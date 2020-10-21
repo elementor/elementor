@@ -29,7 +29,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$controller->endpoints_internal['alpha/index']->register_item_route();
+		$controller->get_endpoint_index()->register_item_route();
 
 		// Act - Reach '/alpha/1'
 		$result = $this->manager->run( 'alpha/index', [ 'id' => '1' ] );
@@ -55,7 +55,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$alpha_controller->endpoints_internal['alpha/index']->register_item_route();
+		$alpha_controller->get_endpoint_index()->register_item_route();
 
 		// Act - Reach '/alpha/1'
 		$result = $this->manager->run( 'alpha/index', [
@@ -80,7 +80,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_controller->endpoints_internal['alpha/beta/index']->register_item_route(
+		$beta_controller->get_endpoint_index()->register_item_route(
 			\WP_REST_Server::READABLE,
 			[
 				'custom_id' => 'sub_id',
@@ -119,7 +119,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$alpha_controller->endpoints_internal['alpha/index']->register_item_route();
+		$alpha_controller->get_endpoint_index()->register_item_route();
 
 		// Act - Reach '/alpha/1'
 		$result = $this->manager->run( 'alpha/index', [
@@ -130,7 +130,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-item', $result );
 
 		// Note: Using only endpoints and controllers it can reach only '/alpha/1/'. since:
-		// There is no way to attach on '$controller->endpoints_internal['alpha/index']' using only endpoints
+		// There is no way to attach on 'index endpoint' using only endpoints. sub-endpoint is the soultion.
 	}
 
 	public function test_endpoints_include_sub_controllers() {
@@ -148,7 +148,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$alpha_controller->endpoints_internal['alpha/index']->register_item_route();
+		$alpha_controller->get_endpoint_index()->register_item_route();
 
 		// Act - Reach '/alpha/1'
 		$result = $this->manager->run( 'alpha/index', [
@@ -173,7 +173,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_controller->endpoints_internal['alpha/beta/index']->register_item_route(
+		$beta_controller->get_endpoint_index()->register_item_route(
 			\WP_REST_Server::READABLE,
 			[
 				'custom_id' => 'sub_id',
@@ -223,7 +223,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$alpha_index_endpoint = $alpha_controller->endpoints_internal['alpha/index'];
+		$alpha_index_endpoint = $alpha_controller->get_endpoint_index();
 		$alpha_index_endpoint->register_item_route();
 
 		// Act - Reach '/alpha/1'
@@ -309,7 +309,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'alpha-items', $result );
 
 		// Arrange - '/alpha/1'.
-		$alpha_controller->endpoints_internal['alpha/index']->register_item_route();
+		$alpha_controller->get_endpoint_index()->register_item_route();
 
 		// Act - Reach '/alpha/1'
 		$result = $this->manager->run( 'alpha/index', [
@@ -334,7 +334,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_index_endpoint = $beta_controller->endpoints_internal['alpha/beta/index'];
+		$beta_index_endpoint = $beta_controller->get_endpoint_index();
 		$beta_index_endpoint->register_item_route(
 			\WP_REST_Server::READABLE,
 			[

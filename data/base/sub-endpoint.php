@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Internal;
-
 abstract class SubEndpoint extends Endpoint {
 
 	/**
@@ -47,8 +45,8 @@ abstract class SubEndpoint extends Endpoint {
 			return $parent->get_base_route() . '/' . $route . $name;
 		}
 
-		// Parent internal sub internal endpoint.
-		if ( $this->controller instanceof SubController && $parent instanceof Internal\IndexSub ) {
+		// Parent sub index endpoint.
+		if ( $this->controller instanceof SubController && $parent instanceof Endpoint\IndexSubController ) {
 			$route = $this->controller->get_route();
 
 			if ( $route ) {
@@ -58,14 +56,10 @@ abstract class SubEndpoint extends Endpoint {
 			return $parent->get_base_route() . '/' . $route . $name;
 		}
 
-		$parent_name = $parent->get_command_public();
-
-		if ( $parent_name ) {
-			$parent_name = $parent_name . '/';
-		}
+		$parent_name = $parent->get_name_public();
 
 		// Parent endpoint
-		return $this->controller->get_rest_base() . '/' . $parent_name . $route . $name;
+		return $this->controller->get_rest_base() . $parent_name . $route . $name;
 	}
 
 	public function get_full_command() {
@@ -81,7 +75,7 @@ abstract class SubEndpoint extends Endpoint {
 
 		if ( $this->parent_endpoint instanceof SubEndpoint ) {
 			$name = $this->parent_endpoint->get_name_ancestry() . '/' . $name;
-		} else if ( ! $this->parent_endpoint instanceof Internal ) {
+		} else if ( ! $this->parent_endpoint instanceof Endpoint\Index ) {
 			$name = $this->parent_endpoint->get_name() . '/' . $name;
 		}
 

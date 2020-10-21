@@ -52,12 +52,12 @@ class SubController extends \Elementor\Data\Base\SubController {
 		return parent::get_item( $request );
 	}
 
-	public function do_register_internal_endpoints() {
+	public function do_register_index_endpoint() {
 		$this->bypass_original_register();
 
 		add_action( 'elementor_rest_api_before_init', function () {
 			add_action( 'rest_api_init', function() {
-				$this->register_internal_endpoints();
+				$this->register_index_endpoint();
 			} );
 		} );
 	}
@@ -70,7 +70,7 @@ class SubController extends \Elementor\Data\Base\SubController {
 		return $this->register_endpoint( $endpoint_class );
 	}
 
-	public function get_endpoint_internal_index() {
-		return reset( $this->endpoints_internal );
+	public function get_endpoint_index() {
+		return $this->index_endpoint;
 	}
 }

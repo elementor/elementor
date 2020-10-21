@@ -7,7 +7,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint;
 class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
 
 	/**
-	 * @var \Elementor\Data\Base\Endpoint|\Elementor\Data\Base\Endpoint\Internal|Endpoint|false
+	 * @var \Elementor\Data\Base\Endpoint|\Elementor\Data\Base\Endpoint\Index|Endpoint|false
 	 */
 	protected $test_endpoint;
 

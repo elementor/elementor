@@ -2,7 +2,7 @@
 
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Internal;
+use Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
@@ -50,7 +50,6 @@ abstract class Endpoint {
 	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
-	 * @param string $route
 	 *
 	 * @throws \Exception
 	 */
@@ -73,36 +72,42 @@ abstract class Endpoint {
 	/**
 	 * Get base route.
 	 *
-	 * Removing 'index' from endpoint.
-	 *
 	 * @return string
 	 */
 	public function get_base_route() {
-		$endpoint_public_name = $this->get_command_public();
+		$endpoint_public_name = $this->get_name_public();
+
+		return '/' . $this->controller->get_rest_base() . rtrim( $endpoint_public_name, '/' );
+	}
+
+	/**
+	 * Get command public.
+	 *
+	 * Convert endpoint to command name ( without index ).
+	 *
+	 * Returns '/{name}/' or '/' ( for index ).
+	 *
+	 * @return string
+	 */
+	public function get_name_public() {
+		$endpoint_public_name = '';
+
+		if ( ! $this instanceof Index ) {
+			$endpoint_public_name = $this->get_name();
+		}
 
 		if ( $endpoint_public_name ) {
 			$endpoint_public_name = '/' . $endpoint_public_name;
 		}
 
-		return '/' . $this->controller->get_rest_base() . $endpoint_public_name;
-	}
-
-	/**
-	 * Convert endpoint to command name ( without internal ).
-	 */
-	public function get_command_public() {
-		$endpoint_public_name = $this->get_name();
-
-		if ( $this instanceof Internal && 'index' === $endpoint_public_name ) {
-			$endpoint_public_name = '';
-		}
+		$endpoint_public_name .= '/';
 
 		return $endpoint_public_name;
 	}
 
 
 	/**
-	 * Convert endpoint to full command name ( including internal ).
+	 * Convert endpoint to full command name ( including index ).
 	 */
 	public function get_full_command() {
 		return $this->controller->get_full_name() . '/' . $this->get_name();
@@ -308,7 +313,7 @@ abstract class Endpoint {
 	 *
 	 * @throws \Exception
 	 */
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '' ) {
 		$custom_id = 'id';
 
 		if ( isset( $args['custom_id'] ) && $args['custom_id'] ) {
@@ -324,7 +329,7 @@ abstract class Endpoint {
 			],
 		], $args );
 
-		$route .= '(?P<' . $custom_id . '>[\w]+)/';
+		$route .= '(?P<' . $custom_id . '>[\w]+)';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
@@ -360,7 +365,7 @@ abstract class Endpoint {
 			throw new \Exception( 'Invalid method.' );
 		}
 
-		$route = $this->get_base_route() . $route;
+		$route = $this->get_base_route() . '/' . $route;
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[

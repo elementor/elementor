@@ -2,7 +2,6 @@
 
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Internal;
 use Elementor\Data\Manager;
 
 abstract class SubController extends Controller {
@@ -39,7 +38,7 @@ abstract class SubController extends Controller {
 	}
 
 	public function get_full_name() {
-		return $this->parent_controller->get_name() . '/' . $this->get_name();
+		return $this->parent_controller->get_name() . '/' . parent::get_full_name();
 	}
 
 	public function get_rest_base() {
@@ -69,7 +68,7 @@ abstract class SubController extends Controller {
 	}
 
 	protected function register_endpoint_format( $command, $endpoint_instance ) {
-		if ( $endpoint_instance instanceof Internal\IndexSub ) {
+		if ( $endpoint_instance instanceof Endpoint\IndexSubController ) {
 			$format = $this->parent_controller->get_name() . '/{id}/' . $this->get_name() . '/' . $endpoint_instance::get_format();
 
 			return Manager::instance()->register_endpoint_format( $command, $format );
@@ -78,7 +77,7 @@ abstract class SubController extends Controller {
 		parent::register_endpoint_format( $command, $endpoint_instance );
 	}
 
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Internal\IndexSub::class );
+	protected function register_index_endpoint() {
+		$this->register_endpoint( Endpoint\IndexSubController::class );
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Data\Base\Endpoint\Internal;
+namespace Elementor\Data\Base\Endpoint;
 
 class IndexRecursive extends Index {
 	public function get_items( $request ) {

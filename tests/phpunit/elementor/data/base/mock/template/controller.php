@@ -23,12 +23,12 @@ class Controller extends \Elementor\Data\Base\Controller {
 		// TODO: Implement register_endpoints() method.
 	}
 
-	public function do_register_internal_endpoints() {
+	public function do_register_index_endpoint() {
 		$this->bypass_original_register();
 
 		add_action( 'elementor_rest_api_before_init', function () {
 			add_action( 'rest_api_init', function() {
-				$this->register_internal_endpoints();
+				$this->register_index_endpoint();
 			} );
 		} );
 	}
@@ -45,7 +45,7 @@ class Controller extends \Elementor\Data\Base\Controller {
 		return $this->register_processor( $processor_class );
 	}
 
-	public function get_endpoint_internal_index() {
-		return reset( $this->endpoints_internal );
+	public function get_endpoint_index() {
+		return $this->index_endpoint;
 	}
 }

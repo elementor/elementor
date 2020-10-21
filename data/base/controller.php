@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Internal;
 use Elementor\Data\Manager;
 use WP_REST_Controller;
 
@@ -14,11 +13,11 @@ abstract class Controller extends WP_REST_Controller {
 	public $endpoints = [];
 
 	/**
-	 * Loaded internal endpoint(s).
+	 * Index endpoint.
 	 *
-	 * @var \Elementor\Data\Base\Endpoint[]
+	 * @var \Elementor\Data\Base\Endpoint\Index
 	 */
-	public $endpoints_internal = [];
+	public $index_endpoint = null;
 
 	/**
 	 * Loaded processor(s).
@@ -164,10 +163,10 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Register internal endpoints.
+	 * Register index endpoint.
 	 */
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Internal\Index::class );
+	protected function register_index_endpoint() {
+		$this->register_endpoint( Endpoint\Index::class );
 	}
 
 	/**
@@ -187,8 +186,8 @@ abstract class Controller extends WP_REST_Controller {
 
 		$command = $endpoint_instance->get_full_command();
 
-		if ( $endpoint_instance instanceof Endpoint\Internal ) {
-			$this->endpoints_internal[ $command ] = $endpoint_instance;
+		if ( $endpoint_instance instanceof Endpoint\Index ) {
+			$this->index_endpoint = $endpoint_instance;
 		} else {
 			$this->endpoints[ $command ] = $endpoint_instance;
 		}
@@ -209,14 +208,7 @@ abstract class Controller extends WP_REST_Controller {
 
 		// Means, the format includes the full-path.
 		if ( ! strstr( $format, '/{' ) ) {
-			$command_public = $endpoint_instance->get_command_public();
-
-			// Probably backwards compatibility for supporting not full formats.
-			if ( $command_public ) {
-				$command_public = '/' . $command_public;
-			}
-
-			$format = $this->get_full_name() . $command_public . '/' . $format;
+			$format = $this->get_full_name() . $endpoint_instance->get_name_public() . $format;
 		}
 
 		// `$e.data.registerFormat()`.
@@ -254,7 +246,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * Endpoints & processors.
 	 */
 	protected function register() {
-		$this->register_internal_endpoints();
+		$this->register_index_endpoint();
 		$this->register_endpoints();
 
 		// Aka hooks.
