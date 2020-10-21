@@ -41,8 +41,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		query_posts( [ 'p' => $active_document->get_id() ] );
 
-		do_action('elementor/frontend/get_builder_content', $active_document, false, false);
-		do_action('elementor/frontend/get_builder_content', $document, false, false);
+		do_action('elementor/frontend/before_get_builder_content', $active_document, false, false);
+		do_action('elementor/frontend/before_get_builder_content', $document, false, false);
 
 		$config = $this->module->get_settings();
 
@@ -60,7 +60,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$excerpt_document = $this->create_document();
 
 		// Emulate an excerpt on frontend.
-		do_action('elementor/frontend/get_builder_content', $excerpt_document, true, false);
+		do_action('elementor/frontend/before_get_builder_content', $excerpt_document, true, false);
 
 		$config = $this->module->get_settings();
 
@@ -75,7 +75,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			],
 		] );
 
-		do_action('elementor/frontend/get_builder_content', $not_supported_document, false, false);
+		do_action('elementor/frontend/before_get_builder_content', $not_supported_document, false, false);
 
 		$config = $this->module->get_settings();
 
@@ -87,7 +87,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$document = $this->create_document();
 
-		do_action('elementor/frontend/get_builder_content', $document, false, false);
+		do_action('elementor/frontend/before_get_builder_content', $document, false, false);
 
 		$config = $this->module->get_settings();
 
