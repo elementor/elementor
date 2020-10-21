@@ -44,4 +44,8 @@ class Controller extends \Elementor\Data\Base\Controller {
 	public function do_register_processor( $processor_class ) {
 		return $this->register_processor( $processor_class );
 	}
+
+	public function get_endpoint_internal_index() {
+		return reset( $this->endpoints_internal );
+	}
 }

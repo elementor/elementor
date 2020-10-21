@@ -2,18 +2,20 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
 use Elementor\Data\Manager;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as SubControllerTemplate;
 
 class Test_Sub_Controller extends Data_Test_Base {
 	public function test_create_simple() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = new ControllerTemplate();
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->run_server();
 
-		$route = '/elementor/v1' . reset($sub_controller->endpoints_internal)->get_base_route();
+		$route = '/elementor/v1' . $sub_controller->get_endpoint_internal_index()->get_base_route();
 
 		// Act.
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
@@ -24,15 +26,27 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_get_reset_base() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = new ControllerTemplate();
 		$sub_controller = new SubControllerTemplate( $controller );
-		$excepted = Manager::REST_BASE . $controller->get_name() . '/' . $sub_controller->get_name();
 
 		// Act.
 		$actual = $sub_controller->get_rest_base();
 
 		// Assert.
-		$this->assertEquals( $excepted, $actual );
+		$this->assertEquals( Manager::REST_BASE . $controller->get_name() . '/' . $sub_controller->get_name(), $actual );
+	}
+
+	public function test_get_full_name() {
+		// Arrange.
+		$controller = new ControllerTemplate();
+		$sub_controller = new SubControllerTemplate( $controller );
+
+		// Act.
+		$actual = $sub_controller->get_full_name();
+
+		// Assert.
+		$this->assertEquals( $controller->get_name() . '/' . $sub_controller->get_name(), $actual );
+
 	}
 
 	public function test_execute_sub_controller_from_internal_endpoint() {
@@ -81,7 +95,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.
@@ -99,7 +113,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->manager->register_controller_instance( $controller );
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.

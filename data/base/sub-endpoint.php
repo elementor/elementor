@@ -19,8 +19,6 @@ abstract class SubEndpoint extends Endpoint {
 		$this->route = $route;
 		$this->parent_endpoint = $parent_endpoint;
 
-		$this->route = $route;
-
 		parent::__construct( $this->parent_endpoint->controller );
 	}
 
@@ -51,15 +49,16 @@ abstract class SubEndpoint extends Endpoint {
 
 		// Parent internal sub internal endpoint.
 		if ( $this->controller instanceof SubController && $parent instanceof Internal\IndexSub ) {
-			return $parent->get_base_route() . '/' . $this->controller->get_route() . '/' . $name;
+			$route = $this->controller->get_route();
+
+			if ( $route ) {
+				$route .= '/';
+			}
+
+			return $parent->get_base_route() . '/' . $route . $name;
 		}
 
-		$parent_name = $parent->get_name();
-
-		// Parent internal index endpoint.
-		if ( $parent instanceof Internal && 'index' && $parent_name ) {
-			$parent_name = '';
-		}
+		$parent_name = $parent->get_command_public();
 
 		if ( $parent_name ) {
 			$parent_name = $parent_name . '/';

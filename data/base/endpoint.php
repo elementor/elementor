@@ -88,8 +88,6 @@ abstract class Endpoint {
 	}
 
 	/**
-	 * TODO: Remove or test.
-	 *
 	 * Convert endpoint to command name ( without internal ).
 	 */
 	public function get_command_public() {

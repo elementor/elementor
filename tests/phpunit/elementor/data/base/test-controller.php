@@ -33,6 +33,14 @@ class Test_Controller extends Data_Test_Base {
 		$this->assertEquals( 'test-controller-' . $controller->random, $name );
 	}
 
+	public function test_get_full_name() {
+		$controller = new ControllerWithEndpoint();
+
+		$name = $controller->get_full_name();
+
+		$this->assertEquals( 'test-controller-' . $controller->random, $name );
+	}
+
 	public function test_get_namespace() {
 		$controller = new ControllerWithEndpoint();
 

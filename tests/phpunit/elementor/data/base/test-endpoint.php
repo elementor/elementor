@@ -30,6 +30,28 @@ class Test_Endpoint extends Data_Test_Base {
 		$this->assertEquals( '/' . $controller_instance->get_name() . '/' . $endpoint_instance->get_name(), $endpoint_instance->get_base_route() );
 	}
 
+	public function test_get_command_public() {
+		$controller_instance = new ControllerWithEndpoint();
+
+		$this->manager->run_server();
+
+		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
+		$internal_index_endpoint = $controller_instance->get_endpoint_internal_index();
+
+		$this->assertEquals( '', $internal_index_endpoint->get_command_public() );
+		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_instance->get_command_public() );
+	}
+
+	public function test_get_full_command() {
+		$controller_instance = new ControllerWithEndpoint();
+
+		$this->manager->run_server();
+
+		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
+
+		$this->assertEquals( $controller_instance->get_name() . '/' . $endpoint_instance->get_name(), $endpoint_instance->get_full_command() );
+	}
+
 	public function test_get_base_route_index_endpoint() {
 		$this->manager->run_server();
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
@@ -82,8 +104,6 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$endpoint_instance->do_register_sub_endpoint( 'test-route/', \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint::class );
 	}
-
-	// TODO: test_register_sub_endpoint_validate_format
 
 	public function test_register_sub_endpoint_run_as_command() {
 		$this->manager->run_server();

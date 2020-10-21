@@ -9,7 +9,7 @@ class IndexSub extends Internal {
 	 */
 	public $controller;
 
-	static function get_format() {
+	public static function get_format() {
 		return '{sub_id}';
 	}
 

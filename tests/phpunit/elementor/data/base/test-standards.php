@@ -351,7 +351,6 @@ class Test_Standards extends Data_Test_Base {
 		// Assert - '/alpha/1/beta/1'.
 		$this->assertEquals( 'beta-item', $result );
 
-		// Note: Using sub-controllers and endpoints it can reach only '/alpha/1/beta/1'.
 		// Arrange - '/alpha/{id}/beta/1/gamma'.
 		$gamma_sub_endpoint = $beta_index_endpoint->register_sub_endpoint( '(?P<sub_sub_id>[\w]+)', OnlySubEndpointGammaSubEndpoint::class );
 

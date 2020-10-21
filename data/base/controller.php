@@ -62,7 +62,6 @@ abstract class Controller extends WP_REST_Controller {
 	abstract public function get_name();
 
 	/**
-	 * TODO: Test
 	 *
 	 * Get full controller name.
 	 *
@@ -195,9 +194,7 @@ abstract class Controller extends WP_REST_Controller {
 			$this->endpoints[ $command ] = $endpoint_instance;
 		}
 
-		$command_public = $endpoint_instance->get_command_public();
-
-		$this->register_endpoint_format( $command, $command_public, $endpoint_instance );
+		$this->register_endpoint_format( $command, $endpoint_instance );
 
 		return $endpoint_instance;
 	}
@@ -206,15 +203,15 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register endpoint format of controllers.
 	 *
 	 * @param string $command
-	 * @param string $command_public
 	 * @param \Elementor\Data\Base\Endpoint $endpoint_instance
 	 */
-	public function register_endpoint_format( $command, $command_public, $endpoint_instance ) {
-		// TODO: try remove 'command-public'.
+	protected function register_endpoint_format( $command, $endpoint_instance ) {
 		$format = $endpoint_instance::get_format();
 
 		// Means, the format includes the full-path.
 		if ( ! strstr( $format, '/{' ) ) {
+			$command_public = $endpoint_instance->get_command_public();
+
 			// Probably backwards compatibility for supporting not full formats.
 			if ( $command_public ) {
 				$command_public = '/' . $command_public;

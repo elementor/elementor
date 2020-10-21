@@ -60,6 +60,7 @@ abstract class SubController extends Controller {
 	public function get_parent() {
 		return $this->parent_controller;
 	}
+
 	/**
 	 * @return string
 	 */
@@ -67,14 +68,14 @@ abstract class SubController extends Controller {
 		trigger_error( 'get_parent_name() or passing parent via constructor is required.', E_USER_ERROR );
 	}
 
-	public function register_endpoint_format( $command, $command_public, $endpoint_instance ) {
-		if ( $endpoint_instance instanceof Internal\IndexSub  ) {
-			$format = $this->parent_controller->get_name() . '/{id}/'. $this->get_name() . '/' . $endpoint_instance::get_format();
+	protected function register_endpoint_format( $command, $endpoint_instance ) {
+		if ( $endpoint_instance instanceof Internal\IndexSub ) {
+			$format = $this->parent_controller->get_name() . '/{id}/' . $this->get_name() . '/' . $endpoint_instance::get_format();
 
 			return Manager::instance()->register_endpoint_format( $command, $format );
 		}
 
-		parent::register_endpoint_format( $command, $command_public, $endpoint_instance );
+		parent::register_endpoint_format( $command, $endpoint_instance );
 	}
 
 	protected function register_internal_endpoints() {
