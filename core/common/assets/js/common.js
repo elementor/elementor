@@ -4,7 +4,6 @@ import Debug from './utils/debug';
 import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
-import DevTools from 'elementor-common-modules/dev-tools/assets/js/dev-tools';
 import API from './api/';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
@@ -49,7 +48,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 			ajax: Ajax,
 			finder: Finder,
 			connect: Connect,
-			devTools: DevTools,
 		};
 
 		activeModules.forEach( ( name ) => {
