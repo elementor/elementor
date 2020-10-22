@@ -56,7 +56,7 @@ class Module extends BaseApp {
 
 		wp_enqueue_script(
 			'elementor-admin-bar',
-			$this->get_js_assets_url( 'admin-bar' ),
+			$this->get_js_assets_url( 'elementor-admin-bar' ),
 			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
 			true
