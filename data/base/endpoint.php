@@ -290,22 +290,22 @@ abstract class Endpoint {
 	 * @param string $methods
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '' ) {
-		$custom_id = 'id';
+		$id_arg_name = 'id';
 
-		if ( isset( $args['custom_id'] ) && $args['custom_id'] ) {
-			$custom_id = $args['custom_id'];
+		if ( isset( $args['id_arg_name'] ) && $args['id_arg_name'] ) {
+			$id_arg_name = $args['id_arg_name'];
 
-			unset( $args['custom_id'] );
+			unset( $args['id_arg_name'] );
 		}
 
 		$args = array_merge( [
-			$custom_id => [
+			$id_arg_name => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 			],
 		], $args );
 
-		$route .= '(?P<' . $custom_id . '>[\w]+)';
+		$route .= '(?P<' . $id_arg_name . '>[\w]+)';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
