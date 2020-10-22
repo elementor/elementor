@@ -1,5 +1,5 @@
 import EditorBase from 'elementor-editor/editor-base';
-import config from './editor-config';
+import config from './config';
 import frontend from './frontend';
 
 export default class EditorTest extends EditorBase {
