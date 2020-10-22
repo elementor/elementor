@@ -54,7 +54,7 @@ class Deprecation {
 	}
 
 	/**
-	 * Get's next version.
+	 * Get next version.
 	 *
 	 * @param string $version
 	 * @param int $count
@@ -159,7 +159,21 @@ class Deprecation {
 		return false;
 	}
 
-	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
+	/**
+	 * Check Deprecation
+	 *
+	 * Checks whether the given entity is valid. If valid, this method checks whether the deprecation
+	 * should be soft (browser console notice) or hard (use WordPress' native deprecation methods).
+	 *
+	 * @param string $entity - The Deprecated entity (the function/hook itself)
+	 * @param string $version
+	 * @param string $replacement Optional
+	 * @param string $base_version Optional. Default is `null`
+	 *
+	 * @return bool|void
+	 * @throws \Exception
+	 */
+	private function check_deprecation( $entity, $version, $replacement, $base_version = null ) {
 		if ( null === $base_version ) {
 			$base_version = $this->current_version;
 		}
@@ -167,9 +181,7 @@ class Deprecation {
 		$diff = $this->compare_version( $base_version, $version );
 
 		if ( false === $diff ) {
-			trigger_error( 'Invalid deprecated_function diff' );
-
-			return;
+			throw new \Exception( 'Invalid deprecation diff' );
 		}
 
 		$print_deprecated = false;
@@ -177,7 +189,7 @@ class Deprecation {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
 			// Soft deprecated.
 			$this->soft_deprecated_notices [] = [
-				$function,
+				$entity,
 				$version,
 				$replacement,
 			];
@@ -190,8 +202,61 @@ class Deprecation {
 			$print_deprecated = true;
 		}
 
+		return $print_deprecated;
+	}
+
+	/**
+	 * Deprecated Function
+	 *
+	 * Handles the deprecation process for functions.
+	 *
+	 * @param string $function
+	 * @param string $version
+	 * @param string $replacement Optional. Default is ''
+	 * @param string $base_version Optional. Default is `null`
+	 * @throws \Exception
+	 */
+	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
+		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
+
 		if ( $print_deprecated ) {
 			_deprecated_function( $function, $version, $replacement );
+		}
+	}
+
+	/**
+	 * Deprecated Hook
+	 *
+	 * Handles the deprecation process for hooks.
+	 *
+	 * @param string $hook
+	 * @param string $version
+	 * @param string $replacement Optional. Default is ''
+	 * @param string $base_version Optional. Default is `null`
+	 * @throws \Exception
+	 */
+	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
+		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
+
+		if ( $print_deprecated ) {
+			_deprecated_hook( $hook, $version, $replacement );
+		}
+	}
+
+	/**
+	 * Deprecated Argument
+	 *
+	 * Handles the deprecation process for function arguments.
+	 *
+	 * @param string $function
+	 * @param string $version
+	 * @throws \Exception
+	 */
+	public function deprecated_argument( $function, $version ) {
+		$print_deprecated = $this->check_deprecation( $function, $version, '' );
+
+		if ( $print_deprecated ) {
+			_deprecated_argument( $function, $version );
 		}
 	}
 }
