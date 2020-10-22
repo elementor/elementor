@@ -18,8 +18,8 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return 'endpoint';
 	}
 
-	public function do_register_sub_endpoint( $route, $endpoint_class ) {
-		return parent::register_sub_endpoint( $route, $endpoint_class );
+	public function do_register_sub_endpoint( $sub_endpoint ) {
+		return parent::register_sub_endpoint( $sub_endpoint );
 	}
 
 	public function get_sub_endpoints() {

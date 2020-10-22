@@ -112,12 +112,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return \Elementor\Data\Base\Controller|false
 	 */
-	public function register_controller_instance( $controller_instance ) {
-		if ( ! ( $controller_instance instanceof Controller ) ) {
-			trigger_error( 'Invalid controller instance.' );
-			return false;
-		}
-
+	public function register_controller_instance( Controller $controller_instance ) {
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
 
 		return $controller_instance;

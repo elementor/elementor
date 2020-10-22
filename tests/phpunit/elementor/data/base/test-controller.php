@@ -108,7 +108,7 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$endpoint_instance = $controller->do_register_endpoint( EndpointTemplate::class );
+		$endpoint_instance = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
 
 		$this->assertCount( 1, $controller->endpoints );
 		$this->assertEquals( $endpoint_instance, array_values( $controller->endpoints )[0] );
@@ -118,9 +118,9 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$controller->do_register_endpoint( EndpointTemplate::class );
+		$controller->do_register_endpoint( new EndpointTemplate( $controller ) );
 
-		$processor_instance = $controller->do_register_processor( ProcessorTemplate::class );
+		$processor_instance = $controller->do_register_processor( new ProcessorTemplate( $controller ) );
 
 		$this->assertCount( 1, $controller->processors );
 		$this->assertCount( 1, $controller->get_processors( $processor_instance->get_command() ) );
@@ -130,7 +130,7 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$endpoint_instance = $controller->do_register_endpoint( EndpointFormatTemplate::class );
+		$endpoint_instance = $controller->do_register_endpoint( new EndpointFormatTemplate( $controller ) );
 
 		$this->assertCount( 1, $this->manager->command_formats );
 
@@ -143,8 +143,8 @@ class Test_Controller extends Data_Test_Base {
 		$this->manager->run_server();
 
 		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
-		$endpoint_instance0 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
-		$endpoint_instance1 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
+		$endpoint_instance0 = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
+		$endpoint_instance1 = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
 
 		$endpoint_instance0->set_test_data( 'get_items', 'endpoint0_result');
 		$endpoint_instance1->set_test_data( 'get_items', 'endpoint1_result');

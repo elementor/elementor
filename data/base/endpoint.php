@@ -36,14 +36,8 @@ abstract class Endpoint {
 	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
-	 *
-	 * @throws \Exception
 	 */
-	public function __construct( $controller ) {
-		if ( ! ( $controller instanceof Controller ) ) {
-			throw new \Exception( 'Invalid controller' );
-		}
-
+	public function __construct( Controller $controller ) {
 		$this->controller = $controller;
 		$this->register();
 	}
@@ -56,13 +50,11 @@ abstract class Endpoint {
 	abstract public function get_name();
 
 	/**
-	 * Get format suffix.
+	 * Get format.
 	 *
-	 * Examples:
-	 * '{one_parameter_name}'.
-	 * '{one_parameter_name}/{two_parameter_name}/'.
-	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
-	 * @note get_format() is used only in `Data\Manager::run()`.
+	 * @note The formats that generated using this function,
+	 * will be used only be `Data\Manager::run()`.
+	 *
 	 * @return string
 	 */
 	public function get_format() {
@@ -117,8 +109,6 @@ abstract class Endpoint {
 	 * Register the endpoint.
 	 *
 	 * By default: register get items route.
-	 *
-	 * @throws \Exception
 	 */
 	protected function register() {
 		$this->register_items_route();
@@ -127,27 +117,19 @@ abstract class Endpoint {
 	/**
 	 * Register sub endpoint.
 	 *
-	 * @param string $route
-	 * @param string $endpoint_class
+	 * @param \Elementor\Data\Base\SubEndpoint $endpoint
 	 *
-	 * @return \Elementor\Data\Base\SubEndpoint|false
+	 * @return \Elementor\Data\Base\SubEndpoint
 	 */
-	public function register_sub_endpoint( $route, $endpoint_class ) {
-		$endpoint_instance = new $endpoint_class( $this, $route );
+	public function register_sub_endpoint( SubEndpoint $endpoint ) {
+		$command = $endpoint->get_full_command();
+		$format = $endpoint->get_format();
 
-		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
-			trigger_error( 'Invalid endpoint instance.' );
-			return false;
-		}
-
-		$command = $endpoint_instance->get_full_command();
-		$format = $endpoint_instance->get_format();
-
-		$this->sub_endpoints[ $command ] = $endpoint_instance;
+		$this->sub_endpoints[ $command ] = $endpoint;
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 
-		return $endpoint_instance;
+		return $endpoint;
 	}
 
 	/**
@@ -306,8 +288,6 @@ abstract class Endpoint {
 	 * @param string $route
 	 * @param array $args
 	 * @param string $methods
-	 *
-	 * @throws \Exception
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '' ) {
 		$custom_id = 'id';
@@ -336,8 +316,6 @@ abstract class Endpoint {
 	 * Register items route.
 	 *
 	 * @param string $methods
-	 *
-	 * @throws \Exception
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
@@ -354,11 +332,10 @@ abstract class Endpoint {
 	 * @param array $args
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			throw new \Exception( 'Invalid method.' );
+			trigger_error( 'Invalid method.', E_USER_ERROR );
 		}
 
 		$route = $this->get_base_route() . '/' . $route;

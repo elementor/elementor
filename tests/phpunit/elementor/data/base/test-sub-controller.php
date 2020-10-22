@@ -10,7 +10,8 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as S
 class Test_Sub_Controller extends Data_Test_Base {
 	public function test_create_simple() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
+
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->run_server();
@@ -26,7 +27,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_get_reset_base() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// Act.
@@ -38,7 +39,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_get_full_name() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// Act.
@@ -51,7 +52,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_index_endpoint() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// By default index endpoint will use the controller.
@@ -70,7 +71,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_index_endpoint_as_command() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// By default index endpoint will use the controller.
@@ -90,12 +91,12 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_endpoint() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( new Endpoint( $sub_controller ) );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.
@@ -107,13 +108,13 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_endpoint_as_command() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->register_controller_instance( $controller );
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( new Endpoint( $sub_controller ) );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.

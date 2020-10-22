@@ -7,8 +7,8 @@ use Elementor\Data\Base\Endpoint\IndexRecursive;
 class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
 
 	public function register_endpoints() {
-		$this->register_endpoint( Endpoint::class );
-		$this->register_endpoint( Endpoint::class );
+		$this->register_endpoint( new Endpoint( $this ) );
+		$this->register_endpoint( new Endpoint( $this ) );
 	}
 
 	public function get_items( $request ) {
@@ -20,6 +20,6 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( IndexRecursive::class );
+		$this->register_endpoint( new IndexRecursive( $this ) );
 	}
 }

@@ -33,8 +33,6 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 */
 	public function __construct() {
-		// TODO: Controllers and endpoints can have common interface.
-
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();
 
@@ -168,38 +166,32 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register index endpoint.
 	 */
 	protected function register_index_endpoint() {
-		$this->register_endpoint( Endpoint\Index::class );
+		$this->register_endpoint( new Endpoint\Index( $this ) );
 	}
 
 	/**
 	 * Register endpoint.
 	 *
-	 * @param string $endpoint_class
+	 * @param \Elementor\Data\Base\Endpoint $endpoint
 	 *
-	 * @return \Elementor\Data\Base\Endpoint|false
+	 * @return \Elementor\Data\Base\Endpoint
 	 */
-	protected function register_endpoint( $endpoint_class ) {
-		$endpoint_instance = new $endpoint_class( $this );
+	protected function register_endpoint( Endpoint $endpoint ) {
+		$command = $endpoint->get_full_command();
 
-		if ( ! ( $endpoint_instance instanceof Endpoint ) ) {
-			trigger_error( 'Invalid endpoint instance.' );
-			return false;
-		}
-
-		$command = $endpoint_instance->get_full_command();
-
-		if ( $endpoint_instance instanceof Endpoint\Index ) {
-			$this->index_endpoint = $endpoint_instance;
+		// TODO: Find better solution.
+		if ( $endpoint instanceof Endpoint\Index ) {
+			$this->index_endpoint = $endpoint;
 		} else {
-			$this->endpoints[ $command ] = $endpoint_instance;
+			$this->endpoints[ $command ] = $endpoint;
 		}
 
-		$format = $endpoint_instance->get_format();
+		$format = $endpoint->get_format();
 
 		// `$e.data.registerFormat()`.
 		Manager::instance()->register_endpoint_format( $command, $format );
 
-		return $endpoint_instance;
+		return $endpoint;
 	}
 
 	/**

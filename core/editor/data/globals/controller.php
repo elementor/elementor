@@ -11,12 +11,12 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->register_endpoint( Endpoints\Colors::class );
-		$this->register_endpoint( Endpoints\Typography::class );
+		$this->register_endpoint( new Endpoints\Colors( $this ) );
+		$this->register_endpoint( new Endpoints\Typography( $this ) );
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( IndexRecursive::class );
+		$this->register_endpoint( new IndexRecursive( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

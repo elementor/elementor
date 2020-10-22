@@ -75,7 +75,7 @@ class Test_Sub_Endpoint extends Data_Test_Base {
 
 	public function test_get_base_route_parent_index_of_sub_controller() {
 		// Arrange.
-		$controller = new Mock\Template\Controller();
+		$controller = $this->manager->register_controller( new Mock\Template\Controller() );
 		$sub_controller = new Mock\Template\SubController( $controller );
 
 		// Trigger register.
@@ -161,7 +161,7 @@ class Test_Sub_Endpoint extends Data_Test_Base {
 
 	public function test_get_full_command_parent_index_of_sub_controller() {
 		// Arrange.
-		$controller = new Mock\Template\Controller();
+		$controller = $this->manager->register_controller( new Mock\Template\Controller() );
 		$sub_controller = new Mock\Template\SubController( $controller );
 
 		$this->manager->run_server();
@@ -204,7 +204,7 @@ class Test_Sub_Endpoint extends Data_Test_Base {
 		$this->manager->run_server();
 
 		$index_endpoint = $controller->index_endpoint;
-		$sub_endpoint = $index_endpoint->register_sub_endpoint('',  SubEndpoint::class );
+		$sub_endpoint = $index_endpoint->register_sub_endpoint( new SubEndpoint( $index_endpoint ) );
 
 		$sub_endpoint->set_test_data( 'get_items', 'valid' );
 
@@ -240,8 +240,8 @@ class Test_Sub_Endpoint extends Data_Test_Base {
 		$this->manager->run_server();
 
 		$endpoint = new Mock\Template\Endpoint( $controller );
-		$sub_endpoint = $endpoint->register_sub_endpoint( '', Mock\Template\SubEndpoint::class );
-		$descendant_endpoint = $sub_endpoint->register_sub_endpoint( '', Mock\Template\SubEndpoint::class );
+		$sub_endpoint = $endpoint->register_sub_endpoint( new Mock\Template\SubEndpoint( $endpoint ) );
+		$descendant_endpoint = $sub_endpoint->register_sub_endpoint( new Mock\Template\SubEndpoint( $sub_endpoint ) );
 
 		$descendant_endpoint->set_test_data( 'get_items', 'valid' );
 

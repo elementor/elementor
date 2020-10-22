@@ -15,22 +15,16 @@ abstract class SubController extends Controller {
 	 *
 	 * $parent_controller is optional, if not passed will use `$this->get_parent_name()`.
 	 *
-	 * @param null|\Elementor\Data\Base\Controller $parent_controller
 	 */
-	public function __construct( $parent_controller = null ) {
-		$this->parent_controller = $parent_controller;
+	public function __construct() {
+		$parent_controller_name = $this->get_parent_name();
 
-		if ( ! $this->parent_controller ) {
-			$this->parent_controller = Manager::instance()->get_controller( $this->get_parent_name() );
+		if ( $parent_controller_name ) {
+			$this->parent_controller = Manager::instance()->get_controller( $parent_controller_name );
 		}
 
 		if ( ! $this->parent_controller ) {
-			trigger_error( 'Cannot find parent controller' );
-			return;
-		}
-
-		if ( $this->parent_controller instanceof SubController ) {
-			trigger_error( 'Parent cannot be sub-controller use endpoints/sub-endpoints' );
+			trigger_error( "Cannot find parent controller: '$parent_controller_name'" );
 			return;
 		}
 
@@ -61,13 +55,13 @@ abstract class SubController extends Controller {
 	}
 
 	/**
+	 * Get parent controller name.
+	 *
 	 * @return string
 	 */
-	public function get_parent_name() {
-		trigger_error( 'get_parent_name() or passing parent via constructor is required.', E_USER_ERROR );
-	}
+	abstract public function get_parent_name();
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( Endpoint\IndexSubController::class );
+		$this->register_endpoint( new Endpoint\IndexSubController( $this ) );
 	}
 }
