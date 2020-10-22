@@ -1,5 +1,7 @@
 <?php
-namespace Elementor\Data\Base\Endpoint;
+namespace Elementor\Data\Base\Endpoint\Index;
+
+use Elementor\Data\Base\Endpoint\Index;
 
 /**
  * Class IndexRecursive, in cases where there no use of dynamic endpoints ( alpha/{id} )
@@ -15,7 +17,7 @@ namespace Elementor\Data\Base\Endpoint;
  *  'partners' => [ partners list ... ],
  * ]
  */
-class IndexRecursive extends Index {
+class Recursive extends Index {
 	public function get_items( $request ) {
 		return $this->controller->get_items_recursive( [ $this ] );
 	}

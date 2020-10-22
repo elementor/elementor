@@ -2,7 +2,7 @@
 namespace Elementor\Core\Editor\Data\Globals;
 
 use Elementor\Data\Base\Controller as Controller_Base;
-use Elementor\Data\Base\Endpoint\IndexRecursive;
+use Elementor\Data\Base\Endpoint;
 use Elementor\Plugin;
 
 class Controller extends Controller_Base {
@@ -16,7 +16,7 @@ class Controller extends Controller_Base {
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new IndexRecursive( $this ) );
+		$this->register_endpoint( new Endpoint\Index\Recursive( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

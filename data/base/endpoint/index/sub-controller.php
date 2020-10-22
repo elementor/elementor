@@ -1,7 +1,9 @@
 <?php
-namespace Elementor\Data\Base\Endpoint;
+namespace Elementor\Data\Base\Endpoint\Index;
 
-class IndexSubController extends Index {
+use Elementor\Data\Base\Endpoint\Index;
+
+class SubController extends Index {
 	/***
 	 * @var \Elementor\Data\Base\SubController
 	 */

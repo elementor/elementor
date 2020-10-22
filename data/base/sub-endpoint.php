@@ -50,7 +50,7 @@ abstract class SubEndpoint extends Endpoint {
 		}
 
 		// Parent sub index endpoint.
-		if ( $this->controller instanceof SubController && $parent instanceof Endpoint\IndexSubController ) {
+		if ( $this->controller instanceof SubController && $parent instanceof Endpoint\Index\SubController ) {
 			$route = $this->controller->get_route();
 
 			if ( $route ) {
