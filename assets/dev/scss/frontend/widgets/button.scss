@@ -24,6 +24,14 @@
 
 	&-icon {
 		flex-grow: 0;
+		order: 0;
+		svg {
+			width: 0;
+		}
+	}
+
+	&-icon-flyover {
+		flex-grow: 0;
 		order: 5;
 		svg {
 			width: 1em;
@@ -79,20 +87,6 @@
 		&left {
 			margin-right: 5px;
 			order: getValueByDirection( 5, 15 );
-		}
-	}
-
-	.elementor-normal-icon- {
-
-		div: none {
-  		display: none;
-		}
-	}
-	
-	.elementor-flyover-icon- {
-
-		div: hover {
-  		display: block;
 		}
 	}
 
