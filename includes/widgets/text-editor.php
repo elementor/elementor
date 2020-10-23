@@ -225,7 +225,7 @@ class Widget_Text_Editor extends Widget_Base {
 				],
 			]
 		);
-		
+
 		$this->add_control(
 			'text_color_flyover',
 			[
