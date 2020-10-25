@@ -78,12 +78,12 @@ class Theme extends Base {
 	 *
 	 * @since 1.0.0
 	 * @access protected
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 *
 	 * @return \WP_Theme WordPress theme object.
 	 */
 	protected function _get_theme() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'get_theme' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::get_theme()' );
 
 		return $this->get_theme();
 	}
@@ -94,7 +94,7 @@ class Theme extends Base {
 	 * Retrieve the theme.
 	 *
 	 * @since 3.1.0
-	 * @access protected
+	 * @access private
 	 *
 	 * @return \WP_Theme WordPress theme object.
 	 */

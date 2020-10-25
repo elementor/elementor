@@ -75,7 +75,7 @@ class Page extends Library_Document {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {

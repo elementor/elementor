@@ -40,7 +40,7 @@ class Model extends BaseModel {
 	}
 
 	/**
-	 * @since 2.8.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {

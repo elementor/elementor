@@ -161,7 +161,7 @@ class Model extends CSS_Model {
 	 *
 	 * Used to add new controls to the page settings model.
 	 *
-	 * @since 1.6.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {

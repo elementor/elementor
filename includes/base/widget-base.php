@@ -281,10 +281,10 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @since 1.7.12
 	 * @access protected
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 */
 	protected function _register_skins() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'register_skins' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
 
 		$this->register_skins();
 	}

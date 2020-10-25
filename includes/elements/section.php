@@ -217,7 +217,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * Used to add new controls to the section element.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {

@@ -778,10 +778,10 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.3.0
 	 * @access protected
-	 * @deprecated since 3.1.0
+	 * @deprecated 3.1.0
 	 */
 	protected function _add_render_attributes() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'add_render_attributes' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::add_render_attributes()' );
 
 		return $this->add_render_attributes();
 	}
@@ -885,7 +885,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _print_content() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'print_content' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );
 
 		$this->print_content();
 	}
@@ -895,7 +895,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Output the element final HTML on the frontend.
 	 *
-	 * @since 3.1.0 (Originally since 1.0.0 in a prefixed version)
+	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function print_content() {
