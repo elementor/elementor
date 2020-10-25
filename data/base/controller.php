@@ -179,7 +179,6 @@ abstract class Controller extends WP_REST_Controller {
 	protected function register_endpoint( Endpoint $endpoint ) {
 		$command = $endpoint->get_full_command();
 
-		// TODO: Find better solution.
 		if ( $endpoint instanceof Endpoint\Index ) {
 			$this->index_endpoint = $endpoint;
 		} else {
