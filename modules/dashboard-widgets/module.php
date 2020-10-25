@@ -65,15 +65,15 @@ class Module extends BaseModule {
 
 	}
 
-	function load_assets() {
+	public function load_assets() {
 		$screen = get_current_screen();
 
 		if ( 'dashboard' !== $screen->id ) {
 			return;
 		}
 
-		wp_enqueue_script( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.js', array( 'jquery' ), false, true );
-		wp_enqueue_style( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.css'  );
+		wp_enqueue_script( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.js', array( 'jquery' ), ELEMENTOR_VERSION, true );
+		wp_enqueue_style( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.css', array(), ELEMENTOR_VERSION );
 	}
 
 	public function admin_head() {
@@ -91,15 +91,15 @@ class Module extends BaseModule {
 		$widgets = array(
 			'elementor_quick_actions_dashboard_widget' => array(
 				'label' => esc_html__( 'Elementor Quick Actions', 'elementor' ),
-				'callback' => [ $this, 'dashboard_quick_actions_render' ]
+				'callback' => [ $this, 'dashboard_quick_actions_render' ],
 			),
 			'elementor_resources_dashboard_widget' => array(
 				'label' => esc_html__( 'Elementor Resources', 'elementor' ),
-				'callback' => [ $this, 'dashboard_resources_render' ]
+				'callback' => [ $this, 'dashboard_resources_render' ],
 			),
 			'elementor_news_updates_dashboard_widget' => array(
 				'label' => esc_html__( 'Elementor News & Updates', 'elementor' ),
-				'callback' => [ $this, 'dashboard_news_updates_render' ]
+				'callback' => [ $this, 'dashboard_news_updates_render' ],
 			),
 		);
 
@@ -107,7 +107,7 @@ class Module extends BaseModule {
 		if ( ! $show_welcome_panel ) {
 			$widgets['elementor_videos_dashboard_widget'] = array(
 				'label' => esc_html__( 'Elementor Video tutorials', 'elementor' ),
-				'callback' => [ $this, 'dashboard_videos_render' ]
+				'callback' => [ $this, 'dashboard_videos_render' ],
 			);
 		}
 
@@ -184,7 +184,7 @@ class Module extends BaseModule {
 									</li>
 									<li>
 										<span class="dashicons dashicons-admin-home"></span>
-										<a href="<?php echo esc_url( admin_url('options-reading.php') ); ?>"><?php esc_html_e( 'Setup your homepage', 'elementor' ); ?></a>
+										<a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>"><?php esc_html_e( 'Setup your homepage', 'elementor' ); ?></a>
 									</li>
 									<li>
 										<span class="dashicons dashicons-welcome-view-site"></span>
@@ -219,7 +219,7 @@ class Module extends BaseModule {
 				'args' => array(
 					'library_type' => 'landing_page',
 					'add_new'      => 1,
-				)
+				),
 			),
 			'elementor_library' => array(
 				'post_type' => false,
@@ -227,7 +227,7 @@ class Module extends BaseModule {
 				'label' => __( 'Popup', 'elementor' ),
 				'args' => array(
 					'template_type' => 'popup',
-				)
+				),
 			),
 		);
 		?>
@@ -322,10 +322,10 @@ class Module extends BaseModule {
 				<div class="versions-info">
 					<div class="elementor-version">
 						<div class="version-row">
-							Elementor V<?php echo ELEMENTOR_VERSION; ?> | <a href="update-core.php"><?php _e('update', 'elementor' ); ?></a>
+							Elementor V<?php echo ELEMENTOR_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
 						</div>
 						<div class="version-row">
-							Elementor Pro V<?php echo ELEMENTOR_PRO_VERSION; ?> | <a href="update-core.php"><?php _e('update', 'elementor' ); ?></a>
+							Elementor Pro V<?php echo ELEMENTOR_PRO_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -357,7 +357,7 @@ class Module extends BaseModule {
 						'url' => 'https://go.elementor.com/wp-dash-faq',
 						'desc' => 'Answer your questions',
 					),
-				)
+				),
 			),
 			'community' => array(
 				'heading' => __( 'Community', 'elementor' ),
@@ -380,7 +380,7 @@ class Module extends BaseModule {
 						'url' => 'https://go.elementor.com/wp-dash-meetups',
 						'desc' => 'Answer your questions',
 					),
-				)
+				),
 			),
 		);
 		?>
