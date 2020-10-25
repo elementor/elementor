@@ -11,11 +11,13 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		// Bypass, use internal endpoints.
+		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+			'id_arg_name' => 'document_id',
+		] );
 	}
 
 	public function get_item( $request ) {
-		$document_id = $request->get_param( 'id' );
+		$document_id = $request->get_param( 'document_id' );
 		$document = Plugin::$instance->documents->get( $document_id );
 
 		if ( ! $document ) {

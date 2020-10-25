@@ -60,7 +60,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_find_controller_instance_advance() {
-		$controller = new ControllerWithEndpoint(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint();
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -233,7 +233,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = new ControllerWithEndpoint(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint();
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -250,7 +250,7 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run() {
-		$controller = new ControllerWithEndpoint(); // controller with endpoint.
+		$controller = new ControllerWithEndpoint();
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -271,7 +271,7 @@ class Test_Manager extends Data_Test_Base {
 			'globals/typography' => 'globals/typography/{id}',
 			'documents/index' => 'documents/{id}',
 			'documents/revisions/index' => 'documents/{id}/revisions/{sub_id}',
-			'documents/revisions/data' => '/documents/(?P<id>[\w]+)/revisions/(?P<document_id>[\w]+)/data',
+			'documents/revisions/index/data' => '/documents/(?P<id>[\w]+)/revisions/(?P<document_id>[\w]+)/data',
 		], $this->manager->command_formats );
 	}
 }

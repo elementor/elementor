@@ -21,8 +21,8 @@ class Test_Controller extends Data_Test_Base {
 			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
 		}
 
-		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_internal_endpoints();`.' );
-		$this->assertCount( 1, $controller->endpoints_internal );
+		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_index_endpoint();`.' );
+		$this->assertNotEquals( null, $controller->get_endpoint_index() );
 	}
 
 	public function test_get_name() {
@@ -92,9 +92,9 @@ class Test_Controller extends Data_Test_Base {
 		$this->assertEquals( $controller->get_name(), $controller_pure_name );
 	}
 
-	public function test_register_internal_endpoints() {
+	public function test_register_index_endpoint() {
 		$controller = new ControllerTemplate();
-		$controller->do_register_internal_endpoints();
+		$controller->do_register_index_endpoint();
 		$this->manager->run_server();
 
 		$data = $this->manager->run_endpoint( $controller->get_name() );
@@ -108,7 +108,7 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$endpoint_instance = $controller->do_register_endpoint( EndpointTemplate::class );
+		$endpoint_instance = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
 
 		$this->assertCount( 1, $controller->endpoints );
 		$this->assertEquals( $endpoint_instance, array_values( $controller->endpoints )[0] );
@@ -118,9 +118,9 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$controller->do_register_endpoint( EndpointTemplate::class );
+		$controller->do_register_endpoint( new EndpointTemplate( $controller ) );
 
-		$processor_instance = $controller->do_register_processor( ProcessorTemplate::class );
+		$processor_instance = $controller->do_register_processor( new ProcessorTemplate( $controller ) );
 
 		$this->assertCount( 1, $controller->processors );
 		$this->assertCount( 1, $controller->get_processors( $processor_instance->get_command() ) );
@@ -130,50 +130,13 @@ class Test_Controller extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$controller->bypass_original_register();
 
-		$endpoint_instance = $controller->do_register_endpoint( EndpointFormatTemplate::class );
+		$endpoint_instance = $controller->do_register_endpoint( new EndpointFormatTemplate( $controller ) );
 
 		$this->assertCount( 1, $this->manager->command_formats );
 
 		$command_format = array_values( $this->manager->command_formats )[0];
 
 		$this->assertEquals( $controller->get_name() . '/' . $endpoint_instance->get_name() . '/{arg_id}', $command_format );
-	}
-
-	public function test_get_items_recursive() {
-		$this->manager->run_server();
-
-		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
-		$endpoint_instance0 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
-		$endpoint_instance1 = $controller_instance->do_register_endpoint( EndpointTemplate::class );
-
-		$endpoint_instance0->set_test_data( 'get_items', 'endpoint0_result');
-		$endpoint_instance1->set_test_data( 'get_items', 'endpoint1_result');
-
-		// Result should include both endpoints result.
-		$results = $controller_instance->get_items_recursive();
-		$count = 0;
-
-		foreach ( $results as $result ) {
-			$this->assertEquals( 'endpoint' . $count . '_result', $result );
-			$count++;
-		}
-	}
-
-	public function test_get_items_recursive_simulated() {
-		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
-		$this->manager->run_server(); // Ensure controller loaded.
-
-		// Run internal index endpoint. Run endpoint 'test-controller'.
-		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );
-
-		foreach ( $endpoints_results as $endpoint_name => $endpoints_result ) {
-			// Run endpoint like `test-controller/test-endpoint-{random}`.
-			$endpoint = $controller->get_name() . '/' . $endpoint_name;
-			$result = $this->manager->run_endpoint( $endpoint );
-
-			// Each manual run of the endpoint equals to part of $endpoints_results which is recursive result.
-			$this->assertEquals( $endpoints_result, $result );
-		}
 	}
 
 	public function test_get_permission_callback() {

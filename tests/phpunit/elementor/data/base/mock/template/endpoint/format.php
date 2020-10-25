@@ -8,7 +8,7 @@ class Format extends Endpoint {
 		return 'endpoint-format';
 	}
 
-	public static function get_format() {
-		return '{arg_id}';
+	public function get_format() {
+		return trim( $this->get_base_route(), '/' ) . '/{arg_id}';
 	}
 }

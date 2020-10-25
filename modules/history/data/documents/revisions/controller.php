@@ -10,21 +10,18 @@ class Controller extends SubController {
 		return 'documents';
 	}
 
-	public function get_route() {
-		return '(?P<document_id>[\w]+)';
-	}
-
 	public function get_name() {
 		return 'revisions';
+	}
+
+	public function get_route() {
+		return '/(?P<document_id>[\w]+)';
 	}
 
 	public function register_endpoints() {
 		// Using internal endpoint as 'base route' for 'data' endpoint.
 		// TODO: Try not use here sub-endpoint but endpoint.
-		$this->endpoints_internal['documents/revisions/index']->register_sub_endpoint(
-			'(?P<revision_id>[\w]+)',
-			Endpoints\Data::class
-		);
+		$this->index_endpoint->register_sub_endpoint( new Endpoints\Data( $this->index_endpoint, '/(?P<revision_id>[\w]+)' ) );
 	}
 
 	public function get_items( $request ) {

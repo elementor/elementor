@@ -2,6 +2,7 @@
 namespace Elementor\Core\Editor\Data\Globals;
 
 use Elementor\Data\Base\Controller as Controller_Base;
+use Elementor\Data\Base\Endpoint;
 use Elementor\Plugin;
 
 class Controller extends Controller_Base {
@@ -10,12 +11,12 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->register_endpoint( Endpoints\Colors::class );
-		$this->register_endpoint( Endpoints\Typography::class );
+		$this->register_endpoint( new Endpoints\Colors( $this ) );
+		$this->register_endpoint( new Endpoints\Typography( $this ) );
 	}
 
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Endpoints\Index::class );
+	protected function register_index_endpoint() {
+		$this->register_endpoint( new Endpoint\Index\Recursive( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

@@ -10,12 +10,13 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as S
 class Test_Sub_Controller extends Data_Test_Base {
 	public function test_create_simple() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
+
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->run_server();
 
-		$route = '/elementor/v1' . $sub_controller->get_endpoint_internal_index()->get_base_route();
+		$route = '/elementor/v1' . $sub_controller->get_endpoint_index()->get_base_route();
 
 		// Act.
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
@@ -26,7 +27,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_get_reset_base() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// Act.
@@ -38,7 +39,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_get_full_name() {
 		// Arrange.
-		$controller = new ControllerTemplate();
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// Act.
@@ -49,38 +50,38 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	}
 
-	public function test_execute_sub_controller_from_internal_endpoint() {
+	public function test_execute_sub_controller_from_index_endpoint() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
-		// By default internal endpoints will use the controller.
+		// By default index endpoint will use the controller.
 		$sub_controller->set_test_data( 'get_items', 'valid' );
 
 		$this->manager->run_server();
 
-		$internal_endpoint_route = $controller->get_name() . '/1/' . $sub_controller->get_name();
+		$index_endpoint_route = $controller->get_name() . '/1/' . $sub_controller->get_name();
 
 		// Act.
-		$data = $this->manager->run_endpoint( $internal_endpoint_route );
+		$data = $this->manager->run_endpoint( $index_endpoint_route );
 
 		// Assert.
 		$this->assertEquals( 'valid', $data );
 	}
 
-	public function test_execute_sub_controller_from_internal_endpoint_as_command() {
+	public function test_execute_sub_controller_from_index_endpoint_as_command() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
-		// By default internal endpoints will use the controller.
+		// By default index endpoint will use the controller.
 		$sub_controller->set_test_data( 'get_items', 'valid' );
 
 		$this->manager->register_controller_instance( $controller );
 		$this->manager->run_server();
 
 		// Act.
-		$data = $this->manager->run( $sub_controller->get_endpoint_internal_index()->get_full_command(), [
+		$data = $this->manager->run( $sub_controller->get_endpoint_index()->get_full_command(), [
 			'id' => '1'
 		] );
 
@@ -90,12 +91,12 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_endpoint() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( new Endpoint( $sub_controller ) );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.
@@ -107,13 +108,13 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 	public function test_execute_sub_controller_from_endpoint_as_command() {
 		// Arrange.
-		$controller = new ControllerWithEndpoint();
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		$this->manager->register_controller_instance( $controller );
 		$this->manager->run_server();
 
-		$endpoint = $sub_controller->do_register_endpoint( Endpoint::class );
+		$endpoint = $sub_controller->do_register_endpoint( new Endpoint( $sub_controller ) );
 		$endpoint->set_test_data( 'get_items', 'valid' );
 
 		// Act.

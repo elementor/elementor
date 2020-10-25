@@ -16,6 +16,7 @@ class SubController extends \Elementor\Data\Base\SubController {
 
 	public function __construct( $parent_controller = null, $test_route = '' ) {
 		$this->test_route = $test_route;
+		$this->parent_controller = $parent_controller;
 		parent::__construct( $parent_controller );
 		$this->bypass_original_permission();
 	}
@@ -52,25 +53,29 @@ class SubController extends \Elementor\Data\Base\SubController {
 		return parent::get_item( $request );
 	}
 
-	public function do_register_internal_endpoints() {
+	public function do_register_index_endpoint() {
 		$this->bypass_original_register();
 
 		add_action( 'elementor_rest_api_before_init', function () {
 			add_action( 'rest_api_init', function() {
-				$this->register_internal_endpoints();
+				$this->register_index_endpoint();
 			} );
 		} );
 	}
 
 	/**
-	 * @param $endpoint_class
+	 * @param $endpoint
 	 * @return \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint|\Elementor\Data\Base\Endpoint
 	 */
-	public function do_register_endpoint( $endpoint_class ) {
-		return $this->register_endpoint( $endpoint_class );
+	public function do_register_endpoint( $endpoint ) {
+		return $this->register_endpoint( $endpoint );
 	}
 
-	public function get_endpoint_internal_index() {
-		return reset( $this->endpoints_internal );
+	public function get_endpoint_index() {
+		return $this->index_endpoint;
+	}
+
+	public function get_parent_name() {
+		return $this->parent_controller->get_name();
 	}
 }

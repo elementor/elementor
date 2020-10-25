@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Internal;
 use Elementor\Data\Manager;
 use WP_REST_Controller;
 
@@ -14,11 +13,11 @@ abstract class Controller extends WP_REST_Controller {
 	public $endpoints = [];
 
 	/**
-	 * Loaded internal endpoint(s).
+	 * Index endpoint.
 	 *
-	 * @var \Elementor\Data\Base\Endpoint[]
+	 * @var \Elementor\Data\Base\Endpoint\Index
 	 */
-	public $endpoints_internal = [];
+	public $index_endpoint = null;
 
 	/**
 	 * Loaded processor(s).
@@ -34,8 +33,6 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 */
 	public function __construct() {
-		// TODO: Controllers and endpoints can have common interface.
-
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();
 
@@ -62,8 +59,10 @@ abstract class Controller extends WP_REST_Controller {
 	abstract public function get_name();
 
 	/**
-	 *
 	 * Get full controller name.
+	 *
+	 * The 'main' job of this method, is to be extend, for example sub-controller will return it's parent name,
+	 * including his self.
 	 *
 	 * @return string
 	 */
@@ -99,7 +98,7 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Retrieves the index for a controller.
+	 * Retrieves rest route(s) index for current controller.
 	 *
 	 * @return \WP_REST_Response|\WP_Error
 	 */
@@ -164,64 +163,35 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Register internal endpoints.
+	 * Register index endpoint.
 	 */
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Internal\Index::class );
+	protected function register_index_endpoint() {
+		$this->register_endpoint( new Endpoint\Index( $this ) );
 	}
 
 	/**
 	 * TODO: test.
 	 * Register endpoint.
 	 *
-	 * @param string $endpoint_class
+	 * @param \Elementor\Data\Base\Endpoint $endpoint
 	 *
-	 * @return \Elementor\Data\Base\Endpoint|false
+	 * @return \Elementor\Data\Base\Endpoint
 	 */
-	protected function register_endpoint( $endpoint_class ) {
-		$endpoint_instance = new $endpoint_class( $this );
+	protected function register_endpoint( Endpoint $endpoint ) {
+		$command = $endpoint->get_full_command();
 
-		if ( ! ( $endpoint_instance instanceof Endpoint ) ) {
-			trigger_error( 'Invalid endpoint instance.' );
-			return false;
-		}
-
-		$command = $endpoint_instance->get_full_command();
-
-		if ( $endpoint_instance instanceof Endpoint\Internal ) {
-			$this->endpoints_internal[ $command ] = $endpoint_instance;
+		if ( $endpoint instanceof Endpoint\Index ) {
+			$this->index_endpoint = $endpoint;
 		} else {
-			$this->endpoints[ $command ] = $endpoint_instance;
+			$this->endpoints[ $command ] = $endpoint;
 		}
 
-		$this->register_endpoint_format( $command, $endpoint_instance );
-
-		return $endpoint_instance;
-	}
-
-	/**
-	 * Register endpoint format of controllers.
-	 *
-	 * @param string $command
-	 * @param \Elementor\Data\Base\Endpoint $endpoint_instance
-	 */
-	protected function register_endpoint_format( $command, $endpoint_instance ) {
-		$format = $endpoint_instance::get_format();
-
-		// Means, the format includes the full-path.
-		if ( ! strstr( $format, '/{' ) ) {
-			$command_public = $endpoint_instance->get_command_public();
-
-			// Probably backwards compatibility for supporting not full formats.
-			if ( $command_public ) {
-				$command_public = '/' . $command_public;
-			}
-
-			$format = $this->get_full_name() . $command_public . '/' . $format;
-		}
+		$format = $endpoint->get_format();
 
 		// `$e.data.registerFormat()`.
 		Manager::instance()->register_endpoint_format( $command, $format );
+
+		return $endpoint;
 	}
 
 	/**
@@ -255,43 +225,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * Endpoints & processors.
 	 */
 	protected function register() {
-		$this->register_internal_endpoints();
+		$this->register_index_endpoint();
 		$this->register_endpoints();
 
 		// Aka hooks.
 		$this->register_processors();
-	}
-
-	/**
-	 * Retrieves a recursive collection of all endpoint(s), items.
-	 *
-	 * Get items recursive, will run overall endpoints of the current controller.
-	 * For each endpoint it will run `$endpoint->getItems( $request ) // the $request passed in get_items_recursive`.
-	 * Will skip $skip_endpoints endpoint(s).
-	 *
-	 * Example, scenario:
-	 * Controller 'test-controller'.
-	 * Controller endpoints: 'endpoint1', 'endpoint2'.
-	 * Endpoint2 get_items method: `get_items() { return 'test' }`.
-	 * Call `Controller.get_items_recursive( ['endpoint1'] )`, result: [ 'endpoint2' => 'test' ];
-	 *
-	 * @param array $skip_endpoints
-	 *
-	 * @return array
-	 */
-	public function get_items_recursive( $skip_endpoints = [] ) {
-		$response = [];
-
-		foreach ( $this->endpoints as $endpoint ) {
-			// Skip self.
-			if ( in_array( $endpoint, $skip_endpoints, true ) ) {
-				continue;
-			}
-
-			$response[ $endpoint->get_name() ] = $endpoint->get_items( null );
-		}
-
-		return $response;
 	}
 
 	/**

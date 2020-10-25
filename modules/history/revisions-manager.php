@@ -409,6 +409,10 @@ class Revisions_Manager {
 		if ( wp_doing_ajax() ) {
 			add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
 		}
+
+		add_action( 'init', function () {
+			Plugin::$instance->data_manager->register_controller( Data\Documents\Revisions\Controller::class );
+		} );
 	}
 
 	/**

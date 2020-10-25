@@ -23,29 +23,32 @@ class Controller extends \Elementor\Data\Base\Controller {
 		// TODO: Implement register_endpoints() method.
 	}
 
-	public function do_register_internal_endpoints() {
+	public function do_register_index_endpoint() {
 		$this->bypass_original_register();
 
 		add_action( 'elementor_rest_api_before_init', function () {
 			add_action( 'rest_api_init', function() {
-				$this->register_internal_endpoints();
+				$this->register_index_endpoint();
 			} );
 		} );
 	}
 
 	/**
-	 * @param $endpoint_class
+	 * @param $endpoint
 	 * @return \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint|\Elementor\Data\Base\Endpoint
 	 */
-	public function do_register_endpoint( $endpoint_class ) {
-		return $this->register_endpoint( $endpoint_class );
+	public function do_register_endpoint( $endpoint ) {
+		return $this->register_endpoint( $endpoint );
 	}
 
 	public function do_register_processor( $processor_class ) {
 		return $this->register_processor( $processor_class );
 	}
 
-	public function get_endpoint_internal_index() {
-		return reset( $this->endpoints_internal );
+	/**
+	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Recursive|null
+	 */
+	public function get_endpoint_index() {
+		return $this->index_endpoint;
 	}
 }
