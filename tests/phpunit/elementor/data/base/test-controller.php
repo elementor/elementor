@@ -139,45 +139,6 @@ class Test_Controller extends Data_Test_Base {
 		$this->assertEquals( $controller->get_name() . '/' . $endpoint_instance->get_name() . '/{arg_id}', $command_format );
 	}
 
-	public function test_get_items_recursive() {
-		$this->manager->run_server();
-
-		$controller_instance = new \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller();
-		$endpoint_instance0 = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance1 = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-
-		$endpoint_instance0->set_test_data( 'get_items', 'endpoint0_result');
-		$endpoint_instance1->set_test_data( 'get_items', 'endpoint1_result');
-
-		// Result should include both endpoints result.
-		$results = $controller_instance->get_items_recursive();
-		$count = 0;
-
-		foreach ( $results as $result ) {
-			$this->assertEquals( 'endpoint' . $count . '_result', $result );
-			$count++;
-		}
-	}
-
-	public function test_get_items_recursive_simulated() {
-		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
-		$this->manager->run_server(); // Ensure controller loaded.
-
-		// Run index endpoint. Run endpoint 'test-controller'.
-		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );
-
-		foreach ( $endpoints_results as $endpoint_name => $endpoints_result ) {
-			// Run endpoint like `test-controller/test-endpoint-{random}`.
-			$endpoint = $controller->get_name() . '/' . $endpoint_name;
-			$result = $this->manager->run_endpoint( $endpoint );
-
-			// Each manual run of the endpoint equals to part of $endpoints_results which is recursive result.
-			$this->assertEquals( $endpoints_result, $result );
-		}
-	}
-
-	// TODO test_get_items_recursive, where one of the endpoint's `permission_callback` is false.
-
 	public function test_get_permission_callback() {
 		// Set admin.
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );

@@ -45,6 +45,9 @@ class Controller extends \Elementor\Data\Base\Controller {
 		return $this->register_processor( $processor_class );
 	}
 
+	/**
+	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Recursive|null
+	 */
 	public function get_endpoint_index() {
 		return $this->index_endpoint;
 	}
