@@ -26,35 +26,32 @@ var JsToScssPlugin = (function () {
 
 	function parseJS( obj, prevKey, prevSelector ) {
 		for ( let key in obj ) {
-			const value = obj[ key ];
+			const value = obj[ key ],
+				prefix = '.eps-',
+				connector = prevSelector && prevSelector.indexOf( prefix ) > -1 ? '&--' : '&-';
 
-			if ( 'object' !== typeof value ) {
-				css += key + ': ' + value + ';';
-			} else {
-				if ( key.indexOf( '@media' ) > -1 ) {
-					css += key + ' {';
-					parseJS( value );
-					css += ' } ';
+			if ( 'string' === typeof value ) {
+				if ( key === 'default' ) {
+					css += value;
 				} else {
-					key = pascalCaseToDashCase( key );
-
-					const prefix = '.eps-';
-					const connector = prevSelector && prevSelector.indexOf( prefix ) > -1 ? '&--' : '&-';
-
-					let selector = '';
-
-					// prevKey.substr is mainly for .dark prefix class
-					// TODO: make better detection when there is a class or an attribute target as prevKey
-					if ( prevKey && prevKey.substr( 0, 1 ) !== '.' && prevKey.substr( 0, 1 ) !== '[' && prevKey.substr( 0, 1 ) !== ':' ) {
-						selector = ( key.indexOf( '&' ) === -1 ) ? connector + key : key;
-					} else {
-						selector = key.substr( 0, 1 ) === '.' || key.substr( 0, 1 ) === '[' || key.substr( 0, 1 ) === ':' ? key : prefix + key;
-					}
-
-					css += selector + ' {';
-					parseJS( value, key, selector );
-					css += ' } ';
+					css += connector + key + ' {' + value + '}\n';
 				}
+			} else {
+				key = pascalCaseToDashCase( key );
+
+				let selector = '';
+
+				// prevKey.substr is mainly for .dark prefix class
+				// TODO: make better detection when there is a class or an attribute target as prevKey
+				if ( prevKey && prevKey.substr( 0, 1 ) !== '.' && prevKey.substr( 0, 1 ) !== '[' && prevKey.substr( 0, 1 ) !== ':' ) {
+					selector = ( key.indexOf( '&' ) === -1 ) ? connector + key : key;
+				} else {
+					selector = key.substr( 0, 1 ) === '.' || key.substr( 0, 1 ) === '[' || key.substr( 0, 1 ) === ':' ? key : prefix + key;
+				}
+
+				css += selector + ' {';
+					parseJS( value, key, selector );
+				css+= '}\n';
 			}
 		}
 
