@@ -13,7 +13,7 @@ class Utils {
 
 	static bindProps = ( arr ) => arr.map( ( obj ) => this.bindProp( obj ) );
 
-	static bindVariant = ( variant, propValue ) => {
+	static getVariant = ( variant, propValue ) => {
 		const variantData = Variants[ variant ],
 			variantName = variant.toLowerCase(),
 			variantObj = variantData[ variantName ];
@@ -22,7 +22,6 @@ class Utils {
 			return '';
 		}
 
-		// TODO: Detect by value, not by string
 		const darkObj = variantData[ styleHelpers.selectors.dark ][ variantName ],
 			ltrObj = variantData[ styleHelpers.selectors.ltr ][ variantName ],
 			rtlObj = variantData[ styleHelpers.selectors.rtl ][ variantName ],
@@ -30,37 +29,21 @@ class Utils {
 			isRtlMode = 'rtl' === getComputedStyle(document.body).direction; // TODO: read from a proper source
 
 		if ( ! propValue ) {
-			// Move to external function and handle media queries inside variants
-			const getBaseStyle = ( obj ) => {
-				for ( const key in obj ) {
-					const cssValue = obj[ key ];
+			let defaultStyle = '';
 
-					if ( 'string' === typeof cssValue  ) {
-						baseStyle += `${ key }: ${ cssValue };`;
-					} else if ( key.indexOf( '@media' ) > -1 ) {
-						baseStyle += key + ' {';
-						getBaseStyle( cssValue );
-						baseStyle += '}';
-					}
-				}
-
-				return baseStyle;
-			};
-			let baseStyle = getBaseStyle( variantObj );
+			defaultStyle += variantObj.default;
 
 			if ( isDarkMode && darkObj ) {
-				baseStyle += getBaseStyle( darkObj );
+				defaultStyle += darkObj.default;
 			}
 
-			if ( ltrObj ) {
-				baseStyle += getBaseStyle( ltrObj )
+			if ( isRtlMode && rtlObj ) {
+				defaultStyle += rtlObj.default;
+			} else if ( ltrObj ) {
+				defaultStyle += ltrObj.default;
 			}
 
-			if ( rtlObj ) {
-				baseStyle += getBaseStyle( rtlObj )
-			}
-
-			return baseStyle;
+			return defaultStyle;
 		}
 
 		const variantStyle = variantObj?.[ propValue ],
@@ -68,37 +51,17 @@ class Utils {
 			ltrStyle = ltrObj?.[ propValue ],
 			rtlStyle = rtlObj?.[ propValue ];
 
-		// Move to external function and handle media queries inside variants
-		function getVariantStyle( obj ) {
-			return Object.entries( obj ).map( ( [ key, value ] ) => {
-				if ( key.indexOf( '@media' ) > -1 ) {
-					const mediaQueryObj = value;
-					let mediaQueryCSS = key + ' {';
-
-					for ( const mediaKey in mediaQueryObj ) {
-						mediaQueryCSS += `${ mediaKey }: ${ mediaQueryObj[ mediaKey ] };`;
-					}
-
-					return mediaQueryCSS += '}';
-				}
-
-				return `${ key }: ${ value };`
-			} ).join( '' );
-		}
-
 		if ( variantStyle ) {
-			let cssString = getVariantStyle( variantStyle );
+			let cssString = variantStyle;
 
 			if ( isDarkMode && darkStyle ) {
-				cssString += getVariantStyle( darkStyle );
-			}
-
-			if ( ! isRtlMode && ltrStyle ) {
-				cssString += getVariantStyle( ltrStyle );
+				cssString += darkStyle;
 			}
 
 			if ( isRtlMode && rtlStyle ) {
-				cssString += getVariantStyle( rtlStyle );
+				cssString += rtlStyle;
+			} else if ( ltrStyle ) {
+				cssString += ltrStyle;
 			}
 
 			return css`${ cssString }`;
