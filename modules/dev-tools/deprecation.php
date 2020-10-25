@@ -259,4 +259,23 @@ class Deprecation {
 			_deprecated_argument( $function, $version );
 		}
 	}
+
+	/**
+	 * @param string $hook
+	 * @param array $args
+	 * @param string $version
+	 * @param string $replacement
+	 * @param null|string $base_version
+	 *
+	 * @throws \Exception
+	 */
+	public function do_deprecated_action( $hook, $args, $version, $replacement = '', $base_version = null ) {
+		if ( ! has_action( $hook  ) ) {
+			return;
+		}
+
+		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
+
+		do_action_ref_array( $hook, $args );
+	}
 }
