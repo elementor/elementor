@@ -1,90 +1,12 @@
-import styled, {css, createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import _$ from 'elementor-app/styled/utils';
 
-//document.querySelector( 'html' ).setAttribute( 'dir', 'rtl' );
-
-const GlobalStyle = createGlobalStyle`
-.eps-heading {
-  text-decoration: underline;
-  color: pink;
-}
-.eps-heading--h1 {
-  font-size: 60px;
-  color: #fcb92c;
-  line-height: 60px;
-}
-.eps-heading--h2 {
-  font-size: 60px;
-  color: #58d0f5;
-  line-height: 60px;
-}
-@media screen and (max-width: 960px) {
-  .eps-heading--h2 {
-    color: blue;
-  }
-}
-
-.eps-theme-dark .eps-heading--h1 {
-  color: pink;
-}
-
-:not([dir=rtl]) .eps-heading--h1 {
-  left: 90px;
-}
-
-[dir=rtl] .eps-heading--h1 {
-  right: 90px;
-}
-
-.eps-text--xs {
-  font-size: 10px;
-}
-.eps-text--sm {
-  font-size: 11px;
-}
-.eps-text--md {
-  font-size: 12px;
-}
-.eps-text--lg {
-  font-size: 13px;
-}
-.eps-text--xl {
-  font-size: 14px;
-}
-
-.eps-button {
-  display: inline-flex;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 1;
-  cursor: pointer;
-}
-.eps-button--variant-contained {
-  padding: 30px;
-  border-radius: 5px;
-}
-.eps-button--variant-outlined {
-  text-decoration: underline;
-}
-.eps-button--color-primary {
-  background-color: #39b54a;
-}
-.eps-button--color-secondary {
-  background-color: #58d0f5;
-}
-`;
-
 const Heading = styled.h1`
-	color: green;
-	${ props =>  _$.utils.bindVariant( 'Heading', props.variant ) }
+	${ props =>  _$.utils.getVariant( 'Heading', props.variant ) }
 `;
-
-console.log( '### Heading', Heading );
 
 export const StyledHeading = ( props ) => (
-	<>
-		<Heading { ...props } className="eps-heading--h1"  as={ props.tag }>{ props.children }</Heading>
-	</>
+	<Heading { ...props } as={ props.tag }>{ props.children }</Heading>
 );
 
 StyledHeading.propTypes = {
@@ -96,3 +18,4 @@ StyledHeading.propTypes = {
 StyledHeading.defaultProps = {
 	className: '',
 };
+
