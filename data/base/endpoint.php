@@ -50,16 +50,13 @@ abstract class Endpoint {
 	abstract public function get_name();
 
 	/**
-	 * Get format.
+	 * Get endpoint format.
 	 *
-	 * @note The formats that generated using this function,
-	 * will be used only be `Data\Manager::run()`.
+	 * @note The formats that generated using this function, will be used only be `Data\Manager::run()`.
 	 *
 	 * @return string
 	 */
-	public function get_format() {
-		return '';
-	}
+	abstract public function get_format();
 
 	/**
 	 * Get base route.
