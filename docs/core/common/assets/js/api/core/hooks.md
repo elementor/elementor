@@ -9,23 +9,23 @@ the hooks attached to $e.commands and each hook fired _after/before_ running a c
 	| `$e.hooks.activate()`                |                                                                                                 |                       | Activate all hooks. 
 	| `$e.hooks.deactivate()`              |                                                                                                 |                       | Deactivate all hooks. 
 	| `$e.hooks.getAll()`                  |                                                                                                 | `{Array}`             | Receive all loaded hooks. 
-	| `$e.hooks.register()`                | `{String}` *type*, `{String}` *event*, `{HookBase}` *instance*                                  | `{Object}` *callback* | Register hook. 
-	| `$e.hooks.run()`                     | `{String}` *type*, `{String}` *event*, `{String}` *command*, `{Object}` *args*, `{*}` *result*  | `{Boolean}`           | Run's a hook. 
-	| `$e.hooks.registerDataAfter()`       | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that's run after the command.  
-	| `$e.hooks.registerDataCatch()`       | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that's run when the command fails.  
-	| `$e.hooks.registerDataDependency()`  | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that's run before the command as dependency.  
-	| `$e.hooks.registerUIAfter()`         | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that's run after the commands run.  
-	| `$e.hooks.registerUICatch()`         | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that's run when the command fails.  
-	| `$e.hooks.registerUIBefore()`        | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that's run before the command.  
-	| `$e.hooks.runDataAfter()`            | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run data hook that's run after the command.
-	| `$e.hooks.runDataCatch()`            | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run data hook that's run when the command fails.
-	| `$e.hooks.runDataDependency()`       | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run data hook that's run before the command as dependency.
-	| `$e.hooks.runUIAfter()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run after the commands run.
-	| `$e.hooks.runUICatch()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run when the command fails.
-	| `$e.hooks.runUIBefore()`             | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run UI hook that's run before the command.
+	| `$e.hooks.register()`                | `{String}` *type*, `{String}` *event*, `{HookBase}` *instance*                                  | `{Object}` *callback* | Register a hook. 
+	| `$e.hooks.run()`                     | `{String}` *type*, `{String}` *event*, `{String}` *command*, `{Object}` *args*, `{*}` *result*  | `{Boolean}`           | Run a hook. 
+	| `$e.hooks.registerDataAfter()`       | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that runs after the command runs.  
+	| `$e.hooks.registerDataCatch()`       | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that runs when the command fails.  
+	| `$e.hooks.registerDataDependency()`  | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register data hook that runs before the command runs as dependency.  
+	| `$e.hooks.registerUIAfter()`         | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that runs after the commands run.  
+	| `$e.hooks.registerUICatch()`         | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that runs when the command fails.  
+	| `$e.hooks.registerUIBefore()`        | `{HookBase}` *instance*                                                                         | `{Object}` *callback* | Register UI hook that runs before the command.  
+	| `$e.hooks.runDataAfter()`            | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a data hook that runs after the command.
+	| `$e.hooks.runDataCatch()`            | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a data hook that runs when the command fails.
+	| `$e.hooks.runDataDependency()`       | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a data hook that runs before the command as dependency.
+	| `$e.hooks.runUIAfter()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a UI hook that runs after the commands run.
+	| `$e.hooks.runUICatch()`              | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a UI hook that runs when the command fails.
+	| `$e.hooks.runUIBefore()`             | `{String}` *command*, `{Object}` *args*, `{*}` *result*                                         | `{Boolean}`           | Run a UI hook that runs before the command.
 
 ## Guidelines, conventions & file's structure 
-  * Each hook, owned by a [component](../core/components.md#guidelines-conventions--files-structure).
+  * Each hook is owned by a [component](../core/components.md#guidelines-conventions--files-structure).
   * Each [component](../core/components.md#guidelines-conventions--files-structure), can extend `defaultHooks` method which are used to import the hooks.
   * The hooks imported via built-in method called `importHooks`.
     * All the hooks should be exported in one index file:
@@ -145,7 +145,7 @@ the hooks attached to $e.commands and each hook fired _after/before_ running a c
     |`{CONTAINER_TYPE}`      | optional, gain performance if container type is known in advance | `document`
     > Example
     ```javascript class:"lineNo"
-    1 // ui/document/elements/settings/footer-saver-refresh-menu.js - This is line should be deleted - just for the exmaple.
+    1 // ui/document/elements/settings/footer-saver-refresh-menu.js - This line should be deleted - just for the example.
     2 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
     3  
     4 export class FooterSaverRefreshMenu extends HookUIAfter {

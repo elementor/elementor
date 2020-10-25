@@ -3,11 +3,10 @@ The new Components API (since 2.7.0), provides a simple and convenient way to bi
 The full list of components, including custom & 3rd routes, is available via: `$e.components.getAll();`
 Each component has it’s unique namespace, that all it’s command and routes are nested under it.
 
-On route to a component route, the component becomes “active” that mean that allows make sure that keyboard shortcuts of this component will work only if the component is active.
-
+On route, to a component route, when the component becomes “active”, it allows binding of keyboard shortcuts for each component.
 The components are extensible so a 3rd party plugin can add some routes, command and shortcuts to an existing component.
 
-*  **Description**: `$e.components` API is a manager, for whole **api** components.
+*  **Description**: `$e.components` API is a manager for whole **api** components.
 *  **Location**: *core/common/assets/js/api/core/components.js*
 *  **Parent**: `elementorModules.Module`
 *  **Methods**:
@@ -25,7 +24,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 
 * **Examples**:
     ```javascript
-     // Example create and register new component, available to run in the console does not depends on anything else.
+     // Example of creating and registering a new component, available to run in the console and does not depend on anything else.
      class CustomComponent extends $e.modules.ComponentBase {
         getNamespace() {
             return 'custom-component';
@@ -51,7 +50,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
      // Register the new component.
      $e.components.register( new CustomComponent() );
      
-     // Run's 'example' command from 'custom-component'.
+     // Runs 'example' command from 'custom-component'.
      result = $e.run( 'custom-component/example', {
         property: 'value',
      } );
@@ -61,9 +60,9 @@ The components are extensible so a 3rd party plugin can add some routes, command
     
     ```
 ## Guidelines, conventions & file's structure
-  * You can view your component as namespace, that holds your [commands](../core/commands.md#guidelines-conventions--files-structure), [hooks](../core/hooks.md#guidelines-conventions--files-structure), [routes](#UPDATE_WHEN_READY), [tabs](#UPDATE_WHEN_READY), [shortcuts](#UPDATE_WHEN_READY) & [utils](#UPDATE_WHEN_READY).
+  * You can view your component as a namespace that holds your [commands](../core/commands.md#guidelines-conventions--files-structure), [hooks](../core/hooks.md#guidelines-conventions--files-structure), [routes](#UPDATE_WHEN_READY), [tabs](#UPDATE_WHEN_READY), [shortcuts](#UPDATE_WHEN_READY) & [utils](#UPDATE_WHEN_READY).
   * Component class file should be named `component.js`
-  * Component folder name should be named as component namespace or sub component namespace.
+  * Component folder name should be named as a component namespace or a sub-component namespace.
   * Components and sub-components convention example, described in next scenario:
   Assuming you create a `Document` component which creates a sub-component `Elements`
     ```html class:"lineNo"

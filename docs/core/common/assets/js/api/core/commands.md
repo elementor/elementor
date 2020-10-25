@@ -1,9 +1,9 @@
 ## API --  `$e.commands`
-The new Commands API (since 2.7.0), provides a simple and convenient way to run something the the editor, create a widget, as well as show a notice or undo changes, using JS commands.
+The new Commands API (since 2.7.0), provides a simple and convenient way to run something in the editor, create a widget, as well as show a notice or undo changes, using JS commands.
 
 The full list of commands, including custom & 3rd commands, is available via: `$e.commands.getAll();`
 
-*  **Description**: `$e.commands` API is a manager of `$e.commands`, allow you to create custom **commands** that runs by `$e.run()`, each components have his own unique commands, and all the commands are managed by this **API**.
+*  **Description**: `$e.commands` API is a manager of all the _commands_, allow you to create custom _commands_ that runs by `$e.run()`, each components have his own unique commands, and all the commands are managed by this **API**.
 
 *  **Location**: */core/common/assets/js/components/commands.js*
 
