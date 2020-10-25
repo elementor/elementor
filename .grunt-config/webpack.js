@@ -108,7 +108,7 @@ const externals = {
 
 const plugins = [
 	new jsToScss( {
-		jsSourcePath: '../core/app/assets/_styles/variants/index.js',
+		jsSourcePath: '../core/app/assets/styled/variants/index.js',
 		scssDestination: '../assets/dev/scss/app/e-style.scss',
 	} ),
 	new webpack.ProvidePlugin( {

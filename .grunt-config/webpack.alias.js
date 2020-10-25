@@ -27,7 +27,7 @@ module.exports = {
 			'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 			'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
 			'elementor-views': path.resolve( __dirname, '../assets/dev/js/editor/views' ),
-			'elementor-styles': path.resolve( __dirname, '../core/app/assets/_styles' ),
+			'elementor-styles': path.resolve( __dirname, '../core/app/assets/styled' ),
 		},
 	},
 };
