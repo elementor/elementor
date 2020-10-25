@@ -35,6 +35,28 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_enqueue_scripts() {
+		// Arrange
+		$document = $this->create_document();
+		$this->module->add_document_to_admin_bar($document, false);
+
+		// Act
+		$this->module->enqueue_scripts();
+
+		do_action( 'wp_enqueue_scripts' );
+
+		// Assert
+		$queue = wp_scripts()->queue;
+
+		$admin_bar_key = array_search( 'admin-bar', $queue );
+		$elementor_admin_bar_key = array_search( 'elementor-admin-bar', $queue );
+
+		$this->assertTrue( $admin_bar_key >= 0 );
+		$this->assertTrue( $elementor_admin_bar_key >= 0 );
+
+		$this->assertTrue( $admin_bar_key > $elementor_admin_bar_key );
+	}
+
 	public function test_it_should_returns_a_valid_config() {
 		$active_document = $this->create_document();
 		$document = $this->create_document();

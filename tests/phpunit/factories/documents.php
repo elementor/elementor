@@ -23,7 +23,7 @@ class Documents extends \WP_UnitTest_Factory_For_Post {
 		$type = 'page';
 		$meta = [];
 
-		if ( ! isset( $args['type'] ) ) {
+		if ( isset( $args['type'] ) ) {
 			$type = $args['type'];
 
 			unset( $args['type'] );
@@ -33,7 +33,7 @@ class Documents extends \WP_UnitTest_Factory_For_Post {
 			$meta = $args['meta_input'];
 		}
 
-		return Plugin::$instance->documents->create( $type, $args, $meta );
+		return Plugin::$instance->documents->create( $type, $args, $meta )->get_id();
 	}
 
 	public function update_object( $document_id, $fields ) {

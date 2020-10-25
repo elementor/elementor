@@ -54,11 +54,23 @@ class Module extends BaseApp {
 			return;
 		}
 
+		// Should load 'elementor-admin-bar' before 'admin-bar'
+		wp_dequeue_script( 'admin-bar' );
+
 		wp_enqueue_script(
 			'elementor-admin-bar',
 			$this->get_js_assets_url( 'elementor-admin-bar' ),
 			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		// This is a core script of WordPress, it is not required to pass the 'ver' argument.
+		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			'admin-bar',
+			null,
+			[ 'elementor-admin-bar' ],
+			false,
 			true
 		);
 
