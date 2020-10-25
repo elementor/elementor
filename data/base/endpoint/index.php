@@ -12,6 +12,10 @@ class Index extends Endpoint {
 		return "{$this->controller->get_full_name()}/{id}";
 	}
 
+	public function get_name_public() {
+		return '';
+	}
+
 	public function get_items( $request ) {
 		return $this->controller->get_items( $request );
 	}

@@ -23,7 +23,10 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
 
-		$this->assertEquals( '/' . $controller_instance->get_name() . '/' . $endpoint_instance->get_name(), $endpoint_instance->get_base_route() );
+		$this->assertEquals(
+			'/' . $controller_instance->get_name() . '/' . $endpoint_instance->get_name(),
+			$endpoint_instance->get_base_route()
+		);
 	}
 
 	public function test_get_name_public() {
@@ -34,8 +37,8 @@ class Test_Endpoint extends Data_Test_Base {
 		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
 		$endpoint_index_instance = $controller_instance->get_endpoint_index();
 
-		$this->assertEquals( '/', $endpoint_index_instance->get_name_public() );
-		$this->assertEquals( '/' . $endpoint_instance->get_name() . '/', $endpoint_instance->get_name_public() );
+		$this->assertEquals( '', $endpoint_index_instance->get_name_public() );
+		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_instance->get_name_public() );
 	}
 
 	public function test_get_full_command() {
@@ -119,11 +122,11 @@ class Test_Endpoint extends Data_Test_Base {
 		$this->manager->register_controller_instance( $controller_instance );
 
 		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
-			new SubEndpoint( $endpoint_instance, 'first-sub-route' )
+			new SubEndpoint( $endpoint_instance, '/first-sub-route' )
 		);
 
 		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
-			new SubEndpoint( $sub_endpoint_instance, 'second-sub-route' )
+			new SubEndpoint( $sub_endpoint_instance, '/second-sub-route' )
 		);
 		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
 
@@ -443,7 +446,7 @@ class Test_Endpoint extends Data_Test_Base {
 		$controller_instance->bypass_original_register();
 
 		$endpoint_instance = new EndpointTemplate( $controller_instance );
-		$endpoint_instance->register_route( 'custom-route' );
+		$endpoint_instance->register_route( '/custom-route' );
 
 		$data = $controller_instance->get_controller_index()->get_data();
 		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/custom-route';

@@ -176,6 +176,8 @@ class Test_Controller extends Data_Test_Base {
 		}
 	}
 
+	// TODO test_get_items_recursive, where one of the endpoint's `permission_callback` is false.
+
 	public function test_get_permission_callback() {
 		// Set admin.
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );

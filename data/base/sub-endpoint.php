@@ -11,13 +11,40 @@ abstract class SubEndpoint extends Endpoint {
 	/**
 	 * @var string
 	 */
-	protected $route = '';
+	protected $route = '/';
 
-	public function __construct( $parent_endpoint, $route = '' ) {
-		$this->route = $route;
+	public function __construct( $parent_endpoint, $route = '/' ) {
+		$this->route = $this->ensure_slashes( $route );
 		$this->parent_endpoint = $parent_endpoint;
 
 		parent::__construct( $this->parent_endpoint->controller );
+	}
+
+	/**
+	 * Ensure start-with and end-with slashes.
+	 *
+	 * '/' => '/'
+	 * 'abc' => '/abc/'
+	 * '/abc' => '/abc/'
+	 * 'abc/' => '/abc/'
+	 * '/abc/' => '/abc/'
+	 *
+	 * @param string $route
+	 *
+	 * @return string
+	 */
+	private function ensure_slashes( $route ) {
+		if ( '/' !== $route[0] ) {
+			$route = '/' . $route;
+		}
+
+		$route_length = strlen( $route );
+
+		if ( $route_length > 1 && '/' !== $route[ $route_length - 1 ] ) {
+			$route .= '/';
+		}
+
+		return $route;
 	}
 
 	public function get_format() {
@@ -25,7 +52,7 @@ abstract class SubEndpoint extends Endpoint {
 	}
 
 	/**
-	 * Get parent route.
+	 * Get parent endpoint.
 	 *
 	 * @return \Elementor\Data\Base\Endpoint|\Elementor\Data\Base\SubEndpoint
 	 */
@@ -37,41 +64,27 @@ abstract class SubEndpoint extends Endpoint {
 		$name = $this->get_name();
 		$parent = $this->get_parent();
 		$is_parent_sub_endpoint = $parent instanceof SubEndpoint;
-
 		$route = $this->route;
-
-		if ( $route ) {
-			$route .= '/';
-		}
 
 		// Parent sub endpoint
 		if ( $is_parent_sub_endpoint ) {
-			return $parent->get_base_route() . '/' . $route . $name;
+			return $parent->get_base_route() . $route . $name;
 		}
 
 		// Parent sub index endpoint.
-		if ( $this->controller instanceof SubController && $parent instanceof Endpoint\Index\SubController ) {
-			$route = $this->controller->get_route();
-
-			if ( $route ) {
-				$route .= '/';
-			}
-
-			return $parent->get_base_route() . '/' . $route . $name;
+		if ( $this->controller instanceof SubController ) {
+			return $parent->get_base_route() . $this->controller->get_route() . '/' . $name;
 		}
 
 		$parent_name = $parent->get_name_public();
+		$path = trim( $parent_name . $route . $name, '/' );
 
 		// Parent endpoint
-		return $this->controller->get_rest_base() . $parent_name . $route . $name;
+		return $this->controller->get_rest_base() . '/' . $path;
 	}
 
 	public function get_full_command() {
-		if ( $this->controller instanceof SubController ) {
-			return $this->controller->get_parent()->get_name() . '/' . $this->controller->get_name() . '/' . $this->get_name_ancestry();
-		}
-
-		return $this->controller->get_name() . '/' . $this->get_name_ancestry();
+		return $this->controller->get_full_name() . '/' . $this->get_name_ancestry();
 	}
 
 	public function get_name_ancestry() {
@@ -79,7 +92,7 @@ abstract class SubEndpoint extends Endpoint {
 
 		if ( $this->parent_endpoint instanceof SubEndpoint ) {
 			$name = $this->parent_endpoint->get_name_ancestry() . '/' . $name;
-		} else if ( ! $this->parent_endpoint instanceof Endpoint\Index ) {
+		} else {
 			$name = $this->parent_endpoint->get_name() . '/' . $name;
 		}
 

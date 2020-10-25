@@ -64,39 +64,24 @@ abstract class Endpoint {
 	/**
 	 * Get base route.
 	 *
+	 * @note This method should always return the base route starts with '/' and end without '/'.
+	 *
 	 * @return string
 	 */
 	public function get_base_route() {
 		$endpoint_public_name = $this->get_name_public();
 
-		return '/' . $this->controller->get_rest_base() . rtrim( $endpoint_public_name, '/' );
+		return rtrim( '/' . $this->controller->get_rest_base() . '/' . $endpoint_public_name, '/' );
 	}
 
 	/**
-	 * Get command public.
-	 *
-	 * Convert endpoint to command name ( without index ).
-	 *
-	 * Returns '/{name}/' or '/' ( for index ).
+	 * Get command public, name ( empty '' for index endpoint ).
 	 *
 	 * @return string
 	 */
 	public function get_name_public() {
-		$endpoint_public_name = '';
-
-		if ( ! $this instanceof Index ) {
-			$endpoint_public_name = $this->get_name();
-		}
-
-		if ( $endpoint_public_name ) {
-			$endpoint_public_name = '/' . $endpoint_public_name;
-		}
-
-		$endpoint_public_name .= '/';
-
-		return $endpoint_public_name;
+		return $this->get_name();
 	}
-
 
 	/**
 	 * Convert endpoint to full command name ( including index ).
@@ -289,7 +274,7 @@ abstract class Endpoint {
 	 * @param array $args
 	 * @param string $methods
 	 */
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '' ) {
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$id_arg_name = 'id';
 
 		if ( isset( $args['id_arg_name'] ) && $args['id_arg_name'] ) {
@@ -338,7 +323,7 @@ abstract class Endpoint {
 			trigger_error( 'Invalid method.', E_USER_ERROR );
 		}
 
-		$route = $this->get_base_route() . '/' . $route;
+		$route = $this->get_base_route() . $route;
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[

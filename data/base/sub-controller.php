@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
@@ -37,10 +36,6 @@ abstract class SubController extends Controller {
 
 	public function get_rest_base() {
 		$route = $this->get_route();
-
-		if ( $route ) {
-			$route = '/' . $route;
-		}
 
 		return $this->parent_controller->get_rest_base() . $route . '/' . $this->get_name();
 	}

@@ -98,7 +98,7 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Retrieves the index for a controller.
+	 * Retrieves rest route(s) index for current controller.
 	 *
 	 * @return \WP_REST_Response|\WP_Error
 	 */
