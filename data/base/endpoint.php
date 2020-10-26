@@ -2,6 +2,7 @@
 
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
@@ -27,21 +28,7 @@ abstract class Endpoint {
 	 *
 	 * @var \Elementor\Data\Base\SubEndpoint[]
 	 */
-	private $sub_endpoints = [];
-
-	/**
-	 * Get format.
-	 *
-	 * Examples:
-	 * '{one_parameter_name}'.
-	 * '{one_parameter_name}/{two_parameter_name}/'.
-	 * '{one_parameter_name}/whatever/anything/{two_parameter_name}/' and so on for each endpoint or sub-endpoint.
-	 * @note get_format() is used only in `Data\Manager::run()`.
-	 * @return string
-	 */
-	public static function get_format() {
-		return '';
-	}
+	protected $sub_endpoints = [];
 
 	/**
 	 * Endpoint constructor.
@@ -49,14 +36,8 @@ abstract class Endpoint {
 	 * run `$this->>register()`.
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller
-	 *
-	 * @throws \Exception
 	 */
-	public function __construct( $controller ) {
-		if ( ! ( $controller instanceof Controller ) ) {
-			throw new \Exception( 'Invalid controller' );
-		}
-
+	public function __construct( Controller $controller ) {
 		$this->controller = $controller;
 		$this->register();
 	}
@@ -69,34 +50,47 @@ abstract class Endpoint {
 	abstract public function get_name();
 
 	/**
+	 * Get endpoint format.
+	 *
+	 * @note The formats that generated using this function, will be used only be `Data\Manager::run()`.
+	 *
+	 * @return string
+	 */
+	abstract public function get_format();
+
+	/**
 	 * Get base route.
 	 *
-	 * Removing 'index' from endpoint.
+	 * @note This method should always return the base route starts with '/' and end without '/'.
 	 *
 	 * @return string
 	 */
 	public function get_base_route() {
-		$endpoint_name = $this->get_name();
+		$endpoint_public_name = $this->get_name_public();
 
-		// TODO: Allow this only for internal routes.
-		// TODO: Make difference between internal and external endpoints.
-		if ( 'index' === $endpoint_name ) {
-			$endpoint_name = '';
-		}
+		return rtrim( '/' . $this->controller->get_rest_base() . '/' . $endpoint_public_name, '/' );
+	}
 
-		if ( $endpoint_name ) {
-			$endpoint_name = '/' . $endpoint_name;
-		}
+	/**
+	 * Get command public, name ( empty '' for index endpoint ).
+	 *
+	 * @return string
+	 */
+	public function get_name_public() {
+		return $this->get_name();
+	}
 
-		return '/' . $this->controller->get_rest_base() . $endpoint_name;
+	/**
+	 * Convert endpoint to full command name ( including index ).
+	 */
+	public function get_full_command() {
+		return $this->controller->get_full_name() . '/' . $this->get_name();
 	}
 
 	/**
 	 * Register the endpoint.
 	 *
 	 * By default: register get items route.
-	 *
-	 * @throws \Exception
 	 */
 	protected function register() {
 		$this->register_items_route();
@@ -105,52 +99,19 @@ abstract class Endpoint {
 	/**
 	 * Register sub endpoint.
 	 *
-	 * @param string $route
-	 * @param string $endpoint_class
+	 * @param \Elementor\Data\Base\SubEndpoint $endpoint
 	 *
-	 * @return \Elementor\Data\Base\SubEndpoint|false
+	 * @return \Elementor\Data\Base\SubEndpoint
 	 */
-	public function register_sub_endpoint( $route, $endpoint_class ) {
-		$endpoint_instance = new $endpoint_class( $route, $this );
+	public function register_sub_endpoint( SubEndpoint $endpoint ) {
+		$command = $endpoint->get_full_command();
+		$format = $endpoint->get_format();
 
-		if ( ! ( $endpoint_instance instanceof SubEndpoint ) ) {
-			trigger_error( 'Invalid endpoint instance.' );
-			return false;
-		}
-
-		$endpoint_route = $route . '/' . $endpoint_instance->get_name();
-
-		$this->sub_endpoints[ $endpoint_route ] = $endpoint_instance;
-
-		$component_name = $endpoint_instance->controller->get_rest_base();
-
-		$parent_instance = $endpoint_instance->get_parent();
-
-		$parent_name = '';
-		$parent_format_suffix = '';
-
-		// TODO: Refactor.
-		// In case parent is sub-endpoint, then its require to have all the ancestry.
-		// To support deep sub-endpoints magic params in `Manager::run()` for magic params.
-		if ( $parent_instance instanceof SubEndpoint ) {
-			$parent_name = $endpoint_instance->get_name_ancestry() . $parent_instance->get_name();
-			$parent_command = $component_name . '/' . $parent_name;
-			$parent_format_prefix = Manager::instance()->command_formats[ $parent_command ];
-
-			$format = $parent_format_prefix . '/' . $endpoint_instance->get_name();
-			$command = $component_name . '/' . $parent_name . '/' . $endpoint_instance->get_name();
-		} else {
-			$parent_name .= $endpoint_instance->get_name();
-			$parent_format_suffix .= $parent_instance::get_format();
-			$current_format_suffix = $endpoint_instance::get_format();
-
-			$format = $component_name . '/' . $parent_format_suffix . '/' . $parent_name . '/' . $current_format_suffix;
-			$command = $component_name . '/' . $parent_name;
-		}
+		$this->sub_endpoints[ $command ] = $endpoint;
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 
-		return $endpoint_instance;
+		return $endpoint;
 	}
 
 	/**
@@ -306,23 +267,27 @@ abstract class Endpoint {
 	/**
 	 * Register item route.
 	 *
-	 * @param array $args
 	 * @param string $route
+	 * @param array $args
 	 * @param string $methods
-	 *
-	 * @throws \Exception
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+		$id_arg_name = 'id';
+
+		if ( isset( $args['id_arg_name'] ) && $args['id_arg_name'] ) {
+			$id_arg_name = $args['id_arg_name'];
+
+			unset( $args['id_arg_name'] );
+		}
+
 		$args = array_merge( [
-			'id' => [
+			$id_arg_name => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 			],
 		], $args );
 
-		if ( isset( $args['id'] ) && $args['id'] ) {
-			$route .= '(?P<id>[\w]+)/';
-		}
+		$route .= '(?P<' . $id_arg_name . '>[\w]+)';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
@@ -333,8 +298,6 @@ abstract class Endpoint {
 	 * Register items route.
 	 *
 	 * @param string $methods
-	 *
-	 * @throws \Exception
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
@@ -351,11 +314,10 @@ abstract class Endpoint {
 	 * @param array $args
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			throw new \Exception( 'Invalid method.' );
+			trigger_error( 'Invalid method.', E_USER_ERROR );
 		}
 
 		$route = $this->get_base_route() . $route;

@@ -1,10 +1,4 @@
 export default class GlobalControlSelect extends Marionette.Behavior {
-	ui() {
-		return {
-			controlContent: '.elementor-control-content',
-		};
-	}
-
 	getClassNames() {
 		return {
 			previewItemsContainer: 'e-global__preview-items-container',
@@ -292,9 +286,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				onOutsideClick: false,
 			},
 			position: {
-				my: `center top`,
-				at: `center bottom+5`,
-				of: this.ui.controlContent,
+				my: `right top`,
+				at: `right bottom+5`,
+				of: this.ui.globalPopoverToggle,
+				collision: 'fit flip',
 				autoRefresh: true,
 			},
 		} );

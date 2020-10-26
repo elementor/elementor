@@ -3,6 +3,7 @@
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Data\Base\Controller;
 use Elementor\Data\Base\Processor;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -73,10 +74,14 @@ class Manager extends BaseModule {
 	/**
 	 * @param string $name
 	 *
-	 * @return \Elementor\Data\Base\Controller
+	 * @return \Elementor\Data\Base\Controller|false
 	 */
 	public function get_controller( $name ) {
-		return $this->controllers[ $name ];
+		if ( isset( $this->controllers[ $name ] ) ) {
+			return $this->controllers[ $name ];
+		}
+
+		return false;
 	}
 
 	private function get_cache( $key ) {
@@ -105,11 +110,9 @@ class Manager extends BaseModule {
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller_instance
 	 *
-	 * @return \Elementor\Data\Base\Controller
+	 * @return \Elementor\Data\Base\Controller|false
 	 */
-	public function register_controller_instance( $controller_instance ) {
-		// TODO: Validate instance.
-
+	public function register_controller_instance( Controller $controller_instance ) {
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
 
 		return $controller_instance;
@@ -228,6 +231,9 @@ class Manager extends BaseModule {
 
 			$endpoint = $formatted;
 		}
+
+		// TODO: Test or delete - update method comment.
+		$endpoint = str_replace( '/index', '', $endpoint );
 
 		return $endpoint;
 	}

@@ -9,6 +9,10 @@ class Data extends SubEndpoint {
 		return 'data';
 	}
 
+	public function get_format() {
+		return 'documents/{id}/revivions/{sub_id}/data';
+	}
+
 	public function get_items( $request ) {
 		$revision = Plugin::$instance->documents->get( $request->get_param( 'revision_id' ) );
 		$document_id = $request->get_param( 'document_id' );
