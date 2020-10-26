@@ -1,57 +1,114 @@
-/**
- * @type {RevisionsComponent|Component}
- */
-let component = null;
+export default class RevisionsTabView extends Marionette.CompositeView {
+	childView = require( './tab-item' );
 
-const RevisionsTabView = Marionette.CompositeView.extend( {
-	id: 'elementor-panel-revisions',
+	childViewContainer ='#elementor-revisions-list';
 
-	template: '#tmpl-elementor-panel-revisions',
+	constructor( ... args ) {
+		super( ... args );
 
-	childView: require( './tab-item' ),
+		/**
+		 * @type {RevisionsComponent|Component}
+		 */
+		this.component = $e.components.get( 'panel/history/revisions' );
+	}
 
-	childViewContainer: '#elementor-revisions-list',
-
-	ui: {
-		discard: '.elementor-panel-scheme-discard .elementor-button',
-		apply: '.elementor-panel-scheme-save .elementor-button',
-	},
-
-	events: {
-		'click @ui.discard': 'onDiscardClick',
-		'click @ui.apply': () => $e.run( 'panel/history/revisions/apply' ),
-	},
-
-	initialize: function( options ) {
-		// TODO: Remove - Temporal solution.
-		if ( ! component ) {
-			component = $e.components.get( 'panel/history/revisions' );
-		}
-
+	initialize( options ) {
 		options.tab = this;
 
 		$e.internal( 'panel/history/revisions/initialize', options );
-	},
+	}
 
-	setRevisionsButtonsActive: function( active ) {
-		const { tab } = component;
+	id() {
+		return 'elementor-panel-revisions';
+	}
 
+	getTemplate() {
+		return '#tmpl-elementor-panel-revisions';
+	}
+
+	ui() {
+		return {
+			discard: '.elementor-panel-scheme-discard .elementor-button',
+			apply: '.elementor-panel-scheme-save .elementor-button',
+		};
+	}
+
+	events() {
+		return {
+			'click @ui.discard': () => $e.run( 'panel/history/revisions/discard' ),
+			'click @ui.apply': () => $e.run( 'panel/history/revisions/apply' ),
+		};
+	}
+
+	setRevisionsButtonsActive( active ) {
 		// Check the tab is open.
-		if ( ! tab.isDestroyed ) {
-			tab.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
+		if ( ! this.isDestroyed ) {
+			this.ui.apply.add( this.ui.discard ).prop( 'disabled', ! active );
 		}
-	},
+	}
 
-	deleteRevision: function( revisionView ) {
+	enterReviewMode() {
+		elementor.changeEditMode( 'review' );
+	}
+
+	exitReviewMode() {
+		elementor.changeEditMode( 'edit' );
+	}
+
+	navigate( reverse ) {
+		if ( ! this.component.currentPreviewId || ! this.component.currentPreviewItem || this.children.length <= 1 ) {
+			return;
+		}
+
+		const currentPreviewItemIndex = this.component.collection.indexOf( this.component.currentPreviewItem.model );
+
+		let requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
+
+		if ( requiredIndex < 0 ) {
+			requiredIndex = this.component.collection.length - 1;
+		}
+
+		if ( requiredIndex >= this.component.collection.length ) {
+			requiredIndex = 0;
+		}
+
+		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
+	}
+
+	onDestroy() {
+		if ( this.component.currentPreviewId && this.component.currentPreviewId !== elementor.config.document.revisions.current_id ) {
+			$e.run( 'panel/history/revisions/discard' );
+		}
+	}
+
+	onRenderCollection() {
+		if ( ! this.component.currentPreviewId ) {
+			return;
+		}
+
+		const currentPreviewModel = this.component.collection.findWhere( { id: parseInt( this.component.currentPreviewId ) } );
+
+		// Ensure the model is exist and not deleted during a save.
+		if ( currentPreviewModel ) {
+			this.component.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
+			this.component.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
+		}
+	}
+
+	onChildviewDetailsAreaClick( childView ) {
+		$e.run( 'panel/history/revisions/preview', { view: childView } );
+	}
+
+	deleteRevision( revisionView ) { // NOT IN USE.
 		revisionView.$el.addClass( 'elementor-revision-item-loading' );
 
-		component.currentDocument.revisions.deleteRevision( revisionView.model, {
+		this.component.currentDocument.revisions.deleteRevision( revisionView.model, {
 			success: () => {
-				if ( revisionView.model.get( 'id' ) === component.currentPreviewId ) {
-					this.onDiscardClick();
+				if ( revisionView.model.get( 'id' ) === this.component.currentPreviewId ) {
+					$e.run( 'panel/history/revisions/discard' );
 				}
 
-				component.currentPreviewId = null;
+				this.component.currentPreviewId = null;
 			},
 			error: () => {
 				revisionView.$el.removeClass( 'elementor-revision-item-loading' );
@@ -59,80 +116,5 @@ const RevisionsTabView = Marionette.CompositeView.extend( {
 				alert( 'An error occurred' );
 			},
 		} );
-	},
-
-	enterReviewMode: function() {
-		elementor.changeEditMode( 'review' );
-	},
-
-	exitReviewMode: function() {
-		elementor.changeEditMode( 'edit' );
-	},
-
-	navigate: function( reverse ) {
-		if ( ! component.currentPreviewId || ! component.currentPreviewItem || this.children.length <= 1 ) {
-			return;
-		}
-
-		var currentPreviewItemIndex = component.collection.indexOf( component.currentPreviewItem.model ),
-			requiredIndex = reverse ? currentPreviewItemIndex - 1 : currentPreviewItemIndex + 1;
-
-		if ( requiredIndex < 0 ) {
-			requiredIndex = component.collection.length - 1;
-		}
-
-		if ( requiredIndex >= component.collection.length ) {
-			requiredIndex = 0;
-		}
-
-		this.children.findByIndex( requiredIndex ).ui.detailsArea.trigger( 'click' );
-	},
-
-	onDiscardClick: function() {
-		const document = component.currentDocument;
-
-		if ( document.config.panel.has_elements ) {
-			document.revisions.setEditorData( elementor.config.document.elements );
-		}
-
-		$e.internal( 'document/save/set-is-modified', { status: component.isRevisionApplied } );
-
-		component.isRevisionApplied = false;
-
-		this.setRevisionsButtonsActive( false );
-
-		component.currentPreviewId = null;
-
-		this.exitReviewMode();
-
-		if ( component.currentPreviewItem ) {
-			component.currentPreviewItem.$el.removeClass( 'elementor-revision-current-preview' );
-		}
-	},
-
-	onDestroy: function() {
-		if ( component.currentPreviewId && component.currentPreviewId !== elementor.config.document.revisions.current_id ) {
-			this.onDiscardClick();
-		}
-	},
-
-	onRenderCollection: function() {
-		if ( ! component.currentPreviewId ) {
-			return;
-		}
-
-		const currentPreviewModel = component.collection.findWhere( { id: parseInt( component.currentPreviewId ) } );
-
-		// Ensure the model is exist and not deleted during a save.
-		if ( currentPreviewModel ) {
-			component.currentPreviewItem = this.children.findByModelCid( currentPreviewModel.cid );
-			component.currentPreviewItem.$el.addClass( 'elementor-revision-current-preview' );
-		}
-	},
-
-	onChildviewDetailsAreaClick: function( childView ) {
-		$e.run( 'panel/history/revisions/preview', { view: childView } );
-	},
-} );
-
-module.exports = RevisionsTabView;
+	}
+}

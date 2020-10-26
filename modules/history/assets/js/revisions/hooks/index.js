@@ -1,6 +1,7 @@
 export { RevisionsUpdateCollection } from './data/document/save/save/revisions-update-collection';
 export { RevisionsSetEditorData } from './data/panel/history/revisions/revisions-set-editor-data';
 export { RevisionsSetCollection } from './data/panel/history/revisions/revisions-set-collection';
+export { RevisionsDeactivateCurrent } from './ui/panel/histroy/revisions/discard/revivions-deactiveate-current';
 export { RevisionsUpdateCurrentAfter } from './ui/panel/histroy/revisions/preview/revisions-update-current-after';
 export { RevisionsUpdateCurrentBefore } from './ui/panel/histroy/revisions/preview/revisions-update-current-before';
 export { RevisionsUpdateCurrentCatch } from './ui/panel/histroy/revisions/preview/revisions-update-current-catch';

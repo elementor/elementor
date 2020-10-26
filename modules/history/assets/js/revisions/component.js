@@ -11,7 +11,6 @@ export default class RevisionsComponent extends ComponentBase {
 	currentDocument;
 
 	/**
-	 * Temporary.
 	 * @type {RevisionsTabView}
 	 */
 	tab;

@@ -1,6 +1,5 @@
 /**
- * TODO: consider refactor this class.
- * TODO: Rename to RevisionsModule.
+ * TODO: Remove 'RevisionsManager'.
  */
 export default class RevisionsManager {
 	document;
