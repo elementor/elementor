@@ -51,6 +51,7 @@ TemplateLibraryManager = function() {
 		jQuery.each( translationMap, function( type, title ) {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
+					/* translators: %s: Template type. */
 					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 				},
 			} );

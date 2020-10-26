@@ -86,7 +86,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				attributes: {
 					tabindex: 0,
 					role: 'button',
-					'aria-label': __( 'Close', 'elementor' ) + ' (Esc)',
+					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
 				},
 			},
 			selectors: {

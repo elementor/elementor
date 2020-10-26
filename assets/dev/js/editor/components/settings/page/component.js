@@ -8,8 +8,8 @@ export default class Component extends ComponentBase {
 	defaultTabs() {
 		return {
 			settings: { title: __( 'Settings', 'elementor' ) },
-			style: { title: __( 'style', 'elementor' ) },
-			advanced: { title: __( 'advanced', 'elementor' ) },
+			style: { title: __( 'Style', 'elementor' ) },
+			advanced: { title: __( 'Advanced', 'elementor' ) },
 		};
 	}
 
