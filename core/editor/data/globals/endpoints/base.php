@@ -28,7 +28,7 @@ abstract class Base extends Endpoint {
 		if ( ! isset( $items[ $id ] ) ) {
 			return new \WP_Error(
 				'global_not_found',
-				__( 'Global value was not found.', 'elementor' ),
+				__( 'The Global value you are trying to use is not available.', 'elementor' ),
 				[ 'status' => Exceptions::NOT_FOUND ]
 			);
 		}

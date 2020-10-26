@@ -165,12 +165,13 @@ class Deprecation {
 	 * Checks whether the given entity is valid. If valid, this method checks whether the deprecation
 	 * should be soft (browser console notice) or hard (use WordPress' native deprecation methods).
 	 *
-	 * @param $entity - The Deprecated entity (the function/hook itself)
+	 * @param string $entity - The Deprecated entity (the function/hook itself)
 	 * @param string $version
 	 * @param string $replacement Optional
 	 * @param string $base_version Optional. Default is `null`
 	 *
 	 * @return bool|void
+	 * @throws \Exception
 	 */
 	private function check_deprecation( $entity, $version, $replacement, $base_version = null ) {
 		if ( null === $base_version ) {
@@ -180,9 +181,7 @@ class Deprecation {
 		$diff = $this->compare_version( $base_version, $version );
 
 		if ( false === $diff ) {
-			trigger_error( 'Invalid deprecation diff' );
-
-			return;
+			throw new \Exception( 'Invalid deprecation diff' );
 		}
 
 		$print_deprecated = false;
@@ -211,10 +210,11 @@ class Deprecation {
 	 *
 	 * Handles the deprecation process for functions.
 	 *
-	 * @param $function
+	 * @param string $function
 	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
 	 * @param string $base_version Optional. Default is `null`
+	 * @throws \Exception
 	 */
 	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
 		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );

@@ -168,7 +168,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	onElementChange( propertyName ) {
 		const changeableProperties = this.getChangeableProperties();
 
-		if ( changeableProperties.propertyName ) {
+		if ( changeableProperties[ propertyName ] ) {
 			this.updateSwiperOption( propertyName );
 		}
 	}

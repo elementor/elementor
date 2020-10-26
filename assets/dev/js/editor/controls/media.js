@@ -44,9 +44,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
-	openFrame: function() {
-		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
-			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+	openFrame: function( e ) {
+		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
+
+		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
 
 			return false;
 		}
