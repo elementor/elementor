@@ -10,6 +10,10 @@
 	line-height: 0;
 	direction: ltr; // Fix for RTL pages
 
+	/*
+	 * @TODO: The `z-index: -1` rules below are temporary fixes for Chrome 85 issue.
+	 *   It will be removed in a future version of Chrome.
+	 */
 	&-top {
 		top: -1px;
 
