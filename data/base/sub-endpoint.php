@@ -47,9 +47,7 @@ abstract class SubEndpoint extends Endpoint {
 		return $route;
 	}
 
-	public function get_format() {
-		return $this->get_base_route();
-	}
+
 
 	/**
 	 * Get parent endpoint.

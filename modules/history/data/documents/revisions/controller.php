@@ -15,12 +15,16 @@ class Controller extends SubController {
 	}
 
 	public function get_route() {
-		return '/(?P<document_id>[\w]+)';
+		return '/(?P<revision_id>[\w]+)';
 	}
 
 	public function register_endpoints() {
 		// Using internal endpoint as 'base route' for 'data' endpoint.
 		// TODO: Try not use here sub-endpoint but endpoint.
+		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+			'id_arg_name' => 'revision_id',
+		] );
+
 		$this->index_endpoint->register_sub_endpoint( new Endpoints\Data( $this->index_endpoint, '/(?P<revision_id>[\w]+)' ) );
 	}
 
