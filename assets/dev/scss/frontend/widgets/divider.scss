@@ -13,17 +13,8 @@
 	--divider-pattern-url: none;
 	--divider-pattern-repeat: repeat-x;
 
-
-	/* Backwards compatibility */
-	&:not(.elementor-widget-divider--view-line_text):not(.elementor-widget-divider--view-line_icon):not(.elementor-widget-divider--separator-type-pattern) {
-
-		.elementor-divider-separator {
-			display: inline-block;
-		}
-	}
-
 	.elementor-divider {
-		line-height: 0;
+		display: flex;
 
 		&__text {
 			font-size: 15px;
@@ -117,6 +108,7 @@
 			--divider-border-style: none;
 
 			&.elementor-widget-divider--view-line .elementor-divider-separator,
+			&:not([class*=elementor-widget-divider--view]) .elementor-divider-separator, // BC since v3.0.10
 			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:before,
 			&:not(.elementor-widget-divider--view-line) .elementor-divider-separator:after {
 				width: 100%;

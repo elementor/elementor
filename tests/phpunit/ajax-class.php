@@ -1,12 +1,17 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Testing\Traits\Base_Elementor;
+use Elementor\Testing\Traits\Extra_Assertions;
+
 class Elementor_Test_AJAX extends \WP_Ajax_UnitTestCase {
 
-	use Elementor_Test;
+	use Base_Elementor, Extra_Assertions;
 
-	protected function getSelf() {
-		return $this;
+	public function define_doing_ajax() {
+		if ( ! wp_doing_ajax() ) {
+			define( 'DOING_AJAX', true );
+		}
 	}
 
 	public function _handleAjaxAndDecode( $action ) {

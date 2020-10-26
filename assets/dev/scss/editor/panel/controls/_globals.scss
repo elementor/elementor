@@ -2,9 +2,11 @@
 .e-global {
 
 	&__popover {
-		width: 270px;
+		// Default panel width is 300px. 288px width positions it at the center of the panel by default.
+		width: 288px;
 		z-index: 1;
 		font-size: 12px;
+		@include padding-start(10px);
 
 		&-toggle {
 			border: 1px solid $editor-lightest;
@@ -84,7 +86,6 @@
 
 		&::-webkit-scrollbar-thumb {
 			background-color: $editor-lighter;
-			outline: 1px solid $editor-darker;
 			border-radius: 10px;
 		}
 	}
@@ -194,6 +195,7 @@
 					font-size: 13px;
 					content: '\e90e'; // eicon-check
 					text-shadow: 0px 0px 1px #000;
+					z-index: 1;
 				 }
 			}
 		}
@@ -270,5 +272,9 @@
 		.elementor-control-input-wrapper {
 			direction: $direction;
 		}
+	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
 	}
 }
