@@ -57,6 +57,6 @@ abstract class SubController extends Controller {
 	abstract public function get_parent_name();
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index\SubController( $this ) );
+		$this->register_endpoint( new Endpoint\Index\SubControllerEndpoint( $this ) );
 	}
 }

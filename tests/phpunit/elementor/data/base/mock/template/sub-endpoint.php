@@ -11,4 +11,8 @@ class SubEndpoint extends \Elementor\Data\Base\SubEndpoint {
 	public function get_type() {
 		return 'sub-endpoint';
 	}
+
+	public function get_format() {
+		return $this->get_base_route();
+	}
 }
