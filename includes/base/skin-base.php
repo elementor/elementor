@@ -58,6 +58,28 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	abstract public function render();
 
 	/**
+	 * Render element in static mode.
+	 *
+	 * If not inherent will call the base render.
+	 */
+	public function render_static() {
+		$this->render();
+	}
+
+	/**
+	 * Determine the render logic.
+	 */
+	public function render_by_mode() {
+		if ( Plugin::$instance->frontend->is_static_render_mode() ) {
+			$this->render_static();
+
+			return;
+		}
+
+		$this->render();
+	}
+
+	/**
 	 * Register skin controls actions.
 	 *
 	 * Run on init and used to register new skins to be injected to the widget.
