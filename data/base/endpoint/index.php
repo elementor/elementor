@@ -15,7 +15,7 @@ class Index extends Endpoint {
 		return "{$this->controller->get_full_name()}/{id}";
 	}
 
-	public function get_name_public() {
+	public function get_public_name() {
 		return '';
 	}
 
@@ -25,7 +25,7 @@ class Index extends Endpoint {
 
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		// Save 'id_arg_name' for 'sub controller, index endpoint'.
-		if ( ! empty( $args['id_arg_name'] ) ) {
+		if ( ! empty( $args['id_arg_name'] ) && 'id' === $this->id_arg_name ) {
 			$this->id_arg_name = $args['id_arg_name'];
 		}
 

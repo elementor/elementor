@@ -38,16 +38,8 @@ abstract class SubEndpoint extends Endpoint {
 			$route = '/' . $route;
 		}
 
-		$route_length = strlen( $route );
-
-		if ( $route_length > 1 && '/' !== $route[ $route_length - 1 ] ) {
-			$route .= '/';
-		}
-
-		return $route;
+		return trailingslashit( $route );
 	}
-
-
 
 	/**
 	 * Get parent endpoint.
@@ -61,23 +53,24 @@ abstract class SubEndpoint extends Endpoint {
 	public function get_base_route() {
 		$name = $this->get_name();
 		$parent = $this->get_parent();
-		$is_parent_sub_endpoint = $parent instanceof SubEndpoint;
+		$is_parent_sub_endpoint = $parent instanceof self;
+		$parent_base = $parent->get_base_route();
 		$route = $this->route;
 
 		// Parent sub endpoint
 		if ( $is_parent_sub_endpoint ) {
-			return $parent->get_base_route() . $route . $name;
+			return $parent_base . $route . $name;
 		}
 
-		// Parent sub index endpoint.
+		// Parent sub controller.
 		if ( $this->controller instanceof SubController ) {
-			return $parent->get_base_route() . $this->controller->get_route() . '/' . $name;
+			return $parent_base . $this->controller->get_route() . '/' . $name;
 		}
-
-		$parent_name = $parent->get_name_public();
-		$path = trim( $parent_name . $route . $name, '/' );
 
 		// Parent endpoint
+		$parent_name = $parent->get_public_name();
+		$path = trim( $parent_name . $route . $name, '/' );
+
 		return $this->controller->get_rest_base() . '/' . $path;
 	}
 

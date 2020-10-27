@@ -2,7 +2,6 @@
 
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
@@ -66,22 +65,22 @@ abstract class Endpoint {
 	 * @return string
 	 */
 	public function get_base_route() {
-		$endpoint_public_name = $this->get_name_public();
-
-		return rtrim( '/' . $this->controller->get_rest_base() . '/' . $endpoint_public_name, '/' );
+		return untrailingslashit( '/' . $this->controller->get_rest_base() . '/' . $this->get_public_name() );
 	}
 
 	/**
-	 * Get command public, name ( empty '' for index endpoint ).
+	 * Get public name ( empty '' for index endpoint ).
 	 *
 	 * @return string
 	 */
-	public function get_name_public() {
+	public function get_public_name() {
 		return $this->get_name();
 	}
 
 	/**
-	 * Convert endpoint to full command name ( including index ).
+	 * Get full command name ( including index ).
+	 *
+	 * @return string
 	 */
 	public function get_full_command() {
 		return $this->controller->get_full_name() . '/' . $this->get_name();
@@ -274,7 +273,7 @@ abstract class Endpoint {
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$id_arg_name = 'id';
 
-		if ( isset( $args['id_arg_name'] ) && $args['id_arg_name'] ) {
+		if ( ! empty( $args['id_arg_name'] ) ) {
 			$id_arg_name = $args['id_arg_name'];
 
 			unset( $args['id_arg_name'] );

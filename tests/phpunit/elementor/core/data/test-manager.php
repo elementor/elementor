@@ -234,6 +234,8 @@ class Test_Manager extends Data_Test_Base {
 
 	public function test_run_endpoint() {
 		$controller = new ControllerWithEndpoint();
+
+
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
@@ -266,7 +268,7 @@ class Test_Manager extends Data_Test_Base {
 		$this->manager->run_server();
 
 		$this->assertEquals( [
-			'globals/index' => 'globals/{id}',
+			'globals/index' => 'globals/index',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
 		], $this->manager->command_formats );
