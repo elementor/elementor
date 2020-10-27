@@ -205,4 +205,36 @@ class Test_Deprecation extends Elementor_Test_Base {
 
 		$this->deprecation->deprecated_function( __FUNCTION__, '0.0.0', '', '0.5.0' );
 	}
+
+	public function test_do_deprecated_action() {
+		$this->setExpectedDeprecated( 'elementor/test/deprecated_action' );
+
+		add_action( 'elementor/test/deprecated_action', function() {
+			echo 'Testing Do Deprecated Action';
+		} );
+
+		ob_start();
+
+		$this->deprecation->do_deprecated_action( 'elementor/test/deprecated_action', [], '0.0.0', '', '0.5.0' );
+
+		$result = ob_get_clean();
+
+		$this->assertEquals( $result, 'Testing Do Deprecated Action' );
+	}
+
+	public function test_do_deprecated_action_soft() {
+		add_action( 'elementor/test/deprecated_action_soft', function() {
+			echo 'Testing Do Deprecated Action';
+		} );
+
+		$this->deprecation->do_deprecated_action( 'elementor/test/deprecated_action_soft', [], '0.0.0', '', '0.4.0' );
+
+		$settings = $this->deprecation->get_settings();
+
+		$this->assertContains( [
+			'elementor/test/deprecated_action_soft',
+			'0.0.0',
+			'',
+		], $settings['soft_notices'] );
+	}
 }
