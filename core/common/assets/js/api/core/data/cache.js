@@ -212,18 +212,22 @@ export default class Cache {
 			}
 
 			const pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
-				pureEndpointParts = pureEndpoint.split( '/' ),
-				lastEndpointPart = pureEndpointParts[ pureEndpointParts.length - 1 ];
+				pureEndpointParts = pureEndpoint.split( '/' );
 
-				pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
-					if ( pureEndpointPart === lastEndpointPart ) {
-						// Null, means delete.
-						accumulator[ pureEndpointPart ] = null;
-					} else {
-						accumulator[ pureEndpointPart ] = {};
-					}
-					return accumulator[ pureEndpointPart ];
-				}, newData );
+			let count = 0;
+
+			pureEndpointParts.reduce( ( accumulator, pureEndpointPart ) => {
+				// If last part.
+				if ( count === pureEndpointParts.length - 1 ) {
+					// Null, means delete.
+					accumulator[ pureEndpointPart ] = null;
+				} else {
+					accumulator[ pureEndpointPart ] = {};
+				}
+
+				count++;
+				return accumulator[ pureEndpointPart ];
+			}, newData );
 
 			if ( Object.keys( oldData ).length ) {
 				const deleteKeys = ( target, nullsObject ) => {
