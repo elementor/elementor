@@ -120,6 +120,9 @@ export default class Data extends Commands {
 	 * @returns {string} endpoint
 	 */
 	commandToEndpoint( command, args, format = null ) {
+		// Do not replace args.
+		args = elementorCommon.helpers.cloneObject( args );
+
 		let endpoint = command;
 
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
