@@ -1154,9 +1154,6 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 			],
-			'i18n' => [
-				'close' => __( 'Close', 'elementor' ),
-			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
