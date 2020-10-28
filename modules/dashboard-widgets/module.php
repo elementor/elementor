@@ -39,7 +39,6 @@ class Module extends BaseModule {
 			add_action( 'welcome_panel', [ $this, 'welcome_dashboard_widget_render' ], PHP_INT_MAX );
 		}
 
-		add_action( 'admin_head', [ $this, 'admin_head' ] );
 		//add_action( 'admin_enqueue_scripts', [ $this, 'load_assets' ] );
 
 		if ( is_network_admin() ) {
@@ -74,16 +73,6 @@ class Module extends BaseModule {
 
 		wp_enqueue_script( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.js', array( 'jquery' ), ELEMENTOR_VERSION, true );
 		wp_enqueue_style( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.css', array(), ELEMENTOR_VERSION );
-	}
-
-	public function admin_head() {
-		//update_user_meta( get_current_user_id(), 'show_welcome_panel', 1 );
-		?>
-		<style>
-
-
-		</style>
-		<?php
 	}
 
 	public function add_dashboard_widgets() {
@@ -149,6 +138,28 @@ class Module extends BaseModule {
 		$create_page_url = Utils::get_create_new_post_url();
 		$create_post_url = Utils::get_create_new_post_url( 'post' );
 
+		$action_links = array(
+				'write_blog' => array(
+						'icon' => 'dashicons-welcome-write-blog',
+						'label' => esc_html__( 'Create your first blog page', 'elementor' ),
+						'url' => esc_url( $create_post_url ),
+				),
+				'about_page' => array(
+						'icon' => 'dashicons-plus-alt2',
+						'label' => esc_html__( 'Add an about page', 'elementor' ),
+						'url' => esc_url( $create_page_url ),
+				),
+				'home_page' => array(
+						'icon' => 'dashicons-admin-home',
+						'label' => esc_html__( 'Setup your homepage', 'elementor' ),
+						'url' => esc_url( admin_url( 'options-reading.php' ) ),
+				),
+				'view_site' => array(
+						'icon' => 'dashicons-welcome-view-site',
+						'label' => esc_html__( 'View your site', 'elementor' ),
+						'url' => esc_url( get_site_url() ),
+				),
+		);
 		?>
 		<div class="elementor_welcome_dashboard_widget_wrap metabox-holder">
 			<div class="postbox-container" style="width: 100%; float: none;">
@@ -174,22 +185,12 @@ class Module extends BaseModule {
 							<div class="next-steps flex-child">
 								<h4><?php esc_html_e( 'Next steps', 'elementor' ); ?></h4>
 								<ul>
-									<li>
-										<span class="dashicons dashicons-welcome-write-blog"></span>
-										<a href="<?php echo esc_url( $create_post_url ); ?>"><?php esc_html_e( 'Create your first blog page', 'elementor' ); ?></a>
-									</li>
-									<li>
-										<span class="dashicons dashicons-plus-alt2"></span>
-										<a href="<?php echo esc_url( $create_page_url ); ?>"><?php esc_html_e( 'Add an about page', 'elementor' ); ?></a>
-									</li>
-									<li>
-										<span class="dashicons dashicons-admin-home"></span>
-										<a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>"><?php esc_html_e( 'Setup your homepage', 'elementor' ); ?></a>
-									</li>
-									<li>
-										<span class="dashicons dashicons-welcome-view-site"></span>
-										<a href="<?php echo esc_url( get_site_url() ); ?>"><?php esc_html_e( 'View your site', 'elementor' ); ?></a>
-									</li>
+									<?php foreach ( $action_links as $action_link ) : ?>
+										<li>
+											<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
+											<a href="<?php echo $action_link['url']; ?>"><?php echo $action_link['label']; ?></a>
+										</li>
+									<?php endforeach; ?>
 								</ul>
 							</div>
 						</div>
@@ -212,6 +213,7 @@ class Module extends BaseModule {
 				'icon' => 'dashicons-sticky',
 				'label' => __( 'Post', 'elementor' ),
 			),
+			/*
 			'landing_page' => array(
 				'post_type' => false,
 				'icon' => 'dashicons-media-text',
@@ -221,15 +223,22 @@ class Module extends BaseModule {
 					'add_new'      => 1,
 				),
 			),
-			'elementor_library' => array(
-				'post_type' => false,
-				'icon' => 'dashicons-format-gallery',
-				'label' => __( 'Popup', 'elementor' ),
-				'args' => array(
-					'template_type' => 'popup',
-				),
-			),
+			*/
 		);
+
+		$cpt_support = $this->get_elementor_cpt_support();
+
+		if ( defined( ELEMENTOR_PRO__FILE__ ) ) {
+			$action_links['elementor_library'] = array(
+					'post_type' => false,
+					'icon' => 'dashicons-format-gallery',
+					'label' => __( 'Popup', 'elementor' ),
+					'args' => array(
+							'template_type' => 'popup',
+					),
+			);
+		}
+
 		?>
 		<div class="elementor-quick-actions-wrap">
 			<div class="flex">
@@ -237,6 +246,11 @@ class Module extends BaseModule {
 					<h3><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
 					<ul>
 						<?php foreach ( $action_links as $key => $action_link ) :
+
+							if ( ! in_array( $key, $cpt_support ) ) {
+								continue;
+							}
+
 							if ( ! $action_link['post_type'] ) {
 								$url = add_query_arg(
 									$action_link['args'],
@@ -285,6 +299,10 @@ class Module extends BaseModule {
 								'url' => get_site_url(),
 							),
 						);
+
+						if ( ! defined( ELEMENTOR_PRO__FILE__ ) ) {
+							unset( $action_links['theme_builder'] );
+						}
 
 						foreach ( $action_links as $key => $action_link ) :
 							?>
@@ -471,5 +489,9 @@ class Module extends BaseModule {
 			</div>
 		</div>
 		<?php
+	}
+
+	private function get_elementor_cpt_support() {
+		return get_option( 'elementor_cpt_support' );
 	}
 }
