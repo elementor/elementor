@@ -208,16 +208,6 @@ class Test_Endpoint extends Data_Test_Base {
 		$this->assertEquals( $excepted_data, $result->get_data() );
 	}
 
-	public function test_base_callback_invalid_method() {
-		$controller = new ControllerTemplate();
-		$controller->bypass_original_register();
-
-		$endpoint_instance = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-
-		$this->expectException( Exception::class );
-		$endpoint_instance->base_callback( 'some-invalid-method', new \WP_REST_Request(), true );
-	}
-
 	public function test_get_item() {
 		$this->manager->run_server();
 

@@ -4,7 +4,7 @@ namespace Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Base\Endpoint\Index;
 
 /**
- * class Children, is optional endpoint.
+ * class AllChildren, is optional endpoint.
  * Used in cases where the endpoints are static & there no use of dynamic endpoints( alpha/{id} ), eg:
  * 'settings' - controller
  * 'settings/products' - endpoint
@@ -15,7 +15,7 @@ use Elementor\Data\Base\Endpoint\Index;
  * 'settings/partners'
  * By running 'get_items' of each endpoint.
  */
-class Children extends Index {
+class AllChildren extends Index {
 	public function get_format() {
 		return $this->controller->get_name() . '/index';
 	}
@@ -50,12 +50,10 @@ class Children extends Index {
 				continue;
 			}
 
-			$can_run = $endpoint->get_permission_callback( $request );
+			$result = $endpoint->get_items( new \WP_REST_Request() );
 
-			// Critical.
-			if ( $can_run ) {
-				// Calling `$endpoint->get_items` directly is unsafe.
-				$response[ $endpoint->get_name() ] = $endpoint->get_items( null );
+			if ( $result ) {
+				$response[ $endpoint->get_name() ] = $result;
 			}
 		}
 

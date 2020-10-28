@@ -52,6 +52,8 @@ abstract class SubController extends Controller {
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new SubIndexEndpoint( $this ) );
+		$this->register_endpoint( new SubIndexEndpoint( $this ), [
+			'index' => true,
+		] );
 	}
 }

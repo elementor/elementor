@@ -2,14 +2,14 @@
 namespace Elementor\Tests\Phpunit\Data\Base\Endpoint\Index;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Data_Test_Base;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Children\Controller as ControllerChildren;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\AllChildren\Controller as ControllerAllChildren;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\BypassPermission as EndpointBypassPermission;
 
-class Test_Children extends Data_Test_Base {
+class Test_All_Children extends Data_Test_Base {
 
 	public function test_get_items() {
 		// Arrange.
-		$controller = new ControllerChildren();
+		$controller = new ControllerAllChildren();
 
 		$this->manager->run_server();
 
@@ -34,7 +34,7 @@ class Test_Children extends Data_Test_Base {
 
 	public function test_get_items__simulated() {
 		// Arrange.
-		$controller = $this->manager->register_controller_instance( new ControllerChildren );
+		$controller = $this->manager->register_controller_instance( new ControllerAllChildren );
 		$this->manager->run_server(); // Ensure controller loaded.
 
 		// Act - Run index endpoint.
@@ -53,13 +53,14 @@ class Test_Children extends Data_Test_Base {
 
 	public function test_get_items__one_endpoint_have_no_permission() {
 		// Arrange.
-		$controller = new ControllerChildren();
+		$controller = new ControllerAllChildren();
 
 		$this->manager->run_server();
 
 		$endpoint_bypass_permission = new EndpointBypassPermission( $controller );
 		$endpoint_bypass_permission->bypass_original_permission( true );
 		$endpoint_bypass_permission->bypass_set_value( false );
+		$controller->do_register_endpoint( $endpoint_bypass_permission );
 
 		// Act - Run index endpoint.
 		$endpoints_results = $this->manager->run_endpoint( $controller->get_name() );

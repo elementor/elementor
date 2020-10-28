@@ -44,7 +44,7 @@ class Controller extends \Elementor\Data\Base\Controller {
 	}
 
 	/**
-	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Children|null
+	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\AllChildren|null
 	 */
 	public function get_endpoint_index() {
 		return $this->index_endpoint;

@@ -166,23 +166,29 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register index endpoint.
 	 */
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index( $this ) );
+		$this->register_endpoint( new Endpoint\Index( $this ), [
+			'index' => true,
+		] );
 	}
 
 	/**
 	 * Register endpoint.
 	 *
 	 * @param \Elementor\Data\Base\Endpoint $endpoint
+	 * @param array $args
 	 *
 	 * @return \Elementor\Data\Base\Endpoint
 	 */
-	protected function register_endpoint( Endpoint $endpoint ) {
+	protected function register_endpoint( Endpoint $endpoint, $args = [] ) {
 		$command = $endpoint->get_full_command();
 
-		if ( $endpoint instanceof Endpoint\Index ) {
-			$this->index_endpoint = $endpoint;
+		// TODO: Remove - Backwards compatibility.
+		$endpoint_proxy = new Endpoint\Proxy( $endpoint );
+
+		if ( ! empty( $args['index'] ) ) {
+			$this->index_endpoint = $endpoint_proxy;
 		} else {
-			$this->endpoints[ $command ] = $endpoint;
+			$this->endpoints[ $command ] = $endpoint_proxy;
 		}
 
 		$format = $endpoint->get_format();

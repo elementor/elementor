@@ -1,11 +1,10 @@
 <?php
-
 namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
-abstract class Endpoint {
+abstract class Endpoint implements Interfaces\EndpointItems {
 
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
@@ -60,7 +59,7 @@ abstract class Endpoint {
 	/**
 	 * Get base route.
 	 *
-	 * @note This method should always return the base route starts with '/' and end without '/'.
+	 * @note This method should always return the base route starts with '/' and ends without '/'.
 	 *
 	 * @return string
 	 */
@@ -69,7 +68,7 @@ abstract class Endpoint {
 	}
 
 	/**
-	 * Get public name ( empty '' for index endpoint ).
+	 * Get public name.
 	 *
 	 * @return string
 	 */
@@ -106,7 +105,10 @@ abstract class Endpoint {
 		$command = $endpoint->get_full_command();
 		$format = $endpoint->get_format();
 
-		$this->sub_endpoints[ $command ] = $endpoint;
+		// TODO: Remove - Backwards compatibility.
+		$endpoint_proxy = new Endpoint\Proxy( $endpoint );
+
+		$this->sub_endpoints[ $command ] = $endpoint_proxy;
 
 		Manager::instance()->register_endpoint_format( $command, $format );
 
@@ -116,69 +118,46 @@ abstract class Endpoint {
 	/**
 	 * Base callback.
 	 *
-	 * All reset requests from the client should pass this function.
+	 * @note All reset requests from the client should pass this function.
 	 *
 	 * @param string $methods
 	 * @param \WP_REST_Request $request
 	 * @param bool $is_multi
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
-	 * @throws \Exception
 	 */
 	public function base_callback( $methods, $request, $is_multi = false ) {
-		// TODO: Find better solution.
-		$json_params = $request->get_json_params();
+		if ( $request ) {
+			$json_params = $request->get_json_params();
 
-		if ( $json_params ) {
-			$request->set_body_params( $json_params );
+			if ( $json_params ) {
+				$request->set_body_params( $json_params );
+			}
 		}
 
-		// TODO: Handle permission callback.
-		switch ( $methods ) {
-			case WP_REST_Server::READABLE:
-				$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
-				break;
+		$result = [];
 
-			case WP_REST_Server::CREATABLE:
-				$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
-				break;
+		if ( $this->get_permission_callback( $request ) ) {
+			switch ( $methods ) {
+				case WP_REST_Server::READABLE:
+					$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
+					break;
 
-			case WP_REST_Server::EDITABLE:
-				$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
-				break;
+				case WP_REST_Server::CREATABLE:
+					$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
+					break;
 
-			case WP_REST_Server::DELETABLE:
-				$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
-				break;
+				case WP_REST_Server::EDITABLE:
+					$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
+					break;
 
-			default:
-				throw new \Exception( 'Invalid method.' );
+				case WP_REST_Server::DELETABLE:
+					$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
+					break;
+			}
 		}
 
 		return rest_ensure_response( $result );
-	}
-
-	/**
-	 * Retrieves a collection of items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	public function get_items( $request ) {
-		return $this->controller->get_items( $request );
-	}
-
-	/**
-	 * Retrieves one item from the collection.
-	 *
-	 * @param string $id
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
-	public function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
 	}
 
 	/**
@@ -194,71 +173,34 @@ abstract class Endpoint {
 		return $this->controller->get_permission_callback( $request );
 	}
 
-	/**
-	 * Creates one item.
-	 *
-	 * @param string $id id of request item.
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
+	public function get_items( $request ) {
+		return $this->controller->get_items( $request );
+	}
+
+	public function get_item( $id, $request ) {
+		return $this->controller->get_item( $request );
+	}
+
 	public function create_item( $id, $request ) {
 		return $this->controller->create_item( $request );
 	}
 
-	/**
-	 * Creates multiple items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
 	public function create_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
-	/**
-	 * Updates one item.
-	 *
-	 * @param string $id id of request item.
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
 	public function update_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
 
-	/**
-	 * Updates multiple items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
 	public function update_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
-	/**
-	 * Delete one item.
-	 *
-	 * @param string $id id of request item.
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
 	public function delete_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
 
-	/**
-	 * Delete multiple items.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
-	 */
 	public function delete_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
@@ -331,5 +273,10 @@ abstract class Endpoint {
 				},
 			],
 		] );
+	}
+
+	// TODO: Remove - Backwards computability.
+	public function get_controller() {
+		return $this->controller;
 	}
 }
