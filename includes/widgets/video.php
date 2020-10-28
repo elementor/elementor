@@ -464,6 +464,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Poster', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'video_type' => 'hosted',
 				],
