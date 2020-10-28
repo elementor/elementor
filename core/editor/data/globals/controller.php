@@ -16,7 +16,7 @@ class Controller extends Controller_Base {
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index\Recursive( $this ) );
+		$this->register_endpoint( new Endpoint\Index\Children( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

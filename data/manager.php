@@ -126,7 +126,7 @@ class Manager extends BaseModule {
 	 *
 	 */
 	public function register_endpoint_format( $command, $format ) {
-		$this->command_formats[ $command ] = rtrim( $format, '/' );
+		$this->command_formats[ $command ] = untrailingslashit( $format );
 	}
 
 	public function register_rest_error_handler() {
@@ -188,7 +188,7 @@ class Manager extends BaseModule {
 
 			parse_str( $query_string, $temp );
 
-			$result->command = rtrim( $pure_command, '/' );
+			$result->command = untrailingslashit( $pure_command );
 			$result->args = array_merge( $args, $temp );
 		}
 
@@ -231,9 +231,6 @@ class Manager extends BaseModule {
 
 			$endpoint = $formatted;
 		}
-
-		// TODO: Test or delete - update method comment.
-		$endpoint = str_replace( '/index', '', $endpoint );
 
 		return $endpoint;
 	}

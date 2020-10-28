@@ -1,10 +1,16 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Recursive;
+namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Children;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 use Elementor\Data\Base\Endpoint\Index;
 
 class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
+
+	/**
+	 * @inheritdoc
+	 * @var Endpoint[]
+	 */
+	public $endpoints;
 
 	public function register_endpoints() {
 		$this->register_endpoint( new Endpoint( $this ) );
@@ -20,6 +26,6 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Index\Recursive( $this ) );
+		$this->register_endpoint( new Index\Children( $this ) );
 	}
 }

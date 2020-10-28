@@ -16,7 +16,7 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	 */
 	protected $test_sub_endpoint;
 
-	public function register_endpoints() { // do same in with endpoint
+	public function register_endpoints() {
 		$this->test_endpoint = $this->register_endpoint( new Endpoint( $this ) );
 		$this->test_sub_endpoint = $this->test_endpoint->register_sub_endpoint( new SubEndpoint( $this->test_endpoint ) );
 	}

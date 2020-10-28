@@ -29,7 +29,7 @@ class Test_Endpoint extends Data_Test_Base {
 		);
 	}
 
-	public function test_get_name_public() {
+	public function test_get_public_name() {
 		$controller_instance = new ControllerWithEndpoint();
 
 		$this->manager->run_server();
@@ -37,8 +37,8 @@ class Test_Endpoint extends Data_Test_Base {
 		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
 		$endpoint_index_instance = $controller_instance->get_endpoint_index();
 
-		$this->assertEquals( '', $endpoint_index_instance->get_name_public() );
-		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_instance->get_name_public() );
+		$this->assertEquals( '', $endpoint_index_instance->get_public_name() );
+		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_instance->get_public_name() );
 	}
 
 	public function test_get_full_command() {

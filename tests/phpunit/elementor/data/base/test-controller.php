@@ -150,7 +150,7 @@ class Test_Controller extends Data_Test_Base {
 
 		foreach( $methods  as $method ) {
 			$request = new \WP_REST_Request( $method );
-			$this->assertEquals( $controller->get_permission_callback( $request ), true );
+			$this->assertEquals( true, $controller->get_permission_callback( $request ) );
 		}
 
 		// Set editor.
@@ -158,7 +158,7 @@ class Test_Controller extends Data_Test_Base {
 
 		foreach( $methods as $method ) {
 			$request = new \WP_REST_Request( $method );
-			$this->assertEquals( $controller->get_permission_callback( $request ), false );
+			$this->assertEquals( false, $controller->get_permission_callback( $request ) );
 		}
 	}
 }

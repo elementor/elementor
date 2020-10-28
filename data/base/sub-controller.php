@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
+use Elementor\Data\Base\Endpoint\Index\SubIndexEndpoint;
 use Elementor\Data\Manager;
 
 abstract class SubController extends Controller {
@@ -9,12 +10,6 @@ abstract class SubController extends Controller {
 	 */
 	public $parent_controller;
 
-	/**
-	 * SubController constructor.
-	 *
-	 * $parent_controller is optional, if not passed will use `$this->get_parent_name()`.
-	 *
-	 */
 	public function __construct() {
 		$parent_controller_name = $this->get_parent_name();
 
@@ -41,6 +36,13 @@ abstract class SubController extends Controller {
 	}
 
 	/**
+	 * Get parent controller name.
+	 *
+	 * @return string
+	 */
+	abstract public function get_parent_name();
+
+	/**
 	 * @return string
 	 */
 	abstract public function get_route();
@@ -49,14 +51,7 @@ abstract class SubController extends Controller {
 		return $this->parent_controller;
 	}
 
-	/**
-	 * Get parent controller name.
-	 *
-	 * @return string
-	 */
-	abstract public function get_parent_name();
-
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index\SubControllerEndpoint( $this ) );
+		$this->register_endpoint( new SubIndexEndpoint( $this ) );
 	}
 }

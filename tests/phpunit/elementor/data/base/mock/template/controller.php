@@ -1,13 +1,11 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template;
 
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockBypassPermission;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockBypassRegister;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockNameType;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
 class Controller extends \Elementor\Data\Base\Controller {
 
-	use MockNameType, MockBypassPermission, MockBypassRegister;
+	use Traits\MockNameType, Traits\MockBypassPermission, Traits\MockBypassRegister;
 
 	public function __construct() {
 		parent::__construct();
@@ -46,7 +44,7 @@ class Controller extends \Elementor\Data\Base\Controller {
 	}
 
 	/**
-	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Recursive|null
+	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Children|null
 	 */
 	public function get_endpoint_index() {
 		return $this->index_endpoint;
