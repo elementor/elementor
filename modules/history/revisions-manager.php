@@ -91,6 +91,64 @@ class Revisions_Manager {
 		}
 	}
 
+	public static function get_revision( $post, $args = [] ) {
+		if ( ! $post || empty( $post->ID ) ) {
+			return null;
+		}
+
+		//$post = wp_get_post_revision( $post );
+
+		$include_data = isset( $args['include_data'] ) ? $args['include_data'] : false;
+
+		if ( $include_data ) {
+			$revision_document = Plugin::$instance->documents->get( $post->ID );
+
+			if ( ! $revision_document ) {
+				return null;
+			}
+		}
+
+		if ( ! isset( self::$authors[ $post->post_author ] ) ) {
+			self::$authors[ $post->post_author ] = [
+				'avatar' => get_avatar( $post->post_author, 22 ),
+				'display_name' => get_the_author_meta( 'display_name', $post->post_author ),
+			];
+		}
+
+		$current_time = current_time( 'timestamp' );
+		$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $post->post_modified ) );
+		$human_time = human_time_diff( strtotime( $post->post_modified ), $current_time );
+
+		if ( false !== strpos( $post->post_name, 'autosave' ) ) {
+			$type = 'autosave';
+		} else {
+			$type = 'revision';
+		}
+
+		$revision = [
+			'id' => $post->ID,
+			'author' => self::$authors[ $post->post_author ]['display_name'],
+			'timestamp' => strtotime( $post->post_modified ),
+			'date' => sprintf(
+			/* translators: 1: Human readable time difference, 2: Date */
+				__( '%1$s ago (%2$s)', 'elementor' ),
+				$human_time,
+				$date
+			),
+			'type' => $type,
+			'gravatar' => self::$authors[ $post->post_author ]['avatar'],
+		];
+
+		if ( $include_data ) {
+			$revision['data'] = [
+				'settings' => $revision_document->get_settings(),
+				'elements' => $revision_document->get_elements_data(),
+			];
+		}
+
+		return $revision;
+	}
+
 	/**
 	 * @since 1.7.0
 	 * @access public
@@ -138,45 +196,17 @@ class Revisions_Manager {
 			return $posts;
 		}
 
-		$current_time = current_time( 'timestamp' );
-
 		/** @var \WP_Post $revision */
 		foreach ( $posts as $revision ) {
-			//$revision_document = Plugin::$instance->documents->get( $revision->ID );
-			$date = date_i18n( _x( 'M j @ H:i', 'revision date format', 'elementor' ), strtotime( $revision->post_modified ) );
+			$revision = self::get_revision( $revision );
 
-			$human_time = human_time_diff( strtotime( $revision->post_modified ), $current_time );
-
-			if ( $revision->ID === $post->ID ) {
-				$type = 'current';
-			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
-				$type = 'autosave';
-			} else {
-				$type = 'revision';
+			// TODO: Find better solution.
+			// `$revision['type'] = 'current';` - Not real data and cannot be reliable.
+			if ( $revision['id'] === $post->ID ) {
+				$revision['type'] = 'current';
 			}
 
-			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
-				self::$authors[ $revision->post_author ] = [
-					'avatar' => get_avatar( $revision->post_author, 22 ),
-					'display_name' => get_the_author_meta( 'display_name', $revision->post_author ),
-				];
-			}
-
-			$revisions[] = [
-				'id' => $revision->ID,
-				'author' => self::$authors[ $revision->post_author ]['display_name'],
-				'timestamp' => strtotime( $revision->post_modified ),
-				'date' => sprintf(
-					/* translators: 1: Human readable time difference, 2: Date */
-					__( '%1$s ago (%2$s)', 'elementor' ),
-					$human_time,
-					$date
-				),
-				'type' => $type,
-				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
-				//'settings' => $revision_document->get_settings(),
-				//'elements' => $revision_document->get_elements_data(),
-			];
+			$revisions [] = $revision;
 		}
 
 		return $revisions;

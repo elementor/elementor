@@ -273,7 +273,6 @@ class Test_Manager extends Data_Test_Base {
 			'globals/typography' => 'globals/typography/{id}',
 			'documents/index' => 'documents/{id}',
 			'documents/revisions/index' => 'documents/{id}/revisions/{sub_id}',
-			'documents/revisions/index/data' => 'documents/{id}/revivions/{sub_id}/data',
 		], $this->manager->command_formats );
 	}
 }

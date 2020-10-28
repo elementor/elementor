@@ -20,12 +20,9 @@ class Controller extends SubController {
 
 	public function register_endpoints() {
 		// Using internal endpoint as 'base route' for 'data' endpoint.
-		// TODO: Try not use here sub-endpoint but endpoint.
 		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, [
 			'id_arg_name' => 'revision_id',
 		] );
-
-		$this->index_endpoint->register_sub_endpoint( new Endpoints\Data( $this->index_endpoint, '/(?P<revision_id>[\w]+)' ) );
 	}
 
 	public function get_items( $request ) {
@@ -47,15 +44,9 @@ class Controller extends SubController {
 			return new \WP_Error( 'rest_unknown_revision', __( 'Unable to get revision information.' ), [ 'status' => 404 ] );
 		}
 
-		$post = $revision->get_post();
-
-		$revision_data = (array) wp_get_post_revision( $post );
-		$revision_data['data'] = [
-			'settings' => $revision->get_settings(),
-			'elements' => $revision->get_elements_data(),
-		];
-
-		return $revision_data;
+		return Revisions_Manager::get_revision( $revision->get_post(), [
+			'include_data' => true,
+		] );
 	}
 
 	public function get_permission_callback( $request ) {

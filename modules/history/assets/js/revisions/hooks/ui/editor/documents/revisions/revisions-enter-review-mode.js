@@ -4,7 +4,7 @@ export class RevisionsEnterReviewMode extends $e.modules.hookUI.After {
 	}
 
 	getId() {
-		return 'revisions-enter-review-mode--/panel/history/revisions';
+		return 'revisions-enter-review-mode--/editor/documents/revisions';
 	}
 
 	getConditions( args ) {
