@@ -4,7 +4,6 @@ namespace Elementor\Core\Base;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
-use Elementor\DB;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\User;
@@ -33,6 +32,32 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+
+	/**
+	 * Document publish status.
+	 */
+	const STATUS_PUBLISH = 'publish';
+
+	/**
+	 * Document draft status.
+	 */
+	const STATUS_DRAFT = 'draft';
+
+	/**
+	 * Document private status.
+	 */
+	const STATUS_PRIVATE = 'private';
+
+	/**
+	 * Document autosave status.
+	 */
+	const STATUS_AUTOSAVE = 'autosave';
+
+	/**
+	 * Document pending status.
+	 */
+	const STATUS_PENDING = 'pending';
+
 
 	private $main_id;
 
@@ -550,7 +575,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+			if ( isset( $data['settings']['post_status'] ) && self::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
 				}
@@ -762,10 +787,10 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 */
-	public function get_elements_data( $status = DB::STATUS_PUBLISH ) {
+	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
-		if ( DB::STATUS_DRAFT === $status ) {
+		if ( self::STATUS_DRAFT === $status ) {
 			$autosave = $this->get_newer_autosave();
 
 			if ( is_object( $autosave ) ) {
@@ -1254,7 +1279,7 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
 		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
-		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
+		$is_published = self::STATUS_PUBLISH === $this->post->post_status || self::STATUS_PRIVATE === $this->post->post_status;
 
 		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
