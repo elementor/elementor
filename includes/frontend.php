@@ -333,9 +333,18 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-runtime',
+			$this->get_js_assets_url( 'runtime', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
+				'elementor-runtime',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
@@ -442,6 +451,16 @@ class Frontend extends App {
 				'elementor-waypoints',
 				'swiper',
 				'share-link',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'external-handlers',
+			$this->get_js_assets_url( 'external-handlers', 'assets/js/' ),
+			[
+				'elementor-frontend',
 			],
 			ELEMENTOR_VERSION,
 			true
