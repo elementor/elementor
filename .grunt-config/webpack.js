@@ -70,12 +70,15 @@ const entry = {
 	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
-	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
-	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+};
+const frontendEntries = {
+	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
+	'external-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/external-handlers.js' ), dependOn: 'frontend' },
+	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 };
 
 const externals = {
@@ -106,26 +109,56 @@ const baseConfig = {
 	resolve: aliasList,
 };
 
-const webpackConfig = Object.assign( {}, baseConfig, {
+const devSharedConfig = {
+	...baseConfig,
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: '[name].[contenthash].bundle.js',
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
 	},
-	entry: entry,
 	watch: true,
-} );
+};
+
+const webpackConfig = [
+	{
+		...devSharedConfig,
+		name: 'base',
+		entry: entry,
+	},
+	{
+		...devSharedConfig,
+		name: 'frontend',
+		optimization: {
+			runtimeChunk:  {
+				name: 'runtime',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+		entry: frontendEntries,
+	},
+];
+
 
 const webpackProductionConfig = Object.assign( {}, baseConfig, {
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: '[name].[contenthash].bundle.min.js',
 		filename: '[name].js',
 	},
 	entry: {},
 	performance: { hints: false },
 	optimization: {
+		runtimeChunk: {
+			name: 'runtime.min',
+		},
+		splitChunks: {
+			minChunks: 2,
+		},
 		minimize: true,
 		minimizer: [
 			new TerserPlugin( {
@@ -140,12 +173,24 @@ const webpackProductionConfig = Object.assign( {}, baseConfig, {
 
 // Add minified entry points
 for ( const entryPoint in entry ) {
-	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
-	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
+	let entryValue = entry[ entryPoint ];
+
+	if ( entryValue.dependOn ) {
+		entryValue = { ...entryValue };
+
+		entryValue.dependOn += '.min';
+	}
+
+	webpackProductionConfig.entry[ entryPoint + '.min' ] = entryValue;
 }
+
+const defaultConfig = webpackConfig.map( ( config ) => {
+	return { ...config, watch: false };
+} );
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
+	default: defaultConfig,
 	production: webpackProductionConfig
 };
 
