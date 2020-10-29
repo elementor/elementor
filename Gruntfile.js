@@ -40,7 +40,7 @@ module.exports = function( grunt ) {
 	] );
 
 	grunt.registerTask( 'scripts', ( isDevMode = false ) => {
-		let taskName = isDevMode ? 'webpack:development' : 'webpack:production';
+		const taskName = isDevMode ? 'webpack:development' : 'webpack:production';
 
 		if ( ! isDevMode ) {
 			grunt.task.run( 'webpack:default' );

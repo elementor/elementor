@@ -75,6 +75,7 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 };
+
 const frontendEntries = {
 	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'external-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/external-handlers.js' ), dependOn: 'frontend' },
@@ -142,7 +143,6 @@ const webpackConfig = [
 	},
 ];
 
-
 const webpackProductionConfig = Object.assign( {}, baseConfig, {
 	mode: 'production',
 	output: {
@@ -176,6 +176,7 @@ for ( const entryPoint in entry ) {
 	let entryValue = entry[ entryPoint ];
 
 	if ( entryValue.dependOn ) {
+		// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
 		entryValue = { ...entryValue };
 
 		entryValue.dependOn += '.min';

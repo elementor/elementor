@@ -18,6 +18,6 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'toggle.default': Toggle,
 		'video.default': Video,
 		'image-carousel.default': ImageCarousel,
-		'text-editor.default': TextEditor
+		'text-editor.default': TextEditor,
 	};
 } );

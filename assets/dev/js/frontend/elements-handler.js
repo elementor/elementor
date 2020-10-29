@@ -1,6 +1,6 @@
 import globalHandler from './handlers/global';
-import sectionHandlers from "./handlers/section/section";
-import columnHandlers from "./handlers/column";
+import sectionHandlers from './handlers/section/section';
+import columnHandlers from './handlers/column';
 
 module.exports = function( $ ) {
 	const handlersInstances = {};
@@ -14,12 +14,10 @@ module.exports = function( $ ) {
 		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
-		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' )
+		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 	};
 
-	const addGlobalHandlers = () => {
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
-	};
+	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
 		elementorFrontend.hooks.addAction( 'frontend/element_ready/section', sectionHandlers );
