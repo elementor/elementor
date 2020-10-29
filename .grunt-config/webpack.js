@@ -35,7 +35,7 @@ const moduleRules = {
 			use: [
 				{
 					loader: 'babel-loader',
-					query: {
+					options: {
 						presets: [ '@wordpress/default' ],
 						plugins: [
 							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
