@@ -1,3 +1,4 @@
+import '../public-path';
 /* global elementorFrontendConfig */
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
@@ -12,7 +13,7 @@ const EventManager = require( 'elementor-utils/hooks' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
 
-class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
