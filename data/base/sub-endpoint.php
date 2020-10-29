@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
-abstract class SubEndpoint extends Endpoint {
+abstract class SubEndpoint extends Endpoint implements Interfaces\SubEndpoint {
 
 	/**
 	 * @var Endpoint
@@ -42,18 +42,33 @@ abstract class SubEndpoint extends Endpoint {
 	}
 
 	/**
-	 * Get parent endpoint.
+	 * Get sub-endpoint ancestors.
 	 *
-	 * @return \Elementor\Data\Base\Endpoint|\Elementor\Data\Base\SubEndpoint
+	 * @return \Elementor\Data\Base\Endpoint[]
 	 */
-	public function get_parent() {
-		return $this->parent_endpoint;
+	private function get_ancestors() {
+		$ancestors = [];
+		$parent = $this;
+
+		do {
+			if ( $parent ) {
+				$ancestors [] = $parent;
+			}
+
+			if ( ! is_callable( [ $parent, 'get_parent' ] ) ) {
+				break;
+			}
+
+			$parent = $parent->get_parent();
+		} while ( $parent );
+
+		return array_reverse( $ancestors );
 	}
 
 	public function get_base_route() {
 		$name = $this->get_name();
 		$parent = $this->get_parent();
-		$is_parent_sub_endpoint = $parent instanceof self;
+		$is_parent_sub_endpoint = $parent instanceof Interfaces\SubEndpoint;
 		$parent_base = $parent->get_base_route();
 		$route = $this->route;
 
@@ -78,15 +93,18 @@ abstract class SubEndpoint extends Endpoint {
 		return $this->controller->get_full_name() . '/' . $this->get_name_ancestry();
 	}
 
-	public function get_name_ancestry() {
-		$name = $this->get_name();
+	public function get_parent() {
+		return $this->parent_endpoint;
+	}
 
-		if ( $this->parent_endpoint instanceof SubEndpoint ) {
-			$name = $this->parent_endpoint->get_name_ancestry() . '/' . $name;
-		} else {
-			$name = $this->parent_endpoint->get_name() . '/' . $name;
+	public function get_name_ancestry() {
+		$result = '';
+		$ancestors = $this->get_ancestors();
+
+		foreach ( $ancestors as $ancestor ) {
+			$result .= $ancestor->get_name() . '/';
 		}
 
-		return $name;
+		return rtrim( $result, '/' );
 	}
 }

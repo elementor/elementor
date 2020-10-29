@@ -16,12 +16,6 @@ class Test_Manager extends Data_Test_Base {
 		$this->manager->kill_server();
 	}
 
-	public function tearDown() {
-		parent::tearDown();
-
-		$this->manager->kill_server();
-	}
-
 	public function test_get_controllers() {
 		$controller = $this->manager->register_controller( ControllerTemplate::class );
 		$controllers = $this->manager->get_controllers();

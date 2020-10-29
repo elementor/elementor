@@ -174,13 +174,15 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register endpoint.
 	 *
 	 * @param \Elementor\Data\Base\Endpoint $endpoint
+	 * @param array $args
 	 *
-	 * @return \Elementor\Data\Base\Endpoint
+	 * @return \Elementor\Data\Base\Endpoint\Proxy
 	 */
-	protected function register_endpoint( Endpoint $endpoint ) {
+	protected function register_endpoint( Endpoint $endpoint, $args = [] ) {
+		$endpoint = new Endpoint\Proxy( $endpoint );
 		$command = $endpoint->get_full_command();
 
-		if ( $endpoint instanceof Endpoint\Index ) {
+		if ( $endpoint->is_index_instance() ) {
 			$this->index_endpoint = $endpoint;
 		} else {
 			$this->endpoints[ $command ] = $endpoint;

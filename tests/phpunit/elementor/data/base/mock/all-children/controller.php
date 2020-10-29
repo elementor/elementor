@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Children;
+namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\AllChildren;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 use Elementor\Data\Base\Endpoint\Index;
@@ -26,6 +26,6 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Index\Children( $this ) );
+		$this->register_endpoint( new Index\AllChildren( $this ) );
 	}
 }

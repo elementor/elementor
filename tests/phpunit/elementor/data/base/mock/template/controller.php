@@ -33,7 +33,7 @@ class Controller extends \Elementor\Data\Base\Controller {
 
 	/**
 	 * @param $endpoint
-	 * @return \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint|\Elementor\Data\Base\Endpoint
+	 * @return \Elementor\Data\Base\Endpoint\Proxy|\Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
 	 */
 	public function do_register_endpoint( $endpoint ) {
 		return $this->register_endpoint( $endpoint );
@@ -43,9 +43,6 @@ class Controller extends \Elementor\Data\Base\Controller {
 		return $this->register_processor( $processor_class );
 	}
 
-	/**
-	 * @return \Elementor\Data\Base\Endpoint\Index|\Elementor\Data\Base\Endpoint\Index\Children|null
-	 */
 	public function get_endpoint_index() {
 		return $this->index_endpoint;
 	}

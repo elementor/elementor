@@ -20,10 +20,6 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return '';
 	}
 
-	public function do_register_sub_endpoint( $sub_endpoint ) {
-		return parent::register_sub_endpoint( $sub_endpoint );
-	}
-
 	public function get_sub_endpoints() {
 		return $this->sub_endpoints;
 	}

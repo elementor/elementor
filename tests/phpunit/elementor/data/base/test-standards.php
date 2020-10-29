@@ -21,6 +21,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
  */
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards;
+use WP_REST_Server;
 
 class Test_Standards extends Data_Test_Base {
 	public function test_only_controller() {
@@ -65,7 +66,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_controller->get_endpoint_index()->register_item_route( \WP_REST_Server::READABLE, [
+		$beta_controller->get_endpoint_index()->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_id',
 		] );
 
@@ -106,7 +107,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$beta_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_id',
 		] );
 
@@ -132,7 +133,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'gamma-items', $result );
 
 		// Arrange - '/alpha/1/beta/1/gamma/1'.
-		$gamma_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_sub_id',
 		] );
 
@@ -170,7 +171,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'gamma-items', $result );
 
 		// Arrange - '/alpha/1/beta/1/gamma/1'.
-		$gamma_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_sub_id',
 		] );
 
