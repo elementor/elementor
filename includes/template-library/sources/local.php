@@ -622,20 +622,22 @@ class Source_Local extends Source_Base {
 	 * @return array Local template data.
 	 */
 	public function get_data( array $args ) {
-		$db = Plugin::$instance->db;
-
 		$template_id = $args['template_id'];
 
-		// TODO: Validate the data (in JS too!).
-		if ( ! empty( $args['display'] ) ) {
-			$content = $db->get_builder( $template_id );
-		} else {
-			$document = Plugin::$instance->documents->get( $template_id );
-			$content = $document ? $document->get_elements_data() : [];
-		}
+		$document = Plugin::$instance->documents->get( $template_id );
+		$content = [];
 
-		if ( ! empty( $content ) ) {
-			$content = $this->replace_elements_ids( $content );
+		if ( $document ) {
+			// TODO: Validate the data (in JS too!).
+			if ( ! empty( $args['display'] ) ) {
+				$content = $document->get_elements_raw_data( null, true );
+			} else {
+				$content = $document->get_elements_data();
+			}
+
+			if ( ! empty( $content ) ) {
+				$content = $this->replace_elements_ids( $content );
+			}
 		}
 
 		$data = [
