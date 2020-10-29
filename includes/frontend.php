@@ -604,6 +604,10 @@ class Frontend extends App {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
+		if ( 'enabled' !== get_option( 'elementor_optimized_js_loading' ) ) {
+			wp_enqueue_script( 'external-handlers' );
+		}
+
 		$this->print_config();
 
 		/**
