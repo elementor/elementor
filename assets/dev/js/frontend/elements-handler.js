@@ -1,45 +1,31 @@
-import Accordion from './handlers/accordion';
-import Alert from './handlers/alert';
-import Counter from './handlers/counter';
-import Progress from './handlers/progress';
-import Tabs from './handlers/tabs';
-import Toggle from './handlers/toggle';
-import Video from './handlers/video';
-import ImageCarousel from './handlers/image-carousel';
-import TextEditor from './handlers/text-editor';
-import sectionHandlers from './handlers/section/section';
-import columnHandlers from './handlers/column';
 import globalHandler from './handlers/global';
+import sectionHandlers from "./handlers/section/section";
+import columnHandlers from "./handlers/column";
 
 module.exports = function( $ ) {
-	const self = this;
-
-	// element-type.skin-type
-	const handlers = {
-		// Elements
-		section: sectionHandlers,
-		column: columnHandlers,
-
-		// Widgets
-		'accordion.default': Accordion,
-		'alert.default': Alert,
-		'counter.default': Counter,
-		'progress.default': Progress,
-		'tabs.default': Tabs,
-		'toggle.default': Toggle,
-		'video.default': Video,
-		'image-carousel.default': ImageCarousel,
-		'text-editor.default': TextEditor,
-	};
-
 	const handlersInstances = {};
 
-	const addGlobalHandlers = function() {
+	this.widgetsHandlers = {
+		'accordion.default': () => import( /* webpackChunkName: 'accordion' */ './handlers/accordion' ),
+		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
+		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
+		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
+		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
+		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
+		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
+		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
+		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' )
+	};
+
+	const addGlobalHandlers = () => {
 		elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 	};
 
 	const addElementsHandlers = () => {
-		$.each( handlers, ( elementName, Handlers ) => {
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/section', sectionHandlers );
+		elementorFrontend.hooks.addAction( 'frontend/element_ready/column', columnHandlers );
+
+		$.each( this.widgetsHandlers, ( elementName, Handlers ) => {
 			const elementData = elementName.split( '.' );
 
 			elementName = elementData[ 0 ];
@@ -50,22 +36,26 @@ module.exports = function( $ ) {
 		} );
 	};
 
+	const isClassHandler = ( Handler ) => Handler.prototype instanceof elementorModules.frontend.handlers.Base;
+
 	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
 
 		elementorFrontend.hooks.addAction( `frontend/element_ready/${ elementName }${ skin }`, ( $element ) => {
-			this.addHandler( Handler, { $element: $element }, true );
+			if ( isClassHandler( Handler ) ) {
+				this.addHandler( Handler, { $element }, true );
+			} else {
+				const handlerValue = Handler();
+
+				if ( handlerValue instanceof Promise ) {
+					handlerValue.then( ( { default: dynamicHandler } ) => {
+						this.addHandler( dynamicHandler, { $element }, true );
+					} );
+				} else {
+					this.addHandler( handlerValue, { $element }, true );
+				}
+			}
 		} );
-	};
-
-	this.init = function() {
-		self.initHandlers();
-	};
-
-	this.initHandlers = function() {
-		addGlobalHandlers();
-
-		addElementsHandlers();
 	};
 
 	this.addHandler = function( HandlerClass, options ) {
@@ -105,10 +95,20 @@ module.exports = function( $ ) {
 
 	this.getHandlers = function( handlerName ) {
 		if ( handlerName ) {
-			return handlers[ handlerName ];
+			const widgetHandler = this.widgetsHandlers[ handlerName ];
+
+			if ( isClassHandler( widgetHandler ) ) {
+				return widgetHandler;
+			}
+
+			return new Promise( ( res ) => {
+				widgetHandler().then( ( { default: dynamicHandler } ) => {
+					res( dynamicHandler );
+				} );
+			} );
 		}
 
-		return handlers;
+		return this.widgetsHandlers;
 	};
 
 	this.runReadyTrigger = function( scope ) {
@@ -131,5 +131,11 @@ module.exports = function( $ ) {
 		if ( 'widget' === elementType ) {
 			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
 		}
+	};
+
+	this.init = () => {
+		addGlobalHandlers();
+
+		addElementsHandlers();
 	};
 };
