@@ -229,10 +229,11 @@ class Deprecation {
 	 *
 	 * Handles the deprecation process for hooks.
 	 *
-	 * @param $hook
-	 * @param $version
+	 * @param string $hook
+	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
 	 * @param string $base_version Optional. Default is `null`
+	 * @throws \Exception
 	 */
 	public function deprecated_hook( $hook, $version, $replacement = '', $base_version = null ) {
 		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
@@ -247,8 +248,9 @@ class Deprecation {
 	 *
 	 * Handles the deprecation process for function arguments.
 	 *
-	 * @param $function
-	 * @param $version
+	 * @param string $function
+	 * @param string $version
+	 * @throws \Exception
 	 */
 	public function deprecated_argument( $function, $version ) {
 		$print_deprecated = $this->check_deprecation( $function, $version, '' );
