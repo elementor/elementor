@@ -15,7 +15,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Index endpoint.
 	 *
-	 * @var \Elementor\Data\Base\Endpoint\Index
+	 * @var \Elementor\Data\Base\Endpoint\Proxy|\Elementor\Data\Base\Endpoint\Index
 	 */
 	public $index_endpoint = null;
 
@@ -174,11 +174,10 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register endpoint.
 	 *
 	 * @param \Elementor\Data\Base\Endpoint $endpoint
-	 * @param array $args
 	 *
 	 * @return \Elementor\Data\Base\Endpoint\Proxy
 	 */
-	protected function register_endpoint( Endpoint $endpoint, $args = [] ) {
+	protected function register_endpoint( Endpoint $endpoint ) {
 		$endpoint = new Endpoint\Proxy( $endpoint );
 		$command = $endpoint->get_full_command();
 
