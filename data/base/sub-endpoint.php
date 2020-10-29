@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Data\Base;
 
-abstract class SubEndpoint extends Endpoint implements Interfaces\EndpointItems {
+abstract class SubEndpoint extends Endpoint implements Interfaces\SubEndpoint {
 
 	/**
 	 * @var Endpoint
@@ -42,6 +42,8 @@ abstract class SubEndpoint extends Endpoint implements Interfaces\EndpointItems 
 	}
 
 	/**
+	 * Get sub-endpoint ancestors.
+	 *
 	 * @return \Elementor\Data\Base\Endpoint[]
 	 */
 	private function get_ancestors() {
@@ -63,19 +65,10 @@ abstract class SubEndpoint extends Endpoint implements Interfaces\EndpointItems 
 		return array_reverse( $ancestors );
 	}
 
-	/**
-	 * Get parent endpoint.
-	 *
-	 * @return \Elementor\Data\Base\Endpoint|\Elementor\Data\Base\SubEndpoint
-	 */
-	public function get_parent() {
-		return $this->parent_endpoint;
-	}
-
 	public function get_base_route() {
 		$name = $this->get_name();
 		$parent = $this->get_parent();
-		$is_parent_sub_endpoint = $parent instanceof self;
+		$is_parent_sub_endpoint = $parent instanceof Interfaces\SubEndpoint;
 		$parent_base = $parent->get_base_route();
 		$route = $this->route;
 
@@ -100,6 +93,10 @@ abstract class SubEndpoint extends Endpoint implements Interfaces\EndpointItems 
 		return $this->controller->get_full_name() . '/' . $this->get_name_ancestry();
 	}
 
+	public function get_parent() {
+		return $this->parent_endpoint;
+	}
+
 	public function get_name_ancestry() {
 		$result = '';
 		$ancestors = $this->get_ancestors();
@@ -110,5 +107,4 @@ abstract class SubEndpoint extends Endpoint implements Interfaces\EndpointItems 
 
 		return rtrim( $result, '/' );
 	}
-
 }

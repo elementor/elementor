@@ -26,8 +26,6 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Index\AllChildren( $this ), [
-			'index' => true,
-		] );
+		$this->register_endpoint( new Index\AllChildren( $this ) );
 	}
 }
