@@ -121,7 +121,7 @@ class Module extends BaseApp {
 	 * Module constructor.
 	 */
 	public function __construct() {
-		add_action( 'elementor/frontend/get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
+		add_action( 'elementor/frontend/before_get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
 		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
 	}
 }
