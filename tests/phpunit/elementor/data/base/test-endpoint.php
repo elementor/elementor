@@ -6,7 +6,6 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
-use Exception;
 
 class Test_Endpoint extends Data_Test_Base {
 	public function test_create_simple() {
@@ -80,7 +79,10 @@ class Test_Endpoint extends Data_Test_Base {
 		$controller_instance = new ControllerTemplate();
 		$endpoint_instance = new EndpointTemplate( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
+		/**
+		 * @var $sub_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $endpoint_instance, 'test-route' )
 		);
 		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
@@ -103,7 +105,10 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$this->manager->register_controller_instance( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
+		/**
+		 * @var $sub_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $endpoint_instance, 'test-route' )
 		);
 		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
@@ -121,10 +126,13 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$this->manager->register_controller_instance( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $endpoint_instance, '/first-sub-route' )
 		);
 
+		/**
+		 * @var $descendant_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
 		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $sub_endpoint_instance, '/second-sub-route' )
 		);
@@ -150,10 +158,13 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$this->manager->register_controller_instance( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $endpoint_instance, 'first-sub-route' )
 		);
 
+		/**
+		 * @var $descendant_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
 		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
 			new SubEndpoint( $sub_endpoint_instance, 'first-sub-route/second-sub-route' )
 		);

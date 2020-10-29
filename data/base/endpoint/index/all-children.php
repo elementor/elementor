@@ -2,6 +2,7 @@
 namespace Elementor\Data\Base\Endpoint\Index;
 
 use Elementor\Data\Base\Endpoint\Index;
+use WP_REST_Request;
 
 /**
  * class AllChildren, is optional endpoint.
@@ -50,7 +51,7 @@ class AllChildren extends Index {
 				continue;
 			}
 
-			$result = $endpoint->get_items( new \WP_REST_Request() );
+			$result = $endpoint->get_items( new WP_REST_Request() );
 
 			if ( $result ) {
 				$response[ $endpoint->get_name() ] = $result;

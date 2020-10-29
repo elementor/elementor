@@ -4,8 +4,7 @@ namespace Elementor\Data\Base;
 use Elementor\Data\Manager;
 use WP_REST_Server;
 
-abstract class Endpoint implements Interfaces\EndpointItems {
-
+abstract class Endpoint implements Interfaces\Endpoint {
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
@@ -40,50 +39,9 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		$this->register();
 	}
 
-	/**
-	 * Get endpoint name.
-	 *
-	 * @return string
-	 */
 	abstract public function get_name();
 
-	/**
-	 * Get endpoint format.
-	 *
-	 * @note The formats that generated using this function, will be used only be `Data\Manager::run()`.
-	 *
-	 * @return string
-	 */
 	abstract public function get_format();
-
-	/**
-	 * Get base route.
-	 *
-	 * @note This method should always return the base route starts with '/' and ends without '/'.
-	 *
-	 * @return string
-	 */
-	public function get_base_route() {
-		return untrailingslashit( '/' . $this->controller->get_rest_base() . '/' . $this->get_public_name() );
-	}
-
-	/**
-	 * Get public name.
-	 *
-	 * @return string
-	 */
-	public function get_public_name() {
-		return $this->get_name();
-	}
-
-	/**
-	 * Get full command name ( including index ).
-	 *
-	 * @return string
-	 */
-	public function get_full_command() {
-		return $this->controller->get_full_name() . '/' . $this->get_name();
-	}
 
 	/**
 	 * Register the endpoint.
@@ -94,38 +52,22 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		$this->register_items_route();
 	}
 
-	/**
-	 * Register sub endpoint.
-	 *
-	 * @param \Elementor\Data\Base\SubEndpoint $endpoint
-	 *
-	 * @return \Elementor\Data\Base\SubEndpoint
-	 */
-	public function register_sub_endpoint( SubEndpoint $endpoint ) {
-		$command = $endpoint->get_full_command();
-		$format = $endpoint->get_format();
-
-		// TODO: Remove - Backwards compatibility.
-		$endpoint_proxy = new Endpoint\Proxy( $endpoint );
-
-		$this->sub_endpoints[ $command ] = $endpoint_proxy;
-
-		Manager::instance()->register_endpoint_format( $command, $format );
-
-		return $endpoint;
+	public function get_controller() {
+		return $this->controller;
 	}
 
-	/**
-	 * Base callback.
-	 *
-	 * @note All reset requests from the client should pass this function.
-	 *
-	 * @param string $methods
-	 * @param \WP_REST_Request $request
-	 * @param bool $is_multi
-	 *
-	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
-	 */
+	public function get_base_route() {
+		return untrailingslashit( '/' . $this->controller->get_rest_base() . '/' . $this->get_public_name() );
+	}
+
+	public function get_public_name() {
+		return $this->get_name();
+	}
+
+	public function get_full_command() {
+		return $this->controller->get_full_name() . '/' . $this->get_name();
+	}
+
 	public function base_callback( $methods, $request, $is_multi = false ) {
 		if ( $request ) {
 			$json_params = $request->get_json_params();
@@ -160,15 +102,6 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		return rest_ensure_response( $result );
 	}
 
-	/**
-	 * Get permission callback.
-	 *
-	 * By default get permission callback from the controller.
-	 *
-	 * @param \WP_REST_Request $request Full data about the request.
-	 *
-	 * @return boolean
-	 */
 	public function get_permission_callback( $request ) {
 		return $this->controller->get_permission_callback( $request );
 	}
@@ -205,13 +138,6 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
-	/**
-	 * Register item route.
-	 *
-	 * @param string $route
-	 * @param array $args
-	 * @param string $methods
-	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$id_arg_name = 'id';
 
@@ -235,27 +161,12 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		}, $args );
 	}
 
-	/**
-	 * Register items route.
-	 *
-	 * @param string $methods
-	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request, true );
 		} );
 	}
 
-	/**
-	 * Register route.
-	 *
-	 * @param string $route
-	 * @param string $methods
-	 * @param null $callback
-	 * @param array $args
-	 *
-	 * @return bool
-	 */
 	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
 			trigger_error( 'Invalid method.', E_USER_ERROR );
@@ -275,8 +186,16 @@ abstract class Endpoint implements Interfaces\EndpointItems {
 		] );
 	}
 
-	// TODO: Remove - Backwards computability.
-	public function get_controller() {
-		return $this->controller;
+	public function register_sub_endpoint( SubEndpoint $endpoint ) {
+		$endpoint = new SubEndpoint\Proxy( $endpoint );
+
+		$command = $endpoint->get_full_command();
+		$format = $endpoint->get_format();
+
+		$this->sub_endpoints[ $command ] = $endpoint;
+
+		Manager::instance()->register_endpoint_format( $command, $format );
+
+		return $endpoint;
 	}
 }

@@ -65,7 +65,7 @@ class SubController extends \Elementor\Data\Base\SubController {
 
 	/**
 	 * @param $endpoint
-	 * @return \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint|\Elementor\Data\Base\Endpoint
+	 * @return \Elementor\Data\Base\Endpoint\Proxy|\Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
 	 */
 	public function do_register_endpoint( $endpoint ) {
 		return $this->register_endpoint( $endpoint );
