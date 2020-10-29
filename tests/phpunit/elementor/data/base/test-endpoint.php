@@ -1,101 +1,258 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Index;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as EndpointTemplate;
-use Exception;
 
 class Test_Endpoint extends Data_Test_Base {
-	public function test_create_simple() {
-		$test_controller_instance = new ControllerWithEndpoint();
+	public function test_get_base_route() {
+		// Arrange.
+		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
-		// Validate `$this->>register()`.
-		$this->assertCount( 1, $test_controller_instance->endpoints );
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
+
+		// Act.
+		$actual = $endpoint->get_base_route();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			'',
+			$controller->get_name(),
+			$endpoint->get_name(),
+		] ),  $actual );
 	}
 
-	public function test_get_base_route() {
-		$controller_instance = new ControllerWithEndpoint();
+	public function test_get_base_route__from_parent_index_endpoint() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+
+		// Trigger register.
 		$this->manager->run_server();
 
-		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
+		$index_endpoint = $controller->get_endpoint_index();
 
-		$this->assertEquals(
-			'/' . $controller_instance->get_name() . '/' . $endpoint_instance->get_name(),
-			$endpoint_instance->get_base_route()
-		);
+		$sub_endpoint = new Mock\Template\Endpoint( $index_endpoint );
+
+		// Act.
+		$actual = $sub_endpoint->get_base_route();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$sub_endpoint->get_name(),
+		] ),  $actual );
+	}
+
+	public function test_get_base_route__from_sub_endpoint() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint(  $endpoint );
+
+		// Act.
+		$actual = $sub_endpoint->get_base_route();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$endpoint->get_name(),
+			$sub_endpoint->get_name(),
+		] ), $actual );
+	}
+
+	public function test_get_base_route__from_grandchild_endpoint() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint );
+		$descendant_endpoint = new Mock\Template\Endpoint( $sub_endpoint );
+
+		// Act.
+		$actual = $descendant_endpoint->get_base_route();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$endpoint->get_name(),
+			$sub_endpoint->get_name(),
+			$descendant_endpoint->get_name()
+		] ), $actual );
+	}
+
+	public function test_get_controller() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint );
+
+		// Act + Assert.
+		$this->assertEquals( $controller, $endpoint->get_controller() );
+		$this->assertEquals( $controller, $sub_endpoint->get_controller() );
+	}
+
+	public function test_get_parent() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint );
+
+		// Act.
+		$expected = $sub_endpoint->get_parent();
+
+		// Assert.
+		$this->assertEquals( $expected, $endpoint );
 	}
 
 	public function test_get_public_name() {
-		$controller_instance = new ControllerWithEndpoint();
-
+		// Arrange.
+		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
-		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
-		$endpoint_index_instance = $controller_instance->get_endpoint_index();
+		$endpoint_instance = reset( $controller->endpoints );
+		$index_endpoint = $controller->get_endpoint_index();
 
-		$this->assertEquals( '', $endpoint_index_instance->get_public_name() );
-		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_instance->get_public_name() );
+		// Act.
+		$index_endpoint_name = $index_endpoint->get_public_name();
+		$endpoint_name = $endpoint_instance->get_public_name();
+
+		// Assert.
+		$this->assertEquals( '', $index_endpoint_name );
+		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_name );
 	}
 
 	public function test_get_full_command() {
+		// Arrange.
 		$controller_instance = new ControllerWithEndpoint();
-
 		$this->manager->run_server();
 
-		$endpoint_instance = array_values( $controller_instance->endpoints )[ 0 ];
+		$endpoint_instance = reset( $controller_instance->endpoints );
+		$excepted = $controller_instance->get_name() . '/' . $endpoint_instance->get_name();
 
-		$this->assertEquals( $controller_instance->get_name() . '/' . $endpoint_instance->get_name(), $endpoint_instance->get_full_command() );
+		// Act.
+		$actual = $endpoint_instance->get_full_command();
+
+		$this->assertEquals( $excepted, $actual );
 	}
 
-	public function test_get_base_route_index_endpoint() {
-		$this->manager->run_server();
-		$controller_instance = new ControllerTemplate();
+	public function test_get_full_command__from_parent_sub_endpoint() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
 
-		$endpoint_instance = $controller_instance->do_register_endpoint( new Index( $controller_instance ) );
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint(  $endpoint );
 
-		$this->assertEquals( '/' . $controller_instance->get_name() , $endpoint_instance->get_base_route() );
+		// Act.
+		$actual = $sub_endpoint->get_full_command();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$endpoint->get_name(),
+			$sub_endpoint->get_name(),
+		] ), $actual );
 	}
 
-	public function test_register() {
-		$this->manager->run_server();
+	public function test_get_full_command__from_grandchild_endpoint() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
 
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint, 'first-sub-route' );
+		$descendant_endpoint = new Mock\Template\Endpoint( $sub_endpoint, 'second-sub-route' );
 
-		$endpoint_instance->set_test_data( 'get_items', 'valid' );
+		// Act.
+		$actual = $descendant_endpoint->get_full_command();
 
-		// Validate register did 'register_items_route'.
-		$data = $this->manager->run_endpoint( $controller_instance->get_name() . '/' . $endpoint_instance->get_name() );
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$endpoint->get_name(),
+			$sub_endpoint->get_name(),
+			$descendant_endpoint->get_name()
+		] ), $actual );
+	}
 
-		$this->assertEquals( $data, 'valid' );
+	public function test_get_name_ancestry() {
+		// Arrange.
+		$controller = new Mock\Template\Controller();
+		$controller->bypass_original_register();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint );
+
+		// Act.
+		$actual = $sub_endpoint->get_name_ancestry();
+
+		// Assert.
+		$this->assertEquals( implode( '/', [
+			$controller->get_name(),
+			$endpoint->get_name(),
+			$sub_endpoint->get_name(),
+		] ), $actual );
 	}
 
 	public function test_register_sub_endpoint() {
+		// Arrange.
 		$this->manager->run_server();
 
 		$controller_instance = new ControllerTemplate();
 		$endpoint_instance = new EndpointTemplate( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
-			new SubEndpoint( $endpoint_instance, 'test-route' )
+		/**
+		 * @var $sub_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
+			new Endpoint( $endpoint_instance, 'test-route' )
 		);
 		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
 
 		$endpoint = $controller_instance->get_name()  . '/' .
-			$endpoint_instance->get_name() .
-            '/test-route/' .
-            $sub_endpoint_instance->get_name();
+		            $endpoint_instance->get_name() .
+		            '/test-route/' .
+		            $sub_endpoint_instance->get_name();
 
+		// Act.
 		$data = $this->manager->run_endpoint( $endpoint  );
 
+		// Assert.
 		$this->assertEquals( $data, 'valid' );
 	}
 
-	public function test_register_sub_endpoint_run_as_command() {
+	public function test_register_sub_endpoint__run_as_command_from_sub_endpoint() {
+		// Arrange.
+		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
+
+		$this->manager->run_server();
+
+		$endpoint = new Mock\Template\Endpoint( $controller );
+
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint, 'test-route' );
+		$sub_endpoint->set_test_data( 'get_items', 'valid' );
+
+		$endpoint->register_sub_endpoint( $sub_endpoint );
+
+		// Act.
+		$data = $this->manager->run( $sub_endpoint->get_full_command() );
+
+		// Assert.
+		$this->assertEquals( 'valid', $data );
+	}
+
+	public function test_register_sub_endpoint___run_as_endpoint_from_grandchild_endpoint() {
+		// Arrange.
 		$this->manager->run_server();
 
 		$controller_instance = new ControllerTemplate();
@@ -103,30 +260,15 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$this->manager->register_controller_instance( $controller_instance );
 
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
-			new SubEndpoint( $endpoint_instance, 'test-route' )
-		);
-		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
-
-		$data = $this->manager->run( $sub_endpoint_instance->get_full_command() );
-
-		$this->assertEquals( $data, 'valid' );
-	}
-
-	public function test_register_sub_endpoint_with_sub_endpoint_parent() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$this->manager->register_controller_instance( $controller_instance );
-
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
-			new SubEndpoint( $endpoint_instance, '/first-sub-route' )
+		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
+			new Endpoint( $endpoint_instance, '/first-sub-route' )
 		);
 
+		/**
+		 * @var $descendant_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
 		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
-			new SubEndpoint( $sub_endpoint_instance, '/second-sub-route' )
+			new Endpoint( $sub_endpoint_instance, '/second-sub-route' )
 		);
 		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
 
@@ -137,310 +279,55 @@ class Test_Endpoint extends Data_Test_Base {
 		            'second-sub-route/' .
 		            $descendant_endpoint_instance->get_name();
 
+		// Act.
 		$data = $this->manager->run_endpoint( $endpoint  );
 
+		// Assert.
 		$this->assertEquals( $data, 'valid' );
 	}
 
-	public function test_register_sub_endpoint_with_sub_endpoint_parent_run_as_command() {
+	public function test_register_sub_endpoint___run_as_command_from_grandchild_endpoint() {
+		// Arrange.
+		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
+
 		$this->manager->run_server();
 
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
+		$endpoint = new Mock\Template\Endpoint( $controller );
+		$sub_endpoint = $endpoint->register_sub_endpoint( new Mock\Template\Endpoint( $endpoint ) );
 
-		$this->manager->register_controller_instance( $controller_instance );
-
-		$sub_endpoint_instance = $endpoint_instance->do_register_sub_endpoint(
-			new SubEndpoint( $endpoint_instance, 'first-sub-route' )
+		/**
+		 * @var $descendant_endpoint \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
+		$descendant_endpoint = $sub_endpoint->register_sub_endpoint(
+			new Mock\Template\Endpoint( $sub_endpoint, 'first-sub-route/second-sub-route' )
 		);
+		$descendant_endpoint->set_test_data( 'get_items', 'valid' );
 
-		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
-			new SubEndpoint( $sub_endpoint_instance, 'first-sub-route/second-sub-route' )
-		);
-		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
+		// Act.
+		$data = $this->manager->run( $descendant_endpoint->get_full_command() );
 
-		$data = $this->manager->run( $descendant_endpoint_instance->get_full_command()  );
-
-		$this->assertEquals( $data, 'valid' );
+		// Assert.
+		$this->assertEquals( 'valid', $data );
 	}
 
-	public function test_base_callback() {
-		$excepted_data = [ 'test' => true ];
-		$controller = new ControllerTemplate();
-		$controller->bypass_original_register();
+	public function test_register_sub_endpoint___run_as_command_from_sub_endpoint_of_index_endpoint() {
+		// Arrange.
+		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
 
-		$endpoint_instance = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-
-		$endpoint_instance->set_test_data( 'get_items', $excepted_data );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::READABLE, new \WP_REST_Request(), true );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'get_item', $excepted_data );
-		$request = new \WP_REST_Request( 'GET', [ 'id' => true ] );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::READABLE, $request, false );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'create_items', $excepted_data );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::CREATABLE, new \WP_REST_Request(), true );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'create_item', $excepted_data );
-		$request = new \WP_REST_Request( 'CREATE', [ 'id' => true ] );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::CREATABLE, $request, false );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'update_items', $excepted_data );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::EDITABLE, new \WP_REST_Request(), true );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'update_item', $excepted_data );
-		$request = new \WP_REST_Request( 'PUT', [ 'id' => true ] );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::EDITABLE, $request, false );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'delete_items', $excepted_data );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::DELETABLE, new \WP_REST_Request(), true );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-
-		$endpoint_instance->set_test_data( 'delete_item', $excepted_data );
-		$request = new \WP_REST_Request( 'DELETE', [ 'id' => true ] );
-		$result = $endpoint_instance->base_callback( \WP_REST_Server::DELETABLE, $request, false );
-		$this->assertEquals( $excepted_data, $result->get_data() );
-	}
-
-	public function test_get_item() {
 		$this->manager->run_server();
 
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'get_item', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->get_item( null,null ) );
-	}
-
-	public function test_get_item_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_item_route();
-
-		$endpoint_instance->set_test_data( 'get_item', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint ) );
-	}
-
-	public function test_get_items() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'get_items', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->get_items( null ) );
-	}
-
-	public function test_get_items_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-
-		$endpoint_instance->set_test_data( 'get_items', 'valid' );
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( trim( $endpoint_instance->get_base_route(), '/' ) ) );
-	}
-
-	public function test_create_item() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'create_item', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->create_item( null,null ) );
-	}
-
-	public function test_create_item_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_item_route( \WP_REST_Server::CREATABLE );
-
-		$endpoint_instance->set_test_data( 'create_item', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], \WP_REST_Server::CREATABLE ) );
-	}
-
-	public function test_create_items() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'create_items', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->create_items( null ) );
-	}
-
-	public function test_create_items_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_items_route( \WP_REST_Server::CREATABLE );
-
-		$endpoint_instance->set_test_data( 'create_items', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'POST' ) );
-	}
-
-	public function test_update_item() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'update_item', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->update_item( null,null ) );
-	}
-
-	public function test_update_item_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_item_route( \WP_REST_Server::EDITABLE );
-
-		$endpoint_instance->set_test_data( 'update_item', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'PUT' ) );
-	}
-
-	public function test_update_items() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'update_items', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->update_items( null ) );
-	}
-
-	public function test_update_items_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_items_route( \WP_REST_Server::EDITABLE );
-
-		$endpoint_instance->set_test_data( 'update_items', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'PUT' ) );
-	}
-
-	public function test_delete_item() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'delete_item', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->delete_item( null,null ) );
-	}
-
-	public function test_delete_item_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_item_route( \WP_REST_Server::DELETABLE );
-
-		$endpoint_instance->set_test_data( 'delete_item', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' ) . '/fake_id';
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'DELETE' ) );
-	}
-
-	public function test_delete_items() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-
-		$endpoint_instance->set_test_data( 'delete_items', 'valid' );
-
-		$this->assertEquals( 'valid', $endpoint_instance->delete_items( null ) );
-	}
-
-	public function test_delete_items_simulated() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = $controller_instance->do_register_endpoint( new EndpointTemplate( $controller_instance ) );
-		$endpoint_instance->register_items_route( \WP_REST_Server::DELETABLE );
-
-		$endpoint_instance->set_test_data( 'delete_items', 'valid' );
-		$endpoint = trim( $endpoint_instance->get_base_route(), '/' );
-
-		$this->assertEquals( 'valid', $this->manager->run_endpoint( $endpoint, [], 'DELETE' ) );
-	}
-
-	public function test_register_item_route() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$controller_instance->bypass_original_register();
-
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-		$endpoint_instance->register_item_route();
-
-		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/(?P<id>[\w]+)';
-
-		$data = $controller_instance->get_controller_index()->get_data();
-
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
-	}
-
-	public function test_register_items_route() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$controller_instance->bypass_original_register();
-
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-		$endpoint_instance->register_items_route();
-
-		$data = $controller_instance->get_controller_index()->get_data();
-		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name();
-
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
-	}
-
-	public function test_register_route() {
-		$this->manager->run_server();
-
-		$controller_instance = new ControllerTemplate();
-		$controller_instance->bypass_original_register();
-
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
-		$endpoint_instance->register_route( '/custom-route' );
-
-		$data = $controller_instance->get_controller_index()->get_data();
-		$except_route = '/' . $controller_instance->get_controller_route() . '/' . $endpoint_instance->get_name() . '/custom-route';
-
-		$this->assertArrayHaveKeys( [ $except_route ], $data['routes'] );
+		$index_endpoint = $controller->index_endpoint;
+
+		/**
+		 * @var $sub_endpoint \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 */
+		$sub_endpoint = $index_endpoint->register_sub_endpoint( new Mock\Template\Endpoint( $index_endpoint ) );
+		$sub_endpoint->set_test_data( 'get_items', 'valid' );
+
+		// Act.
+		$data = $this->manager->run( $sub_endpoint->get_full_command() );
+
+		// Assert.
+		$this->assertEquals( 'valid', $data );
 	}
 }

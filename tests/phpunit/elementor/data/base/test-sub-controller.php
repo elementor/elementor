@@ -8,24 +8,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as Cont
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as SubControllerTemplate;
 
 class Test_Sub_Controller extends Data_Test_Base {
-	public function test_create_simple() {
-		// Arrange.
-		$controller = $this->manager->register_controller( new ControllerTemplate() );
-
-		$sub_controller = new SubControllerTemplate( $controller );
-
-		$this->manager->run_server();
-
-		$route = '/elementor/v1' . $sub_controller->get_endpoint_index()->get_base_route();
-
-		// Act.
-		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
-
-		// Assert.
-		$this->assertArrayHaveKeys( [ $route ], $rest_index['routes'] );
-	}
-
-	public function test_get_reset_base() {
+	public function test_get_rest_base() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
@@ -47,7 +30,23 @@ class Test_Sub_Controller extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( $controller->get_name() . '/' . $sub_controller->get_name(), $actual );
+	}
 
+	public function test_execute_simple() {
+		// Arrange.
+		$controller = $this->manager->register_controller( new ControllerTemplate() );
+
+		$sub_controller = new SubControllerTemplate( $controller );
+
+		$this->manager->run_server();
+
+		$route = '/elementor/v1' . $sub_controller->get_endpoint_index()->get_base_route();
+
+		// Act.
+		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
+
+		// Assert.
+		$this->assertArrayHaveKeys( [ $route ], $rest_index['routes'] );
 	}
 
 	public function test_execute_sub_controller_from_index_endpoint() {

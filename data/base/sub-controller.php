@@ -25,16 +25,6 @@ abstract class SubController extends Controller {
 		parent::__construct();
 	}
 
-	public function get_full_name() {
-		return $this->parent_controller->get_name() . '/' . parent::get_full_name();
-	}
-
-	public function get_rest_base() {
-		$route = $this->get_route();
-
-		return $this->parent_controller->get_rest_base() . $route . '/' . $this->get_name();
-	}
-
 	/**
 	 * Get parent controller name.
 	 *
@@ -47,13 +37,21 @@ abstract class SubController extends Controller {
 	 */
 	abstract public function get_route();
 
+	public function get_full_name() {
+		return $this->parent_controller->get_name() . '/' . parent::get_full_name();
+	}
+
+	public function get_rest_base() {
+		$route = $this->get_route();
+
+		return $this->parent_controller->get_rest_base() . $route . '/' . $this->get_name();
+	}
+
 	public function get_parent() {
 		return $this->parent_controller;
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new SubIndexEndpoint( $this ), [
-			'index' => true,
-		] );
+		$this->register_endpoint( new SubIndexEndpoint( $this ) );
 	}
 }

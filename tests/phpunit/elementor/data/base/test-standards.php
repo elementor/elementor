@@ -8,19 +8,12 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\Base;
  * Try reach the standards with controllers, sub-controllers, endpoints, sub-endpoints.
  * at least show where the limits for them.
  *
- * @important: Currently using only 'out of box' endpoints and controllers, the route limit will be '/alpha/1/'. since:
- * There is no way to attach on 'default controller index endpoint' which is require: 'sub-endpoint'.
- * They only way possible is by manual extending Endpoint class, and override few methods,
- * check the namespace `Elementor\Data\Base\Endpoint\Index` for more information.
- *
- * Also, using controllers, sub-controllers and endpoints the limit will be '/alpha/1/beta/1'.
- * The issue is that gamma endpoint route, will be '/alpha/(?P<sub_id>[\w]+)/beta/gamma'.
- * And not '/alpha/(?P<id>[\w]+)/beta/(?P<sub_id>[\w]+)/gamma' as may assumed.
- *
- * currently 'out of box' solution for reaching '/alpha/1/beta/1/gamma/1/', is classes: described in the tests below.
+ * @important
+ * term: endpoint, parent is controller.
+ * term: sub-endpoint is basically the same endpoint, but parent is also endpoint.
  */
-
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards;
+use WP_REST_Server;
 
 class Test_Standards extends Data_Test_Base {
 	public function test_only_controller() {
@@ -65,7 +58,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_controller->get_endpoint_index()->register_item_route( \WP_REST_Server::READABLE, [
+		$beta_controller->get_endpoint_index()->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_id',
 		] );
 
@@ -106,7 +99,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'beta-items', $result );
 
 		// Arrange - '/alpha/1/beta/1'.
-		$beta_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$beta_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_id',
 		] );
 
@@ -132,7 +125,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'gamma-items', $result );
 
 		// Arrange - '/alpha/1/beta/1/gamma/1'.
-		$gamma_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_sub_id',
 		] );
 
@@ -170,7 +163,7 @@ class Test_Standards extends Data_Test_Base {
 		$this->assertEquals( 'gamma-items', $result );
 
 		// Arrange - '/alpha/1/beta/1/gamma/1'.
-		$gamma_sub_endpoint->register_item_route( \WP_REST_Server::READABLE, [
+		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
 			'id_arg_name' => 'sub_sub_id',
 		] );
 
