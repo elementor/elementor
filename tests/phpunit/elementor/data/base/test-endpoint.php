@@ -122,28 +122,28 @@ class Test_Endpoint extends Data_Test_Base {
 		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
-		$endpoint_instance = reset( $controller->endpoints );
+		$endpoint = reset( $controller->endpoints );
 		$index_endpoint = $controller->get_endpoint_index();
 
 		// Act.
 		$index_endpoint_name = $index_endpoint->get_public_name();
-		$endpoint_name = $endpoint_instance->get_public_name();
+		$endpoint_name = $endpoint->get_public_name();
 
 		// Assert.
 		$this->assertEquals( '', $index_endpoint_name );
-		$this->assertEquals( $endpoint_instance->get_name(), $endpoint_name );
+		$this->assertEquals( $endpoint->get_name(), $endpoint_name );
 	}
 
 	public function test_get_full_command() {
 		// Arrange.
-		$controller_instance = new ControllerWithEndpoint();
+		$controller = new ControllerWithEndpoint();
 		$this->manager->run_server();
 
-		$endpoint_instance = reset( $controller_instance->endpoints );
-		$excepted = $controller_instance->get_name() . '/' . $endpoint_instance->get_name();
+		$endpoint = reset( $controller->endpoints );
+		$excepted = $controller->get_name() . '/' . $endpoint->get_name();
 
 		// Act.
-		$actual = $endpoint_instance->get_full_command();
+		$actual = $endpoint->get_full_command();
 
 		$this->assertEquals( $excepted, $actual );
 	}
@@ -211,21 +211,21 @@ class Test_Endpoint extends Data_Test_Base {
 		// Arrange.
 		$this->manager->run_server();
 
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
+		$controller = new ControllerTemplate();
+		$endpoint = new EndpointTemplate( $controller );
 
 		/**
-		 * @var $sub_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 * @var $sub_endpoint \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
 		 */
-		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
-			new Endpoint( $endpoint_instance, 'test-route' )
+		$sub_endpoint = $endpoint->register_sub_endpoint(
+			new Endpoint( $endpoint, 'test-route' )
 		);
-		$sub_endpoint_instance->set_test_data( 'get_items', 'valid' );
+		$sub_endpoint->set_test_data( 'get_items', 'valid' );
 
-		$endpoint = $controller_instance->get_name()  . '/' .
-		            $endpoint_instance->get_name() .
+		$endpoint = $controller->get_name()  . '/' .
+		            $endpoint->get_name() .
 		            '/test-route/' .
-		            $sub_endpoint_instance->get_name();
+		            $sub_endpoint->get_name();
 
 		// Act.
 		$data = $this->manager->run_endpoint( $endpoint  );
@@ -258,29 +258,29 @@ class Test_Endpoint extends Data_Test_Base {
 		// Arrange.
 		$this->manager->run_server();
 
-		$controller_instance = new ControllerTemplate();
-		$endpoint_instance = new EndpointTemplate( $controller_instance );
+		$controller = new ControllerTemplate();
+		$endpoint = new EndpointTemplate( $controller );
 
-		$this->manager->register_controller_instance( $controller_instance );
+		$this->manager->register_controller_instance( $controller );
 
-		$sub_endpoint_instance = $endpoint_instance->register_sub_endpoint(
-			new Endpoint( $endpoint_instance, '/first-sub-route' )
+		$sub_endpoint = $endpoint->register_sub_endpoint(
+			new Endpoint( $endpoint, '/first-sub-route' )
 		);
 
 		/**
-		 * @var $descendant_endpoint_instance \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
+		 * @var $descendant_endpoint \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint
 		 */
-		$descendant_endpoint_instance = $sub_endpoint_instance->register_sub_endpoint(
-			new Endpoint( $sub_endpoint_instance, '/second-sub-route' )
+		$descendant_endpoint = $sub_endpoint->register_sub_endpoint(
+			new Endpoint( $sub_endpoint, '/second-sub-route' )
 		);
-		$descendant_endpoint_instance->set_test_data( 'get_items', 'valid' );
+		$descendant_endpoint->set_test_data( 'get_items', 'valid' );
 
-		$endpoint = $controller_instance->get_name() . '/' .
-		            $endpoint_instance->get_name() . '/' .
+		$endpoint = $controller->get_name() . '/' .
+		            $endpoint->get_name() . '/' .
 		            'first-sub-route/' .
-		            $sub_endpoint_instance->get_name() . '/' .
+		            $sub_endpoint->get_name() . '/' .
 		            'second-sub-route/' .
-		            $descendant_endpoint_instance->get_name();
+		            $descendant_endpoint->get_name();
 
 		// Act.
 		$data = $this->manager->run_endpoint( $endpoint  );

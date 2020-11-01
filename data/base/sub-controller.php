@@ -7,8 +7,8 @@ use Elementor\Data\Manager;
 /**
  * Class SubController, main advantages:
  * get_route, route extending.
- * get_parent_name, simple way to extend/attach on sub controller.
- * does not require endpoints.
+ * get_parent_name, simple way to extend/attach on parent controller.
+ * does not require use of endpoints.
  */
 abstract class SubController extends Controller {
 	/**
