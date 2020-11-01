@@ -2,7 +2,6 @@
 namespace Elementor\Data\Base\Endpoint;
 
 use Elementor\Data\Base\Interfaces\Endpoint;
-use Elementor\Data\Base\SubEndpoint;
 use WP_REST_Server;
 
 class Proxy implements Endpoint {
@@ -11,24 +10,20 @@ class Proxy implements Endpoint {
 	 */
 	protected $real_endpoint;
 
-	private $instance_types = [];
-
+	/**
+	 * Proxy constructor.
+	 *
+	 * @param $real_endpoint
+	 */
 	public function __construct( $real_endpoint ) {
 		$this->real_endpoint = $real_endpoint;
-
-		if ( $real_endpoint instanceof Index ) {
-			$this->instance_types [] = Index::class;
-		}
 	}
 
 	public function __get( $name ) {
-		if ( 'controller' === $name ) {
-			return $this->get_controller();
-		}
-
 		return $this->real_endpoint->{$name};
 	}
 
+	// Support test traits.
 	public function __call( $method, $arguments ) {
 		$real_call_arguments = [
 			$this->real_endpoint,
@@ -48,8 +43,8 @@ class Proxy implements Endpoint {
 		return $result->data;
 	}
 
-	public function is_index_instance() {
-		return in_array( Index::class, $this->instance_types );
+	public function get_base_route() {
+		return $this->real_endpoint->get_base_route();
 	}
 
 	public function get_items( $request ) {
@@ -84,12 +79,16 @@ class Proxy implements Endpoint {
 		return $this->proxy_base_callback( WP_REST_Server::DELETABLE, $request, false );
 	}
 
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
-		$this->real_endpoint->register_item_route( $methods, $args, $route );
+	public function get_permission_callback( $request ) {
+		return $this->real_endpoint->get_permission_callback( $request );
 	}
 
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		$this->real_endpoint->register_items_route( $methods );
+	}
+
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+		$this->real_endpoint->register_item_route( $methods, $args, $route );
 	}
 
 	public function base_callback( $methods, $request, $is_multi = false ) {
@@ -108,8 +107,8 @@ class Proxy implements Endpoint {
 		return $this->real_endpoint->get_controller();
 	}
 
-	public function get_base_route() {
-		return $this->real_endpoint->get_base_route();
+	public function get_parent() {
+		return $this->real_endpoint->get_parent();
 	}
 
 	public function get_public_name() {
@@ -120,15 +119,11 @@ class Proxy implements Endpoint {
 		return $this->real_endpoint->get_full_command();
 	}
 
-	public function get_permission_callback( $request ) {
-		return $this->real_endpoint->get_permission_callback( $request );
+	public function get_name_ancestry() {
+		return $this->real_endpoint->get_name_ancestry();
 	}
 
-	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
-		return $this->real_endpoint->register_route( $route, $methods, $callback, $args );
-	}
-
-	public function register_sub_endpoint( SubEndpoint $endpoint ) {
+	public function register_sub_endpoint( \Elementor\Data\Base\Endpoint $endpoint ) {
 		return $this->real_endpoint->register_sub_endpoint( $endpoint );
 	}
 }

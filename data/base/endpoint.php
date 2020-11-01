@@ -2,28 +2,26 @@
 namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
-use WP_REST_Server;
 
-abstract class Endpoint implements Interfaces\Endpoint {
-	const AVAILABLE_METHODS = [
-		WP_REST_Server::READABLE,
-		WP_REST_Server::CREATABLE,
-		WP_REST_Server::EDITABLE,
-		WP_REST_Server::DELETABLE,
-		WP_REST_Server::ALLMETHODS,
-	];
+abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
+	/**
+	 * Current parent.
+	 *
+	 * @var \Elementor\Data\Base\Controller|\Elementor\Data\Base\Endpoint
+	 */
+	protected $parent;
 
 	/**
-	 * Controller of current endpoint.
+	 * Current route, effect only in case the endpoint behave like sub-endpoint.
 	 *
-	 * @var \Elementor\Data\Base\Controller
+	 * @var string
 	 */
-	protected $controller;
+	protected $route;
 
 	/**
 	 * Loaded sub endpoint(s).
 	 *
-	 * @var \Elementor\Data\Base\SubEndpoint[]
+	 * @var \Elementor\Data\Base\Endpoint[]
 	 */
 	protected $sub_endpoints = [];
 
@@ -32,32 +30,91 @@ abstract class Endpoint implements Interfaces\Endpoint {
 	 *
 	 * run `$this->>register()`.
 	 *
-	 * @param \Elementor\Data\Base\Controller $controller
+	 * @param \Elementor\Data\Base\Controller|\Elementor\Data\Base\Endpoint $parent
+	 * @param string $route
 	 */
-	public function __construct( Controller $controller ) {
-		$this->controller = $controller;
+	public function __construct( $parent, $route = '/' ) {
+		$this->parent = $parent;
+
+		// In case, its behave like sub-endpoint.
+		if ( ! ( $parent instanceof Controller ) ) {
+			$this->route = $this->ensure_slashes( $route );
+			$this->controller = $parent->get_controller();
+		} else {
+			$this->controller = $parent;
+		}
+
 		$this->register();
+	}
+
+	/**
+	 * Ensure start-with and end-with slashes.
+	 *
+	 * '/' => '/'
+	 * 'abc' => '/abc/'
+	 * '/abc' => '/abc/'
+	 * 'abc/' => '/abc/'
+	 * '/abc/' => '/abc/'
+	 *
+	 * @param string $route
+	 *
+	 * @return string
+	 */
+	private function ensure_slashes( $route ) {
+		if ( '/' !== $route[0] ) {
+			$route = '/' . $route;
+		}
+
+		return trailingslashit( $route );
+	}
+
+	/**
+	 * Get ancestors.
+	 *
+	 * @return \Elementor\Data\Base\Endpoint[]
+	 */
+	private function get_ancestors() {
+		$ancestors = [];
+		$parent = $this;
+
+		do {
+			if ( $parent ) {
+				$ancestors [] = $parent;
+			}
+
+			if ( ! is_callable( [ $parent, 'get_parent' ] ) ) {
+				break;
+			}
+
+			$parent = $parent->get_parent();
+		} while ( $parent );
+
+		return array_reverse( $ancestors );
 	}
 
 	abstract public function get_name();
 
 	abstract public function get_format();
 
-	/**
-	 * Register the endpoint.
-	 *
-	 * By default: register get items route.
-	 */
-	protected function register() {
-		$this->register_items_route();
+	public function get_base_route() {
+		$name = $this->get_public_name();
+		$parent = $this->get_parent();
+		$parent_base = $parent->get_base_route();
+		$route = '/';
+
+		if ( ! ( $parent instanceof Controller ) ) {
+			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
+		}
+
+		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
 	}
 
 	public function get_controller() {
 		return $this->controller;
 	}
 
-	public function get_base_route() {
-		return untrailingslashit( '/' . $this->controller->get_rest_base() . '/' . $this->get_public_name() );
+	public function get_parent() {
+		return $this->parent;
 	}
 
 	public function get_public_name() {
@@ -65,129 +122,28 @@ abstract class Endpoint implements Interfaces\Endpoint {
 	}
 
 	public function get_full_command() {
-		return $this->controller->get_full_name() . '/' . $this->get_name();
-	}
+		$parent = $this->get_parent();
 
-	public function base_callback( $methods, $request, $is_multi = false ) {
-		if ( $request ) {
-			$json_params = $request->get_json_params();
-
-			if ( $json_params ) {
-				$request->set_body_params( $json_params );
-			}
+		if ( $parent instanceof Controller ) {
+			return $this->controller->get_full_name() . '/' . $this->get_name();
 		}
 
-		$result = [];
+		return $this->get_name_ancestry();
+	}
 
-		if ( $this->get_permission_callback( $request ) ) {
-			switch ( $methods ) {
-				case WP_REST_Server::READABLE:
-					$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
-					break;
+	public function get_name_ancestry() {
+		$ancestors = $this->get_ancestors();
+		$ancestors_names = [];
 
-				case WP_REST_Server::CREATABLE:
-					$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
-					break;
-
-				case WP_REST_Server::EDITABLE:
-					$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
-					break;
-
-				case WP_REST_Server::DELETABLE:
-					$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
-					break;
-			}
+		foreach ( $ancestors as $ancestor ) {
+			$ancestors_names [] = $ancestor->get_name();
 		}
 
-		return rest_ensure_response( $result );
+		return implode( '/', $ancestors_names );
 	}
 
-	public function get_permission_callback( $request ) {
-		return $this->controller->get_permission_callback( $request );
-	}
-
-	public function get_items( $request ) {
-		return $this->controller->get_items( $request );
-	}
-
-	public function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
-	}
-
-	public function create_item( $id, $request ) {
-		return $this->controller->create_item( $request );
-	}
-
-	public function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
-	}
-
-	public function update_item( $id, $request ) {
-		return $this->controller->update_item( $request );
-	}
-
-	public function update_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
-	}
-
-	public function delete_item( $id, $request ) {
-		return $this->controller->update_item( $request );
-	}
-
-	public function delete_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
-	}
-
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
-		$id_arg_name = 'id';
-
-		if ( ! empty( $args['id_arg_name'] ) ) {
-			$id_arg_name = $args['id_arg_name'];
-
-			unset( $args['id_arg_name'] );
-		}
-
-		$args = array_merge( [
-			$id_arg_name => [
-				'description' => 'Unique identifier for the object.',
-				'type' => 'string',
-			],
-		], $args );
-
-		$route .= '(?P<' . $id_arg_name . '>[\w]+)';
-
-		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request );
-		}, $args );
-	}
-
-	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
-		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request, true );
-		} );
-	}
-
-	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
-		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			trigger_error( 'Invalid method.', E_USER_ERROR );
-		}
-
-		$route = $this->get_base_route() . $route;
-
-		return register_rest_route( $this->controller->get_namespace(), $route, [
-			[
-				'args' => $args,
-				'methods' => $methods,
-				'callback' => $callback,
-				'permission_callback' => function ( $request ) {
-					return $this->get_permission_callback( $request );
-				},
-			],
-		] );
-	}
-
-	public function register_sub_endpoint( SubEndpoint $endpoint ) {
-		$endpoint = new SubEndpoint\Proxy( $endpoint );
+	public function register_sub_endpoint( Endpoint $endpoint ) {
+		$endpoint = new Endpoint\Proxy( $endpoint );
 
 		$command = $endpoint->get_full_command();
 		$format = $endpoint->get_format();

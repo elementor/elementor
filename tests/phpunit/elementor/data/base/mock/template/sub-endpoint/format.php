@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint;
 
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubEndpoint;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 
-class Format extends SubEndpoint {
+class Format extends Endpoint {
 	public function get_format() {
 		return '{sub_arg_id}';
 	}

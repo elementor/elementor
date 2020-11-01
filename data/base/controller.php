@@ -59,6 +59,11 @@ abstract class Controller extends WP_REST_Controller {
 	abstract public function get_name();
 
 	/**
+	 * Register endpoints.
+	 */
+	abstract public function register_endpoints();
+
+	/**
 	 * Get full controller name.
 	 *
 	 * The 'main' job of this method, is to be extend, for example sub-controller will return it's parent name,
@@ -84,7 +89,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @return string
 	 */
-	public function get_rest_base() {
+	public function get_base_route() {
 		return $this->rest_base;
 	}
 
@@ -94,7 +99,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return string
 	 */
 	public function get_controller_route() {
-		return $this->get_namespace() . '/' . $this->get_rest_base();
+		return $this->get_namespace() . '/' . $this->get_base_route();
 	}
 
 	/**
@@ -131,6 +136,36 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get permission callback.
+	 *
+	 * Default controller permission callback.
+	 * By default endpoint will inherit the permission callback from the controller.
+	 * By default permission is `current_user_can( 'administrator' );`.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return bool
+	 */
+	public function get_permission_callback( $request ) {
+		// The function is public since endpoint need to access it.
+		switch ( $request->get_method() ) {
+			case 'GET':
+			case 'POST':
+			case 'UPDATE':
+			case 'PUT':
+			case 'DELETE':
+			case 'PATCH':
+				return current_user_can( 'administrator' );
+		}
+
+		return false;
+	}
+
+	public function get_items( $request ) {
+		return $this->get_controller_index();
+	}
+
+	/**
 	 * Get processors.
 	 *
 	 * @param string $command
@@ -146,15 +181,6 @@ abstract class Controller extends WP_REST_Controller {
 
 		return $result;
 	}
-
-	public function get_items( $request ) {
-		return $this->get_controller_index();
-	}
-
-	/**
-	 * Register endpoints.
-	 */
-	abstract public function register_endpoints();
 
 	/**
 	 * Register processors.
@@ -178,21 +204,21 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \Elementor\Data\Base\Endpoint\Proxy
 	 */
 	protected function register_endpoint( Endpoint $endpoint ) {
-		$endpoint = new Endpoint\Proxy( $endpoint );
-		$command = $endpoint->get_full_command();
+		$endpoint_proxy = new Endpoint\Proxy( $endpoint );
+		$command = $endpoint_proxy->get_full_command();
 
-		if ( $endpoint->is_index_instance() ) {
+		if ( $endpoint instanceof Endpoint\Index ) {
 			$this->index_endpoint = $endpoint;
 		} else {
 			$this->endpoints[ $command ] = $endpoint;
 		}
 
-		$format = $endpoint->get_format();
+		$format = $endpoint_proxy->get_format();
 
 		// `$e.data.registerFormat()`.
 		Manager::instance()->register_endpoint_format( $command, $format );
 
-		return $endpoint;
+		return $endpoint_proxy;
 	}
 
 	/**
@@ -231,31 +257,5 @@ abstract class Controller extends WP_REST_Controller {
 
 		// Aka hooks.
 		$this->register_processors();
-	}
-
-	/**
-	 * Get permission callback.
-	 *
-	 * Default controller permission callback.
-	 * By default endpoint will inherit the permission callback from the controller.
-	 * By default permission is `current_user_can( 'administrator' );`.
-	 *
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return bool
-	 */
-	public function get_permission_callback( $request ) {
-		// The function is public since endpoint need to access it.
-		switch ( $request->get_method() ) {
-			case 'GET':
-			case 'POST':
-			case 'UPDATE':
-			case 'PUT':
-			case 'DELETE':
-			case 'PATCH':
-				return current_user_can( 'administrator' );
-		}
-
-		return false;
 	}
 }

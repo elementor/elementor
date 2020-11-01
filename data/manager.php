@@ -110,7 +110,7 @@ class Manager extends BaseModule {
 	 *
 	 * @param \Elementor\Data\Base\Controller $controller_instance
 	 *
-	 * @return \Elementor\Data\Base\Controller|false
+	 * @return \Elementor\Data\Base\Controller
 	 */
 	public function register_controller_instance( Controller $controller_instance ) {
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
