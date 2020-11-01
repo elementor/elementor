@@ -2,7 +2,7 @@
 namespace Elementor\Data\Base\Endpoint\Index;
 
 use Elementor\Data\Base\Endpoint\Index;
-use WP_REST_Request;
+use Elementor\Data\Manager;
 
 /**
  * class AllChildren, is optional endpoint.
@@ -51,10 +51,10 @@ class AllChildren extends Index {
 				continue;
 			}
 
-			$result = $endpoint->get_items( new WP_REST_Request() );
+			$result = Manager::instance()->run_request( $endpoint->get_base_route() );
 
-			if ( $result ) {
-				$response[ $endpoint->get_name() ] = $result;
+			if ( ! $result->is_error() ) {
+				$response[ $endpoint->get_name() ] = $result->get_data();
 			}
 		}
 

@@ -336,10 +336,10 @@ class Manager extends BaseModule {
 	 *
 	 * @return \WP_REST_Response
 	 */
-	private function run_request( $endpoint, $args, $method ) {
+	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE ) {
 		$this->run_server();
 
-		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . $endpoint;
+		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . trim( $endpoint, '/' );
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );

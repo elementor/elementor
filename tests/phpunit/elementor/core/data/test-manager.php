@@ -228,8 +228,6 @@ class Test_Manager extends Data_Test_Base {
 
 	public function test_run_endpoint() {
 		$controller = new ControllerWithEndpoint();
-
-
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();

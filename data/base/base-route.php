@@ -3,7 +3,7 @@ namespace Elementor\Data\Base;
 
 use WP_REST_Server;
 
-abstract class EndpointRoute {
+abstract class BaseRoute {
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
@@ -19,38 +19,126 @@ abstract class EndpointRoute {
 	 */
 	protected $controller;
 
+	/**
+	 * Get base route.
+	 * This method should always return the base route starts with '/' and ends without '/'.
+	 *
+	 * @return string
+	 */
+	public function get_base_route() {
+		$name = $this->get_public_name();
+		$parent = $this->get_parent();
+		$parent_base = $parent->get_base_route();
+		$route = '/';
+
+		if ( ! ( $parent instanceof Controller ) ) {
+			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
+		}
+
+		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
+	}
+
+	/**
+	 * Get permission callback.
+	 *
+	 * By default get permission callback from the controller.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return boolean
+	 */
 	public function get_permission_callback( $request ) {
 		return $this->controller->get_permission_callback( $request );
 	}
 
+	/**
+	 * Retrieves a collection of items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function get_items( $request ) {
 		return $this->controller->get_items( $request );
 	}
 
+	/**
+	 * Retrieves one item from the collection.
+	 *
+	 * @param string $id
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function get_item( $id, $request ) {
 		return $this->controller->get_item( $request );
 	}
 
+	/**
+	 * Creates multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function create_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
+	/**
+	 * Creates one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function create_item( $id, $request ) {
 		return $this->controller->create_item( $request );
 	}
 
+	/**
+	 * Updates multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function update_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
+	/**
+	 * Updates one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function update_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
 
+	/**
+	 * Delete multiple items.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function delete_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
+	/**
+	 * Delete one item.
+	 *
+	 * @param string $id id of request item.
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
 	public function delete_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
@@ -83,12 +171,24 @@ abstract class EndpointRoute {
 		] );
 	}
 
+	/**
+	 * Register items route.
+	 *
+	 * @param string $methods
+	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request, true );
 		} );
 	}
 
+	/**
+	 * Register item route.
+	 *
+	 * @param string $route
+	 * @param array $args
+	 * @param string $methods
+	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$id_arg_name = 'id';
 
@@ -112,6 +212,16 @@ abstract class EndpointRoute {
 		}, $args );
 	}
 
+	/**
+	 * Base callback.
+	 * All reset requests from the client should pass this function.
+	 *
+	 * @param string $methods
+	 * @param \WP_REST_Request $request
+	 * @param bool $is_multi
+	 *
+	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 */
 	public function base_callback( $methods, $request, $is_multi = false ) {
 		if ( $request ) {
 			$json_params = $request->get_json_params();

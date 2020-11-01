@@ -3,7 +3,7 @@ namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 
-abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
+abstract class Endpoint extends BaseRoute {
 	/**
 	 * Current parent.
 	 *
@@ -92,35 +92,53 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 		return array_reverse( $ancestors );
 	}
 
+	/**
+	 * Get endpoint name.
+	 *
+	 * @return string
+	 */
 	abstract public function get_name();
 
+	/**
+	 * Get endpoint format.
+	 * The formats that generated using this function, will be used only be `Data\Manager::run()`.
+	 *
+	 * @return string
+	 */
 	abstract public function get_format();
 
-	public function get_base_route() {
-		$name = $this->get_public_name();
-		$parent = $this->get_parent();
-		$parent_base = $parent->get_base_route();
-		$route = '/';
-
-		if ( ! ( $parent instanceof Controller ) ) {
-			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
-		}
-
-		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
-	}
-
+	/**
+	 * Get controller.
+	 *
+	 * @return \Elementor\Data\Base\Controller
+	 */
 	public function get_controller() {
 		return $this->controller;
 	}
 
+	/**
+	 * Get current parent.
+	 *
+	 * @return \Elementor\Data\Base\Controller|\Elementor\Data\Base\Endpoint
+	 */
 	public function get_parent() {
 		return $this->parent;
 	}
 
+	/**
+	 * Get public name.
+	 *
+	 * @return string
+	 */
 	public function get_public_name() {
 		return $this->get_name();
 	}
 
+	/**
+	 * Get full command name ( including index ).
+	 *
+	 * @return string
+	 */
 	public function get_full_command() {
 		$parent = $this->get_parent();
 
@@ -131,6 +149,11 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 		return $this->get_name_ancestry();
 	}
 
+	/**
+	 * Get name ancestry format, example: 'alpha/beta/delta'.
+	 *
+	 * @return string
+	 */
 	public function get_name_ancestry() {
 		$ancestors = $this->get_ancestors();
 		$ancestors_names = [];
@@ -142,9 +165,14 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 		return implode( '/', $ancestors_names );
 	}
 
+	/**
+	 * Register sub endpoint.
+	 *
+	 * @param \Elementor\Data\Base\Endpoint $endpoint
+	 *
+	 * @return \Elementor\Data\Base\Endpoint
+	 */
 	public function register_sub_endpoint( Endpoint $endpoint ) {
-		$endpoint = new Endpoint\Proxy( $endpoint );
-
 		$command = $endpoint->get_full_command();
 		$format = $endpoint->get_format();
 

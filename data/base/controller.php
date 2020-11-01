@@ -201,11 +201,10 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @param \Elementor\Data\Base\Endpoint $endpoint
 	 *
-	 * @return \Elementor\Data\Base\Endpoint\Proxy
+	 * @return \Elementor\Data\Base\Endpoint
 	 */
 	protected function register_endpoint( Endpoint $endpoint ) {
-		$endpoint_proxy = new Endpoint\Proxy( $endpoint );
-		$command = $endpoint_proxy->get_full_command();
+		$command = $endpoint->get_full_command();
 
 		if ( $endpoint instanceof Endpoint\Index ) {
 			$this->index_endpoint = $endpoint;
@@ -213,12 +212,12 @@ abstract class Controller extends WP_REST_Controller {
 			$this->endpoints[ $command ] = $endpoint;
 		}
 
-		$format = $endpoint_proxy->get_format();
+		$format = $endpoint->get_format();
 
 		// `$e.data.registerFormat()`.
 		Manager::instance()->register_endpoint_format( $command, $format );
 
-		return $endpoint_proxy;
+		return $endpoint;
 	}
 
 	/**
