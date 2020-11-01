@@ -96,19 +96,6 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 
 	abstract public function get_format();
 
-	public function get_base_route() {
-		$name = $this->get_public_name();
-		$parent = $this->get_parent();
-		$parent_base = $parent->get_base_route();
-		$route = '/';
-
-		if ( ! ( $parent instanceof Controller ) ) {
-			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
-		}
-
-		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
-	}
-
 	public function get_controller() {
 		return $this->controller;
 	}
