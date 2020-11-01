@@ -163,11 +163,11 @@ class Test_Controller extends Data_Test_Base {
 		$controller->bypass_original_register();
 
 		// Act.
-		$endpoint_instance = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
+		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
 
 		// Assert.
 		$this->assertCount( 1, $controller->endpoints );
-		$this->assertEquals( $endpoint_instance, array_values( $controller->endpoints )[0] );
+		$this->assertEquals( $endpoint, array_values( $controller->endpoints )[0] );
 	}
 
 	public function test_register_processor() {
@@ -209,11 +209,11 @@ class Test_Controller extends Data_Test_Base {
 		$controller->bypass_original_register();
 
 		// Act.
-		$endpoint_instance = $controller->do_register_endpoint( new EndpointFormatTemplate( $controller ) );
+		$endpoint = $controller->do_register_endpoint( new EndpointFormatTemplate( $controller ) );
 		$actual = reset( $this->manager->command_formats );
 
 		// Assert.
 		$this->assertCount( 1, $this->manager->command_formats );
-		$this->assertEquals( $controller->get_name() . '/' . $endpoint_instance->get_name() . '/{arg_id}', $actual );
+		$this->assertEquals( $controller->get_name() . '/' . $endpoint->get_name() . '/{arg_id}', $actual );
 	}
 }

@@ -59,10 +59,10 @@ class Test_Manager extends Data_Test_Base {
 
 		$this->manager->run_server();
 
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
 		// Case controller + endpoint name.
-		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() . '/' . $endpoint_instance->get_name() ));
+		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() . '/' . $endpoint->get_name() ));
 	}
 
 	public function test_command_extract_args() {
@@ -228,14 +228,12 @@ class Test_Manager extends Data_Test_Base {
 
 	public function test_run_endpoint() {
 		$controller = new ControllerWithEndpoint();
-
-
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
-		$command = $controller->get_name() . '/' . $endpoint_instance->get_name();
+		$command = $controller->get_name() . '/' . $endpoint->get_name();
 
 		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
 
@@ -250,9 +248,9 @@ class Test_Manager extends Data_Test_Base {
 		$controller = $this->manager->register_controller_instance( $controller );
 
 		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
-		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint_instance->get_name() );
+		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint->get_name() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
