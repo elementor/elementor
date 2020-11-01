@@ -58,7 +58,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function get_items( $request ) {
+	protected function get_items( $request ) {
 		return $this->controller->get_items( $request );
 	}
 
@@ -70,7 +70,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function get_item( $id, $request ) {
+	protected function get_item( $id, $request ) {
 		return $this->controller->get_item( $request );
 	}
 
@@ -81,7 +81,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function create_items( $request ) {
+	protected function create_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
@@ -93,7 +93,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function create_item( $id, $request ) {
+	protected function create_item( $id, $request ) {
 		return $this->controller->create_item( $request );
 	}
 
@@ -104,7 +104,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function update_items( $request ) {
+	protected function update_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
@@ -116,7 +116,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function update_item( $id, $request ) {
+	protected function update_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
 
@@ -127,7 +127,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function delete_items( $request ) {
+	protected function delete_items( $request ) {
 		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
@@ -139,7 +139,7 @@ abstract class BaseRoute {
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
-	public function delete_item( $id, $request ) {
+	protected function delete_item( $id, $request ) {
 		return $this->controller->update_item( $request );
 	}
 
