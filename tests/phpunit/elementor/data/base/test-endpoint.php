@@ -41,6 +41,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( implode( '/', [
+			'',
 			$controller->get_name(),
 			$sub_endpoint->get_name(),
 		] ),  $actual );
@@ -59,6 +60,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( implode( '/', [
+			'',
 			$controller->get_name(),
 			$endpoint->get_name(),
 			$sub_endpoint->get_name(),
@@ -79,6 +81,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( implode( '/', [
+			'',
 			$controller->get_name(),
 			$endpoint->get_name(),
 			$sub_endpoint->get_name(),

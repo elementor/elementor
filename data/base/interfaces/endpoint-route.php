@@ -6,8 +6,7 @@ use WP_REST_Server;
 interface EndpointRoute {
 	/**
 	 * Get base route.
-	 *
-	 * @note This method should always return the base route starts with '/' and ends without '/'.
+	 * This method should always return the base route starts with '/' and ends without '/'.
 	 *
 	 * @return string
 	 */
@@ -118,8 +117,7 @@ interface EndpointRoute {
 
 	/**
 	 * Base callback.
-	 *
-	 * @note All reset requests from the client should pass this function.
+	 * All reset requests from the client should pass this function.
 	 *
 	 * @param string $methods
 	 * @param \WP_REST_Request $request

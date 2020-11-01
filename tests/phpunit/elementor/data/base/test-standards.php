@@ -36,7 +36,9 @@ class Test_Standards extends Data_Test_Base {
 
 		// Assert - '/alpha/1'.
 		$this->assertEquals( 'alpha-item', $result );
-		// Note: Using only controllers it can reach only 'alpha/1'.
+		/**
+		 * @note Using only controllers it can reach only 'alpha/1'.
+		 */
 	}
 
 	public function test_sub_controllers() {

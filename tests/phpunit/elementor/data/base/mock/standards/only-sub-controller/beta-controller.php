@@ -11,7 +11,7 @@ class BetaController extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\T
 	}
 
 	public function get_route() {
-		return '/(?P<sub_id>[\w]+)';
+		return '/(?P<sub_id>[\w]+)/';
 	}
 
 	public function get_items( $request ) {

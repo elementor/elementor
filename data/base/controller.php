@@ -89,7 +89,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @return string
 	 */
-	public function get_rest_base() {
+	public function get_base_route() {
 		return $this->rest_base;
 	}
 
@@ -99,7 +99,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return string
 	 */
 	public function get_controller_route() {
-		return $this->get_namespace() . '/' . $this->get_rest_base();
+		return $this->get_namespace() . '/' . $this->get_base_route();
 	}
 
 	/**

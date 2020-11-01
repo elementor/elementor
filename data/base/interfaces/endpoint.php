@@ -11,8 +11,7 @@ interface Endpoint extends EndpointRoute {
 
 	/**
 	 * Get endpoint format.
-	 *
-	 * @note The formats that generated using this function, will be used only be `Data\Manager::run()`.
+	 * The formats that generated using this function, will be used only be `Data\Manager::run()`.
 	 *
 	 * @return string
 	 */

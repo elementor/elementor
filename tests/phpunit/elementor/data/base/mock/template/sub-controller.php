@@ -14,7 +14,7 @@ class SubController extends \Elementor\Data\Base\SubController {
 	 */
 	private $test_route;
 
-	public function __construct( $parent_controller = null, $test_route = '' ) {
+	public function __construct( $parent_controller = null, $test_route = '/' ) {
 		$this->test_route = $test_route;
 		$this->parent_controller = $parent_controller;
 		parent::__construct( $parent_controller );

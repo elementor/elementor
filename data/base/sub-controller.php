@@ -4,6 +4,12 @@ namespace Elementor\Data\Base;
 use Elementor\Data\Base\Endpoint\Index\SubIndexEndpoint;
 use Elementor\Data\Manager;
 
+/**
+ * Class SubController, main advantages:
+ * get_route, route extending.
+ * get_parent_name, simple way to extend/attach on sub controller.
+ * does not require endpoints.
+ */
 abstract class SubController extends Controller {
 	/**
 	 * @var \Elementor\Data\Base\Controller
@@ -33,6 +39,8 @@ abstract class SubController extends Controller {
 	abstract public function get_parent_name();
 
 	/**
+	 * Current route, always should start with '/' and end with '/'.
+	 *
 	 * @return string
 	 */
 	abstract public function get_route();
@@ -41,10 +49,8 @@ abstract class SubController extends Controller {
 		return $this->parent_controller->get_name() . '/' . parent::get_full_name();
 	}
 
-	public function get_rest_base() {
-		$route = $this->get_route();
-
-		return $this->parent_controller->get_rest_base() . $route . '/' . $this->get_name();
+	public function get_base_route() {
+		return $this->parent_controller->get_base_route() . $this->get_route() . $this->get_name();
 	}
 
 	public function get_parent() {

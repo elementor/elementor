@@ -44,12 +44,12 @@ class Test_Controller extends Data_Test_Base {
 		$this->assertEquals( Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION, $actual );
 	}
 
-	public function test_get_rest_base() {
+	public function test_get_base_route() {
 		// Arrange.
 		$controller = new ControllerWithEndpoint();
 
 		// Act.
-		$actual = $controller->get_rest_base() ;
+		$actual = $controller->get_base_route() ;
 
 		// Assert.
 		$this->assertEquals( Manager::REST_BASE . $controller->get_name(), $actual );
@@ -63,7 +63,7 @@ class Test_Controller extends Data_Test_Base {
 		$actual = $controller->get_controller_route();
 
 		// Assert.
-		$this->assertEquals( $controller->get_namespace() . '/' . $controller->get_rest_base(), $actual );
+		$this->assertEquals( $controller->get_namespace() . '/' . $controller->get_base_route(), $actual );
 	}
 
 	public function test_get_controller_index() {

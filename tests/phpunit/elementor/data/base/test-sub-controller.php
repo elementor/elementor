@@ -8,13 +8,13 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as Cont
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as SubControllerTemplate;
 
 class Test_Sub_Controller extends Data_Test_Base {
-	public function test_get_rest_base() {
+	public function test_get_base_route() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerTemplate() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
 		// Act.
-		$actual = $sub_controller->get_rest_base();
+		$actual = $sub_controller->get_base_route();
 
 		// Assert.
 		$this->assertEquals( Manager::REST_BASE . $controller->get_name() . '/' . $sub_controller->get_name(), $actual );

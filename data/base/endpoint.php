@@ -69,7 +69,7 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 	}
 
 	/**
-	 * Get sub-endpoint ancestors.
+	 * Get ancestors.
 	 *
 	 * @return \Elementor\Data\Base\Endpoint[]
 	 */
@@ -97,31 +97,16 @@ abstract class Endpoint extends EndpointRoute implements Interfaces\Endpoint {
 	abstract public function get_format();
 
 	public function get_base_route() {
+		$name = $this->get_public_name();
 		$parent = $this->get_parent();
-
-		if ( $parent instanceof Controller ) {
-			return untrailingslashit( '/' . $this->controller->get_rest_base() . '/' . $this->get_public_name() );
-		}
-
-		$name = $this->get_name();
 		$parent_base = $parent->get_base_route();
-		$route = $this->route;
+		$route = '/';
 
-		// Parent sub controller.
-		if ( $this->controller instanceof SubController ) {
-			return $parent_base . $this->controller->get_route() . '/' . $name;
+		if ( ! ( $parent instanceof Controller ) ) {
+			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
 		}
 
-		// Parent sub endpoint
-		if ( $parent instanceof Interfaces\Endpoint ) {
-			return trim( $parent_base . $route . $name, '/' );
-		}
-
-		// Parent endpoint
-		$parent_name = $parent->get_public_name();
-		$path = trim( $parent_name . $route . $name, '/' );
-
-		return $this->controller->get_rest_base() . '/' . $path;
+		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
 	}
 
 	public function get_controller() {

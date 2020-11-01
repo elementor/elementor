@@ -3,7 +3,7 @@ namespace Elementor\Data\Base;
 
 use WP_REST_Server;
 
-abstract class EndpointRoute implements Interfaces\EndpointRoute {
+abstract class EndpointRoute {
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
