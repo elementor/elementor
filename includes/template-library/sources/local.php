@@ -941,7 +941,21 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 */
 	public function admin_import_template_form() {
-		if ( ! self::is_base_templates_screen() ) {
+		$current_type = get_query_var( 'elementor_library_type' );
+		$import_templates = true;
+
+		/**
+		 * Is template import templates.
+		 *
+		 * Filters whether the template should show import templates button.
+		 *
+		 * @param bool    $import_templates Whether the template library supports the button.
+		 *                                  Default is true.
+		 * @param string  $template_type    Template type.
+		 */
+		$import_templates = apply_filters( 'elementor/template_library/is_template_import_templates', $import_templates, $current_type );
+
+		if ( ! $import_templates || ! self::is_base_templates_screen() ) {
 			return;
 		}
 
@@ -1640,6 +1654,7 @@ class Source_Local extends Source_Base {
 					'library' => __( 'Saved Templates', 'elementor' ),
 					'theme' => __( 'Theme Builder', 'elementor' ),
 					'popup' => __( 'Popups', 'elementor' ),
+					'custom_code' => __( 'Custom Code', 'elementor' ),
 				];
 
 				if ( ! empty( $titles[ $current_tab_group ] ) ) {
