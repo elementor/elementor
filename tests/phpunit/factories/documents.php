@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Factories;
 
 use Elementor\Plugin;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -46,5 +47,19 @@ class Documents extends \WP_UnitTest_Factory_For_Post {
 
 	public function get_object_by_id( $document_id ) {
 		return Plugin::$instance->documents->get( $document_id, false );
+	}
+
+	/**
+	 * @param array $arg
+	 *
+	 * @return Document
+	 */
+	public function create_elementor_document( $arg = [] ) {
+		return $this->create_and_get( array_replace_recursive( [
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_data' => wp_json_encode( [ [ 'elType' => 'section' ] ] ),
+			],
+		], $arg ) );
 	}
 }
