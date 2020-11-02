@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<div class="elementor-hotkeys__item">
-					<div class="elementor-hotkeys__item--label"><?php echo __( 'Paste Style', 'elementor' ); ?></div>
+					<div clabss="elementor-hotkeys__item--label"><?php echo __( 'Paste Style', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
 						<span>{{{ ctrlLabel }}}</span>
 						<span>Shift</span>
