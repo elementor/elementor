@@ -946,6 +946,8 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_get_builder_content', $document, $this->_is_excerpt );
 
 		if ( empty( $data ) ) {
+			Plugin::$instance->documents->restore_document();
+
 			return '';
 		}
 
