@@ -5,7 +5,7 @@ use Elementor\Data\Manager;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as SubControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Sub_Controller as SubControllerTemplate;
 
 class Test_Sub_Controller extends Data_Test_Base {
 	public function test_get_base_route() {

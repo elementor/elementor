@@ -3,6 +3,10 @@ namespace Elementor\Data\Base\Processor;
 
 use Elementor\Data\Base\Processor;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 abstract class Before extends Processor {
 
 	/**

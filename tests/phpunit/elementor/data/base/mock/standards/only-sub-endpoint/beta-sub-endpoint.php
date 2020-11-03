@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards\OnlySubEndpoint;
 
-class BetaSubEndpoint extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint {
+class Beta_Sub_Endpoint extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint {
 	public function get_name() {
 		return 'beta';
 	}

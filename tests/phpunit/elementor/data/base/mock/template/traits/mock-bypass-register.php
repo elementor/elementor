@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
-trait MockBypassRegister {
+trait Mock_Bypass_Register {
 	public $bypass_register_status = false;
 
 	public function bypass_original_register( $status = true ) {

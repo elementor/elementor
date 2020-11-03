@@ -4,6 +4,9 @@ namespace Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Base\Endpoint\Index;
 use Elementor\Data\Manager;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 /**
  * class AllChildren, is optional endpoint.
  * Used in cases where the endpoints are static & there no use of dynamic endpoints( alpha/{id} ), eg:

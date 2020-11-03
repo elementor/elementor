@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
-trait MockBypassPermission {
+trait Mock_Bypass_Permission {
 	public $bypass_permission_value = true;
 	public $is_permission_bypassed = false;
 

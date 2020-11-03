@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
-trait MockTestData {
+trait Mock_Test_Data {
 	public $test_data = [];
 
 	public function set_test_data( $key, $value ) {

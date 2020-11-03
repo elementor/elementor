@@ -4,9 +4,9 @@ namespace Elementor\Tests\Phpunit\Data\Base\Endpoint\Index;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController as SubControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Sub_Controller as SubControllerTemplate;
 
-class Test_SubIndexEndpoint extends Data_Test_Base {
+class Test_Sub_Index_Endpoint extends Data_Test_Base {
 	public function test_get_format() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerTemplate() );
@@ -48,7 +48,7 @@ class Test_SubIndexEndpoint extends Data_Test_Base {
 	public function test_get_base_route__from_parent_index_of_sub_controller() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new Mock\Template\Controller() );
-		$sub_controller = new Mock\Template\SubController( $controller );
+		$sub_controller = new Mock\Template\Sub_Controller( $controller );
 
 		// Trigger register.
 		$this->manager->run_server();
@@ -73,7 +73,7 @@ class Test_SubIndexEndpoint extends Data_Test_Base {
 	public function test_get_full_command__from_parent_index_of_sub_controller() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new Mock\Template\Controller() );
-		$sub_controller = new Mock\Template\SubController( $controller );
+		$sub_controller = new Mock\Template\Sub_Controller( $controller );
 
 		$this->manager->run_server();
 

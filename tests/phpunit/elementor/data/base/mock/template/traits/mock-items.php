@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
-trait MockItems {
-	use MockTestData;
+trait Mock_Items {
+	use Mock_Test_Data;
 
 	public function get_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );

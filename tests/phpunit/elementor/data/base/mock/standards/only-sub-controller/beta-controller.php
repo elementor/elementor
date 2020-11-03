@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards\OnlySubController;
 
-class BetaController extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\SubController {
+class Beta_Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Sub_Controller {
 	public function get_name() {
 		return 'beta';
 	}

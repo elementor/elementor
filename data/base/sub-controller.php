@@ -1,8 +1,12 @@
 <?php
 namespace Elementor\Data\Base;
 
-use Elementor\Data\Base\Endpoint\Index\SubIndexEndpoint;
+use Elementor\Data\Base\Endpoint\Index\Sub_Index_Endpoint;
 use Elementor\Data\Manager;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Class SubController, main advantages:
@@ -10,7 +14,7 @@ use Elementor\Data\Manager;
  * get_parent_name, simple way to extend/attach on parent controller.
  * does not require use of endpoints.
  */
-abstract class SubController extends Controller {
+abstract class Sub_Controller extends Controller {
 	/**
 	 * @var \Elementor\Data\Base\Controller
 	 */
@@ -58,6 +62,6 @@ abstract class SubController extends Controller {
 	}
 
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new SubIndexEndpoint( $this ) );
+		$this->register_endpoint( new Sub_Index_Endpoint( $this ) );
 	}
 }

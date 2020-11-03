@@ -5,7 +5,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits;
 
 class Controller extends \Elementor\Data\Base\Controller {
 
-	use Traits\MockNameType, Traits\MockBypassPermission, Traits\MockBypassRegister;
+	use Traits\Mock_Name_Type, Traits\Mock_Bypass_Permission, Traits\Mock_Bypass_Register;
 
 	public function __construct() {
 		parent::__construct();

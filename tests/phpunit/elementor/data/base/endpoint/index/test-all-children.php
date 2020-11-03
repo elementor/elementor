@@ -3,7 +3,7 @@ namespace Elementor\Tests\Phpunit\Data\Base\Endpoint\Index;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\AllChildren\Controller as ControllerAllChildren;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\BypassPermission as EndpointBypassPermission;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint\Bypass_Permission as EndpointBypassPermission;
 
 class Test_All_Children extends Data_Test_Base {
 

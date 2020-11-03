@@ -4,6 +4,10 @@ namespace Elementor\Data\Base;
 use Elementor\Data\Manager;
 use WP_REST_Controller;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Loaded endpoint(s).

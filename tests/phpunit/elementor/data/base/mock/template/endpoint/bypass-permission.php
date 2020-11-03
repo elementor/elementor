@@ -2,8 +2,8 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\MockBypassPermission;
+use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Traits\Mock_Bypass_Permission;
 
-class BypassPermission extends Endpoint {
-	use MockBypassPermission;
+class Bypass_Permission extends Endpoint {
+	use Mock_Bypass_Permission;
 }

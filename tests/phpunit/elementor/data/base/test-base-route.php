@@ -6,7 +6,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint as Endpoi
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\WithSubEndpoint\Controller as ControllerWithSubEndpoint;
 
-class Test_Endpoint_Route extends Data_Test_Base {
+class Test_Base_Route extends Data_Test_Base {
 	public function test_get_base_route() {
 		// Arrange.
 		$controller = new ControllerWithEndpoint();

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Standards\OnlyController;
 
-class AlphaController extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
+class Alpha_Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
 	public function get_name() {
 		return 'alpha';
 	}

@@ -3,7 +3,14 @@ namespace Elementor\Data\Base;
 
 use WP_REST_Server;
 
-abstract class BaseRoute {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+/**
+ * Class purpose is to separate routing logic into one file.
+ */
+abstract class Base_Route {
 	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
@@ -20,6 +27,49 @@ abstract class BaseRoute {
 	protected $controller;
 
 	/**
+	 * Current route, effect only in case the endpoint behave like sub-endpoint.
+	 *
+	 * @var string
+	 */
+	protected $route;
+
+	/**
+	 * Constructor.
+	 *
+	 * run `$this->>register()`.
+	 *
+	 * @param \Elementor\Data\Base\Controller $controller
+	 * @param string $route
+	 */
+	protected function __construct( Controller $controller, $route ) {
+		$this->controller = $controller;
+		$this->route = $this->ensure_slashes( $route );
+
+		$this->register();
+	}
+
+	/**
+	 * Ensure start-with and end-with slashes.
+	 *
+	 * '/' => '/'
+	 * 'abc' => '/abc/'
+	 * '/abc' => '/abc/'
+	 * 'abc/' => '/abc/'
+	 * '/abc/' => '/abc/'
+	 *
+	 * @param string $route
+	 *
+	 * @return string
+	 */
+	private function ensure_slashes( $route ) {
+		if ( '/' !== $route[0] ) {
+			$route = '/' . $route;
+		}
+
+		return trailingslashit( $route );
+	}
+
+	/**
 	 * Get base route.
 	 * This method should always return the base route starts with '/' and ends without '/'.
 	 *
@@ -32,7 +82,7 @@ abstract class BaseRoute {
 		$route = '/';
 
 		if ( ! ( $parent instanceof Controller ) ) {
-			$route = $this->controller instanceof SubController ? $this->controller->get_route() : $this->route;
+			$route = $this->controller instanceof Sub_Controller ? $this->controller->get_route() : $this->route;
 		}
 
 		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
@@ -175,11 +225,12 @@ abstract class BaseRoute {
 	 * Register items route.
 	 *
 	 * @param string $methods
+	 * @param array $args
 	 */
-	public function register_items_route( $methods = WP_REST_Server::READABLE ) {
+	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
 		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request, true );
-		} );
+		}, $args );
 	}
 
 	/**

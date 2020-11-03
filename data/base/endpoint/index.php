@@ -4,6 +4,10 @@ namespace Elementor\Data\Base\Endpoint;
 use Elementor\Data\Base\Endpoint;
 use WP_REST_Server;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 class Index extends Endpoint {
 	public $id_arg_name = 'id';
 

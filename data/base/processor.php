@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Data\Base;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
 abstract class Processor {
 
 	/**

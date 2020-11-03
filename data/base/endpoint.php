@@ -3,20 +3,17 @@ namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
 
-abstract class Endpoint extends BaseRoute {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+abstract class Endpoint extends Base_Route {
 	/**
 	 * Current parent.
 	 *
 	 * @var \Elementor\Data\Base\Controller|\Elementor\Data\Base\Endpoint
 	 */
 	protected $parent;
-
-	/**
-	 * Current route, effect only in case the endpoint behave like sub-endpoint.
-	 *
-	 * @var string
-	 */
-	protected $route;
 
 	/**
 	 * Loaded sub endpoint(s).
@@ -28,44 +25,19 @@ abstract class Endpoint extends BaseRoute {
 	/**
 	 * Endpoint constructor.
 	 *
-	 * run `$this->>register()`.
-	 *
 	 * @param \Elementor\Data\Base\Controller|\Elementor\Data\Base\Endpoint $parent
 	 * @param string $route
 	 */
 	public function __construct( $parent, $route = '/' ) {
+		$controller = $parent;
 		$this->parent = $parent;
 
 		// In case, its behave like sub-endpoint.
 		if ( ! ( $parent instanceof Controller ) ) {
-			$this->route = $this->ensure_slashes( $route );
-			$this->controller = $parent->get_controller();
-		} else {
-			$this->controller = $parent;
+			$controller = $parent->get_controller();
 		}
 
-		$this->register();
-	}
-
-	/**
-	 * Ensure start-with and end-with slashes.
-	 *
-	 * '/' => '/'
-	 * 'abc' => '/abc/'
-	 * '/abc' => '/abc/'
-	 * 'abc/' => '/abc/'
-	 * '/abc/' => '/abc/'
-	 *
-	 * @param string $route
-	 *
-	 * @return string
-	 */
-	private function ensure_slashes( $route ) {
-		if ( '/' !== $route[0] ) {
-			$route = '/' . $route;
-		}
-
-		return trailingslashit( $route );
+		parent::__construct( $controller, $route );
 	}
 
 	/**

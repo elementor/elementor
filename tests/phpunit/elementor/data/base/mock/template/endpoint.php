@@ -10,7 +10,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 	 */
 	public $controller;
 
-	use Traits\MockNameType, Traits\MockItems, Traits\MockBypassRegister;
+	use Traits\Mock_Name_Type, Traits\Mock_Items, Traits\Mock_Bypass_Register;
 
 	public function get_type() {
 		return 'endpoint';
