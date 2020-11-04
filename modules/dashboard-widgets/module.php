@@ -64,29 +64,18 @@ class Module extends BaseModule {
 
 	}
 
-	public function load_assets() {
-		$screen = get_current_screen();
-
-		if ( 'dashboard' !== $screen->id ) {
-			return;
-		}
-
-		wp_enqueue_script( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.js', array( 'jquery' ), ELEMENTOR_VERSION, true );
-		wp_enqueue_style( 'elementor-labs-widgets', ELEMENTOR_LABS_ASSETS_URL . '/widgets.css', array(), ELEMENTOR_VERSION );
-	}
-
 	public function add_dashboard_widgets() {
 
 		$widgets = array(
-			'elementor_quick_actions_dashboard_widget' => array(
+			'e-dashboard-widget-quick-actions' => array(
 				'label' => esc_html__( 'Elementor Quick Actions', 'elementor' ),
 				'callback' => [ $this, 'dashboard_quick_actions_render' ],
 			),
-			'elementor_resources_dashboard_widget' => array(
+			'e-dashboard-widget-resources' => array(
 				'label' => esc_html__( 'Elementor Resources', 'elementor' ),
 				'callback' => [ $this, 'dashboard_resources_render' ],
 			),
-			'elementor_news_updates_dashboard_widget' => array(
+			'e-dashboard-widget-news' => array(
 				'label' => esc_html__( 'Elementor News & Updates', 'elementor' ),
 				'callback' => [ $this, 'dashboard_news_updates_render' ],
 			),
@@ -94,7 +83,7 @@ class Module extends BaseModule {
 
 		$show_welcome_panel = get_user_meta( get_current_user_id(), 'show_welcome_panel', true );
 		if ( ! $show_welcome_panel ) {
-			$widgets['elementor_videos_dashboard_widget'] = array(
+			$widgets['e-dashboard-widget-videos'] = array(
 				'label' => esc_html__( 'Elementor Video tutorials', 'elementor' ),
 				'callback' => [ $this, 'dashboard_videos_render' ],
 			);
@@ -129,7 +118,7 @@ class Module extends BaseModule {
 	}
 
 	public function add_global_widget_class( $classes ) {
-		$classes[] = 'elementor-dashboard-widget';
+		$classes[] = 'e-dashboard-widget';
 
 		return $classes;
 	}
@@ -161,10 +150,10 @@ class Module extends BaseModule {
 				),
 		);
 		?>
-		<div class="elementor_welcome_dashboard_widget_wrap metabox-holder">
+		<div class="e-dashboard-widget-welcome-wrap metabox-holder">
 			<div class="postbox-container" style="width: 100%; float: none;">
 				<div class="meta-box-sortables ui-sortable">
-					<div id="elementor_welcome_dashboard_widget" class="postbox elementor-dashboard-widget">
+					<div id="e-dashboard-widget-welcome" class="postbox e-dashboard-widget">
 						<div class="postbox-header">
 							<h2 class="hndle ui-sortable-handle"><span>Welcome Dashboard Widget</span></h2>
 							<button type="button" style="padding: 0;" class="welcome-panel-close handlediv close-hndle" aria-expanded="true"><span class="screen-reader-text">Toggle panel: Welcome Dashboard Widget</span><span class="toggle-indicator" aria-hidden="true"></span></button>
@@ -213,17 +202,6 @@ class Module extends BaseModule {
 				'icon' => 'dashicons-sticky',
 				'label' => __( 'Post', 'elementor' ),
 			),
-			/*
-			'landing_page' => array(
-				'post_type' => false,
-				'icon' => 'dashicons-media-text',
-				'label' => __( 'Landing Page', 'elementor' ),
-				'args' => array(
-					'library_type' => 'landing_page',
-					'add_new'      => 1,
-				),
-			),
-			*/
 		);
 
 		$cpt_support = $this->get_elementor_cpt_support();
@@ -240,10 +218,10 @@ class Module extends BaseModule {
 		}
 
 		?>
-		<div class="elementor-quick-actions-wrap">
+		<div class="e-quick-actions-wrap">
 			<div class="flex">
 				<div class="flex-child">
-					<h3><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
+					<h3 class="e-heading"><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
 					<ul>
 						<?php foreach ( $action_links as $key => $action_link ) :
 
@@ -269,7 +247,7 @@ class Module extends BaseModule {
 				</div>
 
 				<div class="flex-child">
-					<h3><?php esc_html_e( 'Manage', 'elementor' ); ?></h3>
+					<h3 class="e-heading"><?php esc_html_e( 'Manage', 'elementor' ); ?></h3>
 					<ul>
 						<?php
 						$action_links = array(
@@ -318,7 +296,7 @@ class Module extends BaseModule {
 			<?php
 			if ( $this->recently_edited_query->have_posts() ) : ?>
 				<div class="e-overview__recently-edited">
-					<h3 class="e-overview__heading"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
+					<h3 class="e-heading"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
 					<ul class="e-overview__posts">
 						<?php
 						while ( $this->recently_edited_query->have_posts() ) :
@@ -336,9 +314,9 @@ class Module extends BaseModule {
 			<?php endif; ?>
 
 			<div class="version-updates-wrap">
-				<h3><?php esc_html_e( 'Versions Updates', 'elementor' ); ?></h3>
+				<h3 class="e-heading"><?php esc_html_e( 'Versions Updates', 'elementor' ); ?></h3>
 				<div class="versions-info">
-					<div class="elementor-version">
+					<div class="e-version">
 						<div class="version-row">
 							Elementor V<?php echo ELEMENTOR_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
 						</div>
@@ -402,9 +380,9 @@ class Module extends BaseModule {
 			),
 		);
 		?>
-		<div class="elementor-resources-wrap">
+		<div class="e-resources-wrap">
 			<?php foreach ( $sections as $section ) : ?>
-				<h3><?php echo $section['heading']; ?></h3>
+				<h3 class="e-heading"><?php echo $section['heading']; ?></h3>
 				<?php foreach ( $section['links'] as $link ) : ?>
 					<div class="resource-link">
 						<span class="dashicons <?php echo $link['icon']; ?>"></span>
@@ -419,26 +397,26 @@ class Module extends BaseModule {
 
 	public function dashboard_news_updates_render() {
 		?>
-		<div class="elementor-news-updates-wrap">
+		<div class="e-news-updates-wrap">
 			<?php
 			$elementor_feed = Api::get_feed_data();
 
 			if ( ! empty( $elementor_feed ) ) : ?>
-				<div class="e-overview__feed">
-					<ul class="e-overview__posts">
+				<div class="e-feed">
+					<ul class="e-posts">
 						<?php foreach ( $elementor_feed as $feed_item ) : ?>
-							<li class="e-overview__post">
+							<li class="e-post">
 								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
 									<?php if ( ! empty( $feed_item['badge'] ) ) : ?>
-										<span class="e-overview__badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
+										<span class="e-badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
 									<?php endif; ?>
 									<?php echo esc_html( $feed_item['title'] ); ?>
 								</a>
-								<p class="e-overview__post-description"><?php echo esc_html( $feed_item['excerpt'] ); ?></p>
+								<p class="e-post-description"><?php echo esc_html( $feed_item['excerpt'] ); ?></p>
 							</li>
 						<?php endforeach; ?>
 					</ul>
-					<div class="e-overview__footer">
+					<div class="e-footer e-divider_top">
 						<a target="_blank" href="https://go.elementor.com/overview-widget-blog/"><?php esc_html_e( 'Vist blog', 'elementor' ); ?></a>
 						<span class="dashicons dashicons-arrow-right-alt2"></span>
 					</div>
@@ -473,7 +451,7 @@ class Module extends BaseModule {
 			),
 		)
 		?>
-		<div class="elementor-video-tutorials-wrap">
+		<div class="e-video-tutorials-wrap">
 			<div class="embed">
 				<iframe width="560" height="315" src="https://www.youtube.com/embed/nZlgNmbC-Cw?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
 			</div>
