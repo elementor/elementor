@@ -75,9 +75,9 @@ class Module extends BaseModule {
 				'label' => esc_html__( 'Elementor Resources', 'elementor' ),
 				'callback' => [ $this, 'dashboard_resources_render' ],
 			),
-			'e-dashboard-widget-news' => array(
+			'e-dashboard-widget-news-feed' => array(
 				'label' => esc_html__( 'Elementor News & Updates', 'elementor' ),
-				'callback' => [ $this, 'dashboard_news_updates_render' ],
+				'callback' => [ $this, 'dashboard_news_feed_render' ],
 			),
 		);
 
@@ -173,7 +173,7 @@ class Module extends BaseModule {
 							</div>
 							<div class="next-steps flex-child">
 								<h4><?php esc_html_e( 'Next steps', 'elementor' ); ?></h4>
-								<ul>
+								<ul class="e-action-list">
 									<?php foreach ( $action_links as $action_link ) : ?>
 										<li>
 											<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
@@ -222,7 +222,7 @@ class Module extends BaseModule {
 			<div class="flex">
 				<div class="flex-child">
 					<h3 class="e-heading"><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
-					<ul>
+					<ul class="e-action-list">
 						<?php foreach ( $action_links as $key => $action_link ) :
 
 							if ( ! in_array( $key, $cpt_support ) ) {
@@ -248,7 +248,7 @@ class Module extends BaseModule {
 
 				<div class="flex-child">
 					<h3 class="e-heading"><?php esc_html_e( 'Manage', 'elementor' ); ?></h3>
-					<ul>
+					<ul class="e-action-list">
 						<?php
 						$action_links = array(
 							'elementor_finder' => array(
@@ -257,7 +257,7 @@ class Module extends BaseModule {
 								'url' => '#',
 							),
 							'site_menu' => array(
-								'icon' => 'dashicons-menu-alt3',
+								'icon' => 'dashicons-list-view',
 								'label' => __( 'Setup site menu', 'elementor' ),
 								'url' => 'nav-menus.php',
 							),
@@ -295,9 +295,9 @@ class Module extends BaseModule {
 
 			<?php
 			if ( $this->recently_edited_query->have_posts() ) : ?>
-				<div class="e-overview__recently-edited">
-					<h3 class="e-heading"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
-					<ul class="e-overview__posts">
+				<div class="e-recently-edited">
+					<h3 class="e-heading e-divider_top"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
+					<ul class="e-posts">
 						<?php
 						while ( $this->recently_edited_query->have_posts() ) :
 							$this->recently_edited_query->the_post();
@@ -305,15 +305,15 @@ class Module extends BaseModule {
 
 							$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 							?>
-							<li class="e-overview__post">
-								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
+							<li class="e-post">
+								<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-post-link"><?php echo esc_html( get_the_title() ); ?> <span class="dashicons dashicons-edit"></span></a> <span><?php echo $date; ?>, <?php the_time(); ?></span>
 							</li>
 						<?php endwhile; ?>
 					</ul>
 				</div>
 			<?php endif; ?>
 
-			<div class="version-updates-wrap">
+			<div class="e-version-updates e-divider_top">
 				<h3 class="e-heading"><?php esc_html_e( 'Versions Updates', 'elementor' ); ?></h3>
 				<div class="versions-info">
 					<div class="e-version">
@@ -395,9 +395,9 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	public function dashboard_news_updates_render() {
+	public function dashboard_news_feed_render() {
 		?>
-		<div class="e-news-updates-wrap">
+		<div class="e-news-feed-wrap">
 			<?php
 			$elementor_feed = Api::get_feed_data();
 
@@ -406,7 +406,7 @@ class Module extends BaseModule {
 					<ul class="e-posts">
 						<?php foreach ( $elementor_feed as $feed_item ) : ?>
 							<li class="e-post">
-								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-overview__post-link" target="_blank">
+								<a href="<?php echo esc_url( $feed_item['url'] ); ?>" class="e-post-link" target="_blank">
 									<?php if ( ! empty( $feed_item['badge'] ) ) : ?>
 										<span class="e-badge"><?php echo esc_html( $feed_item['badge'] ); ?></span>
 									<?php endif; ?>
