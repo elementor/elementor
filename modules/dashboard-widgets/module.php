@@ -228,7 +228,7 @@ class Module extends BaseModule {
 
 		$cpt_support = $this->get_elementor_cpt_support();
 
-		if ( defined( ELEMENTOR_PRO__FILE__ ) ) {
+		if ( defined( 'ELEMENTOR_PRO__FILE__' ) ) {
 			$action_links['elementor_library'] = array(
 					'post_type' => false,
 					'icon' => 'dashicons-format-gallery',
@@ -300,7 +300,7 @@ class Module extends BaseModule {
 							),
 						);
 
-						if ( ! defined( ELEMENTOR_PRO__FILE__ ) ) {
+						if ( ! defined( 'ELEMENTOR_PRO__FILE__' ) ) {
 							unset( $action_links['theme_builder'] );
 						}
 
@@ -342,9 +342,11 @@ class Module extends BaseModule {
 						<div class="version-row">
 							Elementor V<?php echo ELEMENTOR_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
 						</div>
-						<div class="version-row">
-							Elementor Pro V<?php echo ELEMENTOR_PRO_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
-						</div>
+						<?php if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) : ?>
+							<div class="version-row">
+								Elementor Pro V<?php echo ELEMENTOR_PRO_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
+							</div>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
