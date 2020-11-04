@@ -91,19 +91,29 @@ module.exports = function( $ ) {
 		Handlers.forEach( ( Handler ) => addHandlerWithHook( elementName, Handler, skin ) );
 	};
 
-	this.getHandlers = function( handlerName ) {
-		if ( handlerName ) {
-			const elementHandler = this.elementsHandlers[ handlerName ];
+	this.getHandler = function( handlerName ) {
+		if ( ! handlerName ) {
+			return;
+		}
 
-			if ( isClassHandler( elementHandler ) ) {
-				return elementHandler;
-			}
+		const elementHandler = this.elementsHandlers[ handlerName ];
 
-			return new Promise( ( res ) => {
-				elementHandler().then( ( { default: dynamicHandler } ) => {
-					res( dynamicHandler );
-				} );
+		if ( isClassHandler( elementHandler ) ) {
+			return elementHandler;
+		}
+
+		return new Promise( ( res ) => {
+			elementHandler().then( ( { default: dynamicHandler } ) => {
+				res( dynamicHandler );
 			} );
+		} );
+	};
+
+	this.getHandlers = function( handlerName ) {
+		elementorCommon.helpers.softDeprecated( 'getHandlers', '3.1.0', 'elementorFrontend.elementsHandler.getHandler' );
+
+		if ( handlerName ) {
+			return this.getHandler( handlerName );
 		}
 
 		return this.elementsHandlers;
