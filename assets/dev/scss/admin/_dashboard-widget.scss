@@ -247,30 +247,22 @@
 #dashboard-widgets {
 
   .postbox-container {
-	margin-left: 0;
-	margin-right: 0;
-	width: 33.33%;
+	//margin-left: 0;
+	//margin-right: 0;
+	//width: 33.33%;
 
 	.meta-box-sortables {
-	  display: -webkit-flex;
-	  display: -moz-flex;
-	  display: -ms-flex;
-	  display: -o-flex;
-	  display: flex;
-	  -webkit-flex-wrap: wrap;
-	  -moz-flex-wrap: wrap;
-	  -ms-flex-wrap: wrap;
-	  -o-flex-wrap: wrap;
-	  flex-wrap: wrap;
-	  margin: 0;
-	  align-items: flex-start;
+	  //display: flex;
+	  //flex-wrap: wrap;
+	  //margin: 0;
+	  //align-items: flex-start;
 
 	  .postbox {
-		flex-basis: calc(33.33% - 16px);
-		max-width: calc(33.33% - 16px);
-		margin-left: 8px;
-		margin-right: 8px;
-		box-sizing: border-box;
+		//flex-basis: calc(33.33% - 16px);
+		//max-width: calc(33.33% - 16px);
+		//margin-left: 8px;
+		//margin-right: 8px;
+		//box-sizing: border-box;
 	  }
 
 	  #elementor_welcome_dashboard_widget {
