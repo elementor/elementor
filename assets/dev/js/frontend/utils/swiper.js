@@ -23,7 +23,6 @@ export default class Swiper {
 		} );
 	}
 
-
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
 	// In Swiper 5.0.0 and up, breakpoints changed from acting as max-width to acting as min-width
 	adjustConfig( config ) {
