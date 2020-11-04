@@ -84,7 +84,7 @@ class Module extends BaseModule {
 		$show_welcome_panel = get_user_meta( get_current_user_id(), 'show_welcome_panel', true );
 		if ( ! $show_welcome_panel ) {
 			$widgets['e-dashboard-widget-videos'] = array(
-				'label' => esc_html__( 'Elementor Video tutorials', 'elementor' ),
+				'label' => esc_html__( 'Elementor Video Tutorials', 'elementor' ),
 				'callback' => [ $this, 'dashboard_videos_render' ],
 			);
 		}
@@ -318,10 +318,10 @@ class Module extends BaseModule {
 				<div class="versions-info">
 					<div class="e-version">
 						<div class="version-row">
-							Elementor V<?php echo ELEMENTOR_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
+							<?php esc_html_e( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?>
 						</div>
 						<div class="version-row">
-							Elementor Pro V<?php echo ELEMENTOR_PRO_VERSION; ?> | <a href="update-core.php"><?php _e( 'update', 'elementor' ); ?></a>
+							<?php esc_html_e( 'Elementor Pro', 'elementor' ); ?> v<?php echo ELEMENTOR_PRO_VERSION; ?>
 						</div>
 					</div>
 				</div>
@@ -337,21 +337,21 @@ class Module extends BaseModule {
 				'links' => array(
 					array(
 						'icon' => 'dashicons-video-alt2',
-						'text' => __( 'Video tutorials', 'elementor' ),
+						'text' => __( 'Video Tutorials', 'elementor' ),
 						'url' => 'https://go.elementor.com/wp-dash-video-tutorials',
-						'desc' => 'Browse a lot of videos',
+						'desc' => 'Browse a lot of videos Browse a lot of videos Browse a lot of videos',
 					),
 					array(
 						'icon' => 'dashicons-media-document',
 						'text' => __( 'Technical docs', 'elementor' ),
 						'url' => 'https://go.elementor.com/wp-dash-technical-docs',
-						'desc' => 'Browse a lot of docs',
+						'desc' => 'Browse a lot of docs Browse a lot of docs Browse a lot of docs',
 					),
 					array(
 						'icon' => 'dashicons-editor-help',
 						'text' => __( 'FAQs', 'elementor' ),
 						'url' => 'https://go.elementor.com/wp-dash-faq',
-						'desc' => 'Answer your questions',
+						'desc' => 'Answer your questions Answer your questions Answer your questions',
 					),
 				),
 			),
@@ -385,9 +385,13 @@ class Module extends BaseModule {
 				<h3 class="e-heading"><?php echo $section['heading']; ?></h3>
 				<?php foreach ( $section['links'] as $link ) : ?>
 					<div class="resource-link">
-						<span class="dashicons <?php echo $link['icon']; ?>"></span>
-						<a target="_blank" href="<?php echo $link['url']; ?>"><?php echo $link['text']; ?></a>
-						<p><?php echo $link['desc']; ?></p>
+						<div class="icon">
+							<span class="dashicons <?php echo $link['icon']; ?>"></span>
+						</div>
+						<div class="text">
+							<a target="_blank" href="<?php echo $link['url']; ?>"><?php echo $link['text']; ?></a>
+							<p><?php echo $link['desc']; ?></p>
+						</div>
 					</div>
 				<?php endforeach; ?>
 			<?php endforeach; ?>
@@ -417,8 +421,9 @@ class Module extends BaseModule {
 						<?php endforeach; ?>
 					</ul>
 					<div class="e-footer e-divider_top">
-						<a target="_blank" href="https://go.elementor.com/overview-widget-blog/"><?php esc_html_e( 'Vist blog', 'elementor' ); ?></a>
-						<span class="dashicons dashicons-arrow-right-alt2"></span>
+						<a target="_blank" href="https://go.elementor.com/overview-widget-blog/">
+							<?php esc_html_e( 'Vist blog', 'elementor' ); ?> <span class="screen-reader-text"><?php echo __( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span>
+						</a>
 					</div>
 				</div>
 			<?php endif; ?>

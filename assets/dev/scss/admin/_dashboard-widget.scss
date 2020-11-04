@@ -7,6 +7,7 @@
 
 		h3.e-heading {
 			font-weight: 600;
+			margin-bottom: 13px;
 		}
 
 		.e-divider_bottom {
@@ -21,7 +22,8 @@
 			padding: 6px 12px;
 		}
 
-		.e-quick-actions-wrap {
+		.e-quick-actions-wrap,
+		.e-news-feed-wrap {
 
 			.e-divider_top {
 				padding-top: 18px;
@@ -32,6 +34,10 @@
 }
 
 .e-dashboard-widget {
+
+	.dashicons {
+		color: #606a73;
+	}
 
 	ul.e-action-list {
 
@@ -377,20 +383,17 @@
 	.e-footer {
 		display: flex;
 
-		&.e-divider_top {
-			padding-top: 12px;
-			padding-bottom: 0;
-		}
-
 		a {
 			flex: 1;
+			text-decoration: none;
 		}
 	}
 }
 
 .resource-link {
+	display: flex;
 
-	p {
-		margin-left: 24px;
+	.icon {
+		width: 30px;
 	}
 }
