@@ -278,7 +278,7 @@ class Module extends BaseModule {
 							),
 						);
 
-						if ( defined( 'ELEMENTOR_PRO__FILE__' ) ) {
+						if ( ! defined( 'ELEMENTOR_PRO__FILE__' ) ) {
 							unset( $action_links['theme_builder'] );
 						}
 
