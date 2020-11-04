@@ -9,7 +9,7 @@ import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
 
 elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
-	elementorFrontend.elementsHandler.widgetsHandlers = {
+	elementorFrontend.elementsHandler.elementsHandlers = {
 		'accordion.default': Accordion,
 		'alert.default': Alert,
 		'counter.default': Counter,

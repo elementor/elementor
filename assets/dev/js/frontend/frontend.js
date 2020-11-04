@@ -1,5 +1,5 @@
-import '../public-path';
 /* global elementorFrontendConfig */
+import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';

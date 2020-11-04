@@ -5,7 +5,7 @@ import columnHandlers from './handlers/column';
 module.exports = function( $ ) {
 	const handlersInstances = {};
 
-	this.widgetsHandlers = {
+	this.elementsHandlers = {
 		'accordion.default': () => import( /* webpackChunkName: 'accordion' */ './handlers/accordion' ),
 		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
 		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
@@ -20,10 +20,10 @@ module.exports = function( $ ) {
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/section', sectionHandlers );
-		elementorFrontend.hooks.addAction( 'frontend/element_ready/column', columnHandlers );
+		this.elementsHandlers.section = sectionHandlers;
+		this.elementsHandlers.column = columnHandlers;
 
-		$.each( this.widgetsHandlers, ( elementName, Handlers ) => {
+		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
 			const elementData = elementName.split( '.' );
 
 			elementName = elementData[ 0 ];
@@ -93,20 +93,20 @@ module.exports = function( $ ) {
 
 	this.getHandlers = function( handlerName ) {
 		if ( handlerName ) {
-			const widgetHandler = this.widgetsHandlers[ handlerName ];
+			const elementHandler = this.elementsHandlers[ handlerName ];
 
-			if ( isClassHandler( widgetHandler ) ) {
-				return widgetHandler;
+			if ( isClassHandler( elementHandler ) ) {
+				return elementHandler;
 			}
 
 			return new Promise( ( res ) => {
-				widgetHandler().then( ( { default: dynamicHandler } ) => {
+				elementHandler().then( ( { default: dynamicHandler } ) => {
 					res( dynamicHandler );
 				} );
 			} );
 		}
 
-		return this.widgetsHandlers;
+		return this.elementsHandlers;
 	};
 
 	this.runReadyTrigger = function( scope ) {

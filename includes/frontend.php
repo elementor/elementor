@@ -456,16 +456,6 @@ class Frontend extends App {
 			true
 		);
 
-		wp_register_script(
-			'external-handlers',
-			$this->get_js_assets_url( 'external-handlers', 'assets/js/' ),
-			[
-				'elementor-frontend',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
 		/**
 		 * After frontend register scripts.
 		 *
@@ -605,7 +595,15 @@ class Frontend extends App {
 		wp_enqueue_script( 'elementor-frontend' );
 
 		if ( 'enabled' !== get_option( 'elementor_optimized_js_loading' ) ) {
-			wp_enqueue_script( 'external-handlers' );
+			wp_enqueue_script(
+				'external-handlers',
+				$this->get_js_assets_url( 'external-handlers', 'assets/js/' ),
+				[
+					'elementor-frontend',
+				],
+				ELEMENTOR_VERSION,
+				true
+			);
 		}
 
 		$this->print_config();
