@@ -943,7 +943,11 @@ class Frontend extends App {
 		 */
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
+		do_action( 'elementor/frontend/before_get_builder_content', $document, $this->_is_excerpt );
+
 		if ( empty( $data ) ) {
+			Plugin::$instance->documents->restore_document();
+
 			return '';
 		}
 
@@ -991,6 +995,8 @@ class Frontend extends App {
 
 		Plugin::$instance->documents->restore_document();
 
+		// BC
+		// TODO: use Deprecation::do_deprecated_action() in 3.1.0
 		do_action( 'elementor/frontend/get_builder_content', $document, $this->_is_excerpt, $with_css );
 
 		return $content;
