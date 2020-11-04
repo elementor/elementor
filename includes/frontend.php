@@ -449,7 +449,6 @@ class Frontend extends App {
 				'elementor-frontend-modules',
 				'elementor-dialog',
 				'elementor-waypoints',
-				'swiper',
 				'share-link',
 			],
 			ELEMENTOR_VERSION,
@@ -1172,6 +1171,7 @@ class Frontend extends App {
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+				'isScriptDebug' => Utils::is_script_debug(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),

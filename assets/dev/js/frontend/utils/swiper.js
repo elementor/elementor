@@ -1,5 +1,3 @@
-const originalSwiper = window.Swiper;
-
 export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
@@ -9,10 +7,22 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		originalSwiper.prototype.adjustConfig = this.adjustConfig;
+		return new Promise( ( res ) => {
+			const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
-		return new originalSwiper( container, this.config );
+			import(
+				/* webpackIgnore: true */
+				`${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js`
+				).then( () => {
+					const SwiperSource = window.Swiper;
+
+					SwiperSource.prototype.adjustConfig = this.adjustConfig;
+
+					res( new SwiperSource( container, this.config ) );
+				} );
+		} );
 	}
+
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
 	// In Swiper 5.0.0 and up, breakpoints changed from acting as max-width to acting as min-width
@@ -58,5 +68,3 @@ export default class Swiper {
 		return config;
 	}
 }
-
-window.Swiper = Swiper;
