@@ -172,8 +172,13 @@ const webpackProductionConfig = Object.assign( {}, baseConfig, {
 } );
 
 // Add minified entry points
-for ( const entryPoint in entry ) {
-	let entryValue = entry[ entryPoint ];
+const productionEntries = {
+	...entry,
+	...frontendEntries,
+};
+
+for ( const entryPoint in productionEntries ) {
+	let entryValue = productionEntries[ entryPoint ];
 
 	if ( entryValue.dependOn ) {
 		// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
