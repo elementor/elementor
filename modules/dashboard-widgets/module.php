@@ -5,9 +5,9 @@ namespace Elementor\Modules\DashboardWidgets;
 use Elementor\Api;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
+use Elementor\User;
 use Elementor\Utils;
-use ElementorLabs\Classes\Module_Base;
-use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	/**
-	 * @var WP_Query $recently_edited_query
+	 * @var \WP_Query $recently_edited_query
 	 */
 	private $recently_edited_query;
 
@@ -30,7 +30,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-
 		$this->set_vars();
 
 		remove_action( 'welcome_panel', 'wp_welcome_panel' );
@@ -60,26 +59,24 @@ class Module extends BaseModule {
 			'orderby' => 'modified',
 		];
 
-		$this->recently_edited_query = new WP_Query( $recently_edited_query_args );
-
+		$this->recently_edited_query = new \WP_Query( $recently_edited_query_args );
 	}
 
 	public function add_dashboard_widgets() {
-
-		$widgets = array(
-			'e-dashboard-widget-quick-actions' => array(
+		$widgets = [
+			'e-dashboard-widget-quick-actions' => [
 				'label' => esc_html__( 'Elementor Quick Actions', 'elementor' ),
 				'callback' => [ $this, 'dashboard_quick_actions_render' ],
-			),
-			'e-dashboard-widget-resources' => array(
+			],
+			'e-dashboard-widget-resources' => [
 				'label' => esc_html__( 'Elementor Resources', 'elementor' ),
 				'callback' => [ $this, 'dashboard_resources_render' ],
-			),
-			'e-dashboard-widget-news-feed' => array(
+			],
+			'e-dashboard-widget-news-feed' => [
 				'label' => esc_html__( 'Elementor News & Updates', 'elementor' ),
 				'callback' => [ $this, 'dashboard_news_feed_render' ],
-			),
-		);
+			],
+		];
 
 		$show_welcome_panel = get_user_meta( get_current_user_id(), 'show_welcome_panel', true );
 		if ( ! $show_welcome_panel ) {
@@ -89,16 +86,14 @@ class Module extends BaseModule {
 			);
 		}
 
-		$widget_backup = array();
+		$widget_backup = [];
 
 		foreach ( $widgets as $widget_id => $widget ) {
-
 			add_filter( "postbox_classes_dashboard_{$widget_id}", array( $this, 'add_global_widget_class' ) );
 
 			wp_add_dashboard_widget( $widget_id, $widget['label'], $widget['callback'] );
 
 			$widget_backup[] = $widget_id;
-
 		}
 
 		global $wp_meta_boxes;
@@ -127,28 +122,28 @@ class Module extends BaseModule {
 		$create_page_url = Utils::get_create_new_post_url();
 		$create_post_url = Utils::get_create_new_post_url( 'post' );
 
-		$action_links = array(
-				'write_blog' => array(
+		$action_links = [
+				'write_blog' => [
 						'icon' => 'dashicons-welcome-write-blog',
 						'label' => esc_html__( 'Create your first blog page', 'elementor' ),
 						'url' => esc_url( $create_post_url ),
-				),
-				'about_page' => array(
+				],
+				'about_page' => [
 						'icon' => 'dashicons-plus-alt2',
 						'label' => esc_html__( 'Add an about page', 'elementor' ),
 						'url' => esc_url( $create_page_url ),
-				),
-				'home_page' => array(
+				],
+				'home_page' => [
 						'icon' => 'dashicons-admin-home',
 						'label' => esc_html__( 'Setup your homepage', 'elementor' ),
 						'url' => esc_url( admin_url( 'options-reading.php' ) ),
-				),
-				'view_site' => array(
+				],
+				'view_site' => [
 						'icon' => 'dashicons-welcome-view-site',
 						'label' => esc_html__( 'View your site', 'elementor' ),
 						'url' => esc_url( get_site_url() ),
-				),
-		);
+				],
+		];
 		?>
 		<div class="e-dashboard-widget-welcome-wrap metabox-holder">
 			<div class="postbox-container" style="width: 100%; float: none;">
@@ -164,9 +159,7 @@ class Module extends BaseModule {
 							</div>
 							<div class="intro flex-child">
 								<h3><?php esc_html_e( 'Welcome to Elementor', 'elementor' ); ?></h3>
-								<p>
-									You’re about to create your professional WordPress site with Elementor. From here, you can quickly start working on your site, watch video tutorials, read up on news updates and much more. Let’s get started!
-								</p>
+								<p><?php esc_html_e( 'You\'re about to create your professional WordPress site with Elementor. From here, you can quickly start working on your site, watch video tutorials, read up on news updates and much more. Let\'s get started!', 'elementor' ); ?></p>
 								<p>
 									<a class="button button-primary button-large" href="<?php echo esc_url( $create_page_url ); ?>"><?php esc_html_e( 'Create a new page', 'elementor' ); ?></a>
 								</p>
@@ -190,61 +183,73 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	public function dashboard_quick_actions_render() {
-		$action_links = array(
-			'page' => array(
-				'post_type' => true,
-				'icon' => 'dashicons-media-text',
-				'label' => __( 'Page', 'elementor' ),
-			),
-			'post' => array(
-				'post_type' => true,
-				'icon' => 'dashicons-sticky',
-				'label' => __( 'Post', 'elementor' ),
-			),
-		);
+	private function get_post_types_action_linkt() {
+		$elementor_supported_post_types = get_post_types_by_support( 'elementor' );
 
-		$cpt_support = $this->get_elementor_cpt_support();
+		$items = [];
 
-		if ( defined( 'ELEMENTOR_PRO__FILE__' ) ) {
-			$action_links['elementor_library'] = array(
-					'post_type' => false,
-					'icon' => 'dashicons-format-gallery',
-					'label' => __( 'Popup', 'elementor' ),
-					'args' => array(
-							'template_type' => 'popup',
-					),
-			);
+		foreach ( $elementor_supported_post_types as $post_type ) {
+			if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+				continue;
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
+
+			// If there is an old post type from inactive plugins
+			if ( ! $post_type_object ) {
+				continue;
+			}
+
+			if ( Source_Local::CPT === $post_type ) {
+				$url = admin_url( Source_Local::ADMIN_MENU_SLUG . '#add_new' );
+			} else {
+				$url = Utils::get_create_new_post_url( $post_type );
+			}
+
+			$items[] = [
+				/* translators: %s the title of the post type */
+				'title' => $post_type_object->labels->singular_name,
+				'url' => $url,
+			];
 		}
 
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+			$base_url = admin_url( Source_Local::ADMIN_MENU_SLUG );
+			$url = add_query_arg(
+				[
+					'tabs_group' => 'popup',
+					'elementor_library_type' => 'popup',
+				],
+				$base_url
+			);
+
+			$items[] = [
+				'title' => __( 'Popup', 'elementor' ),
+				'url' => $url . '#add_new',
+			];
+		}
+
+		return $items;
+	}
+
+	public function dashboard_quick_actions_render() {
+		$action_links = $this->get_post_types_action_linkt();
 		?>
 		<div class="e-quick-actions-wrap">
 			<div class="flex">
+				<?php if ( ! empty( $action_links ) ) : ?>
 				<div class="flex-child">
 					<h3 class="e-heading"><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
 					<ul class="e-action-list">
-						<?php foreach ( $action_links as $key => $action_link ) :
-
-							if ( ! in_array( $key, $cpt_support ) ) {
-								continue;
-							}
-
-							if ( ! $action_link['post_type'] ) {
-								$url = add_query_arg(
-									$action_link['args'],
-									Utils::get_create_new_post_url()
-								);
-							} else {
-								$url = Utils::get_create_new_post_url( $key );
-							}
-							?>
+						<?php foreach ( $action_links as $action_link ) : ?>
 							<li>
-								<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
-								<a href="<?php echo esc_url( $url ); ?>"><?php echo $action_link['label']; ?></a>
+								<span class="dashicons dashicons-plus"></span>
+								<a href="<?php echo esc_url( $action_link['url'] ); ?>"><?php echo $action_link['title']; ?></a>
 							</li>
 						<?php endforeach; ?>
 					</ul>
 				</div>
+				<?php endif; ?>
 
 				<div class="flex-child">
 					<h3 class="e-heading"><?php esc_html_e( 'Manage', 'elementor' ); ?></h3>
@@ -282,11 +287,11 @@ class Module extends BaseModule {
 							unset( $action_links['theme_builder'] );
 						}
 
-						foreach ( $action_links as $key => $action_link ) :
+						foreach ( $action_links as $cpt => $action_link ) :
 							?>
 							<li>
 								<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
-								<a class="<?php echo $key; ?>" href="<?php echo esc_url( $action_link['url'] ); ?>"><?php echo $action_link['label']; ?></a>
+								<a class="<?php echo $cpt; ?>" href="<?php echo esc_url( $action_link['url'] ); ?>"><?php echo $action_link['label']; ?></a>
 							</li>
 						<?php endforeach; ?>
 					</ul>
@@ -474,9 +479,5 @@ class Module extends BaseModule {
 			</div>
 		</div>
 		<?php
-	}
-
-	private function get_elementor_cpt_support() {
-		return get_option( 'elementor_cpt_support' );
 	}
 }
