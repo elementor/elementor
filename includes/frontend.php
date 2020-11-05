@@ -391,14 +391,6 @@ class Frontend extends App {
 			true
 		);
 
-		wp_register_script(
-			'swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
-			[],
-			'5.3.6',
-			true
-		);
-
 		/**
 		 * @deprecated since 2.7.0 Use Swiper instead
 		 */
@@ -445,12 +437,7 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			[
-				'elementor-frontend-modules',
-				'elementor-dialog',
-				'elementor-waypoints',
-				'share-link',
-			],
+			$this->get_elementor_frontend_dependencies(),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -593,7 +580,7 @@ class Frontend extends App {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
-		if ( 'enabled' !== get_option( 'elementor_optimized_js_loading' ) ) {
+		if ( ! $this->is_optimized_js_mode() ) {
 			wp_enqueue_script(
 				'external-handlers',
 				$this->get_js_assets_url( 'external-handlers', 'assets/js/' ),
@@ -1305,5 +1292,32 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	private function is_optimized_js_mode() {
+		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
+	}
+
+	private function get_elementor_frontend_dependencies() {
+		$dependencies = [
+			'elementor-frontend-modules',
+			'elementor-dialog',
+			'elementor-waypoints',
+			'share-link',
+		];
+
+		if ( ! $this->is_optimized_js_mode() ) {
+			wp_register_script(
+				'swiper',
+				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				[],
+				'5.3.6',
+				true
+			);
+
+			array_push( $dependencies, 'swiper' );
+		}
+
+		return $dependencies;
 	}
 }
