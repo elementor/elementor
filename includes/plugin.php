@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -443,6 +444,11 @@ class Plugin {
 	public $app;
 
 	/**
+	 * @var Experiments_Manager
+	 */
+	public $experiments;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -569,6 +575,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->experiments = new Experiments_Manager();
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 
