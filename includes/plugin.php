@@ -16,7 +16,6 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
