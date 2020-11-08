@@ -86,19 +86,7 @@ class Manager extends Base_Object {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
-	private function init_features() {
-		$this->add_feature( [
-			'name' => 'dom_optimization',
-			'title' => __( 'Optimized DOM Output', 'elementor' ),
-			'description' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
-				. __( 'Learn More', 'elementor' ) . '</a>',
-			'status' => self::STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
-		] );
-
-		do_action( 'elementor/experiments/features-registered' );
-	}
+	private function init_features() {}
 
 	private function register_settings_fields( Tools $tools ) {
 		$features = $this->get_features();
