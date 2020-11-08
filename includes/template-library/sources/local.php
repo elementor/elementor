@@ -1268,8 +1268,6 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
-
 		$current_type = get_query_var( 'elementor_library_type' );
 
 		$document_types = Plugin::instance()->documents->get_document_types();
@@ -1283,6 +1281,8 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		$additional_inline_style = '';
+
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
@@ -1293,11 +1293,31 @@ class Source_Local extends Source_Base {
 			}
 
 			$current_type = 'template';
-
-			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
+			$additional_inline_style = '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
+		$this->render_blank_state( $current_type, $additional_inline_style );
+	}
+
+	public function render_blank_state( $current_type, $additional_inline_style = '', $custom_description = '', $custom_href = '' ) {
 		$current_type_label = $this->get_template_label_by_type( $current_type );
+		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
+
+		if ( $additional_inline_style ) {
+			$inline_style .= $additional_inline_style;
+		}
+
+		if ( $custom_description ) {
+			$description = $custom_description;
+		} else {
+			$description = __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' );
+		}
+
+		$href = '';
+		if ( $custom_href ) {
+			$href = $custom_href;
+		}
+
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
@@ -1309,8 +1329,8 @@ class Source_Local extends Source_Base {
 					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>">
+				<p><?php echo $description; ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
