@@ -253,10 +253,16 @@ abstract class Settings_Page {
 
 					$field['field_args']['class'] = implode( ' ', $field_classes );
 
+					$render_callback = [ $controls_class_name, 'render' ];
+
+					if ( isset( $field['render'] ) ) {
+						$render_callback = $field['render'];
+					}
+
 					add_settings_field(
 						$full_field_id,
 						isset( $field['label'] ) ? $field['label'] : '',
-						[ $controls_class_name, 'render' ],
+						$render_callback,
 						static::PAGE_ID,
 						$full_section_id,
 						$field['field_args']
