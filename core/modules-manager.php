@@ -2,6 +2,8 @@
 namespace Elementor\Core;
 
 use Elementor\Core\Base\Module;
+use Elementor\Core\experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,6 +50,19 @@ class Modules_Manager {
 			$class_name = $modules_namespace_prefix . '\\Modules\\' . $class_name . '\Module';
 
 			/** @var Module $class_name */
+
+			$experimental_data = $class_name::get_experimental_data();
+
+			if ( $experimental_data ) {
+				$experimental_data['name'] = $class_name;
+
+				$this->add_experimental_module( $experimental_data );
+
+				if ( ! Plugin::$instance->experiments->is_feature_active( $class_name ) ) {
+					continue;
+				}
+			}
+
 			if ( $class_name::is_active() ) {
 				$this->modules[ $module_name ] = $class_name::instance();
 			}
@@ -115,5 +130,17 @@ class Modules_Manager {
 	 */
 	protected function get_modules_namespace_prefix() {
 		return 'Elementor';
+	}
+
+	private function add_experimental_module( array $experimental_data ) {
+		$default_experimental_data = [
+			'description' => '',
+			'status' => Experiments_Manager::STATUS_ALPHA,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
+
+		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
+
+		Plugin::$instance->experiments->add_feature( $experimental_data );
 	}
 }
