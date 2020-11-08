@@ -364,13 +364,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		global $submenu;
-
-		if ( isset( $submenu['elementor'] ) ) {
-			// @codingStandardsIgnoreStart
-			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-			// @codingStandardsIgnoreEnd
-		}
+		Utils::change_submenu_first_item_label( 'elementor', __( 'Settings', 'elementor' ) );
 	}
 
 	/**
