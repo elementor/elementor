@@ -8,7 +8,6 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1250,11 +1249,17 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 * @param array $args
 	 */
-	public function maybe_render_blank_state( $which ) {
+	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
 
-		if ( self::CPT !== $post_type || 'bottom' !== $which ) {
+		$args = wp_parse_args( $args, [
+			'cpt' => self::CPT,
+			'post_type' => get_query_var( 'elementor_library_type' ),
+		] );
+
+		if ( $args['cpt'] !== $post_type || 'bottom' !== $which ) {
 			return;
 		}
 
@@ -1266,9 +1271,7 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
-
-		$current_type = get_query_var( 'elementor_library_type' );
+		$current_type = $args['post_type'];
 
 		$document_types = Plugin::instance()->documents->get_document_types();
 
@@ -1281,6 +1284,7 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		// TODO: This code maybe unreachable see if above `if ( empty( $document_types[ $current_type ] ) )`.
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
@@ -1292,10 +1296,22 @@ class Source_Local extends Source_Base {
 
 			$current_type = 'template';
 
-			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
+			$args['additional_inline_style'] = '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
+		$this->render_blank_state( $current_type, $args );
+	}
+
+	private function render_blank_state( $current_type, array $args = [] ) {
 		$current_type_label = $this->get_template_label_by_type( $current_type );
+		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
+
+		$args = wp_parse_args( $args, [
+			'additional_inline_style' => '',
+			'href' => '',
+			'description' => __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
+		] );
+		$inline_style .= $args['additional_inline_style'];
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
@@ -1307,8 +1323,8 @@ class Source_Local extends Source_Base {
 					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>">
+				<p><?php echo $args['description']; ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $args['href']; ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
