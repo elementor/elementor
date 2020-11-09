@@ -333,8 +333,8 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
-			'elementor-runtime',
-			$this->get_js_assets_url( 'runtime', 'assets/js/' ),
+			'elementor-webpack-runtime',
+			$this->get_js_assets_url( 'webpack.runtime', 'assets/js/' ),
 			[],
 			ELEMENTOR_VERSION,
 			true
@@ -344,7 +344,7 @@ class Frontend extends App {
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
-				'elementor-runtime',
+				'elementor-webpack-runtime',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
