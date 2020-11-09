@@ -143,52 +143,74 @@ const webpackConfig = [
 	},
 ];
 
-const webpackProductionConfig = Object.assign( {}, baseConfig, {
+const prodSharedOptimization = {
+	minimize: true,
+	minimizer: [
+		new TerserPlugin( {
+			terserOptions: {
+				keep_fnames: true,
+			},
+			include: /\.min\.js$/
+		} ),
+	],
+};
+
+const prodSharedConfig = {
+	...baseConfig,
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: '[name].[contenthash].bundle.min.js',
 		filename: '[name].js',
 	},
-	entry: {},
 	performance: { hints: false },
-	optimization: {
-		runtimeChunk: {
-			name: 'runtime.min',
-		},
-		splitChunks: {
-			minChunks: 2,
-		},
-		minimize: true,
-		minimizer: [
-			new TerserPlugin( {
-				terserOptions: {
-					keep_fnames: true,
-				},
-				include: /\.min\.js$/
-			} ),
-		],
-	},
-} );
-
-// Add minified entry points
-const productionEntries = {
-	...entry,
-	...frontendEntries,
 };
 
-for ( const entryPoint in productionEntries ) {
-	let entryValue = productionEntries[ entryPoint ];
+const webpackProductionConfig = [
+	{
+		...prodSharedConfig,
+		name: 'base',
+		entry: {
+			...entry,
+		},
+		optimization: {
+			...prodSharedOptimization,
+		},
+	},
+	{
+		...prodSharedConfig,
+		name: 'frontend',
+		entry: {
+			...frontendEntries,
+		},
+		optimization: {
+			...prodSharedOptimization,
+			runtimeChunk: {
+				name: 'runtime.min',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+	},
+];
 
-	if ( entryValue.dependOn ) {
-		// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
-		entryValue = { ...entryValue };
+// Add minified entry points
+webpackProductionConfig.forEach( ( config, index ) => {
+	for ( const entryPoint in config.entry ) {
+		let entryValue = config.entry[ entryPoint ];
 
-		entryValue.dependOn += '.min';
+		if ( entryValue.dependOn ) {
+			// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
+			entryValue = { ...entryValue };
+
+			entryValue.dependOn += '.min';
+		}
+
+		delete config.entry[ entryPoint ];
+		config.entry[ entryPoint + '.min' ] = entryValue;
 	}
-
-	webpackProductionConfig.entry[ entryPoint + '.min' ] = entryValue;
-}
+} );
 
 const defaultConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
