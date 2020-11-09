@@ -30,7 +30,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'welcome_panel', [ $this, 'action_welcome_panel' ], 1 );
+		remove_action( 'welcome_panel', 'wp_welcome_panel' );
+		add_action( 'welcome_panel', [ $this, 'welcome_dashboard_widget_render' ] );
 
 		if ( is_network_admin() ) {
 			add_action( 'wp_network_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
@@ -38,13 +39,6 @@ class Module extends BaseModule {
 			add_action( 'wp_user_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
 		} else {
 			add_action( 'wp_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
-		}
-	}
-
-	public function action_welcome_panel() {
-		if ( 3 >= $this->get_recently_edited_query()->post_count ) {
-			remove_action( 'welcome_panel', 'wp_welcome_panel' );
-			add_action( 'welcome_panel', [ $this, 'welcome_dashboard_widget_render' ] );
 		}
 	}
 
@@ -148,37 +142,29 @@ class Module extends BaseModule {
 			],
 		];
 		?>
-		<div class="e-dashboard-widget-welcome-wrap metabox-holder">
-			<div class="postbox-container" style="width: 100%; float: none;">
-				<div class="meta-box-sortables ui-sortable">
-					<div id="e-dashboard-widget-welcome" class="postbox e-dashboard-widget">
-						<div class="postbox-header">
-							<h2 class="hndle ui-sortable-handle"><span>Welcome Dashboard Widget</span></h2>
-							<button type="button" style="padding: 0;" class="welcome-panel-close handlediv close-hndle" aria-expanded="true"><span class="screen-reader-text">Toggle panel: Welcome Dashboard Widget</span><span class="toggle-indicator" aria-hidden="true"></span></button>
-						</div>
-						<div class="flex inside">
-							<div class="video flex-child">
-								<iframe width="560" height="315" src="https://www.youtube.com/embed/_X0eYtY8T_U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-							</div>
-							<div class="intro flex-child">
-								<h3><?php esc_html_e( 'Welcome to Elementor', 'elementor' ); ?></h3>
-								<p><?php esc_html_e( 'You\'re about to create your professional WordPress site with Elementor. From here, you can quickly start working on your site, watch video tutorials, read up on news updates and much more. Let\'s get started!', 'elementor' ); ?></p>
-								<p>
-									<a class="button button-primary button-large" href="<?php echo esc_url( $create_page_url ); ?>"><?php esc_html_e( 'Create a new page', 'elementor' ); ?></a>
-								</p>
-							</div>
-							<div class="next-steps flex-child">
-								<h4><?php esc_html_e( 'Next steps', 'elementor' ); ?></h4>
-								<ul class="e-action-list">
-									<?php foreach ( $action_links as $action_link ) : ?>
-										<li>
-											<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
-											<a href="<?php echo $action_link['url']; ?>"><?php echo $action_link['label']; ?></a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</div>
-						</div>
+		<div class="welcome-panel-content">
+			<div id="e-dashboard-widget-welcome" class="postbox e-dashboard-widget">
+				<div class="flex inside">
+					<div class="video flex-child">
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/_X0eYtY8T_U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+					</div>
+					<div class="intro flex-child">
+						<h3><?php esc_html_e( 'Welcome to Elementor', 'elementor' ); ?></h3>
+						<p><?php esc_html_e( 'You\'re about to create your professional WordPress site with Elementor. From here, you can quickly start working on your site, watch video tutorials, read up on news updates and much more. Let\'s get started!', 'elementor' ); ?></p>
+						<p>
+							<a class="button button-primary button-large" href="<?php echo esc_url( $create_page_url ); ?>"><?php esc_html_e( 'Create a new page', 'elementor' ); ?></a>
+						</p>
+					</div>
+					<div class="next-steps flex-child">
+						<h4><?php esc_html_e( 'Next steps', 'elementor' ); ?></h4>
+						<ul class="e-action-list">
+							<?php foreach ( $action_links as $action_link ) : ?>
+								<li>
+									<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
+									<a href="<?php echo $action_link['url']; ?>"><?php echo $action_link['label']; ?></a>
+								</li>
+							<?php endforeach; ?>
+						</ul>
 					</div>
 				</div>
 			</div>
