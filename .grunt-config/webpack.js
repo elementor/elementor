@@ -77,9 +77,9 @@ const entry = {
 };
 
 const frontendEntries = {
-	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
-	'external-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/external-handlers.js' ), dependOn: 'frontend' },
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
+	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'external-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/external-handlers.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
@@ -133,7 +133,7 @@ const webpackConfig = [
 		name: 'frontend',
 		optimization: {
 			runtimeChunk:  {
-				name: 'runtime',
+				name: 'webpack.runtime',
 			},
 			splitChunks: {
 				minChunks: 2,
@@ -186,7 +186,7 @@ const webpackProductionConfig = [
 		optimization: {
 			...prodSharedOptimization,
 			runtimeChunk: {
-				name: 'runtime.min',
+				name: 'webpack.runtime.min',
 			},
 			splitChunks: {
 				minChunks: 2,
