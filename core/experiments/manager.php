@@ -102,7 +102,9 @@ class Manager extends Base_Object {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
-	private function init_features() {}
+	private function init_features() {
+		do_action( 'elementor/experiments/features-registered' );
+	}
 
 	private function register_settings_fields( Tools $tools ) {
 		$features = $this->get_features();
