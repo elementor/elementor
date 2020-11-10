@@ -64,6 +64,12 @@ class Manager extends Base_Object {
 		return $experimental_data;
 	}
 
+	public function remove_feature( $feature_name ) {
+		if ( isset( $this->features[ $feature_name ] ) ) {
+			unset( $this->features[ $feature_name ] );
+		}
+	}
+
 	public function get_features( $feature_name = null ) {
 		return self::get_items( $this->features, $feature_name );
 	}
