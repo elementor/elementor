@@ -120,11 +120,6 @@ class Module extends BaseModule {
 		$create_post_url = Utils::get_create_new_post_url( 'post' );
 
 		$action_links = [
-			'write_blog' => [
-				'icon' => 'dashicons-admin-site-alt3',
-				'label' => esc_html__( 'Global Settings', 'elementor' ),
-				'url' => esc_url( $create_post_url ),
-			],
 			'about_page' => [
 				'icon' => 'dashicons-networking',
 				'label' => esc_html__( 'Create your site\'s insructure with Theme Builder', 'elementor' ),
@@ -139,6 +134,11 @@ class Module extends BaseModule {
 				'icon' => 'dashicons-list-view',
 				'label' => esc_html__( 'Add a site menu', 'elementor' ),
 				'url' => esc_url( admin_url( 'nav-menus.php' ) ),
+			],
+			'global_settings' => [
+				'icon' => 'dashicons-admin-site-alt3',
+				'label' => esc_html__( 'Global Settings', 'elementor' ),
+				'url' => esc_url( admin_url( 'options-general.php' ) ),
 			],
 		];
 		?>
@@ -312,7 +312,7 @@ class Module extends BaseModule {
 			<div class="e-version-updates e-divider_top flex">
 				<h3 class="e-heading flex-child"><?php esc_html_e( 'Versions', 'elementor' ); ?></h3>
 				<div class="e-versions flex-child">
-					<span class="e-version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
+					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
 					/**
 					 * Elementor dashboard widget after the version.
