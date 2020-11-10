@@ -138,7 +138,7 @@ class Module extends BaseModule {
 			'view_site' => [
 				'icon' => 'dashicons-list-view',
 				'label' => esc_html__( 'Add a site menu', 'elementor' ),
-				'url' => esc_url( get_site_url() ),
+				'url' => esc_url( admin_url( 'nav-menus.php' ) ),
 			],
 		];
 		?>
