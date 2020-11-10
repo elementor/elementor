@@ -155,7 +155,7 @@ class Settings extends Settings_Page {
 			__( 'Custom Code', 'elementor' ),
 			'manage_options',
 			'elementor_custom_custom_code',
-			function () {
+			function() {
 				$this->elementor_custom_code();
 			}
 		);
