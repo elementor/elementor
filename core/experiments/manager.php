@@ -103,6 +103,8 @@ class Manager extends Base_Object {
 	}
 
 	private function init_features() {
+		$this->features = [];
+
 		do_action( 'elementor/experiments/features-registered' );
 	}
 
