@@ -24,6 +24,11 @@ class Manager extends Base_Object {
 	private $features;
 
 	/**
+	 * Add Feature
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
 	 * @param array $options {
 	 *     @type string $name
 	 *     @type string $title
@@ -64,16 +69,44 @@ class Manager extends Base_Object {
 		return $experimental_data;
 	}
 
+	/**
+	 * Remove Feature
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $feature_name
+	 */
 	public function remove_feature( $feature_name ) {
 		if ( isset( $this->features[ $feature_name ] ) ) {
 			unset( $this->features[ $feature_name ] );
 		}
 	}
 
+	/**
+	 * Get Features
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $feature_name Optional. Default is null
+	 *
+	 * @return array|null
+	 */
 	public function get_features( $feature_name = null ) {
 		return self::get_items( $this->features, $feature_name );
 	}
 
+	/**
+	 * Is Feature Active
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $feature_name
+	 *
+	 * @return bool
+	 */
 	public function is_feature_active( $feature_name ) {
 		$feature = $this->get_features( $feature_name );
 
@@ -88,6 +121,15 @@ class Manager extends Base_Object {
 		return true;
 	}
 
+	/**
+	 * Set Feature Default State
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $feature_name
+	 * @param int $default_state
+	 */
 	public function set_feature_default_state( $feature_name, $default_state ) {
 		$feature = $this->get_features( $feature_name );
 
@@ -98,16 +140,40 @@ class Manager extends Base_Object {
 		$this->features[ $feature_name ]['default'] = $default_state;
 	}
 
+	/**
+	 * Get Feature Option Key
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param string $feature_name
+	 *
+	 * @return string
+	 */
 	private function get_feature_option_key( $feature_name ) {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
+	/**
+	 * Init Features
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
 	private function init_features() {
 		$this->features = [];
 
 		do_action( 'elementor/experiments/features-registered' );
 	}
 
+	/**
+	 * Register Settings Fields
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param Tools $tools
+	 */
 	private function register_settings_fields( Tools $tools ) {
 		$features = $this->get_features();
 
@@ -141,6 +207,12 @@ class Manager extends Base_Object {
 		);
 	}
 
+	/**
+	 * Render Settings Intro
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
 	private function render_settings_intro() {
 		?>
 		<h2><?php echo __( 'Elementor Experiments', 'elementor' ); ?></h2>
@@ -149,7 +221,15 @@ Please note that Experiments might change during their development. <a href="%s"
 		<?php
 	}
 
-	private function render_feature_settings_field( $feature ) {
+	/**
+	 * Render Feature Settings Field
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $feature
+	 */
+	private function render_feature_settings_field( array $feature ) {
 		$states = [
 			self::STATE_DEFAULT => __( 'Default', 'elementor' ),
 			self::STATE_ACTIVE => __( 'Active', 'elementor' ),
@@ -173,7 +253,17 @@ Please note that Experiments might change during their development. <a href="%s"
 		<?php
 	}
 
-	private function get_feature_settings_label_html( $feature ) {
+	/**
+	 * Get Feature Settings Label HTML
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $feature
+	 *
+	 * @return string
+	 */
+	private function get_feature_settings_label_html( array $feature ) {
 		ob_start();
 
 		$indicator_classes = 'e-experiment__title__indicator';
@@ -191,6 +281,16 @@ Please note that Experiments might change during their development. <a href="%s"
 		return ob_get_clean();
 	}
 
+	/**
+	 * Get Feature Settings Label HTML
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param string $feature_name
+	 *
+	 * @return int
+	 */
 	private function get_saved_feature_state( $feature_name ) {
 		return (int) get_option( $this->get_feature_option_key( $feature_name ) );
 	}
