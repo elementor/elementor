@@ -56,7 +56,7 @@ class Manager extends Base_Object {
 
 		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
 
-		$state = $this->get_saved_feature_state( $options['name' ] );
+		$state = $this->get_saved_feature_state( $options['name'] );
 
 		if ( ! $state ) {
 			$state = self::STATE_DEFAULT;
@@ -64,7 +64,7 @@ class Manager extends Base_Object {
 
 		$experimental_data['state'] = $state;
 
-		$this->features[ $options['name' ] ] = $experimental_data;
+		$this->features[ $options['name'] ] = $experimental_data;
 
 		return $experimental_data;
 	}
@@ -179,7 +179,7 @@ class Manager extends Base_Object {
 
 		$fields = [];
 
-		foreach( $features as $feature_name => $feature ) {
+		foreach ( $features as $feature_name => $feature ) {
 			$feature_key = 'experiment-' . $feature_name;
 
 			$fields[ $feature_key ]['label'] = $this->get_feature_settings_label_html( $feature );
@@ -243,7 +243,7 @@ Please note that Experiments might change during their development. <a href="%s"
 		?>
 		<div class="e-experiment__content">
 			<select id="e-experiment-<?php echo $feature['name']; ?>" class="e-experiment__select" name="<?php echo $this->get_feature_option_key( $feature['name'] ); ?>">
-				<?php foreach( $states as $state_key => $state_title ) { ?>
+				<?php foreach ( $states as $state_key => $state_title ) { ?>
 					<option value="<?php echo $state_key; ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
 				<?php } ?>
 			</select>
