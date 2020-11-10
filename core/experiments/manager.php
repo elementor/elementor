@@ -41,7 +41,15 @@ class Manager extends Base_Object {
 
 		$allowed_options = [ 'name', 'title', 'description', 'status', 'default' ];
 
-		$this->features[ $options['name' ] ] = array_intersect_key( $options, array_flip( $allowed_options ) );
+		$experimental_data = array_intersect_key( $options, array_flip( $allowed_options ) );
+
+		$default_experimental_data = [
+			'description' => '',
+			'status' => self::STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+		];
+
+		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
 
 		$state = $this->get_saved_feature_state( $options['name' ] );
 
@@ -49,9 +57,11 @@ class Manager extends Base_Object {
 			$state = self::STATE_DEFAULT;
 		}
 
-		$this->features[ $options[ 'name' ] ]['state'] = $state;
+		$experimental_data['state'] = $state;
 
-		return $this->features[ $options['name' ] ];
+		$this->features[ $options['name' ] ] = $experimental_data;
+
+		return $experimental_data;
 	}
 
 	public function get_features( $feature_name = null ) {

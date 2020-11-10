@@ -133,14 +133,6 @@ class Modules_Manager {
 	}
 
 	private function add_experimental_module( array $experimental_data ) {
-		$default_experimental_data = [
-			'description' => '',
-			'status' => Experiments_Manager::STATUS_ALPHA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		];
-
-		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
-
 		Plugin::$instance->experiments->add_feature( $experimental_data );
 	}
 }
