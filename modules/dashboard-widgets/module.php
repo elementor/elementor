@@ -121,29 +121,29 @@ class Module extends BaseModule {
 
 		$action_links = [
 			'write_blog' => [
-				'icon' => 'dashicons-welcome-write-blog',
-				'label' => esc_html__( 'Create your first blog page', 'elementor' ),
+				'icon' => 'dashicons-admin-site-alt3',
+				'label' => esc_html__( 'Global Settings', 'elementor' ),
 				'url' => esc_url( $create_post_url ),
 			],
 			'about_page' => [
-				'icon' => 'dashicons-plus-alt2',
-				'label' => esc_html__( 'Add an about page', 'elementor' ),
+				'icon' => 'dashicons-networking',
+				'label' => esc_html__( 'Create your site\'s insructure with Theme Builder', 'elementor' ),
 				'url' => esc_url( $create_page_url ),
 			],
 			'home_page' => [
 				'icon' => 'dashicons-admin-home',
-				'label' => esc_html__( 'Setup your homepage', 'elementor' ),
+				'label' => esc_html__( 'Set up your homepage', 'elementor' ),
 				'url' => esc_url( admin_url( 'options-reading.php' ) ),
 			],
 			'view_site' => [
-				'icon' => 'dashicons-welcome-view-site',
-				'label' => esc_html__( 'View your site', 'elementor' ),
+				'icon' => 'dashicons-list-view',
+				'label' => esc_html__( 'Add a site menu', 'elementor' ),
 				'url' => esc_url( get_site_url() ),
 			],
 		];
 		?>
 		<div class="welcome-panel-content">
-			<div id="e-dashboard-widget-welcome" class="postbox e-dashboard-widget">
+			<div id="e-dashboard-widget-welcome" class="e-dashboard-widget">
 				<div class="flex inside">
 					<div class="video flex-child">
 						<iframe width="560" height="315" src="https://www.youtube.com/embed/_X0eYtY8T_U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
@@ -156,7 +156,7 @@ class Module extends BaseModule {
 						</p>
 					</div>
 					<div class="next-steps flex-child">
-						<h4><?php esc_html_e( 'Next steps', 'elementor' ); ?></h4>
+						<h4><?php esc_html_e( 'Start With the Essentials', 'elementor' ); ?></h4>
 						<ul class="e-action-list">
 							<?php foreach ( $action_links as $action_link ) : ?>
 								<li>
@@ -228,7 +228,7 @@ class Module extends BaseModule {
 			<div class="flex">
 				<?php if ( ! empty( $action_links ) ) : ?>
 				<div class="flex-child">
-					<h3 class="e-heading"><?php esc_html_e( 'Add New', 'elementor' ); ?></h3>
+					<h3 class="e-heading"><?php esc_html_e( 'Create', 'elementor' ); ?></h3>
 					<ul class="e-action-list">
 						<?php foreach ( $action_links as $action_link ) : ?>
 							<li>
@@ -247,7 +247,7 @@ class Module extends BaseModule {
 						$action_links = [
 							'elementor-finder' => [
 								'icon' => 'dashicons-search',
-								'label' => __( 'Find Anything', 'elementor' ),
+								'label' => __( 'Finder', 'elementor' ),
 								'url' => '#',
 							],
 							'site-menu' => [
@@ -256,7 +256,7 @@ class Module extends BaseModule {
 								'url' => 'nav-menus.php',
 							],
 							'global-settings' => [
-								'icon' => 'dashicons-admin-site',
+								'icon' => 'dashicons-admin-site-alt3',
 								'label' => __( 'Global Settings', 'elementor' ),
 								'url' => 'options-general.php',
 							],
@@ -309,10 +309,10 @@ class Module extends BaseModule {
 				</div>
 			<?php endif; ?>
 
-			<div class="e-version-updates e-divider_top">
-				<h3 class="e-heading"><?php esc_html_e( 'Versions Updates', 'elementor' ); ?></h3>
-				<div class="e-overview__versions">
-					<span class="e-overview__version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
+			<div class="e-version-updates e-divider_top flex">
+				<h3 class="e-heading flex-child"><?php esc_html_e( 'Versions', 'elementor' ); ?></h3>
+				<div class="e-versions flex-child">
+					<span class="e-version"><?php echo __( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; ?></span>
 					<?php
 					/**
 					 * Elementor dashboard widget after the version.

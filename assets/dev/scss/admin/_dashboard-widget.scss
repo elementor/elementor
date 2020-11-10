@@ -165,16 +165,6 @@
 
 // Welcome Widget
 #welcome-panel {
-	overflow: unset;
-	margin: 0;
-	padding: 0;
-	border: none;
-	box-shadow: none;
-	background: transparent;
-
-	.inside {
-		padding: 18px 29px;
-	}
 
 	.e-dashboard-widget {
 
@@ -222,21 +212,9 @@
 	}
 }
 
-#dashboard-widgets {
-
-	#e-dashboard-widget-welcome {
-
-		.toggle-indicator {
-
-			&:before {
-				content: "\f335";
-			}
-		}
-	}
-}
-
 #e-dashboard-widget-welcome {
 	width: 100%;
+	padding-bottom: 23px;
 
 	.toggle-indicator:before {
 		content: "\f335";
@@ -324,15 +302,9 @@
 .e-quick-actions-wrap {
 
 	.e-version-updates {
-		display: flex;
-
-		.versions-info, h3 {
-			flex: 1;
-		}
 
 		.e-version {
-			display: flex;
-			flex-direction: column;
+			display: block;
 			font-size: 0.9em;
 			line-height: 1.5;
 		}
