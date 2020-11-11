@@ -10,6 +10,8 @@ const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+const RemoveChunksPlugin = require('./remove-chunks');
+
 const moduleRules = {
 	rules: [
 		// {
@@ -105,13 +107,16 @@ const baseConfig = {
 	context: __dirname,
 	devtool: 'source-map',
 	externals,
-	plugins,
 	module: moduleRules,
 	resolve: aliasList,
 };
 
 const devSharedConfig = {
 	...baseConfig,
+	plugins: [
+		new RemoveChunksPlugin( '.bundle.js' ),
+		...plugins,
+	],
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
@@ -157,6 +162,10 @@ const prodSharedOptimization = {
 
 const prodSharedConfig = {
 	...baseConfig,
+	plugins: [
+		new RemoveChunksPlugin( '.bundle.min.js' ),
+		...plugins,
+	],
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
