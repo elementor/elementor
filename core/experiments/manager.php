@@ -44,15 +44,15 @@ class Manager extends Base_Object {
 			return null;
 		}
 
-		$allowed_options = [ 'name', 'title', 'description', 'status', 'default' ];
-
-		$experimental_data = array_intersect_key( $options, array_flip( $allowed_options ) );
-
 		$default_experimental_data = [
 			'description' => '',
 			'status' => self::STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		];
+
+		$allowed_options = [ 'name', 'title', 'description', 'status', 'default' ];
+
+		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
 
