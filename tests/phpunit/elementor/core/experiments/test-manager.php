@@ -28,13 +28,14 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$test_feature_data = [
 			'name' => 'test_feature',
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'unaccepted_value' => 'bla bla',
 		];
 
 		$test_set = [
 			'description' => '',
 			'status' => Experiments_Manager::STATUS_ALPHA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'name' => 'test_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
 		];
