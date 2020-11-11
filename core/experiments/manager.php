@@ -78,9 +78,7 @@ class Manager extends Base_Object {
 	 * @param string $feature_name
 	 */
 	public function remove_feature( $feature_name ) {
-		if ( isset( $this->features[ $feature_name ] ) ) {
-			unset( $this->features[ $feature_name ] );
-		}
+		unset( $this->features[ $feature_name ] );
 	}
 
 	/**
