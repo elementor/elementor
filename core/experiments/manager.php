@@ -21,6 +21,10 @@ class Manager extends Base_Object {
 
 	const STATE_INACTIVE = 2;
 
+	private $states;
+
+	private $statuses;
+
 	private $features;
 
 	/**
@@ -153,6 +157,33 @@ class Manager extends Base_Object {
 	}
 
 	/**
+	 * Init States
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
+	private function init_states() {
+		$this->states = [
+			self::STATE_DEFAULT => __( 'Default', 'elementor' ),
+			self::STATE_ACTIVE => __( 'Active', 'elementor' ),
+			self::STATE_INACTIVE => __( 'Inactive', 'elementor' ),
+		];
+	}
+
+	/**
+	 * Init Statuses
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
+	private function init_statuses() {
+		$this->statuses = [
+			self::STATUS_ALPHA => __( 'Alpha', 'elementor' ),
+			self::STATUS_BETA => __( 'Beta', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Init Features
 	 *
 	 * @since 3.1.0
@@ -228,25 +259,15 @@ Please note that Experiments might change during their development. <a href="%s"
 	 * @param array $feature
 	 */
 	private function render_feature_settings_field( array $feature ) {
-		$states = [
-			self::STATE_DEFAULT => __( 'Default', 'elementor' ),
-			self::STATE_ACTIVE => __( 'Active', 'elementor' ),
-			self::STATE_INACTIVE => __( 'Inactive', 'elementor' ),
-		];
-
-		$statuses = [
-			self::STATUS_ALPHA => __( 'Alpha', 'elementor' ),
-			self::STATUS_BETA => __( 'Beta', 'elementor' ),
-		];
 		?>
 		<div class="e-experiment__content">
 			<select id="e-experiment-<?php echo $feature['name']; ?>" class="e-experiment__select" name="<?php echo $this->get_feature_option_key( $feature['name'] ); ?>">
-				<?php foreach ( $states as $state_key => $state_title ) { ?>
+				<?php foreach ( $this->states as $state_key => $state_title ) { ?>
 					<option value="<?php echo $state_key; ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
 				<?php } ?>
 			</select>
 			<div class="e-experiment__description"><?php echo $feature['description']; ?></div>
-			<div class="e-experiment__status"><?php echo sprintf( __( 'Status: %s', 'elementor' ), $statuses[ $feature['status'] ] ); ?></div>
+			<div class="e-experiment__status"><?php echo sprintf( __( 'Status: %s', 'elementor' ), $this->statuses[ $feature['status'] ] ); ?></div>
 		</div>
 		<?php
 	}
@@ -294,6 +315,10 @@ Please note that Experiments might change during their development. <a href="%s"
 	}
 
 	public function __construct() {
+		$this->init_states();
+
+		$this->init_statuses();
+
 		$this->init_features();
 
 		if ( is_admin() ) {
