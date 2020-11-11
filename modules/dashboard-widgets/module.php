@@ -434,23 +434,23 @@ class Module extends BaseModule {
 		$links = [
 			[
 				'text' => 'How to Use Elementor Site Settings',
-				'url' => 'https://youtu.be/GX4AKb2mYHw',
+				'url' => 'https://go.elementor.com/wp-dash-video-site-settings/',
 			],
 			[
 				'text' => 'Elementor Theme Builder Overview',
-				'url' => 'https://youtu.be/BWx8NQm2hdI',
+				'url' => 'https://go.elementor.com/wp-dash-video-theme-builder/',
 			],
 			[
 				'text' => 'Global Colors & Fonts: Creating a Design System With Elementor',
-				'url' => 'https://youtu.be/OvETB43I7_w',
+				'url' => 'https://go.elementor.com/wp-dash-video-design-system/',
 			],
 			[
 				'text' => 'Elementor Pro Live Webinar: Create a Lead Generating Form Popup',
-				'url' => 'https://youtu.be/3jAGJtPb0Us',
+				'url' => 'https://go.elementor.com/wp-dash-video-lead-generation/',
 			],
 			[
 				'text' => 'How to Use Elementor\'s Lottie Widget',
-				'url' => 'https://youtu.be/5m8G57735fQ',
+				'url' => 'https://go.elementor.com/wp-dash-video-lottie-widget/',
 			],
 		]
 		?>
