@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
-use Elementor\Core\experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$test_feature_data = [
 			'name' => 'test_feature',
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'unaccepted_value' => 'bla bla',
+			'unaccepted_key' => 'some value',
 		];
 
 		$test_set = [
@@ -42,11 +42,11 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$new_feature = $experiments->add_feature( $test_feature_data );
 
-		$again_added_feature = $experiments->add_feature( $test_feature_data );
+		$re_added_feature = $experiments->add_feature( $test_feature_data );
 
 		$this->assertEqualSets( $test_set, $new_feature );
 
-		$this->assertEquals( null, $again_added_feature );
+		$this->assertEquals( null, $re_added_feature );
 	}
 
 	public function test_get_features() {

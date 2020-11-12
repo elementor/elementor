@@ -6,7 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\experiments\Manager as Experiments_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;

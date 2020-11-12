@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\experiments;
+namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Tools;
