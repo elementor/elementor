@@ -252,7 +252,7 @@ class Module extends BaseModule {
 							'theme-builder' => [
 								'icon' => 'dashicons-networking',
 								'label' => __( 'Theme Builder', 'elementor' ),
-								'url' =>  Plugin::$instance->app->get_settings( 'menu_url' ),
+								'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
 							],
 							'view-site' => [
 								'icon' => 'dashicons-welcome-view-site',
