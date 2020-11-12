@@ -246,7 +246,7 @@ class Manager extends Base_Object {
 		?>
 		<h2><?php echo __( 'Elementor Experiments', 'elementor' ); ?></h2>
 		<p class="e-experiments__description"><?php echo sprintf( __( 'The list items below are experiments Elementor conducts before they are released.
-Please note that Experiments might change during their development. <a href="%s">Learn More</a>', 'elementor' ), 'https://elementor.com/help/share-usage-data/?utm_source=usage-data&utm_medium=wp-dash&utm_campaign=learn' ); ?></p>
+Please note that Experiments might change during their development. <a href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
 		<?php
 	}
 
