@@ -244,8 +244,8 @@ class Module extends BaseModule {
 							],
 							'theme-builder' => [
 								'icon' => 'dashicons-networking',
-								'label' => __( 'Theme builder', 'elementor' ),
-								'url' => 'edit.php?post_type=elementor_library&tabs_group=theme',
+								'label' => __( 'Theme Builder', 'elementor' ),
+								'url' =>  Plugin::$instance->app->get_settings( 'menu_url' ),
 							],
 							'view-site' => [
 								'icon' => 'dashicons-welcome-view-site',
@@ -253,10 +253,6 @@ class Module extends BaseModule {
 								'url' => get_site_url(),
 							],
 						];
-
-						if ( ! defined( 'ELEMENTOR_PRO_VERSION' ) ) {
-							unset( $action_links['theme-builder'] );
-						}
 
 						foreach ( $action_links as $css_class => $action_link ) :
 							?>
