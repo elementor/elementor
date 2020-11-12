@@ -2,7 +2,6 @@
 namespace Elementor\Core;
 
 use Elementor\Core\Base\Module;
-use Elementor\Core\experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
