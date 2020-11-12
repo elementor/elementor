@@ -26,13 +26,15 @@ class Module extends BaseModule {
 
 		add_action( 'wp_dashboard_setup', [ $this, 'add_dashboard_widgets' ], 100 );
 
-		add_filter( 'default_hidden_meta_boxes', function( $hidden, $screen ) {
-			if ( empty( $screen->id ) || 'dashboard' !== $screen->id ) {
-				return $hidden;
-			}
+		add_filter( 'default_hidden_meta_boxes', [ $this, 'hook_default_hidden_meta_boxes' ], 10, 2 );
+	}
 
-			return array_unique( array_merge( $hidden, $this->default_hidden_dashboard_widgets ) );
-		}, 10, 2 );
+	public function hook_default_hidden_meta_boxes( $hidden, $screen ) {
+		if ( empty( $screen->id ) || 'dashboard' !== $screen->id ) {
+			return $hidden;
+		}
+
+		return array_unique( array_merge( $hidden, $this->default_hidden_dashboard_widgets ) );
 	}
 
 	public function add_dashboard_widgets() {
@@ -70,6 +72,10 @@ class Module extends BaseModule {
 
 		global $wp_meta_boxes;
 
+		// Remove Legacy Elementor Widget
+		unset( $wp_meta_boxes['dashboard']['normal']['core']['e-dashboard-overview'] );
+
+		// Rearrange the widgets
 		$widgets_locations = wp_list_pluck( $widgets, 'location' );
 		$elementor_widgets_data = [];
 
@@ -87,6 +93,7 @@ class Module extends BaseModule {
 				}
 			}
 		}
+
 		foreach ( $locations as $location ) {
 			$wp_meta_boxes['dashboard'][ $location ]['core'] = array_merge( $elementor_widgets_data[ $location ], $wp_meta_boxes['dashboard'][ $location ]['core'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
