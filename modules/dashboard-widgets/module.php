@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\DashboardWidgets;
 
 use Elementor\Api;
@@ -13,17 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * Class Module
- *
- * @package ElementorLabs\Modules\Widgets
- */
 class Module extends BaseModule {
 
-	/**
-	 * @var \WP_Query $recently_edited_query
-	 */
-	private $recently_edited_query = null;
+	private $default_hidden_dashboard_widgets = [];
 
 	public function get_name() {
 		return 'widgets';
@@ -33,44 +24,32 @@ class Module extends BaseModule {
 		remove_action( 'welcome_panel', 'wp_welcome_panel' );
 		add_action( 'welcome_panel', [ $this, 'welcome_dashboard_widget_render' ] );
 
-		if ( is_network_admin() ) {
-			add_action( 'wp_network_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
-		} elseif ( is_user_admin() ) {
-			add_action( 'wp_user_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
-		} else {
-			add_action( 'wp_dashboard_setup', [ $this, 'add_dashboard_widgets' ] );
-		}
-	}
+		add_action( 'wp_dashboard_setup', [ $this, 'add_dashboard_widgets' ], 100 );
 
-	private function get_recently_edited_query() {
-		if ( null === $this->recently_edited_query ) {
-			$recently_edited_query_args = [
-				'post_type' => 'any',
-				'post_status' => [ 'publish', 'draft' ],
-				'posts_per_page' => '3',
-				'meta_key' => '_elementor_edit_mode',
-				'meta_value' => 'builder',
-				'orderby' => 'modified',
-			];
+		add_filter( 'default_hidden_meta_boxes', function( $hidden, $screen ) {
+			if ( empty( $screen->id ) || 'dashboard' !== $screen->id ) {
+				return $hidden;
+			}
 
-			$this->recently_edited_query = new \WP_Query( $recently_edited_query_args );
-		}
-
-		return $this->recently_edited_query;
+			return array_unique( array_merge( $hidden, $this->default_hidden_dashboard_widgets ) );
+		}, 10, 2 );
 	}
 
 	public function add_dashboard_widgets() {
 		$widgets = [
 			'e-dashboard-widget-quick-actions' => [
 				'label' => esc_html__( 'Elementor Quick Actions', 'elementor' ),
+				'location' => 'normal',
 				'callback' => [ $this, 'dashboard_quick_actions_render' ],
 			],
 			'e-dashboard-widget-resources' => [
 				'label' => esc_html__( 'Elementor Resources', 'elementor' ),
+				'location' => 'side',
 				'callback' => [ $this, 'dashboard_resources_render' ],
 			],
 			'e-dashboard-widget-news-feed' => [
 				'label' => esc_html__( 'Elementor News & Updates', 'elementor' ),
+				'location' => 'normal',
 				'callback' => [ $this, 'dashboard_news_feed_render' ],
 			],
 		];
@@ -79,34 +58,38 @@ class Module extends BaseModule {
 		if ( ! $show_welcome_panel ) {
 			$widgets['e-dashboard-widget-videos'] = array(
 				'label' => esc_html__( 'Elementor Video Tutorials', 'elementor' ),
+				'location' => 'side',
 				'callback' => [ $this, 'dashboard_videos_render' ],
 			);
 		}
 
-		$widget_backup = [];
-
 		foreach ( $widgets as $widget_id => $widget ) {
 			add_filter( "postbox_classes_dashboard_{$widget_id}", array( $this, 'add_global_widget_class' ) );
-
 			wp_add_dashboard_widget( $widget_id, $widget['label'], $widget['callback'] );
-
-			$widget_backup[] = $widget_id;
 		}
 
 		global $wp_meta_boxes;
 
-		$default_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		$widgets_locations = wp_list_pluck( $widgets, 'location' );
+		$elementor_widgets_data = [];
 
-		$temp_widget_backup = [];
-		foreach ( $widget_backup as $widget_id ) {
-			$temp_widget_backup[ $widget_id ] = $default_dashboard[ $widget_id ];
-			unset( $default_dashboard[ $widget_id ] );
+		$locations = [ 'normal', 'side' ];
+		foreach ( $locations as $location ) {
+			foreach ( $wp_meta_boxes['dashboard'][ $location ]['core'] as $dashboard_widget_id => $dashboard_widget ) {
+				if ( isset( $widgets_locations[ $dashboard_widget_id ] ) ) {
+					if ( ! isset( $elementor_widgets_data[ $widgets_locations[ $dashboard_widget_id ] ] ) ) {
+						$elementor_widgets_data[ $widgets_locations[ $dashboard_widget_id ] ] = [];
+					}
+					$elementor_widgets_data[ $widgets_locations[ $dashboard_widget_id ] ][ $dashboard_widget_id ] = $dashboard_widget;
+					unset( $wp_meta_boxes['dashboard'][ $location ]['core'][ $dashboard_widget_id ] );
+				} else {
+					$this->default_hidden_dashboard_widgets[] = $dashboard_widget_id;
+				}
+			}
 		}
-
-		$sorted_dashboard = $temp_widget_backup + $default_dashboard;
-
-		// Save the sorted array back into the original metaboxes.
-		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		foreach ( $locations as $location ) {
+			$wp_meta_boxes['dashboard'][ $location ]['core'] = array_merge( $elementor_widgets_data[ $location ], $wp_meta_boxes['dashboard'][ $location ]['core'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
 	}
 
 	public function add_global_widget_class( $classes ) {
@@ -117,28 +100,27 @@ class Module extends BaseModule {
 
 	public function welcome_dashboard_widget_render() {
 		$create_page_url = Utils::get_create_new_post_url();
-		$create_post_url = Utils::get_create_new_post_url( 'post' );
 
 		$action_links = [
 			'about_page' => [
 				'icon' => 'dashicons-networking',
 				'label' => esc_html__( 'Create your site\'s insructure with Theme Builder', 'elementor' ),
-				'url' => esc_url( $create_page_url ),
+				'url' => $create_page_url,
 			],
 			'home_page' => [
 				'icon' => 'dashicons-admin-home',
 				'label' => esc_html__( 'Set up your homepage', 'elementor' ),
-				'url' => esc_url( admin_url( 'options-reading.php' ) ),
+				'url' => admin_url( 'options-reading.php' ),
 			],
 			'view_site' => [
 				'icon' => 'dashicons-list-view',
 				'label' => esc_html__( 'Add a site menu', 'elementor' ),
-				'url' => esc_url( admin_url( 'nav-menus.php' ) ),
+				'url' => admin_url( 'nav-menus.php' ),
 			],
 			'global_settings' => [
 				'icon' => 'dashicons-admin-site-alt3',
 				'label' => esc_html__( 'Global Settings', 'elementor' ),
-				'url' => esc_url( admin_url( 'options-general.php' ) ),
+				'url' => admin_url( 'options-general.php' ),
 			],
 		];
 		?>
@@ -161,7 +143,7 @@ class Module extends BaseModule {
 							<?php foreach ( $action_links as $action_link ) : ?>
 								<li>
 									<span class="dashicons <?php echo $action_link['icon']; ?>"></span>
-									<a href="<?php echo $action_link['url']; ?>"><?php echo $action_link['label']; ?></a>
+									<a href="<?php echo esc_url( $action_link['url'] ); ?>"><?php echo $action_link['label']; ?></a>
 								</li>
 							<?php endforeach; ?>
 						</ul>
@@ -288,7 +270,16 @@ class Module extends BaseModule {
 			</div>
 
 			<?php
-			$recently_edited_query = $this->get_recently_edited_query();
+			$recently_edited_query_args = [
+				'post_type' => 'any',
+				'post_status' => [ 'publish', 'draft' ],
+				'posts_per_page' => '3',
+				'meta_key' => '_elementor_edit_mode',
+				'meta_value' => 'builder',
+				'orderby' => 'modified',
+			];
+
+			$recently_edited_query = new \WP_Query( $recently_edited_query_args );
 
 			if ( $recently_edited_query->have_posts() ) : ?>
 				<div class="e-recently-edited">
