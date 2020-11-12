@@ -17,19 +17,21 @@ class RemoveChunksPlugin {
 
 		const chunksFolder = path.resolve( __dirname, '../assets/js' );
 
-		fs.readdir( chunksFolder, ( err, files ) => {
-			if (err) throw err;
+		if ( fs.existsSync( chunksFolder ) ) {
+			fs.readdir( chunksFolder, ( err, files ) => {
+				if ( err ) throw err;
 
-			for ( const fileName of files ) {
-				const filePath = path.join( chunksFolder, fileName );
+				for ( const fileName of files ) {
+					const filePath = path.join( chunksFolder, fileName );
 
-				if ( fileName.indexOf( this.chunkSuffix ) > -1 && fs.existsSync( filePath ) ) {
-					fs.unlink( filePath, err => {
-						if (err) throw err;
-					});
+					if ( fileName.indexOf( this.chunkSuffix ) > -1 && fs.existsSync( filePath ) ) {
+						fs.unlink( filePath, err => {
+							if ( err ) throw err;
+						});
+					}
 				}
-			}
-		} );
+			} );
+		}
 	}
 }
 
