@@ -112,7 +112,7 @@ class Module extends BaseModule {
 			'about_page' => [
 				'icon' => 'dashicons-networking',
 				'label' => esc_html__( 'Create your site\'s insructure with Theme Builder', 'elementor' ),
-				'url' => $create_page_url,
+				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
 			],
 			'home_page' => [
 				'icon' => 'dashicons-admin-home',
