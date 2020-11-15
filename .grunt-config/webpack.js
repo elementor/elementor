@@ -81,7 +81,7 @@ const entry = {
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
-	'external-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/external-handlers.js' ), dependOn: 'frontend' },
+	'preloaded-elements-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-elements-handlers.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
