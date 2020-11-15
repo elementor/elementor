@@ -24,10 +24,10 @@ class RemoveChunksPlugin {
 				for ( const fileName of files ) {
 					const filePath = path.join( chunksFolder, fileName );
 
-					if ( fileName.indexOf( this.chunkSuffix ) > -1 && fs.existsSync( filePath ) ) {
+					if ( -1 !== fileName.indexOf( this.chunkSuffix ) && fs.existsSync( filePath ) ) {
 						fs.unlink( filePath, err => {
 							if ( err ) throw err;
-						});
+						} );
 					}
 				}
 			} );
