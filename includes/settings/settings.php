@@ -535,7 +535,7 @@ class Settings extends Settings_Page {
 										'enabled' => __( 'Enable', 'elementor' ),
 										'disabled' => __( 'Disable', 'elementor' ),
 									],
-									'desc' => __( 'Developers, Please Note! Optimized JS mode reduces the amount of code that is loaded on the page by default. When activated, the optimized mode allows you to dynamically load code only when it’s needed.', 'elementor' )
+									'desc' => __( 'Please Note! Optimized JS mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed.', 'elementor' )
 										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],
