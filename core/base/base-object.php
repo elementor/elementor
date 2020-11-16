@@ -137,19 +137,29 @@ class Base_Object {
 	 * Has Own Method
 	 *
 	 * Used for check whether the method passed as a parameter was declared in the current instance or inherited.
+	 * If a base_class_name is passed, it checks whether the method was created in that class. If the method was declared
+	 * in the base_class_name, it returns false. Otherwise (method was not declared in base_class_name), it returns true.
 	 *
 	 * @since 3.1.0
 	 *
 	 * @param string $method_name
+	 * @param string $base_class_name
 	 *
-	 * @throws \ReflectionException
 	 * @return bool True if the method was declared by the current instance, False if it was inherited.
 	 */
-	public function has_own_method( $method_name ) {
-		$reflection_method = new \ReflectionMethod( $this, $method_name );
+	public function has_own_method( $method_name, $base_class_name = null ) {
+		try {
+			$reflection_method = new \ReflectionMethod( $this, $method_name );
 
-		// If a ReflectionMethod is successfully created, get its declaring class.
-		$declaring_class = $reflection_method->getDeclaringClass();
+			// If a ReflectionMethod is successfully created, get its declaring class.
+			$declaring_class = $reflection_method->getDeclaringClass();
+		} catch ( \Exception $e ) {
+			return false;
+		}
+
+		if ( $base_class_name ) {
+			return $base_class_name !== $declaring_class->name;
+		}
 
 		return get_called_class() === $declaring_class->name;
 	}
