@@ -110,7 +110,7 @@ class Widget_Spacer extends Widget_Base {
 				'default' => [
 					'size' => 50,
 				],
-				'size_units' => [ 'px', 'vh', 'em' ],
+				'size_units' => [ 'px', 'vh', 'em', '%' ],
 				'range' => [
 					'px' => [
 						'min' => 10,
@@ -119,6 +119,10 @@ class Widget_Spacer extends Widget_Base {
 					'em' => [
 						'min' => 0.1,
 						'max' => 20,
+					],
+					'%' => [
+						'min' => 1,
+						'max' => 100,
 					],
 				],
 				'selectors' => [
