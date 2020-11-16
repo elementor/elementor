@@ -642,7 +642,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		ob_start();
 
-		if ( method_exists( $this, '_print_content' ) ) {
+		if ( $this->has_own_method( '_print_content', self::class ) ) {
 			$this->_print_content();
 		} else {
 			$this->print_content();
@@ -665,7 +665,7 @@ abstract class Element_Base extends Controls_Stack {
 		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
 
 		if ( $should_render ) {
-			if ( method_exists( $this, '_add_render_attributes' ) ) {
+			if ( $this->has_own_method( '_add_render_attributes', self::class ) ) {
 				$this->_add_render_attributes();
 			} else {
 				$this->add_render_attributes();

@@ -915,7 +915,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( null === $this->config ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
-			if ( method_exists( $this, '_get_initial_config' ) ) {
+			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
 				$this->config = $this->_get_initial_config();
 			} else {
 				$this->config = $this->get_initial_config();
@@ -1623,7 +1623,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_content_template' ) ) {
+		if ( $this->has_own_method( '_content_template', self::class ) ) {
 			$this->_content_template();
 		} else {
 			$this->content_template();
@@ -1940,7 +1940,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_register_controls' ) ) {
+		if ( $this->has_own_method( '_register_controls', self::class ) ) {
 			$this->_register_controls();
 		} else {
 			$this->register_controls();
@@ -2083,7 +2083,7 @@ abstract class Controls_Stack extends Base_Object {
 		if ( $data ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
-			if ( method_exists( $this, '_init' ) ) {
+			if ( $this->has_own_method( '_init', self::class ) ) {
 				$this->_init( $data );
 			} else {
 				$this->init( $data );
