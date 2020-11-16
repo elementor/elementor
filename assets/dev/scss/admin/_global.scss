@@ -314,6 +314,11 @@ body {
 	margin-bottom: 5px;
 	max-width: 1000px;
 
+	&__separator {
+		margin: 15px -12px;
+		border: 1px solid #ffb900;
+	}
+
 	&__title {
 		font-weight: bold;
 		margin: 10px 0;
@@ -321,5 +326,24 @@ body {
 
 	+ p {
 		display: none;
+	}
+}
+
+.plugins table.e-compatibility-update-table {
+	tr {
+		background: transparent;
+
+		th {
+			font-weight: 600;
+		}
+
+		th, td {
+			min-width: 150px;
+			font-size: 13px;
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			padding: 5px;
+		}
 	}
 }
