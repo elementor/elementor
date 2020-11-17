@@ -226,6 +226,16 @@ class Manager extends Base_Object {
 			};
 		}
 
+		if ( ! $features ) {
+			$fields['no_features'] = [
+				'label' => __( 'No available experiments', 'elementor' ),
+				'field_args' => [
+					'type' => 'raw_html',
+					'html' => __( 'The current version of Elementor doesn\'t have any experimental features . if you\'re feeling curious make sure to come back in future versions.', 'elementor' ),
+				],
+			];
+		}
+
 		$fields += $tools->get_usage_fields();
 
 		$tools->add_tab(
