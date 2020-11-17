@@ -226,6 +226,8 @@ class Manager extends Base_Object {
 			};
 		}
 
+		$fields += $tools->get_usage_fields();
+
 		$tools->add_tab(
 			'experiments', [
 				'label' => __( 'Experiments', 'elementor' ),
@@ -236,7 +238,6 @@ class Manager extends Base_Object {
 						},
 						'fields' => $fields,
 					],
-					'usage' => $tools->get_usage_section(),
 				],
 			]
 		);
