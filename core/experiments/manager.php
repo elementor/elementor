@@ -4,6 +4,7 @@ namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Tools;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -236,7 +237,9 @@ class Manager extends Base_Object {
 			];
 		}
 
-		$fields += $tools->get_usage_fields();
+		if ( ! Tracker::is_allow_track() ) {
+			$fields += $tools->get_usage_fields();
+		}
 
 		$tools->add_tab(
 			'experiments', [
