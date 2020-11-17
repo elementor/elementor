@@ -52,7 +52,7 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_features() {
 		$experiments = $this->elementor()->experiments;
 
-		// Ensures `get_features` is called correctly even before adding any feature
+		// Assert that `get_features` is called correctly even before adding any feature
 		$experiments->get_features();
 
 		$this->add_test_feature();
