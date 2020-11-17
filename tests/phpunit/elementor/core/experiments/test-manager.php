@@ -34,7 +34,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$test_set = [
 			'description' => '',
-			'status' => Experiments_Manager::STATUS_ALPHA,
+			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'name' => 'test_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,

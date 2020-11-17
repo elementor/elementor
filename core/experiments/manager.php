@@ -11,19 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends Base_Object {
 
-	const STATUS_ALPHA = 1;
+	const RELEASE_STATUS_ALPHA = 'alpha';
 
-	const STATUS_BETA = 2;
+	const RELEASE_STATUS_BETA = 'beta';
 
-	const STATE_DEFAULT = 0;
+	const RELEASE_STATUS_RC = 'rc';
 
-	const STATE_ACTIVE = 1;
+	const RELEASE_STATUS_STABLE = 'stable';
 
-	const STATE_INACTIVE = 2;
+	const STATE_DEFAULT = 'default';
+
+	const STATE_ACTIVE = 'active';
+
+	const STATE_INACTIVE = 'inactive';
 
 	private $states;
 
-	private $statuses;
+	private $release_statuses;
 
 	private $features;
 
@@ -50,11 +54,11 @@ class Manager extends Base_Object {
 
 		$default_experimental_data = [
 			'description' => '',
-			'status' => self::STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'status', 'default' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -176,10 +180,12 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access private
 	 */
-	private function init_statuses() {
-		$this->statuses = [
-			self::STATUS_ALPHA => __( 'Alpha', 'elementor' ),
-			self::STATUS_BETA => __( 'Beta', 'elementor' ),
+	private function init_release_statuses() {
+		$this->release_statuses = [
+			self::RELEASE_STATUS_ALPHA => __( 'Alpha', 'elementor' ),
+			self::RELEASE_STATUS_BETA => __( 'Beta', 'elementor' ),
+			self::RELEASE_STATUS_RC => __( 'Release Candidate', 'elementor' ),
+			self::RELEASE_STATUS_STABLE => __( 'Stable', 'elementor' ),
 		];
 	}
 
@@ -192,7 +198,7 @@ class Manager extends Base_Object {
 	private function init_features() {
 		$this->features = [];
 
-		do_action( 'elementor/experiments/features-registered' );
+		do_action( 'elementor/experiments/features-registered', $this );
 	}
 
 	/**
@@ -267,7 +273,7 @@ Please note that Experiments might change during their development. <a href="%s"
 				<?php } ?>
 			</select>
 			<div class="e-experiment__description"><?php echo $feature['description']; ?></div>
-			<div class="e-experiment__status"><?php echo sprintf( __( 'Status: %s', 'elementor' ), $this->statuses[ $feature['status'] ] ); ?></div>
+			<div class="e-experiment__status"><?php echo sprintf( __( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] ); ?></div>
 		</div>
 		<?php
 	}
@@ -311,13 +317,13 @@ Please note that Experiments might change during their development. <a href="%s"
 	 * @return int
 	 */
 	private function get_saved_feature_state( $feature_name ) {
-		return (int) get_option( $this->get_feature_option_key( $feature_name ) );
+		return get_option( $this->get_feature_option_key( $feature_name ) );
 	}
 
 	public function __construct() {
 		$this->init_states();
 
-		$this->init_statuses();
+		$this->init_release_statuses();
 
 		$this->init_features();
 
