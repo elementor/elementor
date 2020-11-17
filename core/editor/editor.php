@@ -526,6 +526,16 @@ class Editor {
 
 		$page_title_selector .= ', .elementor-page-title';
 
+		$active_experimental_features = [];
+
+		$experiments = Plugin::$instance->experiments;
+
+		foreach ( $experiments->get_features() as $feature_name => $feature ) {
+			if ( $experiments->is_feature_active( $feature_name ) ) {
+				$active_experimental_features[ $feature_name ] = true;
+			}
+		}
+
 		$config = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
@@ -588,10 +598,7 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
-			// Legacy Mode - for backwards compatibility of older HTML markup.
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
+			'experimentalFeatures' => $active_experimental_features,
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
