@@ -18,7 +18,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$features = $experiments->get_features();
 
-		foreach( $features as $feature_name => $feature ) {
+		foreach ( $features as $feature_name => $feature ) {
 			$experiments->remove_feature( $feature_name );
 		}
 	}
