@@ -109,9 +109,14 @@ class Module extends BaseModule {
 		$create_page_url = Utils::get_create_new_post_url();
 
 		$action_links = [
-			'about_page' => [
+			'global_settings' => [
+				'icon' => 'dashicons-admin-site-alt3',
+				'label' => esc_html__( 'Global Settings', 'elementor' ),
+				'url' => admin_url( 'options-general.php' ),
+			],
+			'theme_builder' => [
 				'icon' => 'dashicons-networking',
-				'label' => esc_html__( 'Create your site\'s insructure with Theme Builder', 'elementor' ),
+				'label' => esc_html__( 'Create your website\'s insructure with Theme Builder', 'elementor' ),
 				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
 			],
 			'home_page' => [
@@ -121,13 +126,8 @@ class Module extends BaseModule {
 			],
 			'view_site' => [
 				'icon' => 'dashicons-list-view',
-				'label' => esc_html__( 'Add a site menu', 'elementor' ),
+				'label' => esc_html__( 'Add a website menu', 'elementor' ),
 				'url' => admin_url( 'nav-menus.php' ),
-			],
-			'global_settings' => [
-				'icon' => 'dashicons-admin-site-alt3',
-				'label' => esc_html__( 'Global Settings', 'elementor' ),
-				'url' => admin_url( 'options-general.php' ),
 			],
 		];
 		?>
@@ -139,7 +139,7 @@ class Module extends BaseModule {
 					</div>
 					<div class="intro flex-child">
 						<h3><?php esc_html_e( 'Welcome to Elementor', 'elementor' ); ?></h3>
-						<p><?php esc_html_e( 'You\'re about to create your professional WordPress site with Elementor. From here, you can quickly start working on your site, watch video tutorials, read up on news updates and much more. Let\'s get started!', 'elementor' ); ?></p>
+						<p><?php esc_html_e( 'You\'re about to create your professional WordPress website with Elementor. From here, you can quickly start working on your website, watch video tutorials, read up on news updates and much more. Let\'s get started!', 'elementor' ); ?></p>
 						<p>
 							<a class="button button-primary button-large" href="<?php echo esc_url( $create_page_url ); ?>"><?php esc_html_e( 'Create a new page', 'elementor' ); ?></a>
 						</p>
@@ -241,7 +241,7 @@ class Module extends BaseModule {
 							],
 							'site-menu' => [
 								'icon' => 'dashicons-list-view',
-								'label' => __( 'Setup site menu', 'elementor' ),
+								'label' => __( 'Setup website menu', 'elementor' ),
 								'url' => 'nav-menus.php',
 							],
 							'global-settings' => [
@@ -256,7 +256,7 @@ class Module extends BaseModule {
 							],
 							'view-site' => [
 								'icon' => 'dashicons-welcome-view-site',
-								'label' => __( 'View your site', 'elementor' ),
+								'label' => __( 'View your website', 'elementor' ),
 								'url' => get_site_url(),
 							],
 						];
@@ -450,7 +450,7 @@ class Module extends BaseModule {
 		?>
 		<div class="e-video-tutorials-wrap">
 			<div class="embed">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/nZlgNmbC-Cw?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/GX4AKb2mYHw?controls=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
 			</div>
 			<div class="links">
 				<ul>
