@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends Base_Object {
 
+	const RELEASE_STATUS_DEV = 'dev';
+
 	const RELEASE_STATUS_ALPHA = 'alpha';
 
 	const RELEASE_STATUS_BETA = 'beta';
