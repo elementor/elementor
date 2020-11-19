@@ -82,7 +82,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	onRender: function() {
 		let $contentContainer;
 
-		if ( elementor.config.experimentalFeatures.dom_optimization ) {
+		if ( elementor.config.experimentalFeatures[ 'e-dom_optimization' ] ) {
 			$contentContainer = this.$el;
 		} else {
 			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );

@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: elementor.config.experimentalFeatures.dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: elementor.config.experimentalFeatures[ 'e-dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = elementor.config.experimentalFeatures.dom_optimization ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
+		ui.columnInner = elementor.config.experimentalFeatures[ 'e-dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -195,7 +195,7 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		const isDomOptimizationActive = elementor.config.experimentalFeatures.dom_optimization;
+		const isDomOptimizationActive = elementor.config.experimentalFeatures[ 'e-dom_optimization' ];
 
 		let itemsClasses = '';
 

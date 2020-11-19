@@ -84,7 +84,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		let newIndex = $element.index();
 
-		if ( 'widget' === draggedElType && elementor.config.experimentalFeatures.dom_optimization ) {
+		if ( 'widget' === draggedElType && elementor.config.experimentalFeatures[ 'e-dom_optimization' ] ) {
 			newIndex--;
 		}
 
