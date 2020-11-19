@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\DynamicTags\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,28 +25,38 @@ class DB {
 
 	/**
 	 * Post publish status.
+	 *
+	 * @deprecated 3.1.0 Use `Document::STATUS_PUBLISH` instead
 	 */
-	const STATUS_PUBLISH = 'publish';
+	const STATUS_PUBLISH = Document::STATUS_PUBLISH;
 
 	/**
 	 * Post draft status.
+	 *
+	 * @deprecated 3.1.0 Use `Document::STATUS_DRAFT` instead
 	 */
-	const STATUS_DRAFT = 'draft';
+	const STATUS_DRAFT = Document::STATUS_DRAFT;
 
 	/**
 	 * Post private status.
+	 *
+	 * @deprecated 3.1.0 Use `Document::STATUS_PRIVATE` instead
 	 */
-	const STATUS_PRIVATE = 'private';
+	const STATUS_PRIVATE = Document::STATUS_PRIVATE;
 
 	/**
 	 * Post autosave status.
+	 *
+	 * @deprecated 3.1.0 Use `Document::STATUS_AUTOSAVE` instead
 	 */
-	const STATUS_AUTOSAVE = 'autosave';
+	const STATUS_AUTOSAVE = Document::STATUS_AUTOSAVE;
 
 	/**
 	 * Post pending status.
+	 *
+	 * @deprecated 3.1.0 Use `Document::STATUS_PENDING` instead
 	 */
-	const STATUS_PENDING = 'pending';
+	const STATUS_PENDING = Document::STATUS_PENDING;
 
 	/**
 	 * Switched post data.
@@ -77,7 +88,7 @@ class DB {
 	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead
 	 * @access public
 	 *
 	 * @param int     $post_id           Post ID.
@@ -85,8 +96,17 @@ class DB {
 	 *
 	 * @return array Editor data.
 	 */
-	public function get_builder( $post_id, $status = self::STATUS_PUBLISH ) {
-		if ( self::STATUS_DRAFT === $status ) {
+	public function get_builder( $post_id, $status = Document::STATUS_PUBLISH ) {
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function(
+				__METHOD__,
+				'3.1.0',
+				'`Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )`'
+			);
+
+		if ( Document::STATUS_DRAFT === $status ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
 			$document = Plugin::$instance->documents->get( $post_id );

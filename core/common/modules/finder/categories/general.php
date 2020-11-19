@@ -3,6 +3,7 @@ namespace Elementor\Core\Common\Modules\Finder\Categories;
 
 use Elementor\Core\Common\Modules\Finder\Base_Category;
 use Elementor\Core\RoleManager\Role_Manager;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,6 +63,12 @@ class General extends Base_Category {
 				'title' => __( 'Knowledge Base', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
 				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
+			],
+			'theme-builder' => [
+				'title' => __( 'Theme Builder', 'elementor' ),
+				'icon' => 'library-save',
+				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
+				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
 			],
 		];
 	}

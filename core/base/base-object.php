@@ -80,6 +80,16 @@ class Base_Object {
 		}
 	}
 
+	final public function merge_properties( array $default_props, array $custom_props, array $allowed_props_keys = [] ) {
+		$props = array_replace_recursive( $default_props, $custom_props );
+
+		if ( $allowed_props_keys ) {
+			$props = array_intersect_key( $props, array_flip( $allowed_props_keys ) );
+		}
+
+		return $props;
+	}
+
 	/**
 	 * Get items.
 	 *
@@ -131,5 +141,26 @@ class Base_Object {
 		if ( null === $this->settings ) {
 			$this->settings = $this->get_init_settings();
 		}
+	}
+
+	/**
+	 * Has Own Method
+	 *
+	 * Used for check whether the method passed as a parameter was declared in the current instance or inherited.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $method_name
+	 *
+	 * @throws \ReflectionException
+	 * @return bool True if the method was declared by the current instance, False if it was inherited.
+	 */
+	public function has_own_method( $method_name ) {
+		$reflection_method = new \ReflectionMethod( $this, $method_name );
+
+		// If a ReflectionMethod is successfully created, get its declaring class.
+		$declaring_class = $reflection_method->getDeclaringClass();
+
+		return get_called_class() === $declaring_class->name;
 	}
 }
