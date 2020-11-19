@@ -45,7 +45,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$re_added_feature = $experiments->add_feature( $test_feature_data );
 
-		$this->assertEqualSets( $test_set, $new_feature );
+		$this->assertEquals( $test_set, $new_feature );
 
 		$this->assertEquals( null, $re_added_feature );
 	}
