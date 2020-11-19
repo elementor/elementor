@@ -55,8 +55,8 @@ class Assets_Loader extends Module {
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 
-		foreach( $assets as $assets_type ) {
-			foreach( $assets_type as $asset_name => $asset_data ) {
+		foreach ( $assets as $assets_type ) {
+			foreach ( $assets_type as $asset_name => $asset_data ) {
 				if ( array_key_exists( 'enabled', $asset_data ) ) {
 					if ( 'scripts' === $assets_type ) {
 						$file_path = $this->get_js_assets_url( $asset_data['file_name'], $asset_data['relative_url'], $asset_data['add_min_suffix'] );
