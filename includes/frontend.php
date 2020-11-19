@@ -664,6 +664,18 @@ class Frontend extends App {
 	}
 
 	/**
+	 * Enqueue assets conditionally.
+	 *
+	 * Enqueue all assets that were pre-enabled.
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
+	private function enqueue_conditional_assets() {
+		Plugin::$instance->assets_loader->enqueue_assets();
+	}
+
+	/**
 	 * Elementor footer scripts and styles.
 	 *
 	 * Handle styles and scripts that are not printed in the header.
@@ -680,6 +692,7 @@ class Frontend extends App {
 
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
+		$this->enqueue_conditional_assets();
 
 		$this->print_fonts_links();
 	}

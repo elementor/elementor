@@ -1060,6 +1060,8 @@ class Editor {
 
 		$this->init_editor_templates();
 
+		$this->enqueue_conditional_assets();
+
 		/**
 		 * Elementor editor footer.
 		 *
@@ -1276,6 +1278,18 @@ class Editor {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Enqueue assets conditionally.
+	 *
+	 * Enqueue all assets that were pre-enabled.
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 */
+	private function enqueue_conditional_assets() {
+		Plugin::$instance->assets_loader->enqueue_assets();
 	}
 
 	public function set_post_id( $post_id ) {

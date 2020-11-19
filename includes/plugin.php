@@ -16,6 +16,7 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
+use Elementor\Core\Utils\Assets_Loader;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -448,6 +449,11 @@ class Plugin {
 	public $experiments;
 
 	/**
+	 * @var Assets_Loader
+	 */
+	public $assets_loader;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -608,6 +614,7 @@ class Plugin {
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
+		$this->assets_loader = new Assets_Loader();
 
 		User::init();
 		Api::init();
