@@ -186,6 +186,7 @@ class Manager extends Base_Object {
 	 */
 	private function init_release_statuses() {
 		$this->release_statuses = [
+			self::RELEASE_STATUS_DEV => __( 'Development', 'elementor' ),
 			self::RELEASE_STATUS_ALPHA => __( 'Alpha', 'elementor' ),
 			self::RELEASE_STATUS_BETA => __( 'Beta', 'elementor' ),
 			self::RELEASE_STATUS_RC => __( 'Release Candidate', 'elementor' ),
