@@ -46,6 +46,7 @@ class Manager extends Base_Object {
 	 *     @type string $description
 	 *     @type string $status
 	 *     @type string $default
+	 *     @type callable $on_state_change
 	 * }
 	 *
 	 * @return array|null
@@ -59,9 +60,10 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -76,6 +78,17 @@ class Manager extends Base_Object {
 		$experimental_data['state'] = $state;
 
 		$this->features[ $options['name'] ] = $experimental_data;
+
+		if ( is_admin() ) {
+			$feature_option_key = $this->get_feature_option_key( $options['name'] );
+
+			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
+				$this->on_feature_state_change( $experimental_data, $new_state );
+			};
+
+			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
+			add_action( 'update_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
+		}
 
 		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
 
@@ -365,6 +378,33 @@ class Manager extends Base_Object {
 		}
 
 		return $feature['default'];
+	}
+
+	/**
+	 * On Feature State Change
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $old_feature_data
+	 * @param string $new_state
+	 */
+	private function on_feature_state_change( array $old_feature_data, $new_state ) {
+		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
+
+		$new_feature_data = $this->get_features( $old_feature_data['name'] );
+
+		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
+
+		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
+
+		if ( $actual_old_state === $actual_new_state ) {
+			return;
+		}
+
+		if ( $new_feature_data['on_state_change'] ) {
+			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+		}
 	}
 
 	public function __construct() {

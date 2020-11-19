@@ -38,6 +38,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'name' => 'test_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
+			'on_state_change' => null,
 		];
 
 		$new_feature = $experiments->add_feature( $test_feature_data );
