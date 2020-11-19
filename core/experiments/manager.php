@@ -76,6 +76,8 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
+		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
+
 		return $experimental_data;
 	}
 
@@ -200,7 +202,7 @@ class Manager extends Base_Object {
 	private function init_features() {
 		$this->features = [];
 
-		do_action( 'elementor/experiments/features-registered', $this );
+		do_action( 'elementor/experiments/default-features-registered', $this );
 	}
 
 	/**

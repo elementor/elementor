@@ -23,6 +23,7 @@ class Module extends BaseModule {
 
 	public static function get_experimental_data() {
 		return [
+			'name' => 'e-dashboard-widgets',
 			'title' => __( 'Dashboard Widgets', 'elementor' ),
 			'description' => __( 'Excellent Widgets! You should try them!', 'elementor' ),
 			'status' => Experiments_Manager::RELEASE_STATUS_DEV,
