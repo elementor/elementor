@@ -584,4 +584,27 @@ class Utils {
 
 		return false;
 	}
+
+	/**
+	 * Change Submenu First Item Label
+	 *
+	 * Overwrite the label of the first submenu item of an admin menu item.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param $menu_slug
+	 * @param $new_label
+	 * @access public
+	 */
+	public static function change_submenu_first_item_label( $menu_slug, $new_label ) {
+		global $submenu;
+
+		if ( isset( $submenu[ $menu_slug ] ) ) {
+			// @codingStandardsIgnoreStart
+			$submenu[ $menu_slug ][0][0] = $new_label;
+			// @codingStandardsIgnoreEnd
+		}
+	}
 }

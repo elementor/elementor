@@ -333,9 +333,18 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-webpack-runtime',
+			$this->get_js_assets_url( 'webpack.runtime', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
+				'elementor-webpack-runtime',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
@@ -586,6 +595,18 @@ class Frontend extends App {
 		wp_enqueue_script( 'elementor-frontend' );
 
 		wp_set_script_translations( 'elementor-frontend', 'elementor' );
+
+		if ( 'enabled' !== get_option( 'elementor_optimized_js_loading' ) ) {
+			wp_enqueue_script(
+				'preloaded-elements-handlers',
+				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				[
+					'elementor-frontend',
+				],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
 
 		$this->print_config();
 
@@ -945,7 +966,11 @@ class Frontend extends App {
 		 */
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
+		do_action( 'elementor/frontend/before_get_builder_content', $document, $this->_is_excerpt );
+
 		if ( empty( $data ) ) {
+			Plugin::$instance->documents->restore_document();
+
 			return '';
 		}
 
@@ -993,6 +1018,8 @@ class Frontend extends App {
 
 		Plugin::$instance->documents->restore_document();
 
+		// BC
+		// TODO: use Deprecation::do_deprecated_action() in 3.1.0
 		do_action( 'elementor/frontend/get_builder_content', $document, $this->_is_excerpt, $with_css );
 
 		return $content;
@@ -1153,6 +1180,20 @@ class Frontend extends App {
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+			],
+			'i18n' => [
+				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
+				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
+				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),

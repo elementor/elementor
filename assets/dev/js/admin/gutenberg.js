@@ -45,12 +45,19 @@
 
 					self.animateLoader();
 
-					var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
-					if ( ! documentTitle ) {
-						wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+					// A new post is initialized as an 'auto-draft'.
+					// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
+					const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
+
+					if ( isNewPost ) {
+						var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+						if ( ! documentTitle ) {
+							wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+						}
+
+						wp.data.dispatch( 'core/editor' ).savePost();
 					}
 
-					wp.data.dispatch( 'core/editor' ).savePost();
 					self.redirectWhenSave();
 				} );
 			}

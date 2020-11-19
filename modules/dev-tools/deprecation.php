@@ -28,6 +28,8 @@ class Deprecation {
 	 * Since `get_total_major` cannot determine how much really versions between 2.9.0 and 3.3.0 if there is 2.10.0 version for example,
 	 * versions with major2 more then 9 will be added to total.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param array $parsed_version
 	 *
 	 * @return int
@@ -55,6 +57,8 @@ class Deprecation {
 
 	/**
 	 * Get next version.
+	 *
+	 * @since 3.1.0
 	 *
 	 * @param string $version
 	 * @param int $count
@@ -88,6 +92,8 @@ class Deprecation {
 	/**
 	 * Implode parsed version to string version.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param array $parsed_version
 	 *
 	 * @return string
@@ -102,6 +108,8 @@ class Deprecation {
 
 	/**
 	 * Parse to an informative array.
+	 *
+	 * @since 3.1.0
 	 *
 	 * @param string $version
 	 *
@@ -137,6 +145,8 @@ class Deprecation {
 	 * Notice: If you want to compare between 2.9.0 and 3.3.0, and there is also a 2.10.0 version, you cannot get the right comparison
 	 * Since $this->deprecation->get_total_major cannot determine how much really versions between 2.9.0 and 3.3.0.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param {string} $version1
 	 * @param {string} $version2
 	 *
@@ -165,6 +175,8 @@ class Deprecation {
 	 * Checks whether the given entity is valid. If valid, this method checks whether the deprecation
 	 * should be soft (browser console notice) or hard (use WordPress' native deprecation methods).
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param string $entity - The Deprecated entity (the function/hook itself)
 	 * @param string $version
 	 * @param string $replacement Optional
@@ -188,11 +200,12 @@ class Deprecation {
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
 			// Soft deprecated.
-			$this->soft_deprecated_notices [] = [
-				$entity,
-				$version,
-				$replacement,
-			];
+			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
+				$this->soft_deprecated_notices[ $entity ] = [
+					$version,
+					$replacement,
+				];
+			}
 
 			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
 				$print_deprecated = true;
@@ -209,6 +222,8 @@ class Deprecation {
 	 * Deprecated Function
 	 *
 	 * Handles the deprecation process for functions.
+	 *
+	 * @since 3.1.0
 	 *
 	 * @param string $function
 	 * @param string $version
@@ -229,6 +244,8 @@ class Deprecation {
 	 *
 	 * Handles the deprecation process for hooks.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param string $hook
 	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
@@ -248,6 +265,8 @@ class Deprecation {
 	 *
 	 * Handles the deprecation process for function arguments.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param string $function
 	 * @param string $version
 	 * @throws \Exception
@@ -258,5 +277,30 @@ class Deprecation {
 		if ( $print_deprecated ) {
 			_deprecated_argument( $function, $version );
 		}
+	}
+
+	/**
+	 * Do Deprecated Action
+	 *
+	 * A method used to run deprecated actions through Elementor's deprecation process.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @param string $version
+	 * @param string $replacement
+	 * @param null|string $base_version
+	 *
+	 * @throws \Exception
+	 */
+	public function do_deprecated_action( $hook, $args, $version, $replacement = '', $base_version = null ) {
+		if ( ! has_action( $hook ) ) {
+			return;
+		}
+
+		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
+
+		do_action_ref_array( $hook, $args );
 	}
 }
