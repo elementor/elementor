@@ -76,6 +76,8 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
+		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
+
 		return $experimental_data;
 	}
 
@@ -184,6 +186,7 @@ class Manager extends Base_Object {
 	 */
 	private function init_release_statuses() {
 		$this->release_statuses = [
+			self::RELEASE_STATUS_DEV => __( 'Development', 'elementor' ),
 			self::RELEASE_STATUS_ALPHA => __( 'Alpha', 'elementor' ),
 			self::RELEASE_STATUS_BETA => __( 'Beta', 'elementor' ),
 			self::RELEASE_STATUS_RC => __( 'Release Candidate', 'elementor' ),
@@ -200,7 +203,7 @@ class Manager extends Base_Object {
 	private function init_features() {
 		$this->features = [];
 
-		do_action( 'elementor/experiments/features-registered', $this );
+		do_action( 'elementor/experiments/default-features-registered', $this );
 	}
 
 	/**

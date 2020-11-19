@@ -53,8 +53,6 @@ class Modules_Manager {
 			$experimental_data = $class_name::get_experimental_data();
 
 			if ( $experimental_data ) {
-				$experimental_data['name'] = $class_name;
-
 				Plugin::$instance->experiments->add_feature( $experimental_data );
 
 				if ( ! Plugin::$instance->experiments->is_feature_active( $class_name ) ) {
