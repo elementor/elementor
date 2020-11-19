@@ -23,9 +23,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$result = $this->module->localize_settings( [] );
 
 		$this->assertEqualSets( [
-			__FUNCTION__,
 			'0.0.0',
 			'',
-		], $result['dev_tools']['deprecation']['soft_notices'][0] );
-	}
+		], $result['dev_tools']['deprecation']['soft_notices'][ __FUNCTION__ ] );	}
 }
