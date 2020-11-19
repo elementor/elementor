@@ -155,7 +155,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			[
 				'type' => 'styles',
 				'name' => 'e-animations',
-			]
+			],
 		];
 	}
 }
