@@ -8,7 +8,7 @@ export default class Swiper {
 		}
 
 		return new Promise( ( res ) => {
-			if ( ! elementorFrontendConfig.environmentMode.isOptimizedJS ) {
+			if ( ! elementorFrontendConfig.environmentMode.isOptimizedAssetsLoading ) {
 				return res( this.createSwiperInstance( container, this.config ) );
 			}
 
