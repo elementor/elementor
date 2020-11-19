@@ -1081,6 +1081,14 @@ abstract class Controls_Stack extends Base_Object {
 				}
 
 				$active_settings[ $setting_key ] = $setting;
+
+				$control_conditional_assets = $control_obj::get_conditional_assets( $setting );
+
+				if ( $control_conditional_assets ) {
+					foreach ( $control_conditional_assets as $asset ) {
+						Plugin::$instance->assets_loader->enable_asset( $asset['type'], $asset['name'] );
+					}
+				}
 			} else {
 				$active_settings[ $setting_key ] = null;
 			}
