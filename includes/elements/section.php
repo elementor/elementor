@@ -288,6 +288,40 @@ class Element_Section extends Element_Base {
 					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'gap_columns_custom',
+			[
+				'label' => __( 'Custom Columns Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-column-gap-custom > .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gap' => 'custom',
 				],
 			]
 		);

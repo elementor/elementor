@@ -28,5 +28,10 @@
 	  "colors": true,
 	  "typography": true
 	}
+  },
+  "dev_tools": {
+  	"deprecation": {
+		"soft_notices": []
+	}
   }
 }

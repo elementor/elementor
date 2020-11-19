@@ -53,9 +53,7 @@ class Modules_Manager {
 			$experimental_data = $class_name::get_experimental_data();
 
 			if ( $experimental_data ) {
-				$experimental_data['name'] = $class_name;
-
-				$this->add_experimental_module( $experimental_data );
+				Plugin::$instance->experiments->add_feature( $experimental_data );
 
 				if ( ! Plugin::$instance->experiments->is_feature_active( $class_name ) ) {
 					continue;
@@ -129,9 +127,5 @@ class Modules_Manager {
 	 */
 	protected function get_modules_namespace_prefix() {
 		return 'Elementor';
-	}
-
-	private function add_experimental_module( array $experimental_data ) {
-		Plugin::$instance->experiments->add_feature( $experimental_data );
 	}
 }
