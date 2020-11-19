@@ -145,4 +145,17 @@ class Control_Hover_Animation extends Base_Data_Control {
 			'label_block' => true,
 		];
 	}
+
+	public static function get_conditional_assets( $setting ) {
+		if ( ! $setting ) {
+			return [];
+		}
+
+		return [
+			[
+				'type' => 'styles',
+				'name' => 'e-animations',
+			]
+		];
+	}
 }
