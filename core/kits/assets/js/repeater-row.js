@@ -35,7 +35,8 @@ export default class extends RepeaterRow {
 		const isColor = 'color' === childView.model.get( 'type' ),
 			isPopoverToggle = 'popover_toggle' === childView.model.get( 'type' );
 
-		let globalType = '';
+		let globalType = '',
+			globalTypeTranslated = '';
 
 		if ( isColor ) {
 			this.$colorValue = jQuery( '<div>', { class: 'e-global-colors__color-value elementor-control-unit-3' } );
@@ -44,7 +45,8 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.prepend( this.getRemoveButton(), this.$colorValue );
 
-			globalType = __( 'Color', 'elementor' );
+			globalType = 'color';
+			globalTypeTranslated = __( 'Color', 'elementor' );
 
 			this.updateColorValue();
 		}
@@ -54,7 +56,8 @@ export default class extends RepeaterRow {
 				.find( '.elementor-control-input-wrapper' )
 				.append( this.getRemoveButton() );
 
-			globalType = __( 'Font', 'elementor' );
+			globalType = 'font';
+			globalTypeTranslated = __( 'Font', 'elementor' );
 		}
 
 		if ( isColor || isPopoverToggle ) {
@@ -64,13 +67,13 @@ export default class extends RepeaterRow {
 
 			this.ui.removeButton.tipsy( {
 				/* translators: %s: Font/Color. */
-				title: () => sprintf( __( 'Delete Global %s', 'elementor' ), globalType ),
+				title: () => sprintf( __( 'Delete Global %s', 'elementor' ), globalTypeTranslated ),
 				gravity: () => 's',
 			} );
 
 			removeButtons.tipsy( {
 				/* translators: %s: Font/Color. */
-				title: () => sprintf( __( 'System %s can\'t be deleted', 'elementor' ), globalType ),
+				title: () => sprintf( __( 'System %s can\'t be deleted', 'elementor' ), globalTypeTranslated ),
 				gravity: () => 's',
 			} );
 		}
@@ -84,13 +87,15 @@ export default class extends RepeaterRow {
 
 	onRemoveButtonClick() {
 		const globalType = this.ui.removeButton.data( 'e-global-type' ),
+			globalTypeTranslatedCapitalized = 'font' === globalType ? __( 'Font', 'elementor' ) : __( 'Color', 'elementor' ),
+			globalTypeTranslatedLowercase = 'font' === globalType ? __( 'font', 'elementor' ) : __( 'color', 'elementor' ),
 			/* translators: First %s: Font/Color. Second %s: typography/color */
-			translatedMessage = sprintf( __( 'You\'re about to delete a Global %s. Note that if it\'s being used anywhere on your site, it will inherit a default %s.', 'elementor' ), globalType, __( 'Font', 'elementor' ) === globalType ? 'typography' : 'color' );
+			translatedMessage = sprintf( __( 'You\'re about to delete a Global %s. Note that if it\'s being used anywhere on your site, it will inherit a default %s.', 'elementor' ), globalTypeTranslatedCapitalized, globalTypeTranslatedLowercase );
 
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			className: 'e-global__confirm-delete',
 			/* translators: %s: Font/Color. */
-			headerMessage: sprintf( __( 'Delete Global %s', 'elementor' ), globalType ),
+			headerMessage: sprintf( __( 'Delete Global %s', 'elementor' ), globalTypeTranslatedCapitalized ),
 			message: '<i class="eicon-info-circle"></i> ' + translatedMessage,
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
