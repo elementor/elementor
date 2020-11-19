@@ -121,15 +121,11 @@ class Manager extends Base_Object {
 	public function is_feature_active( $feature_name ) {
 		$feature = $this->get_features( $feature_name );
 
-		if ( ! $feature || self::STATE_INACTIVE === $feature['state'] ) {
+		if ( ! $feature ) {
 			return false;
 		}
 
-		if ( self::STATE_DEFAULT === $feature['state'] ) {
-			return self::STATE_ACTIVE === $feature['default'];
-		}
-
-		return true;
+		return self::STATE_ACTIVE === $this->get_feature_actual_state( $feature );
 	}
 
 	/**
@@ -351,6 +347,24 @@ class Manager extends Base_Object {
 	 */
 	private function get_saved_feature_state( $feature_name ) {
 		return get_option( $this->get_feature_option_key( $feature_name ) );
+	}
+
+	/**
+	 * Get Feature Actual State
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $feature
+	 *
+	 * @return string
+	 */
+	private function get_feature_actual_state( array $feature ) {
+		if ( self::STATE_DEFAULT !== $feature['state'] ) {
+			return $feature['state'];
+		}
+
+		return $feature['default'];
 	}
 
 	public function __construct() {
