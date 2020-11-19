@@ -3,6 +3,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Tracker;
 
@@ -401,6 +402,8 @@ class Manager extends Base_Object {
 		if ( $actual_old_state === $actual_new_state ) {
 			return;
 		}
+
+		Plugin::$instance->files_manager->clear_cache();
 
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
