@@ -885,7 +885,7 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'dom_optimization' );
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' );
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
 			<?php if ( ! $is_dom_optimization_active ) { ?>

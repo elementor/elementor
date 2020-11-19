@@ -151,7 +151,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'dom_optimization' );
+		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' );
 		$main_selector_element = $is_dome_optimization_active ? 'widget' : 'column';
 		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
 		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap';
@@ -909,7 +909,7 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'dom_optimization' );
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' );
 		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
 
 		?>
@@ -936,7 +936,7 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'dom_optimization' );
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' );
 		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
 
 		$column_wrap_classes = $is_dom_optimization_active ? [ 'elementor-widget-wrap' ] : [ 'elementor-column-wrap' ];
@@ -977,7 +977,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'dom_optimization' ) ) { ?>
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>

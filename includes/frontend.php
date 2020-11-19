@@ -545,7 +545,7 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'dom_optimization' ) ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e-dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
