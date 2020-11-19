@@ -76,6 +76,8 @@ class Manager extends Base_Object {
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
+		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
+
 		return $experimental_data;
 	}
 
