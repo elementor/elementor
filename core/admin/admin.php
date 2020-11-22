@@ -489,6 +489,12 @@ class Admin extends App {
 			],
 		];
 
+		// Visible to all core users when Elementor Pro is not installed.
+		$additions_actions['find_an_expert'] = [
+			'title' => __( 'Find an Expert', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
+		];
+
 		/**
 		 * Dashboard widget footer actions.
 		 *
