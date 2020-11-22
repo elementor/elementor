@@ -643,6 +643,8 @@ abstract class Element_Base extends Controls_Stack {
 		ob_start();
 
 		if ( $this->has_own_method( '_print_content', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_print_content', '3.1.0', __CLASS__ . '::print_content()' );
+
 			$this->_print_content();
 		} else {
 			$this->print_content();
@@ -666,6 +668,8 @@ abstract class Element_Base extends Controls_Stack {
 
 		if ( $should_render ) {
 			if ( $this->has_own_method( '_add_render_attributes', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_add_render_attributes', '3.1.0', __CLASS__ . '::add_render_attributes()' );
+
 				$this->_add_render_attributes();
 			} else {
 				$this->add_render_attributes();

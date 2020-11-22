@@ -114,6 +114,8 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( $is_type_instance ) {
 			if ( $this->has_own_method( '_register_skins', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_skins', '3.1.0', __CLASS__ . '::register_skins()' );
+
 				$this->_register_skins();
 			} else {
 				$this->register_skins();

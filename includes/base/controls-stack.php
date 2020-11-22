@@ -916,6 +916,8 @@ abstract class Controls_Stack extends Base_Object {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
 			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
+
 				$this->config = $this->_get_initial_config();
 			} else {
 				$this->config = $this->get_initial_config();
@@ -1624,6 +1626,8 @@ abstract class Controls_Stack extends Base_Object {
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
 		if ( $this->has_own_method( '_content_template', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_content_template', '2.9.0', __CLASS__ . '::content_template()' );
+
 			$this->_content_template();
 		} else {
 			$this->content_template();
@@ -1941,6 +1945,8 @@ abstract class Controls_Stack extends Base_Object {
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
 		if ( $this->has_own_method( '_register_controls', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
+
 			$this->_register_controls();
 		} else {
 			$this->register_controls();
@@ -2084,6 +2090,8 @@ abstract class Controls_Stack extends Base_Object {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
 			if ( $this->has_own_method( '_init', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_init', '2.9.0', __CLASS__ . '::init()' );
+
 				$this->_init( $data );
 			} else {
 				$this->init( $data );
