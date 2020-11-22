@@ -67,6 +67,34 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNotEmpty( $test_feature );
 	}
 
+	public function test_get_active_features() {
+		$this->add_test_feature();
+
+		$experiments = $this->elementor()->experiments;
+
+		$default_activated_test_feature_data = [
+			'name' => 'default_activated_test_feature',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		];
+
+		$experiments->add_feature( $default_activated_test_feature_data );
+
+		$active_features = $experiments->get_active_features();
+
+		$expected_features = [
+			'default_activated_test_feature' => [
+				'description' => '',
+				'release_status' => 'alpha',
+				'default' => 'active',
+				'on_state_change' => null,
+				'name' => 'default_activated_test_feature',
+				'state' => 'default',
+			],
+		];
+
+		$this->assertEquals( $expected_features, $active_features );
+	}
+
 	public function test_is_feature_active() {
 		$this->add_test_feature();
 

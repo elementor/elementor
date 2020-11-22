@@ -123,6 +123,18 @@ class Manager extends Base_Object {
 	}
 
 	/**
+	 * Get Active Features
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_active_features() {
+		return array_filter( $this->features, [ $this, 'is_feature_active' ], ARRAY_FILTER_USE_KEY );
+	}
+
+	/**
 	 * Is Feature Active
 	 *
 	 * @since 3.1.0
