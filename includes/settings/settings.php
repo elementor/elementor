@@ -436,7 +436,10 @@ class Settings extends Settings_Page {
 							],
 						],
 					],
-					'usage' => $this->get_usage_section(),
+					'usage' => [
+						'label' => __( 'Improve Elementor', 'elementor' ),
+						'fields' => $this->get_usage_fields(),
+					],
 				],
 			],
 			self::TAB_STYLE => [
