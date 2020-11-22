@@ -33,5 +33,6 @@
   	"deprecation": {
 		"soft_notices": []
 	}
-  }
+  },
+  "experimentalFeatures": {}
 }
