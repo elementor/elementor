@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
 # For running this script in local env, you need to install:
-# zip archive (for mac users "brew install zip")
-# mysql (for mac users https://flaviocopes.com/mysql-how-to-install/)
+# zip archive
+# mysql
 
 if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [test-type]"
+	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [test-type] [clean-local-env]"
 	exit 1
 fi
 
@@ -15,13 +15,11 @@ DB_PASS=$3
 DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
 
-# TEST_TYPE decided which test to run. (the value need to includes string: "phpunit" or "imgcomp" else the tests functions doesn't run)
+# TEST_TYPE (string) decided which test to run. (the value need to includes string: "phpunit" or "imgcomp" else the tests functions doesn't run)
 TEST_TYPE=$6
 
-# Set default WP_VERSION (if WP_VERSION string is null, that is, has zero length)
-if [ -z $WP_VERSION ] ; then
-    WP_VERSION=latest
-fi
+# CLEAN_LOCAL_TESTS_ENV (bool) (if the value equal to true - run func clean_local_tests_env )
+CLEAN_LOCAL_ENV=$7
 
 # Set WP params for settings
 #locale=(he_IL en_AU en_CA en_NZ en_ZA en_GB en_US)
@@ -45,9 +43,6 @@ WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
 CURRENT_PLUGIN="${WP_CORE_DIR}wp-content/plugins/elementor"
 CURRENT_PLUGIN_TEST_DIR="${CURRENT_PLUGIN}/tests"
 
-# Import like source config.sh
-. $(dirname "$0")/test-functions.sh
-
 decided_which_test_run(){
 	if [ -z "$TEST_TYPE" ]; then
 		return;
@@ -56,11 +51,13 @@ decided_which_test_run(){
 	case $TEST_TYPE in
 
   phpunit)
-    phpunit_test
+    # Import like source config.sh
+		. $(dirname "$0")/run-test-phpunit.sh
     ;;
 
   imgcomp)
-    img_comp_test
+    # Import like source config.sh
+		. $(dirname "$0")/run-test-imgcomp.sh
     ;;
 
   *)
@@ -69,24 +66,19 @@ decided_which_test_run(){
 esac
 }
 
-phpunit_test(){
-	# The below functions running basic test
-	install_wp_cli
-	download_wp_core
-	config
-	install
-	install_test_suite
-	install_plugins
-	install_themes
+
+clean_local_tests_env(){
+	# The below functions are usable only for clean local env when running tests
+	delete_db
+	delete_symlink
+	delete_the_installed_directories
+	wp_cli_cache_clear
 }
 
-img_comp_test(){
-	phpunit_test
-	# here add more functions to the basic test
-}
 
-# The below functions are usable only for clean local env when running tests
-#delete_db
-#delete_symlink
-#delete_the_installed_directories
-#wp_cli_cache_clear
+# Order Running Functions
+decided_which_test_run
+
+if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} = true ]]; then
+	clean_local_tests_env
+fi

@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+#############################################################################################
+#### When used the below functions, you must follow after the order of process functions ####
+############################ And let attention to cd <directory> ############################
+#############################################################################################
+
+
 download() {
     if [ `which curl` ]; then
         curl -s "$1" > "$2";
@@ -56,9 +62,8 @@ install(){
 	wp db optimize --dbuser="$DB_USER" --dbpass="$DB_PASS" "$EXTRA"
 
 	# install WordPress
-	wp core install --url="http://testelementor" --title="$WP_SITE_NAME" --admin_user="$WP_USER" --admin_password="$WP_USER_PASS" --admin_email="$WP_USER_EMAIL"
+	wp core install --url="${DB_HOST}" --title="$WP_SITE_NAME" --admin_user="$WP_USER" --admin_password="$WP_USER_PASS" --admin_email="$WP_USER_EMAIL"
 
-	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 }
 
 get_installed_wp_version(){
@@ -76,6 +81,8 @@ get_installed_wp_version(){
 }
 
 install_test_suite() {
+	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
+
 	get_installed_wp_version
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
@@ -124,6 +131,43 @@ install_themes(){
 	# Install the theme
 	wp theme install "$WP_THEMES" --activate
 }
+
+import_template(){
+	# Import elementor json template to db
+	GET_TEMPLATE_IDS=$(wp elementor library import "${CURRENT_PLUGIN_TEST_DIR}/imgcomp/elementor-17-2020-11-16.json" --user="$WP_USER")
+#	wp db check
+#	wp config list
+	grep '[[],]]\s+\K[0-9]+' <<< "$GET_TEMPLATE_IDS"
+#	wp post list --post_name=elementor-page-17 --post_type=elementor_library --fields=ID,post_title,post_status
+
+#	wp post-type get elementor_library --fields=id
+#	wp post-type list --capability_type=post --fields=name,public
+
+}
+
+run_build(){
+	cd "$CURRENT_PLUGIN"
+	npm i grunt-cli
+	grunt build
+}
+
+install_wp_server(){
+	cd "$WP_CORE_DIR"
+	wp db check
+	wp config list
+	# Launches PHP's built-in web server run on port 80 (for multisite)
+	wp server
+
+
+	# php -S
+
+}
+
+
+
+#############################################################################################
+####################### The Below Functions Clean The Local Tests Env #######################
+#############################################################################################
 
 delete_db(){
 	# Deletes the existing database.
