@@ -7,9 +7,9 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		return new Promise( ( res ) => {
+		return new Promise( ( resolve ) => {
 			if ( ! elementorFrontendConfig.environmentMode.isOptimizedJS ) {
-				return res( this.createSwiperInstance( container, this.config ) );
+				return resolve( this.createSwiperInstance( container, this.config ) );
 			}
 
 			const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
@@ -17,7 +17,7 @@ export default class Swiper {
 			import(
 				/* webpackIgnore: true */
 				`${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`
-				).then( () => res( this.createSwiperInstance( container, this.config ) ) );
+				).then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
 		} );
 	}
 

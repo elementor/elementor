@@ -1322,7 +1322,7 @@ class Frontend extends App {
 				true
 			);
 
-			array_push( $dependencies, 'swiper' );
+			$dependencies[] = 'swiper';
 		}
 
 		return $dependencies;
