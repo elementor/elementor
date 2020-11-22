@@ -526,15 +526,9 @@ class Editor {
 
 		$page_title_selector .= ', .elementor-page-title';
 
-		$active_experimental_features = [];
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
 
-		$experiments = Plugin::$instance->experiments;
-
-		foreach ( $experiments->get_features() as $feature_name => $feature ) {
-			if ( $experiments->is_feature_active( $feature_name ) ) {
-				$active_experimental_features[ $feature_name ] = true;
-			}
-		}
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
 		$config = [
 			'initial_document' => $document->get_config(),
