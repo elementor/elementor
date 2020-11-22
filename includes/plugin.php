@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -15,7 +16,6 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
@@ -449,6 +449,11 @@ class Plugin {
 	public $app;
 
 	/**
+	 * @var Experiments_Manager
+	 */
+	public $experiments;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -575,6 +580,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->experiments = new Experiments_Manager();
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 

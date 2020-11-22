@@ -200,11 +200,12 @@ class Deprecation {
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
 			// Soft deprecated.
-			$this->soft_deprecated_notices [] = [
-				$entity,
-				$version,
-				$replacement,
-			];
+			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
+				$this->soft_deprecated_notices[ $entity ] = [
+					$version,
+					$replacement,
+				];
+			}
 
 			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
 				$print_deprecated = true;

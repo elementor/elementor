@@ -80,6 +80,16 @@ class Base_Object {
 		}
 	}
 
+	final public function merge_properties( array $default_props, array $custom_props, array $allowed_props_keys = [] ) {
+		$props = array_replace_recursive( $default_props, $custom_props );
+
+		if ( $allowed_props_keys ) {
+			$props = array_intersect_key( $props, array_flip( $allowed_props_keys ) );
+		}
+
+		return $props;
+	}
+
 	/**
 	 * Get items.
 	 *
