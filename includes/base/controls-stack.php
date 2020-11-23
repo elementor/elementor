@@ -1082,6 +1082,23 @@ abstract class Controls_Stack extends Base_Object {
 
 				$active_settings[ $setting_key ] = $setting;
 
+				// Enabling assets loading from the registered control fields.
+				if ( ! empty( $control['assets'] ) ) {
+					foreach ( $control['assets'] as $asset ) {
+
+						if ( ! empty( $asset['conditions'] ) ) {
+							$is_condition_fulfilled = Conditions::check( $asset['conditions'], $settings );
+
+							if ( ! $is_condition_fulfilled ) {
+								continue;
+							}
+						}
+
+						Plugin::$instance->assets_loader->enable_asset( $asset['type'], $asset['name'] );
+					}
+				}
+
+				// Enabling assets loading from the control object.
 				$control_conditional_assets = $control_obj::get_conditional_assets( $setting );
 
 				if ( $control_conditional_assets ) {

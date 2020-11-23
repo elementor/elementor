@@ -43,7 +43,7 @@ module.exports = function( grunt ) {
 		const taskName = isDevMode ? 'webpack:development' : 'webpack:production';
 
 		if ( ! isDevMode ) {
-			grunt.task.run( 'webpack:default' );
+			grunt.task.run( 'webpack:developmentNoWatch' );
 		}
 
 		grunt.task.run( taskName );

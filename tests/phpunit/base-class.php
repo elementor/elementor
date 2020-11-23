@@ -11,6 +11,7 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	public function tearDown() {
 		parent::tearDown();
 
+		Plugin::$instance->editor->set_edit_mode( false );
 		Plugin::$instance->documents->restore_document();
 		Plugin::$instance->editor->set_edit_mode( false );
 	}
