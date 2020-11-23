@@ -15,15 +15,14 @@ DB_PASS=$3
 DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
 
-# TEST_TYPE (string) decided which test to run. (the value need to includes string: "phpunit" or "imgcomp" else the tests functions doesn't run)
+# TEST_TYPE (string) decided which test to run. (the value need to includes string: "phpunit" or "image-compare" else the tests functions doesn't run)
 TEST_TYPE=$6
 
 # CLEAN_LOCAL_TESTS_ENV (bool) (if the value equal to true - run func clean_local_tests_env )
 CLEAN_LOCAL_ENV=$7
 
 # Set WP params for settings
-#locale=(he_IL en_AU en_CA en_NZ en_ZA en_GB en_US)
-WP_LOCALE="en_GB"
+WP_LOCALE="en_US"
 WP_USER="test"
 WP_USER_PASS="test"
 WP_USER_EMAIL="user@example.org"
@@ -35,39 +34,39 @@ WP_PLUGINS="elementor"
 INITIAL_WORKING_DIRECTORY=$(pwd)
 echo "$INITIAL_WORKING_DIRECTORY"
 
-# Set paths to directories where you will want to install: wp-cli | wp | wp test suit
+# Set paths to directories where to install.
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
 
 # Set paths to current plugins and them tests directories
-CURRENT_PLUGIN="${WP_CORE_DIR}wp-content/plugins/elementor"
-CURRENT_PLUGIN_TEST_DIR="${CURRENT_PLUGIN}/tests"
+CURRENT_PLUGIN="elementor"
+CURRENT_PLUGIN_DIR="${WP_CORE_DIR}wp-content/plugins/${CURRENT_PLUGIN}"
+CURRENT_PLUGIN_TEST_DIR="${CURRENT_PLUGIN_DIR}/tests"
 
-decided_which_test_run(){
+decided_which_test_run() {
 	if [ -z "$TEST_TYPE" ]; then
-		return;
+		return
 	fi
 
 	case $TEST_TYPE in
 
-  phpunit)
-    # Import like source config.sh
+	phpunit)
+		# Import like source config.sh
 		. $(dirname "$0")/run-test-phpunit.sh
-    ;;
+		;;
 
-  imgcomp)
-    # Import like source config.sh
-		. $(dirname "$0")/run-test-imgcomp.sh
-    ;;
+	image-compare)
+		# Import like source config.sh
+		. $(dirname "$0")/run-test-image-compare.sh
+		;;
 
-  *)
-    return
-    ;;
-esac
+	*)
+		return
+		;;
+	esac
 }
 
-
-clean_local_tests_env(){
+clean_local_tests_env() {
 	# The below functions are usable only for clean local env when running tests
 	delete_db
 	delete_symlink
@@ -75,10 +74,9 @@ clean_local_tests_env(){
 	wp_cli_cache_clear
 }
 
-
 # Order Running Functions
 decided_which_test_run
 
-if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} = true ]]; then
+if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} == true ]]; then
 	clean_local_tests_env
 fi

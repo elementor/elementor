@@ -11,6 +11,3 @@ install
 install_test_suite
 install_plugins
 install_themes
-
-
-

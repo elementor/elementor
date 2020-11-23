@@ -95,7 +95,7 @@ class Library extends \WP_CLI_Command {
 		}
 
 		$imploded = implode(', ', array_column($imported_items, 'template_id'));
-		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported. Template ID(s) ['.$imploded.'].' );
+		\WP_CLI::success( count( $imported_items ) . ' item(s) has been imported.  Template ID(s) ['.$imploded.'].' );
 	}
 
 	/**

@@ -12,10 +12,7 @@ install_plugins
 install_themes
 import_template
 
-#run_build
-#install_wp_server
+run_build
+install_wp_server
 
 # here add more functions to the basic test
-
-
-
