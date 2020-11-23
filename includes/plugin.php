@@ -653,7 +653,7 @@ class Plugin {
 			->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->experiments->is_feature_active()' );
 
 		$legacy_mode = [
-			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e-dom_optimization' ),
+			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e_dom_optimization' ),
 		];
 
 		if ( ! $mode_name ) {
