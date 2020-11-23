@@ -33,6 +33,8 @@ abstract class Document extends Controls_Stack {
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
 
+	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
+
 	/**
 	 * Document publish status.
 	 */
@@ -552,6 +554,8 @@ abstract class Document extends Controls_Stack {
 	 * @return bool
 	 */
 	public function save( $data ) {
+		$this->add_handle_revisions_changed_filter();
+
 		if ( ! $this->is_editable_by_current_user() ) {
 			return false;
 		}
@@ -615,6 +619,8 @@ abstract class Document extends Controls_Stack {
 
 		$this->set_is_saving( false );
 
+		$this->remove_handle_revisions_changed_filter();
+
 		return true;
 	}
 
@@ -648,7 +654,25 @@ abstract class Document extends Controls_Stack {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor() {
-		return ! ! get_post_meta( $this->post->ID, '_elementor_edit_mode', true );
+		return ! ! $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+	}
+
+	/**
+	 * Mark the post as "built with elementor" or not.
+	 *
+	 * @param bool $is_built_with_elementor
+	 *
+	 * @return $this
+	 */
+	public function set_is_built_with_elementor( $is_built_with_elementor ) {
+		if ( $is_built_with_elementor ) {
+			// Use the string `builder` and not a boolean for rollback compatibility
+			$this->update_meta( self::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		} else {
+			$this->delete_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -1308,5 +1332,30 @@ abstract class Document extends Controls_Stack {
 
 	protected function get_have_a_look_url() {
 		return $this->get_permalink();
+	}
+
+	public function handle_revisions_changed( $post_has_changed, $last_revision, $post ) {
+		// In case default, didn't determine the changes.
+		if ( ! $post_has_changed ) {
+			$last_revision_id = $last_revision->ID;
+			$last_revision_document = Plugin::instance()->documents->get( $last_revision_id );
+			$post_document = Plugin::instance()->documents->get( $post->ID );
+
+			$last_revision_settings = $last_revision_document->get_settings();
+			$post_settings = $post_document->get_settings();
+
+			// TODO: Its better to add crc32 signature for each revision and then only compare one part of the checksum.
+			$post_has_changed = $last_revision_settings !== $post_settings;
+		}
+
+		return $post_has_changed;
+	}
+
+	private function add_handle_revisions_changed_filter() {
+		add_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ], 10, 3 );
+	}
+
+	private function remove_handle_revisions_changed_filter() {
+		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 }

@@ -88,7 +88,7 @@ class DB {
 	 * Retrieve editor data from the database.
 	 *
 	 * @since 1.0.0
-	 *
+	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead
 	 * @access public
 	 *
 	 * @param int     $post_id           Post ID.
@@ -97,6 +97,15 @@ class DB {
 	 * @return array Editor data.
 	 */
 	public function get_builder( $post_id, $status = Document::STATUS_PUBLISH ) {
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function(
+				__METHOD__,
+				'3.1.0',
+				'`Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )`'
+			);
+
 		if ( Document::STATUS_DRAFT === $status ) {
 			$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id );
 		} else {
@@ -171,6 +180,7 @@ class DB {
 	 * Set whether the page is using Elementor or not.
 	 *
 	 * @since 1.5.0
+	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->set_is_build_with_elementor( $is_elementor )` instead
 	 * @access public
 	 *
 	 * @param int  $post_id      Post ID.
@@ -178,12 +188,22 @@ class DB {
 	 *                           Default is true.
 	 */
 	public function set_is_elementor_page( $post_id, $is_elementor = true ) {
-		if ( $is_elementor ) {
-			// Use the string `builder` and not a boolean for rollback compatibility
-			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-		} else {
-			delete_post_meta( $post_id, '_elementor_edit_mode' );
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function(
+				__METHOD__,
+				'3.1.0',
+				'Plugin::$instance->documents->get( $post_id )->set_is_build_with_elementor( $is_elementor )'
+			);
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return;
 		}
+
+		$document->set_is_built_with_elementor( $is_elementor );
 	}
 
 	/**

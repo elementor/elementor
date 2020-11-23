@@ -111,7 +111,7 @@ class Editor {
 		Plugin::$instance->documents->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+		$document->set_is_built_with_elementor( true );
 
 		// End BC.
 
