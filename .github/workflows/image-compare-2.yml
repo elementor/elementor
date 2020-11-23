@@ -1,4 +1,4 @@
-name: Image Compare
+name: Image Compare 2.0
 
 on: [push, pull_request]
 
