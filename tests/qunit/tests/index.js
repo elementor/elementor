@@ -19,6 +19,10 @@ export const tests = () => {
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
 	require( './core/kits/assets/js/component.spec' );
+
+	require( './assets/dev/js/editor/data/globals/component.spec' );
+
+	require( './modules/dev-tools/assets/js/editor/dev-tools.spec' );
 };
 
 // Export for external build.

@@ -364,13 +364,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		global $submenu;
-
-		if ( isset( $submenu['elementor'] ) ) {
-			// @codingStandardsIgnoreStart
-			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-			// @codingStandardsIgnoreEnd
-		}
+		Utils::change_submenu_first_item_label( 'elementor', __( 'Settings', 'elementor' ) );
 	}
 
 	/**
@@ -442,21 +436,7 @@ class Settings extends Settings_Page {
 							],
 						],
 					],
-					'usage' => [
-						'label' => __( 'Improve Elementor', 'elementor' ),
-						'fields' => [
-							'allow_tracking' => [
-								'label' => __( 'Usage Data Sharing', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'default' => '',
-									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
-								],
-								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
-							],
-						],
-					],
+					'usage' => $this->get_usage_section(),
 				],
 			],
 			self::TAB_STYLE => [
@@ -529,6 +509,19 @@ class Settings extends Settings_Page {
 										'disabled' => __( 'Disable', 'elementor' ),
 									],
 									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
+								],
+							],
+							'optimized_js_loading' => [
+								'label' => __( 'Optimized JS Loading', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'' => __( 'Default', 'elementor' ),
+										'enabled' => __( 'Enable', 'elementor' ),
+										'disabled' => __( 'Disable', 'elementor' ),
+									],
+									'desc' => __( 'Please Note! Optimized JS mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed.', 'elementor' )
 										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
 								],
 							],

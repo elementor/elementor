@@ -3,6 +3,7 @@ namespace Elementor\Modules\DashboardWidgets;
 
 use Elementor\Api;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
@@ -18,6 +19,15 @@ class Module extends BaseModule {
 
 	public function get_name() {
 		return 'widgets';
+	}
+
+	public static function get_experimental_data() {
+		return [
+			'name' => 'e-dashboard-widgets',
+			'title' => __( 'Dashboard Widgets', 'elementor' ),
+			'description' => __( 'Excellent Widgets! You should try them!', 'elementor' ),
+			'status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
 	}
 
 	public function __construct() {

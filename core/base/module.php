@@ -108,6 +108,10 @@ abstract class Module extends Base_Object {
 		return get_called_class();
 	}
 
+	public static function get_experimental_data() {
+		return [];
+	}
+
 	/**
 	 * Clone.
 	 *
