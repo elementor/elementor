@@ -588,10 +588,6 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
-			// Legacy Mode - for backwards compatibility of older HTML markup.
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),

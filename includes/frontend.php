@@ -531,8 +531,8 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
-			// If The Markup Legacy Mode is active, register the legacy CSS
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
+			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
 				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
@@ -1173,12 +1173,14 @@ class Frontend extends App {
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isOptimizedAssetsLoading' => $this->is_optimized_assets_loading(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
@@ -1198,12 +1200,10 @@ class Frontend extends App {
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
+			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
@@ -1315,7 +1315,7 @@ class Frontend extends App {
 	}
 
 	private function is_optimized_assets_loading() {
-		return Plugin::$instance->experiments->is_feature_active( 'optimized_assets_loading' );
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 	}
 
 	private function get_elementor_frontend_dependencies() {
