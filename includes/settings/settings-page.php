@@ -355,20 +355,17 @@ abstract class Settings_Page {
 		<?php
 	}
 
-	public function get_usage_section() {
+	public function get_usage_fields() {
 		return [
-			'label' => __( 'Improve Elementor', 'elementor' ),
-			'fields' => [
-				'allow_tracking' => [
-					'label' => __( 'Usage Data Sharing', 'elementor' ),
-					'field_args' => [
-						'type' => 'checkbox',
-						'value' => 'yes',
-						'default' => '',
-						'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
-					],
-					'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
+			'allow_tracking' => [
+				'label' => __( 'Usage Data Sharing', 'elementor' ),
+				'field_args' => [
+					'type' => 'checkbox',
+					'value' => 'yes',
+					'default' => '',
+					'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 				],
+				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 			],
 		];
 	}

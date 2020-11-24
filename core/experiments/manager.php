@@ -3,7 +3,9 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Plugin;
 use Elementor\Tools;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -43,8 +45,9 @@ class Manager extends Base_Object {
 	 *     @type string $name
 	 *     @type string $title
 	 *     @type string $description
-	 *     @type string $status
+	 *     @type string $release_status
 	 *     @type string $default
+	 *     @type callable $on_state_change
 	 * }
 	 *
 	 * @return array|null
@@ -58,9 +61,10 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -75,6 +79,19 @@ class Manager extends Base_Object {
 		$experimental_data['state'] = $state;
 
 		$this->features[ $options['name'] ] = $experimental_data;
+
+		if ( is_admin() ) {
+			$feature_option_key = $this->get_feature_option_key( $options['name'] );
+
+			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
+				$this->on_feature_state_change( $experimental_data, $new_state );
+			};
+
+			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
+			add_action( 'update_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
+		}
+
+		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
 
 		return $experimental_data;
 	}
@@ -106,6 +123,18 @@ class Manager extends Base_Object {
 	}
 
 	/**
+	 * Get Active Features
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_active_features() {
+		return array_filter( $this->features, [ $this, 'is_feature_active' ], ARRAY_FILTER_USE_KEY );
+	}
+
+	/**
 	 * Is Feature Active
 	 *
 	 * @since 3.1.0
@@ -118,15 +147,11 @@ class Manager extends Base_Object {
 	public function is_feature_active( $feature_name ) {
 		$feature = $this->get_features( $feature_name );
 
-		if ( ! $feature || self::STATE_INACTIVE === $feature['state'] ) {
+		if ( ! $feature ) {
 			return false;
 		}
 
-		if ( self::STATE_DEFAULT === $feature['state'] ) {
-			return self::STATE_ACTIVE === $feature['default'];
-		}
-
-		return true;
+		return self::STATE_ACTIVE === $this->get_feature_actual_state( $feature );
 	}
 
 	/**
@@ -162,6 +187,24 @@ class Manager extends Base_Object {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
+	private function add_default_features() {
+		$this->add_feature( [
+			'name' => 'e_dom_optimization',
+			'title' => __( 'Optimized DOM Output', 'elementor' ),
+			'description' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_assets_loading',
+			'title' => __( 'Optimized Assets Loading', 'elementor' ),
+			'description' => sprintf( __( 'Please Note! The optimized assets loading mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+	}
+
 	/**
 	 * Init States
 	 *
@@ -184,6 +227,7 @@ class Manager extends Base_Object {
 	 */
 	private function init_release_statuses() {
 		$this->release_statuses = [
+			self::RELEASE_STATUS_DEV => __( 'Development', 'elementor' ),
 			self::RELEASE_STATUS_ALPHA => __( 'Alpha', 'elementor' ),
 			self::RELEASE_STATUS_BETA => __( 'Beta', 'elementor' ),
 			self::RELEASE_STATUS_RC => __( 'Release Candidate', 'elementor' ),
@@ -200,14 +244,9 @@ class Manager extends Base_Object {
 	private function init_features() {
 		$this->features = [];
 
-		$this->add_feature( [
-			'name' => 'optimized_assets_loading',
-			'title' => __( 'Optimized Assets Loading', 'elementor' ),
-			'description' => sprintf( __( 'Please Note! The optimized assets loading mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-		] );
+		$this->add_default_features();
 
-		do_action( 'elementor/experiments/features-registered', $this );
+		do_action( 'elementor/experiments/default-features-registered', $this );
 	}
 
 	/**
@@ -235,6 +274,20 @@ class Manager extends Base_Object {
 			};
 		}
 
+		if ( ! $features ) {
+			$fields['no_features'] = [
+				'label' => __( 'No available experiments', 'elementor' ),
+				'field_args' => [
+					'type' => 'raw_html',
+					'html' => __( 'The current version of Elementor doesn\'t have any experimental features . if you\'re feeling curious make sure to come back in future versions.', 'elementor' ),
+				],
+			];
+		}
+
+		if ( ! Tracker::is_allow_track() ) {
+			$fields += $tools->get_usage_fields();
+		}
+
 		$tools->add_tab(
 			'experiments', [
 				'label' => __( 'Experiments', 'elementor' ),
@@ -245,7 +298,6 @@ class Manager extends Base_Object {
 						},
 						'fields' => $fields,
 					],
-					'usage' => $tools->get_usage_section(),
 				],
 			]
 		);
@@ -260,8 +312,9 @@ class Manager extends Base_Object {
 	private function render_settings_intro() {
 		?>
 		<h2><?php echo __( 'Elementor Experiments', 'elementor' ); ?></h2>
-		<p class="e-experiments__description"><?php echo sprintf( __( 'The list items below are experiments Elementor conducts before they are released.
-Please note that Experiments might change during their development. <a href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p class="e-experiments__description"><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. <a href="%s">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p class="e-experiments__description"><?php echo __( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
+		<p class="e-experiments__description"><?php echo sprintf( __( 'Your feedback is important - <a href="%s">help us</a> improve these features by sharing your thoughts and inputs.', 'elementor' ), 'https://github.com/elementor/elementor/issues' ); ?></p>
 		<?php
 	}
 
@@ -327,6 +380,53 @@ Please note that Experiments might change during their development. <a href="%s"
 	 */
 	private function get_saved_feature_state( $feature_name ) {
 		return get_option( $this->get_feature_option_key( $feature_name ) );
+	}
+
+	/**
+	 * Get Feature Actual State
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $feature
+	 *
+	 * @return string
+	 */
+	private function get_feature_actual_state( array $feature ) {
+		if ( self::STATE_DEFAULT !== $feature['state'] ) {
+			return $feature['state'];
+		}
+
+		return $feature['default'];
+	}
+
+	/**
+	 * On Feature State Change
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 *
+	 * @param array $old_feature_data
+	 * @param string $new_state
+	 */
+	private function on_feature_state_change( array $old_feature_data, $new_state ) {
+		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
+
+		$new_feature_data = $this->get_features( $old_feature_data['name'] );
+
+		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
+
+		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
+
+		if ( $actual_old_state === $actual_new_state ) {
+			return;
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		if ( $new_feature_data['on_state_change'] ) {
+			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+		}
 	}
 
 	public function __construct() {
