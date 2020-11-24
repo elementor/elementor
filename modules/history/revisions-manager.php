@@ -207,9 +207,16 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function restore_revision( $parent_id, $revision_id ) {
-		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $revision_id );
+		$parent = Plugin::$instance->documents->get( $parent_id );
+		$revision = Plugin::$instance->documents->get( $revision_id );
 
-		Plugin::$instance->db->set_is_elementor_page( $parent_id, $is_built_with_elementor );
+		if ( ! $parent || ! $revision ) {
+			return;
+		}
+
+		$is_built_with_elementor = $revision->is_built_with_elementor();
+
+		$parent->set_is_built_with_elementor( $is_built_with_elementor );
 
 		if ( ! $is_built_with_elementor ) {
 			return;

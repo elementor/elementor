@@ -4,6 +4,7 @@ namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Tools;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -75,6 +76,8 @@ class Manager extends Base_Object {
 		$experimental_data['state'] = $state;
 
 		$this->features[ $options['name'] ] = $experimental_data;
+
+		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
 
 		return $experimental_data;
 	}
@@ -184,6 +187,7 @@ class Manager extends Base_Object {
 	 */
 	private function init_release_statuses() {
 		$this->release_statuses = [
+			self::RELEASE_STATUS_DEV => __( 'Development', 'elementor' ),
 			self::RELEASE_STATUS_ALPHA => __( 'Alpha', 'elementor' ),
 			self::RELEASE_STATUS_BETA => __( 'Beta', 'elementor' ),
 			self::RELEASE_STATUS_RC => __( 'Release Candidate', 'elementor' ),
@@ -200,14 +204,7 @@ class Manager extends Base_Object {
 	private function init_features() {
 		$this->features = [];
 
-		$this->add_feature( [
-			'name' => 'optimized_assets_loading',
-			'title' => __( 'Optimized Assets Loading', 'elementor' ),
-			'description' => sprintf( __( 'Please Note! The optimized assets loading mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-		] );
-
-		do_action( 'elementor/experiments/features-registered', $this );
+		do_action( 'elementor/experiments/default-features-registered', $this );
 	}
 
 	/**
@@ -235,6 +232,20 @@ class Manager extends Base_Object {
 			};
 		}
 
+		if ( ! $features ) {
+			$fields['no_features'] = [
+				'label' => __( 'No available experiments', 'elementor' ),
+				'field_args' => [
+					'type' => 'raw_html',
+					'html' => __( 'The current version of Elementor doesn\'t have any experimental features . if you\'re feeling curious make sure to come back in future versions.', 'elementor' ),
+				],
+			];
+		}
+
+		if ( ! Tracker::is_allow_track() ) {
+			$fields += $tools->get_usage_fields();
+		}
+
 		$tools->add_tab(
 			'experiments', [
 				'label' => __( 'Experiments', 'elementor' ),
@@ -245,7 +256,6 @@ class Manager extends Base_Object {
 						},
 						'fields' => $fields,
 					],
-					'usage' => $tools->get_usage_section(),
 				],
 			]
 		);
@@ -260,8 +270,9 @@ class Manager extends Base_Object {
 	private function render_settings_intro() {
 		?>
 		<h2><?php echo __( 'Elementor Experiments', 'elementor' ); ?></h2>
-		<p class="e-experiments__description"><?php echo sprintf( __( 'The list items below are experiments Elementor conducts before they are released.
-Please note that Experiments might change during their development. <a href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p class="e-experiments__description"><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. <a href="%s">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p class="e-experiments__description"><?php echo __( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
+		<p class="e-experiments__description"><?php echo sprintf( __( 'Your feedback is important - <a href="%s">help us</a> improve these features by sharing your thoughts and inputs.', 'elementor' ), 'https://github.com/elementor/elementor/issues' ); ?></p>
 		<?php
 	}
 
