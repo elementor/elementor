@@ -588,10 +588,6 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
-			// Legacy Mode - for backwards compatibility of older HTML markup.
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
 			'i18n' => [
 				'elementor' => __( 'Elementor', 'elementor' ),
 				'edit' => __( 'Edit', 'elementor' ),
@@ -1060,8 +1056,6 @@ class Editor {
 
 		$this->init_editor_templates();
 
-		$this->enqueue_conditional_assets();
-
 		/**
 		 * Elementor editor footer.
 		 *
@@ -1278,18 +1272,6 @@ class Editor {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Enqueue assets conditionally.
-	 *
-	 * Enqueue all assets that were pre-enabled.
-	 *
-	 * @since 3.1.0
-	 * @access private
-	 */
-	private function enqueue_conditional_assets() {
-		Plugin::$instance->assets_loader->enqueue_assets();
 	}
 
 	public function set_post_id( $post_id ) {

@@ -62,7 +62,7 @@ class Assets_Loader extends Module {
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'optimized_assets_loading' );
+		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
 		foreach ( $assets as $assets_type => $assets_type_data ) {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
