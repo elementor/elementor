@@ -171,7 +171,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function get_post_types_action_linkt() {
+	private function get_post_types_action_link() {
 		$elementor_supported_post_types = get_post_types_by_support( 'elementor' );
 
 		$items = [];
@@ -221,7 +221,7 @@ class Module extends BaseModule {
 	}
 
 	public function dashboard_quick_actions_render() {
-		$action_links = $this->get_post_types_action_linkt();
+		$action_links = $this->get_post_types_action_link();
 		?>
 		<div class="e-quick-actions-wrap">
 			<div class="flex">
