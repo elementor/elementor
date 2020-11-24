@@ -1301,7 +1301,7 @@ class Frontend extends App {
 	}
 
 	private function is_optimized_assets_loading() {
-		return Plugin::$instance->experiments->is_feature_active( 'optimized_assets_loading' );
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 	}
 
 	private function get_elementor_frontend_dependencies() {
