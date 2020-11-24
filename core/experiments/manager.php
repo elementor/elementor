@@ -196,6 +196,13 @@ class Manager extends Base_Object {
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_assets_loading',
+			'title' => __( 'Optimized Assets Loading', 'elementor' ),
+			'description' => sprintf( __( 'Please Note! The optimized assets loading mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
 	}
 
 	/**
