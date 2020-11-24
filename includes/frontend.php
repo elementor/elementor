@@ -1159,6 +1159,8 @@ class Frontend extends App {
 	 */
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
 		$settings = [
 			'environmentMode' => [
@@ -1188,6 +1190,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
+			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();
