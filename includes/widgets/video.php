@@ -957,6 +957,8 @@ class Widget_Video extends Widget_Base {
 			$params['end'] = $settings['end'];
 
 			$params['wmode'] = 'opaque';
+
+			$params['origin'] = get_site_url();
 		} elseif ( 'vimeo' === $settings['video_type'] ) {
 			$params_dictionary = [
 				'loop',
