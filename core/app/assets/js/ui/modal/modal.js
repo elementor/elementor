@@ -30,7 +30,7 @@ export default class ModalProvider extends React.Component {
 		return (
 			<>
 				<Button { ... this.props.toggleButtonProps } onClick={ this.state.showModal } />
-				<Modal modalProps={this.state} title={ this.props.title }>
+				<Modal modalProps={this.state} title={ this.props.title } icon={ this.props.icon }>
 					{ this.props.children }
 				</Modal>
 			</>
@@ -41,10 +41,11 @@ export default class ModalProvider extends React.Component {
 ModalProvider.propTypes = {
 	children: PropTypes.node.isRequired,
 	toggleButtonProps: PropTypes.object.isRequired,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.string,
+	icon: PropTypes.string,
 };
 
-class Modal extends React.Component {
+export class Modal extends React.Component {
 	modalRef = React.createRef();
 	closeRef = React.createRef();
 
@@ -70,14 +71,14 @@ class Modal extends React.Component {
 	}
 
 	render() {
-		const { modalProps, children } = this.props;
+		const { modalProps, children, icon } = this.props;
 		return modalProps.show ? (
 			<div className="eps-modal__overlay" onClick={ this.closeModal }>
 				<div className="eps-modal" ref={ this.modalRef } >
 					<Grid container className="eps-modal__header" justify="space-between" alignItems="center">
 						<Grid item>
-							<Icon className="eps-modal__icon eicon-info-circle"/>
-							{ this.props.title }
+							<Icon className={`eps-modal__icon ${ icon }`} />
+							<span className="title">{ this.props.title }</span>
 						</Grid>
 						<Grid item>
 							<div className="eps-modal__close-wrapper" ref={ this.closeRef }>
@@ -98,4 +99,5 @@ Modal.propTypes = {
 	modalProps: PropTypes.object.isRequired,
 	children: PropTypes.any.isRequired,
 	title: PropTypes.string.isRequired,
+	icon: PropTypes.string.isRequired,
 };
