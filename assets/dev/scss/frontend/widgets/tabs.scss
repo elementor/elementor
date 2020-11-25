@@ -124,7 +124,7 @@
 		line-height: 1;
 		border: solid transparent;
 
-		&.elementor-active {
+		&.elementor-active, &:focus {
 			border-color: $gray-light;
 
 			&:before,
