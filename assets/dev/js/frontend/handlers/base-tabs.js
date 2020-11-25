@@ -73,7 +73,6 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 			keys = this.getSettings( 'keys' ),
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
 			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
-			direction = this.getSettings( 'keyDirection' )[ key ],
 			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
 
 		switch ( key ) {
@@ -103,9 +102,10 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		}
 
 		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
+			direction = this.getSettings( 'keyDirection' )[ key ],
 			nextTab = $tabs[ tabIndex + direction ];
 
-			if ( nextTab ) {
+		if ( nextTab ) {
 			nextTab.focus();
 		} else if ( -1 === tabIndex + direction ) {
 			$tabs.last().focus();
