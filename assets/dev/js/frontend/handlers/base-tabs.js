@@ -67,41 +67,47 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.setSettings( originalToggleMethods );
 	}
 
-	handleKeyboardArrows( event ) {
+	handleKeyboardNavigation( event ) {
 		const key = event.keyCode,
 			tab = event.currentTarget,
 			keys = this.getSettings( 'keys' ),
-			isHorizontalKey = key === keys.left || key === keys.right,
-			isVerticalKey = key === keys.up || key === keys.down,
-			isHomeEndKey = key === keys.home || key === keys.end,
-			tablist = tab.closest( this.getSettings( 'selectors' ).tablist ),
-			isVertical = 'vertical' === tablist.getAttribute( 'aria-orientation' );
+			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
+			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
+			direction = this.getSettings( 'keyDirection' )[ key ],
+			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
 
-		if ( ( isVerticalKey && isVertical ) || ( isHorizontalKey && ! isVertical ) || isHomeEndKey ) {
-			if ( isVerticalKey || isHomeEndKey ) {
+		switch ( key ) {
+			case keys.left:
+			case keys.right:
+				if ( isVertical ) {
+					return;
+				}
+				break;
+			case keys.up:
+			case keys.down:
+				if ( ! isVertical ) {
+					return;
+				}
 				event.preventDefault();
-			}
-
-			this.switchTabOnKeyPress( key, tab, tablist );
-		}
-	}
-
-	switchTabOnKeyPress( keyPressed, currentTab, tablist ) {
-		const direction = this.getSettings( 'keyDirection' )[ keyPressed ],
-			tabIndex = currentTab.getAttribute( 'data-tab' ) - 1,
-			isHomeKey = this.getSettings( 'keys' ).home === keyPressed,
-			isEndKey = this.getSettings( 'keys' ).end === keyPressed;
-
-		if ( ( ! direction || 'number' !== typeof tabIndex ) && ! isHomeKey && ! isEndKey ) {
-			return;
+				break;
+			case keys.home:
+				event.preventDefault();
+				$tabs.first().focus();
+				return;
+			case keys.end:
+				event.preventDefault();
+				$tabs.last().focus();
+				return;
+			default:
+				return;
 		}
 
-		const $tabs = jQuery( tablist ).find( this.getSettings( 'selectors' ).tabTitle ),
+		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
 			nextTab = $tabs[ tabIndex + direction ];
 
-		if ( nextTab ) {
+			if ( nextTab ) {
 			nextTab.focus();
-		} else if ( isEndKey || -1 === tabIndex + direction ) {
+		} else if ( -1 === tabIndex + direction ) {
 			$tabs.last().focus();
 		} else {
 			$tabs.first().focus();
@@ -147,30 +153,21 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	}
 
 	bindEvents() {
+		const keys = this.getSettings( 'keys' );
+
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
-				const key = event.keyCode,
-					keys = this.getSettings( 'keys' );
+				const key = event.keyCode;
 
-				switch ( key ) {
-					case keys.end:
-					case keys.home:
-					// Up and down are in keydown
-					// because we need to prevent page scroll >:)
-					case keys.up:
-					case keys.down:
-						this.handleKeyboardArrows( event );
-						break;
+				if ( [ keys.end, keys.home, keys.up, keys.down ].includes( key ) ) {
+					this.handleKeyboardNavigation( event );
 				}
 			},
 			keyup: ( event ) => {
-				const key = event.keyCode,
-					keys = this.getSettings( 'keys' );
-
-				switch ( key ) {
+				switch ( event.keyCode ) {
 					case keys.left:
 					case keys.right:
-						this.handleKeyboardArrows( event );
+						this.handleKeyboardNavigation( event );
 						break;
 					case keys.enter:
 					case keys.space:
@@ -180,7 +177,6 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				}
 			},
 			click: ( event ) => {
-				event.preventDefault();
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 			},
 		} );
