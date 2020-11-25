@@ -36,14 +36,20 @@ class Module extends BaseModule {
 	 * @return array[]
 	 */
 	protected function get_plugins() {
-		return get_plugins();
+		static $plugins;
+
+		if ( ! $plugins ) {
+			$plugins = get_plugins();
+		}
+
+		return $plugins;
 	}
 
 	/**
 	 * Add allowed headers to plugins.
 	 *
-	 * @param array $headers
-	 * @param       $header
+	 * @param array  $headers
+	 * @param string $header
 	 *
 	 * @return array
 	 */
@@ -56,8 +62,8 @@ class Module extends BaseModule {
 	/**
 	 * Append a compatibility message to the update plugin warning.
 	 *
-	 * @param array $args
-	 * @param       $header
+	 * @param array  $args
+	 * @param string $header
 	 *
 	 * @throws \Exception
 	 */
@@ -81,19 +87,28 @@ class Module extends BaseModule {
 	 * Get all the untested extensions (plugins that extend elementor).
 	 *
 	 * @param Version $version
-	 * @param         $header
+	 * @param string  $header
 	 *
 	 * @return mixed|null
 	 * @throws \Exception
 	 */
 	private function get_untested_extensions( Version $version, $header ) {
-		$extensions = $this->get_plugins_with_header( $header );
+		$extensions = array_merge(
+			$this->get_plugins_related_to_elementor(),
+			$this->get_plugins_with_header( $header )
+		);
 
 		return array_reduce( $extensions, function ( array $current, array $extension ) use ( $version, $header ) {
-			$is_valid_version = Version::is_valid_version( $extension[ $header ] );
+			$is_valid_version = false;
 
-			if ( ! $is_valid_version ) {
-				$extension[ $header ] .= ' (Invalid version)';
+			if ( $extension[ $header ] ) {
+				$is_valid_version = Version::is_valid_version( $extension[ $header ] );
+
+				if ( ! $is_valid_version ) {
+					$extension[ $header ] .= ' (Invalid version)';
+				}
+			} else {
+				$extension[ $header ] = 'Unknown';
 			}
 
 			if ( ! $is_valid_version || $version->compare( '>', $extension[ $header ], Version::PART_MAJOR_2 ) ) {
@@ -107,7 +122,7 @@ class Module extends BaseModule {
 	/**
 	 * Get all plugins with specific header.
 	 *
-	 * @param $header
+	 * @param string $header
 	 *
 	 * @return array[]
 	 */
@@ -118,7 +133,35 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Get all the plugins that can be related to elementor.
+	 *
+	 * @return array[]
+	 */
+	private function get_plugins_related_to_elementor() {
+		$should_not_test_plugins = [
+			'elementor/elementor.php',
+			'elementor-pro/elementor-pro.php',
+			'elementor-dev/elementor-dev.php',
+			'elementor-dev-tools/elementor-dev-tools.php',
+		];
+
+		return array_filter( $this->get_plugins(), function ( array $plugin, $key ) use ( $should_not_test_plugins ) {
+			if ( in_array( $key, $should_not_test_plugins, true ) ) {
+				return false;
+			}
+
+			if ( false === strpos( strtolower( $plugin['Name'] ), 'elementor' ) ) {
+				return false;
+			}
+
+			return true;
+		}, ARRAY_FILTER_USE_BOTH);
+	}
+
+	/**
 	 * Module constructor.
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct() {
 		add_filter( 'extra_plugin_headers', function ( array $headers ) {

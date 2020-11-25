@@ -31,7 +31,23 @@ class Test_Module extends Elementor_Test_Base {
 			[
 				'Name' => 'tested version plugin',
 				Module::ELEMENTOR_VERSION_TESTED_HEADER => '3.1.5',
-			]
+			],
+			[
+				'Name' => 'extends elementor',
+				Module::ELEMENTOR_VERSION_TESTED_HEADER => '',
+			],
+			[
+				'Name' => 'regular plugins',
+				Module::ELEMENTOR_VERSION_TESTED_HEADER => '',
+			],
+			'elementor-pro/elementor-pro.php' => [
+				'Name' => 'elementor pro',
+				Module::ELEMENTOR_VERSION_TESTED_HEADER => ''
+			],
+			'elementor-dev/elementor-dev.php' => [
+				'Name' => 'elementor dev',
+				Module::ELEMENTOR_VERSION_TESTED_HEADER => ''
+			],
 		]);
 
 		// Act
@@ -46,9 +62,14 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertRegExp( '/old version plugin/', $result );
 		$this->assertRegExp( '/invalid version plugin/', $result );
+		$this->assertRegExp( '/extends elementor/', $result );
 		$this->assertNotRegExp( '/patch version plugin/', $result );
 		$this->assertNotRegExp( '/tested version plugin/', $result );
-		$this->assertRegExp( '/a\.b\.10 \(Invalid version\)/', $result, 'it should add "(Invalid version)" to the version text' );
+		$this->assertNotRegExp( '/regular plugins/', $result );
+		$this->assertNotRegExp( '/elementor pro/', $result );
+		$this->assertNotRegExp( '/elementor dev/', $result );
+		$this->assertRegExp( '/a\.b\.10 \(Invalid version\)/', $result, 'it should add "(Invalid version)" to the version text.' );
+		$this->assertRegExp( '/Unknown/', $result, 'it should print "Unknown" if there is not version in plugin that has elementor on it`s name.' );
 	}
 
 	public function test_in_plugin_update_message__should_not_check_for_untested_plugins_on_patch_update() {
