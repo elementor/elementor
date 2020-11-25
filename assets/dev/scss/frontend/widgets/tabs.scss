@@ -114,7 +114,6 @@
 
 	.elementor-tab-title {
 		cursor: pointer;
-		outline: none;
 	}
 
 	.elementor-tab-desktop-title {
@@ -124,8 +123,7 @@
 		line-height: 1;
 		border: solid transparent;
 
-		&.elementor-active, &:focus {
-			border-color: $gray-light;
+		&.elementor-active {
 
 			&:before,
 			&:after {
