@@ -199,7 +199,7 @@ class Admin extends App {
 			return;
 		}
 
-		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
+		Plugin::$instance->documents->get( $post_id )->set_is_built_with_elementor( ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
 	/**
@@ -487,6 +487,12 @@ class Admin extends App {
 				'title' => __( 'Go Pro', 'elementor' ),
 				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
+		];
+
+		// Visible to all core users when Elementor Pro is not installed.
+		$additions_actions['find_an_expert'] = [
+			'title' => __( 'Find an Expert', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
 		];
 
 		/**
