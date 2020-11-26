@@ -310,6 +310,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
+				'prefix_class' => 'e-grid-align-',
 				'default' => 'center',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',

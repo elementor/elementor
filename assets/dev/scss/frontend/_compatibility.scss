@@ -23,3 +23,29 @@
 #wpadminbar * {
 	font-style: normal;
 }
+
+.elementor-widget-social-icons.elementor-safari.elementor-grid-0.e-grid-align-right {
+	.elementor-widget-container {
+		margin-left: calc(-0.5 * var(--grid-column-gap));
+		margin-right: calc(-0.5 * var(--grid-column-gap));
+
+		.elementor-grid {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-end;
+
+			&-item {
+				margin-left: calc(0.5 * var(--grid-column-gap));
+				margin-right: calc(0.5 * var(--grid-column-gap));
+			}
+		}
+	}
+}
+
+.rtl .elementor-widget-social-icons.elementor-safari.elementor-grid-0.e-grid-align {
+	&-right {
+		.elementor-grid {
+			justify-content: flex-start;
+		}
+	}
+}
