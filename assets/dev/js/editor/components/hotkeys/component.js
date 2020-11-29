@@ -10,6 +10,7 @@ export default class Component extends ComponentModalBase {
 		return {
 			'': {
 				keys: 'ctrl+?, shift+?',
+				exclude: [ 'input' ],
 			},
 		};
 	}
