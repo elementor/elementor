@@ -1,0 +1,26 @@
+name: Image Compare 2
+
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ubuntu-16.04
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress_versions: ['latest']
+    name: WordPress ${{ matrix.wordpress_versions }}
+    steps:
+      - name: Startup MySQL service
+        run: sudo /etc/init.d/mysql start
+      - name: Checkout source code
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: |
+          bash bin/install-image-compare.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
+      - name: Import Tamplate(s)
+        run: |
+          bash bin/import-tamplates.sh
+      - name: Build Package & Run Tests
+        run: |
+          bash bin/run-test-image-compare.sh

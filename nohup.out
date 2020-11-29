@@ -1,0 +1,267 @@
+[Mon Nov 23 12:30:05 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 12:33:09 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 12:38:33 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 12:38:45 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 12:43:13 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 12:43:47 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+nohup: exec: No such file or directory
+[Mon Nov 23 14:15:12 2020] PHP 7.4.12 Development Server (http://localhost:8080) started
+[Mon Nov 23 14:16:01 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 14:24:02 2020] [::1]:51105 Accepted
+[Mon Nov 23 14:24:02 2020] [::1]:51105 [500]: GET /
+[Mon Nov 23 14:24:02 2020] [::1]:51105 Closing
+[Mon Nov 23 14:27:43 2020] [::1]:51145 Accepted
+[Mon Nov 23 14:27:43 2020] [::1]:51145 [500]: GET /
+[Mon Nov 23 14:27:43 2020] [::1]:51145 Closing
+[Mon Nov 23 14:49:47 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 14:49:58 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 15:40:03 2020] [::1]:51946 Accepted
+[Mon Nov 23 15:40:03 2020] [::1]:51947 Accepted
+[Mon Nov 23 15:40:03 2020] [::1]:51946 [500]: GET /?p=5
+[Mon Nov 23 15:40:03 2020] [::1]:51946 Closing
+[Mon Nov 23 15:40:04 2020] [::1]:51948 Accepted
+[Mon Nov 23 15:40:14 2020] [::1]:51947 [500]: GET /?p=
+[Mon Nov 23 15:40:14 2020] [::1]:51947 Closing
+[Mon Nov 23 15:40:14 2020] [::1]:51950 Accepted
+[Mon Nov 23 15:40:16 2020] [::1]:51948 [500]: GET /
+[Mon Nov 23 15:40:16 2020] [::1]:51948 Closing
+[Mon Nov 23 15:40:17 2020] [::1]:51952 Accepted
+[Mon Nov 23 15:40:25 2020] [::1]:51950 [500]: GET /
+[Mon Nov 23 15:40:25 2020] [::1]:51950 Closing
+[Mon Nov 23 15:40:25 2020] [::1]:51954 Accepted
+[Mon Nov 23 15:40:27 2020] [::1]:51952 [500]: GET /
+[Mon Nov 23 15:40:27 2020] [::1]:51952 Closing
+[Mon Nov 23 15:40:27 2020] [::1]:51956 Accepted
+[Mon Nov 23 15:40:27 2020] [::1]:51954 [500]: GET /
+[Mon Nov 23 15:40:27 2020] [::1]:51954 Closing
+[Mon Nov 23 15:40:27 2020] [::1]:51957 Accepted
+[Mon Nov 23 15:40:28 2020] [::1]:51956 [500]: GET /
+[Mon Nov 23 15:40:28 2020] [::1]:51956 Closing
+[Mon Nov 23 15:40:28 2020] [::1]:51958 Accepted
+[Mon Nov 23 15:40:28 2020] [::1]:51957 [500]: GET /
+[Mon Nov 23 15:40:28 2020] [::1]:51957 Closing
+[Mon Nov 23 15:40:28 2020] [::1]:51959 Accepted
+[Mon Nov 23 15:40:28 2020] [::1]:51958 [500]: GET /
+[Mon Nov 23 15:40:28 2020] [::1]:51958 Closing
+[Mon Nov 23 15:40:28 2020] [::1]:51960 Accepted
+[Mon Nov 23 15:40:28 2020] [::1]:51959 [500]: GET /
+[Mon Nov 23 15:40:28 2020] [::1]:51959 Closing
+[Mon Nov 23 15:40:28 2020] [::1]:51961 Accepted
+[Mon Nov 23 15:40:29 2020] [::1]:51960 [500]: GET /
+[Mon Nov 23 15:40:29 2020] [::1]:51960 Closing
+[Mon Nov 23 15:40:29 2020] [::1]:51962 Accepted
+[Mon Nov 23 15:40:29 2020] [::1]:51961 [500]: GET /
+[Mon Nov 23 15:40:29 2020] [::1]:51961 Closing
+[Mon Nov 23 15:40:29 2020] [::1]:51963 Accepted
+[Mon Nov 23 15:40:29 2020] [::1]:51962 [500]: GET /
+[Mon Nov 23 15:40:29 2020] [::1]:51962 Closing
+[Mon Nov 23 15:40:29 2020] [::1]:51965 Accepted
+[Mon Nov 23 15:40:29 2020] [::1]:51963 [500]: GET /
+[Mon Nov 23 15:40:29 2020] [::1]:51963 Closing
+[Mon Nov 23 15:40:29 2020] [::1]:51966 Accepted
+[Mon Nov 23 15:41:48 2020] [::1]:51965 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:41:48 2020] [::1]:51965 Closing
+[Mon Nov 23 15:41:48 2020] [::1]:51966 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:41:48 2020] [::1]:51966 Closing
+[Mon Nov 23 15:41:48 2020] [::1]:51978 Accepted
+[Mon Nov 23 15:41:48 2020] [::1]:51979 Accepted
+[Mon Nov 23 15:41:52 2020] [::1]:51978 [500]: GET /
+[Mon Nov 23 15:41:52 2020] [::1]:51978 Closing
+[Mon Nov 23 15:41:52 2020] [::1]:51980 Accepted
+[Mon Nov 23 15:41:54 2020] [::1]:51979 [500]: GET /
+[Mon Nov 23 15:41:54 2020] [::1]:51979 Closing
+[Mon Nov 23 15:41:54 2020] [::1]:51981 Accepted
+[Mon Nov 23 15:41:54 2020] [::1]:51980 [500]: GET /
+[Mon Nov 23 15:41:54 2020] [::1]:51980 Closing
+[Mon Nov 23 15:41:54 2020] [::1]:51982 Accepted
+[Mon Nov 23 15:41:55 2020] [::1]:51981 [500]: GET /
+[Mon Nov 23 15:41:55 2020] [::1]:51981 Closing
+[Mon Nov 23 15:41:55 2020] [::1]:51983 Accepted
+[Mon Nov 23 15:41:55 2020] [::1]:51982 [500]: GET /
+[Mon Nov 23 15:41:55 2020] [::1]:51982 Closing
+[Mon Nov 23 15:41:55 2020] [::1]:51984 Accepted
+[Mon Nov 23 15:43:29 2020] [::1]:51983 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:43:29 2020] [::1]:51983 Closing
+[Mon Nov 23 15:43:29 2020] [::1]:51984 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:43:29 2020] [::1]:51984 Closing
+[Mon Nov 23 15:45:57 2020] [::1]:52228 Accepted
+[Mon Nov 23 15:45:57 2020] [::1]:52229 Accepted
+[Mon Nov 23 15:45:59 2020] [::1]:52228 [500]: GET /
+[Mon Nov 23 15:45:59 2020] [::1]:52228 Closing
+[Mon Nov 23 15:45:59 2020] [::1]:52230 Accepted
+[Mon Nov 23 15:46:58 2020] [::1]:52229 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:46:58 2020] [::1]:52229 Closing
+[Mon Nov 23 15:47:05 2020] [::1]:52230 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:47:05 2020] [::1]:52230 Closing
+[Mon Nov 23 15:49:46 2020] [::1]:52289 Accepted
+[Mon Nov 23 15:49:46 2020] [::1]:52290 Accepted
+[Mon Nov 23 15:51:12 2020] [::1]:52289 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:51:12 2020] [::1]:52289 Closing
+[Mon Nov 23 15:51:12 2020] [::1]:52290 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:51:12 2020] [::1]:52290 Closing
+[Mon Nov 23 15:51:12 2020] [::1]:52309 Accepted
+[Mon Nov 23 15:51:12 2020] [::1]:52310 Accepted
+[Mon Nov 23 15:52:30 2020] [::1]:52309 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:52:30 2020] [::1]:52309 Closing
+[Mon Nov 23 15:52:30 2020] [::1]:52310 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Nov 23 15:52:30 2020] [::1]:52310 Closing
+[Mon Nov 23 16:10:53 2020] Failed to listen on localhost:8080 (reason: Address already in use)
+[Mon Nov 23 16:13:30 2020] [::1]:53085 Accepted
+[Mon Nov 23 16:13:30 2020] [::1]:53085 [500]: GET /
+[Mon Nov 23 16:13:30 2020] [::1]:53085 Closing
+[Mon Nov 23 16:14:33 2020] [::1]:53102 Accepted
+[Mon Nov 23 16:14:33 2020] [::1]:53102 [500]: GET /
+[Mon Nov 23 16:14:33 2020] [::1]:53102 Closing
+[Mon Nov 23 16:15:22 2020] [::1]:53113 Accepted
+[Mon Nov 23 16:15:22 2020] [::1]:53113 [500]: GET /
+[Mon Nov 23 16:15:22 2020] [::1]:53113 Closing
+[Mon Nov 23 16:26:23 2020] [::1]:53329 Accepted
+[Mon Nov 23 16:26:23 2020] [::1]:53329 [500]: GET /
+[Mon Nov 23 16:26:23 2020] [::1]:53329 Closing
+[Mon Nov 23 16:31:28 2020] [::1]:53376 Accepted
+[Mon Nov 23 16:31:28 2020] [::1]:53376 [500]: GET /
+[Mon Nov 23 16:31:28 2020] [::1]:53376 Closing
+[Mon Nov 23 16:31:57 2020] [::1]:53383 Accepted
+[Mon Nov 23 16:31:58 2020] [::1]:53383 [500]: GET /
+[Mon Nov 23 16:31:58 2020] [::1]:53383 Closing
+[Mon Nov 23 16:33:26 2020] [::1]:53407 Accepted
+[Mon Nov 23 16:33:26 2020] [::1]:53407 [500]: GET /
+[Mon Nov 23 16:33:26 2020] [::1]:53407 Closing
+[Mon Nov 23 16:33:47 2020] [::1]:53414 Accepted
+[Mon Nov 23 16:33:47 2020] [::1]:53414 [500]: GET /
+[Mon Nov 23 16:33:47 2020] [::1]:53414 Closing
+[Mon Nov 23 16:34:32 2020] [::1]:53428 Accepted
+[Mon Nov 23 16:34:32 2020] [::1]:53428 [500]: GET /
+[Mon Nov 23 16:34:32 2020] [::1]:53428 Closing
+[Mon Nov 23 16:35:18 2020] [::1]:53439 Accepted
+[Mon Nov 23 16:35:18 2020] [::1]:53439 [500]: GET /
+[Mon Nov 23 16:35:18 2020] [::1]:53439 Closing
+[Mon Nov 23 16:36:14 2020] [::1]:53454 Accepted
+[Mon Nov 23 16:36:14 2020] [::1]:53454 [500]: GET /
+[Mon Nov 23 16:36:14 2020] [::1]:53454 Closing
+[Mon Nov 23 16:37:05 2020] [::1]:53470 Accepted
+[Mon Nov 23 16:37:05 2020] [::1]:53470 [500]: GET /
+[Mon Nov 23 16:37:05 2020] [::1]:53470 Closing
+[Mon Nov 23 16:37:24 2020] [::1]:53483 Accepted
+[Mon Nov 23 16:37:24 2020] [::1]:53483 [500]: GET /
+[Mon Nov 23 16:37:24 2020] [::1]:53483 Closing
+[Mon Nov 23 16:37:52 2020] [::1]:53492 Accepted
+[Mon Nov 23 16:37:52 2020] [::1]:53492 [500]: GET /
+[Mon Nov 23 16:37:52 2020] [::1]:53492 Closing
+[Mon Nov 23 16:38:58 2020] [::1]:53627 Accepted
+[Mon Nov 23 16:38:58 2020] [::1]:53627 [500]: GET /
+[Mon Nov 23 16:38:58 2020] [::1]:53627 Closing
+[Mon Nov 23 16:39:22 2020] [::1]:53653 Accepted
+[Mon Nov 23 16:39:22 2020] [::1]:53653 [500]: GET /
+[Mon Nov 23 16:39:22 2020] [::1]:53653 Closing
+[Mon Nov 23 16:40:59 2020] [::1]:53693 Accepted
+[Mon Nov 23 16:40:59 2020] [::1]:53693 [500]: GET /
+[Mon Nov 23 16:40:59 2020] [::1]:53693 Closing
+[Mon Nov 23 16:42:02 2020] [::1]:53729 Accepted
+[Mon Nov 23 16:42:02 2020] [::1]:53729 [500]: GET /
+[Mon Nov 23 16:42:02 2020] [::1]:53729 Closing
+[Mon Nov 23 16:43:50 2020] [::1]:53787 Accepted
+[Mon Nov 23 16:43:50 2020] [::1]:53787 [500]: GET /
+[Mon Nov 23 16:43:50 2020] [::1]:53787 Closing
+[Mon Nov 23 16:44:14 2020] [::1]:53804 Accepted
+[Mon Nov 23 16:44:14 2020] [::1]:53804 [500]: GET /
+[Mon Nov 23 16:44:14 2020] [::1]:53804 Closing
+[Mon Nov 23 16:51:32 2020] [::1]:53898 Accepted
+[Mon Nov 23 16:51:32 2020] [::1]:53898 [500]: GET /
+[Mon Nov 23 16:51:32 2020] [::1]:53898 Closing
+[Mon Nov 23 16:54:21 2020] [::1]:53942 Accepted
+[Mon Nov 23 16:54:21 2020] [::1]:53942 [500]: GET /
+[Mon Nov 23 16:54:21 2020] [::1]:53942 Closing
+[Mon Nov 23 16:54:52 2020] [::1]:53949 Accepted
+[Mon Nov 23 16:54:52 2020] [::1]:53949 [500]: GET /
+[Mon Nov 23 16:54:52 2020] [::1]:53949 Closing
+[Mon Nov 23 16:56:17 2020] [::1]:53969 Accepted
+[Mon Nov 23 16:56:17 2020] [::1]:53969 [500]: GET /
+[Mon Nov 23 16:56:17 2020] [::1]:53969 Closing
+[Mon Nov 23 16:57:02 2020] [::1]:53979 Accepted
+[Mon Nov 23 16:57:02 2020] [::1]:53979 [500]: GET /
+[Mon Nov 23 16:57:02 2020] [::1]:53979 Closing
+[Mon Nov 23 16:57:34 2020] [::1]:53993 Accepted
+[Mon Nov 23 16:57:34 2020] [::1]:53993 [500]: GET /
+[Mon Nov 23 16:57:34 2020] [::1]:53993 Closing
+[Mon Nov 23 16:59:34 2020] [::1]:54031 Accepted
+[Mon Nov 23 16:59:34 2020] [::1]:54031 [500]: GET /
+[Mon Nov 23 16:59:34 2020] [::1]:54031 Closing
+[Mon Nov 23 16:59:54 2020] [::1]:54038 Accepted
+[Mon Nov 23 16:59:54 2020] [::1]:54038 [500]: GET /
+[Mon Nov 23 16:59:54 2020] [::1]:54038 Closing
+[Mon Nov 23 17:00:07 2020] [::1]:54045 Accepted
+[Mon Nov 23 17:00:07 2020] [::1]:54045 [500]: GET /
+[Mon Nov 23 17:00:07 2020] [::1]:54045 Closing
+[Mon Nov 23 17:08:46 2020] [::1]:54157 Accepted
+[Mon Nov 23 17:08:46 2020] [::1]:54157 [500]: GET /
+[Mon Nov 23 17:08:46 2020] [::1]:54157 Closing
+[Mon Nov 23 17:14:27 2020] [::1]:54246 Accepted
+[Mon Nov 23 17:14:27 2020] [::1]:54246 [500]: GET /?p=5
+[Mon Nov 23 17:14:27 2020] [::1]:54246 Closing
+[Mon Nov 23 17:29:37 2020] [::1]:54366 Accepted
+[Mon Nov 23 17:29:37 2020] [::1]:54366 [500]: GET /?p=5
+[Mon Nov 23 17:29:37 2020] [::1]:54366 Closing
+[Mon Nov 23 17:34:51 2020] [::1]:54415 Accepted
+[Mon Nov 23 17:34:51 2020] [::1]:54415 [500]: GET /?p=5
+[Mon Nov 23 17:34:51 2020] [::1]:54415 Closing
+[Mon Nov 23 17:35:15 2020] [::1]:54425 Accepted
+[Mon Nov 23 17:35:15 2020] [::1]:54425 [500]: GET /?p=5
+[Mon Nov 23 17:35:15 2020] [::1]:54425 Closing
+[Mon Nov 23 17:35:40 2020] [::1]:54433 Accepted
+[Mon Nov 23 17:35:40 2020] [::1]:54433 [500]: GET /?p=5
+[Mon Nov 23 17:35:40 2020] [::1]:54433 Closing
+[Mon Nov 23 17:36:27 2020] [::1]:54450 Accepted
+[Mon Nov 23 17:36:27 2020] [::1]:54450 [500]: GET /?p=5
+[Mon Nov 23 17:36:27 2020] [::1]:54450 Closing
+[Mon Nov 23 17:37:43 2020] [::1]:54469 Accepted
+[Mon Nov 23 17:37:43 2020] [::1]:54469 [500]: GET /?p=5
+[Mon Nov 23 17:37:43 2020] [::1]:54469 Closing
+[Mon Nov 23 17:43:44 2020] [::1]:54536 Accepted
+[Mon Nov 23 17:43:44 2020] [::1]:54536 [500]: GET /?p=5
+[Mon Nov 23 17:43:44 2020] [::1]:54536 Closing
+[Mon Nov 23 17:44:29 2020] [::1]:54550 Accepted
+[Mon Nov 23 17:44:29 2020] [::1]:54550 [500]: GET /?p=5
+[Mon Nov 23 17:44:29 2020] [::1]:54550 Closing
+[Mon Nov 23 17:44:49 2020] [::1]:54559 Accepted
+[Mon Nov 23 17:44:49 2020] [::1]:54559 [500]: GET /?p=5
+[Mon Nov 23 17:44:49 2020] [::1]:54559 Closing
+[Mon Nov 23 17:45:32 2020] [::1]:54569 Accepted
+[Mon Nov 23 17:45:32 2020] [::1]:54569 [500]: GET /?p=5
+[Mon Nov 23 17:45:32 2020] [::1]:54569 Closing
+[Mon Nov 23 17:46:25 2020] [::1]:54585 Accepted
+[Mon Nov 23 17:46:25 2020] [::1]:54585 [500]: GET /?p=5
+[Mon Nov 23 17:46:25 2020] [::1]:54585 Closing
+[Mon Nov 23 17:46:53 2020] [::1]:54593 Accepted
+[Mon Nov 23 17:46:53 2020] [::1]:54593 [500]: GET /?p=5
+[Mon Nov 23 17:46:53 2020] [::1]:54593 Closing
+[Mon Nov 23 17:47:40 2020] [::1]:54608 Accepted
+[Mon Nov 23 17:47:40 2020] [::1]:54608 [500]: GET /?p=5
+[Mon Nov 23 17:47:40 2020] [::1]:54608 Closing
+[Mon Nov 23 17:49:39 2020] [::1]:54640 Accepted
+[Mon Nov 23 17:49:39 2020] [::1]:54640 [500]: GET /?p=5
+[Mon Nov 23 17:49:39 2020] [::1]:54640 Closing
+[Mon Nov 23 17:51:29 2020] [::1]:54663 Accepted
+[Mon Nov 23 17:51:29 2020] [::1]:54663 [500]: GET /?p=5
+[Mon Nov 23 17:51:29 2020] [::1]:54663 Closing
+[Mon Nov 23 17:52:07 2020] [::1]:54673 Accepted
+[Mon Nov 23 17:52:07 2020] [::1]:54673 [500]: GET /?p=5
+[Mon Nov 23 17:52:07 2020] [::1]:54673 Closing
+[Mon Nov 23 17:54:49 2020] [::1]:54712 Accepted
+[Mon Nov 23 17:54:49 2020] [::1]:54712 [500]: GET /?p=5
+[Mon Nov 23 17:54:49 2020] [::1]:54712 Closing
+[Mon Nov 23 17:55:12 2020] [::1]:54720 Accepted
+[Mon Nov 23 17:55:12 2020] [::1]:54720 [500]: GET /?p=5
+[Mon Nov 23 17:55:12 2020] [::1]:54720 Closing
+[Mon Nov 23 17:55:51 2020] [::1]:54735 Accepted
+[Mon Nov 23 17:55:51 2020] [::1]:54735 [500]: GET /?p=5
+[Mon Nov 23 17:55:51 2020] [::1]:54735 Closing
+[Mon Nov 23 17:56:33 2020] [::1]:54745 Accepted
+[Mon Nov 23 17:56:33 2020] [::1]:54745 [500]: GET /?p=5
+[Mon Nov 23 17:56:33 2020] [::1]:54745 Closing
+[Mon Nov 23 17:58:53 2020] [::1]:54771 Accepted
+[Mon Nov 23 17:58:53 2020] [::1]:54771 [500]: GET /?p=5
+[Mon Nov 23 17:58:53 2020] [::1]:54771 Closing
+[Mon Nov 23 18:02:58 2020] [::1]:54822 Accepted
+[Mon Nov 23 18:02:58 2020] [::1]:54822 [500]: GET /?p=5
+[Mon Nov 23 18:02:58 2020] [::1]:54822 Closing
