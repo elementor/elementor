@@ -167,10 +167,7 @@ class Control_Animation extends Base_Data_Control {
 		}
 
 		return [
-			[
-				'type' => 'styles',
-				'name' => 'e-animations',
-			],
+			'styles' => [ 'e-animations' ],
 		];
 	}
 }
