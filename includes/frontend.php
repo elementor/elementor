@@ -587,6 +587,8 @@ class Frontend extends App {
 
 		$this->print_config();
 
+		$this->enqueue_conditional_assets();
+
 		/**
 		 * After frontend enqueue scripts.
 		 *
@@ -670,7 +672,6 @@ class Frontend extends App {
 
 		$this->enqueue_styles();
 		$this->enqueue_scripts();
-		$this->enqueue_conditional_assets();
 
 		$this->print_fonts_links();
 	}
