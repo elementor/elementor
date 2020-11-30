@@ -1099,7 +1099,7 @@ abstract class Controls_Stack extends Base_Object {
 				}
 
 				// Enabling assets loading from the control object.
-				$control_conditional_assets = $control_obj::get_conditional_assets( $setting );
+				$control_conditional_assets = $control_obj::get_assets( $setting );
 
 				if ( $control_conditional_assets ) {
 					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {

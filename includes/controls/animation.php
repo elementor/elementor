@@ -161,7 +161,7 @@ class Control_Animation extends Base_Data_Control {
 		<?php
 	}
 
-	public static function get_conditional_assets( $setting ) {
+	public static function get_assets( $setting ) {
 		if ( ! $setting ) {
 			return [];
 		}

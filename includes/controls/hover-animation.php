@@ -146,7 +146,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 		];
 	}
 
-	public static function get_conditional_assets( $setting ) {
+	public static function get_assets( $setting ) {
 		if ( ! $setting ) {
 			return [];
 		}
