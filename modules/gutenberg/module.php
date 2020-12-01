@@ -43,7 +43,13 @@ class Module extends BaseModule {
 						return false;
 					}
 
-					Plugin::$instance->db->set_is_elementor_page( $object->ID, false );
+					$document = Plugin::$instance->documents->get( $object->ID );
+
+					if ( ! $document ) {
+						return false;
+					}
+
+					$document->set_is_built_with_elementor( false );
 
 					return true;
 				},

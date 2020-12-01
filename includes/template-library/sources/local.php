@@ -1317,6 +1317,28 @@ class Source_Local extends Source_Base {
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
+			<?php $this->print_blank_state_template( $current_type_label, $args['href'], $args['description'] ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Print Blank State Template
+	 *
+	 * When the an entity (CPT, Taxonomy...etc) has no saved items, print a blank admin page offering
+	 * to create the very first item.
+	 *
+	 * This method is public because it needs to be accessed from outside the Source_Local
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $current_type_label The Entity title
+	 * @param string $href The URL for the 'Add New' button
+	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.)
+	 */
+	public function print_blank_state_template( $current_type_label, $href, $description ) {
+		?>
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
 				<h2>
@@ -1325,15 +1347,14 @@ class Source_Local extends Source_Base {
 					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo $args['description']; ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $args['href']; ?>">
+				<p><?php echo $description; ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
 			</div>
-		</div>
 		<?php
 	}
 
