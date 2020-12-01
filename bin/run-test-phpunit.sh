@@ -16,6 +16,6 @@ install_plugins
 install_themes
 
 # Decided if clean local env
-if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} == true ]]; then
+if [[ -n ${clean_local_env} && ${clean_local_env} == true ]]; then
 	clean_local_tests_env
 fi

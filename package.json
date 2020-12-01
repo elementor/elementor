@@ -8,7 +8,8 @@
 	"scripts": {
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
 		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
-		"test:qunit": "grunt qunit"
+		"test:qunit": "grunt qunit",
+		"test:visual_regration": "bash bin/install-image-compare-local.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}"
 	},
 	"devDependencies": {
 		"@babel/core": "7.0.0",
@@ -42,7 +43,7 @@
 		"grunt-contrib-watch": "^1.1.0",
 		"grunt-karma": "^3.0.2",
 		"grunt-postcss": "~0.9.0",
-		"grunt-release": "^0.5.1",
+		"grunt-release": "^0.14.0",
 		"grunt-sass": "^2.1.0",
 		"grunt-shell": "~2.1.0",
 		"grunt-text-replace": "~0.4.0",
@@ -70,7 +71,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "^2.2.0",
 		"@wordpress/babel-preset-default": "^2.1.0",
 		"backstop": "^1.0.1",
-		"backstopjs": "^5.0.6",
+		"backstopjs": "^4.3.2",
 		"core-js": "^2.6.5",
 		"grunt-cli": "^1.3.2",
 		"prop-types": "^15.7.1",

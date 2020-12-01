@@ -5,14 +5,14 @@ if [ $# -lt 3 ]; then
 	exit 1
 fi
 
-DB_NAME=$1
-DB_USER=$2
-DB_PASS=$3
-DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
+db_name=$1
+db_user=$2
+db_pass=$3
+db_host=${4-localhost}
+db_version=${5-latest}
 
-WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
-WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
+wp_tests_dir=${wp_tests_dir-/tmp/wordpress-tests-lib}
+wp_core_dir=${wp_core_dir-/tmp/wordpress/}
 
 download() {
     if [ `which curl` ]; then
@@ -22,8 +22,8 @@ download() {
     fi
 }
 
-if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
-	WP_TESTS_TAG="tags/$WP_VERSION"
+if [[ $db_version =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
+	WP_TESTS_TAG="tags/$db_version"
 else
 	# http serves a single offer, whereas https serves multiple. we only want one
 	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
@@ -39,22 +39,22 @@ fi
 set -ex
 
 install_wp() {
-	if [ -d $WP_CORE_DIR ]; then
+	if [ -d $wp_core_dir ]; then
 		return;
 	fi
 
-	mkdir -p $WP_CORE_DIR
+	mkdir -p $wp_core_dir
 
-	if [ $WP_VERSION == 'latest' ]; then
+	if [ $db_version == 'latest' ]; then
 		local ARCHIVE_NAME='latest'
 	else
-		local ARCHIVE_NAME="wordpress-$WP_VERSION"
+		local ARCHIVE_NAME="wordpress-$db_version"
 	fi
 
 	download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
-	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $wp_core_dir
 
-	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
+	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $wp_core_dir/wp-content/db.php
 }
 
 install_test_suite() {
@@ -66,43 +66,43 @@ install_test_suite() {
 	fi
 
 	# set up testing suite if it doesn't yet exist
-	if [ ! -d $WP_TESTS_DIR ]; then
+	if [ ! -d $wp_tests_dir ]; then
 		# set up testing suite
-		mkdir -p $WP_TESTS_DIR
-		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
+		mkdir -p $wp_tests_dir
+		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $wp_tests_dir/includes
 	fi
 
-	cd $WP_TESTS_DIR
+	cd $wp_tests_dir
 
 	if [ ! -f wp-tests-config.php ]; then
-		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
+		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$wp_tests_dir"/wp-tests-config.php
+		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$wp_core_dir':" "$wp_tests_dir"/wp-tests-config.php
+		sed $ioption "s/youremptytestdbnamehere/$db_name/" "$wp_tests_dir"/wp-tests-config.php
+		sed $ioption "s/yourusernamehere/$db_user/" "$wp_tests_dir"/wp-tests-config.php
+		sed $ioption "s/yourpasswordhere/$db_pass/" "$wp_tests_dir"/wp-tests-config.php
+		sed $ioption "s|localhost|${db_host}|" "$wp_tests_dir"/wp-tests-config.php
 	fi
 }
 
 install_db() {
-	# parse DB_HOST for port or socket references
-	local PARTS=(${DB_HOST//\:/ })
-	local DB_HOSTNAME=${PARTS[0]};
+	# parse db_host for port or socket references
+	local PARTS=(${db_host//\:/ })
+	local db_hostNAME=${PARTS[0]};
 	local DB_SOCK_OR_PORT=${PARTS[1]};
 	local EXTRA=""
 
-	if ! [ -z $DB_HOSTNAME ] ; then
+	if ! [ -z $db_hostNAME ] ; then
 		if [ $(echo $DB_SOCK_OR_PORT | grep -e '^[0-9]\{1,\}$') ]; then
-			EXTRA=" --host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
+			EXTRA=" --host=$db_hostNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
 		elif ! [ -z $DB_SOCK_OR_PORT ] ; then
 			EXTRA=" --socket=$DB_SOCK_OR_PORT"
-		elif ! [ -z $DB_HOSTNAME ] ; then
-			EXTRA=" --host=$DB_HOSTNAME --protocol=tcp"
+		elif ! [ -z $db_hostNAME ] ; then
+			EXTRA=" --host=$db_hostNAME --protocol=tcp"
 		fi
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	mysqladmin create $db_name --user="$db_user" --password="$db_pass"$EXTRA
 }
 
 # Install JSCS: JavaScript Code Style checker

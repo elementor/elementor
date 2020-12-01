@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@master
       - name: Install Dependencies
         run: |
-          bash bin/install-image-compare.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
+          bash bin/install-image-compare.sh --db_name=wordpress_test --db_user=root --db_pass=root --db_host=localhost --wp_version=${{ matrix.wordpress_versions }}
       - name: Import Tamplate(s)
         run: |
           bash bin/import-tamplates.sh

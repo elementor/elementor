@@ -9,39 +9,39 @@ if [ $# -lt 3 ]; then
 	exit 1
 fi
 
-DB_NAME=$1
-DB_USER=$2
-DB_PASS=$3
-DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
+db_name=$1
+db_user=$2
+db_pass=$3
+db_host=${4-localhost}
+db_version=${5-latest}
 
 # TEST_TYPE (string) decided which test to run. (the value need to includes string: "phpunit" or "image-compare" else the tests functions doesn't run)
 TEST_TYPE=$6
 
 # CLEAN_LOCAL_TESTS_ENV (bool) (if the value equal to true - run func clean_local_tests_env )
-CLEAN_LOCAL_ENV=$7
+clean_local_env=$7
 
 # Set WP params for settings
-WP_LOCALE="en_US"
-WP_USER="test"
-WP_USER_PASS="test"
-WP_USER_EMAIL="user@example.org"
-WP_SITE_NAME="test"
-WP_THEMES="hello-elementor"
-WP_PLUGINS="elementor"
+wp_locale="en_US"
+wp_user="test"
+wp_user_pass="test"
+wp_user_email="user@example.org"
+wp_site_name="test"
+wp_themes="hello-elementor"
+wp_plugins="elementor"
 
 # Save the current working directory in an environment variable.
-INITIAL_WORKING_DIRECTORY=$(pwd)
-echo "$INITIAL_WORKING_DIRECTORY"
+initial_working_directory=$(pwd)
+echo "$initial_working_directory"
 
 # Set paths to directories where to install.
-WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
-WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
+wp_tests_dir=${wp_tests_dir-/tmp/wordpress-tests-lib}
+wp_core_dir=${wp_core_dir-/tmp/wordpress/}
 
 # Set paths to current plugins and them tests directories
-CURRENT_PLUGIN="elementor"
-CURRENT_PLUGIN_DIR="${WP_CORE_DIR}wp-content/plugins/${CURRENT_PLUGIN}"
-CURRENT_PLUGIN_TEST_DIR="${CURRENT_PLUGIN_DIR}/tests"
+current_plugin="elementor"
+current_plugin_dir="${wp_core_dir}wp-content/plugins/${current_plugin}"
+current_plugin_test_dir="${current_plugin_dir}/tests"
 
 decided_which_test_run() {
 	if [ -z "$TEST_TYPE" ]; then
@@ -77,6 +77,6 @@ clean_local_tests_env() {
 # Order Running Functions
 decided_which_test_run
 
-if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} == true ]]; then
+if [[ -n ${clean_local_env} && ${clean_local_env} == true ]]; then
 	clean_local_tests_env
 fi

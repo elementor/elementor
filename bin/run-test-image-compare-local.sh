@@ -8,20 +8,20 @@
 
 # The below functions running basic test
 install_wp_cli
-install_packages_for_images_compare
-download_wp_core
-config
-install
-install_plugins
-install_themes
-import_templates
+#install_packages_for_images_compare
+#download_wp_core
+#config
+#install
+#install_plugins
+#install_themes
+#import_templates
 
-run_build
-run_wp_server
-test_screenshots
-kill_server_process
+#run_build
+#run_wp_server
+#test_screenshots
+#kill_server_process
 
 # Decided if clean local env
-if [[ -n ${CLEAN_LOCAL_ENV} && ${CLEAN_LOCAL_ENV} == true ]]; then
+if [[ -n ${clean_local_env} && ${clean_local_env} == true ]]; then
 	clean_local_tests_env
 fi

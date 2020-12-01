@@ -40,10 +40,10 @@ docker-compose ${DOCKER_COMPOSE_FILE_OPTIONS} up -d >/dev/null
 # Install the PHPUnit test scaffolding.
 echo -e $(status_message "Installing PHPUnit test scaffolding...")
 if is_windows; then
-	WP_TESTS_DIR=../tmp/wordpress-tests-lib
-	WP_CORE_DIR=../tmp/wordpress
+	wp_tests_dir=../tmp/wordpress-tests-lib
+	wp_core_dir=../tmp/wordpress
 fi
-docker-compose ${DOCKER_COMPOSE_FILE_OPTIONS} run --rm wordpress_phpunit dockerize -wait tcp://mysql:3306 -timeout 30s bash ./bin/install-wp-tests.sh elementor_test root password mysql $WP_VERSION false> /dev/null
+docker-compose ${DOCKER_COMPOSE_FILE_OPTIONS} run --rm wordpress_phpunit dockerize -wait tcp://mysql:3306 -timeout 30s bash ./bin/install-wp-tests.sh elementor_test root password mysql $db_version false> /dev/null
 
 # Finished Installing!
 echo -e "\nTests environment is up!\n"
