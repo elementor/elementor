@@ -166,7 +166,35 @@
 // Welcome Widget
 #welcome-panel {
 
+	@media only screen and (max-width: 600px) {
+
+		.welcome-panel-content {
+			margin: 0;
+		}
+	}
+
 	.e-dashboard-widget {
+
+		@media only screen and (max-width: 1200px) {
+			font-size: 11px;
+		}
+
+		@media only screen and (max-width: 600px) {
+
+			.flex {
+				flex-wrap: wrap;
+
+				.video {
+					padding-bottom: 56%;
+					width: 100%;
+				}
+
+				.intro {
+					padding: 0;
+					width: 100%;
+				}
+			}
+		}
 
 		h2 {
 			font-weight: 600;
@@ -187,27 +215,42 @@
 
 		.intro {
 			padding: 0 40px;
-			font-size: 15px;
-			line-height: 23px;
+
+			@media only screen and (max-width: 1200px) {
+				padding: 0 20px;
+			}
+
+			@media only screen and (max-width: 900px) {
+				padding: 0 15px;
+			}
 
 			p {
-				font-size: inherit;
-				line-height: inherit;
+				font-size: 1.15em;
 			}
 
 			.button {
-				font-size: 15px;
-				line-height: 25px;
+				font-size: 1em;
 				font-weight: 500;
 				padding: 9px 20px;
 			}
 
 			h3 {
-				font-size: 22px;
+				font-size: 1.3em;
 				line-height: 1.2;
 				font-weight: 700;
 			}
 
+		}
+
+		.next-steps {
+
+			@media only screen and (max-width: 900px) {
+				display: none;
+			}
+
+			li {
+				font-size: 1.1em;
+			}
 		}
 	}
 }
