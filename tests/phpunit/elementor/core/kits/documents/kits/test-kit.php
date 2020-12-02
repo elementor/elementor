@@ -12,7 +12,7 @@ class Test_Kit extends Elementor_Test_Base {
 	 */
 	private $kit;
 
-	public function setUp() {
+	public setUp() {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -22,7 +22,7 @@ class Test_Kit extends Elementor_Test_Base {
 		add_post_meta( $kit->get_main_id(), '_elementor_data', '[]' );
 	}
 
-	public function test_save__kits_revision_ensure_changed() {
+	public test_save__kits_revision_ensure_changed() {
 		// Arrange.
 		$this->kit->set_settings( 'post_status', 'draft');
 
@@ -38,7 +38,7 @@ class Test_Kit extends Elementor_Test_Base {
 		$this->assertCount( $excepted_count, Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
 	}
 
-	public function test_save__kits_revision_ensure_same() {
+	public test_save__kits_revision_ensure_same() {
 		// Arrange.
 		$this->kit->save( [ 'settings' => $this->kit->get_settings() ] );
 

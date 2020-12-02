@@ -2,7 +2,7 @@ import CommandHistoryDebounce from 'elementor-document/commands/base/command-his
 
 export class Settings extends CommandHistoryDebounce {
 	/**
-	 * Function getSubTitle().
+	 * getSubTitle().
 	 *
 	 * Get sub title by container.
 	 *
@@ -26,7 +26,7 @@ export class Settings extends CommandHistoryDebounce {
 	}
 
 	/**
-	 * Function restore().
+	 * restore().
 	 *
 	 * Redo/Restore.
 	 *
@@ -50,7 +50,7 @@ export class Settings extends CommandHistoryDebounce {
 	}
 
 	/**
-	 * Function addToHistory().
+	 * addToHistory().
 	 *
 	 * @param {Container} container
 	 * @param {{}} newSettings

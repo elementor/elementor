@@ -5,12 +5,12 @@ use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Endpoint;
 
 class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller {
 
-	public function register_endpoints() {
+	public register_endpoints() {
 		$this->register_endpoint( Endpoint::class );
 		$this->register_endpoint( Endpoint::class );
 	}
 
-	public function get_items( $request ) {
+	public get_items( $request ) {
 		return [
 			'someKey' => [
 				'fakeKey' => 'fakeValue',
@@ -18,7 +18,7 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Templ
 		];
 	}
 
-	protected function register_internal_endpoints() {
+	protected register_internal_endpoints() {
 		$this->register_endpoint( Internal_Endpoint::class );
 	}
 }

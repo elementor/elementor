@@ -1,6 +1,6 @@
 export default class HooksBase extends elementorModules.Module {
 	/**
-	 * Function constructor().
+	 * constructor().
 	 *
 	 * Create hooks base.
 	 *
@@ -59,7 +59,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function getType().
+	 * getType().
 	 *
 	 * Returns type eg: ( event, hook, etc ... ).
 	 *
@@ -74,7 +74,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function getAll().
+	 * getAll().
 	 *
 	 * Return all possible callbacks.
 	 *
@@ -106,7 +106,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function getCurrent();
+	 * getCurrent();
 	 *
 	 * Return current command.
 	 *
@@ -117,7 +117,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function getUsedIds().
+	 * getUsedIds().
 	 *
 	 * Returns the current used ids.
 	 *
@@ -128,7 +128,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function getCallbacks().
+	 * getCallbacks().
 	 *
 	 * Get available callbacks for specific event and command.
 	 *
@@ -161,7 +161,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * function checkEvent().
+	 * checkEvent().
 	 *
 	 * Validate if the event is available.
 	 *
@@ -174,7 +174,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function checkInstance().
+	 * checkInstance().
 	 *
 	 * Validate given instance.
 	 *
@@ -187,7 +187,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function checkId().
+	 * checkId().
 	 *
 	 * Validate if the id is not used before.
 	 *
@@ -200,7 +200,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function shouldRun().
+	 * shouldRun().
 	 *
 	 * Determine if the event should run.
 	 *
@@ -215,7 +215,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function register().
+	 * register().
 	 *
 	 * Register the callback instance.
 	 *
@@ -237,7 +237,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function registerCallback().
+	 * registerCallback().
 	 *
 	 * Register callback.
 	 *
@@ -296,7 +296,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function run().
+	 * run().
 	 *
 	 * Run the callbacks.
 	 *
@@ -322,7 +322,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function runCallbacks().
+	 * runCallbacks().
 	 *
 	 * Run's the given callbacks.
 	 *
@@ -378,7 +378,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function runCallback().
+	 * runCallback().
 	 *
 	 * Run's the given callback.
 	 *
@@ -396,7 +396,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function onRun().
+	 * onRun().
 	 *
 	 * Called before run a set of callbacks.
 	 *
@@ -411,7 +411,7 @@ export default class HooksBase extends elementorModules.Module {
 	}
 
 	/**
-	 * Function onCallback().
+	 * onCallback().
 	 *
 	 * Called before a single callback.
 	 *

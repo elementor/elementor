@@ -8,7 +8,7 @@
 */
 
 const argv = require( 'minimist' )( process.argv.slice( 2 ) );
-console.log( argv );
+// console.log( argv );
 
 const args = {
 	db_name: argv.db_name ?? 'wordpress_test',
@@ -17,22 +17,23 @@ const args = {
 	db_host: argv.db_name ?? 'localhost',
 	db_version: argv.db_name ?? 'latest',
 
-	wp_locale: 'en_US',
-	wp_user: 'test',
-	wp_user_pass: 'test',
-	wp_user_email: 'user@example.org',
-	wp_site_name: 'test',
-	wp_themes: 'hello-elementor',
-	wp_plugins: 'elementor',
+	/**
+	 * Set WP params for settings
+	 */
+	wp_locale: argv.wp_locale ?? 'en_US',
+	wp_user: argv.wp_user ?? 'test',
+	wp_user_pass: argv.wp_user_pass ?? 'test',
+	wp_user_email: argv.wp_user_email ?? 'user@example.org',
+	wp_site_name: argv.wp_site_name ?? 'test',
+	wp_themes: argv.wp_themes ?? 'hello-elementor',
+	wp_plugins: argv.wp_plugins ?? 'elementor',
+
 	files: argv.files ?? [ 'page-17', 'headings', 'buttons' ],
 
 	initial_working_directory: process.cwd(),
 	wp_tests_dir: '/tmp/wordpress-tests-lib',
 	wp_core_dir: '/tmp/wordpress/',
-	current_plugin: 'elementor',
-	current_plugin_dir: `${ this.wp_core_dir }wp-content/plugins/${ this.current_plugin }`,
-	current_plugin_test_dir: `${ this.current_plugin_dir }/tests`,
-	samples_images_dir: `${ this.current_plugin_dir }/tests`,
+	current_plugin: argv.current_plugin ?? 'elementor',
 
 	debug: argv.debug ?? false,
 	clean_local_env: argv.clean_local_env ?? false,
@@ -40,6 +41,13 @@ const args = {
 
 	request_params: argv,
 };
+
+/**
+ * Add more directories paths for test
+ */
+args.current_plugin_dir = `${ args.wp_core_dir }wp-content/plugins/${ args.current_plugin }`;
+args.current_plugin_test_dir = `${ args.current_plugin_dir }/tests`;
+args.samples_images_dir = `${ args.current_plugin_dir }/tests`;
 
 module.exports = args;
 

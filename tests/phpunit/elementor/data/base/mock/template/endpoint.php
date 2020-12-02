@@ -10,11 +10,11 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 
 	use BaseTrait;
 
-	public function get_type() {
+	public get_type() {
 		return 'endpoint';
 	}
 
-	public function get_items( $request ) {
+	public get_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -24,7 +24,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::get_items( $request );
 	}
 
-	public function get_item( $id, $request ) {
+	public get_item( $id, $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -34,7 +34,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::get_item( $id, $request );
 	}
 
-	public function create_items( $request ) {
+	public create_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -44,7 +44,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::create_items( $request );
 	}
 
-	public function create_item( $id, $request ) {
+	public create_item( $id, $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -54,7 +54,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::create_item( $id, $request );
 	}
 
-	public function update_item( $id, $request ) {
+	public update_item( $id, $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -64,7 +64,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::update_item( $id, $request );
 	}
 
-	public function update_items( $request ) {
+	public update_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -74,7 +74,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::update_items( $request );
 	}
 
-	public function delete_item( $id, $request ) {
+	public delete_item( $id, $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -84,7 +84,7 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::delete_item( $id, $request );
 	}
 
-	public function delete_items( $request ) {
+	public delete_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 
 		if ( $test_data ) {
@@ -94,18 +94,18 @@ class Endpoint extends \Elementor\Data\Base\Endpoint {
 		return parent::delete_items( $request );
 	}
 
-	protected function register() {
+	protected register() {
 		// Can be part of BaseTrait.
 		if ( ! $this->controller->bypass_register_status ) {
 			parent::register();
 		}
 	}
 
-	public function do_register() {
+	public do_register() {
 		parent::register();
 	}
 
-	public function do_register_sub_endpoint( $route, $endpoint_class ) {
+	public do_register_sub_endpoint( $route, $endpoint_class ) {
 		return parent::register_sub_endpoint( $route, $endpoint_class );
 	}
 }

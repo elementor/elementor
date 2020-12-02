@@ -22,7 +22,7 @@ export default class CommandHistory extends CommandBase {
 	}
 
 	/**
-	 * Function getHistory().
+	 * getHistory().
 	 *
 	 * Get history object from child, do nothing if it false.
 	 *
@@ -35,7 +35,7 @@ export default class CommandHistory extends CommandBase {
 	}
 
 	/**
-	 * Function isHistoryActive().
+	 * isHistoryActive().
 	 *
 	 * Return `elementor.documents.getCurrent().history.getActive()`.
 	 *

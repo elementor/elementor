@@ -4,7 +4,7 @@ import CommandHistory from './command-history';
 export const DEFAULT_DEBOUNCE_DELAY = 800;
 
 /**
- * Function getDefaultDebounceDelay().
+ * getDefaultDebounceDelay().
  *
  * Returns default debounce delay time, if exists in config override.
  *
@@ -22,9 +22,9 @@ export const getDefaultDebounceDelay = () => {
 
 export default class CommandHistoryDebounce extends CommandHistory {
 	/**
-	 * Function debounce().
+	 * debounce().
 	 *
-	 * Will debounce every function you pass in, at the same debounce flow.
+	 * Will debounce every you pass in, at the same debounce flow.
 	 *
 	 * @param {(function())}
 	 */

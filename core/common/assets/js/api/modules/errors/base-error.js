@@ -14,7 +14,7 @@ export default class BaseError extends Error {
 	data = [];
 
 	/**
-	 * Static helper function to create the error.
+	 * Static helper to create the error.
 	 *
 	 * @param message
 	 * @param code

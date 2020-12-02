@@ -5,11 +5,11 @@ use Elementor\Data\Base\Endpoint;
 
 class Internal_Endpoint extends Endpoint {
 
-	public function get_name() {
+	public get_name() {
 		return 'index';
 	}
 
-	public function get_items( $request ) {
+	public get_items( $request ) {
 		return $this->controller->get_items_recursive( [ $this ] );
 	}
 }

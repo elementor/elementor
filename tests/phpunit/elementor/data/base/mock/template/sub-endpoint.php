@@ -10,11 +10,11 @@ class SubEndpoint extends \Elementor\Data\Base\SubEndpoint {
 
 	use BaseTrait;
 
-	public function get_type() {
+	public get_type() {
 		return 'endpoint';
 	}
 
-	public function get_items( $request ) {
+	public get_items( $request ) {
 		$test_data = $this->get_test_data( 'get_items');
 
 		if ( $test_data ) {
@@ -24,14 +24,14 @@ class SubEndpoint extends \Elementor\Data\Base\SubEndpoint {
 		return parent::get_items( $request );
 	}
 
-	protected function register() {
+	protected register() {
 		// Can be part of BaseTrait.
 		if ( ! $this->controller->bypass_register_status ) {
 			parent::register();
 		}
 	}
 
-	public function do_register() {
+	public do_register() {
 		parent::register();
 	}
 }

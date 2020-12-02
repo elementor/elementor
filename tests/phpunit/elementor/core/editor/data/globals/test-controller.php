@@ -13,19 +13,19 @@ class Test_Controller extends Elementor_Test_Base  {
 	 */
 	protected $manager;
 
-	public function setUp() {
+	public setUp() {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
 	}
 
-	public function tearDown() {
+	public tearDown() {
 		parent::tearDown();
 
 		$this->manager->kill_server();
 	}
 
-	public function test_get_permission_callback() {
+	public test_get_permission_callback() {
 		$controller = new Globals\Controller();
 		$methods = explode( ', ', \WP_REST_Server::ALLMETHODS );
 
