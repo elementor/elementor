@@ -5,8 +5,8 @@
  */
 class Helpers {
 	constructor() {
-		this.installPackagesForImagesCompare();
 		this.args = require( './config' );
+		this.installPackagesForImagesCompare();
 		this.chalk = require( 'chalk' );
 		this.execSync = require( 'child_process' ).execSync;
 		// this.exec = require( 'child_process' ).exec;
