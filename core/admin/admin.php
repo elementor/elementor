@@ -417,7 +417,7 @@ class Admin extends App {
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
 				<div class="e-overview__recently-edited">
-					<h3 class="e-overview__heading"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
+					<h3 class="e-heading e-divider_bottom"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
 					<ul class="e-overview__posts">
 						<?php
 						while ( $recently_edited_query->have_posts() ) :
@@ -435,7 +435,7 @@ class Admin extends App {
 			<?php endif; ?>
 			<?php if ( ! empty( $elementor_feed ) ) : ?>
 				<div class="e-overview__feed">
-					<h3 class="e-overview__heading"><?php echo __( 'News & Updates', 'elementor' ); ?></h3>
+					<h3 class="e-heading e-divider_bottom"><?php echo __( 'News & Updates', 'elementor' ); ?></h3>
 					<ul class="e-overview__posts">
 						<?php foreach ( $elementor_feed as $feed_item ) : ?>
 							<li class="e-overview__post">
@@ -451,7 +451,7 @@ class Admin extends App {
 					</ul>
 				</div>
 			<?php endif; ?>
-			<div class="e-overview__footer">
+			<div class="e-overview__footer e-divider_top">
 				<ul>
 					<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
 						<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php echo __( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
