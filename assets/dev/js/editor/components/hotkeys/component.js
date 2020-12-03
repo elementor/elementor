@@ -9,7 +9,7 @@ export default class Component extends ComponentModalBase {
 	defaultShortcuts() {
 		return {
 			'': {
-				keys: 'ctrl+?, shift+?',
+				keys: 'ctrl+?',
 			},
 		};
 	}
