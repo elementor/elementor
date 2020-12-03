@@ -5,6 +5,7 @@
  */
 class Helpers {
 	constructor() {
+		this.installPackagesForImagesCompare();
 		this.args = require( './config' );
 		this.chalk = require( 'chalk' );
 		this.execSync = require( 'child_process' ).execSync;
@@ -13,6 +14,22 @@ class Helpers {
 		// this.exec = util.promisify( require( 'child_process' ).exec );
 		//this.sh = shell;
 		this.fs = require( 'fs' );
+	}
+
+	installPackagesForImagesCompare() {
+		// process.chdir( this.args.wp_core_dir );
+		if ( ! this.isInstalledPackage( 'shelljs' ) ) {
+			this.execShellCommand( 'npm i -g shelljs' );
+		}
+		if ( ! this.isInstalledPackage( 'chalk' ) ) {
+			this.execShellCommand( 'npm i -g chalk' );
+		}
+		if ( ! this.isInstalledPackage( 'minimist' ) ) {
+			this.execShellCommand( 'npm i minimist' );
+		}
+		if ( ! this.isInstalledPackage( 'backstopjs' ) ) {
+			this.execShellCommand( 'npm i -g backstopjs' );
+		}
 	}
 
 	printMsg( type, msg ) {

@@ -6,26 +6,11 @@
 class BaseApp {
 	constructor() {
 		this.helpers = require( './Helpers' );
-		this.installPackagesForImagesCompare();
 		// this.shell = require( 'shelljs' );
 		this.args = require( './config' );
 	}
 
-	installPackagesForImagesCompare() {
-		// process.chdir( this.args.wp_core_dir );
-		if ( ! this.helpers.isInstalledPackage( 'shelljs' ) ) {
-			this.helpers.execShellCommand( 'npm i -g shelljs' );
-		}
-		if ( ! this.helpers.isInstalledPackage( 'chalk' ) ) {
-			this.helpers.execShellCommand( 'npm i -g chalk' );
-		}
-		if ( ! this.helpers.isInstalledPackage( 'minimist' ) ) {
-			this.helpers.execShellCommand( 'npm i minimist' );
-		}
-		if ( ! this.helpers.isInstalledPackage( 'backstopjs' ) ) {
-			this.helpers.execShellCommand( 'npm i -g backstopjs' );
-		}
-	}
+
 
 
 	installWpCli() {
