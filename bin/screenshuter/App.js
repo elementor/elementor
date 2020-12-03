@@ -15,8 +15,8 @@ class App extends BaseApp {
 		/**
 		 * The below functions running basic test
 		 */
+		// this.installPackagesForImagesCompare();
 		this.installWpCli();
-		this.installPackagesForImagesCompare();
 		this.downloadWpCore();
 		this.config();
 		this.install();

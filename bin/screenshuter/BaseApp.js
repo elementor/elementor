@@ -6,23 +6,27 @@
 class BaseApp {
 	constructor() {
 		this.helpers = require( './Helpers' );
-		this.installShelljs();
-		this.shell = require( 'shelljs' );
-		this.installChalk();
+		this.installPackagesForImagesCompare();
+		// this.shell = require( 'shelljs' );
 		this.args = require( './config' );
 	}
 
-	installShelljs() {
+	installPackagesForImagesCompare() {
+		// process.chdir( this.args.wp_core_dir );
 		if ( ! this.helpers.isInstalledPackage( 'shelljs' ) ) {
 			this.helpers.execShellCommand( 'npm i -g shelljs' );
 		}
-	}
-
-	installChalk() {
 		if ( ! this.helpers.isInstalledPackage( 'chalk' ) ) {
 			this.helpers.execShellCommand( 'npm i -g chalk' );
 		}
+		if ( ! this.helpers.isInstalledPackage( 'minimist' ) ) {
+			this.helpers.execShellCommand( 'npm i minimist' );
+		}
+		if ( ! this.helpers.isInstalledPackage( 'backstopjs' ) ) {
+			this.helpers.execShellCommand( 'npm i -g backstopjs' );
+		}
 	}
+
 
 	installWpCli() {
 		this.helpers.createFolder( this.args.wp_core_dir );
@@ -36,16 +40,6 @@ class BaseApp {
 		this.helpers.execShellCommand( 'sudo mv wp-cli.phar /usr/local/bin/wp' );
 		// Get wp info for debug
 		this.helpers.execShellCommand( 'wp --info' );
-	}
-
-	installPackagesForImagesCompare() {
-		// process.chdir( this.args.wp_core_dir );
-		if ( ! this.helpers.isInstalledPackage( 'minimist' ) ) {
-			this.helpers.execShellCommand( 'npm i minimist' );
-		}
-		if ( ! this.helpers.isInstalledPackage( 'backstopjs' ) ) {
-			this.helpers.execShellCommand( 'npm i -g backstopjs' );
-		}
 	}
 
 	downloadWpCore() {
