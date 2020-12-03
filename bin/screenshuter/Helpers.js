@@ -1,31 +1,44 @@
 'use strict';
 
+/**
+ * Class Helpers represent the helpers functionality of the app
+ */
 class Helpers {
 	constructor() {
 		this.args = require( './config' );
+		this.chalk = require( 'chalk' );
 		this.execSync = require( 'child_process' ).execSync;
+		// this.exec = require( 'child_process' ).exec;
+		// const util = require( 'util' );
+		// this.exec = util.promisify( require( 'child_process' ).exec );
+		//this.sh = shell;
 		this.fs = require( 'fs' );
 	}
 
-	printMsg = ( msg ) => {
+	printMsg( type, msg ) {
 		// If debug equal to true - display msg
 		if ( this.args.debug ) {
 			const now = new Date();
-			console.log( `\n${ now } - ${ msg }` );
-		}
-	};
+			let msgColor;
 
-	// execShellCommand( cmd ) {
-	// 	const exec = require( 'child_process' ).exec;
-	// 	return new Promise( ( resolve, reject ) => {
-	// 		exec( cmd, ( error, stdout, stderr ) => {
-	// 			if ( error ) {
-	// 				console.warn( error );
-	// 			}
-	// 			resolve( stdout ? stdout : stderr );
-	// 		} );
-	// 	} );
-	// }
+			switch ( type.toLowerCase() ) {
+				case 'error':
+					msgColor = this.chalk.red;
+					break;
+				case 'info':
+				case 'warning':
+					msgColor = this.chalk.yellow;
+					break;
+				case 'success':
+					msgColor = this.chalk.green;
+					break;
+				default:
+					msgColor = this.chalk.white;
+			}
+
+			console.log( msgColor( `\n${ now } - ${ msg }` ) );
+		}
+	}
 
 	/**
 	 *  Exec shell command
@@ -40,19 +53,8 @@ class Helpers {
 	 * @param cmd
 	 * @returns {string}
 	 */
-	execShellCommand = ( cmd ) => {
-		try {
-			const resExec = this.execSync( cmd ).toString();
-			this.printMsg( `success ${ resExec }` );
-			return resExec;
-		} catch ( error ) {
-			// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
-			this.printMsg( `message: ${ error.message }` ); // Holds the message you typically want.
-			// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
-			this.printMsg( `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
-		}
-		// let result;
-		// this.execSync( cmd, ( error, stdout, stderr ) => {
+	execShellCommand( cmd ) {
+		// this.exec( cmd, ( error, stdout, stderr ) => {
 		// 	if ( error ) {
 		// 		this.printMsg( `error: ${ error.message }` );
 		// 		return;
@@ -62,43 +64,64 @@ class Helpers {
 		// 		return;
 		// 	}
 		// 	this.printMsg( `success ${ stdout }'` );
-		// 	result = stdout;
+		// 	return stdout;
 		// } );
-		// console.log( x );
+		try {
+			const resExec = this.execSync( cmd ).toString();
+			this.printMsg( 'success', `success ${ resExec }` );
+			return resExec;
+		} catch ( error ) {
+			// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
+			// this.printMsg( 'error', `message: ${ error.message }` ); // Holds the message you typically want.
+			// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
+			this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
+		}
+		// const { error, stdout, stderr } = await exec( cmd );
+		// if ( error.status ) {
+		// 	// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
+		// 	this.printMsg( `message: ${ error.message }` ); // Holds the message you typically want.
+		// 	// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
+		// 	this.printMsg( `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
+		// }
+		// this.printMsg( `success ${ stdout }` );
+		// return stdout;
+	}
 
-		// return result;
-	};
-
-	download = ( cmd ) => {
+	/**
+	 * Download
+	 */
+	download( cmd ) {
 		this.execShellCommand( `${ cmd }` );
-	};
+	}
 
-	createFolder = ( path, recursive = true ) => {
-		// ! this.fs.existsSync( `${ this.args.wp_core_dir }` ) && this.fs.mkdirSync( `${ this.args.wp_core_dir }`, { recursive: true } );
+	/**
+	 * Create directory
+	 */
+	createFolder( path, recursive = true ) {
 		if ( ! this.fs.existsSync( `${ path }` ) ) {
 			this.fs.mkdirSync( `${ path }`, { recursive: recursive } );
 		}
-	};
+	}
 
 	/**
 	 * Delete exists directory and all its contents, including any subdirectories and files
 	 */
-	deleteFolder = ( path ) => {
+	deleteFolder( path ) {
 		if ( this.fs.existsSync( `${ path }` ) ) {
 			this.deleteFolderRecursive( `${ path }` );
 			if ( ! this.fs.existsSync( `${ path }` ) ) {
-				this.printMsg( `Deleted directory: ${ path }.` );
+				this.printMsg( 'success', `Deleted directory: ${ path }.` );
 			} else {
-				this.printMsg( `Can't deleted directory: ${ path }.` );
+				this.printMsg( 'error', `Can't deleted directory: ${ path }.` );
 			}
 		}
-	};
+	}
 
 	/**
 	 * Delete directory and all its contents, including any subdirectories and files
 	 * @path (string) - The path to folder
 	 */
-	deleteFolderRecursive = ( path ) => {
+	deleteFolderRecursive( path ) {
 		if ( this.fs.existsSync( path ) ) {
 			this.fs.readdirSync( path ).forEach( ( file, index ) => {
 				const curPath = path + '/' + file;
@@ -110,35 +133,37 @@ class Helpers {
 			} );
 			this.fs.rmdirSync( path );
 		}
-	};
+	}
 
 	/**
 	 * Create a symbolic link
 	 * @target (string) - The target path to folder/file
 	 * @path (string) - The path to folder/file
 	 */
-	createSymlink = ( target, path ) => {
-		try {
-			this.fs.symlinkSync( target, path, 'dir' );
-			this.printMsg( 'Symbolic link creation complete.' );
-		} catch ( error ) {
-			this.printMsg( error );
+	createSymlink( target, path ) {
+		if ( ! this.isSymlink( path ) ) {
+			try {
+				this.fs.symlinkSync( target, path, 'dir' );
+				this.printMsg( 'success', 'Symbolic link creation complete.' );
+			} catch ( error ) {
+				this.printMsg( error );
+			}
 		}
-	};
+	}
 
 	/**
 	 * Deleting symbolic link
 	 * @path (string) - The path to folder/file
 	 */
-	unlink = ( path ) => {
+	unlink( path ) {
 		this.fs.unlink( path, ( ( err ) => {
 			if ( err ) {
 				this.printMsg( err );
 			} else {
-				this.printMsg( `Deleted Symbolic Link: ${ path }.` );
+				this.printMsg( 'success', `Deleted Symbolic Link: ${ path }.` );
 			}
 		} ) );
-	};
+	}
 
 	/**
 	 * Check if folder/file is a symbolic link
@@ -153,7 +178,7 @@ class Helpers {
 	}
 
 	isInstalledPackage( packageName ) {
-		return !! this.execShellCommand( `npm ls ${ packageName }` );
+		return !! this.execShellCommand( `npm ls -g ${ packageName }` );
 	}
 }
 
