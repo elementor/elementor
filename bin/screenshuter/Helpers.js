@@ -34,7 +34,7 @@ class Helpers {
 
 	printMsg( type, msg ) {
 		// If debug equal to true - display msg
-		// if ( this.args.debug && this.args.debug.length ) {
+		if ( this.args.debug && this.args.debug.length ) {
 			const now = new Date();
 			let msgColor;
 
@@ -54,7 +54,7 @@ class Helpers {
 			}
 
 			console.log( msgColor( `\n${ now } - ${ msg }` ) );
-		// }
+		}
 	}
 
 	/**
@@ -85,13 +85,13 @@ class Helpers {
 		// } );
 		try {
 			const resExec = this.execSync( cmd ).toString();
-			this.printMsg( 'success', `success ${ resExec }` );
+			// this.printMsg( 'success', `success ${ resExec }` );
 			return resExec;
 		} catch ( error ) {
 			// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
 			// this.printMsg( 'error', `message: ${ error.message }` ); // Holds the message you typically want.
 			// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
-			this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
+			// this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
 		}
 		// const { error, stdout, stderr } = await exec( cmd );
 		// if ( error.status ) {
