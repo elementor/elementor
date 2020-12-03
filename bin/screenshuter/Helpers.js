@@ -7,7 +7,7 @@ class Helpers {
 	constructor() {
 		this.installPackagesForImagesCompare();
 		this.args = require( './config' );
-		this.chalk = '';
+		this.chalk = require( 'chalk' );
 		this.execSync = require( 'child_process' ).execSync;
 		// this.exec = require( 'child_process' ).exec;
 		// const util = require( 'util' );
@@ -23,7 +23,6 @@ class Helpers {
 		}
 		if ( ! this.isInstalledPackage( 'chalk' ) ) {
 			this.execShellCommand( 'npm i -g chalk' );
-			this.chalk = require( 'chalk' );
 		}
 		if ( ! this.isInstalledPackage( 'minimist' ) ) {
 			this.execShellCommand( 'npm i minimist' );
@@ -35,7 +34,7 @@ class Helpers {
 
 	printMsg( type, msg ) {
 		// If debug equal to true - display msg
-		if ( this.args.debug && this.args.debug.length ) {
+		// if ( this.args.debug && this.args.debug.length ) {
 			const now = new Date();
 			let msgColor;
 
@@ -55,7 +54,7 @@ class Helpers {
 			}
 
 			console.log( msgColor( `\n${ now } - ${ msg }` ) );
-		}
+		// }
 	}
 
 	/**
