@@ -5,9 +5,9 @@
  */
 class BaseApp {
 	constructor() {
+		this.helpers = require( './Helpers' );
 		// this.shell = require( 'shelljs' );
 		this.args = require( './config' );
-		this.helpers = require( './Helpers' );
 	}
 
 	installWpCli() {
