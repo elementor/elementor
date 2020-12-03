@@ -17,4 +17,4 @@ jobs:
         uses: actions/checkout@master
       - name: Install Dependencies
         run: |
-          node bin/screenshuter/run-test-image-compare-local.js --db_name=wordpress_test --db_user=root --db_pass=root --db_host=localhost --wp_version=${{ matrix.wordpress_versions }}
+          node bin/screenshuter/run-test-image-compare-local.js --wp_version=${{ matrix.wordpress_versions }}
