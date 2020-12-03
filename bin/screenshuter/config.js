@@ -12,10 +12,10 @@ const argv = require( 'minimist' )( process.argv.slice( 2 ) );
 
 const args = {
 	db_name: argv.db_name ?? 'wordpress_test',
-	db_user: argv.db_name ?? 'root',
-	db_pass: argv.db_name ?? 'root',
-	db_host: argv.db_name ?? 'localhost',
-	db_version: argv.db_name ?? 'latest',
+	db_user: argv.db_user ?? 'root',
+	db_pass: argv.db_pass ?? 'root',
+	db_host: argv.db_host ?? 'localhost',
+	db_version: argv.db_version ?? 'latest',
 
 	/**
 	 * Set WP params for settings
