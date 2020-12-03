@@ -5,10 +5,11 @@
  */
 class Helpers {
 	constructor() {
-		this.installPackagesForImagesCompare();
+		// this.chalk = require( 'chalk' );
+		// this.sh = require( 'shelljs' );
 		this.args = require( './config' );
-		this.chalk = require( 'chalk' );
 		this.execSync = require( 'child_process' ).execSync;
+		this.spawn = require( 'child_process' ).spawn;
 		// this.exec = require( 'child_process' ).exec;
 		// const util = require( 'util' );
 		// this.exec = util.promisify( require( 'child_process' ).exec );
@@ -16,46 +17,41 @@ class Helpers {
 		this.fs = require( 'fs' );
 	}
 
-	installPackagesForImagesCompare() {
-		// process.chdir( this.args.wp_core_dir );
-		if ( ! this.isInstalledPackage( 'shelljs' ) ) {
-			this.execShellCommand( 'npm i -g shelljs' );
-		}
-		if ( ! this.isInstalledPackage( 'chalk' ) ) {
-			this.execShellCommand( 'npm i -g chalk' );
-		}
-		if ( ! this.isInstalledPackage( 'minimist' ) ) {
-			this.execShellCommand( 'npm i minimist' );
-		}
-		if ( ! this.isInstalledPackage( 'backstopjs' ) ) {
-			this.execShellCommand( 'npm i -g backstopjs' );
-		}
-	}
-
 	printMsg( type, msg ) {
 		// If debug equal to true - display msg
-		if ( this.args.debug && this.args.debug.length ) {
+		if ( this.args.debug ) {
 			const now = new Date();
 			let msgColor;
 
-			switch ( type.toLowerCase() ) {
-				case 'error':
-					msgColor = this.chalk.red;
-					break;
-				case 'info':
-				case 'warning':
-					msgColor = this.chalk.yellow;
-					break;
-				case 'success':
-					msgColor = this.chalk.green;
-					break;
-				default:
-					msgColor = this.chalk.white;
-			}
+			// switch ( type.toLowerCase() ) {
+			// 	case 'error':
+			// 		msgColor = this.chalk.red;
+			// 		break;
+			// 	case 'info':
+			// 	case 'warning':
+			// 		msgColor = this.chalk.yellow;
+			// 		break;
+			// 	case 'success':
+			// 		msgColor = this.chalk.green;
+			// 		break;
+			// 	default:
+			// 		msgColor = this.chalk.white;
+			// }
 
-			console.log( msgColor( `\n${ now } - ${ msg }` ) );
+			console.log(  `\n${ now } - ${ msg }`  );
 		}
 	}
+
+	// shell( cmd ) {
+	// 	const resShell = this.execute.exec( cmd );
+	// 	if ( resShell.code !== 0 ) {
+	// 		// this.execute.echo( this.chalk.red( resShell.output ) );
+	// 		this.printMsg( 'error', resShell.output );
+	// 		this.execute.exit( 1 );
+	// 	}
+	// 	this.printMsg( 'success', resShell.output );
+	// 	return resShell;
+	// }
 
 	/**
 	 *  Exec shell command
@@ -70,7 +66,7 @@ class Helpers {
 	 * @param cmd
 	 * @returns {string}
 	 */
-	execShellCommand( cmd ) {
+	execute( cmd ) {
 		// this.exec( cmd, ( error, stdout, stderr ) => {
 		// 	if ( error ) {
 		// 		this.printMsg( `error: ${ error.message }` );
@@ -85,13 +81,13 @@ class Helpers {
 		// } );
 		try {
 			const resExec = this.execSync( cmd ).toString();
-			// this.printMsg( 'success', `success ${ resExec }` );
+			this.printMsg( 'success', `success ${ resExec }` );
 			return resExec;
 		} catch ( error ) {
-			// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
-			// this.printMsg( 'error', `message: ${ error.message }` ); // Holds the message you typically want.
-			// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
-			// this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
+			this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
+			this.printMsg( 'error', `message: ${ error.message }` ); // Holds the message you typically want.
+			this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
+			this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
 		}
 		// const { error, stdout, stderr } = await exec( cmd );
 		// if ( error.status ) {
@@ -108,7 +104,7 @@ class Helpers {
 	 * Download
 	 */
 	download( cmd ) {
-		this.execShellCommand( `${ cmd }` );
+		this.execute( `${ cmd }` );
 	}
 
 	/**
@@ -163,7 +159,7 @@ class Helpers {
 				this.fs.symlinkSync( target, path, 'dir' );
 				this.printMsg( 'success', 'Symbolic link creation complete.' );
 			} catch ( error ) {
-				this.printMsg( error );
+				this.printMsg( 'error', error );
 			}
 		}
 	}
@@ -175,7 +171,7 @@ class Helpers {
 	unlink( path ) {
 		this.fs.unlink( path, ( ( err ) => {
 			if ( err ) {
-				this.printMsg( err );
+				this.printMsg( 'error', err );
 			} else {
 				this.printMsg( 'success', `Deleted Symbolic Link: ${ path }.` );
 			}
@@ -195,7 +191,13 @@ class Helpers {
 	}
 
 	isInstalledPackage( packageName ) {
-		return !! this.execShellCommand( `npm ls -g ${ packageName }` );
+		// if ( 'shelljs' == packageName ) {
+		// 	return !! this.execute( `npm ls ${ packageName }` );
+		// }
+		// console.log( packageName );
+		// console.log( this.execute( `npm ls ${ packageName }` ) );
+		// return 0 !== this.execute( `npm ls -g ${ packageName }` ).code;
+		return !! this.execute( `npm ls -g ${ packageName }` );
 	}
 }
 
