@@ -31,7 +31,13 @@ class Assets_Loader extends Module {
 					'dependencies' => [],
 				],
 			],
-			'scripts' => [],
+			'scripts' => [
+				'swiper' => [
+					'src' => $this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+					'version' => '5.3.6',
+					'dependencies' => [],
+				],
+			],
 		];
 	}
 
