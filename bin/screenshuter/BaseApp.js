@@ -5,13 +5,10 @@
  */
 class BaseApp {
 	constructor() {
-		this.helpers = require( './Helpers' );
 		// this.shell = require( 'shelljs' );
 		this.args = require( './config' );
+		this.helpers = require( './Helpers' );
 	}
-
-
-
 
 	installWpCli() {
 		this.helpers.createFolder( this.args.wp_core_dir );

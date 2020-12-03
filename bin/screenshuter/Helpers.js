@@ -7,7 +7,7 @@ class Helpers {
 	constructor() {
 		this.args = require( './config' );
 		this.installPackagesForImagesCompare();
-		this.chalk = require( 'chalk' );
+		this.chalk = '';
 		this.execSync = require( 'child_process' ).execSync;
 		// this.exec = require( 'child_process' ).exec;
 		// const util = require( 'util' );
@@ -23,6 +23,7 @@ class Helpers {
 		}
 		if ( ! this.isInstalledPackage( 'chalk' ) ) {
 			this.execShellCommand( 'npm i -g chalk' );
+			this.chalk = require( 'chalk' );
 		}
 		if ( ! this.isInstalledPackage( 'minimist' ) ) {
 			this.execShellCommand( 'npm i minimist' );
