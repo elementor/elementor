@@ -35,7 +35,7 @@ class Helpers {
 
 	printMsg( type, msg ) {
 		// If debug equal to true - display msg
-		if ( this.args.debug ) {
+		if ( this.args.debug && this.args.debug.length ) {
 			const now = new Date();
 			let msgColor;
 
