@@ -147,8 +147,25 @@ class Base_Object {
 	 * Has Own Method
 	 *
 	 * Used for check whether the method passed as a parameter was declared in the current instance or inherited.
-	 * If a base_class_name is passed, it checks whether the method was created in that class. If the method was declared
-	 * in the base_class_name, it returns false. Otherwise (method was not declared in base_class_name), it returns true.
+	 * If a base_class_name is passed, it checks whether the method was declared in that class. If the method's
+	 * declaring class is the class passed as $base_class_name, it returns false. Otherwise (method was NOT declared
+	 * in $base_class_name), it returns true.
+	 *
+	 * Example #1 - only $method_name is passed:
+	 * The initial declaration of `register_controls()` happens in the `Controls_Stack` class. However, all
+	 * widgets which have their own controls declare this function as well, overriding the original
+	 * declaration. If `has_own_method()` would be called by a Widget's class which implements `register_controls()`,
+	 * with 'register_controls' passed as the first parameter - `has_own_method()` will return true. If the Widget
+	 * does not declare `register_controls()`, `has_own_method()` will return false.
+	 *
+	 * Example #2 - both $method_name and $base_class_name are passed
+	 * In this example, the widget class inherits from a base class `Widget_Base`, and the base implements
+	 * `register_controls()` to add certain controls to all widgets inheriting from it. `has_own_method()` is called by
+	 * the widget, with the string 'register_controls' passed as the first parameter, and 'Elementor\Widget_Base' (its full name
+	 * including the namespace) passed as the second parameter. If the widget class implements `register_controls()`,
+	 * `has_own_method` will return true. If the widget class DOESN'T implement `register_controls()`, it will return
+	 * false (because `Widget_Base` is the declaring class for `register_controls()`, and not the class that called
+	 * `has_own_method()`).
 	 *
 	 * @since 3.1.0
 	 *
