@@ -14,21 +14,11 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 			toggleSelf: true,
 			hidePrevious: true,
 			autoExpand: true,
-			keys: {
-				end: 35,
-				home: 36,
-				left: 37,
-				up: 38,
-				right: 39,
-				down: 40,
-				enter: 13,
-				space: 32,
-			},
 			keyDirection: {
-				37: elementorFrontendConfig.is_rtl ? 1 : -1,
-				38: -1,
-				39: elementorFrontendConfig.is_rtl ? -1 : 1,
-				40: 1,
+				ArrowLeft: elementorFrontendConfig.is_rtl ? 1 : -1,
+				ArrowUp: -1,
+				ArrowRight: elementorFrontendConfig.is_rtl ? -1 : 1,
+				ArrowDown: 1,
 			},
 		};
 	}
@@ -68,32 +58,30 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	}
 
 	handleKeyboardNavigation( event ) {
-		const key = event.keyCode,
-			tab = event.currentTarget,
-			keys = this.getSettings( 'keys' ),
+		const tab = event.currentTarget,
 			$tabList = jQuery( tab.closest( this.getSettings( 'selectors' ).tablist ) ),
 			$tabs = $tabList.find( this.getSettings( 'selectors' ).tabTitle ),
 			isVertical = 'vertical' === $tabList.attr( 'aria-orientation' );
 
-		switch ( key ) {
-			case keys.left:
-			case keys.right:
+		switch ( event.key ) {
+			case 'ArrowLeft':
+			case 'ArrowRight':
 				if ( isVertical ) {
 					return;
 				}
 				break;
-			case keys.up:
-			case keys.down:
+			case 'ArrowUp':
+			case 'ArrowDown':
 				if ( ! isVertical ) {
 					return;
 				}
 				event.preventDefault();
 				break;
-			case keys.home:
+			case 'Home':
 				event.preventDefault();
 				$tabs.first().focus();
 				return;
-			case keys.end:
+			case 'End':
 				event.preventDefault();
 				$tabs.last().focus();
 				return;
@@ -102,7 +90,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		}
 
 		const tabIndex = tab.getAttribute( 'data-tab' ) - 1,
-			direction = this.getSettings( 'keyDirection' )[ key ],
+			direction = this.getSettings( 'keyDirection' )[ event.key ],
 			nextTab = $tabs[ tabIndex + direction ];
 
 		if ( nextTab ) {
@@ -153,24 +141,20 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	}
 
 	bindEvents() {
-		const keys = this.getSettings( 'keys' );
-
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
-				const key = event.keyCode;
-
-				if ( [ keys.end, keys.home, keys.up, keys.down ].includes( key ) ) {
+				if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
 					this.handleKeyboardNavigation( event );
 				}
 			},
 			keyup: ( event ) => {
-				switch ( event.keyCode ) {
-					case keys.left:
-					case keys.right:
+				switch ( event.key ) {
+					case 'ArrowLeft':
+					case 'ArrowRight':
 						this.handleKeyboardNavigation( event );
 						break;
-					case keys.enter:
-					case keys.space:
+					case 'Enter':
+					case 'Space':
 						event.preventDefault();
 						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 						break;
