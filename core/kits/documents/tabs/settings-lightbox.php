@@ -18,6 +18,18 @@ class Settings_Lightbox extends Tab_Base {
 		return __( 'Lightbox', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-lightbox-expand';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-lightbox';
+	}
+
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
