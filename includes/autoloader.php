@@ -137,7 +137,7 @@ class Autoloader {
 		] );
 
 		foreach ( $controls_names as $control_name ) {
-			$class_name = 'Control_' . ucwords( str_replace( ' ', '_', $control_name ), '_' );
+			$class_name = 'Control_' . self::normalize_class_name( $control_name, '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/' . str_replace( '_', '-', $control_name ) . '.php';
 		}
@@ -145,10 +145,24 @@ class Autoloader {
 		$controls_groups_names = Controls_Manager::get_groups_names();
 
 		foreach ( $controls_groups_names as $group_name ) {
-			$class_name = 'Group_Control_' . ucwords( str_replace( '-', '_', $group_name ), '_' );
+			$class_name = 'Group_Control_' . self::normalize_class_name( $group_name, '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/groups/' . $group_name . '.php';
 		}
+	}
+
+	/**
+	 * Normalize Class Name
+	 *
+	 * Used to convert control names to class names.
+	 *
+	 * @param $string
+	 * @param string $delimiter
+	 *
+	 * @return mixed
+	 */
+	private static function normalize_class_name( $string, $delimiter = ' ' ) {
+		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
 	private static function init_classes_aliases() {
