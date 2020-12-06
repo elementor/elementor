@@ -417,7 +417,7 @@ class Widget_Tabs extends Widget_Base {
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
-					$hidden = 1 == $tab_count ? 'hidden' : '';
+					$hidden = 1 == $tab_count ? 'false' : 'hidden';
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
@@ -429,7 +429,7 @@ class Widget_Tabs extends Widget_Base {
 						'role' => 'tabpanel',
 						'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'tabindex' => '0',
-						$hidden => $hidden,
+						'hidden' => $hidden,
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
