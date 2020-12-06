@@ -423,21 +423,15 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_3_1_0_move_optimized_dom_output_to_experiments() {
-		$old_option_key = 'elementor_optimized_dom_output';
-
-		add_option( $old_option_key, 'enabled' );
+		add_option( 'elementor_optimized_dom_output', 'enabled' );
 
 		$is_old_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 
 		Upgrades::v_3_1_0_move_optimized_dom_output_to_experiments();
 
-		$old_option = get_option( $old_option_key );
-
 		$experiments = new Experiments_Manager();
 
 		$this->assertFalse( $is_old_feature_active );
-
-		$this->assertFalse( $old_option );
 
 		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
 	}

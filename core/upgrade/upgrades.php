@@ -871,8 +871,6 @@ class Upgrades {
 			$new_option = 'enabled' === $saved_option ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
 
 			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
-
-			delete_option( 'elementor_optimized_dom_output' );
 		}
 	}
 
