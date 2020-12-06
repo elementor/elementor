@@ -5,15 +5,15 @@
  */
 class Helpers {
 	constructor() {
-		// this.chalk = require( 'chalk' );
-		// this.sh = require( 'shelljs' );
-		this.args = require( './config' );
+
 		this.execSync = require( 'child_process' ).execSync;
 		this.spawn = require( 'child_process' ).spawn;
 		// this.exec = require( 'child_process' ).exec;
 		// const util = require( 'util' );
 		// this.exec = util.promisify( require( 'child_process' ).exec );
 		//this.sh = shell;
+		this.chalk = require( 'chalk' );
+		this.args = require( './config' );
 		this.fs = require( 'fs' );
 	}
 

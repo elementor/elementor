@@ -27,8 +27,7 @@ class BaseApp {
 
 	installWpCli() {
 		// this.helpers.createFolder( this.args.wp_core_dir );
-
-		process.chdir( this.args.wp_core_dir );
+		// process.chdir( this.args.wp_core_dir );
 
 		// Download and install wp-cli
 		this.helpers.execute( `curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar` );
