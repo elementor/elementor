@@ -361,7 +361,7 @@ class Plugin {
 	 *
 	 * @var Files_Manager
 	 */
-	public $posts_css_manager;
+	private $posts_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -694,6 +694,28 @@ class Plugin {
 		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
+	}
+
+	/**
+	 * Plugin Magic Getter
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param $property
+	 * @return mixed
+	 */
+	public function __get( $property ) {
+
+		if ( 'posts_css_manager' === $property ) {
+			self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument( 'Plugin::$instance->posts_css_manager', '2.7.0', 'Plugin::$instance->files_manager' );
+
+			return $this->files_manager;
+		}
+
+		if ( property_exists( $this, $property ) ) {
+			return $this->$property;
+		}
 	}
 
 	/**
