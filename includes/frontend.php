@@ -485,13 +485,6 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
-			'elementor-icons',
-			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-			[],
-			'5.9.1'
-		);
-
-		wp_register_style(
 			'flatpickr',
 			$this->get_css_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[],
@@ -624,7 +617,6 @@ class Frontend extends App {
 		 */
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
-		wp_enqueue_style( 'elementor-icons' );
 		wp_enqueue_style( 'elementor-frontend' );
 
 		/**
