@@ -545,8 +545,8 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
-			// If The Markup Legacy Mode is active, register the legacy CSS
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
+			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
 				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
@@ -1197,9 +1197,6 @@ class Frontend extends App {
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
