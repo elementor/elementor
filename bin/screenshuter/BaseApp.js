@@ -7,15 +7,13 @@ class BaseApp {
 	constructor() {
 		this.helpers = require( './Helpers' );
 		this.installPackagesForImagesCompare();
-		// this.shell = require( 'shelljs' );
 		this.args = require( './config' );
 	}
 
 	installPackagesForImagesCompare() {
-		// process.chdir( this.args.wp_core_dir );
-		if ( ! this.helpers.isInstalledPackage( 'shelljs' ) ) {
-			this.helpers.execute( 'npm i -g shelljs' );
-		}
+		this.helpers.createFolder( this.args.wp_core_dir );
+		process.chdir( this.args.wp_core_dir );
+
 		if ( ! this.helpers.isInstalledPackage( 'chalk' ) ) {
 			this.helpers.execute( 'npm i -g chalk' );
 		}
@@ -28,7 +26,7 @@ class BaseApp {
 	}
 
 	installWpCli() {
-		this.helpers.createFolder( this.args.wp_core_dir );
+		// this.helpers.createFolder( this.args.wp_core_dir );
 
 		process.chdir( this.args.wp_core_dir );
 

@@ -23,35 +23,24 @@ class Helpers {
 			const now = new Date();
 			let msgColor;
 
-			// switch ( type.toLowerCase() ) {
-			// 	case 'error':
-			// 		msgColor = this.chalk.red;
-			// 		break;
-			// 	case 'info':
-			// 	case 'warning':
-			// 		msgColor = this.chalk.yellow;
-			// 		break;
-			// 	case 'success':
-			// 		msgColor = this.chalk.green;
-			// 		break;
-			// 	default:
-			// 		msgColor = this.chalk.white;
-			// }
+			switch ( type.toLowerCase() ) {
+				case 'error':
+					msgColor = this.chalk.red;
+					break;
+				case 'info':
+				case 'warning':
+					msgColor = this.chalk.yellow;
+					break;
+				case 'success':
+					msgColor = this.chalk.green;
+					break;
+				default:
+					msgColor = this.chalk.white;
+			}
 
-			console.log(  `\n${ now } - ${ msg }`  );
+			console.log(  msgColor( `\n${ now } - ${ msg }` )  );
 		}
 	}
-
-	// shell( cmd ) {
-	// 	const resShell = this.execute.exec( cmd );
-	// 	if ( resShell.code !== 0 ) {
-	// 		// this.execute.echo( this.chalk.red( resShell.output ) );
-	// 		this.printMsg( 'error', resShell.output );
-	// 		this.execute.exit( 1 );
-	// 	}
-	// 	this.printMsg( 'success', resShell.output );
-	// 	return resShell;
-	// }
 
 	/**
 	 *  Exec shell command
@@ -67,18 +56,6 @@ class Helpers {
 	 * @returns {string}
 	 */
 	execute( cmd ) {
-		// this.exec( cmd, ( error, stdout, stderr ) => {
-		// 	if ( error ) {
-		// 		this.printMsg( `error: ${ error.message }` );
-		// 		return;
-		// 	}
-		// 	if ( stderr ) {
-		// 		this.printMsg( `stderr: ${ stderr }` );
-		// 		return;
-		// 	}
-		// 	this.printMsg( `success ${ stdout }'` );
-		// 	return stdout;
-		// } );
 		try {
 			const resExec = this.execSync( cmd ).toString();
 			this.printMsg( 'success', `success ${ resExec }` );
@@ -89,15 +66,6 @@ class Helpers {
 			this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
 			this.printMsg( 'error', `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
 		}
-		// const { error, stdout, stderr } = await exec( cmd );
-		// if ( error.status ) {
-		// 	// this.printMsg( `status: ${ error.status }` ); // Might be 127 in your example.
-		// 	this.printMsg( `message: ${ error.message }` ); // Holds the message you typically want.
-		// 	// this.printMsg( `stderr: ${ error.stderr }` ); // Holds the stderr output. Use `.toString()`.
-		// 	this.printMsg( `stdout: ${ error.stdout }` ); // Holds the stdout output. Use `.toString()`.
-		// }
-		// this.printMsg( `success ${ stdout }` );
-		// return stdout;
 	}
 
 	/**
