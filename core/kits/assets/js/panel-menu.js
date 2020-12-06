@@ -8,24 +8,22 @@ export default class PanelMenu extends MenuPageView {
 
 PanelMenu.groups = null;
 
-PanelMenu.createGroupItems = ( groupName, keys ) => {
-	const tabs = $e.components.get( 'panel/global' ).getTabs();
+PanelMenu.createGroupItems = ( groupName ) => {
+	const tabs = $e.components.get( 'panel/global' ).getTabs(),
+		groupTabs = Object.entries( tabs ).filter( ( [ tabId, tabConfig ] ) => groupName === tabConfig.group );
 
-	return keys.map( ( key ) => {
-		const fullKey = groupName + '-' + key,
-			tab = tabs[ fullKey ];
-
+	return groupTabs.map( ( [ tabId, tabConfig ] ) => {
 		return {
-			name: fullKey,
-			icon: tab.icon,
-			title: tab.title,
-			callback: () => $e.route( 'panel/global/' + fullKey ),
+			name: tabId,
+			icon: tabConfig.icon,
+			title: tabConfig.title,
+			callback: () => $e.route( 'panel/global/' + tabId ),
 		};
 	} );
 };
 
 PanelMenu.initGroups = () => {
-	const settingsItems = PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css' ] ),
+	const settingsItems = PanelMenu.createGroupItems( 'settings' ),
 		additionalSettingsProps = {
 			name: 'settings-additional-settings',
 			icon: 'eicon-tools',
@@ -41,12 +39,12 @@ PanelMenu.initGroups = () => {
 		{
 			name: 'design_system',
 			title: elementor.translate( 'design_system' ),
-			items: PanelMenu.createGroupItems( 'global', [ 'colors', 'typography' ] ),
+			items: PanelMenu.createGroupItems( 'global' ),
 		},
 		{
 			name: 'theme_style',
 			title: elementor.translate( 'theme_style' ),
-			items: PanelMenu.createGroupItems( 'theme-style', [ 'typography', 'buttons', 'images', 'form-fields' ] ),
+			items: PanelMenu.createGroupItems( 'theme-style' ),
 		},
 		{
 			name: 'settings',

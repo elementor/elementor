@@ -20,6 +20,18 @@ class Settings_Site_Identity extends Tab_Base {
 		return __( 'Site Identity', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-site-identity';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-site-identity';
+	}
+
 	protected function register_tab_controls() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
