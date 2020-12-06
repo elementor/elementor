@@ -588,7 +588,7 @@ class Documents_Manager {
 		$this->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $post_id );
+		$document->set_is_built_with_elementor( true );
 
 		$doc_config = $document->get_config();
 
