@@ -30,6 +30,11 @@ class Assets_Loader extends Module {
 					'version' => ELEMENTOR_VERSION,
 					'dependencies' => [],
 				],
+				'e-icons' => [
+					'src' => $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+					'version' => '5.9.1',
+					'dependencies' => [],
+				],
 			],
 			'scripts' => [
 				'swiper' => [
