@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@master
       - name: Install Screenshotter
         run: |
-          npm i -g @efelementor/screenshotter --registry=https://npm.pkg.github.com/efelementor
+          npm i
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
