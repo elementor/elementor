@@ -21,6 +21,8 @@ jobs:
       - name: Install Screenshotter
         run: |
           npm i @efelementor/screenshotter@0.2.4
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
