@@ -588,6 +588,14 @@ class Frontend extends App {
 				ELEMENTOR_VERSION,
 				true
 			);
+
+			wp_enqueue_script(
+				'swiper',
+				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				[],
+				'5.3.6',
+				true
+			);
 		}
 
 		$this->print_config();
