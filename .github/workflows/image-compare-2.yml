@@ -6,7 +6,7 @@ jobs:
   run:
     runs-on: ubuntu-16.04
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         wordpress_versions: [ 'latest' ]
     name: WordPress ${{ matrix.wordpress_versions }}
@@ -15,9 +15,9 @@ jobs:
         run: sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
-      - name: Install Screenshotter
-        run: |
-          npm i
+#      - name: Save params as globla in github env
+#        run: |
+#          echo "--db_name=${db_name}" >> $GITHUB_ENV
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
