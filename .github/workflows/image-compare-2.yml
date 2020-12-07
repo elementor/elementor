@@ -20,9 +20,7 @@ jobs:
         #          echo "--db_name=${db_name}" >> $GITHUB_ENV
       - name: Install Screenshotter
         run: |
-          npm i @efelementor/screenshotter@0.2.4
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
+          npm i @efelementor/screenshotter@0.2.4 --registry=https://npm.pkg.github.com/efelementor
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
