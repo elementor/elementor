@@ -898,7 +898,6 @@ class Editor {
 			[
 				'elementor-common',
 				'elementor-select2',
-				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
 				'flatpickr',
