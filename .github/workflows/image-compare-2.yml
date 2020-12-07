@@ -15,9 +15,12 @@ jobs:
         run: sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
-#      - name: Save params as globla in github env
-#        run: |
-#          echo "--db_name=${db_name}" >> $GITHUB_ENV
+        #      - name: Save params as globla in github env
+        #        run: |
+        #          echo "--db_name=${db_name}" >> $GITHUB_ENV
+      - name: Install Screenshotter
+        run: |
+          npm i @efelementor/screenshotter@0.2.4 --registry=https://npm.pkg.github.com/efelementor
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
