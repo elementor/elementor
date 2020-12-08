@@ -20,7 +20,7 @@ jobs:
           mkdir -p "/tmp/wordpress"
           cd "/tmp/wordpress/"
           echo "$PWD"
-          git clone https://github.com/efelementor/elementor-editor-packages/packages/530897.git
+          npm i @efelementor/vrt
           npm i
       - name: Install Dependencies
         run: |
