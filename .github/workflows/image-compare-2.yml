@@ -22,9 +22,8 @@ jobs:
         run: |
 #          npm i @efelementor/screenshotter --registry=https://npm.pkg.github.com/efelementor
           # Set paths to directories where to install.
-          wp_core_dir=${wp_core_dir-/tmp/wordpress/}
-          mkdir -p "$wp_core_dir"
-          cd "$wp_core_dir"
+          mkdir -p "/tmp/wordpress"
+          cd "/tmp/wordpress/"
           echo "$PWD"
           git clone https://github.com/efelementor/elementor-editor-packages/packages/screenshotter.git
           npm i
