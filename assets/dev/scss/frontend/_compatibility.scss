@@ -24,6 +24,49 @@
 	font-style: normal;
 }
 
+
+// Temporary Compatibility for Elementor-Pro Share Buttons
+// TODO: Remove after Elementor Pro update.
+
+.elementor-portfolio.elementor-grid {
+	display: grid;
+}
+
+@mixin share-buttons-align($device) {
+	.elementor-share-buttons {
+		&#{$device} {
+			&--align {
+				&-right {
+					text-align: right;
+				}
+
+				&-left {
+					text-align: left;
+				}
+
+				&-center {
+					text-align: center;
+				}
+
+				&-justify {
+					text-align: justify;
+					text-align-last: justify;
+				}
+			}
+		}
+	}
+}
+
+@include share-buttons-align('');
+
+@media (max-width: $screen-md-max) {
+	@include share-buttons-align(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include share-buttons-align(-mobile);
+}
+
 .elementor-widget-social-icons.elementor-safari.elementor-grid-0.e-grid-align-right {
 	.elementor-widget-container {
 		margin-left: calc(-0.5 * var(--grid-column-gap));
