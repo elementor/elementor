@@ -15,13 +15,8 @@ jobs:
         run: sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
-        #      - name: Save params as globla in github env
-        #        run: |
-        #          echo "--db_name=${db_name}" >> $GITHUB_ENV
       - name: Install Screenshotter
         run: |
-#          npm i @efelementor/screenshotter --registry=https://npm.pkg.github.com/efelementor
-          # Set paths to directories where to install.
           mkdir -p "/tmp/wordpress"
           cd "/tmp/wordpress/"
           echo "$PWD"
