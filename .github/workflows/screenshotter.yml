@@ -1,4 +1,4 @@
-name: Image Compare 2
+name: Screenshotter
 
 on: [ push, pull_request ]
 
