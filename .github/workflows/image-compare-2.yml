@@ -20,7 +20,15 @@ jobs:
         #          echo "--db_name=${db_name}" >> $GITHUB_ENV
       - name: Install Screenshotter
         run: |
-          npm i @efelementor/screenshotter --registry=https://npm.pkg.github.com/efelementor
+#          npm i @efelementor/screenshotter --registry=https://npm.pkg.github.com/efelementor
+          # Set paths to directories where to install.
+          wp_core_dir=${wp_core_dir-/tmp/wordpress/}
+          if [ ! -d "$wp_core_dir" ]; then
+            mkdir -p "$wp_core_dir"
+          fi
+          cd "$wp_core_dir"
+          git clone https://github.com/efelementor/elementor-editor-packages/packages/screenshotter.git
+          npm i
       - name: Install Dependencies
         run: |
           elementor-vrt-install --wp_version=${{ matrix.wordpress_versions }}
