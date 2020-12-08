@@ -2,7 +2,6 @@ import Accordion from './handlers/accordion';
 import Alert from './handlers/alert';
 import Counter from './handlers/counter';
 import Progress from './handlers/progress';
-import SocialIcons from './handlers/social-icons';
 import Tabs from './handlers/tabs';
 import Toggle from './handlers/toggle';
 import Video from './handlers/video';
@@ -15,7 +14,6 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'alert.default': Alert,
 		'counter.default': Counter,
 		'progress.default': Progress,
-		'social-icons.default': SocialIcons,
 		'tabs.default': Tabs,
 		'toggle.default': Toggle,
 		'video.default': Video,

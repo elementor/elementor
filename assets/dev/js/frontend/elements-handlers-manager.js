@@ -10,7 +10,6 @@ module.exports = function( $ ) {
 		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
 		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
 		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
-		'social-icons.default': () => import( /* webpackChunkName: 'social-icons' */ './handlers/social-icons' ),
 		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
 		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
