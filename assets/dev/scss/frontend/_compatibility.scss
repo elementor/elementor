@@ -67,28 +67,34 @@
 	@include share-buttons-align(-mobile);
 }
 
-.elementor-widget-social-icons.elementor-safari.elementor-grid-0.e-grid-align-right {
-	.elementor-widget-container {
-		margin-left: calc(-0.5 * var(--grid-column-gap));
-		margin-right: calc(-0.5 * var(--grid-column-gap));
+.e--ua-appleWebkit {
 
-		.elementor-grid {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: flex-end;
+	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
+	&.rtl { --flex-right: flex-start; }
 
-			&-item {
-				margin-left: calc(0.5 * var(--grid-column-gap));
-				margin-right: calc(0.5 * var(--grid-column-gap));
-			}
-		}
+	.elementor-widget-social-icons.e-grid-align-right, .elementor-share-buttons--align-right {
+		--justify-content: var(--flex-right, flex-end);
 	}
-}
 
-.rtl .elementor-widget-social-icons.elementor-safari.elementor-grid-0.e-grid-align {
-	&-right {
-		.elementor-grid {
-			justify-content: flex-start;
+	.elementor-grid-0 {
+		&.elementor-widget-social-icons.e-grid-align-right,
+		&.elementor-share-buttons--align-right,
+		&.elementor-share-buttons--align-justify {
+			.elementor-widget-container {
+				margin-left: calc(-0.5 * var(--grid-column-gap));
+				margin-right: calc(-0.5 * var(--grid-column-gap));
+
+				.elementor-grid {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: var(--justify-content, space-between);
+
+					&-item {
+						margin-left: calc(0.5 * var(--grid-column-gap));
+						margin-right: calc(0.5 * var(--grid-column-gap));
+					}
+				}
+			}
 		}
 	}
 }
