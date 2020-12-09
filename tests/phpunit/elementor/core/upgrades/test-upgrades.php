@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -419,5 +420,19 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$this->assertEquals( $saved_typography[3]['value']['font_family'], $revision_saved_typography[2]['typography_font_family'] );
 			$this->assertEquals( $saved_typography[4]['value']['font_family'], $revision_saved_typography[3]['typography_font_family'] );
 		}
+	}
+
+	public function test_v_3_1_0_move_optimized_dom_output_to_experiments() {
+		add_option( 'elementor_optimized_dom_output', 'enabled' );
+
+		$is_old_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+
+		Upgrades::v_3_1_0_move_optimized_dom_output_to_experiments();
+
+		$experiments = new Experiments_Manager();
+
+		$this->assertFalse( $is_old_feature_active );
+
+		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
 	}
 }
