@@ -116,6 +116,11 @@ class Settings_Layout extends Tab_Base {
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$page_templates = $page_templates_module->add_page_templates( [], null, null );
 
+		// Removes the Force Theme option from the templates because 'default' is already handled.
+		if ( isset( $page_templates[ PageTemplatesModule::TEMPLATE_THEME ] ) ) {
+			unset( $page_templates[ PageTemplatesModule::TEMPLATE_THEME ] );
+		}
+
 		$page_template_control_options = [
 			'label' => __( 'Default Page Layout', 'elementor' ),
 			'options' => [
