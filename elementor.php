@@ -48,7 +48,7 @@ add_action( 'plugins_loaded', 'elementor_load_plugin_textdomain' );
 
 if ( ! version_compare( PHP_VERSION, '5.6', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '5.0', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '5.2', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
