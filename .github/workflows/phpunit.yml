@@ -41,7 +41,9 @@ jobs:
         run: php7.3 /tmp/phpunit-6
       - name: PHP7.3 - Multisite
         run: WP_MULTISITE=1 php7.3 /tmp/phpunit-6
-      - name: PHP7.4
+      - if: matrix.wordpress_versions != '5.0' && matrix.wordpress_versions != '5.1' && matrix.wordpress_versions != '5.2'
+        name: PHP7.4
         run: php7.4 /tmp/phpunit-7
-      - name: PHP7.4 - Multisite
+      - if: matrix.wordpress_versions != '5.0' && matrix.wordpress_versions != '5.1' && matrix.wordpress_versions != '5.2'
+        name: PHP7.4 - Multisite
         run: WP_MULTISITE=1 php7.4 /tmp/phpunit-7
