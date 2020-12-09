@@ -134,4 +134,4 @@ class AdminBar extends elementorModules.ViewModule {
 	}
 }
 
-jQuery( () => new AdminBar() );
+document.addEventListener( 'DOMContentLoaded', () => new AdminBar() );
