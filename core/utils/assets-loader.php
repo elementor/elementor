@@ -38,6 +38,8 @@ class Assets_Loader extends Module {
 			],
 			'scripts' => [],
 		];
+
+		do_action( 'elementor/assets_loader/assets_registered' );
 	}
 
 	private function get_assets() {
