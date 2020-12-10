@@ -1,4 +1,5 @@
 /* global elementorFrontendConfig */
+import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
@@ -8,11 +9,11 @@ import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
 
-class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -75,7 +76,10 @@ class Frontend extends elementorModules.ViewModule {
 	}
 
 	getGeneralSettings( settingName ) {
-		elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
+		if ( this.isEditMode() ) {
+			parent.elementorCommon.helpers.softDeprecated( 'getGeneralSettings', '3.0.0', 'getKitSettings and remove the `elementor_` prefix' );
+		}
+
 		return this.getKitSettings( `elementor_${ settingName }` );
 	}
 
@@ -140,6 +144,7 @@ class Frontend extends elementorModules.ViewModule {
 			lightbox: new LightboxModule(),
 			urlActions: new URLActions(),
 			swiper: Swiper,
+			environment: environment,
 		};
 
 		// TODO: BC since 2.4.0
@@ -148,7 +153,7 @@ class Frontend extends elementorModules.ViewModule {
 			Masonry: elementorModules.utils.Masonry,
 		};
 
-		this.elementsHandler = new ElementsHandler( jQuery );
+		this.elementsHandler.init();
 
 		if ( this.isEditMode() ) {
 			elementor.once( 'document:loaded', () => this.onDocumentLoaded() );
@@ -275,6 +280,8 @@ class Frontend extends elementorModules.ViewModule {
 		this.hooks = new EventManager();
 
 		this.storage = new Storage();
+
+		this.elementsHandler = new ElementsHandler( jQuery );
 
 		this.addIeCompatibility();
 

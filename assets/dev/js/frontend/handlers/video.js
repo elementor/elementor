@@ -1,4 +1,4 @@
-class VideoModule extends elementorModules.frontend.handlers.Base {
+export default class Video extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -90,7 +90,3 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
-};
