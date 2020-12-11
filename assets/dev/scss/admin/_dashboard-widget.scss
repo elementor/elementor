@@ -1,5 +1,18 @@
 
 //Dashboard Widget
+.e-dashboard-widget {
+
+	ul.e-action-list {
+
+		li {
+			margin-top: 14px;
+
+			a {
+				@include margin-start(5px);
+			}
+		}
+	}
+}
 
 //Overview
 #e-dashboard-overview {
