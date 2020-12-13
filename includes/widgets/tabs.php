@@ -397,10 +397,6 @@ class Widget_Tabs extends Widget_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
 
-		if ( ! $a11y_improvements_experiment ) {
-			$this->add_render_attribute( 'elementor-tabs', 'class', 'disable-outline' );
-		}
-
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'elementor-tabs' );?>>
 			<div class="elementor-tabs-wrapper" role="tablist" >

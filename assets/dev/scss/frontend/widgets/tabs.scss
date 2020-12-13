@@ -112,13 +112,9 @@
 		overflow: hidden;
 	}
 
-	&.disable-outline {
-		--focus-outline: none;
-	}
-
 	.elementor-tab-title {
 		cursor: pointer;
-		outline: var(--focus-outline, initial);
+		outline: var(--focus-outline, none);
 	}
 
 	.elementor-tab-desktop-title {
