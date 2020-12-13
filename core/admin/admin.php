@@ -199,7 +199,7 @@ class Admin extends App {
 			return;
 		}
 
-		Plugin::$instance->db->set_is_elementor_page( $post_id, ! empty( $_POST['_elementor_post_mode'] ) );
+		Plugin::$instance->documents->get( $post_id )->set_is_built_with_elementor( ! empty( $_POST['_elementor_post_mode'] ) );
 	}
 
 	/**
@@ -417,7 +417,7 @@ class Admin extends App {
 			</div>
 			<?php if ( $recently_edited_query->have_posts() ) : ?>
 				<div class="e-overview__recently-edited">
-					<h3 class="e-overview__heading"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
+					<h3 class="e-heading e-divider_bottom"><?php echo __( 'Recently Edited', 'elementor' ); ?></h3>
 					<ul class="e-overview__posts">
 						<?php
 						while ( $recently_edited_query->have_posts() ) :
@@ -435,7 +435,7 @@ class Admin extends App {
 			<?php endif; ?>
 			<?php if ( ! empty( $elementor_feed ) ) : ?>
 				<div class="e-overview__feed">
-					<h3 class="e-overview__heading"><?php echo __( 'News & Updates', 'elementor' ); ?></h3>
+					<h3 class="e-heading e-divider_bottom"><?php echo __( 'News & Updates', 'elementor' ); ?></h3>
 					<ul class="e-overview__posts">
 						<?php foreach ( $elementor_feed as $feed_item ) : ?>
 							<li class="e-overview__post">
@@ -451,7 +451,7 @@ class Admin extends App {
 					</ul>
 				</div>
 			<?php endif; ?>
-			<div class="e-overview__footer">
+			<div class="e-overview__footer e-divider_top">
 				<ul>
 					<?php foreach ( $this->get_dashboard_overview_widget_footer_actions() as $action_id => $action ) : ?>
 						<li class="e-overview__<?php echo esc_attr( $action_id ); ?>"><a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?> <span class="screen-reader-text"><?php echo __( '(opens in a new window)', 'elementor' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
@@ -487,6 +487,12 @@ class Admin extends App {
 				'title' => __( 'Go Pro', 'elementor' ),
 				'link' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-overview-widget&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
+		];
+
+		// Visible to all core users when Elementor Pro is not installed.
+		$additions_actions['find_an_expert'] = [
+			'title' => __( 'Find an Expert', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-find-an-expert',
 		];
 
 		/**
@@ -634,7 +640,7 @@ class Admin extends App {
 		?>
 		<div class="e-major-update-warning">
 			<div class="e-major-update-warning__title"><?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?></div>
-			<div class="e-major-update-warning__message"><?php echo __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you backup your site before upgrading, and make sure you first update in a staging environment', 'elementor' ); ?></div>
+			<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
 		</div>
 		<?php
 	}

@@ -120,7 +120,7 @@ class Manager {
 			return '';
 		}
 
-		return call_user_func_array( $parse_callback, $tag_data );
+		return call_user_func_array( $parse_callback, array_values( $tag_data ) );
 	}
 
 	/**

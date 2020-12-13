@@ -203,7 +203,7 @@ WidgetView = BaseElementView.extend( {
 		this.$el.removeClass( 'elementor-loading' );
 
 		// If container document has been changed during the remote request, don't render.
-		if ( this.container.document.id !== elementor.documents.getCurrent().id ) {
+		if ( this.getContainer().document.id !== elementor.documents.getCurrent().id ) {
 			return;
 		}
 
