@@ -31,7 +31,7 @@ module.exports = {
 						reduceIdents: false,
 						zindex: false,
 						calc: false
-					}]
+					} ]
 				} )
 			]
 		},
