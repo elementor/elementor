@@ -143,6 +143,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
+				// We listen to keydowon event for these keys in order to prevent undesired page scrolling
 				if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
 					this.handleKeyboardNavigation( event );
 				}
