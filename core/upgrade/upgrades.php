@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
@@ -660,8 +662,10 @@ class Upgrades {
 
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
-			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
-			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
@@ -687,7 +691,7 @@ class Upgrades {
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
-				if ( ! empty( $current_settings[ $setting ] ) ) {
+				if ( isset( $current_settings[ $setting ] ) ) {
 					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
@@ -711,7 +715,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
 				self::notice( 'System colors are disabled. nothing to do.' );
@@ -748,7 +752,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -758,7 +762,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
@@ -802,13 +806,13 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -818,7 +822,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
 				self::notice( 'System typography is disabled. nothing to do.' );
@@ -857,17 +861,28 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
+	public static function v_3_1_0_move_optimized_dom_output_to_experiments() {
+		$saved_option = get_option( 'elementor_optimized_dom_output' );
+
+		if ( $saved_option ) {
+			$new_option = 'enabled' === $saved_option ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
+
+			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
+		}
+	}
 
 	/**
 	 * @param callback $callback
-	 * @param Updater $updater
+	 * @param Updater  $updater
+	 *
+	 * @param bool     $include_revisions
 	 *
 	 * @return mixed
 	 */
-	private static function move_settings_to_kit( $callback, $updater ) {
+	private static function move_settings_to_kit( $callback, $updater, $include_revisions = true ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
 			self::notice( 'Active kit not found. nothing to do.' );
@@ -880,6 +895,10 @@ class Upgrades {
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
 			$callback( $active_kit_id );
+		}
+
+		if ( ! $include_revisions ) {
+			return false;
 		}
 
 		$revisions_ids = wp_get_post_revisions( $active_kit_id, [

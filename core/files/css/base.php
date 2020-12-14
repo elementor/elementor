@@ -8,6 +8,7 @@ use Elementor\Controls_Stack;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Responsive\Responsive;
@@ -62,6 +63,8 @@ abstract class Base extends Base_File {
 
 	private $icons_fonts = [];
 
+	private $dynamic_elements_ids = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -97,20 +100,6 @@ abstract class Base extends Base_File {
 
 	protected function is_global_parsing_supported() {
 		return false;
-	}
-
-	/**
-	 * CSS file constructor.
-	 *
-	 * Initializing Elementor CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access public
-	 */
-	public function __construct( $file_name ) {
-		parent::__construct( $file_name );
-
-		$this->init_stylesheet();
 	}
 
 	/**
@@ -161,6 +150,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$meta['dynamic_elements_ids'] = $this->dynamic_elements_ids;
+
 		$this->update_meta( $meta );
 	}
 
@@ -171,6 +162,18 @@ abstract class Base extends Base_File {
 	public function write() {
 		if ( $this->use_external_file() ) {
 			parent::write();
+		}
+	}
+
+	/**
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function delete() {
+		if ( $this->use_external_file() ) {
+			parent::delete();
+		} else {
+			$this->delete_meta();
 		}
 	}
 
@@ -312,6 +315,8 @@ abstract class Base extends Base_File {
 			}
 		}
 
+		$stylesheet = $this->get_stylesheet();
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -405,7 +410,7 @@ abstract class Base extends Base_File {
 				}
 			}
 
-			$this->stylesheet_obj->add_rules( $parsed_selector, $output_css_property, $query );
+			$stylesheet->add_rules( $parsed_selector, $output_css_property, $query );
 		}
 	}
 
@@ -461,6 +466,10 @@ abstract class Base extends Base_File {
 	 * @return Stylesheet The stylesheet object.
 	 */
 	public function get_stylesheet() {
+		if ( ! $this->stylesheet_obj ) {
+			$this->init_stylesheet();
+		}
+
 		return $this->stylesheet_obj;
 	}
 
@@ -506,6 +515,9 @@ abstract class Base extends Base_File {
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
+
+				$this->dynamic_elements_ids[] = $controls_stack->get_id();
+
 				continue;
 			}
 
@@ -545,6 +557,7 @@ abstract class Base extends Base_File {
 		return array_merge( parent::get_default_meta(), [
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
+			'dynamic_elements_ids' => [],
 			'status' => '',
 		] );
 	}
@@ -618,7 +631,7 @@ abstract class Base extends Base_File {
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
-		return $this->stylesheet_obj->__toString();
+		return $this->get_stylesheet()->__toString();
 	}
 
 	/**
@@ -750,9 +763,9 @@ abstract class Base extends Base_File {
 	}
 
 	private function get_selector_global_value( $control, $global_key ) {
-		$value = Plugin::$instance->data_manager->run( $global_key );
+		$data = Plugin::$instance->data_manager->run( $global_key );
 
-		if ( empty( $value ) ) {
+		if ( empty( $data['value'] ) ) {
 			return null;
 		}
 
@@ -761,9 +774,24 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$property_name = str_replace( [ $control['groupPrefix'], '_' ], [ '', '-' ], $control['name'] );
+			$property_name = str_replace( [ $control['groupPrefix'], '_tablet', '_mobile' ], '', $control['name'] );
+
+			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
+			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
+				return null;
+			}
+
+			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+
+			if ( $control['groupPrefix'] . 'font_family' === $control['name'] ) {
+				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
+
+				if ( $default_generic_fonts ) {
+					$value  .= ", $default_generic_fonts";
+				}
+			}
 		} else {
 			$value = "var( --e-global-$control[type]-$id )";
 		}

@@ -48,6 +48,8 @@ export class Remove extends CommandHistory {
 			result = [];
 
 		containers.forEach( ( container ) => {
+			container = container.lookup();
+
 			const collection = container.settings.get( name ),
 				model = collection.at( index );
 

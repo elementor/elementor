@@ -118,6 +118,9 @@ class Manager extends BaseModule {
 	}
 
 	public function register_rest_error_handler() {
+		// TODO: Remove - Find better solution.
+		return;
+
 		if ( ! $this->is_internal() ) {
 			$logger_manager = \Elementor\Core\Logger\Manager::instance();
 
@@ -234,6 +237,12 @@ class Manager extends BaseModule {
 		$this->is_internal = true;
 
 		if ( ! $this->server ) {
+			// Remove all 'rest_api_init' actions.
+			remove_all_actions( 'rest_api_init' );
+
+			// Call custom reset api loader.
+			do_action( 'elementor_rest_api_before_init' );
+
 			$this->server = rest_get_server(); // Init API.
 		}
 
@@ -362,7 +371,7 @@ class Manager extends BaseModule {
 	 * @param array  $args
 	 * @param string $method
 	 *
-	 * @return array processed result
+	 * @return array|false processed result
 	 */
 	public function run( $command, $args = [], $method = 'GET' ) {
 		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );

@@ -190,7 +190,10 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return string The converted ID.
 	 */
 	public function get_id_int() {
-		return hexdec( $this->id );
+		/** We ignore possible notices, in order to support elements created prior to v1.8.0 and might include
+		 *  non-base 16 characters as part of their ID.
+		 */
+		return @hexdec( $this->id );
 	}
 
 	/**
@@ -703,10 +706,12 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access public
+	 * @deprecated 3.0.0
 	 *
 	 * @return array Scheme controls.
 	 */
 	final public function get_scheme_controls() {
+		// _deprecated_function( __METHOD__, '3.0.0' );
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter(
@@ -1866,6 +1871,28 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function render() {}
+
+	/**
+	 * Render element in static mode.
+	 *
+	 * If not inherent will call the base render.
+	 */
+	protected function render_static() {
+		$this->render();
+	}
+
+	/**
+	 * Determine the render logic.
+	 */
+	protected function render_by_mode() {
+		if ( Plugin::$instance->frontend->is_static_render_mode() ) {
+			$this->render_static();
+
+			return;
+		}
+
+		$this->render();
+	}
 
 	/**
 	 * Print content template.

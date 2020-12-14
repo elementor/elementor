@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-
 /**
  * Elementor section element.
  *
@@ -290,6 +288,40 @@ class Element_Section extends Element_Base {
 					'extended' => __( 'Extended', 'elementor' ),
 					'wide' => __( 'Wide', 'elementor' ),
 					'wider' => __( 'Wider', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'gap_columns_custom',
+			[
+				'label' => __( 'Custom Columns Gap', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-column-gap-custom > .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'gap' => 'custom',
 				],
 			]
 		);
@@ -402,8 +434,9 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-		$content_position_selector = $is_legacy_mode_active ? '{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' : '{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap';
+		$content_position_selector = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ?
+				'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
+				'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
 
 		$this->add_control(
 			'content_position',
@@ -1055,17 +1088,6 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		if ( in_array( Schemes\Color::get_type(), Schemes\Manager::get_enabled_schemes(), true ) ) {
-			$this->add_control(
-				'colors_warning',
-				[
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Note: The following set of controls has been deprecated. Those controls are only visible if they were previously populated.', 'elementor' ),
-					'content_classes' => 'elementor-panel-alert elementor-panel-alert-danger',
-				]
-			);
-		}
-
 		$this->add_control(
 			'heading_color',
 			[
@@ -1156,7 +1178,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'allowed_dimensions' => 'vertical',
 				'placeholder' => [
 					'top' => '',
@@ -1175,7 +1197,7 @@ class Element_Section extends Element_Base {
 			[
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1407,7 +1429,7 @@ class Element_Section extends Element_Base {
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
-			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				<div class="elementor-row"></div>
 			<?php } ?>
 		</div>
@@ -1472,7 +1494,7 @@ class Element_Section extends Element_Base {
 			}
 			?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				<div class="elementor-row">
 			<?php }
 	}
@@ -1487,7 +1509,7 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-		<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>
@@ -1504,7 +1526,6 @@ class Element_Section extends Element_Base {
 	 * @access protected
 	 */
 	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
 
 		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
 
@@ -1514,6 +1535,8 @@ class Element_Section extends Element_Base {
 				'elementor-' . $section_type . '-section',
 			]
 		);
+
+		parent::_add_render_attributes();
 	}
 
 	/**

@@ -473,16 +473,6 @@ BaseElementView = BaseContainer.extend( {
 			[ this.getID(), '.elementor-' + elementor.config.document.id + ' .elementor-element.' + this.getElementUniqueID() ] );
 
 		this.controlsCSSParser.addStyleToDocument();
-
-		jQuery.each( settings.getFontControls(), async ( index, control ) => {
-			const fontFamilyName = settings.get( control.name );
-
-			if ( ! fontFamilyName ) {
-				return;
-			}
-
-			elementor.helpers.enqueueFont( fontFamilyName );
-		} );
 	},
 
 	renderCustomClasses() {

@@ -152,7 +152,7 @@
 			width: 100%;
 
 			&:before {
-				right: 5px;
+				@include end(5px);
 			}
 
 			.elementor-control {
@@ -187,4 +187,6 @@
 	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
+	text-align: $end;
+	@include ellipsis;
 }

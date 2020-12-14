@@ -81,7 +81,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		const modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
-			closeButtonClass: 'eicon-close',
+			closeButtonOptions: {
+				iconClass: 'eicon-close',
+				attributes: {
+					tabindex: 0,
+					role: 'button',
+					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
+				},
+			},
 			selectors: {
 				preventClose: '.' + this.getSettings( 'classes.preventClose' ),
 			},
@@ -538,7 +545,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		const onShowMethod = modal.onShow;
 
-		modal.onShow = () => {
+		modal.onShow = async () => {
 			onShowMethod();
 
 			const swiperOptions = {
@@ -572,7 +579,9 @@ module.exports = elementorModules.ViewModule.extend( {
 				$.extend( swiperOptions, options.swiper );
 			}
 
-			this.swiper = new Swiper( $container, swiperOptions );
+			const Swiper = elementorFrontend.utils.swiper;
+
+			this.swiper = await new Swiper( $container, swiperOptions );
 
 			// Expose the swiper instance in the frontend
 			$container.data( 'swiper', this.swiper );
@@ -928,7 +937,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		this.openSlideshow( element.dataset.elementorLightboxSlideshow, element.href );
+		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
+
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
 	},
 
 	bindEvents: function() {

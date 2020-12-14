@@ -4,10 +4,6 @@ export default class PanelMenu extends MenuPageView {
 	initialize() {
 		this.collection = PanelMenu.getGroups();
 	}
-
-	onBeforeShow() {
-		$e.run( 'panel/global/open' );
-	}
 }
 
 PanelMenu.groups = null;
@@ -29,6 +25,18 @@ PanelMenu.createGroupItems = ( groupName, keys ) => {
 };
 
 PanelMenu.initGroups = () => {
+	const settingsItems = PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css' ] ),
+		additionalSettingsProps = {
+			name: 'settings-additional-settings',
+			icon: 'eicon-tools',
+			title: elementor.translate( 'additional_settings' ),
+			type: 'link',
+			link: elementor.config.admin_settings_url,
+			newTab: true,
+		};
+
+	settingsItems.push( additionalSettingsProps );
+
 	PanelMenu.groups = new Backbone.Collection( [
 		{
 			name: 'design_system',
@@ -43,7 +51,7 @@ PanelMenu.initGroups = () => {
 		{
 			name: 'settings',
 			title: elementor.translate( 'settings' ),
-			items: PanelMenu.createGroupItems( 'settings', [ 'site-identity', 'background', 'layout', 'lightbox', 'custom-css' ] ),
+			items: settingsItems,
 		},
 	] );
 };

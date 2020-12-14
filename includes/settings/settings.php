@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -158,7 +158,6 @@ class Settings extends Settings_Page {
 			[ $this, 'handle_external_redirects' ]
 		);
 
-		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Theme Templates', 'elementor' ), __( 'Theme Builder', 'elementor' ), 'manage_options', 'theme_templates', [ $this, 'elementor_theme_templates' ] );
 		add_submenu_page( Source_Local::ADMIN_MENU_SLUG, __( 'Popups', 'elementor' ), __( 'Popups', 'elementor' ), 'manage_options', 'popup_templates', [ $this, 'elementor_popups' ] );
 	}
 
@@ -329,31 +328,10 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<i class="eicon-nerd-chuckle"></i>
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
 				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/popup-builder/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
-			</div>
-		</div><!-- /.wrap -->
-		<?php
-	}
-
-	/**
-	 * Display settings page.
-	 *
-	 * Output the content for the Theme Templates page.
-	 *
-	 * @since 2.4.0
-	 * @access public
-	 */
-	public function elementor_theme_templates() {
-		?>
-		<div class="wrap">
-			<div class="elementor-blank_state">
-				<i class="eicon-nerd-chuckle"></i>
-				<h2><?php echo __( 'Get Theme Builder', 'elementor' ); ?></h2>
-				<p><?php echo __( 'Theme Builder is the industry leading all-in-one solution that lets you customize every part of your WordPress theme visually: Header, Footer, Single, Archive & WooCommerce.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/theme-builder/?utm_source=theme-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -386,13 +364,7 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		global $submenu;
-
-		if ( isset( $submenu['elementor'] ) ) {
-			// @codingStandardsIgnoreStart
-			$submenu['elementor'][0][0] = __( 'Settings', 'elementor' );
-			// @codingStandardsIgnoreEnd
-		}
+		Utils::change_submenu_first_item_label( 'elementor', __( 'Settings', 'elementor' ) );
 	}
 
 	/**
@@ -405,6 +377,7 @@ class Settings extends Settings_Page {
 	 *
 	 * @since 1.7.5
 	 * @access public
+	 * @deprecated 3.0.0
 	 */
 	public function update_css_print_method() {
 		Plugin::$instance->files_manager->clear_cache();
@@ -422,8 +395,6 @@ class Settings extends Settings_Page {
 	 */
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
-
-		$default_breakpoints = Responsive::get_default_breakpoints();
 
 		return [
 			self::TAB_GENERAL => [
@@ -467,18 +438,7 @@ class Settings extends Settings_Page {
 					],
 					'usage' => [
 						'label' => __( 'Improve Elementor', 'elementor' ),
-						'fields' => [
-							'allow_tracking' => [
-								'label' => __( 'Usage Data Sharing', 'elementor' ),
-								'field_args' => [
-									'type' => 'checkbox',
-									'value' => 'yes',
-									'default' => '',
-									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
-								],
-								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
-							],
-						],
+						'fields' => $this->get_usage_fields(),
 					],
 				],
 			],
@@ -491,7 +451,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => __( 'The Style settings changed location and now can be found under: Editor > Menu > Global Settings.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Panel > Hamburger Menu > Site Settings</b>.<br>You can use the Site Settings to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -542,21 +502,6 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
-							'element_wrappers_legacy_mode' => [
-								'label' => __( 'HTML Output Legacy Mode', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'' => __( 'After 3.0', 'elementor' ),
-										1 => __( 'Before 3.0', 'elementor' ),
-									],
-									'desc' => __( 'Developers, Please Note! If you’ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy Mode allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<br /><br />'
-										. __( 'Please note - you should not use this mode on newly created sites.', 'elementor' )
-										. '<br />'
-										. '<a href="https://go.elementor.com/legacy-mode" target="_blank">' . __( 'Learn More', 'elementor' ) . '</a>',
-								],
-							],
 						],
 					],
 				],
@@ -589,7 +534,6 @@ class Settings extends Settings_Page {
 			'elementor_custom_icons',
 			'elementor-license',
 			'popup_templates',
-			'theme_templates',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {
@@ -616,9 +560,19 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
 		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
 
-		// Clear CSS Meta after change print method.
-		add_action( 'add_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
-		add_action( 'update_option_elementor_css_print_method', [ $this, 'update_css_print_method' ] );
+		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
+
+		// Clear CSS Meta after change css related methods.
+		$css_settings = [
+			'elementor_disable_color_schemes',
+			'elementor_disable_typography_schemes',
+			'elementor_css_print_method',
+		];
+
+		foreach ( $css_settings as $option_name ) {
+			add_action( "add_option_{$option_name}", $clear_cache_callback );
+			add_action( "update_option_{$option_name}", $clear_cache_callback );
+		}
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );

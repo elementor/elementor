@@ -7,6 +7,8 @@ use Elementor\Plugin;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Admin\Notices\Base_Notice;
+use Elementor\Core\Admin\Notices\Elementor_Dev_Notice;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	private $notices = [
+	private $plain_notices = [
 		'api_notice',
 		'api_upgrade_plugin',
 		'tracker',
@@ -31,6 +33,14 @@ class Admin_Notices extends Module {
 	private $install_time = null;
 
 	private $current_screen_id = null;
+
+	private function get_notices() {
+		$notices = [
+			new Elementor_Dev_Notice(),
+		];
+
+		return apply_filters( 'elementor/core/admin/notices', $notices );
+	}
 
 	private function get_install_time() {
 		if ( null === $this->install_time ) {
@@ -493,15 +503,84 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	/*
+	 * @TODO: Rewrite this method markup and use it for every admin notice
+	 */
+	public function print_admin_notice( array $options ) {
+		$default_options = [
+			'id' => null,
+			'title' => '',
+			'description' => '',
+			'dismissible' => false,
+			'button' => [
+				'text' => '',
+				'url' => '',
+				'class' => 'elementor-button',
+			],
+		];
+
+		$options = array_replace_recursive( $default_options, $options );
+
+		$id_attr = '';
+		$dismissible_classes = '';
+
+		if ( $options['id'] ) {
+			$id_attr = sprintf( 'data-notice_id="%s"', $options['id'] );
+		}
+
+		if ( $options['dismissible'] ) {
+			$dismissible_classes = 'is-dismissible elementor-message-dismissed';
+		}
+		?>
+		<div
+			class="notice elementor-message <?php echo $dismissible_classes; ?>"
+			<?php echo $id_attr; ?>
+		>
+			<div class="elementor-message-inner">
+				<div class="elementor-message-icon">
+					<div class="e-logo-wrapper">
+						<i class="eicon-elementor" aria-hidden="true"></i>
+					</div>
+				</div>
+				<div class="elementor-message-content">
+					<?php if ( $options['title'] ) { ?>
+						<strong><?php echo $options['title']; ?></strong>
+					<?php } ?>
+					<?php if ( $options['description'] ) { ?>
+						<p><?php echo $options['description']; ?></p>
+					<?php } ?>
+				</div>
+				<?php if ( $options['button']['text'] ) { ?>
+					<div class="elementor-message-action">
+						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"><?php echo $options['button']['text']; ?></a>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+		<?php
+	}
+
 	public function admin_notices() {
 		$this->install_time = Plugin::$instance->get_install_time();
 		$this->current_screen_id = get_current_screen()->id;
 
-		foreach ( $this->notices as $notice ) {
+		foreach ( $this->plain_notices as $notice ) {
 			$method_callback = "notice_{$notice}";
 			if ( $this->$method_callback() ) {
 				return;
 			}
+		}
+
+		/** @var Base_Notice $notice_instance */
+		foreach ( $this->get_notices() as $notice_instance ) {
+			if ( ! $notice_instance->should_print() ) {
+				continue;
+			}
+
+			$this->print_admin_notice( $notice_instance->get_config() );
+
+			// It exits the method to make sure it prints only one notice.
+			return;
 		}
 	}
 

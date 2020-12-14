@@ -1,0 +1,41 @@
+$menu-title-font-size: type(text,xxs);
+$menu-title-line-height: type(line-height,sm);
+$menu-title-padding-y: spacing(8);
+$menu-title-padding-x: spacing(30);
+$menu-item-height: spacing(44);
+
+// Default Color scheme
+$menu-title-color: tints(600);
+
+// Dark Color scheme
+$menu-title-dark-color: tints(600);
+
+:root {
+	--menu-title-color: #{$menu-title-color};
+}
+
+.eps-theme-dark {
+	--menu-title-color: #{$menu-title-dark-color};
+}
+
+.#{$eps-prefix}menu {
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li {
+			display: flex;
+		}
+	}
+
+	&__title {
+		padding: $menu-title-padding-y $menu-title-padding-x;
+		font-size: $menu-title-font-size;
+		line-height: $menu-title-line-height;
+		text-transform: uppercase;
+		font-weight: normal;
+		color: var(--menu-title-color);
+	}
+}

@@ -186,6 +186,21 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'link_click',
+			[
+				'label' => __( 'Apply Link On', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'full_width' => __( 'Full Width', 'elementor' ),
+					'inline' => __( 'Inline', 'elementor' ),
+				],
+				'default' => 'full_width',
+				'separator' => 'before',
+				'prefix_class' => 'elementor-list-item-link-',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -507,7 +522,7 @@ class Widget_Icon_List extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'icon_typography',
-				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
+				'selector' => '{{WRAPPER}} .elementor-icon-list-item, {{WRAPPER}} .elementor-icon-list-item a',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
@@ -551,7 +566,7 @@ class Widget_Icon_List extends Widget_Base {
 				$this->add_inline_editing_attributes( $repeater_setting_key );
 				$migration_allowed = Icons_Manager::is_migration_allowed();
 				?>
-				<li class="elementor-icon-list-item" >
+				<li <?php echo $this->get_render_attribute_string( 'list_item' ); ?>>
 					<?php
 					if ( ! empty( $item['link']['url'] ) ) {
 						$link_key = 'link_' . $index;

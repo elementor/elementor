@@ -8,7 +8,13 @@ const DEFAULT_INNER_SECTION_COLUMNS = 2,
 
 const SectionView = BaseElementView.extend( {
 	childViewContainer: function() {
-		return elementor.config.legacyMode.elementWrappers ? '> .elementor-container > .elementor-row' : '> .elementor-container';
+		let containerSelector = '> .elementor-container';
+
+		if ( ! elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+			containerSelector += ' > .elementor-row';
+		}
+
+		return containerSelector;
 	},
 
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-section-content' ),
@@ -124,7 +130,7 @@ const SectionView = BaseElementView.extend( {
 		var sectionConnectClass = this.isInner() ? '.elementor-inner-section' : '.elementor-top-section';
 
 		return {
-			connectWith: sectionConnectClass + this.childViewContainer,
+			connectWith: sectionConnectClass + this.childViewContainer(),
 			handle: '> .elementor-element-overlay .elementor-editor-element-edit',
 			items: '> .elementor-column',
 			forcePlaceholderSize: true,

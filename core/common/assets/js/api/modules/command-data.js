@@ -1,4 +1,5 @@
 import CommandBase from './command-base';
+import * as errors from './errors';
 
 export default class CommandData extends CommandBase {
 	/**
@@ -107,8 +108,6 @@ export default class CommandData extends CommandBase {
 			this.data = Object.assign( { __requestData__: requestData }, this.data );
 
 			return this.data;
-		} ).catch( ( e ) => {
-			this.onCatchApply( e );
 		} );
 	}
 
@@ -125,7 +124,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterCreate( data, args = {} ) {
+	applyAfterCreate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -142,7 +141,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterDelete( data, args = {} ) {
+	applyAfterDelete( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -159,7 +158,7 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterGet( data, args = {} ) {
+	applyAfterGet( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
@@ -176,7 +175,25 @@ export default class CommandData extends CommandBase {
 	 * @param [args={}]
 	 * @returns {{}} filtered result
 	 */
-	applyAfterUpdate( data, args = {} ) {
+	applyAfterUpdate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
+	}
+
+	/**
+	 * Called after apply() failed.
+	 *
+	 * @param e
+	 */
+	onCatchApply( e ) {
+		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
+		const status = e?.data?.status || 0,
+			dataError = Object.values( errors )
+				.find( ( error ) => error.getStatus() === status );
+
+		e = dataError.create( e.message, e.code, e.data || [] );
+
+		this.runCatchHooks( e );
+
+		e.notify();
 	}
 }

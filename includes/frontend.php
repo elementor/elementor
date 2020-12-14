@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Base\Document;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -29,9 +30,6 @@ class Frontend extends App {
 	 */
 	const THE_CONTENT_FILTER_PRIORITY = 9;
 
-	const RENDER_MODE_NORMAL = 'normal';
-	const RENDER_MODE_STATIC = 'static';
-
 	/**
 	 * Post ID.
 	 *
@@ -54,6 +52,13 @@ class Frontend extends App {
 	 * @var array Used fonts. Default is an empty array.
 	 */
 	public $fonts_to_enqueue = [];
+
+	/**
+	 * Holds the class that respond to manage the render mode.
+	 *
+	 * @var Render_Mode_Manager
+	 */
+	public $render_mode_manager;
 
 	/**
 	 * Registered fonts.
@@ -128,21 +133,6 @@ class Frontend extends App {
 	 */
 	private $content_removed_filters = [];
 
-
-	/**
-	 * @var Document[]
-	 */
-	private $admin_bar_edit_documents = [];
-
-	/**
-	 * Determine the render mode.
-	 * if equals to self::RENDER_MODE_STATIC,
-	 * all the elements should be render without any interaction.
-	 *
-	 * @var string
-	 */
-	private $render_mode = self::RENDER_MODE_NORMAL;
-
 	/**
 	 * @var string[]
 	 */
@@ -165,6 +155,7 @@ class Frontend extends App {
 			return;
 		}
 
+		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
@@ -188,6 +179,17 @@ class Frontend extends App {
 	 */
 	public function get_name() {
 		return 'frontend';
+	}
+
+	/**
+	 * Init render mode manager.
+	 */
+	public function init_render_mode() {
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			return;
+		}
+
+		$this->render_mode_manager = new Render_Mode_Manager();
 	}
 
 	/**
@@ -224,13 +226,8 @@ class Frontend extends App {
 
 		// Priority 7 to allow google fonts in header template to load in <head> tag
 		add_action( 'wp_head', [ $this, 'print_fonts_links' ], 7 );
+		add_action( 'wp_head', [ $this, 'add_theme_color_meta_tag' ] );
 		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
-
-		// Add Edit with the Elementor in Admin Bar.
-		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 200 );
-
-		// Detect Elementor documents via their css that printed before the Admin Bar.
-		add_action( 'elementor/css-file/post/enqueue', [ $this, 'add_document_to_admin_bar' ] );
 	}
 
 	/**
@@ -243,6 +240,23 @@ class Frontend extends App {
 			$this->body_classes = array_merge( $this->body_classes, $class );
 		} else {
 			$this->body_classes[] = $class;
+		}
+	}
+
+	/**
+	 * Add Theme Color Meta Tag
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 */
+	public function add_theme_color_meta_tag() {
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$mobile_theme_color = $kit->get_settings( 'mobile_theme_color' );
+
+		if ( ! empty( $mobile_theme_color ) ) {
+			?>
+			<meta name="theme-color" content="<?php echo $mobile_theme_color; ?>">
+			<?php
 		}
 	}
 
@@ -319,9 +333,18 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-webpack-runtime',
+			$this->get_js_assets_url( 'webpack.runtime', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
+				'elementor-webpack-runtime',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
@@ -368,14 +391,6 @@ class Frontend extends App {
 			true
 		);
 
-		wp_register_script(
-			'swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
-			[],
-			'5.3.6',
-			true
-		);
-
 		/**
 		 * @deprecated since 2.7.0 Use Swiper instead
 		 */
@@ -395,7 +410,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.7.6',
+			'4.8.1',
 			true
 		);
 
@@ -422,13 +437,7 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			[
-				'elementor-frontend-modules',
-				'elementor-dialog',
-				'elementor-waypoints',
-				'swiper',
-				'share-link',
-			],
+			$this->get_elementor_frontend_dependencies(),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -522,8 +531,8 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
-			// If The Markup Legacy Mode is active, register the legacy CSS
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
+			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
 				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
@@ -570,6 +579,18 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
+
+		if ( ! $this->is_optimized_js_mode() ) {
+			wp_enqueue_script(
+				'preloaded-elements-handlers',
+				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				[
+					'elementor-frontend',
+				],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
 
 		$this->print_config();
 
@@ -784,7 +805,15 @@ class Frontend extends App {
 				'cs_CZ' => 'latin-ext',
 				'ro_RO' => 'latin-ext',
 				'pl_PL' => 'latin-ext',
+				'hr_HR' => 'latin-ext',
+				'hu_HU' => 'latin-ext',
+				'sk_SK' => 'latin-ext',
+				'tr_TR' => 'latin-ext',
+				'lt_LT' => 'latin-ext',
 			];
+
+			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
+
 			$locale = get_locale();
 
 			if ( isset( $subsets[ $locale ] ) ) {
@@ -921,7 +950,11 @@ class Frontend extends App {
 		 */
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
+		do_action( 'elementor/frontend/before_get_builder_content', $document, $this->_is_excerpt );
+
 		if ( empty( $data ) ) {
+			Plugin::$instance->documents->restore_document();
+
 			return '';
 		}
 
@@ -969,60 +1002,11 @@ class Frontend extends App {
 
 		Plugin::$instance->documents->restore_document();
 
+		// BC
+		// TODO: use Deprecation::do_deprecated_action() in 3.1.0
+		do_action( 'elementor/frontend/get_builder_content', $document, $this->_is_excerpt, $with_css );
+
 		return $content;
-	}
-
-	/**
-	 * @param Post_CSS $css_file
-	 */
-	public function add_document_to_admin_bar( $css_file ) {
-		$document = Plugin::$instance->documents->get( $css_file->get_post_id() );
-
-		if ( $document::get_property( 'show_on_admin_bar' ) && $document->is_editable_by_current_user() ) {
-			$this->admin_bar_edit_documents[ $document->get_main_id() ] = $document;
-		}
-	}
-
-	/**
-	 * Add Elementor menu to admin bar.
-	 *
-	 * Add new admin bar item only on singular pages, to display a link that
-	 * allows the user to edit with Elementor.
-	 *
-	 * Fired by `admin_bar_menu` action.
-	 *
-	 * @since 1.3.4
-	 * @access public
-	 *
-	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
-	 */
-	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		if ( empty( $this->admin_bar_edit_documents ) ) {
-			return;
-		}
-
-		$queried_object_id = get_queried_object_id();
-
-		$menu_args = [
-			'id' => 'elementor_edit_page',
-			'title' => __( 'Edit with Elementor', 'elementor' ),
-		];
-
-		if ( is_singular() && isset( $this->admin_bar_edit_documents[ $queried_object_id ] ) ) {
-			$menu_args['href'] = $this->admin_bar_edit_documents[ $queried_object_id ]->get_edit_url();
-			unset( $this->admin_bar_edit_documents[ $queried_object_id ] );
-		}
-
-		$wp_admin_bar->add_node( $menu_args );
-
-		foreach ( $this->admin_bar_edit_documents as $document ) {
-			$wp_admin_bar->add_menu( [
-				'id' => 'elementor_edit_doc_' . $document->get_main_id(),
-				'parent' => 'elementor_edit_page',
-				'title' => sprintf( '<span class="elementor-edit-link-title">%s</span><span class="elementor-edit-link-type">%s</span>', $document->get_post()->post_title, $document::get_title() ),
-				'href' => $document->get_edit_url(),
-			] );
-		}
 	}
 
 	/**
@@ -1148,36 +1132,18 @@ class Frontend extends App {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function get_render_mode() {
-		return $this->render_mode;
-	}
-
-	/**
-	 * @param string $render_mode
+	 * Is the current render mode is static.
 	 *
 	 * @return bool
 	 */
-	public function is_render_mode( $render_mode ) {
-		return $this->get_render_mode() === $render_mode;
-	}
-
-	/**
-	 * @param $render_mode
-	 *
-	 * @return $this
-	 */
-	public function set_render_mode( $render_mode ) {
-		$available_render_modes = [ self::RENDER_MODE_STATIC, self::RENDER_MODE_NORMAL ];
-
-		if ( ! in_array( $render_mode, $available_render_modes, true ) ) {
-			$render_mode = self::RENDER_MODE_NORMAL;
+	public function is_static_render_mode() {
+		// The render mode manager is exists only in frontend,
+		// so by default if it is not exist the method will return false.
+		if ( ! $this->render_mode_manager ) {
+			return false;
 		}
 
-		$this->render_mode = $render_mode;
-
-		return $this;
+		return $this->render_mode_manager->get_current()->is_static();
 	}
 
 	/**
@@ -1198,6 +1164,8 @@ class Frontend extends App {
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+				'isScriptDebug' => Utils::is_script_debug(),
+				'isOptimizedJS' => $this->is_optimized_js_mode(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
@@ -1216,7 +1184,7 @@ class Frontend extends App {
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
-			'render_mode' => $this->get_render_mode(),
+			'is_static' => $this->is_static_render_mode(),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
@@ -1328,5 +1296,32 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	private function is_optimized_js_mode() {
+		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
+	}
+
+	private function get_elementor_frontend_dependencies() {
+		$dependencies = [
+			'elementor-frontend-modules',
+			'elementor-dialog',
+			'elementor-waypoints',
+			'share-link',
+		];
+
+		if ( ! $this->is_optimized_js_mode() ) {
+			wp_register_script(
+				'swiper',
+				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				[],
+				'5.3.6',
+				true
+			);
+
+			$dependencies[] = 'swiper';
+		}
+
+		return $dependencies;
 	}
 }

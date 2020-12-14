@@ -56,8 +56,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			const context = this.getSettings( 'context' ),
+			const context = this.getSettings( 'context' );
+			let globalKeys;
+
+			if ( context ) {
 				globalKeys = context.model.get( 'settings' ).get( '__globals__' );
+			}
 
 			this.addControlStyleRules( control, dynamicParsedValues, controls, placeholders, replacements, globalKeys );
 		} );
@@ -93,6 +97,12 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				const selectorGlobalValue = this.getSelectorGlobalValue( control, globalKey );
 
 				if ( selectorGlobalValue ) {
+					if ( 'font' === control.type ) {
+						$e.data.get( globalKey ).then( ( response ) => {
+							elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+						} );
+					}
+
 					// This regex handles a case where a control's selector property value includes more than one CSS selector.
 					// Example: 'selector' => 'background: {{VALUE}}; background-color: {{VALUE}};'.
 					outputCssProperty = cssProperty.replace( /(:)[^;]+(;?)/g, '$1' + selectorGlobalValue + '$2' );
@@ -132,6 +142,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 								throw '';
 							}
+						}
+
+						if ( 'font' === control.type ) {
+							elementor.helpers.enqueueFont( parsedValue );
 						}
 
 						return parsedValue;
@@ -229,7 +243,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		const globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
-		if ( ! data?.id ) {
+		if ( ! data?.value ) {
 			return;
 		}
 
@@ -239,9 +253,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+
+			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
+				return;
+			}
+
+			propertyName = propertyName.replace( '_', '-' );
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+
+			if ( elementor.config.ui.defaultGenericFonts && control.groupPrefix + 'font_family' === control.name ) {
+				value += `, ${ elementor.config.ui.defaultGenericFonts }`;
+			}
 		} else {
 			value = `var( --e-global-${ control.type }-${ id } )`;
 		}

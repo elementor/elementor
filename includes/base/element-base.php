@@ -450,7 +450,9 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = esc_url( $url_control['url'] );
+			$allowed_protocols = array_merge( wp_allowed_protocols(), [ 'skype', 'viber' ] );
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -800,7 +802,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			$is_static_render_mode = Plugin::$instance->frontend->is_render_mode( Frontend::RENDER_MODE_STATIC );
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 
 			if ( ! $is_static_render_mode ) {
 				// Hide the element until the animation begins
