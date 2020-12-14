@@ -786,6 +786,14 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getConfig() {
+		ElementorConfig.legacyMode = {
+			get elementsWrapper() {
+				elementorCommon.helpers.hardDeprecated( 'elementor.config.legacyMode.elementsWrapper', '3.1.0', 'elementor.config.experimentalFeatures.e_dom_optimization' );
+
+				return ! elementor.config.experimentalFeatures.e_dom_optimization;
+			},
+		};
+
 		return ElementorConfig;
 	}
 

@@ -222,13 +222,13 @@ webpackProductionConfig.forEach( ( config, index ) => {
 	}
 } );
 
-const defaultConfig = webpackConfig.map( ( config ) => {
+const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
 	return { ...config, watch: false };
 } );
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
-	default: defaultConfig,
+	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig
 };
 

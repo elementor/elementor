@@ -111,7 +111,7 @@ class Editor {
 		Plugin::$instance->documents->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $this->post_id );
+		$document->set_is_built_with_elementor( true );
 
 		// End BC.
 
@@ -526,6 +526,10 @@ class Editor {
 
 		$page_title_selector .= ', .elementor-page-title';
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$config = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
@@ -588,10 +592,7 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
-			// Legacy Mode - for backwards compatibility of older HTML markup.
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
+			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

@@ -33,6 +33,8 @@ abstract class Document extends Controls_Stack {
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
 
+	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
+
 	/**
 	 * Document publish status.
 	 */
@@ -652,7 +654,25 @@ abstract class Document extends Controls_Stack {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor() {
-		return ! ! get_post_meta( $this->post->ID, '_elementor_edit_mode', true );
+		return ! ! $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+	}
+
+	/**
+	 * Mark the post as "built with elementor" or not.
+	 *
+	 * @param bool $is_built_with_elementor
+	 *
+	 * @return $this
+	 */
+	public function set_is_built_with_elementor( $is_built_with_elementor ) {
+		if ( $is_built_with_elementor ) {
+			// Use the string `builder` and not a boolean for rollback compatibility
+			$this->update_meta( self::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		} else {
+			$this->delete_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -885,17 +905,16 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( $is_legacy_mode_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 			<div class="elementor-inner">
 			<?php } ?>
 				<div class="elementor-section-wrap">
 					<?php $this->print_elements( $elements_data ); ?>
 				</div>
-			<?php if ( $is_legacy_mode_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 			</div>
 			<?php } ?>
 		</div>

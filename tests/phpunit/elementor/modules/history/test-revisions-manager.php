@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\History;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
@@ -147,12 +148,13 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		$post_id = $res['parent_id'];
 		$autosave_post_id = $res['child_id'];
 
-		update_metadata( 'post', $autosave_post_id, '_elementor_edit_mode', true );
+		update_metadata( 'post', $autosave_post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
 		update_metadata( 'post', $autosave_post_id, '_elementor_meta_data', 'content' );
 
 		Revisions_Manager::restore_revision( $post_id, $autosave_post_id );
 
 		$this->assertTrue( $this->check_revisions( $post_id, $autosave_post_id ) );
+		$this->assertEquals( 'builder', get_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, true ) );
 	}
 
 	public function test_should_add_revision_support_for_all_post_types() {
