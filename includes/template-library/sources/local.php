@@ -278,7 +278,7 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
-		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, [ self::CPT, 'page' ], $args );
 
 		/**
 		 * Categories
