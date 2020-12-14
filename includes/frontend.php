@@ -582,7 +582,7 @@ class Frontend extends App {
 
 		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
-		if ( $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_optimized_js_mode() ) {
 			wp_enqueue_script(
 				'preloaded-elements-handlers',
 				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
