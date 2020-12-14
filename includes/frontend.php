@@ -1311,31 +1311,4 @@ class Frontend extends App {
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
-
-	private function is_optimized_js_mode() {
-		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
-	}
-
-	private function get_elementor_frontend_dependencies() {
-		$dependencies = [
-			'elementor-frontend-modules',
-			'elementor-dialog',
-			'elementor-waypoints',
-			'share-link',
-		];
-
-		if ( ! $this->is_optimized_js_mode() ) {
-			wp_register_script(
-				'swiper',
-				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
-				[],
-				'5.3.6',
-				true
-			);
-
-			$dependencies[] = 'swiper';
-		}
-
-		return $dependencies;
-	}
 }
