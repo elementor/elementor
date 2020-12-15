@@ -42,7 +42,7 @@ class Assets_Loader extends Module {
 		do_action( 'elementor/assets_loader/assets_registered' );
 	}
 
-	private function get_assets() {
+	public function get_assets() {
 		if ( ! $this->assets ) {
 			$this->init_assets();
 		}
