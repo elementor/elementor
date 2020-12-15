@@ -470,9 +470,22 @@ class Admin_Notices extends Module {
 			'button' => [
 				'text' => '',
 				'url' => '',
+				'icon' => '',
+				'color' => '',
+				'variant' => '',
 				'class' => 'elementor-button',
 				'new_tab' => false,
 			],
+			'button_secondary' => [
+				'text' => '',
+				'url' => '',
+				'icon' => '',
+				'color' => '',
+				'variant' => '',
+				'class' => 'elementor-button',
+				'new_tab' => false,
+			]
+
 		];
 
 		$notice_classes = $default_options['classes'];
