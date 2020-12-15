@@ -202,8 +202,8 @@ class Manager extends Base_Object {
 			'title' => __( 'Accessibility Improvements', 'elementor' ),
 			'description' => __( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
 				. '<br><strong>' . __( 'Notice!', 'elementor' ) . '</strong> ' . __( 'These enhancements may include some markup fixes to elementor widgets', 'elementor' )
-                . ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
-                . __( 'Learn More', 'elementor' ) . '</a>',
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
 	}
