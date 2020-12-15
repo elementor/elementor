@@ -1,4 +1,4 @@
-class VideoModule extends elementorModules.frontend.handlers.Base {
+export default class Video extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -33,7 +33,12 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 
 	playVideo() {
 		if ( this.elements.$video.length ) {
-			this.elements.$video[ 0 ].play();
+			// this.player exists only for YouTube videos, and its play function is different.
+			if ( this.player ) {
+				this.player.playVideo();
+			} else {
+				this.elements.$video[ 0 ].play();
+			}
 
 			return;
 		}
@@ -66,8 +71,77 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	}
 
+	prepareYTVideo( YT, onOverlayClick ) {
+		const elementSettings = this.getElementSettings(),
+			playerOptions = {
+				videoId: this.videoID,
+				events: {
+					onReady: () => {
+						if ( elementSettings.mute ) {
+							this.player.mute();
+						}
+
+						if ( elementSettings.autoplay || onOverlayClick ) {
+							this.player.playVideo();
+						}
+					},
+					onStateChange: ( event ) => {
+						if ( event.data === YT.PlayerState.ENDED && elementSettings.loop ) {
+							this.player.seekTo( elementSettings.start || 0 );
+						}
+					},
+				},
+				playerVars: {
+					controls: elementSettings.controls ? 1 : 0,
+					rel: elementSettings.rel ? 1 : 0,
+					playsinline: elementSettings.play_on_mobile ? 1 : 0,
+					modestbranding: elementSettings.modestbranding ? 1 : 0,
+					autoplay: elementSettings.autoplay ? 1 : 0,
+					start: elementSettings.start,
+					end: elementSettings.end,
+				},
+			};
+
+		if ( elementSettings.start ) {
+			playerOptions.start = elementSettings.start;
+		}
+
+		if ( elementSettings.end ) {
+			playerOptions.end = elementSettings.end;
+		}
+
+		if ( elementSettings.yt_privacy ) {
+			playerOptions.host = 'https://www.youtube-nocookie.com';
+			playerOptions.playerVars.origin = window.location.hostname;
+		}
+
+		this.player = new YT.Player( this.elements.$video[ 0 ], playerOptions );
+	}
+
 	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
+	}
+
+	onInit() {
+		super.onInit();
+
+		const elementSettings = this.getElementSettings();
+
+		if ( 'youtube' !== elementSettings.video_type ) {
+			// Currently the only API integration in the Video widget is for the YT API
+			return;
+		}
+
+		this.apiProvider = elementorFrontend.utils.youtube;
+
+		this.videoID = this.apiProvider.getVideoIDFromURL( elementSettings.youtube_url );
+
+		// If there is an image overlay, the YouTube video prep method will be triggered on click
+		if ( ! this.videoID ) {
+			return;
+		}
+
+		this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
 	}
 
 	onElementChange( propertyName ) {
@@ -90,7 +164,3 @@ class VideoModule extends elementorModules.frontend.handlers.Base {
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( VideoModule, { $element: $scope } );
-};

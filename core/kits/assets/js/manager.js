@@ -2,11 +2,10 @@ import Component from './component';
 import PanelView from './panel';
 import PanelMenuView from './panel-menu';
 import PanelHeaderBehavior from './panel-header-behavior';
-import Repeater from './repeater';
 import GlobalControlSelect from './globals/global-select-behavior';
 import ControlsCSSParser from 'elementor-assets-js/editor/utils/controls-css-parser';
 
-export default class extends elementorModules.editor.utils.Module {
+export default class Manager extends elementorModules.editor.utils.Module {
 	loadingTriggers = {
 		preview: false,
 		globals: false,
@@ -16,6 +15,32 @@ export default class extends elementorModules.editor.utils.Module {
 	 * @type {ControlsCSSParser}
 	 */
 	variablesCSS = null;
+
+	initialize() {
+		elementor.on( 'preview:loaded', () => {
+			this.loadingTriggers.preview = true;
+
+			this.renderGlobalsDefaultCSS();
+		} );
+
+		elementor.on( 'document:loaded', () => {
+			this.renderGlobalVariables();
+		} );
+
+		elementor.once( 'globals:loaded', () => {
+			this.loadingTriggers.globals = true;
+
+			this.renderGlobalsDefaultCSS();
+		} );
+
+		elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
+
+		if ( ! elementor.config.user.can_edit_kit ) {
+			return;
+		}
+
+		$e.components.register( new Component( { manager: this } ) );
+	}
 
 	addPanelPages() {
 		elementor.getPanelView().addPage( 'kit_settings', {
@@ -210,43 +235,9 @@ export default class extends elementorModules.editor.utils.Module {
 		super.onInit();
 
 		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
-			if ( ! elementor.config.initial_document.panel.support_kit ) {
-				return;
+			if ( elementor.config.initial_document.panel.support_kit ) {
+				this.initialize();
 			}
-
-			if ( ! elementor.config.user.can_edit_kit ) {
-				return;
-			}
-
-			$e.components.register( new Component( { manager: this } ) );
-
-			elementor.addControlView( 'global-style-repeater', Repeater );
-
-			elementor.hooks.addFilter( 'panel/header/behaviors', this.addHeaderBehavior );
-
-			elementor.hooks.addFilter( 'controls/base/behaviors', this.addGlobalsBehavior );
-
-			elementor.on( 'preview:loaded', () => {
-				this.loadingTriggers.preview = true;
-
-				this.renderGlobalsDefaultCSS();
-			} );
-
-			elementor.on( 'document:loaded', () => {
-				this.renderGlobalVariables();
-			} );
-
-			elementor.once( 'globals:loaded', () => {
-				this.loadingTriggers.globals = true;
-
-				this.renderGlobalsDefaultCSS();
-			} );
-
-			elementor.on( 'panel:init', () => {
-				this.addPanelPages();
-
-				this.addPanelMenuItem();
-			} );
 		} );
 	}
 }

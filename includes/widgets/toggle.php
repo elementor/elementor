@@ -112,6 +112,9 @@ class Widget_Toggle extends Widget_Base {
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => __( 'Toggle Content', 'elementor' ),
 				'show_label' => false,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 

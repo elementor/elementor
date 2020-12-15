@@ -14,6 +14,7 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
+import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -342,6 +343,8 @@ export default class EditorBase extends Marionette.Application {
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
+
+		this.devTools = new DevTools();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -783,6 +786,14 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getConfig() {
+		ElementorConfig.legacyMode = {
+			get elementsWrapper() {
+				elementorCommon.helpers.hardDeprecated( 'elementor.config.legacyMode.elementsWrapper', '3.1.0', 'elementor.config.experimentalFeatures.e_dom_optimization' );
+
+				return ! elementor.config.experimentalFeatures.e_dom_optimization;
+			},
+		};
+
 		return ElementorConfig;
 	}
 
