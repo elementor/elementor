@@ -89,6 +89,8 @@ class Modules_Manager {
 			'usage',
 			'compatibility-tag',
 			'dev-tools',
+			'campaigns',
+			'landing-pages',
 		];
 	}
 

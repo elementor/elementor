@@ -183,7 +183,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onRender() {
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lp' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
 		}
 	},
@@ -193,7 +193,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lp' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setMasonrySkin();
 		}
 	},
