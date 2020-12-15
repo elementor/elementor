@@ -30,7 +30,7 @@ class Module extends BaseModule {
 		return [
 			'name' => 'landing-pages',
 			'title' => __( 'Landing Pages', 'elementor' ),
-			'description' => __( 'Marketing Tools: Landing Pages - Enable a new "Campaigns" admin menu with a Landing Pages section.', 'elementor' ),
+			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 		];
 	}
 
@@ -203,7 +203,7 @@ class Module extends BaseModule {
 	private function change_admin_meta_title( $title ) {
 		if ( $this->is_landing_pages_page() ) {
 			// Get WordPress' default 'Pages' translation string, since the original title comes from WordPress core.
-			return str_replace( __( 'Pages', 'default' ), __( 'Landing Pages', 'elementor' ), $title ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+			return str_replace( __( 'Pages', 'elementor' ), __( 'Landing Pages', 'elementor' ), $title ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 		}
 
 		return $title;
