@@ -120,9 +120,6 @@ class Editor {
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
 
-		// Temp: Allow plugins to know that the editor route is ready. TODO: Remove on 2.7.3.
-		define( 'ELEMENTOR_EDITOR_USE_ROUTER', true );
-
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
