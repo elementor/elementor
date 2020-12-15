@@ -698,6 +698,7 @@ class Editor {
 				'yes' => __( 'Yes', 'elementor' ),
 				'blocks' => __( 'Blocks', 'elementor' ),
 				'pages' => __( 'Pages', 'elementor' ),
+				'landing_pages' => __( 'Landing Pages', 'elementor' ),
 				'my_templates' => __( 'My Templates', 'elementor' ),
 
 				// Incompatible Device.
