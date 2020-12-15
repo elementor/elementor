@@ -328,7 +328,7 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<i class="eicon-nerd-chuckle"></i>
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
 				<h2><?php echo __( 'Get Popup Builder', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/popup-builder/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
@@ -468,7 +468,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Settings Panel > Hamburger Menu > Site Settings</b>.<br>You can use the Global Manager to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
+									'html' => __( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Panel > Hamburger Menu > Site Settings</b>.<br>You can use the Site Settings to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', __( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],

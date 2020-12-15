@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 3.0.13
+Stable tag: 3.0.14
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.14 - 2020-11-25 =
+* Tweak: Added 3rd party plugins compatibility to versions rollback mechanism
+* Fix: Updated Popup Builder promotional image
+* Fix: Upload SVG files only when the user allowed to prevent security issues
+* Fix: String updates in Style Settings tab
 
 = 3.0.13 - 2020-11-04 =
 * Tweak: Added compatibility with WordPress v5.6 to the Editor panel ([#12958](https://github.com/elementor/elementor/issues/12958))
