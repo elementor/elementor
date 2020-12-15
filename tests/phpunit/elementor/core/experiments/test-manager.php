@@ -72,6 +72,8 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$experiments = $this->elementor()->experiments;
 
+		$experiments->set_feature_default_state( 'test_feature', Experiments_Manager::STATE_DEFAULT );
+
 		$default_activated_test_feature_data = [
 			'name' => 'default_activated_test_feature',
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -102,7 +104,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
-		$this->assertFalse( $is_test_feature_active );
+		$this->assertTrue( $is_test_feature_active );
 	}
 
 	public function test_is_feature_active__default_activated() {
