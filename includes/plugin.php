@@ -704,9 +704,9 @@ class Plugin {
 	 *
 	 * @param $property
 	 * @return mixed
+	 * @throws \Exception
 	 */
 	public function __get( $property ) {
-
 		if ( 'posts_css_manager' === $property ) {
 			self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument( 'Plugin::$instance->posts_css_manager', '2.7.0', 'Plugin::$instance->files_manager' );
 
@@ -714,8 +714,10 @@ class Plugin {
 		}
 
 		if ( property_exists( $this, $property ) ) {
-			return $this->$property;
+			throw new \Exception( 'Cannot access private property' );
 		}
+
+		return null;
 	}
 
 	/**
