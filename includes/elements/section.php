@@ -434,8 +434,9 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-		$content_position_selector = $is_legacy_mode_active ? '{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap' : '{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap';
+		$content_position_selector = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ?
+				'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
+				'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
 
 		$this->add_control(
 			'content_position',
@@ -1428,7 +1429,7 @@ class Element_Section extends Element_Base {
 		<div class="elementor-shape elementor-shape-top"></div>
 		<div class="elementor-shape elementor-shape-bottom"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}">
-			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				<div class="elementor-row"></div>
 			<?php } ?>
 		</div>
@@ -1493,7 +1494,7 @@ class Element_Section extends Element_Base {
 			}
 			?>
 			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-			<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				<div class="elementor-row">
 			<?php }
 	}
@@ -1508,7 +1509,7 @@ class Element_Section extends Element_Base {
 	 */
 	public function after_render() {
 		?>
-		<?php if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>

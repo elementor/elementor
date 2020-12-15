@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -861,6 +862,16 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function v_3_1_0_move_optimized_dom_output_to_experiments() {
+		$saved_option = get_option( 'elementor_optimized_dom_output' );
+
+		if ( $saved_option ) {
+			$new_option = 'enabled' === $saved_option ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
+
+			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
+		}
 	}
 
 	/**
