@@ -41,7 +41,9 @@
 		}
 	}
 
-	.elementor-video {
-		object-fit: cover;
+	.e-hosted-video {
+		.elementor-video {
+			object-fit: cover;
+		}
 	}
 }
