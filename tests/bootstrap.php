@@ -1,8 +1,9 @@
 <?php
 
 use Elementor\Autoloader;
+	use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
-$_tests_dir = getenv( 'WP_TESTS_DIR' );
+	$_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
 }
@@ -52,6 +53,11 @@ Autoloader::run();
 remove_action( 'admin_init', '_maybe_update_themes' );
 remove_action( 'admin_init', '_maybe_update_core' );
 remove_action( 'admin_init', '_maybe_update_plugins' );
+
+// The following action activates all registered experiments in order for them to be able to be tested.
+add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
+	$experiments_manager->set_feature_default_state( $experimental_data['name'], $experiments_manager::STATE_ACTIVE );
+}, 10, 2 );
 
 // Make sure the main class is running
 \Elementor\Plugin::instance();
