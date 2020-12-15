@@ -502,32 +502,6 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
-							'optimized_dom_output' => [
-								'label' => __( 'Optimized DOM Output', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'' => __( 'Default', 'elementor' ),
-										'enabled' => __( 'Enable', 'elementor' ),
-										'disabled' => __( 'Disable', 'elementor' ),
-									],
-									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
-								],
-							],
-							'optimized_js_loading' => [
-								'label' => __( 'Optimized JS Loading', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'' => __( 'Default', 'elementor' ),
-										'enabled' => __( 'Enable', 'elementor' ),
-										'disabled' => __( 'Disable', 'elementor' ),
-									],
-									'desc' => __( 'Please Note! Optimized JS mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed.', 'elementor' )
-										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
-								],
-							],
 						],
 					],
 				],
@@ -593,7 +567,6 @@ class Settings extends Settings_Page {
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
 			'elementor_css_print_method',
-			'elementor_optimized_dom_output',
 		];
 
 		foreach ( $css_settings as $option_name ) {

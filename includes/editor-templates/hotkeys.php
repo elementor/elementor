@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="elementor-hotkeys__item">
 					<div class="elementor-hotkeys__item--label"><?php echo __( 'Keyboard Shortcuts', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
-						<span>{{{ ctrlLabel }}}</span>
+						<span>Shift</span>
 						<span>?</span>
 					</div>
 				</div>
