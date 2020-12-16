@@ -304,10 +304,10 @@ class Manager extends Base_Object {
 	 */
 	private function render_settings_intro() {
 		?>
-		<h2><?php echo __( 'Elementor Experiments', 'elementor' ); ?></h2>
-		<p class="e-experiments__description"><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
-		<p class="e-experiments__description"><?php echo __( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
-		<p class="e-experiments__description"><?php echo sprintf( __( 'Your feedback is important - <a href="%s" target="_blank">help us</a> improve these features by sharing your thoughts and inputs.', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments-report-an-issue/' ); ?></p>
+		<h2><?php echo __( 'Experiments', 'elementor' ); ?></h2>
+		<p><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p><?php echo __( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
+		<p><?php echo sprintf( __( 'Your feedback is important - <a href="%s" target="_blank">help us</a> improve these features by sharing your thoughts and inputs.', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments-report-an-issue/' ); ?></p>
 		<?php
 	}
 
@@ -327,7 +327,7 @@ class Manager extends Base_Object {
 					<option value="<?php echo $state_key; ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
 				<?php } ?>
 			</select>
-			<div class="e-experiment__description"><?php echo $feature['description']; ?></div>
+			<p class="description"><?php echo $feature['description']; ?></p>
 			<div class="e-experiment__status"><?php echo sprintf( __( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] ); ?></div>
 		</div>
 		<?php
