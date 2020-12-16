@@ -662,28 +662,6 @@ class Widget_Image extends Widget_Base {
 		return $image_data;
 	}
 
-	private function handle_svg_image( $action, $settings ) {
-		$is_custom_size= 'custom' === $settings[ 'image_size' ];
-		$callback = 'set_svg_size';
-		$filter = 'wp_get_attachment_image_src';
-
-		if ( 'before_render' === $action ) {
-			if ( $is_custom_size ) {
-				$custom_dimensions = $settings[ 'image_custom_dimension' ];
-
-				add_image_size( 'custom', $custom_dimensions[ 'width' ], $custom_dimensions[ 'height' ] );
-			}
-
-			add_filter( $filter, [ $this, $callback ], 10, 4 );
-		} elseif ( 'after_render' === $action ) {
-			remove_filter( $filter, [ $this, $callback ] );
-
-			if ( $is_custom_size ) {
-				remove_image_size( 'custom' );
-			}
-		}
-	}
-
 	/**
 	 * Render image widget output on the frontend.
 	 *
