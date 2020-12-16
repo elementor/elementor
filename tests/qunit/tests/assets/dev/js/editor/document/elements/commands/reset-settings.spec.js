@@ -79,7 +79,7 @@ export const ResetSettings = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_settings', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_settings', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

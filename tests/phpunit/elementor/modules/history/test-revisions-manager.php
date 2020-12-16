@@ -173,32 +173,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 			'the filter "wp_save_post_revision_check_for_changes" should return false' );
 	}
 
-	public function test_should_return_editor_settings() {
-		$parent_and_child_posts = $this->factory()->create_and_get_parent_and_child_posts();
-
-		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['parent_id'] );
-
-		$settings_keys = [ 'i18n' ];
-		$this->assertArrayHaveKeys( $settings_keys, $settings );
-
-		$settings_i18n_keys = [
-			'edit_draft',
-			'edit_published',
-			'no_revisions_1',
-			'no_revisions_2',
-			'current',
-			'restore',
-			'restore_auto_saved_data',
-			'restore_auto_saved_data_message',
-			'revision',
-			'revision_history',
-			'revisions_disabled_1',
-			'revisions_disabled_2',
-		];
-		$this->assertArrayHaveKeys( $settings_i18n_keys, $settings['i18n'] );
-	}
-
-
 	/**
 	 * @expectedException \Exception
 	 * @expectedExceptionMessage You must set the revision ID.
