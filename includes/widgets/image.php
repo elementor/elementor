@@ -656,8 +656,8 @@ class Widget_Image extends Widget_Base {
 	public function set_svg_size( $image_data, $attachment_id, $size ) {
 		$image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
-		$image_data['1'] = $image_sizes[ $size ][ 'width' ];
-		$image_data['2'] = $image_sizes[ $size ][ 'height' ];
+		$image_data['1'] = $image_sizes[ $size ]['width'];
+		$image_data['2'] = $image_sizes[ $size ]['height'];
 
 		return $image_data;
 	}
@@ -677,7 +677,7 @@ class Widget_Image extends Widget_Base {
 			return;
 		}
 
-		Images_Manager::handle_svg_image_size('before_render', $settings['image']['id'], $settings['image_size'], $settings['image_custom_dimension'] );
+		Images_Manager::handle_svg_image_size( 'before_render', $settings['image']['id'], $settings['image_size'], $settings['image_custom_dimension'] );
 
 		$has_caption = $this->has_caption( $settings );
 
@@ -722,7 +722,7 @@ class Widget_Image extends Widget_Base {
 		</div>
 		<?php
 
-		Images_Manager::handle_svg_image_size('after_render', $settings['image']['id'] );
+		Images_Manager::handle_svg_image_size( 'after_render', $settings['image']['id'] );
 	}
 
 	/**

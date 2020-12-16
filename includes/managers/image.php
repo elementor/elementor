@@ -140,7 +140,7 @@ class Images_Manager {
 				$size = 'large';
 			}
 
-			return $image_sizes[$size];
+			return $image_sizes[ $size ];
 		}
 	}
 
@@ -164,8 +164,8 @@ class Images_Manager {
 			$size = 'large';
 		}
 
-		$image_data['1'] = $image_sizes[ $size ][ 'width' ];
-		$image_data['2'] = $image_sizes[ $size ][ 'height' ];
+		$image_data['1'] = $image_sizes[ $size ]['width'];
+		$image_data['2'] = $image_sizes[ $size ]['height'];
 
 		return $image_data;
 	}
@@ -176,7 +176,7 @@ class Images_Manager {
 
 		if ( 'before_render' === $action ) {
 			if ( $is_custom_size ) {
-				add_image_size( 'custom', $image_custom_size_array[ 'width' ], $image_custom_size_array[ 'height' ] );
+				add_image_size( 'custom', $image_custom_size_array['width'], $image_custom_size_array['height'] );
 			}
 
 			add_filter( 'wp_get_attachment_image_src', [ $self, 'set_svg_image_size' ], 10, 4 );

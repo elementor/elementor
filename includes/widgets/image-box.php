@@ -539,7 +539,7 @@ class Widget_Image_Box extends Widget_Base {
 
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
 
-		Images_Manager::handle_svg_image_size('before_render', $settings['image']['id'], $settings['thumbnail_size'], $settings['thumbnail_custom_dimension'] );
+		Images_Manager::handle_svg_image_size( 'before_render', $settings['image']['id'], $settings['thumbnail_size'], $settings['thumbnail_custom_dimension'] );
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
@@ -597,7 +597,7 @@ class Widget_Image_Box extends Widget_Base {
 
 		echo $html;
 
-		Images_Manager::handle_svg_image_size('after_render', $settings['image']['id'] );
+		Images_Manager::handle_svg_image_size( 'after_render', $settings['image']['id'] );
 	}
 
 	/**
