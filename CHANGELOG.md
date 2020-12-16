@@ -15,20 +15,20 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 * New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
 * Experiment: Landing Pages - Create beautiful landing pages in a streamlined workflow
 * Experiment: Accessibility Improvements - Make Elementor widgets more accessible (may include markup changes)
-* Tweak: Added conditional load of JS and CSS assets in frontend ([#8572](https://github.com/elementor/elementor/issues/8572))  
-* Tweak: Added conditional load of Swiper components ([#8572](https://github.com/elementor/elementor/issues/8572))
-* Tweak: Improved Tabs widget accessibility ([#8572](https://github.com/elementor/elementor/issues/8572))
-* Tweak: Added alignment options for Tabs widget ([#8572](https://github.com/elementor/elementor/issues/8572))
-* Tweak: Updated Font Awesome icons library to v5.15.1 ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Improved performance by adding conditional load of JS and CSS assets in frontend ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Improved performance by adding conditional load of Swiper components ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Improved Tabs widget accessibility ([#11779](https://github.com/elementor/elementor/issues/11779), [#11561](https://github.com/elementor/elementor/issues/11561))
+* Tweak: Added alignment options for Tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
+* Tweak: Updated Font Awesome icons library to v5.15.1 ([#12057](https://github.com/elementor/elementor/issues/12057))
 * Tweak: Added "Custom" Columns Gap option in Section element ([#11978](https://github.com/elementor/elementor/issues/11978), [#8572](https://github.com/elementor/elementor/issues/8572))
-* Tweak: Added Border Radius support in Google Maps widget ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Added Border Radius support in Google Maps widget ([#11359](https://github.com/elementor/elementor/issues/11359))
 * Tweak: Added dynamic capabilities to Video Background group control ([#10908](https://github.com/elementor/elementor/issues/10908))
-* Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#10908](https://github.com/elementor/elementor/issues/10908))
-* Tweak: Added dynamic capabilities to Toggle Content control in Toggle widget ([#10908](https://github.com/elementor/elementor/issues/10908))
-* Tweak: Added dynamic capabilities to Poster control in Video widget ([#10908](https://github.com/elementor/elementor/issues/10908))
+* Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#9710](https://github.com/elementor/elementor/issues/9710))
+* Tweak: Added dynamic capabilities to Toggle Content control in Toggle widget ([#12405](https://github.com/elementor/elementor/issues/12405))
 * Tweak: Added `em` unit to Border Radius control in Button widget ([#11561](https://github.com/elementor/elementor/issues/11561))
 * Tweak: Introduced a new method for attaching a JS handler to an element ([Developer Documentation](https://developers.elementor.com/new-method-attaching-a-js-handler))
 * Tweak: Refactored YouTube source to use YouTube API in Video widget
+* Tweak: Added dynamic capabilities to Poster control in Video widget
 * Tweak: Global dropdown controls are now displayed for all user roles
 * Tweak: Improved browsers detection utility functionality
 * Tweak: Added "Find an Expert" link to the Admin Dashboard Overview widget
