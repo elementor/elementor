@@ -1,9 +1,10 @@
 # <p><a href="https://elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a></p>
 
-**Welcome to the Elementor Beta - Developer Edition. **
-The Elementor Beta - Developer Edition plugin gives you first access to Elementor’s newest features and improvements. 
+### Welcome to the Elementor Beta - Developer Edition
+
+**This plugin gives you first access to Elementor’s newest features and improvements. 
 Each Developer Edition release, similar to beta version releases, will contain experimental functionalities that developers will be able to use to get familiar with the next releases before they are published. 
-We will use this plugin to validate new features and gain feedback before they are released.
+We will use this plugin to validate new features and gain feedback before they are released.**
 
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 
