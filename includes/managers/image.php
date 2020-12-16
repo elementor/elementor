@@ -155,7 +155,7 @@ class Images_Manager {
 
 		$image_sizes = self::get_all_image_sizes();
 
-		// In some cases when the image is set with custom sizes, the filter value of the $size might be an array
+		// In some cases that the image is set with custom sizes, the filter value of the $size might be an array.
 		if ( is_array( $size ) ) {
 			$size = 'custom';
 		}
@@ -172,8 +172,6 @@ class Images_Manager {
 
 	private static function handle_svg_image_filters( $action, $image_size, $image_custom_size_array ) {
 		$is_custom_size = 'custom' === $image_size;
-		$callback = 'set_svg_image_size';
-		$filter = 'wp_get_attachment_image_src';
 		$self = new self();
 
 		if ( 'before_render' === $action ) {
@@ -181,9 +179,9 @@ class Images_Manager {
 				add_image_size( 'custom', $image_custom_size_array[ 'width' ], $image_custom_size_array[ 'height' ] );
 			}
 
-			add_filter( $filter, [ $self, $callback ], 10, 4 );
+			add_filter( 'wp_get_attachment_image_src', [ $self, 'set_svg_image_size' ], 10, 4 );
 		} elseif ( 'after_render' === $action ) {
-			remove_filter( $filter, [ $self, $callback ] );
+			remove_filter( 'wp_get_attachment_image_src', [ $self, 'set_svg_image_size' ] );
 
 			if ( $is_custom_size ) {
 				remove_image_size( 'custom' );
@@ -197,10 +195,11 @@ class Images_Manager {
 			$image_id = [ $image_id ];
 		}
 
-		// We need to add the SVG filters only once, therefore if we find at least one SVG image we don't need to proceed
+		// We need to add the SVG filters only once, therefore if we find at least one SVG image we don't need to proceed.
 		foreach ( $image_id as $id ) {
 			if ( self::is_svg_image( $id ) ) {
 				self::handle_svg_image_filters( $action, $image_size, $image_custom_size_array );
+
 				break;
 			}
 		}
