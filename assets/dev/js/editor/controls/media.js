@@ -132,7 +132,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.trigger( 'before:select' );
 
 		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON(),
+		const attachment = this.frame.state().get( 'selection' ).first().toJSON(),
 			imageSize = this.container.settings.get( 'image_size' ),
 			attachmentUrl = attachment.sizes[ imageSize ]?.url || attachment.url;
 

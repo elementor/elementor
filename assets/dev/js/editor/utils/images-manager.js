@@ -160,12 +160,13 @@ ImagesManager = function() {
 	};
 
 	self.getImageSizeFromControlOptions = function( imageSize, sizesOptions, imageCustomDimension ) {
-		var imageData = { width: '', height: '' };
-		var imageDimensions;
+		let imageData = { width: '', height: '' },
+			imageDimensions;
 
 		if ( 'custom' === imageSize ) {
 			imageData = imageCustomDimension;
 		} else {
+			// Getting the images sizes values from the control options (regex: NUMBER{space}x{space}NUMBER).
 			imageDimensions = sizesOptions[ imageSize ].match( /(?<=-\s)(\d*\sx\s\d*)/gi );
 
 			if ( imageDimensions && imageDimensions.length ) {
