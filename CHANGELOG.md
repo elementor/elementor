@@ -20,7 +20,7 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 * Tweak: Improved Tabs widget accessibility ([#11779](https://github.com/elementor/elementor/issues/11779), [#11561](https://github.com/elementor/elementor/issues/11561))
 * Tweak: Added alignment options for Tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
 * Tweak: Updated Font Awesome icons library to v5.15.1 ([#12057](https://github.com/elementor/elementor/issues/12057))
-* Tweak: Added "Custom" Columns Gap option in Section element ([#11978](https://github.com/elementor/elementor/issues/11978), [#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Added "Custom" Columns Gap option in Section element ([#11978](https://github.com/elementor/elementor/issues/11978))
 * Tweak: Added Border Radius support in Google Maps widget ([#11359](https://github.com/elementor/elementor/issues/11359))
 * Tweak: Added dynamic capabilities to Video Background group control ([#10908](https://github.com/elementor/elementor/issues/10908))
 * Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#9710](https://github.com/elementor/elementor/issues/9710))
