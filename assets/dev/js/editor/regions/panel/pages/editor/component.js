@@ -15,10 +15,10 @@ export default class Component extends ComponentBase {
 
 	defaultTabs() {
 		return {
-			content: { title: elementor.translate( 'content' ) },
-			style: { title: elementor.translate( 'style' ) },
-			advanced: { title: elementor.translate( 'advanced' ) },
-			layout: { title: elementor.translate( 'layout' ) },
+			content: { title: __( 'Content', 'elementor' ) },
+			style: { title: __( 'Style', 'elementor' ) },
+			advanced: { title: __( 'Advanced', 'elementor' ) },
+			layout: { title: __( 'Layout', 'elementor' ) },
 		};
 	}
 
@@ -32,7 +32,8 @@ export default class Component extends ComponentBase {
 
 	renderTab( tab, args ) {
 		const { model, view } = args,
-			title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] );
+			/* translators: %s: Element Name. */
+			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
 
 		elementor.getPanelView().setPage( 'editor', title, {
 			tab,

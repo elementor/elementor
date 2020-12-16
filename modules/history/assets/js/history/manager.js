@@ -13,17 +13,17 @@ export default class HistoryManager {
 	active = true;
 
 	translations = {
-		add: elementor.translate( 'added' ),
-		change: elementor.translate( 'edited' ),
-		disable: elementor.translate( 'disabled' ),
-		duplicate: elementor.translate( 'duplicate' ),
-		enable: elementor.translate( 'enabled' ),
-		move: elementor.translate( 'moved' ),
-		paste: elementor.translate( 'pasted' ),
-		paste_style: elementor.translate( 'style_pasted' ),
-		remove: elementor.translate( 'removed' ),
-		reset_style: elementor.translate( 'style_reset' ),
-		reset_settings: elementor.translate( 'settings_reset' ),
+		add: __( 'Added', 'elementor' ),
+		change: __( 'Edited', 'elementor' ),
+		disable: __( 'Disabled', 'elementor' ),
+		duplicate: __( 'Duplicate', 'elementor' ),
+		enable: __( 'Enabled', 'elementor' ),
+		move: __( 'Moved', 'elementor' ),
+		paste: __( 'Pasted', 'elementor' ),
+		paste_style: __( 'Style Pasted', 'elementor' ),
+		remove: __( 'Removed', 'elementor' ),
+		reset_style: __( 'Style Reset', 'elementor' ),
+		reset_settings: __( 'Settings Reset', 'elementor' ),
 	};
 
 	constructor( document ) {
@@ -109,7 +109,7 @@ export default class HistoryManager {
 		if ( ! this.items.length ) {
 			this.items.add( {
 				status: 'not_applied',
-				title: elementor.translate( 'editing_started' ),
+				title: __( 'Editing Started', 'elementor' ),
 				subTitle: '',
 				action: '',
 				editing_started: true,
