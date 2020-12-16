@@ -9,7 +9,8 @@ We will use this plugin to validate new features and gain feedback before they a
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 
 ## Changelog
-= 3.1.0 - Dev2 - 2020-12-17 =
+**3.1.0-Dev2 - 2020-12-17**
+
 * New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
 * New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
 * Experiment: Landing Pages - Create beautiful landing pages in a streamlined workflow
@@ -25,14 +26,14 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 * Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#10908](https://github.com/elementor/elementor/issues/10908))
 * Tweak: Added dynamic capabilities to Toggle Content control in Toggle widget ([#10908](https://github.com/elementor/elementor/issues/10908))
 * Tweak: Added dynamic capabilities to Poster control in Video widget ([#10908](https://github.com/elementor/elementor/issues/10908))
-* Tweak: Added 'EM' unit to Border Radius control in Button widget ([#11561](https://github.com/elementor/elementor/issues/11561))
+* Tweak: Added `em` unit to Border Radius control in Button widget ([#11561](https://github.com/elementor/elementor/issues/11561))
 * Tweak: Introduced a new method for attaching a JS handler to an element ([Developer Documentation](https://developers.elementor.com/new-method-attaching-a-js-handler))
 * Tweak: Refactored YouTube source to use YouTube API in Video widget
 * Tweak: Global dropdown controls are now displayed for all user roles
 * Tweak: Improved browsers detection utility functionality
 * Tweak: Added "Find an Expert" link to the Admin Dashboard Overview widget
 * Tweak: Added the new Theme Builder as a Finder item
-* Tweak: Added "+" icon in multi select control for better UX
+* Tweak: Added `+` icon in multi select control for better UX
 * Tweak: Improved Select2 controls load
 * Tweak: Added Elementor Beta (Developer Edition) promotion in WordPress dashboard
 * Tweak: Migrated DOM Improvements to Elementor Experiments
