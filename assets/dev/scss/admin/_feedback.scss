@@ -108,34 +108,37 @@
 	}
 }
 
-#elementor-deactivate-feedback-dialog-header {
+#elementor-deactivate-feedback-dialog {
 
-	i {
-		color: $editor-accent;
-		font-size: 19px;
+	&-header {
+
+		i {
+			color: $editor-accent;
+			font-size: 19px;
+		}
+	}
+
+	&-header-title {
+		font-size: 15px;
+		text-transform: uppercase;
+		font-weight: bold;
+		@include padding-start(5px);
+	}
+
+	&-form-caption {
+		font-weight: bold;
+		font-size: 15px;
+		color: $editor-darkest;
+		line-height: 1.4;
+	}
+
+	&-form-body {
+		padding-top: 30px;
 	}
 }
 
-#elementor-deactivate-feedback-dialog-header-title {
-	font-size: 15px;
-	text-transform: uppercase;
-	font-weight: bold;
-	@include padding-start(5px);
-}
-
-#elementor-deactivate-feedback-dialog-form-caption {
-	font-weight: bold;
-	font-size: 15px;
-	color: $editor-darkest;
-	line-height: 1.4;
-}
-
-#elementor-deactivate-feedback-dialog-form-body {
-	padding-top: 30px;
-}
-
 .elementor-deactivate-feedback-dialog-input-wrapper {
-	line-height: 1.3;
+	line-height: 1;
 	overflow: hidden;
 	margin-bottom: 15px;
 }
