@@ -30,7 +30,7 @@ class Module extends BaseModule {
 		return [
 			'name' => 'landing-pages',
 			'title' => __( 'Landing Pages', 'elementor' ),
-			'description' => __( 'Marketing Tools: Landing Pages - Enable a new "Campaigns" admin menu with a Landing Pages section.', 'elementor' ),
+			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 		];
 	}
 
