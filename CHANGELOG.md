@@ -9,7 +9,8 @@ We will use this plugin to validate new features and gain feedback before they a
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 
 ## Changelog
-= 3.1.0 - Dev2 - 2020-12-17 =
+**3.1.0-Dev2 - 2020-12-17**
+
 * New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
 * New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
 * Experiment: Landing Pages - Create beautiful landing pages in a streamlined workflow
