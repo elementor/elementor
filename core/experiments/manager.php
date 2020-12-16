@@ -4,7 +4,7 @@ namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Plugin;
-use Elementor\Tools;
+use Elementor\Settings;
 use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -245,12 +245,13 @@ class Manager extends Base_Object {
 	/**
 	 * Register Settings Fields
 	 *
-	 * @since 3.1.0
-	 * @access private
+	 * @param Settings $settings
 	 *
-	 * @param Tools $tools
+	 * @since 3.1.0
+	 * f@access private
+	 *
 	 */
-	private function register_settings_fields( Tools $tools ) {
+	private function register_settings_fields( Settings $settings ) {
 		$features = $this->get_features();
 
 		$fields = [];
@@ -278,10 +279,10 @@ class Manager extends Base_Object {
 		}
 
 		if ( ! Tracker::is_allow_track() ) {
-			$fields += $tools->get_usage_fields();
+			$fields += $settings->get_usage_fields();
 		}
 
-		$tools->add_tab(
+		$settings->add_tab(
 			'experiments', [
 				'label' => __( 'Experiments', 'elementor' ),
 				'sections' => [
@@ -430,10 +431,10 @@ class Manager extends Base_Object {
 		$this->init_features();
 
 		if ( is_admin() ) {
-			$page_id = Tools::PAGE_ID;
+			$page_id = Settings::PAGE_ID;
 
-			add_action( "elementor/admin/after_create_settings/{$page_id}", function( Tools $tools ) {
-				$this->register_settings_fields( $tools );
+			add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
+				$this->register_settings_fields( $settings );
 			}, 11 );
 		}
 	}
