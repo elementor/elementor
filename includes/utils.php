@@ -339,7 +339,7 @@ class Utils {
 			'post_type' => $post_type,
 		];
 
-		if ( ! is_null( $template_type ) ) {
+		if ( $template_type ) {
 			$query_args['template_type'] = $template_type;
 		}
 

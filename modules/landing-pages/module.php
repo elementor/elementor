@@ -35,7 +35,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_trashed_landing_page_posts() {
-		if ( isset( $this->trashed_posts ) ) {
+		if ( $this->trashed_posts ) {
 			return $this->trashed_posts;
 		}
 
@@ -44,14 +44,14 @@ class Module extends BaseModule {
 			'post_status' => 'trash',
 			'elementor_library_type' => self::DOCUMENT_TYPE,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => 'landing-page',
+			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->trashed_posts;
 	}
 
 	private function get_landing_page_posts() {
-		if ( isset( $this->posts ) ) {
+		if ( $this->posts ) {
 			return $this->posts;
 		}
 
@@ -59,10 +59,31 @@ class Module extends BaseModule {
 			'post_type' => 'page',
 			'elementor_library_type' => self::DOCUMENT_TYPE,
 			'meta_key' => '_elementor_template_type',
-			'meta_value' => 'landing-page',
+			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->posts;
+	}
+
+	/**
+	 * Is Elementor Landing Page.
+	 *
+	 * Check whether the post is an Elementor Landing Page.
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param \WP_Post $post Post Object
+	 *
+	 * @return bool Whether the post was built with Elementor.
+	 */
+	public function is_elementor_landing_page( $post ) {
+		// If the post is not a page, save a call to the DB.
+		if ( 'page' !== $post->post_type ) {
+			return false;
+		}
+
+		return 'landing-page' === get_post_meta( $post->ID, '_elementor_template_type', true );
 	}
 
 	/**
@@ -234,7 +255,7 @@ class Module extends BaseModule {
 	 * @return array A filtered array of post display states.
 	 */
 	public function add_landing_page_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_elementor_landing_page( $post ) ) {
+		if ( User::is_current_user_can_edit( $post->ID ) && $this->is_elementor_landing_page( $post ) ) {
 			$post_states['landing-page'] = __( 'Landing Page', 'elementor' );
 		}
 
@@ -250,7 +271,7 @@ class Module extends BaseModule {
 		$screen = get_current_screen();
 
 		if ( 'post' === $screen->base ) {
-			return Plugin::$instance->db->is_elementor_landing_page( get_post() );
+			return $this->is_elementor_landing_page( get_post() );
 		}
 
 		return false;
@@ -293,7 +314,7 @@ class Module extends BaseModule {
 		add_action( 'parent_file', function( $parent_file ) {
 			global $current_screen;
 
-			if ( 'post' === $current_screen->base && Plugin::$instance->db->is_elementor_landing_page( get_post() ) ) {
+			if ( 'post' === $current_screen->base && $this->is_elementor_landing_page( get_post() ) ) {
 				return Source_Local::ADMIN_MENU_SLUG;
 			}
 

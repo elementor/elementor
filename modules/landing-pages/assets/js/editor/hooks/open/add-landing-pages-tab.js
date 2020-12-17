@@ -14,7 +14,7 @@ export class LandingPageAddLibraryTab extends $e.modules.hookUI.After {
 
 	apply() {
 		$e.components.get( 'library' ).addTab( 'templates/landing-pages', {
-			title: elementor.translate( 'landing_pages' ),
+			title: __( 'Landing Pages', 'elementor' ),
 			filter: {
 				source: 'remote',
 				type: 'lp',
