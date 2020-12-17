@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Page extends PageBase {
+
 	/**
 	 * Get Properties
 	 *
@@ -92,19 +93,18 @@ class Page extends PageBase {
 	 * @access public
 	 */
 	public function save_template_type() {
-		$page_settings = $this->settings_to_be_saved;
+		$page_data = $this->data_to_be_saved['settings'];
 
-		if ( ! empty( $page_settings ) && isset( $page_settings['page_type'] ) ) {
-			// If 'Landing Page' was selected by the user, convert the document into a Landing Page.
-			if ( Landing_Pages_Module::DOCUMENT_TYPE === $page_settings['page_type'] ) {
-				// Associate the post with the 'elementor_library_type' taxonomy.
-				wp_set_object_terms( $this->get_id(), Landing_Pages_Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
+		// If the selected page type is 'Landing Page', convert the document into a Landing Page.
+		if ( isset( $page_data['settings']['page_type'] ) && Landing_Pages_Module::DOCUMENT_TYPE === $page_data['settings']['page_type'] ) {
+			// Associate the post with the 'elementor_library_type' taxonomy.
+			wp_set_object_terms( $this->get_id(), Landing_Pages_Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
 
-				// Set the '_elementor_template_type' meta field value to 'landing-page'.
-				return $this->update_main_meta( self::TYPE_META_KEY, Landing_Pages_Module::DOCUMENT_TYPE );
-			}
+			// Set the '_elementor_template_type' meta field value to 'landing-page'.
+			return $this->update_main_meta( self::TYPE_META_KEY, Landing_Pages_Module::DOCUMENT_TYPE );
 		}
 
+		// If the selected page type is 'Page'.
 		return parent::save_template_type();
 	}
 }

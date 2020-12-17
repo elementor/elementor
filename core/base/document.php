@@ -90,7 +90,7 @@ abstract class Document extends Controls_Stack {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected $settings_to_be_saved;
+	protected $data_to_be_saved;
 
 	/**
 	 * @since 2.1.0
@@ -570,6 +570,8 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
+		$this->data_to_be_saved = $data;
+
 		$this->set_is_saving( true );
 
 		/**
@@ -606,12 +608,7 @@ abstract class Document extends Controls_Stack {
 			$this->save_elements( $data['elements'] );
 		}
 
-		// $data['settings'] could be not set, the condition is here to prevent an error when accessed.
-		$this->settings_to_be_saved = isset( $data['settings'] ) ? $data['settings'] : [];
-
 		$this->save_template_type();
-
-		unset( $this->settings_to_be_saved );
 
 		$this->save_version();
 
@@ -633,6 +630,8 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/after_save', $this, $data );
 
 		$this->set_is_saving( false );
+
+		unset( $this->data_to_be_saved );
 
 		$this->remove_handle_revisions_changed_filter();
 

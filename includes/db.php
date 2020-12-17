@@ -360,27 +360,6 @@ class DB {
 	}
 
 	/**
-	 * Is Elementor Landing Page.
-	 *
-	 * Check whether the post is an Elementor Landing Page.
-	 *
-	 * @since 3.1.0
-	 * @access public
-	 *
-	 * @param \WP_Post $post Post Object
-	 *
-	 * @return bool Whether the post was built with Elementor.
-	 */
-	public function is_elementor_landing_page( $post ) {
-		// If the post is not a page, save a call to the DB.
-		if ( 'page' !== $post->post_type ) {
-			return false;
-		}
-
-		return 'landing-page' === get_post_meta( $post->ID, '_elementor_template_type', true );
-	}
-
-	/**
 	 * Switch to post.
 	 *
 	 * Change the global WordPress post to the requested post.
