@@ -24,8 +24,8 @@ export default class extends Marionette.Behavior {
 					introductionKey: 'rightClick',
 					dialogOptions: {
 						className: 'elementor-right-click-introduction',
-						headerMessage: elementor.translate( 'meet_right_click_header' ),
-						message: elementor.translate( 'meet_right_click_message' ),
+						headerMessage: __( 'Meet Right Click', 'elementor' ),
+						message: __( 'Now you can access all editing actions using right click.', 'elementor' ),
 						iframe: elementor.$preview,
 						position: {
 							my: 'center top+5',
@@ -36,7 +36,7 @@ export default class extends Marionette.Behavior {
 					onDialogInitCallback: ( dialog ) => {
 						dialog.addButton( {
 							name: 'learn-more',
-							text: elementor.translate( 'learn_more' ),
+							text: __( 'Learn More', 'elementor' ),
 							tag: 'div',
 							callback: () => {
 								open( elementor.config.help_right_click_url, '_blank' );
@@ -45,7 +45,7 @@ export default class extends Marionette.Behavior {
 
 						dialog.addButton( {
 							name: 'ok',
-							text: elementor.translate( 'got_it' ),
+							text: __( 'Got It', 'elementor' ),
 							callback: () => introduction.setViewed(),
 						} );
 

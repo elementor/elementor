@@ -212,8 +212,8 @@ class IconsManager extends Component {
 
 		return (
 			<div id="elementor-icons-manager__upload">
-				<div id="elementor-icons-manager__upload__title">{ elementor.translate( 'my_libraries' ) }</div>
-				<button id="elementor-icons-manager__upload__button" className="elementor-button elementor-button-default" onClick={ onClick }>{ elementor.translate( 'upload' ) }</button>
+				<div id="elementor-icons-manager__upload__title">{ __( 'My Libraries', 'elementor' ) }</div>
+				<button id="elementor-icons-manager__upload__button" className="elementor-button elementor-button-default" onClick={ onClick }>{ __( 'Upload', 'elementor' ) }</button>
 			</div>
 		);
 	}

@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
@@ -145,7 +145,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			'viewport_md',
+			Responsive::BREAKPOINT_OPTION_PREFIX . 'md',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
@@ -167,7 +167,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			'viewport_lg',
+			Responsive::BREAKPOINT_OPTION_PREFIX . 'lg',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
@@ -184,7 +184,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
 			return;
 		}
 

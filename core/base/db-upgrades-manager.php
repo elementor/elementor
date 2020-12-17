@@ -80,15 +80,15 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$message = '<p>' . sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() ) . '</p>';
 		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
 
-		echo '<div class="notice notice-error">' . $message . '</div>';
+		echo '<div class="notice notice-error is-dismissible">' . $message . '</div>';
 	}
 
 	public function admin_notice_upgrade_is_running() {
 		$upgrade_link = $this->get_continue_action_url();
 		$message = '<p>' . sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() ) . '</p>';
-		$message .= '<p>' . __( 'Taking a while?', 'elementor' ) . '<a href="' . $upgrade_link . '" class="button-primary">' . __( 'Click here to run it now', 'elementor' ) . '</a></p>';
+		$message .= '<p>' . __( 'Taking a while?', 'elementor' ) . ' <a href="' . $upgrade_link . '" class="button-primary">' . __( 'Click here to run it now', 'elementor' ) . '</a></p>';
 
-		echo '<div class="notice notice-warning">' . $message . '</div>';
+		echo '<div class="notice notice-warning is-dismissible">' . $message . '</div>';
 	}
 
 	public function admin_notice_upgrade_is_completed() {
@@ -96,7 +96,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$message = '<p>' . sprintf( __( '%s The database update process is now complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_updater_label() ) . '</p>';
 
-		echo '<div class="notice notice-success">' . $message . '</div>';
+		echo '<div class="notice notice-success is-dismissible">' . $message . '</div>';
 	}
 
 	/**

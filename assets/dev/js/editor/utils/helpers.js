@@ -337,7 +337,7 @@ module.exports = {
 			},
 			strings: {
 				confirm: confirmString,
-				cancel: elementor.translate( 'cancel' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			onConfirm: onConfirm,
 		} );
@@ -376,9 +376,9 @@ module.exports = {
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
-					elementor.translate( 'enable_fa5' ),
-					elementor.translate( 'dialog_confirm_enable_fa5' ),
-					elementor.translate( 'update' ),
+					__( 'Elementor\'s New Icon Library', 'elementor' ),
+					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Upgrade".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					__( 'Update', 'elementor' ),
 					onConfirm
 				).show();
 				return true;

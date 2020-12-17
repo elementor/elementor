@@ -86,7 +86,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				attributes: {
 					tabindex: 0,
 					role: 'button',
-					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
+					'aria-label': wp.i18n.__( 'Close', 'elementor' ) + ' (Esc)',
 				},
 			},
 			selectors: {
@@ -215,9 +215,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				facebook: i18n.shareOnFacebook,
-				twitter: i18n.shareOnTwitter,
-				pinterest: i18n.pinIt,
+				facebook: wp.i18n.__( 'Share on Facebook', 'elementor' ),
+				twitter: wp.i18n.__( 'Share on Twitter', 'elementor' ),
+				pinterest: wp.i18n.__( 'Share on Twitter', 'elementor' ),
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -244,8 +244,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( ! videoUrl ) {
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } )
-				.text( i18n.downloadImage )
-				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': i18n.download } ) ) );
+				.text( wp.i18n.__( 'Download image', 'elementor' ) )
+				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': wp.i18n.__( 'Download', 'elementor' ) } ) ) );
 		}
 
 		return $linkList;
@@ -289,7 +289,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elements.$iconShare = $( '<i>', {
 				class: slideshowClasses.iconShare,
 				role: 'button',
-				'aria-label': i18n.share,
+				'aria-label': wp.i18n.__( 'Share', 'elementor' ),
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
 
@@ -313,7 +313,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				class: slideshowClasses.iconZoomIn,
 				role: 'switch',
 				'aria-checked': false,
-				'aria-label': i18n.zoom,
+				'aria-label': wp.i18n.__( 'Zoom', 'elementor' ),
 			} );
 
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
@@ -328,7 +328,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				class: slideshowClasses.iconExpand,
 				role: 'switch',
 				'aria-checked': false,
-				'aria-label': i18n.fullscreen,
+				'aria-label': wp.i18n.__( 'Fullscreen', 'elementor' ),
 			} ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
@@ -481,7 +481,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': i18n.playVideo } ) );
+				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': wp.i18n.__( 'Play Video', 'elementor' ) } ) );
 
 				$slide.append( $playIcon );
 			} else {
@@ -519,8 +519,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': wp.i18n.__( 'Previous', 'elementor' ) } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': wp.i18n.__( 'Next', 'elementor' ) } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 			$container.append(
 				$nextButton,
@@ -545,7 +545,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		const onShowMethod = modal.onShow;
 
-		modal.onShow = () => {
+		modal.onShow = async () => {
 			onShowMethod();
 
 			const swiperOptions = {
@@ -579,7 +579,9 @@ module.exports = elementorModules.ViewModule.extend( {
 				$.extend( swiperOptions, options.swiper );
 			}
 
-			this.swiper = new Swiper( $container, swiperOptions );
+			const Swiper = elementorFrontend.utils.swiper;
+
+			this.swiper = await new Swiper( $container, swiperOptions );
 
 			// Expose the swiper instance in the frontend
 			$container.data( 'swiper', this.swiper );

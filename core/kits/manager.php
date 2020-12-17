@@ -21,16 +21,14 @@ class Manager {
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
-		$kit_post = null;
 
-		if ( $id ) {
-			$kit_post = get_post( $id );
-		}
+		$kit_document = Plugin::$instance->documents->get( $id );
 
-		if ( ! $id || ! $kit_post || 'trash' === $kit_post->post_status ) {
+		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
 			update_option( self::OPTION_ACTIVE, $id );
 		}
+
 		return $id;
 	}
 
@@ -103,33 +101,6 @@ class Manager {
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
-			'i18n' => [
-				'close' => __( 'Close', 'elementor' ),
-				'back' => __( 'Back', 'elementor' ),
-				'site_identity' => __( 'Site Identity', 'elementor' ),
-				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout' => __( 'Layout', 'elementor' ),
-				'theme_style' => __( 'Theme Style', 'elementor' ),
-				'add_color' => __( 'Add Color', 'elementor' ),
-				'add_style' => __( 'Add Style', 'elementor' ),
-				'new_item' => __( 'New Item', 'elementor' ),
-				'new_global' => __( 'New Global', 'elementor' ),
-				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_fonts' => __( 'Global Fonts', 'elementor' ),
-				'global_colors' => __( 'Global Colors', 'elementor' ),
-				'invalid' => __( 'Invalid', 'elementor' ),
-				'color_cannot_be_deleted' => __( 'System Colors can\'t be deleted', 'elementor' ),
-				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
-				'design_system' => __( 'Design System', 'elementor' ),
-				'buttons' => __( 'Buttons', 'elementor' ),
-				'images' => __( 'Images', 'elementor' ),
-				'form_fields' => __( 'Form Fields', 'elementor' ),
-				'background' => __( 'Background', 'elementor' ),
-				'custom_css' => __( 'Custom CSS', 'elementor' ),
-				'additional_settings' => __( 'Additional Settings', 'elementor' ),
-				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-			],
 		] );
 
 		return $settings;
@@ -157,8 +128,6 @@ class Manager {
 			}
 
 			$css_file->enqueue();
-
-			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
 		}
 	}
 
@@ -178,6 +147,17 @@ class Manager {
 		}
 
 		return $kit;
+	}
+
+	public function update_kit_settings_based_on_option( $key, $value ) {
+		/** @var Kit $active_kit */
+		$active_kit = $this->get_active_kit();
+
+		if ( $active_kit->is_saving() ) {
+			return;
+		}
+
+		$active_kit->update_settings( [ $key => $value ] );
 	}
 
 	/**
@@ -242,6 +222,20 @@ class Manager {
 		return ! get_option( 'elementor_disable_typography_schemes' );
 	}
 
+	/**
+	 * Add kit wrapper body class.
+	 *
+	 * It should be added even for non Elementor pages,
+	 * in order to support embedded templates.
+	 */
+	private function add_body_class() {
+		$kit = $this->get_kit_for_frontend();
+
+		if ( $kit ) {
+			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
+		}
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -249,5 +243,17 @@ class Manager {
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
+
+		add_action( 'update_option_blogname', function ( $old_value, $value ) {
+			$this->update_kit_settings_based_on_option( 'site_name', $value );
+		}, 10, 2 );
+
+		add_action( 'update_option_blogdescription', function ( $old_value, $value ) {
+			$this->update_kit_settings_based_on_option( 'site_description', $value );
+		}, 10, 2 );
+
+		add_action( 'wp_head', function() {
+			$this->add_body_class();
+		} );
 	}
 }

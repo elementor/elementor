@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\History;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
@@ -147,12 +148,13 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		$post_id = $res['parent_id'];
 		$autosave_post_id = $res['child_id'];
 
-		update_metadata( 'post', $autosave_post_id, '_elementor_edit_mode', true );
+		update_metadata( 'post', $autosave_post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
 		update_metadata( 'post', $autosave_post_id, '_elementor_meta_data', 'content' );
 
 		Revisions_Manager::restore_revision( $post_id, $autosave_post_id );
 
 		$this->assertTrue( $this->check_revisions( $post_id, $autosave_post_id ) );
+		$this->assertEquals( 'builder', get_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, true ) );
 	}
 
 	public function test_should_add_revision_support_for_all_post_types() {
@@ -170,32 +172,6 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		$this->assertFalse( apply_filters( 'wp_save_post_revision_check_for_changes', false ),
 			'the filter "wp_save_post_revision_check_for_changes" should return false' );
 	}
-
-	public function test_should_return_editor_settings() {
-		$parent_and_child_posts = $this->factory()->create_and_get_parent_and_child_posts();
-
-		$settings = Revisions_Manager::editor_settings( [], $parent_and_child_posts['parent_id'] );
-
-		$settings_keys = [ 'i18n' ];
-		$this->assertArrayHaveKeys( $settings_keys, $settings );
-
-		$settings_i18n_keys = [
-			'edit_draft',
-			'edit_published',
-			'no_revisions_1',
-			'no_revisions_2',
-			'current',
-			'restore',
-			'restore_auto_saved_data',
-			'restore_auto_saved_data_message',
-			'revision',
-			'revision_history',
-			'revisions_disabled_1',
-			'revisions_disabled_2',
-		];
-		$this->assertArrayHaveKeys( $settings_i18n_keys, $settings['i18n'] );
-	}
-
 
 	/**
 	 * @expectedException \Exception

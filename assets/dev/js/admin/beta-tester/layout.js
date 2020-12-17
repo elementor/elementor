@@ -26,7 +26,7 @@ export default class BetaTesterLayout extends elementorModules.common.views.moda
 
 	getLogoOptions() {
 		return {
-			title: elementorAdmin.translate( 'beta_tester_sign_up' ),
+			title: __( 'Sign Up', 'elementor' ),
 		};
 	}
 
@@ -37,7 +37,7 @@ export default class BetaTesterLayout extends elementorModules.common.views.moda
 
 		this.showContentView();
 
-		const doNotShowAgain = elementorAdmin.translate( 'do_not_show_again' );
+		const doNotShowAgain = __( 'Don\'t Show Again', 'elementor' );
 
 		this.modalHeader.currentView.ui.closeModal.after( jQuery( '<div>', { class: 'elementor-beta-tester-do-not-show-again' } ).text( doNotShowAgain ) );
 	}

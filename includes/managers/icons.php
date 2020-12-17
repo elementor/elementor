@@ -91,7 +91,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
-				'ver' => '5.12.0',
+				'ver' => '5.15.1',
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
 			],
@@ -103,7 +103,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
-				'ver' => '5.12.0',
+				'ver' => '5.15.1',
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
 			],
@@ -115,7 +115,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
-				'ver' => '5.12.0',
+				'ver' => '5.15.1',
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
@@ -416,10 +416,13 @@ class Icons_Manager {
 		}
 	}
 
-	public function add_admin_strings( $settings ) {
-		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) . '<br>' . __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
-		$settings['i18n']['confirm_fa_migration_admin_modal_head']  = __( 'Font Awesome 5 Migration', 'elementor' );
-		return $settings;
+	/**
+	 * @deprecated 3.1.0
+	 */
+	public function add_admin_strings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
+		return [];
 	}
 
 	/**

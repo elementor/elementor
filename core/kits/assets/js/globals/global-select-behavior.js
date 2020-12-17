@@ -1,10 +1,4 @@
 export default class GlobalControlSelect extends Marionette.Behavior {
-	ui() {
-		return {
-			controlContent: '.elementor-control-content',
-		};
-	}
-
 	getClassNames() {
 		return {
 			previewItemsContainer: 'e-global__preview-items-container',
@@ -27,19 +21,20 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerUiElements() {
+		const popoverWidget = this.popover.getElements( 'widget' );
+
+		this.ui.manageGlobalsButton = popoverWidget.find( `.${ this.getClassNames().manageButton }` );
+	}
+
+	registerPreviewElements() {
 		const popoverWidget = this.popover.getElements( 'widget' ),
 			classes = this.getClassNames();
 
-		this.ui.globalPreviewsContainer = popoverWidget.find( `.${ classes.previewItemsContainer }` );
 		this.ui.globalPreviewItems = popoverWidget.find( `.${ classes.previewItem }` );
-		this.ui.manageGlobalsButton = popoverWidget.find( `.${ classes.manageButton }` );
 	}
 
 	// This method exists because the UI elements are printed after controls are already rendered.
 	registerEvents() {
-		const classes = this.getClassNames();
-
-		this.ui.globalPreviewsContainer.on( 'click', `.${ classes.previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
 		this.ui.globalPopoverToggle.on( 'click', ( event ) => this.toggleGlobalPopover( event ) );
 		this.ui.manageGlobalsButton.on( 'click', () => {
 			const { route } = this.view.getGlobalMeta(),
@@ -54,6 +49,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		} );
 	}
 
+	addPreviewItemsClickListener() {
+		this.ui.$globalPreviewItemsContainer.on( 'click', `.${ this.getClassNames().previewItem }`, ( event ) => this.applySavedGlobalValue( event.currentTarget.dataset.globalId ) );
+	}
+
 	fetchGlobalValue() {
 		return $e.data.get( this.view.getGlobalKey() )
 			.then( ( globalData ) => {
@@ -66,6 +65,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.view.applySavedValue();
 
 				return globalData.data;
+			} ).catch( ( e ) => {
+				// TODO: Need to be replaced by "e instanceof NotFoundError"
+				if ( 404 !== e?.data?.status ) {
+					return Promise.reject( e );
+				}
+
+				this.disableGlobalValue( false );
 			} );
 	}
 
@@ -154,7 +160,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						if ( result.data.title ) {
 							text = result.data.title;
 						} else {
-							text = elementor.translate( 'default' );
+							text = __( 'Default', 'elementor' );
 						}
 
 						this.updateCurrentGlobalName( text );
@@ -165,10 +171,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				return;
 			} else if ( value ) {
 				// If there is a value and it is not a global, set the text to custom.
-				globalTooltipText = elementor.translate( 'custom' );
+				globalTooltipText = __( 'Custom', 'elementor' );
 			} else {
 				// If there is no value, set the text as default.
-				globalTooltipText = elementor.translate( 'default' );
+				globalTooltipText = __( 'Default', 'elementor' );
 			}
 
 			// If there is no value, remove the 'active' class from the Global Toggle button.
@@ -200,9 +206,25 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 		if ( this.popover.isVisible() ) {
 			this.popover.hide();
 		} else {
-			this.popover.show();
+			if ( this.ui.$globalPreviewItemsContainer ) {
+				// This element is not defined when the controls popover is first loaded.
+				this.ui.$globalPreviewItemsContainer.remove();
+			}
 
-			this.setCurrentActivePreviewItem();
+			this.view.getGlobalsList()
+				.then(
+					( globalsList ) => {
+						// We just deleted the existing list of global preview items, so we need to rebuild it
+						// with the updated list of globals, register the elements and re-add the on click listeners.
+						this.addGlobalsListToPopover( globalsList );
+
+						this.registerPreviewElements();
+						this.addPreviewItemsClickListener();
+
+						this.popover.show();
+
+						this.setCurrentActivePreviewItem();
+					} );
 		}
 	}
 
@@ -233,7 +255,9 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	printGlobalToggleButton() {
 		const $globalToggleButton = jQuery( '<div>', { class: this.getClassNames().popoverToggle + ' elementor-control-unit-1' } ),
-			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } );
+			$globalPopoverToggleIcon = jQuery( '<i>', { class: 'eicon-globe' } ),
+			$globalsLoadingSpinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
+				.html( '<i class="eicon-spinner eicon-animation-spin"></i></span>' );
 
 		$globalToggleButton.append( $globalPopoverToggleIcon );
 
@@ -241,6 +265,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		this.ui.globalPopoverToggle = $globalToggleButton;
 		this.ui.globalPopoverToggleIcon = $globalPopoverToggleIcon;
+		this.ui.$globalsLoadingSpinner = $globalsLoadingSpinner;
 
 		// Add tooltip to the Global Popover toggle button, displaying the current Global Name / 'Default' / 'Custom'.
 		this.ui.globalPopoverToggleIcon.tipsy( {
@@ -250,6 +275,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			offset: 7,
 			gravity: () => 's',
 		} );
+
+		$globalToggleButton.before( $globalsLoadingSpinner );
+
+		this.ui.$globalsLoadingSpinner.hide();
 	}
 
 	initGlobalPopover() {
@@ -264,29 +293,29 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				onOutsideClick: false,
 			},
 			position: {
-				my: `center top`,
-				at: `center bottom+5`,
-				of: this.ui.controlContent,
+				my: `right top`,
+				at: `right bottom+5`,
+				of: this.ui.globalPopoverToggle,
+				collision: 'fit flip',
 				autoRefresh: true,
 			},
 		} );
 
-		// Render the list of globals and append them to the Globals popover.
-		this.view.getGlobalsList()
-			.then(
-			( globalsList ) => {
-				this.addGlobalsListToPopover( globalsList );
-
-				this.registerUiElementsAndEvents();
-			} );
+		// Add Popover elements to the this.ui object and register click events.
+		this.registerUiElementsAndEvents();
 
 		this.createGlobalInfoTooltip();
 	}
 
 	addGlobalsListToPopover( globalsList ) {
-		const $globalsList = this.view.buildGlobalsList( globalsList );
+		const $globalPreviewItemsContainer = jQuery( '<div>', { class: 'e-global__preview-items-container' } );
 
-		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalsList );
+		this.view.buildGlobalsList( globalsList, $globalPreviewItemsContainer );
+
+		this.popover.getElements( 'widget' ).find( `.${ this.getClassNames().globalPopoverTitle }` ).after( $globalPreviewItemsContainer );
+
+		// The populated list is nested under the previews container element.
+		this.ui.$globalPreviewItemsContainer = $globalPreviewItemsContainer;
 	}
 
 	registerUiElementsAndEvents() {
@@ -307,8 +336,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
 			message: $confirmMessage,
 			strings: {
-				confirm: elementor.translate( 'create' ),
-				cancel: elementor.translate( 'cancel' ),
+				confirm: __( 'Create', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			hide: {
 				onBackgroundClick: false,
@@ -352,16 +381,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 		globalMeta.title = this.ui.globalNameInput.val();
 
-		this.createNewGlobal( globalMeta )
-			.then( ( result ) => {
-				const $globalPreview = this.view.createGlobalItemMarkup( result.data );
-
-				this.ui.globalPreviewsContainer.append( $globalPreview );
-			} );
+		this.createNewGlobal( globalMeta );
 	}
 
 	createNewGlobal( globalMeta ) {
-		return $e.run( globalMeta.commandName + '/create', {
+		this.ui.$globalsLoadingSpinner.show();
+
+		$e.run( globalMeta.commandName + '/create', {
 			container: this.view.container,
 			setting: globalMeta.key, // group control name
 			title: globalMeta.title,
@@ -369,7 +395,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			.then( ( result ) => {
 				this.applySavedGlobalValue( result.data.id );
 
-				return result;
+				this.ui.$globalsLoadingSpinner.hide();
 			} );
 	}
 
@@ -397,20 +423,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// The unset method is triggered from the controls via triggerMethod.
 	onUnsetGlobalValue() {
-		const globalMeta = this.view.getGlobalMeta();
-
-		$e.run( 'document/globals/disable', {
-			container: this.view.container,
-			settings: { [ globalMeta.key ]: '' },
-			options: { restore: true },
-		} )
-			.then( () => {
-				this.onValueTypeChange();
-
-				this.view.globalValue = null;
-
-				this.resetActivePreviewItem();
-			} );
+		this.disableGlobalValue();
 	}
 
 	onUnlinkGlobalDefault() {
@@ -454,5 +467,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			mouseenter: () => this.globalInfoTooltip.show(),
 			mouseleave: () => this.globalInfoTooltip.hide(),
 		} );
+	}
+
+	disableGlobalValue( restore = true ) {
+		const globalMeta = this.view.getGlobalMeta();
+
+		return $e.run( 'document/globals/disable', {
+			container: this.view.container,
+			settings: { [ globalMeta.key ]: '' },
+			options: { restore },
+		} )
+			.then( () => {
+				this.onValueTypeChange();
+
+				this.view.globalValue = null;
+
+				this.resetActivePreviewItem();
+			} );
 	}
 }

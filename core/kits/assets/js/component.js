@@ -1,8 +1,23 @@
 import * as hooks from './hooks';
 import * as commands from './commands/';
+import Repeater from './repeater';
 
 export default class extends $e.modules.ComponentBase {
 	pages = {};
+
+	__construct( args ) {
+		super.__construct( args );
+
+		elementor.on( 'panel:init', () => {
+			args.manager.addPanelPages();
+
+			args.manager.addPanelMenuItem();
+		} );
+
+		elementor.hooks.addFilter( 'panel/header/behaviors', args.manager.addHeaderBehavior );
+
+		elementor.addControlView( 'global-style-repeater', Repeater );
+	}
 
 	getNamespace() {
 		return 'panel/global';
@@ -11,57 +26,57 @@ export default class extends $e.modules.ComponentBase {
 	defaultTabs() {
 		return {
 			'global-colors': {
-				title: elementor.translate( 'global_colors' ),
+				title: __( 'Global Colors', 'elementor' ),
 				icon: 'eicon-global-colors',
 				helpUrl: 'https://go.elementor.com/global-colors',
 			},
 			'global-typography': {
-				title: elementor.translate( 'global_fonts' ),
+				title: __( 'Global Fonts', 'elementor' ),
 				icon: 'eicon-t-letter',
 				helpUrl: 'https://go.elementor.com/global-fonts',
 			},
 			'theme-style-typography': {
-				title: elementor.translate( 'typography' ),
+				title: __( 'Typography', 'elementor' ),
 				icon: 'eicon-typography-1',
 				helpUrl: 'https://go.elementor.com/global-theme-style-typography',
 			},
 			'theme-style-buttons': {
-				title: elementor.translate( 'buttons' ),
+				title: __( 'Buttons', 'elementor' ),
 				icon: 'eicon-button',
 				helpUrl: 'https://go.elementor.com/global-theme-style-buttons',
 			},
 			'theme-style-images': {
-				title: elementor.translate( 'images' ),
+				title: __( 'Images', 'elementor' ),
 				icon: 'eicon-image',
 				helpUrl: 'https://go.elementor.com/global-theme-style-images',
 			},
 			'theme-style-form-fields': {
-				title: elementor.translate( 'form_fields' ),
+				title: __( 'Form Fields', 'elementor' ),
 				icon: 'eicon-form-horizontal',
 				helpUrl: 'https://go.elementor.com/global-theme-style-form-fields',
 			},
 			'settings-site-identity': {
-				title: elementor.translate( 'site_identity' ),
+				title: __( 'Site Identity', 'elementor' ),
 				icon: 'eicon-site-identity',
 				helpUrl: 'https://go.elementor.com/global-site-identity',
 			},
 			'settings-background': {
-				title: elementor.translate( 'background' ),
+				title: __( 'Background', 'elementor' ),
 				icon: 'eicon-background',
 				helpUrl: 'https://go.elementor.com/global-background',
 			},
 			'settings-layout': {
-				title: elementor.translate( 'layout' ),
+				title: __( 'Layout', 'elementor' ),
 				icon: 'eicon-layout-settings',
 				helpUrl: 'https://go.elementor.com/global-layout',
 			},
 			'settings-lightbox': {
-				title: elementor.translate( 'lightbox' ),
+				title: __( 'Lightbox', 'elementor' ),
 				icon: 'eicon-lightbox-expand',
 				helpUrl: 'https://go.elementor.com/global-lightbox',
 			},
 			'settings-custom-css': {
-				title: elementor.translate( 'custom_css' ),
+				title: __( 'Custom CSS', 'elementor' ),
 				icon: 'eicon-custom-css',
 				helpUrl: 'https://go.elementor.com/global-custom-css',
 			},

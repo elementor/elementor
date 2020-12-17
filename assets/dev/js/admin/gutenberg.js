@@ -45,12 +45,19 @@
 
 					self.animateLoader();
 
-					var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
-					if ( ! documentTitle ) {
-						wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+					// A new post is initialized as an 'auto-draft'.
+					// if the post is not a new post it should not save it to avoid some saving conflict between elementor and gutenberg.
+					const isNewPost = 'auto-draft' === wp.data.select( 'core/editor' ).getCurrentPost().status;
+
+					if ( isNewPost ) {
+						var documentTitle = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' );
+						if ( ! documentTitle ) {
+							wp.data.dispatch( 'core/editor' ).editPost( { title: 'Elementor #' + $( '#post_ID' ).val() } );
+						}
+
+						wp.data.dispatch( 'core/editor' ).savePost();
 					}
 
-					wp.data.dispatch( 'core/editor' ).savePost();
 					self.redirectWhenSave();
 				} );
 			}
@@ -62,11 +69,11 @@
 			self.cache.$switchModeButton.on( 'click', function() {
 				if ( self.isElementorMode ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: elementorAdmin.translate( 'back_to_wordpress_editor_message' ),
-						headerMessage: elementorAdmin.translate( 'back_to_wordpress_editor_header' ),
+						message: __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
+						headerMessage: __( 'Back to WordPress Editor', 'elementor' ),
 						strings: {
-							confirm: elementorAdmin.translate( 'yes' ),
-							cancel: elementorAdmin.translate( 'cancel' ),
+							confirm: __( 'Continue', 'elementor' ),
+							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
 						onConfirm: function() {
