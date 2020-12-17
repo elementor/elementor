@@ -92,7 +92,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			'button' => [
 				'text' => __( 'Update Now', 'elementor' ),
 				'url' => $upgrade_link,
-				'class' => 'button-primary',
+				'class' => 'e-button e-button--cta',
 			],
 		];
 
@@ -100,13 +100,14 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function admin_notice_upgrade_is_running() {
+		$this->admin_notice_start_upgrade();
 		$upgrade_link = $this->get_continue_action_url();
 		$message = sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() );
 
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
 			'description' => $message,
@@ -115,7 +116,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			'button' => [
 				'text' => __( 'Taking a while?', 'elementor' ) . ' ' . __( 'Click here to run it now', 'elementor' ),
 				'url' => $upgrade_link,
-				'class' => 'button-primary',
+				'class' => 'e-button e-button--primary',
 			],
 		];
 
