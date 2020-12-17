@@ -1,0 +1,158 @@
+
+/*= Elementor Message
+---------------------------------------*/
+
+@media (min-width: 1200px) {
+	.elementor-message-action {
+		@include padding-end(10px);
+	}
+}
+
+
+@media (max-width: 600px) {
+	.e-notice {
+		.elementor-message-inner {
+			display: block;
+			text-align: center;
+
+			.elementor-message-icon,
+			.elementor-message-content,
+			.elementor-message-action {
+				display: block;
+			}
+
+			.elementor-message-action {
+				text-align: center;
+			}
+
+			.elementor-message-icon {
+				width: auto;
+			}
+
+			.elementor-message-content {
+				padding: 10px 0;
+			}
+		}
+	}
+}
+
+
+:root {--e-notice-bg: #fff;
+	--e-notice-border-color: #ccd0d4;
+	--e-notice-context-color: #{$editor-accent};
+	--e-notice-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	--e-notice-dismiss-color: #{$editor-dark};
+}
+
+.e-notice {
+	position: relative;
+	padding: 20px;
+
+	/* Based on WP: */
+	background: var(--e-notice-bg);
+	border: 1px solid var(--e-notice-border-color);
+	border-inline-start: 4px solid var(--e-notice-context-color);
+	box-shadow: var(--e-notice-box-shadow);
+	margin: 5px 15px 2px;
+	/* padding: 1px 12px; */
+
+/* Notice context colors modifiers
+ ----------------------------------------------------*/
+	@each $context, $color in $e-context-colors {
+		&--#{$context} {
+			--e-notice-context-color: var(--e-context-#{$context}-color);
+			--e-notice-context-tint: var(--e-context-#{$context}-tint-1);
+		}
+	}
+
+/* Notice extended style (with optional icon)
+ ----------------------------------------------------*/
+
+	&--extended {
+		--e-notice-icon-is-active: 1;
+	}
+
+/* Notice dismissible modifier
+ ----------------------------------------------------*/
+	&--dismissible {
+		padding-right: 38px;
+	}
+
+/* Notice dismiss button
+ ----------------------------------------------------*/
+	&__dismiss {
+		color: var(--e-notice-dismiss-color);
+		width: 20px;
+		height: 20px;
+		font-size: pxToRem(13px);
+		background: none;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 1px;
+		border: none;
+		margin: 0;
+		padding: 9px;
+		cursor: pointer;
+		font-family: eicons;
+
+		&:before {
+			content: "\e87f";
+			speak: none;
+			text-align: center;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+
+		&:hover:before,
+		&:active:before,
+		&:focus:before {
+			--e-notice-dismiss-color: #{$editor-danger};
+			font-weight: bold;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: var(--e-focus-shadow);
+		}
+	}
+
+	.elementor-message-inner {
+		display: flex;
+		align-items: center;
+	}
+
+	.elementor-message-icon {
+		font-size: 20px;
+	}
+
+	.elementor-message-content {
+		padding: 0 20px;
+	}
+
+	p {
+		padding: 0;
+		margin: 0;
+	}
+
+	h3 {
+		margin: 0 0 5px;
+	}
+
+	.elementor-message-action {
+		display: flex;
+		@include margin-start(auto);
+
+		.elementor-link {
+			padding-top: 5px;
+		}
+	}
+
+	.elementor-message-actions {
+		margin-top: 10px;
+
+		.button.button-primary {
+			@include margin-end(5px);
+		}
+	}
+}
