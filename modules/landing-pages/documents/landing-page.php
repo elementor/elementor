@@ -3,6 +3,7 @@ namespace Elementor\Modules\LandingPages\Documents;
 
 use Elementor\Core\DocumentTypes\Page;
 use Elementor\Modules\LandingPages\Module;
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -54,14 +55,14 @@ class Landing_Page extends Page {
 	 * @access public
 	 */
 	public function save_template_type() {
-		$page_settings = $this->settings_to_be_saved;
+		$page_data = $this->data_to_be_saved['settings'];
 
-		if ( ! empty( $page_settings ) && isset( $page_settings['page_type'] ) ) {
+		if ( isset( $page_data['settings']['page_type'] ) ) {
 			$post_id = $this->get_id();
 			$page_type_wp_page = parent::get_name();
 
-			//If 'Page' was selected by the user, since the document is currently a Landing Page - change it to a regular page.
-			if ( $page_type_wp_page === $page_settings['page_type'] ) {
+			// If 'Page' was selected by the user, since the document is currently a Landing Page - change it to a regular page.
+			if ( $page_type_wp_page === $page_data['settings']['page_type'] ) {
 				// Remove the association to the library taxonomy as a 'landing-page'.
 				wp_remove_object_terms( $post_id, Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
 
@@ -70,7 +71,13 @@ class Landing_Page extends Page {
 			}
 		}
 
-		// If the selected page type is 'Landing Page', make sure it is saved as a Landing Page.
+		/**
+		 * If the selected page is a Landing Page.
+		 */
+		// Make sure it is saved as a Landing Page in the Elementor Library Taxonomy.
+		wp_set_object_terms( $this->get_id(), Landing_Pages_Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
+
+		// Make sure it is saved as a Landing Page Elementor Template Type Meta.
 		return $this->update_main_meta( self::TYPE_META_KEY, $this->get_name() );
 	}
 

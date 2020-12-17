@@ -1,18 +1,17 @@
 export default class AdminMenuHandler extends elementorModules.ViewModule {
 	getDefaultElements() {
-		const settings = this.getSettings(),
-			elements = {
-				$adminPageMenuLink: jQuery( `a[href="${ settings.slug }"]` ),
-			};
+		const settings = this.getSettings();
 
-		return elements;
+		return {
+			$adminPageMenuLink: jQuery( `a[href="${ settings.slug }"]` ),
+		};
 	}
 
 	// This method highlights the currently visited submenu item for the slug provided as an argument to this handler.
-	// This method accepts a jQuery instance of a custom submenu item to highlight. If provided, this method will
-	// highlight the provided item.
+	// This method also accepts a jQuery instance of a custom submenu item to highlight. If provided, the provided
+	// item will be the one highlighted.
 	highlightSubMenuItem( $element = null ) {
-		const $submenuItem = $element ? $element : this.elements.$adminPageMenuLink;
+		const $submenuItem = $element || this.elements.$adminPageMenuLink;
 
 		$submenuItem.addClass( 'current' );
 
@@ -20,10 +19,23 @@ export default class AdminMenuHandler extends elementorModules.ViewModule {
 		$submenuItem.parent().addClass( 'current' );
 	}
 
-	onInit() {
-		const settings = this.getSettings();
+	highlightTopLevelMenuItem( $elementToHighlight, $elementToRemove = null ) {
+		const activeClasses = 'wp-has-current-submenu wp-menu-open current';
 
+		$elementToHighlight
+			.parent()
+			.addClass( activeClasses )
+			.removeClass( 'wp-not-current-submenu' );
+
+		if ( $elementToRemove ) {
+			$elementToRemove.removeClass( activeClasses );
+		}
+	}
+
+	onInit() {
 		super.onInit();
+
+		const settings = this.getSettings();
 
 		if ( window.location.href.includes( settings.slug ) ) {
 			this.highlightSubMenuItem();
