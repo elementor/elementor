@@ -11,9 +11,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Elementor_Dev_Notice extends Base_Notice {
 	/**
-	 * Notice ID
+	 * Notice ID.
 	 */
 	const ID = 'elementor_dev_promote';
+
+	/**
+	 * Plugin slug to install.
+	 */
+	const PLUGIN_SLUG = 'elementor-beta';
+
+	/**
+	 * Plugin name.
+	 */
+	const PLUGIN_NAME = 'elementor-beta/elementor-beta.php';
 
 	/**
 	 * Holds the plugins names.
@@ -72,8 +82,8 @@ class Elementor_Dev_Notice extends Base_Notice {
 			'button' => [
 				'text' => __( 'Install & Activate', 'elementor' ),
 				'url' => wp_nonce_url(
-					self_admin_url( 'update.php?action=install-plugin&plugin=elementor-dev' ),
-					'install-plugin_elementor-dev'
+					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
+					'install-plugin_' . static::PLUGIN_SLUG
 				),
 				'class' => 'button',
 			],
@@ -101,7 +111,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 * @return bool
 	 */
 	private function is_elementor_dev_installed() {
-		return in_array( 'elementor-dev/elementor-dev.php', $this->get_plugins(), true );
+		return in_array( static::PLUGIN_NAME, $this->get_plugins(), true );
 	}
 
 	/**
