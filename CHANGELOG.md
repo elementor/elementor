@@ -44,3 +44,5 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 * Fix: Autoplay option doesn't work in mobile devices when YouTube source is defined in Video widget
 * Fix: YouTube End Time doesn't work when Loop option is active in Video widget
 * Fix: Incompatible variable names in Base Swiper class and Elementor Pro carousels
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-1-planned-deprecations/)
+
