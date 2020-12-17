@@ -14,7 +14,7 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 * New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
 * New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
 * Experiment: Landing Pages - Create beautiful landing pages in a streamlined workflow
-* Experiment: Accessibility Improvements - Make Elementor widgets more accessible (may include markup changes)
+* Experiment: Accessibility Improvements - Make Elementor widgets more accessible (may include markup changes) ([13191](https://github.com/elementor/elementor/issues/13191))
 * Tweak: Improved performance by adding conditional load of JS and CSS assets in frontend ([#8572](https://github.com/elementor/elementor/issues/8572))
 * Tweak: Improved performance by adding conditional load of Swiper components ([#8572](https://github.com/elementor/elementor/issues/8572))
 * Tweak: Improved Tabs widget accessibility ([#11779](https://github.com/elementor/elementor/issues/11779), [#11561](https://github.com/elementor/elementor/issues/11561))
