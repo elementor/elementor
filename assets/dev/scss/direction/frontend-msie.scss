@@ -58,16 +58,4 @@ $direction: ltr;
 			@include product_loop(-mobile);
 		}
 	}
-
-	// TODO: This needs to be removed after pro update.
-	.elementor-element.elementor-wc-products ul.products, .elementor-posts {
-		margin-right: -10px;
-		margin-left: -10px;
-
-		li.product, .elementor-post {
-			padding-right: 10px;
-			padding-left: 10px;
-			margin-bottom: 20px;
-		}
-	}
 }

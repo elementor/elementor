@@ -713,17 +713,6 @@ class Admin extends App {
 		$settings = [
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
-			'i18n' => [
-				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
-				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
-				'yes' => __( 'Continue', 'elementor' ),
-				'cancel' => __( 'Cancel', 'elementor' ),
-				'new_template' => __( 'New Template', 'elementor' ),
-				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
-				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
-				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
-				'do_not_show_again' => __( 'Don\'t Show Again', 'elementor' ),
-			],
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
 			],

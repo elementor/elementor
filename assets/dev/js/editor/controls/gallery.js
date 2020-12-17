@@ -38,7 +38,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		$galleryThumbnails.empty();
 
-		this.ui.status.text( elementor.translate( hasImages ? 'gallery_images_selected' : 'gallery_no_images_selected', [ imagesCount ] ) );
+		this.ui.status.text( hasImages ? sprintf( '%s Images Selected', imagesCount ) : __( 'No Images Selected', 'elementor' ) );
 
 		if ( ! hasImages ) {
 			return;
@@ -75,7 +75,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 			multiple: true,
 			state: frameStates[ action ],
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 		};
 
@@ -158,11 +158,11 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.getRemoveDialog = function() {
 			if ( ! removeDialog ) {
 				removeDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
-					message: elementor.translate( 'dialog_confirm_gallery_delete' ),
-					headerMessage: elementor.translate( 'delete_gallery' ),
+					message: __( 'Are you sure you want to reset this gallery?', 'elementor' ),
+					headerMessage: __( 'Reset Gallery', 'elementor' ),
 					strings: {
-						confirm: elementor.translate( 'delete' ),
-						cancel: elementor.translate( 'cancel' ),
+						confirm: __( 'Delete', 'elementor' ),
+						cancel: __( 'Cancel', 'elementor' ),
 					},
 					defaultOption: 'confirm',
 					onConfirm: this.resetGallery.bind( this ),
