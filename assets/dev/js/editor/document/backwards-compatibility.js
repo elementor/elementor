@@ -41,7 +41,7 @@ export default class BackwardsCompatibility {
 
 		elementor.documents.getCurrent().history.startItem( {
 				type: 'add',
-				title: elementor.translate( 'template' ),
+				title: __( 'Template', 'elementor' ),
 				subTitle: model.get( 'title' ),
 				elementType: 'template',
 		} );

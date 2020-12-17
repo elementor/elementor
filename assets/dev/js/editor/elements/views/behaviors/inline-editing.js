@@ -89,7 +89,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			mode: mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			cleanAttrs: [ 'id', 'class', 'name' ],
-			placeholder: elementor.translate( 'type_here' ) + '...',
+			placeholder: __( 'Type Here', 'elementor' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {

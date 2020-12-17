@@ -14,7 +14,7 @@ export default class extends BaseRegion {
 
 		this.indicators = {
 			customPosition: {
-				title: elementor.translate( 'custom_positioning' ),
+				title: __( 'Custom Positioning', 'elementor' ),
 				icon: 'cursor-move',
 				settingKeys: [ '_position', '_element_width' ],
 				section: '_section_position',

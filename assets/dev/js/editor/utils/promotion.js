@@ -22,7 +22,7 @@ export default class extends elementorModules.Module {
 
 		this.dialog.addButton( {
 			name: 'action',
-			text: elementor.translate( 'see_it_in_action' ),
+			text: __( 'See it in Action', 'elementor' ),
 			callback: () => {
 				open( this.actionURL, '_blank' );
 			},

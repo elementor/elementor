@@ -41,33 +41,14 @@ class Module extends BaseModule {
 	 *
 	 * @since 1.7.0
 	 * @access public
-	 *
-	 * @param array $settings Localized settings.
+	 * @deprecated 3.1.0
 	 *
 	 * @return array Localized settings.
 	 */
-	public function localize_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'history' => __( 'History', 'elementor' ),
-				'template' => __( 'Template', 'elementor' ),
-				'added' => __( 'Added', 'elementor' ),
-				'removed' => __( 'Removed', 'elementor' ),
-				'edited' => __( 'Edited', 'elementor' ),
-				'moved' => __( 'Moved', 'elementor' ),
-				'pasted' => __( 'Pasted', 'elementor' ),
-				'editing_started' => __( 'Editing Started', 'elementor' ),
-				'style_pasted' => __( 'Style Pasted', 'elementor' ),
-				'style_reset' => __( 'Style Reset', 'elementor' ),
-				'settings_reset' => __( 'Settings Reset', 'elementor' ),
-				'enabled' => __( 'Enabled', 'elementor' ),
-				'disabled' => __( 'Disabled', 'elementor' ),
-				'all_content' => __( 'All Content', 'elementor' ),
-				'elements' => __( 'Elements', 'elementor' ),
-			],
-		] );
+	public function localize_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return $settings;
+		return [];
 	}
 
 	/**
@@ -88,8 +69,6 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
-
 		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 	}
 }
