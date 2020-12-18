@@ -554,6 +554,14 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+				Group_Control_Text_Shadow::get_type(),
+				[
+						'name' => 'title_shadow',
+						'selector' => '{{WRAPPER}} .elementor-icon-box-title',
+				]
+		);
+
 		$this->add_control(
 			'heading_description',
 			[
@@ -587,6 +595,14 @@ class Widget_Icon_Box extends Widget_Base {
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
 			]
+		);
+
+		$this->add_group_control(
+				Group_Control_Text_Shadow::get_type(),
+				[
+						'name' => 'description_shadow',
+						'selector' => '{{WRAPPER}} .elementor-icon-box-description',
+				]
 		);
 
 		$this->end_controls_section();
