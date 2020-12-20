@@ -461,48 +461,33 @@ class Admin_Notices extends Module {
 	 * @TODO: Rewrite this method markup and use it for every admin notice
 	 */
 	public function print_admin_notice( array $options ) {
+		$button_default_options = Button::get_default_options();
 		$default_options = [
 			'title' => '',
 			'description' => '',
 			'classes' => [ 'e-notice' ],
-			'context' => '',
+			'type' => '',
 			'dismissible' => true,
-			'button' => [
-				'text' => '',
-				'url' => '',
-				'icon' => '',
-				'color' => '',
-				'variant' => '',
-				'class' => 'e-button',
-				'new_tab' => false,
-				'context' => '',
-			],
-			'button_secondary' => [
-				'text' => '',
-				'url' => '',
-				'icon' => '',
-				'color' => '',
-				'variant' => '',
-				'class' => 'e-button',
-				'new_tab' => false,
-				'context' => '',
-			]
-
+			'icon' => '',
+			'button' => $button_default_options,
+			'button_secondary' => $button_default_options,
 		];
 
 		$notice_classes = $default_options['classes'];
+		$dismiss_button = '';
 
 		if ( isset( $options['type'] ) ) {
-			$notice_classes[] = 'e-notice--' . $options['type'];
+			$notice_classes[] = 'e-notice--' . sanitize_html_class( $options['type'], 'primary' );
+		}
+
+		if ( isset( $options['dismissible'] ) ) {
+			$notice_classes[] = 'e-notice--dismissible';
+			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="Dismiss" tabindex="0"></i>';
 		}
 
 		$notice_classes = implode( ' ', $notice_classes );
 
 		$options = array_replace_recursive( $default_options, $options );
-
-		if ( $options['dismissible'] ) {
-			$notice_classes .= ' e-notice--dismissible';
-		}
 
 		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
 
@@ -516,33 +501,35 @@ class Admin_Notices extends Module {
 
 		if ( isset( $options['button']['icon_classes'] ) ) {
 			// If there should be an icon next to the button text, add it here.
-			$options['button']['text'] = '<i class="' . $options['button']['icon_classes'] . '" aria-hidden="true"></i> ' . $options['button']['text'];
+			$options['button']['text'] = '<i class="' . sanitize_html_class(  $options['button']['icon_classes'] ) . '" aria-hidden="true"></i> ' . $options['button']['text'];
 		}
-		?>
+		?>/
 		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
-			<div class="e-logo-wrapper">
-				<i class="eicon-elementor" aria-hidden="true"></i>
+			<?php echo $dismiss_button; ?>
+			<div class="e-notice__aside">
+				<div class="e-logo-wrapper">
+					<i class="eicon-elementor" aria-hidden="true"></i>
+				</div>
 			</div>
-
-			<div class="elementor-message-content">
-			<?php if ( $options['title'] ) { ?>
-				<strong><?php echo $options['title']; ?></strong>
+			<div class="e-notice__content">
+			<?php if ( ! empty( $options['title'] ) ) { ?>
+				<h3><?php echo $options['title']; ?></h3>
 			<?php } ?>
-			<?php if ( $options['description'] ) { ?>
+
+			<?php if ( ! empty( $options['description'] ) ) { ?>
 				<p><?php echo $options['description']; ?></p>
 			<?php } ?>
-			</div>
 
-		<?php if ( $options['button']['text'] ) { ?>
-			<div class="elementor-message-action">
-				<a class="<?php echo $options['button']['class']; ?>"
-				   href="<?php echo esc_url( $options['button']['url'] ); ?>"
-					<?php echo $open_new_tab; ?>><?php echo $options['button']['text']; ?></a>
+			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
+				<div class="e-notice__actions">
+					<?php foreach ( [ $options['button'], $options['button_secondary'] ] as $button_settings ) {
+						Button::print_button( $button_settings );
+					} ?>
+				</div>
+			<?php } ?>
 			</div>
-		<?php } ?>
 		</div>
-
-		<?php
+	<?php
 	}
 
 	public function admin_notices() {

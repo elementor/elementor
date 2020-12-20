@@ -40,21 +40,22 @@
 :root {--e-notice-bg: #fff;
 	--e-notice-border-color: #ccd0d4;
 	--e-notice-context-color: #{$editor-accent};
+	--e-notice-context-tint: var(--e-context-cta-tint-1);
 	--e-notice-box-shadow: 0 1px 1px rgba(0,0,0,.04);
 	--e-notice-dismiss-color: #{$editor-dark};
 }
 
 .e-notice {
 	position: relative;
-	padding: 20px;
+	display: flex;
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
-	/* Based on WP: */
+	// Based on WP:
 	background: var(--e-notice-bg);
 	border: 1px solid var(--e-notice-border-color);
 	border-inline-start: 4px solid var(--e-notice-context-color);
 	box-shadow: var(--e-notice-box-shadow);
-	margin: 5px 15px 2px;
-	/* padding: 1px 12px; */
+	margin: 5px 10px 2px;
 
 /* Notice context colors modifiers
  ----------------------------------------------------*/
@@ -69,7 +70,7 @@
  ----------------------------------------------------*/
 
 	&--extended {
-		--e-notice-icon-is-active: 1;
+		--e-notice-is-extended: 1;
 	}
 
 /* Notice dismissible modifier
@@ -78,13 +79,42 @@
 		padding-right: 38px;
 	}
 
-/* Notice dismiss button
+/* Layout
+ ----------------------------------------------------*/
+	&__aside {
+		font-size: 20px;
+		overflow: hidden;
+		background-color: var(--e-notice-context-tint);
+		max-width: calc(var(--e-notice-is-extended, 1) * 50px);
+		text-align: center;
+		padding: 15px;
+		flex-grow: 0;
+		flex-shrink: 0;
+
+		.e-logo-wrapper {
+			font-size: pxToRem(9px);
+		}
+	}
+
+	&__content {
+		padding: 20px 15px;
+	}
+
+	&__actions {
+		display: flex;
+		> * + * {
+			margin-inline-start: 8px;
+		}
+	}
+
+/* Dismiss button
  ----------------------------------------------------*/
 	&__dismiss {
-		color: var(--e-notice-dismiss-color);
 		width: 20px;
 		height: 20px;
+		line-height: 20px;
 		font-size: pxToRem(13px);
+		text-align: center;
 		background: none;
 		display: block;
 		position: absolute;
@@ -94,10 +124,15 @@
 		margin: 0;
 		padding: 9px;
 		cursor: pointer;
-		font-family: eicons;
+		font-style: normal;
 
 		&:before {
+			font-family: eicons;
+			display: inline-block;
 			content: "\e87f";
+			color: var(--e-notice-dismiss-color);
+			width: 20px;
+			border-radius: 20px;
 			speak: none;
 			text-align: center;
 			-webkit-font-smoothing: antialiased;
@@ -107,29 +142,21 @@
 		&:hover:before,
 		&:active:before,
 		&:focus:before {
-			--e-notice-dismiss-color: #{$editor-danger};
 			font-weight: bold;
+		}
+
+		&:focus:before {
+			color: #fff;
+			background: var(--e-notice-dismiss-color);
+			outline: none;
 		}
 
 		&:focus {
 			outline: none;
-			box-shadow: var(--e-focus-shadow);
 		}
 	}
 
-	.elementor-message-inner {
-		display: flex;
-		align-items: center;
-	}
-
-	.elementor-message-icon {
-		font-size: 20px;
-	}
-
-	.elementor-message-content {
-		padding: 0 20px;
-	}
-
+/* ----------------------------------------------------*/
 	p {
 		padding: 0;
 		margin: 0;
