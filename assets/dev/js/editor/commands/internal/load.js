@@ -44,12 +44,12 @@ export class Load extends CommandInternalBase {
 		if ( elementor.loaded ) {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
-			$e.data.get( 'globals/index' ).then( () =>
+			return $e.data.get( 'globals/index' ).then( () =>
 				$e.internal( 'editor/documents/attach-preview' )
 			);
 		}
 
-		return document;
+		return Promise.resolve( document );
 	}
 }
 

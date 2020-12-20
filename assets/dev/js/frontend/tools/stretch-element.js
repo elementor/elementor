@@ -30,7 +30,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.reset();
 
 		var $element = this.elements.$element,
-			containerWidth = $container.outerWidth(),
+			containerWidth = $container.innerWidth(),
 			elementOffset = $element.offset().left,
 			isFixed = 'fixed' === $element.css( 'position' ),
 			correctOffset = isFixed ? 0 : elementOffset;
