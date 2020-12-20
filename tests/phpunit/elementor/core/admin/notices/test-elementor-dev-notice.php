@@ -141,6 +141,24 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 		delete_option( 'elementor_beta' );
 	}
 
+	public function test_should_print__should_not_print_when_user_in_install_page() {
+		// Arrange
+		$this->act_as_admin_or_network_admin();
+
+		set_current_screen( 'update' );
+
+		update_option( 'elementor_beta', 'yes' );
+		$notice = $this->mock_notice();
+
+		// Act
+		$result = $notice->should_print();
+
+		// Assert
+		$this->assertFalse( $result );
+
+		delete_option( 'elementor_beta' );
+	}
+
 	public function test_should_print__should_not_print_when_there_nothing_that_trigger_promotion() {
 		// Arrange
 		$this->act_as_admin_or_network_admin();
