@@ -528,10 +528,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_document_controls();
 		/**
 		 * Register document controls.

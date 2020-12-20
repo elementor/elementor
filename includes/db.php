@@ -135,6 +135,8 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
 		$meta = get_post_meta( $post_id, $key, true );
 
 		if ( is_string( $meta ) && ! empty( $meta ) ) {
