@@ -55,7 +55,8 @@
 	border: 1px solid var(--e-notice-border-color);
 	border-inline-start: 4px solid var(--e-notice-context-color);
 	box-shadow: var(--e-notice-box-shadow);
-	margin: 5px 10px 2px;
+	margin: 5px 20px 5px 2px;
+
 
 /* Notice context colors modifiers
  ----------------------------------------------------*/
@@ -158,28 +159,22 @@
 
 /* ----------------------------------------------------*/
 	p {
+		line-height: 1.2;
 		padding: 0;
 		margin: 0;
-	}
 
-	h3 {
-		margin: 0 0 5px;
-	}
-
-	.elementor-message-action {
-		display: flex;
-		@include margin-start(auto);
-
-		.elementor-link {
-			padding-top: 5px;
+		+ .e-notice__actions {
+			margin-top: pxToRem(16px);
 		}
 	}
 
-	.elementor-message-actions {
-		margin-top: 10px;
+	h3 {
+		font-size: pxToRem(17px);
+		line-height: 1.2;
+		margin: 0;
 
-		.button.button-primary {
-			@include margin-end(5px);
+		+ p {
+			margin-top: 8px;
 		}
 	}
 }
