@@ -420,7 +420,7 @@ class Controls_Manager {
 	 * External developers can register new controls by hooking to the
 	 * `elementor/controls/controls_registered` action.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access private
 	 */
 	private function register_controls() {

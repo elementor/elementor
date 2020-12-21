@@ -145,7 +145,8 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						title: elementor.translate( 'edit_element', [ this.options.model.getTitle() ] ),
+						/* translators: %s: Element Name. */
+						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
 						callback: () => $e.run( 'panel/editor/open', {
 								model: this.options.model, // Todo: remove on merge router
 								view: this, // Todo: remove on merge router
@@ -154,7 +155,7 @@ BaseElementView = BaseContainer.extend( {
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
-						title: elementor.translate( 'duplicate' ),
+						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
 						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
 					},
@@ -164,12 +165,12 @@ BaseElementView = BaseContainer.extend( {
 				actions: [
 					{
 						name: 'copy',
-						title: elementor.translate( 'copy' ),
+						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
 						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
 					}, {
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
 						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
@@ -177,13 +178,13 @@ BaseElementView = BaseContainer.extend( {
 						} ),
 					}, {
 						name: 'pasteStyle',
-						title: elementor.translate( 'paste_style' ),
+						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
 					}, {
 						name: 'resetStyle',
-						title: elementor.translate( 'reset_style' ),
+						title: __( 'Reset Style', 'elementor' ),
 						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
@@ -193,7 +194,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'delete',
 						icon: 'eicon-trash',
-						title: elementor.translate( 'delete' ),
+						title: __( 'Delete', 'elementor' ),
 						shortcut: '⌦',
 						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
 					},

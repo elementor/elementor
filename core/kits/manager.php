@@ -114,32 +114,6 @@ class Manager {
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
-			'i18n' => [
-				'close' => __( 'Close', 'elementor' ),
-				'back' => __( 'Back', 'elementor' ),
-				'site_identity' => __( 'Site Identity', 'elementor' ),
-				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout' => __( 'Layout', 'elementor' ),
-				'theme_style' => __( 'Theme Style', 'elementor' ),
-				'add_color' => __( 'Add Color', 'elementor' ),
-				'add_style' => __( 'Add Style', 'elementor' ),
-				'new_item' => __( 'New Item', 'elementor' ),
-				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_fonts' => __( 'Global Fonts', 'elementor' ),
-				'global_colors' => __( 'Global Colors', 'elementor' ),
-				'invalid' => __( 'Invalid', 'elementor' ),
-				'color_cannot_be_deleted' => __( 'System Color can\'t be deleted', 'elementor' ),
-				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
-				'design_system' => __( 'Design System', 'elementor' ),
-				'buttons' => __( 'Buttons', 'elementor' ),
-				'images' => __( 'Images', 'elementor' ),
-				'form_fields' => __( 'Form Fields', 'elementor' ),
-				'background' => __( 'Background', 'elementor' ),
-				'custom_css' => __( 'Custom CSS', 'elementor' ),
-				'additional_settings' => __( 'Additional Settings', 'elementor' ),
-				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-			],
 		] );
 
 		return $settings;

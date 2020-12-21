@@ -100,10 +100,10 @@ class Element_Column extends Element_Base {
 	 *
 	 * Used to add new controls to the column element.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		// Section Layout.
 		$this->start_controls_section(
 			'layout',
@@ -151,10 +151,10 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-		$main_selector_element = $is_legacy_mode_active ? 'column' : 'widget';
-		$widget_wrap_child = $is_legacy_mode_active ? ' > .elementor-widget-wrap' : '';
-		$column_wrap_child = $is_legacy_mode_active ? ' > .elementor-column-wrap' : '';
+		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$main_selector_element = $is_dome_optimization_active ? 'widget' : 'column';
+		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
+		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap';
 
 		$this->add_responsive_control(
 			'content_position',
@@ -205,7 +205,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$space_between_widgets_selector = $is_legacy_mode_active ? '> .elementor-column-wrap ' : '';
+		$space_between_widgets_selector = $is_dome_optimization_active ? '' : '> .elementor-column-wrap ';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
@@ -909,13 +909,13 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-		$wrapper_element = $is_legacy_mode_active ? 'column' : 'widget';
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
 
 		?>
 		<div class="elementor-<?php echo $wrapper_element; ?>-wrap">
 			<div class="elementor-background-overlay"></div>
-			<?php if ( $is_legacy_mode_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
 			<?php } ?>
 		</div>
@@ -936,10 +936,10 @@ class Element_Column extends Element_Base {
 		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
 								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-		$wrapper_attribute_string = $is_legacy_mode_active ? '_inner_wrapper' : '_widget_wrapper';
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
 
-		$column_wrap_classes = $is_legacy_mode_active ? [ 'elementor-column-wrap' ] : [ 'elementor-widget-wrap' ];
+		$column_wrap_classes = $is_dom_optimization_active ? [ 'elementor-widget-wrap' ] : [ 'elementor-column-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
@@ -950,7 +950,7 @@ class Element_Column extends Element_Base {
 				'class' => $column_wrap_classes,
 			],
 			'_widget_wrapper' => [
-				'class' => $is_legacy_mode_active ? 'elementor-widget-wrap' : $column_wrap_classes,
+				'class' => $is_dom_optimization_active ? $column_wrap_classes : 'elementor-widget-wrap',
 			],
 			'_background_overlay' => [
 				'class' => [ 'elementor-background-overlay' ],
@@ -962,7 +962,7 @@ class Element_Column extends Element_Base {
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
 		<?php endif; ?>
-		<?php if ( $is_legacy_mode_active ) : ?>
+		<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php endif; ?>
 		<?php
@@ -977,7 +977,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) { ?>
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				</div>
 		<?php } ?>
 			</div>
@@ -993,7 +993,7 @@ class Element_Column extends Element_Base {
 	 * @since 1.3.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
+	protected function add_render_attributes() {
 
 		$is_inner = $this->get_data( 'isInner' );
 
@@ -1009,7 +1009,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		parent::_add_render_attributes();
+		parent::add_render_attributes();
 	}
 
 	/**

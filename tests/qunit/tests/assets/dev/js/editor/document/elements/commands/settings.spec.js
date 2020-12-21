@@ -128,7 +128,7 @@ export const Settings = () => {
 					const historyItem = HistoryHelper.getFirstItem().attributes;
 
 					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'elements' );
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'change', 'Elements' );
 
 					// Undo.
 					HistoryHelper.undoValidate( assert, historyItem );

@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
-use Elementor\DB;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -177,7 +176,7 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	public function after_document_save( $document ) {
-		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status || DB::STATUS_PRIVATE === $document->get_post()->post_status ) {
+		if ( Document::STATUS_PUBLISH === $document->get_post()->post_status || Document::STATUS_PRIVATE === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
 

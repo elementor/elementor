@@ -140,6 +140,8 @@ class App extends BaseApp {
 			true
 		);
 
+		wp_set_script_translations( 'elementor-common', 'elementor' );
+
 		$this->print_config();
 
 		// Used for external plugins.

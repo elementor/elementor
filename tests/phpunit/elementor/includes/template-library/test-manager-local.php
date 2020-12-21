@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
@@ -140,5 +141,77 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		);
 
 		$this->assertEquals( $ret, [ 'content' => [] ] );
+	}
+
+	public function test_get_data__document_without_data() {
+		// Arrange
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+
+		Plugin::$instance->editor->set_edit_mode( false );
+
+		$post = $this->factory()->create_and_get_custom_post( [
+			'meta_input' => [
+				'_elementor_data' => [],
+			],
+		] );
+
+		// Act
+		$result = Plugin::$instance->templates_manager->get_source( 'local' )->get_data( [
+			'template_id' => $post->ID,
+		] );
+
+		// Assert
+		$this->assertArrayHasKey( 'content', $result );
+		$this->assertTrue( is_array( $result['content'] ) );
+		$this->assertEmpty( $result['content'] );
+
+		Plugin::$instance->editor->set_edit_mode( $is_edit_mode );
+	}
+
+	public function test_get_data() {
+		// Arrange
+		$post = $this->factory()->create_and_get_custom_post( [
+			'meta_input' => [
+				'_elementor_data' => [
+					[
+						'id' => 'test',
+						'elType' => 'section',
+					],
+				],
+			],
+		] );
+
+		// Act
+		$result = Plugin::$instance->templates_manager->get_source( 'local' )->get_data( [
+			'template_id' => $post->ID,
+		] );
+
+		// Assert
+		$this->assertArrayHasKey( 'content', $result );
+		$this->assertArrayHaveKeys( [ 'id', 'elType' ], $result['content'][0] );
+		$this->assertArrayNotHaveKeys(
+			[ 'settings', 'elements', 'isInner' ],
+			$result['content'][0],
+			'should NOT have those keys if display is not exists in the args'
+		);
+		$this->assertEquals( 'section', $result['content'][0]['elType'] );
+		$this->assertNotEquals( 'test', $result['content'][0]['id'], 'The id should be regenerate in get_data method' );
+
+		// Act
+		$result = Plugin::$instance->templates_manager->get_source( 'local' )->get_data( [
+			'template_id' => $post->ID,
+			'display' => true,
+		] );
+
+		// Assert
+		$this->assertArrayHasKey( 'content', $result );
+		$this->assertArrayHaveKeys( [ 'id', 'elType' ], $result['content'][0] );
+		$this->assertArrayHaveKeys(
+			[ 'settings', 'elements', 'isInner' ],
+			$result['content'][0],
+			'SHOULD have those keys if display is exists in the args'
+		);
+		$this->assertEquals( 'section', $result['content'][0]['elType'] );
+		$this->assertNotEquals( 'test', $result['content'][0]['id'], 'The id should be regenerate in get_data method' );
 	}
 }

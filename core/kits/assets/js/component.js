@@ -1,8 +1,23 @@
 import * as hooks from './hooks';
 import * as commands from './commands/';
+import Repeater from './repeater';
 
 export default class extends $e.modules.ComponentBase {
 	pages = {};
+
+	__construct( args ) {
+		super.__construct( args );
+
+		elementor.on( 'panel:init', () => {
+			args.manager.addPanelPages();
+
+			args.manager.addPanelMenuItem();
+		} );
+
+		elementor.hooks.addFilter( 'panel/header/behaviors', args.manager.addHeaderBehavior );
+
+		elementor.addControlView( 'global-style-repeater', Repeater );
+	}
 
 	getNamespace() {
 		return 'panel/global';

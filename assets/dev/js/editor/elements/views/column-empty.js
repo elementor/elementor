@@ -25,7 +25,7 @@ module.exports = Marionette.ItemView.extend( {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						isEnabled: () => DocumentHelper.isPasteEnabled( this._parent.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this._parent.getContainer(),

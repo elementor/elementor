@@ -90,11 +90,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
+					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
 					date: false,

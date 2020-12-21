@@ -86,7 +86,7 @@ class Repeater extends Element_Base {
 	 *
 	 * Register a repeater control to allow the user to set/update data.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.0.0
 	 * @access public

@@ -189,10 +189,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion: function() {
-		let message = elementor.translate( 'dynamic_promotion_message' );
+		let message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
 
 		elementor.promotion.showDialog( {
-			headerMessage: elementor.translate( 'dynamic_content' ),
+			headerMessage: __( 'Dynamic Content', 'elementor' ),
 			message: message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,
