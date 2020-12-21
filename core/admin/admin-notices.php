@@ -121,7 +121,6 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Update Notification', 'elementor' ),
 			'description' => $message,
-
 			'button' => [
 				'icon_classes' => 'dashicons dashicons-update',
 				'text' => __( 'Update Now', 'elementor' ),
@@ -207,12 +206,18 @@ class Admin_Notices extends Module {
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
 
 		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . __( 'Learn more.', 'elementor' ) . '</a>';
-		// The print_admin_notice method opens the description with a <p> tag. To start a new paragraph, we close it and open a new one.
-		$message .= '</p><p class="elementor-message-actions">';
-		$message .= '<a href="' . $optin_url . '" class="e-button e-button--primary">' . __( 'Sure! I\'d love to help', 'elementor' ) . '</a>&nbsp;<a href="' . $optout_url . '" class="e-button e-button--secondary">' . __( 'No thanks', 'elementor' ) . '</a>';
 
 		$options = [
 			'description' => $message,
+			'button' => [
+				'text' => __( 'Sure! I\'d love to help', 'elementor' ),
+				'url' => $optin_url,
+			],
+			'button_secondary' => [
+				'text' => __( 'No thanks', 'elementor' ),
+				'url' => $optout_url,
+				'variant' => 'outline',
+			],
 		];
 
 		$this->print_admin_notice( $options );
@@ -477,10 +482,10 @@ class Admin_Notices extends Module {
 		$dismiss_button = '';
 
 		if ( isset( $options['type'] ) ) {
-			$notice_classes[] = 'e-notice--' . sanitize_html_class( $options['type'], 'primary' );
+			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
-		if ( isset( $options['dismissible'] ) ) {
+			if ( isset( $options['dismissible'] ) ) {
 			$notice_classes[] = 'e-notice--dismissible';
 			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="Dismiss" tabindex="0"></i>';
 		}
@@ -489,8 +494,6 @@ class Admin_Notices extends Module {
 
 		$options = array_replace_recursive( $default_options, $options );
 
-		$open_new_tab = $options['button']['new_tab'] ? ' target="_blank"' : '';
-
 		$wrapper_attributes = [
 			'class' => $notice_classes,
 		];
@@ -498,12 +501,7 @@ class Admin_Notices extends Module {
 		if ( isset( $options['id'] ) ) {
 			$wrapper_attributes['data-notice_id'] = $options['id'];
 		}
-
-		if ( isset( $options['button']['icon_classes'] ) ) {
-			// If there should be an icon next to the button text, add it here.
-			$options['button']['text'] = '<i class="' . sanitize_html_class(  $options['button']['icon_classes'] ) . '" aria-hidden="true"></i> ' . $options['button']['text'];
-		}
-		?>/
+		?>
 		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
 			<?php echo $dismiss_button; ?>
 			<div class="e-notice__aside">
@@ -523,7 +521,11 @@ class Admin_Notices extends Module {
 			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 				<div class="e-notice__actions">
 					<?php foreach ( [ $options['button'], $options['button_secondary'] ] as $button_settings ) {
-						Button::print_button( $button_settings );
+						if ( empty( $button_settings['text'] ) ) {
+							continue;
+						}
+						$button = new Button( $button_settings );
+						$button->print_button();
 					} ?>
 				</div>
 			<?php } ?>
