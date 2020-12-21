@@ -1169,6 +1169,8 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 				'isOptimizedJS' => $this->is_optimized_js_mode(),
 			],
+			// Empty array for BC to avoid errors.
+			'i18n' => [],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
