@@ -448,7 +448,6 @@ class Icons_Manager {
 		if ( is_admin() ) {
 			// @todo: remove once we deprecate fa4
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
-			add_action( 'elementor/admin/localize_settings', [ $this, 'add_admin_strings' ] );
 		}
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
