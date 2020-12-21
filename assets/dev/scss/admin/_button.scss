@@ -11,6 +11,7 @@
 	--e-button-border-radius: 3px;
 	--e-button-context-color: var(--e-context-primary-color);
 	--e-button-context-color-dark: var(--e-context-primary-color-dark);
+	--e-button-context-tint: var(--e-context-primary-tint-1);
 }
 
 .e-button {
@@ -74,12 +75,14 @@
 	}
 
 	// Outline variant
-	&--outline {
+	&.e-button--outline {
 		color: var(--e-button-context-color);
 		background: none;
 		border: 1px solid currentColor;
 
-		&:hover {
+		&:hover,
+		&:focus {
+			color: var(--e-button-context-color-dark);
 			background: var(--e-button-context-tint);
 		}
 
