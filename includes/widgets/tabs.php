@@ -296,7 +296,8 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.elementor-active' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active,
+					 {{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}}',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_ACCENT,
