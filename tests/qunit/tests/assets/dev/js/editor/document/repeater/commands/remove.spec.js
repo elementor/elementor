@@ -68,7 +68,7 @@ export const Remove = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'remove', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

@@ -8,7 +8,7 @@ export default class extends elementorModules.ViewModule {
 				success: () => location.reload(),
 				error: () => {
 					elementor.notifications.showToast( {
-						message: elementor.translate( 'connect_error' ),
+						message: __( 'Unable to connect', 'elementor' ),
 					} );
 				},
 			}, options );

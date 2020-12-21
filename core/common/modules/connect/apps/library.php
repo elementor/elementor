@@ -54,12 +54,6 @@ class Library extends Common_App {
 		$is_connected = $this->is_connected();
 
 		return array_replace_recursive( $settings, [
-			'i18n' => [
-				// Route: library/connect
-				'library/connect:title' => __( 'Connect to Template Library', 'elementor' ),
-				'library/connect:message' => __( 'Access this template and our entire library by creating a free personal account', 'elementor' ),
-				'library/connect:button' => __( 'Get Started', 'elementor' ),
-			],
 			'library_connect' => [
 				'is_connected' => $is_connected,
 			],

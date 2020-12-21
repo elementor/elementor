@@ -132,7 +132,7 @@ export const PasteStyle = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste_style', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );
