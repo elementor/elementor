@@ -22,6 +22,18 @@ class Theme_Style_Buttons extends Tab_Base {
 		return __( 'Buttons', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'theme-style';
+	}
+
+	public function get_icon() {
+		return 'eicon-button';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-theme-style-buttons';
+	}
+
 	protected function register_tab_controls() {
 		$button_selectors = [
 			'{{WRAPPER}} button',

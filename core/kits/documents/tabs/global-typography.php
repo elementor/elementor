@@ -28,6 +28,18 @@ class Global_Typography extends Tab_Base {
 		return __( 'Global Fonts', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'global';
+	}
+
+	public function get_icon() {
+		return 'eicon-t-letter';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-fonts';
+	}
+
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_text_style',

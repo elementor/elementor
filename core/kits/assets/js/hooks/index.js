@@ -9,3 +9,4 @@ export { KitRemoveEditorActiveCSSDocumentsOpen } from './ui/editor/documents/ope
 export { KitRemoveEditorActiveCSSPanelOpen } from './ui/panel/open/remove-editor-active-css';
 export { KitBackToRouteHistory } from './ui/panel/global/close/back-to-route-history';
 export { KitRemovePreviewDeletedVariables } from './ui/document/repeater/remove/remove-preview-deleted-variables';
+export { KitAddMenuItems } from './ui/editor/documents/load/add-menu-items';
