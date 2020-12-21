@@ -45,8 +45,8 @@ PanelMenu.initGroups = () => {
 		},
 		{
 			name: 'theme_style',
-			title: __( 'Theme Style', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'theme-style', [ 'typography', 'buttons', 'images', 'form-fields' ] ),
+			title: __( 'Theme Style', 'elementor' ),
 		},
 		{
 			name: 'settings',

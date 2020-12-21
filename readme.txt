@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 3.0.14
+Stable tag: 3.0.15
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,18 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.15 - 2020-12-21 =
+* Tweak: Added "Theme" option to Page Layout options in Page Settings to allow customization of Site Setting value
+* Tweak: Added a confirmation message before deleing Default Kit to trash to avoid unintentional Site Settings deletion
+* Fix: Named parameters used in Dynamic Tags causes PHP errors in PHP 8.0 ([#13269](https://github.com/elementor/elementor/issues/13269))
+* Fix: "Edit with Elementor" menu does not expands in the top admin-bar menu in WordPress 5.6 ([#13256](https://github.com/elementor/elementor/issues/13256))
+* Fix: Stretch Section causes horizontal scroll when the vertical scrollbar is visible in WordPress 5.6 ([#13260](https://github.com/elementor/elementor/issues/13260))
+* Fix: Unable to save Templates in WordPress 5.6 ([#12273](https://github.com/elementor/elementor/issues/12273), [Topic](https://wordpress.org/support/topic/save-the-template-and-page-builder-loding/))
+* Fix: Ninja Forms plugin conflict in WordPress 5.6 ([#13281](https://github.com/elementor/elementor/issues/13281), [Topic](https://wordpress.org/support/topic/elementor-ninja-forms-bug/), [Topic](https://wordpress.org/support/topic/elementor-bug-ninja-forms/))
+* Fix: Pinterest social sharing is not working when displaying a large image in Lightbox
+* Fix: Manage Global Colors and Fonts buttons is not leading to the correct screen
+* Fix: Permission error when trying to update site description with WP-CLI
 
 = 3.0.14 - 2020-11-25 =
 * Tweak: Added 3rd party plugins compatibility to versions rollback mechanism

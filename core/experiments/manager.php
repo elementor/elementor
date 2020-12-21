@@ -258,7 +258,7 @@ class Manager extends Base_Object {
 	 * @param Settings $settings
 	 *
 	 * @since 3.1.0
-	 * f@access private
+	 * @access private
 	 *
 	 */
 	private function register_settings_fields( Settings $settings ) {
