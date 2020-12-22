@@ -121,8 +121,4 @@ abstract class Base_Data_Control extends Base_Control {
 	protected function get_control_uid( $input_type = 'default' ) {
 		return 'elementor-control-' . $input_type . '-{{{ data._cid }}}';
 	}
-
-	public static function get_assets( $setting ) {
-		return [];
-	}
 }
