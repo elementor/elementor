@@ -21,6 +21,7 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -361,7 +362,7 @@ class Plugin {
 	 *
 	 * @var Files_Manager
 	 */
-	public $posts_css_manager;
+	private $posts_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -419,6 +420,11 @@ class Plugin {
 	 * @var Log_Manager
 	 */
 	public $logger;
+
+	/**
+	 * @var Dev_Tools
+	 */
+	private $dev_tools;
 
 	/**
 	 * @var Core\Upgrade\Manager
@@ -591,10 +597,6 @@ class Plugin {
 		$this->files_manager = new Files_Manager();
 		$this->assets_manager = new Assets_Manager();
 		$this->icons_manager = new Icons_Manager();
-		/*
-		 * @TODO: Remove deprecated alias
-		 */
-		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->tools = new Tools();
 		$this->editor = new Editor();
@@ -701,6 +703,30 @@ class Plugin {
 		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
+	}
+
+	/**
+	 * Plugin Magic Getter
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param $property
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function __get( $property ) {
+		if ( 'posts_css_manager' === $property ) {
+			self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument( 'Plugin::$instance->posts_css_manager', '2.7.0', 'Plugin::$instance->files_manager' );
+
+			return $this->files_manager;
+		}
+
+		if ( property_exists( $this, $property ) ) {
+			throw new \Exception( 'Cannot access private property' );
+		}
+
+		return null;
 	}
 
 	/**

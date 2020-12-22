@@ -580,6 +580,8 @@ class Frontend extends App {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
+		wp_set_script_translations( 'elementor-frontend', 'elementor' );
+
 		if ( ! $this->is_optimized_js_mode() ) {
 			wp_enqueue_script(
 				'preloaded-elements-handlers',
@@ -1167,20 +1169,8 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 				'isOptimizedJS' => $this->is_optimized_js_mode(),
 			],
-			'i18n' => [
-				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
-				'pinIt' => __( 'Pin it', 'elementor' ),
-				'download' => __( 'Download', 'elementor' ),
-				'downloadImage' => __( 'Download image', 'elementor' ),
-				'fullscreen' => __( 'Fullscreen', 'elementor' ),
-				'zoom' => __( 'Zoom', 'elementor' ),
-				'share' => __( 'Share', 'elementor' ),
-				'playVideo' => __( 'Play Video', 'elementor' ),
-				'previous' => __( 'Previous', 'elementor' ),
-				'next' => __( 'Next', 'elementor' ),
-				'close' => __( 'Close', 'elementor' ),
-			],
+			// Empty array for BC to avoid errors.
+			'i18n' => [],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
@@ -1200,11 +1190,21 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
+			// Try to use the 'large' WP image size because the Pinterest share API
+			// has problems accepting shares with large images sometimes, and the WP 'large' thumbnail is
+			// the largest default WP image size that will probably not be changed in most sites
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
+
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
+			}
+
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url(),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [

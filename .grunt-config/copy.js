@@ -34,6 +34,7 @@ const getBuildFiles = [
 	'!package-lock.json',
 	'!package.json',
 	'!phpunit.xml',
+	'!CHANGELOG.md',
 	'!README.md',
 	'!ruleset.xml',
 	'!tests/**',

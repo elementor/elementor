@@ -25,6 +25,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	/**
+	 * The of the theme.
+	 */
+	const TEMPLATE_THEME = 'elementor_theme';
+
+	/**
 	 * Elementor Canvas template name.
 	 */
 	const TEMPLATE_CANVAS = 'elementor_canvas';
@@ -79,9 +84,11 @@ class Module extends BaseModule {
 			$document = Plugin::$instance->documents->get_doc_for_frontend( get_the_ID() );
 
 			if ( $document && $document::get_property( 'support_wp_page_templates' ) ) {
-				$template_path = $this->get_template_path( $document->get_meta( '_wp_page_template' ) );
+				$page_template = $document->get_meta( '_wp_page_template' );
 
-				if ( ! $template_path && $document->is_built_with_elementor() ) {
+				$template_path = $this->get_template_path( $page_template );
+
+				if ( self::TEMPLATE_THEME !== $page_template && ! $template_path && $document->is_built_with_elementor() ) {
 					$kit_default_template = Plugin::$instance->kits_manager->get_current_settings( 'default_page_template' );
 					$template_path = $this->get_template_path( $kit_default_template );
 				}
@@ -149,6 +156,7 @@ class Module extends BaseModule {
 		$page_templates = [
 			self::TEMPLATE_CANVAS => _x( 'Elementor Canvas', 'Page Template', 'elementor' ),
 			self::TEMPLATE_HEADER_FOOTER => _x( 'Elementor Full Width', 'Page Template', 'elementor' ),
+			self::TEMPLATE_THEME => _x( 'Theme', 'Page Template', 'elementor' ),
 		] + $page_templates;
 
 		return $page_templates;

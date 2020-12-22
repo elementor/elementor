@@ -394,6 +394,24 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Check if the current document is a 'revision'
+	 *
+	 * @return bool
+	 */
+	public function is_revision() {
+		return 'revision' === $this->post->post_type;
+	}
+
+	/**
+	 * Checks if the current document status is 'trash'.
+	 *
+	 * @return bool
+	 */
+	public function is_trash() {
+		return 'trash' === $this->post->post_status;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
 	 *
@@ -528,10 +546,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_document_controls();
 		/**
 		 * Register document controls.

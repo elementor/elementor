@@ -40,10 +40,10 @@ class Model extends BaseModel {
 	}
 
 	/**
-	 * @since 2.8.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section( 'preferences', [
 			'tab' => Controls_Manager::TAB_SETTINGS,
 			'label' => __( 'Preferences', 'elementor' ),

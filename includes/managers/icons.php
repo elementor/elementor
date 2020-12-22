@@ -416,10 +416,13 @@ class Icons_Manager {
 		}
 	}
 
-	public function add_admin_strings( $settings ) {
-		$settings['i18n']['confirm_fa_migration_admin_modal_body']  = __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) . '<br>' . __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' );
-		$settings['i18n']['confirm_fa_migration_admin_modal_head']  = __( 'Font Awesome 5 Migration', 'elementor' );
-		return $settings;
+	/**
+	 * @deprecated 3.1.0
+	 */
+	public function add_admin_strings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
+		return [];
 	}
 
 	/**
@@ -445,7 +448,6 @@ class Icons_Manager {
 		if ( is_admin() ) {
 			// @todo: remove once we deprecate fa4
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
-			add_action( 'elementor/admin/localize_settings', [ $this, 'add_admin_strings' ] );
 		}
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );

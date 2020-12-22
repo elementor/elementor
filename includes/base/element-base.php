@@ -641,7 +641,15 @@ abstract class Element_Base extends Controls_Stack {
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
 		ob_start();
-		$this->_print_content();
+
+		if ( $this->has_own_method( '_print_content', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_print_content', '3.1.0', __CLASS__ . '::print_content()' );
+
+			$this->_print_content();
+		} else {
+			$this->print_content();
+		}
+
 		$content = ob_get_clean();
 
 		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
@@ -659,7 +667,13 @@ abstract class Element_Base extends Controls_Stack {
 		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
 
 		if ( $should_render ) {
-			$this->_add_render_attributes();
+			if ( $this->has_own_method( '_add_render_attributes', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_add_render_attributes', '3.1.0', __CLASS__ . '::add_render_attributes()' );
+
+				$this->_add_render_attributes();
+			} else {
+				$this->add_render_attributes();
+			}
 
 			$this->before_render();
 			echo $content;
@@ -768,8 +782,23 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.3.0
 	 * @access protected
+	 * @deprecated 3.1.0
 	 */
 	protected function _add_render_attributes() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::add_render_attributes()' );
+
+		return $this->add_render_attributes();
+	}
+
+	/**
+	 * Add render attributes.
+	 *
+	 * Used to add attributes to the current element wrapper HTML tag.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function add_render_attributes() {
 		$id = $this->get_id();
 
 		$settings = $this->get_settings_for_display();
@@ -860,6 +889,20 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function _print_content() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );
+
+		$this->print_content();
+	}
+
+	/**
+	 * Print element content.
+	 *
+	 * Output the element final HTML on the frontend.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function print_content() {
 		foreach ( $this->get_children() as $child ) {
 			$child->print_element();
 		}

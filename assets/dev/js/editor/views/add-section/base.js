@@ -75,7 +75,7 @@ class AddSectionBase extends Marionette.ItemView {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						isEnabled: () => DocumentHelper.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
@@ -92,12 +92,12 @@ class AddSectionBase extends Marionette.ItemView {
 				actions: [
 					{
 						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
+						title: __( 'Copy All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
-						title: elementor.translate( 'delete_all_content' ),
+						title: __( 'Delete All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
 					},
