@@ -114,4 +114,31 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			'it should return a default template because the document is not support page templates'
 		);
 	}
+
+	public function test_template_include__theme_option_should_return_default() {
+		// Arrange.
+		/** @var PageTemplatesModule $page_templates_module */
+		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
+
+		/** @var Document $document */
+		$document = self::factory()->create_post();
+		$document->update_main_meta( '_wp_page_template', $page_templates_module::TEMPLATE_THEME );
+
+		// Simulate a singular query.
+		query_posts( [
+			'p' => $document->get_main_id(),
+		] );
+
+		the_post();
+
+		// Act.
+		$filtered_template = $page_templates_module->template_include( 'default' );
+
+		// Assert.
+		$this->assertEquals(
+			'default',
+			$filtered_template,
+			'it should return a default template based on post meta (theme).'
+		);
+	}
 }

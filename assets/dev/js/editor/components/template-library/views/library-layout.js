@@ -17,7 +17,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getLogoOptions: function() {
 		return {
-			title: elementor.translate( 'library' ),
+			title: __( 'Library', 'elementor' ),
 			click: function() {
 				$e.run( 'library/open', { toDefault: true } );
 			},

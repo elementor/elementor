@@ -23,7 +23,7 @@ export default class extends elementorModules.Module {
 
 			layoutModal.addButton( {
 				name: 'insert_icon',
-				text: elementor.translate( 'Insert' ),
+				text: __( 'Insert', 'elementor' ),
 				classes: 'elementor-button elementor-button-success',
 				callback: () => {
 					this.updateControlValue();

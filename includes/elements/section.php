@@ -217,10 +217,10 @@ class Element_Section extends Element_Base {
 	 *
 	 * Used to add new controls to the section element.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_layout',
 			[
@@ -1525,7 +1525,7 @@ class Element_Section extends Element_Base {
 	 * @since 1.3.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
+	protected function add_render_attributes() {
 
 		$section_type = $this->get_data( 'isInner' ) ? 'inner' : 'top';
 
@@ -1536,7 +1536,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		parent::_add_render_attributes();
+		parent::add_render_attributes();
 	}
 
 	/**

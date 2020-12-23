@@ -16,7 +16,7 @@ export const Import = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'template' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Template' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

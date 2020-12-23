@@ -33,7 +33,7 @@ export default class Component extends ComponentBase {
 			if ( 1 === containers.length ) {
 				args.title = containers[ 0 ].label;
 			} else {
-				args.title = elementor.translate( 'elements' );
+				args.title = __( 'Elements', 'elementor' );
 			}
 		}
 
