@@ -17,7 +17,6 @@ class Module extends BaseModule {
 
 	const DOCUMENT_TYPE = 'landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=page&elementor_library_type=landing-page';
-	const ADMIN_PAGE_NO_LPS_SLUG = 'edit.php?post_type=elementor_library&page=landing-page';
 
 	private $posts;
 	private $trashed_posts;
