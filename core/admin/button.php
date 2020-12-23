@@ -17,7 +17,7 @@ class Button extends \Elementor\Core\Base\Module {
 		$this->options = $options;
 	}
 
-	static public function get_default_options(): array {
+	static public function get_default_options() {
 		return [
 			'callback' => '',
 			'class' => 'e-button',
