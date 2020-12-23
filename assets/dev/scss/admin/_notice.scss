@@ -1,0 +1,180 @@
+
+/*= Elementor Message
+---------------------------------------*/
+
+@media (min-width: 1200px) {
+	.elementor-message-action {
+		@include padding-end(10px);
+	}
+}
+
+
+@media (max-width: 600px) {
+	.e-notice {
+		.elementor-message-inner {
+			display: block;
+			text-align: center;
+
+			.elementor-message-icon,
+			.elementor-message-content,
+			.elementor-message-action {
+				display: block;
+			}
+
+			.elementor-message-action {
+				text-align: center;
+			}
+
+			.elementor-message-icon {
+				width: auto;
+			}
+
+			.elementor-message-content {
+				padding: 10px 0;
+			}
+		}
+	}
+}
+
+
+:root {--e-notice-bg: #fff;
+	--e-notice-border-color: #ccd0d4;
+	--e-notice-context-color: #{$editor-accent};
+	--e-notice-context-tint: var(--e-context-cta-tint-1);
+	--e-notice-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	--e-notice-dismiss-color: #{$editor-dark};
+}
+
+.e-notice {
+	position: relative;
+	display: flex;
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	// Based on WP:
+	background: var(--e-notice-bg);
+	border: 1px solid var(--e-notice-border-color);
+	border-inline-start: 4px solid var(--e-notice-context-color);
+	box-shadow: var(--e-notice-box-shadow);
+	margin: 5px 20px 5px 2px;
+
+
+/* Notice context colors modifiers
+ ----------------------------------------------------*/
+	@each $context, $color in $e-context-colors {
+		&--#{$context} {
+			--e-notice-context-color: var(--e-context-#{$context}-color);
+			--e-notice-context-tint: var(--e-context-#{$context}-tint-1);
+		}
+	}
+
+/* Notice extended style (with optional icon)
+ ----------------------------------------------------*/
+
+	&--extended {
+		--e-notice-is-extended: 1;
+	}
+
+/* Notice dismissible modifier
+ ----------------------------------------------------*/
+	&--dismissible {
+		padding-right: 38px;
+	}
+
+/* Layout
+ ----------------------------------------------------*/
+	&__aside {
+		font-size: 20px;
+		overflow: hidden;
+		background-color: var(--e-notice-context-tint);
+		max-width: calc(var(--e-notice-is-extended, 1) * 50px);
+		text-align: center;
+		padding: 15px;
+		flex-grow: 0;
+		flex-shrink: 0;
+
+		.e-logo-wrapper {
+			font-size: pxToRem(9px);
+		}
+	}
+
+	&__content {
+		padding: 20px 15px;
+	}
+
+	&__actions {
+		display: flex;
+		> * + * {
+			margin-inline-start: 8px;
+		}
+	}
+
+/* Dismiss button
+ ----------------------------------------------------*/
+	&__dismiss {
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+		font-size: pxToRem(13px);
+		text-align: center;
+		background: none;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 1px;
+		border: none;
+		margin: 0;
+		padding: 9px;
+		cursor: pointer;
+		font-style: normal;
+
+		&:before {
+			font-family: eicons;
+			display: inline-block;
+			content: "\e87f";
+			color: var(--e-notice-dismiss-color);
+			width: 20px;
+			border-radius: 20px;
+			speak: none;
+			text-align: center;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+
+		&:hover:before,
+		&:active:before,
+		&:focus:before {
+			font-weight: bold;
+		}
+
+		&:focus:before {
+			color: #fff;
+			background: var(--e-notice-dismiss-color);
+			outline: none;
+		}
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+/* ----------------------------------------------------*/
+	p {
+		line-height: 1.2;
+		padding: 0;
+		margin: 0;
+
+		+ .e-notice__actions {
+			margin-top: pxToRem(16px);
+		}
+	}
+
+	h3 {
+		font-size: pxToRem(17px);
+		line-height: 1.2;
+		margin: 0;
+
+		+ p {
+			margin-top: 8px;
+		}
+	}
+}
