@@ -166,7 +166,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
 	}
 
-	addUAClasses() {
+	addUserAgentClasses() {
 		for ( const [ key, value ] of Object.entries( environment ) ) {
 			if ( value ) {
 				this.elements.$body.addClass( 'e--ua-' + key );
@@ -291,7 +291,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.elementsHandler = new ElementsHandler( jQuery );
 
-		this.addUAClasses();
+		this.addUserAgentClasses();
 
 		this.addIeCompatibility();
 
