@@ -545,7 +545,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		const onShowMethod = modal.onShow;
 
-		modal.onShow = () => {
+		modal.onShow = async () => {
 			onShowMethod();
 
 			const swiperOptions = {
@@ -579,7 +579,9 @@ module.exports = elementorModules.ViewModule.extend( {
 				$.extend( swiperOptions, options.swiper );
 			}
 
-			this.swiper = new Swiper( $container, swiperOptions );
+			const Swiper = elementorFrontend.utils.swiper;
+
+			this.swiper = await new Swiper( $container, swiperOptions );
 
 			// Expose the swiper instance in the frontend
 			$container.data( 'swiper', this.swiper );

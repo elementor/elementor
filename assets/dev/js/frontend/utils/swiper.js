@@ -1,5 +1,3 @@
-const originalSwiper = window.Swiper;
-
 export default class Swiper {
 	constructor( container, config ) {
 		this.config = config;
@@ -9,9 +7,26 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		originalSwiper.prototype.adjustConfig = this.adjustConfig;
+		return new Promise( ( resolve ) => {
+			if ( ! elementorFrontendConfig.environmentMode.isOptimizedJS ) {
+				return resolve( this.createSwiperInstance( container, this.config ) );
+			}
 
-		return new originalSwiper( container, this.config );
+			const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
+
+			import(
+				/* webpackIgnore: true */
+				`${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`
+				).then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+		} );
+	}
+
+	createSwiperInstance( container, config ) {
+		const SwiperSource = window.Swiper;
+
+		SwiperSource.prototype.adjustConfig = this.adjustConfig;
+
+		return new SwiperSource( container, config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
@@ -58,5 +73,3 @@ export default class Swiper {
 		return config;
 	}
 }
-
-window.Swiper = Swiper;

@@ -392,13 +392,19 @@ class Widget_Tabs extends Widget_Base {
 		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
+
+		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
+
+		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+
 		?>
-		<div class="elementor-tabs">
+		<div <?php echo $this->get_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist" >
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+					$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
@@ -410,7 +416,7 @@ class Widget_Tabs extends Widget_Base {
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
-					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $tab_title; ?></div>
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">

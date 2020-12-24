@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap > .elementor-widget-wrap' : '> .elementor-widget-wrap',
+	childViewContainer: elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -43,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = elementor.config.legacyMode.elementWrappers ? '> .elementor-column-wrap' : '> .elementor-widget-wrap';
+		ui.columnInner = elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -195,14 +195,14 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	onRender: function() {
-		const isLegacyMode = elementor.config.legacyMode.elementWrappers;
+		const isDomOptimizationActive = elementor.config.experimentalFeatures[ 'e_dom_optimization' ];
 
 		let itemsClasses = '';
 
-		if ( isLegacyMode ) {
-			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
-		} else {
+		if ( isDomOptimizationActive ) {
 			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
+		} else {
+			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
 		}
 
 		BaseElementView.prototype.onRender.apply( this, arguments );
@@ -228,9 +228,9 @@ ColumnView = BaseElementView.extend( {
 				let newIndex = jQuery( event.currentTarget ).index();
 
 				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
-				if ( 'bottom' === side && isLegacyMode ) {
+				if ( 'bottom' === side && ! isDomOptimizationActive ) {
 					newIndex++;
-				} else if ( 'top' === side && ! isLegacyMode ) {
+				} else if ( 'top' === side && isDomOptimizationActive ) {
 					newIndex--;
 				}
 

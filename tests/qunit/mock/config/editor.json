@@ -23,7 +23,6 @@
   "kit_config": {
 	  "typography_prefix": "typography_"
   },
-  "legacyMode": {},
   "globals": {
 	"defaults_enabled": {
 	  "colors": true,
@@ -34,5 +33,6 @@
   	"deprecation": {
 		"soft_notices": []
 	}
-  }
+  },
+  "experimentalFeatures": {}
 }

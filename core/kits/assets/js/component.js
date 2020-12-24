@@ -12,9 +12,9 @@ export default class extends $e.modules.ComponentBase {
 			args.manager.addPanelPages();
 
 			args.manager.addPanelMenuItem();
-
-			elementor.hooks.addFilter( 'panel/header/behaviors', args.manager.addHeaderBehavior );
 		} );
+
+		elementor.hooks.addFilter( 'panel/header/behaviors', args.manager.addHeaderBehavior );
 
 		elementor.addControlView( 'global-style-repeater', Repeater );
 	}

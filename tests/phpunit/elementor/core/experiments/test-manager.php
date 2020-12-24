@@ -34,17 +34,18 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$test_set = [
 			'description' => '',
-			'status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'name' => 'test_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
+			'on_state_change' => null,
 		];
 
 		$new_feature = $experiments->add_feature( $test_feature_data );
 
 		$re_added_feature = $experiments->add_feature( $test_feature_data );
 
-		$this->assertEqualSets( $test_set, $new_feature );
+		$this->assertEquals( $test_set, $new_feature );
 
 		$this->assertEquals( null, $re_added_feature );
 	}
@@ -64,6 +65,34 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertArrayHaveKeys( [ 'test_feature' ], $features );
 
 		$this->assertNotEmpty( $test_feature );
+	}
+
+	public function test_get_active_features() {
+		$this->add_test_feature();
+
+		$experiments = $this->elementor()->experiments;
+
+		$default_activated_test_feature_data = [
+			'name' => 'default_activated_test_feature',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		];
+
+		$experiments->add_feature( $default_activated_test_feature_data );
+
+		$active_features = $experiments->get_active_features();
+
+		$expected_features = [
+			'default_activated_test_feature' => [
+				'description' => '',
+				'release_status' => 'alpha',
+				'default' => 'active',
+				'on_state_change' => null,
+				'name' => 'default_activated_test_feature',
+				'state' => 'default',
+			],
+		];
+
+		$this->assertEquals( $expected_features, $active_features );
 	}
 
 	public function test_is_feature_active() {
