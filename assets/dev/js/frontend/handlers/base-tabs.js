@@ -143,6 +143,11 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 	bindEvents() {
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
+				// Support for old markup that includes an `<a>` tag in the tab
+				if ( $( event.target ).is( 'a' ) && `Enter` === event.key ) {
+					event.preventDefault();
+				}
+
 				// We listen to keydowon event for these keys in order to prevent undesired page scrolling
 				if ( [ 'End', 'Home', 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
 					this.handleKeyboardNavigation( event );
@@ -162,6 +167,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				}
 			},
 			click: ( event ) => {
+				event.preventDefault();
 				this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 			},
 		} );
