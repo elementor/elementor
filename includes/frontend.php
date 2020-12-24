@@ -1167,7 +1167,7 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isOptimizedJS' => $this->is_optimized_js_mode(),
+				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
 			// Empty array for BC to avoid errors.
 			'i18n' => [],
