@@ -19,6 +19,8 @@ class Landing_Page extends Page {
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
 
+		unset( $properties['cpt'] );
+
 		return $properties;
 	}
 
