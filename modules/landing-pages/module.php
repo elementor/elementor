@@ -3,6 +3,7 @@ namespace Elementor\Modules\LandingPages;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -30,6 +31,7 @@ class Module extends BaseModule {
 			'name' => 'landing-pages',
 			'title' => __( 'Landing Pages', 'elementor' ),
 			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
 
