@@ -78,8 +78,8 @@ class Manager extends DB_Upgrades_Manager {
 			$installs_history[ $old_version ] = $installs_history[ ELEMENTOR_VERSION ] - 1;
 		}
 
-		uksort( $history, 'version_compare' );
+		uksort( $installs_history, 'version_compare' );
 
-		update_option( self::INSTALLS_HISTORY_META, $history );
+		update_option( self::INSTALLS_HISTORY_META, $installs_history );
 	}
 }
