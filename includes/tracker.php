@@ -1,6 +1,10 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Kits\Manager as Kits_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -338,6 +342,124 @@ class Tracker {
 	}
 
 	/**
+	 * Get usage of general settings.
+	 * 'Elementor->Settings->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_general_usage() {
+		$result = [];
+
+		// Posts types.
+		$cpt_support = get_option( 'elementor_cpt_support', [] );
+		$cpt_usage = [];
+
+		foreach ( Plugin::ELEMENTOR_POST_TYPES as $post_type ) {
+			$cpt_usage[ $post_type ] = in_array( $post_type, $cpt_support );
+		}
+
+		$result['post_types'] = $cpt_usage;
+
+		/** @var Kits_Manager $module */
+		$kits_manager = Plugin::$instance->kits_manager;
+
+		// Disable Default Colors.
+		$result['disable_default_colors'] = $kits_manager->is_custom_colors_enabled();
+
+		// Disable Default Fonts.
+		$result['disable_default_fonts'] = $kits_manager->is_custom_typography_enabled();
+
+		return $result;
+	}
+
+	/**
+	 * Get usage of advanced settings.
+	 * 'Elementor->Settings->Advanced'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_advanced_usage() {
+		return [
+			'css_print_method' => get_option( 'elementor_css_print_method' ),
+			'switch_editor_loader_method' => get_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY ),
+			'enable_unfiltered_file_uploads' => get_option( Files_Upload_Handler::OPTION_KEY ),
+			'font_awesome_support' => get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY ),
+		];
+	}
+
+	/**
+	 * Get usage of experiments settings.
+	 *
+	 * 'Elementor->Settings->Experiments'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_experiments_usage() {
+		$result = [];
+
+		/** @var Experiments_Manager $module */
+		$experiments_manager = Plugin::$instance->experiments;
+
+		// TODO: Those keys should be at `$experiments_manager`.
+		$tracking_keys = [
+			'default',
+			'state',
+		];
+
+		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
+			$data_to_collect = [];
+
+			// Extract only tracking keys.
+			foreach ( $tracking_keys as $tracking_key ) {
+				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
+			}
+
+			$result[ $feature_name ] = $data_to_collect;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get usage of general tools.
+	 * 'Elementor->Tools->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_general_usage() {
+		return [
+			'safe_mode' => get_option( 'elementor_safe_mode' ),
+			'debug_bar' => get_option( 'elementor_enable_inspector' ),
+		];
+	}
+
+	/**
+	 * Get usage of 'version control' tools.
+	 * 'Elementor->Tools->Version Control'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_version_control_usage() {
+		return [
+			'beta_tester' => get_option( 'elementor_beta' ),
+		];
+	}
+
+	/**
+	 * Get usage of 'maintenance' tools.
+	 * 'Elementor->Tools->Maintenance'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_maintenance_usage() {
+		return [
+			'mode' => get_option( 'elementor_maintenance_mode_mode' ),
+			'exclude' => get_option( 'elementor_maintenance_mode_exclude_mode' ),
+			'template_id' => get_option( 'elementor_maintenance_mode_template_id' ),
+		];
+	}
+
+	/**
 	 * Get the tracking data
 	 *
 	 * Retrieve tracking data and apply filter
@@ -357,8 +479,13 @@ class Tracker {
 			'usages' => [
 				'posts' => self::get_posts_usage(),
 				'library' => self::get_library_usage(),
+				'settings-general' => self::get_settings_general_usage(),
+				'settings-advanced' => self::get_settings_advanced_usage(),
+				'settings-experiments' => self::get_settings_experiments_usage(),
+				'tools-general' => self::get_tools_general_usage(),
 			],
 			'is_first_time' => $is_first_time,
+			'install_time' => Plugin::instance()->get_install_time(),
 		];
 
 		/**
