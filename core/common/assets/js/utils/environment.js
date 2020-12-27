@@ -24,8 +24,8 @@ const matchUserAgent = ( UserAgentStr ) => {
 	// Edge 20+
 	isEdge = ( ! isIE && !! window.StyleMedia ) || matchUserAgent( 'Edg' ),
 
-	// Chrome 1+
-	isChrome = !! window.chrome && matchUserAgent( 'Chrome' ),
+	// Google Chrome (Not accurate)
+	isChrome = !! window.chrome && matchUserAgent( 'Chrome' ) && ! ( isEdge || isOpera ),
 
 	// Blink engine
 	isBlink = matchUserAgent( 'Chrome' ) && !! window.CSS,
