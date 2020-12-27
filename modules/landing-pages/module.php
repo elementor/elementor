@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -17,7 +19,6 @@ class Module extends BaseModule {
 
 	const DOCUMENT_TYPE = 'landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=page&elementor_library_type=landing-page';
-	const ADMIN_PAGE_NO_LPS_SLUG = 'edit.php?post_type=elementor_library&page=landing-page';
 
 	private $posts;
 	private $trashed_posts;
@@ -31,6 +32,7 @@ class Module extends BaseModule {
 			'name' => 'landing-pages',
 			'title' => __( 'Landing Pages', 'elementor' ),
 			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
 
@@ -83,7 +85,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		return 'landing-page' === get_post_meta( $post->ID, '_elementor_template_type', true );
+		return 'landing-page' === get_post_meta( $post->ID, Document::TYPE_META_KEY, true );
 	}
 
 	/**

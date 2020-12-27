@@ -19,6 +19,8 @@ class Landing_Page extends Page {
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
 
+		unset( $properties['cpt'] );
+
 		return $properties;
 	}
 
@@ -57,12 +59,12 @@ class Landing_Page extends Page {
 	public function save_template_type() {
 		$page_data = $this->data_to_be_saved['settings'];
 
-		if ( isset( $page_data['settings']['page_type'] ) ) {
+		if ( isset( $page_data['page_type'] ) ) {
 			$post_id = $this->get_id();
 			$page_type_wp_page = parent::get_name();
 
 			// If 'Page' was selected by the user, since the document is currently a Landing Page - change it to a regular page.
-			if ( $page_type_wp_page === $page_data['settings']['page_type'] ) {
+			if ( $page_type_wp_page === $page_data['page_type'] ) {
 				// Remove the association to the library taxonomy as a 'landing-page'.
 				wp_remove_object_terms( $post_id, Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
 
