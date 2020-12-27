@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -84,7 +85,7 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		return 'landing-page' === get_post_meta( $post->ID, '_elementor_template_type', true );
+		return 'landing-page' === get_post_meta( $post->ID, Document::TYPE_META_KEY, true );
 	}
 
 	/**
