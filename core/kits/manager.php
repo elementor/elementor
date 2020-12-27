@@ -26,7 +26,14 @@ class Manager {
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
+
 			update_option( self::OPTION_ACTIVE, $id );
+
+			// Before publish, to prevent recursive loop, update the post status, after kit id is saved.
+			wp_update_post( [
+				'ID' => $id,
+				'post_status' => 'publish',
+			] );
 		}
 
 		return $id;
@@ -81,10 +88,10 @@ class Manager {
 	}
 
 	private function create_default() {
-		$kit = Plugin::$instance->documents->create( 'kit', [
+		$kit = Plugin::$instance->documents->create( Kit::NAME, [
 			'post_type' => Source_Local::CPT,
 			'post_title' => __( 'Default Kit', 'elementor' ),
-			'post_status' => 'publish',
+			'post_status' => 'new',
 		] );
 
 		return $kit->get_id();
@@ -94,7 +101,7 @@ class Manager {
 	 * @param Documents_Manager $documents_manager
 	 */
 	public function register_document( $documents_manager ) {
-		$documents_manager->register_document_type( 'kit', Kit::get_class_full_name() );
+		$documents_manager->register_document_type( Kit::NAME, Kit::get_class_full_name() );
 	}
 
 	public function localize_settings( $settings ) {

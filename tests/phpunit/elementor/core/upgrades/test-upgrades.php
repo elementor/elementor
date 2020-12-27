@@ -13,6 +13,27 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	use Test_Upgrades_Trait;
 
+	/**
+	 * @param string $old_usage_option_name
+	 * @param string $old_usage_meta_key
+	 * @param callable $remove_old_usage_callback
+	 */
+	public function ensure_removed_old_usage_data( $old_usage_option_name, $old_usage_meta_key, $remove_old_usage_callback ) {
+		add_option( $old_usage_option_name, 'test' );
+
+		$document = $this->create_post();
+		$document->update_main_meta( $old_usage_meta_key, 'test' );
+
+		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+
+		// Run upgrade.
+		$remove_old_usage_callback();
+
+		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+	}
+
 	public function test_v_2_7_0_rename_document_types_to_wp() {
 		$this->markTestSkipped();
 		// Create a post with post types (post, page).
@@ -52,21 +73,13 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_2_7_1_remove_old_usage_data() {
-		$old_usage_option_name = 'elementor_elements_usage';
-		$old_usage_meta_key = '_elementor_elements_usage';
-
-		add_option( $old_usage_option_name, 'test' );
-		$document = $this->create_post();
-		$document->update_main_meta( $old_usage_meta_key, 'test' );
-
-		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
-
-		// Run upgrade.
-		Upgrades::_v_2_7_1_remove_old_usage_data();
-
-		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
-		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+		$this->ensure_removed_old_usage_data(
+			'elementor_elements_usage',
+			'_elementor_elements_usage',
+			function () {
+				Upgrades::_v_2_7_1_remove_old_usage_data();
+			}
+		);
 	}
 
 	public function test_v_2_7_1_recalc_usage_data() {
@@ -100,7 +113,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
-		$usage = get_option( $module::OPTION_NAME, [] );
+		$usage = get_option( $module::ELEMENTS_OPTION_NAME, [] );
 
 		// Check there usage.
 		$this->assertEquals( $posts_count, $usage['wp-post']['button']['count'] );
@@ -362,7 +375,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		wp_set_current_user( $user_id );
 
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $kit_id );
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
 
 		// Create revisions.
 		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
@@ -434,5 +447,15 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertFalse( $is_old_feature_active );
 
 		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
+	}
+
+	public function test_v_3_1_0_remove_old_elements_usage() {
+		$this->ensure_removed_old_usage_data(
+			'elementor_controls_usage',
+			'_elementor_controls_usage',
+			function () {
+				Upgrades::_v_3_1_0_remove_old_elements_usage();
+			}
+		);
 	}
 }
