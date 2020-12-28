@@ -10,7 +10,7 @@ const matchUserAgent = ( UserAgentStr ) => {
 	isOpera = ( !! window.opr && !! opr.addons ) || !! window.opera || matchUserAgent( ' OPR/' ),
 
 	// Firefox 1.0+
-	isFirefox = typeof InstallTrigger !== 'undefined' && matchUserAgent( 'Firefox' ),
+	isFirefox = matchUserAgent( 'Firefox' ),
 
 	// Safari 3.0+ "[object HTMLElementConstructor]"
 	isSafari = /^((?!chrome|android).)*safari/i.test( userAgent ) || /constructor/i.test( window.HTMLElement ) ||
