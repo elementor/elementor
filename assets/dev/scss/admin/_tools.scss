@@ -1,3 +1,6 @@
+
+// Tools
+
 #tab-replace_url.elementor-active,
 #tab-fontawesome4_migration.elementor-active {
 
@@ -17,51 +20,5 @@
 		select {
 			@include margin-end(6px);
 		}
-	}
-}
-
-#tab-experiments.elementor-active {
-	font-family: $admin-font-family;
-}
-
-.e-experiments__description {
-	max-width: 810px;
-}
-
-.e-experiment {
-
-	&__title {
-		display: flex;
-		align-items: center;
-
-		&__indicator {
-			height: 10px;
-			width: 10px;
-			border-radius: 50%;
-			border: 2px solid white;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-			&--active {
-				background: $editor-success;
-			}
-		}
-
-		&__label {
-			@include margin-start(10px);
-		}
-	}
-
-	&__description {
-		max-width: 400px;
-		font-size: 13px;
-		font-weight: 400;
-		margin-top: 10px;
-	}
-
-	&__status {
-		margin-top: 5px;
-		font-size: 13px;
-		font-weight: bold;
-		font-style: italic;
 	}
 }

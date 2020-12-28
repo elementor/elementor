@@ -33,7 +33,7 @@ export const Paste = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );
@@ -79,7 +79,7 @@ export const Paste = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

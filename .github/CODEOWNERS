@@ -1,7 +1,7 @@
 # Default
-*                                 		@kingyes
-*.js                              		@kobizz @matipojo
-*.php                             		@matipojo
+*                                       @kingyes
+*.js                                    @kobizz @matipojo
+*.php                                   @matipojo @kobizz
 *.json                                  @kingyes
 *.xml                                   @kingyes
 

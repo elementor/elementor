@@ -48,14 +48,14 @@
 
 							this.addButton( {
 								name: 'submit',
-								text: elementorAdmin.translate( 'submit_n_deactivate' ),
+								text: __( 'Submit & Deactivate', 'elementor' ),
 								callback: self.sendFeedback.bind( self ),
 							} );
 
 							if ( ! elementorAdmin.config.feedback.is_tracker_opted_in ) {
 								this.addButton( {
 									name: 'skip',
-									text: elementorAdmin.translate( 'skip_n_deactivate' ),
+									text: __( 'Skip & Deactivate', 'elementor' ),
 									callback: function() {
 										self.deactivate();
 									},

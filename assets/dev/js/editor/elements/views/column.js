@@ -55,23 +55,27 @@ ColumnView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.edit = {
-			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			/* translators: %s: Element Name. */
+			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'column',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 
 			editTools.add = {
-				title: elementor.translate( 'add_element', [ elementData.title ] ),
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
 
 			editTools.remove = {
-				title: elementor.translate( 'delete_element', [ elementData.title ] ),
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 				icon: 'close',
 			};
 		}
@@ -104,7 +108,7 @@ ColumnView = BaseElementView.extend( {
 				{
 					name: 'addNew',
                     icon: 'eicon-plus',
-					title: elementor.translate( 'new_column' ),
+					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
 					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
 				},
