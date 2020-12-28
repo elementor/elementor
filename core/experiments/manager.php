@@ -213,8 +213,8 @@ class Manager extends Base_Object {
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'new_site' => [
-					'default_active' => true,
-					'minimum_installation_version' => '3.1.0',
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
 			],
 		] );
 	}
