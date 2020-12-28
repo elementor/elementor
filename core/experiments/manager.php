@@ -212,6 +212,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
 		] );
 	}
 
