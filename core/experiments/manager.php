@@ -3,6 +3,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -61,26 +62,51 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+				'always_active' => false,
+				'minimum_installation_version' => null,
+			],
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
-		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
+		$new_site = $experimental_data['new_site'];
 
-		$state = $this->get_saved_feature_state( $options['name'] );
+		$feature_is_mutable = true;
 
-		if ( ! $state ) {
-			$state = self::STATE_DEFAULT;
+		if ( $new_site['default_active'] || $new_site['always_active'] ) {
+			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
+
+			if ( $is_new_installation ) {
+				if ( $new_site['always_active'] ) {
+					$experimental_data['state'] = self::STATE_ACTIVE;
+
+					$feature_is_mutable = false;
+				} elseif ( $new_site['default_active'] ) {
+					$experimental_data['default'] = self::STATE_ACTIVE;
+				}
+			}
 		}
 
-		$experimental_data['state'] = $state;
+		$experimental_data['mutable'] = $feature_is_mutable;
+
+		if ( $feature_is_mutable ) {
+			$state = $this->get_saved_feature_state( $options['name'] );
+
+			if ( ! $state ) {
+				$state = self::STATE_DEFAULT;
+			}
+
+			$experimental_data['state'] = $state;
+		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( is_admin() ) {
+		if ( $feature_is_mutable && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
@@ -264,6 +290,12 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
+			if ( ! $feature['mutable'] ) {
+				unset( $features[ $feature_name ] );
+
+				continue;
+			}
+
 			$feature_key = 'experiment-' . $feature_name;
 
 			$fields[ $feature_key ]['label'] = $this->get_feature_settings_label_html( $feature );

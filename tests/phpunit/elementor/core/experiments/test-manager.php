@@ -39,6 +39,12 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'test_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
 			'on_state_change' => null,
+			'new_site' => [
+				'default_active' => false,
+				'always_active' => false,
+				'minimum_installation_version' => null,
+			],
+			'mutable' => true,
 		];
 
 		$new_feature = $experiments->add_feature( $test_feature_data );
@@ -89,6 +95,12 @@ class Test_Manager extends Elementor_Test_Base {
 				'on_state_change' => null,
 				'name' => 'default_activated_test_feature',
 				'state' => 'default',
+				'new_site' => [
+					'default_active' => false,
+					'always_active' => false,
+					'minimum_installation_version' => null,
+				],
+				'mutable' => true,
 			],
 		];
 
@@ -98,11 +110,29 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_is_feature_active() {
 		$this->add_test_feature();
 
+		$is_test_feature_active = $this->elementor()->experiments->is_feature_active( 'test_feature' );
+
+		$this->assertFalse( $is_test_feature_active );
+	}
+
+	public function test_is_feature_active_new_site() {
+		update_option( Manager::INSTALLS_HISTORY_META, [
+			time() => '3.1.0',
+		] );
+
+		$this->add_test_feature( [
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
+		] );
+
 		$experiments = $this->elementor()->experiments;
 
 		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
-		$this->assertFalse( $is_test_feature_active );
+		$this->assertTrue( $is_test_feature_active );
 	}
 
 	public function test_is_feature_active__default_activated() {
