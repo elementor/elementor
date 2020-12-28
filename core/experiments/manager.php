@@ -220,7 +220,11 @@ class Manager extends Base_Object {
 			'description' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
 		] );
 
 		$this->add_feature( [
