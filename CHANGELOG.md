@@ -9,6 +9,15 @@ We will use this plugin to validate new features and gain feedback before they a
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 
 ## Changelog
+**3.1.0-dev5 - 2020-12-28**
+
+* Tweak: Added compatibility to support Improved Asset Loading of Carousel and Slides widgets
+* Fix: Improved Asset Loading experiment functionality is using an outdated name
+* Fix: Landing Pages experiment glitches
+* Fix: Wrong phrasing of Import template success message in Theme Builder
+* Fix: Border color glitch in Theme Builder
+
+## Changelog
 **3.1.0-dev4 - 2020-12-21**
 
 * Tweak: Added "Theme" option to Page Layout options in Page Settings to allow customization of Site Setting value
