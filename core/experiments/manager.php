@@ -198,6 +198,13 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'e_optimized_assets_loading',
+			'title' => __( 'Improved Asset Loading', 'elementor' ),
+			'description' => sprintf( __( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
 			'name' => 'a11y_improvements',
 			'title' => __( 'Accessibility Improvements', 'elementor' ),
 			'description' => __( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
