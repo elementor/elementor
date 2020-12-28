@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Upgrade\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,10 +25,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_add_feature() {
-		$experiments = $this->elementor()->experiments;
-
 		$test_feature_data = [
-			'name' => 'test_feature',
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'unaccepted_key' => 'some value',
 		];
@@ -47,9 +45,9 @@ class Test_Manager extends Elementor_Test_Base {
 			'mutable' => true,
 		];
 
-		$new_feature = $experiments->add_feature( $test_feature_data );
+		$new_feature = $this->add_test_feature( $test_feature_data );
 
-		$re_added_feature = $experiments->add_feature( $test_feature_data );
+		$re_added_feature = $this->add_test_feature( $test_feature_data );
 
 		$this->assertEquals( $test_set, $new_feature );
 
@@ -76,25 +74,23 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_active_features() {
 		$this->add_test_feature();
 
-		$experiments = $this->elementor()->experiments;
-
 		$default_activated_test_feature_data = [
 			'name' => 'default_activated_test_feature',
 			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 
-		$experiments->add_feature( $default_activated_test_feature_data );
+		$this->add_test_feature( $default_activated_test_feature_data );
 
-		$active_features = $experiments->get_active_features();
+		$active_features = $this->elementor()->experiments->get_active_features();
 
 		$expected_features = [
 			'default_activated_test_feature' => [
 				'description' => '',
 				'release_status' => 'alpha',
-				'default' => 'active',
+				'default' => Experiments_Manager::STATE_ACTIVE,
 				'on_state_change' => null,
 				'name' => 'default_activated_test_feature',
-				'state' => 'default',
+				'state' => Experiments_Manager::STATE_DEFAULT,
 				'new_site' => [
 					'default_active' => false,
 					'always_active' => false,
@@ -139,13 +135,12 @@ class Test_Manager extends Elementor_Test_Base {
 		$experiments = $this->elementor()->experiments;
 
 		$default_activated_test_feature_data = [
-			'name' => 'default_activated_test_feature',
 			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 
-		$experiments->add_feature( $default_activated_test_feature_data );
+		$this->add_test_feature( $default_activated_test_feature_data );
 
-		$is_default_activated_test_feature_active = $experiments->is_feature_active( 'default_activated_test_feature' );
+		$is_default_activated_test_feature_active = $experiments->is_feature_active( 'test_feature' );
 
 		$this->assertTrue( $is_default_activated_test_feature_active );
 	}
@@ -194,13 +189,17 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	private function add_test_feature() {
+	private function add_test_feature( array $args = [] ) {
 		$experiments = $this->elementor()->experiments;
 
 		$test_feature_data = [
 			'name' => 'test_feature',
 		];
 
-		$experiments->add_feature( $test_feature_data );
+		if ( $args ) {
+			$test_feature_data = array_merge( $test_feature_data, $args );
+		}
+
+		return $experiments->add_feature( $test_feature_data );
 	}
 }
