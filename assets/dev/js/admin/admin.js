@@ -1,4 +1,4 @@
-import LandingPagesHandler from 'elementor/modules/landing-pages/assets/js/admin/landing-pages';
+import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -289,24 +289,8 @@ import LandingPagesHandler from 'elementor/modules/landing-pages/assets/js/admin
 			this.roleManager.init();
 
 			if ( this.config.experimentalFeatures['landing-pages'] ) {
-				this.runLandingPagesHandler();
+				new LandingPagesModule();
 			}
-		},
-
-		runLandingPagesHandler: function() {
-			const paths = {
-					landingPagesTablePage: 'edit.php?post_type=page&elementor_library_type=landing-page',
-					landingPagesAddNewPage: 'edit.php?post_type=elementor_library&page=landing-page',
-				},
-				args = {
-					path: this.config.landingPages?.landingPagesHasPages ? paths.landingPagesTablePage : paths.landingPagesAddNewPage,
-					isLandingPageAdminEdit: this.config.landingPages?.isLandingPageAdminEdit,
-					paths,
-				};
-
-			// This class modifies elements in the WordPress admin that are rendered "wrong" by the WordPress core
-			// and could not be modified in the backend.
-			new LandingPagesHandler( args );
 		},
 
 		openGetHelpInNewTab: function() {
