@@ -4,12 +4,14 @@
  */
 const path = require( 'path' );
 
+// Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+// Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
@@ -191,6 +193,7 @@ const webpackProductionConfig = [
 		],
 		name: 'base',
 		entry: {
+			// Clone.
 			...entry,
 		},
 		optimization: {
@@ -205,6 +208,7 @@ const webpackProductionConfig = [
 		],
 		name: 'frontend',
 		entry: {
+			// Clone.
 			...frontendEntries,
 		},
 		optimization: {
@@ -219,7 +223,7 @@ const webpackProductionConfig = [
 	},
 ];
 
-// Add minified entry points
+// Adding .min suffix to production entries.
 webpackProductionConfig.forEach( ( config, index ) => {
 	for ( const entryPoint in config.entry ) {
 		let entryValue = config.entry[ entryPoint ];
