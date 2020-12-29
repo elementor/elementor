@@ -582,7 +582,7 @@ class Frontend extends App {
 
 		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
 				'preloaded-elements-handlers',
 				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
@@ -1167,8 +1167,10 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isOptimizedJS' => $this->is_optimized_js_mode(),
+				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
+			// Empty array for BC to avoid errors.
+			'i18n' => [],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
@@ -1188,11 +1190,21 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
+			// Try to use the 'large' WP image size because the Pinterest share API
+			// has problems accepting shares with large images sometimes, and the WP 'large' thumbnail is
+			// the largest default WP image size that will probably not be changed in most sites
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
+
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
+			}
+
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url(),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [
@@ -1286,8 +1298,8 @@ class Frontend extends App {
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
 
-	private function is_optimized_js_mode() {
-		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
+	private function is_improved_assets_loading() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 	}
 
 	private function get_elementor_frontend_dependencies() {
@@ -1298,7 +1310,7 @@ class Frontend extends App {
 			'share-link',
 		];
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
 				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),

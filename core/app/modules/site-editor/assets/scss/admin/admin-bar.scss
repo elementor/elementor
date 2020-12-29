@@ -1,9 +1,4 @@
 #wpadminbar #wp-admin-bar-elementor_app_site_editor a.ab-item {
-	&:before {
-		content: "\e91d";
-		font-family: eicons;
-		top: 4px;
-		font-size: 13px;
-		color: inherit;
-	}
+	border-top: 1px solid #464b50;
+	margin-top: 6px;
 }

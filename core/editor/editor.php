@@ -589,6 +589,8 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
+			// Empty array for BC to avoid errors.
+			'i18n' => [],
 			'experimentalFeatures' => $active_experimental_features,
 		];
 
