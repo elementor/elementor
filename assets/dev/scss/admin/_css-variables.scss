@@ -13,6 +13,6 @@ $e-context-colors: (
 		--e-context-#{$context}-color: #{$color};
 		--e-context-#{$context}-color-dark: #{darken($color, 10%)};
 		--e-context-#{$context}-tint-4: #{rgba($color, .4)};
-		--e-context-#{$context}-tint-1: #{rgba($color, .1)};
+		--e-context-#{$context}-tint-1: #{rgba($color, .04)};
 	}
 }

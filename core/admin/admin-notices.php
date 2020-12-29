@@ -375,7 +375,8 @@ class Admin_Notices extends Module {
 		}
 
 		$options = [
-			'description' => __( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
+			'title' => __( 'Want to design better MailChimp forms?', 'elementor' ),
+			'description' => __( 'Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
 			'dismissible' => true,
 			'id' => $notice_id,
 			'button' => [
@@ -415,7 +416,8 @@ class Admin_Notices extends Module {
 		}
 
 		$options = [
-			'description' => __( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
+			'title' => __( 'Using popups on your site?', 'elementor' ),
+			'description' => __( 'Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
 			'dismissible' => true,
 			'id' => $notice_id,
 			'button' => [
@@ -423,6 +425,7 @@ class Admin_Notices extends Module {
 				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
 				'class' => 'button button-secondary',
 				'new_tab' => true,
+				'type' => 'cta',
 			],
 		];
 
@@ -456,14 +459,17 @@ class Admin_Notices extends Module {
 		}
 
 		$options = [
-			'description' => __( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
+			'title' => __( 'Managing a multi-user site?', 'elementor' ),
+			'description' => __( 'With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
 			'dismissible' => true,
 			'id' => $notice_id,
+			'icon' => 'elementor',
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
 				'class' => 'button button-secondary',
 				'new_tab' => true,
+				'type' => 'cta',
 			],
 		];
 
@@ -491,14 +497,25 @@ class Admin_Notices extends Module {
 
 		$notice_classes = $default_options['classes'];
 		$dismiss_button = '';
+		$icon = '';
 
 		if ( isset( $options['type'] ) ) {
 			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
-			if ( isset( $options['dismissible'] ) ) {
+		if ( isset( $options['dismissible'] ) ) {
 			$notice_classes[] = 'e-notice--dismissible';
 			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="Dismiss" tabindex="0"></i>';
+		}
+
+		if ( isset( $options['icon'] ) ) {
+			$notice_classes[] = 'e-notice--extended';
+
+			if ( 'elementor' === $options['icon'] ) {
+				$icon = '<div class="e-notice__icon-wrapper e-logo-wrapper"><i class="eicon-elementor" aria-hidden="true"></i></div>';
+			} else {
+				$icon = '<div class="e-notice__icon-wrapper"><i class="' . $options['icon'] . '" aria-hidden="true"></i></div>';
+			}
 		}
 
 		$notice_classes = implode( ' ', $notice_classes );
@@ -516,9 +533,7 @@ class Admin_Notices extends Module {
 		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
 			<?php echo $dismiss_button; ?>
 			<div class="e-notice__aside">
-				<div class="e-logo-wrapper">
-					<i class="eicon-elementor" aria-hidden="true"></i>
-				</div>
+				<?php echo $icon; ?>
 			</div>
 			<div class="e-notice__content">
 			<?php if ( ! empty( $options['title'] ) ) { ?>
@@ -531,10 +546,18 @@ class Admin_Notices extends Module {
 
 			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 				<div class="e-notice__actions">
-					<?php foreach ( [ $options['button'], $options['button_secondary'] ] as $button_settings ) {
+					<?php
+					$first_button = true;
+
+					foreach ( [ $options['button'], $options['button_secondary'] ] as $button_settings ) {
+						if ( ! empty( $button_settings['variant'] ) && ! $first_button ) {
+							$button_settings['variant'] = 'outline';
+						}
+
 						if ( empty( $button_settings['text'] ) ) {
 							continue;
 						}
+
 						$button = new Button( $button_settings );
 						$button->print_button();
 					} ?>

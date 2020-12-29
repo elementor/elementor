@@ -1,47 +1,13 @@
 
-/*= Elementor Notice
----------------------------------------*/
-
-@media (min-width: 1200px) {
-	.elementor-message-action {
-		@include padding-end(10px);
-	}
-}
-
-
-@media (max-width: 600px) {
-	.e-notice {
-		.elementor-message-inner {
-			display: block;
-			text-align: center;
-
-			.elementor-message-icon,
-			.elementor-message-content,
-			.elementor-message-action {
-				display: block;
-			}
-
-			.elementor-message-action {
-				text-align: center;
-			}
-
-			.elementor-message-icon {
-				width: auto;
-			}
-
-			.elementor-message-content {
-				padding: 10px 0;
-			}
-		}
-	}
-}
-
-
+/* Elementor Notice
+ ----------------------------------------------------*/
+/* Private API
+ ----------------------------------------------------*/
 :root {--e-notice-bg: #fff;
 	--e-notice-border-color: #ccd0d4;
 	--e-notice-context-color: #{$editor-accent};
 	--e-notice-context-tint: var(--e-context-cta-tint-1);
-	--e-notice-box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	--e-notice-box-shadow: 0 1px 4px rgba(0,0,0,.15);
 	--e-notice-dismiss-color: #{$editor-dark};
 }
 
@@ -63,6 +29,7 @@
 	@each $context, $color in $e-context-colors {
 		&--#{$context} {
 			--e-notice-context-color: var(--e-context-#{$context}-color);
+			--e-notice-context-color-dark: var(--e-context-#{$context}-color-dark);
 			--e-notice-context-tint: var(--e-context-#{$context}-tint-1);
 		}
 	}
@@ -83,7 +50,6 @@
 /* Layout
  ----------------------------------------------------*/
 	&__aside {
-		font-size: 20px;
 		overflow: hidden;
 		background-color: var(--e-notice-context-tint);
 		max-width: calc(var(--e-notice-is-extended, 1) * 50px);
@@ -91,10 +57,14 @@
 		padding: 15px;
 		flex-grow: 0;
 		flex-shrink: 0;
+	}
 
-		.e-logo-wrapper {
-			font-size: pxToRem(9px);
-		}
+	&__icon-wrapper {
+		font-size: pxToRem(9px);
+		border-radius: 100px;
+		background: var(--e-notice-context-color);
+		color: #fff;
+		text-shadow: 0 0 2px var(--e-notice-context-color-dark), 1px 1px 0 var(--e-notice-context-color-dark), -1px -1px 0 var(--e-notice-context-color-dark);
 	}
 
 	&__content {
