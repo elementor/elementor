@@ -496,9 +496,6 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	/*
-	 * @TODO: Rewrite this method markup and use it for every admin notice
-	 */
 	public function print_admin_notice( array $options ) {
 		$button_default_options = Button::get_default_options();
 		$default_options = [
