@@ -808,31 +808,32 @@ class Widget_Video extends Widget_Base {
 
 		if ( 'youtube' === $settings['video_type'] ) {
 			$video_html = '<div class="elementor-video"></div>';
+		}
+
+		if ( 'hosted' === $settings['video_type'] ) {
+			$this->add_render_attribute( 'video-wrapper', 'class', 'e-hosted-video' );
+
+			ob_start();
+
+			$this->render_hosted_video();
+
+			$video_html = ob_get_clean();
 		} else {
-			if ( 'hosted' === $settings['video_type'] ) {
-				$this->add_render_attribute( 'video-wrapper', 'class', 'e-hosted-video' );
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+			$post_id = get_queried_object_id();
 
-				ob_start();
-
-				$this->render_hosted_video();
-
-				$video_html = ob_get_clean();
-			} else {
-				$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
-				$post_id = get_queried_object_id();
-
-				if ( $is_static_render_mode ) {
-					$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
-				} else {
-					$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
-				}
+			if ( $is_static_render_mode ) {
+				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
+				// YouTube API requires a different markup which was set above.
+			} else if ( 'youtube' !== $settings['video_type'] ) {
+				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
 			}
+		}
 
-			if ( empty( $video_html ) ) {
-				echo esc_url( $video_url );
+		if ( empty( $video_html ) ) {
+			echo esc_url( $video_url );
 
-				return;
-			}
+			return;
 		}
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-wrapper' );
@@ -889,7 +890,7 @@ class Widget_Video extends Widget_Base {
 				} else {
 					// When there is an image URL but no ID, it means the overlay image is the placeholder. In this case, get the placeholder URL.
 					if ( empty( $settings['image_overlay']['id'] && ! empty( $settings['image_overlay']['url'] ) ) ) {
-						$image_url = Utils::get_placeholder_image_src();
+						$image_url = $settings['image_overlay']['url'];
 					} else {
 						$image_url = Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings );
 					}
