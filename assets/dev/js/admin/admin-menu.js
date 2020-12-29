@@ -3,7 +3,7 @@ export default class AdminMenuHandler extends elementorModules.ViewModule {
 		const settings = this.getSettings();
 
 		return {
-			$adminPageMenuLink: jQuery( `a[href="${ settings.slug }"]` ),
+			$adminPageMenuLink: jQuery( `a[href="${ settings.path }"]` ),
 		};
 	}
 
@@ -37,7 +37,7 @@ export default class AdminMenuHandler extends elementorModules.ViewModule {
 
 		const settings = this.getSettings();
 
-		if ( window.location.href.includes( settings.slug ) ) {
+		if ( window.location.href.includes( settings.path ) ) {
 			this.highlightSubMenuItem();
 		}
 	}
