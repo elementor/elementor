@@ -33,9 +33,9 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	playVideo() {
 		if ( this.elements.$video.length ) {
-			// this.player exists only for YouTube videos, and its play function is different.
-			if ( this.player ) {
-				this.player.playVideo();
+			// this.youtubePlayer exists only for YouTube videos, and its play function is different.
+			if ( this.youtubePlayer ) {
+				this.youtubePlayer.playVideo();
 			} else {
 				this.elements.$video[ 0 ].play();
 			}
@@ -78,16 +78,16 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				events: {
 					onReady: () => {
 						if ( elementSettings.mute ) {
-							this.player.mute();
+							this.youtubePlayer.mute();
 						}
 
 						if ( elementSettings.autoplay || onOverlayClick ) {
-							this.player.playVideo();
+							this.youtubePlayer.playVideo();
 						}
 					},
 					onStateChange: ( event ) => {
 						if ( event.data === YT.PlayerState.ENDED && elementSettings.loop ) {
-							this.player.seekTo( elementSettings.start || 0 );
+							this.youtubePlayer.seekTo( elementSettings.start || 0 );
 						}
 					},
 				},
@@ -102,20 +102,12 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				},
 			};
 
-		if ( elementSettings.start ) {
-			playerOptions.start = elementSettings.start;
-		}
-
-		if ( elementSettings.end ) {
-			playerOptions.end = elementSettings.end;
-		}
-
 		if ( elementSettings.yt_privacy ) {
 			playerOptions.host = 'https://www.youtube-nocookie.com';
 			playerOptions.playerVars.origin = window.location.hostname;
 		}
 
-		this.player = new YT.Player( this.elements.$video[ 0 ], playerOptions );
+		this.youtubePlayer = new YT.Player( this.elements.$video[ 0 ], playerOptions );
 	}
 
 	bindEvents() {
