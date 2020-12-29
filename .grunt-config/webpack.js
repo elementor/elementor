@@ -12,6 +12,14 @@ const webpack = require('webpack');
 
 const RemoveChunksPlugin = require('./remove-chunks');
 
+// Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
+const getChunkName = ( chunkData, environment ) => {
+	const minSuffix = 'production' === environment ? '.min' : '',
+		name = ( chunkData.chunk.name === undefined || chunkData.chunk.name === null ) ? '' : '[name].';
+
+	return `${ name }[contenthash].bundle${ minSuffix }.js`;
+};
+
 const moduleRules = {
 	rules: [
 		// {
@@ -117,7 +125,7 @@ const devSharedConfig = {
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
 	},
@@ -169,7 +177,7 @@ const prodSharedConfig = {
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.min.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
 	},
 	performance: { hints: false },
