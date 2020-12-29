@@ -85,8 +85,6 @@ export default class EditorBase extends Marionette.Application {
 					FooterSaver: require( './document/save/behaviors/footer-saver' ),
 				},
 			},
-			// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
-			landingLibraryPageModule: new LandingPageLibraryModule(),
 		},
 		saver: {
 			get footerBehavior() {
@@ -350,6 +348,11 @@ export default class EditorBase extends Marionette.Application {
 		this.devTools = new DevTools();
 
 		this.documents = $e.components.register( new EditorDocuments() );
+
+		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
+		if ( this.config.experimentalFeatures['landing-pages'] ) {
+			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}

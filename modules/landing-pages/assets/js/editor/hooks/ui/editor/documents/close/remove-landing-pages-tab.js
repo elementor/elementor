@@ -1,4 +1,4 @@
-	export class LandingPageRemoveLibraryTab extends $e.modules.hookUI.After {
+export class LandingPageRemoveLibraryTab extends $e.modules.hookUI.After {
 	getCommand() {
 		return 'editor/documents/unload';
 	}

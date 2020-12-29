@@ -19,6 +19,7 @@ class Landing_Page extends Page {
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
 
+		// This is so Landing Pages don't take over WordPress' native 'page' Post type.
 		unset( $properties['cpt'] );
 
 		return $properties;

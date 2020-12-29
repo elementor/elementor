@@ -288,18 +288,20 @@ import LandingPagesHandler from 'elementor/modules/landing-pages/assets/js/admin
 
 			this.roleManager.init();
 
-			this.runLandingPagesHandler();
+			if ( this.config.experimentalFeatures['landing-pages'] ) {
+				this.runLandingPagesHandler();
+			}
 		},
 
 		runLandingPagesHandler: function() {
-			const slugs = {
+			const paths = {
 					landingPagesTablePage: 'edit.php?post_type=page&elementor_library_type=landing-page',
 					landingPagesAddNewPage: 'edit.php?post_type=elementor_library&page=landing-page',
 				},
 				args = {
-					slug: this.config.landingPages?.landingPagesHasPages ? slugs.landingPagesTablePage : slugs.landingPagesAddNewPage,
-					isCurrentPageLPAdminEdit: this.config.landingPages?.isCurrentPageLPAdminEdit,
-					slugs,
+					path: this.config.landingPages?.landingPagesHasPages ? paths.landingPagesTablePage : paths.landingPagesAddNewPage,
+					isLandingPageAdminEdit: this.config.landingPages?.isLandingPageAdminEdit,
+					paths,
 				};
 
 			// This class modifies elements in the WordPress admin that are rendered "wrong" by the WordPress core
