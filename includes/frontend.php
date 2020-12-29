@@ -582,7 +582,7 @@ class Frontend extends App {
 
 		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
 				'preloaded-elements-handlers',
 				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
@@ -1167,7 +1167,7 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isOptimizedJS' => $this->is_optimized_js_mode(),
+				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
 			// Empty array for BC to avoid errors.
 			'i18n' => [],
@@ -1298,8 +1298,8 @@ class Frontend extends App {
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
 
-	private function is_optimized_js_mode() {
-		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
+	private function is_improved_assets_loading() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 	}
 
 	private function get_elementor_frontend_dependencies() {
@@ -1310,7 +1310,7 @@ class Frontend extends App {
 			'share-link',
 		];
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
 				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
