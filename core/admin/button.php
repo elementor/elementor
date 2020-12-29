@@ -21,7 +21,7 @@ class Button extends \Elementor\Core\Base\Module {
 		return [
 			'callback' => '',
 			'class' => 'e-button',
-			'icon_classes' => '',
+			'icon' => '',
 			'new_tab' => false,
 			'text' => '',
 			'type' => '',
@@ -39,6 +39,7 @@ class Button extends \Elementor\Core\Base\Module {
 	}
 
 	public function print_button() {
+		$default_options = $this->get_default_options();
 		$options = $this->get_options();
 
 		if ( empty( $options['text'] ) ) {
@@ -49,11 +50,15 @@ class Button extends \Elementor\Core\Base\Module {
 		$icon = '';
 		$attributes = [];
 
-		if ( ! empty( $options['icon_classes'] ) ) {
-			$icon = '<i class="' . $options['icon_classes'] . '"></i>';
+		if ( ! empty( $options['icon'] ) ) {
+			$icon = '<i class="' . $options['icon'] . '"></i>';
 		}
 
-		$classes = ['e-button'];
+		$classes[] = $default_options['class'];
+
+		if ( ! empty( $options['class'] ) ) {
+			$classes[] = sanitize_html_class( $options['class'] );
+		}
 
 		if ( ! empty( $options['type'] ) ) {
 			$classes[] = 'e-button--' . sanitize_html_class( $options['type'] );
