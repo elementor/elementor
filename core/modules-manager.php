@@ -88,7 +88,6 @@ class Modules_Manager {
 			'safe-mode',
 			'usage',
 			'dev-tools',
-			'campaigns',
 			'landing-pages',
 		];
 	}
