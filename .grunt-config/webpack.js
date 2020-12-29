@@ -114,10 +114,6 @@ const baseConfig = {
 
 const devSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.js' ),
-		...plugins,
-	],
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
@@ -131,11 +127,18 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: entry,
 	},
 	{
 		...devSharedConfig,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		optimization: {
 			runtimeChunk:  {
@@ -163,10 +166,6 @@ const prodSharedOptimization = {
 
 const prodSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.min.js' ),
-		...plugins,
-	],
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
@@ -179,6 +178,9 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: {
 			...entry,
@@ -189,6 +191,10 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.min.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		entry: {
 			...frontendEntries,
