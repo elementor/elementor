@@ -19,7 +19,6 @@ class Button extends \Elementor\Core\Base\Module {
 
 	static public function get_default_options(): array {
 		return [
-			'callback' => '',
 			'class' => 'e-button',
 			'icon' => '',
 			'new_tab' => false,
