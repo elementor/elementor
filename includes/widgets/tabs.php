@@ -410,10 +410,10 @@ class Widget_Tabs extends Widget_Base {
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
-						'aria-selected' => 1 == $tab_count ? 'true' : 'false',
+						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
-						'tabindex' => 1 == $tab_count ? '0' : '-1',
+						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
@@ -424,7 +424,7 @@ class Widget_Tabs extends Widget_Base {
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
-					$hidden = 1 == $tab_count ? 'false' : 'hidden';
+					$hidden = 1 === $tab_count ? 'false' : 'hidden';
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
@@ -441,10 +441,10 @@ class Widget_Tabs extends Widget_Base {
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
-						'aria-selected' => 1 == $tab_count ? 'true' : 'false',
+						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
-						'tabindex' => 1 == $tab_count ? '0' : '-1',
+						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 
@@ -482,7 +482,7 @@ class Widget_Tabs extends Widget_Base {
 						'class': [ 'elementor-tab-title','elementor-tab-desktop-title' ],
 						'data-tab': tabCount,
 						'role': 'tab',
-						'tabindex': 1 == tabCount ? '0' : '-1',
+						'tabindex': 1 === tabCount ? '0' : '-1',
 						'aria-controls': 'elementor-tab-content-' + tabUid,
 						} );
 					#>
