@@ -329,14 +329,21 @@ class Utils {
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
 	 */
-	public static function get_create_new_post_url( $post_type = 'page' ) {
-		$new_post_url = add_query_arg( [
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		$query_args = [
 			'action' => 'elementor_new_post',
 			'post_type' => $post_type,
-		], admin_url( 'edit.php' ) );
+		];
+
+		if ( $template_type ) {
+			$query_args['template_type'] = $template_type;
+		}
+
+		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
 
 		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 

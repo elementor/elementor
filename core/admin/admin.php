@@ -709,6 +709,8 @@ class Admin extends App {
 		$elementor_beta = get_option( 'elementor_beta', 'no' );
 		$all_introductions = User::get_introduction_meta();
 		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
 		$settings = [
 			'home_url' => home_url(),
@@ -722,6 +724,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );
