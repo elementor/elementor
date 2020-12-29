@@ -19,9 +19,20 @@
 	// Based on WP:
 	background: var(--e-notice-bg);
 	border: 1px solid var(--e-notice-border-color);
-	border-inline-start: 4px solid var(--e-notice-context-color);
+	border-inline-start-width: 4px;
 	box-shadow: var(--e-notice-box-shadow);
 	margin: 5px 20px 5px 2px;
+
+	&::before {
+		display: block;
+		content: '';
+		position: absolute;
+		@include start(-4px);
+		top: 0;
+		bottom: 0;
+		width: 4px;
+		background-color: var(--e-notice-context-color);
+	}
 
 
 /* Notice context colors modifiers
