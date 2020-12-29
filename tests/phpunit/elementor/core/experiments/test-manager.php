@@ -111,7 +111,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $is_test_feature_active );
 	}
 
-	public function test_is_feature_active_new_site() {
+	public function test_is_feature_active__new_site() {
 		update_option( Manager::INSTALLS_HISTORY_META, [
 			time() => '3.1.0',
 		] );
