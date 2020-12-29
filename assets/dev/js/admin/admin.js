@@ -288,7 +288,9 @@ import LandingPagesHandler from 'elementor/modules/landing-pages/assets/js/admin
 
 			this.roleManager.init();
 
-			this.runLandingPagesHandler();
+			if ( this.config.experimentalFeatures['landing-pages'] ) {
+				this.runLandingPagesHandler();
+			}
 		},
 
 		runLandingPagesHandler: function() {
