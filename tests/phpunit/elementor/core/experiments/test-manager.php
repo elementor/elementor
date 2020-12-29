@@ -86,7 +86,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$expected_features = [
 			'default_activated_test_feature' => [
 				'description' => '',
-				'release_status' => 'alpha',
+				'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 				'default' => Experiments_Manager::STATE_ACTIVE,
 				'on_state_change' => null,
 				'name' => 'default_activated_test_feature',
