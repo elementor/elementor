@@ -74,7 +74,7 @@ class Button extends \Elementor\Core\Base\Module {
 
 		$html = '<' . $html_tag . ' ' . Utils::render_html_attributes( $attributes ) . '>';
 		$html .= $icon;
-		$html .= sanitize_text_field( $options['text'] );
+		$html .= '<span>' . sanitize_text_field( $options['text'] ) . '</span>';
 		$html .= '</' . $html_tag . '>';
 
 		echo $html;

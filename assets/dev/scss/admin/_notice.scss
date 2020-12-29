@@ -52,19 +52,23 @@
 	&__aside {
 		overflow: hidden;
 		background-color: var(--e-notice-context-tint);
-		max-width: calc(var(--e-notice-is-extended, 1) * 50px);
+		width: calc(var(--e-notice-is-extended, 0) * 50px);
 		text-align: center;
-		padding: 15px;
+		padding-top: 15px;
 		flex-grow: 0;
 		flex-shrink: 0;
 	}
 
 	&__icon-wrapper {
-		font-size: pxToRem(9px);
+		display: inline-block;
+		font-size: pxToRem(10px);
+		max-height: pxToRem(24px);
+		width: pxToRem(24px);
+		line-height: pxToRem(24px);
 		border-radius: 100px;
 		background: var(--e-notice-context-color);
 		color: #fff;
-		text-shadow: 0 0 2px var(--e-notice-context-color-dark), 1px 1px 0 var(--e-notice-context-color-dark), -1px -1px 0 var(--e-notice-context-color-dark);
+		text-shadow: 0 0 3px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark);
 	}
 
 	&__content {

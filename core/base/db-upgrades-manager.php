@@ -77,21 +77,19 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function admin_notice_start_upgrade() {
-		$upgrade_link = $this->get_start_action_url();
-		$message = sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() );
-
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
-			'description' => $message,
+			'title' =>  $this->get_updater_label(),
+			'description' => __( 'Your site database needs to be updated to the latest version.', 'elementor' ),
 			'type' => 'error',
-			'dismissible' => true,
+			'icon' => 'eicon-database',
 			'button' => [
 				'text' => __( 'Update Now', 'elementor' ),
-				'url' => $upgrade_link,
+				'url' => $this->get_start_action_url(),
 				'class' => 'e-button e-button--cta',
 			],
 		];
@@ -101,8 +99,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 	public function admin_notice_upgrade_is_running() {
 		$this->admin_notice_start_upgrade();
-		$upgrade_link = $this->get_continue_action_url();
-		$message = sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() );
 
 		/**
 		 * @var Admin_Notices $admin_notices
@@ -110,12 +106,14 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
-			'description' => $message,
+			'title' => $this->get_updater_label(),
+			'description' => __( 'Database update process is running in the background.', 'elementor' ),
 			'type' => 'warning',
-			'dismissible' => true,
+			'icon' => 'eicon-database',
+
 			'button' => [
 				'text' => __( 'Taking a while?', 'elementor' ) . ' ' . __( 'Click here to run it now', 'elementor' ),
-				'url' => $upgrade_link,
+				'url' => $this->get_continue_action_url(),
 				'class' => 'e-button e-button--primary',
 			],
 		];
@@ -131,12 +129,12 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
-		$admin_notices = Plugin::$instance->common->get_component( 'admin-notices' );
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
 			'description' => $message,
 			'type' => 'success',
-			'dismissible' => true,
+			'icon' => 'eicon-database',
 		];
 
 		$admin_notices->print_admin_notice( $options );

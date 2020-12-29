@@ -79,12 +79,14 @@ class Elementor_Dev_Notice extends Base_Notice {
 				'Get a sneak peek at our in progress development versions, and help us improve Elementor to perfection. Developer Edition releases contain experimental functionality for testing purposes.',
 				'elementor'
 			),
+			'icon' => 'eicon-elementor',
 			'button' => [
 				'text' => __( 'Install & Activate', 'elementor' ),
 				'url' => wp_nonce_url(
 					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
 					'install-plugin_' . static::PLUGIN_SLUG
 				),
+				'type' => 'cta',
 			],
 		];
 	}

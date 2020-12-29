@@ -93,6 +93,16 @@
 		}
 	}
 
+	> i {
+		line-height: inherit;
+		height: var(--e-button-line-height);
+		width: min-content;
+	}
+
+	> * + * {
+		margin-inline-start: .5ch;
+	}
+
 	// Make a button look and behave like a link
 /*	&--link {
 		font-weight: $font-weight-normal;
