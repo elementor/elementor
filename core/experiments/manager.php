@@ -3,6 +3,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -61,26 +62,51 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+				'always_active' => false,
+				'minimum_installation_version' => null,
+			],
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
-		$experimental_data = array_merge( $default_experimental_data, $experimental_data );
+		$new_site = $experimental_data['new_site'];
 
-		$state = $this->get_saved_feature_state( $options['name'] );
+		$feature_is_mutable = true;
 
-		if ( ! $state ) {
-			$state = self::STATE_DEFAULT;
+		if ( $new_site['default_active'] || $new_site['always_active'] ) {
+			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
+
+			if ( $is_new_installation ) {
+				if ( $new_site['always_active'] ) {
+					$experimental_data['state'] = self::STATE_ACTIVE;
+
+					$feature_is_mutable = false;
+				} elseif ( $new_site['default_active'] ) {
+					$experimental_data['default'] = self::STATE_ACTIVE;
+				}
+			}
 		}
 
-		$experimental_data['state'] = $state;
+		$experimental_data['mutable'] = $feature_is_mutable;
+
+		if ( $feature_is_mutable ) {
+			$state = $this->get_saved_feature_state( $options['name'] );
+
+			if ( ! $state ) {
+				$state = self::STATE_DEFAULT;
+			}
+
+			$experimental_data['state'] = $state;
+		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( is_admin() ) {
+		if ( $feature_is_mutable && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
@@ -194,7 +220,11 @@ class Manager extends Base_Object {
 			'description' => __( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
 		] );
 
 		$this->add_feature( [
@@ -204,6 +234,20 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
+			'name' => 'a11y_improvements',
+			'title' => __( 'Accessibility Improvements', 'elementor' ),
+			'description' => __( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
+				. '<br><strong>' . __( 'Please note!', 'elementor' ) . '</strong> ' . __( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
 		] );
 	}
 
@@ -266,6 +310,12 @@ class Manager extends Base_Object {
 		$fields = [];
 
 		foreach ( $features as $feature_name => $feature ) {
+			if ( ! $feature['mutable'] ) {
+				unset( $features[ $feature_name ] );
+
+				continue;
+			}
+
 			$feature_key = 'experiment-' . $feature_name;
 
 			$fields[ $feature_key ]['label'] = $this->get_feature_settings_label_html( $feature );

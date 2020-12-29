@@ -638,9 +638,17 @@ class Admin extends App {
 			return;
 		}
 		?>
+		<hr class="e-major-update-warning__separator" />
 		<div class="e-major-update-warning">
-			<div class="e-major-update-warning__title"><?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?></div>
-			<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			<div class="e-major-update-warning__icon">
+				<i class="eicon-info-circle"></i>
+			</div>
+			<div>
+				<div class="e-major-update-warning__title">
+					<?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?>
+				</div>
+				<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			</div>
 		</div>
 		<?php
 	}
@@ -709,6 +717,8 @@ class Admin extends App {
 		$elementor_beta = get_option( 'elementor_beta', 'no' );
 		$all_introductions = User::get_introduction_meta();
 		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
 		$settings = [
 			'home_url' => home_url(),
@@ -722,6 +732,7 @@ class Admin extends App {
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
 			],
+			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );
