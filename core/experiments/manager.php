@@ -191,8 +191,17 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_dom_optimization',
 			'title' => __( 'Optimized DOM Output', 'elementor' ),
-			'description' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
+			'description' => __( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_optimized_assets_loading',
+			'title' => __( 'Improved Asset Loading', 'elementor' ),
+			'description' => __( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
@@ -306,7 +315,7 @@ class Manager extends Base_Object {
 	private function render_settings_intro() {
 		?>
 		<h2><?php echo __( 'Experiments', 'elementor' ); ?></h2>
-		<p><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
+		<p><?php echo sprintf( __( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed altogether. <a href="%s" target="_blank">Learn More.</a>', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments/' ); ?></p>
 		<p><?php echo __( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
 		<p><?php echo sprintf( __( 'Your feedback is important - <a href="%s" target="_blank">help us</a> improve these features by sharing your thoughts and inputs.', 'elementor' ), 'https://go.elementor.com/wp-dash-experiments-report-an-issue/' ); ?></p>
 		<?php
