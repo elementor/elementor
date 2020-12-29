@@ -131,6 +131,30 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $is_test_feature_active );
 	}
 
+	public function test_is_feature_active__immutable() {
+		update_option( Manager::INSTALLS_HISTORY_META, [
+			time() => '3.1.0',
+		] );
+
+		$this->add_test_feature( [
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'new_site' => [
+				'always_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
+		] );
+
+		$experiments = $this->elementor()->experiments;
+
+		$is_test_feature_active = $experiments->is_feature_active( 'test_feature' );
+
+		$test_feature = $experiments->get_features( 'test_feature' );
+
+		$this->assertTrue( $is_test_feature_active );
+
+		$this->assertFalse( $test_feature['mutable'] );
+	}
+
 	public function test_is_feature_active__default_activated() {
 		$experiments = $this->elementor()->experiments;
 
