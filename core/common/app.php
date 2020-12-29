@@ -100,7 +100,7 @@ class App extends BaseApp {
 			[
 				'backbone',
 			],
-			'2.4.5',
+			'2.4.5.e1',
 			true
 		);
 
