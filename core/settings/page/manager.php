@@ -101,7 +101,7 @@ class Manager extends CSS_Manager {
 			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
-		if ( ! current_user_can( 'edit_post', $id ) ) {
+		if ( ! Utils::is_wp_cli() && ! current_user_can( 'edit_post', $id ) ) {
 			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
@@ -165,7 +165,8 @@ class Manager extends CSS_Manager {
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 		<div class="elementor-panel-navigation">
-			<# _.each( tabs, function( tabTitle, tabSlug ) { #>
+			<# _.each( tabs, function( tabTitle, tabSlug ) {
+			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>

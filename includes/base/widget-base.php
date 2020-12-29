@@ -525,9 +525,9 @@ abstract class Widget_Base extends Element_Base {
 		$skin = $this->get_current_skin();
 		if ( $skin ) {
 			$skin->set_parent( $this );
-			$skin->render();
+			$skin->render_by_mode();
 		} else {
-			$this->render();
+			$this->render_by_mode();
 		}
 
 		$widget_content = ob_get_clean();

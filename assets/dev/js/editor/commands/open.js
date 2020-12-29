@@ -24,7 +24,7 @@ export class Open extends CommandBase {
 				elementorCommon.elements.$body.addClass( `elementor-editor-${ config.type }` );
 
 				// Tell the editor to load the document.
-				$e.internal( 'editor/documents/load', { config } );
+				return $e.internal( 'editor/documents/load', { config } );
 			} )
 			.always( () => {
 				// TODO: move to $e.hooks.ui.

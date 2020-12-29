@@ -1,10 +1,4 @@
 export default class GlobalControlSelect extends Marionette.Behavior {
-	ui() {
-		return {
-			controlContent: '.elementor-control-content',
-		};
-	}
-
 	getClassNames() {
 		return {
 			previewItemsContainer: 'e-global__preview-items-container',
@@ -71,6 +65,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.view.applySavedValue();
 
 				return globalData.data;
+			} ).catch( ( e ) => {
+				// TODO: Need to be replaced by "e instanceof NotFoundError"
+				if ( 404 !== e?.data?.status ) {
+					return Promise.reject( e );
+				}
+
+				this.disableGlobalValue( false );
 			} );
 	}
 
@@ -292,9 +293,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				onOutsideClick: false,
 			},
 			position: {
-				my: `center top`,
-				at: `center bottom+5`,
-				of: this.ui.controlContent,
+				my: `right top`,
+				at: `right bottom+5`,
+				of: this.ui.globalPopoverToggle,
+				collision: 'fit flip',
 				autoRefresh: true,
 			},
 		} );
@@ -421,20 +423,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// The unset method is triggered from the controls via triggerMethod.
 	onUnsetGlobalValue() {
-		const globalMeta = this.view.getGlobalMeta();
-
-		$e.run( 'document/globals/disable', {
-			container: this.view.container,
-			settings: { [ globalMeta.key ]: '' },
-			options: { restore: true },
-		} )
-			.then( () => {
-				this.onValueTypeChange();
-
-				this.view.globalValue = null;
-
-				this.resetActivePreviewItem();
-			} );
+		this.disableGlobalValue();
 	}
 
 	onUnlinkGlobalDefault() {
@@ -478,5 +467,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			mouseenter: () => this.globalInfoTooltip.show(),
 			mouseleave: () => this.globalInfoTooltip.hide(),
 		} );
+	}
+
+	disableGlobalValue( restore = true ) {
+		const globalMeta = this.view.getGlobalMeta();
+
+		return $e.run( 'document/globals/disable', {
+			container: this.view.container,
+			settings: { [ globalMeta.key ]: '' },
+			options: { restore },
+		} )
+			.then( () => {
+				this.onValueTypeChange();
+
+				this.view.globalValue = null;
+
+				this.resetActivePreviewItem();
+			} );
 	}
 }

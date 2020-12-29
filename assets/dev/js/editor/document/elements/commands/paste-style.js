@@ -101,9 +101,11 @@ export class PasteStyle extends CommandHistory {
 		} );
 	}
 
+	/**
+	 * @param {Container} targetContainer
+	 * @param {{}} settings
+	 */
 	pasteStyle( targetContainer, settings ) {
-		targetContainer.view.allowRender = false;
-
 		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		elementor.channels.data.trigger( 'element:before:paste:style', targetContainer.model );
 
@@ -131,12 +133,12 @@ export class PasteStyle extends CommandHistory {
 					render: false,
 				},
 			} );
+
+			targetContainer.panel.refresh();
 		}
 
 		// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 		elementor.channels.data.trigger( 'element:after:paste:style', targetContainer.model );
-
-		targetContainer.view.allowRender = true;
 
 		targetContainer.render();
 	}

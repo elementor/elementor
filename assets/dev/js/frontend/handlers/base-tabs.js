@@ -66,11 +66,12 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		const settings = this.getSettings(),
 			activeClass = settings.classes.active,
 			$requestedTitle = this.elements.$tabTitles.filter( '[data-tab="' + tabIndex + '"]' ),
-			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' );
+			$requestedContent = this.elements.$tabContents.filter( '[data-tab="' + tabIndex + '"]' ),
+			animationDuration = 'show' === settings.showTabFn ? 0 : 400;
 
 		$requestedTitle.add( $requestedContent ).addClass( activeClass );
 
-		$requestedContent[ settings.showTabFn ]( () => elementorFrontend.elements.$window.trigger( 'resize' ) );
+		$requestedContent[ settings.showTabFn ]( animationDuration, () => elementorFrontend.elements.$window.trigger( 'resize' ) );
 	}
 
 	isActiveTab( tabIndex ) {

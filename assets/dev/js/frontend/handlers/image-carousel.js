@@ -168,7 +168,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 	onElementChange( propertyName ) {
 		const changeableProperties = this.getChangeableProperties();
 
-		if ( changeableProperties.propertyName ) {
+		if ( changeableProperties[ propertyName ] ) {
 			this.updateSwiperOption( propertyName );
 		}
 	}

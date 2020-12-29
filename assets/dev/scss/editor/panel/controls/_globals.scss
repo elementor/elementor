@@ -2,9 +2,11 @@
 .e-global {
 
 	&__popover {
-		width: 270px;
+		// Default panel width is 300px. 288px width positions it at the center of the panel by default.
+		width: 288px;
 		z-index: 1;
 		font-size: 12px;
+		@include padding-start(10px);
 
 		&-toggle {
 			border: 1px solid $editor-lightest;

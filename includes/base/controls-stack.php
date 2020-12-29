@@ -1873,6 +1873,28 @@ abstract class Controls_Stack extends Base_Object {
 	protected function render() {}
 
 	/**
+	 * Render element in static mode.
+	 *
+	 * If not inherent will call the base render.
+	 */
+	protected function render_static() {
+		$this->render();
+	}
+
+	/**
+	 * Determine the render logic.
+	 */
+	protected function render_by_mode() {
+		if ( Plugin::$instance->frontend->is_static_render_mode() ) {
+			$this->render_static();
+
+			return;
+		}
+
+		$this->render();
+	}
+
+	/**
 	 * Print content template.
 	 *
 	 * Used to generate the content template on the editor, using a

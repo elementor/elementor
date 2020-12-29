@@ -32,7 +32,7 @@ module.exports = function( config ) {
 			'assets/lib/backbone/backbone.radio.min.js',
 
 			// Elementor Common.
-			'tests/qunit/setup-elementor-common.js',
+			'tests/qunit/setup/elementor-common.js',
 			'assets/lib/dialog/dialog.js',
 			'assets/js/common-modules.js',
 			'assets/js/common.js',
@@ -41,11 +41,11 @@ module.exports = function( config ) {
 			'tests/qunit/index.html',
 
 			// Editor Tinymce.
-			'tests/qunit/setup-tinymce.js',
+			'tests/qunit/setup/tinymce.js',
 			'tests/qunit/vendor/wp-includes/quicktags.min.js',
 
 			// Editor Config.
-			'tests/qunit/setup-editor.js',
+			'tests/qunit/setup/editor.js',
 
 			// Editor Dependencies.
 			'tests/qunit/vendor/wp-includes/jquery-ui.min.js',

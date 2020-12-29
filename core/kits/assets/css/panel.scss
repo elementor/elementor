@@ -187,4 +187,6 @@
 	color: $editor-lightest;
 	font-size: 10px;
 	padding: 0 5px;
+	text-align: $end;
+	@include ellipsis;
 }

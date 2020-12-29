@@ -943,7 +943,11 @@ class Frontend extends App {
 		 */
 		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
 
+		do_action( 'elementor/frontend/before_get_builder_content', $document, $this->_is_excerpt );
+
 		if ( empty( $data ) ) {
+			Plugin::$instance->documents->restore_document();
+
 			return '';
 		}
 
@@ -991,6 +995,8 @@ class Frontend extends App {
 
 		Plugin::$instance->documents->restore_document();
 
+		// BC
+		// TODO: use Deprecation::do_deprecated_action() in 3.1.0
 		do_action( 'elementor/frontend/get_builder_content', $document, $this->_is_excerpt, $with_css );
 
 		return $content;
@@ -1188,11 +1194,21 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
+			// Try to use the 'large' WP image size because the Pinterest share API
+			// has problems accepting shares with large images sometimes, and the WP 'large' thumbnail is
+			// the largest default WP image size that will probably not be changed in most sites
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
+
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
+			}
+
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url(),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [

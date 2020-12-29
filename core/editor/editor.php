@@ -515,16 +515,16 @@ class Editor {
 		// Tweak for WP Admin menu icons
 		wp_print_styles( 'editor-buttons' );
 
-		$page_title_selector = Plugin::$instance->kits_manager->get_current_settings( 'page_title_selector' );
-
-		$page_title_selector .= ', .elementor-page-title';
-
 		$settings = SettingsManager::get_settings_managers_config();
 		// Moved to document since 2.9.0.
 		unset( $settings['page'] );
 
 		$document = Plugin::$instance->documents->get_doc_or_auto_save( $this->post_id );
 		$kits_manager = Plugin::$instance->kits_manager;
+
+		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
+
+		$page_title_selector .= ', .elementor-page-title';
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -581,11 +581,12 @@ class Editor {
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
-			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ),
+			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ) || class_exists( 'Advanced_Editor_Tools' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
 			'ui' => [
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
+				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
 			// Legacy Mode - for backwards compatibility of older HTML markup.
 			'legacyMode' => [
