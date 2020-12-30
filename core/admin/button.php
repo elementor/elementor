@@ -13,7 +13,7 @@ class Button extends \Elementor\Core\Base\Module {
 
 	private $options;
 
-	public function __construct( $options ) {
+	public function __construct( array $options ) {
 		$this->options = $options;
 	}
 
