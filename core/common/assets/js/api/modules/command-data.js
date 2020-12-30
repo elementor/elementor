@@ -91,16 +91,20 @@ export default class CommandData extends CommandBase {
 	apply() {
 		const applyMethods = this.getApplyMethods();
 
-		// Run 'before' method.
-		this.args = applyMethods.before( this.args );
+		if ( applyMethods ) {
+			// Run 'before' method.
+			this.args = applyMethods.before( this.args );
+		}
 
 		const requestData = this.getRequestData();
 
 		return $e.data.fetch( requestData ).then( ( data ) => {
 			this.data = data;
 
-			// Run 'after' method.
-			this.data = applyMethods.after( data, this.args );
+			if ( applyMethods ) {
+				// Run 'after' method.
+				this.data = applyMethods.after( data, this.args );
+			}
 
 			this.data = { data: this.data };
 
