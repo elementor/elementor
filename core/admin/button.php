@@ -87,7 +87,7 @@ class Button extends \Elementor\Core\Base\Module {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_name() : string {
+	public function get_name() {
 		return 'admin-button';
 	}
 }
