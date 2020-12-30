@@ -7,15 +7,16 @@ export default function AllPartsButton( props ) {
 	return (
 		<Match path={ activePathname }>
 			{ ( { match } ) => {
-				const className = `eps-menu-item__link${ match || props.promotion ? ' eps-menu-item--active' : '' }`;
+				const className = match || props.promotion ? 'eps-menu-item--active' : '';
 
 				return (
-					<MenuItem
-						text={__( 'All Parts', 'elementor' )}
-						className={ className }
-						icon="eicon-filter"
-						url={ props.url }
-					/> );
+					<div className={ className }>
+						<MenuItem
+							className="eps-menu-item__link"
+							text={__( 'All Parts', 'elementor' )}
+							icon="eicon-filter" url={ props.url } />
+					</div>
+					);
 				}
 			}
 		</Match>
