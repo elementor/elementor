@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['latest', '5.5', '5.4', '5.3', '5.2', '5.1', '5.0']
+        wordpress_versions: ['latest', '5.5', '5.4', '5.3']
     name: WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Startup MySQL service
@@ -41,9 +41,7 @@ jobs:
         run: php7.3 /tmp/phpunit-6
       - name: PHP7.3 - Multisite
         run: WP_MULTISITE=1 php7.3 /tmp/phpunit-6
-      - if: matrix.wordpress_versions != '5.0' && matrix.wordpress_versions != '5.1' && matrix.wordpress_versions != '5.2'
-        name: PHP7.4
+      - name: PHP7.4
         run: php7.4 /tmp/phpunit-7
-      - if: matrix.wordpress_versions != '5.0' && matrix.wordpress_versions != '5.1' && matrix.wordpress_versions != '5.2'
-        name: PHP7.4 - Multisite
+      - name: PHP7.4 - Multisite
         run: WP_MULTISITE=1 php7.4 /tmp/phpunit-7
