@@ -72,11 +72,24 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function enqueue_scripts() {
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
+
+		wp_register_script(
+				'tipsy',
+				ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $suffix . '.js',
+				[
+					'jquery',
+				],
+				'1.0.0',
+				true
+		);
+
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
 			[
 				'elementor-common',
+				'tipsy',
 			],
 			ELEMENTOR_VERSION,
 			true
