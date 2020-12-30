@@ -278,7 +278,14 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
-		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
+		$cpts_to_associate = [ self::CPT ];
+
+		// If the Landing Page feature is active, associate pages with this taxonomy as well.
+		if ( Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
+			$cpts_to_associate[] = 'page';
+		}
+
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, $cpts_to_associate, $args );
 
 		/**
 		 * Categories
