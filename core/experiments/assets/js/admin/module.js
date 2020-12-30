@@ -23,13 +23,18 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 		} );
 	}
 
-	initIndicatorsTooltip() {
+	addIndicatorsTooltips() {
 		this.elements.$experimentIndicators.each( ( index, experimentIndicator ) => this.addTipsy( jQuery( experimentIndicator ) ) );
 	}
 
 	onInit() {
 		super.onInit();
 
-		this.initIndicatorsTooltip();
+		if ( this.elements.$experimentIndicators.length ) {
+			import(
+				/* webpackIgnore: true */
+				`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
+				).then( () => this.addIndicatorsTooltips() );
+		}
 	}
 }
