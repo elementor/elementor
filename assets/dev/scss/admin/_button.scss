@@ -1,7 +1,3 @@
-@function pxToRem($size) {
-	@return $size / 16px * 1rem;
-}
-
 :root {
 	--e-button-padding-y: #{pxToRem(7px)};
 	--e-button-padding-x: #{pxToRem(12px)};
