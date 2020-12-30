@@ -3,7 +3,8 @@
  ----------------------------------------------------*/
 /* Private API
  ----------------------------------------------------*/
-:root {--e-notice-bg: #fff;
+:root {
+	--e-notice-bg: #fff;
 	--e-notice-border-color: #ccd0d4;
 	--e-notice-context-color: #{$editor-accent};
 	--e-notice-context-tint: var(--e-context-cta-tint-1);
