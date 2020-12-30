@@ -407,13 +407,15 @@ class Manager extends Base_Object {
 		ob_start();
 
 		$indicator_classes = 'e-experiment__title__indicator';
+		$indicator_tooltip = __( 'Inactive by default', 'elementor' );
 
 		if ( $this->is_feature_active( $feature['name'] ) ) {
 			$indicator_classes .= ' e-experiment__title__indicator--active';
+			$indicator_tooltip = __( 'Active by default', 'elementor' );
 		}
 		?>
 		<div class="e-experiment__title">
-			<div class="<?php echo $indicator_classes; ?>"></div>
+			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; ?>"><?php echo $feature['title']; ?></label>
 		</div>
 		<?php
