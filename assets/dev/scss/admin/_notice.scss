@@ -15,7 +15,7 @@
 .e-notice {
 	position: relative;
 	display: flex;
-	font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: $admin-font-family;
 
 	// Based on WP:
 	background: var(--e-notice-bg);
