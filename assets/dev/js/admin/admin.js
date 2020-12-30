@@ -289,7 +289,7 @@ import ExperimentsModule from '../../../../core/experiments/assets/js/admin/modu
 
 			this.roleManager.init();
 
-			if ( this.config.experimentalFeatures['landing-pages'] ) {
+			if ( this.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
 
