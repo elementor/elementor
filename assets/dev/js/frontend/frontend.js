@@ -166,6 +166,14 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
 	}
 
+	addUserAgentClasses() {
+		for ( const [ key, value ] of Object.entries( environment ) ) {
+			if ( value ) {
+				this.elements.$body.addClass( 'e--ua-' + key );
+			}
+		}
+	}
+
 	addIeCompatibility() {
 		const el = document.createElement( 'div' ),
 			supportsGrid = 'string' === typeof el.style.grid;
@@ -282,6 +290,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.addUserAgentClasses();
 
 		this.addIeCompatibility();
 
