@@ -17,7 +17,7 @@ const RemoveChunksPlugin = require('./remove-chunks');
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
-		name = ( chunkData.chunk.name === undefined || chunkData.chunk.name === null ) ? '' : '[name].';
+		name = chunkData.chunk.name ? '[name].' : '';
 
 	return `${ name }[contenthash].bundle${ minSuffix }.js`;
 };
