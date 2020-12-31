@@ -589,8 +589,11 @@ class Editor {
 				'darkModeStylesheetURL' => ELEMENTOR_ASSETS_URL . 'css/editor-dark-mode' . $suffix . '.css',
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
 			],
-			// Empty array for BC to avoid errors.
-			'i18n' => [],
+			// Array for BC to avoid errors.
+			'i18n' => [
+				// 'edit_element' is here for Backwards Compatibility for Elementor Pro versions <3.1.0
+				'edit_element' => __( 'Edit %s', 'elementor' ),
+			],
 			'experimentalFeatures' => $active_experimental_features,
 		];
 
