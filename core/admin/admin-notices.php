@@ -442,7 +442,6 @@ class Admin_Notices extends Module {
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
-				'class' => 'button button-secondary',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -485,7 +484,6 @@ class Admin_Notices extends Module {
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
-				'class' => 'button button-secondary',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -497,7 +495,6 @@ class Admin_Notices extends Module {
 	}
 
 	public function print_admin_notice( array $options ) {
-		$button_default_options = Button::get_default_options();
 		$default_options = [
 			'id' => null,
 			'title' => '',
@@ -506,37 +503,35 @@ class Admin_Notices extends Module {
 			'type' => '',
 			'dismissible' => true,
 			'icon' => '',
-			'button' => $button_default_options,
-			'button_secondary' => $button_default_options,
+			'button' => [],
+			'button_secondary' => [],
 		];
 
-		$notice_classes = $default_options['classes'];
+		$options = array_replace_recursive( $default_options, $options );
+
+		$notice_classes = $options['classes'];
 		$dismiss_button = '';
 		$icon = '';
 
-		if ( isset( $options['type'] ) ) {
+		if ( $options['type'] ) {
 			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
-		if ( ! isset( $options['dismissible'] ) || isset( $options['dismissible'] ) && $options['dismissible'] ) {
+		if ( $options['dismissible'] ) {
 			$notice_classes[] = 'e-notice--dismissible';
 			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="Dismiss" tabindex="0"></i>';
 		}
 
-		if ( isset( $options['icon'] ) ) {
+		if ( $options['icon'] ) {
 			$notice_classes[] = 'e-notice--extended';
 			$icon = '<div class="e-notice__icon-wrapper"><i class="' . $options['icon'] . '" aria-hidden="true"></i></div>';
 		}
-
-		$notice_classes = implode( ' ', $notice_classes );
-
-		$options = array_replace_recursive( $default_options, $options );
 
 		$wrapper_attributes = [
 			'class' => $notice_classes,
 		];
 
-		if ( isset( $options['id'] ) ) {
+		if ( $options['id'] ) {
 			$wrapper_attributes['data-notice_id'] = $options['id'];
 		}
 		?>
@@ -546,25 +541,21 @@ class Admin_Notices extends Module {
 				<?php echo $icon; ?>
 			</div>
 			<div class="e-notice__content">
-			<?php if ( ! empty( $options['title'] ) ) { ?>
+			<?php if ( $options['title'] ) { ?>
 				<h3><?php echo $options['title']; ?></h3>
 			<?php } ?>
 
-			<?php if ( ! empty( $options['description'] ) ) { ?>
+			<?php if ( $options['description'] ) { ?>
 				<p><?php echo $options['description']; ?></p>
 			<?php } ?>
 
 			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 				<div class="e-notice__actions">
 					<?php
-					$first_button = true;
-
-					foreach ( [ $options['button'], $options['button_secondary'] ] as $button_settings ) {
-						if ( empty( $button_settings['variant'] ) && ! $first_button ) {
+					foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
+						if ( empty( $button_settings['variant'] ) && $index ) {
 							$button_settings['variant'] = 'outline';
 						}
-
-						$first_button = false;
 
 						if ( empty( $button_settings['text'] ) ) {
 							continue;

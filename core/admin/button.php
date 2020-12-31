@@ -3,23 +3,27 @@
 namespace Elementor\Core\Admin;
 
 
+use Elementor\Core\Base\Base_Object;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Button extends \Elementor\Core\Base\Module {
+class Button extends Base_Object {
 
 	private $options;
 
 	public function __construct( array $options ) {
-		$this->options = $options;
+		$this->options = $this->merge_properties( $this->get_default_options(), $options );
 	}
 
-	static public function get_default_options() {
+	/**
+	 * @return array
+	 */
+	private function get_default_options() {
 		return [
-			'class' => 'e-button',
+			'class' => [ 'e-button' ],
 			'icon' => '',
 			'new_tab' => false,
 			'text' => '',
@@ -29,23 +33,22 @@ class Button extends \Elementor\Core\Base\Module {
 		];
 	}
 
-	private function get_options( $option = false ) {
-		if ( isset( $this->options[ $option ] ) && array_search( $option, $this->get_default_options()  ) ) {
-			return $this->options[ $option ];
-		}
-
-		return $this->options;
+	/**
+	 * @param string $option Optional default is null
+	 * @return array|mixed
+	 */
+	private function get_options( $option = null ) {
+		return $this->get_items( $this->options, $option );
 	}
 
 	public function print_button() {
-		$default_options = $this->get_default_options();
 		$options = $this->get_options();
 
 		if ( empty( $options['text'] ) ) {
 			return;
 		}
 
-		$html_tag = ! empty( $link ) ? 'a' : 'button';
+		$html_tag = ! empty( $options['link'] ) ? 'a' : 'button';
 		$icon = '';
 		$attributes = [];
 
@@ -53,22 +56,18 @@ class Button extends \Elementor\Core\Base\Module {
 			$icon = '<i class="' . $options['icon'] . '"></i>';
 		}
 
-		$classes[] = $default_options['class'];
-
-		if ( ! empty( $options['class'] ) ) {
-			$classes[] = sanitize_html_class( $options['class'] );
-		}
+		$classes[] = $options['class'];
 
 		if ( ! empty( $options['type'] ) ) {
-			$classes[] = 'e-button--' . sanitize_html_class( $options['type'] );
+			$classes[] = 'e-button--' . $options['type'];
 		}
 
 		if ( ! empty( $options['variant'] ) ) {
-			$classes[] = 'e-button--' . sanitize_html_class( $options['variant'] );
+			$classes[] = 'e-button--' . $options['variant'];
 		}
 
-		if ( ! empty( $link ) ) {
-			$attributes['href'] = $link;
+		if ( ! empty( $options['link'] ) ) {
+			$attributes['href'] = $options['link'];
 			if ( isset( $options['new_tab'] ) ) {
 				$attributes['target'] = "_blank";
 			}
