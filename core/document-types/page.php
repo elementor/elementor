@@ -96,7 +96,7 @@ class Page extends PageBase {
 		$page_data = $this->data_to_be_saved['settings'];
 
 		// If the selected page type is 'Landing Page', convert the document into a Landing Page.
-		if ( isset( $page_data['settings']['page_type'] ) && Landing_Pages_Module::DOCUMENT_TYPE === $page_data['settings']['page_type'] ) {
+		if ( isset( $page_data['page_type'] ) && Landing_Pages_Module::DOCUMENT_TYPE === $page_data['page_type'] ) {
 			// Associate the post with the 'elementor_library_type' taxonomy.
 			wp_set_object_terms( $this->get_id(), Landing_Pages_Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
 

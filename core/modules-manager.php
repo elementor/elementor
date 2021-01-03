@@ -87,10 +87,9 @@ class Modules_Manager {
 			'wp-cli',
 			'safe-mode',
 			'usage',
-			'compatibility-tag',
 			'dev-tools',
-			'campaigns',
 			'landing-pages',
+			'compatibility-tag',
 		];
 	}
 

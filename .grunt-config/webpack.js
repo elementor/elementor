@@ -124,6 +124,8 @@ const devSharedConfig = {
 		chunkFilename: '[name].[contenthash].bundle.js',
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -172,6 +174,8 @@ const prodSharedConfig = {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: '[name].[contenthash].bundle.min.js',
 		filename: '[name].js',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };

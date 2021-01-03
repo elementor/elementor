@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Those variables was declared in 'in_plugin_update_message' method that includes the current view file.
+ * Those variables were declared in 'in_plugin_update_message' method that included the current view file.
  *
  * @var Base_Module $this
  * @var Version $new_version
