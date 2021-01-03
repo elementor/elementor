@@ -17,6 +17,11 @@
 	display: flex;
 	font-family: $admin-font-family;
 
+	// Override WP padding
+	&.notice {
+		padding-left: 0;
+	}
+
 	// Based on WP:
 	background: var(--e-notice-bg);
 	border: 1px solid var(--e-notice-border-color);
@@ -24,6 +29,8 @@
 	box-shadow: var(--e-notice-box-shadow);
 	margin: 5px 20px 5px 2px;
 
+	// An element that acts as the thick colorized border.
+	// Using a sudo element makes the corners look cleaner than the natural border look.
 	&::before {
 		display: block;
 		content: '';

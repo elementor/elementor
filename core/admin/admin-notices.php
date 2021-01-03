@@ -495,7 +495,7 @@ class Admin_Notices extends Module {
 			'id' => null,
 			'title' => '',
 			'description' => '',
-			'classes' => [ 'e-notice' ],
+			'classes' => [ 'notice', 'e-notice' ],
 			'type' => '',
 			'dismissible' => true,
 			'icon' => 'eicon-elementor',
