@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -485,16 +484,16 @@ class Documents_Manager {
 		// Set the post as global post.
 		Plugin::$instance->db->switch_to_post( $document->get_post()->ID );
 
-		$status = DB::STATUS_DRAFT;
+		$status = Document::STATUS_DRAFT;
 
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ], true ) ) {
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE, Document::STATUS_PENDING, Document::STATUS_AUTOSAVE ], true ) ) {
 			$status = $request['status'];
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $status ) {
+		if ( Document::STATUS_AUTOSAVE === $status ) {
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.
-			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
+			if ( in_array( $document->get_post()->post_status, [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE ], true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
 		}
@@ -589,7 +588,7 @@ class Documents_Manager {
 		$this->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $post_id );
+		$document->set_is_built_with_elementor( true );
 
 		$doc_config = $document->get_config();
 

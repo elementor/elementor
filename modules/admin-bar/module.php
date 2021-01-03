@@ -54,11 +54,23 @@ class Module extends BaseApp {
 			return;
 		}
 
+		// Should load 'elementor-admin-bar' before 'admin-bar'
+		wp_dequeue_script( 'admin-bar' );
+
 		wp_enqueue_script(
 			'elementor-admin-bar',
-			$this->get_js_assets_url( 'admin-bar' ),
-			[ 'elementor-common' ],
+			$this->get_js_assets_url( 'elementor-admin-bar' ),
+			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		// This is a core script of WordPress, it is not required to pass the 'ver' argument.
+		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+			'admin-bar',
+			null,
+			[ 'elementor-admin-bar' ],
+			false,
 			true
 		);
 
@@ -121,7 +133,7 @@ class Module extends BaseApp {
 	 * Module constructor.
 	 */
 	public function __construct() {
-		add_action( 'elementor/frontend/get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
-		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/frontend/before_get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
+		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
 	}
 }

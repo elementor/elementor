@@ -2,10 +2,6 @@ import CommandHistory from './command-history';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 export default class CommandDisableEnable extends CommandHistory {
-	static getName() {
-		elementorModules.ForceMethodImplementation();
-	}
-
 	/**
 	 * @returns {string}
 	 */
@@ -55,6 +51,10 @@ export default class CommandDisableEnable extends CommandHistory {
 		super.initialize( args );
 	}
 
+	getTitle() {
+		elementorModules.ForceMethodImplementation();
+	}
+
 	validateArgs( args ) {
 		this.requireContainer( args );
 
@@ -75,7 +75,7 @@ export default class CommandDisableEnable extends CommandHistory {
 			changes[ id ] = settings;
 		} );
 
-		const subTitle = elementor.translate( this.constructor.getName() ) + ' ' + ElementsSettings.getSubTitle( args ),
+		const subTitle = this.getTitle() + ' ' + ElementsSettings.getSubTitle( args ),
 			type = this.type;
 
 		return {

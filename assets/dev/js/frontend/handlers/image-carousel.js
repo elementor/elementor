@@ -88,7 +88,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		return swiperOptions;
 	}
 
-	onInit( ...args ) {
+	async onInit( ...args ) {
 		super.onInit( ...args );
 
 		const elementSettings = this.getElementSettings();
@@ -97,7 +97,9 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$swiperContainer.data( 'swiper', this.swiper );
@@ -168,7 +170,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	onElementChange( propertyName ) {
 		const changeableProperties = this.getChangeableProperties();
 
-		if ( changeableProperties.propertyName ) {
+		if ( changeableProperties[ propertyName ] ) {
 			this.updateSwiperOption( propertyName );
 		}
 	}

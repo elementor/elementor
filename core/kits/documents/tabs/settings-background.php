@@ -53,6 +53,7 @@ class Settings_Background extends Tab_Base {
 				'label' => __( 'Mobile Browser Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'description' => __( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
+				'separator' => 'before',
 			]
 		);
 

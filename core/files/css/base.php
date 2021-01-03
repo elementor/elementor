@@ -784,6 +784,14 @@ abstract class Base extends Base_File {
 			$property_name = str_replace( '_', '-', $property_name );
 
 			$value = "var( --e-global-$control[groupType]-$id-$property_name )";
+
+			if ( $control['groupPrefix'] . 'font_family' === $control['name'] ) {
+				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
+
+				if ( $default_generic_fonts ) {
+					$value  .= ", $default_generic_fonts";
+				}
+			}
 		} else {
 			$value = "var( --e-global-$control[type]-$id )";
 		}

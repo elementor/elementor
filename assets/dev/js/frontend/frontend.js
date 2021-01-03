@@ -1,4 +1,5 @@
 /* global elementorFrontendConfig */
+import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
@@ -8,11 +9,11 @@ import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handler' ),
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
 	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
 
-class Frontend extends elementorModules.ViewModule {
+export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
 		super( ...args );
 
@@ -143,6 +144,7 @@ class Frontend extends elementorModules.ViewModule {
 			lightbox: new LightboxModule(),
 			urlActions: new URLActions(),
 			swiper: Swiper,
+			environment: environment,
 		};
 
 		// TODO: BC since 2.4.0
@@ -162,6 +164,14 @@ class Frontend extends elementorModules.ViewModule {
 
 	initOnReadyElements() {
 		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
+	}
+
+	addUserAgentClasses() {
+		for ( const [ key, value ] of Object.entries( environment ) ) {
+			if ( value ) {
+				this.elements.$body.addClass( 'e--ua-' + key );
+			}
+		}
 	}
 
 	addIeCompatibility() {
@@ -280,6 +290,8 @@ class Frontend extends elementorModules.ViewModule {
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.addUserAgentClasses();
 
 		this.addIeCompatibility();
 

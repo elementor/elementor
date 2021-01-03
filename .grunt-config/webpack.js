@@ -10,6 +10,8 @@ const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+const RemoveChunksPlugin = require('./remove-chunks');
+
 const moduleRules = {
 	rules: [
 		// {
@@ -35,7 +37,7 @@ const moduleRules = {
 			use: [
 				{
 					loader: 'babel-loader',
-					query: {
+					options: {
 						presets: [ '@wordpress/default' ],
 						plugins: [
 							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
@@ -61,7 +63,7 @@ const entry = {
 		path.resolve( __dirname, '../assets/dev/js/editor/editor.js' ),
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
-	'admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
+	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
@@ -70,12 +72,16 @@ const entry = {
 	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
-	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
-	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+};
+
+const frontendEntries = {
+	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
+	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'preloaded-elements-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-elements-handlers.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
@@ -92,7 +98,8 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
-		__: [ '@wordpress/i18n', '__' ],
+		__: ['@wordpress/i18n', '__'],
+		sprintf: ['@wordpress/i18n', 'sprintf'],
 	} )
 ];
 
@@ -101,51 +108,131 @@ const baseConfig = {
 	context: __dirname,
 	devtool: 'source-map',
 	externals,
-	plugins,
 	module: moduleRules,
 	resolve: aliasList,
 };
 
-const webpackConfig = Object.assign( {}, baseConfig, {
+const devSharedConfig = {
+	...baseConfig,
+	plugins: [
+		new RemoveChunksPlugin( '.bundle.js' ),
+		...plugins,
+	],
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: '[name].[contenthash].bundle.js',
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
-	entry: entry,
 	watch: true,
-} );
+};
 
-const webpackProductionConfig = Object.assign( {}, baseConfig, {
+const webpackConfig = [
+	{
+		...devSharedConfig,
+		name: 'base',
+		entry: entry,
+	},
+	{
+		...devSharedConfig,
+		name: 'frontend',
+		optimization: {
+			runtimeChunk:  {
+				name: 'webpack.runtime',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+		entry: frontendEntries,
+	},
+];
+
+const prodSharedOptimization = {
+	minimize: true,
+	minimizer: [
+		new TerserPlugin( {
+			terserOptions: {
+				keep_fnames: true,
+			},
+			include: /\.min\.js$/
+		} ),
+	],
+};
+
+const prodSharedConfig = {
+	...baseConfig,
+	plugins: [
+		new RemoveChunksPlugin( '.bundle.min.js' ),
+		...plugins,
+	],
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: '[name].[contenthash].bundle.min.js',
 		filename: '[name].js',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
-	entry: {},
 	performance: { hints: false },
-	optimization: {
-		minimize: true,
-		minimizer: [
-			new TerserPlugin( {
-				terserOptions: {
-					keep_fnames: true,
-				},
-				include: /\.min\.js$/
-			} ),
-		],
+};
+
+const webpackProductionConfig = [
+	{
+		...prodSharedConfig,
+		name: 'base',
+		entry: {
+			...entry,
+		},
+		optimization: {
+			...prodSharedOptimization,
+		},
 	},
-} );
+	{
+		...prodSharedConfig,
+		name: 'frontend',
+		entry: {
+			...frontendEntries,
+		},
+		optimization: {
+			...prodSharedOptimization,
+			runtimeChunk: {
+				name: 'webpack.runtime.min',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+	},
+];
 
 // Add minified entry points
-for ( const entryPoint in entry ) {
-	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
-	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
-}
+webpackProductionConfig.forEach( ( config, index ) => {
+	for ( const entryPoint in config.entry ) {
+		let entryValue = config.entry[ entryPoint ];
+
+		if ( entryValue.dependOn ) {
+			// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
+			entryValue = { ...entryValue };
+
+			entryValue.dependOn += '.min';
+		}
+
+		delete config.entry[ entryPoint ];
+		config.entry[ entryPoint + '.min' ] = entryValue;
+	}
+} );
+
+const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
+	return { ...config, watch: false };
+} );
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
+	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig
 };
 

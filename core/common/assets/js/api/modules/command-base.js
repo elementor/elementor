@@ -106,6 +106,16 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
+	 * Run all the catch hooks.
+	 *
+	 * @param {Error} e
+	 */
+	runCatchHooks( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
+	}
+
+	/**
 	 * Function onBeforeRun.
 	 *
 	 * Called before run().
@@ -150,5 +160,9 @@ export default class CommandBase extends ArgsObject {
 	 *
 	 * @param {Error} e
 	 */
-	onCatchApply( e ) {} // eslint-disable-line no-unused-vars
+	onCatchApply( e ) {
+		this.runCatchHooks( e );
+
+		elementorCommon.helpers.consoleError( e );
+	}
 }

@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -15,12 +16,12 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -361,7 +362,7 @@ class Plugin {
 	 *
 	 * @var Files_Manager
 	 */
-	public $posts_css_manager;
+	private $posts_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -421,6 +422,11 @@ class Plugin {
 	public $logger;
 
 	/**
+	 * @var Dev_Tools
+	 */
+	private $dev_tools;
+
+	/**
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
@@ -441,6 +447,11 @@ class Plugin {
 	 * @var Core\App\App
 	 */
 	public $app;
+
+	/**
+	 * @var Experiments_Manager
+	 */
+	public $experiments;
 
 	/**
 	 * Clone.
@@ -569,6 +580,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->experiments = new Experiments_Manager();
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 
@@ -585,10 +597,6 @@ class Plugin {
 		$this->files_manager = new Files_Manager();
 		$this->assets_manager = new Assets_Manager();
 		$this->icons_manager = new Icons_Manager();
-		/*
-		 * @TODO: Remove deprecated alias
-		 */
-		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->tools = new Tools();
 		$this->editor = new Editor();
@@ -632,27 +640,30 @@ class Plugin {
 		$this->ajax = $this->common->get_component( 'ajax' );
 	}
 
+	/**
+	 * Get Legacy Mode
+	 *
+	 * @since 3.0.0
+	 * @deprecated 3.1.0 Use `Plugin::$instance->experiments->is_feature_active()` instead
+	 *
+	 * @param string $mode_name Optional. Default is null
+	 *
+	 * @return bool|bool[]
+	 */
 	public function get_legacy_mode( $mode_name = null ) {
-		if ( ! $this->legacy_mode ) {
-			$optimized_dom_output = get_option( 'elementor_optimized_dom_output' );
+		self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation
+			->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->experiments->is_feature_active()' );
 
-			if ( $optimized_dom_output ) {
-				$element_wrappers_legacy_mode = 'disabled' === $optimized_dom_output;
-			} else {
-				$element_wrappers_legacy_mode = true;
-			}
-
-			$this->legacy_mode = [
-				'elementWrappers' => $element_wrappers_legacy_mode,
-			];
-		}
+		$legacy_mode = [
+			'elementWrappers' => ! self::$instance->experiments->is_feature_active( 'e_dom_optimization' ),
+		];
 
 		if ( ! $mode_name ) {
-			return $this->legacy_mode;
+			return $legacy_mode;
 		}
 
-		if ( isset( $this->legacy_mode[ $mode_name ] ) ) {
-			return $this->legacy_mode[ $mode_name ];
+		if ( isset( $legacy_mode[ $mode_name ] ) ) {
+			return $legacy_mode[ $mode_name ];
 		}
 
 		// If there is no legacy mode with the given mode name;
@@ -692,6 +703,30 @@ class Plugin {
 		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
+	}
+
+	/**
+	 * Plugin Magic Getter
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param $property
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function __get( $property ) {
+		if ( 'posts_css_manager' === $property ) {
+			self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument( 'Plugin::$instance->posts_css_manager', '2.7.0', 'Plugin::$instance->files_manager' );
+
+			return $this->files_manager;
+		}
+
+		if ( property_exists( $this, $property ) ) {
+			throw new \Exception( 'Cannot access private property' );
+		}
+
+		return null;
 	}
 
 	/**

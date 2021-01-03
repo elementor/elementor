@@ -37,7 +37,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		if ( isActive ) {
 			this.$el.addClass( 'elementor-active' );
 
-			this.ui.items.show();
+			this.ui.items.css( 'display', 'block' );
 		}
 	},
 
