@@ -135,7 +135,6 @@ class Admin_Notices extends Module {
 				'icon_classes' => 'dashicons dashicons-update',
 				'text' => __( 'Update Now', 'elementor' ),
 				'url' => $upgrade_url,
-				'class' => 'e-button',
 			],
 			'id' => $notice_id,
 		];
@@ -273,7 +272,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => __( 'Hide Notification', 'elementor' ),
-				'class' => 'e-notice-dismiss',
+				'classes' => [ 'e-notice-dismiss' ],
 				'url' => esc_url_raw( $dismiss_url ),
 				'new_tab' => true,
 				'type' => 'cta',
@@ -357,7 +356,6 @@ class Admin_Notices extends Module {
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-contactform7/',
-				'class' => 'button button-secondary',
 				'new_tab' => true,
 				'type' => 'cta',
 			],

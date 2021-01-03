@@ -23,7 +23,7 @@ class Button extends Base_Object {
 	 */
 	private function get_default_options() {
 		return [
-			'class' => [ 'e-button' ],
+			'classes' => [],
 			'icon' => '',
 			'new_tab' => false,
 			'text' => '',
@@ -56,7 +56,7 @@ class Button extends Base_Object {
 			$icon = '<i class="' . $options['icon'] . '"></i>';
 		}
 
-		$classes[] = $options['class'];
+		$classes = array_merge( [ 'e-button' ], $options['classes'] );
 
 		if ( ! empty( $options['type'] ) ) {
 			$classes[] = 'e-button--' . $options['type'];
