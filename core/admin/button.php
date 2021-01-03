@@ -56,7 +56,9 @@ class Button extends Base_Object {
 			$icon = '<i class="' . $options['icon'] . '"></i>';
 		}
 
-		$classes = array_merge( [ 'e-button' ], $options['classes'] );
+		$classes = $options['classes'];
+
+		$classes[] = 'e-button';
 
 		if ( ! empty( $options['type'] ) ) {
 			$classes[] = 'e-button--' . $options['type'];
