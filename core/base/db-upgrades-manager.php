@@ -124,7 +124,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = sprintf( __( '%s The database update process is now complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_updater_label() );
+		$message = __( 'The database update process is now complete. Thank you for updating to the latest version!', 'elementor' );
 
 		/**
 		 * @var Admin_Notices $admin_notices
@@ -132,6 +132,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
+			'title' => __( $this->get_updater_label(), 'elementor' ),
 			'description' => $message,
 			'type' => 'success',
 			'icon' => 'eicon-database',
