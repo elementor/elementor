@@ -219,7 +219,6 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Love using Elementor?', 'elementor' ),
 			'description' => $message,
-			'icon' => 'eicon-elementor',
 			'button' => [
 				'text' => __( 'Sure! I\'d love to help', 'elementor' ),
 				'url' => $optin_url,
@@ -263,7 +262,6 @@ class Admin_Notices extends Module {
 			'description' => __( 'You created over 10 pages with Elementor. Great job! If you can spare a minute,
 				please help us by leaving a five star review on WordPress.org.', 'elementor' ),
 			'id' => $notice_id,
-			'icon' => 'eicon-elementor',
 			'button' => [
 				'text' =>  __( 'Happy To Help', 'elementor' ),
 				'url' => 'https://go.elementor.com/admin-review/',
@@ -311,7 +309,7 @@ class Admin_Notices extends Module {
 			'title' => __( 'Using WooCommerce?', 'elementor' ),
 			'description' => __( 'With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ),
 			'id' => $notice_id,
-			'icon' => 'eicon-elementor',
+
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-woocommerce/',
@@ -351,7 +349,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Using Elementor & Contact Form 7?', 'elementor' ),
 			'description' => __( 'Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ),
-			'icon' => 'eicon-elementor',
+
 			'id' => $notice_id,
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
@@ -394,7 +392,7 @@ class Admin_Notices extends Module {
 			'description' => __( 'Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
 			'dismissible' => true,
 			'id' => $notice_id,
-			'icon' => 'eicon-elementor',
+
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-mc4wp/',
@@ -436,7 +434,7 @@ class Admin_Notices extends Module {
 			'description' => __( 'Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
 			'dismissible' => true,
 			'id' => $notice_id,
-			'icon' => 'eicon-elementor',
+
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
@@ -478,7 +476,7 @@ class Admin_Notices extends Module {
 			'title' => __( 'Managing a multi-user site?', 'elementor' ),
 			'description' => __( 'With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
 			'id' => $notice_id,
-			'icon' => 'eicon-elementor',
+
 			'button' => [
 				'text' => __( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
@@ -500,7 +498,7 @@ class Admin_Notices extends Module {
 			'classes' => [ 'e-notice' ],
 			'type' => '',
 			'dismissible' => true,
-			'icon' => '',
+			'icon' => 'eicon-elementor',
 			'button' => [],
 			'button_secondary' => [],
 		];
