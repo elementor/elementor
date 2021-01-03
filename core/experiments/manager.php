@@ -235,6 +235,20 @@ class Manager extends Base_Object {
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
+
+		$this->add_feature( [
+			'name' => 'a11y_improvements',
+			'title' => __( 'Accessibility Improvements', 'elementor' ),
+			'description' => __( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
+				. '<br><strong>' . __( 'Please note!', 'elementor' ) . '</strong> ' . __( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0',
+			],
+		] );
 	}
 
 	/**

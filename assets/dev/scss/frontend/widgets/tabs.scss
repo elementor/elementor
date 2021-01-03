@@ -114,7 +114,7 @@
 
 	.elementor-tab-title {
 		cursor: pointer;
-		outline: none;
+		outline: var(--focus-outline, none);
 	}
 
 	.elementor-tab-desktop-title {

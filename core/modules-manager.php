@@ -89,6 +89,7 @@ class Modules_Manager {
 			'usage',
 			'dev-tools',
 			'landing-pages',
+			'compatibility-tag',
 		];
 	}
 
