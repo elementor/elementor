@@ -54,8 +54,8 @@ class Page extends PageBase {
 	 *
 	 * @since 3.1.0
 	 */
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
 			return;
