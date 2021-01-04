@@ -12,6 +12,10 @@
 @import "compatibility";
 @import "inline-editor";
 
+
+@import "../../../../../modules/elements-color-picker/assets/css/elemtents-color-picker";
+
+
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
