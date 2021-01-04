@@ -1,7 +1,5 @@
 <?php
-
 namespace Elementor\Core\Admin;
-
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Utils;
@@ -80,7 +78,7 @@ class Button extends Base_Object {
 		if ( ! empty( $options['link'] ) ) {
 			$attributes['href'] = $options['link'];
 			if ( isset( $options['new_tab'] ) ) {
-				$attributes['target'] = "_blank";
+				$attributes['target'] = '_blank';
 			}
 		}
 

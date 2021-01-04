@@ -263,7 +263,7 @@ class Admin_Notices extends Module {
 				please help us by leaving a five star review on WordPress.org.', 'elementor' ),
 			'id' => $notice_id,
 			'button' => [
-				'text' =>  __( 'Happy To Help', 'elementor' ),
+				'text' => __( 'Happy To Help', 'elementor' ),
 				'url' => 'https://go.elementor.com/admin-review/',
 				'new_tab' => true,
 				'type' => 'cta',
@@ -564,8 +564,7 @@ class Admin_Notices extends Module {
 			<?php } ?>
 			</div>
 		</div>
-	<?php
-	}
+		<?php }
 
 	public function admin_notices() {
 		$this->install_time = Plugin::$instance->get_install_time();
