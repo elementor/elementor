@@ -116,7 +116,6 @@ const plugins = [
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
-	devtool: 'source-map',
 	externals,
 	module: moduleRules,
 	resolve: aliasList,
@@ -124,6 +123,11 @@ const baseConfig = {
 
 const devSharedConfig = {
 	...baseConfig,
+	devtool: 'source-map',
+	plugins: [
+		new RemoveChunksPlugin( '.bundle.js' ),
+		...plugins,
+	],
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
