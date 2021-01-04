@@ -83,7 +83,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
-			'title' =>  $this->get_updater_label(),
+			'title' => $this->get_updater_label(),
 			'description' => __( 'Your site database needs to be updated to the latest version.', 'elementor' ),
 			'type' => 'error',
 			'icon' => 'eicon-database',
