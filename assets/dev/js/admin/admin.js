@@ -1,3 +1,5 @@
+import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
+
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
 
@@ -285,6 +287,10 @@
 			this.openGetHelpInNewTab();
 
 			this.roleManager.init();
+
+			if ( this.config.experimentalFeatures[ 'landing-pages' ] ) {
+				new LandingPagesModule();
+			}
 		},
 
 		openGetHelpInNewTab: function() {
