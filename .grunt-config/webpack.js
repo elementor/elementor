@@ -124,10 +124,6 @@ const baseConfig = {
 const devSharedConfig = {
 	...baseConfig,
 	devtool: 'source-map',
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.js' ),
-		...plugins,
-	],
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
