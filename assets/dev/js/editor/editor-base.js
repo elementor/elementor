@@ -791,20 +791,8 @@ export default class EditorBase extends Marionette.Application {
 		return settings;
 	}
 
-	getConfig() {
-		ElementorConfig.legacyMode = {
-			get elementsWrapper() {
-				elementorCommon.helpers.hardDeprecated( 'elementor.config.legacyMode.elementsWrapper', '3.1.0', 'elementor.config.experimentalFeatures.e_dom_optimization' );
-
-				return ! elementor.config.experimentalFeatures.e_dom_optimization;
-			},
-		};
-
-		return ElementorConfig;
-	}
-
 	onStart() {
-		this.config = this.getConfig();
+		this.config = ElementorConfig;
 
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
