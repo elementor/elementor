@@ -100,30 +100,21 @@
 	}
 
 	// Make a button look and behave like a link
-/*	&--link {
-		font-weight: $font-weight-normal;
-		color: $link-color;
+	&--link {
+		color: var(--e-button-context-color);
 		background-color: transparent;
 
-		@include hover {
-			color: $link-hover-color;
-			text-decoration: $link-hover-decoration;
-			background-color: transparent;
-			border-color: transparent;
-		}
-
-		&:focus,
-		&.focus {
-			text-decoration: $link-hover-decoration;
-			border-color: transparent;
-			box-shadow: none;
+		&:hover,
+		&:focus {
+			color: var(--e-button-context-color-dark);
+			background: var(--e-button-context-tint);
 		}
 
 		&:disabled,
 		&.disabled {
-			color: $btn-link-disabled-color;
+			color: $gray;
 		}
-	} */
+	}
 }
 
 // Future-proof disabling of clicks on `<a>` elements
