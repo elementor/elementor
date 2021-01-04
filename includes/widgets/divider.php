@@ -345,10 +345,10 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$styles = $this->get_separator_styles();
 		$this->start_controls_section(
 			'section_divider',
@@ -473,6 +473,7 @@ class Widget_Divider extends Widget_Base {
 			[
 				'label' => __( 'Add Element', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'default' => 'line',
 				'options' => [
 					'line' => [
 						'title' => __( 'None', 'elementor' ),
@@ -489,6 +490,7 @@ class Widget_Divider extends Widget_Base {
 				],
 				'separator' => 'before',
 				'prefix_class' => 'elementor-widget-divider--view-',
+				'toggle' => false,
 				'render_type' => 'template',
 			]
 		);

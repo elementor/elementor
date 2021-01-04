@@ -189,6 +189,16 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
+	 * Run all the catch hooks.
+	 *
+	 * @param {Error} e
+	 */
+	runCatchHooks( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
+	}
+
+	/**
 	 * Function onBeforeRun.
 	 *
 	 * Called before run().
@@ -242,10 +252,8 @@ export default class CommandBase extends ArgsObject {
 	 * @param {Error} e
 	 */
 	onCatchApply( e ) {
-		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+		this.runCatchHooks( e );
 
 		elementorCommon.helpers.consoleError( e );
-
-		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}
 }

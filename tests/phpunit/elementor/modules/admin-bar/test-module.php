@@ -35,16 +35,36 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_enqueue_scripts() {
+		// Arrange
+		$document = $this->create_document();
+		$this->module->add_document_to_admin_bar($document, false);
+
+		// Act
+		$this->module->enqueue_scripts();
+
+		do_action( 'wp_enqueue_scripts' );
+
+		// Assert
+		$queue = wp_scripts()->queue;
+
+		$admin_bar_key = array_search( 'admin-bar', $queue );
+		$elementor_admin_bar_key = array_search( 'elementor-admin-bar', $queue );
+
+		$this->assertTrue( $admin_bar_key >= 0 );
+		$this->assertTrue( $elementor_admin_bar_key >= 0 );
+
+		$this->assertTrue( $admin_bar_key > $elementor_admin_bar_key );
+	}
+
 	public function test_it_should_returns_a_valid_config() {
 		$active_document = $this->create_document();
 		$document = $this->create_document();
 
 		query_posts( [ 'p' => $active_document->get_id() ] );
 
-		$frontend = Plugin::$instance->frontend;
-
-		$frontend->get_builder_content( $active_document->get_id() );
-		$frontend->get_builder_content( $document->get_id() );
+		do_action('elementor/frontend/before_get_builder_content', $active_document, false, false);
+		do_action('elementor/frontend/before_get_builder_content', $document, false, false);
 
 		$config = $this->module->get_settings();
 
@@ -59,14 +79,10 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_it_should_not_add_document_that_is_excerpt() {
-		$frontend = Plugin::$instance->frontend;
-
 		$excerpt_document = $this->create_document();
 
 		// Emulate an excerpt on frontend.
-		$frontend->start_excerpt_flag( $excerpt_document->get_id() );
-		$frontend->get_builder_content( $excerpt_document->get_id() );
-		$frontend->end_excerpt_flag( $excerpt_document->get_id() );
+		do_action('elementor/frontend/before_get_builder_content', $excerpt_document, true, false);
 
 		$config = $this->module->get_settings();
 
@@ -74,8 +90,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_it_should_not_add_document_that_the_settings_show_on_admin_bar_is_false(  ) {
-		$frontend = Plugin::$instance->frontend;
-
 		$not_supported_document = $this->create_document( [
 			'meta_input' => [
 				// The prop 'show_on_admin_bar' of NotSupport document type is false.
@@ -83,7 +97,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 			],
 		] );
 
-		$frontend->get_builder_content( $not_supported_document->get_id() );
+		do_action('elementor/frontend/before_get_builder_content', $not_supported_document, false, false);
 
 		$config = $this->module->get_settings();
 
@@ -95,9 +109,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$document = $this->create_document();
 
-		$frontend = Plugin::$instance->frontend;
-
-		$frontend->get_builder_content( $document->get_id() );
+		do_action('elementor/frontend/before_get_builder_content', $document, false, false);
 
 		$config = $this->module->get_settings();
 

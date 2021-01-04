@@ -100,7 +100,7 @@ class App extends BaseApp {
 			[
 				'backbone',
 			],
-			'2.4.5',
+			'2.4.5.e1',
 			true
 		);
 
@@ -139,6 +139,8 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-common', 'elementor' );
 
 		$this->print_config();
 

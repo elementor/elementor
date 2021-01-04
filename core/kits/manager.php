@@ -44,6 +44,19 @@ class Manager {
 		return Plugin::$instance->documents->get_doc_for_frontend( $id );
 	}
 
+	/**
+	 * Checks if specific post is a kit.
+	 *
+	 * @param $post_id
+	 *
+	 * @return bool
+	 */
+	public function is_kit( $post_id ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		return $document && $document instanceof Kit && ! $document->is_revision();
+	}
+
 
 	/**
 	 * Init kit controls.
@@ -109,32 +122,6 @@ class Manager {
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
 			],
-			'i18n' => [
-				'close' => __( 'Close', 'elementor' ),
-				'back' => __( 'Back', 'elementor' ),
-				'site_identity' => __( 'Site Identity', 'elementor' ),
-				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout' => __( 'Layout', 'elementor' ),
-				'theme_style' => __( 'Theme Style', 'elementor' ),
-				'add_color' => __( 'Add Color', 'elementor' ),
-				'add_style' => __( 'Add Style', 'elementor' ),
-				'new_item' => __( 'New Item', 'elementor' ),
-				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_fonts' => __( 'Global Fonts', 'elementor' ),
-				'global_colors' => __( 'Global Colors', 'elementor' ),
-				'invalid' => __( 'Invalid', 'elementor' ),
-				'color_cannot_be_deleted' => __( 'System Color can\'t be deleted', 'elementor' ),
-				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
-				'design_system' => __( 'Design System', 'elementor' ),
-				'buttons' => __( 'Buttons', 'elementor' ),
-				'images' => __( 'Images', 'elementor' ),
-				'form_fields' => __( 'Form Fields', 'elementor' ),
-				'background' => __( 'Background', 'elementor' ),
-				'custom_css' => __( 'Custom CSS', 'elementor' ),
-				'additional_settings' => __( 'Additional Settings', 'elementor' ),
-				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
-			],
 		] );
 
 		return $settings;
@@ -162,8 +149,6 @@ class Manager {
 			}
 
 			$css_file->enqueue();
-
-			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
 		}
 	}
 
@@ -193,7 +178,7 @@ class Manager {
 			return;
 		}
 
-		$active_kit->save( [ 'settings' => [ $key => $value ] ] );
+		$active_kit->update_settings( [ $key => $value ] );
 	}
 
 	/**
@@ -258,6 +243,48 @@ class Manager {
 		return ! get_option( 'elementor_disable_typography_schemes' );
 	}
 
+	/**
+	 * Add kit wrapper body class.
+	 *
+	 * It should be added even for non Elementor pages,
+	 * in order to support embedded templates.
+	 */
+	private function add_body_class() {
+		$kit = $this->get_kit_for_frontend();
+
+		if ( $kit ) {
+			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
+		}
+	}
+
+	/**
+	 * Send a confirm message before move a kit to trash, or if delete permanently not for trash.
+	 *
+	 * @param       $post_id
+	 * @param false $is_permanently_delete
+	 */
+	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if (
+			! $document ||
+			! $this->is_kit( $post_id ) ||
+			isset( $_GET['force_delete_kit'] ) ||  // phpcs:ignore -- nonce validation is not require here.
+			( $is_permanently_delete && $document->is_trash() )
+		) {
+			return;
+		}
+
+		ob_start();
+		require __DIR__ . '/views/trash-kit-confirmation.php';
+
+		$confirmation_content = ob_get_clean();
+
+		wp_die(
+			new \WP_Error( 'cant_delete_kit', $confirmation_content )
+		);
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -266,6 +293,14 @@ class Manager {
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
 
+		add_action( 'wp_trash_post', function ( $post_id ) {
+			$this->before_delete_kit( $post_id );
+		} );
+
+		add_action( 'before_delete_post', function ( $post_id ) {
+			$this->before_delete_kit( $post_id, true );
+		} );
+
 		add_action( 'update_option_blogname', function ( $old_value, $value ) {
 			$this->update_kit_settings_based_on_option( 'site_name', $value );
 		}, 10, 2 );
@@ -273,5 +308,9 @@ class Manager {
 		add_action( 'update_option_blogdescription', function ( $old_value, $value ) {
 			$this->update_kit_settings_based_on_option( 'site_description', $value );
 		}, 10, 2 );
+
+		add_action( 'wp_head', function() {
+			$this->add_body_class();
+		} );
 	}
 }

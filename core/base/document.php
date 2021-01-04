@@ -4,13 +4,13 @@ namespace Elementor\Core\Base;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
-use Elementor\DB;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
+use Elementor\Core\Settings\Page\Manager as PageManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -33,6 +33,34 @@ abstract class Document extends Controls_Stack {
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
 
+	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
+
+	/**
+	 * Document publish status.
+	 */
+	const STATUS_PUBLISH = 'publish';
+
+	/**
+	 * Document draft status.
+	 */
+	const STATUS_DRAFT = 'draft';
+
+	/**
+	 * Document private status.
+	 */
+	const STATUS_PRIVATE = 'private';
+
+	/**
+	 * Document autosave status.
+	 */
+	const STATUS_AUTOSAVE = 'autosave';
+
+	/**
+	 * Document pending status.
+	 */
+	const STATUS_PENDING = 'pending';
+
+
 	private $main_id;
 
 	/**
@@ -53,6 +81,16 @@ abstract class Document extends Controls_Stack {
 	 * @var \WP_Post WordPress post data.
 	 */
 	protected $post;
+
+	/**
+	 * Settings to be Saved
+	 *
+	 * A variable that temporarily stores the new settings while the document is being saved.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected $data_to_be_saved;
 
 	/**
 	 * @since 2.1.0
@@ -91,11 +129,17 @@ abstract class Document extends Controls_Stack {
 	 * @static
 	 */
 	public static function get_editor_panel_config() {
+		$default_route = 'panel/elements/categories';
+
+		if ( ! Plugin::instance()->role_manager->user_can( 'design' ) ) {
+			$default_route = 'panel/page-settings/settings';
+		}
+
 		return [
 			'title' => static::get_title(), // JS Container title.
 			'widgets_settings' => [],
 			'elements_categories' => static::get_editor_panel_categories(),
-			'default_route' => 'panel/elements/categories',
+			'default_route' => $default_route,
 			'has_elements' => static::get_property( 'has_elements' ),
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
@@ -360,6 +404,24 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Check if the current document is a 'revision'
+	 *
+	 * @return bool
+	 */
+	public function is_revision() {
+		return 'revision' === $this->post->post_type;
+	}
+
+	/**
+	 * Checks if the current document status is 'trash'.
+	 *
+	 * @return bool
+	 */
+	public function is_trash() {
+		return 'trash' === $this->post->post_status;
+	}
+
+	/**
 	 * @since 2.0.0
 	 * @access public
 	 *
@@ -494,10 +556,10 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_document_controls();
 		/**
 		 * Register document controls.
@@ -520,9 +582,13 @@ abstract class Document extends Controls_Stack {
 	 * @return bool
 	 */
 	public function save( $data ) {
+		$this->add_handle_revisions_changed_filter();
+
 		if ( ! $this->is_editable_by_current_user() ) {
 			return false;
 		}
+
+		$this->data_to_be_saved = $data;
 
 		$this->set_is_saving( true );
 
@@ -543,7 +609,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
-			if ( isset( $data['settings']['post_status'] ) && DB::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
+			if ( isset( $data['settings']['post_status'] ) && self::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
 					define( 'DOING_AUTOSAVE', true );
 				}
@@ -583,7 +649,30 @@ abstract class Document extends Controls_Stack {
 
 		$this->set_is_saving( false );
 
+		unset( $this->data_to_be_saved );
+
+		$this->remove_handle_revisions_changed_filter();
+
 		return true;
+	}
+
+	/**
+	 * @param array $new_settings
+	 *
+	 * @return static
+	 */
+	public function update_settings( array $new_settings ) {
+		$document_settings = $this->get_meta( PageManager::META_KEY );
+
+		if ( ! $document_settings ) {
+			$document_settings = [];
+		}
+
+		$this->save_settings(
+			array_replace_recursive( $document_settings, $new_settings )
+		);
+
+		return $this;
 	}
 
 	/**
@@ -597,7 +686,25 @@ abstract class Document extends Controls_Stack {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor() {
-		return ! ! get_post_meta( $this->post->ID, '_elementor_edit_mode', true );
+		return ! ! $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+	}
+
+	/**
+	 * Mark the post as "built with elementor" or not.
+	 *
+	 * @param bool $is_built_with_elementor
+	 *
+	 * @return $this
+	 */
+	public function set_is_built_with_elementor( $is_built_with_elementor ) {
+		if ( $is_built_with_elementor ) {
+			// Use the string `builder` and not a boolean for rollback compatibility
+			$this->update_meta( self::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		} else {
+			$this->delete_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -736,10 +843,10 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 */
-	public function get_elements_data( $status = DB::STATUS_PUBLISH ) {
+	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
 		$elements = $this->get_json_meta( '_elementor_data' );
 
-		if ( DB::STATUS_DRAFT === $status ) {
+		if ( self::STATUS_DRAFT === $status ) {
 			$autosave = $this->get_newer_autosave();
 
 			if ( is_object( $autosave ) ) {
@@ -830,17 +937,16 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_legacy_mode_active = Plugin::instance()->get_legacy_mode( 'elementWrappers' );
-
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( $is_legacy_mode_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 			<div class="elementor-inner">
 			<?php } ?>
 				<div class="elementor-section-wrap">
 					<?php $this->print_elements( $elements_data ); ?>
 				</div>
-			<?php if ( $is_legacy_mode_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 			</div>
 			<?php } ?>
 		</div>
@@ -1277,7 +1383,7 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
 		$can_publish = $post_type_object && current_user_can( $post_type_object->cap->publish_posts );
-		$is_published = DB::STATUS_PUBLISH === $this->post->post_status || DB::STATUS_PRIVATE === $this->post->post_status;
+		$is_published = self::STATUS_PUBLISH === $this->post->post_status || self::STATUS_PRIVATE === $this->post->post_status;
 
 		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
@@ -1306,5 +1412,30 @@ abstract class Document extends Controls_Stack {
 
 	protected function get_have_a_look_url() {
 		return $this->get_permalink();
+	}
+
+	public function handle_revisions_changed( $post_has_changed, $last_revision, $post ) {
+		// In case default, didn't determine the changes.
+		if ( ! $post_has_changed ) {
+			$last_revision_id = $last_revision->ID;
+			$last_revision_document = Plugin::instance()->documents->get( $last_revision_id );
+			$post_document = Plugin::instance()->documents->get( $post->ID );
+
+			$last_revision_settings = $last_revision_document->get_settings();
+			$post_settings = $post_document->get_settings();
+
+			// TODO: Its better to add crc32 signature for each revision and then only compare one part of the checksum.
+			$post_has_changed = $last_revision_settings !== $post_settings;
+		}
+
+		return $post_has_changed;
+	}
+
+	private function add_handle_revisions_changed_filter() {
+		add_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ], 10, 3 );
+	}
+
+	private function remove_handle_revisions_changed_filter() {
+		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 }

@@ -123,7 +123,7 @@ class Test_Module extends Elementor_Test_Base {
 		parent::setUp();
 
 		// Create post.
-		self::$document = $this->create_post();
+		self::$document = $this->factory()->create_post();
 
 		// Save document.
 		self::$document->save( self::$document_mock_default );
@@ -192,7 +192,7 @@ class Test_Module extends Elementor_Test_Base {
 		$module = Module::instance();
 
 		// Get document of new post.
-		$document = $this->create_post();
+		$document = $this->factory()->create_post();
 
 		// Inject meta.
 		$document->update_meta( '_elementor_data', self::$meta_data_mock_default );
@@ -284,7 +284,7 @@ class Test_Module extends Elementor_Test_Base {
 		$module = Module::instance();
 
 		// Create additional document in order that after remove from global the usage will not be empty.
-		$this->create_post()->save( self::$document_mock_default );
+		$this->factory()->create_post()->save( self::$document_mock_default );
 
 		// Add another button.
 		$elements_with_two_buttons = self::$document_mock_default;
@@ -360,7 +360,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['controls']['content']['section_button']['text'] );
 
 		// Create post.
-		$document2 = $this->create_post();
+		$document2 = $this->factory()->create_post();
 
 		// Save document.
 		$document2->save( self::$document_mock_default );
@@ -442,25 +442,5 @@ class Test_Module extends Elementor_Test_Base {
 		$global_usage = get_option( Module::OPTION_NAME, [] );
 
 		$this->assertEquals( 0, count( $global_usage[ $doc_name ]['heading']['controls'] ) );
-	}
-
-	/**
-	 * @return Document|false
-	 */
-	private function create_post() {
-		$admin = $this->factory()->create_and_get_administrator_user();
-
-		wp_set_current_user( $admin->ID );
-
-		$post = $this->factory()->create_and_get_custom_post( [
-			'post_author' => $admin->ID,
-			'post_type' => 'post',
-		] );
-
-		add_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
-
-		$document = self::elementor()->documents->get( $post->ID );
-
-		return $document;
 	}
 }
