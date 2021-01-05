@@ -8,6 +8,17 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install Dependencies
         run: |
           npm install
@@ -29,8 +40,8 @@ jobs:
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
           curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=by-commit"
-          echo ::set-env name=BUILD_PATH::"builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}"
-          echo ::set-env name=PACKAGE_VERSION::${PACKAGE_VERSION}
+          echo "BUILD_PATH=builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
       - name: Run Tests
         run: |
           git clone ${{ secrets.BACKSTOP_CONFIG_REPO_URL }} backstop-config

@@ -171,7 +171,7 @@ abstract class Base_Tag extends Controls_Stack {
 			'label' => __( 'Settings', 'elementor' ),
 		] );
 
-		$this->_register_controls();
+		$this->register_controls();
 
 		$this->end_controls_section();
 

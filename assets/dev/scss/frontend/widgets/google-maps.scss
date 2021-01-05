@@ -1,4 +1,12 @@
+//
+// Google Map
+//
+
 .elementor-widget-google_maps {
+
+	.elementor-widget-container {
+		overflow: hidden; // Allow border-radius
+	}
 
 	iframe {
 		height: 300px;

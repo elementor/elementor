@@ -66,7 +66,7 @@ export default class SiteEditor {
 				tooltip_data: {
 					title: __( 'What is a Single Page Template?', 'elementor' ),
 					content: __( 'A single page template allows you to easily create the layout and style of pages, ensuring design consistency across all the pages of your site.', 'elementor' ),
-					tip: __( 'You can create multiple global page templates, and assign each to different areas of your site.', 'elementor' ),
+					tip: __( 'You can create multiple single page templates, and assign each to different areas of your site.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-page',
 					video_url: 'https://www.youtube.com/embed/_y5eZ60lVoY',
 				},
@@ -81,7 +81,7 @@ export default class SiteEditor {
 				tooltip_data: {
 					title: __( 'What is a Single Post Template?', 'elementor' ),
 					content: __( 'A single post template allows you to easily design the layout and style of posts, ensuring a design consistency throughout all your blog posts, for example.', 'elementor' ),
-					tip: __( 'You can create multiple global post templates, and assign each to a different category.', 'elementor' ),
+					tip: __( 'You can create multiple single post templates, and assign each to a different category.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-post',
 					video_url: 'https://www.youtube.com/embed/8Fk-Edu7DL0',
 				},
@@ -96,7 +96,7 @@ export default class SiteEditor {
 				tooltip_data: {
 					title: __( 'What is an Archive Template?', 'elementor' ),
 					content: __( 'An archive template allows you to easily design the layout and style of archive pages - those pages that show a list of posts (e.g. a blog’s list of recent posts), which may be filtered by terms such as authors, categories, tags, search results, etc.', 'elementor' ),
-					tip: __( 'If you’d like a different style for a specific category, it’s easy to create a separate global archive template whose condition is to only display when users are viewing that category’s list of posts.', 'elementor' ),
+					tip: __( 'If you’d like a different style for a specific category, it’s easy to create a separate archive template whose condition is to only display when users are viewing that category’s list of posts.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-archive',
 					video_url: 'https://www.youtube.com/embed/wxElpEh9bfA',
 				},
@@ -126,7 +126,7 @@ export default class SiteEditor {
 				tooltip_data: {
 					title: __( 'What is a Single Product Template?', 'elementor' ),
 					content: __( 'A single product template allows you to easily design the layout and style of WooCommerce single product pages, and apply that template to various conditions that you assign.', 'elementor' ),
-					tip: __( 'You can create multiple global product templates, and assign each to different types of products, enabling a custom design for each group of similar products.', 'elementor' ),
+					tip: __( 'You can create multiple single product templates, and assign each to different types of products, enabling a custom design for each group of similar products.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-product',
 					video_url: 'https://www.youtube.com/embed/PjhoB1RWkBM',
 				},
@@ -141,7 +141,7 @@ export default class SiteEditor {
 				tooltip_data: {
 					title: __( 'What is a Products Archive Template?', 'elementor' ),
 					content: __( 'A products archive template allows you to easily design the layout and style of your WooCommerce shop page or other product archive pages - those pages that show a list of products, which may be filtered by terms such as categories, tags, etc.', 'elementor' ),
-					tip: __( 'You can create multiple global archive product templates, and assign each to different categories of products. This gives you the freedom to customize the appearance for each type of product being shown.', 'elementor' ),
+					tip: __( 'You can create multiple archive product templates, and assign each to different categories of products. This gives you the freedom to customize the appearance for each type of product being shown.', 'elementor' ),
 					docs: 'https://go.elementor.com/app-theme-builder-products-archive',
 					video_url: 'https://www.youtube.com/embed/cQLeirgkguA',
 				},

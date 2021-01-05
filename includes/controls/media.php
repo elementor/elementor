@@ -155,9 +155,12 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 					<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 						<# if( 'image' === data.media_type ) { #>
-						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+							<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="image"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
+							<# if ( data.should_include_svg_inline_option) { #>
+								<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="svg"><?php echo __( 'Choose Svg', 'elementor' ); ?></div>
+							<# } #>
 						<# } else if( 'video' === data.media_type ) { #>
-						<div class="elementor-control-media__tool elementor-control-media__replace"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
+						<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="video"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
 						<# } #>
 					</div>
 				</div>
@@ -206,6 +209,7 @@ class Control_Media extends Control_Base_Multiple {
 		return [
 			'label_block' => true,
 			'media_type' => 'image',
+			'should_include_svg_inline_option' => false,
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',

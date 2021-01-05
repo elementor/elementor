@@ -8,6 +8,17 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install Dependencies
         run: npm i
       - name: Run Lint
@@ -30,6 +41,7 @@ jobs:
           phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
       - name: Run PHP Syntax Lint
         run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
           php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .

@@ -65,6 +65,13 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				this.view.applySavedValue();
 
 				return globalData.data;
+			} ).catch( ( e ) => {
+				// TODO: Need to be replaced by "e instanceof NotFoundError"
+				if ( 404 !== e?.data?.status ) {
+					return Promise.reject( e );
+				}
+
+				this.disableGlobalValue( false );
 			} );
 	}
 
@@ -153,7 +160,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						if ( result.data.title ) {
 							text = result.data.title;
 						} else {
-							text = elementor.translate( 'default' );
+							text = __( 'Default', 'elementor' );
 						}
 
 						this.updateCurrentGlobalName( text );
@@ -164,10 +171,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				return;
 			} else if ( value ) {
 				// If there is a value and it is not a global, set the text to custom.
-				globalTooltipText = elementor.translate( 'custom' );
+				globalTooltipText = __( 'Custom', 'elementor' );
 			} else {
 				// If there is no value, set the text as default.
-				globalTooltipText = elementor.translate( 'default' );
+				globalTooltipText = __( 'Default', 'elementor' );
 			}
 
 			// If there is no value, remove the 'active' class from the Global Toggle button.
@@ -329,8 +336,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
 			message: $confirmMessage,
 			strings: {
-				confirm: elementor.translate( 'create' ),
-				cancel: elementor.translate( 'cancel' ),
+				confirm: __( 'Create', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			hide: {
 				onBackgroundClick: false,
@@ -416,20 +423,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 
 	// The unset method is triggered from the controls via triggerMethod.
 	onUnsetGlobalValue() {
-		const globalMeta = this.view.getGlobalMeta();
-
-		$e.run( 'document/globals/disable', {
-			container: this.view.container,
-			settings: { [ globalMeta.key ]: '' },
-			options: { restore: true },
-		} )
-			.then( () => {
-				this.onValueTypeChange();
-
-				this.view.globalValue = null;
-
-				this.resetActivePreviewItem();
-			} );
+		this.disableGlobalValue();
 	}
 
 	onUnlinkGlobalDefault() {
@@ -473,5 +467,22 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			mouseenter: () => this.globalInfoTooltip.show(),
 			mouseleave: () => this.globalInfoTooltip.hide(),
 		} );
+	}
+
+	disableGlobalValue( restore = true ) {
+		const globalMeta = this.view.getGlobalMeta();
+
+		return $e.run( 'document/globals/disable', {
+			container: this.view.container,
+			settings: { [ globalMeta.key ]: '' },
+			options: { restore },
+		} )
+			.then( () => {
+				this.onValueTypeChange();
+
+				this.view.globalValue = null;
+
+				this.resetActivePreviewItem();
+			} );
 	}
 }
