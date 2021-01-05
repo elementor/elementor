@@ -791,8 +791,12 @@ export default class EditorBase extends Marionette.Application {
 		return settings;
 	}
 
+	getConfig() {
+		return ElementorConfig;
+	}
+
 	onStart() {
-		this.config = ElementorConfig;
+		this.config = this.getConfig();
 
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
