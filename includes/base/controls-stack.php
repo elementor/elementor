@@ -1738,6 +1738,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access protected
+	 * @deprecated 3.1.0 Use `Controls_Stack::register_controls()` instead
 	 */
 	protected function _register_controls() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_controls()' );
