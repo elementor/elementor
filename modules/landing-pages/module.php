@@ -32,6 +32,7 @@ class Module extends BaseModule {
 			'name' => 'landing-pages',
 			'title' => __( 'Landing Pages', 'elementor' ),
 			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 		];
 	}
 
