@@ -289,7 +289,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			this.roleManager.init();
 
-			if ( this.config.experimentalFeatures[ 'landing-pages' ] ) {
+			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
 

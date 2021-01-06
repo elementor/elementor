@@ -223,7 +223,7 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
-				'minimum_installation_version' => '3.1.0',
+				'minimum_installation_version' => '3.1.0-beta',
 			],
 		] );
 
@@ -243,10 +243,10 @@ class Manager extends Base_Object {
 				. '<br><strong>' . __( 'Please note!', 'elementor' ) . '</strong> ' . __( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
-				'minimum_installation_version' => '3.1.0',
+				'minimum_installation_version' => '3.1.0-beta',
 			],
 		] );
 	}
