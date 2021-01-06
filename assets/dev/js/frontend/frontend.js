@@ -18,6 +18,16 @@ export default class Frontend extends elementorModules.ViewModule {
 		super( ...args );
 
 		this.config = elementorFrontendConfig;
+
+		this.config.legacyMode = {
+			get elementWrappers() {
+				if ( elementorFrontend.isEditMode() ) {
+					elementorCommon.helpers.hardDeprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+				}
+
+				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
+			},
+		};
 	}
 
 	// TODO: BC since 2.5.0
