@@ -6,7 +6,18 @@
 *.xml                                   @kingyes
 
 # Assets
-/assets/dev/js/editor/commands    		@matipojo
+/assets/dev/js/editor/commands                                  @matipojo @inewlegend
+/assets/dev/js/editor/component.js                              @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/container                                 @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/data                                      @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/document                                  @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/document.js                               @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/editor-document.js                        @kobizz @matipojo @inewlegend
+/assets/dev/js/editor/editor.js                                 @kobizz @matipojo @inewlegend
+/assets/dev/js/modules/imports/args-object.js                   @kobizz @matipojo @inewlegend
+/assets/dev/js/modules/imports/force-method-implementation.js   @kobizz @matipojo @inewlegend
+/assets/dev/js/modules/imports/instance-type.js                 @kobizz @matipojo @inewlegend
+
 /assets/dev/scss                  		@kobizz
 
 # External Libraries
@@ -27,6 +38,7 @@
 /core/base/background-task.php			@matipojo
 /core/base/background-task-manager.php	@matipojo
 /core/common                      		@kobizz
+/core/common/assets/js/api              @kobizz @inewlegend
 /core/common/modules/ajax         		@kobizz @matipojo
 /core/common/modules/connect      		@matipojo
 /core/common/modules/finder       		@kobizz
@@ -34,6 +46,7 @@
 /core/document-types              		@matipojo
 /core/dynamic-tags                		@kobizz
 /core/editor                      		@kobizz
+/core/editor/data                       @kobizz @inewlegend
 /core/experiments                 		@kobizz
 /core/kits                        		@matipojo @kobizz
 /core/files                       		@kobizz @matipojo
@@ -45,6 +58,12 @@
 /core/utils                       		@matipojo @kobizz
 /core/utils/collection.php              @nevoss
 /core/utils/version.php                 @nevoss
+
+# Data
+/data                                   @matipojo @kobizz @inewlegend
+
+# Docs
+/docs/core/common/assets/js/api         @kobizz @matipojo @inewlegend
 
 # Includes
 /includes/admin-templates         		@kobizz
@@ -94,10 +113,13 @@
 /modules                          		@matipojo
 /modules/admin-bar                      @nevoss
 /modules/compatibility-tag              @nevoss
+/modules/dev-tools                      @matipojo @inewlegend
 /modules/dynamic-tags             		@matipojo @kobizz
 /modules/library             			@matipojo @kobizz
 /modules/system-info             		@matipojo @kobizz
 /modules/gutenberg                		@kingyes
+/modules/usage                          @matipojo @inewlegend
 
 # Tests
 /tests                            		@matipojo
+/tests/qunit                            @matipojo @inewlegend
