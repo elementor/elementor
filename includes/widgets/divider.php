@@ -520,6 +520,29 @@ class Widget_Divider extends Widget_Base {
 		);
 
 		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'look' => 'line_text',
+				],
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'span',
+			]
+		);
+
+		$this->add_control(
 			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
@@ -1033,7 +1056,7 @@ class Widget_Divider extends Widget_Base {
 				$this->add_inline_editing_attributes( 'text' );
 				$this->add_render_attribute( 'text', [ 'class' => [ 'elementor-divider__text', 'elementor-divider__element' ] ] );
 				?>
-				<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
+				<<?php echo $settings['html_tag'] . ' ' . $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></<?php echo $settings['html_tag']; ?>>
 			<?php endif; ?>
 			</span>
 		</div>
