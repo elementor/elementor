@@ -20,8 +20,8 @@
 
 # Core
 /core                             		@kingyes
-/core/admin/notices                     @nevoss
-/core/app                             	@matipojo @kobizz
+/core/admin/notices                 	@nevoss
+/core/app                             	@matipojo @kobizz @nevoss
 /core/base                        		@matipojo @kobizz
 /core/base/db-upgrades-manager.php		@matipojo
 /core/base/background-task.php			@matipojo
@@ -43,8 +43,8 @@
 /core/settings                    		@matipojo
 /core/upgrade                     		@matipojo
 /core/utils                       		@matipojo @kobizz
-/core/utils/collection.php              @nevoss
-/core/utils/version.php                 @nevoss
+/core/utils/collection.php          	@nevoss
+/core/utils/version.php             	@nevoss
 
 # Includes
 /includes/admin-templates         		@kobizz
@@ -92,8 +92,8 @@
 
 # Modules
 /modules                          		@matipojo
-/modules/admin-bar                      @nevoss
-/modules/compatibility-tag              @nevoss
+/modules/admin-bar                  	@nevoss
+/modules/compatibility-tag          	@nevoss
 /modules/dynamic-tags             		@matipojo @kobizz
 /modules/library             			@matipojo @kobizz
 /modules/system-info             		@matipojo @kobizz
