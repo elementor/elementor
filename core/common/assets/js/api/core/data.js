@@ -265,6 +265,7 @@ export default class Data extends Commands {
 		const type = requestData.type,
 			nonce = wpApiSettings.nonce,
 			params = {
+				signal: requestData.args?.options?.signal,
 				credentials: 'include', // cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
