@@ -218,6 +218,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.0.16 - 2021-01-06 =
+* Tweak: String changes in Delete Site Settings screen
+* Fix: Clicking "Recalculate" button in System info throws a PHP error ([#13100](https://github.com/elementor/elementor/issues/13100 ))
+* Fix: Regenerate CSS is not working properly in large scale servers
+* Fix: Template Library title sanitization to avoid security issues
+* Fix: `libxml_disable_entity_loader` warning is thrown in PHP 8.0 instances
+
 = 3.0.15 - 2020-12-21 =
 * Tweak: Added "Theme" option to Page Layout options in Page Settings to allow customization of Site Setting value
 * Tweak: Added a confirmation message before deleing Default Kit to trash to avoid unintentional Site Settings deletion
