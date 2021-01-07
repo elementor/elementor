@@ -5,13 +5,32 @@ Each Developer Edition release, similar to beta version releases, will contain e
 We will use this plugin to validate new features and gain feedback before they are released.**
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 ## Changelog
+**3.2.0-dev1 - 2021-01-07**
+* Tweak: Add vertical alignment for tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
+* Tweak: Converted Elementor Landing Pages to Custom Post type
+* Tweak: Added an option to choose Text element HTML tag in Divider widget
+* Tweak: Added more Webpack optimization to improve performance
+* Tweak: Improved browser detection mechanism
+* Tweak: Updated Experiment status for Landing Pages and Accessibility Improvements
+* Tweak: String changes in Delete Site Settings screen
+* Fix: Clicking "Recalculate" button in System info throws a PHP error ([#13100](ttps://github.com/elementor/elementor/issues/13100))
+* Fix: Duplicate items in responsive view of Tabs widget
+* Fix: Unable to open Dynamic tag controls popover
+* Fix: Columns Gap control is not working when Optimized DOM output mode is inactive
+* Fix: JS source map files caused console warnings
+* Fix: Some dynamic controls were not available
+* Fix: Console error was thrown when activating Motion Effects with Legacy DOM mode
+* Fix: Regenerate CSS is not working properly in large scale servers
+* Fix: Template Library title sanitization to avoid security issues
+* Fix: `libxml_disable_entity_loader` warning is thrown in PHP 8.0 instances
+
 **3.1.0-dev5 - 2020-12-28**
 * Tweak: Added compatibility to support Improved Asset Loading of Carousel and Slides widgets
 * Fix: Improved Asset Loading experiment functionality is using an outdated name
 * Fix: Landing Pages experiment glitches
 * Fix: Wrong phrasing of Import template success message in Theme Builder
 * Fix: Border color glitch in Theme Builder
-## Changelog
+
 **3.1.0-dev4 - 2020-12-21**
 * Tweak: Added "Theme" option to Page Layout options in Page Settings to allow customization of Site Setting value
 * Tweak: Added a confirmation message before deleing Default Kit to trash to avoid unintentional Site Settings deletion
