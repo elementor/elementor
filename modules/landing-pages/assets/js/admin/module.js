@@ -10,9 +10,11 @@ export default class extends elementorModules.Module {
 	}
 
 	runHandler() {
-		const paths = {
-				landingPagesTablePage: 'edit.php?post_type=page&elementor_library_type=landing-page',
-				landingPagesAddNewPage: 'edit.php?post_type=elementor_library&page=landing-page',
+		const pageName = 'e-landing-page',
+			paths = {
+				landingPagesTablePage: 'edit.php?post_type=' + pageName,
+				landingPagesAddNewPage: 'edit.php?post_type=elementor_library&page=' + pageName,
+				landingPagesTrashPage: 'edit.php?post_status=trash&post_type=' + pageName,
 			},
 			args = {
 				path: elementorAdmin.config.landingPages?.landingPagesHasPages ? paths.landingPagesTablePage : paths.landingPagesAddNewPage,
