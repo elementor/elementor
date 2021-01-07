@@ -53,6 +53,46 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Merge array recursively
+	 *
+	 * @param $items
+	 *
+	 * @return $this
+	 */
+	public function merge_recursive( $items ) {
+		if ( $items instanceof Collection ) {
+			$items = $items->all();
+		}
+
+		return new static( array_merge_recursive( $this->items, $items ) );
+	}
+
+	/**
+	 * Implode the items
+	 *
+	 * @param $glue
+	 *
+	 * @return string
+	 */
+	public function implode( $glue ) {
+		return implode( $glue, $this->items );
+	}
+
+	/**
+	 * Run a map over each of the items.
+	 *
+	 * @param  callable  $callback
+	 * @return $this
+	 */
+	public function map( callable $callback ) {
+		$keys = array_keys( $this->items );
+
+		$items = array_map( $callback, $this->items, $keys );
+
+		return new static( array_combine( $keys, $items ) );
+	}
+
+	/**
 	 * @param callable $callback
 	 *
 	 * @return $this
@@ -81,6 +121,19 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	public function except( array $keys ) {
 		return $this->filter( function ( $value, $key ) use ( $keys ) {
 			return ! in_array( $key, $keys, true );
+		} );
+	}
+
+	/**
+	 * Get the items with the specified keys.
+	 *
+	 * @param array $keys
+	 *
+	 * @return $this
+	 */
+	public function only( array $keys ) {
+		return $this->filter( function ( $value, $key ) use ( $keys ) {
+			return in_array( $key, $keys, true );
 		} );
 	}
 

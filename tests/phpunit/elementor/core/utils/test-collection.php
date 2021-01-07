@@ -45,7 +45,7 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a', 'b' ], $result );
 	}
 
-	public function test_expect() {
+	public function test_except() {
 		// Arrange
 		$collection = new Collection( $array = [ 'a' => '1', 'b' => '2', 'c' => '3' ] );
 
@@ -54,6 +54,30 @@ class Test_Collection extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEqualSets( [ 'b' => '2' ], $result->all() );
+	}
+
+	public function only() {
+		// Arrange
+		$collection = new Collection( $array = [ 'a' => '1', 'b' => '2', 'c' => '3' ] );
+
+		// Act
+		$result = $collection->except( [ 'a', 'c' ] );
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => '1', 'c' => '3' ], $result->all() );
+	}
+
+	public function test_map() {
+		// Arrange
+		$collection = new Collection( $array = [ 'a' => '1', 'b' => '2' ] );
+
+		// Act
+		$result = $collection->map( function ( $value, $key ) {
+			return $value . $key;
+		} );
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => '1a', 'b' => '2b' ], $result->all() );
 	}
 
 	public function test_map_with_keys() {
@@ -84,6 +108,31 @@ class Test_Collection extends Elementor_Test_Base {
 		// Assert
 		$this->assertEqualSets( [ 'a' => '1', 'b' => '2', 'c' => '3' ], $result->all() );
 		$this->assertEqualSets( [ 'a' => '1', 'b' => '2', 'c' => '3' ], $result2->all() );
+	}
+
+	public function test_merge_recursive() {
+		// Arrange
+		$collection = new Collection( [ 'a' => [ '1', '2' ], 'b' => [ '3' ] ] );
+		$collection2 = new Collection( [ 'b' => [ '4', '5' ], 'c' => [ '6' ] ] );
+
+		// Act
+		$result = $collection->merge_recursive( $collection2->all() );
+		$result2 = $collection2->merge_recursive( $collection2 );
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
+		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
+	}
+
+	public function test_implode() {
+		// Arrange
+		$collection = new Collection( [ '1', '2', '3' ] );
+
+		// Act
+		$result = $collection->implode(',');
+
+		// Assert
+		$this->assertEquals( '1,2,3', $result );
 	}
 
 	public function test_filter() {
