@@ -368,7 +368,7 @@ label.elementor-template-library-order-label {
 	}
 
 	// For blocks
-	&:not(.elementor-template-library-template-page, .elementor-template-library-template-page):not(.elementor-template-library-template-lp) {
+	&:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp) {
 		position: relative;
 		width: calc(33.333% - #{$remote-templates-items-space});
 		overflow: hidden;
@@ -491,10 +491,6 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-template-page,
 .elementor-template-library-template-lp {
-
-	.elementor-template-library-template-name {
-		display: initial;
-	}
 
 	@media (max-width: $library_screen_breakpoint) {
 		width: calc(25% - #{$remote-templates-items-space});
