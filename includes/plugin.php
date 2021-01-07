@@ -602,10 +602,10 @@ class Plugin {
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
-		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
+		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
