@@ -3,6 +3,7 @@ namespace Elementor\Modules\LandingPages;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
