@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
@@ -128,6 +128,9 @@ class Settings_Layout extends Tab_Base {
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$page_templates = $page_templates_module->add_page_templates( [], null, null );
 
+		// Removes the Theme option from the templates because 'default' is already handled.
+		unset( $page_templates[ PageTemplatesModule::TEMPLATE_THEME ] );
+
 		$page_template_control_options = [
 			'label' => __( 'Default Page Layout', 'elementor' ),
 			'options' => [
@@ -196,7 +199,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
 			return;
 		}
 

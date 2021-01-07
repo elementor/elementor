@@ -10,7 +10,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	getLogoOptions: function() {
 		return {
-			title: elementorAdmin.translate( 'new_template' ),
+			title: __( 'New Template', 'elementor' ),
 		};
 	},
 

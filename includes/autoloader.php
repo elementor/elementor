@@ -145,7 +145,7 @@ class Autoloader {
 		$controls_groups_names = Controls_Manager::get_groups_names();
 
 		foreach ( $controls_groups_names as $group_name ) {
-			$class_name = 'Group_Control_' . self::normalize_class_name( str_replace( '-', '_', $group_name ), '_' );
+			$class_name = 'Group_Control_' . self::normalize_class_name( $group_name, '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/groups/' . $group_name . '.php';
 		}
@@ -154,18 +154,15 @@ class Autoloader {
 	/**
 	 * Normalize Class Name
 	 *
-	 * Used to convert control names to class name,
-	 * a ucwords polyfill for php versions not supporting delimiter parameter
-	 * reference : https://github.com/elementor/elementor/issues/7310#issuecomment-469593385
+	 * Used to convert control names to class names.
 	 *
 	 * @param $string
 	 * @param string $delimiter
 	 *
-	 * @todo Remove once we bump minimum php version to 5.6
 	 * @return mixed
 	 */
 	private static function normalize_class_name( $string, $delimiter = ' ' ) {
-		return str_replace( ' ', $delimiter, ucwords( str_replace( $delimiter, ' ', $string ) ) );
+		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
 	private static function init_classes_aliases() {

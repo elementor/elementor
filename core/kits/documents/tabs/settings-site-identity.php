@@ -3,8 +3,8 @@
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
-use Elementor\DB;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -113,7 +113,7 @@ class Settings_Site_Identity extends Tab_Base {
 	public function on_save( $data ) {
 		if (
 			! isset( $data['settings'] ) ||
-			DB::STATUS_PUBLISH !== $data['settings']['post_status'] ||
+			Document::STATUS_PUBLISH !== $data['settings']['post_status'] ||
 			// Should check for the current action to avoid infinite loop
 			// when updating options like: "blogname" and "blogdescription".
 			strpos( current_action(), 'update_option_' ) === 0

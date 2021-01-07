@@ -90,11 +90,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
+					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
 					date: false,
@@ -104,6 +104,24 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
+
+		if ( elementor.config.filesUpload.unfilteredFiles ) {
+			this.setUploadMimeType( this.frame, this.getMediaType() );
+		}
+	},
+
+	setUploadMimeType( frame, ext ) {
+		// Add unfiltered files to the allowed upload extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+
+		frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ( 'application/json' === ext ) ? 'json' : oldExtensions + ',svg';
+		} );
+
+		this.frame.on( 'close', () => {
+			// Restore allowed upload extensions
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
 	},
 
 	/**

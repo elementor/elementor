@@ -27,7 +27,7 @@ PanelMenu.initGroups = () => {
 		additionalSettingsProps = {
 			name: 'settings-additional-settings',
 			icon: 'eicon-tools',
-			title: elementor.translate( 'additional_settings' ),
+			title: __( 'Additional Settings', 'elementor' ),
 			type: 'link',
 			link: elementor.config.admin_settings_url,
 			newTab: true,
@@ -38,17 +38,17 @@ PanelMenu.initGroups = () => {
 	PanelMenu.groups = new Backbone.Collection( [
 		{
 			name: 'design_system',
-			title: elementor.translate( 'design_system' ),
+			title: __( 'Design System', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'global' ),
 		},
 		{
 			name: 'theme_style',
-			title: elementor.translate( 'theme_style' ),
+			title: __( 'Theme Style', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'theme-style' ),
 		},
 		{
 			name: 'settings',
-			title: elementor.translate( 'settings' ),
+			title: __( 'Settings', 'elementor' ),
 			items: settingsItems,
 		},
 	] );

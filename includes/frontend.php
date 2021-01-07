@@ -333,9 +333,18 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_register_scripts' );
 
 		wp_register_script(
+			'elementor-webpack-runtime',
+			$this->get_js_assets_url( 'webpack.runtime', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-frontend-modules',
 			$this->get_js_assets_url( 'frontend-modules' ),
 			[
+				'elementor-webpack-runtime',
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
@@ -379,14 +388,6 @@ class Frontend extends App {
 				'jquery',
 			],
 			'0.2.1',
-			true
-		);
-
-		wp_register_script(
-			'swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
-			[],
-			'5.3.6',
 			true
 		);
 
@@ -436,13 +437,7 @@ class Frontend extends App {
 		wp_register_script(
 			'elementor-frontend',
 			$this->get_js_assets_url( 'frontend' ),
-			[
-				'elementor-frontend-modules',
-				'elementor-dialog',
-				'elementor-waypoints',
-				'swiper',
-				'share-link',
-			],
+			$this->get_elementor_frontend_dependencies(),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -536,8 +531,8 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		if ( Plugin::instance()->get_legacy_mode( 'elementWrappers' ) ) {
-			// If The Markup Legacy Mode is active, register the legacy CSS
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
+			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
 				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
@@ -584,6 +579,20 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
+
+		wp_set_script_translations( 'elementor-frontend', 'elementor' );
+
+		if ( ! $this->is_improved_assets_loading() ) {
+			wp_enqueue_script(
+				'preloaded-elements-handlers',
+				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				[
+					'elementor-frontend',
+				],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
 
 		$this->print_config();
 
@@ -1153,32 +1162,24 @@ class Frontend extends App {
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
+				'isScriptDebug' => Utils::is_script_debug(),
+				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
-			'i18n' => [
-				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
-				'pinIt' => __( 'Pin it', 'elementor' ),
-				'download' => __( 'Download', 'elementor' ),
-				'downloadImage' => __( 'Download image', 'elementor' ),
-				'fullscreen' => __( 'Fullscreen', 'elementor' ),
-				'zoom' => __( 'Zoom', 'elementor' ),
-				'share' => __( 'Share', 'elementor' ),
-				'playVideo' => __( 'Play Video', 'elementor' ),
-				'previous' => __( 'Previous', 'elementor' ),
-				'next' => __( 'Next', 'elementor' ),
-				'close' => __( 'Close', 'elementor' ),
-			],
+			// Empty array for BC to avoid errors.
+			'i18n' => [],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
-			'legacyMode' => [
-				'elementWrappers' => Plugin::instance()->get_legacy_mode( 'elementWrappers' ),
-			],
+			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
@@ -1194,11 +1195,21 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
+			// Try to use the 'large' WP image size because the Pinterest share API
+			// has problems accepting shares with large images sometimes, and the WP 'large' thumbnail is
+			// the largest default WP image size that will probably not be changed in most sites
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
+
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
+			}
+
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url(),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [
@@ -1290,5 +1301,32 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	private function is_improved_assets_loading() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+	}
+
+	private function get_elementor_frontend_dependencies() {
+		$dependencies = [
+			'elementor-frontend-modules',
+			'elementor-dialog',
+			'elementor-waypoints',
+			'share-link',
+		];
+
+		if ( ! $this->is_improved_assets_loading() ) {
+			wp_register_script(
+				'swiper',
+				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
+				[],
+				'5.3.6',
+				true
+			);
+
+			$dependencies[] = 'swiper';
+		}
+
+		return $dependencies;
 	}
 }

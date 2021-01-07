@@ -16,12 +16,6 @@ module.exports = BaseSettings.extend( {
 	save: function() {},
 
 	changeCallbacks: {
-		post_title: function( newValue ) {
-			var $title = elementorFrontend.elements.$document.find( elementor.config.page_title_selector );
-
-			$title.text( newValue );
-		},
-
 		template: function() {
 			$e.run( 'document/save/auto', {
 				force: true,

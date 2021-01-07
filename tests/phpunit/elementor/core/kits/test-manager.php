@@ -8,6 +8,9 @@ use Elementor\Core\Files\Manager as Files_Manager;
 
 class Test_Manager extends Elementor_Test_Base {
 	public function test_get_active_id() {
+		// Make sure the the 'wp_trash_post' function will actually throw the kit to trash
+		$_GET['force_delete_kit'] = '1';
+
 		// Test deleted kit.
 		$test_description = 'active id should return a new kit id after delete kit';
 		$active_id = Plugin::$instance->kits_manager->get_active_id();
@@ -96,5 +99,69 @@ class Test_Manager extends Elementor_Test_Base {
 		$kit->save( [] );
 
 		Plugin::instance()->files_manager = $file_manager;
+	}
+
+	public function test_before_trash_kit() {
+		// Arrange
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Assert (Expect)
+		$this->expectException(\WPDieException::class);
+
+		// Act
+		do_action( 'wp_trash_post', $kit_id );
+	}
+
+	public function test_before_trash_kit__when_permanently_deleting() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// Assert (Expect)
+		$this->expectException(\WPDieException::class);
+
+		// Act
+		do_action( 'before_delete_post', $kit->get_id() );
+	}
+
+	public function test_before_trash_kit__when_permanently_deleting_and_kit_in_trash() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		wp_update_post([
+			'ID' => $kit->get_id(),
+			'post_status' => 'trash'
+		]);
+
+		// Refresh cache.
+		Plugin::$instance->documents->get( $kit->get_id(), false );
+
+		// Act
+		do_action( 'before_delete_post', $kit->get_id() );
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
+	}
+
+	public function test_before_trash_kit__should_not_die_if_the_post_is_not_a_kit() {
+		// Arrange
+		$post_id = $this->factory()->post->create_and_get()->ID;
+
+		// Act
+		do_action( 'wp_trash_post', $post_id);
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
+	}
+
+	public function test_before_trash_kit__should_not_die_if_force_trash_query_string_param_passed(  ) {
+		// Arrange
+		$_GET['force_delete_kit'] = '1';
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Act
+		do_action( 'wp_trash_post', $kit_id );
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
 	}
 }

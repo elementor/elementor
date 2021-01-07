@@ -1,4 +1,4 @@
-class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase {
+export default class ImageCarousel extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -88,7 +88,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 		return swiperOptions;
 	}
 
-	onInit( ...args ) {
+	async onInit( ...args ) {
 		super.onInit( ...args );
 
 		const elementSettings = this.getElementSettings();
@@ -97,7 +97,9 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$swiperContainer.data( 'swiper', this.swiper );
@@ -179,7 +181,3 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
-};
