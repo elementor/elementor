@@ -186,7 +186,7 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-tabs-alignment-',
 				'condition' => [
-						'type' => 'horizontal',
+					'type' => 'horizontal',
 				],
 			]
 		);
