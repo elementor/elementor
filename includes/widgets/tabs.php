@@ -192,33 +192,33 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-				'tabs_align_vertical',
-				[
-						'label' => __( 'Alignment', 'elementor' ),
-						'type' => Controls_Manager::CHOOSE,
-						'options' => [
-								'' => [
-										'title' => __( 'Start', 'elementor' ),
-										'icon' => 'eicon-v-align-top',
-								],
-								'center' => [
-										'title' => __( 'Center', 'elementor' ),
-										'icon' => 'eicon-v-align-middle',
-								],
-								'end' => [
-										'title' => __( 'End', 'elementor' ),
-										'icon' => 'eicon-v-align-bottom',
-								],
-								'stretch' => [
-										'title' => __( 'Justified', 'elementor' ),
-										'icon' => 'eicon-v-align-stretch',
-								],
-						],
-						'prefix_class' => 'elementor-tabs-alignment-',
-						'condition' => [
-								'type' => 'vertical',
-						],
-				]
+			'tabs_align_vertical',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+					'stretch' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-v-align-stretch',
+					],
+				],
+				'prefix_class' => 'elementor-tabs-alignment-',
+				'condition' => [
+					'type' => 'vertical',
+				],
+			]
 		);
 
 		$this->end_controls_section();
