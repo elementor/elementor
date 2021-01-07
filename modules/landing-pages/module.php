@@ -1,14 +1,11 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
-use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,10 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const DOCUMENT_TYPE = 'landing-page';
-	const ADMIN_PAGE_SLUG = 'edit.php?post_type=page&elementor_library_type=landing-page';
+	const CPT = 'e-landing-page';
+	const ADMIN_PAGE_SLUG = 'edit.php?post_type=' . self::CPT;
 
 	private $posts;
 	private $trashed_posts;
+	private $new_lp_url;
+	private $permalink_structure;
 
 	public function get_name() {
 		return 'landing-pages';
@@ -43,12 +43,9 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$this->trashed_posts = new \WP_Query( [
-			'post_type' => 'page',
+			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
-			'elementor_library_type' => self::DOCUMENT_TYPE,
-			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->trashed_posts;
@@ -61,11 +58,10 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any landing pages.
 		$this->posts = new \WP_Query( [
-			'post_type' => 'page',
+			'post_type' => self::CPT,
+			// 'post_status' is not 'any' because 'any' does not include auto-drafts and revisions.
+			'post_status' => [ 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit' ],
 			'posts_per_page' => 1,
-			'elementor_library_type' => self::DOCUMENT_TYPE,
-			'meta_key' => '_elementor_template_type',
-			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->posts;
@@ -84,12 +80,7 @@ class Module extends BaseModule {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_elementor_landing_page( $post ) {
-		// If the post is not a page, save a call to the DB.
-		if ( 'page' !== $post->post_type ) {
-			return false;
-		}
-
-		return 'landing-page' === get_post_meta( $post->ID, Document::TYPE_META_KEY, true );
+		return self::CPT === $post->post_type;
 	}
 
 	/**
@@ -105,10 +96,10 @@ class Module extends BaseModule {
 		// If there are no Landing Pages, show the "Create Your First Landing Page" page.
 		// If there are, show the pages table.
 		if ( ! empty( $posts->posts ) ) {
-			$this->landing_page_menu_slug = self::ADMIN_PAGE_SLUG;
+			$landing_page_menu_slug = self::ADMIN_PAGE_SLUG;
 			$landing_page_menu_callback = null;
 		} else {
-			$this->landing_page_menu_slug = self::DOCUMENT_TYPE;
+			$landing_page_menu_slug = self::CPT;
 			$landing_page_menu_callback = [ $this, 'print_empty_landing_pages_page' ];
 		}
 
@@ -119,29 +110,16 @@ class Module extends BaseModule {
 			$landing_pages_title,
 			$landing_pages_title,
 			'manage_options',
-			$this->landing_page_menu_slug,
+			$landing_page_menu_slug,
 			$landing_page_menu_callback
 		);
 	}
 
 	private function get_add_new_landing_page_url() {
-		return Utils::get_create_new_post_url( 'page', self::DOCUMENT_TYPE ) . '#library';
-	}
-
-	/**
-	 * Remove Type Column
-	 *
-	 * Removes the "Type" column from the pages table.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param array $columns
-	 * @return array $columns
-	 */
-	private function remove_type_column( $columns ) {
-		unset( $columns['taxonomy-elementor_library_type'] );
-
-		return $columns;
+		if ( ! $this->new_lp_url ) {
+			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+		}
+		return $this->new_lp_url;
 	}
 
 	/**
@@ -165,7 +143,7 @@ class Module extends BaseModule {
 
 		if ( ! empty( $trashed_posts->posts ) ) { ?>
 			<div class="e-trashed-items">
-				<?php echo sprintf( __( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), admin_url( 'edit.php?post_status=trash&post_type=page&elementor_library_type=landing-page' ) ); ?>
+				<?php echo sprintf( __( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ); ?>
 			</div>
 		<?php } ?>
 		</div>
@@ -193,79 +171,11 @@ class Module extends BaseModule {
 		$categories['create']['items']['landing-pages'] = [
 			'title' => __( 'Add New Landing Page', 'elementor' ),
 			'icon' => 'single-page',
-			'url' => esc_url( Utils::get_create_new_post_url( 'page', self::DOCUMENT_TYPE ) ) . '#library',
-			'keywords' => [ 'landing-page', 'landing', 'page', 'new', 'create', 'library' ],
+			'url' => $this->get_add_new_landing_page_url(),
+			'keywords' => [ self::DOCUMENT_TYPE, 'landing', 'page', 'new', 'create', 'library' ],
 		];
 
 		return $categories;
-	}
-
-	/**
-	 * Change Admin Page Title
-	 *
-	 * Changes the page title of the "Landing Pages" Admin page which displays the "Pages" table,
-	 * from "Pages" to the "Landing Pages" translation string.
-	 *
-	 * @since 3.1.0
-	 */
-	private function change_admin_page_title() {
-		global $wp_post_types;
-
-		if ( $this->is_landing_pages_page() ) {
-			$wp_post_types['page']->labels->name = __( 'Landing Pages', 'elementor' );
-		}
-	}
-
-	/**
-	 * Change Admin Meta Title
-	 *
-	 * Changes the contents of the meta <title> tag in the "Landing Pages" Admin page which displays the "Pages" table,
-	 * from "Pages" to "Landing Pages".
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param string $title meta title contents
-	 * @return string $title
-	 */
-	private function change_admin_meta_title( $title ) {
-		if ( $this->is_landing_pages_page() ) {
-			// Get WordPress' default 'Pages' translation string, since the original title comes from WordPress core.
-			return str_replace( __( 'Pages', 'elementor' ), __( 'Landing Pages', 'elementor' ), $title ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
-		}
-
-		return $title;
-	}
-
-	private function is_landing_pages_page() {
-		global $wp_the_query;
-
-		return isset( $wp_the_query->query['post_type'] )
-			&& isset( $wp_the_query->query['elementor_library_type'] )
-			&& 'page' === $wp_the_query->query['post_type']
-			&& self::DOCUMENT_TYPE === $wp_the_query->query['elementor_library_type'];
-	}
-
-	/**
-	 * Add Landing Page post state.
-	 *
-	 * Adds a new "Landing Page" post state to the post table.
-	 *
-	 * Fired by `display_post_states` filter.
-	 *
-	 * @since 1.8.0
-	 * @access public
-	 *
-	 * @param array    $post_states An array of post display states.
-	 * @param \WP_Post $post        The current post object.
-	 *
-	 * @return array A filtered array of post display states.
-	 */
-	public function add_landing_page_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && $this->is_elementor_landing_page( $post ) ) {
-			$post_states['landing-page'] = __( 'Landing Page', 'elementor' );
-		}
-
-		return $post_states;
 	}
 
 	/**
@@ -297,7 +207,78 @@ class Module extends BaseModule {
 		return array_replace_recursive( $settings, $additional_settings );
 	}
 
+	private function register_landing_page_cpt() {
+		$labels = [
+			'name' => __( 'Landing Pages', 'elementor' ),
+			'singular_name' => __( 'Landing Page', 'elementor' ),
+			'add_new' => __( 'Add New', 'elementor' ),
+			'add_new_item' => __( 'Add New Landing Page', 'elementor' ),
+			'edit_item' => __( 'Edit Landing Page', 'elementor' ),
+			'new_item' => __( 'New Landing Page', 'elementor' ),
+			'all_items' => __( 'All Landing Pages', 'elementor' ),
+			'view_item' => __( 'View Landing Page', 'elementor' ),
+			'search_items' => __( 'Search Landing Pages', 'elementor' ),
+			'not_found' => __( 'No landing pages found', 'elementor' ),
+			'not_found_in_trash' => __( 'No landing pages found in trash', 'elementor' ),
+			'parent_item_colon' => '',
+			'menu_name' => __( 'Landing Pages', 'elementor' ),
+		];
+
+		$args = [
+			'labels' => $labels,
+			'public' => true,
+			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
+			'capability_type' => 'page',
+			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
+		];
+
+		if ( false !== strpos( $this->permalink_structure, '/%postname%/' ) ) {
+			// For rewriting the Landing Page's permalink to act like a page in case the site's permalink structure
+			// is '/%postname%/'.
+			$args['rewrite'] = [
+				'slug' => '/',
+				'with_front' => false,
+			];
+		}
+
+		register_post_type( self::CPT, $args );
+	}
+
+	public function remove_post_type_slug( $post_link, $post, $leavename ) {
+		if ( self::CPT !== $post->post_type || 'publish' !== $post->post_status ) {
+			return $post_link;
+		}
+
+		return str_replace( '/' . $post->post_type . '/', '/', $post_link );
+	}
+
+	public function adjust_landing_page_query( $query ) {
+		if ( ! $query->is_main_query() || 2 !== count( $query->query ) || ! isset( $query->query['page'] ) ) {
+			return;
+		}
+		if ( ! empty( $query->query['name'] ) ) {
+			$query->set( 'post_type', [ 'post', self::CPT, 'page' ] );
+		}
+	}
+
 	public function __construct() {
+		$this->permalink_structure = get_option( 'permalink_structure' );
+
+		$this->register_landing_page_cpt();
+
+		// Landing Pages should act like pages, including in their permalink structure. If the permalink structure is
+		// `/%postname%/`, the following hooks change the permalink to remove the CPT slug from it.
+		if ( ! is_admin() && false !== strpos( $this->permalink_structure, '/%postname%/' ) ) {
+			add_filter( 'post_type_link', function( $post_link, $post, $leavename ) {
+				$this->remove_post_type_slug( $post_link, $post, $leavename );
+			}, 10, 3 );
+
+			add_action( 'pre_get_posts', function( $query ) {
+				$this->adjust_landing_page_query( $query );
+			} );
+		}
+
 		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
@@ -306,44 +287,19 @@ class Module extends BaseModule {
 			$this->add_submenu_page();
 		}, 30 );
 
-		// This is a hack to change the H1 title of the Landing Pages table page from 'Pages' to 'Landing Pages'.
-		add_action( 'admin_head', function() {
-			$this->change_admin_page_title();
-		} );
-
-		// When visiting the Landing Pages Table page, the default title is 'Pages'. This filter callback changes it
-		// to the 'Landing Pages' translation string.
-		add_filter( 'admin_title', function( $title ) {
-			return $this->change_admin_meta_title( $title );
-		} );
-
-		// Since Landing Pages are actually Pages ('page' post type), the 'Pages' menu is highlighted by default in
-		// the admin. This overrides that and highlights the Templates menu instead, where the 'Landing Pages' submenu
-		// item is located.
-		add_action( 'parent_file', function( $parent_file ) {
-			global $current_screen;
-
-			if ( 'post' === $current_screen->base && $this->is_elementor_landing_page( get_post() ) ) {
-				return Source_Local::ADMIN_MENU_SLUG;
-			}
-
-			return $parent_file;
-		} );
-
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
-		add_action( 'elementor/admin/localize_settings', function( $settings ) {
+		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
 			return $this->admin_localize_settings( $settings );
 		} );
 
-		add_filter( 'elementor/finder/categories', function( $categories ) {
+		add_filter( 'elementor/finder/categories', function( array $categories ) {
 			return $this->add_finder_items( $categories );
 		} );
 
-		// Remove the "Type" column added to the Pages table by the Landing Page document.
-		add_filter( 'manage_page_posts_columns', function( $columns ) {
-			return $this->remove_type_column( $columns );
-		} );
+		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function( array $cpts ) {
+			$cpts[] = self::CPT;
 
-		add_filter( 'display_post_states', [ $this, 'add_landing_page_post_state' ], 20, 2 );
+			return $cpts;
+		} );
 	}
 }

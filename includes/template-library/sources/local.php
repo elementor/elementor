@@ -6,6 +6,7 @@ use Elementor\Core\Editor\Editor;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
+use Elementor\Modules\LandingPages\Module as Landing_Page_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 
@@ -278,12 +279,7 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
-		$cpts_to_associate = [ self::CPT ];
-
-		// If the Landing Page feature is active, associate pages with this taxonomy as well.
-		if ( Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
-			$cpts_to_associate[] = 'page';
-		}
+		$cpts_to_associate = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_cpts', [ self::CPT ] );
 
 		register_taxonomy( self::TAXONOMY_TYPE_SLUG, $cpts_to_associate, $args );
 

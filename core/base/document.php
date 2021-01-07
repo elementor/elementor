@@ -83,16 +83,6 @@ abstract class Document extends Controls_Stack {
 	protected $post;
 
 	/**
-	 * Settings to be Saved
-	 *
-	 * A variable that temporarily stores the new settings while the document is being saved.
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 */
-	protected $data_to_be_saved;
-
-	/**
 	 * @since 2.1.0
 	 * @access protected
 	 * @static
@@ -588,8 +578,6 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
-		$this->data_to_be_saved = $data;
-
 		$this->set_is_saving( true );
 
 		/**
@@ -648,8 +636,6 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/after_save', $this, $data );
 
 		$this->set_is_saving( false );
-
-		unset( $this->data_to_be_saved );
 
 		$this->remove_handle_revisions_changed_filter();
 
