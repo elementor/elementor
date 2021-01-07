@@ -14,6 +14,7 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
+import ResponsiveTopBar from './top-bar';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 
@@ -397,7 +398,13 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
+		const topBar = new ResponsiveTopBar();
 
+		topBar.render();
+
+		// topBar.$el
+
+		this.$preview.before( topBar.$el );
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
