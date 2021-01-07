@@ -21,7 +21,7 @@ export class KitAfterSave extends After {
 				buttons: [
 					{
 						name: 'back_to_editor',
-						text: __( 'Show Panel', 'elementor' ),
+						text: __( 'Back to Editor', 'elementor' ),
 						callback() {
 							$e.run( 'panel/global/close' );
 						},

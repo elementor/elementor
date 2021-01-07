@@ -10,7 +10,7 @@ const SectionView = BaseElementView.extend( {
 	childViewContainer: function() {
 		let containerSelector = '> .elementor-container';
 
-		if ( ! elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( ! elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
 			containerSelector += ' > .elementor-row';
 		}
 
