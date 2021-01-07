@@ -150,6 +150,10 @@
 				display: flex;
 			}
 
+			.elementor-tabs-wrapper {
+				flex-direction: column;
+			}
+
 			.elementor-tabs-content-wrapper {
 				flex-grow: 1;
 				border-style: solid;
@@ -192,10 +196,17 @@
 				}
 			}
 
-			&stretch {
+			&stretch.elementor-tabs-view-horizontal  {
 
 				.elementor-tab-title {
 					width: 100%;
+				}
+			}
+
+			&stretch.elementor-tabs-view-vertical {
+
+				.elementor-tab-title {
+					height: 100%;
 				}
 			}
 		}
