@@ -8,7 +8,7 @@ Visit the plugin page to download [Elementor Beta - Developer Edition](https://w
 **3.2.0-dev1 - 2021-01-07**
 * Tweak: Add vertical alignment for tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
 * Tweak: Converted Elementor Landing Pages to Custom Post type
-* Tweak: Added an option to choose Text element HTML tag in Divider widget
+* Tweak: Added an option to choose Text element HTML tag in Divider widget (<[#11499](https://github.com/elementor/elementor/issues/11499))
 * Tweak: Added more Webpack optimization to improve performance
 * Tweak: Improved browser detection mechanism
 * Tweak: Updated Experiment status for Landing Pages and Accessibility Improvements
