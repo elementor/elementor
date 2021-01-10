@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\CompatibilityTag;
 
+use Elementor\Plugin;
+use Elementor\Core\Utils\Version;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +26,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	protected function get_plugin_header() {
-		return self::PLUGIN_VERSION_TESTED_HEADER;
+		return static::PLUGIN_VERSION_TESTED_HEADER;
 	}
 
 	/**
@@ -42,6 +44,13 @@ class Module extends Base_Module {
 	}
 
 	/**
+	 * @return string
+	 */
+	protected function get_plugin_version() {
+		return ELEMENTOR_VERSION;
+	}
+
+	/**
 	 * @return Collection
 	 */
 	protected function get_plugins_to_check() {
@@ -55,7 +64,8 @@ class Module extends Base_Module {
 	 * @return Collection
 	 */
 	private function get_plugins_with_plugin_title_in_their_name() {
-		return $this->get_plugins()
+		return Plugin::$instance->wp
+			->get_plugins()
 			->except( [
 				'elementor/elementor.php',
 				'elementor-dev/elementor-dev.php',

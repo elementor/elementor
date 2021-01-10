@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
@@ -449,6 +450,11 @@ class Plugin {
 	public $app;
 
 	/**
+	 * @var Wp_Api
+	 */
+	public $wp;
+
+	/**
 	 * @var Experiments_Manager
 	 */
 	public $experiments;
@@ -610,6 +616,7 @@ class Plugin {
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
+		$this->wp = new Wp_Api();
 
 		User::init();
 		Api::init();
