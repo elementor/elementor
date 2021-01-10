@@ -6,6 +6,8 @@ jobs:
   run:
     runs-on: ubuntu-16.04
     timeout-minutes: 20
+    env:
+      screenshotter_config_path: ${{ github.workspace }}/tests/screenshotter/config.js
     strategy:
       fail-fast: false
       matrix:
@@ -17,20 +19,20 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@master
       - name: Install Elementor-ScreenShotter
-        run: | ####### TO DO: Remove all sudo
+        run: | ##### TO DO: Remove all sudo
           sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
           sudo chown -R $USER /usr/local/lib/node_modules
           sudo chown -R $USER /usr/local/bin/
-          npm i -g wp-screenshotter@1.17.2
+          npm i -g @elementor/screenshotter
       - name: Install Dependencies
         run: |
-          elementor-screenshotter-install --debug=true
+          elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
       - name: Import Tamplate(s)
         run: |
-          elementor-screenshotter-import-templates --debug=true
+          elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
       - name: Build Package & Run Test
         run: |
-          elementor-screenshotter-run-test --debug=true --deepDebug=true
+          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true --deepDebug=true
       - uses: actions/upload-artifact@master
         if: failure()
         with:

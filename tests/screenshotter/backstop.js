@@ -1,14 +1,14 @@
-const Url = require( 'url' );
-const urls = require( './config/config.url.json' );
+const config = require( './config' );
 
 const getScenarios = () => {
 	const scenarios = [];
+	const origin = config.url_origin;
 
-	urls.forEach( ( urlPath ) => {
+	config.templates.forEach( ( pathname ) => {
 		scenarios.push( {
-			label: Url.parse( urlPath, true ).pathname,
-			url: urlPath,
-			referenceUrl: urlPath,
+			label: pathname,
+			url: `${ origin }/${ pathname }`,
+			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
 			delay: 2000,
@@ -22,25 +22,23 @@ const getScenarios = () => {
 	return scenarios;
 };
 
+const testsViewports = () => {
+	const view = [];
+
+	config.tests_viewports.forEach( ( viewport ) => {
+		view.push( {
+			label: viewport.label,
+			width: viewport.width,
+			height: viewport.height,
+		} );
+	} );
+
+	return view;
+};
+
 module.exports = {
 	id: 'elementor_screenshotter',
-	viewports: [
-		{
-			label: 'phone',
-			width: 767,
-			height: 575,
-		},
-		{
-			label: 'tablet',
-			width: 1024,
-			height: 768,
-		},
-		{
-			label: 'desktop',
-			width: 1366,
-			height: 768,
-		},
-	],
+	viewports: testsViewports(),
 	scenarios: getScenarios(),
 	paths: {
 		bitmaps_reference: `backstop_data/reference`,

@@ -21,6 +21,7 @@
 		"babel-loader": "8.0.0",
 		"babel-plugin-transform-react-jsx": "^6.24.1",
 		"babel-preset-env": "^1.7.0",
+		"chalk": "^4.1.0",
 		"concurrently": "^4.0.1",
 		"cssnano": "^4.1.10",
 		"eslint": "^5.4.0",
