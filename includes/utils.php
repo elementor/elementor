@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DevTools\Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -334,20 +336,9 @@ class Utils {
 	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
-		$query_args = [
-			'action' => 'elementor_new_post',
-			'post_type' => $post_type,
-		];
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.1.0', 'Plugin::$instance->documents->get_create_new_post_url()' );
 
-		if ( $template_type ) {
-			$query_args['template_type'] = $template_type;
-		}
-
-		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
-
-		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
-
-		return $new_post_url;
+		return Plugin::$instance->documents->get_create_new_post_url( $post_type, $template_type );
 	}
 
 	/**
