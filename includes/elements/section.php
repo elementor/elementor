@@ -318,7 +318,7 @@ class Element_Section extends Element_Base {
 				],
 				'size_units' => [ 'px', '%', 'vh', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-column-gap-custom > .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-column-gap-custom .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'gap' => 'custom',
