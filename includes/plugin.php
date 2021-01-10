@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
@@ -454,6 +455,11 @@ class Plugin {
 	public $experiments;
 
 	/**
+	 * @var Breakpoints_Manager
+	 */
+	public $breakpoints;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -581,6 +587,7 @@ class Plugin {
 	 */
 	private function init_components() {
 		$this->experiments = new Experiments_Manager();
+		$this->breakpoints = new Breakpoints_Manager();
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 

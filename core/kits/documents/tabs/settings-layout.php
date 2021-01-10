@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
@@ -12,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Settings_Layout extends Tab_Base {
+
+	const BREAKPOINTS_SELECT_CONTROL_ID = 'active_breakpoints';
 
 	public function get_id() {
 		return 'settings-layout';
@@ -201,7 +204,7 @@ class Settings_Layout extends Tab_Base {
 		}
 
 		if ( $should_compile_css ) {
-			Responsive::compile_stylesheet_templates();
+			Breakpoints_Manager::compile_stylesheet_templates();
 		}
 	}
 }

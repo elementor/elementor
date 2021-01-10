@@ -2,11 +2,12 @@
 namespace Elementor\Core\Editor;
 
 use Elementor\Api;
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -724,10 +725,12 @@ class Editor {
 			);
 		}
 
-		if ( Responsive::has_custom_breakpoints() ) {
-			$breakpoints = Responsive::get_breakpoints();
-
-			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		/** @var Breakpoint $mobile_portrait_breakpoint */
+		$mobile_portrait_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE );
+		$mobile_breakpoint_value = $mobile_portrait_breakpoint->get_value();
+		// What we want to know is whether the md (mobile portrait) breakpoint has the same value as the default or not.
+		if ( $mobile_portrait_breakpoint->get_default_value() === $mobile_breakpoint_value ) {
+			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $mobile_breakpoint_value . 'px; }' );
 		}
 
 		/**

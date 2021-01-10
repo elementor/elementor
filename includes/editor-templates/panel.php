@@ -1,7 +1,8 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+	use Elementor\Core\Responsive\Responsive;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -92,8 +93,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
 					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Tablet', 'elementor' ); ?></span>
-					<?php $breakpoints = Responsive::get_breakpoints(); ?>
-					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), $breakpoints['md'] . 'px' ); ?></span>
+					<?php $mobile_breakpoint = Plugin::$instance->breakpoints->get_config( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ); ?>
+					<span class="elementor-description"> <?php echo sprintf( __( 'Preview for %s', 'elementor' ), $mobile_breakpoint['value'] . 'px' ); ?></span>
 				</div>
 				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
 					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>

@@ -4,6 +4,7 @@ namespace Elementor\Core\Responsive\Files;
 
 use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,7 +31,7 @@ class Frontend extends Base {
 	 * @access public
 	 */
 	public function parse_content() {
-		$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = Plugin::$instance->breakpoints->get_config();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
@@ -45,7 +46,7 @@ class Frontend extends Base {
 				$breakpoint_index++;
 			}
 
-			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ];
+			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
 
 			if ( $is_max_point ) {
 				$value--;
