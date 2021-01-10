@@ -166,7 +166,6 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => __( 'Update Notification', 'elementor' ),
 			'description' => $admin_notice['notice_text'],
-			'dismissible' => true,
 			'id' => $notice_id,
 		];
 
