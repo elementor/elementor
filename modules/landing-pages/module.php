@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -152,34 +153,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add Finder Items
-	 *
-	 * Adds Items to the Finder index to make them searchable in the Elementor Editor Finder modal.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param array $categories
-	 * @return array $categories
-	 */
-	private function add_finder_items( array $categories ) {
-		$categories['general']['items']['landing-pages'] = [
-			'title' => __( 'Landing Pages', 'elementor' ),
-			'icon' => 'single-page',
-			'url' => admin_url( self::ADMIN_PAGE_SLUG ),
-			'keywords' => [ self::DOCUMENT_TYPE, 'landing', 'page', 'library' ],
-		];
-
-		$categories['create']['items']['landing-pages'] = [
-			'title' => __( 'Add New Landing Page', 'elementor' ),
-			'icon' => 'single-page',
-			'url' => $this->get_add_new_landing_page_url(),
-			'keywords' => [ self::DOCUMENT_TYPE, 'landing', 'page', 'new', 'create', 'library' ],
-		];
-
-		return $categories;
-	}
-
-	/**
 	 * Is Current Admin Page Edit LP
 	 *
 	 * Checks whether the current page is a native WordPress edit page for a landing page.
@@ -272,7 +245,7 @@ class Module extends BaseModule {
 		// `/%postname%/`, the following hooks change the permalink to remove the CPT slug from it.
 		if ( ! is_admin() && false !== strpos( $this->permalink_structure, '/%postname%/' ) ) {
 			add_filter( 'post_type_link', function( $post_link, $post, $leavename ) {
-				$this->remove_post_type_slug( $post_link, $post, $leavename );
+				return $this->remove_post_type_slug( $post_link, $post, $leavename );
 			}, 10, 3 );
 
 			add_action( 'pre_get_posts', function( $query ) {
@@ -293,14 +266,26 @@ class Module extends BaseModule {
 			return $this->admin_localize_settings( $settings );
 		} );
 
-		add_filter( 'elementor/finder/categories', function( array $categories ) {
-			return $this->add_finder_items( $categories );
-		} );
-
 		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function( array $cpts ) {
 			$cpts[] = self::CPT;
 
 			return $cpts;
 		} );
+
+		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_columns', function( $posts_columns ) {
+			/** @var Source_Local $source_local */
+			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
+
+			return $source_local->admin_columns_headers( $posts_columns );
+		} );
+
+		// In the Landing Pages Admin Table page - Overwrite Template type column row values.
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_custom_column', function( $column_name, $post_id ) {
+			/** @var Landing_Page $document */
+			$document = Plugin::$instance->documents->get( $post_id );
+
+			$document->admin_columns_content( $column_name );
+		}, 10, 2 );
 	}
 }
