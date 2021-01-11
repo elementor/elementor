@@ -577,7 +577,6 @@ abstract class Base_App {
 				foreach ( $notices as $notice ) {
 					$options = [
 						'description' => $notice['content'],
-						'dismissible' => true,
 						'type' => $notice['type'],
 					];
 
