@@ -2,10 +2,11 @@ import AdminMenuHandler from 'elementor-admin/admin-menu';
 
 export default class LandingPagesHandler extends AdminMenuHandler {
 	getDefaultSettings() {
-		const adminMenuSelectors = {
+		const pageName = 'e-landing-page',
+			adminMenuSelectors = {
 				// The escaping is done because jQuery requires it for selectors.
-				landingPagesTablePage: 'a[href=\"edit.php?post_type=page&elementor_library_type=landing-page\"]',
-				landingPagesAddNewPage: 'a[href=\"edit.php?post_type=elementor_library&page=landing-page\"]',
+				landingPagesTablePage: 'a[href=\"edit.php?post_type=' + pageName + '\"]',
+				landingPagesAddNewPage: 'a[href=\"edit.php?post_type=elementor_library&page=' + pageName + '\"]',
 			};
 
 		return {
@@ -34,11 +35,12 @@ export default class LandingPagesHandler extends AdminMenuHandler {
 
 		const settings = this.getSettings(),
 			isLandingPagesTablePage = !! window.location.href.includes( settings.paths.landingPagesTablePage ),
+			isLandingPagesTrashPage = !! window.location.href.includes( settings.paths.landingPagesTrashPage ),
 			isLandingPagesCreateYourFirstPage = !! window.location.href.includes( settings.paths.landingPagesAddNewPage );
 
 		// If the current page is a Landing Pages Page (the Posts Table page, "Create Your First.." page, or a native
 		// WordPress dashboard page edit screen when using WordPress' Classic Editor).
-		if ( isLandingPagesTablePage || isLandingPagesCreateYourFirstPage || settings.isLandingPageAdminEdit ) {
+		if ( isLandingPagesTablePage || isLandingPagesTrashPage || isLandingPagesCreateYourFirstPage || settings.isLandingPageAdminEdit ) {
 			// Make sure the active admin top level menu item is 'Templates', and not 'Pages'.
 			this.highlightTopLevelMenuItem( this.elements.$templatesMenuItem, this.elements.$pagesMenuItemAndLink );
 

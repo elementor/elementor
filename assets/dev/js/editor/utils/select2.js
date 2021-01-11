@@ -1,47 +1,79 @@
 export default class Select2 extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
+			selectors: {
+				plusButton: '.select2-selection__e-plus-button',
+				// The select2InlineSearch selector can not be changed.
+				select2InlineSearch: '.select2-selection__rendered .select2-search--inline',
+			},
 			classes: {
-				allSelected: 'select2-container--all-selected',
+				plusButton: 'select2-selection__e-plus-button',
+				// The select2Choice class name can not be changed to get the select2 choice style.
+				select2Choice: 'select2-selection__choice',
 			},
 		};
 	}
 
-	toggleAllSelectedClass() {
+	isAllSelected() {
+		let isAllSelected = false;
+
 		this.select2.dataAdapter.query( {}, ( data ) => {
-			const allSelectedClass = this.getSettings( 'classes.allSelected' ),
-				totalOptionsCount = data.results.length,
+			const totalOptionsCount = data.results.length,
 				currentSelectionsCount = this.elements.$element.select2( 'data' ).length;
 
 			if ( currentSelectionsCount === totalOptionsCount ) {
-				this.state.isAllSelected = true;
-				this.elements.$container.addClass( allSelectedClass );
-			} else if ( this.state.isAllSelected ) {
-				this.state.isAllSelected = false;
-				this.elements.$container.removeClass( allSelectedClass );
+				isAllSelected = true;
 			}
 		} );
+
+		return isAllSelected;
 	}
 
-	addAllSelectedIndication() {
-		this.toggleAllSelectedClass();
+	addPlusButton() {
+		const { plusButton, select2Choice } = this.getSettings( 'classes' ),
+			plusButtonClasses = [ select2Choice, plusButton ].join( ' ' );
 
-		this.select2.on( 'select', () => this.toggleAllSelectedClass() );
+		this.elements.$plusButton = jQuery( '<li>', { class: plusButtonClasses } ).text( '+' );
 
-		this.select2.on( 'unselect', () => this.toggleAllSelectedClass() );
+		this.elements.$plusButton.insertBefore( this.elements.$inlineSearch );
+	}
+
+	togglePlusButton() {
+		if ( this.isAllSelected() ) {
+			if ( this.elements.$plusButton ) {
+				this.elements.$plusButton.remove();
+			}
+		} else {
+			this.addPlusButton();
+		}
+	}
+
+	addSelect2Events() {
+		this.select2.on( 'select', () => this.onSelectionChange() );
+
+		this.select2.on( 'unselect', () => this.onSelectionChange() );
+	}
+
+	onSelectionChange() {
+		this.togglePlusButton();
 	}
 
 	extendBaseFunctionality() {
 		const config = this.select2.options.options;
 
 		if ( config.multiple ) {
-			this.addAllSelectedIndication();
+			this.togglePlusButton();
+
+			this.addSelect2Events();
 		}
 	}
 
 	iniElements() {
+		const select2InlineSearch = this.getSettings( 'selectors.select2InlineSearch' );
+
 		this.elements.$element = this.select2.$element;
 		this.elements.$container = this.select2.$container;
+		this.elements.$inlineSearch = this.elements.$container.find( select2InlineSearch );
 	}
 
 	destroy() {
@@ -54,10 +86,6 @@ export default class Select2 extends elementorModules.ViewModule {
 		const { $element, options } = this.getSettings();
 
 		this.select2 = $element.select2( options ).data( 'select2' );
-
-		this.state = {
-			isAllSelected: false,
-		};
 
 		this.iniElements();
 		this.extendBaseFunctionality();

@@ -162,7 +162,7 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
-			'tabs_align',
+			'tabs_align_horizontal',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -187,6 +187,36 @@ class Widget_Tabs extends Widget_Base {
 				'prefix_class' => 'elementor-tabs-alignment-',
 				'condition' => [
 					'type' => 'horizontal',
+				],
+			]
+		);
+
+		$this->add_control(
+			'tabs_align_vertical',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+					'stretch' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-v-align-stretch',
+					],
+				],
+				'prefix_class' => 'elementor-tabs-alignment-',
+				'condition' => [
+					'type' => 'vertical',
 				],
 			]
 		);
