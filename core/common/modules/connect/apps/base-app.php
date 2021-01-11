@@ -576,7 +576,7 @@ abstract class Base_App {
 
 				foreach ( $notices as $notice ) {
 					$options = [
-						'description' => $notice['content'],
+						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
 						'type' => $notice['type'],
 					];
 

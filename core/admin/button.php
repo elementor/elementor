@@ -9,41 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Button extends Base_Object {
-
-	private $options;
-
-	public function __construct( array $options ) {
-		$this->options = $this->merge_properties( $this->get_default_options(), $options );
-	}
-
 	/**
-	 * @param null $option
-	 * @return array
+	 * @inheritDoc
 	 */
-	private function get_default_options( $option = null ) {
-		$default_options = [
-			'classes' => [ 'e-button' ],
-			'icon' => '',
-			'new_tab' => false,
-			'text' => '',
-			'type' => '',
-			'url' => '',
-			'variant' => '',
-		];
-
-		if ( null !== $option && -1 !== in_array( $option, $default_options ) ) {
-			return $default_options[ $option ];
-		}
-
-		return $default_options;
-	}
-
-	/**
-	 * @param string $option Optional default is null
-	 * @return array|mixed
-	 */
-	private function get_options( $option = null ) {
-		return $this->get_items( $this->options, $option );
+	public function get_name() {
+		return 'admin-button';
 	}
 
 	public function print_button() {
@@ -54,6 +24,7 @@ class Button extends Base_Object {
 		}
 
 		$html_tag = ! empty( $options['link'] ) ? 'a' : 'button';
+		$before = '';
 		$icon = '';
 		$attributes = [];
 
@@ -75,6 +46,10 @@ class Button extends Base_Object {
 			$classes[] = 'e-button--' . $options['variant'];
 		}
 
+		if ( ! empty( $options['before'] ) ) {
+			$before = '<span>' . $options['before'] . '</span>';
+		}
+
 		if ( ! empty( $options['link'] ) ) {
 			$attributes['href'] = $options['link'];
 			if ( isset( $options['new_tab'] ) ) {
@@ -84,7 +59,7 @@ class Button extends Base_Object {
 
 		$attributes['class'] = $classes;
 
-		$html = '<' . $html_tag . ' ' . Utils::render_html_attributes( $attributes ) . '>';
+		$html = $before . '<' . $html_tag . ' ' . Utils::render_html_attributes( $attributes ) . '>';
 		$html .= $icon;
 		$html .= '<span>' . sanitize_text_field( $options['text'] ) . '</span>';
 		$html .= '</' . $html_tag . '>';
@@ -92,10 +67,40 @@ class Button extends Base_Object {
 		echo $html;
 	}
 
+	public function __construct( array $options ) {
+		$this->options = $this->merge_properties( $this->get_default_options(), $options );
+	}
+
+	private $options;
+
 	/**
-	 * @inheritDoc
+	 * @param string $option Optional default is null
+	 * @return array|mixed
 	 */
-	public function get_name() {
-		return 'admin-button';
+	private function get_options( $option = null ) {
+		return $this->get_items( $this->options, $option );
+	}
+
+	/**
+	 * @param null $option
+	 * @return array
+	 */
+	private function get_default_options( $option = null ) {
+		$default_options = [
+			'classes' => [ 'e-button' ],
+			'icon' => '',
+			'new_tab' => false,
+			'text' => '',
+			'type' => '',
+			'url' => '',
+			'variant' => '',
+			'before' => '',
+		];
+
+		if ( null !== $option && -1 !== in_array( $option, $default_options ) ) {
+			return $default_options[ $option ];
+		}
+
+		return $default_options;
 	}
 }

@@ -98,8 +98,6 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function admin_notice_upgrade_is_running() {
-		$this->admin_notice_start_upgrade();
-
 		/**
 		 * @var Admin_Notices $admin_notices
 		 */
@@ -112,7 +110,8 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			'icon' => 'eicon-database',
 
 			'button' => [
-				'text' => __( 'Taking a while?', 'elementor' ) . ' ' . __( 'Click here to run it now', 'elementor' ),
+				'before' => __( 'Taking a while?', 'elementor' ),
+				'text' => __( 'Click here to run it now', 'elementor' ),
 				'url' => $this->get_continue_action_url(),
 				'class' => 'e-button e-button--primary',
 			],

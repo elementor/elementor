@@ -1,8 +1,5 @@
-
-/* Elementor Notice
- ----------------------------------------------------*/
-/* Private API
- ----------------------------------------------------*/
+// Elementor Notice
+// Private API
 :root {
 	--e-notice-bg: #fff;
 	--e-notice-border-color: #ccd0d4;
@@ -43,8 +40,7 @@
 	}
 
 
-/* Notice context colors modifiers
- ----------------------------------------------------*/
+	// Notice context colors modifiers
 	@each $context, $color in $e-context-colors {
 		&--#{$context} {
 			--e-notice-context-color: var(--e-context-#{$context}-color);
@@ -53,21 +49,17 @@
 		}
 	}
 
-/* Notice extended style (with optional icon)
- ----------------------------------------------------*/
-
+	// Notice extended style (with optional icon)
 	&--extended {
 		--e-notice-is-extended: 1;
 	}
 
-/* Notice dismissible modifier
- ----------------------------------------------------*/
+	// Notice dismissible modifier
 	&--dismissible {
 		padding-right: 38px;
 	}
 
-/* Layout
- ----------------------------------------------------*/
+	// Layout
 	&__aside {
 		overflow: hidden;
 		background-color: var(--e-notice-context-tint);
@@ -101,8 +93,7 @@
 		}
 	}
 
-/* Dismiss button
- ----------------------------------------------------*/
+	// Dismiss button
 	&__dismiss {
 		width: 20px;
 		height: 20px;
@@ -150,7 +141,6 @@
 		}
 	}
 
-/* ----------------------------------------------------*/
 	p {
 		line-height: 1.2;
 		padding: 0;
