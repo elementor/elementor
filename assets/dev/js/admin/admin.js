@@ -1,4 +1,5 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
+import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -289,9 +290,11 @@ import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/
 
 			this.roleManager.init();
 
-			if ( this.config.experimentalFeatures[ 'landing-pages' ] ) {
+			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+
+			new ExperimentsModule();
 		},
 
 		openGetHelpInNewTab: function() {
