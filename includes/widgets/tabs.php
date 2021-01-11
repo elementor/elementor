@@ -157,6 +157,7 @@ class Widget_Tabs extends Widget_Base {
 					'vertical' => __( 'Vertical', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-tabs-view-',
+				'render_type' => 'template',
 				'separator' => 'before',
 			]
 		);
@@ -185,6 +186,7 @@ class Widget_Tabs extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor-tabs-alignment-',
+				'render_type' => 'template',
 				'condition' => [
 					'type' => 'horizontal',
 				],
@@ -215,6 +217,7 @@ class Widget_Tabs extends Widget_Base {
 					],
 				],
 				'prefix_class' => 'elementor-tabs-alignment-',
+				'render_type' => 'template',
 				'condition' => [
 					'type' => 'vertical',
 				],
