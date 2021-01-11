@@ -515,7 +515,7 @@ class Admin_Notices extends Module {
 		if ( $options['dismissible'] ) {
 			$label = __( 'Dismiss', 'elementor' );
 			$notice_classes[] = 'e-notice--dismissible';
-			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="' . __( $label ) . '" tabindex="0"></i>';
+			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="' . $label . '" tabindex="0"></i>';
 		}
 
 		if ( $options['icon'] ) {
