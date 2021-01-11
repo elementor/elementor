@@ -19,6 +19,18 @@ class Theme_Style_Typography extends Tab_Base {
 		return __( 'Typography', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'theme-style';
+	}
+
+	public function get_icon() {
+		return 'eicon-typography-1';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-theme-style-typography';
+	}
+
 	public function register_tab_controls() {
 		$this->start_controls_section(
 			'section_typography',
