@@ -48,6 +48,8 @@ class Module extends BaseModule {
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
+			'meta_key' => '_elementor_template_type',
+			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->trashed_posts;
@@ -64,6 +66,8 @@ class Module extends BaseModule {
 			// 'post_status' is not 'any' because 'any' does not include auto-drafts and revisions.
 			'post_status' => [ 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit' ],
 			'posts_per_page' => 1,
+			'meta_key' => '_elementor_template_type',
+			'meta_value' => self::DOCUMENT_TYPE,
 		] );
 
 		return $this->posts;
