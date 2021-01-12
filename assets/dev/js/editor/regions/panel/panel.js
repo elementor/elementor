@@ -27,6 +27,17 @@ module.exports = BaseRegion.extend( {
 		this.setSize();
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+
+		this.updateWidgetSize();
+	},
+
+	updateWidgetSize: function() {
+		jQuery( '#elementor-panel' ).bind( 'load resize', () => {
+			let getPanelWidth = document.getElementById( 'elementor-panel-elements-categories' ).clientWidth;
+			let calcWidgetPanel = parseInt( ( getPanelWidth - 10 ) / 144 );
+			let calcWidgetColumn = 1 === calcWidgetPanel ? ( 100 / 2 ) : ( 100 / calcWidgetPanel ).toFixed( 3 );
+			jQuery( '.elementor-panel-category-items .elementor-element-wrapper' ).css( 'width', calcWidgetColumn + '%' );
+		} );
 	},
 
 	setSize: function() {
