@@ -23,7 +23,9 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
-		if ( ! this.select2Instance ) {
+		const elementSelect2Data = this.ui.select.data( 'select2' );
+
+		if ( ! elementSelect2Data ) {
 			this.select2Instance = new Select2( {
 				$element: this.ui.select,
 				options: this.getSelect2Options(),
