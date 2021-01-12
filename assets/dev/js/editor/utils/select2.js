@@ -68,7 +68,7 @@ export default class Select2 extends elementorModules.ViewModule {
 		}
 	}
 
-	iniElements() {
+	initSelect2Elements() {
 		const select2InlineSearch = this.getSettings( 'selectors.select2InlineSearch' );
 
 		this.elements.$element = this.select2.$element;
@@ -87,7 +87,7 @@ export default class Select2 extends elementorModules.ViewModule {
 
 		this.select2 = $element.select2( options ).data( 'select2' );
 
-		this.iniElements();
+		this.initSelect2Elements();
 		this.extendBaseFunctionality();
 	}
 }
