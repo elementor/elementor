@@ -25,7 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<div class="elementor-panel-category-title">{{{ title }}}</div>
+	<div class="elementor-panel-category-title">{{{ title }}}
+		<# if ( 'favorites' === title.trim().toLowerCase() ) { #><i class="eicon-info-circle" data-tooltip="Right click on widgets to add or remove them from favorites"></i><# } #>
+	</div>
 	<div class="elementor-panel-category-items"></div>
 </script>
 
@@ -36,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
-	<div class="elementor-element">
+	<div class="elementor-element" data-id="{{ obj.widgetType || obj.title.trim().toLowerCase().replaceAll( ' ', '-' ) }}">
 		<# if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>

@@ -1,0 +1,53 @@
+#elementor-panel-categories {
+	#elementor-panel-category-favorites {
+		.elementor-panel-category-title > i {
+			color: #c2cbd2;
+			padding: 0 14px;
+		}
+	}
+	.e-favorite-widget-relative {
+		position: relative;
+	}
+	#e-favorite-widget-context-menu {
+		background: #ffffff;
+		color: #6d7882;
+		cursor: pointer;
+		display: block;
+		overflow: hidden;
+		padding: 6px 3px;
+		position: absolute;
+		top: 6px;
+		user-select: none;
+		width: calc(100% - 10px);
+		z-index: 99999999999999;
+
+		&:hover {
+			background: #71d1f5;
+			color: #ffffff;
+		}
+
+		&.remove-from-favorites {
+			&:before {
+				font-family: eicons;
+				content: '\e947';
+				color: #c2cbd2;
+				padding-right: 6px;
+			}
+			&:hover:before {
+				color: #ffffff;
+			}
+		}
+
+		&.add-to-favorites {
+			&:before {
+				font-family: eicons;
+				content: '\e8f7';
+				color: #c2cbd2;
+				padding-right: 6px;
+			}
+			&:hover:before {
+				color: #ffffff;
+			}
+		}
+	}
+}
