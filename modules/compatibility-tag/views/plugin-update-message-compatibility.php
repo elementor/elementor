@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			/* translators: %1$s: Plugin name %s: Plugin version */
 			echo sprintf(
 				__( 'Some of the plugins you’re using have not been tested with the latest version of %1$s (%2$s). To avoid issues, make sure they are all up to date and compatible before updating %1$s.', 'elementor' ),
-				$this->get_plugin_name(),
+				$this->get_plugin_label(),
 				$new_version->__toString()
 			);
 			?>
