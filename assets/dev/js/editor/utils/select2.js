@@ -61,7 +61,8 @@ export default class Select2 extends elementorModules.ViewModule {
 	extendBaseFunctionality() {
 		const config = this.select2.options.options;
 
-		if ( config.multiple ) {
+		// When select2 has ajax the selected items re-render multiple times and deletes the injected plus-button.
+		if ( config.multiple && ! config.ajax ) {
 			this.togglePlusButton();
 
 			this.addSelect2Events();
