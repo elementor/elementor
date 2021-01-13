@@ -2,9 +2,10 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 3.0.12
+Beta tag: 3.1.0-beta3
+Stable tag: 3.0.16
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +218,46 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.0.16 - 2021-01-06 =
+* Tweak: String changes in Delete Site Settings screen
+* Fix: Clicking "Recalculate" button in System info throws a PHP error ([#13100](https://github.com/elementor/elementor/issues/13100 ))
+* Fix: Regenerate CSS is not working properly in large scale servers
+* Fix: Template Library title sanitization to avoid security issues
+* Fix: `libxml_disable_entity_loader` warning is thrown in PHP 8.0 instances
+
+= 3.0.15 - 2020-12-21 =
+* Tweak: Added "Theme" option to Page Layout options in Page Settings to allow customization of Site Setting value
+* Tweak: Added a confirmation message before deleing Default Kit to trash to avoid unintentional Site Settings deletion
+* Fix: Named parameters used in Dynamic Tags causes PHP errors in PHP 8.0 ([#13269](https://github.com/elementor/elementor/issues/13269))
+* Fix: "Edit with Elementor" menu does not expands in the top admin-bar menu in WordPress 5.6 ([#13256](https://github.com/elementor/elementor/issues/13256))
+* Fix: Stretch Section causes horizontal scroll when the vertical scrollbar is visible in WordPress 5.6 ([#13260](https://github.com/elementor/elementor/issues/13260))
+* Fix: Unable to save Templates in WordPress 5.6 ([#12273](https://github.com/elementor/elementor/issues/12273), [Topic](https://wordpress.org/support/topic/save-the-template-and-page-builder-loding/))
+* Fix: Ninja Forms plugin conflict in WordPress 5.6 ([#13281](https://github.com/elementor/elementor/issues/13281), [Topic](https://wordpress.org/support/topic/elementor-ninja-forms-bug/), [Topic](https://wordpress.org/support/topic/elementor-bug-ninja-forms/))
+* Fix: Pinterest social sharing is not working when displaying a large image in Lightbox
+* Fix: Manage Global Colors and Fonts buttons is not leading to the correct screen
+* Fix: Permission error when trying to update site description with WP-CLI
+
+= 3.0.14 - 2020-11-25 =
+* Tweak: Added 3rd party plugins compatibility to versions rollback mechanism
+* Fix: Updated Popup Builder promotional image
+* Fix: Upload SVG files only when the user allowed to prevent security issues
+* Fix: String updates in Style Settings tab
+
+= 3.0.13 - 2020-11-04 =
+* Tweak: Added compatibility with WordPress v5.6 to the Editor panel ([#12958](https://github.com/elementor/elementor/issues/12958))
+* Tweak: Updated translation strings in Theme Builder promotional screen
+* Fix: Tab content is animated when active in Tabs widget ([#12724](https://github.com/elementor/elementor/issues/12724))
+* Fix: "Edit with Elementor" button in admin top-bar is missing in some cases ([#12951](https://github.com/elementor/elementor/issues/12951), [#12995](https://github.com/elementor/elementor/issues/12995))
+* Fix: "Edit with Elementor" button in a post removes draft
+* Fix: "Edit with Elementor" doesn't work for empty Elementor posts
+* Fix: Some settings are not being updated in the Preview in Image Carousel widget
+* Fix: Console error message when Global value is not found
+* Fix: Revisions are not being saved in Site Settings
+* Fix: Apply or Restore revision actions triggers console errors
+* Fix: Paste action without any data throws a console error
+* Fix: Pasting style with Global values is not reflected in the Panel
+* Fix: Can't submit forms from templates when the parent post is empty
 
 = 3.0.12 - 2020-10-20 =
 * Tweak: Added "Read More" link to major version upgrade notice

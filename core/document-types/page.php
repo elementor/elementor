@@ -6,6 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Page extends PageBase {
+
+	/**
+	 * Get Properties
+	 *
+	 * Return Document Configuration Properties.
+	 *
+	 * @return array $properties
+	 */
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -16,6 +24,8 @@ class Page extends PageBase {
 	}
 
 	/**
+	 * Get Name
+	 *
 	 * @access public
 	 */
 	public function get_name() {
@@ -23,6 +33,8 @@ class Page extends PageBase {
 	}
 
 	/**
+	 * Get Title
+	 *
 	 * @access public
 	 * @static
 	 */

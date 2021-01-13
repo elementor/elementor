@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -92,17 +93,15 @@ class Module extends BaseModule {
 		foreach ( $this->registered_apps as $slug => $class ) {
 			$this->apps[ $slug ] = new $class();
 		}
-
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
-	public function localize_settings( $settings ) {
-		return array_replace_recursive( $settings, [
-			'i18n' => [
-				'connect_error' => __( 'Unable to connect', 'elementor' ),
-				'connected_successfully' => __( 'Connected successfully', 'elementor' ),
-			],
-		] );
+	/**
+	 * @deprecated 3.1.0
+	 */
+	public function localize_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
+		return [];
 	}
 
 	/**

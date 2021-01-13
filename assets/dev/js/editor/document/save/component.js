@@ -31,7 +31,7 @@ export default class Component extends BackwardsCompatibility {
 		elementorCommon.elements.$window.on( 'beforeunload', () => {
 			if ( this.isEditorChanged() ) {
 				// Returns a message to confirm dialog.
-				return elementor.translate( 'before_unload_alert' );
+				return __( 'Please note: All unsaved changes will be lost.', 'elementor' );
 			}
 		} );
 	}

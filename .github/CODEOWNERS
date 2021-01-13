@@ -1,7 +1,9 @@
 # Default
-*                                 		@kingyes
-*.js                              		@kobizz @matipojo
-*.php                             		@matipojo
+*                                       @kingyes
+*.js                                    @kobizz @matipojo
+*.php                                   @matipojo @kobizz
+*.json                                  @kingyes
+*.xml                                   @kingyes
 
 # Assets
 /assets/dev/js/editor/commands    		@matipojo
@@ -18,12 +20,12 @@
 
 # Core
 /core                             		@kingyes
+/core/admin/notices                     @nevoss
 /core/app                             	@matipojo @kobizz
-/core/admin                       		@kingyes
-/core/base                        		@kingyes @matipojo @kobizz
-/core/base/db-upgrades-manager.php		@kingyes @matipojo
-/core/base/background-task.php			@kingyes @matipojo
-/core/base/background-task-manager.php	@kingyes @matipojo
+/core/base                        		@matipojo @kobizz
+/core/base/db-upgrades-manager.php		@matipojo
+/core/base/background-task.php			@matipojo
+/core/base/background-task-manager.php	@matipojo
 /core/common                      		@kobizz
 /core/common/modules/ajax         		@kobizz @matipojo
 /core/common/modules/connect      		@matipojo
@@ -32,23 +34,26 @@
 /core/document-types              		@matipojo
 /core/dynamic-tags                		@kobizz
 /core/editor                      		@kobizz
+/core/experiments                 		@kobizz
 /core/kits                        		@matipojo @kobizz
 /core/files                       		@kobizz @matipojo
 /core/logger                      		@matipojo
 /core/responsive                  		@kobizz
 /core/role-manager                		@kobizz
 /core/settings                    		@matipojo
-/core/upgrade                     		@kingyes @matipojo
-/core/utils                       		@kingyes @matipojo @kobizz
+/core/upgrade                     		@matipojo
+/core/utils                       		@matipojo @kobizz
+/core/utils/collection.php              @nevoss
+/core/utils/version.php                 @nevoss
 
 # Includes
-/includes/admin-templates         		@kingyes @kobizz
-/includes/controls                		@kingyes @kobizz
+/includes/admin-templates         		@kobizz
+/includes/controls                		@kobizz
 /includes/editor-templates        		@kobizz
 /includes/libraries               		@kingyes @matipojo
-/includes/managers                		@kingyes @matipojo @kobizz
+/includes/managers                		@matipojo @kobizz
 /includes/schemes                 		@kobizz
-/includes/settings                		@kingyes @kobizz
+/includes/settings                		@kobizz
 /includes/settings/system-info    		@kobizz
 
 /includes/api.php                 		@kingyes
@@ -58,18 +63,17 @@
 /includes/base/skin-base.php      		@matipojo
 /includes/base/widget-base.php    		@kingyes @kobizz
 /includes/base/controls-stack.php 		@kobizz
-/includes/beta-tester.php         		@kingyes
 /includes/compatibility.php       		@matipojo
 /includes/conditions.php          		@kobizz
 /includes/db.php                  		@kingyes @matipojo
-/includes/elements/column.php     		@kingyes @kobizz
-/includes/elements/repeater.php   		@kingyes @matipojo
-/includes/elements/section.php    		@kingyes @kobizz
+/includes/elements/column.php     		@kobizz
+/includes/elements/repeater.php   		@matipojo
+/includes/elements/section.php    		@kobizz
 /includes/embed.php               		@kobizz
-/includes/fonts.php               		@kingyes
-/includes/frontend.php            		@kingyes @kobizz @matipojo
-/includes/heartbeat.php           		@kingyes
-/includes/maintenance.php         		@kingyes
+/includes/fonts.php               		@matipojo
+/includes/frontend.php            		@kobizz @matipojo
+/includes/heartbeat.php           		@matipojo
+/includes/maintenance.php         		@matipojo
 /includes/maintenance-mode.php    		@matipojo
 /includes/plugin.php              		@kingyes @kobizz @matipojo
 /includes/preview.php             		@kingyes @kobizz @matipojo
@@ -84,14 +88,17 @@
 /includes/template-library        		@kingyes @kobizz
 
 # Widgets
-/includes/widgets                 		@kingyes @kobizz
+/includes/widgets                 		@kobizz
 
 # Modules
 /modules                          		@matipojo
+/modules/admin-bar                      @nevoss
+/modules/compatibility-tag              @nevoss
 /modules/dynamic-tags             		@matipojo @kobizz
+/modules/landing-pages           		@kobizz @udidol
 /modules/library             			@matipojo @kobizz
 /modules/system-info             		@matipojo @kobizz
 /modules/gutenberg                		@kingyes
 
 # Tests
-/tests                            		@kingyes @matipojo
+/tests                            		@matipojo

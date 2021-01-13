@@ -108,18 +108,17 @@ class Manager {
 	 * @access public
 	 */
 	public function clear_cache() {
-		delete_post_meta_by_key( Post_CSS::META_KEY );
-
-		delete_option( Global_CSS::META_KEY );
-
-		delete_option( Frontend::META_KEY );
-
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file_path ) {
 			unlink( $file_path );
 		}
+
+		delete_post_meta_by_key( Post_CSS::META_KEY );
+
+		delete_option( Global_CSS::META_KEY );
+		delete_option( Frontend::META_KEY );
 
 		/**
 		 * Elementor clear files.

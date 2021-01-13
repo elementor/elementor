@@ -136,7 +136,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
-		<# if ( 'page' === type ) { #>
+		<?php // 'lp' stands for Landing Pages Library type. ?>
+		<# if ( 'page' === type || 'lp' === type ) { #>
 			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
 		<# } else { #>
 			<img src="{{ thumbnail }}">
@@ -159,7 +160,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
-	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">{{{ title }}}</div>
+	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">{{ title }}</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>

@@ -62,11 +62,9 @@ class Compatibility {
 			return;
 		}
 
-		// TODO: Hard deprecation on 3.1.0.
-		// $replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
-		// _deprecated_hook( $deprecated_action, '2.7.0', $replacement );
+		$replacement = "`elementor/element/wp-post/{$section_id}/{$current_sub_action}` or `elementor/element/wp-page/{$section_id}/{$current_sub_action}`";
 
-		do_action( $deprecated_action, $instance, $section_id, $args );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action( $deprecated_action, func_get_args(), '2.7.0', $replacement );
 	}
 
 	public static function clear_3rd_party_cache() {

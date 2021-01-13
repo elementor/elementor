@@ -40,8 +40,8 @@ jobs:
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
           curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=by-commit"
-          echo ::set-env name=BUILD_PATH::"builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}"
-          echo ::set-env name=PACKAGE_VERSION::${PACKAGE_VERSION}
+          echo "BUILD_PATH=builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
       - name: Run Tests
         run: |
           git clone ${{ secrets.BACKSTOP_CONFIG_REPO_URL }} backstop-config
