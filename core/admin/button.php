@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Button extends Base_Object {
+
+	private $options;
 	/**
 	 * @inheritDoc
 	 */
@@ -70,8 +72,6 @@ class Button extends Base_Object {
 	public function __construct( array $options ) {
 		$this->options = $this->merge_properties( $this->get_default_options(), $options );
 	}
-
-	private $options;
 
 	/**
 	 * @param string $option Optional default is null
