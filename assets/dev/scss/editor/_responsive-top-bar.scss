@@ -1,0 +1,35 @@
+.e-mq-bar {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	height: 40px;
+	color: $editor-light;
+	background-color: $editor-darkest;
+
+	&__col {
+		display: flex;
+		width: 25%;
+		justify-content: center;
+
+		&:last-child {
+			justify-content: flex-end;
+		}
+	}
+
+	&__close {
+		appearance: none;
+		background: none;
+		border: 0 none;
+		padding: 4px;
+		cursor: pointer;
+		color: inherit;
+	}
+}
+
+.e-mq-switcher {
+	&__option {
+
+	}
+}
