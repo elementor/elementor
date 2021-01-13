@@ -20,9 +20,28 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
+	/**
+	 * Legacy breakpoints.
+	 *
+	 * For Backwards compatibility, Holds the old responsive breakpoints.
+	 *
+	 * @since 3.1.0
+	 * @access private
+	 * @static
+	 *
+	 * @var array Legacy breakpoints.
+	 */
+	private $legacy_breakpoints = [
+		'xs' => 0,
+		'sm' => 480,
+		'md' => 768,
+		'lg' => 1025,
+		'xl' => 1440,
+		'xxl' => 1600,
+	];
+
 	private $config;
 	private $breakpoints;
-	private $kit_settings;
 
 	public function get_name() {
 		return 'breakpoints';
@@ -43,6 +62,19 @@ class Manager extends Module {
 			$this->breakpoints = $this->init_breakpoints();
 		}
 		return self::get_items( $this->breakpoints, $breakpoint_name );
+	}
+
+	/**
+	 * Get Legacy Breakpoints
+	 *
+	 * Retrieve the array of legacy breakpoints. Used for backwards compatibility.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array $legacy_breakpoints
+	 */
+	public function get_legacy_breakpoints() {
+		return $this->legacy_breakpoints;
 	}
 
 	/**

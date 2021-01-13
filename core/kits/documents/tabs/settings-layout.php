@@ -25,7 +25,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints = Responsive::get_default_breakpoints();
+		$default_breakpoints = Plugin::$instance->breakpoints->get_legacy_breakpoints();
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
