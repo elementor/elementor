@@ -189,7 +189,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onRender() {
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
 		}
 	},

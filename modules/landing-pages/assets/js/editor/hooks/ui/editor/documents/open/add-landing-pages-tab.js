@@ -20,6 +20,9 @@ export class LandingPageAddLibraryTab extends $e.modules.hookUI.After {
 				type: 'lp',
 			},
 		}, 2 );
+
+		// Pages are replaced by landing pages so they need to be removed.
+		$e.components.get( 'library' ).removeTab( 'templates/pages' );
 	}
 }
 
