@@ -35,8 +35,6 @@ export default function ImportPluginsList() {
 		<Button variant="contained" color="disabled" text={ __( 'Install & Activate', 'elementor' ) } />
 	);
 
-	console.log( '--- RENDER: ImportPluginsList()' );
-
 	return (
 		<List separated className="import-plugins-list">
 			{

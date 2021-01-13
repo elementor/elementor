@@ -1,12 +1,12 @@
-import Layout from '../../templates/layout';
-import Message from '../../ui/message/message';
-import ClickHere from '../../ui/click-here/click-here';
+import Layout from '../../../templates/layout';
+import Message from '../../../ui/message/message';
+import ClickHere from '../../../ui/click-here/click-here';
 import UploadFile from 'elementor-app/molecules/upload-file';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
-import useFile from '../../hooks/use-file/use-file';
+import useFile from '../../../hooks/use-file/use-file';
 
 import './import-failed.scss';
 

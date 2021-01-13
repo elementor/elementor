@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Redirect } from '@reach/router';
 
 import Layout from '../../templates/layout';
-import ExportContent from './export-content/export-content';
-import DownloadButton from './download-button/download-button';
+import ExportContent from './components/export-content/export-content';
+import DownloadButton from './components/download-button/download-button';
 import Footer from '../../shared/footer/footer';
 
 import '../import-export.scss';

@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { Context as KitContext } from '../../../../context/kit-context';
+import { Context as KitContext } from '../../../../../context/kit-context';
 
 import Box from 'elementor-app/ui/atoms/box';
 

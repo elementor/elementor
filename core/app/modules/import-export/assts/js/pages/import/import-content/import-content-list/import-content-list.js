@@ -1,5 +1,5 @@
-import { Context as ImportContext } from '../../../context/import';
-import KitContentList from '../../../shared/kit-content/kit-content-list/kit-content-list';
+import { Context as ImportContext } from '../../../../context/kit-context';
+import KitContentList from '../../../../shared/kit-content/kit-content-list/kit-content-list';
 
 export default function ImportContentList() {
 	const { importContent } = React.useContext( ImportContext );

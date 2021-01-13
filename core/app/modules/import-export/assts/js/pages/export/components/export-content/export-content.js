@@ -1,4 +1,4 @@
-import KitContent from '../../../shared/kit-content/kit-content';
+import KitContent from '../../../../shared/kit-content/kit-content';
 import KitNameInput from './kit-name-input/kit-name-input';
 import Heading from 'elementor-app/ui/atoms/heading';
 
