@@ -25,6 +25,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 
 		const elementSelect2Data = this.ui.select.data( 'select2' );
 
+		// Checking if the element itself was initiated with select2 functionality in case of multiple renders.
 		if ( ! elementSelect2Data ) {
 			this.select2Instance = new Select2( {
 				$element: this.ui.select,
