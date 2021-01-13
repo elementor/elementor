@@ -1,6 +1,6 @@
 import Layout from '../../../templates/layout';
 import Footer from '../../../shared/footer/footer';
-import ExportPluginsList from './export-plugins-list/export-plugins-list';
+import ExportPluginsList from './components/export-plugins-list/export-plugins-list';
 import Box from 'elementor-app/ui/atoms/box';
 import Button from 'elementor-app/ui/molecules/button';
 import Heading from 'elementor-app/ui/atoms/heading';

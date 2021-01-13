@@ -3,17 +3,12 @@ $eps-box-notice-dark-color: dark-tints(200);
 $eps-box-notice-background-color: tints(100);
 $eps-box-notice-dark-background-color: dark-tints(500);
 
-:root {
+$root: eps-notice;
+
+.#{$root} {
 	--eps-box-notice-color: #{$eps-box-notice-color};
 	--eps-box-notice-background-color: #{$eps-box-notice-background-color};
-}
 
-.eps-theme-dark {
-	--eps-box-notice-color: #{$eps-box-notice-dark-color};
-	--eps-box-notice-background-color: #{$eps-box-notice-dark-background-color};
-}
-
-.eps-notice {
 	padding: spacing(10) spacing(16);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	background-color: var(--eps-box-notice-background-color);
@@ -27,5 +22,12 @@ $eps-box-notice-dark-background-color: dark-tints(500);
 		padding: 0;
 		color: var(--eps-box-notice-color);
 		font-style: italic;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--eps-box-notice-color: #{$eps-box-notice-dark-color};
+		--eps-box-notice-background-color: #{$eps-box-notice-dark-background-color};
 	}
 }

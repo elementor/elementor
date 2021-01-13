@@ -1,15 +1,11 @@
 $export-complete-secondary-sentence-color: tints(500);
 $export-complete-secondary-sentence-dark-color: dark-tints(200);
 
-:root {
+$root: e-app-export-complete;
+
+.#{$root} {
 	--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-color};
-}
 
-.eps-theme-dark {
-	--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-dark-color};
-}
-
-.e-app-export-complete {
 	height: 100%;
 
 	&__main-image {
@@ -22,5 +18,11 @@ $export-complete-secondary-sentence-dark-color: dark-tints(200);
 
 	&__learn-more {
 		margin-bottom: spacing(44);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-dark-color};
 	}
 }

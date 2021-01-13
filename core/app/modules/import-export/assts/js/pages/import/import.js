@@ -36,7 +36,7 @@ export default function Import() {
 						setFile( files[ 0 ] );
 					} }
 				/>
-				<Notice color="warning" className="kit-content-list__notice">
+				<Notice color="warning" className="e-app-import__notice">
 					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
 				</Notice>
 			</section>
