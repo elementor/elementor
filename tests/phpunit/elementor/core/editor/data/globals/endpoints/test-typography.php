@@ -45,4 +45,11 @@ class Test_Typography extends Base {
 
 		$this->assertEquals( $rest_result['id'], $typography[0]['_id'] );
 	}
+
+	public function test_get_item_that_does_not_exists() {
+		$rest_result = $this->manager->run_endpoint( $this->get_endpoint( 'fake_id' ) );
+
+		$this->assertEquals( 'global_not_found', $rest_result['code'] );
+		$this->assertEquals( 404, $rest_result['data']['status'] );
+	}
 }

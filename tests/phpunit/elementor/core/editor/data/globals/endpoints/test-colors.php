@@ -5,7 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 use Elementor\Plugin;
 use Elementor\Core\Editor\Data;
 
-class Test_Colors extends Base  {
+class Test_Colors extends Base {
 	public function get_command() {
 		return 'globals/colors';
 	}
@@ -42,5 +42,12 @@ class Test_Colors extends Base  {
 		$rest_result = $this->manager->run_endpoint( $this->get_endpoint( $colors[0]['_id'] ) );
 
 		$this->assertEquals( $rest_result['id'], $colors[0]['_id'] );
+	}
+
+	public function test_get_item_that_does_not_exists() {
+		$rest_result = $this->manager->run_endpoint( $this->get_endpoint( 'fake_id' ) );
+
+		$this->assertEquals( 'global_not_found', $rest_result['code'] );
+		$this->assertEquals( 404, $rest_result['data']['status'] );
 	}
 }

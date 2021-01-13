@@ -36,9 +36,7 @@
 	}
 
 	&-area {
-		background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
-		background-size: 16px 16px;
-		background-position: 0 0, 8px 8px;
+		@include checkers-background(16px);
 		background-color: #f6f6f6;
 
 		&:not(:hover) {

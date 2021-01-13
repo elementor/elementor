@@ -21,6 +21,18 @@ class Theme_Style_Images extends Tab_Base {
 		return __( 'Images', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'theme-style';
+	}
+
+	public function get_icon() {
+		return 'eicon-image';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-theme-style-images';
+	}
+
 	protected function register_tab_controls() {
 		$image_selectors = [
 			'{{WRAPPER}} img',

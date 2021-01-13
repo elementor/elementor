@@ -106,7 +106,7 @@ class Responsive {
 				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys ) ) {
 					$new_array[ $breakpoint_key ] = self::$default_breakpoints[ $breakpoint_key ];
 				} else {
-					$saved_option = get_option( 'elementor_viewport_' . $breakpoint_key );
+					$saved_option = Plugin::$instance->kits_manager->get_current_settings( self::BREAKPOINT_OPTION_PREFIX . $breakpoint_key );
 
 					$new_array[ $breakpoint_key ] = $saved_option ? (int) $saved_option : self::$default_breakpoints[ $breakpoint_key ];
 				}

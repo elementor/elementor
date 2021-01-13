@@ -609,6 +609,9 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
+			'dynamic' => [
+				'active' => true,
+			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],

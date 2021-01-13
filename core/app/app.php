@@ -49,6 +49,11 @@ class App extends BaseApp {
 			return $menu;
 		}
 
+		// Non admin role / custom wp menu.
+		if ( empty( $submenu[ Source_Local::ADMIN_MENU_SLUG ] ) ) {
+			return $menu;
+		}
+
 		// Hack to add a link to sub menu.
 		foreach ( $submenu[ Source_Local::ADMIN_MENU_SLUG ] as &$item ) {
 			if ( self::PAGE_ID === $item[2] ) {

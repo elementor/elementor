@@ -285,26 +285,27 @@ ul.elementor-icon-list-items.elementor-inline-items {
 
 // Simple 12 Columns responsive grid
 .elementor-grid {
+	display: grid;
+	grid-column-gap: var(--grid-column-gap);
+	grid-row-gap: var(--grid-row-gap);
 
 	.elementor-grid-item {
-		word-break: break-word;
-		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser
+		min-width: 0; // Prevent columns from overflowing the grid area in Firefox browser (Doesn't seem to do anything  --Josh)
 	}
 
 	@mixin grid_loop($device) {
 
 		&#{$device}-0 {
 			.elementor-grid {
-				display: flex;
-				overflow: hidden;
-				flex-wrap: wrap;
-				margin-right: calc(var(--grid-side-margin) / 2);
-				margin-left: calc(var(--grid-side-margin) / 2);
+				display: inline-block;
+				width: 100%;
+				word-spacing: var(--grid-column-gap);
+				margin-bottom: calc(-1 * var(--grid-row-gap));
 
-				&-item > div, &-item > a {
-					margin-right: calc(var(--grid-side-margin) / 2);
-					margin-left: calc(var(--grid-side-margin) / 2);
-					margin-bottom: var(--grid-bottom-margin);
+				.elementor-grid-item {
+					display: inline-block;
+					margin-bottom: var(--grid-row-gap);
+					word-break: break-word;
 				}
 			}
 		}
@@ -314,9 +315,6 @@ ul.elementor-icon-list-items.elementor-inline-items {
 			&#{$device}-#{$i} {
 				.elementor-grid {
 					grid-template-columns: repeat(#{$i} , 1fr);
-					display: grid;
-					grid-column-gap: var(--grid-column-gap);
-					grid-row-gap: var(--grid-row-gap);
 				}
 			}
 		}

@@ -5,22 +5,13 @@ import DocumentHelper from 'elementor-document/helper';
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
 const Preview = BaseSectionsContainerView.extend( {
+	initialize: function() {
+		this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
+
+		BaseSectionsContainerView.prototype.initialize.apply( this, arguments );
+	},
 
 	getChildViewContainer: function() {
-		if ( ! this.$childViewContainer ) {
-			this.$childViewContainer = jQuery( '<div>', { class: 'elementor-section-wrap' } );
-
-			if ( elementor.config.legacyMode.elementWrappers ) {
-				const inner = jQuery( '<div>', { class: 'elementor-inner' } );
-
-				inner.append( this.$childViewContainer );
-
-				this.$el.prepend( inner );
-			} else {
-				this.$el.prepend( this.$childViewContainer );
-			}
-		}
-
 		return this.$childViewContainer;
 	},
 
@@ -58,7 +49,7 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
@@ -74,12 +65,12 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
+						title: __( 'Copy All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
-						title: elementor.translate( 'delete_all_content' ),
+						title: __( 'Delete All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
 					},
@@ -89,14 +80,27 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	onRender: function() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
+		let $contentContainer;
+
+		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+			$contentContainer = this.$el;
+		} else {
+			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );
+
+			this.$el.html( $inner );
+
+			$contentContainer = $inner;
 		}
-		var addNewSectionView = new AddSectionView();
 
-		addNewSectionView.render();
+		$contentContainer.html( this.$childViewContainer );
 
-		this.$el.append( addNewSectionView.$el );
+		if ( elementor.userCan( 'design' ) ) {
+			const addNewSectionView = new AddSectionView();
+
+			addNewSectionView.render();
+
+			$contentContainer.append( addNewSectionView.$el );
+		}
 	},
 } );
 

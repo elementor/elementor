@@ -22,9 +22,9 @@ export default class FilesUploadHandler {
 
 		return elementor.helpers.getSimpleDialog(
 			'e-enable-unfiltered-files-dialog',
-			elementor.translate( 'enable_unfiltered_files_upload' ),
-			elementor.translate( 'dialog_confirm_enable_unfiltered_files_upload' ),
-			elementor.translate( 'enable' ),
+			__( 'Enable Unfiltered File Uploads', 'elementor' ),
+			__( 'Before you enable unfiltered files upload, note that this kind of files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ),
+			__( 'Enable', 'elementor' ),
 			onConfirm
 		);
 	}

@@ -256,7 +256,7 @@ export default class Container extends ArgsObject {
 			settings: rowSettingsModel,
 			view: this.view,
 			parent: this.repeaters[ repeaterName ],
-			label: this.label + ' ' + elementor.translate( 'Item' ),
+			label: this.label + ' ' + __( 'Item', 'elementor' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
 		} ) );

@@ -1,8 +1,8 @@
 <?php
-
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Core\Base\BackgroundProcess\WP_Background_Process;
 
 /**
  * Based on https://github.com/woocommerce/woocommerce/blob/master/includes/abstracts/class-wc-background-process.php
@@ -11,13 +11,10 @@ use Elementor\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-async-request.php';
-include_once ELEMENTOR_PATH . '/includes/libraries/wp-background-process/wp-background-process.php';
-
 /**
  * WC_Background_Process class.
  */
-abstract class Background_Task extends \WP_Background_Process {
+abstract class Background_Task extends WP_Background_Process {
 	protected $current_item;
 
 	/**
