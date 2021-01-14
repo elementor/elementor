@@ -1,0 +1,31 @@
+
+.elementor-element {
+
+	&-color-picker {
+		display:none;
+		position: absolute;
+		bottom: 5px;
+		#{$end}: 5px;
+		border-radius: 5px;
+		overflow: hidden;
+		box-shadow: 0 0 3px 1px rgba(0,0,0,0.1);
+
+		&__swatch{
+			width: 20px;
+			height: 40px;
+			cursor: pointer;
+			transition: $transition-hover;
+
+			&:hover {
+				width: 40px;
+			}
+		}
+	}
+}
+
+.elementor-editor__ui-state__color-picker {
+	.elementor-element-color-picker:hover,
+	.elementor-widget-container:hover + .elementor-element-color-picker {
+		display: flex;
+	}
+}

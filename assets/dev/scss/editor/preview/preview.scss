@@ -1,5 +1,6 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
+@import "../../helpers/direction";
 
 @import "../units";
 @import "../breakpoints";
@@ -12,8 +13,8 @@
 @import "compatibility";
 @import "inline-editor";
 
-
-@import "../../../../../modules/elements-color-picker/assets/css/elemtents-color-picker";
+//Eyedropper Experiment
+@import "../../../../../modules/elements-color-picker/assets/scss/elemtents-color-picker";
 
 
 // Hidden WP Admin Bar
