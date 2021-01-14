@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import Layout from '../../templates/layout';
 import Notice from '../../ui/notice/notice';
+import Title from '../../ui/title/title';
 import DropZone from 'elementor-app/organisms/drop-zone';
 
 import useFile from '../../hooks/use-file/use-file';
@@ -18,7 +19,7 @@ export default function Import() {
 	useEffect( () => {
 		if ( isLoading ) {
 			setTimeout( () => {
-				setLoading(false);
+				setLoading( false );
 			}, 5000 );
 		}
 	}, [ isLoading ] );
@@ -26,7 +27,17 @@ export default function Import() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
+				<Title
+					primary={ __( 'Upload Kit File', 'elementor' ) }
+					secondary={ __( 'Upload the kit file.You will be able to see the Kit’s content at the end of the process.', 'elementor' ) }
+				/>
+
+				<Notice color="warning" className="e-app-import__notice">
+					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
+				</Notice>
+
 				<DropZone
+					className="e-app-import__drop-zone"
 					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
@@ -36,9 +47,6 @@ export default function Import() {
 						setFile( files[ 0 ] );
 					} }
 				/>
-				<Notice color="warning" className="e-app-import__notice">
-					{ __( 'Important: It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
-				</Notice>
 			</section>
 		</Layout>
 	);
