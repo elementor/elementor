@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
-use Elementor\Core\Breakpoints\Manager as Breakpoints_manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
@@ -196,7 +196,7 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
+		foreach ( Plugin::$instance->breakpoints->get_config() as $breakpoint_key => $breakpoint ) {
 			$setting_key = "viewport_{$breakpoint_key}";
 			if ( isset( $data['settings'][ $setting_key ] ) ) {
 				$should_compile_css = true;
