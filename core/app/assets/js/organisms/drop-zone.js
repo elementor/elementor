@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import UploadFile from 'elementor-app/molecules/upload-file';
 import DragDrop from 'elementor-app/ui/atoms/drag-drop';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -7,7 +9,8 @@ import Text from 'elementor-app/ui/atoms/text';
 import './drop-zone.scss';
 
 export default function DropZone( props ) {
-	const dragDropEvents = {
+	const classes = [ 'e-app-drop-zone', props.className ],
+		dragDropEvents = {
 		onDrop: ( event ) => {
 			if ( ! props.isLoading ) {
 				props.onFileSelect( event.dataTransfer.files, event );
@@ -16,7 +19,7 @@ export default function DropZone( props ) {
 	};
 
 	return (
-		<section className="e-app-drop-zone">
+		<section className={ Utils.arrayToClassName( classes ) }>
 			<DragDrop { ...dragDropEvents } isLoading={ props.isLoading }>
 				{ props.icon && <Icon className={ `e-app-drop-zone__icon ${ props.icon }` } /> }
 
