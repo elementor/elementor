@@ -1,4 +1,4 @@
-import CommonHelper from 'elementor-tests-qunit/tests/core/common/helper';
+import CommonHelper from 'elementor/tests/qunit/tests/core/common/helper';
 import ElementsHelper from '../../elements/helper';
 
 export const Duplicate = () => {

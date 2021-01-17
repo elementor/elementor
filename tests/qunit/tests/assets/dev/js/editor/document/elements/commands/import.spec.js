@@ -1,7 +1,7 @@
 import ElementsHelper from '../helper';
 import HistoryHelper from '../../history/helper';
-import BlockFaq from 'elementor-tests-qunit/mock/library/blocks/faq.json';
-import PageLandingPageHotel from 'elementor-tests-qunit/mock/library/pages/landing-page-hotel.json';
+import BlockFaq from 'elementor/tests/qunit/mock/library/blocks/faq.json';
+import PageLandingPageHotel from 'elementor/tests/qunit/mock/library/pages/landing-page-hotel.json';
 
 export const Import = () => {
 	QUnit.module( 'Import', () => {
@@ -16,7 +16,7 @@ export const Import = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'template' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Template' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

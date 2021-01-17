@@ -1,5 +1,5 @@
 import ElementsHelper from './elements/helper.js';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 let documentTemp;
 

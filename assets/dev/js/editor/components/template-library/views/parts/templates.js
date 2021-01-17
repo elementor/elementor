@@ -2,6 +2,8 @@ var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/templ
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
 	TemplateLibraryCollectionView;
 
+import Select2 from 'elementor-editor-utils/select2.js';
+
 TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
 
@@ -151,14 +153,20 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	setFiltersUI: function() {
-		var $filters = this.$( this.ui.selectFilter );
+		if ( ! this.select2Instance ) {
+			const $filters = this.$( this.ui.selectFilter ),
+				select2Options = {
+					placeholder: __( 'Category', 'elementor' ),
+					allowClear: true,
+					width: 150,
+					dropdownParent: this.$el,
+				};
 
-		$filters.select2( {
-			placeholder: elementor.translate( 'category' ),
-			allowClear: true,
-			width: 150,
-			dropdownParent: this.$el,
-		} );
+			this.select2Instance = new Select2( {
+				$element: $filters,
+				options: select2Options,
+			} );
+		}
 	},
 
 	setMasonrySkin: function() {
@@ -174,6 +182,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
+	isPageOrLandingPageTemplates: function() {
+		const templatesType = elementor.templates.getFilter( 'type' );
+
+		return 'page' === templatesType || 'lp' === templatesType;
+	},
+
 	onRender() {
 		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
@@ -185,7 +199,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
 		}
 	},

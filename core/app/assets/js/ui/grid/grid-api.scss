@@ -1,5 +1,6 @@
 // COMPONENT API: GRID
-@import "assets/dev/scss/editor/_breakpoints.scss";
+// Used specific path here since, pro loads the grid and 'current path' will be wrong.
+@import "../../../../../../assets/dev/scss/editor/_breakpoints.scss";
 
 
 // MIXIN: Grid Coll generator

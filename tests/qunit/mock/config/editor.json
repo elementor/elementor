@@ -23,11 +23,16 @@
   "kit_config": {
 	  "typography_prefix": "typography_"
   },
-  "legacyMode": {},
   "globals": {
 	"defaults_enabled": {
 	  "colors": true,
 	  "typography": true
 	}
-  }
+  },
+  "dev_tools": {
+  	"deprecation": {
+		"soft_notices": []
+	}
+  },
+  "experimentalFeatures": {}
 }

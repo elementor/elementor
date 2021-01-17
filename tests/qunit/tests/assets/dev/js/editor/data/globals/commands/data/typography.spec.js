@@ -1,4 +1,4 @@
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const Typography = () => {
 	QUnit.module( 'Typography', ( hooks ) => {

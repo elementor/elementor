@@ -13,6 +13,17 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install Dependencies
         run: npm install
       - name: Build and Deploy
@@ -38,3 +49,8 @@ jobs:
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
           curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=core"
+          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@master
+        with:
+          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          path: elementor-*.zip

@@ -1,5 +1,5 @@
 import ElementsHelper from '../../../../../elements/helper';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const SetStructure = () => {
 	QUnit.module( 'SetStructure', () => {

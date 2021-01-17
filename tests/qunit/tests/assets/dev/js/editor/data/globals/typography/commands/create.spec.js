@@ -1,5 +1,5 @@
-import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/document/elements/helper';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const Create = () => {
 	QUnit.module( 'Create', ( hooks ) => {

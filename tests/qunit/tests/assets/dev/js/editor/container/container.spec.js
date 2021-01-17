@@ -1,4 +1,4 @@
-import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/document/elements/helper';
+import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/container/container.js', () => {

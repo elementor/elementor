@@ -1,4 +1,4 @@
-import DocumentHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/document/helper';
+import DocumentHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/helper';
 import * as dataCommands from './commands/data/index.spec';
 
 jQuery( () => {

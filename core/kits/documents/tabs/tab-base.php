@@ -21,6 +21,22 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 
 	abstract protected function register_tab_controls();
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return '';
+	}
+
+	public function get_help_url() {
+		return '';
+	}
+
+	public function get_additional_tab_content() {
+		return '';
+	}
+
 	public function register_controls() {
 		$this->register_tab();
 

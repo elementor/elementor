@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -101,7 +101,7 @@ class Manager extends CSS_Manager {
 			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
-		if ( ! current_user_can( 'edit_post', $id ) ) {
+		if ( ! Utils::is_wp_cli() && ! current_user_can( 'edit_post', $id ) ) {
 			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
@@ -122,7 +122,7 @@ class Manager extends CSS_Manager {
 		wp_update_post( $post );
 
 		// Check updated status
-		if ( DB::STATUS_PUBLISH === get_post_status( $id ) ) {
+		if ( Document::STATUS_PUBLISH === get_post_status( $id ) ) {
 			$autosave = wp_get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				wp_delete_post_revision( $autosave->ID );
@@ -165,7 +165,8 @@ class Manager extends CSS_Manager {
 
 		if ( Object.values( tabs ).length > 1 ) { #>
 		<div class="elementor-panel-navigation">
-			<# _.each( tabs, function( tabTitle, tabSlug ) { #>
+			<# _.each( tabs, function( tabTitle, tabSlug ) {
+			$e.bc.ensureTab( 'panel/page-settings', tabSlug ); #>
 			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
 				<a href="#">{{{ tabTitle }}}</a>
 			</div>

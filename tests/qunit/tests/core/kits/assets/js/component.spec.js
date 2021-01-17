@@ -1,7 +1,7 @@
-import * as ajax from 'elementor-tests-qunit/mock/ajax';
-import * as eData from 'elementor-tests-qunit/mock/e-data';
+import * as ajax from 'elementor/tests/qunit/mock/ajax';
+import * as eData from 'elementor/tests/qunit/mock/e-data';
 import * as hooks from './hooks/index.spec';
-import DocumentHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/document/helper';
+import DocumentHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/helper';
 
 jQuery( () => {
 	QUnit.module( 'Component: panel/global', () => {
