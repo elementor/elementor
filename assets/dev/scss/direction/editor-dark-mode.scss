@@ -276,7 +276,7 @@ select {
 		}
 	}
 
-	#elementor-panel-elements-search-input {
+	input[type="search"] {
 		background-color: $theme-dark-gray;
 		color: $theme-dark-light;
 
