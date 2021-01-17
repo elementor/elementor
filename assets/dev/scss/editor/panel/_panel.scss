@@ -4,6 +4,7 @@
 .elementor-panel {
 	position: fixed;
 	height: 100%;
+	width: var(--e-editor-panel-width, 300px);
 	top: 0;
 	bottom: 0;
 	overflow: visible;

@@ -5,7 +5,7 @@
 	background-color: #333;
 	position: absolute;
 	height: 100%;
-	top: 0;
+	top: calc(var(--e-is-device-mode) * 40px);
 	right: 0;
 	border: 0;
 

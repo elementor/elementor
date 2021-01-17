@@ -109,6 +109,6 @@ body {
 #elementor-preview {
 
 	&:not(.ui-resizable-resizing) {
-		transition: $start .5s, width 0.5s;
+		transition: $start .5s, width 0.5s, top 0.25s ease-in-out;
 	}
 }

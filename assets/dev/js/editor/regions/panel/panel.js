@@ -39,8 +39,7 @@ module.exports = BaseRegion.extend( {
 	},
 
 	resizable: function() {
-		var self = this,
-			side = elementorCommon.config.isRTL ? 'right' : 'left';
+		var self = this;
 
 		self.$el.resizable( {
 			handles: elementorCommon.config.isRTL ? 'w' : 'e',
@@ -57,7 +56,7 @@ module.exports = BaseRegion.extend( {
 				self.saveSize();
 			},
 			resize: function( event, ui ) {
-				elementor.$previewWrapper.css( side, ui.size.width );
+				document.body.style.setProperty( '--e-is-device-mode', ui.size.width );
 			},
 		} );
 	},
