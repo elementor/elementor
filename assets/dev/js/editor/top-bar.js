@@ -23,32 +23,34 @@ export default class TopBar extends Marionette.ItemView {
 	}
 
 	ui() {
+		const prefix = '.e-mq-';
+
 		return {
-			addNewSection: '.elementor-add-new-section',
-			closeButton: '.elementor-add-section-close',
-			addSectionButton: '.elementor-add-section-button',
-			addTemplateButton: '.elementor-add-template-button',
-			selectPreset: '.elementor-select-preset',
-			presets: '.elementor-preset',
+			switcherOption: prefix + 'switcher__option',
+			switcher: prefix + 'switcher',
+			closeButton: prefix + 'bar__close-button',
+			optionsMenuToggle: prefix + 'bar__options-button',
 		};
 	}
 
 	events() {
 		return {
-			'click @ui.addSectionButton': 'onAddSectionButtonClick',
-			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
+			'change @ui.switcherOption': 'onBreakpointSelected',
 			'click @ui.closeButton': 'onCloseButtonClick',
-			'click @ui.presets': 'onPresetSelected',
 		};
 	}
 
-	behaviors() {
-		return {
-			contextMenu: {
-				behaviorClass: require( 'elementor-behaviors/context-menu' ),
-				groups: this.getContextMenuGroups(),
-			},
-		};
+	onBreakpointSelected( e ) {
+		const selectedBreakpoint = jQuery( e.target ).attr( 'value' );
+		elementor.changeDeviceMode( selectedBreakpoint );
+	}
+
+	onChange() {
+		const changeCallback = this.getOption( 'change' );
+
+		if ( changeCallback ) {
+			changeCallback();
+		}
 	}
 
 	onClick() {
