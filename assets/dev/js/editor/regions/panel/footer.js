@@ -20,7 +20,7 @@ module.exports = Marionette.ItemView.extend( {
 	events: {
 		'click @ui.menuButtons': 'onMenuButtonsClick',
 		'click @ui.settings': 'onSettingsClick',
-		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
+		'click @ui.deviceModeIcon': 'onDeviceModeIconClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
 		'click @ui.navigator': 'onNavigatorClick',
@@ -129,11 +129,8 @@ module.exports = Marionette.ItemView.extend( {
 		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
 	},
 
-	onResponsiveButtonsClick: function( event ) {
-		var $clickedButton = this.$( event.currentTarget ),
-			newDeviceMode = $clickedButton.data( 'device-mode' );
-
-		elementor.changeDeviceMode( newDeviceMode );
+	onDeviceModeIconClick: function() {
+		jQuery( document.body ).toggleClass( 'e-is-device-mode' );
 	},
 
 	onSaveTemplateClick: function() {
