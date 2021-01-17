@@ -402,9 +402,7 @@ export default class EditorBase extends Marionette.Application {
 
 		topBar.render();
 
-		// topBar.$el
-
-		this.$preview.before( topBar.$el );
+		this.$previewWrapper.before( topBar.$el );
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
