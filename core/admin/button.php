@@ -69,10 +69,6 @@ class Button extends Base_Object {
 		echo $html;
 	}
 
-	public function __construct( array $options ) {
-		$this->options = $this->merge_properties( $this->get_default_options(), $options );
-	}
-
 	/**
 	 * @param string $option Optional default is null
 	 * @return array|mixed
@@ -102,5 +98,9 @@ class Button extends Base_Object {
 		}
 
 		return $default_options;
+	}
+
+	public function __construct( array $options ) {
+		$this->options = $this->merge_properties( $this->get_default_options(), $options );
 	}
 }
