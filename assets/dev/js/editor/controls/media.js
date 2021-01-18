@@ -89,9 +89,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
-			button: {
-				text: elementor.translate( 'insert_media' ),
-			},
+			frame: 'post',
+			type: 'image',
+			multiple: false,
 			states: [
 				new wp.media.controller.Library( {
 					title: elementor.translate( 'insert_media' ),
@@ -102,12 +102,44 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			],
 		} );
 
+		// Remove unwanted elements when frame is opened.
+		this.frame.on( 'ready open', this.onFrameReady.bind( this ) );
+
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
 
 		if ( elementor.config.filesUpload.unfilteredFiles ) {
 			this.setUploadMimeType( this.frame, this.getMediaType() );
 		}
+	},
+
+	/**
+	 * Hack to remove unwanted elements from modal.
+	 */
+	onFrameReady() {
+		const frameElement = document.querySelector( '.media-modal.wp-core-ui' );
+
+		const elementsToRemove = [
+			'#menu-item-insert',
+			'#menu-item-gallery',
+			'#menu-item-playlist',
+			'#menu-item-video-playlist',
+			'.embed-link-settings',
+		];
+
+		elementsToRemove.forEach( ( selector ) => {
+			const el = frameElement.querySelector( selector );
+
+			if ( el ) {
+				el.remove();
+			}
+		} );
+
+		// Remove elements from the URL upload tab.
+		frameElement.classList.add( 'elementor-wp-media-elements-removed' );
+
+		// Go to the custom upload tab.
+		frameElement.querySelector( '#menu-item-library' ).click();
 	},
 
 	setUploadMimeType( frame, ext ) {
@@ -131,8 +163,19 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	select: function() {
 		this.trigger( 'before:select' );
 
-		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		const state = this.frame.state();
+		let attachment;
+
+		if ( 'embed' === state.get( 'id' ) ) {
+			// Insert from URL.
+			attachment = {
+				url: state.props.get( 'url' ),
+				id: '',
+			};
+		} else {
+			// Get the attachment from the modal frame.
+			attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		}
 
 		if ( attachment.url ) {
 			this.setValue( {

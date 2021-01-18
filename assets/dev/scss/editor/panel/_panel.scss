@@ -116,6 +116,14 @@
 		display: table;
 		clear: both;
 	}
+
+	// Hack to remove unwanted elements from the modal
+	&.elementor-wp-media-elements-removed {
+		.embed-link-settings,
+		.embed-media-settings > :not( .wp-clearfix ){
+			display: none;
+		}
+	}
 }
 
 #elementor-panel-get-pro-elements {
