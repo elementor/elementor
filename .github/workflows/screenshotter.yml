@@ -21,7 +21,7 @@ jobs:
           sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
           sudo chown -R $USER /usr/local/lib/node_modules
           sudo chown -R $USER /usr/local/bin/
-          npm i -g wp-screenshotter@1.17.2
+          npm i -g @elementor/screenshotter
       - name: Install Dependencies
         run: |
           elementor-screenshotter-install --debug=true
