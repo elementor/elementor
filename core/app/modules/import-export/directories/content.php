@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\App\Modules\ImportExport\Directories;
 
+use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -13,11 +15,7 @@ class Content extends Base {
 	}
 
 	protected function get_default_sub_directories() {
-		$post_types = $this->iterator->get_settings( 'post_types' );
-
-		if ( ! $post_types ) {
-			return [];
-		}
+		$post_types = [ 'page', 'post', Landing_Pages_Module::CPT ];
 
 		$sub_directories = [];
 
