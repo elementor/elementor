@@ -44,11 +44,11 @@ class Module extends BaseModule {
 	}
 
 	public function get_init_settings() {
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], admin_url() );
+
 		return [
-			'custom_post_types' => [
-				'post' => 'Posts',
-				'page' => 'Pages',
-			],
+			'exportURL' => $export_url,
 		];
 	}
 
