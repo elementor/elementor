@@ -8,18 +8,14 @@ export default function ExportButton( props ) {
 			return '';
 		}
 
-		const currentBaseUrl = window.location.origin + window.location.pathname + window.location.search,
-			queryConnection = currentBaseUrl.indexOf( '?' ) > -1 ? '&' : '?',
-			currentPostTypes = context.includes.includes( 'content' ) ? context.postTypes : [],
+		const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
 			exportData = {
 				elementor_export_kit: {
-					title: context.title,
 					include: context.includes,
-					post_types: currentPostTypes,
 				},
 			};
 
-		return currentBaseUrl + queryConnection + jQuery.param( exportData ) + window.location.hash;
+		return exportURL + '&' + jQuery.param( exportData );
 	};
 
 	return (
