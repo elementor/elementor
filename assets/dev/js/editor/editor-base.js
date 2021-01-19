@@ -645,6 +645,19 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
+	enterDeviceMode() {
+		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
+	}
+
+	toggleDeviceMode() {
+		elementorCommon.elements.$body.toggleClass( 'e-is-device-mode' );
+	}
+
+	exitDeviceMode() {
+		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+		elementor.changeDeviceMode( 'desktop' );
+	}
+
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
