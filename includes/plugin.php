@@ -8,7 +8,6 @@ use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Import_Export\Manager as Import_Export_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Files\Manager as Files_Manager;
@@ -632,7 +631,6 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
-			$this->import_export = new Import_Export_Manager();
 			new Elementor_3_Re_Migrate_Globals();
 		}
 	}
