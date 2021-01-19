@@ -1,6 +1,5 @@
 import { memo } from 'react';
 
-import PostTypesSelect from './post-types-select/post-types-select';
 import TemplatesFeatures from './templates-features/templates-features';
 import KitContentCheckbox from './kit-content-checkbox/kit-content-checkbox';
 import Notice from '../../../ui/notice/notice';
@@ -26,7 +25,7 @@ function KitContentList( props ) {
 		</Notice>
 	),
 	getProFeaturesIndication = () => (
-		<Text variant="md" tag="span" color="cta" className="kit-content-list__pro-indication">
+		<Text variant="sm" tag="span" color="cta" className="kit-content-list__pro-indication">
 			<strong data-value={ Math.random() }>{ __( 'Pro Features', 'elementor' ) }</strong>
 		</Text>
 	);
@@ -44,7 +43,7 @@ function KitContentList( props ) {
 									<KitContentCheckbox type={ item.type } className="kit-content-list__checkbox" />
 
 									<Grid item className={ 'content' === item.type ? ' kit-content-list-grid--expand' : '' }>
-										<Heading variant="h3" className="kit-content-list__title">{ item.data.title }</Heading>
+										<Heading variant="h4" tag="h3" className="kit-content-list__title">{ item.data.title }</Heading>
 
 										<Grid item>
 											<Text variant="sm" tag="span" className="kit-content-list__description">
@@ -52,8 +51,6 @@ function KitContentList( props ) {
 											</Text>
 
 											{ item.data.notice && getProFeaturesIndication() }
-
-											{ ( item.hasSelect && 'export' === props.type ) ? <PostTypesSelect itemType={ item.type } /> : null }
 										</Grid>
 									</Grid>
 								</Grid>

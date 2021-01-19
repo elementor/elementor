@@ -10,8 +10,14 @@ import './export-complete.scss';
 
 export default function ExportComplete() {
 	const getFooter = () => (
-		<Footer justify="center" className="e-app-export-complete__learn-more">
-			<Button variant="underlined" color="link" size="lg" text={ __( 'Learn More', 'elementor' ) } url="/#" />
+		<Footer separator justify="end">
+			<Button
+				variant="contained"
+				size="lg"
+				text={ __( 'Back to dashboard', 'elementor' ) }
+				color="primary"
+				url="#"
+			/>
 		</Footer>
 	);
 
@@ -21,16 +27,16 @@ export default function ExportComplete() {
 				<Message>
 					<img className="e-app-export-complete__main-image" src={ elementorAppConfig.assets_url + 'images/go-pro.svg' } />
 
-					<Heading variant="display-3">
-						{ __( 'Your Kit Was Exported Successfully!', 'elementor' ) }
+					<Heading variant="display-3" className="e-app-export-complete__message-title">
+						{ __( 'Thanks for exporting', 'elementor' ) }
 					</Heading>
 
-					<Text variant="xl">
-						{ __( 'Use this exported Kit on another Elementor site by uploading it via Kit Manager > Import Kit', 'elementor' ) }
+					<Text variant="xl" className="e-app-export-complete__message-line" >
+						{ __( 'This may take a few moments to complete.', 'elementor' ) }
 					</Text>
 
-					<Text tag="span" variant="sm" className="e-app-export-complete__secondary-sentence">
-						{ __( 'If the download doesn\'t start automatically, please', 'elementor' ) } <ClickHere url="/#" />
+					<Text tag="span" variant="xs" className="e-app-export-complete__message-line">
+						{ __( 'Download not working?', 'elementor' ) } <ClickHere url="/#" /> { __( 'to dawnload', 'elementor' ) }
 					</Text>
 				</Message>
 			</section>
