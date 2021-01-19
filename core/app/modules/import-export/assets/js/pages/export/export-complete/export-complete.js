@@ -1,7 +1,7 @@
 import Layout from '../../../templates/layout';
 import Message from '../../../ui/message/message';
 import Footer from '../../../shared/footer/footer';
-import ClickHere from '../../../ui/click-here/click-here';
+import ClickToDownload from './components/click-to-download/click-to-download';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
@@ -36,7 +36,7 @@ export default function ExportComplete() {
 					</Text>
 
 					<Text tag="span" variant="xs" className="e-app-export-complete__message-line">
-						{ __( 'Download not working?', 'elementor' ) } <ClickHere url="/#" /> { __( 'to dawnload', 'elementor' ) }
+						{ __( 'Download not working?', 'elementor' ) } <ClickToDownload /> { __( 'to dawnload', 'elementor' ) }
 					</Text>
 				</Message>
 			</section>
