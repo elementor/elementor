@@ -37,29 +37,21 @@ function KitContentList( props ) {
 			{
 				kitContentData.map( ( item, index ) => (
 					<List.Item separated padding="20" key={ index } className="kit-content-list__item">
-						<Grid container justify="space-between" alignItems="center">
-							<Grid item container={ item.hasSelect }>
-								<Grid item container>
-									<KitContentCheckbox type={ item.type } className="kit-content-list__checkbox" />
+						<Grid container>
+							<KitContentCheckbox type={ item.type } className="kit-content-list__checkbox" />
 
-									<Grid item className={ 'content' === item.type ? ' kit-content-list-grid--expand' : '' }>
-										<Heading variant="h4" tag="h3" className="kit-content-list__title">{ item.data.title }</Heading>
+							<Grid item className={ 'content' === item.type ? ' kit-content-list-grid--expand' : '' }>
+								<Heading variant="h4" tag="h3" className="kit-content-list__title">{ item.data.title }</Heading>
 
-										<Grid item>
-											<Text variant="sm" tag="span" className="kit-content-list__description">
-												{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
-											</Text>
+								<Grid item>
+									<Text variant="sm" tag="span" className="kit-content-list__description">
+										{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
+									</Text>
 
-											{ item.data.notice && getProFeaturesIndication() }
-										</Grid>
-									</Grid>
+									{ item.data.notice && getProFeaturesIndication() }
 								</Grid>
 							</Grid>
-
-							{ item.data.notice && getButton() }
 						</Grid>
-
-						{ item.data.notice && getNotice( item.data.notice ) }
 					</List.Item>
 				) )
 			}
