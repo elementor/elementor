@@ -56,22 +56,7 @@ body {
 	}
 
 	&.elementor-editor-active {
-
-		#elementor-preview {
-
-			@media (max-width: $editor-screen-lg-max) {
-				@include start($panel-width);
-			}
-
-			@media (min-width: $editor-screen-xl-min) {
-				@include start($panel-xl-width);
-			}
-
-			@include end(0);
-		}
-
 		#elementor-mode-switcher-preview {
-
 			.eicon {
 				&:before {
 					content: getValueByDirection('\e89f', '\e89e');

@@ -4,7 +4,14 @@
 
 :root {
 	--e-is-preview-mode: 0;
-	--e-editor-panel-width: 300px;
+
+	@media (max-width: $editor-screen-lg-max) {
+		--e-editor-panel-width: #{$panel-width};
+	}
+
+	@media (min-width: $editor-screen-xl-min) {
+		--e-editor-panel-width: #{$panel-xl-width};
+	}
 }
 
 .elementor-panel {
