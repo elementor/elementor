@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
-      - name: Import Tamplate(s)
+      - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
       - name: Build Package & Run Test
