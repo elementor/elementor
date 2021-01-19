@@ -11,7 +11,7 @@ export default function ExportButton( props ) {
 		const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
 			exportData = {
 				elementor_export_kit: {
-					include: context.includes,
+					include: context.kitContent.includes,
 				},
 			};
 
@@ -22,7 +22,8 @@ export default function ExportButton( props ) {
 		<Context.Consumer>
 			{
 				( context ) => {
-					const isDownloadAllowed = context.kitContent.includes.length;
+					const isDownloadAllowed = context.kitContent.includes.length,
+						downloadURL = getDownloadUrl( context, isDownloadAllowed );
 
 					return (
 						<Button
@@ -30,10 +31,11 @@ export default function ExportButton( props ) {
 							size="lg"
 							text={ __( 'Export', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
-							url={ getDownloadUrl( context.kitContent, isDownloadAllowed ) }
+							url={ downloadURL }
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
 									props.setIsDownloading( true );
+									context.dispatch( { type: 'SET_DOWNLOAD_URL', value: downloadURL } );
 								}
 							} }
 						/>
