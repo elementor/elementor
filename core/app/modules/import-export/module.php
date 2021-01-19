@@ -3,6 +3,8 @@ namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Plugin;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,23 +32,6 @@ class Module extends BaseModule {
 	 */
 	private $import;
 
-	public function __construct() {
-		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-	}
-
-	public function on_elementor_init() {
-		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
-			$this->export = new Export();
-		}
-	}
-
-	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( self::IMPORT_TRIGGER_KEY, function() {
-			return $this->import = new Import();
-		} );
-	}
-
 	/**
 	 * Get name.
 	 *
@@ -65,5 +50,48 @@ class Module extends BaseModule {
 				'page' => 'Pages',
 			],
 		];
+	}
+
+	private function on_elementor_init() {
+		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
+			$this->export = new Export();
+		}
+	}
+
+	private function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( self::IMPORT_TRIGGER_KEY, function() {
+			return $this->import = new Import();
+		} );
+	}
+
+	private function register_admin_menu() {
+		add_submenu_page(
+			Settings::PAGE_ID,
+			'',
+			__( 'Export', 'elementor' ),
+			'manage_options',
+			Plugin::$instance->app->get_base_url() . '#/export'
+		);
+
+		add_submenu_page(
+			Settings::PAGE_ID,
+			'',
+			__( 'Import', 'elementor' ),
+			'manage_options',
+			Plugin::$instance->app->get_base_url() . '#/import'
+		);
+	}
+
+	public function __construct() {
+		add_action( 'elementor/init', function() {
+			$this->on_elementor_init();
+		} );
+		add_action( 'elementor/ajax/register_actions', function( Ajax $ajax ) {
+			$this->register_ajax_actions( $ajax );
+		} );
+
+		add_action( 'admin_menu', function() {
+			$this->register_admin_menu();
+		}, 206 ); // Below Elementor/Tools
 	}
 }
