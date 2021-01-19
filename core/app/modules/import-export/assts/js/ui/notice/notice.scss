@@ -14,7 +14,7 @@ $root: eps-notice;
 	background-color: var(--eps-box-notice-background-color);
 
 	&--warning {
-		border-left: 2px solid theme-colors(warning);
+		border-left: 3px solid theme-colors(warning);
 	}
 
 	&__text {

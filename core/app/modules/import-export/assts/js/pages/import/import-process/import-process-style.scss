@@ -1,20 +1,15 @@
 .e-app-import-process {
 	&__icon {
-		color: theme-colors(info);
 		font-size: 30px;
+		margin-bottom: spacing(44);
 	}
 
-	&__main-title {
-		margin-top: spacing(44);
+	&__title {
+		font-weight: normal;
+		margin: spacing(44) 0 spacing(24);
 	}
 
-	&__box {
-		margin-top: 50px;
-		text-align: initial;
-
-		* {
-			margin: 0;
-			padding: 0;
-		}
+	&__content {
+		color: tints(500);
 	}
 }

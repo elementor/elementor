@@ -15,8 +15,16 @@ $kit-content-list-locked-features-dark-color: dark-tints(300);
 		margin-inline-end: spacing(12);
 	}
 
+	&__title {
+		color: tints(700);
+	}
+
+	&__description {
+		color: tints(600);
+	}
+
 	&__pro-indication {
-		margin-inline-start: spacing(30);
+		margin-inline-start: spacing(20);
 		color: theme-colors(cta);
 	}
 

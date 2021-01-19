@@ -1,19 +1,25 @@
-$export-complete-secondary-sentence-color: tints(500);
-$export-complete-secondary-sentence-dark-color: dark-tints(200);
+$export-complete-message-line-color: tints(500);
+$export-complete-message-line-dark-color: dark-tints(200);
 
 $root: e-app-export-complete;
 
 .#{$root} {
-	--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-color};
+	--export-complete-message-line-color: #{$export-complete-message-line-color};
 
 	height: 100%;
 
 	&__main-image {
-		margin-bottom: spacing(30);
+		margin-bottom: spacing(44);
 	}
 
-	&__secondary-sentence {
-		color: var(--export-complete-secondary-sentence-color);
+	&__message-title {
+		font-weight: normal;
+		margin-bottom: spacing(24);
+	}
+
+	&__message-line {
+		color: var(--export-complete-message-line-color);
+		margin-bottom: spacing(10);
 	}
 
 	&__learn-more {
@@ -23,6 +29,6 @@ $root: e-app-export-complete;
 
 .eps-theme-dark {
 	.#{$root} {
-		--export-complete-secondary-sentence-color: #{$export-complete-secondary-sentence-dark-color};
+		--export-complete-message-line-color: #{$export-complete-message-line-dark-color};
 	}
 }

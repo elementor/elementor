@@ -1,5 +1,13 @@
 .import-export-title {
-	border-bottom: 2px solid #E6E9EC;
-	padding-bottom: spacing(20);
+	border-bottom: 1px solid tints(300);
 	margin-bottom: spacing(44);
+
+	&__primary {
+		color: tints(600);
+	}
+
+	&__secondary {
+		color: tints(500);
+		margin-top: spacing(20);
+	}
 }
