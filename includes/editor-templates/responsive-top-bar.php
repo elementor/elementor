@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 //$breakpoints = Responsive::get_breakpoints();
 $breakpoints = [
-		'mobile' => __( 'Mobile', 'elementor' ),
-		'tablet' => __( 'Tablet', 'elementor' ),
-		'desktop' => __( 'Desktop', 'elementor' ),
+	'mobile' => __( 'Mobile', 'elementor' ),
+	'tablet' => __( 'Tablet', 'elementor' ),
+	'desktop' => __( 'Desktop', 'elementor' ),
 ];
 ?>
 <script type="text/template" id="tmpl-elementor-templates-responsive-top-bar">
