@@ -3,17 +3,16 @@ import KitContext from '../context/kit-context';
 
 export default function Layout( props ) {
 	const config = {
-		title: 'import' === props.type ? __( 'Import Kit', 'elementor' ) : __( 'Export Kit', 'elementor' ),
+		title: 'import' === props.type ? __( 'Import', 'elementor' ) : __( 'Export', 'elementor' ),
 		headerButtons: props.headerButtons,
 		content: props.children,
 		footer: props.footer,
-	},
-	Context = KitContext;
+	};
 
 	return (
-		<Context>
+		<KitContext>
 			<Page { ...config } />
-		</Context>
+		</KitContext>
 	);
 }
 
