@@ -63,8 +63,9 @@ export default function Import() {
 						setFile( files[ 0 ] );
 					} }
 				/>
+
+				{ isImportFailed && getDialog() }
 			</section>
-			{ isImportFailed && getDialog() }
 		</Layout>
 	);
 }
