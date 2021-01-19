@@ -386,8 +386,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.$previewWrapper = $( '#elementor-preview' );
 
-		this.$responsiveTopBar = $( '.e-responsive-top-bar' );
-
 		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		// Make sure the iFrame does not exist.
@@ -400,11 +398,15 @@ export default class EditorBase extends Marionette.Application {
 
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
+
 		const topBar = new ResponsiveTopBar();
 
 		topBar.render();
 
+		this.$responsiveTopBar = topBar.$el;
+
 		this.$previewWrapper.before( topBar.$el );
+
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
