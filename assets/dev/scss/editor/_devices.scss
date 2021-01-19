@@ -1,13 +1,19 @@
 //
 // Switcher Preview by Devices
 //
+
+body {
+	--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
+}
+
 #elementor-preview {
 	background-color: #333;
 	position: absolute;
 	height: 100%;
-	top: calc(var(--e-is-device-mode) * 40px);
 	right: 0;
 	border: 0;
+	width: var(--e-preview-width);
+	top: calc(var(--e-is-device-mode) * 40px);
 
 	.elementor-device-desktop & {
 		overflow-y: hidden;

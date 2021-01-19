@@ -9,14 +9,14 @@
 .e-responsive-top-bar {
 	position: fixed;
 	z-index: 1;
-	left: var(--e-editor-panel-width, 300px);
-	right: 0;
+	width: var(--e-preview-width);
+	@include end(0);
+	top: calc(-40px + ( 40px * var(--e-is-device-mode)));
 }
 
 .e-mq { /* Just a prefix. There is no element with this className */
 	&-bar {
 		display: flex;
-		width: calc(var(--e-editor-panel-width, 300px) - 100%);
 		align-items: center;
 		justify-content: space-between;
 		padding: 10px;
@@ -35,7 +35,7 @@
 		}
 
 		&__close-button,
-		&__options-button {
+		&__settings-button {
 			padding: 4px;
 		}
 

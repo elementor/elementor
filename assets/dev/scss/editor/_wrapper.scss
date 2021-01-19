@@ -81,15 +81,10 @@ body {
 	}
 
 	&.elementor-editor-preview {
-
-		#elementor-preview {
-			left: 0;
-		}
+		--e-preview-width: 100%;
 
 		#elementor-mode-switcher-preview {
-
 			.eicon {
-
 				&:before {
 					content: getValueByDirection('\e89e', '\e89f');
 				}

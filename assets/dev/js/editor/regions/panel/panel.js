@@ -30,12 +30,9 @@ module.exports = BaseRegion.extend( {
 	},
 
 	setSize: function() {
-		var width = this.storage.size.width,
-			side = elementorCommon.config.isRTL ? 'right' : 'left';
+		const savedWidth = this.storage.size.width;
 
-		this.$el.css( 'width', width );
-
-		elementor.$previewWrapper.css( side, width );
+		elementorCommon.elements.$body.css( '--e-editor-panel-width', savedWidth );
 	},
 
 	resizable: function() {
