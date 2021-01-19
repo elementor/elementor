@@ -674,13 +674,6 @@ export default class EditorBase extends Marionette.Application {
 		if ( $element ) {
 			$element.removeClass( 'elementor-edit-area-active' );
 		}
-
-		if ( hidePanel ) {
-			// Handle panel resize
-			this.$previewWrapper.css( elementorCommon.config.isRTL ? 'right' : 'left', '' );
-
-			this.panel.$el.css( 'width', '' );
-		}
 	}
 
 	exitPreviewMode() {

@@ -11,7 +11,6 @@ module.exports = Marionette.ItemView.extend( {
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
-		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
@@ -38,10 +37,6 @@ module.exports = Marionette.ItemView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
-	},
-
-	getDeviceModeButton: function( deviceMode ) {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
 	addSubMenuItem: function( subMenuName, itemData ) {
@@ -117,20 +112,8 @@ module.exports = Marionette.ItemView.extend( {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onDeviceModeChange: function() {
-		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
-			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-
-		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
-
-		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
-
-		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
-	},
-
 	onDeviceModeIconClick: function() {
-		jQuery( document.body ).toggleClass( 'e-is-device-mode' );
+		elementor.toggleDeviceMode();
 	},
 
 	onSaveTemplateClick: function() {
