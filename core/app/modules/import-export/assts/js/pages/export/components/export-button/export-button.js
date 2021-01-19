@@ -2,7 +2,7 @@ import { Context } from '../../../../context/kit-context';
 
 import Button from 'elementor-app/ui/molecules/button';
 
-export default function DownloadButton( props ) {
+export default function ExportButton( props ) {
 	const getDownloadUrl = ( context, isDownloadAllowed ) => {
 		if ( ! isDownloadAllowed ) {
 			return '';
@@ -32,7 +32,7 @@ export default function DownloadButton( props ) {
 						<Button
 							variant="contained"
 							size="lg"
-							text={ __( 'Next', 'elementor' ) }
+							text={ __( 'Export', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
 							url={ getDownloadUrl( context.kitContent, isDownloadAllowed ) }
 							onClick={ () => {
@@ -48,6 +48,6 @@ export default function DownloadButton( props ) {
 	);
 }
 
-DownloadButton.propTypes = {
+ExportButton.propTypes = {
 	setIsDownloading: PropTypes.func,
 };
