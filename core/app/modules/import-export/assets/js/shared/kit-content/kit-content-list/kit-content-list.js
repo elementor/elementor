@@ -48,7 +48,7 @@ function KitContentList( props ) {
 										{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
 									</Text>
 
-									{ item.data.notice && getProFeaturesIndication() }
+									{ elementorAppConfig.hasPro && getProFeaturesIndication() }
 								</Grid>
 							</Grid>
 						</Grid>
