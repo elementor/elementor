@@ -62,9 +62,18 @@ class Root extends Base {
 	}
 
 	protected function get_default_sub_directories() {
-		return [
-			new Templates( $this->iterator, $this ),
-			new Content( $this->iterator, $this ),
-		];
+		$sub_directories = [];
+
+		$include = $this->iterator->get_settings( 'include' );
+
+		if ( in_array( 'templates', $include ) ) {
+			$sub_directories[] = new Templates( $this->iterator, $this );
+		}
+
+		if ( in_array( 'content', $include ) ) {
+			$sub_directories[] = new Content( $this->iterator, $this );
+		}
+
+		return $sub_directories;
 	}
 }
