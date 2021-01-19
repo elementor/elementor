@@ -108,6 +108,7 @@ class Kit extends PageBase {
 				'icon' => $tab->get_icon(),
 				'group' => $tab->get_group(),
 				'helpUrl' => $tab->get_help_url(),
+				'additionalContent' => $tab->get_additional_tab_content(),
 			];
 		}
 

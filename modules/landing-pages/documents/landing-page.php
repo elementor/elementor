@@ -3,7 +3,9 @@ namespace Elementor\Modules\LandingPages\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\Library\Traits\Library;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Landing_Page extends PageBase {
+
+	// Library Document Trait
+	use Library;
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -60,19 +65,17 @@ class Landing_Page extends PageBase {
 	}
 
 	/**
-	 * Save Template type.
-	 *
-	 * Set new/updated document type (Page/landing Page). This method is called whenever a page is saved.
+	 * Admin Columns Content
 	 *
 	 * @since 3.1.0
+	 *
+	 * @param $column_name
 	 * @access public
 	 */
-	public function save_template_type() {
-		// Make sure it is saved as a Landing Page in the Elementor Library Taxonomy.
-		wp_set_object_terms( $this->get_id(), Landing_Pages_Module::DOCUMENT_TYPE, Source_Local::TAXONOMY_TYPE_SLUG );
-
-		// Make sure it is saved as a Landing Page Elementor Template Type Meta.
-		return $this->update_main_meta( self::TYPE_META_KEY, $this->get_name() );
+	public function admin_columns_content( $column_name ) {
+		if ( 'elementor_library_type' === $column_name ) {
+			$this->print_admin_column_type();
+		}
 	}
 
 	protected function get_remote_library_config() {
