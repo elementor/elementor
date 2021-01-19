@@ -386,6 +386,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.$previewWrapper = $( '#elementor-preview' );
 
+		this.$responsiveTopBar = $( '.e-responsive-top-bar' );
+
 		this.$previewResponsiveWrapper = $( '#elementor-preview-responsive-wrapper' );
 
 		// Make sure the iFrame does not exist.

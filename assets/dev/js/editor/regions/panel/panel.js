@@ -43,17 +43,18 @@ module.exports = BaseRegion.extend( {
 			minWidth: 200,
 			maxWidth: 680,
 			start: function() {
-				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
+				elementor.$previewWrapper.add( jQuery( elementor.$responsiveTopBar ) ).addClass( 'ui-resizable-resizing' );
 			},
-			stop: function() {
-				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
+			stop: function( event, ui ) {
+				elementor.$previewWrapper.add( jQuery( elementor.$responsiveTopBar ) ).removeClass( 'ui-resizable-resizing' );
 
 				elementor.getPanelView().updateScrollbar();
 
-				self.saveSize();
+				self.saveStorage( 'size', ui.size.width + 'px' );
 			},
 			resize: function( event, ui ) {
-				document.body.style.setProperty( '--e-is-device-mode', ui.size.width );
+				elementorCommon.elements.$body.css( '--e-editor-panel-width', ui.size.width + 'px' );
+				self.$el.css( 'width', '' );
 			},
 		} );
 	},
