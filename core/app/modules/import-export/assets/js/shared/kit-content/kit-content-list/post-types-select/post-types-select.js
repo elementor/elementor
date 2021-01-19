@@ -22,8 +22,6 @@ function PostTypesSelect( props ) {
 			) );
 		};
 
-	console.log( '--- RENDER: PostTypesSelect()' );
-
 	return useMemo( () => (
 		<Grid container justify="center" className="kit-content-selection-container">
 			<Select2
