@@ -14,8 +14,6 @@ export default function KitContentCheckbox( props ) {
 			context.dispatch( { type: actionType, value: props.type } );
 		};
 
-	console.log( '--- RENDER: KitContentCheckbox() 222' );
-
 	return useMemo( () => (
 		<Checkbox checked={ isSelected() } onChange={ setIncludes } className={ props.className } />
 	), [ context.kitContent.includes ] );

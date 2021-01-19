@@ -6,9 +6,7 @@ export const Context = React.createContext();
 
 export default function KitContext( props ) {
 	const initialState = {
-		title: 'Initial Title',
 		includes: [],
-		postTypes: [],
 	},
 	[ kitContent, dispatch ] = useReducer( reducer, initialState );
 

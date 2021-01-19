@@ -40,7 +40,6 @@ const kitContentData = [
 			title: __( 'Content', 'elementor' ),
 			description: __( 'Elementor Pages, Custom Post Type', 'elementor' ),
 		},
-		hasSelect: true,
 	},
 	{
 		type: 'settings',
