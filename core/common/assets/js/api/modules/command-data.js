@@ -65,6 +65,11 @@ export default class CommandData extends CommandBase {
 				after = this.applyAfterUpdate;
 				break;
 
+			case 'options':
+				before = this.applyBeforeOptions;
+				after = this.applyAfterOptions;
+				break;
+
 			default:
 				return false;
 		}
@@ -176,6 +181,23 @@ export default class CommandData extends CommandBase {
 	 * @returns {{}} filtered result
 	 */
 	applyAfterUpdate( data, args = {} ) {// eslint-disable-line no-unused-vars
+		return data;
+	}
+
+	/**
+	 * @param [args={}]
+	 * @returns {{}} filtered args
+	 */
+	applyBeforeOptions( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterOptions( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
 	}
 
