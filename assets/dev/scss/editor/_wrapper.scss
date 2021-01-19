@@ -85,10 +85,14 @@ body {
 	}
 }
 
+.e-responsive-top-bar,
 #elementor-panel,
 #elementor-preview {
 
 	&:not(.ui-resizable-resizing) {
-		transition: $start .5s, width 0.5s, top 0.25s ease-in-out;
+		transition:
+				$start .5s ease-in-out,
+				width .5s ease-in-out,
+				top .25s ease-in-out;
 	}
 }
