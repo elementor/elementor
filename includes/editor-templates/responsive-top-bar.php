@@ -38,7 +38,7 @@ $breakpoints = [
 		</div>
 		<div class="e-mq-bar__col">
 
-			<button class="e-mq-bar__options-button">
+			<button class="e-mq-bar__settings-button">
 				<span class="elementor-screen-only">Close</span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
