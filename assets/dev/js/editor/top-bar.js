@@ -7,12 +7,6 @@ export default class TopBar extends Marionette.ItemView {
 		return 'e-responsive-top-bar';
 	}
 
-	events() {
-		return {
-			click: 'onClick',
-		};
-	}
-
 	templateHelpers() {
 		return {
 			title: this.getOption( 'title' ),
