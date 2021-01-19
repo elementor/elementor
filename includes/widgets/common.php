@@ -365,6 +365,162 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
+			'_section_masking',
+			[
+				'label' => __( 'Masking', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_mask_image',
+			[
+				'label' => __( 'Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'media_type' => 'image/svg+xml',
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-image: url( {{URL}} );',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_position',
+			[
+				'label' => __( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => __( 'Center Center', 'elementor' ),
+					'center left' => __( 'Center Left', 'elementor' ),
+					'center right' => __( 'Center Right', 'elementor' ),
+					'top center' => __( 'Top Center', 'elementor' ),
+					'top left' => __( 'Top Left', 'elementor' ),
+					'top right' => __( 'Top Right', 'elementor' ),
+					'bottom center' => __( 'Bottom Center', 'elementor' ),
+					'bottom left' => __( 'Bottom Left', 'elementor' ),
+					'bottom right' => __( 'Bottom Right', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-position: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_position_x',
+			[
+				'label' => __( 'X Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 50,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-position-x: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_position_y',
+			[
+				'label' => __( 'Y Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 50,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-position-y: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'auto' => __( 'Fit Element', 'elementor' ),
+					'cover' => __( 'Stretch', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => 'auto',
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-size: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_size_scale',
+			[
+				'label' => __( 'Scale', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%' ],
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 100,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-size: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'_mask_size' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_repeat',
+			[
+				'label' => __( 'Repeat', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'repeat' => __( 'Yes', 'elementor' ),
+					'no-repeat' => __( 'No', 'elementor' ),
+					'repeat-x' => __( 'Repeat X', 'elementor' ),
+					'repeat-Y' => __( 'Repeat Y', 'elementor' ),
+				],
+				'default' => 'no-repeat',
+				'selectors' => [
+					'{{WRAPPER}}' => 'mask-repeat: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'_section_position',
 			[
 				'label' => __( 'Positioning', 'elementor' ),
