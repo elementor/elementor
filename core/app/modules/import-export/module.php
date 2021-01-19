@@ -53,7 +53,15 @@ class Module extends BaseModule {
 	}
 
 	private function on_elementor_init() {
+		if ( empty( $_GET[ 'nonce' ] ) ) {
+			return;
+		}
+
 		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
+			if ( ! wp_verify_nonce( $_GET[ 'nonce' ], 'elementor_export' ) ) {
+				return;
+			}
+
 			$this->export = new Export();
 		}
 	}
