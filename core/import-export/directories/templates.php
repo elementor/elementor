@@ -21,7 +21,7 @@ class Templates extends Base {
 
 		$manifest_data = [];
 
-		foreach( $templates as $template ) {
+		foreach ( $templates as $template ) {
 			$template_document = Plugin::$instance->documents->get( $template['template_id'] );
 
 			$template_export_data = $template_document->get_export_data();

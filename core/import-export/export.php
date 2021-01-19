@@ -1,25 +1,18 @@
 <?php
 namespace Elementor\Core\Import_Export;
 
-use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Import_Export\Directories\Root;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Export extends Base_Object {
+class Export extends Iterator {
 
 	/**
 	 * @var \ZipArchive
 	 */
 	private $zip_archive;
-
-	private $current_archive_path = '';
-
-	private function get_archive_file_path( $file_name ) {
-		return $this->get_current_archive_path() . $file_name;
-	}
 
 	private function init_zip_archive() {
 		$zip_archive = new \ZipArchive();
@@ -34,26 +27,10 @@ class Export extends Base_Object {
 	}
 
 	private function get_archive_file_name() {
-		return __DIR__ . $this->get_archive_relative_file_name();
+		return __DIR__ . DIRECTORY_SEPARATOR . $this->get_archive_relative_file_name();
 	}
 
-	protected function get_init_settings() {
-		return $_GET[ Manager::EXPORT_TRIGGER_KEY ];
-	}
-
-	public function get_current_archive_path() {
-		return $this->current_archive_path;
-	}
-
-	public function set_current_archive_path( $path ) {
-		$this->current_archive_path = $path . '/';
-	}
-
-	public function add_json_file( $name, $content, $json_flags = null ) {
-		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), json_encode( $content, $json_flags ) );
-	}
-
-	public function run() {
+	protected function run() {
 		$this->init_zip_archive();
 
 		$root_directory = new Root( $this );
@@ -79,5 +56,13 @@ class Export extends Base_Object {
 		unlink( $file_name );
 
 		die;
+	}
+
+	protected function get_init_settings() {
+		return $_GET[ Manager::EXPORT_TRIGGER_KEY ];
+	}
+
+	public function add_json_file( $name, $content, $json_flags = null ) {
+		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), json_encode( $content, $json_flags ) );
 	}
 }

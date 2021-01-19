@@ -28,12 +28,17 @@ class Root extends Base {
 
 		$kit_post = $kit->get_post();
 
+		$kit_title = $this->exporter->get_settings( 'title' );
+
+		$kit_name = sanitize_title( $kit_title );
+
 		$manifest_data = [
 			'author' => get_the_author_meta( 'display_name', $kit_post->post_author ),
 			'version' => Manager::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'created' => date( 'Y-m-d H:i:s' ),
-			'title' => $this->exporter->get_settings( 'include' ),
+			'name' => $kit_name,
+			'title' => $kit_title,
 			'description' => $kit_post->post_excerpt,
 			'image' => get_the_post_thumbnail_url( $kit_post ),
 		];
@@ -45,10 +50,21 @@ class Root extends Base {
 		return $manifest_data;
 	}
 
+	protected function import( array $settings ) {
+		$new_kit_id = Plugin::$instance->kits_manager->create( [
+			'post_title' => $settings['title'],
+			'post_excerpt' => $settings['description'],
+		] );
+
+		$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [
+			'url' => $settings['image'],
+		], $new_kit_id );
+	}
+
 	protected function get_default_sub_directories() {
 		return [
-			new Templates( $this->exporter, $this ),
-			new Content( $this->exporter, $this ),
+			new Templates( $this->iterator, $this ),
+			new Content( $this->iterator, $this ),
 		];
 	}
 }
