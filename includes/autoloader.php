@@ -42,15 +42,43 @@ class Autoloader {
 	private static $classes_aliases;
 
 	/**
+	 * Default path for autoloader.
+	 *
+	 * @var string
+	 */
+	private static $default_path;
+
+	/**
+	 * Default namespace for autoloader.
+	 *
+	 * @var string
+	 */
+	private static $default_namespace;
+
+	/**
 	 * Run autoloader.
 	 *
 	 * Register a function as `__autoload()` implementation.
+	 *
+	 * @param string $default_path
+	 * @param string $default_namespace
 	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
 	 */
-	public static function run() {
+	public static function run( $default_path = '', $default_namespace = '' ) {
+		if ( '' === $default_path ) {
+			$default_path = ELEMENTOR_PATH;
+		}
+
+		if ( '' === $default_namespace ) {
+			$default_namespace = __NAMESPACE__;
+		}
+
+		self::$default_path = $default_path;
+		self::$default_namespace = $default_namespace;
+
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
@@ -249,7 +277,7 @@ class Autoloader {
 		$classes_map = self::get_classes_map();
 
 		if ( isset( $classes_map[ $relative_class_name ] ) ) {
-			$filename = ELEMENTOR_PATH . '/' . $classes_map[ $relative_class_name ];
+			$filename = self::$default_path . '/' . $classes_map[ $relative_class_name ];
 		} else {
 			$filename = strtolower(
 				preg_replace(
@@ -259,7 +287,7 @@ class Autoloader {
 				)
 			);
 
-			$filename = ELEMENTOR_PATH . $filename . '.php';
+			$filename = self::$default_path . $filename . '.php';
 		}
 
 		if ( is_readable( $filename ) ) {
@@ -279,11 +307,11 @@ class Autoloader {
 	 * @param string $class Class name.
 	 */
 	private static function autoload( $class ) {
-		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
+		if ( 0 !== strpos( $class, self::$default_namespace . '\\' ) ) {
 			return;
 		}
 
-		$relative_class_name = preg_replace( '/^' . __NAMESPACE__ . '\\\/', '', $class );
+		$relative_class_name = preg_replace( '/^' . self::$default_namespace . '\\\/', '', $class );
 
 		$classes_aliases = self::get_classes_aliases();
 
@@ -296,7 +324,7 @@ class Autoloader {
 			$relative_class_name = $alias_data['replacement'];
 		}
 
-		$final_class_name = __NAMESPACE__ . '\\' . $relative_class_name;
+		$final_class_name = self::$default_namespace . '\\' . $relative_class_name;
 
 		if ( ! class_exists( $final_class_name ) ) {
 			self::load_class( $relative_class_name );
