@@ -7,7 +7,7 @@ export const Context = React.createContext();
 export default function KitContext( props ) {
 	const initialState = {
 		includes: [],
-		downloadURL: '/import',
+		downloadURL: '',
 	},
 	[ kitContent, dispatch ] = useReducer( reducer, initialState );
 
