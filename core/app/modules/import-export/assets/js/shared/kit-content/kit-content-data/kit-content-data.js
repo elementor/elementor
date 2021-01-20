@@ -2,25 +2,12 @@ const kitContentData = [
 	{
 		type: 'templates',
 		data: {
-			title: __( 'Templates', 'elementor' ),
+			title: __( 'Theme builder & Templates', 'elementor' ),
 			features: {
 				open: [
 					__( 'Landing Pages', 'elementor' ),
 					__( 'Saved Templates (Sections, Page)', 'elementor' ),
 				],
-				locked: [
-					__( 'Popups', 'elementor' ),
-				],
-			},
-			notice: __( 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected', 'elementor' ),
-		},
-	},
-	{
-		type: 'theme-builder',
-		data: {
-			title: __( 'Theme builder', 'elementor' ),
-			features: {
-				open: [],
 				locked: [
 					__( 'Headers', 'elementor' ),
 					__( 'Footers', 'elementor' ),
@@ -29,6 +16,7 @@ const kitContentData = [
 					__( 'Single Pages', 'elementor' ),
 					__( 'Search Results', 'elementor' ),
 					__( '404 Error Page', 'elementor' ),
+					__( 'Popups', 'elementor' ),
 				],
 			},
 			notice: __( 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected', 'elementor' ),
@@ -38,7 +26,7 @@ const kitContentData = [
 		type: 'content',
 		data: {
 			title: __( 'Content', 'elementor' ),
-			description: __( 'Elementor Pages, Custom Post Type', 'elementor' ),
+			description: __( 'Elementor Pages', 'elementor' ),
 		},
 	},
 	{
