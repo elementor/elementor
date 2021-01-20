@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import Layout from '../../templates/layout';
-import Notice from '../../ui/notice/notice';
-import Title from '../../ui/title/title';
+import Layout from '../../../templates/layout';
+import Notice from '../../../ui/notice/notice';
+import Title from '../../../ui/title/title';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
-import useFile from '../../hooks/use-file/use-file';
+import useFile from '../../../hooks/use-file/use-file';
 
-import './import.scss';
+import './import-kit.scss';
 
-export default function Import() {
+export default function ImportKit() {
 	const [ isLoading, setLoading ] = useState( false ),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		{ setFile } = useFile(),

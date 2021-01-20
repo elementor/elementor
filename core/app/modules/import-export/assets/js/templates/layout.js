@@ -1,5 +1,4 @@
 import Page from 'elementor-app/layout/page';
-import KitContext from '../context/kit-context';
 
 export default function Layout( props ) {
 	const config = {
@@ -9,11 +8,7 @@ export default function Layout( props ) {
 		footer: props.footer,
 	};
 
-	return (
-		<KitContext>
-			<Page { ...config } />
-		</KitContext>
-	);
+	return <Page { ...config } />;
 }
 
 Layout.propTypes = {
