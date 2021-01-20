@@ -423,7 +423,7 @@ class Module extends BaseModule {
 			}, 10, 3 );
 
 			// The query itself only has to be manipulated when pages are viewed in the front end.
-			if ( ! is_admin() || is_ajax() ) {
+			if ( ! is_admin() || wp_doing_ajax() ) {
 				add_action( 'pre_get_posts', function ( $query ) {
 					$this->adjust_landing_page_query( $query );
 				} );
