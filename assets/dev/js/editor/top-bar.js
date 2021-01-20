@@ -59,6 +59,25 @@ export default class TopBar extends Marionette.ItemView {
 	}
 
 	onBreakpointSettingsOpen() {
+		const isWPPreviewMode = elementorCommon.elements.$body.hasClass( 'elementor-editor-preview' );
+
+		if ( isWPPreviewMode ) {
+			// Exit Preview Mode
+			elementor.panel.$el.find( '#elementor-mode-switcher-preview-input' ).trigger( 'click' );
+		}
+
+		const isInSettingsPanelActive = 'panel/global/menu' === elementor.documents.currentDocument.config.panel.default_route;
+
+		if ( isInSettingsPanelActive ) {
+			// Shake the panel
+			_( 6 ).times( ( n ) => {
+				_.delay( () => elementor.panel.$el.css( 'margin-left', ( ( ( n + 1 ) % 2 ) * 5 ) + 'px' ), n * 70 );
+			} );
+
+			return;
+		}
+
+		//  Open Settings Panel for Global/Layout/Breakpoints Settings
 		$e.run( 'editor/documents/switch', {
 			id: elementor.config.kit_id,
 			mode: 'autosave',
