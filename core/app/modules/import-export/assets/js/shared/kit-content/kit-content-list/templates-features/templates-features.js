@@ -6,24 +6,16 @@ export default function TemplatesFeatures( props ) {
 
 		return (
 			<span className="kit-content-list__locked-features">
-				{ props.features.locked.join( ', ' ) }
+				{ props.features.locked.join( ', ' ) + ', ' }
 			</span>
 		);
 	},
-	getOpenFeatures = () => {
-		let openFeatures = props.features.open?.join( ', ' );
-
-		if ( openFeatures && getLockedFeatures() ) {
-			openFeatures += ', ';
-		}
-
-		return openFeatures;
-	};
+	getOpenFeatures = () => props.features.open?.join( ', ' );
 
 	return (
 		<>
-			{ getOpenFeatures() }
 			{ getLockedFeatures() }
+			{ getOpenFeatures() }
 		</>
 	);
 }
