@@ -143,7 +143,24 @@ class Favorites extends Endpoint {
 			unset( $favorites_widgets[ $widget_id ] );
 		}
 
-		return update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
-	}
+		$update_favorites = update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
+		if ( $update_favorites ) {
+			$this->add_tracking_data();
+		}
 
+		return $update_favorites;
+ 	}
+
+	/**
+	 * Update tracking data for favorites-widgets-panel
+	 */
+	private function add_tracking_data() {
+		add_filter( 'elementor/tracker/send_tracking_data_params', function( $params ) {
+			$params['usages']['favorites_widgets_panel'] = $this->get_favorite_widget();
+			return $params;
+		} );
+		//add_action( 'elementor/document/before_save', function( $document, $data ) {
+		//
+		//} );
+	}
 }
