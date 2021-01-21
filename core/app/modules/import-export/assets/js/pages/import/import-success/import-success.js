@@ -1,14 +1,8 @@
 import Layout from '../../../templates/layout';
-import Message from '../../../ui/message/message';
+import WizardStep from '../../../ui/wizard-step/wizard-step';
 import ClickHere from '../../../ui/click-here/click-here';
 import Footer from '../../../ui/footer/footer';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
 import Button from 'elementor-app/ui/molecules/button';
-
-import './import-success.scss';
-import ClickToDownload from "../../export/export-complete/components/click-to-download/click-to-download";
-import WizardStep from "../../../ui/wizard-step/wizard-step";
 
 export default function ImportSuccess() {
 	const getFooter = () => (
