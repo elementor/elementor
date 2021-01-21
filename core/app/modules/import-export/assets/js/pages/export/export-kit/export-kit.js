@@ -7,8 +7,6 @@ import ExportButton from './components/export-button/export-button';
 import Footer from '../../../ui/footer/footer';
 import KitContent from './components/kit-content/kit-content';
 
-import '../../import-export.scss';
-
 export default function ExportKit() {
 	const [ isDownloading, setIsDownloading ] = useState( false ),
 		getFooter = () => {
