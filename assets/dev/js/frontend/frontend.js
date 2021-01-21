@@ -6,7 +6,7 @@ import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper';
+import Swiper from './utils/swiper-bc';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),

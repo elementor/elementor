@@ -17,7 +17,7 @@
 	}
 
 	if ( tabConfig.additionalContent ) {
-		#> {{ tabConfig.additionalContent }} <#
+		#> {{{ tabConfig.additionalContent }}} <#
 	}
 	#>
 </script>
