@@ -2,17 +2,12 @@ import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import Footer from '../../../ui/footer/footer';
 import ClickToDownload from './components/click-to-download/click-to-download';
-import Button from 'elementor-app/ui/molecules/button';
+import DashboardButton from '../../../shared/dashboard-button/dashboard-button';
 
 export default function ExportComplete() {
 	const getFooter = () => (
 		<Footer separator justify="end">
-			<Button
-				variant="contained"
-				text={ __( 'Back to dashboard', 'elementor' ) }
-				color="primary"
-				url="#"
-			/>
+			<DashboardButton />
 		</Footer>
 	);
 

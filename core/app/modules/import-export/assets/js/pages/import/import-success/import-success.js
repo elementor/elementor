@@ -2,17 +2,12 @@ import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import ClickHere from '../../../ui/click-here/click-here';
 import Footer from '../../../ui/footer/footer';
-import Button from 'elementor-app/ui/molecules/button';
+import DashboardButton from '../../../shared/dashboard-button/dashboard-button';
 
 export default function ImportSuccess() {
 	const getFooter = () => (
 		<Footer separator justify="end">
-			<Button
-				variant="contained"
-				text={ __( 'View Live Site', 'elementor' ) }
-				color="primary"
-				url="#"
-			/>
+			<DashboardButton />
 		</Footer>
 	);
 
