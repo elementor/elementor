@@ -377,7 +377,7 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'media_type' => 'image/svg+xml',
+				'media_type' => 'image',
 				'selectors' => [
 					'{{WRAPPER}}' => 'mask-image: url( {{URL}} );',
 				],
