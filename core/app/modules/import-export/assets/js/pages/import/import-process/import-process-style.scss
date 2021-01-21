@@ -1,5 +1,16 @@
-.e-app-import-process {
+$e-app-import-process-icon-color: tints(500);
+$e-app-import-process-icon-dark-color: dark-tints(200);
+$e-app-import-process-text-color: tints(500);
+$e-app-import-process-text-dark-color: dark-tints(200);
+
+$root: e-app-import-process;
+
+.#{$root} {
+	--e-app-import-process-icon-color: #{$e-app-import-process-icon-color};
+	--e-app-import-process-text-color: #{$e-app-import-process-text-color};
+
 	&__icon {
+		color: var(--e-app-import-process-icon-color);
 		font-size: 30px;
 		margin-bottom: spacing(44);
 	}
@@ -8,7 +19,14 @@
 		margin-bottom: spacing(24);
 	}
 
-	&__content {
-		color: tints(500);
+	&__text {
+		color: var(--e-app-import-process-text-color);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-process-icon-color: #{$e-app-import-process-icon-dark-color};
+		--e-app-import-process-text-color: #{$e-app-import-process-text-dark-color};
 	}
 }

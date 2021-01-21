@@ -1,10 +1,16 @@
+$import-export-wizard-step-icon-color: tints(400);
+$import-export-wizard-step-icon-dark-color: dark-tints(400);
 $import-export-wizard-step-text-color: tints(500);
 $import-export-wizard-step-text-dark-color: dark-tints(200);
+$import-export-wizard-step-bottom-text-color: tints(500);
+$import-export-wizard-step-bottom-text-dark-color: dark-tints(200);
 
 $root: import-export-wizard-step;
 
 .#{$root} {
+	--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-color};
 	--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-color};
+	--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-color};
 
 	text-align: center;
 
@@ -15,7 +21,7 @@ $root: import-export-wizard-step;
 
 	&__icon {
 		margin-bottom: spacing(44);
-		color: tints(400);
+		color: var(--import-export-wizard-step-icon-color);
 		font-size: 50px;
 	}
 
@@ -31,13 +37,15 @@ $root: import-export-wizard-step;
 		display: block;
 		position: fixed;
 		bottom: spacing(44);
-		color: tints(500);
+		color: var(--import-export-wizard-step-bottom-text-color);
 		font-style: italic;
 	}
 }
 
 .eps-theme-dark {
 	.#{$root} {
+		--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-dark-color};
 		--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-dark-color};
+		--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-dark-color};
 	}
 }
