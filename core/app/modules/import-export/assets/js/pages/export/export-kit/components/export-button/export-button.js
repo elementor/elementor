@@ -28,7 +28,6 @@ export default function ExportButton( props ) {
 					return (
 						<Button
 							variant="contained"
-							size="lg"
 							text={ __( 'Export', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
 							url={ downloadURL }
