@@ -27,7 +27,7 @@ export default function DropZone( props ) {
 
 				{ props.text && <Text variant="xl" className="e-app-drop-zone__text">{ props.text }</Text> }
 
-				{ props.secondaryText && <Text variant="xl">{ props.secondaryText }</Text> }
+				{ props.secondaryText && <Text variant="xl" className="e-app-drop-zone__secondary-text">{ props.secondaryText }</Text> }
 
 				{ props.showButton && <UploadFile isLoading={ props.isLoading } onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
 			</DragDrop>
