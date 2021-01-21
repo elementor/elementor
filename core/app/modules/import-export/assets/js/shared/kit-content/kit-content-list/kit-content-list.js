@@ -8,18 +8,20 @@ import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 
+import useLink from '../../../hooks/use-link/use-link';
 import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content-list.scss';
 
 function KitContentList() {
 	const hasPro = elementorAppConfig.hasPro,
+	{ url } = useLink(),
 	getProFeaturesIndication = () => (
 		<a
 			className="kit-content-list__pro-indication"
 			target="_blank"
 			rel="noopener noreferrer"
-			href="https://elementor.com/pro/">
+			href={ url.goPro }>
 				<Button
 					variant="contained"
 					size="sm"

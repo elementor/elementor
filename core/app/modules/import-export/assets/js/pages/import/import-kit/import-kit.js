@@ -7,27 +7,33 @@ import DropZone from 'elementor-app/organisms/drop-zone';
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
 import useFile from '../../../hooks/use-file/use-file';
+import useLink from '../../../hooks/use-link/use-link';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
 	const [ isLoading, setLoading ] = useState( false ),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
+		{ action } = useLink(),
 		{ setFile } = useFile(),
 		onFileSelect = ( files ) => {
 			setFile( files[ 0 ] );
 			setIsImportFailed( false );
+		},
+		resetImportProcess = () => {
+			setIsImportFailed( false );
+			setFile( null );
 		};
 
 	const getDialog = () => (
 		<Dialog
 			title={ __( 'Import Failed', 'elementor' ) }
 			text={ __( 'We are sorry, but some problem accrued. Please try again. If the problem continues, contact our support.', 'elementor' ) }
-			approveButtonUrl="https://go.elementor.com/app-theme-builder-load-issue"
 			approveButtonColor="primary"
-			approveButtonTarget="_blank"
 			approveButtonText={ __( 'Retry', 'elementor' ) }
-			dismissButtonText={ __( 'Cancel', 'elementor' ) }
+			approveButtonOnClick={ resetImportProcess }
+			dismissButtonText={ __( 'Exit', 'elementor' ) }
+			dismissButtonOnClick={ action.backToDashboard }
 		/>
 	);
 
