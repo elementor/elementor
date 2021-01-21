@@ -1,5 +1,6 @@
-import useLink from '../../hooks/use-link/use-link';
 import Button from 'elementor-app/ui/molecules/button';
+
+import useLink from '../../hooks/use-link/use-link';
 
 export default function DashboardButton() {
 	const { action } = useLink();
