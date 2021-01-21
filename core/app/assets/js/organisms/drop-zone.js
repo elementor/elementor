@@ -25,7 +25,7 @@ export default function DropZone( props ) {
 
 				{ props.heading && <Heading variant="display-3">{ props.heading }</Heading> }
 
-				{ props.text && <Text variant="xl">{ props.text }</Text> }
+				{ props.text && <Text variant="xl" className="e-app-drop-zone__text">{ props.text }</Text> }
 
 				{ props.secondaryText && <Text variant="xl">{ props.secondaryText }</Text> }
 
