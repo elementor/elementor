@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 
-import { Context as KitContext } from '../../../../context/kit-context';
+import { Context as KitContext } from '../../../../../../../context/kit-context';
 
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 

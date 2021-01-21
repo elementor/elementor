@@ -5,7 +5,7 @@ import Layout from '../../../templates/layout';
 import Title from '../../../ui/title/title';
 import ExportButton from './components/export-button/export-button';
 import Footer from '../../../ui/footer/footer';
-import KitContent from '../../../shared/kit-content/kit-content';
+import KitContent from './components/kit-content/kit-content';
 
 import '../../import-export.scss';
 
