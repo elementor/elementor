@@ -1,6 +1,6 @@
 import Layout from '../../../templates/layout';
 import KitContent from '../../../shared/kit-content/kit-content';
-import Footer from '../../../shared/footer/footer';
+import Footer from '../../../ui/footer/footer';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
 

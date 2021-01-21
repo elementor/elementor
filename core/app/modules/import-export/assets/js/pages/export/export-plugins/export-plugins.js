@@ -1,5 +1,5 @@
 import Layout from '../../../templates/layout';
-import Footer from '../../../shared/footer/footer';
+import Footer from '../../../ui/footer/footer';
 import ExportPluginsList from './components/export-plugins-list/export-plugins-list';
 import Box from 'elementor-app/ui/atoms/box';
 import Button from 'elementor-app/ui/molecules/button';

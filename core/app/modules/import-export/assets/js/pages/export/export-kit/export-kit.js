@@ -4,11 +4,10 @@ import { Redirect } from '@reach/router';
 import Layout from '../../../templates/layout';
 import Title from '../../../ui/title/title';
 import ExportButton from './components/export-button/export-button';
-import Footer from '../../../shared/footer/footer';
+import Footer from '../../../ui/footer/footer';
 import KitContent from '../../../shared/kit-content/kit-content';
 
 import '../../import-export.scss';
-import './export-kit.scss';
 
 export default function ExportKit() {
 	const [ isDownloading, setIsDownloading ] = useState( false ),
