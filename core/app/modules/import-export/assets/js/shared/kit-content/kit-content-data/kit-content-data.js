@@ -5,8 +5,8 @@ const kitContentData = [
 			title: __( 'Theme builder & Templates', 'elementor' ),
 			features: {
 				open: [
+					__( 'Saved Templates', 'elementor' ),
 					__( 'Landing Pages', 'elementor' ),
-					__( 'Saved Templates (Sections, Page)', 'elementor' ),
 				],
 				locked: [
 					__( 'Headers', 'elementor' ),
@@ -19,7 +19,6 @@ const kitContentData = [
 					__( 'Popups', 'elementor' ),
 				],
 			},
-			notice: __( 'Site Parts, Global widgets and Popups will are available only when Elementor Pro license is Connected', 'elementor' ),
 		},
 	},
 	{
