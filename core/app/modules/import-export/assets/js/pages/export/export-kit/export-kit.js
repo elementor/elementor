@@ -27,8 +27,11 @@ export default function ExportKit() {
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export">
 				<Title
-					primary={ __( 'Choose What to Include in the Kit', 'elementor' ) }
-					secondary={ [ __( 'Choose the kit components to export, such as pages, site setting, headers and more.', 'elementor' ), __( 'By default, we will export all the components.', 'elementor' ) ] }
+					primary={ __( 'Choose What To Include In The Kit', 'elementor' ) }
+					secondary={ [
+						__( 'Choose the kit components to export, such as pages, site setting, headers and more.', 'elementor' ),
+						__( 'By default, we will export all the components.', 'elementor' ),
+					] }
 				/>
 
 				{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <KitContent type="export" /> }

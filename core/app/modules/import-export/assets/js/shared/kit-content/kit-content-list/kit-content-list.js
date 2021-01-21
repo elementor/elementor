@@ -2,7 +2,6 @@ import { memo } from 'react';
 
 import TemplatesFeatures from './templates-features/templates-features';
 import KitContentCheckbox from './kit-content-checkbox/kit-content-checkbox';
-import Notice from '../../../ui/notice/notice';
 import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
@@ -13,24 +12,19 @@ import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content-list.scss';
 
-function KitContentList( props ) {
-	const getButton = () => (
-		<Grid item>
-			<Button variant="contained" color="cta" text={ __( 'Lear More', 'elementor' ) } url="/#" />
-		</Grid>
-	),
-	getNotice = ( notice ) => (
-		<Notice color="warning" className="kit-content-list__notice">
-			{ notice }
-		</Notice>
-	),
+function KitContentList() {
+	const hasPro = elementorAppConfig.hasPro,
 	getProFeaturesIndication = () => (
 		<Text variant="sm" tag="span" color="cta" className="kit-content-list__pro-indication">
-			<strong data-value={ Math.random() }>{ __( 'Pro Features', 'elementor' ) }</strong>
+			<Button
+				variant="contained"
+				size="sm"
+				text={ __( 'Go Pro', 'elementor' ) }
+				color="cta"
+				url="#"
+			/>
 		</Text>
 	);
-
-	console.log( '--- RENDER: KitContentList()' );
 
 	return (
 		<List separated className="kit-content-list">
@@ -45,10 +39,10 @@ function KitContentList( props ) {
 
 								<Grid item>
 									<Text variant="sm" tag="span" className="kit-content-list__description">
-										{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } /> ) }
+										{ item.data.description || ( item.data.features && <TemplatesFeatures features={ item.data.features } hasPro={ hasPro } /> ) }
 									</Text>
 
-									{ elementorAppConfig.hasPro && getProFeaturesIndication() }
+									{ item.data.features && ! hasPro && getProFeaturesIndication() }
 								</Grid>
 							</Grid>
 						</Grid>

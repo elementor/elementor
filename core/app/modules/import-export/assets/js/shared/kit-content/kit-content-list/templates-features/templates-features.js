@@ -5,8 +5,8 @@ export default function TemplatesFeatures( props ) {
 		}
 
 		return (
-			<span className="kit-content-list__locked-features">
-				{ props.features.locked.join( ', ' ) + ', ' }
+			<span className={ props.hasPro ? '' : 'kit-content-list__locked-features' }>
+				{ ', ' + props.features.locked.join( ', ' ) }
 			</span>
 		);
 	},
@@ -14,12 +14,13 @@ export default function TemplatesFeatures( props ) {
 
 	return (
 		<>
-			{ getLockedFeatures() }
 			{ getOpenFeatures() }
+			{ getLockedFeatures() }
 		</>
 	);
 }
 
 TemplatesFeatures.propTypes = {
 	features: PropTypes.object,
+	hasPro: PropTypes.bool,
 };

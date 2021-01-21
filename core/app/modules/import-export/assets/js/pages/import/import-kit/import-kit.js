@@ -24,9 +24,9 @@ export default function ImportKit() {
 			title={ __( 'Import Failed', 'elementor' ) }
 			text={ __( 'We are sorry, but some problem accrued. Please try again. If the problem continues, contact our support.', 'elementor' ) }
 			approveButtonUrl="https://go.elementor.com/app-theme-builder-load-issue"
-			approveButtonColor="danger"
+			approveButtonColor="primary"
 			approveButtonTarget="_blank"
-			approveButtonText={ __( 'Exit', 'elementor' ) }
+			approveButtonText={ __( 'Retry', 'elementor' ) }
 			dismissButtonText={ __( 'Cancel', 'elementor' ) }
 		/>
 	);

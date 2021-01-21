@@ -29,7 +29,7 @@ export default function Title( props ) {
 
 	return (
 		<div className={ Utils.arrayToClassName( classes ) }>
-			{ props.primary && <Heading variant="h3" className="import-export-title__primary">{ props.primary }</Heading> }
+			{ props.primary && <Heading variant="display-3" className="import-export-title__primary">{ props.primary }</Heading> }
 			{ props.secondary && <Text className="import-export-title__secondary">{ handleMultiLine( props.secondary ) }</Text> }
 		</div>
 	);
