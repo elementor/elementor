@@ -15,15 +15,18 @@ import './kit-content-list.scss';
 function KitContentList() {
 	const hasPro = elementorAppConfig.hasPro,
 	getProFeaturesIndication = () => (
-		<Text variant="sm" tag="span" color="cta" className="kit-content-list__pro-indication">
-			<Button
-				variant="contained"
-				size="sm"
-				text={ __( 'Go Pro', 'elementor' ) }
-				color="cta"
-				url="#"
-			/>
-		</Text>
+		<a
+			className="kit-content-list__pro-indication"
+			target="_blank"
+			rel="noopener noreferrer"
+			href="https://elementor.com/pro/">
+				<Button
+					variant="contained"
+					size="sm"
+					text={ __( 'Go Pro', 'elementor' ) }
+					color="cta"
+				/>
+		</a>
 	);
 
 	return (
