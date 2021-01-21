@@ -12,6 +12,8 @@ $root: import-export-wizard-step;
 	--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-color};
 	--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-color};
 
+	height: 100%;
+	position: relative;
 	text-align: center;
 
 	&__image-container {
@@ -35,10 +37,11 @@ $root: import-export-wizard-step;
 
 	&__bottom-text {
 		display: block;
-		position: fixed;
-		bottom: spacing(44);
+		position: absolute;/**/
+		bottom: 0;
 		color: var(--import-export-wizard-step-bottom-text-color);
 		font-style: italic;
+		margin-bottom: 0;
 	}
 }
 
