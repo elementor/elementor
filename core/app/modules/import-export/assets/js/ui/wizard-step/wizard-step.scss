@@ -1,0 +1,43 @@
+$import-export-wizard-step-text-color: tints(500);
+$import-export-wizard-step-text-dark-color: dark-tints(200);
+
+$root: import-export-wizard-step;
+
+.#{$root} {
+	--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-color};
+
+	text-align: center;
+
+	&__image-container {
+		height: 140px;
+		margin: (spacing(44) * 2) 0 spacing(44);
+	}
+
+	&__icon {
+		margin-bottom: spacing(44);
+		color: tints(400);
+		font-size: 50px;
+	}
+
+	&__title {
+		margin-bottom: spacing(24);
+	}
+
+	&__text {
+		color: var(--import-export-wizard-step-text-color);
+	}
+
+	&__bottom-text {
+		display: block;
+		position: fixed;
+		bottom: spacing(44);
+		color: tints(500);
+		font-style: italic;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-dark-color};
+	}
+}
