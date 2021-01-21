@@ -34,7 +34,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <KitContent type="export" /> }
+				{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <KitContent /> }
 			</section>
 		</Layout>
 	);

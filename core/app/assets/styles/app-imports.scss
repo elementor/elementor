@@ -20,7 +20,6 @@
 @import "../../modules/site-editor/assets/js/templates/site-editor.scss";
 @import "../../modules/site-editor/assets/scss/loading.scss";
 @import "../js/ui/atoms/checkbox.scss";
-@import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/kit-content-list/post-types-select/post-types-select.scss";
 @import "../../modules/import-export/assets/js/ui/click-here/click-here.scss";
 @import "../js/ui/molecules/select2.scss";
 @import "../js/ui/atoms/drag-drop.scss";
@@ -29,7 +28,6 @@
 @import "../../modules/import-export/assets/js/ui/footer/footer.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-success/import-success-list/import-success-list.scss";
 @import "../../modules/import-export/assets/js/ui/message/message.scss";
-@import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/kit-content-list/kit-content-list.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-process/import-process-style.scss";
 @import "../js/ui/atoms/box.scss";
 @import "../js/ui/molecules/list.scss";
@@ -48,7 +46,6 @@
 @import "../../modules/import-export/assets/js/ui/click-here/click-here.scss";
 @import "../../modules/import-export/assets/js/ui/notice/notice.scss";
 @import "../../modules/import-export/assets/js/ui/footer/footer.scss";
-@import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/kit-content-list/kit-content-list.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/template-type.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/add-new.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/conditions/conditions.scss";
@@ -58,3 +55,5 @@
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/atoms/indicator-bullet.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-kit/import-kit.scss";
 @import "../../modules/import-export/assets/js/ui/wizard-step/wizard-step.scss";
+@import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/kit-content.scss";
+@import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/components/templates-features/templates-features.scss";

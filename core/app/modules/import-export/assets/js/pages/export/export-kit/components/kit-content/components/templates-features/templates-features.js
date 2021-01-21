@@ -1,3 +1,5 @@
+import './templates-features.scss';
+
 export default function TemplatesFeatures( props ) {
 	const getLockedFeatures = () => {
 		if ( ! props.features.locked?.length ) {
@@ -5,7 +7,7 @@ export default function TemplatesFeatures( props ) {
 		}
 
 		return (
-			<span className={ props.hasPro ? '' : 'kit-content-list__locked-features' }>
+			<span className={ props.isLocked ? 'e-app-export-templates-features__locked' : '' }>
 				{ ', ' + props.features.locked.join( ', ' ) }
 			</span>
 		);
@@ -22,5 +24,5 @@ export default function TemplatesFeatures( props ) {
 
 TemplatesFeatures.propTypes = {
 	features: PropTypes.object,
-	hasPro: PropTypes.bool,
+	isLocked: PropTypes.bool,
 };

@@ -1,0 +1,45 @@
+$kit-content-title-color: tints(700);
+$kit-content-title-dark-color: dark-tints(100);
+$kit-content-description-color: tints(600);
+$kit-content-description-dark-color: dark-tints(200);
+
+$root: kit-content;
+
+.#{$root} {
+	--kit-content-title-color: #{$kit-content-title-color};
+	--kit-content-description-color: #{$kit-content-description-color};
+
+	&__checkbox {
+		flex-shrink: 0;
+		margin-inline-end: spacing(12);
+	}
+
+	&__title {
+		color: var(--kit-content-title-color);
+	}
+
+	&__description {
+		color: var(--kit-content-description-color);
+	}
+
+	&__go-pro-button {
+		margin-inline-start: spacing(20);
+	}
+
+	&__notice {
+		margin-top: spacing(16);
+	}
+
+	.kit-content-grid {
+		&--expand {
+			flex-grow: 1;
+		}
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--kit-content-title-color: #{$kit-content-title-dark-color};
+		--kit-content-description-color: #{$kit-content-description-dark-color};
+	}
+}
