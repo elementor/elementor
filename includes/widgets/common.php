@@ -379,7 +379,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::MEDIA,
 				'media_type' => 'image',
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-image: url( {{URL}} );',
+					'{{WRAPPER}}' => '-webkit-mask-image: url( {{URL}} );',
 				],
 			]
 		);
@@ -403,7 +403,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'default' => 'center center',
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-position: {{VALUE}};',
+					'{{WRAPPER}}' => '-webkit-mask-position: {{VALUE}};',
 				],
 			]
 		);
@@ -425,7 +425,7 @@ class Widget_Common extends Widget_Base {
 					'size' => 50,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-position-x: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '-webkit-mask-position-x: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'_mask_position' => 'custom',
@@ -450,7 +450,7 @@ class Widget_Common extends Widget_Base {
 					'size' => 50,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-position-y: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '-webkit-mask-position-y: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'_mask_position' => 'custom',
@@ -470,7 +470,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'default' => 'auto',
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-size: {{VALUE}};',
+					'{{WRAPPER}}' => '-webkit-mask-size: {{VALUE}};',
 				],
 			]
 		);
@@ -492,7 +492,7 @@ class Widget_Common extends Widget_Base {
 					'size' => 100,
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '-webkit-mask-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'_mask_size' => 'custom',
@@ -513,7 +513,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'default' => 'no-repeat',
 				'selectors' => [
-					'{{WRAPPER}}' => 'mask-repeat: {{VALUE}};',
+					'{{WRAPPER}}' => '-webkit-mask-repeat: {{VALUE}};',
 				],
 			]
 		);
