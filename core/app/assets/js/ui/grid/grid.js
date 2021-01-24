@@ -81,11 +81,7 @@ Grid.propTypes = {
 	lg: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xxl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any,
 };
 
 Grid.defaultProps = {
