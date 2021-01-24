@@ -317,11 +317,9 @@ body {
 
 	&__separator {
 		margin: 15px -12px;
-		border: 1px solid $wp-warning;
 	}
 
 	&__icon {
-		color: $wp-warning-text;
 		font-size: 17px;
 		@include margin-end(9px);
 		@include margin-start(2px);
@@ -334,6 +332,26 @@ body {
 
 	+ p {
 		display: none;
+	}
+}
+
+.notice-success .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-success;
+	}
+
+	&__icon {
+		color: $wp-success-text;
+	}
+}
+
+.notice-warning .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-warning;
+	}
+
+	&__icon {
+		color: $wp-warning-text;
 	}
 }
 
