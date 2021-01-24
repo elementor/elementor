@@ -367,7 +367,6 @@ class Element_Section extends Element_Base {
 				'size_units' => [ 'px', 'vh', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} > .elementor-container:after' => 'content: ""; min-height: inherit;', // Hack for IE11
 				],
 				'condition' => [
 					'height' => [ 'min-height' ],
