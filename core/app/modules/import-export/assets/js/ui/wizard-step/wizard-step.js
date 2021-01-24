@@ -12,40 +12,42 @@ export default function WizardStep( props ) {
 		classes = [ baseClassName, props.className ];
 
 	return (
-		<Grid className={ Utils.arrayToClassName( classes ) } justify="center" container>
-			<Grid item>
-				{ props.image &&
+		<>
+			<Grid className={ Utils.arrayToClassName( classes ) } justify="center" container>
+				<Grid item>
+					{ props.image &&
 					<Grid className="import-export-wizard-step__image-container" justify="center" alignItems="end" container>
 						<img
 							className="import-export-wizard-step__image"
 							src={ props.image }
 						/>
 					</Grid>
-				}
+					}
 
-				{ props.icon &&
+					{ props.icon &&
 					<Icon className={ `import-export-wizard-step__icon ${ props.icon }` } />
-				}
+					}
 
-				{ props.title &&
+					{ props.title &&
 					<Heading variant="display-3" className="import-export-wizard-step__title">
 						{ props.title }
 					</Heading>
-				}
+					}
 
-				{ props.text &&
+					{ props.text &&
 					<Text variant="xl" className="import-export-wizard-step__text" >
 						{ props.text }
 					</Text>
-				}
-			</Grid>
+					}
 
-			{ props.bottomText &&
-				<Text variant="xs" className="import-export-wizard-step__bottom-text">
-					{ props.bottomText }
-				</Text>
-			}
-		</Grid>
+					{ props.bottomText &&
+					<Text variant="xs" className="import-export-wizard-step__bottom-text">
+						{ props.bottomText }
+					</Text>
+					}
+				</Grid>
+			</Grid>
+		</>
 	);
 }
 

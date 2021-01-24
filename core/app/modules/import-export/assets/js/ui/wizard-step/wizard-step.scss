@@ -37,8 +37,8 @@ $root: import-export-wizard-step;
 
 	&__bottom-text {
 		display: block;
-		position: absolute;/**/
-		bottom: 0;
+		position: sticky;
+		top: 100%; /* Will prevent text overlapping when window height is too short. */
 		color: var(--import-export-wizard-step-bottom-text-color);
 		font-style: italic;
 		margin-bottom: 0;
