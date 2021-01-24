@@ -18,7 +18,7 @@ $config_url = add_query_arg(
 </h4>
 
 <p>
-	<?php echo __( 'By removing this template you will delete your entire Site Settings. If this template is deleted, all associated settings: Global Colors & Fonts, Theme Style, Layout, Background, and Lightbox settings will be removed from your existing sites. This action can not be undone.', 'elementor' ); ?>
+	<?php echo __( 'By removing this template you will delete your entire Site Settings. If this template is deleted, all associated settings: Global Colors & Fonts, Theme Style, Layout, Background, and Lightbox settings will be removed from your existing site. This action can not be undone.', 'elementor' ); ?>
 </p>
 
 <br/>

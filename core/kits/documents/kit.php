@@ -21,19 +21,7 @@ class Kit extends PageBase {
 	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
 
-		$this->tabs = [
-			'global-colors' => new Tabs\Global_Colors( $this ),
-			'global-typography' => new Tabs\Global_Typography( $this ),
-			'theme-style-typography' => new Tabs\Theme_Style_Typography( $this ),
-			'theme-style-buttons' => new Tabs\Theme_Style_Buttons( $this ),
-			'theme-style-images' => new Tabs\Theme_Style_Images( $this ),
-			'theme-style-form-fields' => new Tabs\Theme_Style_Form_Fields( $this ),
-			'settings-site-identity' => new Tabs\Settings_Site_Identity( $this ),
-			'settings-background' => new Tabs\Settings_Background( $this ),
-			'settings-layout' => new Tabs\Settings_Layout( $this ),
-			'settings-lightbox' => new Tabs\Settings_Lightbox( $this ),
-			'settings-custom-css' => new Tabs\Settings_Custom_CSS( $this ),
-		];
+		$this->register_tabs();
 	}
 
 	public static function get_properties() {
@@ -99,10 +87,39 @@ class Kit extends PageBase {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * Register a kit settings menu.
+	 *
+	 * @param $id
+	 * @param $class
+	 */
+	public function register_tab( $id, $class ) {
+		$this->tabs[ $id ] = new $class( $this );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		foreach ( $this->tabs as $id => $tab ) {
+			$config['tabs'][ $id ] = [
+				'title' => $tab->get_title(),
+				'icon' => $tab->get_icon(),
+				'group' => $tab->get_group(),
+				'helpUrl' => $tab->get_help_url(),
+				'additionalContent' => $tab->get_additional_tab_content(),
+			];
+		}
+
+		return $config;
+	}
+
+	/**
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->register_document_controls();
 
 		foreach ( $this->tabs as $tab ) {
@@ -152,5 +169,30 @@ class Kit extends PageBase {
 		$post_css = Post_CSS::create( $this->post->ID );
 
 		$post_css->enqueue();
+	}
+
+	/**
+	 * Register default tabs (menu pages) for site settings.
+	 */
+	private function register_tabs() {
+		$tabs = [
+			'global-colors' => Tabs\Global_Colors::class,
+			'global-typography' => Tabs\Global_Typography::class,
+			'theme-style-typography' => Tabs\Theme_Style_Typography::class,
+			'theme-style-buttons' => Tabs\Theme_Style_Buttons::class,
+			'theme-style-images' => Tabs\Theme_Style_Images::class,
+			'theme-style-form-fields' => Tabs\Theme_Style_Form_Fields::class,
+			'settings-site-identity' => Tabs\Settings_Site_Identity::class,
+			'settings-background' => Tabs\Settings_Background::class,
+			'settings-layout' => Tabs\Settings_Layout::class,
+			'settings-lightbox' => Tabs\Settings_Lightbox::class,
+			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
+		];
+
+		foreach ( $tabs as $id => $class ) {
+			$this->register_tab( $id, $class );
+		}
+
+		do_action( 'elementor/kit/register_tabs', $this );
 	}
 }

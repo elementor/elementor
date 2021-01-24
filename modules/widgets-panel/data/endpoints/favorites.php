@@ -39,7 +39,7 @@ class Favorites extends Endpoint {
 	 * Register Rest
 	 *
 	 * @since 3.0.16
-	 * @access public
+	 * @access protected
 	 *
 	 * @throws \Exception
 	 */
@@ -121,18 +121,21 @@ class Favorites extends Endpoint {
 	 * ID, add the widget to the favorite widgets or remove it from the
 	 * favorites, based on the `favorite` parameter.
 	 *
-	 * @since 3.0.16
-	 * @access private
-	 *
-	 * @param int  $widget_id   The widget ID.
-	 * @param bool $favorite    Optional. Whether the template is marked as
+	 * @param string $widget_id The widget T.
+	 * @param bool   $favorite  Optional. Whether the template is marked as
 	 *                          favorite, or not. Default is true.
 	 *
 	 * @return int|bool User meta ID if the key didn't exist, true on successful
 	 *                  update, false on failure.
+	 * @since  3.0.16
+	 * @access private
+	 *
 	 */
-	private function mark_as_favorite_widget( $widget_id, $favorite = true ) {
+	private function mark_as_favorite_widget( string $widget_id, $favorite = true ) {
 		$favorites_widgets = $this->get_favorite_widget();
+
+		/** @var  $widget_id @TODO: check if this var needed esc_html__ */
+		$widget_id = esc_html__( $widget_id, 'elementor' );
 
 		if ( $favorite ) {
 			if ( isset( $favorites_widgets[ $widget_id ] ) ) {
@@ -153,14 +156,23 @@ class Favorites extends Endpoint {
 
 	/**
 	 * Update tracking data for favorites-widgets-panel
+	 *
+	 * @since  3.0.16
+	 * @access private
 	 */
 	private function add_tracking_data() {
+		/**
+		 * Add tracking data for favorites-widgets-panel
+		 *
+		 * Called on elementor/tracker/send_tracking_data_params.
+		 *
+		 * @param array $params
+		 *
+		 * @return array
+		 */
 		add_filter( 'elementor/tracker/send_tracking_data_params', function( $params ) {
 			$params['usages']['favorites_widgets_panel'] = $this->get_favorite_widget();
 			return $params;
 		} );
-		//add_action( 'elementor/document/before_save', function( $document, $data ) {
-		//
-		//} );
 	}
 }

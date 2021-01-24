@@ -93,10 +93,10 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_video',
 			[
@@ -116,6 +116,7 @@ class Widget_Video extends Widget_Base {
 					'dailymotion' => __( 'Dailymotion', 'elementor' ),
 					'hosted' => __( 'Self Hosted', 'elementor' ),
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -137,6 +138,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -243,9 +245,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Start Time', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify a start time (in seconds)', 'elementor' ),
-				'condition' => [
-					'loop' => '',
-				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -256,9 +256,9 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::NUMBER,
 				'description' => __( 'Specify an end time (in seconds)', 'elementor' ),
 				'condition' => [
-					'loop' => '',
 					'video_type' => [ 'youtube', 'hosted' ],
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -276,6 +276,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -287,6 +288,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -295,6 +297,7 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Mute', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
+				'frontend_available' => true,
 			]
 		);
 
@@ -306,6 +309,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'dailymotion',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -320,6 +324,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type!' => 'vimeo',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -346,6 +351,7 @@ class Widget_Video extends Widget_Base {
 					'video_type' => [ 'youtube' ],
 					'controls' => 'yes',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -373,6 +379,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'video_type' => 'youtube',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -464,6 +471,9 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Poster', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'dynamic' => [
+					'active' => true,
+				],
 				'condition' => [
 					'video_type' => 'hosted',
 				],
@@ -495,6 +505,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Hide', 'elementor' ),
 				'label_on' => __( 'Show', 'elementor' ),
+				'frontend_available' => true,
 			]
 		);
 
@@ -512,6 +523,7 @@ class Widget_Video extends Widget_Base {
 				'condition' => [
 					'show_image_overlay' => 'yes',
 				],
+				'frontend_available' => true,
 			]
 		);
 
@@ -785,29 +797,35 @@ class Widget_Video extends Widget_Base {
 
 		if ( 'hosted' === $settings['video_type'] ) {
 			$video_url = $this->get_hosted_video_url();
+		} else {
+			$embed_params = $this->get_embed_params();
+			$embed_options = $this->get_embed_options();
 		}
 
 		if ( empty( $video_url ) ) {
 			return;
 		}
 
+		if ( 'youtube' === $settings['video_type'] ) {
+			$video_html = '<div class="elementor-video"></div>';
+		}
+
 		if ( 'hosted' === $settings['video_type'] ) {
+			$this->add_render_attribute( 'video-wrapper', 'class', 'e-hosted-video' );
+
 			ob_start();
 
 			$this->render_hosted_video();
 
 			$video_html = ob_get_clean();
 		} else {
-			$embed_params = $this->get_embed_params();
-
-			$embed_options = $this->get_embed_options();
-
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 			$post_id = get_queried_object_id();
 
 			if ( $is_static_render_mode ) {
 				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
-			} else {
+				// YouTube API requires a different markup which was set above.
+			} else if ( 'youtube' !== $settings['video_type'] ) {
 				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
 			}
 		}
@@ -870,7 +888,14 @@ class Widget_Video extends Widget_Base {
 						] );
 					}
 				} else {
-					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings ) . ');' );
+					// When there is an image URL but no ID, it means the overlay image is the placeholder. In this case, get the placeholder URL.
+					if ( empty( $settings['image_overlay']['id'] && ! empty( $settings['image_overlay']['url'] ) ) ) {
+						$image_url = $settings['image_overlay']['url'];
+					} else {
+						$image_url = Group_Control_Image_Size::get_attachment_image_src( $settings['image_overlay']['id'], 'image_overlay', $settings );
+					}
+
+					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $image_url . ');' );
 				}
 				?>
 				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>

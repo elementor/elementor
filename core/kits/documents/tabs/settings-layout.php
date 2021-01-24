@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
@@ -19,6 +19,18 @@ class Settings_Layout extends Tab_Base {
 
 	public function get_title() {
 		return __( 'Layout', 'elementor' );
+	}
+
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-layout-settings';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-layout';
 	}
 
 	protected function register_tab_controls() {
@@ -187,7 +199,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
 			return;
 		}
 

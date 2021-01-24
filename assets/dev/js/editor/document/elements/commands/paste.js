@@ -14,7 +14,7 @@ export class Paste extends CommandHistory {
 	getHistory() {
 		return {
 			type: 'paste',
-			title: elementor.translate( 'elements' ),
+			title: __( 'Elements', 'elementor' ),
 		};
 	}
 
