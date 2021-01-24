@@ -22,6 +22,10 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 		}
 	}
 
+	isActive( settings ) {
+		return elementorFrontend.isEditMode() || settings.$element.hasClass( 'elementor-section-stretched' );
+	}
+
 	initStretch() {
 		this.stretch = this.stretch.bind( this );
 
@@ -46,6 +50,10 @@ export default class StretchedSection extends elementorModules.frontend.handlers
 	}
 
 	onInit( ...args ) {
+		if ( ! this.isActive( this.getSettings() ) ) {
+			return;
+		}
+
 		this.initStretch();
 
 		super.onInit( ...args );

@@ -65,10 +65,10 @@ function isValidPropValue( propValue ) {
 
 Grid.propTypes = {
 	className: PropTypes.string,
-	direction: PropTypes.string,
-	justify: PropTypes.string,
-	alignContent: PropTypes.string,
-	alignItems: PropTypes.string,
+	direction: PropTypes.oneOf( [ 'row', 'column', 'row-reverse', 'column-reverse' ] ),
+	justify: PropTypes.oneOf( [ 'start', 'center', 'end', 'space-between', 'space-evenly', 'space-around', 'stretch' ] ),
+	alignContent: PropTypes.oneOf( [ 'start', 'center', 'end', 'space-between', 'stretch' ] ),
+	alignItems: PropTypes.oneOf( [ 'start', 'center', 'end', 'baseline', 'stretch' ] ),
 	container: PropTypes.bool,
 	item: PropTypes.bool,
 	noWrap: PropTypes.bool,

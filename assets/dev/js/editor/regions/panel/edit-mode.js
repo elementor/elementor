@@ -50,7 +50,7 @@ EditModeItemView = Marionette.ItemView.extend( {
 	},
 
 	onEditModeChanged: function( activeMode ) {
-		const title = elementor.translate( 'preview' === activeMode ? 'back_to_editor' : 'preview' );
+		const title = 'preview' === activeMode ? __( 'Back to Editor', 'elementor' ) : __( 'Preview', 'elementor' );
 
 		this.ui.previewLabel.attr( 'title', title );
 		this.ui.previewLabelA11y.text( title );
