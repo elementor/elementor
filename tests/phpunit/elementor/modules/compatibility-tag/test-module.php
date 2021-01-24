@@ -46,8 +46,8 @@ class Test_Module extends Elementor_Test_Base {
 					'Name' => 'elementor core',
 					Module::PLUGIN_VERSION_TESTED_HEADER => ''
 				],
-				'elementor-dev/elementor-dev.php' => [
-					'Name' => 'elementor dev',
+				'elementor-beta/elementor-beta.php' => [
+					'Name' => 'elementor beta',
 					Module::PLUGIN_VERSION_TESTED_HEADER => ''
 				],
 			] ),
@@ -73,6 +73,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertRegExp( '/extends elementor/', $result );
 		$this->assertNotRegExp( '/regular plugins/', $result );
 		$this->assertNotRegExp( '/elementor core/', $result );
-		$this->assertNotRegExp( '/elementor dev/', $result );
+		$this->assertNotRegExp( '/elementor beta/', $result );
 	}
 }

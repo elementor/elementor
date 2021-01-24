@@ -257,7 +257,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -293,7 +292,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
