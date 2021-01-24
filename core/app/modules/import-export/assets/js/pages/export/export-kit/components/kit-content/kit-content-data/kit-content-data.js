@@ -2,7 +2,7 @@ const kitContentData = [
 	{
 		type: 'templates',
 		data: {
-			title: __( 'Theme Builder & Templates', 'elementor' ),
+			title: __( 'Templates', 'elementor' ),
 			features: {
 				open: [
 					__( 'Saved Templates', 'elementor' ),
