@@ -264,6 +264,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Fix: Column height is not correct when Optimized DOM experiment is inactive
 * Fix: Wrong translation function caused errors in the Revisions panel
 * Fix: Widgets empty state is not visible in WordPress 5.6
+* Deprecated: Deprecate methods prefixed with an underscore and replace them with unprefixed methods
 * Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-1-planned-deprecations/)
 
 = 3.0.16 - 2021-01-06 =
