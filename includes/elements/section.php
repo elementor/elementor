@@ -474,6 +474,8 @@ class Element_Section extends Element_Base {
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'hidden' => __( 'Hidden', 'elementor' ),
+					'hidden auto' => __( 'Hidden X', 'elementor' ),
+					'auto hidden' => __( 'Hidden Y', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'overflow: {{VALUE}}',
