@@ -20,10 +20,10 @@ class Root extends Base {
 
 		$include = $this->exporter->get_settings( 'include' );
 
-		$include_kit_settings = in_array( 'settings', $include );
+		$include_site_settings = in_array( 'settings', $include );
 
-		if ( $include_kit_settings ) {
-			$this->exporter->add_json_file( 'kit', $kit->get_export_data() );
+		if ( $include_site_settings ) {
+			$this->exporter->add_json_file( 'site-settings', $kit->get_export_data() );
 		}
 
 		$kit_post = $kit->get_post();
@@ -43,7 +43,7 @@ class Root extends Base {
 			'image' => get_the_post_thumbnail_url( $kit_post ),
 		];
 
-		if ( $include_kit_settings ) {
+		if ( $include_site_settings ) {
 			$manifest_data['settings'] = array_keys( $kit->get_tabs() );
 		}
 
