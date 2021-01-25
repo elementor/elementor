@@ -44,7 +44,7 @@ class Root extends Base {
 			'author' => get_the_author_meta( 'display_name', $kit_post->post_author ),
 			'version' => Module::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
-			'created' => date( 'Y-m-d H:i:s' ),
+			'created' => gmdate( 'Y-m-d H:i:s' ),
 			'name' => $kit_name,
 			'title' => $kit_title,
 			'description' => $kit_post->post_excerpt,
