@@ -26,6 +26,14 @@ class Root extends Base {
 			$this->exporter->add_json_file( 'site-settings', $kit->get_export_data() );
 		}
 
+		$options = [];
+
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$options['home_page'] = get_option( 'page_on_front' );
+		}
+
+		$this->exporter->add_json_file( 'options', $options );
+
 		$kit_post = $kit->get_post();
 
 		$kit_title = $this->exporter->get_settings( 'title' );
