@@ -3,7 +3,7 @@ import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 import Button from 'elementor-app/ui/molecules/button';
 
-import kitContentData from '../../../../shared/kit-content/kit-content-data/kit-content-data';
+import kitContentData from '../../../export/export-kit/components/kit-content/kit-content-data/kit-content-data';
 
 import './import-success-list.scss';
 

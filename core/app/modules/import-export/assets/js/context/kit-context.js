@@ -7,10 +7,12 @@ export const Context = React.createContext();
 export default function KitContext( props ) {
 	const initialState = {
 		includes: [],
+		downloadURL: '',
 	},
 	[ kitContent, dispatch ] = useReducer( reducer, initialState );
 
-	console.log( 'kitContent', kitContent );
+	// eslint-disable-next-line no-console
+	console.log( 'KitContext - setting defining new reducer', kitContent );
 
 	return (
 		<Context.Provider value={ { kitContent, dispatch } }>

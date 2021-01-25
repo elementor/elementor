@@ -16,7 +16,7 @@ export default function ImportProcess() {
 					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
 				</Heading>
 
-				<Text variant="xl" className="e-app-import-process__content">
+				<Text variant="xl" className="e-app-import-process__text">
 					{ __( 'This may take a few moments to complete.', 'elementor' ) }
 					<br />
 					{ __( 'Please don’t close this window until importing is completed', 'elementor' ) }

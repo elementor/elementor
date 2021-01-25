@@ -1,0 +1,54 @@
+$import-export-wizard-step-icon-color: tints(400);
+$import-export-wizard-step-icon-dark-color: dark-tints(400);
+$import-export-wizard-step-text-color: tints(500);
+$import-export-wizard-step-text-dark-color: dark-tints(200);
+$import-export-wizard-step-bottom-text-color: tints(500);
+$import-export-wizard-step-bottom-text-dark-color: dark-tints(200);
+
+$root: import-export-wizard-step;
+
+.#{$root} {
+	--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-color};
+	--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-color};
+	--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-color};
+
+	height: 100%;
+	position: relative;
+	text-align: center;
+
+	&__image-container {
+		height: 140px;
+		margin: (spacing(44) * 2) 0 spacing(44);
+	}
+
+	&__icon {
+		margin-bottom: spacing(44);
+		color: var(--import-export-wizard-step-icon-color);
+		font-size: 50px;
+	}
+
+	&__title {
+		margin-bottom: spacing(24);
+	}
+
+	&__text {
+		color: var(--import-export-wizard-step-text-color);
+	}
+
+	&__bottom-text {
+		display: block;
+		position: sticky;
+		top: 100%; /* Will prevent text overlapping when window height is too short. */
+		color: var(--import-export-wizard-step-bottom-text-color);
+		font-style: italic;
+		margin-bottom: 0;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-dark-color};
+		--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-dark-color};
+		--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-dark-color};
+	}
+}

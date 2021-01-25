@@ -9,12 +9,13 @@ export default function ClickHere( props ) {
 		classes = [ baseClassName, props.className ];
 
 	return (
-		<Button
-			variant="underlined"
-			color="link"
+		<a
 			className={ Utils.arrayToClassName( classes ) }
-			text={ __( 'Click here', 'elementor' ) }
-			url={ props.url } />
+			target="_blank"
+			rel="noopener noreferrer"
+			href={ props.url }>
+			{ __( 'Click here', 'elementor' ) }
+		</a>
 	);
 }
 

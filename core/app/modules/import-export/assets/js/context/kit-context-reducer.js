@@ -30,8 +30,8 @@ class ReducerActions {
 
 export const reducer = ( state, action ) => {
 	switch ( action.type ) {
-		case 'SET_TITLE':
-			return { ...state, title: action.value };
+		case 'SET_DOWNLOAD_URL':
+			return { ...state, downloadURL: action.value };
 		case 'ADD_INCLUDE':
 			return ReducerActions.updateIncludes( state, action.value, 'add' );
 		case 'REMOVE_INCLUDE':
