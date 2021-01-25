@@ -78,10 +78,10 @@ class Widget_Image_Carousel extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_image_carousel',
 			[
@@ -257,7 +257,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					'yes' => __( 'Yes', 'elementor' ),
 					'no' => __( 'No', 'elementor' ),
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);
@@ -293,7 +292,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				'condition' => [
 					'autoplay' => 'yes',
 				],
-				'render_type' => 'none',
 				'frontend_available' => true,
 			]
 		);

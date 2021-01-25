@@ -222,33 +222,6 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * Get items.
-	 *
-	 * Utility method that receives an array with a needle and returns all the
-	 * items that match the needle. If needle is not defined the entire haystack
-	 * will be returned.
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.3.0 Use `Controls_Stack::get_items()` instead
-	 * @access protected
-	 * @static
-	 *
-	 * @param array  $haystack An array of items.
-	 * @param string $needle   Optional. Needle. Default is null.
-	 *
-	 * @return mixed The whole haystack or the needle from the haystack when requested.
-	 */
-	protected static function _get_items( array $haystack, $needle = null ) {
-		 _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
-
-		if ( $needle ) {
-			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
-		}
-
-		return $haystack;
-	}
-
-	/**
 	 * Get current section.
 	 *
 	 * When inserting new controls, this method will retrieve the current section.
@@ -357,7 +330,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Register a single control to allow the user to set/update data.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -942,7 +915,9 @@ abstract class Controls_Stack extends Base_Object {
 		if ( null === $this->config ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
-			if ( method_exists( $this, '_get_initial_config' ) ) {
+			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
+
 				$this->config = $this->_get_initial_config();
 			} else {
 				$this->config = $this->get_initial_config();
@@ -1329,7 +1304,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * registered controls from this point will be assigned to this section,
 	 * until you close the section using `end_controls_section()` method.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1415,7 +1390,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls section. When you use this method
 	 * it stops adding new controls to this section.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1495,7 +1470,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tabs()` method.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1533,7 +1508,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls tabs. When you use this method it
 	 * stops adding new controls to this tabs.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1550,7 +1525,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Each tab added after this point will be assigned to this group of tabs,
 	 * until you close it using `end_controls_tab()` method.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1581,7 +1556,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open controls tab. When you use this method it
 	 * stops adding new controls to this tab.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -1597,7 +1572,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * all the registered controls from this point will be assigned to this
 	 * popover, until you close the popover using `end_popover()` method.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -1614,7 +1589,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * Used to close an existing open popover. When you use this method it stops
 	 * adding new controls to this popover.
 	 *
-	 * This method should be used inside `_register_controls()`.
+	 * This method should be used inside `register_controls()`.
 	 *
 	 * @since 1.9.0
 	 * @access public
@@ -1650,7 +1625,9 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_content_template' ) ) {
+		if ( $this->has_own_method( '_content_template', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_content_template', '2.9.0', __CLASS__ . '::content_template()' );
+
 			$this->_content_template();
 		} else {
 			$this->content_template();
@@ -1761,8 +1738,29 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @since 1.4.0
 	 * @access protected
+	 * @deprecated 3.1.0 Use `Controls_Stack::register_controls()` instead
 	 */
-	protected function _register_controls() {}
+	protected function _register_controls() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_controls()' );
+
+		$this->register_controls();
+	}
+
+	/**
+	 * Register controls.
+	 *
+	 * Used to add new controls to any element type. For example, external
+	 * developers use this method to register controls in a widget.
+	 *
+	 * Should be inherited and register new controls using `add_control()`,
+	 * `add_responsive_control()` and `add_group_control()`, inside control
+	 * wrappers like `start_controls_section()`, `start_controls_tabs()` and
+	 * `start_controls_tab()`.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function register_controls() {}
 
 	/**
 	 * Get default data.
@@ -1833,7 +1831,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		// _deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::get_initial_config()' );
 
 		return $this->get_initial_config();
 	}
@@ -1929,7 +1927,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access protected
 	 */
 	protected function _content_template() {
-		// _deprecated_function( __METHOD__, '2.9.0', 'content_template' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::content_template()' );
 
 		$this->content_template();
 	}
@@ -1937,7 +1935,7 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * Initialize controls.
 	 *
-	 * Register the all controls added by `_register_controls()`.
+	 * Register the all controls added by `register_controls()`.
 	 *
 	 * @since 2.0.0
 	 * @access protected
@@ -1947,7 +1945,9 @@ abstract class Controls_Stack extends Base_Object {
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
 		// This `if` statement should be removed when the method is removed
-		if ( method_exists( $this, '_register_controls' ) ) {
+		if ( $this->has_own_method( '_register_controls', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
+
 			$this->_register_controls();
 		} else {
 			$this->register_controls();
@@ -2016,7 +2016,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		// _deprecated_function( __METHOD__, '2.9.0', 'init' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::init()' );
 
 		$this->init( $data );
 	}
@@ -2090,7 +2090,9 @@ abstract class Controls_Stack extends Base_Object {
 		if ( $data ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated
-			if ( method_exists( $this, '_init' ) ) {
+			if ( $this->has_own_method( '_init', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_init', '2.9.0', __CLASS__ . '::init()' );
+
 				$this->_init( $data );
 			} else {
 				$this->init( $data );

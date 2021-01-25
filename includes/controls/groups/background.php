@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -554,6 +556,13 @@ class Group_Control_Background extends Group_Control_Base {
 			'description' => __( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
+			'dynamic' => [
+				'active' => true,
+				'categories' => [
+					TagsModule::POST_META_CATEGORY,
+					TagsModule::URL_CATEGORY,
+				],
+			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -609,6 +618,9 @@ class Group_Control_Background extends Group_Control_Base {
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
+			'dynamic' => [
+				'active' => true,
+			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],

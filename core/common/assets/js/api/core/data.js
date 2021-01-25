@@ -3,7 +3,7 @@ import Commands from './commands.js';
 import Cache from './data/cache';
 
 /**
- * @typedef {('create'|'delete'|'get'|'update')} DataTypes
+ * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
  */
 
 /**
@@ -72,6 +72,9 @@ export default class Data extends Commands {
 
 			case 'update':
 				return 'PUT';
+
+			case 'options':
+				return 'OPTIONS';
 		}
 
 		return false;
@@ -99,6 +102,9 @@ export default class Data extends Commands {
 
 			case 'update':
 				return EDITABLE;
+
+			case 'options':
+				return [ 'OPTIONS' ];
 		}
 
 		return false;
@@ -124,35 +130,32 @@ export default class Data extends Commands {
 
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
-		if ( argsQueryLength ) {
-			if ( format && format.includes( '/{' ) ) {
-				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
-				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
+		if ( argsQueryLength && format && format.includes( '/{' ) ) {
+			// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
+			const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
 
-				magicParams.forEach( ( param ) => {
-					// Remove the '{', '}'.
-					param = param.replace( '{', '' );
-					param = param.replace( '}', '' );
+			magicParams.forEach( ( param ) => {
+				// Remove the '{', '}'.
+				param = param.replace( '{', '' );
+				param = param.replace( '}', '' );
 
-					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
+				const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
 
-					if ( ! formatted ) {
-						return;
-					}
+				if ( ! formatted ) {
+					return;
+				}
 
-					const key = formatted[ 0 ],
-						value = formatted[ 1 ].toString();
+				const key = formatted[ 0 ],
+					value = formatted[ 1 ].toString();
 
-					// Replace magic params with values.
-					format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
+				// Replace magic params with values.
+				format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
 
-					delete args.query[ key ];
-				} );
+				delete args.query[ key ];
+			} );
+		}
 
-				endpoint = format;
-			}
-		} else if ( format ) {
-			// No magic params, but still format,
+		if ( format ) {
 			endpoint = format;
 		}
 
@@ -265,6 +268,7 @@ export default class Data extends Commands {
 		const type = requestData.type,
 			nonce = wpApiSettings.nonce,
 			params = {
+				signal: requestData.args?.options?.signal,
 				credentials: 'include', // cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
@@ -484,6 +488,10 @@ export default class Data extends Commands {
 
 	update( command, data, query = {}, options = {} ) {
 		return this.run( 'update', command, { query, options, data } );
+	}
+
+	options( command, query, options = {} ) {
+		return this.run( 'options', command, { query, options } );
 	}
 
 	/**

@@ -14,6 +14,8 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
+import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
+import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -246,7 +248,7 @@ export default class EditorBase extends Marionette.Application {
 		const elementConfig = elementorCommon.helpers.cloneObject( this.config.elements[ elType ] );
 
 		if ( 'section' === elType && model.get( 'isInner' ) ) {
-			elementConfig.title = this.translate( 'inner_section' );
+			elementConfig.title = __( 'Inner Section', 'elementor' );
 		}
 
 		return elementConfig;
@@ -343,7 +345,14 @@ export default class EditorBase extends Marionette.Application {
 
 		this.promotion = new Promotion();
 
+		this.devTools = new DevTools();
+
 		this.documents = $e.components.register( new EditorDocuments() );
+
+		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
+		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
+			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -433,15 +442,15 @@ export default class EditorBase extends Marionette.Application {
 
 			dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-clear-page-dialog',
-				headerMessage: elementor.translate( 'clear_page' ),
-				message: elementor.translate( 'dialog_confirm_clear_page' ),
+				headerMessage: __( 'Delete All Content', 'elementor' ),
+				message: __( 'Attention: We are going to DELETE ALL CONTENT from this page. Are you sure you want to do that?', 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: elementor.translate( 'delete' ),
-					cancel: elementor.translate( 'cancel' ),
+					confirm: __( 'Delete', 'elementor' ),
+					cancel: __( 'Cancel', 'elementor' ),
 				},
 				onConfirm: () => $e.run( 'document/elements/empty', { force: true } ),
 			} );
@@ -506,15 +515,15 @@ export default class EditorBase extends Marionette.Application {
 		let message;
 
 		if ( 4 === xmlHttpRequest.readyState ) {
-			message = this.translate( 'server_error' );
+			message = __( 'Server Error', 'elementor' );
 
 			if ( 200 !== xmlHttpRequest.status ) {
 				message += ' (' + xmlHttpRequest.status + ' ' + xmlHttpRequest.statusText + ')';
 			}
 		} else if ( 0 === xmlHttpRequest.readyState ) {
-			message = this.translate( 'server_connection_lost' );
+			message = __( 'Connection Lost', 'elementor' );
 		} else {
-			message = this.translate( 'unknown_error' );
+			message = __( 'Unknown Error', 'elementor' );
 		}
 
 		return message + '.';
@@ -569,8 +578,8 @@ export default class EditorBase extends Marionette.Application {
 				at: 'center center',
 			},
 			strings: {
-				confirm: this.translate( 'learn_more' ),
-				cancel: this.translate( 'go_back' ),
+				confirm: __( 'Learn More', 'elementor' ),
+				cancel: __( 'Go Back', 'elementor' ),
 			},
 			onConfirm: null,
 			onCancel: () => parent.history.go( -1 ),
@@ -591,15 +600,15 @@ export default class EditorBase extends Marionette.Application {
 			dialogType: 'confirm',
 			dialogOptions: {
 				id: 'elementor-flexbox-attention-dialog',
-				headerMessage: this.translate( 'flexbox_attention_header' ),
-				message: this.translate( 'flexbox_attention_message' ),
+				headerMessage: __( 'Note: Flexbox Changes', 'elementor' ),
+				message: __( 'Elementor 2.5 introduces key changes to the layout using CSS Flexbox. Your existing pages might have been affected, please review your page before publishing.', 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: this.translate( 'learn_more' ),
-					cancel: this.translate( 'got_it' ),
+					confirm: __( 'Learn More', 'elementor' ),
+					cancel: __( 'Got It', 'elementor' ),
 				},
 				hide: {
 					onButtonClick: false,
@@ -619,11 +628,11 @@ export default class EditorBase extends Marionette.Application {
 	checkPageStatus() {
 		if ( elementor.documents.getCurrent().isDraft() ) {
 			this.notifications.showToast( {
-				message: this.translate( 'working_on_draft_notification' ),
+				message: __( 'This is just a draft. Play around and when you\'re done - click update.', 'elementor' ),
 				buttons: [
 					{
 						name: 'view_revisions',
-						text: elementor.translate( 'view_all_revisions' ),
+						text: __( 'View All Revisions', 'elementor' ),
 						callback: () => $e.route( 'panel/history/revisions' ),
 					},
 				],
@@ -890,10 +899,10 @@ export default class EditorBase extends Marionette.Application {
 
 	onEnvNotCompatible() {
 		this.showFatalErrorDialog( {
-			headerMessage: this.translate( 'device_incompatible_header' ),
-			message: this.translate( 'device_incompatible_message' ),
+			headerMessage: __( 'Your browser isn\'t compatible', 'elementor' ),
+			message: __( 'Your browser isn\'t compatible with all of Elementor\'s editing features. We recommend you switch to another browser like Chrome or Firefox.', 'elementor' ),
 			strings: {
-				confirm: elementor.translate( 'proceed_anyway' ),
+				confirm: __( 'Proceed Anyway', 'elementor' ),
 			},
 			hide: {
 				onButtonClick: true,
@@ -904,7 +913,7 @@ export default class EditorBase extends Marionette.Application {
 
 	onPreviewLoadingError() {
 		const debugUrl = this.config.document.urls.preview + '&preview-debug',
-			previewDebugLinkText = this.config.i18n.preview_debug_link_text,
+			previewDebugLinkText = __( 'Click here for preview debug', 'elementor' ),
 			previewDebugLink = '<div id="elementor-preview-debug-link-text"><a href="' + debugUrl + '" target="_blank">' + previewDebugLinkText + '</a></div>',
 			debugData = elementor.config.preview.debug_data,
 			dialogOptions = {
@@ -939,8 +948,8 @@ export default class EditorBase extends Marionette.Application {
 
 		if ( ! args ) {
 			args = {
-				headerMessage: this.translate( 'preview_el_not_found_header' ),
-				message: this.translate( 'preview_el_not_found_message' ),
+				headerMessage: __( 'Sorry, the content area was not found in your page.', 'elementor' ),
+				message: __( 'You must call \'the_content\' function in the current template, in order for Elementor to work on this page.', 'elementor' ),
 				confirmURL: elementor.config.help_the_content_url,
 			};
 		}

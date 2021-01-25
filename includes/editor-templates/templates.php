@@ -136,7 +136,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
 	<div class="elementor-template-library-template-body">
-		<# if ( 'page' === type ) { #>
+		<?php // 'lp' stands for Landing Pages Library type. ?>
+		<# if ( 'page' === type || 'lp' === type ) { #>
 			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
 		<# } else { #>
 			<img src="{{ thumbnail }}">

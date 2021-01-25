@@ -132,7 +132,7 @@ export const Create = () => {
 					eInnerSection.view.children.forEach( ( el ) => innerSectionColumnsIds.push( el.model.id ) );
 
 					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'inner_section' );
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Inner Section' );
 
 					// Inner section have x columns.
 					assert.equal( eInnerSection.view.collection.length, DEFAULT_INNER_SECTION_COLUMNS,
@@ -252,7 +252,7 @@ export const Create = () => {
 					} );
 
 					// Exist in history.
-					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'inner_section' );
+					HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Inner Section' );
 
 					// Inner section have x columns.
 					eInnerSections.forEach( ( eInnerSection ) => assert.equal( eInnerSection.view.collection.length,
