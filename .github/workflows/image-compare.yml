@@ -21,6 +21,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo chown -R $USER /usr/local/bin/
+          sudo chown -R $USER /usr/local/lib/node_modules
           npm i --no-save @elementor/screenshotter
           ./node_modules/@elementor/screenshotter/src/install-dependencies.js --config=${screenshotter_config_path} --debug=true
       - name: Import Templates
