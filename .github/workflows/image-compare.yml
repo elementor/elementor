@@ -19,17 +19,18 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@master
       - name: Install Dependencies
-        run: |
+        run: | ##### TO DO: Remove all sudo
+          sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
           sudo chown -R $USER /usr/local/bin/
           sudo chown -R $USER /usr/local/lib/node_modules
-          npm i --no-save @elementor/screenshotter
-          ./node_modules/@elementor/screenshotter/src/install-dependencies.js --config=${screenshotter_config_path} --debug=true
+          npm i -g @elementor/screenshotter
+          elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
       - name: Import Templates
         run: |
-          ./node_modules/@elementor/screenshotter/src/import-templates.js --config=${screenshotter_config_path} --debug=true
+          elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
       - name: Build Package & Run Test
         run: |
-          ./node_modules/@elementor/screenshotter/src/run-test-screenshotter.js --config=${screenshotter_config_path} --debug=true --deepDebug=true
+          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true --deepDebug=true
       - uses: actions/upload-artifact@master
         if: failure()
         with:
