@@ -75,7 +75,7 @@ export const Move = () => {
 				let count = 0;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'move', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

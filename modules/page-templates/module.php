@@ -5,7 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Core\DocumentTypes\PageBase as PageBase;
@@ -379,11 +378,11 @@ class Module extends BaseModule {
 
 			$ajax_data = $ajax->get_current_action_data();
 
-			$is_autosave_action = $ajax_data && 'save_builder' === $ajax_data['action'] && DB::STATUS_AUTOSAVE === $ajax_data['data']['status'];
+			$is_autosave_action = $ajax_data && 'save_builder' === $ajax_data['action'] && Document::STATUS_AUTOSAVE === $ajax_data['data']['status'];
 
 			// Don't allow WP to update the parent page template.
 			// (during `wp_update_post` from page-settings or save_plain_text).
-			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) && DB::STATUS_DRAFT !== get_post_status( $object_id ) ) {
+			if ( $is_autosave_action && ! wp_is_post_autosave( $object_id ) && Document::STATUS_DRAFT !== get_post_status( $object_id ) ) {
 				$check = false;
 			}
 		}
