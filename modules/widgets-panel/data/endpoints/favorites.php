@@ -100,13 +100,13 @@ class Favorites extends Endpoint {
 	 * Retrieve favorites widgets from DB.
 	 *
 	 * @since 3.0.16
-	 * @access private
+	 * @access public
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return array|mixed
 	 */
-	private function get_favorite_widget() {
+	public static function get_favorite_widget() {
 		$favorites_widgets = get_user_meta( get_current_user_id(), self::META_KEY, true );
 		if ( ! $favorites_widgets ) {
 			$favorites_widgets = [];
@@ -146,21 +146,17 @@ class Favorites extends Endpoint {
 			unset( $favorites_widgets[ $widget_id ] );
 		}
 
-		$update_favorites = update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
-		if ( $update_favorites ) {
-			$this->add_tracking_data();
-		}
+		return update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
 
-		return $update_favorites;
  	}
 
 	/**
 	 * Update tracking data for favorites-widgets-panel
 	 *
 	 * @since  3.0.16
-	 * @access private
+	 * @access public
 	 */
-	private function add_tracking_data() {
+	public static function add_tracking_data() {
 		/**
 		 * Add tracking data for favorites-widgets-panel
 		 *
@@ -171,6 +167,9 @@ class Favorites extends Endpoint {
 		 * @return array
 		 */
 		add_filter( 'elementor/tracker/send_tracking_data_params', function( $params ) {
+			/**
+			 * @TODO: add users to usages array
+			 */
 			$params['usages']['favorites_widgets_panel'] = $this->get_favorite_widget();
 			return $params;
 		} );

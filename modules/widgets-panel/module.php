@@ -5,6 +5,7 @@ namespace Elementor\Modules\WidgetsPanel;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 use Elementor\Modules\WidgetsPanel\Data\Controller;
+use Elementor\Modules\WidgetsPanel\Data\Endpoints\Favorites;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -75,7 +76,7 @@ class Module extends BaseModule {
 				if ( ! isset( $config['widgets'] ) ) {
 					$config['widgets'] = [];
 				}
-				$favorites_widgets = get_user_meta( get_current_user_id(), self::META_KEY, true );
+				$favorites_widgets = Favorites::get_favorite_widget();
 				if ( ! empty( $favorites_widgets ) ) {
 					foreach ( $favorites_widgets as $widget_name => $value ) {
 						if ( ! isset( $config['widgets'][ $widget_name ] ) ) {
@@ -87,6 +88,8 @@ class Module extends BaseModule {
 			}
 			return $config;
 		}, 10, 2 );
+
+		Favorites::add_tracking_data();
 	}
 
 }
