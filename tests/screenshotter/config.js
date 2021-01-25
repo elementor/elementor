@@ -46,6 +46,8 @@ const config = {
 		'icons',
 		'icons-box',
 		'icons-list',
+		'image',
+		'image-box',
 		'social-icons',
 		'testimonials',
 		'text-editor',
