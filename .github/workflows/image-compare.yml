@@ -1,59 +1,35 @@
 name: Image Compare
 
-on: push
+on: [push, pull_request]
 
 jobs:
   run:
     runs-on: ubuntu-16.04
+    timeout-minutes: 20
+    env:
+      screenshotter_config_path: ${{ github.workspace }}/tests/screenshotter/config.js
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress_versions: [ 'latest' ]
+    name: WordPress ${{ matrix.wordpress_versions }}
     steps:
+      - name: Startup MySQL service
+        run:  sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
-      - name: Cache node modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
       - name: Install Dependencies
         run: |
-          npm install
-          npm install backstopjs
-      - name: Build Package
+          npm i --no-save @elementor/screenshotter
+          ./node_modules/@elementor/screenshotter/src/install-dependencies.js --config=${screenshotter_config_path} --debug=true
+      - name: Import Templates
         run: |
-          npm config set git-tag-version false
-          export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
-          export PACKAGE_VERSION=$(cat package.json \
-            | grep version \
-            | head -1 \
-            | awk -F: '{ print $2 }' \
-            | sed 's/[",]//g' \
-            | tr -d '[[:space:]]')
-          export PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}-${GITHUB_SHA:0:7}.zip"
-          grunt build
-          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
-          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
-          mv build elementor
-          zip -r $PLUGIN_ZIP_FILENAME elementor
-          curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT }}&type=by-commit"
-          echo "BUILD_PATH=builds/by-commit/$(date '+%Y-%m')/${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
-          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-      - name: Run Tests
+          ./node_modules/@elementor/screenshotter/src/import-templates.js --config=${screenshotter_config_path} --debug=true
+      - name: Build Package & Run Test
         run: |
-          git clone ${{ secrets.BACKSTOP_CONFIG_REPO_URL }} backstop-config
-          mkdir -p backstop_data_en_US/
-          cp -r backstop-config/reference/ backstop_data_en_US/bitmaps_reference/
-          ./node_modules/backstopjs/cli/index.js test --config=backstop-config/backstop.js --count=1 --siteUrl=https://${{ secrets.BACKSTOP_EMULATOR_DOMAIN }} --coreVersion=${BUILD_PATH}
-      - name: Before upload..
-        run: |
-          find backstop_data_en_US -type f -name "*.json" -o -name "*.js" -print0 | xargs -0 sed -i -e 's/${{ secrets.BACKSTOP_EMULATOR_DOMAIN }}/localhost/g'
-        if: failure()
+          ./node_modules/@elementor/screenshotter/src/run-test-screenshotter.js --config=${screenshotter_config_path} --debug=true --deepDebug=true
       - uses: actions/upload-artifact@master
         if: failure()
         with:
           name: backstop-output
-          path: backstop_data_en_US
+          path: /tmp/wordpress/backstop_data
