@@ -3,11 +3,13 @@ module.exports = {
 		'wordpress',
 		'plugin:wordpress/esnext',
 		'plugin:react/recommended',
+		'plugin:no-jquery/deprecated',
 	],
 	plugins: [
 		'wordpress',
 		'babel',
 		'react',
+		'no-jquery',
 	],
 	parser: 'babel-eslint',
 	globals: {
