@@ -12,13 +12,15 @@ export class Add extends CommandBase {
 		if ( result.data ) {
 			// Get the categories of widget from front-end
 			const widgetsArr = elementor.widgetsCache[ `${ widget }` ];
-			if ( undefined !== typeof widgetsArr ) {
-				if ( widgetsArr.hasOwnProperty( 'categories' ) ) {
+			if ( widgetsArr ) {
+				if ( ! widgetsArr.hasOwnProperty( 'categories' ) ) {
 					widgetsArr.categories = [];
 				}
-				// Check - if element in array do nothing, else add it to array
-				if ( widgetsArr.includes( 'favorites' ) ) {
-					widgetsArr.push( 'favorites' );
+				// Get element position in array
+				const elmExistsInArr = widgetsArr.categories.includes( 'favorites' );
+				// Check - if element not exists in array - add it to array
+				if ( ! elmExistsInArr ) {
+					widgetsArr.categories.push( 'favorites' );
 					$e.route( 'panel/elements/categories', { refresh: true } );
 				}
 			}
