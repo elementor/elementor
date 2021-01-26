@@ -11,16 +11,18 @@ export class Add extends CommandBase {
 		const result = await $e.data.create( `panel-favorites/favorites?id=${ widget }`, {} );
 		if ( result.data ) {
 			// Get the categories of widget from front-end
-			const widgetsArr = elementor.widgetsCache[ `${ widget }` ].categories;
-			if ( 'undefined' === typeof widgetsArr ) {
-				widgetsArr.categories = [];
-			}
-			// Get element position in array
-			const elmPos = widgetsArr.indexOf( 'favorites' );
-			// Check - if element in array do nothing, else add it to array
-			if ( -1 === elmPos ) {
-				widgetsArr.push( 'favorites' );
-				$e.route( 'panel/elements/categories', { refresh: true } );
+			const widgetsArr = elementor.widgetsCache[ `${ widget }` ];
+			if ( widgetsArr ) {
+				if ( ! widgetsArr.hasOwnProperty( 'categories' ) ) {
+					widgetsArr.categories = [];
+				}
+				// Get element position in array
+				const elmExistsInArr = widgetsArr.categories.includes( 'favorites' );
+				// Check - if element not exists in array - add it to array
+				if ( ! elmExistsInArr ) {
+					widgetsArr.categories.push( 'favorites' );
+					$e.route( 'panel/elements/categories', { refresh: true } );
+				}
 			}
 		}
 

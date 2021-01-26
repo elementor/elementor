@@ -219,6 +219,53 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.1.0 - 2021-01-24 =
+* New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
+* New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
+* Experiment: Landing Pages - Create beautiful landing pages in a streamlined workflow
+* Experiment: Accessibility Improvements - Make Elementor widgets more accessible (may include markup changes) ([#13191](https://github.com/elementor/elementor/issues/13191))
+* Experiment: Improved performance by loading JS and Swiper assets conditionally in frontend ([#8572](https://github.com/elementor/elementor/issues/8572), [Developer Documentation](https://developers.elementor.com/experiment-optimized-asset-loading))
+* Tweak: Improved Tabs widget accessibility ([#11779](https://github.com/elementor/elementor/issues/11779), [#11561](https://github.com/elementor/elementor/issues/11561))
+* Tweak: Added alignment options for Tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
+* Tweak: Updated Font Awesome icons library to v5.15.1 ([#12057](https://github.com/elementor/elementor/issues/12057))
+* Tweak: Added "Custom" Columns Gap option in Section element ([#11978](https://github.com/elementor/elementor/issues/11978))
+* Tweak: Added Border Radius support in Google Maps widget ([#11359](https://github.com/elementor/elementor/issues/11359))
+* Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#9710](https://github.com/elementor/elementor/issues/9710))
+* Tweak: Added dynamic capabilities to Toggle Content control in Toggle widget ([#12405](https://github.com/elementor/elementor/issues/12405))
+* Tweak: Added `em` unit to Border Radius control in Button widget ([#11561](https://github.com/elementor/elementor/issues/11561))
+* Tweak: Introduced a new method for attaching a JS handler to an element ([Developer Documentation](https://developers.elementor.com/new-method-attaching-a-js-handler))
+* Tweak: Added the option to add custom menu items in Site Settings ([Developer Documentation](https://github.com/elementor/elementor/pull/13243))
+* Tweak: Added an option to choose Text element HTML tag in Divider widget ([#11499](https://github.com/elementor/elementor/issues/11499))
+* Tweak: Updated `eicons` library to v5.10.0
+* Tweak: Refactored YouTube source to use YouTube API in Video widget
+* Tweak: Added dynamic capabilities to Poster control in Video widget
+* Tweak: Global dropdown controls are now displayed for all user roles
+* Tweak: Improved browsers detection utility functionality
+* Tweak: Added "Find an Expert" link to the Admin Dashboard Overview widget
+* Tweak: Added the new Theme Builder as a Finder item
+* Tweak: Added `+` icon in multi-select control for better UX
+* Tweak: Improved Select2 controls load
+* Tweak: Added Elementor Beta (Developer Edition) promotion in WordPress dashboard
+* Tweak: Migrated DOM Improvements to Elementor Experiments
+* Tweak: Removed redundant extra padding in responsive controls
+* Tweak: Modified the Theme Builder app link UI in the Admin Bar menu
+* Fix: Some keyboards layout cannot open the keyboard shortcuts dialog ([#6145](https://github.com/elementor/elementor/issues/6145))
+* Fix: Change Page Layout doesn't update the preview on the first attempt ([#13245](https://github.com/elementor/elementor/issues/13245))
+* Fix: Update Post Title via Site Settings removes style from Post Title widget ([#12605](https://github.com/elementor/elementor/issues/12605))
+* Fix: Can't rearrange items between sections in Navigator since WordPress 5.6 update ([#12256](https://github.com/elementor/elementor/issues/12256))
+* Fix: Double click needed to play YouTube video when Poster image exists in Video widget
+* Fix: Autoplay option doesn't work in mobile devices when YouTube source is muted in Video widget
+* Fix: YouTube End Time option doesn't work when Loop option is active in Video widget
+* Fix: Incompatible variable names in Base Swiper class and Elementor Pro carousels
+* Fix: Landing Pages menu item directs to the wrong page
+* Fix: Redundant spacing is added to WYSIWYG control if rich editing is disabled
+* Fix: Editor Autoplay is not working consistently in Image Carousel widget
+* Fix: Console errors are thrown when entering the Revisions menu in edge cases
+* Fix: Column height is not correct when Optimized DOM experiment is inactive
+* Fix: Wrong translation function caused errors in the Revisions panel
+* Fix: Widgets empty state is not visible in WordPress 5.6
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-1-planned-deprecations/)
+
 = 3.0.16 - 2021-01-06 =
 * Tweak: String changes in Delete Site Settings screen
 * Fix: Clicking "Recalculate" button in System info throws a PHP error ([#13100](https://github.com/elementor/elementor/issues/13100 ))
