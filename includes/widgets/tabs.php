@@ -147,6 +147,27 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_control(
+			'html_tag',
+			[
+				'label' => __( 'HTML Tag', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				],
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+					'p' => 'p',
+				],
+				'default' => 'h3',
+			]
+		);
+
+		$this->add_control(
 			'type',
 			[
 				'label' => __( 'Position', 'elementor' ),
@@ -482,6 +503,7 @@ class Widget_Tabs extends Widget_Base {
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<<?php echo $settings['html_tag'] . ' ' . $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></<?php echo $settings['html_tag']; ?
 				<?php endforeach; ?>
 			</div>
 		</div>
