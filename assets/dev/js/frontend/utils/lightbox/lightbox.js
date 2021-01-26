@@ -662,12 +662,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				if ( isFirst ) {
 					event.preventDefault();
 
-					$buttons.last().focus();
+					$buttons.last().trigger( 'focus' );
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
 
-				$buttons.first().focus();
+				$buttons.first().trigger( 'focus' );
 			}
 		}
 	},

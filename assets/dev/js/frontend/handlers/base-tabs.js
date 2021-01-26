@@ -79,11 +79,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 				break;
 			case 'Home':
 				event.preventDefault();
-				$tabs.first().focus();
+				$tabs.first().trigger( 'focus' );
+				$tabs.first().trigger( 'click' );
 				return;
 			case 'End':
 				event.preventDefault();
-				$tabs.last().focus();
+				$tabs.last().trigger( 'focus' );
+				$tabs.last().trigger( 'click' );
 				return;
 			default:
 				return;
@@ -95,10 +97,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 
 		if ( nextTab ) {
 			nextTab.focus();
+			nextTab.click();
 		} else if ( -1 === tabIndex + direction ) {
-			$tabs.last().focus();
+			$tabs.last().trigger( 'focus' );
+			$tabs.last().trigger( 'click' );
 		} else {
-			$tabs.first().focus();
+			$tabs.first().trigger( 'focus' );
+			$tabs.first().trigger( 'click' );
 		}
 	}
 
@@ -144,7 +149,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
 				// Support for old markup that includes an `<a>` tag in the tab
-				if ( $( event.target ).is( 'a' ) && `Enter` === event.key ) {
+				if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
 					event.preventDefault();
 				}
 
