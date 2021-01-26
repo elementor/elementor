@@ -79,6 +79,9 @@ class Module extends BaseModule {
 				$favorites_widgets = Favorites::get_favorite_widget();
 				if ( ! empty( $favorites_widgets ) ) {
 					foreach ( $favorites_widgets as $widget_name => $value ) {
+						if ( ! isset( $config['widgets'][ $widget_name ] ) ) {
+							// TODO: init
+						}
 						$config['widgets'][ $widget_name ]['categories'][] = 'favorites';
 					}
 				}

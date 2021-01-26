@@ -7,12 +7,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	ui() {
-		this.selectors = {
+		return {
 			noResults: '#elementor-finder__no-results',
 			categoryItem: '.elementor-finder__results__item',
 		};
-
-		return this.selectors;
 	}
 
 	events() {
@@ -48,7 +46,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	activateNextItem( reverse ) {
-		const $allItems = jQuery( this.selectors.categoryItem );
+		const $allItems = jQuery( this.ui.categoryItem.selector );
 
 		let nextItemIndex = 0;
 
