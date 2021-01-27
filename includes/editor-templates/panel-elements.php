@@ -38,7 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
-	<div class="elementor-element" data-id="{{ obj.widgetType || obj.title.trim().toLowerCase().replaceAll( ' ', '-' ) }}">
+	<div class="elementor-element" data-id="{{ obj.widgetType }}">
+		<# console.log(obj) #>
 		<# if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
