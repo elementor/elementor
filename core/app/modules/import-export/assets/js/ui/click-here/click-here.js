@@ -1,7 +1,5 @@
 import Utils from 'elementor-app/utils/utils.js';
 
-import Button from 'elementor-app/ui/molecules/button';
-
 import './click-here.scss';
 
 export default function ClickHere( props ) {
