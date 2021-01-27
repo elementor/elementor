@@ -40,7 +40,7 @@ export default function KitContent() {
 											{ item.data.description || getTemplateFeatures( item.data.features ) }
 										</Text>
 
-										{ item.data.features && ! hasPro && <GoProButton className="kit-content__go-pro-button" /> }
+										{ item.data.features?.locked && ! hasPro && <GoProButton className="kit-content__go-pro-button" /> }
 									</Grid>
 								</Grid>
 							</Grid>
