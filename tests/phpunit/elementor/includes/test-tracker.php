@@ -24,8 +24,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets( [
 			'post_types' => [
-				'page' => true,
-				'post' => false,
+				'page',
 			],
 			'disable_default_colors' => false,
 			'disable_default_fonts' => true,

@@ -351,14 +351,7 @@ class Tracker {
 		$result = [];
 
 		// Posts types.
-		$cpt_support = get_option( 'elementor_cpt_support', [] );
-		$cpt_usage = [];
-
-		foreach ( Plugin::ELEMENTOR_POST_TYPES as $post_type ) {
-			$cpt_usage[ $post_type ] = in_array( $post_type, $cpt_support );
-		}
-
-		$result['post_types'] = $cpt_usage;
+		$result['post_types'] = get_option( 'elementor_cpt_support', Plugin::ELEMENTOR_DEFAULT_POST_TYPES );
 
 		/** @var Kits_Manager $module */
 		$kits_manager = Plugin::$instance->kits_manager;
