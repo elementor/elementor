@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import Layout from '../../../templates/layout';
 import Notice from '../../../ui/notice/notice';
-import Title from '../../../ui/title/title';
+import PageHeader from '../../../ui/page-header/page-header';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
@@ -49,9 +49,9 @@ export default function ImportKit() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				<Title
-					primary={ __( 'Upload Kit File', 'elementor' ) }
-					secondary={ __( 'Upload the kit file.You will be able to see the Kit’s content at the end of the process.', 'elementor' ) }
+				<PageHeader
+					heading={ __( 'Upload Kit File', 'elementor' ) }
+					description={ __( 'Upload the kit file.You will be able to see the Kit’s content at the end of the process.', 'elementor' ) }
 				/>
 
 				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
