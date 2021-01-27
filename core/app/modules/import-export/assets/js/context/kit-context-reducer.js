@@ -13,19 +13,6 @@ class ReducerActions {
 
 		return state;
 	}
-
-	static setPostTypes( state, selectedOptions, include ) {
-		const includesAction = selectedOptions.length ? 'add' : 'remove';
-
-		/*
-		When post types are selected:
-		We need to add their related category name (the 'include' value) to the includes list
-		This action makes the relevant category checkbox to be marked as checked
-		 */
-		state = this.updateIncludes( state, include, includesAction );
-
-		return { ...state, postTypes: selectedOptions };
-	}
 }
 
 export const reducer = ( state, action ) => {
@@ -36,8 +23,6 @@ export const reducer = ( state, action ) => {
 			return ReducerActions.updateIncludes( state, action.value, 'add' );
 		case 'REMOVE_INCLUDE':
 			return ReducerActions.updateIncludes( state, action.value, 'remove' );
-		case 'SET_POST_TYPES':
-			return ReducerActions.setPostTypes( state, action.value, action.include );
 		default:
 			return state;
 	}

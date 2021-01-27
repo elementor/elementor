@@ -6,18 +6,16 @@ export default function GoProButton( props ) {
 	const { url } = useLink();
 
 	return (
-		<a
+		<Button
 			className={ props.className }
+			variant="contained"
+			size="sm"
+			color="cta"
+			text={ __( 'Go Pro', 'elementor' ) }
+			url={ url.goPro }
 			target="_blank"
 			rel="noopener noreferrer"
-			href={ url.goPro }>
-				<Button
-					variant="contained"
-					size="sm"
-					text={ __( 'Go Pro', 'elementor' ) }
-					color="cta"
-				/>
-		</a>
+		/>
 	);
 }
 

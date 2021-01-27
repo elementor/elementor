@@ -11,9 +11,6 @@ export default function KitContext( props ) {
 	},
 	[ kitContent, dispatch ] = useReducer( reducer, initialState );
 
-	// eslint-disable-next-line no-console
-	console.log( 'KitContext - setting defining new reducer', kitContent );
-
 	return (
 		<Context.Provider value={ { kitContent, dispatch } }>
 			{ props.children }

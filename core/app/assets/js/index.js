@@ -5,8 +5,7 @@ import ImportExport from '../../modules/import-export/assets/js/module';
 new SiteEditor();
 new ImportExport();
 
-//const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
-const AppWrapper = React.Fragment;
+const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 
 ReactDOM.render(
 	<AppWrapper>
