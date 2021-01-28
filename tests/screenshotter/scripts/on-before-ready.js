@@ -1,4 +1,6 @@
 module.exports = async function( page ) {
+	const config = require( '../config' );
+	const url = require( 'url' );
 	const fs = require( 'fs' );
 	const path = require( 'path' );
 	const chalk = require( 'chalk' );
@@ -18,6 +20,15 @@ module.exports = async function( page ) {
 	}
 
 	page
+		.on( 'request', async ( request ) => {
+			const req = request.url();
+			const host = url.parse( config.url_origin, true ).host;
+			const reqUrl = url.parse( req, true ).host;
+			if ( 'localhost' === reqUrl ) {
+				req.replace( reqUrl, host );
+				return req;
+			}
+		} )
 		.on( 'console', ( message ) => {
 			const type = message.type().substr( 0, 3 ).toUpperCase();
 			const colors = {
@@ -29,11 +40,15 @@ module.exports = async function( page ) {
 			const color = colors[ type ] || chalk.blue;
 			console.log( color( `${ type } ${ message.text() }` ) );
 		} )
-		.on( 'pageerror', ( { message } ) => console.log( chalk.red( message ) ) )
-		.on( 'response', ( response ) =>
-			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) ) )
-		.on( 'requestfailed', ( request ) =>
-			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) ) )
+		.on( 'pageerror', ( { message } ) => {
+			console.log( chalk.red( message ) );
+		} )
+		.on( 'response', ( response ) => {
+			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
+		} )
+		.on( 'requestfailed', ( request ) => {
+			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) )
+		} )
 		.on( 'load', async () => {
 			const pageTitle = await page.title();
 			const cdp = await page.target().createCDPSession();
