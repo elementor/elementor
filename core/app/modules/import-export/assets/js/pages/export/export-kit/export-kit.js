@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import { Redirect } from '@reach/router';
-
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import ExportButton from './components/export-button/export-button';
@@ -8,18 +5,11 @@ import Footer from '../../../ui/footer/footer';
 import KitContent from './components/kit-content/kit-content';
 
 export default function ExportKit() {
-	const [ isDownloading, setIsDownloading ] = useState( false ),
-		getFooter = () => {
-			if ( isDownloading ) {
-				return;
-			}
-
-			return (
-				<Footer separator justify="end">
-					<ExportButton setIsDownloading={ setIsDownloading } />
-				</Footer>
-			);
-		};
+	const getFooter = () => (
+			<Footer separator justify="end">
+				<ExportButton />
+			</Footer>
+		);
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -32,7 +22,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				{ isDownloading ? <Redirect to="/export/complete" noThrow /> : <KitContent /> }
+				<KitContent />
 			</section>
 		</Layout>
 	);

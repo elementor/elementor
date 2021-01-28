@@ -1,22 +1,33 @@
-import { Context } from '../../../../../context/kit-context';
+import { useState, useEffect } from 'react';
+import { useNavigate } from '@reach/router';
+
+import { Context } from '../../../../../context/export/export-context';
 
 import Button from 'elementor-app/ui/molecules/button';
 
-export default function ExportButton( props ) {
-	const getDownloadUrl = ( context, isDownloadAllowed ) => {
-		if ( ! isDownloadAllowed ) {
-			return '';
-		}
+export default function ExportButton() {
+	const [ isDownloading, setIsDownloading ] = useState( false ),
+		navigate = useNavigate(),
+		getDownloadUrl = ( context, isDownloadAllowed ) => {
+			if ( ! isDownloadAllowed ) {
+				return '';
+			}
 
-		const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
-			exportData = {
-				elementor_export_kit: {
-					include: context.kitContent.includes,
-				},
-			};
+			const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
+				exportData = {
+					elementor_export_kit: {
+						include: context.kitContent.includes,
+					},
+				};
 
-		return exportURL + '&' + jQuery.param( exportData );
+			return exportURL + '&' + jQuery.param( exportData );
 	};
+
+	useEffect( () => {
+		if ( isDownloading ) {
+			navigate( 'export/complete' );
+		}
+	}, [ isDownloading ] );
 
 	return (
 		<Context.Consumer>
@@ -33,8 +44,8 @@ export default function ExportButton( props ) {
 							url={ downloadURL }
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
-									props.setIsDownloading( true );
-									context.dispatch( { type: 'SET_DOWNLOAD_URL', value: downloadURL } );
+									context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadURL } );
+									setIsDownloading( true );
 								}
 							} }
 						/>
