@@ -113,18 +113,22 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	// On sorting element
-	updateSort: function( ui ) {
+	updateSort: function( ui, newIndex ) {
+		if ( undefined === newIndex ) {
+			newIndex = ui.item.index();
+		}
+
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: this.getSortedElementNewIndex( ui.item ),
+				at: newIndex,
 			},
 		} );
 	},
 
 	// On receiving element from another container
-	receiveSort: function( event, ui ) {
+	receiveSort: function( event, ui, newIndex ) {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
@@ -144,11 +148,15 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
+		if ( undefined === newIndex ) {
+			newIndex = ui.item.index();
+		}
+
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: this.getSortedElementNewIndex( ui.item ),
+				at: newIndex,
 			},
 		} );
 	},
@@ -198,7 +206,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortReceive: function( event, ui ) {
-		this.receiveSort( event, ui );
+		this.receiveSort( event, ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
 	onSortUpdate: function( event, ui ) {
@@ -208,7 +216,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		this.updateSort( ui );
+		this.updateSort( ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
 	onAddChild: function( view ) {
