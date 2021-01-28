@@ -11,6 +11,7 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
+		this.storage.size.width = window.getComputedStyle( this.$el[0] ).getPropertyValue( 'width' );
 
 		this.indicators = {
 			customPosition: {
