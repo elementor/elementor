@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { Context as KitContext } from '../../../../../context/kit-context';
+import { Context as KitContext } from '../../../../../context/export/export-context';
 
 import ClickHere from '../../../../../ui/click-here/click-here';
 

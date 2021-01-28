@@ -1,23 +1,23 @@
 import { useReducer } from 'react';
 
-import { reducer } from './kit-context-reducer';
+import { reducer } from './export-context-reducer';
 
 export const Context = React.createContext();
 
-export default function KitContext( props ) {
+export default function ExportContext( props ) {
 	const initialState = {
 		includes: [],
 		downloadURL: '',
 	},
-	[ kitContent, dispatch ] = useReducer( reducer, initialState );
+	[ data, dispatch ] = useReducer( reducer, initialState );
 
 	return (
-		<Context.Provider value={ { kitContent, dispatch } }>
+		<Context.Provider value={ { data, dispatch } }>
 			{ props.children }
 		</Context.Provider>
 	);
 }
 
-KitContext.propTypes = {
+ExportContext.propTypes = {
 	children: PropTypes.object.isRequired,
 };

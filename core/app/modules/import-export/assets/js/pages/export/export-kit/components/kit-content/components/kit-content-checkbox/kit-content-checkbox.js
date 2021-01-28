@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 
-import { Context as KitContext } from '../../../../../../../context/kit-context';
+import { Context as KitContext } from '../../../../../../../context/export/export-context';
 
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
@@ -11,7 +11,7 @@ export default function KitContentCheckbox( props ) {
 			const isChecked = event.target.checked,
 				actionType = isChecked ? 'ADD_INCLUDE' : 'REMOVE_INCLUDE';
 
-			context.dispatch( { type: actionType, value: props.type } );
+			context.dispatch( { type: actionType, payload: props.type } );
 		};
 
 	return useMemo( () => (
