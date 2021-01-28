@@ -19,14 +19,26 @@ module.exports = async function( page ) {
 		} );
 	}
 
+	page.setRequestInterception( true );
+
 	page
 		.on( 'request', async ( request ) => {
+			// return await fixUrlAdrress( request );
 			const req = request.url();
 			const host = url.parse( config.url_origin, true ).host;
-			const reqUrl = url.parse( req, true ).host;
-			if ( 'localhost' === reqUrl ) {
-				req.replace( reqUrl, host );
-				return req;
+			const reqHost = url.parse( req, true ).host;
+
+			// Intercept if request url.host=localhost
+			if ( 'localhost' === reqHost ) {
+				// Send response
+				request.respond( {
+					status: 302,
+					headers: {
+						location: req.replace( reqHost, host ),
+					},
+				} );
+			} else {
+				request.continue();
 			}
 		} )
 		.on( 'console', ( message ) => {
@@ -43,8 +55,10 @@ module.exports = async function( page ) {
 		.on( 'pageerror', ( { message } ) => {
 			console.log( chalk.red( message ) );
 		} )
-		.on( 'response', ( response ) => {
+		.on( 'response', async ( response ) => {
+			// const fixResponse = await fixUrlAdrress( response );
 			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
+			// return fixResponse;
 		} )
 		.on( 'requestfailed', ( request ) => {
 			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) )
