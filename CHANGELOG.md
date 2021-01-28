@@ -5,6 +5,16 @@ Each Developer Edition release, similar to beta version releases, will contain e
 We will use this plugin to validate new features and gain feedback before they are released.**
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 ## Changelog
+**3.2.0-dev2 - 2021-01-24**
+* Tweak: Updated `eicons` library to v5.10.0
+* Fix: Can't rearrange items between sections in Navigator since WordPress 5.6 update ([#12256](https://github.com/elementor/elementor/issues/12256))
+* Fix: Editor Autoplay is not working consistently in Image Carousel widget
+* Fix: IE11 bug in case of `min-height` mixed with `align-items: center`
+* Fix: Wrong translation function caused errors in the Revisions panel
+* Fix: UI glitch in the Template Library footer banner
+* Fix: Widgets empty state is not visible in WordPress 5.6
+
+
 **3.2.0-dev1 - 2021-01-07**
 * Tweak: Add vertical alignment for tabs widget ([#11997](https://github.com/elementor/elementor/issues/11997))
 * Tweak: Converted Elementor Landing Pages to Custom Post type
