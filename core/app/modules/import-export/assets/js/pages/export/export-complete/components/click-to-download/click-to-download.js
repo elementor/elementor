@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 
-import { Context as KitContext } from '../../../../../context/export/export-context';
+import { Context } from '../../../../../context/export/export-context';
 
 import ClickHere from '../../../../../ui/click-here/click-here';
 
 export default function ClickToDownload() {
-	const context = useContext( KitContext );
+	const exportContext = useContext( Context );
 
 	return (
-		<ClickHere url={ context.kitContent.downloadURL } />
+		<ClickHere url={ exportContext.data.downloadURL } target="_self" />
 	);
 }

@@ -8,7 +8,7 @@ import Button from 'elementor-app/ui/molecules/button';
 export default function ExportButton() {
 	const [ isDownloading, setIsDownloading ] = useState( false ),
 		navigate = useNavigate(),
-		getDownloadUrl = ( context, isDownloadAllowed ) => {
+		getDownloadUrl = ( exportContext, isDownloadAllowed ) => {
 			if ( ! isDownloadAllowed ) {
 				return '';
 			}
@@ -16,7 +16,7 @@ export default function ExportButton() {
 			const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
 				exportData = {
 					elementor_export_kit: {
-						include: context.kitContent.includes,
+						include: exportContext.data.includes,
 					},
 				};
 
@@ -32,9 +32,9 @@ export default function ExportButton() {
 	return (
 		<Context.Consumer>
 			{
-				( context ) => {
-					const isDownloadAllowed = context.kitContent.includes.length,
-						downloadURL = getDownloadUrl( context, isDownloadAllowed );
+				( exportContext ) => {
+					const isDownloadAllowed = exportContext.data.includes.length,
+						downloadURL = getDownloadUrl( exportContext, isDownloadAllowed );
 
 					return (
 						<Button
@@ -44,7 +44,7 @@ export default function ExportButton() {
 							url={ downloadURL }
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
-									context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadURL } );
+									exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadURL } );
 									setIsDownloading( true );
 								}
 							} }
