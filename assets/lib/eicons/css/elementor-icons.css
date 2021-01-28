@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.9.1");
-  src: url("../fonts/eicons.eot?5.9.1#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.9.1") format("woff2"), url("../fonts/eicons.woff?5.9.1") format("woff"), url("../fonts/eicons.ttf?5.9.1") format("truetype"), url("../fonts/eicons.svg?5.9.1#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.10.0");
+  src: url("../fonts/eicons.eot?5.10.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.10.0") format("woff2"), url("../fonts/eicons.woff?5.10.0") format("woff"), url("../fonts/eicons.ttf?5.10.0") format("truetype"), url("../fonts/eicons.svg?5.10.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1172,6 +1172,36 @@
 
 .eicon-background:before {
   content: '\e97d'; }
+
+.eicon-device-responsive:before {
+  content: '\e97e'; }
+
+.eicon-device-wide:before {
+  content: '\e97f'; }
+
+.eicon-code-highlight:before {
+  content: '\e980'; }
+
+.eicon-video-playlist:before {
+  content: '\e981'; }
+
+.eicon-download-kit:before {
+  content: '\e982'; }
+
+.eicon-kit-details:before {
+  content: '\e983'; }
+
+.eicon-kit-parts:before {
+  content: '\e984'; }
+
+.eicon-kit-upload:before {
+  content: '\e985'; }
+
+.eicon-kit-plugins:before {
+  content: '\e986'; }
+
+.eicon-kit-upload-alt:before {
+  content: '\e987'; }
 
 .eicon-eye:before {
   content: '\e8ac'; }

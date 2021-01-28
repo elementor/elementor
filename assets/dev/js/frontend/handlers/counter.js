@@ -1,4 +1,4 @@
-class Counter extends elementorModules.frontend.handlers.Base {
+export default class Counter extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -29,9 +29,3 @@ class Counter extends elementorModules.frontend.handlers.Base {
 		} );
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( Counter, {
-		$element: $scope,
-	} );
-};
