@@ -572,11 +572,12 @@ class Widget_Social_Icons extends Widget_Base {
 		?>
 		<div class="elementor-social-icons-wrapper elementor-grid">
 			<?php
+			$icons_count = count( $settings['social_icon_list'] );
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
 				$is_new = empty( $item['social'] ) && $migration_allowed;
 				$social = '';
-				$whitespace = count( $settings['social_icon_list'] ) !== $index + 1 ? '&nbsp;' : '';
+				$whitespace = $icons_count !== $index + 1 ? '&nbsp;' : '';
 
 				// add old default
 				if ( empty( $item['social'] ) && ! $migration_allowed ) {
