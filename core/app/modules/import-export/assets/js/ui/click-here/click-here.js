@@ -9,10 +9,10 @@ export default function ClickHere( props ) {
 	return (
 		<a
 			className={ Utils.arrayToClassName( classes ) }
-			target="_blank"
+			target={ props.target }
 			rel="noopener noreferrer"
 			href={ props.url }>
-			{ __( 'Click here', 'elementor' ) }
+			{ __( 'Click Here', 'elementor' ) }
 		</a>
 	);
 }
@@ -20,8 +20,10 @@ export default function ClickHere( props ) {
 ClickHere.propTypes = {
 	className: PropTypes.string,
 	url: PropTypes.string,
+	target: PropTypes.string,
 };
 
 ClickHere.defaultProps = {
 	className: '',
+	target: '_blank',
 };
