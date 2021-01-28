@@ -1,50 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from '@reach/router';
+
+import { Context } from '../../../context/import/import-context';
 
 import Layout from '../../../templates/layout';
 import Notice from '../../../ui/notice/notice';
 import PageHeader from '../../../ui/page-header/page-header';
+import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
 import DropZone from 'elementor-app/organisms/drop-zone';
-import Dialog from 'elementor-app/ui/dialog/dialog';
-
-import useFile from '../../../hooks/use-file/use-file';
-import useLink from '../../../hooks/use-link/use-link';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const [ isLoading, setLoading ] = useState( false ),
-		[ isImportFailed, setIsImportFailed ] = useState( false ),
-		{ action } = useLink(),
-		{ setFile } = useFile(),
-		onFileSelect = ( files ) => {
-			setFile( files[ 0 ] );
-			setIsImportFailed( false );
-		},
+	const [ isImportFailed, setIsImportFailed ] = useState( false ),
+		importContext = useContext( Context ),
+		navigate = useNavigate(),
 		resetImportProcess = () => {
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
-			setFile( null );
 		};
 
-	const getDialog = () => (
-		<Dialog
-			title={ __( 'Import Failed', 'elementor' ) }
-			text={ __( 'We are sorry, but some problem accrued. Please try again. If the problem continues, contact our support.', 'elementor' ) }
-			approveButtonColor="primary"
-			approveButtonText={ __( 'Retry', 'elementor' ) }
-			approveButtonOnClick={ resetImportProcess }
-			dismissButtonText={ __( 'Exit', 'elementor' ) }
-			dismissButtonOnClick={ action.backToDashboard }
-		/>
-	);
-
 	useEffect( () => {
-		if ( isLoading ) {
-			setTimeout( () => {
-				setLoading( false );
+		const selectedFile = importContext.data.file;
+
+		if ( selectedFile ) {
+			if ( 'application/x-zip-compressed' === selectedFile.type ) {
+				navigate( '/import/process' );
+			} else {
 				setIsImportFailed( true );
-			}, 1000 );
+			}
 		}
-	}, [ isLoading ] );
+	}, [ importContext.data.file ] );
 
 	return (
 		<Layout type="import">
@@ -63,14 +49,12 @@ export default function ImportKit() {
 					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
-					isLoading={ isLoading }
 					onFileSelect={ ( files ) => {
-						setLoading( true );
-						setFile( files[ 0 ] );
+						importContext.dispatch( { type: 'SET_FILE', payload: files[ 0 ] } );
 					} }
 				/>
 
-				{ isImportFailed && getDialog() }
+				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
 			</section>
 		</Layout>
 	);

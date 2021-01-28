@@ -12,7 +12,7 @@ export default function Message( props ) {
 
 Message.propTypes = {
 	className: PropTypes.string,
-	children: PropTypes.oneOfType( [ PropTypes.object, PropTypes.arrayOf( PropTypes.object ) ] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 Message.defaultProps = {
