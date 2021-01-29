@@ -26,10 +26,8 @@ module.exports = async function( page ) {
 			const requestUrl = request.url();
 			const host = url.parse( config.url_origin, true ).host;
 			const requestHost = url.parse( requestUrl, true ).host;
-			
-			// Intercept if request url.host=localhost
+
 			if ( 'localhost' === requestHost ) {
-				// Send response
 				request.respond( {
 					status: 302,
 					headers: {
