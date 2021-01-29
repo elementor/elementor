@@ -26,14 +26,15 @@ module.exports = async function( page ) {
 			const requestUrl = request.url();
 			const host = url.parse( config.url_origin, true ).host;
 			const requestHost = url.parse( requestUrl, true ).host;
-
+			
 			// Intercept if request url.host=localhost
 			if ( 'localhost' === requestHost ) {
 				// Send response
 				request.respond( {
-					body: fs.readFileSync(
-						path.replace( requestHost, host ),
-					),
+					status: 302,
+					headers: {
+						location: requestUrl.replace( requestHost, host ),
+					},
 				} );
 			} else {
 				request.continue();
