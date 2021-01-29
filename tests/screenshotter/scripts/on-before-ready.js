@@ -23,19 +23,17 @@ module.exports = async function( page ) {
 
 	page
 		.on( 'request', async ( request ) => {
-			// return await fixUrlAdrress( request );
-			const req = request.url();
+			const requestUrl = request.url();
 			const host = url.parse( config.url_origin, true ).host;
-			const reqHost = url.parse( req, true ).host;
+			const requestHost = url.parse( requestUrl, true ).host;
 
 			// Intercept if request url.host=localhost
-			if ( 'localhost' === reqHost ) {
+			if ( 'localhost' === requestHost ) {
 				// Send response
 				request.respond( {
-					status: 302,
-					headers: {
-						location: req.replace( reqHost, host ),
-					},
+					body: fs.readFileSync(
+						path.replace( requestHost, host ),
+					),
 				} );
 			} else {
 				request.continue();
