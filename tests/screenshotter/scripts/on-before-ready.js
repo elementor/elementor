@@ -24,14 +24,14 @@ module.exports = async function( page ) {
 	page
 		.on( 'request', async ( request ) => {
 			const requestUrl = request.url();
-			const host = url.parse( config.url_origin, true ).host;
+			const configHost = url.parse( config.url_origin, true ).host;
 			const requestHost = url.parse( requestUrl, true ).host;
 
 			if ( 'localhost' === requestHost ) {
 				request.respond( {
 					status: 302,
 					headers: {
-						location: requestUrl.replace( requestHost, host ),
+						location: requestUrl.replace( requestHost, configHost ),
 					},
 				} );
 			} else {
