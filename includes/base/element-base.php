@@ -830,7 +830,11 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
 		}
 
-		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
+		$_animation = ! empty( $settings['_animation'] );
+		$animation = ! empty( $settings['animation'] );
+		$has_animation = $_animation && 'none' !== $settings['_animation'] || $animation && 'none' !== $settings['animation'];
+
+		if ( $has_animation ) {
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 
 			if ( ! $is_static_render_mode ) {
