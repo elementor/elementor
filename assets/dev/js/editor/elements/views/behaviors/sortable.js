@@ -78,6 +78,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return this.view.getChildViewContainer( this.view );
 	},
 
+	// This method is used to fix widgets index detection when dragging or sorting using the preview interface,
+	// The natural widget index in the column is wrong, since there is a `.elementor-background-overlay` element
+	// at the beginning of the column
 	getSortedElementNewIndex( $element ) {
 		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
 			draggedElType = draggedModel.get( 'elType' );
