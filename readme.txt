@@ -222,8 +222,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Minor UI improvements in Compatibility tag
 * Fix: Async JS loading conflicted with `wp.i18n` ([#13708](https://github.com/elementor/elementor/issues/13708), [#13746](https://github.com/elementor/elementor/issues/13746), [Topic](https://wordpress.org/support/topic/console-error-43/))
 * Fix: Elementor loads unnecessary `wp-polyfills.min.js` script in Frontend ([#13720](https://github.com/elementor/elementor/issues/13720))
-* Fix: Landing Pages experiment removes content in static blog pages ([#13706](https://github.com/elementor/elementor/issues/13706), [#13728](https://github.com/elementor/elementor/issues/13728), [#13725](https://github.com/elementor/elementor/issues/13725),
-*Topic](https://wordpress.org/support/topic/blog-page-not-showing-after-update-3/))
+* Fix: Landing Pages experiment removes content in static blog pages ([#13706](https://github.com/elementor/elementor/issues/13706), [#13728](https://github.com/elementor/elementor/issues/13728), [#13725](https://github.com/elementor/elementor/issues/13725), [Topic](https://wordpress.org/support/topic/blog-page-not-showing-after-update-3/))
 * Fix: Background Slideshow shifted if Section is stretched and has Full Width layout ([#13750](https://github.com/elementor/elementor/issues/13750), [Topic](https://wordpress.org/support/topic/slide-show-background-2/), [Topic](https://wordpress.org/support/topic/slider-background-section-layout-issue/), [Topic](https://wordpress.org/support/topic/elementor-v-3-0-16-breaks-full-width-header/))
 * Fix: Entrance animation set to `none` caused a delay in the widget load
 * Fix: Navigator rearrangement glitches when Optimized DOM experiment is active
