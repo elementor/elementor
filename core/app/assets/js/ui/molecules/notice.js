@@ -15,7 +15,7 @@ export default function Notice( props ) {
 	return (
 		<div className={ Utils.arrayToClassName( classes ) }>
 			<Text variant="xs" className="eps-notice__text">
-				{ props.children }
+				{ props.label && <strong>{ props.label + ': ' }</strong> } { props.children }
 			</Text>
 		</div>
 	);
@@ -24,6 +24,7 @@ export default function Notice( props ) {
 Notice.propTypes = {
 	className: PropTypes.string,
 	color: PropTypes.string,
+	label: PropTypes.string,
 	children: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.object,

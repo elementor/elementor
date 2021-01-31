@@ -3,9 +3,10 @@ import Utils from 'elementor-app/utils/utils.js';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
-import './title.scss';
+import './page-header.scss';
 
-export default function Title( props ) {
+// Page header.
+export default function PageHeader( props ) {
 	const baseClassName = 'import-export-title',
 		classes = [ baseClassName, props.className ];
 
@@ -29,21 +30,21 @@ export default function Title( props ) {
 
 	return (
 		<div className={ Utils.arrayToClassName( classes ) }>
-			{ props.primary && <Heading variant="display-3" className="import-export-title__primary">{ props.primary }</Heading> }
-			{ props.secondary && <Text className="import-export-title__secondary">{ handleMultiLine( props.secondary ) }</Text> }
+			{ props.heading && <Heading variant="display-3" className="import-export-title__primary">{ props.heading }</Heading> }
+			{ props.description && <Text className="import-export-title__secondary">{ handleMultiLine( props.description ) }</Text> }
 		</div>
 	);
 }
 
-Title.propTypes = {
+PageHeader.propTypes = {
 	className: PropTypes.string,
-	primary: PropTypes.string,
-	secondary: PropTypes.oneOfType( [
+	heading: PropTypes.string,
+	description: PropTypes.oneOfType( [
 		PropTypes.string,
 		PropTypes.array,
 	] ),
 };
 
-Title.defaultProps = {
+PageHeader.defaultProps = {
 	className: '',
 };

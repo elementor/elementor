@@ -1,6 +1,6 @@
 export default function Select( props ) {
 	return (
-		<select data-value={ Math.random() } multiple={ props.multiple } className={ props.className } value={ props.value } onChange={ props.onChange } ref={ props.elRef }>
+		<select multiple={ props.multiple } className={ props.className } value={ props.value } onChange={ props.onChange } ref={ props.elRef }>
 			{ props.options.map( ( option ) =>
 				option.children ?
 					<optgroup label={ option.label } key={ option.label }>

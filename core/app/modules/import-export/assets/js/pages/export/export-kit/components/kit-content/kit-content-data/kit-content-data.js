@@ -6,7 +6,6 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Saved Templates', 'elementor' ),
-					__( 'Landing Pages', 'elementor' ),
 				],
 				locked: [
 					__( 'Headers', 'elementor' ),
@@ -25,14 +24,28 @@ const kitContentData = [
 		type: 'content',
 		data: {
 			title: __( 'Content', 'elementor' ),
-			description: __( 'Elementor Pages', 'elementor' ),
+			features: {
+				open: [
+					__( 'Elementor Pages', 'elementor' ),
+					__( 'Landing Pages', 'elementor' ),
+				],
+			},
 		},
 	},
 	{
 		type: 'settings',
 		data: {
 			title: __( 'Site Settings', 'elementor' ),
-			description: __( 'Global Colors, Global  Typography, Theme Style settings, Layout Settings, Lightbox Settings, Background Settings', 'elementor' ),
+			features: {
+				open: [
+					__( 'Global Colors', 'elementor' ),
+					__( 'Global  Typography', 'elementor' ),
+					__( 'Theme Style settings', 'elementor' ),
+					__( 'Layout Settings', 'elementor' ),
+					__( 'Lightbox Settings', 'elementor' ),
+					__( 'Background Settings', 'elementor' ),
+				],
+			},
 		},
 	},
 ];

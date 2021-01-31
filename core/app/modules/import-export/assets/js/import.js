@@ -1,4 +1,4 @@
-import KitContext from './context/kit-context';
+import ImportContext from './context/import/import-context';
 import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
 
@@ -8,7 +8,7 @@ import ImportSuccess from './pages/import/import-success/import-success';
 
 export default function Import() {
 	return (
-		<KitContext>
+		<ImportContext>
 			<LocationProvider history={ router.appHistory }>
 				<Router>
 					<ImportSuccess path="success" />
@@ -16,6 +16,6 @@ export default function Import() {
 					<ImportKit default />
 				</Router>
 			</LocationProvider>
-		</KitContext>
+		</ImportContext>
 	);
 }

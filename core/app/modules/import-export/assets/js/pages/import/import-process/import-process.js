@@ -1,12 +1,41 @@
+import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from '@reach/router';
+
 import Layout from '../../../templates/layout';
 import Message from '../../../ui/message/message';
+import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 
+import { Context } from '../../../context/import/import-context';
+
+import useUploadFile from '../../../hooks/use-file/use-upload-file';
+
 import './import-process-style.scss';
 
 export default function ImportProcess() {
+	const [ isImportFailed, setIsImportFailed ] = useState( false ),
+		{ setFile, uploadStatus } = useUploadFile( 'elementor_export_kit' ),
+		importContext = useContext( Context ),
+		navigate = useNavigate(),
+		resetImportProcess = () => {
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			navigate( '/import' );
+		};
+
+	useEffect( () => {
+		setFile( importContext.data.file );
+	}, [] );
+
+	useEffect( () => {
+		if ( uploadStatus.success ) {
+			navigate( '/import/success' );
+		} else if ( uploadStatus.error ) {
+			setIsImportFailed( true );
+		}
+	}, [ uploadStatus ] );
+
 	return (
 		<Layout type="import">
 			<Message className="e-app-import-process">
@@ -21,6 +50,8 @@ export default function ImportProcess() {
 					<br />
 					{ __( 'Please don’t close this window until importing is completed', 'elementor' ) }
 				</Text>
+
+				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
 			</Message>
 		</Layout>
 	);
