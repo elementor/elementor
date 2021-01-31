@@ -316,26 +316,21 @@ class Module extends BaseModule {
 	 */
 	private function adjust_landing_page_query( \WP_Query $query ) {
 		// Only handle actual pages.
-		if ( ! $query->is_main_query() || ! isset( $query->query['page'] ) ) {
+		if (
+			! $query->is_main_query()
+			// If the query is not for a page.
+			|| ! isset( $query->query['page'] )
+			// If the query is for a static home/blog page.
+			|| is_home()
+			// If the post type comes already set, the main query is probably a custom one made by another plugin.
+			// In this case we do not want to intervene in order to not cause a conflict.
+			|| isset( $query->query['post_type'] )
+		) {
 			return;
 		}
 
-		$query_post_types = $query->get( 'post_type' );
-
-		// If the post type field is empty, create it as an array.
-		if ( empty( $query_post_types ) ) {
-			// If the post types query is empty, create it as an array and include the landing pages CPT in it.
-			$query_post_types = [ 'post', 'page' ];
-		}
-
-		// If it is not empty but it is not an array (for example, if it is a single post type string), change it into
-		// an array.
-		if ( ! is_array( $query_post_types ) ) {
-			$query_post_types = [ $query_post_types ];
-		}
-
-		// Add the Landing Page CPT to the list of post types for the query.
-		$query_post_types[] = self::CPT;
+		// Create the post types property as an array and include the landing pages CPT in it.
+		$query_post_types = [ 'post', 'page', self::CPT ];
 
 		// Since WordPress determined this is supposed to be a page, we'll pre-set the post_type query arg to make sure
 		// it includes the Landing Page CPT, so when the query is parsed, our CPT will be a legitimate match to the
