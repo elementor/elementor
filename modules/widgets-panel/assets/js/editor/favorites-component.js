@@ -17,7 +17,7 @@ export default class FavoritesComponent extends ComponentBase {
 
 	registerAPI() {
 		super.registerAPI();
-		$e.routes.on( 'run:after', ( component, route, args ) => {
+		$e.routes.on( 'run:after', ( component, route ) => {
 			if ( 'panel/elements/categories' === route ) {
 				this.menuId = 'e-favorite-widget-context-menu';
 				this.favoriteWidgetMenu = null;
@@ -45,6 +45,7 @@ export default class FavoritesComponent extends ComponentBase {
 		// Remove the menu if exists
 		this.hideFavoriteWidgetsMenu();
 
+		const panel = jQuery( '#elementor-panel' );
 		// Find the clicked widget
 		this.clickedWidget = jQuery( e.target ).parents( '.elementor-element-wrapper' );
 		// Find the name (id) of clicked widget
@@ -58,17 +59,31 @@ export default class FavoritesComponent extends ComponentBase {
 		this.menuClass = menuText.toLowerCase().replaceAll( ' ', '-' );
 
 		// Create menu element with content
-		this.favoriteWidgetMenu = jQuery( `<div id="${ this.menuId }" class="${ this.menuClass }">${ menuText }</div>` );
-		// Change the parent css to relative
-		this.clickedWidget.addClass( 'e-favorite-widget-relative' );
+		this.favoriteWidgetMenu = jQuery( '<div>', { id: this.menuId, class: this.menuClass } );
+		this.favoriteWidgetMenu.html( jQuery( '<span>' ).text( menuText ) );
 		// Insert the menu to widget wrapper
-		this.favoriteWidgetMenu.appendTo( this.clickedWidget );
+		this.favoriteWidgetMenu.insertAfter( panel );
+
+		const screenInnerWidth = jQuery( document ).outerWidth();
+		const menuWidth = this.favoriteWidgetMenu.outerWidth();
+		const positionX = e.pageX;
+		const calcPosition = screenInnerWidth - ( positionX + menuWidth );
+		let fixPositionX = positionX - e.offsetX;
+		if ( -1 === Math.sign( calcPosition ) ) {
+			fixPositionX = positionX + calcPosition;
+		}
+		if ( this.favoriteWidgetMenu ) {
+			this.favoriteWidgetMenu.css( {
+				top: e.pageY - 20 + 'px',
+				left: fixPositionX + 'px',
+			} );
+		}
+		return false;
 	}
 
 	hideFavoriteWidgetsMenu() {
 		if ( this.favoriteWidgetMenu ) {
 			jQuery( `#${ this.menuId }.${ this.menuClass }` ).remove();
-			this.clickedWidget.removeClass( 'e-favorite-widget-relative' );
 			this.favoriteWidgetMenu = null;
 			this.clickedWidget = null;
 		}
@@ -79,12 +94,12 @@ export default class FavoritesComponent extends ComponentBase {
 			// Events settings
 			const targetId = 'e-favorite-widget-context-menu' === e.target.id;
 			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
-			const rightClickOnWidgetNotMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
+			const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
 			const clickOnMenu = 'click' === e.type && targetId;
 
 			if ( rightClickOnMenu ) {
 				return false;
-			} else if ( rightClickOnWidgetNotMenu ) {
+			} else if ( rightClickOnWidgetOutOfMenu ) {
 				e.preventDefault();
 				// Add the right click menu
 				this.addFavoriteWidgetsMenu( e );
@@ -103,6 +118,14 @@ export default class FavoritesComponent extends ComponentBase {
 					this.hideFavoriteWidgetsMenu();
 				}
 			} else {
+				this.hideFavoriteWidgetsMenu();
+			}
+		} );
+
+		elementorFrontend.elements.$window.keyup( ( e ) => {
+			const ESC_KEY = 27;
+
+			if ( ESC_KEY === e.keyCode ) {
 				this.hideFavoriteWidgetsMenu();
 			}
 		} );

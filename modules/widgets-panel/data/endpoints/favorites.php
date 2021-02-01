@@ -47,7 +47,6 @@ class Favorites extends Endpoint {
 		parent::register();
 
 		$this->register_item_route( \WP_REST_Server::READABLE );
-		//$this->register_item_route( \WP_REST_Server::CREATABLE );
 		$this->register_route( '/(?P<id>[\w\-]+)/', \WP_REST_Server::CREATABLE, function ( $request ) {
 			return $this->base_callback( \WP_REST_Server::CREATABLE, $request );
 		}, [
@@ -56,8 +55,6 @@ class Favorites extends Endpoint {
 				'type' => 'string',
 			]
 		] );
-
-		//$this->register_item_route( \WP_REST_Server::DELETABLE );
 		$this->register_route( '/(?P<id>[\w\-]+)/', \WP_REST_Server::DELETABLE, function ( $request ) {
 			return $this->base_callback( \WP_REST_Server::DELETABLE, $request );
 		}, [
@@ -168,7 +165,6 @@ class Favorites extends Endpoint {
 		}
 
 		return update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
-
  	}
 
 	/**

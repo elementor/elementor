@@ -13,6 +13,7 @@ export class Add extends CommandBase {
 			// Get the categories of widget from front-end
 			const widgetsArr = elementor.widgetsCache[ `${ widget }` ];
 			if ( widgetsArr ) {
+				/* @TODO: This line for 'inner-section' - need to fix it when get answer about it */
 				if ( ! widgetsArr.hasOwnProperty( 'categories' ) ) {
 					widgetsArr.categories = [];
 				}
