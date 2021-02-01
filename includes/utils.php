@@ -623,4 +623,61 @@ class Utils {
 			// @codingStandardsIgnoreEnd
 		}
 	}
+
+	/**
+	 * Get Current Domain.
+	 *
+	 * Getting the current domain value in case that the user is using a subdomain or a mirror domain.
+	 *
+	 * @since 3.1.2
+	 * @access public
+	 *
+	 * @return string
+	 *
+	 */
+	public static function get_current_domain() {
+		// Removing first slash.
+		$root_folder = substr( $_SERVER['PHP_SELF'], 1 );
+
+		$root_folder = explode( '/', $root_folder );
+
+		// In case there is only one item it means that it's the page file name and not the root folder.
+		$root_folder = count( $root_folder ) > 1 ? $root_folder[0] : '';
+
+		$current_domain = $_SERVER['SERVER_NAME'];
+
+		if ( $root_folder ) {
+			$current_domain .= '/' . $root_folder;
+		}
+
+		return $current_domain;
+	}
+
+	/**
+	 * Get Current Domain SRC.
+	 *
+	 * Responsible for manipulating a file path in cases of subdomain or a mirror domain.
+	 * Without this manipulation: client-side assets will not be loaded due to CORS error.
+	 *
+	 * @since 3.1.2
+	 * @access public
+	 *
+	 * @param string $src
+	 *
+	 * @return string
+	 *
+	 */
+	public static function get_current_domain_src( $src ) {
+		$current_domain = self::get_current_domain();
+
+		// Removing http/https from get_site_url().
+		$source_domain = preg_replace('(^https?://)', '', get_site_url() );
+
+		// Comparing the server domain to the current domain in cases when the user uses a subdomain or proxy URL.
+		if ( $current_domain !== $source_domain ) {
+			return str_replace( $source_domain, $current_domain, $src );
+		}
+
+		return $src;
+	}
 }

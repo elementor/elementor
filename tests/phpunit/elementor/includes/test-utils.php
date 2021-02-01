@@ -180,4 +180,141 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
 	}
+
+	public function test_get_current_domain() {
+		// Scenario 1 - Website without a root folder.
+		$this->get_current_domain__base();
+
+		// Scenario 2 - Website with a root folder.
+		$this->get_current_domain__root_folder();
+	}
+
+	public function get_current_domain__base() {
+		$initial_server_name = $_SERVER['SERVER_NAME'];
+
+		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
+		$_SERVER['SERVER_NAME'] = 'www.my-website.com';
+
+		$initial_php_self = $_SERVER['PHP_SELF'];
+
+		// Setting a root folder to the website.
+		$_SERVER['PHP_SELF'] = '/index.php';
+
+		$this->assertEquals(
+			'www.my-website.com',
+			Utils::get_current_domain(),
+			'Current domain value is incorrect.'
+		);
+
+		// Restoring root folder.
+		$_SERVER['PHP_SELF'] = $initial_php_self;
+
+		// Restoring SERVER_NAME value.
+		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
+
+	public function get_current_domain__root_folder() {
+		$initial_server_name = $_SERVER['SERVER_NAME'];
+
+		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
+		$_SERVER['SERVER_NAME'] = 'www.my-website.com';
+
+		$initial_php_self = $_SERVER['PHP_SELF'];
+
+		// Setting a root folder to the website.
+		$_SERVER['PHP_SELF'] = '/my-website-folder/index.php';
+
+		$this->assertEquals(
+			'www.my-website.com/my-website-folder',
+			Utils::get_current_domain(),
+			'Current domain value is incorrect.'
+		);
+
+		// Restoring root folder.
+		$_SERVER['PHP_SELF'] = $initial_php_self;
+
+		// Restoring SERVER_NAME value.
+		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
+
+	public function test_get_current_domain_src() {
+		// Scenario 1 - Subdomain with no root folder ( www.x.com === de.x.com ).
+		$this->get_current_domain_src__sub_domain();
+
+		// Scenario 2 - Subdomain with a root folder ( www.x.com/site === de.x.com/site ).
+		$this->get_current_domain_src__sub_domain_root_folder();
+
+		// Scenario 3 - Root folder + mirror domain points to root folder ( www.x.com/site === www.y.com ).
+		$this->get_current_domain_src__mirror_domain();
+	}
+
+	public function get_current_domain_src__set_site_url( $url = '' ) {
+		return $url . '/my-website-folder';
+	}
+
+	public function get_current_domain_src__sub_domain() {
+		$initial_server_name = $_SERVER['SERVER_NAME'];
+
+		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
+		$_SERVER['SERVER_NAME'] = 'de.example.org';
+
+		$this->assertEquals(
+			'http://de.example.org/wp-content/plugins/elementor/assets/css/common.css?ver=3.1.0',
+			Utils::get_current_domain_src("http://$initial_server_name/wp-content/plugins/elementor/assets/css/common.css?ver=3.1.0" ),
+			'sub_domain - Failed to replace current domain with subdomain.'
+		);
+
+		// Restoring SERVER_NAME value.
+		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
+
+	public function get_current_domain_src__sub_domain_root_folder() {
+		$initial_server_name = $_SERVER['SERVER_NAME'];
+
+		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
+		$_SERVER['SERVER_NAME'] = 'de.example.org';
+
+		$initial_php_self = $_SERVER['PHP_SELF'];
+
+		// Setting a root folder to the website.
+		$_SERVER['PHP_SELF'] = '/my-website-folder/index.php';
+
+		// Overwriting the get_site_url() value to emulate a website with a root folder.
+		add_filter( 'site_url', [ $this, 'get_current_domain_src__set_site_url' ], 10, 4 );
+
+		$this->assertEquals(
+			'http://de.example.org/my-website-folder/wp-content/plugins/elementor/assets/lib/swiper/swiper.js?ver=5.3.6',
+			Utils::get_current_domain_src("http://$initial_server_name/my-website-folder/wp-content/plugins/elementor/assets/lib/swiper/swiper.js?ver=5.3.6" ),
+			'sub_domain_root - Failed to replace current domain with subdomain.'
+		);
+
+		remove_filter( 'site_url', 'test_get_current_domain_src__set_root_folder', 10, 4 );
+
+		// Restoring root folder.
+		$_SERVER['PHP_SELF'] = $initial_php_self;
+
+		// Restoring SERVER_NAME value.
+		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
+
+	public function get_current_domain_src__mirror_domain() {
+		$initial_server_name = $_SERVER['SERVER_NAME'];
+
+		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
+		$_SERVER['SERVER_NAME'] = 'www.mirror-domain.com';
+
+		// Overwriting the get_site_url() value to emulate a website with a root folder.
+		add_filter( 'site_url', [ $this, 'get_current_domain_src__set_site_url' ], 10, 4 );
+
+		$this->assertEquals(
+			'http://www.mirror-domain.com/wp-content/plugins/elementor/assets/lib/swiper/swiper.js?ver=5.3.6',
+			Utils::get_current_domain_src("http://$initial_server_name/my-website-folder/wp-content/plugins/elementor/assets/lib/swiper/swiper.js?ver=5.3.6" ),
+			'mirror_domain - Failed to replace current domain with mirror domain.'
+		);
+
+		remove_filter( 'site_url', 'test_get_current_domain_src__set_root_folder', 10, 4 );
+
+		// Restoring SERVER_NAME value.
+		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
 }
