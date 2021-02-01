@@ -1191,7 +1191,7 @@ class Frontend extends App {
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
+				'assets' => Utils::get_current_domain_src( ELEMENTOR_ASSETS_URL ),
 			],
 		];
 
