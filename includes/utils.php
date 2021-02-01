@@ -671,7 +671,7 @@ class Utils {
 		$current_domain = self::get_current_domain();
 
 		// Removing http/https from get_site_url().
-		$source_domain = preg_replace('(^https?://)', '', get_site_url() );
+		$source_domain = preg_replace( '(^https?://)', '', get_site_url() );
 
 		// Comparing the server domain to the current domain in cases when the user uses a subdomain or proxy URL.
 		if ( $current_domain !== $source_domain ) {
