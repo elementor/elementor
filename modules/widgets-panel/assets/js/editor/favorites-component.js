@@ -64,21 +64,14 @@ export default class FavoritesComponent extends ComponentBase {
 		// Insert the menu to widget wrapper
 		this.favoriteWidgetMenu.insertAfter( panel );
 
-		const screenInnerWidth = jQuery( document ).outerWidth();
 		const menuWidth = this.favoriteWidgetMenu.outerWidth();
-		const positionX = e.pageX;
-		const calcPosition = screenInnerWidth - ( positionX + menuWidth );
-		let fixPositionX = positionX - e.offsetX;
-		if ( -1 === Math.sign( calcPosition ) ) {
-			fixPositionX = positionX + calcPosition;
-		}
+		const setMenuPositionX = elementorCommon.config.isRTL ? ( e.pageX - menuWidth ) : e.pageX;
 		if ( this.favoriteWidgetMenu ) {
 			this.favoriteWidgetMenu.css( {
 				top: e.pageY - 20 + 'px',
-				left: fixPositionX + 'px',
+				left: setMenuPositionX + 'px',
 			} );
 		}
-		return false;
 	}
 
 	hideFavoriteWidgetsMenu() {
@@ -90,9 +83,9 @@ export default class FavoritesComponent extends ComponentBase {
 	}
 
 	addFavoriteWidgetsEvents() {
-		jQuery( document ).bind( 'contextmenu click', ( e ) => {
+		jQuery( document ).bind( 'contextmenu click keyup', ( e ) => {
 			// Events settings
-			const targetId = 'e-favorite-widget-context-menu' === e.target.id;
+			const targetId = 'e-favorite-widget-context-menu' === e.target.parentElement.id;
 			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
 			const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
 			const clickOnMenu = 'click' === e.type && targetId;
@@ -120,14 +113,21 @@ export default class FavoritesComponent extends ComponentBase {
 			} else {
 				this.hideFavoriteWidgetsMenu();
 			}
+
+			escHideMenu( e );
 		} );
 
-		elementorFrontend.elements.$window.keyup( ( e ) => {
+		/* @TODO: Check how to add event on panel and preview together */
+		elementorFrontend.elements.$window.on( 'keyup', ( e ) => {
+			escHideMenu( e );
+		} );
+
+		const escHideMenu = ( e ) => {
 			const ESC_KEY = 27;
 
 			if ( ESC_KEY === e.keyCode ) {
 				this.hideFavoriteWidgetsMenu();
 			}
-		} );
+		};
 	}
 }
