@@ -21,8 +21,9 @@ module.exports = async function( page ) {
 		} );
 	}
 
+	page.setRequestInterception( true );
+
 	page
-		.setRequestInterception( true )
 		.on( 'request', async ( request ) => {
 			const requestUrl = request.url();
 			const configHost = url.parse( config.url_origin, true ).host;
