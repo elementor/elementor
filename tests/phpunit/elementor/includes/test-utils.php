@@ -182,14 +182,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_get_current_domain() {
-		// Scenario 1 - Website without a root folder.
-		$this->get_current_domain__base();
-
-		// Scenario 2 - Website with a root folder.
-		$this->get_current_domain__root_folder();
-	}
-
-	public function get_current_domain__base() {
 		$initial_server_name = $_SERVER['SERVER_NAME'];
 
 		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
@@ -213,7 +205,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$_SERVER['SERVER_NAME'] = $initial_server_name;
 	}
 
-	public function get_current_domain__root_folder() {
+	public function test_get_current_domain__root_folder() {
 		$initial_server_name = $_SERVER['SERVER_NAME'];
 
 		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
@@ -238,21 +230,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_get_current_domain_src() {
-		// Scenario 1 - Subdomain with no root folder ( www.x.com === de.x.com ).
-		$this->get_current_domain_src__sub_domain();
-
-		// Scenario 2 - Subdomain with a root folder ( www.x.com/site === de.x.com/site ).
-		$this->get_current_domain_src__sub_domain_root_folder();
-
-		// Scenario 3 - Root folder + mirror domain points to root folder ( www.x.com/site === www.y.com ).
-		$this->get_current_domain_src__mirror_domain();
-	}
-
-	public function get_current_domain_src__set_site_url( $url = '' ) {
-		return $url . '/my-website-folder';
-	}
-
-	public function get_current_domain_src__sub_domain() {
 		$initial_server_name = $_SERVER['SERVER_NAME'];
 
 		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
@@ -268,7 +245,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$_SERVER['SERVER_NAME'] = $initial_server_name;
 	}
 
-	public function get_current_domain_src__sub_domain_root_folder() {
+	public function test_get_current_domain_src__sub_domain_root_folder() {
 		$initial_server_name = $_SERVER['SERVER_NAME'];
 
 		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
@@ -297,7 +274,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$_SERVER['SERVER_NAME'] = $initial_server_name;
 	}
 
-	public function get_current_domain_src__mirror_domain() {
+	public function test_get_current_domain_src__mirror_domain() {
 		$initial_server_name = $_SERVER['SERVER_NAME'];
 
 		// Overwriting the SERVER_NAME to emulate a subdomain scenario.
@@ -316,5 +293,9 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Restoring SERVER_NAME value.
 		$_SERVER['SERVER_NAME'] = $initial_server_name;
+	}
+
+	public function get_current_domain_src__set_site_url( $url = '' ) {
+		return $url . '/my-website-folder';
 	}
 }
