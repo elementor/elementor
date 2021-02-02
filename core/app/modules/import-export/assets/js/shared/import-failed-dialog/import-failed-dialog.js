@@ -1,6 +1,6 @@
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
-import useLink from '../../hooks/use-link/use-link';
+import useLink from '../../../../../../assets/js/hooks/use-link';
 
 export default function ImportFailedDialog( props ) {
 	const { action } = useLink();

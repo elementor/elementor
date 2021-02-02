@@ -10,7 +10,7 @@ import Text from 'elementor-app/ui/atoms/text';
 
 import { Context } from '../../../context/import/import-context';
 
-import useUploadFile from '../../../hooks/use-file/use-upload-file';
+import useUploadFile from '../../../../../../../assets/js/hooks/use-upload-file';
 
 import './import-process-style.scss';
 

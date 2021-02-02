@@ -1,14 +1,14 @@
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
-import Footer from '../../../ui/footer/footer';
 import ClickToDownload from './components/click-to-download/click-to-download';
-import DashboardButton from '../../../shared/dashboard-button/dashboard-button';
+import WizardFooter from 'elementor-app/organisms/wizard-footer';
+import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 export default function ExportComplete() {
 	const getFooter = () => (
-		<Footer separator justify="end">
+		<WizardFooter separator justify="end">
 			<DashboardButton />
-		</Footer>
+		</WizardFooter>
 	);
 
 	return (

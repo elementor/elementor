@@ -24,7 +24,6 @@
 @import "../js/ui/molecules/select2.scss";
 @import "../js/ui/atoms/drag-drop.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-kit/import-kit";
-@import "../../modules/import-export/assets/js/ui/footer/footer.scss";
 @import "../../modules/import-export/assets/js/ui/message/message.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-process/import-process-style.scss";
 @import "../js/ui/atoms/box.scss";
@@ -38,7 +37,6 @@
 @import "../../modules/import-export/assets/js/pages/import/import-process/import-process-style.scss";
 @import "../../modules/import-export/assets/js/ui/message/message.scss";
 @import "../../modules/import-export/assets/js/ui/click-here/click-here.scss";
-@import "../../modules/import-export/assets/js/ui/footer/footer.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/template-type.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/add-new.scss";
 @import "../../../../../elementor-pro/core/app/modules/site-editor/assets/js/pages/conditions/conditions.scss";
@@ -51,3 +49,4 @@
 @import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/kit-content.scss";
 @import "../../modules/import-export/assets/js/pages/export/export-kit/components/kit-content/components/templates-features/templates-features.scss";
 @import "../../modules/import-export/assets/js/ui/page-header/page-header.scss";
+@import "../js/organisms/wizard-footer.scss";

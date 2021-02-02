@@ -1,6 +1,6 @@
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
-import GoProButton from './components/go-pro-button/go-pro-button';
+import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -19,7 +19,13 @@ export default function KitContent() {
 			}
 
 			return <TemplatesFeatures features={ features } isLocked={ ! hasPro } />;
-		};
+		},
+		getGoProButton = () => (
+			<GoProButton
+				className="kit-content__go-pro-button"
+				urlParams="utm_source=import-export&utm_medium=app&utm_campaign=go-pro"
+			/>
+		);
 
 	return (
 		<Box>
@@ -40,7 +46,7 @@ export default function KitContent() {
 											{ item.data.description || getTemplateFeatures( item.data.features ) }
 										</Text>
 
-										{ item.data.features?.locked && ! hasPro && <GoProButton className="kit-content__go-pro-button" /> }
+										{ item.data.features?.locked && ! hasPro && getGoProButton() }
 									</Grid>
 								</Grid>
 							</Grid>

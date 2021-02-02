@@ -1,14 +1,14 @@
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import ExportButton from './components/export-button/export-button';
-import Footer from '../../../ui/footer/footer';
 import KitContent from './components/kit-content/kit-content';
+import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ExportKit() {
 	const getFooter = () => (
-			<Footer separator justify="end">
+			<WizardFooter separator justify="end">
 				<ExportButton />
-			</Footer>
+			</WizardFooter>
 		);
 
 	return (
