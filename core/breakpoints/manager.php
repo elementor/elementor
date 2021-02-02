@@ -18,6 +18,7 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_TABLET = 'tablet';
 	const BREAKPOINT_KEY_TABLET_EXTRA = 'tablet_extra';
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
+	const BREAKPOINT_KEY_DESKTOP = 'desktop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
 	/**
@@ -123,8 +124,13 @@ class Manager extends Module {
 			$args = [ 'name' => $name ] + $config;
 
 			// Make sure each breakpoint knows whether it is enabled.
-			if ( self::BREAKPOINT_KEY_MOBILE === $name || self::BREAKPOINT_KEY_TABLET === $name ) {
-				//TODO: Remove this once the new breakpoint keys are implemented.
+			if ( ! $active_breakpoint_keys
+				&& ( self::BREAKPOINT_KEY_MOBILE === $name
+				|| self::BREAKPOINT_KEY_TABLET === $name
+				|| self::BREAKPOINT_KEY_DESKTOP === $name )
+			) {
+				// For Backwards Compatibility, enable the three existing default breakpoints.
+				//TODO: Remove the next line once the new breakpoint keys are implemented.
 				$args['value'] = $this->get_old_breakpoint_values( $name );
 
 				// Make sure the default Mobile and Tablet breakpoints are always enabled.
@@ -149,6 +155,7 @@ class Manager extends Module {
 		$values_map = [
 			self::BREAKPOINT_KEY_MOBILE => $old_breakpoints['md'],
 			self::BREAKPOINT_KEY_TABLET => $old_breakpoints['lg'],
+			self::BREAKPOINT_KEY_DESKTOP => $old_breakpoints['lg'] + 1,
 		];
 
 		return $values_map[ $name ];
@@ -304,8 +311,13 @@ class Manager extends Module {
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
 				'label' => 'Laptop',
-				'default_value' => 1920,
+				'default_value' => 1620,
 				'direction' => 'max',
+			],
+			self::BREAKPOINT_KEY_DESKTOP => [
+				'label' => 'Desktop',
+				'default_value' => 1621,
+				'direction' => 'min',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
 				'label' => 'Widescreen',
