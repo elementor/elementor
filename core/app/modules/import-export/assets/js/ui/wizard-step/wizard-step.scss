@@ -1,16 +1,16 @@
-$import-export-wizard-step-icon-color: tints(400);
-$import-export-wizard-step-icon-dark-color: dark-tints(400);
-$import-export-wizard-step-text-color: tints(500);
-$import-export-wizard-step-text-dark-color: dark-tints(200);
-$import-export-wizard-step-bottom-text-color: tints(500);
-$import-export-wizard-step-bottom-text-dark-color: dark-tints(200);
+$e-app-import-export-wizard-step-icon-color: tints(400);
+$e-app-import-export-wizard-step-icon-dark-color: dark-tints(400);
+$e-app-import-export-wizard-step-text-color: tints(500);
+$e-app-import-export-wizard-step-text-dark-color: dark-tints(200);
+$e-app-import-export-wizard-step-bottom-text-color: tints(500);
+$e-app-import-export-wizard-step-bottom-text-dark-color: dark-tints(200);
 
-$root: import-export-wizard-step;
+$root: e-app-import-export-wizard-step;
 
 .#{$root} {
-	--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-color};
-	--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-color};
-	--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-color};
+	--e-app-import-export-wizard-step-icon-color: #{$e-app-import-export-wizard-step-icon-color};
+	--e-app-import-export-wizard-step-text-color: #{$e-app-import-export-wizard-step-text-color};
+	--e-app-import-export-wizard-step-bottom-text-color: #{$e-app-import-export-wizard-step-bottom-text-color};
 
 	height: 100%;
 	position: relative;
@@ -23,7 +23,7 @@ $root: import-export-wizard-step;
 
 	&__icon {
 		margin-bottom: spacing(44);
-		color: var(--import-export-wizard-step-icon-color);
+		color: var(--e-app-import-export-wizard-step-icon-color);
 		font-size: 50px;
 	}
 
@@ -32,14 +32,14 @@ $root: import-export-wizard-step;
 	}
 
 	&__text {
-		color: var(--import-export-wizard-step-text-color);
+		color: var(--e-app-import-export-wizard-step-text-color);
 	}
 
 	&__bottom-text {
 		display: block;
 		position: sticky;
 		top: 100%; /* Will prevent text overlapping when window height is too short. */
-		color: var(--import-export-wizard-step-bottom-text-color);
+		color: var(--e-app-import-export-wizard-step-bottom-text-color);
 		font-style: italic;
 		margin-bottom: 0;
 	}
@@ -47,8 +47,8 @@ $root: import-export-wizard-step;
 
 .eps-theme-dark {
 	.#{$root} {
-		--import-export-wizard-step-icon-color: #{$import-export-wizard-step-icon-dark-color};
-		--import-export-wizard-step-text-color: #{$import-export-wizard-step-text-dark-color};
-		--import-export-wizard-step-bottom-text-color: #{$import-export-wizard-step-bottom-text-dark-color};
+		--e-app-import-export-wizard-step-icon-color: #{$e-app-import-export-wizard-step-icon-dark-color};
+		--e-app-import-export-wizard-step-text-color: #{$e-app-import-export-wizard-step-text-dark-color};
+		--e-app-import-export-wizard-step-bottom-text-color: #{$e-app-import-export-wizard-step-bottom-text-dark-color};
 	}
 }

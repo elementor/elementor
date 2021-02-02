@@ -3,7 +3,7 @@ import Utils from 'elementor-app/utils/utils.js';
 import './click-here.scss';
 
 export default function ClickHere( props ) {
-	const baseClassName = 'import-export-click-here',
+	const baseClassName = 'e-app-import-export-click-here',
 		classes = [ baseClassName, props.className ];
 
 	return (

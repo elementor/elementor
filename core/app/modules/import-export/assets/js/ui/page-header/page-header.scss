@@ -1,26 +1,26 @@
-$import-export-title-border-bottom-color: tints(300);
-$import-export-title-border-bottom-dark-color: dark-tints(500);
-$import-export-title-primary-color: tints(600);
-$import-export-title-primary-dark-color: dark-tints(100);
-$import-export-title-secondary-color: tints(500);
-$import-export-title-secondary-dark-color: dark-tints(100);
+$e-app-import-export-title-border-bottom-color: tints(300);
+$e-app-import-export-title-border-bottom-dark-color: dark-tints(500);
+$e-app-import-export-title-primary-color: tints(600);
+$e-app-import-export-title-primary-dark-color: dark-tints(100);
+$e-app-import-export-title-secondary-color: tints(500);
+$e-app-import-export-title-secondary-dark-color: dark-tints(100);
 
-$root: import-export-title;
+$root: e-app-import-export-title;
 
 .#{$root} {
-	--import-export-title-border-bottom-color: #{$import-export-title-border-bottom-color};
-	--import-export-title-primary-color: #{$import-export-title-primary-color};
-	--import-export-title-secondary-color: #{$import-export-title-secondary-color};
+	--e-app-import-export-title-border-bottom-color: #{$e-app-import-export-title-border-bottom-color};
+	--e-app-import-export-title-primary-color: #{$e-app-import-export-title-primary-color};
+	--e-app-import-export-title-secondary-color: #{$e-app-import-export-title-secondary-color};
 
-	border-bottom: 1px solid var(--import-export-title-border-bottom-color);
+	border-bottom: 1px solid var(--e-app-import-export-title-border-bottom-color);
 	margin-bottom: spacing(44);
 
 	&__primary {
-		color: var(--import-export-title-primary-color);
+		color: var(--e-app-import-export-title-primary-color);
 	}
 
 	&__secondary {
-		color: var(--import-export-title-secondary-color);
+		color: var(--e-app-import-export-title-secondary-color);
 		margin-top: spacing(20);
 	}
 
@@ -28,8 +28,8 @@ $root: import-export-title;
 
 .eps-theme-dark {
 	.#{$root} {
-		--import-export-title-border-bottom-color: #{$import-export-title-border-bottom-dark-color};
-		--import-export-title-primary-color: #{$import-export-title-primary-dark-color};
-		--import-export-title-secondary-color: #{$import-export-title-secondary-dark-color};
+		--e-app-import-export-title-border-bottom-color: #{$e-app-import-export-title-border-bottom-dark-color};
+		--e-app-import-export-title-primary-color: #{$e-app-import-export-title-primary-dark-color};
+		--e-app-import-export-title-secondary-color: #{$e-app-import-export-title-secondary-dark-color};
 	}
 }

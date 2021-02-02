@@ -22,27 +22,27 @@ export default function KitContent() {
 		},
 		getGoProButton = () => (
 			<GoProButton
-				className="kit-content__go-pro-button"
+				className="e-app-export-kit-content__go-pro-button"
 				urlParams="utm_source=import-export&utm_medium=app&utm_campaign=go-pro"
 			/>
 		);
 
 	return (
 		<Box>
-			<List separated className="kit-content">
+			<List separated className="e-app-export-kit-content">
 				{
 					kitContentData.map( ( item, index ) => (
-						<List.Item separated padding="20" key={ index } className="kit-content__item">
+						<List.Item separated padding="20" key={ index } className="e-app-export-kit-content__item">
 							<Grid container>
-								<KitContentCheckbox type={ item.type } className="kit-content__checkbox" />
+								<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
 
 								<Grid item>
-									<Heading variant="h4" tag="h3" className="kit-content__title">
+									<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
 										{ item.data.title }
 									</Heading>
 
 									<Grid item>
-										<Text variant="sm" tag="span" className="kit-content__description">
+										<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
 											{ item.data.description || getTemplateFeatures( item.data.features ) }
 										</Text>
 
