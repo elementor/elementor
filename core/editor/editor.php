@@ -722,10 +722,9 @@ class Editor {
 
 		/** @var Breakpoint $mobile_portrait_breakpoint */
 		$mobile_portrait_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE );
-		$mobile_breakpoint_value = $mobile_portrait_breakpoint->get_value();
 		// What we want to know is whether the md (mobile portrait) breakpoint has the same value as the default or not.
-		if ( $mobile_portrait_breakpoint->get_default_value() === $mobile_breakpoint_value ) {
-			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $mobile_breakpoint_value . 'px; }' );
+		if ( $mobile_portrait_breakpoint->is_custom() ) {
+			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $mobile_portrait_breakpoint->get_value() . 'px; }' );
 		}
 
 		/**

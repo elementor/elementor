@@ -19,28 +19,7 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_TABLET = 'tablet';
 	const BREAKPOINT_KEY_TABLET_EXTRA = 'tablet_extra';
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
-	const BREAKPOINT_KEY_DESKTOP = 'desktop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
-
-	/**
-	 * Legacy breakpoints.
-	 *
-	 * For Backwards compatibility, Holds the old responsive breakpoints.
-	 *
-	 * @since 3.1.0
-	 * @access private
-	 * @static
-	 *
-	 * @var array Legacy breakpoints.
-	 */
-	private $legacy_breakpoints = [
-		'xs' => 0,
-		'sm' => 480,
-		'md' => 768,
-		'lg' => 1025,
-		'xl' => 1440,
-		'xxl' => 1600,
-	];
 
 	private $config;
 	private $breakpoints;
@@ -64,19 +43,6 @@ class Manager extends Module {
 			$this->breakpoints = $this->init_breakpoints();
 		}
 		return self::get_items( $this->breakpoints, $breakpoint_name );
-	}
-
-	/**
-	 * Get Legacy Breakpoints
-	 *
-	 * Retrieve the array of legacy breakpoints. Used for backwards compatibility.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @return array $legacy_breakpoints
-	 */
-	public function get_legacy_breakpoints() {
-		return $this->legacy_breakpoints;
 	}
 
 	/**
@@ -120,19 +86,16 @@ class Manager extends Module {
 	private function init_breakpoints() {
 		$breakpoints = [];
 		$active_breakpoint_keys = Plugin::$instance->kits_manager->get_current_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
+		$default_config = self::get_default_config();
 
 		foreach ( self::get_default_config() as $name => $config ) {
 			$args = [ 'name' => $name ] + $config;
 
 			// Make sure each breakpoint knows whether it is enabled.
-			if ( ! $active_breakpoint_keys
-				&& ( self::BREAKPOINT_KEY_MOBILE === $name
-				|| self::BREAKPOINT_KEY_TABLET === $name
-				|| self::BREAKPOINT_KEY_DESKTOP === $name )
-			) {
+			if ( ! $active_breakpoint_keys && ( self::BREAKPOINT_KEY_MOBILE === $name || self::BREAKPOINT_KEY_TABLET === $name ) ) {
 				// For Backwards Compatibility, enable the three existing default breakpoints.
 				//TODO: Remove the next line once the new breakpoint keys are implemented.
-				$args['value'] = $this->get_old_breakpoint_values( $name );
+				$args['value'] = $default_config[ $name ]['default_value'];
 
 				// Make sure the default Mobile and Tablet breakpoints are always enabled.
 				$args['is_enabled'] = true;
@@ -147,19 +110,6 @@ class Manager extends Module {
 		}
 
 		return $breakpoints;
-	}
-
-	//TODO: Remove this once the new breakpoint keys are implemented.
-	private function get_old_breakpoint_values( $name ) {
-		$old_breakpoints = Responsive::get_breakpoints();
-
-		$values_map = [
-			self::BREAKPOINT_KEY_MOBILE => $old_breakpoints['md'],
-			self::BREAKPOINT_KEY_TABLET => $old_breakpoints['lg'],
-			self::BREAKPOINT_KEY_DESKTOP => $old_breakpoints['lg'] + 1,
-		];
-
-		return $values_map[ $name ];
 	}
 
 	/**
@@ -219,13 +169,13 @@ class Manager extends Module {
 	 * @return boolean
 	 */
 	public function has_custom_breakpoints() {
-		$kit_settings = Plugin::$instance->kits_manager->get_current_settings();
-		$breakpoint_names = array_keys( self::get_default_config() );
+		$breakpoints = $this->get_breakpoints();
 
 		$has_custom_breakpoints = false;
 
-		foreach ( $breakpoint_names as $breakpoint_name ) {
-			if ( ! empty( $kit_settings[ $breakpoint_name ] ) ) {
+		foreach ( $breakpoints as $breakpoint ) {
+			/** @var Breakpoint $breakpoint */
+			if ( $breakpoint->is_custom() ) {
 				$has_custom_breakpoints = true;
 				break;
 			}
@@ -278,7 +228,15 @@ class Manager extends Module {
 			$templates[ $file_name ] = $template_path;
 		}
 
-		return apply_filters( 'elementor/core/responsive/get_stylesheet_templates', $templates );
+		$deprecated_hook = 'elementor/core/responsive/get_stylesheet_templates';
+		$replacement_hook = 'elementor/core/breakpoints/get_stylesheet_template';
+
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_hook( $deprecated_hook, '3.2.0', $replacement_hook );
+
+		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
+		$templates = apply_filters( $deprecated_hook, $templates );
+
+		return apply_filters( $replacement_hook, $templates );
 	}
 
 	/**
@@ -292,7 +250,7 @@ class Manager extends Module {
 		return [
 			self::BREAKPOINT_KEY_MOBILE => [
 				'label' => 'Mobile',
-				'default_value' => 768,
+				'default_value' => 767,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
@@ -314,11 +272,6 @@ class Manager extends Module {
 				'label' => 'Laptop',
 				'default_value' => 1620,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_DESKTOP => [
-				'label' => 'Desktop',
-				'default_value' => 1621,
-				'direction' => 'min',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
 				'label' => 'Widescreen',

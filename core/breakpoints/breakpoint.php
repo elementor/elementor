@@ -1,13 +1,14 @@
 <?php
 namespace Elementor\Core\Breakpoints;
 
+use Elementor\Core\Base\Base_Object;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Breakpoint {
+class Breakpoint extends Base_Object {
 
 	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
 
@@ -15,13 +16,14 @@ class Breakpoint {
 	private $default_value;
 	private $db_key;
 	private $value;
+	private $is_custom;
 	private $direction = 'max';
 	private $is_enabled = false;
 
 	/**
 	 * Get Name
 	 *
-	 * @since 3.1.0
+	 * @since 3.2.0
 	 *
 	 * @return string
 	 */
@@ -32,7 +34,7 @@ class Breakpoint {
 	/**
 	 * Get Initial Config
 	 *
-	 * @since 3.1.0
+	 * @since 3.2.0
 	 *
 	 * @return array Initial Config
 	 */
@@ -67,10 +69,19 @@ class Breakpoint {
 		if ( ! $this->value ) {
 			$value_from_db = Plugin::$instance->kits_manager->get_current_settings( $this->db_key );
 
-			$this->value = isset( $value_from_db ) ? $value_from_db : $this->default_value;
+			if ( $value_from_db ) {
+				$this->value = $value_from_db;
+				$this->is_custom = true;
+			} else {
+				$this->value = $this->default_value;
+			}
 		}
 
 		return $this->value;
+	}
+
+	public function is_custom() {
+		return $this->is_custom;
 	}
 
 	public function get_default_value() {

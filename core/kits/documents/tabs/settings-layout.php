@@ -36,7 +36,9 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints = Plugin::$instance->breakpoints->get_legacy_breakpoints();
+		$default_breakpoints = Breakpoints_Manager::get_default_config();
+		$default_tablet_breakpoint = $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]['default_value'];
+		$default_mobile_breakpoint = $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]['default_value'];
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -55,10 +57,10 @@ class Settings_Layout extends Tab_Base {
 					'size' => '1140',
 				],
 				'tablet_default' => [
-					'size' => $default_breakpoints['lg'],
+					'size' => $default_tablet_breakpoint,
 				],
 				'mobile_default' => [
-					'size' => $default_breakpoints['md'],
+					'size' => $default_mobile_breakpoint,
 				],
 				'range' => [
 					'px' => [
@@ -166,12 +168,12 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['sm'] + 1,
-				'max' => $default_breakpoints['lg'] - 1,
-				'default' => $default_breakpoints['md'],
-				'placeholder' => $default_breakpoints['md'],
+				'min' => 481, // Formerly 'sm'.
+				'max' => $default_tablet_breakpoint - 1,
+				'default' => $default_mobile_breakpoint,
+				'placeholder' => $default_mobile_breakpoint,
 				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
+				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_mobile_breakpoint ),
 			]
 		);
 
@@ -188,12 +190,12 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['md'] + 1,
-				'max' => $default_breakpoints['xl'] - 1,
-				'default' => $default_breakpoints['lg'],
-				'placeholder' => $default_breakpoints['lg'],
+				'min' => 481,
+				'max' => $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP ]['default_value'] - 1,
+				'default' => $default_tablet_breakpoint,
+				'placeholder' => $default_tablet_breakpoint,
 				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
+				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_tablet_breakpoint ),
 			]
 		);
 
