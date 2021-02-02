@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends Module {
 
+	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
 	const BREAKPOINT_KEY_MOBILE = 'mobile';
 	const BREAKPOINT_KEY_MOBILE_EXTRA = 'mobile_extra';
 	const BREAKPOINT_KEY_TABLET = 'tablet';

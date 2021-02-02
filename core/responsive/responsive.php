@@ -2,6 +2,7 @@
 namespace Elementor\Core\Responsive;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Modules\DevTools\Deprecation;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -86,6 +87,8 @@ class Responsive {
 	 * @return array Editable breakpoints.
 	 */
 	public static function get_editable_breakpoints() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Responsive::get_editable_breakpoints()', '3.1.0' );
+
 		return array_intersect_key( self::get_breakpoints(), array_flip( self::$editable_breakpoints_keys ) );
 	}
 
@@ -122,6 +125,8 @@ class Responsive {
 	 * @static
 	 */
 	public static function has_custom_breakpoints() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Elementor\Core\Responsive\Responsive::get_editable_breakpoints()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::has_custom_breakpoints()' );
+
 		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
 	}
 
@@ -131,7 +136,7 @@ class Responsive {
 	 * @static
 	 */
 	public static function get_stylesheet_templates_path() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Responsive::get_stylesheet_templates_path()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::get_stylesheet_templates_path()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Elementor\Core\Responsive\Responsive::get_stylesheet_templates_path()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::get_stylesheet_templates_path()' );
 
 		return Breakpoints_Manager::get_stylesheet_templates_path();
 	}

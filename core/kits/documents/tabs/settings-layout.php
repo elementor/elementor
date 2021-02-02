@@ -5,7 +5,6 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -163,7 +162,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'md',
+			Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'md',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
@@ -185,7 +184,7 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'lg',
+			Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'lg',
 			[
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,

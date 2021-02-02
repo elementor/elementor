@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -664,8 +665,8 @@ class Upgrades {
 			$current_settings = get_option( '_elementor_general_settings', [] );
 			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
 			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
-			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
-			$current_settings[ Responsive::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
