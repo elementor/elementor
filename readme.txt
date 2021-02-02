@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.6
 Requires PHP: 5.6
-Beta tag: 3.1.0-beta4
-Stable tag: 3.0.16
+Stable tag: 3.1.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -218,6 +217,20 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.1.1 - 2021-01-31 =
+* Tweak: Minor UI improvements in Compatibility tag
+* Fix: Async JS loading conflicted with `wp.i18n` ([#13708](https://github.com/elementor/elementor/issues/13708), [#13746](https://github.com/elementor/elementor/issues/13746), [Topic](https://wordpress.org/support/topic/console-error-43/))
+* Fix: Elementor loads unnecessary `wp-polyfills.min.js` script in Frontend ([#13720](https://github.com/elementor/elementor/issues/13720))
+* Fix: Landing Pages experiment removes content in static blog pages ([#13706](https://github.com/elementor/elementor/issues/13706), [#13728](https://github.com/elementor/elementor/issues/13728), [#13725](https://github.com/elementor/elementor/issues/13725), [Topic](https://wordpress.org/support/topic/blog-page-not-showing-after-update-3/))
+* Fix: Background Slideshow shifted if Section is stretched and has Full Width layout ([#13750](https://github.com/elementor/elementor/issues/13750), [Topic](https://wordpress.org/support/topic/slide-show-background-2/), [Topic](https://wordpress.org/support/topic/slider-background-section-layout-issue/), [Topic](https://wordpress.org/support/topic/elementor-v-3-0-16-breaks-full-width-header/))
+* Fix: Entrance animation set to `none` caused a delay in the widget load
+* Fix: Navigator rearrangement glitches when Optimized DOM experiment is active
+* Fix: Keyboard navigation isn't working in Tabs widget when Accessibility Improvements experiment is active
+* Fix: Minor UI glitches in Experiments screen
+* Fix: Wrong check of a deprecated method caused a notice when `ELEMENTOR_DEBUG` is enabled
+* Fix: Arrow keys navigation is not working in Finder
+* Fix: Theme Style overrides icon size when set in `em` in Social Icon widget
 
 = 3.1.0 - 2021-01-24 =
 * New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
