@@ -52,7 +52,6 @@ export default class FavoritesComponent extends ComponentBase {
 		this.clickedWidgetId = this.clickedWidget.find( '.elementor-element' ).data( 'id' );
 		// Find the category where user clicked
 		this.clickedWidgetCat = this.clickedWidget.parents( '.elementor-panel-category' ).attr( 'id' );
-
 		// Decided witch msg display. if clicked on widget under "Favorites" category display: Remove... otherwise Add...
 		const menuText = 'elementor-panel-category-favorites' === this.clickedWidgetCat ? 'Remove From Favorites' : 'Add To Favorites';
 		// Convert action text to class name
@@ -82,8 +81,27 @@ export default class FavoritesComponent extends ComponentBase {
 		}
 	}
 
+	disableSectionWidgets( widget ) {
+		const sectionWidgets = [
+			'inner-section',
+		];
+
+		if ( sectionWidgets.includes( widget ) ) {
+			this.hideFavoriteWidgetsMenu();
+			return true;
+		}
+
+		return false;
+	}
+
 	addFavoriteWidgetsEvents() {
 		jQuery( document ).bind( 'contextmenu click keyup', ( e ) => {
+			// Disable Add/Remove to favorites category, if widget type is section.
+			const isSectionWidgets = this.disableSectionWidgets( e.target.offsetParent.dataset.id );
+			if ( isSectionWidgets ) {
+				return false;
+			}
+
 			// Events settings
 			const targetId = 'e-favorite-widget-context-menu' === e.target.parentElement.id;
 			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
@@ -94,6 +112,7 @@ export default class FavoritesComponent extends ComponentBase {
 				return false;
 			} else if ( rightClickOnWidgetOutOfMenu ) {
 				e.preventDefault();
+
 				// Add the right click menu
 				this.addFavoriteWidgetsMenu( e );
 			} else if ( clickOnMenu ) {
