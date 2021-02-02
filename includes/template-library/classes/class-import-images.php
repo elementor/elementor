@@ -94,7 +94,7 @@ class Import_Images {
 	 * attachment metadata.
 	 *
 	 * @since 1.0.0
-	 * @since 3.1.0 New `$parent_post_id` option added
+	 * @since 3.2.0 New `$parent_post_id` option added
 	 * @access public
 	 *
 	 * @param array $attachment The attachment.
