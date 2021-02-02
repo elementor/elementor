@@ -6,7 +6,6 @@ use Elementor\Core\Editor\Editor;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Modules\LandingPages\Module as Landing_Page_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 
