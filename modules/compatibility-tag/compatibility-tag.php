@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\CompatibilityTag;
 
+use Elementor\Plugin;
 use Elementor\Core\Utils\Version;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Utils\Collection;
@@ -20,11 +21,6 @@ class Compatibility_Tag extends Base_Object {
 	 * @var string Holds the header that should be checked.
 	 */
 	private $header;
-
-	/**
-	 * @var array[] All the installed plugins
-	 */
-	private $plugins;
 
 	/**
 	 * Compatibility_Tag constructor.
@@ -53,21 +49,6 @@ class Compatibility_Tag extends Base_Object {
 	}
 
 	/**
-	 * Get all the plugins in the current site.
-	 *
-	 * This method is protected to allow mock it in the tests.
-	 *
-	 * @return array[]
-	 */
-	protected function get_plugins() {
-		if ( ! $this->plugins ) {
-			$this->plugins = get_plugins();
-		}
-
-		return $this->plugins;
-	}
-
-	/**
 	 * Check single plugin if is compatible or not.
 	 *
 	 * @param Version $version
@@ -77,7 +58,7 @@ class Compatibility_Tag extends Base_Object {
 	 * @throws \Exception
 	 */
 	private function is_compatible( Version $version, $plugin_name ) {
-		$plugins = $this->get_plugins();
+		$plugins = Plugin::$instance->wp->get_plugins();
 
 		if ( ! isset( $plugins[ $plugin_name ] ) ) {
 			return self::PLUGIN_NOT_EXISTS;

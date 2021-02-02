@@ -484,7 +484,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.9.1'
+			'5.10.0'
 		);
 
 		wp_register_style(
@@ -580,8 +580,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
@@ -1163,6 +1161,10 @@ class Frontend extends App {
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
@@ -1170,8 +1172,20 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
-			// Empty array for BC to avoid errors.
-			'i18n' => [],
+			'i18n' => [
+				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
+				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
+				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+			],
 			'is_rtl' => is_rtl(),
 			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
@@ -1179,6 +1193,7 @@ class Frontend extends App {
 			'responsive' => Plugin::$instance->breakpoints->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
+			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 			],
