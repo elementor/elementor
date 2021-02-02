@@ -12,16 +12,17 @@ module.exports = async function( page ) {
 		pathname.replace( /^\.*\/|\/?[^\/]+\.[a-z]+|\/$/g, '' );
 		fs.mkdir( path.resolve( __dirname, pathname ), { recursive: true }, ( e ) => {
 			if ( e ) {
+				// eslint-disable-next-line no-console
 				console.error( e );
 			} else {
+				// eslint-disable-next-line no-console
 				console.log( chalk.green( 'Success created folder - snapshot' ) );
 			}
 		} );
 	}
 
-	page.setRequestInterception( true );
-
 	page
+		.setRequestInterception( true )
 		.on( 'request', async ( request ) => {
 			const requestUrl = request.url();
 			const configHost = url.parse( config.url_origin, true ).host;
@@ -47,18 +48,20 @@ module.exports = async function( page ) {
 				INF: chalk.cyan,
 			};
 			const color = colors[ type ] || chalk.blue;
+			// eslint-disable-next-line no-console
 			console.log( color( `${ type } ${ message.text() }` ) );
 		} )
 		.on( 'pageerror', ( { message } ) => {
+			// eslint-disable-next-line no-console
 			console.log( chalk.red( message ) );
 		} )
 		.on( 'response', async ( response ) => {
-			// const fixResponse = await fixUrlAdrress( response );
+			// eslint-disable-next-line no-console
 			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
-			// return fixResponse;
 		} )
 		.on( 'requestfailed', ( request ) => {
-			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) )
+			// eslint-disable-next-line no-console
+			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) );
 		} )
 		.on( 'load', async () => {
 			const pageTitle = await page.title();
@@ -67,6 +70,7 @@ module.exports = async function( page ) {
 			const filePath = `backstop_data/html_snapshots/${ pageTitle }.mhtml`;
 			fs.writeFileSync( filePath, data );
 			if ( ! fs.existsSync( filePath ) ) {
+				// eslint-disable-next-line no-console
 				console.log( chalk.red( `Failed to created file - ${ filePath }` ) );
 			}
 		} );
