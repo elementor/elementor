@@ -147,6 +147,10 @@ class Import_Images {
 			require_once ABSPATH . '/wp-admin/includes/image.php';
 		}
 
+		if ( ! function_exists( 'wp_read_video_metadata' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/media.php';
+		}
+
 		wp_update_attachment_metadata(
 			$post_id,
 			wp_generate_attachment_metadata( $post_id, $upload['file'] )
