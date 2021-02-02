@@ -16,7 +16,9 @@ import './import-process-style.scss';
 
 export default function ImportProcess() {
 	const [ isImportFailed, setIsImportFailed ] = useState( false ),
-		{ setFile, uploadStatus } = useUploadFile( 'elementor_export_kit' ),
+		{ setFile, uploadStatus } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
+			include: [ 'templates', 'content', 'site-settings' ],
+		} ),
 		importContext = useContext( Context ),
 		navigate = useNavigate(),
 		resetImportProcess = () => {

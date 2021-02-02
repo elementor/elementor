@@ -53,23 +53,29 @@ class Module extends BaseModule {
 	}
 
 	private function on_elementor_init() {
-		if ( empty( $_GET[ 'nonce' ] ) ) {
-			return;
-		}
-
-		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
-			if ( ! wp_verify_nonce( $_GET[ 'nonce' ], 'elementor_export' ) ) {
+		if ( isset( $_POST['action'] ) && self::IMPORT_TRIGGER_KEY === $_POST['action'] ) {
+			if ( ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
 				return;
 			}
 
-			$this->export = new Export();
-		}
-	}
+			$this->import = new Import( json_decode( stripslashes( $_POST['data'] ), true ) );
 
-	private function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( self::IMPORT_TRIGGER_KEY, function() {
-			return $this->import = new Import();
-		} );
+			$result = $this->import->run();
+
+			wp_send_json_success( $result );
+		}
+
+		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
+			if ( ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
+				return;
+			}
+
+			$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
+
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
+
+			$this->export->run();
+		}
 	}
 
 	private function register_admin_menu() {
@@ -93,9 +99,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_action( 'elementor/init', function() {
 			$this->on_elementor_init();
-		} );
-		add_action( 'elementor/ajax/register_actions', function( Ajax $ajax ) {
-			$this->register_ajax_actions( $ajax );
 		} );
 
 		add_action( 'admin_menu', function() {

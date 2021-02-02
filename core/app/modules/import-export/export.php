@@ -30,7 +30,7 @@ class Export extends Iterator {
 		return __DIR__ . DIRECTORY_SEPARATOR . $this->get_archive_relative_file_name();
 	}
 
-	protected function run() {
+	final public function run() {
 		$this->init_zip_archive();
 
 		$root_directory = new Root( $this );
@@ -49,7 +49,7 @@ class Export extends Iterator {
 
 		header( 'Content-Disposition: attachment; filename=' . $this->get_archive_relative_file_name() );
 
-		header( 'Content-length: ' . filesize( $file_name ));
+		header( 'Content-length: ' . filesize( $file_name ) );
 
 		readfile( $file_name );
 
@@ -58,11 +58,7 @@ class Export extends Iterator {
 		die;
 	}
 
-	protected function get_init_settings() {
-		return $_GET[ Module::EXPORT_TRIGGER_KEY ];
-	}
-
 	public function add_json_file( $name, $content, $json_flags = null ) {
-		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), json_encode( $content, $json_flags ) );
+		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), wp_json_encode( $content, $json_flags ) );
 	}
 }

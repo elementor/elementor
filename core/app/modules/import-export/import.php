@@ -11,14 +11,14 @@ class Import extends Iterator {
 
 	private $files_base_dir;
 
-	final protected function run() {
+	final public function run() {
 		$wp_upload_dir = wp_upload_dir();
 
 		$this->files_base_dir = $wp_upload_dir['basedir'] . '/elementor/tmp/kit/';
 
 		$zip = new \ZipArchive();
 
-		$zip->open( $_FILES['file']['tmp_name'] );
+		$zip->open( $_FILES['e_import_file']['tmp_name'] );
 
 		$zip->extractTo( $this->files_base_dir );
 
@@ -28,14 +28,28 @@ class Import extends Iterator {
 
 		$import_result = $root_directory->run_import( $settings );
 
-//		rmdir( $this->files_base_dir );
+		$this->remove_dir( $this->files_base_dir );
 
 		return $import_result;
 	}
 
-	final protected function read_json_file( $name ) {
-		$full_file_name = $this->files_base_dir . $this->get_archive_file_path( $name . '.json' );
+	final public function read_json_file( $name ) {
+		$name = $this->files_base_dir . $this->get_archive_file_path( $name . '.json' );
 
-		return json_decode( file_get_contents( $full_file_name ), true );
+		return json_decode( file_get_contents( $name ), true );
+	}
+
+	private function remove_dir( $dir ) {
+		$dir_iterator = new \RecursiveDirectoryIterator( $dir, \RecursiveDirectoryIterator::SKIP_DOTS );
+
+		foreach ( new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST ) as $name => $item ) {
+			if ( is_dir( $name ) ) {
+				rmdir( $name );
+			} else {
+				unlink( $name );
+			}
+		}
+
+		rmdir( $dir );
 	}
 }

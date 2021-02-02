@@ -73,7 +73,7 @@ abstract class Base {
 
 		$manifest_data = $this->export();
 
-		foreach( $this->sub_directories as $sub_directory ) {
+		foreach ( $this->sub_directories as $sub_directory ) {
 			$manifest_data[ $sub_directory->get_name() ] = $sub_directory->run_export();
 		}
 
@@ -85,8 +85,12 @@ abstract class Base {
 
 		$meta_data = $this->import( $settings );
 
-		foreach( $this->sub_directories as $sub_directory ) {
+		foreach ( $this->sub_directories as $sub_directory ) {
 			$sub_directory_name = $sub_directory->get_name();
+
+			if ( ! isset( $settings[ $sub_directory_name ] ) ) {
+				continue;
+			}
 
 			$meta_data[ $sub_directory_name ] = $sub_directory->run_import( $settings[ $sub_directory_name ] );
 		}
@@ -102,15 +106,15 @@ abstract class Base {
 	}
 
 	/**
-	 * @param array $settings
+	 * @param array $import_settings
 	 *
 	 * @return array
 	 */
-	protected function import( array $settings ) {
+	protected function import( array $import_settings ) {
 		return [];
 	}
 
-	protected function get_default_sub_directories(){
+	protected function get_default_sub_directories() {
 		return [];
 	}
 

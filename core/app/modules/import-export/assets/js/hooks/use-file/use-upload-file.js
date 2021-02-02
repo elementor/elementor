@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function useUploadFile( action ) {
+export default function useUploadFile( fileName, action, data ) {
 	const [ file, setFile ] = useState(),
 		uploadInitialState = {
 			success: false,
@@ -13,10 +13,21 @@ export default function useUploadFile( action ) {
 		if ( file ) {
 			const formData = new FormData();
 
-			formData.append( file.name, file );
+			formData.append( fileName || file.name, file );
+
+			formData.append( 'action', action );
+
+			formData.append( 'nonce', elementorCommon.config.ajax.nonce );
+
+			formData.append( 'data', JSON.stringify( data ) );
 
 			const options = {
+				type: 'post',
+				url: elementorCommon.config.ajax.url,
 				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
 				success: () => {
 					setUploadStatus( ( prevState ) => ( { ...prevState, success: true } ) );
 				},
@@ -28,7 +39,7 @@ export default function useUploadFile( action ) {
 				},
 			};
 
-			elementorCommon.ajax.addRequest( action, options );
+			jQuery.ajax( options );
 		}
 	}, [ file ] );
 

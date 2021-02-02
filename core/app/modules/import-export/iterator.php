@@ -11,11 +11,7 @@ abstract class Iterator extends Base_Object {
 
 	private $current_archive_path = '';
 
-	abstract protected function run();
-
-	public function __construct() {
-		return $this->run();
-	}
+	abstract public function run();
 
 	protected function get_archive_file_path( $file_name ) {
 		return $this->get_current_archive_path() . $file_name;
@@ -31,5 +27,9 @@ abstract class Iterator extends Base_Object {
 		}
 
 		$this->current_archive_path = $path;
+	}
+
+	public function __construct( array $settings ) {
+		$this->set_settings( $settings );
 	}
 }

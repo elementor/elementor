@@ -24,7 +24,7 @@ export default function ImportKit() {
 		const selectedFile = importContext.data.file;
 
 		if ( selectedFile ) {
-			if ( 'application/x-zip-compressed' === selectedFile.type ) {
+			if ( 'application/zip' === selectedFile.type ) {
 				navigate( '/import/process' );
 			} else {
 				setIsImportFailed( true );
