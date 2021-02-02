@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
@@ -1258,6 +1259,16 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
+	/*
+	 * Get Export Data
+	 *
+	 * Filters a document's data on export
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to export
+	 */
 	public function get_export_data() {
 		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
@@ -1269,7 +1280,7 @@ abstract class Document extends Controls_Stack {
 				return null;
 			}
 
-			return $this->process_element_export_import_content( $element, 'on_export' );
+			return $this->process_element_import_export( $element, 'on_export' );
 		} );
 
 		return [
@@ -1278,7 +1289,60 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
-	private function process_element_export_import_content( Controls_Stack $element, $method ) {
+	/*
+	 * Get Import Data
+	 *
+	 * Filters a document's data on import
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to import
+	 */
+	public function get_import_data( array $data ) {
+		$data['content'] = Plugin::$instance->db->iterate_data( $data['content'], function( $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_import' );
+		} );
+
+		if ( ! empty( $data['settings'] ) ) {
+			$template_model = new Page_Model( [
+				'id' => 0,
+				'settings' => $data['settings'],
+			] );
+
+			$data['settings'] = $this->process_element_import_export( $template_model, 'on_import' );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Import
+	 *
+	 * Allows to import an external data to a document
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @param array $data
+	 */
+	public function import( array $data ) {
+		$data = $this->get_import_data( $data );
+
+		$this->save( [
+			'elements' => $data['content'],
+			'settings' => $data['settings'],
+		] );
+	}
+
+	private function process_element_import_export( Controls_Stack $element, $method ) {
 		$element_data = $element->get_data();
 
 		if ( method_exists( $element, $method ) ) {
