@@ -1,6 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commandsData from './commands-data/';
 import * as commands from './commands';
+import ignoreSectionWidgets from './helpers/ignoreSectionWidgets';
 
 export default class FavoritesComponent extends ComponentBase {
 	getNamespace() {
@@ -81,24 +82,11 @@ export default class FavoritesComponent extends ComponentBase {
 		}
 	}
 
-	disableSectionWidgets( widget ) {
-		const sectionWidgets = [
-			'inner-section',
-		];
-
-		if ( sectionWidgets.includes( widget ) ) {
-			this.hideFavoriteWidgetsMenu();
-			return true;
-		}
-
-		return false;
-	}
-
 	addFavoriteWidgetsEvents() {
 		jQuery( document ).bind( 'contextmenu click keyup', ( e ) => {
 			// Disable Add/Remove to favorites category, if widget type is section.
-			const isSectionWidgets = this.disableSectionWidgets( e.target.offsetParent.dataset.id );
-			if ( isSectionWidgets ) {
+			if ( ignoreSectionWidgets.includes( e.target.offsetParent.dataset.id ) ) {
+				this.hideFavoriteWidgetsMenu();
 				return false;
 			}
 
