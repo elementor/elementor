@@ -2,13 +2,17 @@ import { useRef } from 'react';
 
 import Button from 'elementor-app/ui/molecules/button';
 
+import Utils from 'elementor-app/utils/utils.js';
+
 import './upload-file.scss';
 
 export default function UploadFile( props ) {
-	const fileInput = useRef( null );
+	const fileInput = useRef( null ),
+		baseClassName = 'e-app-upload-file',
+		classes = [ baseClassName, props.className ];
 
 	return (
-		<div>
+		<div className={ Utils.arrayToClassName( classes ) }>
 			<input
 				ref={ fileInput }
 				type="file"
