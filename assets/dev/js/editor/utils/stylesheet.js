@@ -3,18 +3,44 @@
 		var self = this,
 			rules = {},
 			rawCSS = {},
-			devices = {};
+			devices = {},
+			breakpoints,
+			// A object map of breakpoint database keys
+			breakpointKeys,
+			// A flat array of the breakpoint keys.
+			breakpointNames; //
 
-		var getDeviceMaxValue = function( deviceName ) {
-			var deviceNames = Object.keys( devices ),
-				deviceNameIndex = deviceNames.indexOf( deviceName ),
-				nextIndex = deviceNameIndex + 1;
+		const getDeviceMinBreakpoint = ( deviceName ) => {
+			let minBreakpoint;
 
-			if ( nextIndex >= deviceNames.length ) {
-				throw new RangeError( 'Max value for this device is out of range.' );
+			if ( ! breakpoints ) {
+				// The breakpoints config object
+				breakpoints = elementorFrontend.config.breakpoints;
 			}
 
-			return devices[ deviceNames[ nextIndex ] ] - 1;
+			if ( ! breakpointNames ) {
+				breakpointNames = Object.keys( breakpoints );
+			}
+
+			if ( ! breakpointKeys ) {
+				breakpointKeys = elementor.config.breakpointKeys;
+			}
+
+			if ( breakpointKeys.mobile === deviceName ) {
+				// Mobile is the lowest breakpoint, so its min point is 0.
+				minBreakpoint = 0;
+			} else if ( breakpointKeys.widescreen === deviceName ) {
+				// Widescreen only has a minimum point. In this case, the breakpoint
+				// value in the Breakpoints config is itself the device min point.
+				minBreakpoint = breakpoints[ breakpointKeys.widescreen ].value;
+			} else {
+				const deviceNameIndex = breakpointNames.indexOf( deviceName ),
+					previousIndex = deviceNameIndex - 1;
+
+				minBreakpoint = devices[ breakpointNames[ previousIndex ] ] + 1;
+			}
+
+			return minBreakpoint;
 		};
 
 		var queryToHash = function( query ) {
@@ -37,7 +63,7 @@
 					endPoint = queryParts[ 0 ],
 					deviceName = queryParts[ 1 ];
 
-				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
+				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : getDeviceMinBreakpoint( deviceName );
 			} );
 
 			return query;

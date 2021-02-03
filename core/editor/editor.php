@@ -588,6 +588,14 @@ class Editor {
 			],
 			// Empty array for BC to avoid errors.
 			'i18n' => [],
+			'breakpointKeys' => [
+				'mobile' => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
+				'mobileExtra' => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+				'tablet' => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+				'tabletExtra' => Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
+				'laptop' => Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
+				'widescreen' => Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
+			],
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
