@@ -13,7 +13,13 @@ export default function DropZone( props ) {
 		dragDropEvents = {
 		onDrop: ( event ) => {
 			if ( ! props.isLoading ) {
-				props.onFileSelect( event.dataTransfer.files, event );
+				const file = event.dataTransfer.files[ 0 ];
+
+				if ( file?.type.includes( props.filetype ) ) {
+					props.onFileSelect( file, event );
+				} else {
+					props.onError();
+				}
 			}
 		},
 	};
@@ -29,7 +35,14 @@ export default function DropZone( props ) {
 
 				{ props.secondaryText && <Text variant="xl" className="e-app-drop-zone__secondary-text">{ props.secondaryText }</Text> }
 
-				{ props.showButton && <UploadFile isLoading={ props.isLoading } onFileSelect={ props.onFileSelect } text={ props.buttonText } /> }
+				{ props.showButton &&
+					<UploadFile
+						isLoading={ props.isLoading }
+						onFileSelect={ props.onFileSelect }
+						onError={ props.onError }
+						text={ props.buttonText }
+						filetype={ props.filetype }
+					/> }
 			</DragDrop>
 		</section>
 	);
@@ -38,7 +51,7 @@ export default function DropZone( props ) {
 DropZone.propTypes = {
 	className: PropTypes.string,
 	children: PropTypes.any,
-	onFileSelect: PropTypes.func,
+	onFileSelect: PropTypes.func.isRequired,
 	heading: PropTypes.string,
 	text: PropTypes.string,
 	secondaryText: PropTypes.string,
@@ -47,6 +60,8 @@ DropZone.propTypes = {
 	showButton: PropTypes.bool,
 	showIcon: PropTypes.bool,
 	isLoading: PropTypes.bool,
+	filetype: PropTypes.oneOf( [ 'zip' ] ),
+	onError: PropTypes.func,
 };
 
 DropZone.defaultProps = {
@@ -54,4 +69,6 @@ DropZone.defaultProps = {
 	icon: 'eicon-library-upload',
 	showButton: true,
 	showIcon: true,
+	filetype: 'zip',
+	onError: () => {},
 };
