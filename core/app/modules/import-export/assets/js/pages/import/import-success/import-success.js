@@ -18,7 +18,7 @@ export default function ImportSuccess() {
 				title={ __( 'Congrats! Your Kit Was Imported Successfully', 'elementor' ) }
 				bottomText={ (
 					<>
-						<ClickHere url="/#" /> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
+						<ClickHere target="_blank" url="https://elementor.com/help/what-are-kits?utm_source=editor-app&utm_medium=wp-dash&utm_campaign=learn" /> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 					</>
 				) }
 			/>
