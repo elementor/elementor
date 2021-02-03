@@ -4,7 +4,6 @@ namespace Elementor\Core\Breakpoints;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
 use Elementor\Core\Responsive\Files\Frontend;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +22,7 @@ class Manager extends Module {
 
 	private $config;
 	private $breakpoints;
+	private $breakpoint_keys;
 
 	public function get_name() {
 		return 'breakpoints';
@@ -182,6 +182,40 @@ class Manager extends Module {
 		}
 
 		return $has_custom_breakpoints;
+	}
+
+	/**
+	 * Get Device Min Breakpoint
+	 *
+	 * For a given device, return the minimum possible breakpoint. Except for the cases of mobile and widescreen
+	 * devices, A device's min breakpoint is determined by the previous device's max breakpoint + 1px.
+	 *
+	 * @since 3.2.0
+	 * @param string $device_name
+	 * @return int the min breakpoint of the passed device
+	 */
+	public function get_device_min_breakpoint( $device_name ) {
+		$config = $this->get_config();
+
+		if ( ! $this->breakpoint_keys ) {
+			$this->breakpoint_keys = array_keys( $config );
+		}
+
+		if ( self::BREAKPOINT_KEY_MOBILE === $device_name ) {
+			// Mobile is the lowest breakpoint, so its min point is 0.
+			$min_breakpoint = 0;
+		} elseif ( self::BREAKPOINT_KEY_WIDESCREEN === $device_name ) {
+			// Widescreen only has a minimum point. The breakpoint value in the config is itself the device min point.
+			$min_breakpoint = $config[ self::BREAKPOINT_KEY_WIDESCREEN ]['value'];
+		} else {
+			$device_name_index = array_search( $device_name, $this->breakpoint_keys, true );
+
+			$previous_index = $device_name_index - 1;
+
+			$min_breakpoint = $config[ $this->breakpoint_keys[ $previous_index ] ]['value'] + 1;
+		}
+
+		return $min_breakpoint;
 	}
 
 	/**

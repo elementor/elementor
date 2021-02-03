@@ -702,13 +702,10 @@ abstract class Base extends Base_File {
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
-		$breakpoints_with_previous_values = Plugin::$instance->breakpoints->get_active_breakpoints_with_previous_values();
+		$breakpoints_config = Plugin::$instance->breakpoints->get_config();
 
-		// Mobile is the lowest breakpoint and has a min point of 0, so it is added separately from the loop.
-		$this->stylesheet_obj->add_device( 'mobile', 0 );
-
-		foreach ( $breakpoints_with_previous_values as $breakpoint_name => $value ) {
-			$this->stylesheet_obj->add_device( $breakpoint_name, $value );
+		foreach ( $breakpoints_config as $breakpoint_name => $breakpoint_config ) {
+			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint_config['value'] );
 		}
 	}
 
