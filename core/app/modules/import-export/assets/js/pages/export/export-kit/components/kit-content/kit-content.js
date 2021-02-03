@@ -33,7 +33,7 @@ export default function KitContent() {
 				{
 					kitContentData.map( ( item, index ) => (
 						<List.Item separated padding="20" key={ index } className="e-app-export-kit-content__item">
-							<Grid container>
+							<Grid container noWrap>
 								<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
 
 								<Grid item>
