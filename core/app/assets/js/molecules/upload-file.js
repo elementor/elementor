@@ -16,12 +16,12 @@ export default function UploadFile( props ) {
 			<input
 				ref={ fileInput }
 				type="file"
-				accept={ '.' + props.filetype }
+				accept={ props.filetypes.map( ( type ) => '.' + type ).join( ', ' ) }
 				className="e-app-upload-file__input"
 				onChange={ ( event ) => {
 					const file = event.target.files[ 0 ];
 
-					if ( file?.type.includes( props.filetype ) ) {
+					if ( file && Utils.isOneOfFiletypes( file.type, props.filetypes ) ) {
 						props.onFileSelect( file, event );
 					} else {
 						fileInput.current.value = '';
@@ -54,13 +54,13 @@ UploadFile.propTypes = {
 	text: PropTypes.string,
 	onFileSelect: PropTypes.func,
 	isLoading: PropTypes.bool,
-	filetype: PropTypes.oneOf( [ 'zip' ] ),
+	filetypes: PropTypes.array,
 	onError: PropTypes.func,
 };
 
 UploadFile.defaultProps = {
 	className: '',
 	text: __( 'Select File', 'elementor' ),
-	filetype: 'zip',
+	filetypes: [ 'zip' ],
 	onError: () => {},
 };

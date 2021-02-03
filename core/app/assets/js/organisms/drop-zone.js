@@ -15,7 +15,7 @@ export default function DropZone( props ) {
 			if ( ! props.isLoading ) {
 				const file = event.dataTransfer.files[ 0 ];
 
-				if ( file?.type.includes( props.filetype ) ) {
+				if ( file && Utils.isOneOfFiletypes( file.type, props.filetypes ) ) {
 					props.onFileSelect( file, event );
 				} else {
 					props.onError();
@@ -41,7 +41,7 @@ export default function DropZone( props ) {
 						onFileSelect={ props.onFileSelect }
 						onError={ props.onError }
 						text={ props.buttonText }
-						filetype={ props.filetype }
+						filetypes={ props.filetypes }
 					/> }
 			</DragDrop>
 		</section>
@@ -60,7 +60,7 @@ DropZone.propTypes = {
 	showButton: PropTypes.bool,
 	showIcon: PropTypes.bool,
 	isLoading: PropTypes.bool,
-	filetype: PropTypes.oneOf( [ 'zip' ] ),
+	filetypes: PropTypes.array,
 	onError: PropTypes.func,
 };
 
@@ -69,6 +69,6 @@ DropZone.defaultProps = {
 	icon: 'eicon-library-upload',
 	showButton: true,
 	showIcon: true,
-	filetype: 'zip',
+	filetypes: [ 'zip' ],
 	onError: () => {},
 };
