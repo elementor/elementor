@@ -22,12 +22,8 @@ class Export extends Iterator {
 		$this->zip_archive = $zip_archive;
 	}
 
-	private function get_archive_relative_file_name() {
-		return 'elementor-kit.zip';
-	}
-
 	private function get_archive_file_name() {
-		return __DIR__ . DIRECTORY_SEPARATOR . $this->get_archive_relative_file_name();
+		return __DIR__ . DIRECTORY_SEPARATOR . 'elementor-temp-kit.zip';
 	}
 
 	final public function run() {
@@ -45,9 +41,11 @@ class Export extends Iterator {
 
 		$file_name = $this->get_archive_file_name();
 
+		$downloaded_file_name = 'elementor-kit-' . $manifest_data['name'] . '.zip';
+
 		header( 'Content-type: application/zip' );
 
-		header( 'Content-Disposition: attachment; filename=' . $this->get_archive_relative_file_name() );
+		header( 'Content-Disposition: attachment; filename=' . $downloaded_file_name );
 
 		header( 'Content-length: ' . filesize( $file_name ) );
 
