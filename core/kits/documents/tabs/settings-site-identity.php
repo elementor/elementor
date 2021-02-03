@@ -66,6 +66,7 @@ class Settings_Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogname' ),
 				'placeholder' => __( 'Choose name', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
@@ -76,6 +77,7 @@ class Settings_Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogdescription' ),
 				'placeholder' => __( 'Choose description', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
@@ -90,6 +92,7 @@ class Settings_Site_Identity extends Tab_Base {
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
 				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 
@@ -104,6 +107,7 @@ class Settings_Site_Identity extends Tab_Base {
 					'url' => $site_icon_src ? $site_icon_src[0] : '',
 				],
 				'description' => __( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 

@@ -23,7 +23,7 @@ class Export extends Iterator {
 	}
 
 	private function get_archive_relative_file_name() {
-		return 'kit.zip';
+		return 'elementor-kit.zip';
 	}
 
 	private function get_archive_file_name() {
