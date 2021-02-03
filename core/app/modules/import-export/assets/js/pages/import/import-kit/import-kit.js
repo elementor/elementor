@@ -21,14 +21,8 @@ export default function ImportKit() {
 		};
 
 	useEffect( () => {
-		const selectedFile = importContext.data.file;
-
-		if ( selectedFile ) {
-			if ( 'application/zip' === selectedFile.type ) {
-				navigate( '/import/process' );
-			} else {
-				setIsImportFailed( true );
-			}
+		if ( importContext.data.file ) {
+			navigate( '/import/process' );
 		}
 	}, [ importContext.data.file ] );
 
@@ -49,9 +43,10 @@ export default function ImportKit() {
 					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
-					onFileSelect={ ( files ) => {
-						importContext.dispatch( { type: 'SET_FILE', payload: files[ 0 ] } );
+					onFileSelect={ ( file ) => {
+						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
+					onError={ () => setIsImportFailed( true ) }
 				/>
 
 				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
