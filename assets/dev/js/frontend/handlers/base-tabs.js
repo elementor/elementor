@@ -144,7 +144,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.elements.$tabTitles.on( {
 			keydown: ( event ) => {
 				// Support for old markup that includes an `<a>` tag in the tab
-				if ( $( event.target ).is( 'a' ) && `Enter` === event.key ) {
+				if ( jQuery( event.target ).is( 'a' ) && `Enter` === event.key ) {
 					event.preventDefault();
 				}
 
