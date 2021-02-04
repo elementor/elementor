@@ -205,7 +205,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		let videoLink = this.getElementSettings( 'background_video_link' ),
 			videoID;
 		// Extract any URL param options passed in by the user
-		const videoLinkOptions = Object.fromEntries(new URLSearchParams(new URL(videoLink).search));
+		const videoLinkOptions = Object.fromEntries( new URLSearchParams( new URL( videoLink ).search ) );
 
 		const playOnce = this.getElementSettings( 'background_play_once' );
 
