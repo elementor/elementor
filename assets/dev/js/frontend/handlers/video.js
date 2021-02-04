@@ -102,9 +102,10 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				},
 			};
 
+		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
 		if ( elementSettings.yt_privacy ) {
 			playerOptions.host = 'https://www.youtube-nocookie.com';
-			playerOptions.playerVars.origin = window.location.hostname;
+			playerOptions.origin = window.location.hostname;
 		}
 
 		this.youtubePlayer = new YT.Player( this.elements.$video[ 0 ], playerOptions );
@@ -133,17 +134,13 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		// When Optimized asset loading is set to off, the video type is set to 'Youtube', and 'Privacy Mode' is set
-		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
-		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
-		// initialization of the Youtube API object.
-		if ( ! elementorFrontend.config.experimentalFeatures[ 'e_optimized_assets_loading' ] && elementSettings.yt_privacy ) {
-			setTimeout( () => {
-				this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
-			}, 0 );
-		} else {
+		// Due to a bug in the YouTube Embed API, there might be a conflict when privacy mode is set to ON, and the
+		// page contains additional YouTube videos that are loaded WITHOUT privacy mode, such as a video background
+		// in a section. In these cases, to avoid the conflict, a timeout is added to defer the initialization of
+		// the Youtube API object.
+		setTimeout( () => {
 			this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
-		}
+		}, 0 );
 	}
 
 	onElementChange( propertyName ) {
