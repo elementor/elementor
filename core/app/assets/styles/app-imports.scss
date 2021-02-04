@@ -8,7 +8,6 @@
 @import "../../modules/import-export/assets/js/pages/import/import-process/import-process-style.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-kit/import-kit.scss";
 @import "../../modules/site-editor/assets/js/pages/promotion.scss";
-@import "../../modules/import-export/assets/js/ui/click-here/click-here.scss";
 @import "../../modules/import-export/assets/js/ui/message/message.scss";
 @import "../../modules/import-export/assets/js/ui/wizard-step/wizard-step.scss";
 @import "../../modules/import-export/assets/js/ui/page-header/page-header.scss";
@@ -32,3 +31,4 @@
 @import "../js/ui/atoms/drag-drop.scss";
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
+@import "../../modules/import-export/assets/js/ui/info-link/info-link.scss";
