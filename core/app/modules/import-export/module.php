@@ -45,7 +45,7 @@ class Module extends BaseModule {
 
 	public function get_init_settings() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], admin_url() );
+		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
 		return [
 			'exportURL' => $export_url,
