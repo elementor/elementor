@@ -1,15 +1,27 @@
+import { useContext } from 'react';
+
+import { Context } from '../../../context/export/export-context';
+
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
-import ClickToDownload from './components/click-to-download/click-to-download';
+import InfoLink from '../../../ui/info-link/info-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 export default function ExportComplete() {
-	const getFooter = () => (
-		<WizardFooter separator justify="end">
-			<DashboardButton />
-		</WizardFooter>
-	);
+	const exportContext = useContext( Context ),
+		getFooter = () => (
+			<WizardFooter separator justify="end">
+				<DashboardButton />
+			</WizardFooter>
+		),
+		getDownloadLink = () => (
+			<InfoLink
+				text={ __( 'Click Here', 'elementor' ) }
+				url={ exportContext.data.downloadURL }
+				target="_self"
+			/>
+		);
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -19,7 +31,7 @@ export default function ExportComplete() {
 				text={ __( 'This may take a few moments to complete.', 'elementor' ) }
 				bottomText={ (
 					<>
-						{ __( 'Download not working?', 'elementor' ) } <ClickToDownload /> { __( 'to dawnload', 'elementor' ) }
+						{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to dawnload', 'elementor' ) }
 					</>
 				) }
 			/>
