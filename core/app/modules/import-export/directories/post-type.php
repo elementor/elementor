@@ -49,13 +49,12 @@ class Post_Type extends Base {
 
 		$manifest_data = [];
 
-		foreach( $query->posts as $post ) {
-			$manifest_data[] = [
-				'id' => $post->ID,
+		foreach ( $query->posts as $post ) {
+			$manifest_data[ $post->ID ] = [
 				'title' => $post->post_title,
 				'post_type' => $this->post_type,
 				'thumbnail' => get_the_post_thumbnail_url( $post ),
-				'url' => get_permalink( $post )
+				'url' => get_permalink( $post ),
 			];
 
 			$document = Plugin::$instance->documents->get( $post->ID );
@@ -72,5 +71,50 @@ class Post_Type extends Base {
 		}
 
 		return $manifest_data;
+	}
+
+	protected function import( array $import_settings ) {
+		$result = [
+			'success' => [],
+			'failed' => [],
+		];
+
+		foreach ( $import_settings as $id => $post_settings ) {
+			try {
+				$import = $this->import_post( $id, $post_settings );
+
+				if ( is_wp_error( $import ) ) {
+					$result['failed'][ $id ] = $import->get_error_message();
+
+					continue;
+				}
+
+				$result['success'][] = $import;
+			} catch ( \Error $error ) {
+				$result['failed'][ $id ] = $error->getMessage();
+			}
+		}
+
+		return $result;
+	}
+
+	public function import_post( $id, array $post_settings ) {
+		$post_data = $this->importer->read_json_file( $id );
+
+		$new_document = Plugin::$instance->documents->create(
+			$this->post_type,
+			[
+				'post_title' => $post_settings['title'],
+				'post_status' => 'publish',
+			]
+		);
+
+		if ( is_wp_error( $new_document ) ) {
+			return $new_document;
+		}
+
+		$new_document->import( $post_data );
+
+		return $new_document->get_main_id();
 	}
 }
