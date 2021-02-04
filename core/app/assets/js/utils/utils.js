@@ -17,4 +17,8 @@ export default class Utils {
 			.map( ( value ) => Utils.pxToRem( value ) )
 			.join( ' ' );
 	};
+
+	static isOneOfFiletypes = ( filetype, filetypeOptions ) => {
+		return filetypeOptions.some( ( type ) => filetype.includes( type ) );
+	};
 }

@@ -8,7 +8,7 @@ import Text from 'elementor-app/ui/atoms/text';
 import './wizard-step.scss';
 
 export default function WizardStep( props ) {
-	const baseClassName = 'import-export-wizard-step',
+	const baseClassName = 'e-app-import-export-wizard-step',
 		classes = [ baseClassName, props.className ];
 
 	return (
@@ -16,32 +16,32 @@ export default function WizardStep( props ) {
 			<Grid className={ Utils.arrayToClassName( classes ) } justify="center" container>
 				<Grid item>
 					{ props.image &&
-					<Grid className="import-export-wizard-step__image-container" justify="center" alignItems="end" container>
+					<Grid className="e-app-import-export-wizard-step__image-container" justify="center" alignItems="end" container>
 						<img
-							className="import-export-wizard-step__image"
+							className="e-app-import-export-wizard-step__image"
 							src={ props.image }
 						/>
 					</Grid>
 					}
 
 					{ props.icon &&
-					<Icon className={ `import-export-wizard-step__icon ${ props.icon }` } />
+					<Icon className={ `e-app-import-export-wizard-step__icon ${ props.icon }` } />
 					}
 
 					{ props.title &&
-					<Heading variant="display-3" className="import-export-wizard-step__title">
+					<Heading variant="display-3" className="e-app-import-export-wizard-step__title">
 						{ props.title }
 					</Heading>
 					}
 
 					{ props.text &&
-					<Text variant="xl" className="import-export-wizard-step__text" >
+					<Text variant="xl" className="e-app-import-export-wizard-step__text" >
 						{ props.text }
 					</Text>
 					}
 
 					{ props.bottomText &&
-					<Text variant="xs" className="import-export-wizard-step__bottom-text">
+					<Text variant="xs" className="e-app-import-export-wizard-step__bottom-text">
 						{ props.bottomText }
 					</Text>
 					}

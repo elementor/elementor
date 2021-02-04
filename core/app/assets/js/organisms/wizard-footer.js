@@ -1,9 +1,11 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import Grid from 'elementor-app/ui/grid/grid';
 
-import './footer.scss';
+import './wizard-footer.scss';
 
-export default function Footer( props ) {
-	const baseClassName = 'import-export-footer',
+export default function WizardFooter( props ) {
+	const baseClassName = 'e-app-wizard-footer',
 		classes = [ baseClassName, props.className ];
 
 	if ( props.separator ) {
@@ -11,13 +13,13 @@ export default function Footer( props ) {
 	}
 
 	return (
-		<Grid container { ...props } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<Grid container { ...props } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</Grid>
 	);
 }
 
-Footer.propTypes = {
+WizardFooter.propTypes = {
 	className: PropTypes.string,
 	justify: PropTypes.any,
 	separator: PropTypes.any,
@@ -28,6 +30,6 @@ Footer.propTypes = {
 	] ).isRequired,
 };
 
-Footer.defaultProps = {
+WizardFooter.defaultProps = {
 	className: '',
 };

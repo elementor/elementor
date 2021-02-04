@@ -1,9 +1,9 @@
 import Utils from 'elementor-app/utils/utils.js';
 
-import './click-here.scss';
+import './info-link.scss';
 
-export default function ClickHere( props ) {
-	const baseClassName = 'import-export-click-here',
+export default function InfoLink( props ) {
+	const baseClassName = 'e-app-import-export-click-here',
 		classes = [ baseClassName, props.className ];
 
 	return (
@@ -12,18 +12,19 @@ export default function ClickHere( props ) {
 			target={ props.target }
 			rel="noopener noreferrer"
 			href={ props.url }>
-			{ __( 'Click Here', 'elementor' ) }
+			{ props.text }
 		</a>
 	);
 }
 
-ClickHere.propTypes = {
+InfoLink.propTypes = {
 	className: PropTypes.string,
 	url: PropTypes.string,
 	target: PropTypes.string,
+	text: PropTypes.string,
 };
 
-ClickHere.defaultProps = {
+InfoLink.defaultProps = {
 	className: '',
 	target: '_blank',
 };

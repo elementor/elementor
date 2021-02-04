@@ -1,6 +1,6 @@
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
-import GoProButton from './components/go-pro-button/go-pro-button';
+import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -19,28 +19,34 @@ export default function KitContent() {
 			}
 
 			return <TemplatesFeatures features={ features } isLocked={ ! hasPro } />;
-		};
+		},
+		getGoProButton = () => (
+			<GoProButton
+				className="e-app-export-kit-content__go-pro-button"
+				urlParams="utm_source=import-export&utm_medium=app&utm_campaign=go-pro"
+			/>
+		);
 
 	return (
 		<Box>
-			<List separated className="kit-content">
+			<List separated className="e-app-export-kit-content">
 				{
 					kitContentData.map( ( item, index ) => (
-						<List.Item separated padding="20" key={ index } className="kit-content__item">
-							<Grid container>
-								<KitContentCheckbox type={ item.type } className="kit-content__checkbox" />
+						<List.Item separated padding="20" key={ index } className="e-app-export-kit-content__item">
+							<Grid container noWrap>
+								<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
 
 								<Grid item>
-									<Heading variant="h4" tag="h3" className="kit-content__title">
+									<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
 										{ item.data.title }
 									</Heading>
 
 									<Grid item>
-										<Text variant="sm" tag="span" className="kit-content__description">
+										<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
 											{ item.data.description || getTemplateFeatures( item.data.features ) }
 										</Text>
 
-										{ item.data.features?.locked && ! hasPro && <GoProButton className="kit-content__go-pro-button" /> }
+										{ item.data.features?.locked && ! hasPro && getGoProButton() }
 									</Grid>
 								</Grid>
 							</Grid>

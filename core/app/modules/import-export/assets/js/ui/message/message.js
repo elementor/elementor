@@ -2,8 +2,8 @@ import './message.scss';
 
 export default function Message( props ) {
 	return (
-		<div className={ `import-export-message ${ props.className }` }>
-			<div className="import-export-message__content">
+		<div className={ `e-app-import-export-message ${ props.className }` }>
+			<div className="e-app-import-export-message__content">
 				{ props.children }
 			</div>
 		</div>

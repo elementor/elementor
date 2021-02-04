@@ -7,7 +7,7 @@ import './page-header.scss';
 
 // Page header.
 export default function PageHeader( props ) {
-	const baseClassName = 'import-export-title',
+	const baseClassName = 'e-app-import-export-title',
 		classes = [ baseClassName, props.className ];
 
 	const handleMultiLine = ( content ) => {
@@ -30,8 +30,8 @@ export default function PageHeader( props ) {
 
 	return (
 		<div className={ Utils.arrayToClassName( classes ) }>
-			{ props.heading && <Heading variant="display-3" className="import-export-title__primary">{ props.heading }</Heading> }
-			{ props.description && <Text className="import-export-title__secondary">{ handleMultiLine( props.description ) }</Text> }
+			{ props.heading && <Heading variant="display-3" className="e-app-import-export-title__primary">{ props.heading }</Heading> }
+			{ props.description && <Text className="e-app-import-export-title__secondary">{ handleMultiLine( props.description ) }</Text> }
 		</div>
 	);
 }
