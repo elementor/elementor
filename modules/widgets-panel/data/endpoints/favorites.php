@@ -3,6 +3,7 @@
 namespace Elementor\Modules\WidgetsPanel\Data\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
+use Elementor\Modules\WidgetsPanel\Data\Endpoints\Helpers\IgnoreWidgetsType;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +23,15 @@ class Favorites extends Endpoint {
 	 * @since 3.0.16
 	 */
 	const META_KEY = '_elementor_favorites_widgets';
+
+	/**
+	 * List of widget type - section
+	 *
+	 * @since 3.0.16
+	 */
+	const IGNORE_WIDGETS = [
+		'inner-section',
+	];
 
 	/**
 	 * The name of path - Rest Api
@@ -46,6 +56,7 @@ class Favorites extends Endpoint {
 	protected function register() {
 		parent::register();
 
+		/** @TODO: Check what the right way to stop request ( like middleware ) */
 		$this->register_item_route( \WP_REST_Server::READABLE );
 		$this->register_route( '/(?P<id>[\w\-]+)/', \WP_REST_Server::CREATABLE, function ( $request ) {
 			return $this->base_callback( \WP_REST_Server::CREATABLE, $request );
@@ -53,6 +64,11 @@ class Favorites extends Endpoint {
 			'id' => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
+				//'validate_callback' => function( $widget_id ) {
+				//	if ( in_array( $widget_id, self::IGNORE_WIDGETS ) ) {
+				//		return false;
+				//	}
+				//},
 			]
 		] );
 		$this->register_route( '/(?P<id>[\w\-]+)/', \WP_REST_Server::DELETABLE, function ( $request ) {
@@ -150,9 +166,13 @@ class Favorites extends Endpoint {
 	 *
 	 */
 	private function mark_as_favorite_widget( string $widget_id, $favorite = true ) {
+		if ( in_array( $widget_id, self::IGNORE_WIDGETS ) ) {
+			return false;
+		}
+
 		$favorites_widgets = $this->get_favorite_widget();
 
-		/** @var  $widget_id @TODO: check if this var needed esc_html__ */
+		/** @var  $widget_id */
 		$widget_id = esc_html__( $widget_id, 'elementor' );
 
 		if ( $favorite ) {
@@ -165,7 +185,7 @@ class Favorites extends Endpoint {
 		}
 
 		return update_user_meta( get_current_user_id(), self::META_KEY, $favorites_widgets );
- 	}
+	}
 
 	/**
 	 * Update tracking data for favorites-widgets-panel

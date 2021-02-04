@@ -1,11 +1,10 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import ignoreSectionWidgets from '../helpers/ignoreSectionWidgets';
 
 export class Add extends CommandBase {
 	async apply( args = {} ) {
 		const widget = args.widget ?? '';
 
-		if ( ! widget.length || ignoreSectionWidgets.includes( widget ) ) {
+		if ( ! widget.length ) {
 			return false;
 		}
 
