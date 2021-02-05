@@ -19,9 +19,12 @@ var Debug = function() {
 	};
 
 	var onError = function( event ) {
-		var originalEvent = event.originalEvent,
-			error = originalEvent.error;
+		var originalEvent = event.originalEvent;
+		if ( ! originalEvent ) {
+			return;
+		}
 
+		var error = originalEvent.error;
 		if ( ! error ) {
 			return;
 		}
