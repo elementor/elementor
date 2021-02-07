@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 
 export default function useUploadFile( fileName, action, data ) {
-	const [ file, setFile ] = useState(),
+	const [ uploadFile, setUploadFile ] = useState(),
 		uploadInitialState = {
 			success: false,
 			error: false,
 			complete: false,
 		},
-		[ uploadStatus, setUploadStatus ] = useState( uploadInitialState );
+		[ uploadFileStatus, setUploadFileStatus ] = useState( uploadInitialState );
 
 	useEffect( () => {
-		if ( file ) {
+		if ( uploadFile ) {
 			const formData = new FormData();
 
-			formData.append( fileName || file.name, file );
+			formData.append( fileName || uploadFile.name, uploadFile );
 
 			formData.append( 'action', action );
 
@@ -29,23 +29,23 @@ export default function useUploadFile( fileName, action, data ) {
 				contentType: false,
 				processData: false,
 				success: () => {
-					setUploadStatus( ( prevState ) => ( { ...prevState, success: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, success: true } ) );
 				},
 				error: () => {
-					setUploadStatus( ( prevState ) => ( { ...prevState, error: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, error: true } ) );
 				},
 				complete: () => {
-					setUploadStatus( ( prevState ) => ( { ...prevState, complete: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, complete: true } ) );
 				},
 			};
 
 			jQuery.ajax( options );
 		}
-	}, [ file ] );
+	}, [ uploadFile ] );
 
 	return {
-		file,
-		setFile,
-		uploadStatus,
+		uploadFile,
+		setUploadFile,
+		uploadFileStatus,
 	};
 }
