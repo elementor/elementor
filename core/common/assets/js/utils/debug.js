@@ -20,7 +20,7 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
-			error = originalEvent.error;
+			error = originalEvent?.error;
 
 		if ( ! error ) {
 			return;
