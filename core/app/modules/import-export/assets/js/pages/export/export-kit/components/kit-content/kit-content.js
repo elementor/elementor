@@ -54,33 +54,36 @@ export default function KitContent() {
 		<Box>
 			<List separated className="e-app-export-kit-content">
 				{
-					kitContentData.map( ( item, index ) => (
-						<List.Item separated padding="20" key={ item.type } className="e-app-export-kit-content__item">
-							<div
-								onMouseEnter={ () => item.data.features?.locked && setContainerHoverState( index, true ) }
-								onMouseLeave={ () => item.data.features?.locked && setContainerHoverState( index, false ) }
-								data-value={ Math.random() }
-							>
-								<Grid container noWrap>
-									<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
+					kitContentData.map( ( item, index ) => {
+						const isLockedFeaturesNoPro = item.data.features?.locked && ! hasPro;
 
-									<Grid item>
-										<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-											{ item.data.title }
-										</Heading>
+						return (
+							<List.Item separated padding="20" key={ item.type } className="e-app-export-kit-content__item">
+								<div
+									onMouseEnter={ () => isLockedFeaturesNoPro && setContainerHoverState( index, true ) }
+									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
+								>
+									<Grid container noWrap>
+										<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
 
 										<Grid item>
-											<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
-												{ item.data.description || getTemplateFeatures( item.data.features, index ) }
-											</Text>
+											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
+												{ item.data.title }
+											</Heading>
 
-											{ item.data.features?.locked && ! hasPro && getGoProButton() }
+											<Grid item>
+												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
+													{ item.data.description || getTemplateFeatures( item.data.features, index ) }
+												</Text>
+
+												{ isLockedFeaturesNoPro && getGoProButton() }
+											</Grid>
 										</Grid>
 									</Grid>
-								</Grid>
-							</div>
-						</List.Item>
-					) )
+								</div>
+							</List.Item>
+						);
+					} )
 				}
 			</List>
 		</Box>
