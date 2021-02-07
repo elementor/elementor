@@ -16,7 +16,7 @@ import './import-process-style.scss';
 
 export default function ImportProcess() {
 	const [ isImportFailed, setIsImportFailed ] = useState( false ),
-		{ setFile, uploadStatus } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
+		{ setUploadFile, uploadFileStatus } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
 		importContext = useContext( Context ),
@@ -27,16 +27,16 @@ export default function ImportProcess() {
 		};
 
 	useEffect( () => {
-		setFile( importContext.data.file );
+		setUploadFile( importContext.data.file );
 	}, [] );
 
 	useEffect( () => {
-		if ( uploadStatus.success ) {
+		if ( uploadFileStatus.success ) {
 			navigate( '/import/success' );
-		} else if ( uploadStatus.error ) {
+		} else if ( uploadFileStatus.error ) {
 			setIsImportFailed( true );
 		}
-	}, [ uploadStatus ] );
+	}, [ uploadFileStatus ] );
 
 	return (
 		<Layout type="import">
