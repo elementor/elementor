@@ -20,10 +20,7 @@ $root: e-app-export-kit-content;
 
 	&__description {
 		color: var(--e-app-export-kit-content-description-color);
-	}
-
-	&__go-pro-button {
-		margin-inline-start: spacing(20);
+		margin-inline-end: spacing(20);
 	}
 
 	&__notice {
