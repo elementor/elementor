@@ -9,7 +9,7 @@ export const SectionColumns = () => {
 			assert.equal( eSection.settings.get( 'structure' ), structure );
 		} );
 
-		QUnit.test( 'create section at index 0 - ensure options does not forward to columns', ( assert ) => {
+		QUnit.test( 'create section at index 0 - with section that already in index 0 - ensure options does not forward to columns', ( assert ) => {
 			// Resolve issue: ED-1903.
 			// Arrange.
 			const eSectionInitial = ElementsHelper.createSectionStructure( 3, '32' ),
