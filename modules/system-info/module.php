@@ -62,6 +62,7 @@ class Module extends BaseModule {
 		'plugins' => [],
 		'network_plugins' => [],
 		'mu_plugins' => [],
+		'experiments' => [],
 	];
 
 	/**
