@@ -17,6 +17,7 @@ const kitContentData = [
 					__( '404 Error Page', 'elementor' ),
 					__( 'Popups', 'elementor' ),
 				],
+				tooltip: __( 'This Template is available only in the Pro version', 'elementor' ),
 			},
 		},
 	},

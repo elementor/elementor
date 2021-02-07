@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
@@ -13,43 +15,70 @@ import './kit-content.scss';
 
 export default function KitContent() {
 	const hasPro = elementorAppConfig.hasPro,
-		getTemplateFeatures = ( features ) => {
+		[ isTipsyLibReady, setIsTipsyLibReady ] = useState( false ),
+		[ containerHover, setContainerHover ] = useState( {} ),
+		getTemplateFeatures = ( features, index ) => {
 			if ( ! features ) {
 				return;
 			}
 
-			return <TemplatesFeatures features={ features } isLocked={ ! hasPro } />;
+			return (
+				<TemplatesFeatures
+					features={ features }
+					isLocked={ ! hasPro }
+					showTooltip={ containerHover[ index ] }
+					isTipsyLibReady={ isTipsyLibReady }
+				/>
+			);
 		},
 		getGoProButton = () => (
 			<GoProButton
 				className="e-app-export-kit-content__go-pro-button"
 				urlParams="utm_source=import-export&utm_medium=app&utm_campaign=go-pro"
 			/>
-		);
+		),
+		setContainerHoverState = ( index, state ) => {
+			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
+		};
+
+	useEffect( () => {
+		if ( ! hasPro ) {
+			import(
+				/* webpackIgnore: true */
+				`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
+				).then( () => setIsTipsyLibReady( true ) );
+		}
+	}, [] );
 
 	return (
 		<Box>
 			<List separated className="e-app-export-kit-content">
 				{
 					kitContentData.map( ( item, index ) => (
-						<List.Item separated padding="20" key={ index } className="e-app-export-kit-content__item">
-							<Grid container noWrap>
-								<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
-
-								<Grid item>
-									<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-										{ item.data.title }
-									</Heading>
+						<List.Item separated padding="20" key={ item.type } className="e-app-export-kit-content__item">
+							<div
+								onMouseEnter={ () => item.data.features?.locked && setContainerHoverState( index, true ) }
+								onMouseLeave={ () => item.data.features?.locked && setContainerHoverState( index, false ) }
+								data-value={ Math.random() }
+							>
+								<Grid container noWrap>
+									<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
 
 									<Grid item>
-										<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
-											{ item.data.description || getTemplateFeatures( item.data.features ) }
-										</Text>
+										<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
+											{ item.data.title }
+										</Heading>
 
-										{ item.data.features?.locked && ! hasPro && getGoProButton() }
+										<Grid item>
+											<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
+												{ item.data.description || getTemplateFeatures( item.data.features, index ) }
+											</Text>
+
+											{ item.data.features?.locked && ! hasPro && getGoProButton() }
+										</Grid>
 									</Grid>
 								</Grid>
-							</Grid>
+							</div>
 						</List.Item>
 					) )
 				}
