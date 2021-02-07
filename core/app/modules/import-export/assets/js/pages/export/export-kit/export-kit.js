@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import InfoLink from '../../../ui/info-link/info-link';
@@ -25,9 +27,9 @@ export default function ExportKit() {
 					heading={ __( 'Choose What To Include In The Kit', 'elementor' ) }
 					description={ [
 						__( 'Choose the kit components to export, such as pages, site setting, headers and more.', 'elementor' ),
-						<>
+						<React.Fragment key="description-secondary-line">
 							{ __( 'By default, we will export all the components.', 'elementor' ) } { getLearnMoreLink() }
-						</>,
+						</React.Fragment>,
 					] }
 				/>
 
