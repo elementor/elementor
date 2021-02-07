@@ -20,6 +20,7 @@ var Debug = function() {
 
 	var onError = function( event ) {
 		var originalEvent = event.originalEvent,
+			// Some events does not include originalEvent as prop (mostly custom error events).
 			error = originalEvent?.error;
 
 		if ( ! error ) {
