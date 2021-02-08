@@ -28,7 +28,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return this.model.get( 'media_type' );
 	},
 
-	getLibrary: function ( library ) {
+	getLibrary: function( library ) {
 		if ( library ) {
 			return ( 'svg' === library ) ? 'image/svg+xml' : library;
 		}
