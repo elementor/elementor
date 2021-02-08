@@ -28,6 +28,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		return this.model.get( 'media_type' );
 	},
 
+	getLibrary: function ( library ) {
+		if ( library ) {
+			return ( 'svg' === library ) ? 'image/svg+xml' : library;
+		}
+
+		return this.model.get( 'library' ) || this.getMediaType();
+	},
+
 	applySavedValue: function() {
 		var url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType();
@@ -53,8 +61,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return false;
 		}
 
-		if ( ! this.frame ) {
-			this.initFrame();
+		if ( ! this.frame || this.getLibrary( mediaType ) !== this.frame.states.library ) {
+			this.initFrame( mediaType );
 		}
 
 		this.frame.open();
@@ -85,7 +93,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	/**
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
-	initFrame: function() {
+	initFrame: function( library ) {
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
@@ -95,7 +103,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			states: [
 				new wp.media.controller.Library( {
 					title: __( 'Insert Media', 'elementor' ),
-					library: wp.media.query( { type: this.getMediaType() } ),
+					library: wp.media.query( { type: this.getLibrary( library ) } ),
 					multiple: false,
 					date: false,
 				} ),
