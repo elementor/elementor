@@ -245,7 +245,8 @@ class Manager extends Module {
 	/**
 	 * Get Default Config
 	 *
-	 * Retrieve the default breakpoints config array.
+	 * Retrieve the default breakpoints config array. The 'selector' property is used for CSS generation (the
+	 * Stylesheet::add_device() method).
 	 *
 	 * @return array
 	 */
@@ -255,31 +256,37 @@ class Manager extends Module {
 				'label' => 'Mobile',
 				'default_value' => 767,
 				'direction' => 'max',
+				'selector' => 'mobile',
 			],
 			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
 				'label' => 'Mobile Extra',
 				'default_value' => 880,
 				'direction' => 'max',
+				'selector' => 'mobile_extra',
 			],
 			self::BREAKPOINT_KEY_TABLET => [
 				'label' => 'Tablet',
 				'default_value' => 1024,
 				'direction' => 'max',
+				'selector' => 'tablet',
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
 				'label' => 'Tablet Extra',
 				'default_value' => 1366,
 				'direction' => 'max',
+				'selector' => 'tablet_extra',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
 				'label' => 'Laptop',
 				'default_value' => 1620,
 				'direction' => 'max',
+				'selector' => 'laptop',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
 				'label' => 'Widescreen',
 				'default_value' => 2400,
 				'direction' => 'min',
+				'selector' => 'widescreen',
 			],
 		];
 	}

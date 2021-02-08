@@ -704,8 +704,8 @@ abstract class Base extends Base_File {
 
 		$breakpoints_config = Plugin::$instance->breakpoints->get_config();
 
-		foreach ( $breakpoints_config as $breakpoint_name => $breakpoint_config ) {
-			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint_config['value'] );
+		foreach ( $breakpoints_config as $breakpoint_config ) {
+			$this->stylesheet_obj->add_device( $breakpoint_config['selector'], $breakpoint_config['value'] );
 		}
 	}
 
