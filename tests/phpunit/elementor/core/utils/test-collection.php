@@ -151,4 +151,77 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'b' => '2' ], $result2->all() );
 	}
 
+	public function test_pluck() {
+		// Arrange
+		$collection = new Collection( [
+			[ 'a' => 1, 'b' => 2 ],
+			[ 'a' => 3, 'b' => 4 ]
+		] );
+		$collection2 = new Collection( [
+			(object) [ 'a' => 1, 'b' => 2 ],
+			(object) [ 'a' => 3, 'b' => 4 ],
+		] );
+
+		// Act
+		$result = $collection->pluck('a');
+		$result2 = $collection2->pluck('b');
+
+		// Assert
+		$this->assertEqualSets( [ 1, 3 ], $result->all() );
+		$this->assertEqualSets( [ 2, 4 ], $result2->all() );
+	}
+
+	public function test_group_by() {
+		// Arrange
+		$collection = new Collection( [
+			[ 'a' => 1, 'b' => 2 ],
+			[ 'a' => 1, 'b' => 3 ],
+			[ 'a' => 3, 'b' => 2 ],
+		] );
+		$collection2 = new Collection( [
+			(object) [ 'a' => 1, 'b' => 2 ],
+			(object) [ 'a' => 1, 'b' => 3 ],
+			(object) [ 'a' => 3, 'b' => 2 ],
+		] );
+
+		// Assert
+		$result = $collection->group_by( 'a' );
+		$result2 = $collection2->group_by( 'b' );
+
+		// Assert
+		$this->assertEqualSets( [
+			1 => [
+				[ 'a' => 1, 'b' => 2 ],
+				[ 'a' => 1, 'b' => 3 ]
+			],
+			3 => [
+				[ 'a' => 3, 'b' => 2 ]
+			]
+		], $result->all() );
+
+		$this->assertEqualSets( [
+			2 => [
+				(object) [ 'a' => 1, 'b' => 2 ],
+				(object) [ 'a' => 3, 'b' => 2 ],
+			],
+			3 => [
+				(object) [ 'a' => 1, 'b' => 3 ],
+			]
+		], $result2->all() );
+	}
+
+	public function test_get() {
+		// Arrange
+		$collection = new Collection( ['a' => 1, 'b' => 2] );
+
+		// Act
+		$result = $collection->get( 'a' );
+		$result2 = $collection->get( 'c' );
+		$result3 = $collection->get( 'c', 1 );
+
+		// Assert
+		$this->assertEquals( 1, $result );
+		$this->assertEquals( null, $result2 );
+		$this->assertEquals( 1, $result3 );
+	}
 }
