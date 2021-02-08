@@ -6,6 +6,7 @@ export default class Component extends ComponentBase {
 	currentPicker = {
 		container: null,
 		control: null,
+		initialColor: null,
 	};
 
 	getNamespace() {

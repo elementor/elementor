@@ -6,7 +6,9 @@ export class End extends CommandBase {
 
 		elementor.$previewContents.find( '.elementor-element-color-picker' ).remove();
 
-		elementor.$previewContents.off( 'mousemove.color-picker' );
+		elementor.$previewContents.off( 'mouseenter.color-picker' );
+
+		elementor.$previewWrapper.off( 'mouseleave.color-picker' );
 
 		$e.run( 'document/elements/settings', {
 			container: this.component.currentPicker.container,
@@ -16,8 +18,9 @@ export class End extends CommandBase {
 		} );
 
 		this.component.currentPicker = {
-			container: args.container,
-			control: args.control,
+			container: null,
+			control: null,
+			initialColor: null,
 		};
 	}
 }

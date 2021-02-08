@@ -7,10 +7,15 @@ export class Start extends CommandBase {
 		this.component.currentPicker = {
 			container: args.container,
 			control: args.control,
+			initialColor: args.container.getSetting( args.control ),
 		};
 
-		elementor.$previewContents.on( 'mousemove.color-picker', '.elementor-element', ( e ) => {
+		elementor.$previewContents.on( 'mouseenter.color-picker', '.elementor-element', ( e ) => {
 			$e.run( 'elements-color-picker/show-swatches', { id: e.currentTarget.dataset.id } );
+		} );
+
+		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
+			$e.run( 'elements-color-picker/end', { value: this.component.currentPicker.initialColor } );
 		} );
 	}
 }

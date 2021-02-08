@@ -1,4 +1,5 @@
 export { ShowSwatches } from './show-swatches';
 export { Start } from './start';
-export { Apply } from './apply';
+export { EnterPreview } from './enter-preview';
+export { ExitPreview } from './exit-preview';
 export { End } from './end';

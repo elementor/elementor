@@ -1,55 +1,113 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import ColorThief from '../../lib/color-thief-2.3.2';
+import Utils from "../../../../../../core/app/assets/js/utils/utils";
 
 export class ShowSwatches extends CommandBase {
+
+	constructor( args ) {
+		super( args );
+
+		this.colors = {};
+		this.pickerClass = 'elementor-element-color-picker';
+		this.pickerSelector = '.' + this.pickerClass;
+		this.container = null;
+		this.tmpImages = [];
+	}
+
 	apply( args ) {
 		if ( ! args.id ) {
 			return;
 		}
 
-		const container = elementor.getContainer( args.id ),
-			colors = {},
-			pickerClass = 'elementor-element-color-picker',
-			pickerSelector = '.' + pickerClass;
+		this.container = elementor.getContainer( args.id );
 
-		if ( container.view.$el.find( pickerSelector ).length ) {
+		if ( this.container.view.$el.find( this.pickerSelector ).length ) {
 			return;
 		}
 
-		Object.keys( container.settings.attributes ).map( ( control ) => {
-			// Temp fix for control without conditions
-			if ( '_background_hover_color_b' === control || '_background_color_b' === control ) {
+		this.extractColorsFromSettings();
+
+		setTimeout( () => {
+			this.extractColorsFromImages();
+			this.initSwatch();
+		}, 100 );
+	}
+
+	extractColorsFromSettings() {
+		// Iterate over the widget controls.
+		Object.keys( this.container.settings.attributes ).map( ( control ) => {
+
+			if ( ! ( control in this.container.controls ) ) {
 				return;
 			}
 
-			if ( 'color' === container.controls[ control ]?.type ) {
-				const value = container.getSetting( control );
-				if ( value && ! Object.values( colors ).includes( value ) ) {
-					colors[ control ] = value;
-				}
+			// Throw non-active controls.
+			if ( ! elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) ) {
+				return;
+			}
+
+			// Handle background images.
+			if ( control.startsWith( '_background_image' ) ) {
+				this.addTempBackgroundImage( this.container.getSetting( control ) );
+			}
+
+			// Throw non-color controls.
+			if ( 'color' !== this.container.controls[ control ]?.type ) {
+				return;
+			}
+
+			const value = this.container.getSetting( control );
+
+			if ( value && ! Object.values( this.colors ).includes( value ) ) {
+				this.colors[ control ] = value;
 			}
 		} );
+	}
 
-		if ( container.view.$el.find( 'img' ).length ) {
-
-			const colorThief = new ColorThief();
-			const palette =	colorThief.getPalette( container.view.$el.find( 'img' ).eq( 0 )[ 0 ] );
-
-			const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-				const hex = x.toString(16)
-				return hex.length === 1 ? '0' + hex : hex
-			}).join('');
-
-			palette.forEach( ( color, index ) => {
-				colors[ 'palette' + index ] = rgbToHex( color[0], color[1], color[2] );
-			} );
+	addTempBackgroundImage( { url } ) {
+		if ( ! url ) {
+			return;
 		}
 
-		const $picker = jQuery( '<div></div>', {
-			class: pickerClass,
+		// Create the image.
+		const img = document.createElement( 'img' );
+		img.src = url;
+
+		// Push the image to the temporary images array.
+		this.tmpImages.push( img );
+	}
+
+	extractColorsFromImages() {
+		// Iterate over all images in the widget.
+		const images = [
+			...this.tmpImages,
+			...this.container.view.$el[ 0 ].querySelectorAll( 'img' ),
+		];
+
+		images.forEach( ( img, i ) => {
+			const colorThief = new ColorThief();
+			const palette =	colorThief.getPalette( img );
+
+			// add the palette to the colors array.
+			palette.forEach( ( color, index ) => {
+				const hex = Utils.rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+
+				if ( ! Object.values( this.colors ).includes( hex ) ) {
+					this.colors[ `palette-${ i }-${ index }` ] = hex;
+				}
+			} );
 		} );
 
-		Object.entries( colors ).map( ( [ control, value ] ) => {
+		this.tmpImages = [];
+	}
+
+	// Create the swatch.
+	initSwatch() {
+		const $picker = jQuery( '<div></div>', {
+			class: this.pickerClass,
+		} );
+
+		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			$picker.append( jQuery( `<div></div>`, {
 				class: 'elementor-element-color-picker__swatch',
 				title: `${ control }: ${ value }`,
@@ -57,12 +115,16 @@ export class ShowSwatches extends CommandBase {
 					backgroundColor: value,
 				},
 				on: {
-					mouseenter: () => $e.run( 'elements-color-picker/apply', { value } ),
-					click: () => $e.run( 'elements-color-picker/end', { value } ),
+					mouseenter: () => $e.run( 'elements-color-picker/enter-preview', { value } ),
+					mouseleave: () => $e.run( 'elements-color-picker/exit-preview' ),
+					click: ( event ) => {
+						$e.run( 'elements-color-picker/end', { value } );
+						event.stopPropagation();
+					},
 				},
 			} )	);
 		} );
 
-		container.view.$el.append( $picker );
+		this.container.view.$el.append( $picker );
 	}
 }
