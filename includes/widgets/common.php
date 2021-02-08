@@ -385,6 +385,60 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
+			'_mask_size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'auto' => __( 'Fit', 'elementor' ),
+					'cover' => __( 'Fill', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => 'auto',
+				'selectors' => [
+					'{{WRAPPER}}' => '-webkit-mask-size: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_size_scale',
+			[
+				'label' => __( 'Scale', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 100,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '-webkit-mask-size: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'_mask_size' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
 			'_mask_position',
 			[
 				'label' => __( 'Position', 'elementor' ),
@@ -413,16 +467,28 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'X Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%' ],
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
 				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
 					'%' => [
-						'min' => 0,
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
 						'max' => 100,
 					],
 				],
 				'default' => [
 					'unit' => '%',
-					'size' => 50,
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-position-x: {{SIZE}}{{UNIT}};',
@@ -438,16 +504,28 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => __( 'Y Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%' ],
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
 				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
 					'%' => [
-						'min' => 0,
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
 						'max' => 100,
 					],
 				],
 				'default' => [
 					'unit' => '%',
-					'size' => 50,
+					'size' => 0,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-position-y: {{SIZE}}{{UNIT}};',
@@ -459,61 +537,24 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
-			'_mask_size',
-			[
-				'label' => __( 'Size', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'auto' => __( 'Fit Element', 'elementor' ),
-					'cover' => __( 'Stretch', 'elementor' ),
-					'custom' => __( 'Custom', 'elementor' ),
-				],
-				'default' => 'auto',
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-size: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_mask_size_scale',
-			[
-				'label' => __( 'Scale', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%' ],
-				'range' => [
-					'%' => [
-						'min' => 0,
-						'max' => 200,
-					],
-				],
-				'default' => [
-					'unit' => '%',
-					'size' => 100,
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-size: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'_mask_size' => 'custom',
-				],
-			]
-		);
-
-		$this->add_control(
 			'_mask_repeat',
 			[
 				'label' => __( 'Repeat', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'repeat' => __( 'Yes', 'elementor' ),
 					'no-repeat' => __( 'No', 'elementor' ),
-					'repeat-x' => __( 'Repeat X', 'elementor' ),
-					'repeat-Y' => __( 'Repeat Y', 'elementor' ),
+					'repeat' => __( 'Yes', 'elementor' ),
+					'repeat-x' => __( 'Repeat-X', 'elementor' ),
+					'repeat-Y' => __( 'Repeat-Y', 'elementor' ),
+					'round' => __( 'Round', 'elementor' ),
+					'space' => __( 'Space', 'elementor' ),
 				],
 				'default' => 'no-repeat',
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-repeat: {{VALUE}};',
+				],
+				'condition' => [
+					'_mask_size!' => 'cover',
 				],
 			]
 		);
