@@ -46,40 +46,10 @@ class Manager extends Module {
 	}
 
 	/**
-	 * Get Active Breakpoints with Previous Values
-	 *
-	 * Returns an array of breakpoints with the breakpoint names as keys, and the previous breakpoint's value as their
-	 * value. This is used by the CSS generation classes to get the minimum points of each breakpoint. The returned
-	 * array includes all breakpoints EXCEPT for mobile, since mobile is the lowest breakpoint and as such, it has
-	 * a minimum point of 0px.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @return array
-	 */
-	public function get_active_breakpoints_with_previous_values() {
-		$breakpoints = $this->get_config();
-		$breakpoint_names = array_keys( $breakpoints );
-		// An array to be populated with each breakpoint name (except mobile) as the key, with the previous
-		// breakpoint's value as its value.
-		$breakpoints_with_previous_values = [];
-
-		foreach ( $breakpoint_names as $index => $breakpoint_name ) {
-			// Skip mobile which has a minimum point of 0.
-			if ( 0 === $index ) {
-				continue;
-			}
-
-			$breakpoints_with_previous_values[ $breakpoint_name ] = $breakpoints[ $breakpoint_names[ $index - 1 ] ]['value'];
-		}
-
-		return $breakpoints_with_previous_values;
-	}
-
-	/**
 	 * Init Breakpoints
 	 *
-	 * Creates the breakpoints array, containing instances of each breakpoint.
+	 * Creates the breakpoints array, containing instances of each breakpoint. Returns an array of ALL breakpoints,
+	 * both enabled and disabled.
 	 *
 	 * @return array
 	 */
@@ -88,15 +58,13 @@ class Manager extends Module {
 		$active_breakpoint_keys = Plugin::$instance->kits_manager->get_current_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
 		$default_config = self::get_default_config();
 
-		foreach ( self::get_default_config() as $name => $config ) {
+		foreach ( $default_config as $name => $config ) {
 			$args = [ 'name' => $name ] + $config;
 
 			// Make sure each breakpoint knows whether it is enabled.
+			// TODO: Adjust this if/else block once the Select2 control is implemented in Site Settings.
+			// For Backwards Compatibility, enable the two default breakpoints (mobile, tablet).
 			if ( ! $active_breakpoint_keys && ( self::BREAKPOINT_KEY_MOBILE === $name || self::BREAKPOINT_KEY_TABLET === $name ) ) {
-				// For Backwards Compatibility, enable the three existing default breakpoints.
-				//TODO: Remove the next line once the new breakpoint keys are implemented.
-				$args['value'] = $default_config[ $name ]['default_value'];
-
 				// Make sure the default Mobile and Tablet breakpoints are always enabled.
 				$args['is_enabled'] = true;
 			} elseif ( $active_breakpoint_keys ) {
