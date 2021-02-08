@@ -367,7 +367,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_masking',
 			[
-				'label' => __( 'Masking', 'elementor' ),
+				'label' => __( 'Mask', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
