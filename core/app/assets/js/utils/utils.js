@@ -18,7 +18,7 @@ export default class Utils {
 			.join( ' ' );
 	};
 
-	static rgbToHex = ( r, g, b)  => '#' + [ r, g, b ].map( ( x ) => {
+	static rgbToHex = ( r, g, b ) => '#' + [ r, g, b ].map( ( x ) => {
 		const hex = x.toString( 16 );
 		return 1 === hex.length ? '0' + hex : hex;
 	} ).join( '' );

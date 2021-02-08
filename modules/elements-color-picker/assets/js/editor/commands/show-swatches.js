@@ -1,9 +1,8 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import ColorThief from '../../lib/color-thief-2.3.2';
-import Utils from "../../../../../../core/app/assets/js/utils/utils";
+import Utils from '../../../../../../core/app/assets/js/utils/utils';
 
 export class ShowSwatches extends CommandBase {
-
 	constructor( args ) {
 		super( args );
 
@@ -36,7 +35,6 @@ export class ShowSwatches extends CommandBase {
 	extractColorsFromSettings() {
 		// Iterate over the widget controls.
 		Object.keys( this.container.settings.attributes ).map( ( control ) => {
-
 			if ( ! ( control in this.container.controls ) ) {
 				return;
 			}

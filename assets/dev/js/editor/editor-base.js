@@ -355,7 +355,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( this.config.experimentalFeatures['elements-color-picker'] ) {
+		if ( this.config.experimentalFeatures[ 'elements-color-picker' ] ) {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
