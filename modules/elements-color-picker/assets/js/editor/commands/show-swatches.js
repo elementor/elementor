@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import ColorThief from './color-thief-2.3.2';
+import ColorThief from '../../lib/color-thief-2.3.2';
 
 export class ShowSwatches extends CommandBase {
 	apply( args ) {
