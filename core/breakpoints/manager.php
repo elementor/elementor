@@ -12,10 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends Module {
 
+	// The mobile and tablet keys are not semantic due to the need for backwards compatibility.
 	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
-	const BREAKPOINT_KEY_MOBILE = 'mobile';
+	const BREAKPOINT_KEY_MOBILE = 'md';
 	const BREAKPOINT_KEY_MOBILE_EXTRA = 'mobile_extra';
-	const BREAKPOINT_KEY_TABLET = 'tablet';
+	const BREAKPOINT_KEY_TABLET = 'lg';
 	const BREAKPOINT_KEY_TABLET_EXTRA = 'tablet_extra';
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';

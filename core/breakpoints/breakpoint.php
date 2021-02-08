@@ -3,14 +3,13 @@ namespace Elementor\Core\Breakpoints;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Plugin;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Breakpoint extends Base_Object {
-
-	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
 
 	private $name;
 	private $default_value;
@@ -140,7 +139,7 @@ class Breakpoint extends Base_Object {
 
 	public function __construct( $args ) {
 		$this->name = $args['name'];
-		$this->db_key = self::BREAKPOINT_OPTION_PREFIX . $args['name'];
+		$this->db_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $args['name'];
 		$this->direction = $args['direction'];
 		$this->is_enabled = $args['is_enabled'];
 		$this->default_value = $args['default_value'];
