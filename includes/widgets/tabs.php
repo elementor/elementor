@@ -151,6 +151,8 @@ class Widget_Tabs extends Widget_Base {
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
+				'condition' => [
+					'look' => 'line_title',
 			],
 			'options' =>
 			[
