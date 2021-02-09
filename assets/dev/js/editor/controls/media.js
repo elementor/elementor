@@ -92,7 +92,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			button: {
 				text: __( 'Insert Media', 'elementor' ),
 			},
-      frame: 'post',
+			frame: 'post',
 			type: 'image',
 			multiple: false,
 			states: [
