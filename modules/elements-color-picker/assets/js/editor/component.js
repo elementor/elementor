@@ -15,4 +15,13 @@ export default class Component extends ComponentBase {
 	defaultCommands() {
 		return this.importCommands( commands );
 	}
+
+	defaultShortcuts() {
+		return {
+			end: {
+				keys: 'esc',
+				scopes: [ 'panel', 'preview' ],
+			},
+		};
+	}
 }
