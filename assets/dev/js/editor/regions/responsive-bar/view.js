@@ -1,10 +1,10 @@
-export default class TopBar extends Marionette.ItemView {
+export default class View extends Marionette.ItemView {
 	getTemplate() {
 		return '#tmpl-elementor-templates-responsive-top-bar';
 	}
 
 	className() {
-		return 'e-responsive-top-bar';
+		return 'e-mq-bar';
 	}
 
 	templateHelpers() {
