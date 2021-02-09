@@ -18,7 +18,7 @@ export default class Component extends ComponentBase {
 
 	defaultShortcuts() {
 		return {
-			end: {
+			apply: {
 				keys: 'esc',
 				scopes: [ 'panel', 'preview' ],
 			},

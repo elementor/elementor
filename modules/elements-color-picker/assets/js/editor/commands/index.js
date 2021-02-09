@@ -1,4 +1,4 @@
-export { End } from './end';
+export { Apply } from './apply';
 export { EnterPreview } from './enter-preview';
 export { ExitPreview } from './exit-preview';
 export { ShowSwatches } from './show-swatches';

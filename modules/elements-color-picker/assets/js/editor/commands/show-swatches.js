@@ -134,7 +134,7 @@ export class ShowSwatches extends CommandBase {
 					mouseenter: () => $e.run( 'elements-color-picker/enter-preview', { value } ),
 					mouseleave: () => $e.run( 'elements-color-picker/exit-preview' ),
 					click: ( event ) => {
-						$e.run( 'elements-color-picker/end', {
+						$e.run( 'elements-color-picker/apply', {
 							value,
 							trigger: {
 								palette: $picker,

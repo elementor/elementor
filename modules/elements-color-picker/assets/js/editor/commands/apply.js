@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export class End extends CommandBase {
+export class Apply extends CommandBase {
 	apply( { value, trigger } ) {
 		this.setColor( value );
 
