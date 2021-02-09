@@ -127,7 +127,7 @@ export class ShowSwatches extends CommandBase {
 				class: 'elementor-element-color-picker__swatch',
 				title: `${ control }: ${ value }`,
 				css: {
-					backgroundColor: value,
+					'--color': value,
 				},
 				'data-color': value,
 				on: {

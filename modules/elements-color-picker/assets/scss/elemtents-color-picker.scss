@@ -32,6 +32,7 @@
 			transition: $transition-hover;
 			position: relative;
 			overflow: hidden;
+			background-color: var( --color );
 
 			&::before {
 				content: attr( data-color );
@@ -39,11 +40,11 @@
 				left: 50%;
 				top: 50%;
 				opacity: 0;
-				color: #FFF;
+				color: var( --color );
 				font-size: 10px;
 				font-family: $admin-font-family;
-				text-shadow: 0 0 5px rgba(0,0,0,.5);
 				transform: translate( -50%, -50% );
+				filter: hue-rotate( 180deg ) grayscale( 1 ) contrast( 999 ) invert( 1 );
 				transition: inherit;
 			}
 
