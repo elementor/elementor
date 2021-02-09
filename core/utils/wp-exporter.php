@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * What changed:
  *  Remove echos.
- *  Remove filters.
  *  Fix indents.
  *  Add methods
  *      indent.
@@ -23,12 +22,14 @@ class WP_Exporter {
 	const WXR_VERSION = '1.2';
 
 	private static $default_args = [
-		'content'    => 'all',
-		'author'     => false,
-		'category'   => false,
+		'content' => 'all',
+		'author' => false,
+		'category' => false,
 		'start_date' => false,
-		'end_date'   => false,
-		'status'     => false,
+		'end_date' => false,
+		'status' => false,
+		'offset' => 0,
+		'limit' => -1,
 	];
 
 	private $args = [];
@@ -186,7 +187,21 @@ class WP_Exporter {
 		$termmeta = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->termmeta} WHERE term_id = %d", $term->term_id ) );// phpcs:ignore
 
 		foreach ( $termmeta as $meta ) {
-			$result .= sprintf( $this->indent( 3 ) . "<wp:termmeta>\n\t\t\t<wp:meta_key>%s</wp:meta_key>\n\t\t\t<wp:meta_value>%s</wp:meta_value>\n\t\t</wp:termmeta>\n", wxr_cdata( $meta->meta_key ), wxr_cdata( $meta->meta_value ) );
+			/**
+			 * Filters whether to selectively skip term meta used for WXR exports.
+			 *
+			 * Returning a truthy value from the filter will skip the current meta
+			 * object from being exported.
+			 *
+			 * @since 4.6.0
+			 *
+			 * @param bool   $skip     Whether to skip the current piece of term meta. Default false.
+			 * @param string $meta_key Current meta key.
+			 * @param object $meta     Current meta object.
+			 */
+			if ( ! apply_filters( 'wxr_export_skip_termmeta', false, $meta->meta_key, $meta ) ) {
+				$result .= sprintf( $this->indent( 3 ) . "<wp:termmeta>\n\t\t\t<wp:meta_key>%s</wp:meta_key>\n\t\t\t<wp:meta_value>%s</wp:meta_value>\n\t\t</wp:termmeta>\n", wxr_cdata( $meta->meta_key ), wxr_cdata( $meta->meta_value ) );
+			}
 		}
 
 		return $result;
@@ -337,16 +352,36 @@ class WP_Exporter {
 				foreach ( $posts as $post ) {
 					setup_postdata( $post );
 
+					$title = apply_filters( 'the_title_rss', $post->post_title );
+
+					/**
+					 * Filters the post content used for WXR exports.
+					 *
+					 * @since 2.5.0
+					 *
+					 * @param string $post_content Content of the current post.
+					 */
+					$content = $this->wxr_cdata( apply_filters( 'the_content_export', $post->post_content ) );
+
+					/**
+					 * Filters the post excerpt used for WXR exports.
+					 *
+					 * @since 2.6.0
+					 *
+					 * @param string $post_excerpt Excerpt for the current post.
+					 */
+					$excerpt = $this->wxr_cdata( apply_filters( 'the_excerpt_export', $post->post_excerpt ) );
+
 					$result .= $this->indent( 2 ) . '<item>' . PHP_EOL;
 
-					$result .= $this->indent( 3 ) . '<title>' . $post->post_title . '</title>' . PHP_EOL;
+					$result .= $this->indent( 3 ) . '<title>' . $title . '</title>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<link>' . esc_url( get_permalink() ) . '</link>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<pubDate>' . mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) . '</pubDate>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<dc:creator>' . $this->wxr_cdata( get_the_author_meta( 'login' ) ) . '</dc:creator>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<guid isPermaLink="false">' . $this->wxr_cdata( get_the_author_meta( 'login' ) ) . '</guid>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<description></description>' . PHP_EOL;
-					$result .= $this->indent( 3 ) . '<content>' . $this->wxr_cdata( $post->post_content ) . '</content>' . PHP_EOL;
-					$result .= $this->indent( 3 ) . '<excerpt:encoded>' . $this->wxr_cdata( $post->post_excerpt ) . '</excerpt:encoded>' . PHP_EOL;
+					$result .= $this->indent( 3 ) . '<content:encoded>' . $content . '</content:encoded>' . PHP_EOL;
+					$result .= $this->indent( 3 ) . '<excerpt:encoded>' . $excerpt . '</excerpt:encoded>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<wp:post_id>' . (int) $post->ID . '</wp:post_id>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<wp:post_date>' . $this->wxr_cdata( $post->post_date ) . '</wp:post_date>' . PHP_EOL;
 					$result .= $this->indent( 3 ) . '<wp:post_date_gmt>' . $this->wxr_cdata( $post->post_date_gmt ) . '</wp:post_date_gmt>' . PHP_EOL;
@@ -368,6 +403,22 @@ class WP_Exporter {
 
 					$postmeta = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->postmeta} WHERE post_id = %d", $post->ID ) );// phpcs:ignore
 					foreach ( $postmeta as $meta ) {
+						/**
+						 * Filters whether to selectively skip post meta used for WXR exports.
+						 *
+						 * Returning a truthy value from the filter will skip the current meta
+						 * object from being exported.
+						 *
+						 * @since 3.3.0
+						 *
+						 * @param bool   $skip     Whether to skip the current post meta. Default false.
+						 * @param string $meta_key Current meta key.
+						 * @param object $meta     Current meta object.
+						 */
+						if ( apply_filters( 'wxr_export_skip_postmeta', false, $meta->meta_key, $meta ) ) {
+							continue;
+						}
+
 						$result .= $this->indent( 3 ) . '<wp:postmeta>' . PHP_EOL;
 
 						$result .= $this->indent( 4 ) . '<wp:meta_key>' . $this->wxr_cdata( $meta->meta_key ) . '</wp:meta_key>' . PHP_EOL;
@@ -379,6 +430,7 @@ class WP_Exporter {
 					$_comments = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->comments} WHERE comment_post_ID = %d AND comment_approved <> 'spam'", $post->ID ) );// phpcs:ignore
 					$comments  = array_map( 'get_comment', $_comments );
 					foreach ( $comments as $c ) {
+
 						$result .= $result .= $this->indent( 3 ) . '<wp:comment>' . PHP_EOL;
 
 						$result .= $this->indent( 4 ) . '<wp:comment_id>' . (int) $c->comment_ID . '</wp:comment_id>' . PHP_EOL;
@@ -396,6 +448,22 @@ class WP_Exporter {
 
 						$c_meta = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->commentmeta} WHERE comment_id = %d", $c->comment_ID ) );// phpcs:ignore
 						foreach ( $c_meta as $meta ) {
+							/**
+							 * Filters whether to selectively skip comment meta used for WXR exports.
+							 *
+							 * Returning a truthy value from the filter will skip the current meta
+							 * object from being exported.
+							 *
+							 * @since 4.0.0
+							 *
+							 * @param bool   $skip     Whether to skip the current comment meta. Default false.
+							 * @param string $meta_key Current meta key.
+							 * @param object $meta     Current meta object.
+							 */
+							if ( apply_filters( 'wxr_export_skip_commentmeta', false, $meta->meta_key, $meta ) ) {
+								continue;
+							}
+
 							$result .= $result .= $this->indent( 4 ) . '<wp:commentmeta>' . PHP_EOL;
 
 							$result .= $this->indent( 5 ) . '<wp:meta_key>' . $this->wxr_cdata( $meta->meta_key ) . '</wp:meta_key>' . PHP_EOL;
@@ -434,7 +502,7 @@ class WP_Exporter {
 		$terms = wp_get_object_terms( $post->ID, $taxonomies );
 
 		foreach ( (array) $terms as $term ) {
-			$result .= $this->indent( 2 ) . "<category domain=\"{$term->taxonomy}\" nicename=\"{$term->slug}\">" . $this->wxr_cdata( $term->name ) . '</category>' . PHP_EOL;
+			$result .= $this->indent( 3 ) . "<category domain=\"{$term->taxonomy}\" nicename=\"{$term->slug}\">" . $this->wxr_cdata( $term->name ) . '</category>' . PHP_EOL;
 		}
 
 		return $result;
@@ -456,6 +524,13 @@ class WP_Exporter {
 					$this->wxr_tags_list( $tags ) .
 					$this->wxr_terms_list( $terms );
 
+		ob_start();
+		/** This action is documented in wp-includes/feed-rss2.php */
+		do_action( 'rss2_head' );
+		$rss2_head = ob_get_clean();
+
+		$dynamic .= $rss2_head;
+
 		if ( 'all' === $this->args['content'] ) {
 			$dynamic .= $this->wxr_nav_menu_terms();
 		}
@@ -464,6 +539,22 @@ class WP_Exporter {
 
 		$result = <<<EOT
 <?xml version="1.0" encoding="$charset" ?>
+<!-- This is a WordPress eXtended RSS file generated by WordPress as an export of your site. -->
+<!-- It contains information about your site's posts, pages, comments, categories, and other content. -->
+<!-- You may use this file to transfer that content from one site to another. -->
+<!-- This file is not intended to serve as a complete backup of your site. -->
+
+<!-- To import this information into a WordPress site follow these steps: -->
+<!-- 1. Log in to that site as an administrator. -->
+<!-- 2. Go to Tools: Import in the WordPress admin panel. -->
+<!-- 3. Install the "WordPress" importer from the list. -->
+<!-- 4. Activate & Run Importer. -->
+<!-- 5. Upload this file using the form provided on that page. -->
+<!-- 6. You will first be asked to map the authors in this export file to users -->
+<!--    on the site. For each author, you may choose to map to an -->
+<!--    existing user on the site or to create a new user. -->
+<!-- 7. WordPress will then import each of the posts, pages, comments, categories, etc. -->
+<!--    contained in this file into your site. -->
 $generator
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/$wxr_version/excerpt/"
@@ -532,8 +623,13 @@ EOT;
 			}
 		}
 
+		$limit = '';
+		if ( -1 !== (int) $this->args['limit'] ) {
+			$limit = 'LIMIT ' . (int) $this->args['limit'] . ' OFFSET ' . (int) $this->args['offset'];
+		}
+
 		// Grab a snapshot of post IDs, just in case it changes during the export.
-		$post_ids = $this->wpdb->get_col( "SELECT ID FROM {$this->wpdb->posts} $join WHERE $where" );// phpcs:ignore
+		$post_ids = $this->wpdb->get_col( "SELECT ID FROM {$this->wpdb->posts} $join WHERE $where $limit" );// phpcs:ignore
 
 		/*
 		 * Get the requested terms ready, empty unless posts filtered by category
