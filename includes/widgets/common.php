@@ -379,7 +379,7 @@ class Widget_Common extends Widget_Base {
 				'type' => Controls_Manager::MEDIA,
 				'media_type' => 'image',
 				'should_include_svg_inline_option' => true,
-				'library' => 'image/svg+xml',
+				'library_type' => 'image/svg+xml',
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-image: url( {{URL}} );',
 				],

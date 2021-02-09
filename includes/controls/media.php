@@ -210,7 +210,7 @@ class Control_Media extends Control_Base_Multiple {
 			'label_block' => true,
 			'media_type' => 'image',
 			'should_include_svg_inline_option' => false,
-			'library' => '',
+			'library_type' => '',
 			'dynamic' => [
 				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
