@@ -237,7 +237,7 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $cats as $c ) {
-			$result .= $this->indent( 2  ) . '<wp:category>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '<wp:category>' . PHP_EOL;
 
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $c->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:category_nicename>' . $this->wxr_cdata( $c->slug ) . '</wp:category_nicename>' . PHP_EOL;
@@ -256,7 +256,7 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $tags as $t ) {
-			$result .= $this->indent( 2  ) . '<wp:tag>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '<wp:tag>' . PHP_EOL;
 
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $t->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:tag_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:tag_slug>' . PHP_EOL;
@@ -264,7 +264,7 @@ class WP_Exporter {
 						$this->wxr_tag_description( $t ) .
 						$this->wxr_term_meta( $t );
 
-			$result .= $this->indent( 2  ) . '</wp:tag>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '</wp:tag>' . PHP_EOL;
 		}
 
 		return $result;
@@ -274,7 +274,7 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $terms as $t ) {
-			$result .= $this->indent( 2  ) . '<wp:term>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
 
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>' . $this->wxr_cdata( $t->taxonomy ) . '</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:term_slug>' . PHP_EOL;
@@ -283,7 +283,7 @@ class WP_Exporter {
 						$this->wxr_term_description( $t ) .
 						$this->wxr_term_meta( $t );
 
-			$result .= $this->indent( 2  ) . '</wp:term>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
 
 		return $result;
@@ -301,14 +301,14 @@ class WP_Exporter {
 		$result = '';
 
 		foreach ( $nav_menus as $menu ) {
-			$result .= $this->indent( 2  ) . '<wp:term>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '<wp:term>' . PHP_EOL;
 
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $menu->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_taxonomy>nav_menu</wp:term_taxonomy>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $menu->slug ) . '</wp:term_slug>' . PHP_EOL;
 			$result .= wxr_term_name( $menu );
 
-			$result .= $this->indent( 2  ) . '</wp:term>' . PHP_EOL;
+			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
 
 		return $result;
