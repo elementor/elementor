@@ -113,8 +113,13 @@ export class ShowSwatches extends CommandBase {
 
 	// Create the swatch.
 	initSwatch() {
+		const count = Object.entries( this.colors ).length;
 		const $picker = jQuery( '<div></div>', {
 			class: this.pickerClass,
+			css: {
+				'--count': count,
+			},
+			'data-count': count,
 		} );
 
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
@@ -124,6 +129,7 @@ export class ShowSwatches extends CommandBase {
 				css: {
 					backgroundColor: value,
 				},
+				'data-color': value,
 				on: {
 					mouseenter: () => $e.run( 'elements-color-picker/enter-preview', { value } ),
 					mouseleave: () => $e.run( 'elements-color-picker/exit-preview' ),
