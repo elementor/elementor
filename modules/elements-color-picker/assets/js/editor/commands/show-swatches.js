@@ -141,7 +141,7 @@ export class ShowSwatches extends CommandBase {
 								swatch: event.target,
 							},
 						} );
-						
+
 						event.stopPropagation();
 					},
 				},
