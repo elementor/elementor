@@ -28,6 +28,7 @@ export class Apply extends CommandBase {
 			settings: {
 				[ this.component.currentPicker.control ]: color,
 			},
+			options: { external: true },
 		} );
 
 		this.component.currentPicker.initialColor = color;
