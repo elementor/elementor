@@ -6,6 +6,7 @@ export class ExitPreview extends CommandBase {
 			return;
 		}
 
+		// Silent
 		this.component.currentPicker.container.settings.set( this.component.currentPicker.control, this.component.currentPicker.initialColor );
 		this.component.currentPicker.container.render();
 	}
