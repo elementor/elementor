@@ -11,6 +11,8 @@ export class ShowSwatches extends CommandBase {
 		this.pickerSelector = '.' + this.pickerClass;
 		this.container = null;
 		this.tmpImages = [];
+
+		this.COLORS_LIMIT = 5;
 	}
 
 	apply( args ) {
@@ -35,6 +37,11 @@ export class ShowSwatches extends CommandBase {
 	extractColorsFromSettings() {
 		// Iterate over the widget controls.
 		Object.keys( this.container.settings.attributes ).map( ( control ) => {
+			// Limit colors count.
+			if ( this.reachedColorsLimit() ) {
+				return;
+			}
+
 			if ( ! ( control in this.container.controls ) ) {
 				return;
 			}
@@ -90,6 +97,11 @@ export class ShowSwatches extends CommandBase {
 			palette.forEach( ( color, index ) => {
 				const hex = Utils.rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 
+				// Limit colors count.
+				if ( this.reachedColorsLimit() ) {
+					return;
+				}
+
 				if ( ! Object.values( this.colors ).includes( hex ) ) {
 					this.colors[ `palette-${ i }-${ index }` ] = hex;
 				}
@@ -124,5 +136,10 @@ export class ShowSwatches extends CommandBase {
 		} );
 
 		this.container.view.$el.append( $picker );
+	}
+
+	// Check if the palette reached its limit.
+	reachedColorsLimit() {
+		return ( this.COLORS_LIMIT <= Object.keys( this.colors ).length );
 	}
 }
