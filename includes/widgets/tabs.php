@@ -79,10 +79,10 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_tabs',
 			[
@@ -100,6 +100,9 @@ class Widget_Tabs extends Widget_Base {
 				'default' => __( 'Tab Title', 'elementor' ),
 				'placeholder' => __( 'Tab Title', 'elementor' ),
 				'label_block' => true,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -111,9 +114,6 @@ class Widget_Tabs extends Widget_Base {
 				'placeholder' => __( 'Tab Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'show_label' => false,
-				'dynamic' => [
-					'active' => false,
-				],
 			]
 		);
 
@@ -149,7 +149,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'type',
 			[
-				'label' => __( 'Type', 'elementor' ),
+				'label' => __( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'horizontal',
 				'options' => [
@@ -158,6 +158,66 @@ class Widget_Tabs extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'tabs_align_horizontal',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+					'stretch' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-h-align-stretch',
+					],
+				],
+				'prefix_class' => 'elementor-tabs-alignment-',
+				'condition' => [
+					'type' => 'horizontal',
+				],
+			]
+		);
+
+		$this->add_control(
+			'tabs_align_vertical',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'' => [
+						'title' => __( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'end' => [
+						'title' => __( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+					'stretch' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-v-align-stretch',
+					],
+				],
+				'prefix_class' => 'elementor-tabs-alignment-',
+				'condition' => [
+					'type' => 'vertical',
+				],
 			]
 		);
 
@@ -252,7 +312,7 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title a' => 'color: {{VALUE}}',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -266,7 +326,8 @@ class Widget_Tabs extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active,
+					 {{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}}',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_ACCENT,
@@ -281,6 +342,34 @@ class Widget_Tabs extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_align',
+			[
+				'label' => __( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tab-title' => 'text-align: {{VALUE}};',
+				],
+				'condition' => [
+					'tabs_align' => 'stretch',
 				],
 			]
 		);
@@ -334,31 +423,38 @@ class Widget_Tabs extends Widget_Base {
 		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
+
+		$a11y_improvements_experiment = Plugin::$instance->experiments->is_feature_active( 'a11y_improvements' );
+
+		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
+
 		?>
-		<div class="elementor-tabs" role="tablist">
-			<div class="elementor-tabs-wrapper">
+		<div <?php echo $this->get_render_attribute_string( 'elementor-tabs' ); ?>>
+			<div class="elementor-tabs-wrapper" role="tablist" >
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
-
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+					$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
 
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
+						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
+						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 					?>
-					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><a href=""><?php echo $item['tab_title']; ?></a></div>
+					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $tab_title; ?></div>
 				<?php endforeach; ?>
 			</div>
-			<div class="elementor-tabs-content-wrapper">
+			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
-
+					$hidden = 1 === $tab_count ? 'false' : 'hidden';
 					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
 					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
@@ -369,12 +465,17 @@ class Widget_Tabs extends Widget_Base {
 						'data-tab' => $tab_count,
 						'role' => 'tabpanel',
 						'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
+						'tabindex' => '0',
+						'hidden' => $hidden,
 					] );
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
+						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
+						'tabindex' => 1 === $tab_count ? '0' : '-1',
+						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
@@ -397,35 +498,41 @@ class Widget_Tabs extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<div class="elementor-tabs" role="tablist">
-			<#
-			if ( settings.tabs ) {
-				var tabindex = view.getIDInt().toString().substr( 0, 3 );
-				#>
-				<div class="elementor-tabs-wrapper">
-					<#
-					_.each( settings.tabs, function( item, index ) {
-						var tabCount = index + 1;
-						#>
-						<div id="elementor-tab-title-{{ tabindex + tabCount }}" class="elementor-tab-title elementor-tab-desktop-title" data-tab="{{ tabCount }}" role="tab" aria-controls="elementor-tab-content-{{ tabindex + tabCount }}"><a href="">{{{ item.tab_title }}}</a></div>
+		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">
+			<# if ( settings.tabs ) {
+				var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
+				<div class="elementor-tabs-wrapper" role="tablist">
+					<# _.each( settings.tabs, function( item, index ) {
+						var tabCount = index + 1,
+							tabUid = elementUid + tabCount,
+							tabTitleKey = 'tab-title-' + tabUid;
+
+					view.addRenderAttribute( tabTitleKey, {
+						'id': 'elementor-tab-title-' + tabUid,
+						'class': [ 'elementor-tab-title','elementor-tab-desktop-title' ],
+						'data-tab': tabCount,
+						'role': 'tab',
+						'tabindex': 1 === tabCount ? '0' : '-1',
+						'aria-controls': 'elementor-tab-content-' + tabUid,
+						} );
+					#>
+						<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>
 					<# } ); #>
 				</div>
 				<div class="elementor-tabs-content-wrapper">
-					<#
-					_.each( settings.tabs, function( item, index ) {
+					<# _.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1,
 							tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
 
 						view.addRenderAttribute( tabContentKey, {
-							'id': 'elementor-tab-content-' + tabindex + tabCount,
+							'id': 'elementor-tab-content-' + elementUid + tabCount,
 							'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
 							'data-tab': tabCount,
 							'role' : 'tabpanel',
-							'aria-labelledby' : 'elementor-tab-title-' + tabindex + tabCount
+							'aria-labelledby' : 'elementor-tab-title-' + elementUid + tabCount
 						} );
 
-						view.addInlineEditingAttributes( tabContentKey, 'advanced' );
-						#>
+						view.addInlineEditingAttributes( tabContentKey, 'advanced' ); #>
 						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					<# } ); #>

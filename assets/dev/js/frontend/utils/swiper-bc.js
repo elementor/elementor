@@ -1,6 +1,4 @@
-const originalSwiper = window.Swiper;
-
-export default class Swiper {
+export default class SwiperBC {
 	constructor( container, config ) {
 		this.config = config;
 
@@ -9,9 +7,39 @@ export default class Swiper {
 			this.config = this.adjustConfig( config );
 		}
 
-		originalSwiper.prototype.adjustConfig = this.adjustConfig;
+		// In case of a legacy behaviour the constructor should return a new Swiper instance instead of a Promise.
+		if ( config.legacy ) {
+			return this.createSwiperInstance( container, this.config );
+		}
 
-		return new originalSwiper( container, this.config );
+		return new Promise( ( resolve ) => {
+			if ( ! elementorFrontendConfig.environmentMode.isImprovedAssetsLoading ) {
+				return resolve( this.createSwiperInstance( container, this.config ) );
+			}
+
+			const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
+
+			import(
+				/* webpackIgnore: true */
+				`${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`
+				).then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+		} );
+	}
+
+	createSwiperInstance( container, config ) {
+		// The condition should run only once to prevent an additional overwrite of the SwiperSource.
+		if ( ! SwiperBC.isSwiperLoaded && elementorFrontendConfig.environmentMode.isImprovedAssetsLoading ) {
+			SwiperSource = window.Swiper;
+
+			SwiperBC.isSwiperLoaded = true;
+
+			// Once the SwiperSource has the Swiper lib function, we need to overwrite window.Swiper with the legacySwiper class.
+			legacySwiper();
+		}
+
+		SwiperSource.prototype.adjustConfig = this.adjustConfig;
+
+		return new SwiperSource( container, config );
 	}
 
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
@@ -59,4 +87,23 @@ export default class Swiper {
 	}
 }
 
-window.Swiper = Swiper;
+// The following code is needed to support Pro version < 3.1.0.
+SwiperBC.isSwiperLoaded = false;
+
+// In the legacy behavior, window.Swiper was a class that returns an instance of the Swiper lib function after config adjustments.
+function legacySwiper() {
+	window.Swiper = class {
+		constructor( container, config ) {
+			config.legacy = true;
+
+			return new SwiperBC( container, config );
+		}
+	};
+}
+
+let SwiperSource = window.Swiper;
+
+// In case that the Swiper lib exists (meaning not in optimized mode) we overwrite the window.Swiper with a class that supports legacy behavior.
+if ( SwiperSource ) {
+	legacySwiper();
+}

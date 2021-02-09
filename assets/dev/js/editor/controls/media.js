@@ -89,12 +89,15 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
-			frame: 'post',
+			button: {
+				text: __( 'Insert Media', 'elementor' ),
+			},
+      frame: 'post',
 			type: 'image',
 			multiple: false,
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
+					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: this.getMediaType() } ),
 					multiple: false,
 					date: false,

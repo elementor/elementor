@@ -54,11 +54,11 @@ abstract class PageBase extends Document {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		self::register_hide_title_control( $this );
 
