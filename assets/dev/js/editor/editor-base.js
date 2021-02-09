@@ -14,7 +14,7 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
-import ResponsiveTopBar from './top-bar';
+import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 
@@ -399,14 +399,6 @@ export default class EditorBase extends Marionette.Application {
 			this.$previewResponsiveWrapper.append( this.$preview );
 		}
 
-		const topBar = new ResponsiveTopBar();
-
-		topBar.render();
-
-		this.$responsiveTopBar = topBar.$el;
-
-		this.$previewWrapper.before( topBar.$el );
-
 		this.$preview.on( 'load', this.onPreviewLoaded.bind( this ) );
 	}
 
@@ -496,6 +488,17 @@ export default class EditorBase extends Marionette.Application {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
 		this.trigger( 'panel:init' );
+	}
+
+	initResponsiveBar() {
+		this.addRegions( {
+			responsiveBar: {
+				el: '#elementor-responsive-bar',
+				regionClass: ResponsiveBar,
+			},
+		} );
+
+		this.trigger( 'responsiveBar:init' );
 	}
 
 	initNavigator() {
@@ -823,6 +826,8 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.initPreview();
+
+		this.initResponsiveBar();
 
 		this.requestWidgetsConfig();
 
