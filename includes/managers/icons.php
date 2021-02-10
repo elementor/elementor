@@ -183,6 +183,45 @@ class Icons_Manager {
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
 
+	/**
+	 * is_font_awesome_inline
+	 *
+	 * @return bool
+	 */
+	private static function is_font_awesome_inline() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_font_awesome_inline' );
+	}
+
+	/**
+	 * get_font_awesome_svg
+	 * @param $icon_name
+	 *
+	 * @return bool|mixed|string
+	 */
+	public static function get_font_awesome_svg( $icon_name ) {
+		preg_match('/fa(.*) fa-/', $icon_name, $matches );
+		$icon_option_key = str_replace( ' fa-', '-', $icon_name );
+		$svg = get_option( $icon_option_key );
+
+		if ( ! empty( $svg ) ) {
+			return $svg;
+		}
+
+		$icon_style = str_replace( ' fa-', '', $matches[0] );
+		$filename = str_replace( $matches[0], '', $icon_name ) . '.svg';
+		$svg_base_url = plugin_dir_path( ELEMENTOR__FILE__ ) . '/assets/lib/font-awesome/svg/';
+		$svg_path = $svg_base_url . $icon_style . '/' . $filename;
+		$svg = file_get_contents( $svg_path );
+
+		$svg = preg_replace( '/<!--(.|\s)*?-->/', '', $svg );
+
+		if ( ! empty( $svg ) ) {
+			update_option( $icon_option_key, $svg );
+		}
+
+		return $svg;
+	}
+
 	private static function render_svg_icon( $value ) {
 		if ( ! isset( $value['id'] ) ) {
 			return '';
@@ -197,6 +236,10 @@ class Icons_Manager {
 			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
+		if ( self::is_font_awesome_inline() ) {
+			return self::get_font_awesome_svg( $icon['value'] );
+		}
+
 		if ( empty( $attributes['class'] ) ) {
 			$attributes['class'] = $icon['value'];
 		} else {
@@ -206,6 +249,7 @@ class Icons_Manager {
 				$attributes['class'] .= ' ' . $icon['value'];
 			}
 		}
+
 		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
 	}
 
@@ -451,9 +495,11 @@ class Icons_Manager {
 		}
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+		if ( ! self::is_font_awesome_inline() && ! self::is_migration_allowed() ) {
+			add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_fontawesome_css']);
+			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+		}
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
