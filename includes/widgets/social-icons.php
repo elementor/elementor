@@ -572,12 +572,10 @@ class Widget_Social_Icons extends Widget_Base {
 		?>
 		<div class="elementor-social-icons-wrapper elementor-grid">
 			<?php
-			$icons_count = count( $settings['social_icon_list'] );
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
 				$is_new = empty( $item['social'] ) && $migration_allowed;
 				$social = '';
-				$whitespace = $icons_count !== $index + 1 ? '&nbsp;' : '';
 
 				// add old default
 				if ( empty( $item['social'] ) && ! $migration_allowed ) {
@@ -611,7 +609,8 @@ class Widget_Social_Icons extends Widget_Base {
 
 				$this->add_link_attributes( $link_key, $item['link'] );
 
-				?><div class="elementor-grid-item">
+				?>
+				<div class="elementor-grid-item">
 					<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 						<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
 						<?php
@@ -621,8 +620,8 @@ class Widget_Social_Icons extends Widget_Base {
 							<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
 						<?php } ?>
 					</a>
-				</div><?php echo $whitespace; /* Prevent optimization plugins from removing the whitespace between items */
-			} ?>
+				</div>
+			<?php } ?>
 		</div>
 		<?php
 	}
