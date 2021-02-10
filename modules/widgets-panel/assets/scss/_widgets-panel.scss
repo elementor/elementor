@@ -35,7 +35,7 @@
 		&.add-to-favorites {
 			& > span:before {
 				font-family: eicons;
-				width: 16px;
+				padding-right: 2px;
 				color: $editor-lighter;
 			}
 			& > span:hover:before {
@@ -63,6 +63,7 @@
 		&.add-to-favorites {
 			& > span:before {
 				display: inline-flex;
+				padding: 0 0 0 2px;
 			}
 		}
 	}

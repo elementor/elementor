@@ -1,7 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commandsData from './commands-data/';
 import * as commands from './commands';
-import ignoreSectionWidgets from './helpers/ignoreSectionWidgets';
 
 export default class FavoritesComponent extends ComponentBase {
 	getNamespace() {
@@ -16,13 +15,24 @@ export default class FavoritesComponent extends ComponentBase {
 		return this.importCommands( commandsData );
 	}
 
+	defaultShortcuts() {
+		return {
+			exit: {
+				keys: 'esc',
+				dependency: () => {
+					return jQuery( `#${ this.$favoriteMenuId }` ).length;
+				},
+				scopes: [ 'panel', 'preview' ],
+			},
+		};
+	}
+
 	registerAPI() {
 		super.registerAPI();
 		$e.routes.on( 'run:after', ( component, route ) => {
 			if ( 'panel/elements/categories' === route ) {
-				this.menuId = 'e-favorite-widget-context-menu';
-				this.favoriteWidgetMenu = null;
-				this.clickedWidget = null;
+				this.$panel = jQuery( '#elementor-panel' );
+				this.$favoriteMenuId = 'e-favorite-widget-context-menu';
 
 				this.addFavoriteWidgetsEvents();
 				this.addToolTip();
@@ -30,10 +40,18 @@ export default class FavoritesComponent extends ComponentBase {
 		} );
 	}
 
+	moveElementInArray( array, from, to ) {
+		array.splice( to, 0, array.splice( from, 1 )[ 0 ] );
+		return array;
+	}
+
 	addToolTip() {
-		const favoriteCategory = jQuery( '#elementor-panel-category-favorites .elementor-panel-category-title > i' );
-		if ( favoriteCategory ) {
-			favoriteCategory.tipsy( {
+		const $favoriteCategory = jQuery( '#elementor-panel-category-favorites .elementor-panel-category-title' );
+		if ( 'favorites' === $favoriteCategory.text().trim().toLowerCase() ) {
+			const $iconInfo = jQuery( '<i>', { class: 'eicon-info-circle', 'data-tooltip': __( 'Right click on widgets to add or remove them from favorites', 'elementor' ) } );
+			$iconInfo.appendTo( $favoriteCategory );
+			const icon = $favoriteCategory.find( '> i' );
+			icon.tipsy( {
 				title: function title() {
 					return this.getAttribute( 'data-tooltip' );
 				},
@@ -42,99 +60,112 @@ export default class FavoritesComponent extends ComponentBase {
 		}
 	}
 
-	addFavoriteWidgetsMenu( e ) {
+	displayFavoriteMenu( action, widgetId, menuText, e ) {
 		// Remove the menu if exists
-		this.hideFavoriteWidgetsMenu();
+		this.removeFavoriteMenu();
 
-		const panel = jQuery( '#elementor-panel' );
-		// Find the clicked widget
-		this.clickedWidget = jQuery( e.target ).parents( '.elementor-element-wrapper' );
-		// Find the name (id) of clicked widget
-		this.clickedWidgetId = this.clickedWidget.find( '.elementor-element' ).data( 'id' );
-		// Find the category where user clicked
-		this.clickedWidgetCat = this.clickedWidget.parents( '.elementor-panel-category' ).attr( 'id' );
-		// Decided witch msg display. if clicked on widget under "Favorites" category display: Remove... otherwise Add...
-		const menuText = 'elementor-panel-category-favorites' === this.clickedWidgetCat ? 'Remove From Favorites' : 'Add To Favorites';
-		// Convert action text to class name
-		this.menuClass = menuText.toLowerCase().replaceAll( ' ', '-' );
+		const menuClass = menuText.toLowerCase().replaceAll( ' ', '-' );
+		const $favoriteWidgetMenu = jQuery( '<div>', { id: this.$favoriteMenuId, class: menuClass } );
+		$favoriteWidgetMenu.html( jQuery( '<span>' ).text( menuText ) );
+		$favoriteWidgetMenu.insertAfter( this.$panel );
 
-		// Create menu element with content
-		this.favoriteWidgetMenu = jQuery( '<div>', { id: this.menuId, class: this.menuClass } );
-		this.favoriteWidgetMenu.html( jQuery( '<span>' ).text( menuText ) );
-		// Insert the menu to widget wrapper
-		this.favoriteWidgetMenu.insertAfter( panel );
+		this.setPositionMenu( $favoriteWidgetMenu, e );
 
-		const menuWidth = this.favoriteWidgetMenu.outerWidth();
+		if ( widgetId && $favoriteWidgetMenu.length ) {
+			this.contextmenuOnFavoritesMenu();
+			this.contextmenuOrClickOnOutsideMenu();
+
+			$favoriteWidgetMenu.on( 'click.favorites', ( event ) => {
+				event.preventDefault();
+				if ( 'add' === action ) {
+					// Add widget to DB and "FAVORITES" category
+					$e.run( 'panel-favorites/add', { widget: widgetId } );
+				}
+				if ( 'remove' === action ) {
+					// Remove widget from DB and "FAVORITES" category
+					$e.run( 'panel-favorites/remove', { widget: widgetId } );
+				}
+				$favoriteWidgetMenu.off( 'click.favorites', this.removeFavoriteMenu() );
+			} );
+		}
+	}
+
+	setPositionMenu( favoriteWidgetMenu, e ) {
+		const menuWidth = favoriteWidgetMenu.outerWidth();
 		const setMenuPositionX = elementorCommon.config.isRTL ? ( e.pageX - menuWidth ) : e.pageX;
-		if ( this.favoriteWidgetMenu ) {
-			this.favoriteWidgetMenu.css( {
-				top: e.pageY - 20 + 'px',
+		if ( favoriteWidgetMenu.length ) {
+			favoriteWidgetMenu.css( {
+				top: e.pageY + 'px',
 				left: setMenuPositionX + 'px',
 			} );
 		}
 	}
 
-	hideFavoriteWidgetsMenu() {
-		if ( this.favoriteWidgetMenu ) {
-			jQuery( `#${ this.menuId }.${ this.menuClass }` ).remove();
-			this.favoriteWidgetMenu = null;
-			this.clickedWidget = null;
+	removeFavoriteMenu() {
+		const $favoriteWidgetMenu = jQuery( `#${ this.$favoriteMenuId }` );
+		if ( $favoriteWidgetMenu.length ) {
+			$favoriteWidgetMenu.remove();
 		}
 	}
 
 	addFavoriteWidgetsEvents() {
-		jQuery( document ).bind( 'contextmenu click keyup', ( e ) => {
-			// Disable Add/Remove to favorites category, if widget type is section.
-			if ( ignoreSectionWidgets.includes( e.target.offsetParent.dataset.id ) ) {
-				this.hideFavoriteWidgetsMenu();
-				return false;
-			}
+		this.contextmenuAddToFavorites();
+		this.contextmenuRemoveFromFavorites();
+	}
 
-			// Events settings
-			const targetId = 'e-favorite-widget-context-menu' === e.target.parentElement.id;
-			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
-			const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
-			const clickOnMenu = 'click' === e.type && targetId;
-
-			if ( rightClickOnMenu ) {
-				return false;
-			} else if ( rightClickOnWidgetOutOfMenu ) {
+	contextmenuAddToFavorites() {
+		const $panelCategories = jQuery( '[ id^=elementor-panel-category- ]:not( [ id=elementor-panel-category-favorites ] )' );
+		if ( $panelCategories.length ) {
+			$panelCategories.on( 'contextmenu', '.elementor-element', ( e ) => {
 				e.preventDefault();
+				const widgetId = e.target.offsetParent.dataset.id;
+				const menuText = __( 'Add To Favorites', 'elementor' );
+				this.displayFavoriteMenu( 'add', widgetId, menuText, e );
+			} );
+		}
+	}
 
-				// Add the right click menu
-				this.addFavoriteWidgetsMenu( e );
-			} else if ( clickOnMenu ) {
+	contextmenuRemoveFromFavorites() {
+		const $favoriteCategory = jQuery( '#elementor-panel-category-favorites' );
+		if ( $favoriteCategory.length ) {
+			$favoriteCategory.on( 'contextmenu', '.elementor-element', ( e ) => {
 				e.preventDefault();
-				// Set the logic of clicked (add/remove) on menu
-				if ( this.clickedWidgetCat && this.clickedWidget ) {
-					// Check category widget where user clicked and run command
-					if ( 'elementor-panel-category-favorites' === this.clickedWidgetCat ) {
-						// Remove widget from DB and from "FAVORITES" category
-						$e.run( 'panel-favorites/remove', { widget: this.clickedWidgetId } );
-					} else {
-						// Add widget to DB and under "FAVORITES" category
-						$e.run( 'panel-favorites/add', { widget: this.clickedWidgetId } );
-					}
-					this.hideFavoriteWidgetsMenu();
+				const widgetId = e.target.offsetParent.dataset.id;
+				const menuText = __( 'Remove From Favorites', 'elementor' );
+				this.displayFavoriteMenu( 'remove', widgetId, menuText, e );
+			} );
+		}
+	}
+
+	contextmenuOnFavoritesMenu() {
+		const $menuFavorites = jQuery( `#${ this.$favoriteMenuId }` );
+		if ( $menuFavorites.length ) {
+			$menuFavorites.on( 'contextmenu.favorites', ( e ) => {
+				const targetId = this.$favoriteMenuId === e.target.parentElement.id;
+				const rightClickOnMenu = 'contextmenu' === e.type && targetId;
+				if ( rightClickOnMenu ) {
+					return false;
 				}
-			} else {
-				this.hideFavoriteWidgetsMenu();
-			}
+			} );
+		} else {
+			$menuFavorites.off( 'contextmenu.favorites' );
+		}
+	}
 
-			escHideMenu( e );
-		} );
+	contextmenuOrClickOnOutsideMenu() {
+		const $panelClickedOutsideWidgets = jQuery( '#elementor-editor-wrapper' );
+		if ( $panelClickedOutsideWidgets.length ) {
+			$panelClickedOutsideWidgets.on( 'contextmenu.favoriteMenu click.favoriteMenu', ( e ) => {
+				e.preventDefault();
+				const targetId = this.$favoriteMenuId === e.target.parentElement.id;
+				const rightClickOnMenu = 'contextmenu' === e.type && targetId;
+				const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
+				const clickOnMenu = 'click' === e.type && targetId;
 
-		/* @TODO: Check how to add event on panel and preview together */
-		elementorFrontend.elements.$window.on( 'keyup', ( e ) => {
-			escHideMenu( e );
-		} );
-
-		const escHideMenu = ( e ) => {
-			const ESC_KEY = 27;
-
-			if ( ESC_KEY === e.keyCode ) {
-				this.hideFavoriteWidgetsMenu();
-			}
-		};
+				if ( ! rightClickOnMenu && ! rightClickOnWidgetOutOfMenu && ! clickOnMenu ) {
+					$panelClickedOutsideWidgets.off( 'contextmenu.favoriteMenu click.favoriteMenu', this.removeFavoriteMenu() );
+				}
+			} );
+		}
 	}
 }

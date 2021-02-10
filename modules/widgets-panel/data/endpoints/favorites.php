@@ -3,7 +3,7 @@
 namespace Elementor\Modules\WidgetsPanel\Data\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
-use Elementor\Modules\WidgetsPanel\Data\Endpoints\Helpers\IgnoreWidgetsType;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,15 +23,6 @@ class Favorites extends Endpoint {
 	 * @since 3.0.16
 	 */
 	const META_KEY = '_elementor_favorites_widgets';
-
-	/**
-	 * List of widget type - section
-	 *
-	 * @since 3.0.16
-	 */
-	const IGNORE_WIDGETS = [
-		'inner-section',
-	];
 
 	/**
 	 * The name of path - Rest Api
@@ -64,11 +55,6 @@ class Favorites extends Endpoint {
 			'id' => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
-				//'validate_callback' => function( $widget_id ) {
-				//	if ( in_array( $widget_id, self::IGNORE_WIDGETS ) ) {
-				//		return false;
-				//	}
-				//},
 			]
 		] );
 		$this->register_route( '/(?P<id>[\w\-]+)/', \WP_REST_Server::DELETABLE, function ( $request ) {
@@ -166,7 +152,12 @@ class Favorites extends Endpoint {
 	 *
 	 */
 	private function mark_as_favorite_widget( string $widget_id, $favorite = true ) {
-		if ( in_array( $widget_id, self::IGNORE_WIDGETS ) ) {
+		/**
+		 * Validate: widget is registered widget
+		 * @var array $widgets - Retrieve all the registered widgets
+		 */
+		$widgets = Plugin::instance()->widgets_manager->get_widget_types_config();
+		if ( in_array( $widget_id, $widgets ) ) {
 			return false;
 		}
 

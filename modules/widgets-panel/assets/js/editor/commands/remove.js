@@ -11,12 +11,12 @@ export class Remove extends CommandBase {
 		const result = await $e.data.delete( `panel-favorites/favorites?id=${ widget }`, {} );
 		if ( result.data ) {
 			// Get the categories of widget from front-end
-			const widgetsArr = elementor.widgetsCache[ widget ].categories;
+			const widgets = elementor.widgetsCache[ widget ].categories;
 			// Get element position in array
-			const elmPos = widgetsArr.indexOf( 'favorites' );
-			// Check - if element in array remove the element, else do nothing
-			if ( -1 !== elmPos ) {
-				widgetsArr.splice( elmPos, 1 );
+			const elementPosition = widgets.indexOf( 'favorites' );
+			// Check: if element in array - remove the element, else do nothing
+			if ( -1 !== elementPosition ) {
+				widgets.splice( elementPosition, 1 );
 				$e.route( 'panel/elements/categories', { refresh: true } );
 			}
 		}

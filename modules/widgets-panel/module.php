@@ -65,12 +65,25 @@ class Module extends BaseModule {
 	public function add_hooks() {
 		Plugin::$instance->data_manager->register_controller( Controller::class );
 
-		Plugin::$instance->elements_manager->add_category( 'favorites', [
-			'title' => __( 'Favorites', 'elementor' ),
-			'icon' => 'eicon-font',
-		] );
-
 		add_filter( 'elementor/document/config', function( $config, $document_id ) {
+			$config['panel'] = [ 'elements_categories' => [
+				'favorites' => [
+					'title' => __( 'Favorites', 'elementor' ),
+					'icon' => 'eicon-font',
+				],
+			] ];
+
+			$config['widgets'] = [ 'inner-section' => [
+				'elType' => 'section',
+				'title' => __( 'Inner Section', 'elementor' ),
+				'icon' => 'eicon-columns',
+				'reload_preview' => false,
+				'widget_type' => 'inner-section',
+				'keywords' => [ 'row', 'columns', 'nested' ],
+				'categories' => [ 'basic' ],
+				'show_in_panel' => true,
+			] ];
+
 			$document = Plugin::$instance->documents->get( $document_id );
 			if ( $document::get_property( 'has_elements' ) ) {
 				if ( ! isset( $config['widgets'] ) ) {
@@ -83,7 +96,9 @@ class Module extends BaseModule {
 					}
 				}
 			}
+
 			return $config;
+
 		}, 10, 2 );
 
 		Favorites::add_tracking_data();
