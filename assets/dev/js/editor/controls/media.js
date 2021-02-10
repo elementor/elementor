@@ -96,6 +96,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				new wp.media.controller.Library( {
 					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: this.getMediaType() } ),
+					filterable: 'uploaded',
 					multiple: false,
 					date: false,
 				} ),
