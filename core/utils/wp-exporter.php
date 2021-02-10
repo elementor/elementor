@@ -61,6 +61,8 @@ class WP_Exporter {
 	 * @return string
 	 */
 	private function wxr_cdata( $str ) {
+		$str = (string) $str;
+
 		if ( ! seems_utf8( $str ) ) {
 			$str = utf8_encode( $str );
 		}
