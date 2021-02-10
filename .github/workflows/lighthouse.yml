@@ -1,0 +1,53 @@
+name: Lighthouse
+
+on: [ push, pull_request ]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      lighthouse_config_dir: ${{ github.workspace }}/tests/lighthouse
+      lighthouse_config_path: ${{ github.workspace }}/tests/lighthouse/config.js
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress_versions: [ 'latest' ]
+    name: WordPress ${{ matrix.wordpress_versions }}
+    steps:
+      - name: Startup MySQL service
+        run:  sudo /etc/init.d/mysql start
+      - name: Checkout source code
+        uses: actions/checkout@master
+      - name: Install Elementor-ScreenShotter
+        run: | ##### TO DO: Remove all sudo
+          sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+          sudo chown -R $USER /usr/local/lib/node_modules
+          sudo chown -R $USER /usr/local/bin/
+          npm i -g @elementor/screenshotter
+      - name: Install Dependencies
+        run: |
+          elementor-screenshotter-install --config=${lighthouse_config_path} --debug=true
+      - name: Import Templates
+        run: |
+          elementor-screenshotter-import-templates --config=${lighthouse_config_path} --debug=true
+      - name: Build
+        run: |
+          cd /tmp/wordpress/wp-content/plugins/elementor && npm i
+          cd /tmp/wordpress/wp-content/plugins/elementor && grunt build
+      - name: Run Server
+        run: |
+          cd /tmp/wordpress/ && wp rewrite structure "/%postname%/"
+          cd /tmp/wordpress/ && wp server && wget http://localhost:8080 &
+      - name: Lighthouse
+        uses: treosh/lighthouse-ci-action@v7
+        with:
+          urls: |
+            http://localhost:8080/
+            http://localhost:8080/buttons/
+            http://localhost:8080/dividers/
+            http://localhost:8080/global-settings/
+            http://localhost:8080/headings/
+          budgetPath: ${{ github.workspace }}/tests/lighthouse/budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false
