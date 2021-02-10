@@ -199,7 +199,7 @@ class Icons_Manager {
 	 * @return bool|mixed|string
 	 */
 	public static function get_font_awesome_svg( $icon_name ) {
-		preg_match('/fa(.*) fa-/', $icon_name, $matches );
+		preg_match( '/fa(.*) fa-/', $icon_name, $matches );
 		$icon_option_key = str_replace( ' fa-', '-', $icon_name );
 		$svg = get_option( $icon_option_key );
 
@@ -497,7 +497,7 @@ class Icons_Manager {
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		if ( ! self::is_font_awesome_inline() && ! self::is_migration_allowed() ) {
-			add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_fontawesome_css']);
+			add_action('elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 		}
 

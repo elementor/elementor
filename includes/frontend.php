@@ -475,7 +475,7 @@ class Frontend extends App {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_font_awesome_inline' ) && ! Icons_Manager::is_migration_allowed() ) {
 			wp_register_style(
 				'font-awesome',
-				$this->get_css_assets_url('font-awesome', 'assets/lib/font-awesome/css/'),
+				$this->get_css_assets_url( 'font-awesome', 'assets/lib/font-awesome/css/' ),
 				[],
 				'4.7.0'
 			);
