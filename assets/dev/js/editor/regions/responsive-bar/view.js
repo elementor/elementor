@@ -40,6 +40,16 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	}
 
+	addTipsyToBreakpointSwitch() {
+		this.ui.switcherLabel.tipsy(
+			{
+				gravity: 'n',
+				offset: 10,
+				title: () => jQuery( this ).text(),
+			}
+		);
+	}
+
 	onDeviceModeChange() {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 			$currentDeviceSwitcherOption = this.ui.switcherOption.filter( '[value=' + currentDeviceMode + ']' );
@@ -87,23 +97,11 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
+	onRender() {
+		this.addTipsyToBreakpointSwitch();
+	}
+
 	onCloseButtonClick() {
 		elementor.exitDeviceMode();
-	}
-
-	onChange() {
-		const changeCallback = this.getOption( 'change' );
-
-		if ( changeCallback ) {
-			changeCallback();
-		}
-	}
-
-	onClick() {
-		const clickCallback = this.getOption( 'click' );
-
-		if ( clickCallback ) {
-			clickCallback();
-		}
 	}
 }
