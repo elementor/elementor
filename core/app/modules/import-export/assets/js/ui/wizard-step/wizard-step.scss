@@ -27,15 +27,15 @@ $root: e-app-import-export-wizard-step;
 		font-size: 50px;
 	}
 
-	&__title {
+	&__heading {
 		margin-bottom: spacing(24);
 	}
 
-	&__text {
+	&__description {
 		color: var(--e-app-import-export-wizard-step-text-color);
 	}
 
-	&__bottom-text {
+	&__notice {
 		display: block;
 		position: sticky;
 		top: 100%; /* Will prevent text overlapping when window height is too short. */

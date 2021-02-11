@@ -27,9 +27,15 @@ export default function ExportComplete() {
 		<Layout type="export" footer={ getFooter() }>
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
-				title={ __( 'Thanks For Exporting', 'elementor' ) }
-				text={ __( 'This may take a few moments to complete.', 'elementor' ) }
-				bottomText={ (
+				heading={ __( 'Your export is ready!', 'elementor' ) }
+				description={
+					<>
+						{ __( 'The download should start in a few seconds.', 'elementor' ) }
+						<br />
+						{ __( 'You can then import the file and use it on other sites.', 'elementor' ) }
+					</>
+				}
+				notice={ (
 					<>
 						{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to dawnload', 'elementor' ) }
 					</>

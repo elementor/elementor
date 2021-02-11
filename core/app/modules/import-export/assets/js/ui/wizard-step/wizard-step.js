@@ -28,21 +28,21 @@ export default function WizardStep( props ) {
 					<Icon className={ `e-app-import-export-wizard-step__icon ${ props.icon }` } />
 					}
 
-					{ props.title &&
-					<Heading variant="display-3" className="e-app-import-export-wizard-step__title">
-						{ props.title }
+					{ props.heading &&
+					<Heading variant="display-3" className="e-app-import-export-wizard-step__heading">
+						{ props.heading }
 					</Heading>
 					}
 
-					{ props.text &&
-					<Text variant="xl" className="e-app-import-export-wizard-step__text" >
-						{ props.text }
+					{ props.description &&
+					<Text variant="xl" className="e-app-import-export-wizard-step__description" >
+						{ props.description }
 					</Text>
 					}
 
-					{ props.bottomText &&
-					<Text variant="xs" className="e-app-import-export-wizard-step__bottom-text">
-						{ props.bottomText }
+					{ props.notice &&
+					<Text variant="xs" className="e-app-import-export-wizard-step__notice">
+						{ props.notice }
 					</Text>
 					}
 				</Grid>
@@ -55,9 +55,9 @@ WizardStep.propTypes = {
 	className: PropTypes.string,
 	image: PropTypes.string,
 	icon: PropTypes.string,
-	title: PropTypes.string,
-	text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
-	bottomText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	heading: PropTypes.string,
+	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	notice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 };
 
 WizardStep.defaultProps = {

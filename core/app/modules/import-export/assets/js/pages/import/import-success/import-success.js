@@ -15,8 +15,9 @@ export default function ImportSuccess() {
 		<Layout type="import" footer={ getFooter() }>
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
-				title={ __( 'Congrats! Your Kit Was Imported Successfully', 'elementor' ) }
-				bottomText={ (
+				heading={ __( 'Your file is ready!', 'elementor' ) }
+				description={ __( 'You can find the components of this file in the Library.', 'elementor'  ) }
+				notice={ (
 					<>
 						<InfoLink
 							text={ __( 'Click Here', 'elementor' ) }
