@@ -46,7 +46,7 @@ module.exports = BaseRegion.extend( {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
 			stop: function( event, ui ) {
-				elementor.$previewWrapper.add( jQuery( elementor.$responsiveTopBar ) ).removeClass( 'ui-resizable-resizing' );
+				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
 				elementor.getPanelView().updateScrollbar();
 
