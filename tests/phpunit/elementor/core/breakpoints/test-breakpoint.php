@@ -41,10 +41,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 			/** @var Breakpoint $breakpoint */
 			$breakpoint_config = $breakpoint->get_config();
 
-			$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled', 'selector' ], $breakpoint_config );
-			$this->assertIsNumeric( $breakpoint_config['value'] );
+			$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $breakpoint_config );
+			$this->assertIsInt( $breakpoint_config['value'] );
 			$this->assertIsString( $breakpoint_config['direction'] );
-			$this->assertIsString( $breakpoint_config['selector'] );
 			$this->assertIsBool( $breakpoint_config['is_enabled'] );
 		}
 	}

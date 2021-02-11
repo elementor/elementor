@@ -62,7 +62,7 @@ class Test_Manager extends Elementor_Test_Base {
 				$enabled_breakpoint_keys[] = $breakpoint->get_name();
 
 				// This checks both that the config item is an array and that it contains the correct keys.
-				$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled', 'selector' ], $config[ $breakpoint_name ] );
+				$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $config[ $breakpoint_name ] );
 			}
 		}
 
