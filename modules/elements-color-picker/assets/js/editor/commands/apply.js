@@ -14,11 +14,11 @@ export class Apply extends CommandBase {
 
 			// End picking only after the user leaves the swatch container.
 			trigger.palette.on( 'mouseleave.color-picker', () => {
-				this.endPicking();
+				$e.run( 'elements-color-picker/end' );
 				trigger.palette.off( 'mouseleave.color-picker' );
 			} );
 		} else {
-			this.endPicking();
+			$e.run( 'elements-color-picker/end' );
 		}
 	}
 
@@ -32,21 +32,5 @@ export class Apply extends CommandBase {
 		} );
 
 		this.component.currentPicker.initialColor = color;
-	}
-
-	endPicking() {
-		elementor.$previewContents.find( 'body' ).removeClass( 'elementor-editor__ui-state__color-picker' );
-
-		elementor.$previewContents.find( '.elementor-element-color-picker' ).remove();
-
-		elementor.$previewContents.off( 'mouseenter.color-picker' );
-
-		elementor.$previewWrapper.off( 'mouseleave.color-picker' );
-
-		this.component.currentPicker = {
-			container: null,
-			control: null,
-			initialColor: null,
-		};
 	}
 }
