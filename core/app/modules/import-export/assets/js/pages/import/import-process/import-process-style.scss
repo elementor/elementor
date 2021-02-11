@@ -11,7 +11,7 @@ $root: e-app-import-process;
 
 	&__icon {
 		color: var(--e-app-import-process-icon-color);
-		font-size: 30px;
+		font-size: type( size, '30' );
 		margin-bottom: spacing(44);
 	}
 
