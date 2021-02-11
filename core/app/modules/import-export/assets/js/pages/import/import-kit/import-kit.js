@@ -43,6 +43,7 @@ export default function ImportKit() {
 					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
 					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
+					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
 						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
