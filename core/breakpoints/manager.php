@@ -56,26 +56,27 @@ class Manager extends Module {
 	 */
 	private function init_breakpoints() {
 		$breakpoints = [];
-		$active_breakpoint_keys = Plugin::$instance->kits_manager->get_current_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$active_breakpoint_keys = $kit->get_settings_for_display( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
 		$default_config = self::get_default_config();
 
-		foreach ( $default_config as $name => $config ) {
-			$args = [ 'name' => $name ] + $config;
+		if ( ! $active_breakpoint_keys ) {
+			$active_breakpoint_keys = [ self::BREAKPOINT_KEY_MOBILE, self::BREAKPOINT_KEY_TABLET ];
+		}
 
-			// Make sure each breakpoint knows whether it is enabled.
-			// TODO: Adjust this if/else block once the Select2 control is implemented in Site Settings.
+		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
+			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;
+
 			// For Backwards Compatibility, enable the two default breakpoints (mobile, tablet).
-			if ( ! $active_breakpoint_keys && ( self::BREAKPOINT_KEY_MOBILE === $name || self::BREAKPOINT_KEY_TABLET === $name ) ) {
+			if ( self::BREAKPOINT_KEY_MOBILE === $breakpoint_name || self::BREAKPOINT_KEY_TABLET === $breakpoint_name ) {
 				// Make sure the default Mobile and Tablet breakpoints are always enabled.
 				$args['is_enabled'] = true;
-			} elseif ( $active_breakpoint_keys ) {
-				$args['is_enabled'] = in_array( $name, $active_breakpoint_keys['options'], true );
 			} else {
-				// TODO: Adjust this if/else statement once the Select2 control is implemented in Site Settings.
-				$args['is_enabled'] = false;
+				// If the breakpoint is in the active breakpoints array, make sure it's instantiated as enabled.
+				$args['is_enabled'] = in_array( $breakpoint_name, $active_breakpoint_keys, true );
 			}
 
-			$breakpoints[ $name ] = new Breakpoint( $args );
+			$breakpoints[ $breakpoint_name ] = new Breakpoint( $args );
 		}
 
 		return $breakpoints;
