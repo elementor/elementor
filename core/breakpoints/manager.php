@@ -141,17 +141,13 @@ class Manager extends Module {
 	public function has_custom_breakpoints() {
 		$breakpoints = $this->get_breakpoints();
 
-		$has_custom_breakpoints = false;
-
 		foreach ( $breakpoints as $breakpoint ) {
 			/** @var Breakpoint $breakpoint */
 			if ( $breakpoint->is_custom() ) {
-				$has_custom_breakpoints = true;
-				break;
+				return true;
 			}
 		}
-
-		return $has_custom_breakpoints;
+		return false;
 	}
 
 	/**
