@@ -89,9 +89,10 @@ class Post_Type extends Base {
 		$post_data = $this->importer->read_json_file( $id );
 
 		$new_document = Plugin::$instance->documents->create(
-			$this->post_type,
+			$post_settings['doc_type'],
 			[
 				'post_title' => $post_settings['title'],
+				'post_type' => $this->post_type,
 				'post_status' => 'publish',
 			]
 		);
