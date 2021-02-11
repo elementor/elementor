@@ -31,18 +31,14 @@ export default class FavoritesComponent extends ComponentBase {
 		super.registerAPI();
 		$e.routes.on( 'run:after', ( component, route ) => {
 			if ( 'panel/elements/categories' === route ) {
-				this.$panel = jQuery( '#elementor-panel' );
 				this.favoriteMenuId = 'e-favorite-widget-context-menu';
+				this.$favoriteMenu = jQuery( `#${ this.favoriteMenuId }` );
+				this.$panel = jQuery( '#elementor-panel' );
 
 				this.addFavoriteWidgetsEvents();
 				this.addToolTip();
 			}
 		} );
-	}
-
-	moveElementInArray( array, from, to ) {
-		array.splice( to, 0, array.splice( from, 1 )[ 0 ] );
-		return array;
 	}
 
 	addToolTip() {
@@ -69,11 +65,12 @@ export default class FavoritesComponent extends ComponentBase {
 
 		const $favoriteWidgetMenu = jQuery( '<div>', { id: this.favoriteMenuId, class: menuClass } );
 		$favoriteWidgetMenu.html( jQuery( '<span>' ).text( menuText ) );
+		this.$favoriteMenu = $favoriteWidgetMenu;
 		$favoriteWidgetMenu.insertAfter( this.$panel );
 
 		this.setPositionMenu( $favoriteWidgetMenu, e );
 
-		if ( widgetId && $favoriteWidgetMenu.length ) {
+		if ( widgetId ) {
 			this.contextmenuOnFavoritesMenu();
 			this.contextmenuOrClickOnOutsideMenu();
 
@@ -102,8 +99,8 @@ export default class FavoritesComponent extends ComponentBase {
 	}
 
 	removeFavoriteMenu() {
-		const $favoriteWidgetMenu = jQuery( `#${ this.favoriteMenuId }` );
-		$favoriteWidgetMenu.remove();
+		this.$favoriteMenu.off( 'contextmenu.favorites' );
+		this.$favoriteMenu.remove();
 	}
 
 	addFavoriteWidgetsEvents() {
@@ -124,46 +121,37 @@ export default class FavoritesComponent extends ComponentBase {
 
 	contextmenuRemoveFromFavorites() {
 		const $favoriteCategory = jQuery( '#elementor-panel-category-favorites' );
-		if ( $favoriteCategory.length ) {
-			$favoriteCategory.on( 'contextmenu', '.elementor-element', ( e ) => {
-				e.preventDefault();
-				const widgetId = e.target.offsetParent.dataset.id;
-				const menuClass = 'remove-from-favorites';
-				const menuText = __( 'Remove From Favorites', 'elementor' );
-				this.displayFavoriteMenu( 'remove', widgetId, menuClass, menuText, e );
-			} );
-		}
+		$favoriteCategory.on( 'contextmenu', '.elementor-element', ( e ) => {
+			e.preventDefault();
+			const widgetId = e.target.offsetParent.dataset.id;
+			const menuClass = 'remove-from-favorites';
+			const menuText = __( 'Remove From Favorites', 'elementor' );
+			this.displayFavoriteMenu( 'remove', widgetId, menuClass, menuText, e );
+		} );
 	}
 
 	contextmenuOnFavoritesMenu() {
-		const $menuFavorites = jQuery( `#${ this.favoriteMenuId }` );
-		if ( $menuFavorites.length ) {
-			$menuFavorites.on( 'contextmenu.favorites', ( e ) => {
-				const targetId = this.favoriteMenuId === e.target.parentElement.id;
-				const rightClickOnMenu = 'contextmenu' === e.type && targetId;
-				if ( rightClickOnMenu ) {
-					return false;
-				}
-			} );
-		} else {
-			$menuFavorites.off( 'contextmenu.favorites' );
-		}
+		this.$favoriteMenu.on( 'contextmenu.favorites', ( e ) => {
+			const targetId = this.favoriteMenuId === e.target.parentElement.id;
+			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
+			if ( rightClickOnMenu ) {
+				return false;
+			}
+		} );
 	}
 
 	contextmenuOrClickOnOutsideMenu() {
 		const $panelClickedOutsideWidgets = jQuery( '#elementor-editor-wrapper' );
-		if ( $panelClickedOutsideWidgets.length ) {
-			$panelClickedOutsideWidgets.on( 'contextmenu.favoriteMenu click.favoriteMenu', ( e ) => {
-				e.preventDefault();
-				const targetId = this.favoriteMenuId === e.target.parentElement.id;
-				const rightClickOnMenu = 'contextmenu' === e.type && targetId;
-				const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
-				const clickOnMenu = 'click' === e.type && targetId;
+		$panelClickedOutsideWidgets.on( 'contextmenu.favoriteMenu click.favoriteMenu', ( e ) => {
+			e.preventDefault();
+			const targetId = this.favoriteMenuId === e.target.parentElement.id;
+			const rightClickOnMenu = 'contextmenu' === e.type && targetId;
+			const rightClickOnWidgetOutOfMenu = 'contextmenu' === e.type && 'elementor-element' === e.target.offsetParent.className && ! targetId;
+			const clickOnMenu = 'click' === e.type && targetId;
 
-				if ( ! rightClickOnMenu && ! rightClickOnWidgetOutOfMenu && ! clickOnMenu ) {
-					$panelClickedOutsideWidgets.off( 'contextmenu.favoriteMenu click.favoriteMenu', this.removeFavoriteMenu() );
-				}
-			} );
-		}
+			if ( ! rightClickOnMenu && ! rightClickOnWidgetOutOfMenu && ! clickOnMenu ) {
+				$panelClickedOutsideWidgets.off( 'contextmenu.favoriteMenu click.favoriteMenu', this.removeFavoriteMenu() );
+			}
+		} );
 	}
 }
