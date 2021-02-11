@@ -224,4 +224,31 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEquals( null, $result2 );
 		$this->assertEquals( 1, $result3 );
 	}
+
+	public function test_unique() {
+		// Arrange
+		$collection = new Collection( ['a', 'a', 'b', 'c', 'c'] );
+
+		// Act
+		$result = $collection->unique();
+
+		// Assert
+		$this->assertEqualSets( [ 'a', 'b', 'c' ], $result->all() );
+	}
+
+	public function test_first() {
+		// Arrange
+		$collection = new Collection( [ 20 => 'c', 21 => 'a', 30 => 'b' ] );
+		$collection2 = new Collection( [] );
+
+		// Act
+		$result = $collection->first();
+		$result2 = $collection2->first();
+		$result3 = $collection2->first( 'a' );
+
+		// Assert
+		$this->assertEquals( 'c', $result );
+		$this->assertEquals( null, $result2 );
+		$this->assertEquals( 'a', $result3 );
+	}
 }
