@@ -352,7 +352,7 @@ export default class Container extends ArgsObject {
 				return globalValue;
 			}
 		}
-		return localValue  || this.getGlobalDefault( name );
+		return localValue || this.getGlobalDefault( name );
 	}
 
 	getGlobalKey( name ) {
