@@ -31,7 +31,7 @@ class Templates extends Base {
 
 			$manifest_data[ $template['template_id'] ] = [
 				'title' => $template['title'],
-				'type' => $template['type'],
+				'doc_type' => $template_document->get_name(),
 				'thumbnail' => $template['thumbnail'],
 			];
 		}
@@ -67,10 +67,10 @@ class Templates extends Base {
 	private function import_template( $id, array $template_settings ) {
 		$template = $this->importer->read_json_file( $id );
 
-		$template_type = $template_settings['type'];
+		$doc_type = $template_settings['doc_type'];
 
 		$new_document = Plugin::$instance->documents->create(
-			$template_type,
+			$doc_type,
 			[
 				'post_title' => $template_settings['title'],
 				'post_type' => Source_Local::CPT,

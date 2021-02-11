@@ -40,12 +40,14 @@ class Root extends Base {
 		$kit_post = $kit->get_post();
 
 		$manifest_data = [
+			'name' => sanitize_title( $kit_post->post_title ),
+			'title' => $kit_post->post_title,
 			'author' => get_the_author_meta( 'display_name', $kit_post->post_author ),
 			'version' => Module::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'created' => gmdate( 'Y-m-d H:i:s' ),
 			'description' => $kit_post->post_excerpt,
-			'image' => get_the_post_thumbnail_url( $kit_post ),
+			'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
 		];
 
 		if ( $include_site_settings ) {

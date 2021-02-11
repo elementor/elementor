@@ -45,7 +45,7 @@ class Module extends BaseModule {
 
 	public function get_init_settings() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], admin_url() );
+		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
 		return [
 			'exportURL' => $export_url,
@@ -72,9 +72,13 @@ class Module extends BaseModule {
 
 			$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
 
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
+			try {
+				$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
 
-			$this->export->run();
+				$this->export->run();
+			} catch ( \Error $error ) {
+				wp_die( $error->getMessage() );
+			}
 		}
 	}
 

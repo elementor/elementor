@@ -1317,7 +1317,9 @@ abstract class Document extends Controls_Stack {
 				'settings' => $data['settings'],
 			] );
 
-			$data['settings'] = $this->process_element_import_export( $template_model, 'on_import' );
+			$page_data = $this->process_element_import_export( $template_model, 'on_import' );
+
+			$data['settings'] = $page_data['settings'];
 		}
 
 		return $data;

@@ -15,6 +15,10 @@ class Export extends Iterator {
 	private $zip_archive;
 
 	private function init_zip_archive() {
+		if ( ! class_exists( '\ZipArchive' ) ) {
+			throw new \Error( 'ZipArchive module is not installed on the server. You must install this module to perform the export process.' );
+		}
+
 		$zip_archive = new \ZipArchive();
 
 		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
@@ -22,12 +26,8 @@ class Export extends Iterator {
 		$this->zip_archive = $zip_archive;
 	}
 
-	private function get_archive_relative_file_name() {
-		return 'elementor-kit.zip';
-	}
-
 	private function get_archive_file_name() {
-		return __DIR__ . DIRECTORY_SEPARATOR . $this->get_archive_relative_file_name();
+		return __DIR__ . DIRECTORY_SEPARATOR . 'elementor-temp-kit.zip';
 	}
 
 	final public function run() {
@@ -45,9 +45,11 @@ class Export extends Iterator {
 
 		$file_name = $this->get_archive_file_name();
 
+		$downloaded_file_name = 'elementor-kit-' . $manifest_data['name'] . '.zip';
+
 		header( 'Content-type: application/zip' );
 
-		header( 'Content-Disposition: attachment; filename=' . $this->get_archive_relative_file_name() );
+		header( 'Content-Disposition: attachment; filename=' . $downloaded_file_name );
 
 		header( 'Content-length: ' . filesize( $file_name ) );
 
