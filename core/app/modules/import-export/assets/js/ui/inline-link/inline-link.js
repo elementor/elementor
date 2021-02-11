@@ -3,7 +3,7 @@ import Utils from 'elementor-app/utils/utils.js';
 import './inline-link.scss';
 
 export default function InlineLink( props ) {
-	const baseClassName = 'e-app-import-export-click-here',
+	const baseClassName = 'e-app-import-export-inline-link',
 		classes = [ baseClassName, props.className ];
 
 	return (
