@@ -19,7 +19,7 @@ class Content extends Base {
 
 		$sub_directories = [];
 
-		foreach( $post_types as $post_type ) {
+		foreach ( $post_types as $post_type ) {
 			$sub_directories[] = new Post_Type( $this->iterator, $this, $post_type );
 		}
 
