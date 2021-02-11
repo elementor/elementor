@@ -26,18 +26,18 @@
 				breakpointKeys = elementor.config.breakpointKeys;
 			}
 
-			if ( breakpointKeys.mobile === deviceName ) {
-				// Mobile is the lowest breakpoint, so its min point is 0.
+			if ( breakpointNames[ 0 ] === deviceName ) {
+				// For the lowest breakpoint, the min point is always 0.
 				minBreakpoint = 0;
-			} else if ( breakpointKeys.widescreen === deviceName ) {
+			} else if ( 'min' === breakpoints.deviceName.direction ) {
 				// Widescreen only has a minimum point. In this case, the breakpoint
 				// value in the Breakpoints config is itself the device min point.
-				minBreakpoint = breakpoints[ breakpointKeys.widescreen ].value;
+				minBreakpoint = breakpoints[ deviceName ].value;
 			} else {
 				const deviceNameIndex = breakpointNames.indexOf( deviceName ),
 					previousIndex = deviceNameIndex - 1;
 
-				minBreakpoint = devices[ breakpointNames[ previousIndex ] ] + 1;
+				minBreakpoint = breakpoints[ breakpointNames[ previousIndex ] ] + 1;
 			}
 
 			return minBreakpoint;

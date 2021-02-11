@@ -164,24 +164,31 @@ class Manager extends Module {
 	 * @return int the min breakpoint of the passed device
 	 */
 	public function get_device_min_breakpoint( $device_name ) {
-		$config = $this->get_config();
+		$breakpoints = $this->get_breakpoints();
+		/** @var Breakpoint $current_device_breakpoint */
+		$current_device_breakpoint = $breakpoints[ $device_name ];
 
-		if ( ! $this->breakpoint_keys ) {
-			$this->breakpoint_keys = array_keys( $config );
+		if ( ! $this->active_breakpoint_keys ) {
+			// Since this method is called multiple times, usage of class variables is to memory and processing time.
+			$this->active_breakpoint_keys = array_keys( $breakpoints );
 		}
 
-		if ( self::BREAKPOINT_KEY_MOBILE === $device_name ) {
-			// Mobile is the lowest breakpoint, so its min point is 0.
+		if ( $this->active_breakpoint_keys[0] === $device_name ) {
+			// For the lowest breakpoint, the min point is always 0.
 			$min_breakpoint = 0;
-		} elseif ( self::BREAKPOINT_KEY_WIDESCREEN === $device_name ) {
-			// Widescreen only has a minimum point. The breakpoint value in the config is itself the device min point.
-			$min_breakpoint = $config[ self::BREAKPOINT_KEY_WIDESCREEN ]['value'];
+		} elseif ( 'min' === $current_device_breakpoint->get_direction() ) {
+			// 'min-width' breakpoints only have a minimum point. The breakpoint value itself the device min point.
+			$min_breakpoint = $current_device_breakpoint->get_value();
 		} else {
-			$device_name_index = array_search( $device_name, $this->breakpoint_keys, true );
+			// This block handles all other devices.
+			$device_name_index = array_search( $device_name, $this->active_breakpoint_keys, true );
 
 			$previous_index = $device_name_index - 1;
+			$previous_breakpoint_key = $this->active_breakpoint_keys[ $previous_index ];
+			/** @var Breakpoint $previous_breakpoint */
+			$previous_breakpoint = $breakpoints[ $previous_breakpoint_key ];
 
-			$min_breakpoint = $config[ $this->breakpoint_keys[ $previous_index ] ]['value'] + 1;
+			$min_breakpoint = $previous_breakpoint->get_value() + 1;
 		}
 
 		return $min_breakpoint;
