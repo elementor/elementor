@@ -199,7 +199,6 @@ class Icons_Manager {
 	 * @return bool|mixed|string
 	 */
 	public static function get_font_awesome_svg( $icon_name ) {
-		preg_match( '/fa(.*) fa-/', $icon_name, $matches );
 		$icon_option_key = str_replace( ' fa-', '-', $icon_name );
 		$svg = get_option( $icon_option_key );
 
@@ -207,6 +206,7 @@ class Icons_Manager {
 			return $svg;
 		}
 
+		preg_match( '/fa(.*) fa-/', $icon_name, $matches );
 		$icon_style = str_replace( ' fa-', '', $matches[0] );
 		$icon_styles = [
 			'fab' => 'brands',
@@ -218,14 +218,14 @@ class Icons_Manager {
 		$icon_list_url = $icons_base_url . $icon_styles[ $icon_style ] . '.json';
 		$icon_list = json_decode( file_get_contents( $icon_list_url ), true );
 		$icon_data = $icon_list['icons'][ $icon_name ];
-		$svg = '<i><svg class="e-fa-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
-		<path d="' . $icon_data[4] . '"></path></svg></i>';
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
+		<path d="' . $icon_data[4] . '"></path></svg>';
 
 		if ( ! empty( $svg ) ) {
 			update_option( $icon_option_key, $svg );
 		}
 
-		return $svg;
+		return '<i>' . $svg . '</i>';
 	}
 
 	private static function render_svg_icon( $value ) {
