@@ -43,7 +43,7 @@ module.exports = BaseRegion.extend( {
 			minWidth: 200,
 			maxWidth: 680,
 			start: function() {
-				elementor.$previewWrapper.add( jQuery( elementor.$responsiveTopBar ) ).addClass( 'ui-resizable-resizing' );
+				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
 			stop: function( event, ui ) {
 				elementor.$previewWrapper.add( jQuery( elementor.$responsiveTopBar ) ).removeClass( 'ui-resizable-resizing' );
