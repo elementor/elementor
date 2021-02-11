@@ -30,7 +30,6 @@ export default class View extends Marionette.ItemView {
 
 	events() {
 		return {
-			click: 'onClick',
 			'change @ui.switcherOption': 'onBreakpointSelected',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
