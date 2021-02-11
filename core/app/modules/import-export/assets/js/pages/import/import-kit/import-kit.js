@@ -37,18 +37,22 @@ export default function ImportKit() {
 		<Layout type="import">
 			<section className="e-app-import">
 				<PageHeader
-					heading={ __( 'Upload Kit File', 'elementor' ) }
-					description={ __( 'Upload the kit file.You will be able to see the Kit’s content at the end of the process.', 'elementor' ) }
+					heading={ __( 'Import Kits', 'elementor' ) }
+					description={
+						<>
+							{ __( 'Upload a file with Elementor components - pages, site settings, headers, etc. - so you can access them later and quickly apply them to your site.', 'elementor' ) } { getLearnMoreLink() }
+						</>
+					}
 				/>
 
 				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
-					{ __( 'It is strongly recommended that you backup your database before Importing a Kit.', 'elementor' ) }
+					{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
 				</Notice>
 
 				<DropZone
 					className="e-app-import__drop-zone"
-					heading={ __( 'Import a Kit to Your Site', 'elementor' ) }
-					text={ __( 'Drag & Drop your zip template file', 'elementor' ) }
+					heading={ __( 'Upload Files to Your Library', 'elementor' ) }
+					text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {

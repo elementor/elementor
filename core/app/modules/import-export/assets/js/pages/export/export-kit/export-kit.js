@@ -24,11 +24,11 @@ export default function ExportKit() {
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export">
 				<PageHeader
-					heading={ __( 'Choose What To Include In The Kit', 'elementor' ) }
+					heading={ __( 'Export Kits', 'elementor' ) }
 					description={ [
-						__( 'Choose the kit components to export, such as pages, site setting, headers and more.', 'elementor' ),
+						__( 'Choose which Elementor components - pages, site settings, headers, etc. - to include in your kit file.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, we will export all the components.', 'elementor' ) } { getLearnMoreLink() }
+							{ __( 'By default, all of your components will be exported.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,
 					] }
 				/>

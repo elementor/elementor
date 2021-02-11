@@ -44,13 +44,13 @@ export default function ImportProcess() {
 				<Icon className="e-app-import-process__icon eicon-loading eicon-animation-spin" />
 
 				<Heading variant="display-3" className="e-app-import-process__title">
-					{ __( 'Your Kit Is Being Imported', 'elementor' ) }
+					{ __( 'Processing your file...', 'elementor' ) }
 				</Heading>
 
 				<Text variant="xl" className="e-app-import-process__text">
-					{ __( 'This may take a few moments to complete.', 'elementor' ) }
+					{ __( 'This usually takes a few moments.', 'elementor' ) }
 					<br />
-					{ __( 'Please don’t close this window until importing is completed', 'elementor' ) }
+					{ __( 'Don\'t close this window until your import is finished.', 'elementor' ) }
 				</Text>
 
 				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
