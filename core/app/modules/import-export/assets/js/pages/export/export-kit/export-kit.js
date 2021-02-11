@@ -16,7 +16,7 @@ export default function ExportKit() {
 		getLearnMoreLink = () => (
 			<InfoLink
 				text={ __( 'Learn More', 'elementor' ) }
-				url="https://elementor.com/help/what-are-kits?utm_source=editor-app&utm_medium=wp-dash&utm_campaign=learn"
+				url="https://go.elementor.com/app-what-are-kits"
 			/>
 		);
 

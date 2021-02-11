@@ -34,7 +34,7 @@ export default function KitContent() {
 		getGoProButton = () => (
 			<GoProButton
 				className="e-app-export-kit-content__go-pro-button"
-				urlParams="utm_source=import-export&utm_medium=app&utm_campaign=go-pro"
+				url="https://go.elementor.com/go-pro-import-export"
 			/>
 		),
 		setContainerHoverState = ( index, state ) => {
