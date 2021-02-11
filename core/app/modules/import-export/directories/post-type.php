@@ -23,16 +23,11 @@ class Post_Type extends Base {
 	}
 
 	public function export() {
-		$only_elementor = 'page' === $this->post_type;
-
 		$query_args = [
 			'post_type' => $this->post_type,
 			'post_status' => 'publish',
 			'posts_per_page' => 20,
-		];
-
-		if ( $only_elementor ) {
-			$query_args['meta_query'] = [
+			'meta_query' => [
 				[
 					'key' => '_elementor_data',
 					'compare' => 'EXISTS',
@@ -42,32 +37,24 @@ class Post_Type extends Base {
 					'compare' => '!=',
 					'value' => '[]',
 				],
-			];
-		}
+			],
+		];
 
 		$query = new \WP_Query( $query_args );
 
 		$manifest_data = [];
 
 		foreach ( $query->posts as $post ) {
+			$document = Plugin::$instance->documents->get( $post->ID );
+
 			$manifest_data[ $post->ID ] = [
 				'title' => $post->post_title,
-				'post_type' => $this->post_type,
+				'doc_type' => $document->get_name(),
 				'thumbnail' => get_the_post_thumbnail_url( $post ),
 				'url' => get_permalink( $post ),
 			];
 
-			$document = Plugin::$instance->documents->get( $post->ID );
-
-			if ( $only_elementor || $document->is_built_with_elementor() ) {
-				$post_data = $document->get_export_data();
-			} else {
-				$post_data = [
-					'content' => $post->post_content,
-				];
-			}
-
-			$this->exporter->add_json_file( $post->ID, $post_data );
+			$this->exporter->add_json_file( $post->ID, $document->get_export_data() );
 		}
 
 		return $manifest_data;
