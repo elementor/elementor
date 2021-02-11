@@ -58,11 +58,15 @@ class Module extends BaseModule {
 				return;
 			}
 
-			$this->import = new Import( json_decode( stripslashes( $_POST['data'] ), true ) );
+			try {
+				$this->import = new Import( json_decode( stripslashes( $_POST['data'] ), true ) );
 
-			$result = $this->import->run();
+				$result = $this->import->run();
 
-			wp_send_json_success( $result );
+				wp_send_json_success( $result );
+			} catch ( \Error $error ) {
+				wp_send_json_error( $error->getMessage() );
+			}
 		}
 
 		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
