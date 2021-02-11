@@ -29,7 +29,7 @@ $breakpoints = [
 							value="%1$s">
 					<label class="e-mq-switcher__label" for="e-mq-switch-%1$s">
 						<i class="eicon-device-%1$s" aria-hidden="true"></i>
-						<span>%2$s</span>
+						<span class="screen-reader-text">%2$s</span>
 					</label>', $name, $label ); } ?>
 			</div>
 		</div>
