@@ -16,11 +16,7 @@ class Import extends Iterator {
 
 		$this->files_base_dir = $wp_upload_dir['basedir'] . '/elementor/tmp/kit/';
 
-		$zip = new \ZipArchive();
-
-		$zip->open( $_FILES['e_import_file']['tmp_name'] );
-
-		$zip->extractTo( $this->files_base_dir );
+		unzip_file( $_FILES['e_import_file']['tmp_name'], $this->files_base_dir );
 
 		$settings = $this->read_json_file( 'manifest' );
 
