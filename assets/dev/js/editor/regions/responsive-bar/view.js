@@ -45,7 +45,9 @@ export default class View extends Marionette.ItemView {
 			{
 				gravity: 'n',
 				offset: 10,
-				title: () => jQuery( this ).text(),
+				title() {
+					return jQuery( this ).data( 'tooltip' );
+				},
 			}
 		);
 	}
