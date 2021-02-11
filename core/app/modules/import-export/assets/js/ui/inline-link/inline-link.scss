@@ -1,5 +1,39 @@
+$e-app-import-export-inline-link-color-primary: theme-colors(success);
+$e-app-import-export-inline-link-color-secondary: tints(400);
+$e-app-import-export-inline-link-color-danger: theme-colors(danger);
+$e-app-import-export-inline-link-color-cta: theme-colors(cta);
+$e-app-import-export-inline-link-color-link: theme-elements-colors(link-color);
+$e-app-import-export-inline-link-color-disabled: theme-colors(disabled);
+
 .e-app-import-export-inline-link {
-	color: theme-colors(info);
+	color: var(--e-app-import-export-inline-link-color);
 	font-style: italic;
 	text-decoration: underline;
+
+	&__color {
+		&--primary {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-primary};
+		}
+
+		&--secondary {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-secondary};
+		}
+
+		&--danger {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-danger};
+		}
+
+		&--cta {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-cta};
+		}
+
+		&--link {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-link};
+		}
+
+		&--disabled,
+		&[disabled] {
+			--e-app-import-export-inline-link-color: #{$e-app-import-export-inline-link-color-disabled};
+		}
+	}
 }
