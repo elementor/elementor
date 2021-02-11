@@ -38,7 +38,7 @@ class Settings_Layout extends Tab_Base {
 
 	protected function register_tab_controls() {
 		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
-		/** @var $breakpoints Breakpoint[] */
+		/** @var Breakpoint[] $breakpoints */
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
@@ -166,7 +166,7 @@ class Settings_Layout extends Tab_Base {
 		}
 
 		$this->add_control(
-			'active_breakpoints',
+			self::BREAKPOINTS_SELECT_CONTROL_ID,
 			[
 				'label' => __( 'Active Breakpoints', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
@@ -180,6 +180,7 @@ class Settings_Layout extends Tab_Base {
 				],
 				'label_block' => true,
 				'render_type' => 'none',
+				'frontend_available' => true,
 				'multiple' => true,
 			]
 		);
@@ -253,7 +254,7 @@ class Settings_Layout extends Tab_Base {
 				$control_config['max'] = $breakpoint_value;
 			} else {
 				// For all other breakpoints, the minimum and maximum are standard.
-				$control_config['min'] = $breakpoints_manager->get_device_min_breakpoint( $breakpoint_key );
+				$control_config['min'] = $breakpoints_manager->get_device_min_breakpoint( $breakpoint_key, false );
 				$control_config['max'] = $breakpoint_value;
 			}
 

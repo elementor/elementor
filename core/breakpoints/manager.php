@@ -159,21 +159,25 @@ class Manager extends Module {
 	 * For a given device, return the minimum possible breakpoint. Except for the cases of mobile and widescreen
 	 * devices, A device's min breakpoint is determined by the previous device's max breakpoint + 1px.
 	 *
-	 * @since 3.2.0
 	 * @param string $device_name
+	 * @param bool $only_enabled_breakpoints If provided, determines whether the min breakpoint is checked against all
+	 * existing breakpoints, or only enabled ones. Default: true.
 	 * @return int the min breakpoint of the passed device
+	 *@since 3.2.0
 	 */
-	public function get_device_min_breakpoint( $device_name ) {
+	public function get_device_min_breakpoint( $device_name, $only_enabled_breakpoints = true ) {
+		$breakpoints_config = $only_enabled_breakpoints ? $this->get_config() : self::get_default_config();
 		$breakpoints = $this->get_breakpoints();
 		/** @var Breakpoint $current_device_breakpoint */
 		$current_device_breakpoint = $breakpoints[ $device_name ];
 
-		if ( ! $this->active_breakpoint_keys ) {
+		if ( ! $this->breakpoint_keys ) {
 			// Since this method is called multiple times, usage of class variables is to memory and processing time.
-			$this->active_breakpoint_keys = array_keys( $breakpoints );
+			// Get only the keys for active breakpoints.
+			$this->breakpoint_keys = array_keys( $breakpoints_config );
 		}
 
-		if ( $this->active_breakpoint_keys[0] === $device_name ) {
+		if ( $this->breakpoint_keys[0] === $device_name ) {
 			// For the lowest breakpoint, the min point is always 0.
 			$min_breakpoint = 0;
 		} elseif ( 'min' === $current_device_breakpoint->get_direction() ) {
@@ -181,10 +185,10 @@ class Manager extends Module {
 			$min_breakpoint = $current_device_breakpoint->get_value();
 		} else {
 			// This block handles all other devices.
-			$device_name_index = array_search( $device_name, $this->active_breakpoint_keys, true );
+			$device_name_index = array_search( $device_name, $this->breakpoint_keys, true );
 
 			$previous_index = $device_name_index - 1;
-			$previous_breakpoint_key = $this->active_breakpoint_keys[ $previous_index ];
+			$previous_breakpoint_key = $this->breakpoint_keys[ $previous_index ];
 			/** @var Breakpoint $previous_breakpoint */
 			$previous_breakpoint = $breakpoints[ $previous_breakpoint_key ];
 
