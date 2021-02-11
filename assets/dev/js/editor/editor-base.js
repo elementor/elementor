@@ -827,8 +827,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initPreview();
 
-		this.initResponsiveBar();
-
 		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
@@ -903,6 +901,8 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
+
+		this.initResponsiveBar();
 
 		this.previewLoadedOnce = true;
 	}
