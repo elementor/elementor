@@ -208,12 +208,18 @@ class Icons_Manager {
 		}
 
 		$icon_style = str_replace( ' fa-', '', $matches[0] );
-		$filename = str_replace( $matches[0], '', $icon_name ) . '.svg';
-		$svg_base_url = plugin_dir_path( ELEMENTOR__FILE__ ) . '/assets/lib/font-awesome/svg/';
-		$svg_path = $svg_base_url . $icon_style . '/' . $filename;
-		$svg = file_get_contents( $svg_path );
-
-		$svg = preg_replace( '/<!--(.|\s)*?-->/', '', $svg );
+		$icon_styles = [
+			'fab' => 'brands',
+			'far' => 'regular',
+			'fas' => 'solid',
+		];
+		$icon_name = str_replace( $matches[0], '', $icon_name );
+		$icons_base_url = plugin_dir_path( ELEMENTOR__FILE__ ) . 'assets/lib/font-awesome/js/';
+		$icon_list_url = $icons_base_url . $icon_styles[ $icon_style ] . '.json';
+		$icon_list = json_decode( file_get_contents( $icon_list_url ), true );
+		$icon_data = $icon_list['icons'][ $icon_name ];
+		$svg = '<i><svg class="e-fa-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
+		<path d="' . $icon_data[4] . '"></path></svg></i>';
 
 		if ( ! empty( $svg ) ) {
 			update_option( $icon_option_key, $svg );
