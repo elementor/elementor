@@ -222,6 +222,7 @@ class Settings_Layout extends Tab_Base {
 			$control_config = [
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
+				'default' => $default_breakpoint_config['default_value'],
 				'placeholder' => $default_breakpoint_config['default_value'],
 				/* translators: %1$d: Breakpoint value; %2$s: 'above' or 'below', depending on whether the breakpoint is min or max width. */
 				'description' => sprintf(
