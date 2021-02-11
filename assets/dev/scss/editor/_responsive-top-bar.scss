@@ -76,62 +76,8 @@
 					font-size: 15px;
 				}
 
-				span {
-					display: block;
-					position: absolute;
-					top: 100%;
-					width: 224px;
-					max-width: 0;
-					max-height: 0;
-					overflow: hidden;
-					transition: 1ms 200ms;
-					left: -100px;
-					text-align: center;
-					padding-bottom: 30px;
-
-					em {
-						display: inline-block;
-						position: relative;
-						border-radius: 3px;
-						/* TODO: figure out which variable this needs to be. (dark-dark isn't available in light mode)*/
-						background-color: #26292C;
-						padding: 4px;
-						font-style: normal;
-						transform-origin: top center;
-						transform: scale(0.3);
-						opacity: 0;
-						transition: 100ms ease-in;
-
-						&:before {
-							content: '';
-							display: block;
-							position: absolute;
-							border-style: solid;
-							border-width: 4px;
-							border-color: transparent transparent #26292C;
-							top: -8px;
-							left: calc(50% - 4px);
-						}
-					}
-				}
-
 				i:hover {
 					color: $editor-lighter;
-
-					+ span {
-						max-height: 400px;
-						transition: 1ms;
-						width: 220px;
-						max-width: 220px;
-						height: auto;
-
-						em {
-							transform: translateY(15px) scale(1);
-							opacity: 1;
-							animation: show-tooltip;
-							transition: 150ms ease-in-out;
-						}
-					}
 				}
 			}
 
