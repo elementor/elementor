@@ -497,7 +497,7 @@ class Icons_Manager {
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
 		if ( ! self::is_font_awesome_inline() && ! self::is_migration_allowed() ) {
-			add_action('elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+			add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 		}
 
