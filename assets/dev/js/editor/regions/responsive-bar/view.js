@@ -21,6 +21,7 @@ export default class View extends Marionette.ItemView {
 
 		return {
 			switcherOption: prefix + 'switcher__option',
+			switcherLabel: prefix + 'switcher__label',
 			switcher: prefix + 'switcher',
 			closeButton: prefix + 'bar__close-button',
 			breakpointSettingsButton: prefix + 'bar__settings-button',
