@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
@@ -36,9 +37,11 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints = Breakpoints_Manager::get_default_config();
-		$default_tablet_breakpoint = $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]['default_value'];
-		$default_mobile_breakpoint = $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]['default_value'];
+		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
+		/** @var $breakpoints Breakpoint[] */
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -57,10 +60,10 @@ class Settings_Layout extends Tab_Base {
 					'size' => '1140',
 				],
 				'tablet_default' => [
-					'size' => $default_tablet_breakpoint,
+					'size' => $breakpoints[ $breakpoint_key_tablet ]->get_default_value(),
 				],
 				'mobile_default' => [
-					'size' => $default_mobile_breakpoint,
+					'size' => $breakpoints[ $breakpoint_key_mobile ]->get_default_value(),
 				],
 				'range' => [
 					'px' => [
@@ -155,51 +158,108 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
+		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$options = [];
+
+		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+			$options[ $prefix . $breakpoint_key ] = $breakpoint->get_config( 'label' );
+		}
+
 		$this->add_control(
-			'breakpoint_md_heading',
+			'active_breakpoints',
 			[
-				'label' => __( 'Mobile', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Active Breakpoints', 'elementor' ),
+				'type' => Controls_Manager::SELECT2,
+				'options' => $options,
+				'default' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
+				],
+				'select2options' => [
+					'allowClear' => false,
+				],
+				'label_block' => true,
+				'render_type' => 'none',
+				'multiple' => true,
 			]
 		);
 
-		$this->add_control(
-			Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'md',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => 481, // Formerly 'sm'.
-				'max' => $default_tablet_breakpoint - 1,
-				'default' => $default_mobile_breakpoint,
-				'placeholder' => $default_mobile_breakpoint,
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_mobile_breakpoint ),
-			]
-		);
+		$this->add_breakpoints_controls();
 
-		$this->add_control(
-			'breakpoint_lg_heading',
-			[
-				'label' => __( 'Tablet', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-			]
-		);
-
-		$this->add_control(
-			Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'lg',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => 481,
-				'max' => $default_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP ]['default_value'] - 1,
-				'default' => $default_tablet_breakpoint,
-				'placeholder' => $default_tablet_breakpoint,
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_tablet_breakpoint ),
-			]
-		);
+		// Include the old mobile and tablet breakpoint controls as hidden for backwards compatibility.
+		$this->add_control( 'viewport_md', [ 'type' => Controls_Manager::HIDDEN ] );
+		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
+	}
+
+	private function add_breakpoints_controls() {
+		$breakpoints_manager = Plugin::$instance->breakpoints;
+		$breakpoints_config = $breakpoints_manager->get_config();
+		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
+		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+
+		// Add a control for each of the **default** breakpoints.
+		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
+			$this->add_control(
+				'breakpoint_' . $breakpoint_key . '_heading',
+				[
+					'label' => $default_breakpoint_config['label'],
+					'type' => Controls_Manager::HEADING,
+					'conditions' => [
+						'terms' => [
+							[
+								'name' => 'active_breakpoints',
+								'operator' => 'contains',
+								'value' => $prefix . $breakpoint_key,
+							],
+						],
+					],
+				]
+			);
+
+			$control_config = [
+				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::NUMBER,
+				'placeholder' => $default_breakpoint_config['default_value'],
+				/* translators: %1$d: Breakpoint value; %2$s: 'above' or 'below', depending on whether the breakpoint is min or max width. */
+				'description' => sprintf(
+					__( 'This breakpoint applies to %1$dpx and %2$s.', 'elementor' ),
+					isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'],
+					'max' === $default_breakpoint_config['direction'] ? __( 'below', 'elementor' ) : __( 'above', 'elementor' )
+				),
+				'frontend_available' => true,
+				'conditions' => [
+					'terms' => [
+						[
+							'name' => 'active_breakpoints',
+							'operator' => 'contains',
+							'value' => $prefix . $breakpoint_key,
+						],
+					],
+				],
+			];
+
+			// If the current breakpoint is currently active, use its actual value for the min/max properties.
+			// Otherwise, use the default breakpoint values.
+			$breakpoint_value = isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'];
+
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $breakpoint_key ) {
+				// For the Widescreen breakpoint, there is no maximum - it is a min-width breakpoint.
+				$control_config['min'] = $breakpoint_value;
+			} elseif ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_key ) {
+				// For the mobile breakpoint, we set no minimum. This is because the minimum is 0, since it is always
+				// the smallest breakpoint.
+				$control_config['max'] = $breakpoint_value;
+			} else {
+				// For all other breakpoints, the minimum and maximum are standard.
+				$control_config['min'] = $breakpoints_manager->get_device_min_breakpoint( $breakpoint_key );
+				$control_config['max'] = $breakpoint_value;
+			}
+
+			// Add the breakpoint Control itself.
+			$this->add_control( $prefix . $breakpoint_key, $control_config );
+		}
 	}
 
 	public function on_save( $data ) {
@@ -210,9 +270,23 @@ class Settings_Layout extends Tab_Base {
 		$should_compile_css = false;
 
 		foreach ( Plugin::$instance->breakpoints->get_config() as $breakpoint_key => $breakpoint ) {
-			$setting_key = "viewport_{$breakpoint_key}";
-			if ( isset( $data['settings'][ $setting_key ] ) ) {
+			$prefix = 'viewport_';
+			$breakpoint_setting_key = $prefix . $breakpoint_key;
+
+			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
+
+				// For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
+				// old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
+				// is added is because the old breakpoints system was min-width based, and the new system introduced in
+				// Elementor v3.2.0 is max-width based.
+				if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_key ) {
+					$data['settings'][ $prefix . 'md' ] = $data['settings'][ $breakpoint_setting_key ] + 1;
+				}
+
+				if ( Breakpoints_Manager::BREAKPOINT_KEY_TABLET === $breakpoint_key ) {
+					$data['settings'][ $prefix . 'lg' ] = $data['settings'][ $breakpoint_setting_key ] + 1;
+				}
 			}
 		}
 

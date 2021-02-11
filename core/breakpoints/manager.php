@@ -14,9 +14,9 @@ class Manager extends Module {
 
 	// The mobile and tablet keys are not semantic due to the need for backwards compatibility.
 	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
-	const BREAKPOINT_KEY_MOBILE = 'md';
+	const BREAKPOINT_KEY_MOBILE = 'mobile';
 	const BREAKPOINT_KEY_MOBILE_EXTRA = 'mobile_extra';
-	const BREAKPOINT_KEY_TABLET = 'lg';
+	const BREAKPOINT_KEY_TABLET = 'tablet';
 	const BREAKPOINT_KEY_TABLET_EXTRA = 'tablet_extra';
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
@@ -260,40 +260,34 @@ class Manager extends Module {
 	public static function get_default_config() {
 		return [
 			self::BREAKPOINT_KEY_MOBILE => [
-				'label' => 'Mobile',
+				'label' => __( 'Mobile', 'elementor' ),
 				'default_value' => 767,
 				'direction' => 'max',
-				'selector' => 'mobile',
 			],
 			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
-				'label' => 'Mobile Extra',
+				'label' => __( 'Mobile Extra', 'elementor' ),
 				'default_value' => 880,
 				'direction' => 'max',
-				'selector' => 'mobile_extra',
 			],
 			self::BREAKPOINT_KEY_TABLET => [
-				'label' => 'Tablet',
+				'label' => __( 'Tablet', 'elementor' ),
 				'default_value' => 1024,
 				'direction' => 'max',
-				'selector' => 'tablet',
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
-				'label' => 'Tablet Extra',
+				'label' => __( 'Tablet Extra', 'elementor' ),
 				'default_value' => 1366,
 				'direction' => 'max',
-				'selector' => 'tablet_extra',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
-				'label' => 'Laptop',
+				'label' => __( 'Laptop', 'elementor' ),
 				'default_value' => 1620,
 				'direction' => 'max',
-				'selector' => 'laptop',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
-				'label' => 'Widescreen',
+				'label' => __( 'Widescreen', 'elementor' ),
 				'default_value' => 2400,
 				'direction' => 'min',
-				'selector' => 'widescreen',
 			],
 		];
 	}

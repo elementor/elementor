@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Breakpoint extends Base_Object {
 
 	private $name;
-	private $selector;
 	private $default_value;
 	private $db_key;
 	private $value;
@@ -144,7 +143,6 @@ class Breakpoint extends Base_Object {
 	public function __construct( $args ) {
 		$this->name = $args['name'];
 		// Used for CSS generation
-		$this->selector = $args['selector'];
 		$this->db_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $args['name'];
 		$this->direction = $args['direction'];
 		$this->is_enabled = $args['is_enabled'];
