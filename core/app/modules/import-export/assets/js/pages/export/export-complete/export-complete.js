@@ -16,7 +16,7 @@ export default function ExportComplete() {
 			</WizardFooter>
 		),
 		getDownloadLink = () => (
-			<InlineLink url={ exportContext.data.downloadURL } target="_parent" download>
+			<InlineLink url={ exportContext.data.downloadURL } target="_parent">
 				{ __( 'Click Here', 'elementor' ) }
 			</InlineLink>
 		);
