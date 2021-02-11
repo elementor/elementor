@@ -1,6 +1,11 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class Apply extends CommandBase {
+	/**
+	 *
+	 * @param value The new color to apply.
+	 * @param trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
+	 */
 	apply( { value, trigger } ) {
 		this.setColor( value );
 
