@@ -60,7 +60,7 @@ DropZone.propTypes = {
 	showButton: PropTypes.bool,
 	showIcon: PropTypes.bool,
 	isLoading: PropTypes.bool,
-	filetypes: PropTypes.array,
+	filetypes: PropTypes.array.isRequired,
 	onError: PropTypes.func,
 };
 
@@ -69,6 +69,5 @@ DropZone.defaultProps = {
 	icon: 'eicon-library-upload',
 	showButton: true,
 	showIcon: true,
-	filetypes: [ 'zip' ],
 	onError: () => {},
 };

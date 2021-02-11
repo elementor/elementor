@@ -54,13 +54,12 @@ UploadFile.propTypes = {
 	text: PropTypes.string,
 	onFileSelect: PropTypes.func,
 	isLoading: PropTypes.bool,
-	filetypes: PropTypes.array,
+	filetypes: PropTypes.array.isRequired,
 	onError: PropTypes.func,
 };
 
 UploadFile.defaultProps = {
 	className: '',
 	text: __( 'Select File', 'elementor' ),
-	filetypes: [ 'zip' ],
 	onError: () => {},
 };
