@@ -338,22 +338,21 @@ export default class Container extends ArgsObject {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 
-	getSetting( name ) {
+	getSetting( name, localOnly = false ) {
+		const localValue = this.settings.get( name );
+
+		if ( localOnly ) {
+			return localValue;
+		}
+
+		// Try to get the value in the order: Global, Local, Global default.
 		if ( this.getGlobalKey( name ) ) {
 			const globalValue = this.getGlobalValue( name );
-
 			if ( globalValue ) {
 				return globalValue;
 			}
 		}
-
-		const controlValue = this.settings.get( name );
-
-		if ( controlValue ) {
-			return controlValue;
-		}
-
-		return this.getGlobalDefault( name );
+		return localValue  || this.getGlobalDefault( name );
 	}
 
 	getGlobalKey( name ) {
