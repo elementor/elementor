@@ -103,6 +103,12 @@ class Post_Type extends Base {
 
 		$new_document->import( $post_data );
 
+		if ( $post_settings['thumbnail'] ) {
+			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [ 'url' => $post_settings['thumbnail'] ] );
+
+			set_post_thumbnail( $new_document->get_main_post(), $attachment['id'] );
+		}
+
 		return $new_document->get_main_id();
 	}
 }
