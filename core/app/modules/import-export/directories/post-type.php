@@ -12,6 +12,10 @@ class Post_Type extends Base {
 
 	private $post_type;
 
+	private $show_page_on_front;
+
+	private $page_on_front_id;
+
 	protected function get_name() {
 		return $this->post_type;
 	}
@@ -20,6 +24,10 @@ class Post_Type extends Base {
 		parent::__construct( $iterator, $parent );
 
 		$this->post_type = $post_type;
+
+		if ( 'page' === $post_type ) {
+			$this->init_page_on_front_data();
+		}
 	}
 
 	public function export() {
@@ -47,12 +55,18 @@ class Post_Type extends Base {
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
 
-			$manifest_data[ $post->ID ] = [
+			$post_manifest_data = [
 				'title' => $post->post_title,
 				'doc_type' => $document->get_name(),
 				'thumbnail' => get_the_post_thumbnail_url( $post ),
 				'url' => get_permalink( $post ),
 			];
+
+			if ( $post->ID === $this->page_on_front_id ) {
+				$post_manifest_data['show_on_front'] = true;
+			}
+
+			$manifest_data[ $post->ID ] = $post_manifest_data;
 
 			$this->exporter->add_json_file( $post->ID, $document->get_export_data() );
 		}
@@ -109,6 +123,20 @@ class Post_Type extends Base {
 			set_post_thumbnail( $new_document->get_main_post(), $attachment['id'] );
 		}
 
-		return $new_document->get_main_id();
+		$new_id = $new_document->get_main_id();
+
+		if ( $this->show_page_on_front && ! empty( $post_settings['show_on_front'] ) ) {
+			update_option( 'page_on_front', $new_id );
+		}
+
+		return $new_id;
+	}
+
+	private function init_page_on_front_data() {
+		$this->show_page_on_front = 'page' === get_option( 'show_on_front' );
+
+		if ( $this->show_page_on_front && $this->exporter ) {
+			$this->page_on_front_id = (int) get_option( 'page_on_front' );
+		}
 	}
 }
