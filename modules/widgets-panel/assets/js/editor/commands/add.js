@@ -2,25 +2,25 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Add extends CommandBase {
 	async apply( args = {} ) {
-		const widget = args.widget ?? '';
+		const widgetId = args.widget ?? '';
 
-		if ( ! widget.length ) {
+		if ( ! widgetId.length ) {
 			return false;
 		}
 
-		const result = await $e.data.create( `panel-favorites/favorites?id=${ widget }`, {} );
+		const result = await $e.data.create( `panel-favorites/favorites?id=${ widgetId }`, {} );
 		if ( result.data ) {
 			// Get the categories of widget from front-end
-			const widgets = elementor.widgetsCache[ `${ widget }` ];
-			if ( widgets ) {
-				if ( ! widgets.hasOwnProperty( 'categories' ) ) {
-					widgets.categories = [];
+			const widget = elementor.widgetsCache[ `${ widgetId }` ];
+			if ( widget ) {
+				if ( ! widget.hasOwnProperty( 'categories' ) ) {
+					widget.categories = [];
 				}
 				// Get element position in array
-				const elementExists = widgets.categories.includes( 'favorites' );
+				const categoryExists = widget.categories.includes( 'favorites' );
 				// Check: if element not exists in array - add it to array
-				if ( ! elementExists ) {
-					widgets.categories.push( 'favorites' );
+				if ( ! categoryExists ) {
+					widget.categories.push( 'favorites' );
 					$e.route( 'panel/elements/categories', { refresh: true } );
 				}
 			}

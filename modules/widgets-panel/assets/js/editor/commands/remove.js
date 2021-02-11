@@ -2,21 +2,21 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Remove extends CommandBase {
 	async apply( args ) {
-		const widget = args.widget ?? '';
+		const widgetId = args.widget ?? '';
 
-		if ( ! widget.length ) {
+		if ( ! widgetId.length ) {
 			return false;
 		}
 
-		const result = await $e.data.delete( `panel-favorites/favorites?id=${ widget }`, {} );
+		const result = await $e.data.delete( `panel-favorites/favorites?id=${ widgetId }`, {} );
 		if ( result.data ) {
 			// Get the categories of widget from front-end
-			const widgets = elementor.widgetsCache[ widget ].categories;
+			const widgetCategories = elementor.widgetsCache[ widgetId ].categories;
 			// Get element position in array
-			const elementPosition = widgets.indexOf( 'favorites' );
+			const categoryPosition = widgetCategories.indexOf( 'favorites' );
 			// Check: if element in array - remove the element, else do nothing
-			if ( -1 !== elementPosition ) {
-				widgets.splice( elementPosition, 1 );
+			if ( -1 !== categoryPosition ) {
+				widgetCategories.splice( categoryPosition, 1 );
 				$e.route( 'panel/elements/categories', { refresh: true } );
 			}
 		}
