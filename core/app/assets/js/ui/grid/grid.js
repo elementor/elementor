@@ -1,3 +1,5 @@
+import Utils from 'elementor-app/utils/utils.js';
+
 import './grid.scss';
 
 export default function Grid( props ) {
@@ -23,7 +25,7 @@ export default function Grid( props ) {
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
-		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ getStyle() } className={ Utils.arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);
