@@ -72,9 +72,13 @@ class Module extends BaseModule {
 
 			$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
 
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
+			try {
+				$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
 
-			$this->export->run();
+				$this->export->run();
+			} catch ( \Error $error ) {
+				wp_die( $error->getMessage() );
+			}
 		}
 	}
 
