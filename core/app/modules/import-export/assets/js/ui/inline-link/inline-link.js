@@ -1,8 +1,8 @@
 import Utils from 'elementor-app/utils/utils.js';
 
-import './info-link.scss';
+import './inline-link.scss';
 
-export default function InfoLink( props ) {
+export default function InlineLink( props ) {
 	const baseClassName = 'e-app-import-export-click-here',
 		classes = [ baseClassName, props.className ];
 
@@ -17,14 +17,14 @@ export default function InfoLink( props ) {
 	);
 }
 
-InfoLink.propTypes = {
+InlineLink.propTypes = {
 	className: PropTypes.string,
 	url: PropTypes.string,
 	target: PropTypes.string,
 	text: PropTypes.string,
 };
 
-InfoLink.defaultProps = {
+InlineLink.defaultProps = {
 	className: '',
 	target: '_blank',
 };

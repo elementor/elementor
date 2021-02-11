@@ -4,7 +4,7 @@ import { Context } from '../../../context/export/export-context';
 
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
-import InfoLink from '../../../ui/info-link/info-link';
+import InlineLink from '../../../ui/inline-link/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
@@ -16,7 +16,7 @@ export default function ExportComplete() {
 			</WizardFooter>
 		),
 		getDownloadLink = () => (
-			<InfoLink
+			<InlineLink
 				text={ __( 'Click Here', 'elementor' ) }
 				url={ exportContext.data.downloadURL }
 				target="_self"

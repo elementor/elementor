@@ -2,7 +2,7 @@ import React from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import InfoLink from '../../../ui/info-link/info-link';
+import InlineLink from '../../../ui/inline-link/inline-link';
 import ExportButton from './components/export-button/export-button';
 import KitContent from './components/kit-content/kit-content';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
@@ -14,7 +14,7 @@ export default function ExportKit() {
 			</WizardFooter>
 		),
 		getLearnMoreLink = () => (
-			<InfoLink
+			<InlineLink
 				text={ __( 'Learn More', 'elementor' ) }
 				url="https://go.elementor.com/app-what-are-kits"
 			/>

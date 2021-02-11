@@ -1,6 +1,6 @@
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
-import InfoLink from '../../../ui/info-link/info-link';
+import InlineLink from '../../../ui/inline-link/inline-link';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
@@ -19,7 +19,7 @@ export default function ImportSuccess() {
 				description={ __( 'You can find the components of this file in the Library.', 'elementor'  ) }
 				notice={ (
 					<>
-						<InfoLink
+						<InlineLink
 							text={ __( 'Click Here', 'elementor' ) }
 							url="https://go.elementor.com/app-what-are-kits"
 						/> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }

@@ -6,7 +6,7 @@ import { Context } from '../../../context/import/import-context';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
-import InfoLink from '../../../ui/info-link/info-link';
+import InlineLink from '../../../ui/inline-link/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 
@@ -21,7 +21,7 @@ export default function ImportKit() {
 			setIsImportFailed( false );
 		},
 		getLearnMoreLink = () => (
-			<InfoLink
+			<InlineLink
 				text={ __( 'Learn More', 'elementor' ) }
 				url="https://go.elementor.com/app-what-are-kits"
 			/>
