@@ -30,6 +30,10 @@ abstract class Iterator extends Base_Object {
 	}
 
 	public function __construct( array $settings ) {
+		if ( ! class_exists( '\ZipArchive' ) ) {
+			throw new \Error( 'ZipArchive module is not installed on the server. You must install this module to perform the process.' );
+		}
+
 		$this->set_settings( $settings );
 	}
 }

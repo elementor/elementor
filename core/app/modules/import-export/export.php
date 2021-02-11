@@ -15,10 +15,6 @@ class Export extends Iterator {
 	private $zip_archive;
 
 	private function init_zip_archive() {
-		if ( ! class_exists( '\ZipArchive' ) ) {
-			throw new \Error( 'ZipArchive module is not installed on the server. You must install this module to perform the export process.' );
-		}
-
 		$zip_archive = new \ZipArchive();
 
 		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
