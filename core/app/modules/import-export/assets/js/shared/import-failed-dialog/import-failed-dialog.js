@@ -1,14 +1,14 @@
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
-import useLink from '../../../../../../assets/js/hooks/use-link';
+import useAction from '../../../../../../assets/js/hooks/use-action';
 
 export default function ImportFailedDialog( props ) {
-	const { action } = useLink();
+	const action = useAction();
 
 	return (
 		<Dialog
-			title={ __( 'Import Failed', 'elementor' ) }
-			text={ __( 'We are sorry, but some problem accrued. Please try again. If the problem continues, contact our support.', 'elementor' ) }
+			title={ __( 'Something went wrong', 'elementor' ) }
+			text={ __( 'Nothing to worry about, just try again. Contact support if the problem continues.', 'elementor' ) }
 			approveButtonColor="primary"
 			approveButtonText={ __( 'Retry', 'elementor' ) }
 			approveButtonOnClick={ props.onRetry }
