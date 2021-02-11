@@ -22,4 +22,21 @@ class Module extends BaseModule {
 			'description' => __( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
 		];
 	}
+
+	/**
+	 * Scripts for module.
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script(
+			'color-thief',
+			$this->get_js_assets_url( 'color-thief', 'assets/lib/color-thief/' ),
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	public function __construct() {
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+	}
 }
