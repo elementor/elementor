@@ -78,8 +78,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<span class="elementor-screen-only"><?php echo __( 'History', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<!-- TODO: Change the icon to the new design once the css className has been determined -->
-		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
 			<?php echo __( 'Responsive Mode', 'elementor' ); ?>
 		</span>
