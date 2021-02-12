@@ -401,8 +401,8 @@ class WP_Exporter {
 			$result .= $this->indent( 3 ) . '<wp:term_id>' . (int) $t->term_id . '</wp:term_id>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:tag_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:tag_slug>' . PHP_EOL;
 			$result .= $this->wxr_tag_name( $t ) .
-			           $this->wxr_tag_description( $t ) .
-			           $this->wxr_term_meta( $t );
+						$this->wxr_tag_description( $t ) .
+						$this->wxr_term_meta( $t );
 
 			$result .= $this->indent( 2 ) . '</wp:tag>' . PHP_EOL;
 		}
@@ -427,8 +427,8 @@ class WP_Exporter {
 			$result .= $this->indent( 3 ) . '<wp:term_slug>' . $this->wxr_cdata( $t->slug ) . '</wp:term_slug>' . PHP_EOL;
 			$result .= $this->indent( 3 ) . '<wp:term_parent>' . $this->wxr_cdata( $t->parent ? $terms[ $t->parent ]->slug : '' ) . '</wp:term_parent>' . PHP_EOL;
 			$result .= $this->wxr_term_name( $t ) .
-			           $this->wxr_term_description( $t ) .
-			           $this->wxr_term_meta( $t );
+						$this->wxr_term_description( $t ) .
+						$this->wxr_term_meta( $t );
 
 			$result .= $this->indent( 2 ) . '</wp:term>' . PHP_EOL;
 		}
