@@ -249,10 +249,9 @@ class Widget_Button extends Widget_Base {
 					'default' => __( 'Default', 'elementor' ),
 					'flyover' => __( 'Flyover', 'elementor' ),
 					],
-				],
-				'selector' => [
-					'{{WRAPPER}} .elementor-button .elementor-flyover-icon{{VALUE}};',
-				],
+
+		'selector' => [
+			'{{WRAPPER}} .elementor-button .elementor-flyover-icon{{VALUE}};',
 			]
 		);
 
