@@ -9,7 +9,7 @@ export class ShowSwatches extends CommandBase {
 		this.pickerClass = 'elementor-element-color-picker';
 		this.pickerSelector = '.' + this.pickerClass;
 		this.container = null;
-		this.tmpImages = [];
+		this.backgroundImages = [];
 	}
 
 	validateArgs( args ) {
@@ -79,13 +79,13 @@ export class ShowSwatches extends CommandBase {
 		img.src = url;
 
 		// Push the image to the temporary images array.
-		this.tmpImages.push( img );
+		this.backgroundImages.push( img );
 	}
 
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
 		const images = [
-			...this.tmpImages,
+			...this.backgroundImages,
 			...this.container.view.$el[ 0 ].querySelectorAll( 'img' ),
 		];
 
@@ -108,7 +108,7 @@ export class ShowSwatches extends CommandBase {
 			} );
 		} );
 
-		this.tmpImages = [];
+		this.backgroundImages = [];
 	}
 
 	// Create the swatch.
