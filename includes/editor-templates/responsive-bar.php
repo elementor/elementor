@@ -12,29 +12,29 @@ $breakpoints = [
 	'desktop' => __( 'Desktop', 'elementor' ),
 ]; ?>
 
-<script type="text/template" id="tmpl-elementor-templates-responsive-top-bar">
-		<div class="e-mq-bar__col"></div>
-		<div class="e-mq-bar__col">
-			<div class="e-mq-switcher">
+<script type="text/template" id="tmpl-elementor-templates-responsive-bar">
+		<div class="e-responsive-bar__col"></div>
+		<div class="e-responsive-bar__col">
+			<div class="e-responsive-bar-switcher">
 				<?php foreach ( $breakpoints as $name => $label ) {
 					printf( '<input
 							type="radio"
 							name="breakpoint"
-							class="e-mq-switcher__option e-mq-switcher__option-%1$s"
-							id="e-mq-switch-%1$s"
+							class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
+							id="e-responsive-bar-switch-%1$s"
 							value="%1$s">
-					<label class="e-mq-switcher__label" for="e-mq-switch-%1$s" data-tooltip="%2$s">
+					<label class="e-responsive-bar-switcher__label" for="e-responsive-bar-switch-%1$s" data-tooltip="%2$s">
 						<i class="eicon-device-%1$s" aria-hidden="true"></i>
 						<span class="screen-reader-text">%2$s</span>
 					</label>', $name, $label ); } ?>
 			</div>
 		</div>
-		<div class="e-mq-bar__col">
-			<button class="e-mq-bar__settings-button e-mq-bar__button">
+		<div class="e-responsive-bar__col">
+			<button class="e-responsive-bar__settings-button e-responsive-bar__button">
 				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
-			<button class="e-mq-bar__close-button e-mq-bar__button">
+			<button class="e-responsive-bar__close-button e-responsive-bar__button">
 				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>

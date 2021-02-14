@@ -1037,7 +1037,7 @@ class Editor {
 			'templates',
 			'navigator',
 			'hotkeys',
-			'responsive-top-bar',
+			'responsive-bar',
 		];
 
 		foreach ( $template_names as $template_name ) {

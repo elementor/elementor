@@ -6,7 +6,7 @@
 	--e-is-device-mode: 1;
 }
 
-.e-responsive-top-bar {
+.e-responsive-bar {
 	position: fixed;
 	z-index: 1;
 	width: var(--e-preview-width);
@@ -14,8 +14,8 @@
 	top: calc(-40px + ( 40px * var(--e-is-device-mode)));
 }
 
-.e-mq { /* Just a prefix. There is no element with this className */
-	&-bar {
+.e-responsive-bar {
+	& {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -63,7 +63,7 @@
 			padding: 0 !important;
 			position: absolute;
 
-			+ .e-mq-switcher__label {
+			+ .e-responsive-bar-switcher__label {
 				display: block;
 				float: left;
 				position: relative;

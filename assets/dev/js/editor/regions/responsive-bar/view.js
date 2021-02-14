@@ -1,21 +1,21 @@
 export default class View extends Marionette.ItemView {
 	getTemplate() {
-		return '#tmpl-elementor-templates-responsive-top-bar';
+		return '#tmpl-elementor-templates-responsive-bar';
 	}
 
 	className() {
-		return 'e-mq-bar';
+		return 'e-responsive-bar';
 	}
 
 	ui() {
-		const prefix = '.e-mq-';
+		const prefix = '.' + this.className();
 
 		return {
-			switcherOption: prefix + 'switcher__option',
-			switcherLabel: prefix + 'switcher__label',
-			switcher: prefix + 'switcher',
-			closeButton: prefix + 'bar__close-button',
-			breakpointSettingsButton: prefix + 'bar__settings-button',
+			switcherOption: prefix + '-switcher__option',
+			switcherLabel: prefix + '-switcher__label',
+			switcher: prefix + '-switcher',
+			closeButton: prefix + '__close-button',
+			breakpointSettingsButton: prefix + '__settings-button',
 		};
 	}
 
