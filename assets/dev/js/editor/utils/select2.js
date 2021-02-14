@@ -61,14 +61,15 @@ export default class Select2 extends elementorModules.ViewModule {
 	extendBaseFunctionality() {
 		const config = this.select2.options.options;
 
-		if ( config.multiple ) {
+		// When select2 has ajax the selected items re-render multiple times and deletes the injected plus-button.
+		if ( config.multiple && ! config.ajax ) {
 			this.togglePlusButton();
 
 			this.addSelect2Events();
 		}
 	}
 
-	iniElements() {
+	initSelect2Elements() {
 		const select2InlineSearch = this.getSettings( 'selectors.select2InlineSearch' );
 
 		this.elements.$element = this.select2.$element;
@@ -87,7 +88,7 @@ export default class Select2 extends elementorModules.ViewModule {
 
 		this.select2 = $element.select2( options ).data( 'select2' );
 
-		this.iniElements();
+		this.initSelect2Elements();
 		this.extendBaseFunctionality();
 	}
 }
