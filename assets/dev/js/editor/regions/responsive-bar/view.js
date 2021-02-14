@@ -7,15 +7,6 @@ export default class View extends Marionette.ItemView {
 		return 'e-mq-bar';
 	}
 
-	templateHelpers() {
-		return {
-			title: this.getOption( 'title' ),
-			width: '',
-			height: '',
-			activeDevice: '',
-		};
-	}
-
 	ui() {
 		const prefix = '.e-mq-';
 
