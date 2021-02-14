@@ -10,8 +10,6 @@ export class ShowSwatches extends CommandBase {
 		this.pickerSelector = '.' + this.pickerClass;
 		this.container = null;
 		this.tmpImages = [];
-
-		this.COLORS_LIMIT = 5;
 	}
 
 	apply( args ) {
@@ -152,6 +150,8 @@ export class ShowSwatches extends CommandBase {
 
 	// Check if the palette reached its limit.
 	reachedColorsLimit() {
-		return ( this.COLORS_LIMIT <= Object.keys( this.colors ).length );
+		const COLORS_LIMIT = 5;
+
+		return ( COLORS_LIMIT <= Object.keys( this.colors ).length );
 	}
 }
