@@ -35,12 +35,12 @@ $breakpoints = [
 		</div>
 		<div class="e-mq-bar__col">
 
-			<button class="e-mq-bar__settings-button">
+			<button class="e-mq-bar__settings-button e-mq-bar__button">
 				<span class="elementor-screen-only">Close</span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
 
-			<button class="e-mq-bar__close-button">
+			<button class="e-mq-bar__close-button e-mq-bar__button">
 				<span class="elementor-screen-only">Close</span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
