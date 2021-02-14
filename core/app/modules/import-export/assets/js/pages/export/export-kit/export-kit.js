@@ -21,7 +21,7 @@ export default function ExportKit() {
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
-			<section className="e-app-export">
+			<section className="e-app-export-kit">
 				<PageHeader
 					heading={ __( 'Export Kits', 'elementor' ) }
 					description={ [

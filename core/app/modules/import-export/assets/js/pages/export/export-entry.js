@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 
 import { Context } from '../../context/export/export-context';
 
@@ -8,19 +8,17 @@ import ExportComplete from './export-complete/export-complete';
 
 export default function ExportEntry() {
 	const exportContext = useContext( Context ),
-		[ isDownloading, setIsDownloading ] = useState( false );
+		exportCompleteImageUrl = elementorAppConfig.assets_url + 'images/go-pro.svg';
 
-	useEffect( () => {
-		if ( exportContext.data.downloadURL ) {
-			console.log( 'isDownloading - true' );
-			setIsDownloading( true );
-		}
-	}, [ exportContext.data.downloadURL ] );
-
+	// The exportCompleteImageUrl should be preloaded because safari blocks external requests while downloading the file.
 	return (
 		<Layout type="export">
 			<section className="e-app-export">
-				{ isDownloading ? <ExportComplete /> : <ExportKit /> }
+				<link rel="preload" as="image" href={ exportCompleteImageUrl } />
+				{
+					exportContext.data.downloadURL ?
+						<ExportComplete imageUrl={ exportCompleteImageUrl } /> : <ExportKit />
+				}
 			</section>
 		</Layout>
 	);

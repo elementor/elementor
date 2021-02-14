@@ -1,14 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from '@reach/router';
-
 import { Context } from '../../../../../context/export/export-context';
 
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ExportButton() {
-	const [ isDownloading, setIsDownloading ] = useState( false ),
-		navigate = useNavigate(),
-		getDownloadUrl = ( exportContext, isDownloadAllowed ) => {
+	const getDownloadUrl = ( exportContext, isDownloadAllowed ) => {
 			if ( ! isDownloadAllowed ) {
 				return '';
 			}
@@ -23,12 +18,6 @@ export default function ExportButton() {
 			return exportURL + '&' + jQuery.param( exportData );
 	};
 
-	useEffect( () => {
-		if ( isDownloading ) {
-			navigate( 'export/complete' );
-		}
-	}, [ isDownloading ] );
-
 	return (
 		<Context.Consumer>
 			{
@@ -39,13 +28,12 @@ export default function ExportButton() {
 					return (
 						<Button
 							variant="contained"
-							text={ __( 'Export', 'elementor' ) }
+							text={ __( 'Export 7', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
 							url={ downloadURL }
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
 									exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadURL } );
-									setIsDownloading( true );
 								}
 							} }
 						/>

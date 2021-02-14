@@ -8,7 +8,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
-export default function ExportComplete() {
+export default function ExportComplete( props ) {
 	const exportContext = useContext( Context ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
@@ -24,7 +24,7 @@ export default function ExportComplete() {
 	return (
 		<Layout type="export" footer={ getFooter() }>
 			<WizardStep
-				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
+				image={ props.imageUrl }
 				heading={ __( 'Your export is ready!', 'elementor' ) }
 				description={
 					<>
@@ -42,3 +42,7 @@ export default function ExportComplete() {
 		</Layout>
 	);
 }
+
+ExportComplete.propTypes = {
+	imageUrl: PropTypes.string,
+};
