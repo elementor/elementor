@@ -93,7 +93,7 @@ export class ShowSwatches extends CommandBase {
 			const colorThief = new ColorThief();
 			const palette =	colorThief.getPalette( img );
 
-			// add the palette to the colors array.
+			// Add the palette to the colors array.
 			palette.forEach( ( color, index ) => {
 				const hex = Utils.rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 
