@@ -25,6 +25,9 @@ export class ShowSwatches extends CommandBase {
 
 		this.extractColorsFromSettings();
 
+		// Hack to wait for the images to load before picking the colors from it
+		// when extracting colors from a background image control.
+		// TODO: Find a better solution.
 		setTimeout( () => {
 			this.extractColorsFromImages();
 			this.initSwatch();
