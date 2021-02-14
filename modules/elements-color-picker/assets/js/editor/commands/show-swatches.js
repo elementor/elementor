@@ -85,8 +85,8 @@ export class ShowSwatches extends CommandBase {
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
 		const images = [
-			...this.backgroundImages,
 			...this.container.view.$el[ 0 ].querySelectorAll( 'img' ),
+			...this.backgroundImages,
 		];
 
 		images.forEach( ( img, i ) => {
