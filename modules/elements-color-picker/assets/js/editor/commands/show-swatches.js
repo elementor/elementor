@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import Utils from '../../../../../../core/app/assets/js/utils/utils';
+import Utils from 'elementor/core/app/assets/js/utils/utils';
 
 export class ShowSwatches extends CommandBase {
 	constructor( args ) {
