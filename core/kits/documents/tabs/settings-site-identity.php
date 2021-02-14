@@ -116,7 +116,7 @@ class Settings_Site_Identity extends Tab_Base {
 
 	public function on_save( $data ) {
 		if (
-			! isset( $data['settings'] ) ||
+			! isset( $data['settings']['post_status'] ) ||
 			Document::STATUS_PUBLISH !== $data['settings']['post_status'] ||
 			// Should check for the current action to avoid infinite loop
 			// when updating options like: "blogname" and "blogdescription".
