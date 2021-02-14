@@ -270,23 +270,28 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		foreach ( Plugin::$instance->breakpoints->get_config() as $breakpoint_key => $breakpoint ) {
+		$breakpoints_config = Plugin::$instance->breakpoints->get_config();
+
+		foreach ( $breakpoints_config as $breakpoint_key => $breakpoint ) {
 			$prefix = 'viewport_';
 			$breakpoint_setting_key = $prefix . $breakpoint_key;
+			$breakpoint_value_to_update = is_numeric( $data['settings'][ $breakpoint_setting_key ] ) ? $data['settings'][ $breakpoint_setting_key ] : $breakpoints_config[ $breakpoint_key ]['value'];
 
 			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
 
-				// For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
-				// old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
-				// is added is because the old breakpoints system was min-width based, and the new system introduced in
-				// Elementor v3.2.0 is max-width based.
+				/**
+				 * For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
+				 * old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
+				 * is added is because the old breakpoints system was min-width based, and the new system introduced in
+				 * Elementor v3.2.0 is max-width based.
+				 */
 				if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_key ) {
-					$data['settings'][ $prefix . 'md' ] = $data['settings'][ $breakpoint_setting_key ] + 1;
+					$data['settings'][ $prefix . 'md' ] = $breakpoint_value_to_update + 1;
 				}
 
 				if ( Breakpoints_Manager::BREAKPOINT_KEY_TABLET === $breakpoint_key ) {
-					$data['settings'][ $prefix . 'lg' ] = $data['settings'][ $breakpoint_setting_key ] + 1;
+					$data['settings'][ $prefix . 'lg' ] = $breakpoint_value_to_update + 1;
 				}
 			}
 		}
