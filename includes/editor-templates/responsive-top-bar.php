@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-//$breakpoints = Responsive::get_breakpoints();
+// TODO: Use API data instead of this static array, once it is available.
 $breakpoints = [
 	'mobile' => __( 'Mobile', 'elementor' ),
 	'tablet' => __( 'Tablet', 'elementor' ),
