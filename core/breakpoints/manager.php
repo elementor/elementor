@@ -168,13 +168,11 @@ class Manager extends Module {
 		/** @var Breakpoint $current_device_breakpoint */
 		$current_device_breakpoint = $breakpoints[ $device_name ];
 
-		if ( ! $this->breakpoint_keys ) {
-			// Since this method is called multiple times, usage of class variables is to memory and processing time.
-			// Get only the keys for active breakpoints.
-			$this->breakpoint_keys = array_keys( $breakpoints_config );
-		}
+		// Since this method is called multiple times, usage of class variables is to memory and processing time.
+		// Get only the keys for active breakpoints.
+		$breakpoint_keys = array_keys( $breakpoints_config );
 
-		if ( $this->breakpoint_keys[0] === $device_name ) {
+		if ( $breakpoint_keys[0] === $device_name ) {
 			// For the lowest breakpoint, the min point is always 0.
 			$min_breakpoint = 0;
 		} elseif ( 'min' === $current_device_breakpoint->get_direction() ) {
@@ -182,10 +180,10 @@ class Manager extends Module {
 			$min_breakpoint = $current_device_breakpoint->get_value();
 		} else {
 			// This block handles all other devices.
-			$device_name_index = array_search( $device_name, $this->breakpoint_keys, true );
+			$device_name_index = array_search( $device_name, $breakpoint_keys, true );
 
 			$previous_index = $device_name_index - 1;
-			$previous_breakpoint_key = $this->breakpoint_keys[ $previous_index ];
+			$previous_breakpoint_key = $breakpoint_keys[ $previous_index ];
 			/** @var Breakpoint $previous_breakpoint */
 			$previous_breakpoint = $breakpoints[ $previous_breakpoint_key ];
 
