@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Responsive\Responsive;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,12 +10,10 @@ $breakpoints = [
 	'mobile' => __( 'Mobile', 'elementor' ),
 	'tablet' => __( 'Tablet', 'elementor' ),
 	'desktop' => __( 'Desktop', 'elementor' ),
-];
-?>
-<script type="text/template" id="tmpl-elementor-templates-responsive-top-bar">
-		<div class="e-mq-bar__col">
+]; ?>
 
-		</div>
+<script type="text/template" id="tmpl-elementor-templates-responsive-top-bar">
+		<div class="e-mq-bar__col"></div>
 		<div class="e-mq-bar__col">
 			<div class="e-mq-switcher">
 				<?php foreach ( $breakpoints as $name => $label ) {
@@ -34,14 +30,12 @@ $breakpoints = [
 			</div>
 		</div>
 		<div class="e-mq-bar__col">
-
 			<button class="e-mq-bar__settings-button e-mq-bar__button">
-				<span class="elementor-screen-only">Close</span>
+				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
-
 			<button class="e-mq-bar__close-button e-mq-bar__button">
-				<span class="elementor-screen-only">Close</span>
+				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
 		</div>
