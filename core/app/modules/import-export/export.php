@@ -23,7 +23,7 @@ class Export extends Iterator {
 	}
 
 	private function get_archive_file_name() {
-		return __DIR__ . DIRECTORY_SEPARATOR . 'elementor-temp-kit.zip';
+		return $this->get_temp_dir() . 'elementor-temp-kit.zip';
 	}
 
 	final public function run() {
