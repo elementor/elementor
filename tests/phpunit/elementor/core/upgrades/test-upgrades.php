@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -434,5 +435,94 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertFalse( $is_old_feature_active );
 
 		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
+	}
+
+	public function test_v_3_2_0_migrate_breakpoints_to_new_system() {
+		$updater = $this->create_updater();
+
+		// Set admin user so the kit will be able to be edited.
+		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $user_id );
+
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Set a custom value for 'viewport_md' before running the upgrade, to test the migration in case the user has
+		// a saved custom breakpoint value.
+		$kit_settings = $kit->get_settings();
+		$kit_settings['viewport_md'] = 600;
+
+		$page_settings_manager = Settings_Manager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $kit_settings, $kit_id );
+
+		// Refresh kit after update.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		// Create revisions.
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
+		$upgrade_iterations = 1;
+
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
+			$kit->save( [
+				'elements' => [],
+			] );
+		}
+
+		$updater->set_limit( $this->query_limit );
+
+		// Run upgrade.
+		while ( Upgrades::_v_3_2_0_migrate_breakpoints_to_new_system( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $this->revisions_count ) {
+				break;
+			}
+		}
+
+		// Assert iterations.
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+		$kit_settings = $kit->get_settings();
+
+		// Mobile - Handle case where the values are empty (no breakpoints are saved).
+		$expected_value = is_numeric( $kit_settings['viewport_md'] ) ? $kit_settings['viewport_md'] - 1 : $kit_settings['viewport_md'];
+		$actual_value = $kit_settings['viewport_mobile'];
+
+		$this->assertEquals( $expected_value, $actual_value );
+
+		// Tablet - Handle case where the values are empty (no breakpoints are saved).
+		$expected_value = is_numeric( $kit_settings['viewport_lg'] ) ? $kit_settings['viewport_lg'] - 1 : $kit_settings['viewport_lg'];
+		$actual_value = $kit_settings['viewport_tablet'];
+
+		$this->assertEquals( $expected_value, $actual_value );
+
+		// Assert revisions upgraded.
+		$revisions_ids = wp_get_post_revisions( $kit_id, [
+			'fields' => 'ids',
+		] );
+
+		foreach ( $revisions_ids as $revision_id ) {
+			$revision = Plugin::$instance->documents->get( $revision_id, false );
+			$revision_settings = $revision->get_settings();
+
+			// Mobile
+			$expected_value = is_numeric( $revision_settings['viewport_md'] ) ? $revision_settings['viewport_md'] - 1 : $revision_settings['viewport_md'];
+			$actual_value = $revision_settings['viewport_mobile'];
+
+			$this->assertEquals( $expected_value, $actual_value );
+
+			// Tablet
+			$expected_value = is_numeric( $revision_settings['viewport_lg'] ) ? $revision_settings['viewport_lg'] - 1 : $revision_settings['viewport_lg'];
+			$actual_value = $revision_settings['viewport_tablet'];
+
+			$this->assertEquals( $expected_value, $actual_value );
+		}
 	}
 }
