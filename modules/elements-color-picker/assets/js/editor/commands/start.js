@@ -15,7 +15,7 @@ export class Start extends CommandBase {
 		} );
 
 		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
-			$e.run( 'elements-color-picker/end', { value: this.component.currentPicker.initialColor } );
+			$e.run( 'elements-color-picker/end' );
 		} );
 	}
 }
