@@ -42,9 +42,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 			$breakpoint_config = $breakpoint->get_config();
 
 			$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $breakpoint_config );
-			$this->assertIsInt( $breakpoint_config['value'] );
-			$this->assertIsString( $breakpoint_config['direction'] );
-			$this->assertIsBool( $breakpoint_config['is_enabled'] );
+			$this->assertTrue( is_numeric( $breakpoint_config['value'] ) );
+			$this->assertTrue( is_string( $breakpoint_config['direction'] ) );
+			$this->assertTrue( is_bool( $breakpoint_config['is_enabled'] ) );
 		}
 	}
 
