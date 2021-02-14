@@ -16,7 +16,7 @@ export default function ImportSuccess() {
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
 				heading={ __( 'Your file is ready!', 'elementor' ) }
-				description={ __( 'You can find the components of this file in the Library.', 'elementor'  ) }
+				description={ __( 'You can find the components of this file in the Library.', 'elementor' ) }
 				notice={ (
 					<>
 						<InlineLink url="https://go.elementor.com/app-what-are-kits">
