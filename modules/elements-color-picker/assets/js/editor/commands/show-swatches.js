@@ -12,11 +12,11 @@ export class ShowSwatches extends CommandBase {
 		this.tmpImages = [];
 	}
 
-	apply( args ) {
-		if ( ! args.id ) {
-			return;
-		}
+	validateArgs( args ) {
+		this.requireArgument( 'id', args );
+	}
 
+	apply( args ) {
 		this.container = elementor.getContainer( args.id );
 
 		if ( this.container.view.$el.find( this.pickerSelector ).length ) {
