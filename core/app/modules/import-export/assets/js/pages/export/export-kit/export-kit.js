@@ -2,9 +2,9 @@ import React from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import InlineLink from '../../../ui/inline-link/inline-link';
 import ExportButton from './components/export-button/export-button';
 import KitContent from './components/kit-content/kit-content';
+import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ExportKit() {

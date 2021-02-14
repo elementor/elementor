@@ -31,4 +31,4 @@
 @import "../js/ui/atoms/drag-drop.scss";
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
-@import "../../modules/import-export/assets/js/ui/inline-link/inline-link.scss";
+@import "../js/ui/molecules/inline-link.scss";

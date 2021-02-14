@@ -4,7 +4,7 @@ import { Context } from '../../../context/export/export-context';
 
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
-import InlineLink from '../../../ui/inline-link/inline-link';
+import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
