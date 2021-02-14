@@ -876,25 +876,34 @@ class Upgrades {
 		}
 	}
 
-	public static function v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
+	public static function _v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
-			$kit_settings = $kit->get_meta( $meta_key );
+			$kit_settings = $kit->get_settings();
 
-			$old_mobile_option_key = 'viewport_md';
-			$old_tablet_option_key = 'viewport_lg';
+			$prefix = 'viewport_';
+			$old_mobile_option_key = $prefix . 'md';
+			$old_tablet_option_key = $prefix . 'lg';
 
 			$old_breakpoint_values = [
 				$old_mobile_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_mobile_option_key ),
 				$old_tablet_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_tablet_option_key ),
 			];
 
-			// 1px is reduced because the new breakpoints system is based on max-width, as opposed to the old breakpoints
-			// system that worked based on min-width.
-			$kit_settings[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = $old_breakpoint_values[ $old_mobile_option_key ] - 1;
-			$kit_settings[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] = $old_breakpoint_values[ $old_tablet_option_key ] - 1;
+			$new_breakpoint_values = $old_breakpoint_values;
+
+			// Breakpoint values are either a number, or an empty string (empty setting).
+			foreach ( $new_breakpoint_values as $new_breakpoint_key => $new_breakpoint_value ) {
+				if ( '' !== $new_breakpoint_value ) {
+					// If the saved breakpoint value is a number, 1px is reduced because the new breakpoints system is
+					// based on max-width, as opposed to the old breakpoints system that worked based on min-width.
+					$new_breakpoint_values[ $new_breakpoint_key ] = $new_breakpoint_value - 1;
+				}
+			}
+
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = $new_breakpoint_values[ $old_mobile_option_key ];
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] = $new_breakpoint_values[ $old_tablet_option_key ];
 
 			// Populate the 'active_breakpoints' Select2 control with legacy breakpoint keys as default values, to make
 			// sure they are active in the new system.
