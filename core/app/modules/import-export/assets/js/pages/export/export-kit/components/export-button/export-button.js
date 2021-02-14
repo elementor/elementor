@@ -28,7 +28,7 @@ export default function ExportButton() {
 					return (
 						<Button
 							variant="contained"
-							text={ __( 'Export 7', 'elementor' ) }
+							text={ __( 'Export', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
 							url={ downloadURL }
 							onClick={ () => {
