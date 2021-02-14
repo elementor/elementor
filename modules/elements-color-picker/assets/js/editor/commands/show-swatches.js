@@ -6,7 +6,7 @@ export class ShowSwatches extends CommandBase {
 		super( args );
 
 		this.colors = {};
-		this.pickerClass = 'elementor-element-color-picker';
+		this.pickerClass = 'e-element-color-picker';
 		this.pickerSelector = '.' + this.pickerClass;
 		this.container = null;
 		this.backgroundImages = [];
@@ -124,7 +124,7 @@ export class ShowSwatches extends CommandBase {
 
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			$picker.append( jQuery( `<div></div>`, {
-				class: 'elementor-element-color-picker__swatch',
+				class: `${ this.pickerClass }__swatch`,
 				title: `${ control }: ${ value }`,
 				css: {
 					'--color': value,

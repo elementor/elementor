@@ -4,7 +4,7 @@ export class End extends CommandBase {
 	apply() {
 		elementor.$previewContents.find( 'body' ).removeClass( 'elementor-editor__ui-state__color-picker' );
 
-		elementor.$previewContents.find( '.elementor-element-color-picker' ).remove();
+		elementor.$previewContents.find( '.e-element-color-picker' ).remove();
 
 		elementor.$previewContents.off( 'mouseenter.color-picker' );
 
