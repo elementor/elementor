@@ -114,6 +114,12 @@ export class ShowSwatches extends CommandBase {
 	// Create the swatch.
 	initSwatch() {
 		const count = Object.entries( this.colors ).length;
+
+		// Don't render the picker when there are no extracted colors.
+		if ( 0 === count ) {
+			return;
+		}
+
 		const $picker = jQuery( '<div></div>', {
 			class: this.pickerClass,
 			css: {

@@ -16,10 +16,6 @@
 		border: 2px solid #FFF;
 		transition: opacity .3s, left .05s, top .05s, width .3s;
 
-		&[data-count='0'] {
-			display: none;
-		}
-
 		&[data-count='1']:hover {
 			width: calc( 2 * var( --swatch-size ) );
 		}
