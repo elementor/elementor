@@ -46,11 +46,6 @@ export class ShowSwatches extends CommandBase {
 				return;
 			}
 
-			// Throw non-active controls.
-			if ( ! elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) ) {
-				return;
-			}
-
 			// Handle background images.
 			if ( control.startsWith( '_background_image' ) ) {
 				this.addTempBackgroundImage( this.container.getSetting( control ) );
@@ -58,6 +53,11 @@ export class ShowSwatches extends CommandBase {
 
 			// Throw non-color controls.
 			if ( 'color' !== this.container.controls[ control ]?.type ) {
+				return;
+			}
+
+			// Throw non-active controls.
+			if ( ! elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) ) {
 				return;
 			}
 
