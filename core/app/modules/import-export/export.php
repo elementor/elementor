@@ -27,6 +27,8 @@ class Export extends Iterator {
 	}
 
 	final public function run() {
+		ob_start();
+
 		$this->init_zip_archive();
 
 		$root_directory = new Root( $this );
@@ -42,6 +44,9 @@ class Export extends Iterator {
 		$file_name = $this->get_archive_file_name();
 
 		$downloaded_file_name = 'elementor-kit-' . $manifest_data['name'] . '.zip';
+
+		// Clear any output before sending the file
+		ob_end_clean();
 
 		header( 'Content-type: application/zip' );
 
