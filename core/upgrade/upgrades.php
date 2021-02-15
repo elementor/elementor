@@ -907,10 +907,12 @@ class Upgrades {
 
 			// Populate the 'active_breakpoints' Select2 control with legacy breakpoint keys as default values, to make
 			// sure they are active in the new system.
-			$kit_settings[ Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID ] = [
-				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
-				Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-			];
+			if ( empty( $kit_settings[ Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID ] ) ) {
+				$kit_settings[ Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID ] = [
+					$prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
+					$prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+				];
+			}
 
 			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
 			$page_settings_manager->save_settings( $kit_settings, $kit_id );
