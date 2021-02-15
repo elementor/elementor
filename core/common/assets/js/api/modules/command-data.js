@@ -208,9 +208,14 @@ export default class CommandData extends CommandBase {
 	 */
 	onCatchApply( e ) {
 		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
-		const status = e?.data?.status || 0,
-			dataError = Object.values( errors )
-				.find( ( error ) => error.getStatus() === status );
+		const status = e?.data?.status || 0;
+
+		let dataError = Object.values( errors )
+			.find( ( error ) => error.getStatus() === status );
+
+		if ( ! dataError ) {
+			dataError = errors.DefaultError;
+		}
 
 		e = dataError.create( e.message, e.code, e.data || [] );
 
