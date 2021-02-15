@@ -41,7 +41,7 @@ export default function ExportComplete() {
 				}
 				notice={ (
 					<>
-						{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to dawnload', 'elementor' ) }
+						{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to download', 'elementor' ) }
 					</>
 				) }
 			/>
