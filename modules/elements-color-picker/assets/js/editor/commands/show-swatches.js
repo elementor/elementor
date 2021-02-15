@@ -66,9 +66,15 @@ export class ShowSwatches extends CommandBase {
 				return;
 			}
 
-			const value = this.container.getSetting( control );
+			let value = this.container.getSetting( control );
 
 			if ( value && ! Object.values( this.colors ).includes( value ) ) {
+				// If it's a global color, it will return a css variable which needs to be resolved to a HEX value.
+				if ( value.startsWith( 'var' ) ) {
+					value = value.replace( 'var(', '' ).replace( ')', '' ).trim();
+					value = getComputedStyle( this.container.view.$el[ 0 ] ).getPropertyValue( value );
+				}
+
 				this.colors[ control ] = value;
 			}
 		} );

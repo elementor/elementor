@@ -2,7 +2,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class ExitPreview extends CommandBase {
 	apply( args ) {
-		if ( ! this.component.currentPicker.initialColor ) {
+		if ( null === this.component.currentPicker.initialColor ) {
 			return;
 		}
 
