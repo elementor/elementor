@@ -70,9 +70,11 @@ export class ShowSwatches extends CommandBase {
 
 			if ( value && ! Object.values( this.colors ).includes( value ) ) {
 				// If it's a global color, it will return a css variable which needs to be resolved to a HEX value.
-				if ( value.startsWith( 'var' ) ) {
-					value = value.replace( 'var(', '' ).replace( ')', '' ).trim();
-					value = getComputedStyle( this.container.view.$el[ 0 ] ).getPropertyValue( value );
+				const pattern = /var\(([^)]+)\)/i;
+				const matches = value.match( pattern );
+
+				if ( matches ) {
+					value = getComputedStyle( this.container.view.$el[ 0 ] ).getPropertyValue( matches[ 1 ].trim() );
 				}
 
 				this.colors[ control ] = value;
