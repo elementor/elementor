@@ -167,6 +167,7 @@ class Icons_Manager {
 		if ( ! $is_test_mode && $add_suffix ) {
 			$url .= '.min';
 		}
+
 		return $url . '.' . $ext_type;
 	}
 
@@ -194,38 +195,35 @@ class Icons_Manager {
 
 	/**
 	 * get_font_awesome_svg
-	 * @param $icon_name
+	 * @param $icon array( 'value' => string, 'library' => string )
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_awesome_svg( $icon_name ) {
-		$icon_option_key = str_replace( ' fa-', '-', $icon_name );
+	public static function get_font_awesome_svg( $icon ) {
+		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );
+
+		// Load the SVG from the database
 		$svg = get_option( $icon_option_key );
 
 		if ( ! empty( $svg ) ) {
 			return $svg;
 		}
 
-		preg_match( '/fa(.*) fa-/', $icon_name, $matches );
-		$icon_style = str_replace( ' fa-', '', $matches[0] );
-		$icon_styles = [
-			'fab' => 'brands',
-			'far' => 'regular',
-			'fas' => 'solid',
-		];
-		$icon_name = str_replace( $matches[0], '', $icon_name );
-		$icons_base_url = plugin_dir_path( ELEMENTOR__FILE__ ) . 'assets/lib/font-awesome/js/';
-		$icon_list_url = $icons_base_url . $icon_styles[ $icon_style ] . '.json';
+		// On first use, load the SVG from the Font Awesome json file
+		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
+		$icon_name = str_replace( $matches[0], '', $icon['value'] );
+		$filename = str_replace( 'fa-', '', $icon['library'] );
+		$icon_list_url = self::get_fa_asset_url( $filename, 'json', false );
 		$icon_list = json_decode( file_get_contents( $icon_list_url ), true );
-		$icon_data = $icon_list['icons'][ $icon_name ];
+		$icon_data = $icon_list[ 'icons' ][ $icon_name ];
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
-		<path d="' . $icon_data[4] . '"></path></svg>';
+					<path d="' . $icon_data[4] . '"></path>
+				</svg>';
 
-		if ( ! empty( $svg ) ) {
-			update_option( $icon_option_key, $svg );
-		}
+		// On first use, Save the SVG in the database for later use
+		update_option( $icon_option_key, $svg );
 
-		return '<i>' . $svg . '</i>';
+		return $svg;
 	}
 
 	private static function render_svg_icon( $value ) {
@@ -242,8 +240,9 @@ class Icons_Manager {
 			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
+		$content = '';
 		if ( self::is_font_awesome_inline() ) {
-			return self::get_font_awesome_svg( $icon['value'] );
+			$content = self::get_font_awesome_svg( $icon );
 		}
 
 		if ( empty( $attributes['class'] ) ) {
@@ -256,7 +255,7 @@ class Icons_Manager {
 			}
 		}
 
-		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
+		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '>' . $content . '</' . $tag . '>';
 	}
 
 	/**
@@ -277,6 +276,7 @@ class Icons_Manager {
 		// handler SVG Icon
 		if ( 'svg' === $icon['library'] ) {
 			$output = self::render_svg_icon( $icon['value'] );
+		} elseif ( 'eicon' === $icon['library'] ) {
 		} else {
 			$output = self::render_icon_html( $icon, $attributes, $tag );
 		}
@@ -502,10 +502,10 @@ class Icons_Manager {
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 
-		if ( ! self::is_font_awesome_inline() && ! self::is_migration_allowed() ) {
+		if ( ! self::is_font_awesome_inline() ) {
 			add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
-			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 		}
+			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
