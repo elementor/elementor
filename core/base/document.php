@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
@@ -186,12 +187,22 @@ abstract class Document extends Controls_Stack {
 		return get_called_class();
 	}
 
+	public static function get_create_url() {
+		$base_create_url = Plugin::$instance->documents->get_create_new_post_url( Source_Local::CPT );
+
+		return add_query_arg( [ 'template_type' => static::get_type() ], $base_create_url );
+	}
+
+	public function get_name() {
+		return static::get_type();
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_unique_name() {
-		return $this->get_name() . '-' . $this->post->ID;
+		return static::get_type() . '-' . $this->post->ID;
 	}
 
 	/**
