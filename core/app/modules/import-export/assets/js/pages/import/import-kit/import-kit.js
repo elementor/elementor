@@ -21,7 +21,7 @@ export default function ImportKit() {
 			setIsImportFailed( false );
 		},
 		getLearnMoreLink = () => (
-			<InlineLink	url="https://go.elementor.com/app-what-are-kits">
+			<InlineLink	url="https://go.elementor.com/app-what-are-kits" italic>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);

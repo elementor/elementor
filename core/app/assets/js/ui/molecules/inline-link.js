@@ -7,15 +7,20 @@ import './inline-link.scss';
 
 export default function InlineLink( props ) {
 	const baseClassName = 'eps-inline-link',
-		colorClassName = `${ baseClassName }__color--${ props.color || 'link' }`,
-		classes = [ baseClassName, props.className, colorClassName ],
+		colorClassName = `${ baseClassName }--color-${ props.color }`,
+		underlineClassName = 'none' !== props.underline ? `${ baseClassName }--underline-${ props.underline }` : '',
+		italicClassName = props.italic ? `${ baseClassName }--italic` : '',
+		classes = [
+			baseClassName,
+			colorClassName,
+			underlineClassName,
+			italicClassName,
+			props.className,
+		],
 		className = Utils.arrayToClassName( classes ),
-		style = { textDecoration: props.decoration || 'underline' },
 		getRouterLink = () => (
 			<LocationProvider history={ router.appHistory }>
 				<Link
-					{ ...props }
-					style={ style }
 					to={ props.url }
 					className={ className }
 				>
@@ -25,12 +30,10 @@ export default function InlineLink( props ) {
 		),
 		getExternalLink = () => (
 			<a
-				{ ...props }
-				style={ style }
-				className={ className }
-				target={ props.target || '_blank' }
-				rel="noopener noreferrer"
 				href={ props.url }
+				target={ props.target }
+				rel={ props.rel }
+				className={ className }
 			>
 				{ props.children }
 			</a>
@@ -41,13 +44,20 @@ export default function InlineLink( props ) {
 
 InlineLink.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.string,
 	url: PropTypes.string,
 	target: PropTypes.string,
+	rel: PropTypes.string,
 	text: PropTypes.string,
 	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
-	decoration: PropTypes.string,
+	underline: PropTypes.oneOf( [ 'none', 'hover', 'always' ] ),
+	italic: PropTypes.bool,
 };
 
 InlineLink.defaultProps = {
 	className: '',
+	color: 'link',
+	underline: 'always',
+	target: '_blank',
+	rel: 'noopener noreferrer',
 };

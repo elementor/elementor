@@ -7,32 +7,42 @@ $eps-inline-link-color-disabled: theme-colors(disabled);
 
 .eps-inline-link {
 	color: var(--eps-inline-link-color);
-	font-style: italic;
 
-	&__color {
-		&--primary {
+	&--color {
+		&-primary {
 			--eps-inline-link-color: #{$eps-inline-link-color-primary};
 		}
 
-		&--secondary {
+		&-secondary {
 			--eps-inline-link-color: #{$eps-inline-link-color-secondary};
 		}
 
-		&--danger {
+		&-danger {
 			--eps-inline-link-color: #{$eps-inline-link-color-danger};
 		}
 
-		&--cta {
+		&-cta {
 			--eps-inline-link-color: #{$eps-inline-link-color-cta};
 		}
 
-		&--link {
+		&-link {
 			--eps-inline-link-color: #{$eps-inline-link-color-link};
 		}
 
-		&--disabled,
-		&[disabled] {
+		&-disabled {
 			--eps-inline-link-color: #{$eps-inline-link-color-disabled};
 		}
+	}
+
+	&--underline {
+		&-hover:hover,
+		&-always,
+		&-always:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&--italic {
+		font-style: italic;
 	}
 }

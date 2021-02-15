@@ -19,7 +19,7 @@ export default function ImportSuccess() {
 				description={ __( 'You can find the components of this file in the Library.', 'elementor' ) }
 				notice={ (
 					<>
-						<InlineLink url="https://go.elementor.com/app-what-are-kits">
+						<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
 							{ __( 'Click Here', 'elementor' ) }
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 					</>

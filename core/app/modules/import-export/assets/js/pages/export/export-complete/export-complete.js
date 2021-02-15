@@ -16,7 +16,7 @@ export default function ExportComplete( props ) {
 			</WizardFooter>
 		),
 		getDownloadLink = () => (
-			<InlineLink url={ exportContext.data.downloadURL } target="_parent">
+			<InlineLink url={ exportContext.data.downloadURL } target="_parent" italic>
 				{ __( 'Click Here', 'elementor' ) }
 			</InlineLink>
 		);
