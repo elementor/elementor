@@ -30,7 +30,7 @@ export default function ExportButton() {
 							variant="contained"
 							text={ __( 'Export', 'elementor' ) }
 							color={ isDownloadAllowed ? 'primary' : 'disabled' }
-							url={ downloadURL }
+							url="complete"
 							onClick={ () => {
 								if ( isDownloadAllowed ) {
 									exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadURL } );
