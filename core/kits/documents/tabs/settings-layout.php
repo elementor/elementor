@@ -21,6 +21,18 @@ class Settings_Layout extends Tab_Base {
 		return __( 'Layout', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-layout-settings';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-layout';
+	}
+
 	protected function register_tab_controls() {
 		$default_breakpoints = Responsive::get_default_breakpoints();
 

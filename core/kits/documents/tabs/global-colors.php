@@ -24,6 +24,18 @@ class Global_Colors extends Tab_Base {
 		return __( 'Global Colors', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'global';
+	}
+
+	public function get_icon() {
+		return 'eicon-global-colors';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-colors';
+	}
+
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_global_colors',

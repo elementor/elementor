@@ -68,7 +68,8 @@ class Module extends Base_Module {
 			->get_plugins()
 			->except( [
 				'elementor/elementor.php',
-				'elementor-dev/elementor-dev.php',
+				'elementor-beta/elementor-beta.php',
+				'block-builder/block-builder.php',
 			] )
 			->filter( function ( array $data ) {
 				return false !== strpos( strtolower( $data['Name'] ), 'elementor' );
