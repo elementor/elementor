@@ -196,7 +196,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
 		if ( elementSettings.background_privacy_mode ) {
-			playerOptions.host = 'http://www.youtube-nocookie.com';
+			playerOptions.host = 'https://www.youtube-nocookie.com';
 			playerOptions.origin = window.location.hostname;
 		}
 
