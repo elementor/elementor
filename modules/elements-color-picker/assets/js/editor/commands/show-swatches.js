@@ -5,11 +5,6 @@ export class ShowSwatches extends CommandBase {
 	constructor( args ) {
 		super( args );
 
-		// Don't pick colors from the current widget.
-		if ( args.id === this.component.currentPicker.container.id ) {
-			return;
-		}
-
 		this.colors = {};
 		this.pickerClass = 'e-element-color-picker';
 		this.pickerSelector = '.' + this.pickerClass;
@@ -22,6 +17,11 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	apply( args ) {
+		// Don't pick colors from the current widget.
+		if ( args.id === this.component.currentPicker.container.id ) {
+			return;
+		}
+
 		this.container = elementor.getContainer( args.id );
 
 		if ( this.container.view.$el.find( this.pickerSelector ).length ) {
