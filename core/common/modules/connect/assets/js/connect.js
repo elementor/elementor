@@ -13,6 +13,9 @@ export default class extends elementorModules.ViewModule {
 				},
 			}, options );
 
+			const clickedUnderTab = $e.components.get( 'library' ).currentTab.split( '/' );
+			const tabName = clickedUnderTab[ clickedUnderTab.length - 1 ];
+
 			this.each( function() {
 				counter++;
 
@@ -21,7 +24,7 @@ export default class extends elementorModules.ViewModule {
 
 				$this.attr( {
 					target: '_blank',
-					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId,
+					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId + '&utm_source=editor-panel&utm_medium=wp-dash&utm_campaign=insert_' + tabName,
 				} );
 
 				elementorCommon.elements.$window
