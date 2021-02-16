@@ -40,17 +40,7 @@ class Frontend extends Base {
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
 			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys );
 
-			$is_max_point = 'MAX' === $placeholder_data[2];
-
-			if ( $is_max_point ) {
-				$breakpoint_index++;
-			}
-
 			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
-
-			if ( $is_max_point ) {
-				$value--;
-			}
 
 			return $value . 'px';
 		}, $file_content );
