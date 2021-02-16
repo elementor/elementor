@@ -50,7 +50,11 @@ class Export extends Iterator {
 	}
 
 	public function add_json_file( $name, $content, $json_flags = null ) {
-		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), wp_json_encode( $content, $json_flags ) );
+		$this->add_file( $name . '.json', wp_json_encode( $content, $json_flags ) );
+	}
+
+	public function add_file( $file_name, $content ) {
+		$this->zip_archive->addFromString( $this->get_archive_file_path( $file_name ), $content );
 	}
 
 	private function init_zip_archive() {
