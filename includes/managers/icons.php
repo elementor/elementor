@@ -317,7 +317,6 @@ class Icons_Manager {
 		// handler SVG Icon
 		if ( 'svg' === $icon['library'] ) {
 			$output = self::render_svg_icon( $icon['value'] );
-		} elseif ( 'eicon' === $icon['library'] ) {
 		} else {
 			$output = self::render_icon_html( $icon, $attributes, $tag );
 		}
