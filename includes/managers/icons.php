@@ -240,18 +240,17 @@ class Icons_Manager {
 			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
-		$content = '';
-		if ( self::is_font_awesome_inline() ) {
-			$content = self::get_font_awesome_svg( $icon );
-		}
+		$content = self::is_font_awesome_inline() ? self::render_font_awesome_svg( $icon ) : '';
 
-		if ( empty( $attributes['class'] ) ) {
-			$attributes['class'] = $icon['value'];
-		} else {
-			if ( is_array( $attributes['class'] ) ) {
-				$attributes['class'][] = $icon['value'];
+		if ( ! self::is_font_awesome_inline() ) {
+			if ( empty( $attributes['class'] ) ) {
+				$attributes['class'] = $icon['value'];
 			} else {
-				$attributes['class'] .= ' ' . $icon['value'];
+				if ( is_array( $attributes['class'] ) ) {
+					$attributes['class'][] = $icon['value'];
+				} else {
+					$attributes['class'] .= ' ' . $icon['value'];
+				}
 			}
 		}
 
