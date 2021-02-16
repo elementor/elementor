@@ -414,11 +414,8 @@ class Manager extends Base_Object {
 			$indicator_classes .= ' e-experiment__title__indicator--active';
 		}
 
-		if ( self::STATE_DEFAULT === $feature['state'] ) {
-			$indicator_tooltip = $is_feature_active ? __( 'Active by default', 'elementor' ) : __( 'Inactive by default', 'elementor' );
-		} else {
-			$indicator_tooltip = self::STATE_ACTIVE === $feature['state'] ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' );
-		}
+		$indicator_tooltip = $this->get_feature_state_label( $feature );
+
 		?>
 		<div class="e-experiment__title">
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; ?>"></div>
@@ -427,6 +424,18 @@ class Manager extends Base_Object {
 		<?php
 
 		return ob_get_clean();
+	}
+
+	public function get_feature_state_label( array $feature ) {
+		$is_feature_active = $this->is_feature_active( $feature['name'] );
+
+		if ( self::STATE_DEFAULT === $feature['state'] ) {
+			$label = $is_feature_active ? __( 'Active by default', 'elementor' ) : __( 'Inactive by default', 'elementor' );
+		} else {
+			$label = self::STATE_ACTIVE === $feature['state'] ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' );
+		}
+
+		return $label;
 	}
 
 	/**

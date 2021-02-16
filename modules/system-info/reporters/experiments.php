@@ -56,7 +56,7 @@ class Experiments extends Base {
 
 		foreach ( $experiments as $experiment ) {
 			// If the state is default, add the default state to the string.
-			$state = 'default' === $experiment['state'] ? $experiment['state'] . ' - ' . $experiment['default'] : $experiment['state'];
+			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
 
 			$output .= '<tr><td>' . $experiment['title'] . ': </td>';
 			$output .= '<td>' . $state . '</td>';
@@ -88,7 +88,7 @@ class Experiments extends Base {
 
 		foreach ( $experiments as $experiment ) {
 			// If the state is default, add the default state to the string.
-			$state = 'default' === $experiment['state'] ? $experiment['state'] . ' - ' . $experiment['default'] : $experiment['state'];
+			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
 
 			// The first item automatically has a tab character before it. Add tabs only to the rest of the items.
 			if ( ! $is_first_item ) {
