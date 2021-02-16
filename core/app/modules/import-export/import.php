@@ -12,7 +12,7 @@ class Import extends Iterator {
 	final public function run() {
 		$zip = new \ZipArchive();
 
-		$zip->open( $_FILES['e_import_file']['tmp_name'] );
+		$zip->open( $this->get_settings( 'file_name' ) );
 
 		$temp_dir = $this->get_temp_dir();
 
