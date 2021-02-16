@@ -38,9 +38,23 @@ class Frontend extends Base {
 		$file_content = file_get_contents( $this->template_file );
 
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
-			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys );
+			if ( 'DESKTOP' === $placeholder_data[1] ) {
+				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+			} else {
+				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
-			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
+				$is_max_point = 'MAX' === $placeholder_data[2];
+
+				if ( ! $is_max_point ) {
+					$breakpoint_index--;
+				}
+
+				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
+
+				if ( ! $is_max_point ) {
+					$value++;
+				}
+			}
 
 			return $value . 'px';
 		}, $file_content );

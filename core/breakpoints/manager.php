@@ -23,7 +23,6 @@ class Manager extends Module {
 
 	private $config;
 	private $breakpoints;
-	private $breakpoint_keys;
 
 	public function get_name() {
 		return 'breakpoints';
@@ -191,6 +190,29 @@ class Manager extends Module {
 		}
 
 		return $min_breakpoint;
+	}
+
+	public function get_desktop_min_point() {
+		$config = $this->get_config();
+		$desktop_previous_device = $this->get_desktop_previous_device();
+
+		return $config[ $desktop_previous_device ]['value'] + 1;
+	}
+
+	private function get_desktop_previous_device() {
+		$config_array_keys = array_keys( $this->get_config() );
+		$num_of_devices = count( $config_array_keys );
+
+		// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
+		// widescreen.
+		if ( self::BREAKPOINT_KEY_WIDESCREEN === $config_array_keys[ $num_of_devices - 1 ] ) {
+			$desktop_previous_device = $config_array_keys[ $num_of_devices - 2 ];
+		} else {
+			// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
+			$desktop_previous_device = $config_array_keys[ $num_of_devices - 1 ];
+		}
+
+		return $desktop_previous_device;
 	}
 
 	/**
