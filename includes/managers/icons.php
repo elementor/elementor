@@ -194,34 +194,76 @@ class Icons_Manager {
 	}
 
 	/**
-	 * get_font_awesome_svg
-	 * @param $icon array( 'value' => string, 'library' => string )
+	 * render_svg_symbols
 	 *
-	 * @return bool|mixed|string
 	 */
-	public static function get_font_awesome_svg( $icon ) {
-		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );
+	public static function render_svg_symbols() {
+		$symbols = apply_filters( 'all_svg_symbols', [] );
 
-		// Load the SVG from the database
-		$svg = get_option( $icon_option_key );
-
-		if ( ! empty( $svg ) ) {
-			return $svg;
+		if ( ! count( $symbols ) ) {
+			return;
 		}
 
-		// On first use, load the SVG from the Font Awesome json file
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
+
+		foreach ( $symbols as $symbol_id => [ $width, $height, $arr, $character, $path ] ) {
+			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $width . ' ' . $height . '">';
+			$svg .= '<path d="' . $path . '"></path>';
+			$svg .= '</symbol>';
+		}
+
+		$svg .= '</svg>';
+
+		echo $svg;
+	}
+
+	/**
+	 * get_font_awesome_svg_from_library
+	 * @param $icon array ( 'value' => string, 'library' => string )
+	 *
+	 * @return array|mixed
+	 */
+	private static function get_font_awesome_svg_from_library( $icon ) {
 		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
 		$icon_name = str_replace( $matches[0], '', $icon['value'] );
 		$filename = str_replace( 'fa-', '', $icon['library'] );
 		$icon_list_url = self::get_fa_asset_url( $filename, 'json', false );
 		$icon_list = json_decode( file_get_contents( $icon_list_url ), true );
-		$icon_data = $icon_list[ 'icons' ][ $icon_name ];
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
-					<path d="' . $icon_data[4] . '"></path>
-				</svg>';
 
-		// On first use, Save the SVG in the database for later use
-		update_option( $icon_option_key, $svg );
+		return $icon_list[ 'icons' ][ $icon_name ];
+	}
+
+	/**
+	 * render_font_awesome_svg
+	 * @param $icon array [ 'value' => string, 'library' => string ]
+	 *
+	 * @return bool|mixed|string
+	 */
+	public static function render_font_awesome_svg( $icon ) {
+		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+
+		// Load the SVG from the database
+		$icon_data = get_option( $icon_option_key );
+
+		if ( empty( $icon_data ) ) {
+			// On first use, load the SVG from the Font Awesome json file
+			$icon_data = self::get_font_awesome_svg_from_library( $icon );
+		}
+
+		add_filter( 'all_svg_symbols', function( $symbols ) use ( $icon_option_key, $icon_data ) {
+			$symbols[ $icon_option_key ] = $icon_data;
+			return $symbols;
+		} );
+
+		// If in edit mode inline the full svg, otherwise use the symbol
+		$svg = ! $is_edit_mode ? '<svg><use xlink:href="#'. $icon_option_key .'" /></svg>' :
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
+				<path d="' . $icon_data[4] . '"></path>
+			</svg>';
+
+		// On first use, Save the $icon_data in the database for future renders
+		update_option( $icon_option_key, $icon_data );
 
 		return $svg;
 	}
