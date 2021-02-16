@@ -25,7 +25,7 @@ class Export extends Iterator {
 
 		$this->set_current_archive_path( '' );
 
-		$this->add_json_file( 'manifest', $manifest_data, JSON_PRETTY_PRINT );
+		$this->add_json_file( 'manifest', $manifest_data );
 
 		$this->zip_archive->close();
 
