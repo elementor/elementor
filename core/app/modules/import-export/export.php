@@ -14,18 +14,6 @@ class Export extends Iterator {
 	 */
 	private $zip_archive;
 
-	private function init_zip_archive() {
-		$zip_archive = new \ZipArchive();
-
-		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
-
-		$this->zip_archive = $zip_archive;
-	}
-
-	private function get_archive_file_name() {
-		return $this->get_temp_dir() . 'elementor-temp-kit.zip';
-	}
-
 	final public function run() {
 		ob_start();
 
@@ -63,5 +51,17 @@ class Export extends Iterator {
 
 	public function add_json_file( $name, $content, $json_flags = null ) {
 		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), wp_json_encode( $content, $json_flags ) );
+	}
+
+	private function init_zip_archive() {
+		$zip_archive = new \ZipArchive();
+
+		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
+
+		$this->zip_archive = $zip_archive;
+	}
+
+	private function get_archive_file_name() {
+		return $this->get_temp_dir() . 'elementor-temp-kit.zip';
 	}
 }
