@@ -23,6 +23,8 @@ class Export extends Iterator {
 
 		$manifest_data = $root_directory->run_export();
 
+		$manifest_data = apply_filters( 'elementor/kit/export/manifest-data', $manifest_data, $this );
+
 		$this->set_current_archive_path( '' );
 
 		$this->add_json_file( 'manifest', $manifest_data );
