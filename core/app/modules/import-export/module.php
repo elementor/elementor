@@ -59,7 +59,11 @@ class Module extends BaseModule {
 			}
 
 			try {
-				$this->import = new Import( json_decode( stripslashes( $_POST['data'] ), true ) );
+				$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
+
+				$import_settings['file_name'] = $_FILES['e_import_file']['tmp_name'];
+
+				$this->import = new Import( $import_settings );
 
 				$result = $this->import->run();
 

@@ -121,6 +121,6 @@ abstract class Base {
 	private function register_directories() {
 		$sub_directories = $this->get_default_sub_directories();
 
-		$this->sub_directories = apply_filters( 'elementor/kits/import-export/directory/' . $this->get_path(), $sub_directories, $this );
+		$this->sub_directories = apply_filters( 'elementor/kit/import-export/directory/' . $this->get_path(), $sub_directories, $this );
 	}
 }

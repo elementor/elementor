@@ -24,6 +24,10 @@ abstract class Iterator extends Base_Object {
 			$wp_upload_dir = wp_upload_dir();
 
 			$this->temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp', 'kit' ] ) . DIRECTORY_SEPARATOR;
+
+			if ( ! is_dir( $this->temp_dir ) ) {
+				mkdir( $this->temp_dir, 0777, true );
+			}
 		}
 
 		return $this->temp_dir;

@@ -14,18 +14,6 @@ class Export extends Iterator {
 	 */
 	private $zip_archive;
 
-	private function init_zip_archive() {
-		$zip_archive = new \ZipArchive();
-
-		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
-
-		$this->zip_archive = $zip_archive;
-	}
-
-	private function get_archive_file_name() {
-		return $this->get_temp_dir() . 'elementor-temp-kit.zip';
-	}
-
 	final public function run() {
 		ob_start();
 
@@ -35,9 +23,11 @@ class Export extends Iterator {
 
 		$manifest_data = $root_directory->run_export();
 
+		$manifest_data = apply_filters( 'elementor/kit/export/manifest-data', $manifest_data, $this );
+
 		$this->set_current_archive_path( '' );
 
-		$this->add_json_file( 'manifest', $manifest_data, JSON_PRETTY_PRINT );
+		$this->add_json_file( 'manifest', $manifest_data );
 
 		$this->zip_archive->close();
 
@@ -62,6 +52,22 @@ class Export extends Iterator {
 	}
 
 	public function add_json_file( $name, $content, $json_flags = null ) {
-		$this->zip_archive->addFromString( $this->get_archive_file_path( $name . '.json' ), wp_json_encode( $content, $json_flags ) );
+		$this->add_file( $name . '.json', wp_json_encode( $content, $json_flags ) );
+	}
+
+	public function add_file( $file_name, $content ) {
+		$this->zip_archive->addFromString( $this->get_archive_file_path( $file_name ), $content );
+	}
+
+	private function init_zip_archive() {
+		$zip_archive = new \ZipArchive();
+
+		$zip_archive->open( $this->get_archive_file_name(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE );
+
+		$this->zip_archive = $zip_archive;
+	}
+
+	private function get_archive_file_name() {
+		return $this->get_temp_dir() . 'elementor-temp-kit.zip';
 	}
 }
