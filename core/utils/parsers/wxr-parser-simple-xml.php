@@ -10,10 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WordPress eXtended RSS file parser implementations,
  * Originally made by WordPress part of WordPress/Importer.
+ * https://plugins.trac.wordpress.org/browser/wordpress-importer/trunk/parsers/class-wxr-parser-simplexml.php
  *
  * What was done:
  * Reformat of the code.
- * Removed unused code.
+ * Removed variable '$internal_errors'.
  * Changed text domain.
  */
 

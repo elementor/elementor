@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WordPress eXtended RSS file parser implementations,
  * Originally made by WordPress part of WordPress/Importer.
+ * https://plugins.trac.wordpress.org/browser/wordpress-importer/trunk/parsers/class-wxr-parser-xml.php
  *
  * What was done:
  * Reformat of the code.
@@ -17,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Changed text domain.
  * Added clear() method.
  * Added undeclared class properties.
- * Removed unnecessary code.
  * Changed methods visibility.
  */
 

@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * WordPress eXtended RSS file parser implementations
  * Originally made by WordPress part of WordPress/Importer.
+ * https://plugins.trac.wordpress.org/browser/wordpress-importer/trunk/parsers/class-wxr-parser-regex.php
  *
  * What was done:
  * Reformat of the code.
@@ -46,10 +47,30 @@ class WXR_Parser_Regex {
 		$multiline_content = '';
 
 		$multiline_tags = [
-			'item' => [ 'posts', [ $this, 'process_post' ] ],
-			'wp:category' => [ 'categories', [ $this, 'process_category' ] ],
-			'wp:tag' => [ 'tags', [ $this, 'process_tag' ] ],
-			'wp:term' => [ 'terms', [ $this, 'process_term' ] ],
+			'item' => [
+				'posts',
+				function ( $post ) {
+					return $this->process_post( $post );
+				},
+			],
+			'wp:category' => [
+				'categories',
+				function ( $category ) {
+					return $this->process_category( $category );
+				},
+			],
+			'wp:tag' => [
+				'tags',
+				function ( $tag ) {
+					return $this->process_tag( $tag );
+				},
+			],
+			'wp:term' => [
+				'terms',
+				function ( $term ) {
+					return $this->process_term( $term );
+				},
+			],
 		];
 
 		$fp = $this->fopen( $file, 'r' );
@@ -137,16 +158,16 @@ class WXR_Parser_Regex {
 		];
 	}
 
-	public function process_category( $c ) {
+	private function process_category( $category ) {
 		$term = [
-			'term_id' => $this->get_tag( $c, 'wp:term_id' ),
-			'cat_name' => $this->get_tag( $c, 'wp:cat_name' ),
-			'category_nicename' => $this->get_tag( $c, 'wp:category_nicename' ),
-			'category_parent' => $this->get_tag( $c, 'wp:category_parent' ),
-			'category_description' => $this->get_tag( $c, 'wp:category_description' ),
+			'term_id' => $this->get_tag( $category, 'wp:term_id' ),
+			'cat_name' => $this->get_tag( $category, 'wp:cat_name' ),
+			'category_nicename' => $this->get_tag( $category, 'wp:category_nicename' ),
+			'category_parent' => $this->get_tag( $category, 'wp:category_parent' ),
+			'category_description' => $this->get_tag( $category, 'wp:category_description' ),
 		];
 
-		$term_meta = $this->process_meta( $c, 'wp:termmeta' );
+		$term_meta = $this->process_meta( $category, 'wp:termmeta' );
 		if ( ! empty( $term_meta ) ) {
 			$term['termmeta'] = $term_meta;
 		}
@@ -154,15 +175,15 @@ class WXR_Parser_Regex {
 		return $term;
 	}
 
-	public function process_tag( $t ) {
+	private function process_tag( $tag ) {
 		$term = [
-			'term_id' => $this->get_tag( $t, 'wp:term_id' ),
-			'tag_name' => $this->get_tag( $t, 'wp:tag_name' ),
-			'tag_slug' => $this->get_tag( $t, 'wp:tag_slug' ),
-			'tag_description' => $this->get_tag( $t, 'wp:tag_description' ),
+			'term_id' => $this->get_tag( $tag, 'wp:term_id' ),
+			'tag_name' => $this->get_tag( $tag, 'wp:tag_name' ),
+			'tag_slug' => $this->get_tag( $tag, 'wp:tag_slug' ),
+			'tag_description' => $this->get_tag( $tag, 'wp:tag_description' ),
 		];
 
-		$term_meta = $this->process_meta( $t, 'wp:termmeta' );
+		$term_meta = $this->process_meta( $tag, 'wp:termmeta' );
 		if ( ! empty( $term_meta ) ) {
 			$term['termmeta'] = $term_meta;
 		}
@@ -170,25 +191,25 @@ class WXR_Parser_Regex {
 		return $term;
 	}
 
-	public function process_term( $t ) {
-		$term = [
-			'term_id' => $this->get_tag( $t, 'wp:term_id' ),
-			'term_taxonomy' => $this->get_tag( $t, 'wp:term_taxonomy' ),
-			'slug' => $this->get_tag( $t, 'wp:term_slug' ),
-			'term_parent' => $this->get_tag( $t, 'wp:term_parent' ),
-			'term_name' => $this->get_tag( $t, 'wp:term_name' ),
-			'term_description' => $this->get_tag( $t, 'wp:term_description' ),
+	private function process_term( $term ) {
+		$term_data = [
+			'term_id' => $this->get_tag( $term, 'wp:term_id' ),
+			'term_taxonomy' => $this->get_tag( $term, 'wp:term_taxonomy' ),
+			'slug' => $this->get_tag( $term, 'wp:term_slug' ),
+			'term_parent' => $this->get_tag( $term, 'wp:term_parent' ),
+			'term_name' => $this->get_tag( $term, 'wp:term_name' ),
+			'term_description' => $this->get_tag( $term, 'wp:term_description' ),
 		];
 
-		$term_meta = $this->process_meta( $t, 'wp:termmeta' );
+		$term_meta = $this->process_meta( $term, 'wp:termmeta' );
 		if ( ! empty( $term_meta ) ) {
-			$term['termmeta'] = $term_meta;
+			$term_data['termmeta'] = $term_meta;
 		}
 
-		return $term;
+		return $term_data;
 	}
 
-	public function process_meta( $string, $tag ) {
+	private function process_meta( $string, $tag ) {
 		$parsed_meta = [];
 
 		preg_match_all( "|<$tag>(.+?)</$tag>|is", $string, $meta );
@@ -207,7 +228,7 @@ class WXR_Parser_Regex {
 		return $parsed_meta;
 	}
 
-	public function process_author( $a ) {
+	private function process_author( $a ) {
 		return [
 			'author_id' => $this->get_tag( $a, 'wp:author_id' ),
 			'author_login' => $this->get_tag( $a, 'wp:author_login' ),
@@ -218,7 +239,7 @@ class WXR_Parser_Regex {
 		];
 	}
 
-	public function process_post( $post ) {
+	private function process_post( $post ) {
 		$normalize_tag_callback = function ( $matches ) {
 			return $this->normalize_tag( $matches );
 		};

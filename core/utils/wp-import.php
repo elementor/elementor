@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Originally made by WordPress part of WordPress/Importer.
+ * https://plugins.trac.wordpress.org/browser/wordpress-importer/trunk/class-wp-import.php
  *
  * What was done:
  * Reformat of the code.
@@ -46,9 +47,12 @@ class WP_Import extends \WP_Importer {
 	private $args;
 
 	/**
-	 * @var string
+	 * @var array
 	 */
-	private $output = '';
+	private $output = [
+		'status' => 'failed',
+		'errors' => [],
+	];
 
 	/*
 	 * WXR attachment ID
@@ -192,10 +196,12 @@ class WP_Import extends \WP_Importer {
 		$this->set_author_mapping();
 
 		wp_suspend_cache_invalidation( true );
-		$this->process_categories();
-		$this->process_tags();
-		$this->process_terms();
-		$this->process_posts();
+		$imported_summery = [
+			'categories' => $this->process_categories(),
+			'tags' => $this->process_tags(),
+			'terms' => $this->process_terms(),
+			'posts' => $this->process_posts(),
+		];
 		wp_suspend_cache_invalidation( false );
 
 		// Update incorrect/missing information in the DB.
@@ -204,6 +210,19 @@ class WP_Import extends \WP_Importer {
 		$this->remap_featured_images();
 
 		$this->import_end();
+
+		$is_some_succeed = false;
+		foreach ( $imported_summery as $item ) {
+			if ( $item > 0 ) {
+				$is_some_succeed = true;
+				break;
+			}
+		}
+
+		if ( $is_some_succeed ) {
+			$this->output['status'] = 'success';
+			$this->output['summary'] = $imported_summery;
+		}
 	}
 
 	/**
@@ -213,7 +232,7 @@ class WP_Import extends \WP_Importer {
 	 */
 	private function import_start( $file ) {
 		if ( ! is_file( $file ) ) {
-			$this->output .= __( 'The file does not exist, please try again.', 'elementor' ) . PHP_EOL;
+			$this->output['errors'] = [ __( 'The file does not exist, please try again.', 'elementor' ) ];
 
 			return;
 		}
@@ -221,7 +240,7 @@ class WP_Import extends \WP_Importer {
 		$import_data = $this->parse( $file );
 
 		if ( is_wp_error( $import_data ) ) {
-			$this->output .= $import_data->get_error_message() . PHP_EOL;
+			$this->output['errors'] = [ $import_data->get_error_message() ];
 
 			return;
 		}
@@ -256,8 +275,6 @@ class WP_Import extends \WP_Importer {
 		wp_defer_term_counting( false );
 		wp_defer_comment_counting( false );
 
-		$this->output .= __( 'All done.', 'elementor' ) . PHP_EOL;
-
 		do_action( 'import_end' );
 	}
 
@@ -278,7 +295,7 @@ class WP_Import extends \WP_Importer {
 				$login = sanitize_user( $post['post_author'], true );
 
 				if ( empty( $login ) ) {
-					$this->output .= sprintf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'elementor' ), $post['post_author'] ) . PHP_EOL;
+					$this->output['errors'][] = sprintf( __( 'Failed to import author %s. Their posts will be attributed to the current user.', 'elementor' ), $post['post_author'] );
 					continue;
 				}
 
@@ -339,11 +356,13 @@ class WP_Import extends \WP_Importer {
 					}
 					$this->author_mapping[ $santized_old_login ] = $user_id;
 				} else {
-					$this->output .= sprintf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'elementor' ), $this->authors[ $old_login ]['author_display_name'] ) . PHP_EOL;
+					$error = sprintf( __( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'elementor' ), $this->authors[ $old_login ]['author_display_name'] );
 
 					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-						$this->output .= $user_id->get_error_message() . PHP_EOL;
+						$error .= PHP_EOL . $user_id->get_error_message();
 					}
+
+					$this->output['errors'][] = $error;
 				}
 			}
 
@@ -361,12 +380,16 @@ class WP_Import extends \WP_Importer {
 	 * Create new categories based on import information
 	 *
 	 * Doesn't create a new category if its slug already exists
+	 *
+	 * @return int number of imported categories.
 	 */
 	private function process_categories() {
+		$result = 0;
+
 		$this->categories = apply_filters( 'wp_import_categories', $this->categories );
 
 		if ( empty( $this->categories ) ) {
-			return;
+			return $result;
 		}
 
 		foreach ( $this->categories as $cat ) {
@@ -397,12 +420,15 @@ class WP_Import extends \WP_Importer {
 				if ( isset( $cat['term_id'] ) ) {
 					$this->processed_terms[ intval( $cat['term_id'] ) ] = $id;
 				}
+				$result++;
 			} else {
-				$this->output .= sprintf( __( 'Failed to import category %s', 'elementor' ), $cat['category_nicename'] ) . PHP_EOL;
+				$error = sprintf( __( 'Failed to import category %s', 'elementor' ), $cat['category_nicename'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$this->output .= $id->get_error_message() . PHP_EOL;
+					$error .= PHP_EOL . $id->get_error_message();
 				}
+
+				$this->output['errors'][] = $error;
 				continue;
 			}
 
@@ -410,18 +436,24 @@ class WP_Import extends \WP_Importer {
 		}
 
 		unset( $this->categories );
+
+		return $result;
 	}
 
 	/**
 	 * Create new post tags based on import information
 	 *
 	 * Doesn't create a tag if its slug already exists
+	 *
+	 * @return int number of imported tags.
 	 */
 	private function process_tags() {
+		$result = 0;
+
 		$this->tags = apply_filters( 'wp_import_tags', $this->tags );
 
 		if ( empty( $this->tags ) ) {
-			return;
+			return $result;
 		}
 
 		foreach ( $this->tags as $tag ) {
@@ -448,12 +480,15 @@ class WP_Import extends \WP_Importer {
 				if ( isset( $tag['term_id'] ) ) {
 					$this->processed_terms[ intval( $tag['term_id'] ) ] = $id['term_id'];
 				}
+				$result++;
 			} else {
-				$this->output .= sprintf( __( 'Failed to import post tag %s', 'elementor' ), $tag['tag_name'] ) . PHP_EOL;
+				$error = sprintf( __( 'Failed to import post tag %s', 'elementor' ), $tag['tag_name'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$this->output .= $id->get_error_message() . PHP_EOL;
+					$error .= PHP_EOL . $id->get_error_message();
 				}
+
+				$this->output['errors'][] = $error;
 				continue;
 			}
 
@@ -461,18 +496,24 @@ class WP_Import extends \WP_Importer {
 		}
 
 		unset( $this->tags );
+
+		return $result;
 	}
 
 	/**
 	 * Create new terms based on import information
 	 *
 	 * Doesn't create a term its slug already exists
+	 *
+	 * @return int number of imported terms.
 	 */
 	private function process_terms() {
+		$result = 0;
+
 		$this->terms = apply_filters( 'wp_import_terms', $this->terms );
 
 		if ( empty( $this->terms ) ) {
-			return;
+			return $result;
 		}
 
 		foreach ( $this->terms as $term ) {
@@ -509,11 +550,15 @@ class WP_Import extends \WP_Importer {
 				if ( isset( $term['term_id'] ) ) {
 					$this->processed_terms[ intval( $term['term_id'] ) ] = $id['term_id'];
 				}
+				$result++;
 			} else {
-				$this->output .= sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] ) . PHP_EOL;
+				$error = sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
+
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-					$this->output .= $id->get_error_message() . PHP_EOL;
+					$error .= PHP_EOL . $id->get_error_message();
 				}
+
+				$this->output['errors'][] = $error;
 				continue;
 			}
 
@@ -521,6 +566,8 @@ class WP_Import extends \WP_Importer {
 		}
 
 		unset( $this->terms );
+
+		return $result;
 	}
 
 	/**
@@ -587,15 +634,19 @@ class WP_Import extends \WP_Importer {
 	 * Doesn't create a new post if: the post type doesn't exist, the given post ID
 	 * is already noted as imported or a post with the same title and date already exists.
 	 * Note that new/updated terms, comments and meta are imported for the last of the above.
+	 *
+	 * @return int number of imported posts.
 	 */
 	private function process_posts() {
+		$result = 0;
+
 		$this->posts = apply_filters( 'wp_import_posts', $this->posts );
 
 		foreach ( $this->posts as $post ) {
 			$post = apply_filters( 'wp_import_post_data_raw', $post );
 
 			if ( ! post_type_exists( $post['post_type'] ) ) {
-				$this->output .= sprintf( __( 'Failed to import %1$s: Invalid post type %2$s', 'elementor' ), $post['post_title'], $post['post_type'] ) . PHP_EOL;
+				$this->output['errors'][] = sprintf( __( 'Failed to import %1$s: Invalid post type %2$s', 'elementor' ), $post['post_title'], $post['post_type'] );
 				do_action( 'wp_import_post_exists', $post );
 				continue;
 			}
@@ -631,7 +682,7 @@ class WP_Import extends \WP_Importer {
 			$post_exists = apply_filters( 'wp_import_existing_post', $post_exists, $post );
 
 			if ( $post_exists && get_post_type( $post_exists ) == $post['post_type'] ) {
-				$this->output .= sprintf( __( '%1$s %2$s already exists.', 'elementor' ), $post_type_object->labels->singular_name, $post['post_title'] ) . PHP_EOL;
+				$this->output['errors'][] = sprintf( __( '%1$s %2$s already exists.', 'elementor' ), $post_type_object->labels->singular_name, $post['post_title'] );
 
 				$post_id = $post_exists;
 				$comment_post_id = $post_id;
@@ -708,12 +759,18 @@ class WP_Import extends \WP_Importer {
 				}
 
 				if ( is_wp_error( $post_id ) ) {
-					$this->output .= sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $post_type_object->labels->singular_name, $post['post_title'] ) . PHP_EOL;
+					$error = sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $post_type_object->labels->singular_name, $post['post_title'] );
+
 					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-						$this->output .= $post_id->get_error_message() . PHP_EOL;
+						$error .= PHP_EOL . $post_id->get_error_message();
 					}
+
+					$this->output['errors'][] = $error;
+
 					continue;
 				}
+
+				$result++;
 
 				if ( 1 == $post['is_sticky'] ) {
 					stick_post( $post_id );
@@ -743,10 +800,14 @@ class WP_Import extends \WP_Importer {
 							$term_id = $t['term_id'];
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
-							$this->output .= sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $taxonomy, $term['name'] ) . PHP_EOL;
+							$error = sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $taxonomy, $term['name'] );
+
 							if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
-								$this->output .= $t->get_error_message() . PHP_EOL;
+								$error .= PHP_EOL . $t->get_error_message();
 							}
+
+							$this->output['errors'][] = $error;
+
 							do_action( 'wp_import_insert_term_failed', $t, $term, $post_id, $post );
 							continue;
 						}
@@ -859,6 +920,8 @@ class WP_Import extends \WP_Importer {
 		}
 
 		unset( $this->posts );
+
+		return $result;
 	}
 
 	/**
@@ -890,14 +953,14 @@ class WP_Import extends \WP_Importer {
 
 		// No nav_menu term associated with this menu item.
 		if ( ! $menu_slug ) {
-			$this->output .= __( 'Menu item skipped due to missing menu slug', 'elementor' ) . PHP_EOL;
+			$this->output['errors'][] = __( 'Menu item skipped due to missing menu slug', 'elementor' );
 
 			return;
 		}
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
 		if ( ! $menu_id ) {
-			$this->output .= sprintf( __( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug ) . PHP_EOL;
+			$this->output['errors'][] = sprintf( __( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug );
 
 			return;
 		} else {
