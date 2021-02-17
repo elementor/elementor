@@ -1358,7 +1358,9 @@ class Source_Local extends Source_Base {
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
-				<?php if ( 'custom code' === strtolower( $current_type_label ) ) :
+				<?php
+				$module_name = str_replace( '_', ' ', module::MODULE_NAME );
+				if ( strtolower( $current_type_label ) === $module_name ) :
 					$trashed_posts_query = new \WP_Query( [
 						'post_type' => module::CPT,
 						'post_status' => 'trash',
