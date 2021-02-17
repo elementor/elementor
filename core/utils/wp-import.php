@@ -191,7 +191,9 @@ class WP_Import extends \WP_Importer {
 			return self::DEFAULT_BUMP_REQUEST_TIMEOUT;
 		} );
 
-		$this->import_start( $file );
+		if ( ! $this->import_start( $file ) ) {
+			return;
+		}
 
 		$this->set_author_mapping();
 
@@ -234,7 +236,7 @@ class WP_Import extends \WP_Importer {
 		if ( ! is_file( $file ) ) {
 			$this->output['errors'] = [ __( 'The file does not exist, please try again.', 'elementor' ) ];
 
-			return;
+			return false;
 		}
 
 		$import_data = $this->parse( $file );
@@ -242,7 +244,7 @@ class WP_Import extends \WP_Importer {
 		if ( is_wp_error( $import_data ) ) {
 			$this->output['errors'] = [ $import_data->get_error_message() ];
 
-			return;
+			return false;
 		}
 
 		$this->version = $import_data['version'];
@@ -257,6 +259,8 @@ class WP_Import extends \WP_Importer {
 		wp_defer_comment_counting( true );
 
 		do_action( 'import_start' );
+
+		return true;
 	}
 
 	/**
