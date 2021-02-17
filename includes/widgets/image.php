@@ -781,8 +781,9 @@ class Widget_Image extends Widget_Base {
 
 			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				#><div class="elementor-image{{ settings.shape ? ' elementor-image-shape-' + settings.shape : '' }}"><#
-				var imgClass = '';
 			<?php } ?>
+
+			var imgClass = '';
 
 			if ( '' !== settings.hover_animation ) {
 				imgClass = 'elementor-animation-' + settings.hover_animation;
