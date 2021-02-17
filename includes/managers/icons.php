@@ -194,11 +194,35 @@ class Icons_Manager {
 	}
 
 	/**
+	 * store_svg_symbols
+	 *
+	 *
+	 */
+	public static function store_svg_symbols() {
+		global $post;
+
+		$has_svg_meta = ! empty( get_post_meta( $post->ID, '_elementor_svg_symbols' )[0] );
+		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
+
+		if ( ! count( $symbols ) ) {
+			return;
+		}
+
+		update_post_meta( $post->ID, '_elementor_svg_symbols', $symbols );
+
+		if ( ! $has_svg_meta ) {
+			self::render_svg_symbols();
+		}
+	}
+
+	/**
 	 * render_svg_symbols
 	 *
 	 */
 	public static function render_svg_symbols() {
-		$symbols = apply_filters( 'all_svg_symbols', [] );
+		global $post;
+		$saved_symbols = get_post_meta( $post->ID, '_elementor_svg_symbols' );
+		$symbols = ! empty( $saved_symbols ) ? $saved_symbols[0] : [];
 
 		if ( ! count( $symbols ) ) {
 			return;
@@ -206,9 +230,9 @@ class Icons_Manager {
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
 
-		foreach ( $symbols as $symbol_id => [ $width, $height, $arr, $character, $path ] ) {
-			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $width . ' ' . $height . '">';
-			$svg .= '<path d="' . $path . '"></path>';
+		foreach ( $symbols as $symbol_id => $symbol ) {
+			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $symbol['width'] . ' ' . $symbol['height'] . '">';
+			$svg .= '<path d="' . $symbol['path'] . '"></path>';
 			$svg .= '</symbol>';
 		}
 
@@ -244,15 +268,20 @@ class Icons_Manager {
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 
 		// Load the SVG from the database
-		$icon_data = get_option( $icon_option_key );
+		$icon_data = ''; //get_option( $icon_option_key );
 
 		if ( empty( $icon_data ) ) {
 			// On first use, load the SVG from the Font Awesome json file
 			$icon_data = self::get_font_awesome_svg_from_library( $icon );
 		}
 
-		add_filter( 'all_svg_symbols', function( $symbols ) use ( $icon_option_key, $icon_data ) {
-			$symbols[ $icon_option_key ] = $icon_data;
+		// Add the icon data to the symbols array for later use in page rendering process.
+		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_option_key, $icon_data ) {
+			$symbols[ $icon_option_key ] = [
+				'width' => $icon_data[0],
+				'height' => $icon_data[1],
+				'path' => $icon_data[4],
+			];
 			return $symbols;
 		} );
 
@@ -540,12 +569,19 @@ class Icons_Manager {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
 		}
 
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
-
-		if ( ! self::is_font_awesome_inline() ) {
-			add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		if ( self::is_font_awesome_inline() ) {
+			add_action( 'wp_footer', [ $this, 'store_svg_symbols' ], 10 );
+			add_action( 'elementor/editor/after_save', function( $post_id ) {
+				update_post_meta( $post_id, '_elementor_svg_symbols', [] );
+			} );
+			add_action( 'wp_enqueue_scripts', [ $this, 'render_svg_symbols' ] );
+			add_action( 'wp_footer', function() {
+				echo  '<style> .elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }</style>';
+			}, 10 );
 		}
-			add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		if ( ! self::is_migration_allowed() ) {
 			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
