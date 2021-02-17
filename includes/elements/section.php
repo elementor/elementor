@@ -383,6 +383,7 @@ class Element_Section extends Element_Base {
 				'default' => 'default',
 				'options' => [
 					'default' => __( 'Default', 'elementor' ),
+					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-height-',
@@ -403,7 +404,16 @@ class Element_Section extends Element_Base {
 						'min' => 0,
 						'max' => 1440,
 					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
+				'size_units' => [ 'px', 'vh', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
 				],
@@ -434,8 +444,8 @@ class Element_Section extends Element_Base {
 		);
 
 		$content_position_selector = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ?
-				'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
-				'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
+			'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
+			'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
 
 		$this->add_control(
 			'content_position',
@@ -508,8 +518,8 @@ class Element_Section extends Element_Base {
 		];
 
 		$options = [
-			'' => __( 'Default', 'elementor' ),
-		] + array_combine( $possible_tags, $possible_tags );
+			           '' => __( 'Default', 'elementor' ),
+		           ] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
@@ -1407,22 +1417,22 @@ class Element_Section extends Element_Base {
 		?>
 		<#
 		if ( settings.background_video_link ) {
-			let videoAttributes = 'autoplay muted playsinline';
+		let videoAttributes = 'autoplay muted playsinline';
 
-			if ( ! settings.background_play_once ) {
-				videoAttributes += ' loop';
-			}
+		if ( ! settings.background_play_once ) {
+		videoAttributes += ' loop';
+		}
 
-			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+		view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-			if ( ! settings.background_play_on_mobile ) {
-				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
-			}
+		if ( ! settings.background_play_on_mobile ) {
+		view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+		}
 		#>
-			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
-				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
-			</div>
+		<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
+		<div class="elementor-background-video-embed"></div>
+		<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+		</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -1447,55 +1457,55 @@ class Element_Section extends Element_Base {
 		$settings = $this->get_settings_for_display();
 		?>
 		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-			<?php
-			if ( 'video' === $settings['background_background'] ) :
-				if ( $settings['background_video_link'] ) :
-					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+		<?php
+		if ( 'video' === $settings['background_background'] ) :
+			if ( $settings['background_video_link'] ) :
+				$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 
-					$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+				$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
-					if ( ! $settings['background_play_on_mobile'] ) {
-						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
-					}
-					?>
-					<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
-						<?php if ( $video_properties ) : ?>
-							<div class="elementor-background-video-embed"></div>
-							<?php
-						else :
-							$video_tag_attributes = 'autoplay muted playsinline';
-							if ( 'yes' !== $settings['background_play_once'] ) :
-								$video_tag_attributes .= ' loop';
-							endif;
-							?>
-							<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; ?>></video>
-						<?php endif; ?>
-					</div>
-					<?php
-				endif;
-			endif;
-
-			$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-									in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
-
-			if ( $has_background_overlay ) :
+				if ( ! $settings['background_play_on_mobile'] ) {
+					$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+				}
 				?>
-				<div class="elementor-background-overlay"></div>
-				<?php
+				<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
+					<?php if ( $video_properties ) : ?>
+						<div class="elementor-background-video-embed"></div>
+					<?php
+					else :
+						$video_tag_attributes = 'autoplay muted playsinline';
+						if ( 'yes' !== $settings['background_play_once'] ) :
+							$video_tag_attributes .= ' loop';
+						endif;
+						?>
+						<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; ?>></video>
+					<?php endif; ?>
+				</div>
+			<?php
 			endif;
+		endif;
 
-			if ( $settings['shape_divider_top'] ) {
-				$this->print_shape_divider( 'top' );
-			}
+		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
+		                          in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
 
-			if ( $settings['shape_divider_bottom'] ) {
-				$this->print_shape_divider( 'bottom' );
-			}
+		if ( $has_background_overlay ) :
 			?>
-			<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
-			<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				<div class="elementor-row">
-			<?php }
+			<div class="elementor-background-overlay"></div>
+		<?php
+		endif;
+
+		if ( $settings['shape_divider_top'] ) {
+			$this->print_shape_divider( 'top' );
+		}
+
+		if ( $settings['shape_divider_bottom'] ) {
+			$this->print_shape_divider( 'bottom' );
+		}
+		?>
+		<div class="elementor-container elementor-column-gap-<?php echo esc_attr( $settings['gap'] ); ?>">
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
+			<div class="elementor-row">
+		<?php }
 	}
 
 	/**
@@ -1509,9 +1519,9 @@ class Element_Section extends Element_Base {
 	public function after_render() {
 		?>
 		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				</div>
-		<?php } ?>
 			</div>
+		<?php } ?>
+		</div>
 		</<?php echo esc_html( $this->get_html_tag() ); ?>>
 		<?php
 	}
