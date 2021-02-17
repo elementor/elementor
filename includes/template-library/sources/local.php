@@ -1357,6 +1357,15 @@ class Source_Local extends Source_Base {
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
+				<?php if ( 'custom code' === strtolower( $current_type_label ) ) :
+					$trashed_posts_query = new \WP_Query( [
+						'post_type' => 'elementor_snippet',
+						'post_status' => 'trash',
+					] );
+					if ( $trashed_posts_query->post_count > 0 ) : ?>
+						<p>Or view <a href="./edit.php?post_status=trash&post_type=elementor_snippet">Trashed Items</a></p>
+					<?php endif;
+				endif; ?>
 			</div>
 		<?php
 	}
