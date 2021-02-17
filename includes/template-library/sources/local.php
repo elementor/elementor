@@ -9,6 +9,7 @@ use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\LandingPages\Module as Landing_Page_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
+use ElementorPro\Modules\CustomCode\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1359,11 +1360,11 @@ class Source_Local extends Source_Base {
 				</a>
 				<?php if ( 'custom code' === strtolower( $current_type_label ) ) :
 					$trashed_posts_query = new \WP_Query( [
-						'post_type' => 'elementor_snippet',
+						'post_type' => module::CPT,
 						'post_status' => 'trash',
 					] );
 					if ( $trashed_posts_query->post_count > 0 ) : ?>
-						<p>Or view <a href="./edit.php?post_status=trash&post_type=elementor_snippet">Trashed Items</a></p>
+						<p><?php echo __( 'Or view', 'elementor' ); ?> <a href='./edit.php?post_status=trash&post_type=<?php echo module::CPT; ?>'><?php echo __( 'Trashed Items', 'elementor' ); ?></a></p>
 					<?php endif;
 				endif; ?>
 			</div>
