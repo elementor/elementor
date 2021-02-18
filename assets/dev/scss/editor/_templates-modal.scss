@@ -349,21 +349,30 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
-
-		.elementor-template-library-template-body {
-
-			&:before {
-				position: absolute;
+		&--access-level-1 {
+			.elementor-template-library-template-body:before {
 				content: 'pro';
-				text-transform: uppercase;
-				top: 5px;
-				@include end(5px);
 				background-color: $editor-accent;
 				color: $editor-lightest;
-				padding: 2px 4px 0;
-				font-size: 9px;
-				border-radius: 2px;
 			}
+		}
+
+		&--access-level-2 {
+			.elementor-template-library-template-body:before {
+				content: 'expert';
+				background-color: $editor-dark-blue;
+				color: $editor-lightest;
+			}
+		}
+
+		.elementor-template-library-template-body:before {
+			position: absolute;
+			text-transform: uppercase;
+			top: 5px;
+			@include end(5px);
+			padding: 2px 4px 0;
+			font-size: 9px;
+			border-radius: 2px;
 		}
 	}
 
