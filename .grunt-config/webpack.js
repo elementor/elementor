@@ -4,13 +4,23 @@
  */
 const path = require( 'path' );
 
+// Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+// Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
+
+// Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
+const getChunkName = ( chunkData, environment ) => {
+	const minSuffix = 'production' === environment ? '.min' : '',
+		name = chunkData.chunk.name ? '[name].' : '';
+
+	return `${ name }[contenthash].bundle${ minSuffix }.js`;
+};
 
 const moduleRules = {
 	rules: [
@@ -98,14 +108,14 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
-		__: [ '@wordpress/i18n', '__' ],
+		__: ['@wordpress/i18n', '__'],
+		sprintf: ['@wordpress/i18n', 'sprintf'],
 	} )
 ];
 
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
-	devtool: 'source-map',
 	externals,
 	module: moduleRules,
 	resolve: aliasList,
@@ -113,16 +123,15 @@ const baseConfig = {
 
 const devSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.js' ),
-		...plugins,
-	],
+	devtool: 'source-map',
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -130,11 +139,18 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: entry,
 	},
 	{
 		...devSharedConfig,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		optimization: {
 			runtimeChunk:  {
@@ -162,15 +178,13 @@ const prodSharedOptimization = {
 
 const prodSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.min.js' ),
-		...plugins,
-	],
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.min.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -178,8 +192,12 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: {
+			// Clone.
 			...entry,
 		},
 		optimization: {
@@ -188,8 +206,13 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.min.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		entry: {
+			// Clone.
 			...frontendEntries,
 		},
 		optimization: {
@@ -204,7 +227,7 @@ const webpackProductionConfig = [
 	},
 ];
 
-// Add minified entry points
+// Adding .min suffix to production entries.
 webpackProductionConfig.forEach( ( config, index ) => {
 	for ( const entryPoint in config.entry ) {
 		let entryValue = config.entry[ entryPoint ];

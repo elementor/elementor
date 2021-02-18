@@ -6,7 +6,7 @@ import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper';
+import Swiper from './utils/swiper-bc';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
@@ -18,6 +18,16 @@ export default class Frontend extends elementorModules.ViewModule {
 		super( ...args );
 
 		this.config = elementorFrontendConfig;
+
+		this.config.legacyMode = {
+			get elementWrappers() {
+				if ( elementorFrontend.isEditMode() ) {
+					elementorCommon.helpers.hardDeprecated( 'elementorFrontend.config.legacyMode.elementWrappers', '3.1.0', 'elementorFrontend.config.experimentalFeatures.e_dom_optimization' );
+				}
+
+				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
+			},
+		};
 	}
 
 	// TODO: BC since 2.5.0
@@ -166,6 +176,14 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.elements.$wpAdminBar = this.elements.$document.find( this.getSettings( 'selectors.adminBar' ) );
 	}
 
+	addUserAgentClasses() {
+		for ( const [ key, value ] of Object.entries( environment ) ) {
+			if ( value ) {
+				this.elements.$body.addClass( 'e--ua-' + key );
+			}
+		}
+	}
+
 	addIeCompatibility() {
 		const el = document.createElement( 'div' ),
 			supportsGrid = 'string' === typeof el.style.grid;
@@ -282,6 +300,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.addUserAgentClasses();
 
 		this.addIeCompatibility();
 

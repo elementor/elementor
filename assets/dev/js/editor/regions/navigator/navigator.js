@@ -11,10 +11,11 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
+		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
 
 		this.indicators = {
 			customPosition: {
-				title: elementor.translate( 'custom_positioning' ),
+				title: __( 'Custom Positioning', 'elementor' ),
 				icon: 'cursor-move',
 				settingKeys: [ '_position', '_element_width' ],
 				section: '_section_position',

@@ -20,7 +20,7 @@ import Icon from './ui/atoms/icon';
 import List from './ui/molecules/list';
 import Menu from './ui/menu/menu';
 import MenuItem from './ui/menu/menu-item';
-import ModalProvider from './ui/modal/modal';
+import { Modal, default as ModalProvider } from './ui/modal/modal';
 import NotFound from './pages/not-found';
 import Notice from './ui/molecules/notice';
 import Page from './layout/page';
@@ -52,6 +52,7 @@ export default {
 	List,
 	Menu,
 	MenuItem,
+	Modal,
 	ModalProvider,
 	NotFound,
 	Notice,

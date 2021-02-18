@@ -638,9 +638,17 @@ class Admin extends App {
 			return;
 		}
 		?>
+		<hr class="e-major-update-warning__separator" />
 		<div class="e-major-update-warning">
-			<div class="e-major-update-warning__title"><?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?></div>
-			<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			<div class="e-major-update-warning__icon">
+				<i class="eicon-info-circle"></i>
+			</div>
+			<div>
+				<div class="e-major-update-warning__title">
+					<?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?>
+				</div>
+				<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			</div>
 		</div>
 		<?php
 	}
@@ -713,17 +721,6 @@ class Admin extends App {
 		$settings = [
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
-			'i18n' => [
-				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
-				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
-				'yes' => __( 'Continue', 'elementor' ),
-				'cancel' => __( 'Cancel', 'elementor' ),
-				'new_template' => __( 'New Template', 'elementor' ),
-				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
-				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
-				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
-				'do_not_show_again' => __( 'Don\'t Show Again', 'elementor' ),
-			],
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
 			],

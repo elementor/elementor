@@ -113,7 +113,13 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $is_type_instance ) {
-			$this->_register_skins();
+			if ( $this->has_own_method( '_register_skins', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_skins', '3.1.0', __CLASS__ . '::register_skins()' );
+
+				$this->_register_skins();
+			} else {
+				$this->register_skins();
+			}
 
 			$widget_name = $this->get_name();
 
@@ -273,6 +279,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Register widget skins - deprecated prefixed method
+	 *
+	 * @since 1.7.12
+	 * @access protected
+	 * @deprecated 3.1.0
+	 */
+	protected function _register_skins() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
+
+		$this->register_skins();
+	}
+
+	/**
 	 * Register widget skins.
 	 *
 	 * This method is activated while initializing the widget base class. It is
@@ -280,14 +299,14 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Usage:
 	 *
-	 *    protected function _register_skins() {
+	 *    protected function register_skins() {
 	 *        $this->add_skin( new Skin_Classic( $this ) );
 	 *    }
 	 *
-	 * @since 1.7.12
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_skins() {}
+	protected function register_skins() {}
 
 	/**
 	 * Get initial config.
@@ -400,8 +419,8 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
 
 		$this->add_render_attribute(
 			'_wrapper', 'class', [
@@ -656,7 +675,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _print_content() {
+	protected function print_content() {
 		$this->render_content();
 	}
 
@@ -765,7 +784,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Add new skin.
 	 *
 	 * Register new widget skin to allow the user to set custom designs. Must be
-	 * called inside the `_register_skins()` method.
+	 * called inside the `register_skins()` method.
 	 *
 	 * @since 1.0.0
 	 * @access public

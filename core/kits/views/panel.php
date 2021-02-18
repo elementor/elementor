@@ -13,7 +13,13 @@
 			<i class="eicon-help-o"></i>
 		</a>
 	</div>
-	<# } #>
+	<#
+	}
+
+	if ( tabConfig.additionalContent ) {
+		#> {{{ tabConfig.additionalContent }}} <#
+	}
+	#>
 </script>
 
 <script type="text/template" id="tmpl-elementor-global-style-repeater-row">
