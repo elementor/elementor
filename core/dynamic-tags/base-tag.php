@@ -171,7 +171,7 @@ abstract class Base_Tag extends Controls_Stack {
 			'label' => __( 'Settings', 'elementor' ),
 		] );
 
-		if ( $this->has_own_method( '_register_controls', self::class ) ) {
+		if ( $this->has_own_method( '_register_controls' ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
 
 			$this->_register_controls();

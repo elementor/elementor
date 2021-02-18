@@ -1,7 +1,7 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"prev_stable_version": "3.0.16",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
@@ -21,6 +21,7 @@
 		"babel-loader": "8.0.0",
 		"babel-plugin-transform-react-jsx": "^6.24.1",
 		"babel-preset-env": "^1.7.0",
+		"chalk": "^4.1.0",
 		"concurrently": "^4.0.1",
 		"cssnano": "^4.1.10",
 		"eslint": "^5.4.0",
@@ -70,6 +71,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "^2.2.0",
 		"@wordpress/babel-preset-default": "^2.1.0",
 		"core-js": "^2.6.5",
+		"grunt-cli": "^1.3.2",
 		"prop-types": "^15.7.1",
 		"reach-router-hash-history": "0.0.3",
 		"sass-lint": "^1.13.1"
