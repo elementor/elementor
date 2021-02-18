@@ -428,6 +428,16 @@ class Widget_Tabs extends Widget_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
 
+		$this->add_render_attribute( 'elementor-tabs-content-wrapper', [
+			'class' => 'elementor-tabs-content-wrapper',
+			'role' => 'tablist',
+			'aria-orientation' => 'vertical',
+		] );
+
+		if ( Plugin::instance()->editor->is_edit_mode() ) {
+			$this->add_render_attribute( 'elementor-tabs-content-wrapper', 'class', 'elementor-drop-area' );
+		}
+
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist" >
@@ -450,7 +460,7 @@ class Widget_Tabs extends Widget_Base {
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $tab_title; ?></div>
 				<?php endforeach; ?>
 			</div>
-			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
+			<div <?php echo $this->get_render_attribute_string( 'elementor-tabs-content-wrapper' ); ?>>
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
@@ -519,7 +529,7 @@ class Widget_Tabs extends Widget_Base {
 						<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>
 					<# } ); #>
 				</div>
-				<div class="elementor-tabs-content-wrapper">
+				<div class="elementor-tabs-content-wrapper elementor-drop-area">
 					<# _.each( settings.tabs, function( item, index ) {
 						var tabCount = index + 1,
 							tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
