@@ -30,7 +30,10 @@ body {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	transition: all .5s ease 0s;
+
+	&:not(.ui-resizable-resizing) {
+		transition: all .5s ease 0s;
+	}
 
 	.elementor-device-desktop & {
 		min-width: map_get($breakpoints, lg);
@@ -40,14 +43,18 @@ body {
 	}
 
 	.elementor-device-tablet & {
-		width: $editor-screen-md-min;
-		height: $editor-screen-lg-min;
+		max-width: $editor-screen-md-max;
+		min-width: $editor-screen-md-min;
+		width: var(--e-editor-preview-width, #{$editor-screen-md-min});
+		height: var(--e-editor-preview-height, #{$editor-screen-lg-min});
 		padding: 40px 10px 70px;
 	}
 
 	.elementor-device-mobile & {
-		width: 360px;
-		height: 640px;
+		max-width: $editor-screen-sm-max;
+		min-width: 320px;
+		width: var(--e-editor-preview-width, 360px);
+		height: var(--e-editor-preview-width, 640px);
 		padding: 40px 10px 70px;
 	}
 
@@ -57,6 +64,42 @@ body {
 		margin: 30px auto 80px;
 		box-sizing: content-box;
 	}
+
+	.ui-resizable-e, .ui-resizable-w {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&:before {
+			content: '';
+			display: block;
+			background-color: rgba(255, 255, 255, 0.2);
+			width: 4px;
+			height: 50px;
+			border-radius: 3px;
+			transition: all 0.2s ease-in-out;
+		}
+
+		&:hover:before {
+			background-color: rgba(255, 255, 255, 0.6);
+			height: 100px;
+		}
+	}
+
+	&.ui-resizable-resizing {
+		.ui-resizable-e, .ui-resizable-w {
+			&:before {
+				background-color: rgba(255, 255, 255, 0.9);
+			}
+		}
+	}
+
+	.ui-resizable-e {
+		right: 0;
+	}
+	.ui-resizable-w {
+		left: 0;
+	}
 }
 
 #elementor-preview-iframe {
@@ -64,3 +107,4 @@ body {
 	height: 100%;
 	background-color: #fff;
 }
+

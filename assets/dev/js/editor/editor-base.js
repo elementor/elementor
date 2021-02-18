@@ -541,6 +541,27 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
+	makePreviewResizable() {
+		const responsiveWrapper = this.$previewWrapper.find( '#elementor-preview-responsive-wrapper' );
+
+		responsiveWrapper.resizable( {
+			handles: 'n, e, s, w',
+			start: function() {
+			},
+			stop: function( event, ui ) {
+				//self.saveSize( ui.size.width + 'px' );
+			},
+			resize: function( event, ui ) {
+				elementorCommon.elements.$body.css( '--e-editor-preview-width', ui.size.width + 'px' );
+				responsiveWrapper.css( {
+					width: '',
+					left: '',
+					right: '',
+				} );
+			},
+		} );
+	}
+
 	preventClicksInsideEditor() {
 		this.$previewContents.on( 'submit', ( event ) =>
 			event.preventDefault()
@@ -654,6 +675,7 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
+		this.makePreviewResizable();
 	}
 
 	toggleDeviceMode() {
@@ -895,6 +917,8 @@ export default class EditorBase extends Marionette.Application {
 		this.trigger( 'preview:loaded', ! this.loaded /* isFirst */ );
 
 		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
+
+		this.makePreviewResizable();
 
 		this.loaded = true;
 	}
