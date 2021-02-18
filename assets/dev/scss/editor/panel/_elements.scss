@@ -40,9 +40,16 @@
 	}
 }
 
+#elementor-panel-elements-search-area {
+	position: sticky;
+	top: 0;
+	padding: 10px;
+	background-color: $editor-background;
+	z-index: $first-layer;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
-	margin: 10px 10px 5px;
 }
 
 #elementor-panel-elements-search-input {
