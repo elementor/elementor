@@ -1,8 +1,9 @@
 name: Sync Branches
 
-on:
-  schedule:
-    - cron: '0 */2 * * *'
+#on:
+#  schedule:
+#    - cron: '0 */2 * * *'
+on: [push]
 
 jobs:
   run:
@@ -25,4 +26,7 @@ jobs:
           git config --local user.name "${{ secrets.MAINTAIN_USERNAME }}"
           git checkout "release/${NEXT_PACKAGE_VERSION}"
           git merge origin/develop
+          git push
+          git checkout developer-edition
+          git merge "release/${NEXT_PACKAGE_VERSION}"
           git push
