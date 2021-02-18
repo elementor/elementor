@@ -1,9 +1,8 @@
 name: Sync Branches
 
-#on:
-#  schedule:
-#    - cron: '0 */2 * * *'
-on: [push]
+on:
+  schedule:
+    - cron: '0 */2 * * *'
 
 jobs:
   run:
