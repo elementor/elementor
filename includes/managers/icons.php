@@ -201,7 +201,6 @@ class Icons_Manager {
 	public static function store_svg_symbols() {
 		global $post;
 
-		$has_svg_meta = ! empty( get_post_meta( $post->ID, '_elementor_svg_symbols' )[0] );
 		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
 
 		if ( ! count( $symbols ) ) {
@@ -209,10 +208,6 @@ class Icons_Manager {
 		}
 
 		update_post_meta( $post->ID, '_elementor_svg_symbols', $symbols );
-
-		if ( ! $has_svg_meta ) {
-			self::render_svg_symbols();
-		}
 	}
 
 	/**
@@ -221,8 +216,8 @@ class Icons_Manager {
 	 */
 	public static function render_svg_symbols() {
 		global $post;
-		$saved_symbols = get_post_meta( $post->ID, '_elementor_svg_symbols' );
-		$symbols = ! empty( $saved_symbols ) ? $saved_symbols[0] : [];
+		$saved_symbols = get_post_meta( $post->ID, '_elementor_svg_symbols' )[0];
+		$symbols = ! empty( $saved_symbols ) ? $saved_symbols : [];
 
 		if ( ! count( $symbols ) ) {
 			return;
@@ -230,7 +225,9 @@ class Icons_Manager {
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
 
-		foreach ( $symbols as $symbol_id => $symbol ) {
+		foreach ( $symbols as $symbol_id => $icon ) {
+			$symbol = self::get_icon_svg_data( $icon );
+
 			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $symbol['width'] . ' ' . $symbol['height'] . '">';
 			$svg .= '<path d="' . $symbol['path'] . '"></path>';
 			$svg .= '</symbol>';
@@ -257,6 +254,27 @@ class Icons_Manager {
 		return $icon_list[ 'icons' ][ $icon_name ];
 	}
 
+	public static function get_icon_svg_data( $icon ) {
+		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
+		$icon_data = get_option( $icon_option_key );
+
+		if ( empty( $icon_data ) ) {
+			// On first use, load the SVG from the Font Awesome json file
+			$icon_data = self::get_font_awesome_svg_from_library( $icon );
+			$icon_data = [
+				'width' => $icon_data[0],
+				'height' => $icon_data[1],
+				'key' => $icon_option_key,
+				'path' => $icon_data[4],
+			];
+
+			// Save the $icon_data in the database for future renders
+			update_option( $icon_option_key, $icon_data );
+		}
+
+		return $icon_data;
+	}
+
 	/**
 	 * render_font_awesome_svg
 	 * @param $icon array [ 'value' => string, 'library' => string ]
@@ -264,37 +282,29 @@ class Icons_Manager {
 	 * @return bool|mixed|string
 	 */
 	public static function render_font_awesome_svg( $icon ) {
-		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 
 		// Load the SVG from the database
-		$icon_data = ''; //get_option( $icon_option_key );
-
-		if ( empty( $icon_data ) ) {
-			// On first use, load the SVG from the Font Awesome json file
-			$icon_data = self::get_font_awesome_svg_from_library( $icon );
-		}
+		$icon_data = self::get_icon_svg_data( $icon );
 
 		// Add the icon data to the symbols array for later use in page rendering process.
-		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_option_key, $icon_data ) {
-			$symbols[ $icon_option_key ] = [
-				'width' => $icon_data[0],
-				'height' => $icon_data[1],
-				'path' => $icon_data[4],
-			];
+		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data, $icon ) {
+			if ( ! in_array( $icon_data[ 'key' ], $symbols ) ) {
+				$symbols[ $icon_data['key'] ] = $icon;
+			}
+
 			return $symbols;
 		} );
 
 		// If in edit mode inline the full svg, otherwise use the symbol
-		$svg = ! $is_edit_mode ? '<svg><use xlink:href="#'. $icon_option_key .'" /></svg>' :
-			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $icon_data[0] . ' ' . $icon_data[1] . '">
-				<path d="' . $icon_data[4] . '"></path>
+		if ( $is_edit_mode ) {
+			return '<svg xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'] . '">
+				<path d="' . $icon_data['path'] . '"></path>
 			</svg>';
+		}
 
-		// On first use, Save the $icon_data in the database for future renders
-		update_option( $icon_option_key, $icon_data );
-
-		return $svg;
+		return '<svg><use xlink:href="#'. $icon_data['key'] .'" /></svg>';
 	}
 
 	private static function render_svg_icon( $value ) {
@@ -305,15 +315,25 @@ class Icons_Manager {
 		return Svg_Handler::get_inline_svg( $value['id'] );
 	}
 
-	private static function render_icon_html( $icon, $attributes = [], $tag = 'i' ) {
+	private static function is_fa5_icon( $icon ) {
+		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
+
+		return ! empty( $matches );
+	}
+
+	public static function render_icon_html( $icon, $attributes = [], $tag = 'i' ) {
 		$icon_types = self::get_icon_manager_tabs();
 		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
 			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
-		$content = self::is_font_awesome_inline() ? self::render_font_awesome_svg( $icon ) : '';
+		$content = '';
 
-		if ( ! self::is_font_awesome_inline() ) {
+		if ( self::is_font_awesome_inline() && self::is_fa5_icon( $icon ) ) {
+			$content = self::render_font_awesome_svg( $icon );
+		}
+
+		if ( ! self::is_font_awesome_inline() || ! self::is_fa5_icon( $icon ) ) {
 			if ( empty( $attributes['class'] ) ) {
 				$attributes['class'] = $icon['value'];
 			} else {
@@ -571,13 +591,13 @@ class Icons_Manager {
 
 		if ( self::is_font_awesome_inline() ) {
 			add_action( 'wp_footer', [ $this, 'store_svg_symbols' ], 10 );
+			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ] );
+			add_action( 'wp_footer', function() {
+				echo  '<style> .elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }</style>';
+			} );
 			add_action( 'elementor/editor/after_save', function( $post_id ) {
 				update_post_meta( $post_id, '_elementor_svg_symbols', [] );
 			} );
-			add_action( 'wp_enqueue_scripts', [ $this, 'render_svg_symbols' ] );
-			add_action( 'wp_footer', function() {
-				echo  '<style> .elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }</style>';
-			}, 10 );
 		}
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );

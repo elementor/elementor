@@ -1327,7 +1327,8 @@ class Frontend extends App {
 			array_push( $deferred_styles,
 					'elementor-icons-shared-0',
 					'elementor-icons-fa-regular',
-					'elementor-icons-fa-solid'
+					'elementor-icons-fa-solid',
+					'elementor-icons-fa-brands'
 			);
 		}
 
