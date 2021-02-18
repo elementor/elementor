@@ -65,6 +65,13 @@ body {
 		box-sizing: content-box;
 	}
 
+	.ui-resizable-n, .ui-resizable-s {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 20px;
+	}
+
 	.ui-resizable-e, .ui-resizable-w {
 		display: flex;
 		align-items: center;
