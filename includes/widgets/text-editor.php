@@ -241,7 +241,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => 'max-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
