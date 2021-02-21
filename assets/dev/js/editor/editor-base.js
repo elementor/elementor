@@ -542,24 +542,26 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	makePreviewResizable() {
-		const responsiveWrapper = this.$previewWrapper.find( '#elementor-preview-responsive-wrapper' );
+		const responsiveWrapper = this.$previewResponsiveWrapper;
 
 		responsiveWrapper.resizable( {
 			handles: 'n, e, s, w',
-			start: function() {
+
+			start: function( event, ui ) {
+				// ..
 			},
 			stop: function( event, ui ) {
-				//self.saveSize( ui.size.width + 'px' );
+				// ..
 			},
 			resize: function( event, ui ) {
 				elementorCommon.elements.$body.css( '--e-editor-preview-width', ui.size.width + 'px' );
-				responsiveWrapper.css( {
-					width: '',
-					left: '',
-					right: '',
-				} );
+				responsiveWrapper.css( { width: '', left: '', right: '', top: '', height: '' } );
 			},
 		} );
+	}
+
+	updatePreviewResizeOpions() {
+		// this.$previewResponsiveWrapper
 	}
 
 	preventClicksInsideEditor() {
@@ -854,6 +856,8 @@ export default class EditorBase extends Marionette.Application {
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+
+		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOpions );
 
 		this.initClearPageDialog();
 
