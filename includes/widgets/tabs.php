@@ -480,7 +480,7 @@ class Widget_Tabs extends Widget_Base {
 					] );
 
 					if ( Plugin::instance()->editor->is_edit_mode() ) {
-						$this->add_render_attribute( $tab_content_setting_key, 'data-repeater-id', $item[ '_id' ] );
+						$this->add_render_attribute( $tab_content_setting_key, 'data-repeater-id', $item['_id'] );
 					}
 
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [

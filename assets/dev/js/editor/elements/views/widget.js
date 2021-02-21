@@ -269,7 +269,7 @@ WidgetView = BaseElementView.extend( {
 							break;
 
 						case 'bottom':
-							if( parent.lastChild.isSameNode( current ) ) {
+							if ( parent.lastChild.isSameNode( current ) ) {
 								// If `current` the last child, append the new one in the end.
 								parent.appendChild( newElement );
 							} else {
