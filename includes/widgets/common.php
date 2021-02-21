@@ -44,6 +44,32 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * @param $shape String Shape name.
+	 *
+	 * @return string The shape path in the assets folder.
+	 */
+	private function get_shape_url( $shape ) {
+		return ELEMENTOR_ASSETS_URL . 'mask-shapes/' . $shape . '.svg';
+	}
+
+	/**
+	 * @return array Array of shapes with their URL as key.
+	 */
+	private function get_shapes() {
+		$shapes = [
+			$this->get_shape_url( 'circle' ) => __( 'Circle', 'elementor' ),
+			$this->get_shape_url( 'square' ) => __( 'Square', 'elementor' ),
+			$this->get_shape_url( 'rectangle' ) => __( 'Rectangle', 'elementor' ),
+			$this->get_shape_url( 'triangle' ) => __( 'Triangle', 'elementor' ),
+			$this->get_shape_url( 'oval' ) => __( 'Oval', 'elementor' ),
+			$this->get_shape_url( 'arrow' ) => __( 'Arrow', 'elementor' ),
+			$this->get_shape_url( 'blob' ) => __( 'Blob', 'elementor' ),
+		];
+
+		return $shapes;
+	}
+
+	/**
 	 * Register common widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -373,6 +399,35 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->add_control(
+			'_mask_switch',
+			[
+				'label' => __( 'Mask', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => __( 'Off', 'elementor' ),
+				'default' => '',
+			]
+		);
+
+		$options = array_merge(
+			$this->get_shapes(),
+			[ 'custom' => __( 'Custom', 'elementor' ) ]
+		);
+
+		$this->add_control( '_mask_shape', [
+			'label' => __( 'Shape', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => $options,
+			'default' => 'circle',
+			'selectors' => [
+				'{{WRAPPER}}' => '-webkit-mask-image: url( {{VALUE}} );',
+			],
+			'condition' => [
+				'_mask_switch!' => '',
+			],
+		] );
+
+		$this->add_control(
 			'_mask_image',
 			[
 				'label' => __( 'Image', 'elementor' ),
@@ -380,13 +435,32 @@ class Widget_Common extends Widget_Base {
 				'media_type' => 'image',
 				'should_include_svg_inline_option' => true,
 				'library_type' => 'image/svg+xml',
+				'dynamic' => [
+					'active' => true,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-image: url( {{URL}} );',
+				],
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_shape' => 'custom',
 				],
 			]
 		);
 
 		$this->add_control(
+			'_mask_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://elementor.com' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'_mask_size',
 			[
 				'label' => __( 'Size', 'elementor' ),
@@ -400,10 +474,13 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-size: {{VALUE}};',
 				],
+				'condition' => [
+					'_mask_switch!' => '',
+				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_size_scale',
 			[
 				'label' => __( 'Scale', 'elementor' ),
@@ -435,12 +512,13 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => '-webkit-mask-size: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
+					'_mask_switch!' => '',
 					'_mask_size' => 'custom',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_position',
 			[
 				'label' => __( 'Position', 'elementor' ),
@@ -461,10 +539,13 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '-webkit-mask-position: {{VALUE}};',
 				],
+				'condition' => [
+					'_mask_switch!' => '',
+				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_position_x',
 			[
 				'label' => __( 'X Position', 'elementor' ),
@@ -496,12 +577,13 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => '-webkit-mask-position-x: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
+					'_mask_switch!' => '',
 					'_mask_position' => 'custom',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_position_y',
 			[
 				'label' => __( 'Y Position', 'elementor' ),
@@ -533,19 +615,20 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => '-webkit-mask-position-y: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
+					'_mask_switch!' => '',
 					'_mask_position' => 'custom',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_repeat',
 			[
 				'label' => __( 'Repeat', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'no-repeat' => __( 'No', 'elementor' ),
-					'repeat' => __( 'Yes', 'elementor' ),
+					'no-repeat' => __( 'No-Repeat', 'elementor' ),
+					'repeat' => __( 'Repeat', 'elementor' ),
 					'repeat-x' => __( 'Repeat-X', 'elementor' ),
 					'repeat-Y' => __( 'Repeat-Y', 'elementor' ),
 					'round' => __( 'Round', 'elementor' ),
@@ -556,6 +639,7 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => '-webkit-mask-repeat: {{VALUE}};',
 				],
 				'condition' => [
+					'_mask_switch!' => '',
 					'_mask_size!' => 'cover',
 				],
 			]
