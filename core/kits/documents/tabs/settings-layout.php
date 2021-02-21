@@ -170,6 +170,8 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => __( 'Active Breakpoints', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
+				/* translators: 1: Mobile, 2: Tablet. */
+				'description' => __( 'Mobile and Tablet options cannot be deleted', 'elementor' ),
 				'options' => $options,
 				'default' => [
 					$prefix . $breakpoint_key_mobile,
@@ -177,6 +179,10 @@ class Settings_Layout extends Tab_Base {
 				],
 				'select2options' => [
 					'allowClear' => false,
+				],
+				'nonDeletableOptions' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
 				],
 				'label_block' => true,
 				'render_type' => 'none',

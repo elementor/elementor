@@ -23,7 +23,8 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
-		const elementSelect2Data = this.ui.select.data( 'select2' );
+		const elementSelect2Data = this.ui.select.data( 'select2' ),
+			nonDeletableOptions = this.model.get( 'nonDeletableOptions' );
 
 		// Checking if the element itself was initiated with select2 functionality in case of multiple renders.
 		if ( ! elementSelect2Data ) {
@@ -33,6 +34,16 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 			} );
 		} else {
 			this.ui.select.trigger( 'change' );
+		}
+
+		if ( nonDeletableOptions ) {
+			this.ui.select.on( 'select2:unselecting', ( event ) => {
+				const data = event.params.args.data;
+
+				if ( nonDeletableOptions.includes( event.params.args.data.id ) ) {
+					event.preventDefault();
+				}
+			} );
 		}
 	},
 
