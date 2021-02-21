@@ -247,23 +247,6 @@ class Settings_Layout extends Tab_Base {
 				],
 			];
 
-			// If the current breakpoint is currently active, use its actual value for the min/max properties.
-			// Otherwise, use the default breakpoint values.
-			$breakpoint_value = isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'];
-
-			if ( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $breakpoint_key ) {
-				// For the Widescreen breakpoint, there is no maximum - it is a min-width breakpoint.
-				$control_config['min'] = $breakpoint_value;
-			} elseif ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_key ) {
-				// For the mobile breakpoint, we set no minimum. This is because the minimum is 0, since it is always
-				// the smallest breakpoint.
-				$control_config['max'] = $breakpoint_value;
-			} else {
-				// For all other breakpoints, the minimum and maximum are standard.
-				$control_config['min'] = $breakpoints_manager->get_device_min_breakpoint( $breakpoint_key, false );
-				$control_config['max'] = $breakpoint_value;
-			}
-
 			// Add the breakpoint Control itself.
 			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}
