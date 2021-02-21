@@ -479,6 +479,10 @@ class Widget_Tabs extends Widget_Base {
 						'hidden' => $hidden,
 					] );
 
+					if ( Plugin::instance()->editor->is_edit_mode() ) {
+						$this->add_render_attribute( $tab_content_setting_key, 'data-repeater-id', $item[ '_id' ] );
+					}
+
 					$this->add_render_attribute( $tab_title_mobile_setting_key, [
 						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
 						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
@@ -538,6 +542,7 @@ class Widget_Tabs extends Widget_Base {
 							'id': 'elementor-tab-content-' + elementUid + tabCount,
 							'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
 							'data-tab': tabCount,
+							'data-repeater-id': item._id,
 							'role' : 'tabpanel',
 							'aria-labelledby' : 'elementor-tab-title-' + elementUid + tabCount
 						} );
