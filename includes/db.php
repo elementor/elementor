@@ -352,7 +352,7 @@ class DB {
 	 * Check whether the post was built with Elementor.
 	 *
 	 * @since 1.0.10
-	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()` instead
+	 * @deprecated 3.2.0 Use `Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -365,7 +365,7 @@ class DB {
 			->deprecation
 			->deprecated_function(
 				__METHOD__,
-				'3.1.0',
+				'3.2.0',
 				'Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()'
 			);
 
