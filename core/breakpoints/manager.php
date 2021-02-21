@@ -22,6 +22,7 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
 	private $config;
+	private $active_config;
 	private $breakpoints;
 
 	public function get_name() {
@@ -58,9 +59,10 @@ class Manager extends Module {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 		$active_breakpoint_keys = $kit->get_settings_for_display( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
 		$default_config = self::get_default_config();
+		$prefix = self::BREAKPOINT_OPTION_PREFIX;
 
 		if ( ! $active_breakpoint_keys ) {
-			$active_breakpoint_keys = [ self::BREAKPOINT_KEY_MOBILE, self::BREAKPOINT_KEY_TABLET ];
+			$active_breakpoint_keys = [ $prefix . self::BREAKPOINT_KEY_MOBILE, $prefix . self::BREAKPOINT_KEY_TABLET ];
 		}
 
 		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
@@ -72,7 +74,7 @@ class Manager extends Module {
 				$args['is_enabled'] = true;
 			} else {
 				// If the breakpoint is in the active breakpoints array, make sure it's instantiated as enabled.
-				$args['is_enabled'] = in_array( $breakpoint_name, $active_breakpoint_keys, true );
+				$args['is_enabled'] = in_array( $prefix . $breakpoint_name, $active_breakpoint_keys, true );
 			}
 
 			$breakpoints[ $breakpoint_name ] = new Breakpoint( $args );
@@ -99,6 +101,16 @@ class Manager extends Module {
 		return self::get_items( $this->config, $breakpoint_name );
 	}
 
+	public function get_active_config( $breakpoint_name = null ) {
+		if ( ! $this->active_config ) {
+			$this->active_config = array_filter( $this->get_config(), function( $breakpoint ) {
+				return $breakpoint['is_enabled'];
+			} );
+		}
+
+		return self::get_items( $this->active_config, $breakpoint_name );
+	}
+
 	/**
 	 * Init Config
 	 *
@@ -117,12 +129,7 @@ class Manager extends Module {
 		// Iterate over the breakpoint instances and get each one's config.
 		foreach ( $breakpoints as $name => $instance ) {
 			/** @var Breakpoint $instance */
-			$breakpoint_config = $instance->get_config();
-
-			// Only add breakpoints to the config array if they are enabled.
-			if ( $breakpoint_config['is_enabled'] ) {
-				$config[ $name ] = $breakpoint_config;
-			}
+			$config[ $name ] = $instance->get_config();
 		}
 
 		return $config;
@@ -162,7 +169,7 @@ class Manager extends Module {
 	 *@since 3.2.0
 	 */
 	public function get_device_min_breakpoint( $device_name, $only_enabled_breakpoints = true ) {
-		$breakpoints_config = $only_enabled_breakpoints ? $this->get_config() : self::get_default_config();
+		$breakpoints_config = $only_enabled_breakpoints ? $this->get_active_config() : $this->get_config();
 		$breakpoints = $this->get_breakpoints();
 		/** @var Breakpoint $current_device_breakpoint */
 		$current_device_breakpoint = $breakpoints[ $device_name ];
@@ -193,14 +200,14 @@ class Manager extends Module {
 	}
 
 	public function get_desktop_min_point() {
-		$config = $this->get_config();
+		$config = $this->get_active_config();
 		$desktop_previous_device = $this->get_desktop_previous_device();
 
 		return $config[ $desktop_previous_device ]['value'] + 1;
 	}
 
 	private function get_desktop_previous_device() {
-		$config_array_keys = array_keys( $this->get_config() );
+		$config_array_keys = array_keys( $this->get_active_config() );
 		$num_of_devices = count( $config_array_keys );
 
 		// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before

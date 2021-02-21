@@ -4,7 +4,7 @@
 			rules = {},
 			rawCSS = {},
 			devices = {},
-			breakpoints,
+			activeBreakpoints,
 			// A object map of breakpoint database keys
 			breakpointKeys,
 			// A flat array of the breakpoint keys.
@@ -13,13 +13,13 @@
 		const getDeviceMinBreakpoint = ( deviceName ) => {
 			let minBreakpoint;
 
-			if ( ! breakpoints ) {
+			if ( ! activeBreakpoints ) {
 				// The breakpoints config object
-				breakpoints = elementorFrontend.config.breakpoints;
+				activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 			}
 
 			if ( ! breakpointNames ) {
-				breakpointNames = Object.keys( breakpoints );
+				breakpointNames = Object.keys( activeBreakpoints );
 			}
 
 			if ( ! breakpointKeys ) {
@@ -29,15 +29,15 @@
 			if ( breakpointNames[ 0 ] === deviceName ) {
 				// For the lowest breakpoint, the min point is always 0.
 				minBreakpoint = 0;
-			} else if ( 'min' === breakpoints.deviceName.direction ) {
+			} else if ( 'min' === activeBreakpoints[ deviceName ].direction ) {
 				// Widescreen only has a minimum point. In this case, the breakpoint
 				// value in the Breakpoints config is itself the device min point.
-				minBreakpoint = breakpoints[ deviceName ].value;
+				minBreakpoint = activeBreakpoints[ deviceName ].value;
 			} else {
 				const deviceNameIndex = breakpointNames.indexOf( deviceName ),
 					previousIndex = deviceNameIndex - 1;
 
-				minBreakpoint = breakpoints[ breakpointNames[ previousIndex ] ] + 1;
+				minBreakpoint = activeBreakpoints[ breakpointNames[ previousIndex ] ] + 1;
 			}
 
 			return minBreakpoint;

@@ -1190,7 +1190,10 @@ class Frontend extends App {
 			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
-			'responsive' => Plugin::$instance->breakpoints->get_config(),
+			'responsive' => [
+				'breakpoints' => Plugin::$instance->breakpoints->get_config(),
+				'activeBreakpoints' => Plugin::$instance->breakpoints->get_active_config(),
+			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,

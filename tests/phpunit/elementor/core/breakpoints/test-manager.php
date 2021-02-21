@@ -51,7 +51,7 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	public function test_get_config() {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$config = Plugin::$instance->breakpoints->get_config();
+		$active_config = Plugin::$instance->breakpoints->get_active_config();
 
 		// Create an array and populate it with the keys of only enabled breakpoints.
 		$enabled_breakpoint_keys = [];
@@ -62,11 +62,11 @@ class Test_Manager extends Elementor_Test_Base {
 				$enabled_breakpoint_keys[] = $breakpoint->get_name();
 
 				// This checks both that the config item is an array and that it contains the correct keys.
-				$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $config[ $breakpoint_name ] );
+				$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $active_config[ $breakpoint_name ] );
 			}
 		}
 
-		$this->assertEquals( $enabled_breakpoint_keys, array_keys( $config ) );
+		$this->assertEquals( $enabled_breakpoint_keys, array_keys( $active_config ) );
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_has_custom_breakpoints() {
-		$config = Plugin::$instance->breakpoints->get_config();
+		$config = Plugin::$instance->breakpoints->get_active_config();
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
 		$has_custom_breakpoints = false;
@@ -101,7 +101,7 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_device_min_breakpoint() {
-		$config = Plugin::$instance->breakpoints->get_config();
+		$config = Plugin::$instance->breakpoints->get_active_config();
 
 		// Test for mobile specifically, which always has a min point of 0.
 		$this->assertEquals( 0, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );

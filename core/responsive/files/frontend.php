@@ -31,7 +31,7 @@ class Frontend extends Base {
 	 * @access public
 	 */
 	public function parse_content() {
-		$breakpoints = Plugin::$instance->breakpoints->get_config();
+		$breakpoints = Plugin::$instance->breakpoints->get_active_config();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 

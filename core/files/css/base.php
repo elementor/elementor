@@ -702,7 +702,7 @@ abstract class Base extends Base_File {
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
-		$breakpoints_config = Plugin::$instance->breakpoints->get_config();
+		$breakpoints_config = Plugin::$instance->breakpoints->get_active_config();
 
 		foreach ( $breakpoints_config as $breakpoint_name => $breakpoint_config ) {
 			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint_config['value'] );

@@ -57,7 +57,7 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 */
 	public function test_is_enabled() {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$active_breakpoint_names = array_keys( Plugin::$instance->breakpoints->get_config() );
+		$active_breakpoint_names = array_keys( Plugin::$instance->breakpoints->get_active_config() );
 
 		foreach ( $breakpoints as $breakpoint ) {
 			/** @var Breakpoint $breakpoint */

@@ -270,7 +270,7 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		$breakpoints_config = Plugin::$instance->breakpoints->get_config();
+		$breakpoints_config = Plugin::$instance->breakpoints->get_active_config();
 
 		foreach ( $breakpoints_config as $breakpoint_key => $breakpoint ) {
 			$prefix = 'viewport_';

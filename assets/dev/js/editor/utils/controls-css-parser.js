@@ -28,7 +28,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	initStylesheet: function() {
-		const breakpoints = elementorFrontend.config.responsive;
+		const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		this.stylesheet = new Stylesheet();
 
