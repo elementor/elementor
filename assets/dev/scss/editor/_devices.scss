@@ -14,6 +14,9 @@ body {
 	border: 0;
 	width: var(--e-preview-width);
 	top: calc(var(--e-is-device-mode) * 40px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	.elementor-device-desktop & {
 		overflow-y: hidden;
@@ -25,14 +28,11 @@ body {
 }
 
 #elementor-preview-responsive-wrapper {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	margin: auto;
+	transition: all .5s ease 0s;
 
 	&:not(.ui-resizable-resizing) {
-		transition: all .5s ease 0s;
+		transition: width .15s ease 0s;
 	}
 
 	.elementor-device-desktop & {
@@ -46,7 +46,9 @@ body {
 		max-width: $editor-screen-md-max;
 		min-width: $editor-screen-md-min;
 		width: var(--e-editor-preview-width, #{$editor-screen-md-min});
-		height: var(--e-editor-preview-height, #{$editor-screen-lg-min});
+		min-height: var(--e-editor-preview-height, #{$editor-screen-md-min});
+		height: var(--e-editor-preview-height, #{$editor-screen-md-max});
+		max-height: var(--e-editor-preview-height, #{$editor-screen-md-max});
 		padding: 40px 10px 70px;
 	}
 
@@ -70,6 +72,21 @@ body {
 		align-items: center;
 		justify-content: center;
 		height: 20px;
+
+		&:before {
+			content: '';
+			display: block;
+			background-color: rgba(255, 255, 255, 0.2);
+			width: 50px;
+			height: 4px;
+			border-radius: 3px;
+			transition: all 0.2s ease-in-out;
+		}
+
+		&:hover:before {
+			background-color: rgba(255, 255, 255, 0.6);
+			width: 100px;
+		}
 	}
 
 	.ui-resizable-e, .ui-resizable-w {
