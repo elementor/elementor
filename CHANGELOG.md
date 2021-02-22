@@ -5,6 +5,25 @@ Each Developer Edition release, similar to beta version releases, will contain e
 We will use this plugin to validate new features and gain feedback before they are released.**
 Visit the plugin page to download [Elementor Beta - Developer Edition](https://wordpress.org/plugins/elementor-beta)
 ## Changelog
+**3.2.0-dev4 - 2021-02-22**
+* Tweak: Changed devices switching UI to Responsive Top bar to allow future extra breakpoints
+* Tweak: Added Gradient Background option to Button widget
+* Tweak: Splitted `eicons` library into Editor and Frontend usages in Optimized Asset Load experiment
+* Tweak: Made widgets panel resizing more responsive
+* Tweak: Added sticky search box in the widgets panel
+* Tweak: Removed deprecated `jQuery` functions for WP 5.7 compatibility
+* Tweak: Added Dynamic capability to video link in Background video
+* Tweak: Added `--force` CLI replace command to always return the number of replaces
+* Tweak: Removed `elementor-image` & `elementor-text-editor` wrappers from DOM in Optimized DOM experiment
+* Tweak: Added a Privacy Mode control for YouTube source in Video widget
+* Tweak: Background Video changed `http` to `https` in the `youtube-nocookie`
+* Tweak: Added a mixin for webkit-scrollbar design in Table of Contents widget CSS
+* Fix: Landing page created via the Admin bar wasn't created with Canvas layout
+* Fix: Youtube videos didn't work properly when Privacy mode is enabled and Optimized Asset Loading experiment is disabled 
+* Fix: Column structure glitch when changing the section structure
+* Fix: Error event will not always have an originalEvent (props [@enisdenjo](https://github.com/enisdenjo))
+* Deprecated: `is_built_with_elementor` DB method
+
 **3.2.0-dev2 - 2021-01-24**
 * Tweak: Updated `eicons` library to v5.10.0
 * Fix: Can't rearrange items between sections in Navigator since WordPress 5.6 update ([#12256](https://github.com/elementor/elementor/issues/12256))
