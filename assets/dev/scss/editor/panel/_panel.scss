@@ -1,9 +1,24 @@
 //
 // Panel
 //
+
+:root {
+	--e-is-preview-mode: 0;
+
+	@media (max-width: $editor-screen-lg-max) {
+		--e-editor-panel-width: #{$panel-width};
+	}
+
+	@media (min-width: $editor-screen-xl-min) {
+		--e-editor-panel-width: #{$panel-xl-width};
+	}
+}
+
 .elementor-panel {
 	position: fixed;
 	height: 100%;
+	width: var(--e-editor-panel-width);
+	@include start(calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode)));
 	top: 0;
 	bottom: 0;
 	overflow: visible;
@@ -12,31 +27,12 @@
 	font-family: $admin-font-family;
 	font-size: 13px;
 
-	.elementor-editor-active & {
-		@include start(0);
-	}
-
 	.elementor-editor-preview & {
-
-		@media (max-width: $editor-screen-lg-max) {
-			@include start(-$panel-width);
-		}
-
-		@media (min-width: $editor-screen-xl-min) {
-			@include start(-$panel-xl-width);
-		}
+		--e-is-preview-mode: 1;
 
 		> .ui-resizable-e, > .ui-resizable-w {
 			display: none;
 		}
-	}
-
-	@media (max-width: $editor-screen-lg-max) {
-		width: $panel-width;
-	}
-
-	@media (min-width: $editor-screen-xl-min) {
-		width: $panel-xl-width;
 	}
 
 	.ps-scrollbar-y-rail {

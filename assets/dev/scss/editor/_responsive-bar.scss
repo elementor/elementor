@@ -1,0 +1,92 @@
+:root {
+	--e-is-device-mode: 0;
+}
+
+.e-is-device-mode {
+	--e-is-device-mode: 1;
+}
+
+.e-responsive-bar {
+	position: fixed;
+	z-index: 1;
+	width: var(--e-preview-width);
+	@include end(0);
+	top: calc(-40px + ( 40px * var(--e-is-device-mode)));
+}
+
+.e-responsive-bar {
+	& {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px;
+		height: 40px;
+		color: $editor-light;
+		background-color: $editor-darkest;
+
+		&__col {
+			display: flex;
+			width: 25%;
+			justify-content: center;
+
+			&:last-child {
+				justify-content: flex-end;
+			}
+		}
+
+		&__close-button,
+		&__settings-button {
+			padding: 4px;
+		}
+
+		&__button {
+			appearance: none;
+			background: none;
+			border: 0 none;
+			cursor: pointer;
+			color: inherit;
+
+			&:hover {
+				color: $editor-lighter;
+			}
+		}
+	}
+
+	&-switcher {
+		&__option {
+			appearance: none;
+			overflow: hidden;
+			opacity: 0;
+			width: 0 !important;
+			height: 0 !important;
+			border: 0 !important;
+			padding: 0 !important;
+			position: absolute;
+
+			+ .e-responsive-bar-switcher__label {
+				display: block;
+				float: left;
+				position: relative;
+				cursor: pointer;
+
+				i {
+					width: 24px;
+					line-height: 24px;
+					text-align: center;
+					font-size: 15px;
+				}
+
+				i:hover {
+					color: $editor-lighter;
+				}
+			}
+
+			&:checked + label {
+				i {
+					color: $editor-info;
+				}
+			}
+		}
+	}
+}
+
