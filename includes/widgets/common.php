@@ -70,6 +70,25 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * Get array of selectors and rules to deal with image masking and mask the image instead of the wrapper.
+	 *
+	 * @param $rules string The CSS rules to apply.
+	 *
+	 * @return array Selectors with the rules applied.
+	 */
+	private function get_mask_selectors( $rules ) {
+		$mask_selectors = [
+			'default' => '{{WRAPPER}}:not( .elementor-widget-image )',
+			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-image > img',
+		];
+
+		return [
+			$mask_selectors['default'] => $rules,
+			$mask_selectors['image'] => $rules,
+		];
+	}
+
+	/**
 	 * Register common widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -419,9 +438,7 @@ class Widget_Common extends Widget_Base {
 			'type' => Controls_Manager::SELECT,
 			'options' => $options,
 			'default' => $this->get_shape_url( 'circle' ),
-			'selectors' => [
-				'{{WRAPPER}}' => '-webkit-mask-image: url( {{VALUE}} );',
-			],
+			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{VALUE}} );' ),
 			'condition' => [
 				'_mask_switch!' => '',
 			],
@@ -438,9 +455,7 @@ class Widget_Common extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-image: url( {{URL}} );',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{URL}} );' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_shape' => 'custom',
@@ -471,9 +486,7 @@ class Widget_Common extends Widget_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'default' => 'auto',
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-size: {{VALUE}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],
@@ -508,9 +521,7 @@ class Widget_Common extends Widget_Base {
 					'unit' => '%',
 					'size' => 100,
 				],
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-size: {{SIZE}}{{UNIT}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{SIZE}}{{UNIT}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_size' => 'custom',
@@ -536,9 +547,7 @@ class Widget_Common extends Widget_Base {
 					'custom' => __( 'Custom', 'elementor' ),
 				],
 				'default' => 'center center',
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-position: {{VALUE}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],
@@ -573,9 +582,7 @@ class Widget_Common extends Widget_Base {
 					'unit' => '%',
 					'size' => 0,
 				],
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-position-x: {{SIZE}}{{UNIT}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-x: {{SIZE}}{{UNIT}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_position' => 'custom',
@@ -611,9 +618,7 @@ class Widget_Common extends Widget_Base {
 					'unit' => '%',
 					'size' => 0,
 				],
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-position-y: {{SIZE}}{{UNIT}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-y: {{SIZE}}{{UNIT}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_position' => 'custom',
@@ -635,9 +640,7 @@ class Widget_Common extends Widget_Base {
 					'space' => __( 'Space', 'elementor' ),
 				],
 				'default' => 'no-repeat',
-				'selectors' => [
-					'{{WRAPPER}}' => '-webkit-mask-repeat: {{VALUE}};',
-				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-repeat: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_size!' => 'cover',
