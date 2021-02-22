@@ -37,7 +37,6 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
 		/** @var Breakpoint[] $breakpoints */
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
@@ -252,6 +251,42 @@ class Settings_Layout extends Tab_Base {
 		}
 	}
 
+	/**
+	 * Before Save
+	 *
+	 * Runs Before the Kit document is saved.
+	 *
+	 * For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
+	 * old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
+	 * is added is because the old breakpoints system was min-width based, and the new system introduced in
+	 * Elementor v3.2.0 is max-width based.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param array $data
+	 * @return array $data
+	 */
+	public function before_save( $data ) {
+		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
+		/** @var Breakpoint[] $breakpoints */
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+
+		// Update the old mobile breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'md' ] = empty( $data['settings'][ $mobile_breakpoint_key ] )
+			? $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->get_default_value() + 1
+			: $data['settings'][ $mobile_breakpoint_key ] + 1;
+
+		// Update the old tablet breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'lg' ] = empty( $data['settings'][ $tablet_breakpoint_key ] )
+			? $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]->get_default_value() + 1
+			: $data['settings'][ $tablet_breakpoint_key ] + 1;
+
+		return $data;
+	}
+
 	public function on_save( $data ) {
 		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
 			return;
@@ -259,29 +294,14 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		$breakpoints_config = Plugin::$instance->breakpoints->get_active_config();
+		/** @var Breakpoint[] $breakpoints */
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
-		foreach ( $breakpoints_config as $breakpoint_key => $breakpoint ) {
-			$prefix = 'viewport_';
-			$breakpoint_setting_key = $prefix . $breakpoint_key;
-			$breakpoint_value_to_update = is_numeric( $data['settings'][ $breakpoint_setting_key ] ) ? $data['settings'][ $breakpoint_setting_key ] : $breakpoints_config[ $breakpoint_key ]['value'];
+		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $breakpoint_key;
 
 			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
-
-				/**
-				 * For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
-				 * old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
-				 * is added is because the old breakpoints system was min-width based, and the new system introduced in
-				 * Elementor v3.2.0 is max-width based.
-				 */
-				if ( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE === $breakpoint_key ) {
-					$data['settings'][ $prefix . 'md' ] = $breakpoint_value_to_update + 1;
-				}
-
-				if ( Breakpoints_Manager::BREAKPOINT_KEY_TABLET === $breakpoint_key ) {
-					$data['settings'][ $prefix . 'lg' ] = $breakpoint_value_to_update + 1;
-				}
 			}
 		}
 
