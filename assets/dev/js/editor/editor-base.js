@@ -14,6 +14,7 @@ import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
+import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 
@@ -489,6 +490,17 @@ export default class EditorBase extends Marionette.Application {
 		this.trigger( 'panel:init' );
 	}
 
+	initResponsiveBar() {
+		this.addRegions( {
+			responsiveBar: {
+				el: '#elementor-responsive-bar',
+				regionClass: ResponsiveBar,
+			},
+		} );
+
+		this.trigger( 'responsiveBar:init' );
+	}
+
 	initNavigator() {
 		this.addRegions( {
 			navigator: {
@@ -640,6 +652,19 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
+	enterDeviceMode() {
+		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
+	}
+
+	toggleDeviceMode() {
+		elementorCommon.elements.$body.toggleClass( 'e-is-device-mode' );
+	}
+
+	exitDeviceMode() {
+		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+		elementor.changeDeviceMode( 'desktop' );
+	}
+
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -655,13 +680,6 @@ export default class EditorBase extends Marionette.Application {
 
 		if ( $element ) {
 			$element.removeClass( 'elementor-edit-area-active' );
-		}
-
-		if ( hidePanel ) {
-			// Handle panel resize
-			this.$previewWrapper.css( elementorCommon.config.isRTL ? 'right' : 'left', '' );
-
-			this.panel.$el.css( 'width', '' );
 		}
 	}
 
@@ -883,6 +901,8 @@ export default class EditorBase extends Marionette.Application {
 
 	onFirstPreviewLoaded() {
 		this.initPanel();
+
+		this.initResponsiveBar();
 
 		this.previewLoadedOnce = true;
 	}
