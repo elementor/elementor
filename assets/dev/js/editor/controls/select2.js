@@ -9,11 +9,27 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	},
 
 	getSelect2DefaultOptions: function() {
-		return {
+		const defaultOptions = {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
 			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
-		};
+		},
+			nonDeletableOptions = this.model.get( 'nonDeletableOptions' );
+
+		// If any non-deletable options are passed, remove the 'x' element from the template for selected items.
+		if ( nonDeletableOptions ) {
+			defaultOptions.templateSelection = ( data, container ) => {
+				if ( nonDeletableOptions.includes( data.id ) ) {
+					jQuery( container )
+						.addClass( 'e-non-deletable' )
+						.find( '.select2-selection__choice__remove' ).remove();
+				}
+
+				return data.text;
+			};
+		}
+
+		return defaultOptions;
 	},
 
 	getSelect2Options: function() {
@@ -23,8 +39,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
-		const elementSelect2Data = this.ui.select.data( 'select2' ),
-			nonDeletableOptions = this.model.get( 'nonDeletableOptions' );
+		const elementSelect2Data = this.ui.select.data( 'select2' );
 
 		// Checking if the element itself was initiated with select2 functionality in case of multiple renders.
 		if ( ! elementSelect2Data ) {
@@ -32,14 +47,18 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 				$element: this.ui.select,
 				options: this.getSelect2Options(),
 			} );
+
+			this.handleNonDeletableOptions();
 		} else {
 			this.ui.select.trigger( 'change' );
 		}
+	},
+
+	handleNonDeletableOptions() {
+		const nonDeletableOptions = this.model.get( 'nonDeletableOptions' );
 
 		if ( nonDeletableOptions ) {
 			this.ui.select.on( 'select2:unselecting', ( event ) => {
-				const data = event.params.args.data;
-
 				if ( nonDeletableOptions.includes( event.params.args.data.id ) ) {
 					event.preventDefault();
 				}
