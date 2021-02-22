@@ -11,7 +11,6 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
 
 		this.indicators = {
 			customPosition: {
