@@ -8,6 +8,8 @@ import Video from './handlers/video';
 import ImageCarousel from './handlers/image-carousel';
 import TextEditor from './handlers/text-editor';
 
+import LightboxModule from 'elementor-frontend/utils/lightbox/lightbox';
+
 elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 	elementorFrontend.elementsHandler.elementsHandlers = {
 		'accordion.default': Accordion,
@@ -20,4 +22,8 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'image-carousel.default': ImageCarousel,
 		'text-editor.default': TextEditor,
 	};
+
+	elementorFrontend.on( 'components:init', () => {
+		elementorFrontend.utils.lightbox = new LightboxModule();
+	} );
 } );

@@ -586,8 +586,8 @@ class Frontend extends App {
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
-				'preloaded-elements-handlers',
-				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				'preloaded-modules',
+				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
 				[
 					'elementor-frontend',
 				],
