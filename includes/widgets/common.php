@@ -418,7 +418,7 @@ class Widget_Common extends Widget_Base {
 			'label' => __( 'Shape', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => $options,
-			'default' => 'circle',
+			'default' => $this->get_shape_url( 'circle' ),
 			'selectors' => [
 				'{{WRAPPER}}' => '-webkit-mask-image: url( {{VALUE}} );',
 			],
