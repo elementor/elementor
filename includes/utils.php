@@ -136,7 +136,9 @@ class Utils {
 			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
 		);
 
-		$rows_affected = false === $second_rows_affected ? false : $rows_affected + $second_rows_affected;
+		if ( $second_rows_affected ) {
+			$rows_affected += $second_rows_affected;
+		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
