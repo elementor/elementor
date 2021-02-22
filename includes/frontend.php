@@ -220,7 +220,9 @@ class Frontend extends App {
 
 		$this->post_id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
@@ -280,7 +282,9 @@ class Frontend extends App {
 
 		$id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $id ) ) {
+		$document = Plugin::$instance->documents->get( $id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
 		}
 
@@ -927,11 +931,11 @@ class Frontend extends App {
 			return '';
 		}
 
-		if ( ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
 			return '';
 		}
-
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $document );
