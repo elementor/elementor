@@ -96,4 +96,42 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 
 		$this->assertEquals( $total_items_expected, $total_items_actual );
 	}
+
+	public function test_run__ensure_with_meta_key() {
+		// Arrange.
+		$meta_key = 'some_key_that_export_will_seek';
+
+		$document = self::factory()->create_post();
+
+		$document->update_meta( $meta_key, true );
+
+		$exporter = new WP_Exporter( [
+			'with_meta_key' => $meta_key,
+		] );
+
+		// Act.
+		$content = $exporter->run();
+		$actual_items = substr_count( $content, '<item>' );
+
+		// Assert.
+		$this->assertEquals( 1, $actual_items );
+	}
+
+	public function test_run__ensure_with_meta_key_not_found() {
+		// Arrange.
+		$meta_key = 'some_key_that_export_will_seek';
+
+		self::factory()->create_post();
+
+		$exporter = new WP_Exporter( [
+			'with_meta_key' => $meta_key,
+		] );
+
+		// Act.
+		$content = $exporter->run();
+		$actual_items = substr_count( $content, '<item>' );
+
+		// Assert.
+		$this->assertEquals( 0, $actual_items );
+	}
 }

@@ -30,6 +30,7 @@ class WP_Exporter {
 		'status' => false,
 		'offset' => 0,
 		'limit' => -1,
+		'with_meta_key' => '', // If specified `meta_key` then will include all post(s) that have this meta_key.
 	];
 
 	/**
@@ -95,6 +96,19 @@ class WP_Exporter {
 		$limit = '';
 		if ( -1 !== (int) $this->args['limit'] ) {
 			$limit = 'LIMIT ' . (int) $this->args['limit'] . ' OFFSET ' . (int) $this->args['offset'];
+		}
+
+		if ( ! empty( $this->args['with_meta_key'] ) ) {
+			if ( $join ) {
+				$join .= ' ';
+			}
+
+			if ( $where ) {
+				$where .= ' AND ';
+			}
+
+			$join .= "INNER JOIN {$this->wpdb->postmeta} ON ({$this->wpdb->posts}.ID = {$this->wpdb->postmeta}.post_id)";
+			$where .= $this->wpdb->prepare( "{$this->wpdb->postmeta}.meta_key = %s", $this->args['with_meta_key'] );// phpcs:ignore
 		}
 
 		// Grab a snapshot of post IDs, just in case it changes during the export.
