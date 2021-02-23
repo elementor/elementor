@@ -170,7 +170,7 @@ class Settings_Layout extends Tab_Base {
 				'label' => __( 'Active Breakpoints', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
 				/* translators: 1: Mobile, 2: Tablet. */
-				'description' => __( 'Mobile and Tablet options cannot be deleted', 'elementor' ),
+				'description' => __( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
 				'options' => $options,
 				'default' => [
 					$prefix . $breakpoint_key_mobile,
@@ -197,58 +197,6 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
-	}
-
-	private function add_breakpoints_controls() {
-		$breakpoints_manager = Plugin::$instance->breakpoints;
-		$breakpoints_config = $breakpoints_manager->get_config();
-		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
-		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
-
-		// Add a control for each of the **default** breakpoints.
-		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
-			$this->add_control(
-				'breakpoint_' . $breakpoint_key . '_heading',
-				[
-					'label' => $default_breakpoint_config['label'],
-					'type' => Controls_Manager::HEADING,
-					'conditions' => [
-						'terms' => [
-							[
-								'name' => 'active_breakpoints',
-								'operator' => 'contains',
-								'value' => $prefix . $breakpoint_key,
-							],
-						],
-					],
-				]
-			);
-
-			$control_config = [
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'placeholder' => $default_breakpoint_config['default_value'],
-				/* translators: %1$d: Breakpoint value; %2$s: 'above' or 'below', depending on whether the breakpoint is min or max width. */
-				'description' => sprintf(
-					__( 'This breakpoint applies to %1$dpx and %2$s.', 'elementor' ),
-					isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'],
-					'max' === $default_breakpoint_config['direction'] ? __( 'below', 'elementor' ) : __( 'above', 'elementor' )
-				),
-				'frontend_available' => true,
-				'conditions' => [
-					'terms' => [
-						[
-							'name' => 'active_breakpoints',
-							'operator' => 'contains',
-							'value' => $prefix . $breakpoint_key,
-						],
-					],
-				],
-			];
-
-			// Add the breakpoint Control itself.
-			$this->add_control( $prefix . $breakpoint_key, $control_config );
-		}
 	}
 
 	/**
@@ -307,6 +255,58 @@ class Settings_Layout extends Tab_Base {
 
 		if ( $should_compile_css ) {
 			Breakpoints_Manager::compile_stylesheet_templates();
+		}
+	}
+
+	private function add_breakpoints_controls() {
+		$breakpoints_manager = Plugin::$instance->breakpoints;
+		$breakpoints_config = $breakpoints_manager->get_config();
+		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
+		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+
+		// Add a control for each of the **default** breakpoints.
+		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
+			$this->add_control(
+				'breakpoint_' . $breakpoint_key . '_heading',
+				[
+					'label' => $default_breakpoint_config['label'],
+					'type' => Controls_Manager::HEADING,
+					'conditions' => [
+						'terms' => [
+							[
+								'name' => 'active_breakpoints',
+								'operator' => 'contains',
+								'value' => $prefix . $breakpoint_key,
+							],
+						],
+					],
+				]
+			);
+
+			$control_config = [
+				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::NUMBER,
+				'placeholder' => $default_breakpoint_config['default_value'],
+				/* translators: %1$d: Breakpoint value; %2$s: 'above' or 'below', depending on whether the breakpoint is min or max width. */
+				'description' => sprintf(
+					__( 'This breakpoint applies to %1$dpx and %2$s.', 'elementor' ),
+					isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'],
+					'max' === $default_breakpoint_config['direction'] ? __( 'below', 'elementor' ) : __( 'above', 'elementor' )
+				),
+				'frontend_available' => true,
+				'conditions' => [
+					'terms' => [
+						[
+							'name' => 'active_breakpoints',
+							'operator' => 'contains',
+							'value' => $prefix . $breakpoint_key,
+						],
+					],
+				],
+			];
+
+			// Add the breakpoint Control itself.
+			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}
 	}
 }
