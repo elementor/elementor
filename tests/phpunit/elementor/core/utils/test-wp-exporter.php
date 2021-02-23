@@ -106,7 +106,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		$document->update_meta( $meta_key, true );
 
 		$exporter = new WP_Exporter( [
-			'with_meta_key' => $meta_key,
+			'meta_key' => $meta_key,
 		] );
 
 		// Act.
@@ -124,7 +124,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		self::factory()->create_post();
 
 		$exporter = new WP_Exporter( [
-			'with_meta_key' => $meta_key,
+			'meta_key' => $meta_key,
 		] );
 
 		// Act.
