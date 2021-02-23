@@ -48,7 +48,7 @@ class Control_Select2 extends Base_Data_Control {
 			'multiple' => false,
 			// Select2 library options
 			'select2options' => [],
-			// the immutableOptions array can be passed option keys. The passed option keys will be non-deletable.
+			// the nonDeletableOptions array can be passed option keys. The passed option keys will be non-deletable.
 			'nonDeletableOptions' => [],
 		];
 	}
