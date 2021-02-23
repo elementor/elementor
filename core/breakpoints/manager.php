@@ -92,6 +92,7 @@ class Manager extends Module {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -102,13 +103,11 @@ class Manager extends Module {
 	 * devices, A device's min breakpoint is determined by the previous device's max breakpoint + 1px.
 	 *
 	 * @param string $device_name
-	 * @param bool $only_enabled_breakpoints If provided, determines whether the min breakpoint is checked against all
-	 * existing breakpoints, or only enabled ones. Default: true.
 	 * @return int the min breakpoint of the passed device
 	 *@since 3.2.0
 	 */
-	public function get_device_min_breakpoint( $device_name, $only_enabled_breakpoints = true ) {
-		$breakpoints_config = $only_enabled_breakpoints ? $this->get_active_config() : $this->get_config();
+	public function get_device_min_breakpoint( $device_name ) {
+		$breakpoints_config = $this->get_active_config();
 		$breakpoints = $this->get_breakpoints();
 		/** @var Breakpoint $current_device_breakpoint */
 		$current_device_breakpoint = $breakpoints[ $device_name ];
@@ -140,7 +139,7 @@ class Manager extends Module {
 
 	public function get_desktop_min_point() {
 		$config = $this->get_active_config();
-		$desktop_previous_device = $this->get_desktop_previous_device();
+		$desktop_previous_device = $this->get_desktop_previous_device_key();
 
 		return $config[ $desktop_previous_device ]['value'] + 1;
 	}
@@ -229,14 +228,10 @@ class Manager extends Module {
 		$default_config = self::get_default_config();
 		$prefix = self::BREAKPOINT_OPTION_PREFIX;
 
-		if ( ! $active_breakpoint_keys ) {
-			$active_breakpoint_keys = [ $prefix . self::BREAKPOINT_KEY_MOBILE, $prefix . self::BREAKPOINT_KEY_TABLET ];
-		}
-
 		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
 			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;
 
-			// For Backwards Compatibility, enable the two default breakpoints (mobile, tablet).
+			// Make sure the two default breakpoints (mobile, tablet) are always enabled.
 			if ( self::BREAKPOINT_KEY_MOBILE === $breakpoint_name || self::BREAKPOINT_KEY_TABLET === $breakpoint_name ) {
 				// Make sure the default Mobile and Tablet breakpoints are always enabled.
 				$args['is_enabled'] = true;
@@ -275,7 +270,7 @@ class Manager extends Module {
 		return $config;
 	}
 
-	private function get_desktop_previous_device() {
+	private function get_desktop_previous_device_key() {
 		$config_array_keys = array_keys( $this->get_active_config() );
 		$num_of_devices = count( $config_array_keys );
 
