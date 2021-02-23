@@ -38,7 +38,7 @@ class Settings_Layout extends Tab_Base {
 
 	protected function register_tab_controls() {
 		/** @var Breakpoint[] $breakpoints */
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
@@ -59,10 +59,10 @@ class Settings_Layout extends Tab_Base {
 					'size' => '1140',
 				],
 				'tablet_default' => [
-					'size' => $breakpoints[ $breakpoint_key_tablet ]->get_default_value(),
+					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
 				],
 				'mobile_default' => [
-					'size' => $breakpoints[ $breakpoint_key_mobile ]->get_default_value(),
+					'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
 				],
 				'range' => [
 					'px' => [
@@ -160,8 +160,8 @@ class Settings_Layout extends Tab_Base {
 		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
 		$options = [];
 
-		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
-			$options[ $prefix . $breakpoint_key ] = $breakpoint->get_config( 'label' );
+		foreach ( $breakpoints_default_config as $breakpoint_key => $breakpoint ) {
+			$options[ $prefix . $breakpoint_key ] = $breakpoint[ 'label' ];
 		}
 
 		$this->add_control(
@@ -215,21 +215,26 @@ class Settings_Layout extends Tab_Base {
 	 * @return array $data
 	 */
 	public function before_save( $data ) {
+		// When creating a default kit, $data['settings'] is empty and should remain empty, so settings.
+		if ( empty( $data['settings'] ) ) {
+			return $data;
+		}
+
 		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
 		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
-		/** @var Breakpoint[] $breakpoints */
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		/** @var Breakpoint[] $default_breakpoint_config */
+		$default_breakpoint_config = Breakpoints_Manager::get_default_config();
 
 		// Update the old mobile breakpoint. If the setting is empty, use the default value.
 		$data['settings'][ $prefix . 'md' ] = empty( $data['settings'][ $mobile_breakpoint_key ] )
-			? $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->get_default_value() + 1
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]['default_value'] + 1
 			: $data['settings'][ $mobile_breakpoint_key ] + 1;
 
 		// Update the old tablet breakpoint. If the setting is empty, use the default value.
 		$data['settings'][ $prefix . 'lg' ] = empty( $data['settings'][ $tablet_breakpoint_key ] )
-			? $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]->get_default_value() + 1
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]['default_value'] + 1
 			: $data['settings'][ $tablet_breakpoint_key ] + 1;
 
 		return $data;
@@ -242,10 +247,10 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		/** @var Breakpoint[] $breakpoints */
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		/** @var Breakpoint[] $breakpoints_default_config */
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
-		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+		foreach ( $breakpoints_default_config as $breakpoint_key => $default_config ) {
 			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $breakpoint_key;
 
 			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
@@ -259,8 +264,6 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	private function add_breakpoints_controls() {
-		$breakpoints_manager = Plugin::$instance->breakpoints;
-		$breakpoints_config = $breakpoints_manager->get_config();
 		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
 		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
 
@@ -287,12 +290,6 @@ class Settings_Layout extends Tab_Base {
 				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
-				/* translators: %1$d: Breakpoint value; %2$s: 'above' or 'below', depending on whether the breakpoint is min or max width. */
-				'description' => sprintf(
-					__( 'This breakpoint applies to %1$dpx and %2$s.', 'elementor' ),
-					isset( $breakpoints_config[ $breakpoint_key ] ) ? $breakpoints_config[ $breakpoint_key ]['value'] : $default_breakpoint_config['default_value'],
-					'max' === $default_breakpoint_config['direction'] ? __( 'below', 'elementor' ) : __( 'above', 'elementor' )
-				),
 				'frontend_available' => true,
 				'conditions' => [
 					'terms' => [
