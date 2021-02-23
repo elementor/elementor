@@ -16,6 +16,18 @@ jQuery( () => {
 			} ] );
 		} );
 
+		QUnit.test( 'getHashCommands(): Ensure valid return format - Only one hash command the start with (#)', ( assert ) => {
+			// Act.
+			const actual = $e.getHashCommands( '#e:run:my-component/command' );
+
+			// Assert.
+			assert.deepEqual( actual, [ {
+				callback: $e.run,
+				command: 'my-component/command',
+				method: 'e:run',
+			} ] );
+		} );
+
 		QUnit.test( 'runHashCommands(): Ensure callbacks performed', ( assert ) => {
 			// Arrange.
 			const eOrig = $e.run;

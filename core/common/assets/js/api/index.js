@@ -67,7 +67,7 @@ export default class API {
 	/**
 	 * Function getHashCommands().
 	 *
-	 * Handles API requests that comes from hash ( eg #api:run ).
+	 * Handles API requests that comes from hash ( eg #e:run ).
 	 *
 	 * @param {string} hash
 	 *
@@ -81,7 +81,8 @@ export default class API {
 					'e:run': $e.run,
 					'e:route': $e.route,
 				},
-				hashList = hash.split( '&' );
+				// Remove first '#' and split each '&'.
+				hashList = hash.substr( 1 ).split( '&' );
 
 			hashList.forEach( ( hashItem ) => {
 				const hashParts = hashItem.split( ':' );
