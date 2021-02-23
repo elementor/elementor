@@ -171,7 +171,7 @@ class Manager extends Module {
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
 				'label' => __( 'Tablet Extra', 'elementor' ),
-				'default_value' => 1366,
+				'default_value' => 1365,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
