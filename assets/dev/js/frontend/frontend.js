@@ -294,6 +294,16 @@ export default class Frontend extends elementorModules.ViewModule {
 		jQuery.migrateTrace = false;
 	}
 
+	populateActiveBreakpointsConfig() {
+		this.config.responsive.activeBreakpoints = {};
+
+		Object.keys( this.config.responsive.breakpoints ).forEach( ( breakpointKey ) => {
+			if ( this.config.responsive.breakpoints[ breakpointKey ].is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = this.config.responsive.breakpoints[ breakpointKey ];
+			}
+		} );
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
@@ -312,6 +322,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		if ( this.isEditMode() ) {
 			this.muteMigrationTraces();
 		}
+
+		this.populateActiveBreakpointsConfig();
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );

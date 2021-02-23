@@ -56,7 +56,7 @@ class Manager extends Module {
 	 * @param string|null $breakpoint_name
 	 * @return array All breakpoints config, or a specific breakpoint's config.
 	 */
-	public function get_config( $breakpoint_name = null ) {
+	private function get_config( $breakpoint_name = null ) {
 		if ( ! $this->config ) {
 			$this->config = $this->init_config();
 		}
