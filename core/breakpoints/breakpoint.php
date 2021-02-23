@@ -83,31 +83,6 @@ class Breakpoint extends Base_Object {
 	}
 
 	/**
-	 * Set Value
-	 *
-	 * Set the `$value` class variable and the `$is_custom` class variable.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @return int $value class variable
-	 */
-	private function init_value() {
-		$cached_value = Plugin::$instance->kits_manager->get_current_settings( $this->db_key );
-
-		if ( $cached_value ) {
-			$this->value = $cached_value;
-
-			$this->is_custom = $this->value !== $this->default_value;
-		} else {
-			$this->value = $this->default_value;
-
-			$this->is_custom = false;
-		}
-
-		return $this->value;
-	}
-
-	/**
 	 * Is Custom
 	 *
 	 * Check if the breakpoint's value is a custom or default value.
@@ -144,6 +119,31 @@ class Breakpoint extends Base_Object {
 	 */
 	public function get_direction() {
 		return $this->direction;
+	}
+
+	/**
+	 * Set Value
+	 *
+	 * Set the `$value` class variable and the `$is_custom` class variable.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return int $value class variable
+	 */
+	private function init_value() {
+		$cached_value = Plugin::$instance->kits_manager->get_current_settings( $this->db_key );
+
+		if ( $cached_value ) {
+			$this->value = $cached_value;
+
+			$this->is_custom = $this->value !== $this->default_value;
+		} else {
+			$this->value = $this->default_value;
+
+			$this->is_custom = false;
+		}
+
+		return $this->value;
 	}
 
 	public function __construct( $args ) {

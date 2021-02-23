@@ -47,43 +47,6 @@ class Manager extends Module {
 	}
 
 	/**
-	 * Init Breakpoints
-	 *
-	 * Creates the breakpoints array, containing instances of each breakpoint. Returns an array of ALL breakpoints,
-	 * both enabled and disabled.
-	 *
-	 * @return array
-	 */
-	private function init_breakpoints() {
-		$breakpoints = [];
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$active_breakpoint_keys = $kit->get_settings_for_display( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
-		$default_config = self::get_default_config();
-		$prefix = self::BREAKPOINT_OPTION_PREFIX;
-
-		if ( ! $active_breakpoint_keys ) {
-			$active_breakpoint_keys = [ $prefix . self::BREAKPOINT_KEY_MOBILE, $prefix . self::BREAKPOINT_KEY_TABLET ];
-		}
-
-		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
-			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;
-
-			// For Backwards Compatibility, enable the two default breakpoints (mobile, tablet).
-			if ( self::BREAKPOINT_KEY_MOBILE === $breakpoint_name || self::BREAKPOINT_KEY_TABLET === $breakpoint_name ) {
-				// Make sure the default Mobile and Tablet breakpoints are always enabled.
-				$args['is_enabled'] = true;
-			} else {
-				// If the breakpoint is in the active breakpoints array, make sure it's instantiated as enabled.
-				$args['is_enabled'] = in_array( $prefix . $breakpoint_name, $active_breakpoint_keys, true );
-			}
-
-			$breakpoints[ $breakpoint_name ] = new Breakpoint( $args );
-		}
-
-		return $breakpoints;
-	}
-
-	/**
 	 * Get Config
 	 *
 	 * Retrieve --Enabled-- Breakpoints Config
@@ -109,30 +72,6 @@ class Manager extends Module {
 		}
 
 		return self::get_items( $this->active_config, $breakpoint_name );
-	}
-
-	/**
-	 * Init Config
-	 *
-	 * Iterate over the breakpoint instances to create the breakpoints config array.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @return array $config
-	 */
-	private function init_config() {
-		$config = [];
-
-		// Make sure breakpoint instances are initialized before fetching their config.
-		$breakpoints = $this->get_breakpoints();
-
-		// Iterate over the breakpoint instances and get each one's config.
-		foreach ( $breakpoints as $name => $instance ) {
-			/** @var Breakpoint $instance */
-			$config[ $name ] = $instance->get_config();
-		}
-
-		return $config;
 	}
 
 	/** Has Custom Breakpoints
@@ -206,77 +145,6 @@ class Manager extends Module {
 		return $config[ $desktop_previous_device ]['value'] + 1;
 	}
 
-	private function get_desktop_previous_device() {
-		$config_array_keys = array_keys( $this->get_active_config() );
-		$num_of_devices = count( $config_array_keys );
-
-		// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
-		// widescreen.
-		if ( self::BREAKPOINT_KEY_WIDESCREEN === $config_array_keys[ $num_of_devices - 1 ] ) {
-			$desktop_previous_device = $config_array_keys[ $num_of_devices - 2 ];
-		} else {
-			// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
-			$desktop_previous_device = $config_array_keys[ $num_of_devices - 1 ];
-		}
-
-		return $desktop_previous_device;
-	}
-
-	/**
-	 * Get Stylesheet Templates Path
-	 *
-	 * @since 3.2.0
-	 * @access public
-	 * @static
-	 */
-	public static function get_stylesheet_templates_path() {
-		return ELEMENTOR_ASSETS_PATH . 'css/templates/';
-	}
-
-	/**
-	 * Compile Stylesheet Templates
-	 *
-	 * @since 3.2.0
-	 * @access public
-	 * @static
-	 */
-	public static function compile_stylesheet_templates() {
-		foreach ( self::get_stylesheet_templates() as $file_name => $template_path ) {
-			$file = new Frontend( $file_name, $template_path );
-
-			$file->update();
-		}
-	}
-
-	/**
-	 * Get Stylesheet Templates
-	 *
-	 * @since 3.2.0
-	 * @access private
-	 * @static
-	 */
-	private static function get_stylesheet_templates() {
-		$templates_paths = glob( self::get_stylesheet_templates_path() . '*.css' );
-
-		$templates = [];
-
-		foreach ( $templates_paths as $template_path ) {
-			$file_name = 'custom-' . basename( $template_path );
-
-			$templates[ $file_name ] = $template_path;
-		}
-
-		$deprecated_hook = 'elementor/core/responsive/get_stylesheet_templates';
-		$replacement_hook = 'elementor/core/breakpoints/get_stylesheet_template';
-
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_hook( $deprecated_hook, '3.2.0', $replacement_hook );
-
-		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
-		$templates = apply_filters( $deprecated_hook, $templates );
-
-		return apply_filters( $replacement_hook, $templates );
-	}
-
 	/**
 	 * Get Default Config
 	 *
@@ -318,5 +186,137 @@ class Manager extends Module {
 				'direction' => 'min',
 			],
 		];
+	}
+
+	/**
+	 * Get Stylesheet Templates Path
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 * @static
+	 */
+	public static function get_stylesheet_templates_path() {
+		return ELEMENTOR_ASSETS_PATH . 'css/templates/';
+	}
+
+	/**
+	 * Compile Stylesheet Templates
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 * @static
+	 */
+	public static function compile_stylesheet_templates() {
+		foreach ( self::get_stylesheet_templates() as $file_name => $template_path ) {
+			$file = new Frontend( $file_name, $template_path );
+
+			$file->update();
+		}
+	}
+
+	/**
+	 * Init Breakpoints
+	 *
+	 * Creates the breakpoints array, containing instances of each breakpoint. Returns an array of ALL breakpoints,
+	 * both enabled and disabled.
+	 *
+	 * @return array
+	 */
+	private function init_breakpoints() {
+		$breakpoints = [];
+		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
+		$active_breakpoint_keys = $kit->get_settings_for_display( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
+		$default_config = self::get_default_config();
+		$prefix = self::BREAKPOINT_OPTION_PREFIX;
+
+		if ( ! $active_breakpoint_keys ) {
+			$active_breakpoint_keys = [ $prefix . self::BREAKPOINT_KEY_MOBILE, $prefix . self::BREAKPOINT_KEY_TABLET ];
+		}
+
+		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
+			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;
+
+			// For Backwards Compatibility, enable the two default breakpoints (mobile, tablet).
+			if ( self::BREAKPOINT_KEY_MOBILE === $breakpoint_name || self::BREAKPOINT_KEY_TABLET === $breakpoint_name ) {
+				// Make sure the default Mobile and Tablet breakpoints are always enabled.
+				$args['is_enabled'] = true;
+			} else {
+				// If the breakpoint is in the active breakpoints array, make sure it's instantiated as enabled.
+				$args['is_enabled'] = in_array( $prefix . $breakpoint_name, $active_breakpoint_keys, true );
+			}
+
+			$breakpoints[ $breakpoint_name ] = new Breakpoint( $args );
+		}
+
+		return $breakpoints;
+	}
+
+	/**
+	 * Init Config
+	 *
+	 * Iterate over the breakpoint instances to create the breakpoints config array.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array $config
+	 */
+	private function init_config() {
+		$config = [];
+
+		// Make sure breakpoint instances are initialized before fetching their config.
+		$breakpoints = $this->get_breakpoints();
+
+		// Iterate over the breakpoint instances and get each one's config.
+		foreach ( $breakpoints as $name => $instance ) {
+			/** @var Breakpoint $instance */
+			$config[ $name ] = $instance->get_config();
+		}
+
+		return $config;
+	}
+
+	private function get_desktop_previous_device() {
+		$config_array_keys = array_keys( $this->get_active_config() );
+		$num_of_devices = count( $config_array_keys );
+
+		// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
+		// widescreen.
+		if ( self::BREAKPOINT_KEY_WIDESCREEN === $config_array_keys[ $num_of_devices - 1 ] ) {
+			$desktop_previous_device = $config_array_keys[ $num_of_devices - 2 ];
+		} else {
+			// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
+			$desktop_previous_device = $config_array_keys[ $num_of_devices - 1 ];
+		}
+
+		return $desktop_previous_device;
+	}
+
+	/**
+	 * Get Stylesheet Templates
+	 *
+	 * @since 3.2.0
+	 * @access private
+	 * @static
+	 */
+	private static function get_stylesheet_templates() {
+		$templates_paths = glob( self::get_stylesheet_templates_path() . '*.css' );
+
+		$templates = [];
+
+		foreach ( $templates_paths as $template_path ) {
+			$file_name = 'custom-' . basename( $template_path );
+
+			$templates[ $file_name ] = $template_path;
+		}
+
+		$deprecated_hook = 'elementor/core/responsive/get_stylesheet_templates';
+		$replacement_hook = 'elementor/core/breakpoints/get_stylesheet_template';
+
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_hook( $deprecated_hook, '3.2.0', $replacement_hook );
+
+		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
+		$templates = apply_filters( $deprecated_hook, $templates );
+
+		return apply_filters( $replacement_hook, $templates );
 	}
 }
