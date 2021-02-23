@@ -287,12 +287,16 @@ class Manager {
 	 * @return array $admin_bar_config
 	 */
 	private function add_menu_in_admin_bar( $admin_bar_config ) {
-		$admin_bar_config['elementor_edit_page']['children'][] = [
-			'id' => 'elementor_site_settings',
-			'title' => __( 'Site Settings', 'elementor' ),
-			'sub_title' => __( 'Site', 'elementor' ),
-			'href' => $admin_bar_config['elementor_edit_page']['href'] . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
-		];
+		$document = Plugin::$instance->documents->get( get_the_ID() );
+
+		if ( $document ) {
+			$admin_bar_config['elementor_edit_page']['children'][] = [
+				'id' => 'elementor_site_settings',
+				'title' => __( 'Site Settings', 'elementor' ),
+				'sub_title' => __( 'Site', 'elementor' ),
+				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+			];
+		}
 
 		return $admin_bar_config;
 	}
