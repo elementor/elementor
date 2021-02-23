@@ -110,7 +110,7 @@ export default class extends elementorModules.ViewModule {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( ! this.isOptimizedAssetsLoading() ) {
+		if ( ! this.isOptimizedAssetsLoading() || elementorFrontend.isEditMode() ) {
 			return;
 		}
 
