@@ -25,21 +25,25 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	getTemplateActionButton: function( templateData ) {
-		var viewId = '#tmpl-elementor-template-library-' + ( templateData.accessLevel !== 0 ? 'get-pro-button' : 'insert-button' );
+		var viewId = '#tmpl-elementor-template-library-' + ( 0 !== templateData.accessLevel ? 'get-pro-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
 		var template = Marionette.TemplateCache.get( viewId );
 
-		const buttonTextsFromAccessLevel = {
-			0: null, // Core does not need button text
-			1: __( 'Go Pro', 'elementor' ),
-			2: __( 'Go Expert', 'elementor' ),
+		const config = {
+			0: null, // Core does not need params to its view.
+			1: {
+				buttonText: __( 'Go Pro', 'elementor' ),
+				utmCampaign: 'gopro',
+			},
+			2: {
+				buttonText: __( 'Go Expert', 'elementor' ),
+				utmCampaign: 'goexpert',
+			},
 		};
 
-		return Marionette.Renderer.render( template, {
-			buttonText: buttonTextsFromAccessLevel[ templateData.accessLevel ],
-		} );
+		return Marionette.Renderer.render( template, config[ templateData.accessLevel ] );
 	},
 
 	setHeaderDefaultParts: function() {

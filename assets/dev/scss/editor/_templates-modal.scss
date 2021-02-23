@@ -349,7 +349,7 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
-		&--access-level-1 {
+		&__access-level-1 {
 			.elementor-template-library-template-body:before {
 				content: 'pro';
 				background-color: $editor-accent;
@@ -357,7 +357,7 @@ label.elementor-template-library-order-label {
 			}
 		}
 
-		&--access-level-2 {
+		&__access-level-2 {
 			.elementor-template-library-template-body:before {
 				content: 'expert';
 				background-color: $editor-dark-blue;

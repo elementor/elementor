@@ -202,7 +202,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
 	<a
 		class="elementor-template-library-template-action elementor-button elementor-go-pro"
-		href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"
+		href="{{{ '<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign={UTM_CAMPAIGN}&utm_medium=wp-dash' ); ?>'.replace('%7BUTM_CAMPAIGN%7D', utmCampaign) }}}"
 		target="_blank"
 	>
 		<i class="eicon-external-link-square" aria-hidden="true"></i>
