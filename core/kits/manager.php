@@ -19,6 +19,8 @@ class Manager {
 
 	const OPTION_ACTIVE = 'elementor_active_kit';
 
+	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
+
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
 
@@ -277,6 +279,24 @@ class Manager {
 		);
 	}
 
+	/**
+	 * Add 'Edit with elementor -> Site Settings' in admin bar.
+	 *
+	 * @param [] $admin_bar_config
+	 *
+	 * @return array $admin_bar_config
+	 */
+	private function add_menu_in_admin_bar( $admin_bar_config ) {
+		$admin_bar_config['elementor_edit_page']['children'][] = [
+			'id' => 'elementor_site_settings',
+			'title' => __( 'Site Settings', 'elementor' ),
+			'sub_title' => __( 'Site', 'elementor' ),
+			'href' => $admin_bar_config['elementor_edit_page']['href'] . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+		];
+
+		return $admin_bar_config;
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -303,6 +323,10 @@ class Manager {
 
 		add_action( 'wp_head', function() {
 			$this->add_body_class();
+		} );
+
+		add_filter( 'elementor/frontend/admin_bar/settings', function ( $admin_bar_config ) {
+			return $this->add_menu_in_admin_bar( $admin_bar_config );
 		} );
 	}
 }
