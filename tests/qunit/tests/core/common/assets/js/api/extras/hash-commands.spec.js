@@ -1,8 +1,8 @@
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/index.js', ( hooks ) => {
-		QUnit.test( 'getHashCommands(): Ensure valid return format', ( assert ) => {
+	QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks ) => {
+		QUnit.test( 'get(): Ensure valid return format', ( assert ) => {
 			// Act.
-			const actual = $e.getHashCommands( '#whatever&e:run:test-command&e:route:test-route' );
+			const actual = $e.extras.hashCommands.get( '#whatever&e:run:test-command&e:route:test-route' );
 
 			// Assert.
 			assert.deepEqual( actual, [ {
@@ -16,9 +16,9 @@ jQuery( () => {
 			} ] );
 		} );
 
-		QUnit.test( 'getHashCommands(): Ensure valid return format - Only one hash command the start with (#)', ( assert ) => {
+		QUnit.test( 'get(): Ensure valid return format - Only one hash command the start with (#)', ( assert ) => {
 			// Act.
-			const actual = $e.getHashCommands( '#e:run:my-component/command' );
+			const actual = $e.extras.hashCommands.get( '#e:run:my-component/command' );
 
 			// Assert.
 			assert.deepEqual( actual, [ {
@@ -28,7 +28,7 @@ jQuery( () => {
 			} ] );
 		} );
 
-		QUnit.test( 'runHashCommands(): Ensure callbacks performed', ( assert ) => {
+		QUnit.test( 'run(): Ensure callbacks performed', ( assert ) => {
 			// Arrange.
 			const eOrig = $e.run;
 
@@ -37,7 +37,7 @@ jQuery( () => {
 			$e.run = ( command ) => ensureCallbackPerformed = command;
 
 			// Act.
-			$e.runHashCommands( [ {
+			$e.extras.hashCommands.run( [ {
 				callback: $e.run,
 				command: 'ensure-value',
 				method: 'e:run',

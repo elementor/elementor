@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -288,6 +289,17 @@ class Manager {
 	 */
 	private function add_menu_in_admin_bar( $admin_bar_config ) {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			$recent_edited_post = Utils::get_recently_edited_posts_query( [
+				'posts_per_page' => 1,
+			] );
+
+			if ( $recent_edited_post->post_count ) {
+				$posts = $recent_edited_post->get_posts();
+				$document = Plugin::$instance->documents->get( reset( $posts )->ID );
+			}
+		}
 
 		if ( $document ) {
 			$admin_bar_config['elementor_edit_page']['children'][] = [

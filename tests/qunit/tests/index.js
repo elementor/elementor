@@ -7,7 +7,7 @@ export const tests = () => {
 
 	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
-	require( './core/common/assets/js/api/index.spec' );
+	require( './core/common/assets/js/api/extras/hash-commands.spec' );
 
 	require( './assets/dev/js/editor/container/container.spec' );
 

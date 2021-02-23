@@ -9,6 +9,7 @@ import ComponentBase from './modules/component-base';
 import ComponentModalBase from './modules/component-modal-base';
 import Components from './core/components';
 import Data from './core/data.js';
+import HashCommands from './extras/hash-commands';
 import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
@@ -16,13 +17,6 @@ import Shortcuts from './core/shortcuts';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
-
-/**
- * @typedef HashCommand
- * @property {string} method,
- * @property {string} command
- * @property {function( ... )} callback
- */
 
 export default class API {
 	/**
@@ -58,64 +52,12 @@ export default class API {
 			hookUI,
 		};
 
+		this.extras = {
+			hashCommands: new HashCommands(),
+		};
+
 		// Backwards compatibility should be last, in order to handle others.
 		this.bc = new BackwardsCompatibility();
-
-		this.hashCommands = this.getHashCommands();
-	}
-
-	/**
-	 * Function getHashCommands().
-	 *
-	 * Handles API requests that comes from hash ( eg #e:run ).
-	 *
-	 * @param {string} hash
-	 *
-	 * @returns {Array.<HashCommand>}
-	 */
-	getHashCommands( hash = location.hash ) {
-		const result = [];
-
-		if ( hash ) {
-			const hashFormat = {
-					'e:run': $e.run,
-					'e:route': $e.route,
-				},
-				// Remove first '#' and split each '&'.
-				hashList = hash.substr( 1 ).split( '&' );
-
-			hashList.forEach( ( hashItem ) => {
-				const hashParts = hashItem.split( ':' );
-
-				if ( 3 === hashParts.length && hashFormat[ hashParts[ 0 ] + ':' + hashParts[ 1 ] ] ) {
-					const method = hashParts[ 0 ] + ':' + hashParts[ 1 ],
-						callback = hashFormat[ method ];
-
-					if ( callback ) {
-						const command = hashParts[ 2 ];
-
-						result.push( {
-							method,
-							command,
-							callback,
-						} );
-					}
-				}
-			} );
-		}
-
-		return result;
-	}
-
-	/**
-	 * Function runHashCommands().
-	 *
-	 * @param {Array.<HashCommand>} [hashCommands=this.hashCommands]
-	 */
-	runHashCommands( hashCommands = this.hashCommands ) {
-		hashCommands.forEach( ( hashCommand ) => {
-			hashCommand.callback( hashCommand.command );
-		} );
 	}
 
 	/**

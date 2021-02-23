@@ -623,4 +623,17 @@ class Utils {
 			// @codingStandardsIgnoreEnd
 		}
 	}
+
+	public static function get_recently_edited_posts_query( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		] );
+
+		return new \WP_Query( $args );
+	}
 }

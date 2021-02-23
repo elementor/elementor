@@ -8,7 +8,7 @@ export class StateReady extends CommandInternalBase {
 		if ( ! this.component.stateReadyOnce ) {
 			this.component.stateReadyOnce = true;
 
-			$e.runHashCommands();
+			$e.extras.hashCommands.runOnce();
 		}
 	}
 }
