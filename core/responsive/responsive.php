@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * responsive breakpoints.
  *
  * @since 1.0.0
+ * @deprecated 3.2.0
  */
 class Responsive {
 
@@ -87,7 +88,7 @@ class Responsive {
 	 * @return array Editable breakpoints.
 	 */
 	public static function get_editable_breakpoints() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Responsive::get_editable_breakpoints()', '3.1.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
 		return array_intersect_key( self::get_breakpoints(), array_flip( self::$editable_breakpoints_keys ) );
 	}
@@ -125,7 +126,7 @@ class Responsive {
 	 * @static
 	 */
 	public static function has_custom_breakpoints() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Elementor\Core\Responsive\Responsive::get_editable_breakpoints()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::has_custom_breakpoints()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'Plugin::$instance->breakpoints->has_custom_breakpoints()' );
 
 		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
 	}
@@ -136,7 +137,7 @@ class Responsive {
 	 * @static
 	 */
 	public static function get_stylesheet_templates_path() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Elementor\Core\Responsive\Responsive::get_stylesheet_templates_path()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::get_stylesheet_templates_path()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'Elementor\Core\Breakpoints\Manager::get_stylesheet_templates_path()' );
 
 		return Breakpoints_Manager::get_stylesheet_templates_path();
 	}
@@ -147,7 +148,7 @@ class Responsive {
 	 * @static
 	 */
 	public static function compile_stylesheet_templates() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Responsive::compile_stylesheet_templates()', '3.1.0', 'Elementor\Core\Breakpoints\Manager::compile_stylesheet_templates()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'Elementor\Core\Breakpoints\Manager::compile_stylesheet_templates()' );
 
 		Breakpoints_Manager::compile_stylesheet_templates();
 	}
