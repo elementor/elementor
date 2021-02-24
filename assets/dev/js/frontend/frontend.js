@@ -8,6 +8,7 @@ import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper-bc';
 import LightboxManager from './utils/lightbox/lightbox-manager';
+import AssetsLoader from './utils/assets-loader';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
@@ -157,6 +158,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			urlActions: new URLActions(),
 			swiper: Swiper,
 			environment: environment,
+			assetsLoader: new AssetsLoader(),
 		};
 
 		// TODO: BC since 2.4.0
