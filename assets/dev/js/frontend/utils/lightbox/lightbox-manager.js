@@ -35,7 +35,7 @@ export default class extends elementorModules.ViewModule {
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	}
 
-	onLinkClick( event ) {
+	async onLinkClick( event ) {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
@@ -55,44 +55,9 @@ export default class extends elementorModules.ViewModule {
 			return;
 		}
 
-		this.showLightbox( element );
-	}
-
-	async showLightbox( element ) {
 		const lightbox = this.isOptimizedAssetsLoading() ? await this.constructor.getLightbox() : elementorFrontend.utils.lightbox;
 
-		let lightboxData = {};
-
-		if ( element.dataset.elementorLightbox ) {
-			lightboxData = JSON.parse( element.dataset.elementorLightbox );
-		}
-
-		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
-			lightbox.showModal( lightboxData );
-
-			return;
-		}
-
-		if ( ! element.dataset.elementorLightboxSlideshow ) {
-			const slideshowID = 'single-img';
-
-			lightbox.showModal( {
-				type: 'image',
-				id: slideshowID,
-				url: element.href,
-				title: element.dataset.elementorLightboxTitle,
-				description: element.dataset.elementorLightboxDescription,
-				modalOptions: {
-					id: 'elementor-lightbox-slideshow-' + slideshowID,
-				},
-			} );
-
-			return;
-		}
-
-		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
-
-		lightbox.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
+		lightbox.createLightbox( element );
 	}
 
 	isOptimizedAssetsLoading() {

@@ -169,6 +169,41 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.show();
 	},
 
+	createLightbox: function( element ) {
+		let lightboxData = {};
+
+		if ( element.dataset.elementorLightbox ) {
+			lightboxData = JSON.parse( element.dataset.elementorLightbox );
+		}
+
+		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
+			this.showModal( lightboxData );
+
+			return;
+		}
+
+		if ( ! element.dataset.elementorLightboxSlideshow ) {
+			const slideshowID = 'single-img';
+
+			this.showModal( {
+				type: 'image',
+				id: slideshowID,
+				url: element.href,
+				title: element.dataset.elementorLightboxTitle,
+				description: element.dataset.elementorLightboxDescription,
+				modalOptions: {
+					id: 'elementor-lightbox-slideshow-' + slideshowID,
+				},
+			} );
+
+			return;
+		}
+
+		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
+
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
+	},
+
 	setHTMLContent: function( html ) {
 		this.getModal().setMessage( html );
 	},
