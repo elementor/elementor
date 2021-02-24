@@ -59,26 +59,20 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	async getLightbox() {
-		return elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ?
-			await elementorFrontend.utils.lightbox :
-			elementorFrontend.utils.lightbox;
-	}
-
 	async animateVideo() {
-		const lightbox = await this.getLightbox();
+		const lightbox = await elementorFrontend.utils.lightbox;
 
 		lightbox.setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
 	}
 
 	async handleAspectRatio() {
-		const lightbox = await this.getLightbox();
+		const lightbox = await elementorFrontend.utils.lightbox;
 
 		lightbox.setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
 	}
 
 	async hideLightbox() {
-		const lightbox = await this.getLightbox();
+		const lightbox = await elementorFrontend.utils.lightbox;
 
 		lightbox.getModal().hide();
 	}
