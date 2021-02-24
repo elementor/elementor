@@ -14,7 +14,9 @@ export default class extends elementorModules.ViewModule {
 	initActions() {
 		this.actions = {
 			lightbox: async ( settings ) => {
-				const lightbox = await elementorFrontend.utils.lightbox();
+				const lightbox = elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ?
+					await elementorFrontend.utils.lightbox :
+					elementorFrontend.utils.lightbox;
 
 				if ( settings.id ) {
 					lightbox.openSlideshow( settings.id, settings.url );

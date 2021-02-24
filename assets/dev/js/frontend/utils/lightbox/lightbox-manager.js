@@ -1,5 +1,5 @@
 export default class extends elementorModules.ViewModule {
-	static async getLightbox() {
+	static getLightbox() {
 		return new Promise( ( resolve ) => {
 			import(
 				/* webpackChunkName: 'lightbox' */

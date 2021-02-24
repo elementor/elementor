@@ -151,7 +151,9 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
-			lightbox: LightboxManager.getLightbox,
+			get lightbox() {
+				return LightboxManager.getLightbox();
+			},
 			urlActions: new URLActions(),
 			swiper: Swiper,
 			environment: environment,
