@@ -27,6 +27,6 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		// We first need to delete the property because by default it's a getter function that cannot be overwritten.
 		delete elementorFrontend.utils.lightbox;
 
-		elementorFrontend.utils.lightbox = new LightboxModule()
+		elementorFrontend.utils.lightbox = new LightboxModule();
 	} );
 } );
