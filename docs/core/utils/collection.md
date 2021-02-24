@@ -36,6 +36,17 @@ foreach( $data as $document ) {
 }
 ```
 
+Another option:
+```php
+use Elementor\Core\Base\Document;
+
+$only_parent_documents = array_unique(
+    array_map( function ( Document $document ) {
+        return $document->get_main_id();
+    }, $data ) 
+);
+```
+
 ### Extend Collection
 There are two ways to extend the `Collection` class, you can add your new method to class itself, or you can extend the `Collection` and create more specific `Collection` class, for example `Documents_Collection`:
 
