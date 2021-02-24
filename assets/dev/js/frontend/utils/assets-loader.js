@@ -19,11 +19,12 @@ export default class AssetsLoader {
 	add( assetData ) {
 		const { type, key, src, parent } = assetData;
 
-		this.constructor.assets[ type ][ key ] = {
-			src,
-			parent,
-			isLoaded: false,
-		};
+		if ( ! this.constructor.assets[ type ][ key ] ) {
+			this.constructor.assets[ type ][ key ] = {
+				src,
+				parent,
+			};
+		}
 	}
 
 	load( type, key ) {
@@ -32,6 +33,8 @@ export default class AssetsLoader {
 
 			if ( assetData.isLoaded ) {
 				resolve( true );
+
+				return;
 			}
 
 			let element;
@@ -43,7 +46,7 @@ export default class AssetsLoader {
 			}
 
 			element.onload = () => {
-				assetData.isLoaded = true;
+				this.constructor.assets[ type ][ key ].isLoaded = true;
 
 				resolve( true );
 			};
@@ -61,4 +64,3 @@ AssetsLoader.assets = {
 	scripts: {},
 	styles: {},
 };
-
