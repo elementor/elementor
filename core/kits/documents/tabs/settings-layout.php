@@ -161,7 +161,7 @@ class Settings_Layout extends Tab_Base {
 		$options = [];
 
 		foreach ( $breakpoints_default_config as $breakpoint_key => $breakpoint ) {
-			$options[ $prefix . $breakpoint_key ] = $breakpoint[ 'label' ];
+			$options[ $prefix . $breakpoint_key ] = $breakpoint['label'];
 		}
 
 		$this->add_control(
