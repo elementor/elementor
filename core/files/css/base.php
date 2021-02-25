@@ -5,6 +5,7 @@ use Elementor\Base_Data_Control;
 use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
@@ -702,10 +703,11 @@ abstract class Base extends Base_File {
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
-		$breakpoints_config = Plugin::$instance->breakpoints->get_active_config();
+		/** @var Breakpoint[] $active_breakpoints */
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		foreach ( $breakpoints_config as $breakpoint_name => $breakpoint_config ) {
-			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint_config['value'] );
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint->get_value() );
 		}
 	}
 

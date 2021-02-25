@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Responsive\Files;
 
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Plugin;
@@ -31,7 +32,8 @@ class Frontend extends Base {
 	 * @access public
 	 */
 	public function parse_content() {
-		$breakpoints = Plugin::$instance->breakpoints->get_active_config();
+		/** @var Breakpoint[] $breakpoints */
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
@@ -49,7 +51,7 @@ class Frontend extends Base {
 					$breakpoint_index--;
 				}
 
-				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]['value'];
+				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
 
 				if ( ! $is_max_point ) {
 					$value++;

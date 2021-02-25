@@ -24,6 +24,7 @@ class Manager extends Module {
 	private $config;
 	private $active_config;
 	private $breakpoints;
+	private $active_breakpoints;
 
 	public function get_name() {
 		return 'breakpoints';
@@ -32,7 +33,8 @@ class Manager extends Module {
 	/**
 	 * Get Breakpoints
 	 *
-	 * Retrieve the array of --enabled-- breakpoints, or a single breakpoint if a name is passed.
+	 * Retrieve the array containing instances of all breakpoints existing in the system, or a single breakpoint if a
+	 * name is passed.
 	 *
 	 * @since 3.2.0
 	 *
@@ -47,31 +49,23 @@ class Manager extends Module {
 	}
 
 	/**
-	 * Get Config
+	 * Get Active Breakpoints
 	 *
-	 * Retrieve --Enabled-- Breakpoints Config
+	 * Retrieve the array of --enabled-- breakpoints, or a single breakpoint if a name is passed.
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param string|null $breakpoint_name
-	 * @return array All breakpoints config, or a specific breakpoint's config.
+	 * @param $breakpoint_name
+	 * @return mixed
 	 */
-	private function get_config( $breakpoint_name = null ) {
-		if ( ! $this->config ) {
-			$this->config = $this->init_config();
-		}
-
-		return self::get_items( $this->config, $breakpoint_name );
-	}
-
-	public function get_active_config( $breakpoint_name = null ) {
-		if ( ! $this->active_config ) {
-			$this->active_config = array_filter( $this->get_config(), function( $breakpoint ) {
-				return $breakpoint['is_enabled'];
+	public function get_active_breakpoints( $breakpoint_name = null ) {
+		if ( ! $this->active_breakpoints ) {
+			$this->active_breakpoints = array_filter( $this->get_breakpoints(), function( $breakpoint ) {
+				/** @var Breakpoint $breakpoint */
+				return $breakpoint->is_enabled();
 			} );
 		}
-
-		return self::get_items( $this->active_config, $breakpoint_name );
+		return self::get_items( $this->active_breakpoints, $breakpoint_name );
 	}
 
 	/** Has Custom Breakpoints
@@ -107,14 +101,13 @@ class Manager extends Module {
 	 *@since 3.2.0
 	 */
 	public function get_device_min_breakpoint( $device_name ) {
-		$breakpoints_config = $this->get_active_config();
-		$breakpoints = $this->get_breakpoints();
+		$active_breakpoints = $this->get_active_breakpoints();
 		/** @var Breakpoint $current_device_breakpoint */
-		$current_device_breakpoint = $breakpoints[ $device_name ];
+		$current_device_breakpoint = $active_breakpoints[ $device_name ];
 
 		// Since this method is called multiple times, usage of class variables is to memory and processing time.
 		// Get only the keys for active breakpoints.
-		$breakpoint_keys = array_keys( $breakpoints_config );
+		$breakpoint_keys = array_keys( $active_breakpoints );
 
 		if ( $breakpoint_keys[0] === $device_name ) {
 			// For the lowest breakpoint, the min point is always 0.
@@ -129,7 +122,7 @@ class Manager extends Module {
 			$previous_index = $device_name_index - 1;
 			$previous_breakpoint_key = $breakpoint_keys[ $previous_index ];
 			/** @var Breakpoint $previous_breakpoint */
-			$previous_breakpoint = $breakpoints[ $previous_breakpoint_key ];
+			$previous_breakpoint = $active_breakpoints[ $previous_breakpoint_key ];
 
 			$min_breakpoint = $previous_breakpoint->get_value() + 1;
 		}
@@ -138,10 +131,11 @@ class Manager extends Module {
 	}
 
 	public function get_desktop_min_point() {
-		$config = $this->get_active_config();
+		/** @var Breakpoint[] $active_breakpoints */
+		$active_breakpoints = $this->get_active_breakpoints();
 		$desktop_previous_device = $this->get_desktop_previous_device_key();
 
-		return $config[ $desktop_previous_device ]['value'] + 1;
+		return $active_breakpoints[ $desktop_previous_device ]->get_value() + 1;
 	}
 
 	/**
@@ -246,32 +240,8 @@ class Manager extends Module {
 		return $breakpoints;
 	}
 
-	/**
-	 * Init Config
-	 *
-	 * Iterate over the breakpoint instances to create the breakpoints config array.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @return array $config
-	 */
-	private function init_config() {
-		$config = [];
-
-		// Make sure breakpoint instances are initialized before fetching their config.
-		$breakpoints = $this->get_breakpoints();
-
-		// Iterate over the breakpoint instances and get each one's config.
-		foreach ( $breakpoints as $name => $instance ) {
-			/** @var Breakpoint $instance */
-			$config[ $name ] = $instance->get_config();
-		}
-
-		return $config;
-	}
-
 	private function get_desktop_previous_device_key() {
-		$config_array_keys = array_keys( $this->get_active_config() );
+		$config_array_keys = array_keys( $this->get_active_breakpoints() );
 		$num_of_devices = count( $config_array_keys );
 
 		// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
