@@ -29,7 +29,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	/**
-	 *
 	 * Get library type for `wp.media` using a given media type.
 	 * `svg` will return the svg mime-type, others will return the `library_type` from the model settings.
 	 * Defaults to `getMediaType()` if nothing is present.
