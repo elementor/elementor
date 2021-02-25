@@ -214,7 +214,7 @@ class Settings_Layout extends Tab_Base {
 	 * @param array $data
 	 * @return array $data
 	 */
-	public function before_save( $data ) {
+	public function before_save( array $data ) {
 		// When creating a default kit, $data['settings'] is empty and should remain empty, so settings.
 		if ( empty( $data['settings'] ) ) {
 			return $data;
