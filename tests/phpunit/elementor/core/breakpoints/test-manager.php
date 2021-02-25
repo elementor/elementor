@@ -30,8 +30,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 		$all_breakpoint_names = array_keys( Breakpoints_Manager::get_default_config() );
 
-		$this->assertIsArray( $breakpoints );
-
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
 			/** @var Breakpoint $breakpoint */
 			// Check that the items in the breakpoints array are actual breakpoints.
