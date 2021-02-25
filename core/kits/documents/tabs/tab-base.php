@@ -53,7 +53,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 	 * @param array $data
 	 * @return array
 	 */
-	public function before_save( $data ) {
+	public function before_save( array $data ) {
 		return $data;
 	}
 
