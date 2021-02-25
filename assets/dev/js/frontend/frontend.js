@@ -28,6 +28,8 @@ export default class Frontend extends elementorModules.ViewModule {
 				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
 			},
 		};
+
+		this.populateActiveBreakpointsConfig();
 	}
 
 	// TODO: BC since 2.5.0
@@ -297,9 +299,9 @@ export default class Frontend extends elementorModules.ViewModule {
 	populateActiveBreakpointsConfig() {
 		this.config.responsive.activeBreakpoints = {};
 
-		Object.keys( this.config.responsive.breakpoints ).forEach( ( breakpointKey ) => {
-			if ( this.config.responsive.breakpoints[ breakpointKey ].is_enabled ) {
-				this.config.responsive.activeBreakpoints[ breakpointKey ] = this.config.responsive.breakpoints[ breakpointKey ];
+		Object.entries( this.config.responsive.breakpoints ).forEach( ( [ breakpointKey, breakpointData ] ) => {
+			if ( breakpointData.is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = breakpointData;
 			}
 		} );
 	}
@@ -322,8 +324,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		if ( this.isEditMode() ) {
 			this.muteMigrationTraces();
 		}
-
-		this.populateActiveBreakpointsConfig();
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
