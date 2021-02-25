@@ -42,6 +42,10 @@ export default class AssetsLoader {
 const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
 AssetsLoader.assets = {
-	script: {},
+	script: {
+		dialog: {
+			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.8.1`,
+		},
+	},
 	style: {},
 };
