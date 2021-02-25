@@ -16,17 +16,6 @@ export default class AssetsLoader {
 		return styleElement;
 	}
 
-	add( assetData ) {
-		const { type, key, src, parent } = assetData;
-
-		if ( ! this.constructor.assets[ type ][ key ] ) {
-			this.constructor.assets[ type ][ key ] = {
-				src,
-				parent,
-			};
-		}
-	}
-
 	load( type, key ) {
 		return new Promise( ( resolve ) => {
 			const assetData = this.constructor.assets[ type ][ key ];
@@ -37,21 +26,13 @@ export default class AssetsLoader {
 				return;
 			}
 
-			let element;
+			this.constructor.assets[ type ][ key ].isLoaded = true;
 
-			if ( 'scripts' === type ) {
-				element = this.getScriptElement( assetData.src );
-			} else if ( 'styles' === type ) {
-				element = this.getStyleElement( assetData.src );
-			}
+			const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
 
-			element.onload = () => {
-				this.constructor.assets[ type ][ key ].isLoaded = true;
+			element.onload = () => resolve( true );
 
-				resolve( true );
-			};
-
-			const parent = [ 'body', 'head' ].includes( assetData.parent ) ? assetData.parent : 'body';
+			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
 
 			document[ parent ].appendChild( element );
 		} );
@@ -61,6 +42,6 @@ export default class AssetsLoader {
 const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
 
 AssetsLoader.assets = {
-	scripts: {},
-	styles: {},
+	script: {},
+	style: {},
 };
