@@ -720,7 +720,6 @@ class Editor {
 			);
 		}
 
-		/** @var Breakpoint[] $breakpoints */
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
 		// The two breakpoints under 'tablet' need to be checked for values.

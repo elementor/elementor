@@ -703,7 +703,6 @@ abstract class Base extends Base_File {
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
-		/** @var Breakpoint[] $active_breakpoints */
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {

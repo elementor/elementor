@@ -37,7 +37,6 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		/** @var Breakpoint[] $breakpoints */
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
@@ -224,7 +223,6 @@ class Settings_Layout extends Tab_Base {
 		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
-		/** @var Breakpoint[] $default_breakpoint_config */
 		$default_breakpoint_config = Breakpoints_Manager::get_default_config();
 
 		// Update the old mobile breakpoint. If the setting is empty, use the default value.
@@ -247,7 +245,6 @@ class Settings_Layout extends Tab_Base {
 
 		$should_compile_css = false;
 
-		/** @var Breakpoint[] $breakpoints_default_config */
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
 		foreach ( $breakpoints_default_config as $breakpoint_key => $default_config ) {

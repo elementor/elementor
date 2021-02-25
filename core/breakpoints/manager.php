@@ -39,7 +39,7 @@ class Manager extends Module {
 	 * @since 3.2.0
 	 *
 	 * @param $breakpoint_name
-	 * @return mixed
+	 * @return Breakpoint[]|Breakpoint
 	 */
 	public function get_breakpoints( $breakpoint_name = null ) {
 		if ( ! $this->breakpoints ) {
@@ -56,7 +56,7 @@ class Manager extends Module {
 	 * @since 3.2.0
 	 *
 	 * @param $breakpoint_name
-	 * @return mixed
+	 * @return Breakpoint[]|Breakpoint
 	 */
 	public function get_active_breakpoints( $breakpoint_name = null ) {
 		if ( ! $this->active_breakpoints ) {
@@ -65,6 +65,7 @@ class Manager extends Module {
 				return $breakpoint->is_enabled();
 			} );
 		}
+
 		return self::get_items( $this->active_breakpoints, $breakpoint_name );
 	}
 
@@ -102,7 +103,6 @@ class Manager extends Module {
 	 */
 	public function get_device_min_breakpoint( $device_name ) {
 		$active_breakpoints = $this->get_active_breakpoints();
-		/** @var Breakpoint $current_device_breakpoint */
 		$current_device_breakpoint = $active_breakpoints[ $device_name ];
 
 		// Since this method is called multiple times, usage of class variables is to memory and processing time.
@@ -131,7 +131,6 @@ class Manager extends Module {
 	}
 
 	public function get_desktop_min_point() {
-		/** @var Breakpoint[] $active_breakpoints */
 		$active_breakpoints = $this->get_active_breakpoints();
 		$desktop_previous_device = $this->get_desktop_previous_device_key();
 

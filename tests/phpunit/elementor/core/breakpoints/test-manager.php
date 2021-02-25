@@ -48,7 +48,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_has_custom_breakpoints() {
-		/** @var Breakpoint[] $active_breakpoints */
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
@@ -73,7 +72,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_device_min_breakpoint() {
-		/** @var Breakpoint[] $active_breakpoints */
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		// Test for mobile specifically, which always has a min point of 0.

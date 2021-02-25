@@ -57,11 +57,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 */
 	public function test_is_enabled() {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		/** @var Breakpoint[] $active_breakpoint_names */
 		$active_breakpoint_names = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
 		foreach ( $breakpoints as $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
 			if ( $breakpoint->is_enabled() ) {
 				// Check if the enabled breakpoint is in the array of active breakpoint names, as returned from the
 				// Breakpoints Manager's `get_config()` method.
