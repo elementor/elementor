@@ -1,6 +1,12 @@
 import ElementView from './element';
 
 export default class extends Marionette.LayoutView {
+	constructor( options ) {
+		super( options );
+
+		this.elementsModel = options.elementsModel;
+	}
+
 	getTemplate() {
 		return '#tmpl-elementor-navigator';
 	}
@@ -51,7 +57,7 @@ export default class extends Marionette.LayoutView {
 
 	onShow() {
 		this.elements.show( new ElementView( {
-			model: elementor.elementsModel,
+			model: this.elementsModel,
 		} ) );
 	}
 

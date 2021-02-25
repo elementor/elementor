@@ -1,7 +1,10 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
+	isMultiDocumentSupport = false;
+
 	getNamespace() {
 		return 'navigator';
 	}
@@ -23,6 +26,10 @@ export default class Component extends ComponentBase {
 				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 
 	open( args ) {

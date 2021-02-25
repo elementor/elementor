@@ -23,6 +23,7 @@ export default class extends Marionette.CompositeView {
 		return {
 			contextmenu: 'onContextMenu',
 			'click @ui.item': 'onItemClick',
+			'dblclick @ui.item': 'onItemDoubleClick',
 			'click @ui.toggle': 'onToggleClick',
 			'click @ui.toggleList': 'onToggleListClick',
 			'click @ui.indicator': 'onIndicatorClick',
@@ -92,6 +93,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	initialize() {
+		this.component = this.component || $e.components.get( 'navigator' );
 		this.collection = this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
@@ -99,6 +101,13 @@ export default class extends Marionette.CompositeView {
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
             .listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+
+		// On on document loaded expand current list.
+		if ( this.component.isMultiDocumentSupport && this.isCurrentActiveDocument() ) {
+			setTimeout( () => {
+				this.toggleList();
+			} );
+		}
 	}
 
 	getIndent() {
@@ -107,6 +116,14 @@ export default class extends Marionette.CompositeView {
 
 	isRoot() {
 		return ! this.model.get( 'elType' );
+	}
+
+	isDocument() {
+		return 'document' === this.model.get( 'elType' );
+	}
+
+	isCurrentActiveDocument() {
+		return this.model.get( 'settings' )?.get( 'id' ) === elementor.documents.getCurrentId();
 	}
 
 	hasChildren() {
@@ -273,10 +290,16 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onRender() {
-		this.activateSortable();
+		if ( this.component.isMultiDocumentSupport ) {
+			if ( this.isRoot() ) {
+				return;
+			}
+		} else {
+			this.activateSortable();
 
-		if ( this.isRoot() ) {
-			return;
+			if ( this.isRoot() ) {
+				return;
+			}
 		}
 
 		this.ui.item.css( 'padding-' + ( elementorCommon.config.isRTL ? 'right' : 'left' ), this.getIndent() );
@@ -307,7 +330,25 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onItemClick() {
+		// If its current edited document, then toggle items list.
+		if ( this.component.isMultiDocumentSupport && this.isCurrentActiveDocument() ) {
+			return this.toggleList();
+		}
+
 		this.model.trigger( 'request:edit', { scrollIntoView: true } );
+	}
+
+	onItemDoubleClick() {
+		if ( ! this.component.isMultiDocumentSupport ) {
+			return;
+		}
+
+		if ( this.isDocument() && ! this.isCurrentActiveDocument() ) {
+			$e.run( 'editor/documents/switch', {
+				id: this.model.get( 'settings' ).get( 'id' ),
+				force: true,
+			} );
+		}
 	}
 
 	onToggleClick( event ) {
@@ -317,6 +358,11 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onTitleDoubleClick() {
+		// No title editing for documents.
+		if ( this.component.isMultiDocumentSupport && this.isDocument() ) {
+			return;
+		}
+
 		this.enterTitleEditing();
 	}
 
