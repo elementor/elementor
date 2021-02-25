@@ -63,9 +63,7 @@ class Kit extends PageBase {
 
 	public function save( $data ) {
 		foreach ( $this->tabs as $tab ) {
-			if ( method_exists( $tab, 'before_save' ) ) {
-				$data = $tab->before_save( $data );
-			}
+			$data = $tab->before_save( $data );
 		}
 
 		$saved = parent::save( $data );
