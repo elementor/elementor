@@ -1324,9 +1324,9 @@ class Frontend extends App {
 	private function get_elementor_frontend_dependencies() {
 		$dependencies = [
 			'elementor-frontend-modules',
-			'elementor-dialog',
 			'elementor-waypoints',
 			'share-link',
+			'jquery-ui-position',
 		];
 
 		if ( ! $this->is_improved_assets_loading() ) {
@@ -1339,6 +1339,7 @@ class Frontend extends App {
 			);
 
 			$dependencies[] = 'swiper';
+			$dependencies[] = 'elementor-dialog';
 		}
 
 		return $dependencies;
