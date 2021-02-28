@@ -513,7 +513,7 @@ class Settings extends Settings_Page {
 										'fallback' => __( 'Fallback', 'elementor' ),
 										'optional' => __( 'Optional', 'elementor' ),
 									],
-									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' .  __( 'Auto - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Blocking - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - Hides the text for a minimal period and will use the custom font only if loaded within a few seconds.', 'elementor' ) . '<br>' . __( 'Optional - Hides the text for a minimal period and will use the fallback font unless the custom font is already fully loaded.', 'elementor' ),
+									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' .  __( 'Default - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Blocking - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - Hides the text for a minimal period and will use the custom font only if loaded within a few seconds.', 'elementor' ) . '<br>' . __( 'Optional - Hides the text for a minimal period and will use the fallback font unless the custom font is already fully loaded.', 'elementor' ),
 								],
 							],
 						],
