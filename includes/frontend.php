@@ -516,6 +516,7 @@ class Frontend extends App {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
+		$frontend_with_widgets_file_name = 'frontend-with-widgets' . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_file = Responsive::has_custom_breakpoints();
 
@@ -531,6 +532,7 @@ class Frontend extends App {
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+			$frontend_with_widgets_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_with_widgets_file_name;
 		}
 
 		$frontend_dependencies = [];
@@ -545,6 +547,10 @@ class Frontend extends App {
 			);
 
 			$frontend_dependencies[] = 'elementor-frontend-legacy';
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$frontend_file_url = $frontend_with_widgets_file_url;
 		}
 
 		wp_register_style(
