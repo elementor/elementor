@@ -823,7 +823,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
+		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 
