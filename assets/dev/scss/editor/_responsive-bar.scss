@@ -6,51 +6,82 @@
 	--e-is-device-mode: 1;
 }
 
-.e-responsive-bar {
-	position: fixed;
-	z-index: 1;
-	width: var(--e-preview-width);
-	@include end(0);
-	top: calc(-40px + ( 40px * var(--e-is-device-mode)));
+#elementor-responsive-bar {
+	position: sticky;
+	height: calc(40px * var(--e-is-device-mode));
+	overflow: hidden;
+	align-self: stretch;
+	flex-shrink: 0;
+	transition: height .2s ease-in-out, opacity .1s ;
+	top: 0;
+	z-index: 100;
+	opacity: var(--e-is-device-mode);
+	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
 }
 
 .e-responsive-bar {
-	& {
+	width: 100%;
+	height: 100%;
+	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+	z-index: 1;
+	transition: margin-top .2s ease-in-out;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 10px;
+	height: 40px;
+	color: $editor-light;
+	background-color: $editor-darkest;
+
+	&__col {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 10px;
-		height: 40px;
-		color: $editor-light;
-		background-color: $editor-darkest;
+		width: 25%;
+		justify-content: center;
 
-		&__col {
-			display: flex;
-			width: 25%;
-			justify-content: center;
-
-			&:last-child {
-				justify-content: flex-end;
-			}
-		}
-
-		&__close-button,
-		&__settings-button {
-			padding: 4px;
-		}
-
-		&__button {
-			appearance: none;
-			background: none;
-			border: 0 none;
-			cursor: pointer;
-			color: inherit;
-
-			&:hover {
-				color: $editor-lighter;
-			}
+		&:last-child {
+			justify-content: flex-start;
+			flex-direction: row-reverse;
 		}
 	}
+
+	&__close-button,
+	&__settings-button {
+		padding: 10px;
+	}
+
+	&__button {
+		appearance: none;
+		background: none;
+		border: 0 none;
+		cursor: pointer;
+		color: inherit;
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+		}
+
+		&:hover {
+			color: $editor-lighter;
+		}
+
+		margin-inline-start: 10px;
+	}
+
+	&__close-button + &__button {
+		position: relative;
+		margin-inline-end: 10px;
+
+		&::before {
+			content: '';
+			display: block;
+			height: 20px;
+			width: 1px;
+			background-color: $editor-light;
+			position: absolute;
+			@include end(-15px);
+		}
+	}
+
 
 	&-switcher {
 		&__option {
@@ -89,4 +120,3 @@
 		}
 	}
 }
-

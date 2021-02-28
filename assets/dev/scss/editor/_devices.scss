@@ -8,18 +8,20 @@ body {
 
 #elementor-preview {
 	background-color: #333;
-	position: absolute;
 	height: 100%;
-	right: 0;
 	border: 0;
 	width: var(--e-preview-width);
-	top: calc(var(--e-is-device-mode) * 40px);
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	justify-content: flex-start;
 	align-items: center;
 
 	.elementor-device-desktop & {
 		overflow-y: hidden;
+
+		.ui-resizable-handle {
+			display: none;
+		}
 	}
 
 	body:not(.elementor-device-desktop) & {
@@ -28,8 +30,10 @@ body {
 }
 
 #elementor-preview-responsive-wrapper {
-	margin: auto;
-	transition: all .5s ease 0s;
+	margin: Max(calc((100vh - 40px - var(--e-editor-preview-height)) / 2), 40px) auto;
+	padding: 20px;
+	width: var(--e-editor-preview-width);
+	height: var(--e-editor-preview-height);
 
 	&:not(.ui-resizable-resizing) {
 		transition: width .15s ease 0s;
@@ -37,34 +41,23 @@ body {
 
 	.elementor-device-desktop & {
 		min-width: map_get($breakpoints, lg);
-		margin: 0 auto;
 		width: 100%;
 		height: 100%;
-	}
-
-	.elementor-device-tablet & {
-		max-width: $editor-screen-md-max;
-		min-width: $editor-screen-md-min;
-		width: var(--e-editor-preview-width, #{$editor-screen-md-min});
-		min-height: var(--e-editor-preview-height, #{$editor-screen-md-min});
-		height: var(--e-editor-preview-height, #{$editor-screen-md-max});
-		max-height: var(--e-editor-preview-height, #{$editor-screen-md-max});
-		padding: 40px 10px 70px;
-	}
-
-	.elementor-device-mobile & {
-		max-width: $editor-screen-sm-max;
-		min-width: 320px;
-		width: var(--e-editor-preview-width, 360px);
-		height: var(--e-editor-preview-width, 640px);
-		padding: 40px 10px 70px;
+		padding: 0;
 	}
 
 	body:not(.elementor-device-desktop) & {
-		border-radius: 30px;
-		background-color: #111;
-		margin: 30px auto 80px;
 		box-sizing: content-box;
+		position: relative;
+	}
+
+	.ui-resizable-handle {
+		top: 0;
+
+		&.ui-resizable-s {
+			top: auto;
+			bottom: 0;
+		}
 	}
 
 	.ui-resizable-n, .ui-resizable-s {
@@ -93,6 +86,7 @@ body {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		width: 20px;
 
 		&:before {
 			content: '';
@@ -118,6 +112,10 @@ body {
 		}
 	}
 
+	.ui-resizable-s {
+		bottom: 0;
+	}
+
 	.ui-resizable-e {
 		right: 0;
 	}
@@ -130,5 +128,6 @@ body {
 	width: 100%;
 	height: 100%;
 	background-color: #fff;
+	box-shadow: 0 0 3px rgba(0, 0, 0, .3), 0 0 20px rgba(0, 0, 0, .15);
 }
 
