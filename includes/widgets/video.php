@@ -272,6 +272,18 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'youtube_lazy_load',
+			[
+				'label' => __( 'Lazy Load', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => 'youtube',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'autoplay',
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
