@@ -603,6 +603,9 @@ abstract class Document extends Controls_Stack {
 				}
 			}
 
+			// Validate. Also save to `$data` for the `after_save` hook.
+			$data['settings'] = $this->validate_controls( $data['settings'], $this->get_controls() );
+
 			$this->save_settings( $data['settings'] );
 
 			// Refresh post after save settings.
@@ -611,6 +614,9 @@ abstract class Document extends Controls_Stack {
 
 		// Don't check is_empty, because an empty array should be saved.
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			// Validate. Also save to `$data` for the `after_save` hook.
+			$data['elements'] = $this->validate_elements_settings( $data['elements'] );
+
 			$this->save_elements( $data['elements'] );
 		}
 
@@ -857,6 +863,15 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $elements;
+	}
+
+	/**
+	 * Get document setting from DB.
+	 *
+	 * @return array
+	 */
+	public function get_db_document_settings() {
+		return $this->get_meta( static::PAGE_META_KEY );
 	}
 
 	/**
@@ -1374,5 +1389,59 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
+	}
+
+	/**
+	 * Validate elements settings.
+	 *
+	 * Iterate all elements via the `validate_controls` method.
+	 *
+	 * @param array $elements
+	 *
+	 * @return array
+	 */
+	private function validate_elements_settings( array $elements ) {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $element_data ) {
+			$instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			$element_data['settings'] = $this->validate_controls( $element_data['settings'], $instance->get_controls() );
+
+			return $element_data;
+		} );
+	}
+
+	/**
+	 * Validate settings of an element or a document.
+	 *
+	 * Avoid change settings like `html_tag` & `title_size` to a `script` tag.
+	 * Go over all Select & Select2 controls in order to handle also 3rd party settings.
+	 *
+	 * @param array $settings The setting to validate.
+	 * @param array $controls The controls config for the settings set.
+	 *
+	 * @return array
+	 */
+	private function validate_controls( array $settings, array $controls ) {
+		foreach ( $controls as $control_id => $control_config ) {
+			if ( Controls_Manager::SELECT !== $control_config['type'] && Controls_Manager::SELECT2  !== $control_config['type'] ) {
+				continue;
+			}
+
+			if ( empty( $settings[ $control_id ] ) ) {
+				continue;
+			}
+
+			// In case it's modified by 3rd party hooks.
+			if ( ! isset( $control_config['options'] ) ) {
+				$control_config['options'] = [];
+			}
+
+			// If it's not one of the control options. reset it to default.
+			if ( ! isset( $control_config['options'][ $settings[ $control_id ] ] ) ) {
+				$settings[ $control_id ] = $control_config['default'];
+			}
+		}
+
+		return $settings;
 	}
 }
