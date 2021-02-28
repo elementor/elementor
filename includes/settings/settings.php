@@ -507,14 +507,14 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'select',
 									'options' => [
-										'default' => __( 'Default', 'elementor' ),
+										'default' => __( 'Default (by default - auto)', 'elementor' ),
 										'auto' => __( 'Auto', 'elementor' ),
+										'block' => __( 'Blocking', 'elementor' ),
 										'swap' => __( 'Swap', 'elementor' ),
-										'block' => __( 'Block', 'elementor' ),
 										'fallback' => __( 'Fallback', 'elementor' ),
 										'optional' => __( 'Optional', 'elementor' ),
 									],
-									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' .  __( 'Auto - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Block - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - A compromise between block and swap: a very short time period that the text will be invisible.', 'elementor' ) . '<br>' . __( 'Optional - Give the browser the freedom to decide whether or not a font should even be used.', 'elementor' ),
+									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' .  __( 'Auto - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Blocking - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - A compromise between block and swap: a very short time period that the text will be invisible.', 'elementor' ) . '<br>' . __( 'Optional - Give the browser the freedom to decide whether or not a font should even be used.', 'elementor' ),
 								],
 							],
 						],
