@@ -502,6 +502,21 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'font_display' => [
+								'label' => __( 'Google Fonts Load', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'options' => [
+										'default' => __( 'Default', 'elementor' ),
+										'auto' => __( 'Auto', 'elementor' ),
+										'swap' => __( 'Swap', 'elementor' ),
+										'block' => __( 'Block', 'elementor' ),
+										'fallback' => __( 'Fallback', 'elementor' ),
+										'optional' => __( 'Optional', 'elementor' ),
+									],
+									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' .  __( 'Auto - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Block - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - A compromise between block and swap: a very short time period that the text will be invisible.', 'elementor' ) . '<br>' . __( 'Optional - Give the browser the freedom to decide whether or not a font should even be used.', 'elementor' ),
+								],
+							],
 						],
 					],
 				],
