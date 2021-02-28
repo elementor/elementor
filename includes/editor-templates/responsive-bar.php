@@ -42,7 +42,8 @@ $breakpoints = [
 				<span class="elementor-screen-only"><?php echo __( 'Flip', 'elementor' ); ?></span>
 				<i class="fas fa-sync-alt"></i>
 			</button>
-			<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width">
-			<input type="text" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height">
+			<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
+			<span class="e-responsive-bar__input-size-separator">x</span>
+			<input type="text" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
 		</div>
 </script>
