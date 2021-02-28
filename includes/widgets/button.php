@@ -478,6 +478,7 @@ class Widget_Button extends Widget_Base {
 			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
+		/* <InjectCss:button></InjectCss> */
 		?>
 		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
