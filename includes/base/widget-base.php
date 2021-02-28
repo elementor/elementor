@@ -33,6 +33,19 @@ abstract class Widget_Base extends Element_Base {
 	protected $_has_template_content = true;
 
 	/**
+	 * Registered Runtime Widgets.
+	 *
+	 * Registering in runtime all widgets that are being used on the page.
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 * @static
+	 *
+	 * @var array
+	 */
+	public static $registered_runtime_widgets = [];
+
+	/**
 	 * Get element type.
 	 *
 	 * Retrieve the element type, in this case `widget`.
@@ -903,5 +916,26 @@ abstract class Widget_Base extends Element_Base {
 
 		$this->end_controls_section();
 
+	}
+
+	public function register_runtime_widget( $widget_name ) {
+		if ( ! $widget_name ) {
+			return;
+		}
+
+		self::$registered_runtime_widgets[] = $widget_name;
+	}
+
+	public function is_widget_css() {
+		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+		$is_widget_type_already_exist = in_array( $this->get_name(), self::$registered_runtime_widgets, TRUE );
+
+		if ( ! $is_optimized_mode || $is_widget_type_already_exist ) {
+			return false;
+		}
+
+		$this->register_runtime_widget( $this->get_name() );
+
+		return true;
 	}
 }
