@@ -798,14 +798,7 @@ class Frontend extends App {
 			}
 
 			// Defining a font-display type to google fonts.
-			$font_display_setting = Fonts::get_font_display_setting();
-
-			// Define the font display default value.
-			if ( 'default' === $font_display_setting ) {
-				$font_display_setting = 'auto';
-			}
-
-			$font_display_url_str = '&display=' . $font_display_setting;
+			$font_display_url_str = '&display=' . Fonts::get_font_display_setting();
 
 			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $google_fonts['google'] ), $font_display_url_str );
 
