@@ -31,7 +31,7 @@ module.exports = {
 		}
 
 		if ( ! $document.find( selector ).length ) {
-			$document.find( 'link:last' ).after( link );
+			$document.find( 'link' ).last().after( link );
 		}
 	},
 
