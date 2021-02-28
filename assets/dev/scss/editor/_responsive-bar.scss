@@ -37,6 +37,7 @@
 		display: flex;
 		width: 25%;
 		justify-content: center;
+		align-items: center;
 
 		&:last-child {
 			justify-content: flex-start;
@@ -79,9 +80,25 @@
 			background-color: $editor-light;
 			position: absolute;
 			@include end(-15px);
+			top: calc(50% - 10px);
 		}
 	}
 
+	&__input-size {
+		background-color: transparent;
+		color: $editor-light;
+		border: 1px solid #6D7882;
+		padding: 0 3px;
+		max-width: 35px;
+		font-size: 12px;
+		line-height: 16px;
+		height: 18px;
+		margin: auto 10px;
+
+		&-separator {
+			color: #6D7882;
+		}
+	}
 
 	&-switcher {
 		&__option {
