@@ -30,13 +30,12 @@ body {
 }
 
 #elementor-preview-responsive-wrapper {
-	margin: Max(calc((100vh - 40px - var(--e-editor-preview-height)) / 2), 40px) auto;
 	padding: 20px;
 	width: var(--e-editor-preview-width);
 	height: var(--e-editor-preview-height);
 
 	&:not(.ui-resizable-resizing) {
-		transition: width .15s ease 0s;
+		transition: .3s ease-in-out;
 	}
 
 	.elementor-device-desktop & {
@@ -47,6 +46,8 @@ body {
 	}
 
 	body:not(.elementor-device-desktop) & {
+		margin: Max(calc((100vh - 40px - var(--e-editor-preview-height)) / 2), 40px)
+			Max(calc((100vw - var(--e-editor-panel-width) - var(--e-editor-preview-width)) / 2), 40px );
 		box-sizing: content-box;
 		position: relative;
 	}

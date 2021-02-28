@@ -14,7 +14,9 @@ export default class View extends Marionette.ItemView {
 			switcherOption: prefix + '-switcher__option',
 			switcherLabel: prefix + '-switcher__label',
 			switcher: prefix + '-switcher',
+			sizeInput: prefix + '__input-size',
 			closeButton: prefix + '__close-button',
+			flipButton: prefix + '__flip-button',
 			breakpointSettingsButton: prefix + '__settings-button',
 		};
 	}
@@ -22,6 +24,8 @@ export default class View extends Marionette.ItemView {
 	events() {
 		return {
 			'change @ui.switcherOption': 'onBreakpointSelected',
+			'change @ui.sizeInput': 'onSizeInputChange',
+			'click @ui.flipButton': 'onFlipButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 		};
@@ -29,6 +33,7 @@ export default class View extends Marionette.ItemView {
 
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviweResize );
 	}
 
 	addTipsyToBreakpointSwitch() {
@@ -74,7 +79,9 @@ export default class View extends Marionette.ItemView {
 		if ( isInSettingsPanelActive ) {
 			// Shake the panel
 			_( 6 ).times( ( n ) => {
-				_.delay( () => elementor.panel.$el.css( 'margin-left', ( ( ( n + 1 ) % 2 ) * 5 ) + 'px' ), n * 70 );
+				_.delay( () => {
+						elementor.panel.$el.css( 'transform', 'translateX(' + ( ( ( n + 1 ) % 2 ) * 5 ) + 'px)' );
+					}, n * 70 );
 			} );
 
 			return;
@@ -90,11 +97,32 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
+	onPreviweResize() {
+		const width = elementor.channels.responsivePreview.request( 'width' );
+		const height = elementor.channels.responsivePreview.request( 'height' );
+
+		this.ui.sizeInput.filter( '.e-responsive-bar__input-width' ).val( width );
+		this.ui.sizeInput.filter( '.e-responsive-bar__input-height' ).val( height );
+	}
+
 	onRender() {
 		this.addTipsyToBreakpointSwitch();
 	}
 
 	onCloseButtonClick() {
 		elementor.exitDeviceMode();
+	}
+
+	onSizeInputChange() {
+		const size = {
+			width: this.ui.sizeInput.filter( '.e-responsive-bar__input-width' ).val(),
+			height: this.ui.sizeInput.filter( '.e-responsive-bar__input-height' ).val(),
+		};
+
+		elementor.updatePreviewSize( size );
+	}
+
+	onFlipButtonClick() {
+		elementor.togglePreviewOrientation();
 	}
 }

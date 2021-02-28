@@ -47,6 +47,7 @@ export default class EditorBase extends Marionette.Application {
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
+		responsivePreview: Backbone.Radio.channel( 'ELEMENTOR:responsivePreview' ),
 	};
 
 	get debug() {
@@ -541,27 +542,92 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
-	makePreviewResizable() {
-		const responsiveWrapper = this.$previewResponsiveWrapper;
+	initPreviewResizable() {
+		const $responsiveWrapper = this.$previewResponsiveWrapper;
 
-		responsiveWrapper.resizable( {
+		$responsiveWrapper.resizable( {
+			disabled: true,
 			handles: 'n, e, s, w',
 
-			start: function( event, ui ) {
-				// ..
+			stop: () => {
+				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
 			},
-			stop: function( event, ui ) {
-				// ..
-			},
-			resize: function( event, ui ) {
-				elementorCommon.elements.$body.css( '--e-editor-preview-width', ui.size.width + 'px' );
-				responsiveWrapper.css( { width: '', left: '', right: '', top: '', height: '' } );
+			resize: ( event, ui ) => {
+				$responsiveWrapper.css( {
+					right: '0', left: '0', top: '0', bottom: '0',
+					'--e-editor-preview-width': ui.size.width + 'px',
+					'--e-editor-preview-height': ui.size.height + 'px',
+				} );
+
+				this.broadcastPreviewResize( ui.size );
 			},
 		} );
 	}
 
-	updatePreviewResizeOpions() {
-		// this.$previewResponsiveWrapper
+	broadcastPreviewResize( size ) {
+		this.channels.responsivePreview
+			.reply( 'width', size.width )
+			.reply( 'height', size.height )
+			.trigger( 'resize' );
+	}
+
+	getBreakpointResizeOptions( currentBreakpoint ) {
+		switch ( currentBreakpoint ) {
+			case 'mobile': return {
+				width: 375,
+				height: 667,
+				maxWidth: 414,
+				minWidth: 320,
+				maxHeight: 896,
+				minHeight: 480,
+			};
+			case 'tablet': return {
+				width: 768,
+				height: 1024,
+				maxWidth: 1024,
+				minWidth: 768,
+				maxHeight: 1024,
+				minHeight: 768,
+			};
+			default: return {};
+		}
+	}
+
+	updatePreviewResizeOptions() {
+		const $responsiveWrapper = this.$previewResponsiveWrapper;
+		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
+		const isPreviewDisabled = $responsiveWrapper.resizable( 'option', 'disabled' );
+
+		if ( 'desktop' === currentBreakpoint ) {
+			if ( ! isPreviewDisabled ) {
+				$responsiveWrapper.resizable( 'disable' );
+			}
+
+			$responsiveWrapper.css( {
+				'--e-editor-preview-width': '',
+				'--e-editor-preview-height': '',
+			} );
+
+			this.broadcastPreviewResize( {
+				width: this.$previewWrapper.outerWidth(),
+				height: this.$previewWrapper.outerHeight() - 40,
+			} );
+		} else {
+			if ( isPreviewDisabled ) {
+				$responsiveWrapper.resizable( 'enable' );
+			}
+
+			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
+
+			$responsiveWrapper.css( {
+				'--e-editor-preview-width': breakpointResizeOptions.width + 'px',
+				'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
+			} );
+
+			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
+
+			$responsiveWrapper.resizable( 'option', { ...breakpointResizeOptions } );
+		}
 	}
 
 	preventClicksInsideEditor() {
@@ -677,7 +743,7 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
-		this.makePreviewResizable();
+		this.initPreviewResizable();
 	}
 
 	toggleDeviceMode() {
@@ -687,6 +753,17 @@ export default class EditorBase extends Marionette.Application {
 	exitDeviceMode() {
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 		elementor.changeDeviceMode( 'desktop' );
+	}
+
+	updatePreviewSize( size ) {
+		this.$previewResponsiveWrapper.css( {
+			'--e-editor-preview-width': size.width + 'px',
+			'--e-editor-preview-height': size.height + 'px',
+		} );
+	}
+
+	togglePreviewOrientation() {
+		this.$previewResponsiveWrapper.toggleClass( 'e-device-landscape' );
 	}
 
 	enterPreviewMode( hidePanel ) {
@@ -857,7 +934,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOpions );
+		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOptions );
 
 		this.initClearPageDialog();
 
@@ -922,8 +999,6 @@ export default class EditorBase extends Marionette.Application {
 
 		$e.internal( 'editor/documents/attach-preview' ).then( () => jQuery( '#elementor-loading, #elementor-preview-loading' ).fadeOut( 600 ) );
 
-		this.makePreviewResizable();
-
 		this.loaded = true;
 	}
 
@@ -931,6 +1006,8 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
+
+		this.initPreviewResizable();
 
 		this.previewLoadedOnce = true;
 	}
