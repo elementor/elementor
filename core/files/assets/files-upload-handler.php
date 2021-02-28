@@ -24,7 +24,7 @@ abstract class Files_Upload_Handler {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-editor-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**
@@ -45,7 +45,7 @@ abstract class Files_Upload_Handler {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $enabled Weather upload is enabled or not.
+		 * @param bool $enabled Whether upload is enabled or not.
 		 */
 		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
 

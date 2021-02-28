@@ -150,6 +150,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
 			'Tools' => 'includes/settings/tools.php',
 			'Tracker' => 'includes/tracker.php',
+			'Uploads_Manager' => 'includes/managers/uploads-manager.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',
 			'Widget_WordPress' => 'includes/widgets/wordpress.php',
