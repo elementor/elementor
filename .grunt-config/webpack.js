@@ -14,6 +14,9 @@ const webpack = require('webpack');
 // Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
+// Injecting widgets CSS.
+const WidgetsCss = require( './widgets-css' );
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -148,6 +151,7 @@ const webpackConfig = [
 	{
 		...devSharedConfig,
 		plugins: [
+			new WidgetsCss( 'development' ),
 			new RemoveChunksPlugin( '.bundle.js' ),
 			...plugins,
 		],
@@ -207,6 +211,7 @@ const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
 		plugins: [
+			new WidgetsCss( 'production' ),
 			new RemoveChunksPlugin( '.bundle.min.js' ),
 			...plugins,
 		],
