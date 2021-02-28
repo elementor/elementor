@@ -797,7 +797,17 @@ class Frontend extends App {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $google_fonts['google'] ) );
+			// Defining a font-display type to google fonts.
+			$font_display_setting = Fonts::get_font_display_setting();
+
+			// Define the font display default value.
+			if ( 'default' === $font_display_setting ) {
+				$font_display_setting = 'auto';
+			}
+
+			$font_display_url_str = '&display=' . $font_display_setting;
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $google_fonts['google'] ), $font_display_url_str );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
