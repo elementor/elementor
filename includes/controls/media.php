@@ -157,7 +157,7 @@ class Control_Media extends Control_Base_Multiple {
 						<# if( 'image' === data.media_type ) { #>
 							<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="image"><?php echo __( 'Choose Image', 'elementor' ); ?></div>
 							<# if ( data.should_include_svg_inline_option) { #>
-								<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="svg"><?php echo __( 'Choose Svg', 'elementor' ); ?></div>
+								<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="svg"><?php echo __( 'Choose SVG', 'elementor' ); ?></div>
 							<# } #>
 						<# } else if( 'video' === data.media_type ) { #>
 						<div class="elementor-control-media__tool elementor-control-media__replace" data-media-type="video"><?php echo __( 'Choose Video', 'elementor' ); ?></div>
