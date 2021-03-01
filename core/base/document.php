@@ -1423,7 +1423,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	private function validate_controls( array $settings, array $controls ) {
 		foreach ( $controls as $control_id => $control_config ) {
-			if ( Controls_Manager::SELECT !== $control_config['type'] && Controls_Manager::SELECT2  !== $control_config['type'] ) {
+			if ( Controls_Manager::SELECT !== $control_config['type']
+				 && Controls_Manager::SELECT2 !== $control_config['type'] ) {
 				continue;
 			}
 
