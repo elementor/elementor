@@ -603,8 +603,8 @@ abstract class Document extends Controls_Stack {
 				}
 			}
 
-			// Validate. Also save to `$data` for the `after_save` hook.
-			$data['settings'] = $this->validate_controls( $data['settings'], $this->get_controls() );
+			// Process before save. Also save the result to `$data` for the `after_save` hook.
+			$data['settings'] = $this->before_save_controls( $data['settings'], $this->get_controls() );
 
 			$this->save_settings( $data['settings'] );
 
@@ -614,8 +614,8 @@ abstract class Document extends Controls_Stack {
 
 		// Don't check is_empty, because an empty array should be saved.
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-			// Validate. Also save to `$data` for the `after_save` hook.
-			$data['elements'] = $this->validate_elements_settings( $data['elements'] );
+			// Process before save. Also save the result to `$data` for the `after_save` hook.
+			$data['elements'] = $this->before_save_elements_controls( $data['elements'] );
 
 			$this->save_elements( $data['elements'] );
 		}
@@ -1400,47 +1400,33 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 */
-	private function validate_elements_settings( array $elements ) {
+	private function before_save_elements_controls( array $elements ) {
 		return Plugin::$instance->db->iterate_data( $elements, function ( $element_data ) {
 			$instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			$element_data['settings'] = $this->validate_controls( $element_data['settings'], $instance->get_controls() );
+			$element_data['settings'] = $this->before_save_controls( $element_data['settings'], $instance->get_controls() );
 
 			return $element_data;
 		} );
 	}
 
 	/**
-	 * Validate settings of an element or a document.
-	 *
-	 * Avoid change settings like `html_tag` & `title_size` to a `script` tag.
-	 * Go over all Select & Select2 controls in order to handle also 3rd party settings.
+	 * Process settings of an element or a document.
 	 *
 	 * @param array $settings The setting to validate.
 	 * @param array $controls The controls config for the settings set.
 	 *
 	 * @return array
 	 */
-	private function validate_controls( array $settings, array $controls ) {
+	private function before_save_controls( array $settings, array $controls ) {
 		foreach ( $controls as $control_id => $control_config ) {
-			if ( Controls_Manager::SELECT !== $control_config['type']
-				 && Controls_Manager::SELECT2 !== $control_config['type'] ) {
-				continue;
-			}
-
 			if ( empty( $settings[ $control_id ] ) ) {
 				continue;
 			}
 
-			// In case it's modified by 3rd party hooks.
-			if ( ! isset( $control_config['options'] ) ) {
-				$control_config['options'] = [];
-			}
-
-			// If it's not one of the control options. reset it to default.
-			if ( ! isset( $control_config['options'][ $settings[ $control_id ] ] ) ) {
-				$settings[ $control_id ] = $control_config['default'];
-			}
+			/** @var \Elementor\Control_Select|\Elementor\Control_Select2 $control_obj */
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control_config['type'] );
+			$settings[ $control_id ] = $control_obj->before_save( $settings[ $control_id ], $control_config );
 		}
 
 		return $settings;

@@ -33,9 +33,12 @@ class Test_Document extends Elementor_Test_Base {
 							[
 								'id' => '5a1e8e5',
 								'elType' => 'widget',
-								'settings' => [ 'text' => 'Test Text' ],
+								'settings' => [
+									'style' => 'dots_tribal',
+									'text' => 'Divider',
+								],
 								'elements' => [],
-								'widgetType' => 'button',
+								'widgetType' => 'divider',
 							],
 						],
 					],
@@ -61,7 +64,8 @@ class Test_Document extends Elementor_Test_Base {
 				'isInner' => false,
 				'settings' => [
 					'html_tag' => 'script',
-					'external_html_tag' => 'script'
+					'external_select' => 'script',
+					'external_multiple_select2' => [ 'a', 'b' ],
 				],
 				'elements' => [
 					[
@@ -83,6 +87,18 @@ class Test_Document extends Elementor_Test_Base {
 								'elements' => [],
 								'widgetType' => 'heading',
 							],
+							[
+								'id' => '5a1e8ehtml_tag5',
+								'elType' => 'widget',
+								'settings' => [
+									'style' => 'dots_tribal',
+									'text' => 'alert()',
+									'look' => 'line_text',
+									'html_tag' => 'script',
+								],
+								'elements' => [],
+								'widgetType' => 'divider',
+							],
 						],
 					],
 				],
@@ -99,11 +115,24 @@ class Test_Document extends Elementor_Test_Base {
 
 	public static function add_external_control( $element ) {
 		$element->add_control(
-			'external_html_tag',
+			'external_select',
 			[
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => 'Empty' // Pass `test_controlsDefaultData`.
+				],
+			]
+		);
+
+		$element->add_control(
+			'external_multiple_select2',
+			[
+				'type' => Controls_Manager::SELECT2,
+				'multiple' => true,
+				'options' => [
+					'' => 'Empty', // Pass `test_controlsDefaultData`.
+					'a' => 'A',
+					'b' => 'B',
 				],
 			]
 		);
@@ -173,15 +202,31 @@ class Test_Document extends Elementor_Test_Base {
 		// Assert.
 		$saved_section = $document->get_elements_data()[0];
 
-		// Section's XSS replaced with the default value.
-		$this->assertEquals( '', $saved_section['settings']['html_tag'] );
-		$this->assertEquals( '', $saved_section['settings']['external_html_tag'] );
+		// Section.
+		$this->assertEquals( '', $saved_section['settings']['html_tag'],
+			'Section html_tag is cleaned.' );
 
-		// Column's XSS replaced with the default value.
-		$this->assertEquals( '', $saved_section['elements'][0]['settings']['html_tag'] );
+		$this->assertEquals( '', $saved_section['settings']['external_select'],
+			'Section external setting is cleaned.' );
 
-		// Widget's XSS replaced with the default value.
-		$this->assertEquals( 'h2', $saved_section['elements'][0]['elements'][0]['settings']['header_size'] );
+		$this->assertEquals( [ 'a', 'b' ], $saved_section['settings']['external_multiple_select2'],
+			'Section multiselect handled properly.' );
+
+		// Column.
+		$this->assertEquals( '', $saved_section['elements'][0]['settings']['html_tag'],
+			'Column html_tag is cleaned.' );
+
+		// Widget Heading.
+		$this->assertEquals( 'h2', $saved_section['elements'][0]['elements'][0]['settings']['header_size'],
+			'Widget Heading header_size is cleaned.' );
+
+		// Widget Divider.
+		$this->assertEquals( 'span', $saved_section['elements'][0]['elements'][1]['settings']['html_tag'],
+			'Widget Divider header_size is cleaned.' );
+
+		// Widget Divider's style (group options) is not replaced.
+		$this->assertEquals( 'dots_tribal', $saved_section['elements'][0]['elements'][1]['settings']['style'],
+			'Widget divider group select is handled properly' );
 
 		$this->assertEquals( $expected_document_settings, $document->get_db_document_settings() );
 	}
