@@ -53,18 +53,24 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 *
 	 * @return array Array of shapes with their URL as key.
 	 */
-	private function get_shapes() {
+	private function get_shapes( $add_custom = true ) {
 		$shapes = [
-			$this->get_shape_url( 'circle' ) => __( 'Circle', 'elementor' ),
-			$this->get_shape_url( 'square' ) => __( 'Square', 'elementor' ),
-			$this->get_shape_url( 'rectangle' ) => __( 'Rectangle', 'elementor' ),
-			$this->get_shape_url( 'triangle' ) => __( 'Triangle', 'elementor' ),
-			$this->get_shape_url( 'oval' ) => __( 'Oval', 'elementor' ),
-			$this->get_shape_url( 'arrow' ) => __( 'Arrow', 'elementor' ),
-			$this->get_shape_url( 'blob' ) => __( 'Blob', 'elementor' ),
+			'circle' => __( 'Circle', 'elementor' ),
+			'square' => __( 'Square', 'elementor' ),
+			'rectangle' => __( 'Rectangle', 'elementor' ),
+			'triangle' => __( 'Triangle', 'elementor' ),
+			'oval' => __( 'Oval', 'elementor' ),
+			'arrow' => __( 'Arrow', 'elementor' ),
+			'blob' => __( 'Blob', 'elementor' ),
 		];
+
+		if ( $add_custom ) {
+			$shapes['custom'] = __( 'Custom', 'elementor' );
+		}
 
 		return $shapes;
 	}
@@ -428,17 +434,12 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$options = array_merge(
-			$this->get_shapes(),
-			[ 'custom' => __( 'Custom', 'elementor' ) ]
-		);
-
 		$this->add_control( '_mask_shape', [
 			'label' => __( 'Shape', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => $options,
-			'default' => $this->get_shape_url( 'circle' ),
-			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{VALUE}} );' ),
+			'options' => $this->get_shapes(),
+			'default' => 'circle',
+			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
 			'condition' => [
 				'_mask_switch!' => '',
 			],
