@@ -46,6 +46,9 @@ AssetsLoader.assets = {
 		dialog: {
 			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.8.1`,
 		},
+		'share-link': {
+			src: `${ elementorFrontendConfig.urls.assets }lib/share-link/share-link${ fileSuffix }.js?ver=${ elementorFrontendConfig.version }`,
+		},
 	},
 	style: {},
 };

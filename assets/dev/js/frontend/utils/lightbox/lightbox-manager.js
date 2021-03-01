@@ -6,9 +6,10 @@ export default class extends elementorModules.ViewModule {
 					`elementor-frontend/utils/lightbox/lightbox`
 				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
 			} ),
-			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' );
+			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
+			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' );
 
-		return Promise.all( [ lightboxPromise, dialogPromise ] ).then( () => lightboxPromise );
+		return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise ] ).then( () => lightboxPromise );
 	}
 
 	getDefaultSettings() {
