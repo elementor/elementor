@@ -141,7 +141,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		if ( elementSettings.youtube_lazy_load ) {
+		if ( elementSettings.lazy_load ) {
 			this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
 				callback: ( event ) => {
 					if ( event.isInViewport ) {
