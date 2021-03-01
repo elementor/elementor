@@ -60,12 +60,11 @@ class Widget_Common extends Widget_Base {
 	private function get_shapes( $add_custom = true ) {
 		$shapes = [
 			'circle' => __( 'Circle', 'elementor' ),
-			'square' => __( 'Square', 'elementor' ),
-			'rectangle' => __( 'Rectangle', 'elementor' ),
+			'flower' => __( 'Flower', 'elementor' ),
+			'sketch' => __( 'Sketch', 'elementor' ),
 			'triangle' => __( 'Triangle', 'elementor' ),
-			'oval' => __( 'Oval', 'elementor' ),
-			'arrow' => __( 'Arrow', 'elementor' ),
 			'blob' => __( 'Blob', 'elementor' ),
+			'hexagon' => __( 'Hexagon', 'elementor' ),
 		];
 
 		if ( $add_custom ) {
@@ -482,11 +481,11 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'auto' => __( 'Fit', 'elementor' ),
+					'contain' => __( 'Fit', 'elementor' ),
 					'cover' => __( 'Fill', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
-				'default' => 'auto',
+				'default' => 'contain',
 				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
