@@ -624,6 +624,16 @@ class Utils {
 		}
 	}
 
+	/**
+	 * Get recently edited posts query.
+	 *
+	 * Returns `WP_Query` of the recent edited posts.
+	 * By default max posts ( $args['posts_per_page'] ) is 3.
+	 *
+	 * @param array $args
+	 *
+	 * @return \WP_Query
+	 */
 	public static function get_recently_edited_posts_query( $args = [] ) {
 		$args = wp_parse_args( $args, [
 			'post_type' => 'any',

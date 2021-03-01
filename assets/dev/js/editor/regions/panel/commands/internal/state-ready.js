@@ -4,7 +4,7 @@ export class StateReady extends CommandInternalBase {
 	apply() {
 		elementorCommon.elements.$body.removeClass( 'elementor-panel-loading' );
 
-		// Maybe cannot be hook because not sure if its effect UI or data.
+		// Cannot be hook because not sure if it affects UI or data.
 		if ( ! this.component.stateReadyOnce ) {
 			this.component.stateReadyOnce = true;
 

@@ -7,7 +7,7 @@
 
 export default class HashCommands {
 	/**
-	 * Cannot be static since its points on callback(s) that created only on creating of '$e'.
+	 * Cannot be static since it uses callback(s) that are available only after '$e' is initialized.
 	 */
 	hashFormat = {
 		'e:run': $e.run,
@@ -37,19 +37,21 @@ export default class HashCommands {
 			hashList.forEach( ( hashItem ) => {
 				const hashParts = hashItem.split( ':' );
 
-				if ( 3 === hashParts.length && this.hashFormat[ hashParts[ 0 ] + ':' + hashParts[ 1 ] ] ) {
-					const method = hashParts[ 0 ] + ':' + hashParts[ 1 ],
-						callback = this.hashFormat[ method ];
+				if ( 3 !== hashParts.length ) {
+					return;
+				}
 
-					if ( callback ) {
-						const command = hashParts[ 2 ];
+				const method = hashParts[ 0 ] + ':' + hashParts[ 1 ],
+					callback = this.hashFormat[ method ];
 
-						result.push( {
-							method,
-							command,
-							callback,
-						} );
-					}
+				if ( callback ) {
+					const command = hashParts[ 2 ];
+
+					result.push( {
+						method,
+						command,
+						callback,
+					} );
 				}
 			} );
 		}
