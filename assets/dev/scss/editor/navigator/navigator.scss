@@ -12,9 +12,11 @@
 	display: none;
 
 	body.elementor-navigator-docked & {
-		top: 0;
-		@include end(0);
-		height: 100%;
+		position: relative;
+		height: auto;
+		top: auto;
+		left: auto;
+		right: auto;
 	}
 
 	body:not(.elementor-navigator-docked) & {
