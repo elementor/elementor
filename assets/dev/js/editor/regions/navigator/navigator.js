@@ -25,8 +25,7 @@ export default class extends BaseRegion {
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-		// TODO: Move to hook on 'editor/documents/load'.
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+		// TODO: Move to hook.
 		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
@@ -85,8 +84,8 @@ export default class extends BaseRegion {
 		};
 	}
 
-	initLayout() {
-		this.show( new NavigatorLayout() );
+	initLayout( elementsModel ) {
+		this.show( new NavigatorLayout( { elementsModel } ) );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );
@@ -273,16 +272,6 @@ export default class extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
-		}
-	}
-
-	onDocumentLoaded( document ) {
-		if ( document.config.panel.has_elements ) {
-			this.initLayout();
-
-			if ( this.storage.visible ) {
-				$e.route( 'navigator' );
-			}
 		}
 	}
 
