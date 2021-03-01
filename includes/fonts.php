@@ -1188,6 +1188,6 @@ class Fonts {
 	}
 
 	public static function get_font_display_setting() {
-		return get_option( 'elementor_font_display' );
+		return get_option( 'elementor_font_display', 'auto' );
 	}
 }

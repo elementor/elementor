@@ -506,6 +506,7 @@ class Settings extends Settings_Page {
 								'label' => __( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => 'auto',
 									'options' => [
 										'auto' => __( 'Default', 'elementor' ),
 										'block' => __( 'Blocking', 'elementor' ),
