@@ -199,7 +199,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
+		const initialSlideURL = element.dataset.elementorLightboxVideo || element.href;
 
 		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
 	},
