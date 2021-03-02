@@ -41,6 +41,29 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	/**
+	 * Test Get Active Breakpoints
+	 *
+	 * Test the Breakpoints_Manager::get_breakpoints() method.
+	 *
+	 * @since 3.2.0
+	 */
+	public function test_get_active_breakpoints() {
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$test_array = [];
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint_instance ) {
+			/** @var Breakpoint $breakpoint_instance */
+			if ( $breakpoint_instance->is_enabled() ) {
+				$test_array[ $breakpoint_name ] = $breakpoint_instance;
+			}
+		}
+
+		$this->assertEquals( $active_breakpoints, $test_array );
+	}
+
+	/**
 	 * Test Has Custom Breakpoints
 	 *
 	 * Test the Breakpoints_Manager::has_custom_breakpoints() method.

@@ -22,7 +22,6 @@ class Test_Breakpoint extends Elementor_Test_Base {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
 			$this->assertEquals( $breakpoint_name, $breakpoint->get_name() );
 		}
 	}
@@ -38,10 +37,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
 		foreach ( $breakpoints as $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
 			$breakpoint_config = $breakpoint->get_config();
 
-			$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled' ], $breakpoint_config );
+			$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled', 'label' ], $breakpoint_config );
 			$this->assertTrue( is_numeric( $breakpoint_config['value'] ) );
 			$this->assertTrue( is_string( $breakpoint_config['direction'] ) );
 			$this->assertTrue( is_bool( $breakpoint_config['is_enabled'] ) );
@@ -56,18 +54,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_is_enabled() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$active_breakpoint_names = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+		$breakpoint = $this->create_breakpoint();
 
-		foreach ( $breakpoints as $breakpoint ) {
-			if ( $breakpoint->is_enabled() ) {
-				// Check if the enabled breakpoint is in the array of active breakpoint names, as returned from the
-				// Breakpoints Manager's `get_config()` method.
-				$this->assertContains( $breakpoint->get_name(), $active_breakpoint_names );
-			} else {
-				$this->assertNotContains( $breakpoint->get_name(), $active_breakpoint_names );
-			}
-		}
+		$this->assertTrue( $breakpoint->is_enabled() );
 	}
 
 	/**
@@ -78,19 +67,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_value() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$breakpoint = $this->create_breakpoint();
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
-			$value_from_db = Plugin::$instance->kits_manager->get_current_settings( Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $breakpoint_name );
-
-			if ( $value_from_db ) {
-				$this->assertEquals( $value_from_db, $breakpoint->get_value() );
-			} else {
-				$this->assertEquals( $breakpoints_default_config[ $breakpoint_name ]['default_value'], $breakpoint->get_value() );
-			}
-		}
+		$this->assertEquals( 800, $breakpoint->get_value() );
 	}
 
 	/**
@@ -105,7 +84,6 @@ class Test_Breakpoint extends Elementor_Test_Base {
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
 			$value = $breakpoint->get_value();
 			$default_value = $breakpoints_default_config[ $breakpoint_name ]['default_value'];
 
@@ -121,13 +99,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_default_value() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$breakpoint = $this->create_breakpoint();
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
-			$this->assertEquals( $breakpoints_default_config[ $breakpoint_name ]['default_value'], $breakpoint->get_default_value() );
-		}
+		$this->assertEquals( 800, $breakpoint->get_default_value() );
 	}
 
 	/**
@@ -138,12 +112,27 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_direction() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$breakpoint = $this->create_breakpoint();
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
-			$this->assertEquals( $breakpoints_default_config[ $breakpoint_name ]['direction'], $breakpoint->get_direction() );
-		}
+		$this->assertEquals( 'max', $breakpoint->get_direction() );
+	}
+
+	/**
+	 * Create Breakpoint
+	 *
+	 * Creates and returns a test breakpoint.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return Breakpoint
+	 */
+	private function create_breakpoint() {
+		return new Breakpoint( [
+			'name' => 'test',
+			'label' => 'Test',
+			'direction' => 'max',
+			'is_enabled' => true,
+			'default_value' => 800,
+		] );
 	}
 }
