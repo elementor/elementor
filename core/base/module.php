@@ -308,7 +308,7 @@ abstract class Module extends Base_Object {
 	 * Initialize the module related widgets.
 	 */
 	public function init_widgets() {
-		if ( ! method_exists( $this, 'get_widgets'  ) ) {
+		if ( ! method_exists( $this, 'get_widgets' ) ) {
 			return;
 		}
 

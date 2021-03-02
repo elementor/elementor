@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Shapes;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
