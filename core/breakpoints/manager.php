@@ -21,8 +21,6 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
-	private $config;
-	private $active_config;
 	private $breakpoints;
 	private $active_breakpoints;
 
