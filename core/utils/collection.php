@@ -249,6 +249,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function values() {
+		return array_values( $this->all() );
+	}
+
+	/**
 	 * @param mixed $key
 	 *
 	 * @return bool
