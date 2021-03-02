@@ -26,15 +26,13 @@ class WidgetsCss {
 	createWidgetsTempFiles() {
 		console.log( '------------------------ creating widgets temp files with prefix: ', this.tempFilePrefix );
 		if ( fs.existsSync( this.widgetsScssSourceFolder ) ) {
-			fs.readdirSync( folder ).forEach( ( fileName ) => {
-				for ( const fileName of files ) {
-					const widgetName = fileName.replace( '.scss', '' ),
-						widgetScssFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName ),
-						widgetScssRtlFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName.replace( '.scss', '-rtl.scss' ) );
+			fs.readdirSync( this.widgetsScssSourceFolder ).forEach( ( fileName ) => {
+				const widgetName = fileName.replace( '.scss', '' ),
+					widgetScssFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName ),
+					widgetScssRtlFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName.replace( '.scss', '-rtl.scss' ) );
 
-					write.sync( widgetScssFileDest, this.getWidgetScssContent( widgetName, 'ltr' ) );
-					write.sync( widgetScssRtlFileDest, this.getWidgetScssContent( widgetName, 'rtl' ) );
-				}
+				write.sync( widgetScssFileDest, this.getWidgetScssContent( widgetName, 'ltr' ) );
+				write.sync( widgetScssRtlFileDest, this.getWidgetScssContent( widgetName, 'rtl' ) );
 			} );
 		}
 	}
