@@ -491,17 +491,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit = Plugin::$instance->documents->get( $kit_id, false );
 		$kit_settings = $kit->get_settings();
 
-		// Mobile - Handle case where the values are empty (no breakpoints are saved).
-		$expected_value = is_numeric( $kit_settings['viewport_md'] ) ? $kit_settings['viewport_md'] - 1 : $kit_settings['viewport_md'];
-		$actual_value = $kit_settings['viewport_mobile'];
-
-		$this->assertEquals( $expected_value, $actual_value );
-
-		// Tablet - Handle case where the values are empty (no breakpoints are saved).
-		$expected_value = is_numeric( $kit_settings['viewport_lg'] ) ? $kit_settings['viewport_lg'] - 1 : $kit_settings['viewport_lg'];
-		$actual_value = $kit_settings['viewport_tablet'];
-
-		$this->assertEquals( $expected_value, $actual_value );
+		$this->run_breakpoint_assertions( $kit_settings );
 
 		// Assert revisions upgraded.
 		$revisions_ids = wp_get_post_revisions( $kit_id, [
@@ -512,17 +502,18 @@ class Test_Upgrades extends Elementor_Test_Base {
 			$revision = Plugin::$instance->documents->get( $revision_id, false );
 			$revision_settings = $revision->get_settings();
 
-			// Mobile
-			$expected_value = is_numeric( $revision_settings['viewport_md'] ) ? $revision_settings['viewport_md'] - 1 : $revision_settings['viewport_md'];
-			$actual_value = $revision_settings['viewport_mobile'];
-
-			$this->assertEquals( $expected_value, $actual_value );
-
-			// Tablet
-			$expected_value = is_numeric( $revision_settings['viewport_lg'] ) ? $revision_settings['viewport_lg'] - 1 : $revision_settings['viewport_lg'];
-			$actual_value = $revision_settings['viewport_tablet'];
-
-			$this->assertEquals( $expected_value, $actual_value );
+			$this->run_breakpoint_assertions( $revision_settings );
 		}
+	}
+
+	private function run_breakpoint_assertions( $settings ) {
+		// Mobile.
+		$this->assertEquals( $settings['viewport_md'] - 1, $settings['viewport_mobile'] );
+
+		// Tablet - Check the case where there is no custom breakpoint saved, so the value is empty.
+		$expected_value = '' !== $settings['viewport_lg'] ? $settings['viewport_lg'] - 1 : $settings['viewport_lg'];
+		$actual_value = $settings['viewport_tablet'];
+
+		$this->assertEquals( $expected_value, $actual_value );
 	}
 }
