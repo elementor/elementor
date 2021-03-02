@@ -134,7 +134,7 @@ class Breakpoint extends Base_Object {
 		$cached_value = Plugin::$instance->kits_manager->get_current_settings( $this->db_key );
 
 		if ( $cached_value ) {
-			$this->value = $cached_value;
+			$this->value = (int) $cached_value;
 
 			$this->is_custom = $this->value !== $this->default_value;
 		} else {
