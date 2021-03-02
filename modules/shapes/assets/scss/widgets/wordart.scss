@@ -1,11 +1,5 @@
 .elementor-widget-wordart {
 
-	&.elementor-element-editable {
-		svg path {
-			stroke: var( --stroke-color, #E8178A );
-		}
-	}
-
 	svg {
 		width: var( --width );
 		height: auto;
