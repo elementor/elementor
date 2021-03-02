@@ -927,10 +927,11 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function is_widget_css() {
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 		$is_widget_type_already_exist = in_array( $this->get_name(), self::$registered_runtime_widgets, TRUE );
 
-		if ( ! $is_optimized_mode || $is_widget_type_already_exist ) {
+		if ( $is_preview_mode || ! $is_optimized_mode || $is_widget_type_already_exist ) {
 			return false;
 		}
 

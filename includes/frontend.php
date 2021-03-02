@@ -549,7 +549,9 @@ class Frontend extends App {
 			$frontend_dependencies[] = 'elementor-frontend-legacy';
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+
+		if ( ! $is_optimized_assets_loading || Plugin::$instance->preview->is_preview_mode() ) {
 			$frontend_file_url = $frontend_with_widgets_file_url;
 		}
 
