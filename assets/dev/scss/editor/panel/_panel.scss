@@ -43,9 +43,7 @@
 		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
 
-	#elementor-panel-elements,
-	#elementor-global-templates,
-	.elementor-panel-category-items {
+	.elementor-responsive-panel {
 		overflow: hidden;
 		padding: 0 10px;
 		display: grid;
