@@ -48,6 +48,13 @@ trait Auth_Helpers {
 	/**
 	 * @return \WP_User
 	 */
+	public function act_as_subscriber() {
+		return $this->act_as( 'subscriber' );
+	}
+
+	/**
+	 * @return \WP_User
+	 */
 	public function act_as_admin_or_network_admin() {
 		if ( is_multisite() ) {
 			return $this->act_as_network_admin();

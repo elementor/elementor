@@ -10,6 +10,7 @@ export default class Navigator extends BaseRegion {
 		this.component = $e.components.register( new NavigatorComponent( { manager: this } ) );
 
 		this.isDocked = false;
+		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
 
 		this.indicators = {
 			customPosition: {
