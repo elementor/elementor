@@ -31,10 +31,9 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	public function test_get_breakpoints() {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$all_breakpoint_names = array_keys( Breakpoints_Manager::get_default_config() );
 
 		// Check that the breakpoints array contains exactly the same amount of keys as in the default config.
-		$this->assertEquals( array_diff_key( $breakpoints, $all_breakpoint_names ), $breakpoints );
+		$this->assertEmpty( array_diff_key( Breakpoints_Manager::get_default_config(), $breakpoints ) );
 	}
 
 	/**
