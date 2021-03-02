@@ -6,7 +6,7 @@ class WidgetsCss {
 	constructor( env ) {
 		this.env = env;
 
-		this.tempFilePrefix = '000-';
+		this.tempFilePrefix = '000-' + env + '-';
 
 		this.widgetsFolder = path.resolve( __dirname, '../includes/widgets' );
 		this.widgetsScssSourceFolder = path.resolve( __dirname, '../assets/dev/scss/frontend/widgets' );
@@ -17,17 +17,16 @@ class WidgetsCss {
 	apply( compiler ) {
 		compiler.hooks.environment.tap( 'WidgetsCss', () => this.createWidgetsTempFiles() );
 
-		compiler.hooks.done.tap( 'WidgetsCss', () => this.injectCss() );
-
-		//compiler.hooks.done.tap( 'WidgetsCss', () => this.removeWidgetsTempFiles() );
+		compiler.hooks.done.tap( 'WidgetsCss', () => {
+			this.injectCss();
+			this.removeWidgetsTempFiles();
+		} );
 	}
 
 	createWidgetsTempFiles() {
-		console.log( '------------------------ creating widgets temp files' );
+		console.log( '------------------------ creating widgets temp files with prefix: ', this.tempFilePrefix );
 		if ( fs.existsSync( this.widgetsScssSourceFolder ) ) {
-			fs.readdir( this.widgetsScssSourceFolder, ( err, files ) => {
-				if ( err ) throw err;
-
+			fs.readdirSync( folder ).forEach( ( fileName ) => {
 				for ( const fileName of files ) {
 					const widgetName = fileName.replace( '.scss', '' ),
 						widgetScssFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName ),
@@ -63,45 +62,41 @@ class WidgetsCss {
 	}
 
 	injectCss() {
-		console.log( '------------------------------------------------------ INJECTING CSS' );
+		console.log( '------------------------------------------------------ INJECTING CSS from: ', this.tempFilePrefix );
 		const cssFolder = path.resolve( __dirname, '../assets/css' );
 
 		if ( fs.existsSync( this.widgetsFolder ) ) {
-			fs.readdir( this.widgetsFolder, ( err, files ) => {
-				if ( err ) throw err;
+			fs.readdirSync( this.widgetsFolder ).forEach( ( fileName ) => {
+				const widgetFilePath = path.join( this.widgetsFolder, fileName );
+				let widgetContent = fs.readFileSync( widgetFilePath, 'utf8' );
 
-				for ( const fileName of files ) {
-					const widgetFilePath = path.join( this.widgetsFolder, fileName );
-					let widgetContent = fs.readFileSync( widgetFilePath, 'utf8' );
+				// Getting the content inside the InjectCSS tags (<InjectCSS:widgetName></InjectCSS>).
+				let widgetInjectCssContent = widgetContent.match( /\/\* <\InjectCss:[^]+?<\/InjectCss> \*\// );
 
-					// Getting the content inside the InjectCSS tags (<InjectCSS:widgetName></InjectCSS>).
-					let widgetInjectCssContent = widgetContent.match( /\/\* <\InjectCss:[^]+?<\/InjectCss> \*\// );
+				if ( widgetInjectCssContent ) {
+					widgetInjectCssContent = widgetInjectCssContent[ 0 ];
 
-					if ( widgetInjectCssContent ) {
-						widgetInjectCssContent = widgetInjectCssContent[ 0 ];
+					// Getting the value inside the InjectCSS tag (<InjectCSS:*widgetName*>).
+					const widgetName = widgetInjectCssContent.match( /\/\* <InjectCss:[^]+?(?=>)/ )[ 0 ].replace( '/* <InjectCss:', '' ),
+						fileMinSuffix = 'development' === this.env ? '' : '.min',
+						cssFilePath = path.join( cssFolder, this.tempFilePrefix + widgetName + fileMinSuffix + '.css' );
 
-						// Getting the value inside the InjectCSS tag (<InjectCSS:*widgetName*>).
-						const widgetName = widgetInjectCssContent.match( /\/\* <InjectCss:[^]+?(?=>)/ )[ 0 ].replace( '/* <InjectCss:', '' ),
-							fileMinSuffix = 'development' === this.env ? '' : '.min',
-							cssFilePath = path.join( cssFolder, this.tempFilePrefix + widgetName + fileMinSuffix + '.css' );
-
-						console.log( 'Checking if exist cssFilePath', cssFilePath );
-						if ( fs.existsSync( cssFilePath ) ) {
-							console.log( 'YES - INJECTING!!!' );
-							const cssFileContent = fs.readFileSync( cssFilePath, 'utf8' ),
-								cssContent = cssFileContent.replace( /(\r\n|\n|\r|\t)/gm, '' ),
-								phpContent = `/* <InjectCss:${ widgetName }> */
+					console.log( 'Checking if exist cssFilePath', cssFilePath );
+					if ( fs.existsSync( cssFilePath ) ) {
+						console.log( 'YES - INJECTING!!!' );
+						const cssFileContent = fs.readFileSync( cssFilePath, 'utf8' ),
+							cssContent = cssFileContent.replace( /(\r\n|\n|\r|\t)/gm, '' ),
+							phpContent = `/* <InjectCss:${ widgetName }> */
 			if ( $this->is_widget_css() ) {
 				echo '<style>${ cssContent }</style>';
 			}
 		/* </InjectCss> */`;
 
-							widgetContent = widgetContent.replace( widgetInjectCssContent, phpContent );
+						widgetContent = widgetContent.replace( widgetInjectCssContent, phpContent );
 
-							write.sync( widgetFilePath, widgetContent );
-						} else {
-							console.log( 'FILE does not exist' );
-						}
+						write.sync( widgetFilePath, widgetContent );
+					} else {
+						console.log( 'FILE does not exist' );
 					}
 				}
 			} );
@@ -109,22 +104,18 @@ class WidgetsCss {
 	}
 
 	removeWidgetsTempFiles() {
-		console.log( '------------------------------------------------------ REMOVING TEMP FILES' );
+		console.log( '------------------------------------------------------ REMOVING TEMP FILES: ', this.tempFilePrefix );
 		const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
 
 		tempFilesFolders.forEach( ( folder ) => {
 			if ( fs.existsSync( folder ) ) {
-				fs.readdir( folder, ( err, files ) => {
-					if ( err ) throw err;
+				fs.readdirSync( folder ).forEach( ( fileName ) => {
+					const filePath = path.join( folder, fileName );
 
-					for ( const fileName of files ) {
-						const filePath = path.join( folder, fileName );
-
-						if ( -1 !== fileName.indexOf( this.tempFilePrefix ) && fs.existsSync( filePath ) ) {
-							fs.unlink( filePath, err => {
-								if ( err ) throw err;
-							} );
-						}
+					if ( -1 !== fileName.indexOf( this.tempFilePrefix ) && fs.existsSync( filePath ) ) {
+						fs.unlink( filePath, err => {
+							if ( err ) throw err;
+						} );
 					}
 				} );
 			}
