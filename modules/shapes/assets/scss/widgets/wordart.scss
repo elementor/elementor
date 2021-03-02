@@ -1,0 +1,44 @@
+.elementor-widget-wordart {
+
+	&.elementor-element-editable {
+		svg path {
+			stroke: var( --stroke-color, #E8178A );
+		}
+	}
+
+	svg {
+		width: var( --width );
+		height: auto;
+		overflow: visible;
+		word-spacing: var( --word-spacing );
+		transform: rotate( var( --rotate, 0 ) ) scaleX( var( --scale-x, 1 ) ) scaleY( var( --scale-y, 1 ) );
+
+		path {
+			fill: var( --path-fill, transparent );
+			stroke: var( --stroke-color, transparent );
+			stroke-width: var( --stroke-width, 1px );
+			transition: var( --stroke-transition ) stroke, var( --stroke-transition ) fill;
+		}
+
+		&:hover {
+			path {
+				--path-fill: var( --path-fill-hover );
+				--stroke-color: var( --stroke-color-hover );
+				--stroke-width: var( --stroke-width-hover );
+			}
+		}
+
+		text {
+			--fill: var( --text-color );
+			fill: var( --fill );
+			text-anchor: var( --alignment, start );
+			transition: var( --transition ) stroke,
+						var( --transition ) stroke-width,
+						var( --transition ) fill;
+
+			&:hover {
+				--text-color: var( --text-color-hover );
+			}
+		}
+	}
+}

@@ -8,6 +8,9 @@ import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper-bc';
 
+/* New modules handlers */
+import Shapes from "elementor/modules/shapes/assets/js/frontend/frontend";
+
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
@@ -294,12 +297,31 @@ export default class Frontend extends elementorModules.ViewModule {
 		jQuery.migrateTrace = false;
 	}
 
+	/**
+	 * Initialize the modules' widgets handlers.
+	 */
+	initModules() {
+		let handlers = {
+			shapes: Shapes,
+		};
+
+		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		handlers = elementorFrontend.hooks.applyFilters( 'elementor/frontend/handlers', handlers );
+
+		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
+			this.modulesHandlers[ moduleName ] = new ModuleClass();
+		} );
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.modulesHandlers = {};
 
 		this.addUserAgentClasses();
 
@@ -315,6 +337,8 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
+
+		this.initModules();
 
 		this.initOnReadyElements();
 
