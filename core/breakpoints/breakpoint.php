@@ -92,6 +92,10 @@ class Breakpoint extends Base_Object {
 	 * @return bool $is_custom class variable
 	 */
 	public function is_custom() {
+		if ( ! $this->is_custom ) {
+			$this->get_value();
+		}
+
 		return $this->is_custom;
 	}
 

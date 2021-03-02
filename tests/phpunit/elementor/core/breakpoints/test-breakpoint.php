@@ -19,11 +19,9 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_name() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+		$breakpoint = $this->create_breakpoint();
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$this->assertEquals( $breakpoint_name, $breakpoint->get_name() );
-		}
+		$this->assertEquals( 'test', $breakpoint->get_name() );
 	}
 
 	/**
@@ -77,15 +75,22 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_is_custom() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$this->set_admin_user();
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$value = $breakpoint->get_value();
-			$default_value = $breakpoints_default_config[ $breakpoint_name ]['default_value'];
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-			$this->assertEquals( $value !== $default_value, $breakpoint->is_custom(), $breakpoint_name );
-		}
+		// Set a custom value for the tablet breakpoint.
+		$kit->set_settings( 'viewport_tablet', 900 );
+
+		// Save kit settings.
+		$kit->save( [ 'settings' => $kit->get_settings() ] );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+
+		$tablet_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'tablet' );
+
+		$this->assertTrue( $tablet_breakpoint->is_custom() );
 	}
 
 	/**
@@ -131,5 +136,14 @@ class Test_Breakpoint extends Elementor_Test_Base {
 			'is_enabled' => true,
 			'default_value' => 800,
 		] );
+	}
+
+	private function set_admin_user() {
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// In the production environment 'JS' sends empty array, do the same.
+		add_post_meta( $kit->get_main_id(), '_elementor_data', '[]' );
 	}
 }
