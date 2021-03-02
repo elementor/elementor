@@ -224,7 +224,7 @@ class WordArt extends Widget_Base {
 			],
 			'default' => [
 				'unit' => '%',
-				'size' => 100,
+				'size' => 50,
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
