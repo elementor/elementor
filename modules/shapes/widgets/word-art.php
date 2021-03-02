@@ -191,6 +191,18 @@ class WordArt extends Widget_Base {
 			],
 		] );
 
+		$this->add_control( 'path_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => __( 'Notice! The path will be visible on live preview', 'elementor' ),
+				'show_label' => false,
+				'content_classes' => 'elementor-descriptor',
+				'condition' => [
+					'show_path!' => '',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
