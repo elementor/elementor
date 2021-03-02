@@ -168,7 +168,6 @@ class Settings_Layout extends Tab_Base {
 			[
 				'label' => __( 'Active Breakpoints', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
-				/* translators: 1: Mobile, 2: Tablet. */
 				'description' => __( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
 				'options' => $options,
 				'default' => [
