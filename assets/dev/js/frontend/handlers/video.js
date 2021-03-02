@@ -24,11 +24,13 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 	}
 
 	handleVideo() {
-		if ( ! this.getElementSettings( 'lightbox' ) ) {
-			this.elements.$imageOverlay.remove();
+		this.apiProvider.onApiReady( ( apiObject ) => {
+			if ( ! this.getElementSettings( 'lightbox' ) ) {
+				this.elements.$imageOverlay.remove();
 
-			this.playVideo();
-		}
+				this.prepareYTVideo( apiObject, true );
+			}
+		} );
 	}
 
 	playVideo() {
@@ -102,9 +104,10 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 				},
 			};
 
+		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
 		if ( elementSettings.yt_privacy ) {
 			playerOptions.host = 'https://www.youtube-nocookie.com';
-			playerOptions.playerVars.origin = window.location.hostname;
+			playerOptions.origin = window.location.hostname;
 		}
 
 		this.youtubePlayer = new YT.Player( this.elements.$video[ 0 ], playerOptions );
@@ -133,7 +136,38 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+		// If the user is using an image overlay, loading the API happens on overlay click instead of on init.
+		if ( elementSettings.show_image_overlay && elementSettings.image_overlay.url ) {
+			return;
+		}
+
+		if ( elementSettings.lazy_load ) {
+			this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
+				callback: ( event ) => {
+					if ( event.isInViewport ) {
+						this.intersectionObserver.unobserve( this.elements.$video.parent()[ 0 ] );
+						this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+					}
+				},
+			} );
+
+			// We observe the parent, since the video container has a height of 0.
+			this.intersectionObserver.observe( this.elements.$video.parent()[ 0 ] );
+
+			return;
+		}
+
+		// When Optimized asset loading is set to off, the video type is set to 'Youtube', and 'Privacy Mode' is set
+		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
+		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
+		// initialization of the Youtube API object.
+		if ( ! elementorFrontend.config.experimentalFeatures[ 'e_optimized_assets_loading' ] ) {
+			setTimeout( () => {
+				this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+			}, 0 );
+		} else {
+			this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+		}
 	}
 
 	onElementChange( propertyName ) {

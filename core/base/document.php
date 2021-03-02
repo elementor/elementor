@@ -603,6 +603,9 @@ abstract class Document extends Controls_Stack {
 				}
 			}
 
+			// Process before save. Also save the result to `$data` for the `after_save` hook.
+			$data['settings'] = $this->before_save_controls( $data['settings'], $this->get_controls() );
+
 			$this->save_settings( $data['settings'] );
 
 			// Refresh post after save settings.
@@ -611,6 +614,9 @@ abstract class Document extends Controls_Stack {
 
 		// Don't check is_empty, because an empty array should be saved.
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+			// Process before save. Also save the result to `$data` for the `after_save` hook.
+			$data['elements'] = $this->before_save_elements_controls( $data['elements'] );
+
 			$this->save_elements( $data['elements'] );
 		}
 
@@ -857,6 +863,15 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $elements;
+	}
+
+	/**
+	 * Get document setting from DB.
+	 *
+	 * @return array
+	 */
+	public function get_db_document_settings() {
+		return $this->get_meta( static::PAGE_META_KEY );
 	}
 
 	/**
@@ -1374,5 +1389,46 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
+	}
+
+	/**
+	 * Validate elements settings.
+	 *
+	 * Iterate all elements via the `validate_controls` method.
+	 *
+	 * @param array $elements
+	 *
+	 * @return array
+	 */
+	private function before_save_elements_controls( array $elements ) {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $element_data ) {
+			$instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			$element_data['settings'] = $this->before_save_controls( $element_data['settings'], $instance->get_controls() );
+
+			return $element_data;
+		} );
+	}
+
+	/**
+	 * Process settings of an element or a document.
+	 *
+	 * @param array $settings The setting to validate.
+	 * @param array $controls The controls config for the settings set.
+	 *
+	 * @return array
+	 */
+	private function before_save_controls( array $settings, array $controls ) {
+		foreach ( $controls as $control_id => $control_config ) {
+			if ( empty( $settings[ $control_id ] ) ) {
+				continue;
+			}
+
+			/** @var \Elementor\Control_Select|\Elementor\Control_Select2 $control_obj */
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control_config['type'] );
+			$settings[ $control_id ] = $control_obj->before_save( $settings[ $control_id ], $control_config );
+		}
+
+		return $settings;
 	}
 }
