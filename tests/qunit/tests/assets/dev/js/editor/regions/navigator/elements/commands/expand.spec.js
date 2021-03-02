@@ -10,7 +10,7 @@ export const Expand = () => {
 
 			assert.expect( all.length );
 
-			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
+			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				// Collapse all
 				$e.run( 'navigator/elements/toggle-folding-all', { state: false } );

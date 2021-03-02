@@ -12,7 +12,7 @@ export const ToggleFolding = () => {
 				eSections.push( ElementsHelper.createSection() );
 			}
 
-			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
+			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
 			const done = assert.async();
 
 			setTimeout( () => {

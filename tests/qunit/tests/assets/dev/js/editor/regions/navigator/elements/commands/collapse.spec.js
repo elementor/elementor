@@ -8,7 +8,7 @@ export const Collapse = () => {
 				eSection = eColumn.parent,
 				all = [ eSection, eColumn, eWidget ];
 
-			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
+			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				// Expand all
 				$e.run( 'navigator/elements/toggle-folding-all', { state: true } );

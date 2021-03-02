@@ -6,7 +6,7 @@ export const Hide = () => {
 			const eButton = ElementsHelper.createAutoButton(),
 				done = assert.async();
 
-			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
+			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				$e.run( 'navigator/elements/hide', {
 					container: eButton,
