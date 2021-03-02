@@ -5,8 +5,11 @@ use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Traits\Breakpoints_Trait;
 
 class Test_Manager extends Elementor_Test_Base {
+
+	use Breakpoints_Trait;
 
 	/**
 	 * Test Get Name
@@ -30,14 +33,8 @@ class Test_Manager extends Elementor_Test_Base {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 		$all_breakpoint_names = array_keys( Breakpoints_Manager::get_default_config() );
 
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			/** @var Breakpoint $breakpoint */
-			// Check that the items in the breakpoints array are actual breakpoints.
-			$this->assertTrue( $breakpoint instanceof Breakpoint );
-
-			// Check that the generated breakpoint is one of the breakpoints in the default config array.
-			$this->assertContains( $breakpoint_name, $all_breakpoint_names );
-		}
+		// Check that the breakpoints array contains exactly the same amount of keys as in the default config.
+		$this->assertEquals( array_diff_key( $breakpoints, $all_breakpoint_names ), $breakpoints );
 	}
 
 	/**
@@ -97,9 +94,65 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_device_min_breakpoint() {
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
+		$this->assertEquals( $active_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->get_value() + 1, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_TABLET ) );
+	}
+
+	/**
+	 * Test Get Device Min Breakpoint - Mobile
+	 *
+	 * Test the Breakpoints_Manager::get_device_min_breakpoint() method for the mobile device case, which is a special
+	 * case.
+	 *
+	 * @since 3.2.0
+	 */
+	public function test_get_device_min_breakpoint_mobile() {
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
 		// Test for mobile specifically, which always has a min point of 0.
 		$this->assertEquals( 0, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
+	}
 
-		$this->assertEquals( $active_breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->get_value() + 1, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_TABLET ) );
+	/**
+	 * Test Get Desktop Min Breakpoint
+	 *
+	 * Test the Breakpoints_Manager::get_desktop_min_point() method with default active breakpoints.
+	 *
+	 * @since 3.2.0
+	 */
+	public function test_get_desktop_min_point() {
+		$tablet_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'tablet' );
+
+		$this->assertEquals( $tablet_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+	}
+
+	/**
+	 * Test Get Desktop Min Breakpoint When Laptop Enabled
+	 *
+	 * Test the Breakpoints_Manager::get_desktop_min_point() method when the laptop breakpoint is enabled.
+	 *
+	 * @since 3.2.0
+	 */
+	public function test_get_desktop_min_point_when_laptop_enabled() {
+		$this->set_admin_user();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit_settings = $kit->get_settings();
+
+		// Add the laptop breakpoint to the active breakpoints setting.
+		$kit_settings['active_breakpoints'][] = 'viewport_laptop';
+
+		// Save kit settings.
+		$kit->save( [ 'settings' => $kit_settings ] );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+
+		// The test is done on a new manager, because the instance attached to the Plugin instance already set its
+		// active breakpoints, and this setting cannot be changed once it is set.
+		$manager = new Breakpoints_Manager();
+
+		$laptop_breakpoint = $manager->get_breakpoints( 'laptop' );
+
+		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, $manager->get_desktop_min_point() );
 	}
 }

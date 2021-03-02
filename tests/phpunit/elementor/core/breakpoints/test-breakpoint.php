@@ -5,11 +5,13 @@ use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Traits\Breakpoints_Trait;
 use Elementor\Testing\Traits\Extra_Assertions;
 
 class Test_Breakpoint extends Elementor_Test_Base {
 
 	use Extra_Assertions;
+	use Breakpoints_Trait;
 
 	/**
 	 * Test Get Name
@@ -136,14 +138,5 @@ class Test_Breakpoint extends Elementor_Test_Base {
 			'is_enabled' => true,
 			'default_value' => 800,
 		] );
-	}
-
-	private function set_admin_user() {
-		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
-
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		// In the production environment 'JS' sends empty array, do the same.
-		add_post_meta( $kit->get_main_id(), '_elementor_data', '[]' );
 	}
 }

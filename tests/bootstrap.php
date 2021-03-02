@@ -40,6 +40,7 @@ require __DIR__ . '/phpunit/traits/base-elementor.php';
 require __DIR__ . '/phpunit/traits/extra-assertions.php';
 require __DIR__ . '/phpunit/traits/auth-helpers.php';
 require __DIR__ . '/phpunit/traits/elementor-library-trait.php';
+require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
 require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/ajax-class.php';
