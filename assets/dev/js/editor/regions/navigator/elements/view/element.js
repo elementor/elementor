@@ -1,8 +1,11 @@
-import NavigatorElementEmpty from './element-empty';
-import NavigatorRootEmpty from './root-empty';
+import ElementEmpty from './element-empty';
+import RootEmpty from './root-empty';
 import DocumentHelper from 'elementor-document/helper';
 
-export default class NavigatorElement extends Marionette.CompositeView {
+/**
+ * @memberOf e.elementor.navigator
+ */
+export default class Element extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -40,11 +43,11 @@ export default class NavigatorElement extends Marionette.CompositeView {
 
 	getEmptyView() {
 		if ( this.isRoot() ) {
-			return NavigatorRootEmpty;
+			return RootEmpty;
 		}
 
 		if ( this.hasChildren() ) {
-			return NavigatorElementEmpty;
+			return ElementEmpty;
 		}
 
 		return null;
@@ -95,20 +98,23 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.collection = this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
+
+		/**
+		 * Since the way elements are rendered.
+		 * If you create element on exists column, everything is fine because JS engine callstack is empty
+		 * and it will create the widget container, but if u drag element it will be 2 ticks.
+		 * 1. Create section & column.
+		 * 2. Create the widget in the column.
+		 * For this situation 'linkContainer' without `setTimeout` will fail because the widget container does not exist yet.
+		 */
+		setTimeout( this.linkContainer.bind( this ) );
 	}
 
-	// TODO: Temp fix, remove whole block, find better solution.
-	linkContainerNavView() {
-		if ( ! this.model.id ) {
-			return;
-		}
-
-		if ( ! this.container ) {
+	linkContainer() {
+		if ( ! this.isRoot() ) {
 			this.container = elementor.getContainer( this.model.id );
-		}
-
-		if ( this.container ) {
-			this.container.navView = this;
+			this.container.navigator.view = this;
+			this.container.navigator.model = this.model;
 		}
 	}
 
@@ -226,7 +232,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.ui.title.attr( 'contenteditable', false );
 
 		$e.run( 'document/elements/settings', {
-			container: elementor.getContainer( this.model.id ),
+			container: this.container,
 			settings: {
 				_title: this.ui.title.text().trim(),
 			},
@@ -285,12 +291,10 @@ export default class NavigatorElement extends Marionette.CompositeView {
 		this.toggleHiddenClass();
 
 		this.renderIndicators();
-
-		setTimeout( this.linkContainerNavView.bind( this ) );
 	}
 
 	onItemClick() {
-		const container = this.container || elementor.getContainer( this.model.id );
+		const container = this.container;
 
 		$e.run( 'panel/editor/open', {
 			model: container.model,
@@ -304,7 +308,7 @@ export default class NavigatorElement extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		const container = this.container || elementor.getContainer( this.model.id );
+		const container = this.container;
 
 		$e.run( 'navigator/elements/toggle-visibility', { container } );
 	}

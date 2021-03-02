@@ -1,5 +1,5 @@
-import NavigatorComponent from './component';
-import NavigatorLayout from './layout';
+import Component from './component';
+import Layout from './layout';
 
 const BaseRegion = require( 'elementor-regions/base' );
 
@@ -7,7 +7,7 @@ export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		this.component = $e.components.register( new NavigatorComponent( { manager: this } ) );
+		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
 		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
@@ -24,10 +24,6 @@ export default class Navigator extends BaseRegion {
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		// TODO: Move to hook on 'editor/documents/load'.
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
-		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -86,7 +82,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	initLayout() {
-		this.show( new NavigatorLayout() );
+		this.show( new Layout() );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );
@@ -138,7 +134,7 @@ export default class Navigator extends BaseRegion {
 
 	dock() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
-			'3.0.0',
+			'3.0.2',
 			"$e.run( 'navigator/dock' )"
 		);
 
@@ -147,7 +143,7 @@ export default class Navigator extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
-			'3.0.0',
+			'3.0.2',
 			"$e.run( 'navigator/undock', { silent } )"
 		);
 
@@ -238,22 +234,6 @@ export default class Navigator extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
-		}
-	}
-
-	onDocumentLoaded( document ) {
-		if ( document.config.panel.has_elements ) {
-			this.initLayout();
-
-			if ( this.storage.visible ) {
-				$e.route( 'navigator' );
-			}
-		}
-	}
-
-	onDocumentUnloaded() {
-		if ( this.component.isOpen ) {
-			this.component.close( true );
 		}
 	}
 }

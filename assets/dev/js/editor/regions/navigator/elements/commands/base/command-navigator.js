@@ -1,17 +1,17 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export class CommandNavView extends CommandBase {
+export class CommandNavigator extends CommandBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			if ( ! container.navView ) {
-				throw Error( `'container.navView' is required, container id: '${ container.id }' ` );
+			if ( ! container.navigator ) {
+				throw Error( `'container.navigator' is required, container id: '${ container.id }' ` );
 			}
 		} );
 	}
 }
 
-export default CommandNavView;
+export default CommandNavigator;

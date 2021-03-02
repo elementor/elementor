@@ -1,16 +1,16 @@
-import CommandNavView from './base/command-nav-view';
+import CommandNavigator from './base/command-navigator';
 
-export class Expand extends CommandNavView {
+export class Expand extends CommandNavigator {
 	apply( args ) {
 		const { containers = [ args.container ], callback } = args;
 
 		containers.forEach( ( container ) => {
-			const element = container.navView;
+			const view = container.navigator.view;
 
 			// TODO: move to UI HOOK.
-			element.ui.item.toggleClass( 'elementor-active', true );
+			view.ui.item.toggleClass( 'elementor-active', true );
 
-			element.ui.elements.slideDown( 300, callback );
+			view.ui.elements.slideDown( 300, callback );
 		} );
 	}
 }

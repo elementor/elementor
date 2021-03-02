@@ -2,7 +2,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class ToggleFoldingAll extends CommandBase {
 	apply( args ) {
-		const layout = this.component.manager.manager.getLayout(),
+		const layout = elementor.navigator.getLayout(),
 			state = args.hasOwnProperty( 'state' ) ? args.state : 'expand' === layout.ui.toggleAll.data( 'elementor-action' ),
 			classes = [ 'eicon-collapse', 'eicon-expand' ],
 			all = [];

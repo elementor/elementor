@@ -10,7 +10,7 @@ export const Expand = () => {
 
 			assert.expect( all.length );
 
-			// TODO: Timeout & promising because of 'container.navView'.
+			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				// Collapse all
 				$e.run( 'navigator/elements/toggle-folding-all', { state: false } );
@@ -20,7 +20,7 @@ export const Expand = () => {
 				setTimeout( () => {
 					$e.run( 'navigator/elements/expand', { container } );
 
-					assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), true );
+					assert.equal( container.navigator.view.$el.children().hasClass( 'elementor-active' ), true );
 
 					resolve();
 				} );

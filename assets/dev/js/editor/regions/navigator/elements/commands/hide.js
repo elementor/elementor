@@ -1,13 +1,8 @@
-import CommandNavView from './base/command-nav-view';
+import CommandNavigatorVisibility from './base/command-navigator-visibility';
 
-export class Hide extends CommandNavView {
-	apply( args ) {
-		const { containers = [ args.container ] } = args;
-
-		containers.forEach( ( container ) => {
-			container.navView.model.set( 'hidden', true );
-			container.navView.toggleHiddenClass();
-		} );
+export class Hide extends CommandNavigatorVisibility {
+	getVisibility() {
+		return true;
 	}
 }
 

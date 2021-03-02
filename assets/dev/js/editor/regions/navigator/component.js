@@ -1,12 +1,14 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import NavigatorElementsComponent from './elements/component';
-import * as commands from './commands/';
+import ElementsComponent from './elements/component';
 
-export default class NavigatorComponent extends ComponentBase {
+import * as commands from './commands/';
+import * as hooks from './hooks/index';
+
+export default class Component extends ComponentBase {
 	__construct( args ) {
 		super.__construct( args );
 
-		this.elements = $e.components.register( new NavigatorElementsComponent( { manager: this } ) );
+		this.elements = $e.components.register( new ElementsComponent() );
 	}
 
 	getNamespace() {
@@ -30,6 +32,10 @@ export default class NavigatorComponent extends ComponentBase {
 				dependency: () => elementor.getPreviewContainer().isEditable(),
 			},
 		};
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 
 	open( args ) {

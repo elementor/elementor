@@ -1,18 +1,18 @@
-import CommandNavView from './base/command-nav-view';
+import CommandNavigator from './base/command-navigator';
 
-export class ToggleFolding extends CommandNavView {
+export class ToggleFolding extends CommandNavigator {
 	apply( args ) {
 		const { containers = [ args.container ], callback, state } = args;
 
 		containers.forEach( ( container ) => {
-			const element = container.navView;
+			const { view, model } = container.navigator;
 
 			// If not have children or is root.
-			if ( 'widget' === element.model.get( 'elType' ) || ! element.model.get( 'elType' ) ) {
+			if ( 'widget' === model.get( 'elType' ) || ! model.get( 'elType' ) ) {
 				return;
 			}
 
-			const isActive = element.ui.item.hasClass( 'elementor-active' );
+			const isActive = view.ui.item.hasClass( 'elementor-active' );
 
 			if ( isActive === state ) {
 				return;
@@ -25,9 +25,9 @@ export class ToggleFolding extends CommandNavView {
 			}
 
 			if ( undefined === state ) {
-				element.ui.item.toggleClass( 'elementor-active', state );
+				view.ui.item.toggleClass( 'elementor-active', state );
 
-				element.ui.elements.slideToggle( 300, callback );
+				view.ui.elements.slideToggle( 300, callback );
 			} else if ( state ) {
 				$e.run( 'navigator/elements/expand', newArgs );
 			} else {

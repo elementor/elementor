@@ -8,7 +8,7 @@ export const Collapse = () => {
 				eSection = eColumn.parent,
 				all = [ eSection, eColumn, eWidget ];
 
-			// TODO: Timeout & promising because of 'container.navView'.
+			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				// Expand all
 				$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
@@ -20,7 +20,7 @@ export const Collapse = () => {
 				setTimeout( () => {
 					$e.run( 'navigator/elements/collapse', { container } );
 
-					assert.equal( container.navView.$el.children().hasClass( 'elementor-active' ), false );
+					assert.equal( container.navigator.view.$el.children().hasClass( 'elementor-active' ), false );
 
 					resolve();
 				} );

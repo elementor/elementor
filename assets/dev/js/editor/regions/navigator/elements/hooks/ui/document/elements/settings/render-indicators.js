@@ -17,14 +17,16 @@ export class NavigatorRenderIndicators extends After {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
+			const { view, model } = container.navigator;
+
 			// Prevent empty title. ( consider move to another hook ).
 			if ( 0 === args.settings._title.length ) {
-				container.navView.ui.title.text( container.navView.model.getTitle() );
+				view.ui.title.text( model.getTitle() );
 			}
 
 			jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
 				if ( Object.keys( container.settings.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
-					continaer.navView.renderIndicators();
+					view.renderIndicators();
 
 					return false;
 				}

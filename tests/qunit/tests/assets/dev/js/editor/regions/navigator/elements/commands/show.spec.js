@@ -6,7 +6,7 @@ export const Show = () => {
 			const eButton = ElementsHelper.createAutoButton(),
 				done = assert.async();
 
-			// TODO: Timeout & promising because of 'container.navView'.
+			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
 			setTimeout( () => {
 				$e.run( 'navigator/elements/show', {
 					container: eButton,

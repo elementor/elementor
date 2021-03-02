@@ -12,7 +12,7 @@ export const ToggleFolding = () => {
 				eSections.push( ElementsHelper.createSection() );
 			}
 
-			// TODO: Timeout & promising because of 'container.navView'.
+			// TODO:  To find the source of the issue of `timeout` see navigator->element->initialize method.
 			const done = assert.async();
 
 			setTimeout( () => {
@@ -25,7 +25,7 @@ export const ToggleFolding = () => {
 					} );
 
 					eSections.forEach( ( eSection ) => {
-						assert.equal( eSection.navView.$el.children().hasClass( 'elementor-active' ), state,
+						assert.equal( eSection.navigator.view.$el.children().hasClass( 'elementor-active' ), state,
 							`section id: '${ eSection.id }' navigator element active state: '${ state }'` );
 					} );
 				} );

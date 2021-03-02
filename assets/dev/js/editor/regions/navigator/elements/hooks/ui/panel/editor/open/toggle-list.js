@@ -10,26 +10,17 @@ export class NavigatorToggleList extends After {
 	}
 
 	apply( args ) {
-		const container = args.view.getContainer(),
-			navView = container.navView;
-
-		// TODO: Remove with 'container.navView'.
-		// Since 'panel/editor/open' for widget applies before the container exist.
-		if ( ! navView ) {
-			return setTimeout( () => this.apply( args ) );
-		}
-
-		this.toggleList( navView );
+		this.toggleList( args.view.getContainer().navigator.view );
 	}
 
-	toggleList( navView ) {
-		navView.recursiveParentInvoke( 'toggleList', true );
+	toggleList( view ) {
+		view.recursiveParentInvoke( 'toggleList', true );
 
 		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
-		navView.addEditingClass();
+		view.addEditingClass();
 
-		elementor.helpers.scrollToView( navView.$el, 400, elementor.navigator.getLayout().elements.$el );
+		elementor.helpers.scrollToView( view.$el, 400, elementor.navigator.getLayout().elements.$el );
 	}
 }
 
