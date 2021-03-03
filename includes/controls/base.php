@@ -123,20 +123,6 @@ abstract class Base_Control extends Base_Object {
 	}
 
 	/**
-	 * Process value before save to DB.
-	 *
-	 * By default do nothing. inheritors may save meta data or validate the value before saving it to the DB.
-	 *
-	 * @param mixed $value
-	 * @param array $config
-	 *
-	 * @return mixed
-	 */
-	public function before_save( $value, array $config ) {
-		return $value;
-	}
-
-	/**
 	 * Get default control settings.
 	 *
 	 * Retrieve the default settings of the control. Used to return the default
