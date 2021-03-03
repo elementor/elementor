@@ -1404,7 +1404,9 @@ abstract class Document extends Controls_Stack {
 		return Plugin::$instance->db->iterate_data( $elements, function ( $element_data ) {
 			$instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			$element_data['settings'] = $this->before_save_controls( $element_data['settings'], $instance->get_controls() );
+			if ( ! empty( $element_data['settings'] ) ) {
+				$element_data['settings'] = $this->before_save_controls( $element_data['settings'], $instance->get_controls() );
+			}
 
 			return $element_data;
 		} );
