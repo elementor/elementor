@@ -620,7 +620,9 @@ class WordArt extends Widget_Base {
 		if ( 'custom' !== $settings['path'] ) {
 			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
 		} else {
-			$path_svg = file_get_contents( $settings['custom_path']['url'] );
+			$url = $settings['custom_path']['url'];
+			// Get the file contents only if it's svg.
+			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
 		}
 
 		// Add WordArt text.
