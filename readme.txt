@@ -218,7 +218,11 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
-= 3.1.2 - 2021-02-03 =
+= 3.1.3 - 2021-03-03 =
+* Tweak: Added `aria-expanded` property to Tabs, Accordion and Toggle widgets ([#11246](https://github.com/elementor/elementor/issues/11246), [#3576](https://github.com/elementor/elementor/issues/3576))
+* Fix: Values are being cleared after save action in Query control ([#14098](https://github.com/elementor/elementor/issues/14098))
+
+= 3.1.2 - 2021-03-02 =
 * Tweak: Added Lazy load option for YouTube in Video widget to prevent conflicts ([#13898](https://github.com/elementor/elementor/issues/13898))
 * Tweak: Allow overwriting the assets URL when using a mirror domain ([#13701](https://github.com/elementor/elementor/issues/13701))
 * Tweak: Removed deprecated `jQuery` functions for WP 5.7 compatibility
