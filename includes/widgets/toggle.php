@@ -554,7 +554,7 @@ class Widget_Toggle extends Widget_Base {
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
 				<div class="elementor-toggle-item">
-					<<?php echo esc_html( $settings['title_html_tag'] ); ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
+					<<?php echo Utils::validate_html_tag( $settings['title_html_tag'] ); ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
 						<?php if ( $has_icon ) : ?>
 						<span class="elementor-toggle-icon elementor-toggle-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
 							<?php
@@ -568,7 +568,7 @@ class Widget_Toggle extends Widget_Base {
 						</span>
 						<?php endif; ?>
 						<a href="" class="elementor-toggle-title"><?php echo $item['tab_title']; ?></a>
-					</<?php echo esc_html( $settings['title_html_tag'] ); ?>>
+					</<?php echo Utils::validate_html_tag( $settings['title_html_tag'] ); ?>>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php endforeach; ?>
