@@ -88,7 +88,7 @@ class Test_Document extends Elementor_Test_Base {
 								'widgetType' => 'heading',
 							],
 							[
-								'id' => '5a1e8ehtml_tag5',
+								'id' => '5a1e86',
 								'elType' => 'widget',
 								'settings' => [
 									'style' => 'dots_tribal',
@@ -121,6 +121,7 @@ class Test_Document extends Elementor_Test_Base {
 				'options' => [
 					'' => 'Empty' // Pass `test_controlsDefaultData`.
 				],
+				'validate' => true,
 			]
 		);
 
@@ -134,6 +135,7 @@ class Test_Document extends Elementor_Test_Base {
 					'a' => 'A',
 					'b' => 'B',
 				],
+				'validate' => true,
 			]
 		);
 	}
@@ -180,6 +182,7 @@ class Test_Document extends Elementor_Test_Base {
 				[
 					'type' => Controls_Manager::SELECT,
 					'options' => [],
+					'validate' => true,
 				]
 			);
 

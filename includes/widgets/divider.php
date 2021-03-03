@@ -539,6 +539,7 @@ class Widget_Divider extends Widget_Base {
 					'p' => 'p',
 				],
 				'default' => 'span',
+				'validate' => true,
 			]
 		);
 

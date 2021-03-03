@@ -230,6 +230,7 @@ class Widget_Icon_Box extends Widget_Base {
 					'p' => 'p',
 				],
 				'default' => 'h3',
+				'validate' => true,
 			]
 		);
 

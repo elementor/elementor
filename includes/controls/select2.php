@@ -112,8 +112,7 @@ class Control_Select2 extends Base_Data_Control {
 	 * @return string|array
 	 */
 	private function validate_value( $value, array $config ) {
-		// If there is no `allowed` list, don't touch it.
-		if ( empty( $config['options'] ) ) {
+		if ( empty( $config['validate'] ) ) {
 			return $value;
 		}
 

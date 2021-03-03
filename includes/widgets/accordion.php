@@ -217,6 +217,7 @@ class Widget_Accordion extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
+				'validate' => true,
 			]
 		);
 

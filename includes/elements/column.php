@@ -241,6 +241,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'render_type' => 'none',
+				'validate' => true,
 			]
 		);
 

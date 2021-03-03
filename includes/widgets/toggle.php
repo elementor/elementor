@@ -221,6 +221,7 @@ class Widget_Toggle extends Widget_Base {
 				],
 				'default' => 'div',
 				'separator' => 'before',
+				'validate' => true,
 			]
 		);
 
