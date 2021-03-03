@@ -2,17 +2,30 @@
  * @typedef HashCommand
  * @property {string} method,
  * @property {string} command
- * @property {function( ... )} callback
  */
 
 export default class HashCommands {
 	/**
 	 * Cannot be static since it uses callback(s) that are available only after '$e' is initialized.
 	 */
-	hashFormat = {
-		'e:run': $e.run,
-		'e:route': $e.route,
+	dispatchersList = {
+		'e:run': {
+			runner: $e.run,
+			isSafe: ( command ) => $e.commands.getCommandClass( command )?.getInfo().isSafe,
+		},
+
+		'e:route': {
+			runner: $e.route,
+			isSafe: () => true,
+		},
 	};
+
+	/**
+	 * List of current loaded hash commands.
+	 *
+	 * @type {Array.<HashCommand>}
+	 */
+	commands = [];
 
 	constructor() {
 		this.commands = this.get();
@@ -42,15 +55,14 @@ export default class HashCommands {
 				}
 
 				const method = hashParts[ 0 ] + ':' + hashParts[ 1 ],
-					callback = this.hashFormat[ method ];
+					dispatcher = this.dispatchersList[ method ];
 
-				if ( callback ) {
+				if ( dispatcher ) {
 					const command = hashParts[ 2 ];
 
 					result.push( {
 						method,
 						command,
-						callback,
 					} );
 				}
 			} );
@@ -67,8 +79,18 @@ export default class HashCommands {
 	 * @param {Array.<HashCommand>} [commands=this.commands]
 	 */
 	run( commands = this.commands ) {
-		commands.forEach( ( command ) => {
-			command.callback( command.command );
+		commands.forEach( ( hashCommand ) => {
+			const dispatcher = this.dispatchersList[ hashCommand.method ];
+
+			if ( ! dispatcher ) {
+				throw Error( `No dispatcher found for the command: \`${ hashCommand.command }\`.` );
+			}
+
+			if ( ! dispatcher.isSafe( hashCommand.command ) ) {
+				throw Error( `Attempting to run unsafe or non exist command: \`${ hashCommand.command }\`.` );
+			}
+
+			dispatcher.runner( hashCommand.command );
 		} );
 	}
 
