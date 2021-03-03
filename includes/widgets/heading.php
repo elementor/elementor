@@ -167,6 +167,7 @@ class Widget_Heading extends Widget_Base {
 					'p' => 'p',
 				],
 				'default' => 'h2',
+				'validate' => true,
 			]
 		);
 

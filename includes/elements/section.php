@@ -518,6 +518,7 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'separator' => 'before',
+				'validate' => true,
 			]
 		);
 

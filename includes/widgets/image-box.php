@@ -197,6 +197,7 @@ class Widget_Image_Box extends Widget_Base {
 					'p' => 'p',
 				],
 				'default' => 'h3',
+				'validate' => true,
 			]
 		);
 

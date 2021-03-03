@@ -118,6 +118,10 @@ class Control_Select extends Base_Data_Control {
 	 * @return mixed|string
 	 */
 	private function validate_value( $value, array $config ) {
+		if ( empty( $config['validate'] ) ) {
+			return $value;
+		}
+
 		$is_valid = false;
 
 		// Handle options groups.
