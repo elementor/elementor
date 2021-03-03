@@ -300,6 +300,14 @@ class WordArt extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+				'fields_options' => [
+					'font_size' => [
+						'default' => [
+							'size' => '5',
+							'unit' => 'px',
+						],
+					],
+				],
 			]
 		);
 
