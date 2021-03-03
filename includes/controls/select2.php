@@ -112,8 +112,22 @@ class Control_Select2 extends Base_Data_Control {
 	 * @return string|array
 	 */
 	private function validate_value( $value, array $config ) {
-		// Multiple select are not relevant to check.
+		// If there is no `allowed` list, don't touch it.
+		if ( empty( $config['options'] ) ) {
+			return $value;
+		}
+
+		// Handle multiple select.
 		if ( ! empty( $config['multiple'] ) ) {
+			$validated_value = [];
+
+			foreach ( $value as $index => $item ) {
+				if ( isset( $config['options'][ $item ] ) ) {
+					$validated_value[ $index ] = $item;
+				}
+			}
+
+			$value = $validated_value;
 			$is_valid = true;
 		} else {
 			$is_valid = isset( $config['options'][ $value ] );
