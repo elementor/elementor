@@ -96,47 +96,4 @@ class Control_Select extends Base_Data_Control {
 		<# } #>
 		<?php
 	}
-
-	/**
-	 * @param string $value
-	 * @param array $config
-	 *
-	 * @return string
-	 */
-	public function before_save( $value, array $config ) {
-		return $this->validate_value( $value, $config );
-	}
-
-	/**
-	 * Validate the value is listed in the control options config.
-	 *
-	 * Avoid change settings like `html_tag` & `title_size` to a `script` tag.
-	 *
-	 * @param string $value
-	 * @param array $config
-	 *
-	 * @return mixed|string
-	 */
-	private function validate_value( $value, array $config ) {
-		$is_valid = false;
-
-		// Handle options groups.
-		if ( isset( $config['groups'] ) ) {
-			foreach ( $config['groups'] as $index => $group ) {
-				if ( isset( $group['options'][ $value ] ) ) {
-					$is_valid = true;
-					break;
-				}
-			}
-		} else {
-			$is_valid = isset( $config['options'][ $value ] );
-		}
-
-		// If it's not one of the control options. reset it to default.
-		if ( ! $is_valid ) {
-			$value = $config['default'];
-		}
-
-		return $value;
-	}
 }
