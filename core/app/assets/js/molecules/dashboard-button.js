@@ -13,7 +13,7 @@ export default function DashboardButton( props ) {
 		<Button
 			{ ...props }
 			className={ Utils.arrayToClassName( classes ) }
-			text={ __( 'Back to dashboard', 'elementor' ) }
+			text={ props.text }
 			onClick={ action.backToDashboard }
 		/>
 	);
@@ -21,10 +21,12 @@ export default function DashboardButton( props ) {
 
 DashboardButton.propTypes = {
 	className: PropTypes.string,
+	text: PropTypes.string,
 };
 
 DashboardButton.defaultProps = {
 	className: '',
 	variant: 'contained',
 	color: 'primary',
+	text: __( 'Back to dashboard', 'elementor' ),
 };
