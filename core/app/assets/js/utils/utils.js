@@ -1,4 +1,10 @@
 export const pxToRem = ( pixels ) => {
+	if ( ! pixels ) {
+		return;
+	} else if ( 'string' !== typeof pixels ) {
+		pixels = pixels.toString();
+	}
+
 	return pixels
 		.split( ' ' )
 		.map( ( value ) => `${ value * 0.0625 }rem` )
