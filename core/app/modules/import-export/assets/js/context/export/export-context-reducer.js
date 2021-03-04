@@ -1,7 +1,7 @@
 class ReducerActions {
 	static updateIncludes( state, value, action ) {
 		if ( 'add' === action ) {
-			// If the value already exist, then doing nothing
+			// If the value already exists, then do nothing.
 			if ( state.includes.includes( value ) ) {
 				return state;
 			}

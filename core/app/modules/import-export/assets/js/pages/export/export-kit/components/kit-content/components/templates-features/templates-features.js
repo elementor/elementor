@@ -3,7 +3,7 @@ import './templates-features.scss';
 
 export default function TemplatesFeatures( props ) {
 	const featuresContainer = useRef( null ),
-		isLockedFeatures = 	props.features.locked?.length,
+		isLockedFeatures = props.features.locked?.length,
 		getLockedFeatures = () => {
 			if ( ! isLockedFeatures ) {
 				return;
