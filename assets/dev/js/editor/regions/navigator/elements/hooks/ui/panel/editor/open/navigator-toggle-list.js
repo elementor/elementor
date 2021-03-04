@@ -9,10 +9,17 @@ export class NavigatorToggleList extends After {
 		return 'navigator-toggle-list--/panel/editor/open';
 	}
 
-	apply( args ) {
-		this.toggleList( args.view.getContainer().navigator.view );
+	getConditions( args ) {
+		return args.view.container.navigator.view;
 	}
 
+	apply( args ) {
+		this.toggleList( args.view.container.navigator.view );
+	}
+
+	/**
+	 * @param {e.elementor.navigator.Element} view
+	 */
 	toggleList( view ) {
 		view.recursiveParentInvoke( 'toggleList', true );
 
