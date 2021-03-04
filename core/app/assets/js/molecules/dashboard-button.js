@@ -2,7 +2,7 @@ import Button from 'elementor-app/ui/molecules/button';
 
 import useAction from '../hooks/use-action';
 
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function DashboardButton( props ) {
 	const action = useAction(),
@@ -12,7 +12,7 @@ export default function DashboardButton( props ) {
 	return (
 		<Button
 			{ ...props }
-			className={ Utils.arrayToClassName( classes ) }
+			className={ arrayToClassName( classes ) }
 			text={ props.text }
 			onClick={ action.backToDashboard }
 		/>

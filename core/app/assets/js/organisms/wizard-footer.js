@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Grid from 'elementor-app/ui/grid/grid';
 
@@ -13,7 +13,7 @@ export default function WizardFooter( props ) {
 	}
 
 	return (
-		<Grid container { ...props } className={ Utils.arrayToClassName( classes ) }>
+		<Grid container { ...props } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</Grid>
 	);

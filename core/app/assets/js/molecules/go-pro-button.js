@@ -1,6 +1,6 @@
 import Button from 'elementor-app/ui/molecules/button';
 
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function GoProButton( props ) {
 	const baseClassName = 'e-app-go-pro-button',
@@ -9,7 +9,7 @@ export default function GoProButton( props ) {
 	return (
 		<Button
 			{ ...props }
-			className={ Utils.arrayToClassName( classes ) }
+			className={ arrayToClassName( classes ) }
 			text={ props.text }
 		/>
 	);

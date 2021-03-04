@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Text from 'elementor-app/ui/atoms/text';
 
@@ -13,7 +13,7 @@ export default function Notice( props ) {
 	}
 
 	return (
-		<div className={ Utils.arrayToClassName( classes ) }>
+		<div className={ arrayToClassName( classes ) }>
 			<Text variant="xs" className="eps-notice__text">
 				{ props.label && <strong>{ props.label + ': ' }</strong> } { props.children }
 			</Text>

@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -30,7 +30,7 @@ export default function PageHeader( props ) {
 	};
 
 	return (
-		<div className={ Utils.arrayToClassName( classes ) }>
+		<div className={ arrayToClassName( classes ) }>
 			<Grid container>
 				<Grid item className="e-app-import-export-page-header__content-wrapper">
 					{ props.heading && <Heading variant="display-3" className="e-app-import-export-page-header__heading">{ props.heading }</Heading> }

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import Button from 'elementor-app/ui/molecules/button';
 
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName, isOneOf } from 'elementor-app/utils/utils.js';
 
 import './upload-file.scss';
 
@@ -12,7 +12,7 @@ export default function UploadFile( props ) {
 		classes = [ baseClassName, props.className ];
 
 	return (
-		<div className={ Utils.arrayToClassName( classes ) }>
+		<div className={ arrayToClassName( classes ) }>
 			<input
 				ref={ fileInput }
 				type="file"
@@ -21,7 +21,7 @@ export default function UploadFile( props ) {
 				onChange={ ( event ) => {
 					const file = event.target.files[ 0 ];
 
-					if ( file && Utils.isOneOfFiletypes( file.type, props.filetypes ) ) {
+					if ( file && isOneOf( file.type, props.filetypes ) ) {
 						props.onFileSelect( file, event );
 					} else {
 						fileInput.current.value = '';

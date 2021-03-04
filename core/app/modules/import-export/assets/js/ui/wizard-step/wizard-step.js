@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Grid from 'elementor-app/ui/grid/grid';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -13,7 +13,7 @@ export default function WizardStep( props ) {
 
 	return (
 		<>
-			<Grid className={ Utils.arrayToClassName( classes ) } justify="center" container>
+			<Grid className={ arrayToClassName( classes ) } justify="center" container>
 				<Grid item>
 					{ props.image &&
 					<Grid className="e-app-import-export-wizard-step__image-container" justify="center" alignItems="end" container>
