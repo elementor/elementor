@@ -77,18 +77,7 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_is_custom() {
-		$this->set_admin_user();
-
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		// Set a custom value for the tablet breakpoint.
-		$kit->set_settings( 'viewport_tablet', 900 );
-
-		// Save kit settings.
-		$kit->save( [ 'settings' => $kit->get_settings() ] );
-
-		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( 900 );
 
 		$tablet_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'tablet' );
 

@@ -67,19 +67,15 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_has_custom_breakpoints() {
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		// If this has already been called once with a value, we call it again to set it to its initial empty value.
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( '' );
 
-		$has_custom_breakpoints = false;
+		// We know the breakpoint settings are empty and have no custom values. Assert it.
+		$this->assertFalse( Plugin::$instance->breakpoints->has_custom_breakpoints() );
 
-		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
-			if ( $breakpoints_default_config[ $breakpoint_name ]['default_value'] !== $breakpoint->get_value() ) {
-				$has_custom_breakpoints = true;
-				break;
-			}
-		}
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( 900 );
 
-		$this->assertEquals( $has_custom_breakpoints, Plugin::$instance->breakpoints->has_custom_breakpoints() );
+		$this->assertTrue( Plugin::$instance->breakpoints->has_custom_breakpoints() );
 	}
 
 	/**
