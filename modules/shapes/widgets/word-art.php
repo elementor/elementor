@@ -159,15 +159,15 @@ class WordArt extends Widget_Base {
 				'default' => 'left',
 				'options' => [
 					'start' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => __( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'middle' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => __( 'Middle', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'end' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => __( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
