@@ -30,6 +30,6 @@ Trait Breakpoints_Trait {
 		// Refresh kit.
 		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
 
-		Plugin::$instance->breakpoints->refresh_breakpoints();
+		Plugin::$instance->breakpoints->refresh();
 	}
 }

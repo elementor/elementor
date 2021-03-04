@@ -142,7 +142,7 @@ class Test_Manager extends Elementor_Test_Base {
 		// Refresh kit.
 		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
 
-		Plugin::$instance->breakpoints->refresh_breakpoints();
+		Plugin::$instance->breakpoints->refresh();
 
 		$laptop_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'laptop' );
 

@@ -132,7 +132,7 @@ class Manager extends Module {
 		return $active_breakpoints[ $desktop_previous_device ]->get_value() + 1;
 	}
 
-	public function refresh_breakpoints() {
+	public function refresh() {
 		$this->init_breakpoints();
 		$this->init_active_breakpoints();
 	}
