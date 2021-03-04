@@ -31,9 +31,9 @@ export default function ImportProcess() {
 	}, [] );
 
 	useEffect( () => {
-		if ( uploadFileStatus.success ) {
+		if ( 'success' === uploadFileStatus.status ) {
 			navigate( '/import/success' );
-		} else if ( uploadFileStatus.error ) {
+		} else if ( 'error' === uploadFileStatus.status ) {
 			setIsImportFailed( true );
 		}
 	}, [ uploadFileStatus ] );
