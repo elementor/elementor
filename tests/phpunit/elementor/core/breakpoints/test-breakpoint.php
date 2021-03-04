@@ -46,7 +46,7 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	/**
 	 * Test Is Enabled
 	 *
-	 * Tests Breakpoint::get_config() for all breakpoints.
+	 * Tests Breakpoint::get_config().
 	 *
 	 * @since 3.2.0
 	 */
