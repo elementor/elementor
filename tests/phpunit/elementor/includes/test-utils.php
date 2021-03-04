@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Settings\Page\Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Testing\Elementor_Test_Base;
@@ -179,5 +180,23 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
+	}
+
+	public function test_replace_urls__ensure_page_settings() {
+		// Arrange.
+		$setting_key = 'some-url';
+		$from_url = 'http://localhost/';
+		$to_url = 'http://127.0.0.1/';
+
+		$document = self::factory()->create_post();
+
+		$document->update_meta( Manager::META_KEY, [ $setting_key => $from_url ] );
+
+		// Act.
+		$affected_rows = Utils::replace_urls( $from_url, $to_url );
+
+		// Assert.
+		$this->assertSame( '1 row affected.', $affected_rows );
+		$this->assertSame( [ $setting_key => $to_url ], $document->get_meta( Manager::META_KEY ) );
 	}
 }
