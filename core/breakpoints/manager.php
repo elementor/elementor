@@ -41,7 +41,7 @@ class Manager extends Module {
 	 */
 	public function get_breakpoints( $breakpoint_name = null ) {
 		if ( ! $this->breakpoints ) {
-			$this->breakpoints = $this->init_breakpoints();
+			$this->init_breakpoints();
 		}
 		return self::get_items( $this->breakpoints, $breakpoint_name );
 	}
@@ -53,15 +53,12 @@ class Manager extends Module {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param $breakpoint_name
+	 * @param string|null $breakpoint_name
 	 * @return Breakpoint[]|Breakpoint
 	 */
 	public function get_active_breakpoints( $breakpoint_name = null ) {
 		if ( ! $this->active_breakpoints ) {
-			$this->active_breakpoints = array_filter( $this->get_breakpoints(), function( $breakpoint ) {
-				/** @var Breakpoint $breakpoint */
-				return $breakpoint->is_enabled();
-			} );
+			$this->init_active_breakpoints();
 		}
 
 		return self::get_items( $this->active_breakpoints, $breakpoint_name );
@@ -133,6 +130,11 @@ class Manager extends Module {
 		$desktop_previous_device = $this->get_desktop_previous_device_key();
 
 		return $active_breakpoints[ $desktop_previous_device ]->get_value() + 1;
+	}
+
+	public function refresh_breakpoints() {
+		$this->init_breakpoints();
+		$this->init_active_breakpoints();
 	}
 
 	/**
@@ -210,12 +212,12 @@ class Manager extends Module {
 	 * Creates the breakpoints array, containing instances of each breakpoint. Returns an array of ALL breakpoints,
 	 * both enabled and disabled.
 	 *
-	 * @return array
+	 * @since 3.2.0
 	 */
 	private function init_breakpoints() {
 		$breakpoints = [];
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$active_breakpoint_keys = $kit->get_settings_for_display( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
+		$active_breakpoint_keys = $kit->get_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
 		$default_config = self::get_default_config();
 		$prefix = self::BREAKPOINT_OPTION_PREFIX;
 
@@ -234,7 +236,21 @@ class Manager extends Module {
 			$breakpoints[ $breakpoint_name ] = new Breakpoint( $args );
 		}
 
-		return $breakpoints;
+		$this->breakpoints = $breakpoints;
+	}
+
+	/**
+	 * Init Active Breakpoints
+	 *
+	 * Create/Refresh the array of --enabled-- breakpoints.
+	 *
+	 * @since 3.2.0
+	 */
+	private function init_active_breakpoints() {
+		$this->active_breakpoints = array_filter( $this->get_breakpoints(), function( $breakpoint ) {
+			/** @var Breakpoint $breakpoint */
+			return $breakpoint->is_enabled();
+		} );
 	}
 
 	private function get_desktop_previous_device_key() {
