@@ -142,12 +142,10 @@ class Test_Manager extends Elementor_Test_Base {
 		// Refresh kit.
 		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
 
-		// The test is done on a new manager, because the instance attached to the Plugin instance already set its
-		// active breakpoints, and this setting cannot be changed once it is set.
-		$manager = new Breakpoints_Manager();
+		Plugin::$instance->breakpoints->refresh_breakpoints();
 
-		$laptop_breakpoint = $manager->get_breakpoints( 'laptop' );
+		$laptop_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'laptop' );
 
-		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, $manager->get_desktop_min_point() );
+		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
 	}
 }
