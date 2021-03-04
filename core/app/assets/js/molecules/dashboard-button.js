@@ -1,6 +1,6 @@
 import Button from 'elementor-app/ui/molecules/button';
 
-import useAction from '../hooks/use-action';
+import useAction from 'elementor-app/hooks/use-action';
 
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 

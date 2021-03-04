@@ -1,6 +1,6 @@
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
-import useAction from '../../../../../../assets/js/hooks/use-action';
+import useAction from 'elementor-app/hooks/use-action';
 
 export default function ImportFailedDialog( props ) {
 	const action = useAction();
