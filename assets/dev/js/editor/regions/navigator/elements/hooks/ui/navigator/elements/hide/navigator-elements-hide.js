@@ -1,12 +1,12 @@
 import After from 'elementor-api/modules/hooks/ui/after';
 
-export class NavigatorShow extends After {
+export class NavigatorElementsHide extends After {
 	getCommand() {
-		return 'navigator/elements/show';
+		return 'navigator/elements/hide';
 	}
 
 	getId() {
-		return 'navigator-elements-show--/navigator/elements/show';
+		return 'navigator-elements-hide--/navigator/elements/hide';
 	}
 
 	apply( args ) {
@@ -16,4 +16,4 @@ export class NavigatorShow extends After {
 	}
 }
 
-export default NavigatorShow;
+export default NavigatorElementsHide;
