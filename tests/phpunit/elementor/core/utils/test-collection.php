@@ -20,6 +20,17 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( $array, $result );
 	}
 
+	public function test_values() {
+		// Arrange
+		$collection = new Collection( [ 'a' => 'a', 'b' => 'b' ] );
+
+		// Act
+		$result = $collection->all();
+
+		// Assert
+		$this->assertEqualSets( [ 'a', 'b' ], $result );
+	}
+
 	public function test_is_empty() {
 		// Arrange
 		$collection = new Collection( [] );
