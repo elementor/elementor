@@ -242,6 +242,19 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->add_control(
+			'icon_flyover'
+			[
+				'label' => __( 'Icon Flyover', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => __( 'Off', 'elementor' ),
+				'label_on' => __( 'On', 'elementor' ),
+				'prefix_class' => 'elementor-icon-flyover',
+				'frontend_available' => true,
+			'selector' => '{{WRAPPER}} .elementor-button-icon:hover',	
+			]
+		);
+
+		$this->add_control(
 			'view',
 			[
 				'label' => __( 'View', 'elementor' ),
