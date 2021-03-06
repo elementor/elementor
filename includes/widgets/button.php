@@ -248,8 +248,6 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
-				'prefix_class' => 'elementor-icon-flyover',
-				'frontend_available' => true,
 			'selector' => '{{WRAPPER}} .elementor-button-icon:hover',	
 			]
 		);
