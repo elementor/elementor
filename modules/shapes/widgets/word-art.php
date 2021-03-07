@@ -725,7 +725,7 @@ class WordArt extends Widget_Base {
 		}
 
 		// Check if the start point is empty, but accept 0 as value.
-		if ( Utils::is_empty( $settings['start_point']['size'] ) ) {
+		if ( ! Utils::is_empty( $settings['start_point']['size'] ) ) {
 			$offset = $settings['start_point']['size'];
 		}
 
