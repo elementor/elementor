@@ -483,7 +483,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.10.0'
+			'5.11.0'
 		);
 
 		wp_register_style(
@@ -579,8 +579,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
@@ -1173,15 +1171,27 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
-			// Empty array for BC to avoid errors.
-			'i18n' => [],
+			'i18n' => [
+				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
+				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
+				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
+				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
 			],
 		];
 

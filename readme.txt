@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.6
 Requires PHP: 5.6
-Beta tag: 3.1.0-beta4
-Stable tag: 3.0.16
+Stable tag: 3.1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -219,6 +218,41 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.1.3 - 2021-03-03 =
+* Tweak: Added `aria-expanded` property to Tabs, Accordion and Toggle widgets ([#11246](https://github.com/elementor/elementor/issues/11246), [#3576](https://github.com/elementor/elementor/issues/3576))
+* Fix: Values are being cleared after save action in Query control ([#14098](https://github.com/elementor/elementor/issues/14098))
+
+= 3.1.2 - 2021-03-02 =
+* Tweak: Added Lazy load option for YouTube in Video widget to prevent conflicts ([#13898](https://github.com/elementor/elementor/issues/13898))
+* Tweak: Allow overwriting the assets URL when using a mirror domain ([#13701](https://github.com/elementor/elementor/issues/13701))
+* Tweak: Removed deprecated `jQuery` functions for WP 5.7 compatibility
+* Tweak: Added a `mixin` for `webkit-scrollbar` design in Table of Content widget CSS
+* Tweak: Added `--force` CLI replace command to always return the number of replaces
+* Tweak: Added a Lazy Load control for YouTube source in Background Video
+* Tweak: Updated `eicons` library to v5.11.0
+* Fix: Youtube videos didn't work properly when Privacy mode is enabled and "Improved Asset Loading" experiment is disabled ([#13711](https://github.com/elementor/elementor/issues/13711))
+* Fix: Error event will not always have an `originalEvent` ([Props @enisdenjo](https://github.com/enisdenjo))
+* Fix: Background Video protocol wasn't using `https` for `youtube-nocookie` option in Video widget
+* Fix: Youtube API script was loaded when Image overlay is used
+* Fix: Navigator overlapped preview area if attached to the right
+* Fix: Column layout glitch when changing the section structure
+* Fix: Landing page created via the Admin bar wasn't created with Canvas layout
+* Fix: Sanitized options in the editor to enforce better security policies
+
+= 3.1.1 - 2021-01-31 =
+* Tweak: Minor UI improvements in Compatibility tag
+* Fix: Async JS loading conflicted with `wp.i18n` ([#13708](https://github.com/elementor/elementor/issues/13708), [#13746](https://github.com/elementor/elementor/issues/13746), [Topic](https://wordpress.org/support/topic/console-error-43/))
+* Fix: Elementor loads unnecessary `wp-polyfills.min.js` script in Frontend ([#13720](https://github.com/elementor/elementor/issues/13720))
+* Fix: Landing Pages experiment removes content in static blog pages ([#13706](https://github.com/elementor/elementor/issues/13706), [#13728](https://github.com/elementor/elementor/issues/13728), [#13725](https://github.com/elementor/elementor/issues/13725), [Topic](https://wordpress.org/support/topic/blog-page-not-showing-after-update-3/))
+* Fix: Background Slideshow shifted if Section is stretched and has Full Width layout ([#13750](https://github.com/elementor/elementor/issues/13750), [Topic](https://wordpress.org/support/topic/slide-show-background-2/), [Topic](https://wordpress.org/support/topic/slider-background-section-layout-issue/), [Topic](https://wordpress.org/support/topic/elementor-v-3-0-16-breaks-full-width-header/))
+* Fix: Entrance animation set to `none` caused a delay in the widget load
+* Fix: Navigator rearrangement glitches when Optimized DOM experiment is active
+* Fix: Keyboard navigation isn't working in Tabs widget when Accessibility Improvements experiment is active
+* Fix: Minor UI glitches in Experiments screen
+* Fix: Wrong check of a deprecated method caused a notice when `ELEMENTOR_DEBUG` is enabled
+* Fix: Arrow keys navigation is not working in Finder
+* Fix: Theme Style overrides icon size when set in `em` in Social Icon widget
+
 = 3.1.0 - 2021-01-24 =
 * New: Elementor Experiments - Experience new features before they're officially released ([Developer Documentation](https://developers.elementor.com/elementor-experiments/))
 * New: Compatibility Tag - Make sure your website plugins are compatible with Elementor ([Developer Documentation](https://developers.elementor.com/compatibility-tag/))
@@ -233,7 +267,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Added dynamic capabilities to Tab Title control in Tabs widget ([#9710](https://github.com/elementor/elementor/issues/9710))
 * Tweak: Added dynamic capabilities to Toggle Content control in Toggle widget ([#12405](https://github.com/elementor/elementor/issues/12405))
 * Tweak: Added `em` unit to Border Radius control in Button widget ([#11561](https://github.com/elementor/elementor/issues/11561))
-* Tweak: Introduced a new method for attaching a JS handler to an element ([Developer Documentation](https://developers.elementor.com/new-method-attaching-a-js-handler))
+* Tweak: Introduced a new method for attaching a JS handler to an element ([Developer Documentation](https://developers.elementor.com/a-new-method-for-attaching-a-js-handler-to-an-element/))
 * Tweak: Added the option to add custom menu items in Site Settings ([Developer Documentation](https://github.com/elementor/elementor/pull/13243))
 * Tweak: Added an option to choose Text element HTML tag in Divider widget ([#11499](https://github.com/elementor/elementor/issues/11499))
 * Tweak: Updated `eicons` library to v5.10.0
