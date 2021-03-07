@@ -10,12 +10,13 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 
 	getDefaultElements() {
 		const { selectors } = this.getSettings();
+		const element = this.$element[ 0 ];
 
 		return {
-			widgetWrapper: this.$element[ 0 ],
-			pathContainer: this.$element[ 0 ].querySelector( selectors.pathContainer ),
-			svg: this.$element[ 0 ].querySelector( selectors.svg ),
-			textPath: this.$element[ 0 ].querySelector( selectors.textPath ),
+			widgetWrapper: element,
+			pathContainer: element.querySelector( selectors.pathContainer ),
+			svg: element.querySelector( selectors.svg ),
+			textPath: element.querySelector( selectors.textPath ),
 		};
 	}
 
@@ -98,7 +99,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 
 	// Attach a unique id to the path.
 	attachIdToPath() {
-		const path = this.elements.svg.querySelector( '[data-path-anchor]' ) || this.elements.svg.querySelector( 'path' );
+		const path = this.elements.svg.querySelector( '[data-path-anchor], path' );
 		path.id = this.pathId;
 	}
 

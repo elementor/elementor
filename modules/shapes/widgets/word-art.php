@@ -5,8 +5,9 @@ namespace Elementor\Modules\Shapes\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
-use Elementor\Widget_Base;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
+use Elementor\Utils;
+use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -99,12 +100,16 @@ class WordArt extends Widget_Base {
 	 * Register content controls under content tab.
 	 */
 	protected function register_content_tab() {
-		$this->start_controls_section( 'section_content_wordart', [
-			'label' => __( 'WordArt', 'elementor' ),
-			'tab' => Controls_Manager::TAB_CONTENT,
-		] );
+		$this->start_controls_section(
+			'section_content_wordart',
+			[
+				'label' => __( 'WordArt', 'elementor' ),
+				'tab' => Controls_Manager::TAB_CONTENT,
+			]
+		);
 
-		$this->add_control( 'text',
+		$this->add_control(
+			'text',
 			[
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
@@ -113,26 +118,33 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'path', [
-			'label' => __( 'Shape Path', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => Shapes_Module::get_paths(),
-			'default' => 'circle',
-		] );
+		$this->add_control(
+			'path',
+			[
+				'label' => __( 'Shape Path', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => Shapes_Module::get_paths(),
+				'default' => 'circle',
+			]
+		);
 
-		$this->add_control( 'custom_path', [
-			'label' => __( 'SVG', 'elementor' ),
-			'type' => Controls_Manager::MEDIA,
-			'condition' => [
-				'path' => 'custom',
-			],
-			'dynamic' => [
-				'active' => true,
-			],
-			'description' => __( 'Add data-path-anchor attribute to your path in order to put the text along it. Otherwise, it will default to the first path element.', 'elementor' ),
-		] );
+		$this->add_control(
+			'custom_path',
+			[
+				'label' => __( 'SVG', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'condition' => [
+					'path' => 'custom',
+				],
+				'dynamic' => [
+					'active' => true,
+				],
+				'description' => __( 'Add data-path-anchor attribute to your path in order to put the text along it. Otherwise, it will default to the first path element.', 'elementor' ),
+			]
+		);
 
-		$this->add_control( 'shape_notice',
+		$this->add_control(
+			'shape_notice',
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wordart-more-paths' ),
@@ -140,7 +152,8 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'link',
+		$this->add_control(
+			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
@@ -152,7 +165,8 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'alignment',
+		$this->add_responsive_control(
+			'alignment',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -178,20 +192,24 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'show_path', [
-			'label' => __( 'Show Path', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'label_on' => __( 'On', 'elementor' ),
-			'label_off' => __( 'Off', 'elementor' ),
-			'return_value' => self::DEFAULT_PATH_FILL,
-			'separator' => 'before',
-			'default' => '',
-			'selectors' => [
-				'{{WRAPPER}}' => '--path-stroke: {{VALUE}}; --path-fill: transparent;',
-			],
-		] );
+		$this->add_control(
+			'show_path',
+			[
+				'label' => __( 'Show Path', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => __( 'Off', 'elementor' ),
+				'return_value' => self::DEFAULT_PATH_FILL,
+				'separator' => 'before',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--path-stroke: {{VALUE}}; --path-fill: transparent;',
+				],
+			]
+		);
 
-		$this->add_control( 'path_notice',
+		$this->add_control(
+			'path_notice',
 			[
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => __( 'Notice! The path will be visible on live preview', 'elementor' ),
@@ -213,84 +231,102 @@ class WordArt extends Widget_Base {
 		/**
 		 * WordArt styling section.
 		 */
-		$this->start_controls_section( 'section_style_wordart', [
-			'label' => __( 'WordArt', 'elementor' ),
-			'tab' => Controls_Manager::TAB_STYLE,
-		] );
+		$this->start_controls_section(
+			'section_style_wordart',
+			[
+				'label' => __( 'WordArt', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
 
-		$this->add_responsive_control( 'size', [
-			'label' => __( 'Size', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ '%', 'px' ],
-			'range' => [
-				'%' => [
-					'min' => 0,
-					'max' => 100,
-					'step' => 10,
+		$this->add_responsive_control(
+			'size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%', 'px' ],
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+						'step' => 10,
+					],
+					'px' => [
+						'min' => 0,
+						'max' => 300,
+						'step' => 10,
+					],
 				],
-				'px' => [
-					'min' => 0,
-					'max' => 300,
-					'step' => 10,
+				'default' => [
+					'unit' => '%',
+					'size' => 100,
 				],
-			],
-			'default' => [
-				'unit' => '%',
-				'size' => 100,
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
-			],
-		] );
-
-		$this->add_responsive_control( 'rotation', [
-			'label' => __( 'Rotate', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'deg' ],
-			'range' => [
-				'deg' => [
-					'min' => 0,
-					'max' => 360,
-					'step' => 1,
+				'selectors' => [
+					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
-			],
-			'default' => [
-				'unit' => 'deg',
-				'size' => '',
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--rotate: {{SIZE}}{{UNIT}};',
-			],
-		] );
+			]
+		);
 
-		$this->add_control( 'flip_horizontally', [
-			'label' => __( 'Flip Horizontally', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'label_on' => __( 'Yes', 'elementor' ),
-			'label_off' => __( 'No', 'elementor' ),
-			'return_value' => '-1',
-			'default' => '',
-			'selectors' => [
-				'{{WRAPPER}}' => '--scale-x: {{VALUE}};',
-			],
-		] );
+		$this->add_responsive_control(
+			'rotation',
+			[
+				'label' => __( 'Rotate', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'deg' ],
+				'range' => [
+					'deg' => [
+						'min' => 0,
+						'max' => 360,
+						'step' => 1,
+					],
+				],
+				'default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--rotate: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
 
-		$this->add_control( 'flip_vertically', [
-			'label' => __( 'Flip Vertically', 'elementor' ),
-			'type' => Controls_Manager::SWITCHER,
-			'label_on' => __( 'Yes', 'elementor' ),
-			'label_off' => __( 'No', 'elementor' ),
-			'return_value' => '-1',
-			'default' => '',
-			'selectors' => [
-				'{{WRAPPER}}' => '--scale-y: {{VALUE}};',
-			],
-		] );
+		$this->add_control(
+			'flip_horizontally',
+			[
+				'label' => __( 'Flip Horizontally', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
+				'return_value' => '-1',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--scale-x: {{VALUE}};',
+				],
+			]
+		);
 
-		$this->add_control( 'text_heading', [
-			'label' => __( 'Text', 'elementor' ),
-			'type' => Controls_Manager::HEADING,
-		] );
+		$this->add_control(
+			'flip_vertically',
+			[
+				'label' => __( 'Flip Vertically', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => __( 'Yes', 'elementor' ),
+				'label_off' => __( 'No', 'elementor' ),
+				'return_value' => '-1',
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => '--scale-y: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_heading',
+			[
+				'label' => __( 'Text', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
@@ -311,44 +347,50 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control( 'word_spacing', [
-			'label' => __( 'Word Spacing', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
-				'px' => [
-					'min' => -20,
-					'max' => 20,
-					'step' => 1,
+		$this->add_responsive_control(
+			'word_spacing',
+			[
+				'label' => __( 'Word Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px' ],
+				'range' => [
+					'px' => [
+						'min' => -20,
+						'max' => 20,
+						'step' => 1,
+					],
 				],
-			],
-			'default' => [
-				'unit' => 'px',
-				'size' => '',
-			],
-			'selectors' => [
-				'{{WRAPPER}}' => '--word-spacing: {{SIZE}}{{UNIT}};',
-			],
-		] );
+				'default' => [
+					'unit' => 'px',
+					'size' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--word-spacing: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
 
-		$this->add_control( 'start_point', [
-			'label' => __( 'Start Point', 'elementor' ),
-			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ '%' ],
-			'range' => [
-				'px' => [
-					'min' => -100,
-					'max' => 100,
-					'step' => 1,
+		$this->add_control(
+			'start_point',
+			[
+				'label' => __( 'Start Point', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%' ],
+				'range' => [
+					'px' => [
+						'min' => -100,
+						'max' => 100,
+						'step' => 1,
+					],
 				],
-			],
-			'default' => [
-				'unit' => '%',
-				'size' => '',
-			],
-			'frontend_available' => true,
-			'render_type' => 'none',
-		] );
+				'default' => [
+					'unit' => '%',
+					'size' => '',
+				],
+				'frontend_available' => true,
+				'render_type' => 'none',
+			]
+		);
 
 		$this->start_controls_tabs( 'text_style' );
 
@@ -437,13 +479,16 @@ class WordArt extends Widget_Base {
 		/**
 		 * Path styling section.
 		 */
-		$this->start_controls_section( 'section_style_path', [
-			'label' => __( 'Path', 'elementor' ),
-			'tab' => Controls_Manager::TAB_STYLE,
-			'condition' => [
-				'show_path!' => '',
-			],
-		] );
+		$this->start_controls_section(
+			'section_style_path',
+			[
+				'label' => __( 'Path', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+				'condition' => [
+					'show_path!' => '',
+				],
+			]
+		);
 
 		$this->start_controls_tabs( 'path_style' );
 
@@ -469,10 +514,13 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'stroke_heading_normal', [
-			'label' => __( 'Stroke', 'elementor' ),
-			'type' => Controls_Manager::HEADING,
-		] );
+		$this->add_control(
+			'stroke_heading_normal',
+			[
+				'label' => __( 'Stroke', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
 
 		$this->add_control(
 			'stroke_color_normal',
@@ -532,10 +580,13 @@ class WordArt extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'stroke_heading_hover', [
-			'label' => __( 'Stroke', 'elementor' ),
-			'type' => Controls_Manager::HEADING,
-		] );
+		$this->add_control(
+			'stroke_heading_hover',
+			[
+				'label' => __( 'Stroke', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
 
 		$this->add_control(
 			'stroke_color_hover',
@@ -674,7 +725,7 @@ class WordArt extends Widget_Base {
 		}
 
 		// Check if the start point is empty, but accept 0 as value.
-		if ( 0 !== strlen( $settings['start_point']['size'] ) ) {
+		if ( Utils::is_empty( $settings['start_point']['size'] ) ) {
 			$offset = $settings['start_point']['size'];
 		}
 
