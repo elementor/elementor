@@ -1,4 +1,23 @@
 export default class Helpers {
+	static allowedHTMLWrapperTags = [
+		'article',
+		'aside',
+		'div',
+		'footer',
+		'h1',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6',
+		'header',
+		'main',
+		'nav',
+		'p',
+		'section',
+		'span',
+	];
+
 	softDeprecated( name, version, replacement ) {
 		if ( elementorCommon.config.isDebug ) {
 			this.deprecatedMessage( 'soft', name, version, replacement );
@@ -60,5 +79,18 @@ export default class Helpers {
 
 	getUniqueId() {
 		return Math.random().toString( 16 ).substr( 2, 7 );
+	}
+
+	/**
+	 * Function validateHTMLTag().
+	 *
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param {string} tag
+	 *
+	 * @returns {string}
+	 */
+	validateHTMLTag( tag ) {
+		return Helpers.allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
 	}
 }
