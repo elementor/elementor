@@ -247,7 +247,9 @@ class Widget_Button extends Widget_Base {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
-				'selector' => '{{WRAPPER}} .elementor-button-icon' => 'icon:hover;',
+				'selector' => [
+					'{{WRAPPER}} .elementor-button-icon' => 'icon:hover;',
+				],
 			]
 		);
 
