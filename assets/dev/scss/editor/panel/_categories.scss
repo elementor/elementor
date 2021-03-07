@@ -51,13 +51,6 @@
 	}
 
 	&-items {
-		overflow: hidden;
 		padding: 0 10px;
-		display: grid;
-		gap: 10px;
-		// The uppercase M in `Min` is used in order to avoid SASS conflicts with CSS `min` function.
-		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
-		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
-		grid-template-columns: repeat( auto-fit, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
 	}
 }
