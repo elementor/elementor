@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 3.1.1
+Stable tag: 3.1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +217,27 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.1.3 - 2021-03-03 =
+* Tweak: Added `aria-expanded` property to Tabs, Accordion and Toggle widgets ([#11246](https://github.com/elementor/elementor/issues/11246), [#3576](https://github.com/elementor/elementor/issues/3576))
+* Fix: Values are being cleared after save action in Query control ([#14098](https://github.com/elementor/elementor/issues/14098))
+
+= 3.1.2 - 2021-03-02 =
+* Tweak: Added Lazy load option for YouTube in Video widget to prevent conflicts ([#13898](https://github.com/elementor/elementor/issues/13898))
+* Tweak: Allow overwriting the assets URL when using a mirror domain ([#13701](https://github.com/elementor/elementor/issues/13701))
+* Tweak: Removed deprecated `jQuery` functions for WP 5.7 compatibility
+* Tweak: Added a `mixin` for `webkit-scrollbar` design in Table of Content widget CSS
+* Tweak: Added `--force` CLI replace command to always return the number of replaces
+* Tweak: Added a Lazy Load control for YouTube source in Background Video
+* Tweak: Updated `eicons` library to v5.11.0
+* Fix: Youtube videos didn't work properly when Privacy mode is enabled and "Improved Asset Loading" experiment is disabled ([#13711](https://github.com/elementor/elementor/issues/13711))
+* Fix: Error event will not always have an `originalEvent` ([Props @enisdenjo](https://github.com/enisdenjo))
+* Fix: Background Video protocol wasn't using `https` for `youtube-nocookie` option in Video widget
+* Fix: Youtube API script was loaded when Image overlay is used
+* Fix: Navigator overlapped preview area if attached to the right
+* Fix: Column layout glitch when changing the section structure
+* Fix: Landing page created via the Admin bar wasn't created with Canvas layout
+* Fix: Sanitized options in the editor to enforce better security policies
 
 = 3.1.1 - 2021-01-31 =
 * Tweak: Minor UI improvements in Compatibility tag
