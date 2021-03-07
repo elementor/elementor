@@ -8,7 +8,6 @@ import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper-bc';
 
-/* New modules handlers */
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 
 const EventManager = require( 'elementor-utils/hooks' ),
