@@ -37,7 +37,7 @@ class Test_Admin_Notices extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		// Assert
-		$this->assertRegExp( '/\<strong\>test title\<\/strong\>/', $result );
+		$this->assertRegExp( '/\<h3\>test title\<\/h3\>/', $result );
 		$this->assertRegExp( '/\<p\>test description\<\/p\>/', $result );
 		$this->assertRegExp( '/data-notice_id="test_id"/', $result );
 	}
