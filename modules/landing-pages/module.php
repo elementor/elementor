@@ -471,9 +471,11 @@ class Module extends BaseModule {
 			// Get the Landing Page menu node.
 			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
 
-			$new_landing_page_node->href = $this->get_add_new_landing_page_url();
+			if ( $new_landing_page_node ) {
+				$new_landing_page_node->href = $this->get_add_new_landing_page_url();
 
-			$admin_bar->add_node( $new_landing_page_node );
+				$admin_bar->add_node( $new_landing_page_node );
+			}
 		}, 100 );
 	}
 }
