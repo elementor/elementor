@@ -10,6 +10,7 @@
 		transform: rotate( var( --rotate, 0 ) ) scaleX( var( --scale-x, 1 ) ) scaleY( var( --scale-y, 1 ) );
 
 		path {
+			vector-effect: non-scaling-stroke; /* Prevent path size scaling when resizing the SVG. */
 			fill: var( --path-fill, transparent );
 			stroke: var( --stroke-color, transparent );
 			stroke-width: var( --stroke-width, 1px );
