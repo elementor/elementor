@@ -15,21 +15,6 @@ module.exports = BaseSettings.extend( {
 
 	save: function() {},
 
-	changeCallbacks: {
-		template: function() {
-			$e.run( 'document/save/auto', {
-				force: true,
-				onSuccess: function() {
-					elementor.reloadPreview();
-
-					elementor.once( 'preview:loaded', function() {
-						$e.route( 'panel/page-settings/settings' );
-					} );
-				},
-			} );
-		},
-	},
-
 	getDataToSave: function( data ) {
 		data.id = elementor.config.document.id;
 

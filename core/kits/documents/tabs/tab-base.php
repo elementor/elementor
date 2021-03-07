@@ -33,6 +33,10 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		return '';
 	}
 
+	public function get_additional_tab_content() {
+		return '';
+	}
+
 	public function register_controls() {
 		$this->register_tab();
 

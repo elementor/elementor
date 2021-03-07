@@ -95,4 +95,17 @@
 	background-size: $checker-size $checker-size;
 	background-position: 0 0,( $checker-size / 2 ) ( $checker-size / 2 );
 }
+
+
+@mixin webkit-scrollbar($width, $color, $border-radius) {
+
+	&::-webkit-scrollbar {
+		width: $width;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: $color;
+		border-radius: $border-radius;
+	}
+}
 //End

@@ -312,7 +312,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			self.elements.$formAnchor = $( 'h1' );
 
-			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
 			self.elements.$formAnchor.after( $importArea );
 
