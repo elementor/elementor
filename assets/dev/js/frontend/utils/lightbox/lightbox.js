@@ -162,14 +162,16 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setSlideshowContent( options.slideshow );
 
 				break;
-			default:
-				self.setHTMLContent( options.html );
 		}
 
 		modal.show();
 	},
 
 	setHTMLContent: function( html ) {
+		if ( window.elementorCommon ) {
+			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+		}
+
 		this.getModal().setMessage( html );
 	},
 
@@ -823,7 +825,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
+		// Check for lowercase `a` to make sure it works also for links inside SVGs.
+		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 

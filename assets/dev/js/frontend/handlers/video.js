@@ -141,6 +141,22 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
+		if ( elementSettings.lazy_load ) {
+			this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
+				callback: ( event ) => {
+					if ( event.isInViewport ) {
+						this.intersectionObserver.unobserve( this.elements.$video.parent()[ 0 ] );
+						this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+					}
+				},
+			} );
+
+			// We observe the parent, since the video container has a height of 0.
+			this.intersectionObserver.observe( this.elements.$video.parent()[ 0 ] );
+
+			return;
+		}
+
 		// When Optimized asset loading is set to off, the video type is set to 'Youtube', and 'Privacy Mode' is set
 		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
 		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the

@@ -860,6 +860,15 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get document setting from DB.
+	 *
+	 * @return array
+	 */
+	public function get_db_document_settings() {
+		return $this->get_meta( static::PAGE_META_KEY );
+	}
+
+	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
