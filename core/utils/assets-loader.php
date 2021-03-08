@@ -95,6 +95,10 @@ class Assets_Loader extends Module {
 		return wp_remote_get( $src );
 	}
 
+	public function get_file_size( $src ) {
+		return filesize( $src );
+	}
+
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
