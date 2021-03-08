@@ -53,18 +53,23 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 *
 	 * @return array Array of shapes with their URL as key.
 	 */
-	private function get_shapes() {
+	private function get_shapes( $add_custom = true ) {
 		$shapes = [
-			$this->get_shape_url( 'circle' ) => __( 'Circle', 'elementor' ),
-			$this->get_shape_url( 'square' ) => __( 'Square', 'elementor' ),
-			$this->get_shape_url( 'rectangle' ) => __( 'Rectangle', 'elementor' ),
-			$this->get_shape_url( 'triangle' ) => __( 'Triangle', 'elementor' ),
-			$this->get_shape_url( 'oval' ) => __( 'Oval', 'elementor' ),
-			$this->get_shape_url( 'arrow' ) => __( 'Arrow', 'elementor' ),
-			$this->get_shape_url( 'blob' ) => __( 'Blob', 'elementor' ),
+			'circle' => __( 'Circle', 'elementor' ),
+			'flower' => __( 'Flower', 'elementor' ),
+			'sketch' => __( 'Sketch', 'elementor' ),
+			'triangle' => __( 'Triangle', 'elementor' ),
+			'blob' => __( 'Blob', 'elementor' ),
+			'hexagon' => __( 'Hexagon', 'elementor' ),
 		];
+
+		if ( $add_custom ) {
+			$shapes['custom'] = __( 'Custom', 'elementor' );
+		}
 
 		return $shapes;
 	}
@@ -78,7 +83,7 @@ class Widget_Common extends Widget_Base {
 	 */
 	private function get_mask_selectors( $rules ) {
 		$mask_selectors = [
-			'default' => '{{WRAPPER}}:not( .elementor-widget-image )',
+			'default' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container',
 			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-image > img',
 		];
 
@@ -428,17 +433,12 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$options = array_merge(
-			$this->get_shapes(),
-			[ 'custom' => __( 'Custom', 'elementor' ) ]
-		);
-
 		$this->add_control( '_mask_shape', [
 			'label' => __( 'Shape', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => $options,
-			'default' => $this->get_shape_url( 'circle' ),
-			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{VALUE}} );' ),
+			'options' => $this->get_shapes(),
+			'default' => 'circle',
+			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
 			'condition' => [
 				'_mask_switch!' => '',
 			],
@@ -467,7 +467,7 @@ class Widget_Common extends Widget_Base {
 			'_mask_notice',
 			[
 				'type' => Controls_Manager::HIDDEN,
-				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://elementor.com' ),
+				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/mask-control' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
 					'_mask_switch!' => '',
@@ -481,11 +481,11 @@ class Widget_Common extends Widget_Base {
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'auto' => __( 'Fit', 'elementor' ),
+					'contain' => __( 'Fit', 'elementor' ),
 					'cover' => __( 'Fill', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
-				'default' => 'auto',
+				'default' => 'contain',
 				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
