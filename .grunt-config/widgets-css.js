@@ -14,15 +14,6 @@ class WidgetsCss {
 		this.widgetsCssFolder = path.resolve( __dirname, '../assets/css' );
 	}
 
-	apply( compiler ) {
-		compiler.hooks.environment.tap( 'WidgetsCss', () => this.createWidgetsTempFiles() );
-
-		compiler.hooks.done.tap( 'WidgetsCss', () => {
-			this.injectCss();
-			this.removeWidgetsTempFiles();
-		} );
-	}
-
 	createWidgetsTempFiles() {
 		console.log( '------------------------ creating widgets temp files with prefix: ', this.tempFilePrefix );
 		if ( fs.existsSync( this.widgetsScssSourceFolder ) ) {
@@ -103,7 +94,8 @@ class WidgetsCss {
 
 	removeWidgetsTempFiles() {
 		console.log( '------------------------------------------------------ REMOVING TEMP FILES: ', this.tempFilePrefix );
-		const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
+		//const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
+		const tempFilesFolders = [ this.widgetsScssFolder ];
 
 		tempFilesFolders.forEach( ( folder ) => {
 			if ( fs.existsSync( folder ) ) {
