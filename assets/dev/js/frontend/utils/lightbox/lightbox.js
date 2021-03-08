@@ -86,7 +86,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				attributes: {
 					tabindex: 0,
 					role: 'button',
-					'aria-label': wp.i18n.__( 'Close', 'elementor' ) + ' (Esc)',
+					'aria-label': elementorFrontend.config.i18n.close + ' (Esc)',
 				},
 			},
 			selectors: {
@@ -162,14 +162,16 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setSlideshowContent( options.slideshow );
 
 				break;
-			default:
-				self.setHTMLContent( options.html );
 		}
 
 		modal.show();
 	},
 
 	setHTMLContent: function( html ) {
+		if ( window.elementorCommon ) {
+			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+		}
+
 		this.getModal().setMessage( html );
 	},
 
@@ -215,9 +217,9 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				facebook: wp.i18n.__( 'Share on Facebook', 'elementor' ),
-				twitter: wp.i18n.__( 'Share on Twitter', 'elementor' ),
-				pinterest: wp.i18n.__( 'Share on Twitter', 'elementor' ),
+				facebook: i18n.shareOnFacebook,
+				twitter: i18n.shareOnTwitter,
+				pinterest: i18n.pinIt,
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -244,8 +246,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( ! videoUrl ) {
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } )
-				.text( wp.i18n.__( 'Download image', 'elementor' ) )
-				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': wp.i18n.__( 'Download', 'elementor' ) } ) ) );
+				.text( i18n.downloadImage )
+				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': i18n.download } ) ) );
 		}
 
 		return $linkList;
@@ -289,7 +291,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elements.$iconShare = $( '<i>', {
 				class: slideshowClasses.iconShare,
 				role: 'button',
-				'aria-label': wp.i18n.__( 'Share', 'elementor' ),
+				'aria-label': i18n.share,
 				'aria-expanded': false,
 			} ).append( $( '<span>' ) );
 
@@ -313,7 +315,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				class: slideshowClasses.iconZoomIn,
 				role: 'switch',
 				'aria-checked': false,
-				'aria-label': wp.i18n.__( 'Zoom', 'elementor' ),
+				'aria-label': i18n.zoom,
 			} );
 
 			elements.$iconZoom.on( 'click', this.toggleZoomMode );
@@ -328,7 +330,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				class: slideshowClasses.iconExpand,
 				role: 'switch',
 				'aria-checked': false,
-				'aria-label': wp.i18n.__( 'Fullscreen', 'elementor' ),
+				'aria-label': i18n.fullscreen,
 			} ).append( $( '<span>' ), $( '<span>' ) );
 			elements.$iconExpand.on( 'click', this.toggleFullscreen );
 			elements.$header.append( elements.$iconExpand );
@@ -481,7 +483,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': wp.i18n.__( 'Play Video', 'elementor' ) } ) );
+				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': i18n.playVideo } ) );
 
 				$slide.append( $playIcon );
 			} else {
@@ -519,8 +521,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': wp.i18n.__( 'Previous', 'elementor' ) } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': wp.i18n.__( 'Next', 'elementor' ) } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
 
 			$container.append(
 				$nextButton,
@@ -662,12 +664,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				if ( isFirst ) {
 					event.preventDefault();
 
-					$buttons.last().focus();
+					$buttons.last().trigger( 'focus' );
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
 
-				$buttons.first().focus();
+				$buttons.first().trigger( 'focus' );
 			}
 		}
 	},
@@ -823,7 +825,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
+		// Check for lowercase `a` to make sure it works also for links inside SVGs.
+		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 

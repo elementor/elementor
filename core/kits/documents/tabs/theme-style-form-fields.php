@@ -21,6 +21,18 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		return __( 'Form Fields', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'theme-style';
+	}
+
+	public function get_icon() {
+		return 'eicon-form-horizontal';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-theme-style-form-fields';
+	}
+
 	protected function register_tab_controls() {
 		$label_selectors = [
 			'{{WRAPPER}} label',

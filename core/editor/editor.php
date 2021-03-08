@@ -521,11 +521,7 @@ class Editor {
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
 
-		$page_title_selector .= ', .elementor-page-title';
-
-		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
-
-		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -591,7 +587,6 @@ class Editor {
 			],
 			// Empty array for BC to avoid errors.
 			'i18n' => [],
-			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {

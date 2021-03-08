@@ -1,10 +1,15 @@
-export default class Swiper {
+export default class SwiperBC {
 	constructor( container, config ) {
 		this.config = config;
 
 		if ( this.config.breakpoints ) {
 			// The config is passed as a param to allow adjustConfig to be called outside of this wrapper
 			this.config = this.adjustConfig( config );
+		}
+
+		// In case of a legacy behaviour the constructor should return a new Swiper instance instead of a Promise.
+		if ( config.legacy ) {
+			return this.createSwiperInstance( container, this.config );
 		}
 
 		return new Promise( ( resolve ) => {
@@ -22,7 +27,15 @@ export default class Swiper {
 	}
 
 	createSwiperInstance( container, config ) {
-		const SwiperSource = window.Swiper;
+		// The condition should run only once to prevent an additional overwrite of the SwiperSource.
+		if ( ! SwiperBC.isSwiperLoaded && elementorFrontendConfig.environmentMode.isImprovedAssetsLoading ) {
+			SwiperSource = window.Swiper;
+
+			SwiperBC.isSwiperLoaded = true;
+
+			// Once the SwiperSource has the Swiper lib function, we need to overwrite window.Swiper with the legacySwiper class.
+			legacySwiper();
+		}
 
 		SwiperSource.prototype.adjustConfig = this.adjustConfig;
 
@@ -72,4 +85,25 @@ export default class Swiper {
 
 		return config;
 	}
+}
+
+// The following code is needed to support Pro version < 3.1.0.
+SwiperBC.isSwiperLoaded = false;
+
+// In the legacy behavior, window.Swiper was a class that returns an instance of the Swiper lib function after config adjustments.
+function legacySwiper() {
+	window.Swiper = class {
+		constructor( container, config ) {
+			config.legacy = true;
+
+			return new SwiperBC( container, config );
+		}
+	};
+}
+
+let SwiperSource = window.Swiper;
+
+// In case that the Swiper lib exists (meaning not in optimized mode) we overwrite the window.Swiper with a class that supports legacy behavior.
+if ( SwiperSource ) {
+	legacySwiper();
 }

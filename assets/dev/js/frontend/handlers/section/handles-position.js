@@ -4,7 +4,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 	}
 
 	isFirstSection() {
-		return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
+		return this.$element[ 0 ] === document.querySelector( '.elementor-edit-mode .elementor-top-section' );
 	}
 
 	isOverflowHidden() {

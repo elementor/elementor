@@ -220,7 +220,9 @@ class Frontend extends App {
 
 		$this->post_id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
@@ -280,7 +282,9 @@ class Frontend extends App {
 
 		$id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $id ) ) {
+		$document = Plugin::$instance->documents->get( $id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
 		}
 
@@ -483,7 +487,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.9.1'
+			'5.11.0'
 		);
 
 		wp_register_style(
@@ -579,8 +583,6 @@ class Frontend extends App {
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
 		wp_enqueue_script( 'elementor-frontend' );
-
-		wp_set_script_translations( 'elementor-frontend', 'elementor' );
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
@@ -929,11 +931,11 @@ class Frontend extends App {
 			return '';
 		}
 
-		if ( ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
 			return '';
 		}
-
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $document );
@@ -1162,6 +1164,10 @@ class Frontend extends App {
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
@@ -1169,14 +1175,27 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
-			// Empty array for BC to avoid errors.
-			'i18n' => [],
+			'i18n' => [
+				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
+				'pinIt' => __( 'Pin it', 'elementor' ),
+				'download' => __( 'Download', 'elementor' ),
+				'downloadImage' => __( 'Download image', 'elementor' ),
+				'fullscreen' => __( 'Fullscreen', 'elementor' ),
+				'zoom' => __( 'Zoom', 'elementor' ),
+				'share' => __( 'Share', 'elementor' ),
+				'playVideo' => __( 'Play Video', 'elementor' ),
+				'previous' => __( 'Previous', 'elementor' ),
+				'next' => __( 'Next', 'elementor' ),
+				'close' => __( 'Close', 'elementor' ),
+			],
 			'is_rtl' => is_rtl(),
 			'breakpoints' => Responsive::get_breakpoints(),
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
+			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
+				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
 			],
 		];
 
