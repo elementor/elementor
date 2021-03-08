@@ -92,11 +92,15 @@ class Assets_Loader extends Module {
 	}
 
 	public function read_file_content( $src ) {
-		return wp_remote_get( $src );
+		$file_data = wp_remote_get( $src );
+
+		return $file_data[ 'body' ];
 	}
 
 	public function get_file_size( $src ) {
-		return filesize( $src );
+		$file_data = wp_remote_get( $src );
+
+		return $file_data['headers']['data']['content-length'];
 	}
 
 	public function enqueue_assets() {
