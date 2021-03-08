@@ -67,22 +67,6 @@ class TextPath extends Widget_Base {
 	}
 
 	/**
-	 * Get widget categories.
-	 *
-	 * Retrieve the list of categories the Text Path widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @return array Widget categories.
-	 * @since  2.0.0
-	 * @access public
-	 *
-	 */
-	public function get_categories() {
-		return [ 'basic' ];
-	}
-
-	/**
 	 * Get widget keywords.
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
