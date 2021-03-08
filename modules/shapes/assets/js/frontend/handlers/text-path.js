@@ -2,8 +2,8 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 	getDefaultSettings() {
 		return {
 			selectors: {
-				pathContainer: '.elementor-wordart',
-				svg: '.elementor-wordart > svg',
+				pathContainer: '.elementor-text-path',
+				svg: '.elementor-text-path > svg',
 			},
 		};
 	}

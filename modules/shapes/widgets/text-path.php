@@ -20,14 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class WordArt extends Widget_Base {
+class TextPath extends Widget_Base {
 
 	const DEFAULT_PATH_FILL = '#E8178A';
 
 	/**
 	 * Get widget name.
 	 *
-	 * Retrieve WordArt widget name.
+	 * Retrieve Text Path widget name.
 	 *
 	 * @return string Widget name.
 	 * @since  1.0.0
@@ -35,13 +35,13 @@ class WordArt extends Widget_Base {
 	 *
 	 */
 	public function get_name() {
-		return 'wordart';
+		return 'text-path';
 	}
 
 	/**
 	 * Get widget title.
 	 *
-	 * Retrieve WordArt widget title.
+	 * Retrieve Text Path widget title.
 	 *
 	 * @return string Widget title.
 	 * @since  1.0.0
@@ -49,13 +49,13 @@ class WordArt extends Widget_Base {
 	 *
 	 */
 	public function get_title() {
-		return __( 'WordArt', 'elementor' );
+		return __( 'Text Path', 'elementor' );
 	}
 
 	/**
 	 * Get widget icon.
 	 *
-	 * Retrieve WordArt widget icon.
+	 * Retrieve Text Path widget icon.
 	 *
 	 * @return string Widget icon.
 	 * @since  1.0.0
@@ -69,7 +69,7 @@ class WordArt extends Widget_Base {
 	/**
 	 * Get widget categories.
 	 *
-	 * Retrieve the list of categories the WordArt widget belongs to.
+	 * Retrieve the list of categories the Text Path widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
@@ -93,7 +93,7 @@ class WordArt extends Widget_Base {
 	 *
 	 */
 	public function get_keywords() {
-		return [ 'text', 'curve', 'path', 'wordart', 'word art' ];
+		return [ 'text path', 'word path', 'text on path', 'wordart', 'word art' ];
 	}
 
 	/**
@@ -101,9 +101,9 @@ class WordArt extends Widget_Base {
 	 */
 	protected function register_content_tab() {
 		$this->start_controls_section(
-			'section_content_wordart',
+			'section_content_text_path',
 			[
-				'label' => __( 'WordArt', 'elementor' ),
+				'label' => __( 'Text Path', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -147,7 +147,7 @@ class WordArt extends Widget_Base {
 			'shape_notice',
 			[
 				'type' => Controls_Manager::HIDDEN,
-				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wordart-more-paths' ),
+				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/more-text-paths' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 			]
 		);
@@ -216,12 +216,12 @@ class WordArt extends Widget_Base {
 	 */
 	protected function register_style_tab() {
 		/**
-		 * WordArt styling section.
+		 * Text Path styling section.
 		 */
 		$this->start_controls_section(
-			'section_style_wordart',
+			'section_style_text_path',
 			[
-				'label' => __( 'WordArt', 'elementor' ),
+				'label' => __( 'Text Path', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -640,7 +640,7 @@ class WordArt extends Widget_Base {
 	}
 
 	/**
-	 * Register WordArt widget controls.
+	 * Register Text Path widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
@@ -653,7 +653,7 @@ class WordArt extends Widget_Base {
 	}
 
 	/**
-	 * Render WordArt widget output on the frontend.
+	 * Render Text Path widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
@@ -672,9 +672,9 @@ class WordArt extends Widget_Base {
 			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
 		}
 
-		// Add WordArt text.
-		$this->add_render_attribute( 'wordart', [
-			'class' => 'elementor-wordart',
+		// Add Text Path text.
+		$this->add_render_attribute( 'text_path', [
+			'class' => 'elementor-text-path',
 			'data-text' => $settings['text'],
 		] );
 
@@ -688,21 +688,21 @@ class WordArt extends Widget_Base {
 				'data-rel' => $link['nofollow'] ? 'nofollow' : '',
 			];
 
-			$this->add_render_attribute( 'wordart', $link_settings );
+			$this->add_render_attribute( 'text_path', $link_settings );
 		}
 
 		// Add hover animation.
 		if ( ! empty( $settings['hover_animation'] ) ) {
-			$this->add_render_attribute( 'wordart', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+			$this->add_render_attribute( 'text_path', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
 		$offset = $settings['start_point']['size'];
 
-		$this->add_render_attribute( 'wordart', 'data-start-offset', $offset );
+		$this->add_render_attribute( 'text_path', 'data-start-offset', $offset );
 
 		// Render.
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wordart' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( 'text_path' ); ?>>
 			<?php echo $path_svg; ?>
 		</div>
 		<?php

@@ -51,7 +51,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function get_widgets() {
 		return [
-			'WordArt',
+			'TextPath',
 		];
 	}
 
