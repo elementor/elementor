@@ -73,7 +73,7 @@ class Assets_Loader extends Module {
 		return $this->assets_data;
 	}
 
-	public function add_assets_data( $type, $key, $value ) {
+	public function save_asset_data( $type, $key, $value ) {
 		if ( ! in_array( $type, $this->allowed_assets_data_types, TRUE ) ) {
 			return;
 		}
