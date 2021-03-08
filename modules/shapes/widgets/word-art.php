@@ -139,14 +139,14 @@ class WordArt extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'description' => __( 'Add data-path-anchor attribute to your path in order to put the text along it. Otherwise, it will default to the first path element.', 'elementor' ),
+				'description' => sprintf( __( 'Add a <code>data-path-anchor</code> attribute to your path in order to put the text along with it. Otherwise, it will default to the first path element. Create your own custom SVG path. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/text-path-create-paths' ),
 			]
 		);
 
 		$this->add_control(
 			'shape_notice',
 			[
-				'type' => Controls_Manager::RAW_HTML,
+				'type' => Controls_Manager::HIDDEN,
 				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/wordart-more-paths' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 			]
@@ -172,16 +172,16 @@ class WordArt extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'left',
 				'options' => [
-					'start' => [
-						'title' => __( 'Start', 'elementor' ),
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
-					'middle' => [
-						'title' => __( 'Middle', 'elementor' ),
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'end' => [
-						'title' => __( 'End', 'elementor' ),
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
@@ -204,19 +204,6 @@ class WordArt extends Widget_Base {
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}' => '--path-stroke: {{VALUE}}; --path-fill: transparent;',
-				],
-			]
-		);
-
-		$this->add_control(
-			'path_notice',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Notice! The path will be visible on live preview', 'elementor' ),
-				'show_label' => false,
-				'content_classes' => 'elementor-descriptor',
-				'condition' => [
-					'show_path!' => '',
 				],
 			]
 		);
@@ -253,13 +240,13 @@ class WordArt extends Widget_Base {
 					],
 					'px' => [
 						'min' => 0,
-						'max' => 300,
-						'step' => 10,
+						'max' => 800,
+						'step' => 50,
 					],
 				],
 				'default' => [
-					'unit' => '%',
-					'size' => 100,
+					'unit' => 'px',
+					'size' => 500,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
@@ -342,6 +329,7 @@ class WordArt extends Widget_Base {
 							'size' => '5',
 							'unit' => 'px',
 						],
+						'size_units' => [ 'px' ],
 					],
 				],
 			]
@@ -373,7 +361,7 @@ class WordArt extends Widget_Base {
 		$this->add_control(
 			'start_point',
 			[
-				'label' => __( 'Start Point', 'elementor' ),
+				'label' => __( 'Starting Point', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ '%' ],
 				'range' => [
@@ -385,7 +373,7 @@ class WordArt extends Widget_Base {
 				],
 				'default' => [
 					'unit' => '%',
-					'size' => '',
+					'size' => 0,
 				],
 				'frontend_available' => true,
 				'render_type' => 'none',
@@ -708,26 +696,7 @@ class WordArt extends Widget_Base {
 			$this->add_render_attribute( 'wordart', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
-		// Handle alignment & start-offset.
-		switch ( $settings['alignment'] ) {
-			case 'end':
-				$offset = '100';
-				break;
-
-			case 'middle':
-				$offset = '50';
-				break;
-
-			case 'start':
-			default:
-				$offset = '0';
-				break;
-		}
-
-		// Check if the start point is empty, but accept 0 as value.
-		if ( ! Utils::is_empty( $settings['start_point']['size'] ) ) {
-			$offset = $settings['start_point']['size'];
-		}
+		$offset = $settings['start_point']['size'];
 
 		$this->add_render_attribute( 'wordart', 'data-start-offset', $offset );
 

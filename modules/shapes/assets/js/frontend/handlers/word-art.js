@@ -44,52 +44,13 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 		this.elements.textPath.setAttribute( 'startOffset', offset );
 	}
 
-	// Auto align the text on the path using the alignment settings from the element.
-	autoAlignText() {
-		const { alignment, start_point: startPoint } = this.getElementSettings();
-		let offset = '';
-
-		// Set the offset value according to the alignment type.
-		switch ( alignment ) {
-			case 'end':
-				offset = '100%';
-				break;
-
-			case 'middle':
-				offset = '50%';
-				break;
-
-			case 'start':
-			default:
-				offset = '0';
-				break;
-		}
-
-		if ( '' !== startPoint.size ) {
-			offset = `${ startPoint.size }%`;
-		}
-
-		this.setOffset( offset );
-	}
-
 	// Handle element settings changes.
 	onElementChange( setting ) {
 		const { start_point: startPoint } = this.getElementSettings();
 
 		switch ( setting ) {
-			case 'alignment':
-				this.autoAlignText();
-				break;
-
 			case 'start_point':
-				const size = startPoint.size;
-
-				if ( '' !== size ) {
-					this.setOffset( `${ size }%` );
-				} else {
-					this.autoAlignText();
-				}
-
+				this.setOffset( `${ startPoint.size }%` );
 				break;
 
 			default:

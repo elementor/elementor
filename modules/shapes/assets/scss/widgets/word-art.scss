@@ -1,6 +1,7 @@
 .elementor-widget-wordart {
 
 	font-size: 5px;
+	text-align: var( --alignment, #{$start} );
 
 	svg {
 		width: var( --width );
@@ -10,7 +11,7 @@
 		transform: rotate( var( --rotate, 0 ) ) scaleX( var( --scale-x, 1 ) ) scaleY( var( --scale-y, 1 ) );
 
 		path {
-			vector-effect: non-scaling-stroke; /* Prevent path size scaling when resizing the SVG. */
+			vector-effect: non-scaling-stroke; /* Prevent stroke size scaling when resizing the SVG. */
 			fill: var( --path-fill, transparent );
 			stroke: var( --stroke-color, transparent );
 			stroke-width: var( --stroke-width, 1px );
@@ -28,7 +29,6 @@
 		text {
 			--fill: var( --text-color );
 			fill: var( --fill );
-			text-anchor: var( --alignment, start );
 			transition: var( --transition ) stroke,
 						var( --transition ) stroke-width,
 						var( --transition ) fill;
