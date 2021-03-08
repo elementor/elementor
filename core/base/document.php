@@ -1007,6 +1007,8 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
+		$this->save_assets_data( $elements );
+
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
@@ -1374,5 +1376,29 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
+	}
+
+	private function save_assets_data( $elements ) {
+		$assets_data = get_option( 'elementor_assets_data' );
+
+		if ( ! $assets_data ) {
+			$assets_data = [];
+		} elseif ( ! $assets_data['widgets_css'] ) {
+			$assets_data['widgets_css'] = [];
+		}
+
+		Plugin::$instance->db->iterate_data( $elements, function( $element ) use ( &$assets_data ) {
+			$widget_type = $element['widgetType'];
+
+			if ( $widget_type ) {
+				$widget_css = file_get_contents( ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_type . '.min.css' );
+
+				$assets_data['widgets_css'][ $widget_type ] = $widget_css;
+			}
+
+			return $element;
+		} );
+
+		update_option( 'elementor_assets_data', $assets_data );
 	}
 }
