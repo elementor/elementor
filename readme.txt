@@ -218,6 +218,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.1.4 - 2021-03-08 =
+* Fix: Clicking on Video widget Image Overlay doesn't play videos for non-YouTube Videos ([#14095](https://github.com/elementor/elementor/issues/14095), [#14038](https://github.com/elementor/elementor/issues/14038))
+* Fix: Carousels navigation arrows `z-index` issue in Safari ([#13791](https://github.com/elementor/elementor/issues/13791))
+* Fix: Gradient control doesn't work when using Global Colors ([#13288](https://github.com/elementor/elementor/issues/13288))
+* Fix: Landing Pages can cause a fatal error for Author roles in the WordPress dashboard
+* Fix: `<a>` tags placed in an SVG file trigger the Lightbox
+* Fix: hardened allowed options in the editor to enforce better security policies
+* Fix: Removed `html` option in Lightbox module to prevent security issues
+
 = 3.1.3 - 2021-03-03 =
 * Tweak: Added `aria-expanded` property to Tabs, Accordion and Toggle widgets ([#11246](https://github.com/elementor/elementor/issues/11246), [#3576](https://github.com/elementor/elementor/issues/3576))
 * Fix: Values are being cleared after save action in Query control ([#14098](https://github.com/elementor/elementor/issues/14098))
