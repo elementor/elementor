@@ -592,7 +592,8 @@ class Widget_Toggle extends Widget_Base {
 				var tabindex = view.getIDInt().toString().substr( 0, 3 ),
 					iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, {}, 'i' , 'object' ),
 					iconActiveHTML = elementor.helpers.renderIcon( view, settings.selected_active_icon, {}, 'i' , 'object' ),
-					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
+					migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
+					titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_html_tag );
 
 				_.each( settings.tabs, function( item, index ) {
 					var tabCount = index + 1,
@@ -619,7 +620,7 @@ class Widget_Toggle extends Widget_Base {
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
 					#>
 					<div class="elementor-toggle-item">
-						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-toggle-icon elementor-toggle-icon-{{ settings.icon_align }}" aria-hidden="true">
 								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
@@ -632,7 +633,7 @@ class Widget_Toggle extends Widget_Base {
 							</span>
 							<# } #>
 							<a href="" class="elementor-toggle-title">{{{ item.tab_title }}}</a>
-						</{{{ settings.title_html_tag }}}>
+						</{{{ titleHTMLTag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>
 					<#

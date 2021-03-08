@@ -698,9 +698,10 @@ class Widget_Icon_Box extends Widget_Base {
 			</div>
 			<# } #>
 			<div class="elementor-icon-box-content">
-				<{{{ settings.title_size }}} class="elementor-icon-box-title">
+				<# var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size ); #>
+				<{{{ titleSizeTag }}} class="elementor-icon-box-title">
 					<{{{ iconTag + ' ' + link }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>{{{ settings.title_text }}}</{{{ iconTag }}}>
-				</{{{ settings.title_size }}}>
+				</{{{ titleSizeTag }}}>
 				<# if ( settings.description_text ) { #>
 				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
 				<# } #>
