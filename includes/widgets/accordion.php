@@ -494,8 +494,6 @@ class Widget_Accordion extends Widget_Base {
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 		$has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
 		$id_int = substr( $this->get_id_int(), 0, 3 );
-
-		/* <InjectCss:accordion></InjectCss> */
 		?>
 		<div class="elementor-accordion" role="tablist">
 			<?php
