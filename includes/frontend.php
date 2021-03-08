@@ -483,7 +483,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.10.0'
+			'5.11.0'
 		);
 
 		wp_register_style(
@@ -1191,7 +1191,7 @@ class Frontend extends App {
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
+				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
 			],
 		];
 
