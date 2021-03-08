@@ -6,7 +6,7 @@ export class End extends CommandBase {
 
 		elementor.$previewContents.find( '.e-element-color-picker' ).remove();
 
-		elementor.$previewContents.off( 'mouseenter.color-picker' );
+		elementor.$previewContents.off( 'click.color-picker' );
 
 		elementor.$previewWrapper.off( 'mouseleave.color-picker' );
 

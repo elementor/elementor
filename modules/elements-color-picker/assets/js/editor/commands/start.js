@@ -10,8 +10,8 @@ export class Start extends CommandBase {
 			initialColor: args.container.getSetting( args.control ),
 		};
 
-		elementor.$previewContents.on( 'mouseenter.color-picker', '.elementor-element', ( e ) => {
-			$e.run( 'elements-color-picker/show-swatches', { id: e.currentTarget.dataset.id } );
+		elementor.$previewContents.on( 'click.color-picker', '.elementor-element', ( e ) => {
+			$e.run( 'elements-color-picker/show-swatches', { event: e } );
 		} );
 
 		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {

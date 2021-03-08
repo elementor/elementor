@@ -13,18 +13,34 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	validateArgs( args ) {
-		this.requireArgument( 'id', args );
+		this.requireArgument( 'event', args );
 	}
 
 	apply( args ) {
+		const { event: e } = args;
+		const id = e.currentTarget.dataset.id;
+
+		// Calculate swatch location.
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = Math.round( e.clientX - rect.left ) + 'px';
+		const y = Math.round( e.clientY - rect.top ) + 'px';
+
 		// Don't pick colors from the current widget.
-		if ( args.id === this.component.currentPicker.container.id ) {
+		if ( id === this.component.currentPicker.container.id ) {
 			return;
 		}
 
-		this.container = elementor.getContainer( args.id );
+		this.container = elementor.getContainer( id );
 
-		if ( this.container.view.$el.find( this.pickerSelector ).length ) {
+		const $activePicker = this.container.view.$el.find( this.pickerSelector );
+
+		// If there is a picker already, just move it to the click area.
+		if ( $activePicker.length ) {
+			$activePicker.css( {
+				'--left': x,
+				'--top': y,
+			} );
+
 			return;
 		}
 
@@ -35,7 +51,7 @@ export class ShowSwatches extends CommandBase {
 		// TODO: Find a better solution.
 		setTimeout( () => {
 			this.extractColorsFromImages();
-			this.initSwatch();
+			this.initSwatch( x, y );
 		}, 100 );
 	}
 
@@ -125,7 +141,7 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	// Create the swatch.
-	initSwatch() {
+	initSwatch( x = 0, y = 0 ) {
 		const count = Object.entries( this.colors ).length;
 
 		// Don't render the picker when there are no extracted colors.
@@ -137,14 +153,19 @@ export class ShowSwatches extends CommandBase {
 			class: this.pickerClass,
 			css: {
 				'--count': count,
+				'--left': x,
+				'--top': y,
 			},
 			'data-count': count,
 		} );
 
+		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
+		// which will fire the `apply` command and will close everything.
+		this.container.view.$el.append( $picker );
+
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			$picker.append( jQuery( `<div></div>`, {
 				class: `${ this.pickerClass }__swatch`,
-				title: `${ control }: ${ value }`,
 				css: {
 					'--color': value,
 				},
@@ -166,8 +187,6 @@ export class ShowSwatches extends CommandBase {
 				},
 			} )	);
 		} );
-
-		this.container.view.$el.append( $picker );
 	}
 
 	// Check if the palette reached its limit.
