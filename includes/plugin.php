@@ -138,18 +138,6 @@ class Plugin {
 	public $widgets_manager;
 
 	/**
-	 * Assets Manager.
-	 *
-	 * Holds the Assets manager.
-	 *
-	 * @since 3.3.0
-	 * @access public
-	 *
-	 * @var Assets_Manager
-	 */
-	public $assets_manager;
-
-	/**
 	 * Revisions manager.
 	 *
 	 * Holds the plugin revisions manager.
@@ -354,6 +342,18 @@ class Plugin {
 	public $files_manager;
 
 	/**
+	 * Assets Manager.
+	 *
+	 * Holds the Assets manager.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 *
+	 * @var Assets_Manager
+	 */
+	public $assets_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.
@@ -459,6 +459,11 @@ class Plugin {
 	 * @var Experiments_Manager
 	 */
 	public $experiments;
+
+	/**
+	 * @var Assets_Loader
+	 */
+	public $assets_loader;
 
 	/**
 	 * Clone.
@@ -615,10 +620,10 @@ class Plugin {
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
-		$this->assets_manager = new Assets_Manager();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
+		$this->assets_loader = new Assets_Loader();
 
 		User::init();
 		Api::init();
