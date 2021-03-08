@@ -10,10 +10,12 @@ export class Start extends CommandBase {
 			initialColor: args.container.getSetting( args.control ),
 		};
 
+		// Initialize a swatch on click.
 		elementor.$previewContents.on( 'click.color-picker', '.elementor-element', ( e ) => {
 			$e.run( 'elements-color-picker/show-swatches', { event: e } );
 		} );
 
+		// Stop the picking process when the user leaves the preview area.
 		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
 			$e.run( 'elements-color-picker/end' );
 		} );

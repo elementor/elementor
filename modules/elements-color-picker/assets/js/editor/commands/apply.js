@@ -2,6 +2,8 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Apply extends CommandBase {
 	/**
+	 * Execute the color apply command.
+	 *
 	 * @param value The new color to apply.
 	 * @param trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
 	 */
@@ -26,6 +28,11 @@ export class Apply extends CommandBase {
 		}
 	}
 
+	/**
+	 * Set a color to the current selected element.
+	 *
+	 * @param color
+	 */
 	setColor( color ) {
 		$e.run( 'document/elements/settings', {
 			container: this.component.currentPicker.container,

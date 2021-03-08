@@ -12,10 +12,20 @@ export class ShowSwatches extends CommandBase {
 		this.backgroundImages = [];
 	}
 
+	/**
+	 * Validate the command arguments.
+	 *
+	 * @param args
+	 */
 	validateArgs( args ) {
 		this.requireArgument( 'event', args );
 	}
 
+	/**
+	 * Execute the command.
+	 *
+	 * @param args
+	 */
 	apply( args ) {
 		const { event: e } = args;
 		const id = e.currentTarget.dataset.id;
@@ -55,6 +65,9 @@ export class ShowSwatches extends CommandBase {
 		}, 100 );
 	}
 
+	/**
+	 * Extract colors from color controls of the current selected element.
+	 */
 	extractColorsFromSettings() {
 		// Iterate over the widget controls.
 		Object.keys( this.container.settings.attributes ).map( ( control ) => {
@@ -98,6 +111,12 @@ export class ShowSwatches extends CommandBase {
 		} );
 	}
 
+	/**
+	 * Create a temporary image element in order to extract colors from it using ColorThief.
+	 * Used with background images from background controls.
+	 *
+	 * @param url
+	 */
 	addTempBackgroundImage( { url } ) {
 		if ( ! url ) {
 			return;
@@ -111,6 +130,9 @@ export class ShowSwatches extends CommandBase {
 		this.backgroundImages.push( img );
 	}
 
+	/**
+	 * Iterate over all images in the current selected element and extract colors from them.
+	 */
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
 		const images = [
@@ -140,7 +162,12 @@ export class ShowSwatches extends CommandBase {
 		this.backgroundImages = [];
 	}
 
-	// Create the swatch.
+	/**
+	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
+	 *
+	 * @param x
+	 * @param y
+	 */
 	initSwatch( x = 0, y = 0 ) {
 		const count = Object.entries( this.colors ).length;
 
@@ -189,7 +216,11 @@ export class ShowSwatches extends CommandBase {
 		} );
 	}
 
-	// Check if the palette reached its limit.
+	/**
+	 * Check if the palette reached its colors limit.
+	 *
+	 * @returns {boolean}
+	 */
 	reachedColorsLimit() {
 		const COLORS_LIMIT = 5;
 
