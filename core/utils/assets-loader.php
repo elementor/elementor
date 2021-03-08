@@ -91,6 +91,10 @@ class Assets_Loader extends Module {
 		update_option( self::ASSETS_DATA_KEY, $assets_data );
 	}
 
+	public function read_file_content( $src ) {
+		return wp_remote_get( $src );
+	}
+
 	public function enqueue_assets() {
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
