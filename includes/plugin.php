@@ -20,6 +20,7 @@ use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Core\Utils\Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
@@ -135,6 +136,18 @@ class Plugin {
 	 * @var Widgets_Manager
 	 */
 	public $widgets_manager;
+
+	/**
+	 * Assets Manager.
+	 *
+	 * Holds the Assets manager.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @var Assets_Manager
+	 */
+	public $assets_manager;
 
 	/**
 	 * Revisions manager.
@@ -339,18 +352,6 @@ class Plugin {
 	 * @var Files_Manager
 	 */
 	public $files_manager;
-
-	/**
-	 * Assets Manager.
-	 *
-	 * Holds the Assets manager.
-	 *
-	 * @since 2.6.0
-	 * @access public
-	 *
-	 * @var Assets_Manager
-	 */
-	public $assets_manager;
 
 	/**
 	 * Files Manager.
@@ -614,6 +615,7 @@ class Plugin {
 		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
+		$this->assets_manager = new Assets_Manager();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
