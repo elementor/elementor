@@ -570,23 +570,10 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
-
 			if ( $this->is_widget_first_render() ) {
-				$widget_name = $this->get_name();
+				$this->register_runtime_widget( $this->get_name() );
 
-				$this->register_runtime_widget( $widget_name );
-
-				$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_name . '.min.css';
-
-				if ( 'external' === $this->get_widget_css_print_method() ) {
-					echo sprintf( "<link rel='stylesheet' href='%s'>", $widget_css_file_path );
-				} else {
-					$assets_data = get_option( 'elementor_assets_data' );
-
-					$widget_css = $assets_data['widgets_css'][ $widget_name ];
-
-					echo '<style>' . $widget_css . '</style>';
-				}
+				echo $this->get_widget_css();
 			}
 
 			// get_name
@@ -607,10 +594,6 @@ abstract class Widget_Base extends Element_Base {
 			?>
 		</div>
 		<?php
-	}
-
-	protected function get_widget_css_print_method() {
-		return 'external';
 	}
 
 	protected function is_widget_first_render() {
@@ -966,5 +949,19 @@ abstract class Widget_Base extends Element_Base {
 		$this->register_runtime_widget( $this->get_name() );
 
 		return true;
+	}
+
+	private function get_widget_css() {
+		$widget_name = $this->get_name();
+
+		$widget_css = Plugin::$instance->assets_loader->get_assets_data( 'widgets_css', $widget_name );
+
+		if ( $widget_css ) {
+			return $widget_css;
+		}
+
+		$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_name . '.min.css';
+
+		return sprintf( '<link rel="stylesheet" href="%s">', $widget_css_file_path );
 	}
 }
