@@ -466,7 +466,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_mask_notice',
 			[
-				'type' => Controls_Manager::RAW_HTML,
+				'type' => Controls_Manager::HIDDEN,
 				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://elementor.com' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
