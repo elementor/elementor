@@ -70,8 +70,6 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
-	private static $page_widgets = [];
-
 	/**
 	 * Document post data.
 	 *
