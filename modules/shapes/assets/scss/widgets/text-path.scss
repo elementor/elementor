@@ -3,8 +3,12 @@
 	font-size: 5px;
 	text-align: var( --alignment, #{$start} );
 
-	svg {
+	&.elementor-element {
 		width: var( --width );
+	}
+
+	svg {
+		width: 100%;
 		height: auto;
 		overflow: visible;
 		word-spacing: var( --word-spacing );
