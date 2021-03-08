@@ -2,7 +2,10 @@ module.exports = function( grunt ) {
 	'use strict';
 
 	const fs = require( 'fs' ),
-		pkgInfo = grunt.file.readJSON( 'package.json' );
+		pkgInfo = grunt.file.readJSON( 'package.json' ),
+		WidgetsCss = require( './.grunt-config/widgets-css' );
+
+	const widgetsCss = new WidgetsCss( 'production' );
 
 	require( 'load-grunt-tasks' )( grunt );
 
@@ -32,8 +35,14 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'default', [
 		'i18n',
 		'scripts',
+		'create_temp_css_files',
 		'styles',
+		'remove_temp_css_files',
 	] );
+
+	grunt.registerTask( 'create_temp_css_files', () => widgetsCss.createWidgetsTempFiles() );
+
+	grunt.registerTask( 'remove_temp_css_files', () => widgetsCss.removeWidgetsTempFiles() );
 
 	grunt.registerTask( 'i18n', [
 		'checktextdomain',
