@@ -1016,7 +1016,7 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$this->save_assets_data( $elements );
+		$this->save_widgets_css( $elements );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
 
@@ -1387,27 +1387,27 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function save_assets_data( $elements ) {
-		$assets_data = get_option( 'elementor_assets_data' );
-
-		if ( ! $assets_data ) {
-			$assets_data = [];
-		} elseif ( ! $assets_data['widgets_css'] ) {
-			$assets_data['widgets_css'] = [];
-		}
-
+	private function save_widgets_css( $elements ) {
 		Plugin::$instance->db->iterate_data( $elements, function( $element ) use ( &$assets_data ) {
 			$widget_type = $element['widgetType'];
 
 			if ( $widget_type ) {
-				$widget_css = file_get_contents( ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_type . '.min.css' );
+				$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_type . '.min.css';
 
-				$assets_data['widgets_css'][ $widget_type ] = $widget_css;
+				$widget_css_file_size = Plugin::$instance->assets_loader->get_file_data( $widget_css_file_path, 'size' );
+
+				// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
+				if ( $widget_css_file_size > 2000 ) {
+					$widget_css = sprintf( '<link rel="stylesheet" href="%s">', $widget_css_file_path );
+				} else {
+					$widget_css = Plugin::$instance->assets_loader->get_file_data( $widget_css_file_path, 'content' );
+					$widget_css = sprintf( '<style>%s</style>', $widget_css );
+				}
+
+				Plugin::$instance->assets_loader->save_asset_data( 'widgets_css', $widget_type, $widget_css );
 			}
 
 			return $element;
 		} );
-
-		update_option( 'elementor_assets_data', $assets_data );
 	}
 }
