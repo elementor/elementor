@@ -24,6 +24,8 @@ class Assets_Loader extends Module {
 
 	private $assets_data;
 
+	private $files_data;
+
 	public function get_name() {
 		return 'assets-loader';
 	}
@@ -91,16 +93,20 @@ class Assets_Loader extends Module {
 		update_option( self::ASSETS_DATA_KEY, $assets_data );
 	}
 
-	public function read_file_content( $src ) {
-		$file_data = wp_remote_get( $src );
+	public function get_file_data( $src, $data_type = '' ) {
+		if ( ! $this->files_data[ $src ] ) {
+			$this->files_data[ $src ] = wp_remote_get( $src );
+		}
 
-		return $file_data[ 'body' ];
-	}
+		$file_data = $this->files_data[ $src ];
 
-	public function get_file_size( $src ) {
-		$file_data = wp_remote_get( $src );
+		if ( 'content' === $data_type ) {
+			return $file_data[ 'body' ];
+		} elseif ( 'size' === $data_type ) {
+			return $file_data['headers']['content-length'];
+		}
 
-		return $file_data['headers']['data']['content-length'];
+		return $file_data;
 	}
 
 	public function enqueue_assets() {
