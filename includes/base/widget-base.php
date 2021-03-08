@@ -573,7 +573,7 @@ abstract class Widget_Base extends Element_Base {
 			if ( $this->is_widget_first_render() ) {
 				$this->register_runtime_widget( $this->get_name() );
 
-				echo $this->get_widget_css();
+				$this->print_widget_css();
 			}
 
 			// get_name
@@ -937,20 +937,6 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	public function is_widget_css() {
-		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-		$is_widget_type_already_exist = in_array( $this->get_name(), self::$registered_runtime_widgets, TRUE );
-
-		if ( $is_preview_mode || ! $is_optimized_mode || $is_widget_type_already_exist ) {
-			return false;
-		}
-
-		$this->register_runtime_widget( $this->get_name() );
-
-		return true;
-	}
-
 	private function get_widget_css() {
 		$widget_name = $this->get_name();
 
@@ -963,5 +949,16 @@ abstract class Widget_Base extends Element_Base {
 		$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_name . '.min.css';
 
 		return sprintf( '<link rel="stylesheet" href="%s">', $widget_css_file_path );
+	}
+
+	public function print_widget_css() {
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+
+		if ( $is_preview_mode || ! $is_optimized_mode ) {
+			return;
+		}
+
+		echo $this->get_widget_css();
 	}
 }
