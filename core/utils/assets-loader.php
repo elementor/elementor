@@ -16,7 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.1.0
  */
 class Assets_Loader extends Module {
+	const ASSETS_DATA_KEY =  'elementor_assets_data';
+
+	private $allowed_assets_data_types = [ 'widgets_css' ];
+
 	private $assets;
+
+	private $assets_data;
 
 	public function get_name() {
 		return 'assets-loader';
@@ -24,18 +30,7 @@ class Assets_Loader extends Module {
 
 	private function init_assets() {
 		$this->assets = [
-			'styles' => [
-				'e-animations' => [
-					'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
-					'version' => ELEMENTOR_VERSION,
-					'dependencies' => [],
-				],
-				'e-icons' => [
-					'src' => $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-					'version' => '5.9.1',
-					'dependencies' => [],
-				],
-			],
+			'styles' => [],
 			'scripts' => [],
 		];
 
@@ -64,6 +59,36 @@ class Assets_Loader extends Module {
 		}
 
 		$this->assets = array_replace_recursive( $this->assets, $assets );
+	}
+
+	public function get_assets_data( $type = '', $key = '' ) {
+		if ( ! $this->assets_data ) {
+			$this->assets_data = get_option( self::ASSETS_DATA_KEY );
+		}
+
+		if ( $type && $key ) {
+			return $this->assets_data[ $type ][ $key ];
+		}
+
+		return $this->assets_data;
+	}
+
+	public function add_assets_data( $type, $key, $value ) {
+		if ( ! in_array( $type, $this->allowed_assets_data_types, TRUE ) ) {
+			return;
+		}
+
+		$assets_data = $this->get_assets_data();
+
+		if ( ! $assets_data ) {
+			$assets_data = [];
+		} elseif ( ! $assets_data[ $type ] ) {
+			$assets_data[ $type ] = [];
+		}
+
+		$assets_data[ $type ][ $key ] = $value;
+
+		update_option( self::ASSETS_DATA_KEY, $assets_data );
 	}
 
 	public function enqueue_assets() {
