@@ -294,10 +294,10 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param string $file_extension
+	 * @param string|null $file_extension
 	 * @return string $temp_dir
 	 */
-	private function get_allowed_mime_types( $file_extension ) {
+	private function get_allowed_mime_types( $file_extension = null ) {
 		if ( ! $this->allowed_mime_types ) {
 			$this->allowed_mime_types = get_allowed_mime_types();
 		}
