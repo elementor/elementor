@@ -1018,6 +1018,7 @@ abstract class Document extends Controls_Stack {
 	protected function save_elements( $elements ) {
 		$page_widgets = $this->get_page_widgets( $elements );
 
+		// TODO: save only on version change
 		$this->save_widgets_css( $page_widgets );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
@@ -1391,19 +1392,8 @@ abstract class Document extends Controls_Stack {
 
 	private function save_widgets_css( $page_widgets ) {
 		foreach ( $page_widgets as $widget_name ) {
-			$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_name . '.min.css';
-
-			$widget_css_file_size = Plugin::$instance->assets_loader->get_file_data( $widget_css_file_path, 'size' );
-
-			// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
-			if ( $widget_css_file_size > 2000 ) {
-				$widget_css = sprintf( '<link rel="stylesheet" href="%s">', $widget_css_file_path );
-			} else {
-				$widget_css = Plugin::$instance->assets_loader->get_file_data( $widget_css_file_path, 'content' );
-				$widget_css = sprintf( '<style>%s</style>', $widget_css );
-			}
-
-			Plugin::$instance->assets_loader->save_asset_data( 'widgets_css', $widget_name, $widget_css );
+			// Should iterate over current widgets and update on version change
+			//Plugin::$instance->assets_loader->save_asset_css()
 		}
 	}
 
