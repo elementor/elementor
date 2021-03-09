@@ -108,7 +108,7 @@ class TextPath extends Widget_Base {
 				'label' => __( 'Path Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => Shapes_Module::get_paths(),
-				'default' => 'circle',
+				'default' => 'wave',
 			]
 		);
 

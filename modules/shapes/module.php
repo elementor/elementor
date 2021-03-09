@@ -15,8 +15,8 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public static function get_paths( $add_custom = true ) {
 		$paths = [
-			'circle' => __( 'Circle', 'elementor' ),
 			'arc' => __( 'Arc', 'elementor' ),
+			'circle' => __( 'Circle', 'elementor' ),
 			'oval' => __( 'Oval', 'elementor' ),
 			'spiral' => __( 'Spiral', 'elementor' ),
 			'wave' => __( 'Wave', 'elementor' ),
