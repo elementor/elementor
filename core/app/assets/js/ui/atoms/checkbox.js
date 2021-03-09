@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import './checkbox.scss';
 
@@ -15,7 +15,7 @@ export default function Checkbox( props ) {
 			{ ...props }
 			type="checkbox"
 			disabled={ props.disabled }
-			className={ Utils.arrayToClassName( classes ) }
+			className={ arrayToClassName( classes ) }
 		/>
 	);
 }

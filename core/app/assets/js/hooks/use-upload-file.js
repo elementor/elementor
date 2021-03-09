@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 export default function useUploadFile( fileName, action, data ) {
 	const [ uploadFile, setUploadFile ] = useState(),
 		uploadInitialState = {
-			success: false,
-			error: false,
-			complete: false,
+			status: 'initial',
+			isComplete: false,
 		},
 		[ uploadFileStatus, setUploadFileStatus ] = useState( uploadInitialState );
 
@@ -29,13 +28,13 @@ export default function useUploadFile( fileName, action, data ) {
 				contentType: false,
 				processData: false,
 				success: () => {
-					setUploadFileStatus( ( prevState ) => ( { ...prevState, success: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, status: 'success' } ) );
 				},
 				error: () => {
-					setUploadFileStatus( ( prevState ) => ( { ...prevState, error: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, status: 'error' } ) );
 				},
 				complete: () => {
-					setUploadFileStatus( ( prevState ) => ( { ...prevState, complete: true } ) );
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, isComplete: true } ) );
 				},
 			};
 

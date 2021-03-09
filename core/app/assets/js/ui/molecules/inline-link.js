@@ -1,7 +1,7 @@
 import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import './inline-link.scss';
 
@@ -17,7 +17,7 @@ export default function InlineLink( props ) {
 			italicClassName,
 			props.className,
 		],
-		className = Utils.arrayToClassName( classes ),
+		className = arrayToClassName( classes ),
 		getRouterLink = () => (
 			<LocationProvider history={ router.appHistory }>
 				<Link

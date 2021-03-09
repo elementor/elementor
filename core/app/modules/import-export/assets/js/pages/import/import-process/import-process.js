@@ -10,13 +10,12 @@ import Text from 'elementor-app/ui/atoms/text';
 
 import { Context } from '../../../context/import/import-context';
 
-import useUploadFile from '../../../../../../../assets/js/hooks/use-upload-file';
+import useUploadFile from 'elementor-app/hooks/use-upload-file';
 
 import './import-process-style.scss';
 
 export default function ImportProcess() {
-	const [ isImportFailed, setIsImportFailed ] = useState( false ),
-		{ setUploadFile, uploadFileStatus } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
+	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
 		importContext = useContext( Context ),
@@ -31,10 +30,8 @@ export default function ImportProcess() {
 	}, [] );
 
 	useEffect( () => {
-		if ( uploadFileStatus.success ) {
+		if ( 'success' === uploadFileStatus.status ) {
 			navigate( '/import/success' );
-		} else if ( uploadFileStatus.error ) {
-			setIsImportFailed( true );
 		}
 	}, [ uploadFileStatus ] );
 
@@ -53,7 +50,7 @@ export default function ImportProcess() {
 					{ __( 'Don\'t close this window until your import is finished.', 'elementor' ) }
 				</Text>
 
-				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
+				{ 'error' === uploadFileStatus.status && <ImportFailedDialog onRetry={ resetImportProcess } /> }
 			</Message>
 		</Layout>
 	);

@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName, isOneOf } from 'elementor-app/utils/utils.js';
 
 import UploadFile from 'elementor-app/molecules/upload-file';
 import DragDrop from 'elementor-app/ui/atoms/drag-drop';
@@ -15,7 +15,7 @@ export default function DropZone( props ) {
 			if ( ! props.isLoading ) {
 				const file = event.dataTransfer.files[ 0 ];
 
-				if ( file && Utils.isOneOfFiletypes( file.type, props.filetypes ) ) {
+				if ( file && isOneOf( file.type, props.filetypes ) ) {
 					props.onFileSelect( file, event );
 				} else {
 					props.onError();
@@ -25,7 +25,7 @@ export default function DropZone( props ) {
 	};
 
 	return (
-		<section className={ Utils.arrayToClassName( classes ) }>
+		<section className={ arrayToClassName( classes ) }>
 			<DragDrop { ...dragDropEvents } isLoading={ props.isLoading }>
 				{ props.icon && <Icon className={ `e-app-drop-zone__icon ${ props.icon }` } /> }
 

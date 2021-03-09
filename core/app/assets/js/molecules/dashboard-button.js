@@ -1,8 +1,8 @@
 import Button from 'elementor-app/ui/molecules/button';
 
-import useAction from '../hooks/use-action';
+import useAction from 'elementor-app/hooks/use-action';
 
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function DashboardButton( props ) {
 	const action = useAction(),
@@ -12,8 +12,8 @@ export default function DashboardButton( props ) {
 	return (
 		<Button
 			{ ...props }
-			className={ Utils.arrayToClassName( classes ) }
-			text={ __( 'Back to dashboard', 'elementor' ) }
+			className={ arrayToClassName( classes ) }
+			text={ props.text }
 			onClick={ action.backToDashboard }
 		/>
 	);
@@ -21,10 +21,12 @@ export default function DashboardButton( props ) {
 
 DashboardButton.propTypes = {
 	className: PropTypes.string,
+	text: PropTypes.string,
 };
 
 DashboardButton.defaultProps = {
 	className: '',
 	variant: 'contained',
 	color: 'primary',
+	text: __( 'Back to dashboard', 'elementor' ),
 };
