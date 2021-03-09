@@ -98,14 +98,14 @@ class TextPath extends Widget_Base {
 				'label' => __( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
-				'default' => __( 'Add Your Text Here', 'elementor' ),
+				'default' => __( 'Add Your Curvy Text Here', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'path',
 			[
-				'label' => __( 'Shape Path', 'elementor' ),
+				'label' => __( 'Path Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => Shapes_Module::get_paths(),
 				'default' => 'circle',
@@ -123,7 +123,7 @@ class TextPath extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'description' => sprintf( __( 'Add a <code>data-path-anchor</code> attribute to your path in order to put the text along with it. Otherwise, it will default to the first path element. Create your own custom SVG path. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/text-path-create-paths' ),
+				'description' => sprintf( __( 'Want to create custom text paths with SVG? <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/text-path-create-paths' ),
 			]
 		);
 
