@@ -216,7 +216,7 @@ class Manager extends Module {
 	private function init_breakpoints() {
 		$breakpoints = [];
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$active_breakpoint_keys = $kit->get_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
+		$active_breakpoint_keys = $kit->get_settings( Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID );
 		$default_config = self::get_default_config();
 		$prefix = self::BREAKPOINT_SETTING_PREFIX;
 

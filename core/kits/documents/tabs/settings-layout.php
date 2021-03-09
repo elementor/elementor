@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Layout extends Tab_Base {
 
-	const BREAKPOINTS_SELECT_CONTROL_ID = 'active_breakpoints';
+	const ACTIVE_BREAKPOINTS_CONTROL_ID = 'active_breakpoints';
 
 	public function get_id() {
 		return 'settings-layout';
@@ -164,7 +164,7 @@ class Settings_Layout extends Tab_Base {
 		}
 
 		$this->add_control(
-			self::BREAKPOINTS_SELECT_CONTROL_ID,
+			self::ACTIVE_BREAKPOINTS_CONTROL_ID,
 			[
 				'label' => __( 'Active Breakpoints', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
