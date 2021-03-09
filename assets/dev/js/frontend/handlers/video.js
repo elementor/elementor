@@ -24,7 +24,17 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 	}
 
 	handleVideo() {
-		if ( ! this.getElementSettings( 'lightbox' ) ) {
+		if ( this.getElementSettings( 'lightbox' ) ) {
+			return;
+		}
+
+		if ( 'youtube' === this.getElementSettings( 'video_type' ) ) {
+			this.apiProvider.onApiReady( ( apiObject ) => {
+				this.elements.$imageOverlay.remove();
+
+				this.prepareYTVideo( apiObject, true );
+			} );
+		} else {
 			this.elements.$imageOverlay.remove();
 
 			this.playVideo();
@@ -131,6 +141,27 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 		// If there is an image overlay, the YouTube video prep method will be triggered on click
 		if ( ! this.videoID ) {
+			return;
+		}
+
+		// If the user is using an image overlay, loading the API happens on overlay click instead of on init.
+		if ( elementSettings.show_image_overlay && elementSettings.image_overlay.url ) {
+			return;
+		}
+
+		if ( elementSettings.lazy_load ) {
+			this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
+				callback: ( event ) => {
+					if ( event.isInViewport ) {
+						this.intersectionObserver.unobserve( this.elements.$video.parent()[ 0 ] );
+						this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+					}
+				},
+			} );
+
+			// We observe the parent, since the video container has a height of 0.
+			this.intersectionObserver.observe( this.elements.$video.parent()[ 0 ] );
+
 			return;
 		}
 
