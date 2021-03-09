@@ -91,7 +91,7 @@ abstract class Files_Upload_Handler {
 	protected function is_file_should_handled( $file ) {
 		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
 
-		return $this->is_elementor_media_upload() && $this->get_mime_type() === $file['type'] && $this->get_file_type() === $ext;
+		return $this->is_elementor_media_upload() && $this->get_file_type() === $ext;
 	}
 
 	/**
