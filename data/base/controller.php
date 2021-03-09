@@ -232,13 +232,31 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * TODO: Remove and use '_register_endpoint' instead ( Backwards computability ).
+	 *
+	 * @param Endpoint|string $endpoint
+	 *
+	 * @return \Elementor\Data\Base\Endpoint
+	 */
+	protected function register_endpoint( $endpoint ) {
+		$real_endpoint = $endpoint;
+
+		// Backwards compatibility.
+		if ( is_string( $endpoint ) ) {
+			$real_endpoint = new $endpoint( $this );
+		}
+
+		return $this->_register_endpoint( $real_endpoint );
+	}
+
+	/**
 	 * Register endpoint.
 	 *
 	 * @param \Elementor\Data\Base\Endpoint $endpoint
 	 *
 	 * @return \Elementor\Data\Base\Endpoint
 	 */
-	protected function register_endpoint( Endpoint $endpoint ) {
+	protected function _register_endpoint( Endpoint $endpoint ) {
 		$command = $endpoint->get_full_command();
 
 		if ( $endpoint instanceof Endpoint\Index ) {
@@ -248,6 +266,11 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$format = $endpoint->get_format();
+
+		// TODO: Remove `if` All endpoints should have format - Backwards computability.
+		if ( ! $format ) {
+			return $endpoint;
+		}
 
 		// `$e.data.registerFormat()`.
 		Manager::instance()->register_endpoint_format( $command, $format );

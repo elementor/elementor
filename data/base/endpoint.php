@@ -72,12 +72,17 @@ abstract class Endpoint extends Base_Route {
 	abstract public function get_name();
 
 	/**
+	 * TODO: This method should be 'abstract' ( Backwards compatibility ).
+	 *
 	 * Get endpoint format.
 	 * The formats that generated using this function, will be used only be `Data\Manager::run()`.
 	 *
 	 * @return string
 	 */
-	abstract public function get_format();
+	public function get_format() {
+		// Backwards compatibility.
+		return '';
+	}
 
 	/**
 	 * Get controller.
