@@ -277,6 +277,19 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'frontend_available' => true,
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'show_image_overlay',
+							'value' => '',
+						],
+						[
+							'name' => 'image_overlay[url]',
+							'value' => '',
+						],
+					],
+				],
 			]
 		);
 
@@ -378,6 +391,40 @@ class Widget_Video extends Widget_Base {
 				'description' => __( 'When you turn on privacy mode, YouTube won\'t store information about visitors on your website unless they play the video.', 'elementor' ),
 				'condition' => [
 					'video_type' => 'youtube',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
+			'lazy_load',
+			[
+				'label' => __( 'Lazy Load', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'video_type',
+							'operator' => '===',
+							'value' => 'youtube',
+						],
+						[
+							'relation' => 'and',
+							'terms' => [
+								[
+									'name' => 'show_image_overlay',
+									'operator' => '===',
+									'value' => 'yes',
+								],
+								[
+									'name' => 'video_type',
+									'operator' => '!==',
+									'value' => 'hosted',
+								],
+							],
+						],
+					],
 				],
 				'frontend_available' => true,
 			]
@@ -524,18 +571,6 @@ class Widget_Video extends Widget_Base {
 					'show_image_overlay' => 'yes',
 				],
 				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
-			'lazy_load',
-			[
-				'label' => __( 'Lazy Load', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'condition' => [
-					'show_image_overlay' => 'yes',
-					'video_type!' => 'hosted',
-				],
 			]
 		);
 
