@@ -177,7 +177,7 @@ class Settings_Layout extends Tab_Base {
 				'select2options' => [
 					'allowClear' => false,
 				],
-				'nonDeletableOptions' => [
+				'lockedOptions' => [
 					$prefix . $breakpoint_key_mobile,
 					$prefix . $breakpoint_key_tablet,
 				],
