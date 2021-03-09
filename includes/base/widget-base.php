@@ -938,20 +938,10 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	private function get_widget_css() {
-		$widget_name = $this->get_name();
-
-		$widget_css = Plugin::$instance->assets_loader->get_assets_data( 'widgets_css', $widget_name );
-
-		if ( $widget_css ) {
-			return $widget_css;
-		}
-
-		$widget_css_file_path = ELEMENTOR_ASSETS_URL . 'css/000-production-' . $widget_name . '.min.css';
-
-		return sprintf( '<link rel="stylesheet" href="%s">', $widget_css_file_path );
+		return Plugin::$instance->assets_loader->get_asset_data( 'assets_css', $this->get_name() );
 	}
 
-	public function print_widget_css() {
+	private function print_widget_css() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
