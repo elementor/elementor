@@ -1,0 +1,40 @@
+.e-kit-library__kit-item-overlay {
+	height: 100%;
+
+	& > *:first-child {
+		flex: 1;
+	}
+}
+
+.e-kit-library__kit-item-overlay-overview-button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	height: 100%;
+	width: 100%;
+
+	& > i {
+		font-size: 2rem;
+		margin-bottom: 5px;
+	}
+
+	& > span {
+		font-size: 0.9rem;
+	}
+}
+
+.e-kit-library__kit-item-overlay-demo-button {
+	display: flex;
+	width: 100%;
+	background: white;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	font-size: 13px;
+
+	& > * {
+		margin: 0 3px;
+	}
+}

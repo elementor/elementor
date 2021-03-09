@@ -1,0 +1,13 @@
+.e-kit-library {
+	&__index-layout-container {
+		flex-grow: 1;
+	}
+
+	&__index-layout-search-area {
+		padding: spacing(44);
+	}
+
+	&__index-layout-main {
+		padding-top: spacing(0);
+	}
+}

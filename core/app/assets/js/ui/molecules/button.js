@@ -14,7 +14,7 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		variant: PropTypes.oneOf( [ 'contained', 'underlined', '' ] ),
+		variant: PropTypes.oneOf( [ 'contained', 'underlined', 'outlined', '' ] ),
 		color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 		size: PropTypes.oneOf( [ 'sm', 'md', 'lg' ] ),
 		target: PropTypes.string,

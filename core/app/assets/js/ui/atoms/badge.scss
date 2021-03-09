@@ -1,0 +1,8 @@
+.eps-badge {
+	display: inline-block;
+	background: $eps-theme-light;
+	padding: spacing(5) spacing(12);
+	box-shadow: shadow("2");
+	border-radius: 4px;
+	font-size: type(size, "12");
+}

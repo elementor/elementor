@@ -223,6 +223,7 @@ class App extends BaseApp {
 
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
+		$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
 

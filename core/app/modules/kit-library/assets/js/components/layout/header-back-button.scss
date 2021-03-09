@@ -1,0 +1,10 @@
+.e-kit-library__header-back {
+	color: tints(500);
+	@include padding-end( spacing( 20 ) );
+	@include padding-start( spacing( 5 ) );
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	@include border-end( 1px solid #eee )
+}
