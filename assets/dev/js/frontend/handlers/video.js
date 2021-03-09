@@ -24,13 +24,21 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 	}
 
 	handleVideo() {
-		this.apiProvider.onApiReady( ( apiObject ) => {
-			if ( ! this.getElementSettings( 'lightbox' ) ) {
+		if ( this.getElementSettings( 'lightbox' ) ) {
+			return;
+		}
+
+		if ( 'youtube' === this.getElementSettings( 'video_type' ) ) {
+			this.apiProvider.onApiReady( ( apiObject ) => {
 				this.elements.$imageOverlay.remove();
 
 				this.prepareYTVideo( apiObject, true );
-			}
-		} );
+			} );
+		} else {
+			this.elements.$imageOverlay.remove();
+
+			this.playVideo();
+		}
 	}
 
 	playVideo() {

@@ -635,7 +635,8 @@ class Widget_Image_Box extends Widget_Base {
 			html += '<div class="elementor-image-box-content">';
 
 			if ( settings.title_text ) {
-				var title_html = settings.title_text;
+				var title_html = settings.title_text,
+					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link.url ) {
 					title_html = '<a href="' + settings.link.url + '">' + title_html + '</a>';
@@ -645,7 +646,7 @@ class Widget_Image_Box extends Widget_Base {
 
 				view.addInlineEditingAttributes( 'title_text', 'none' );
 
-				html += '<' + settings.title_size  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + title_html + '</' + settings.title_size  + '>';
+				html += '<' + titleSizeTag  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + title_html + '</' + titleSizeTag  + '>';
 			}
 
 			if ( settings.description_text ) {
