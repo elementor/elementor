@@ -310,7 +310,7 @@ class TextPath extends Widget_Base {
 				'fields_options' => [
 					'font_size' => [
 						'default' => [
-							'size' => '5',
+							'size' => '20',
 							'unit' => 'px',
 						],
 						'size_units' => [ 'px' ],
