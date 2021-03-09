@@ -46,6 +46,6 @@ class Import extends Iterator {
 			}
 		}
 
-		rmdir( $dir );
+		return rmdir( $dir );
 	}
 }
