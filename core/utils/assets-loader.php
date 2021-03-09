@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assets_Loader extends Module {
 	const ASSETS_DATA_KEY =  'elementor_assets_data';
 
-	private $allowed_assets_data_types = [ 'widgets_css' ];
+	private $allowed_assets_data_types = [ 'assets_css' ];
 
 	private $assets;
 
@@ -63,50 +63,63 @@ class Assets_Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
-	public function get_assets_data( $type = '', $key = '' ) {
-		if ( ! $this->assets_data ) {
-			$this->assets_data = get_option( self::ASSETS_DATA_KEY );
-		}
-
-		if ( $type && $key ) {
-			return $this->assets_data[ $type ][ $key ];
-		}
-
-		return $this->assets_data;
-	}
-
-	public function save_asset_data( $type, $key, $value ) {
-		if ( ! in_array( $type, $this->allowed_assets_data_types, TRUE ) ) {
+	public function get_asset_data( $data_type, $asset_name ) {
+//		delete_option( self::ASSETS_DATA_KEY );
+//		return;
+		if ( ! in_array( $data_type, $this->allowed_assets_data_types, TRUE ) ) {
 			return;
 		}
 
-		$assets_data = $this->get_assets_data();
-
-		if ( ! $assets_data ) {
-			$assets_data = [];
-		} elseif ( ! $assets_data[ $type ] ) {
-			$assets_data[ $type ] = [];
+		if ( ! $this->assets_data ) {
+			$this->init_assets_data( $data_type );
 		}
 
-		$assets_data[ $type ][ $key ] = $value;
+		if ( 'assets_css' === $data_type && ! array_key_exists( $asset_name, $this->assets_data[ $data_type ] ) ) {
+			return $this->get_asset_css( $asset_name );
+		}
 
-		update_option( self::ASSETS_DATA_KEY, $assets_data );
+		return $this->assets_data[ $data_type ][ $asset_name ];
 	}
 
-	public function get_file_data( $src, $data_type = '' ) {
-		if ( ! $this->files_data[ $src ] ) {
-			$this->files_data[ $src ] = wp_remote_get( $src );
+	public function save_asset_data( $data_type, $asset_name, $value ) {
+		if ( ! in_array( $data_type, $this->allowed_assets_data_types, TRUE ) ) {
+			return;
 		}
 
-		$file_data = $this->files_data[ $src ];
-
-		if ( 'content' === $data_type ) {
-			return $file_data[ 'body' ];
-		} elseif ( 'size' === $data_type ) {
-			return $file_data['headers']['content-length'];
+		if ( ! $this->assets_data ) {
+			$this->init_assets_data( $data_type );
 		}
 
-		return $file_data;
+		$this->assets_data[ $data_type ][ $asset_name ] = $value;
+
+		update_option( self::ASSETS_DATA_KEY, $this->assets_data );
+	}
+
+	private function get_file_data( $asset_file, $data_type = '' ) {
+		if ( ! $this->files_data ) {
+			$this->files_data = [];
+		}
+
+		if ( ! array_key_exists( $asset_file, $this->files_data ) ) {
+			$this->files_data[ $asset_file ] = [];
+		}
+
+		if ( $data_type ) {
+			// Getting data from local file path.
+			$file_path = ELEMENTOR_ASSETS_PATH . $asset_file;
+
+			if ( 'content' === $data_type ) {
+				$data = file_get_contents( $file_path );
+			} elseif ( 'size' === $data_type ) {
+				$data = filesize( $file_path );
+			}
+
+			$this->files_data[ $asset_file ][ $data_type ] = $data;
+
+			return $data;
+		}
+
+		return $this->files_data[ $asset_file ];
 	}
 
 	public function enqueue_assets() {
@@ -125,5 +138,31 @@ class Assets_Loader extends Module {
 				}
 			}
 		}
+	}
+
+	private function init_assets_data( $data_type = '' ) {
+		$this->assets_data = get_option( self::ASSETS_DATA_KEY, [] );
+
+		if ( $data_type && ! array_key_exists( $data_type, $this->assets_data )  ) {
+			$this->assets_data[ $data_type ] = [];
+		}
+	}
+
+	private function get_asset_css( $asset_name ) {
+		$asset_file = 'css/000-production-' . $asset_name . '.min.css';
+
+		$asset_css_file_size = $this->get_file_data( $asset_file, 'size' );
+
+		// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
+		if ( $asset_css_file_size > 2000 ) {
+			$asset_css = sprintf( '<link rel="stylesheet" href="%s">', ELEMENTOR_ASSETS_URL . $asset_file );
+		} else {
+			$asset_css = $this->get_file_data( $asset_file, 'content' );
+			$asset_css = sprintf( '<style>%s</style>', $asset_css );
+		}
+
+		$this->save_asset_data( 'assets_css', $asset_name, $asset_css );
+
+		return $asset_css;
 	}
 }
