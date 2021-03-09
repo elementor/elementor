@@ -80,14 +80,22 @@ class Manager {
 		return $kit->get_settings( $setting );
 	}
 
-	private function create_default() {
-		$kit = Plugin::$instance->documents->create( 'kit', [
-			'post_type' => Source_Local::CPT,
-			'post_title' => __( 'Default Kit', 'elementor' ),
+	public function create( array $kit_data = [], array $kit_meta_data = [] ) {
+		$default_kit_data = [
 			'post_status' => 'publish',
-		] );
+		];
+
+		$kit_data = array_merge( $default_kit_data, $kit_data );
+
+		$kit_data['post_type'] = Source_Local::CPT;
+
+		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
 		return $kit->get_id();
+	}
+
+	private function create_default() {
+		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
 	}
 
 	/**
