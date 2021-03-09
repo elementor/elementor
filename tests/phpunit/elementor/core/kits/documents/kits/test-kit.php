@@ -54,7 +54,7 @@ class Test_Kit extends Elementor_Test_Base {
 	}
 
 	public function test_settings_layout_before_save() {
-		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 		$kit_id = $this->kit->get_id();
 		$settings = $this->kit->get_settings();
 

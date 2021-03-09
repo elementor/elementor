@@ -154,7 +154,7 @@ class Breakpoint extends Base_Object {
 		$this->name = $args['name'];
 		$this->label = $args['label'];
 		// Used for CSS generation
-		$this->db_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $args['name'];
+		$this->db_key = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $args['name'];
 		$this->direction = $args['direction'];
 		$this->is_enabled = $args['is_enabled'];
 		$this->default_value = $args['default_value'];

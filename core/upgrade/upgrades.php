@@ -666,8 +666,8 @@ class Upgrades {
 			$current_settings = get_option( '_elementor_general_settings', [] );
 			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
 			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
-			$current_settings[ Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
-			$current_settings[ Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
@@ -882,7 +882,7 @@ class Upgrades {
 
 			$kit_settings = $kit->get_settings();
 
-			$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+			$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 			$old_mobile_option_key = $prefix . 'md';
 			$old_tablet_option_key = $prefix . 'lg';
 

@@ -12,8 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends Module {
 
-	// The mobile and tablet keys are not semantic due to the need for backwards compatibility.
-	const BREAKPOINT_OPTION_PREFIX = 'viewport_';
+	const BREAKPOINT_SETTING_PREFIX = 'viewport_';
 	const BREAKPOINT_KEY_MOBILE = 'mobile';
 	const BREAKPOINT_KEY_MOBILE_EXTRA = 'mobile_extra';
 	const BREAKPOINT_KEY_TABLET = 'tablet';
@@ -219,7 +218,7 @@ class Manager extends Module {
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 		$active_breakpoint_keys = $kit->get_settings( Settings_Layout::BREAKPOINTS_SELECT_CONTROL_ID );
 		$default_config = self::get_default_config();
-		$prefix = self::BREAKPOINT_OPTION_PREFIX;
+		$prefix = self::BREAKPOINT_SETTING_PREFIX;
 
 		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
 			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;

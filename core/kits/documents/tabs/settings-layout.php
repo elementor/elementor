@@ -156,7 +156,7 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
-		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 		$options = [];
 
 		foreach ( $breakpoints_default_config as $breakpoint_key => $breakpoint ) {
@@ -218,7 +218,7 @@ class Settings_Layout extends Tab_Base {
 			return $data;
 		}
 
-		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
 		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
@@ -247,7 +247,7 @@ class Settings_Layout extends Tab_Base {
 		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
 
 		foreach ( $breakpoints_default_config as $breakpoint_key => $default_config ) {
-			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX . $breakpoint_key;
+			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $breakpoint_key;
 
 			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
@@ -261,7 +261,7 @@ class Settings_Layout extends Tab_Base {
 
 	private function add_breakpoints_controls() {
 		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
-		$prefix = Breakpoints_Manager::BREAKPOINT_OPTION_PREFIX;
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 
 		// Add a control for each of the **default** breakpoints.
 		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
