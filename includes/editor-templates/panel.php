@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,7 +93,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo __( 'Tablet', 'elementor' ); ?></span>
 					<?php
-					/** @var Breakpoint $mobile_breakpoint */
 					$mobile_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE );
 					?>
 					<span class="elementor-description"> <?php echo sprintf( __( 'Preview for %s', 'elementor' ), $mobile_breakpoint->get_value() . 'px' ); ?></span>
