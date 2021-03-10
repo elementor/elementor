@@ -190,7 +190,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function delete_item( $id, $request ) {
-		return $this->controller->update_item( $request );
+		return $this->controller->delete_item( $request );
 	}
 
 	/**
@@ -256,7 +256,7 @@ abstract class Base_Route {
 			],
 		], $args );
 
-		$route .= '(?P<' . $id_arg_name . '>[\w]+)';
+		$route .= '(?P<' . $id_arg_name . '>[\d]+)';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
