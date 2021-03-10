@@ -168,6 +168,7 @@ abstract class Controller extends WP_REST_Controller {
 	public function get_items( $request ) {
 		return $this->get_controller_index();
 	}
+
 	/**
 	 * Creates multiple items.
 	 *
@@ -222,6 +223,27 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register processors.
 	 */
 	public function register_processors() {
+	}
+
+	/**
+	 * Get collection params by 'additionalProperties' context.
+	 *
+	 * @param string $context
+	 *
+	 * @return array
+	 */
+	protected function get_collection_params_by_additional_props_context( $context ) {
+		$result = [];
+
+		$collection_params = $this->get_collection_params();
+
+		foreach ( $collection_params as $collection_param_key => $collection_param ) {
+			if ( isset( $collection_param['additionalProperties']['context'] ) && $context === $collection_param['additionalProperties']['context'] ) {
+				$result[ $collection_param_key ] = $collection_param;
+			}
+		}
+
+		return $result;
 	}
 
 	/**
