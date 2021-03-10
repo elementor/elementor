@@ -1,0 +1,212 @@
+// Use hotspot animation:
+//.elementor-pulse .elementor-pulse-fade-out .hotspot-overlay
+
+// Animation: Pulse
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+.elementor-pulse {
+    animation: pulse 0.7s infinite alternate;
+    animation-timing-function: ease;
+}
+
+// Animation: Pulse Fade Out
+@keyframes pulse-fade-out {
+    from {
+        transform: scale(0.5);
+        opacity: 1;
+    }
+    to {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+.elementor-pulse-fade-out .outer-circle {
+    animation: pulse-fade-out 2s infinite;
+}
+.elementor-hotspot:not(.elementor-hotspot-circle) .elementor-hotspot-trigger.elementor-pulse-fade-out:before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    animation: pulse-fade-out 2s infinite;
+}
+// Animation: Sequenced
+@keyframes sequenced {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.elementor-sequenced-animation {
+    animation: sequenced 0.3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: both; //
+}
+// End Animations
+
+.elementor-widget-hotspot {
+    .elementor-widget-container {
+        position: relative;
+        display: inline-block;
+        & > img {
+            display: inline-block;
+        }
+    }
+
+    .elementor-hotspot {
+        // --hotspot-offset-x: calc( var(--hotspot-offset-x) * var(--horizontal-orientation-right)  );
+        // transform: translate( calc( 50% * (-1 * var(--horizontal-orientation-right) )  ), -50%);
+        // left:  var( --hotspot-offset-x, auto  ) ;
+        // right:  var( --hotspot-offset-x, auto  ) ;
+
+        z-index:1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        // transform: translate(-50%, -50%);
+
+        &.elementor-hotspot-circle .outer-circle,
+        &.elementor-hotspot-circle .inner-circle {
+            content: "";
+            cursor: pointer;
+            display: inline-block;
+            box-sizing: content-box;
+            // width: 100%;
+            // height: 100%;
+            border-radius: 50%;
+        }
+
+        &.elementor-hotspot-circle .inner-circle {
+            // width: 50%;
+            // height: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        &.elementor-hotspot-only-icon .elementor-hotspot-trigger {
+            line-height: 0;
+            box-sizing: content-box;
+        }
+
+        // &.hotspot-position-from-right {
+        //     transform: translate(50%, 0);
+        // }
+
+        // &.hotspot-position-from-left {
+        //     transform: translate(-50%, 0);
+        // }
+
+        .elementor-hotspot-trigger {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+
+            &.hotspot-trigger-start {
+                flex-direction: row;
+            }
+
+            &.hotspot-trigger-end {
+                flex-direction: row-reverse;
+            }
+        }
+
+        & .elementor-hotspot-trigger.hotspot-overlay {
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        & .elementor-hotspot-trigger.hotspot-overlay:hover {//
+            opacity: 1;//
+        }
+
+        &:not(.elementor-hotspot-circle) .elementor-hotspot-trigger {
+            // padding: 6px 8px;
+            // border-radius: 3px;
+        }
+
+        .animation-direction-mask{
+            overflow: hidden;
+            position:absolute;
+            .elementor-tooltip{
+                box-shadow: none!important;//
+                position: static;
+                cursor: auto;
+                // opacity: 1;
+                transition: transform 0.3s, opacity 0.3s;
+                // transform-origin: top center;
+            }
+        }
+    
+        .animation-to-top .elementor-tooltip{//
+            transform: translate(0, -100%);
+        }
+        .animation-to-left .elementor-tooltip{
+            transform: translate(-100%, 0);
+        }
+        .animation-to-right .elementor-tooltip{
+            transform: translate(100%, 0);//
+        }
+        .animation-to-bottom .elementor-tooltip{
+            transform: translate(0, 100%);
+        }
+        
+        .animation-direction-mask .elementor-tooltip.elementor-slide-direction,
+        .animation-direction-mask .elementor-tooltip.elementor-fade-direction{
+            transform: translate(0, 0);
+            opacity:1;
+        }
+
+    
+        .elementor-tooltip {
+            // margin:5px;
+            // font-size: 11px;
+            transition: opacity 0.3s, transform 0.3s;
+            transform-origin: center center;
+            cursor: default;
+            position: absolute;
+            &.elementor-fade-animation{
+                opacity: 0;
+            }
+            &.show-tooltip {
+                cursor: auto;
+                transition: none;
+                display: block;
+                opacity: 1;
+            }
+            &.elementor-fade-in-out{
+                cursor: auto;
+                opacity: 1;
+            }
+            &.elementor-fade-in-out{
+                cursor: auto;
+                opacity: 1;
+            }
+            // &.elementor-fade-direction{
+            //     cursor: auto;
+            // }
+            // &.elementor-slide-direction{
+            //     transform: translate(0, 0);
+            // }
+        }
+    }
+
+
+
+    
+}

@@ -41,6 +41,7 @@ class Widgets_Manager {
 	*/
 	private function init_widgets() {
 		$build_widgets_filename = [
+			'hotspot',
 			'common',
 			'heading',
 			'image',
