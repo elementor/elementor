@@ -1018,7 +1018,6 @@ abstract class Document extends Controls_Stack {
 	protected function save_elements( $elements ) {
 		$page_widgets = $this->get_page_widgets( $elements );
 
-		// TODO: save only on version change
 		$this->save_widgets_css( $page_widgets );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
@@ -1392,9 +1391,20 @@ abstract class Document extends Controls_Stack {
 
 	private function save_widgets_css( $page_widgets ) {
 		foreach ( $page_widgets as $widget_name ) {
-			// Should iterate over current widgets and update on version change
-			//Plugin::$instance->assets_loader->save_asset_css()
+			Plugin::$instance->assets_loader->get_asset_data( $this->get_widget_css_config( $widget_name ) );
 		}
+	}
+
+	private function get_widget_css_config( $widget_name ) {
+		$css_file_path = 'css/000-production-' . $widget_name . '.min.css';
+
+		return [
+			'type' => 'css',
+			'key' => $widget_name,
+			'url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'version' => ELEMENTOR_VERSION,
+		];
 	}
 
 	private function get_page_widgets( $elements ) {

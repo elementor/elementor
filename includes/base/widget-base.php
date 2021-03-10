@@ -938,7 +938,21 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	private function get_widget_css() {
-		return Plugin::$instance->assets_loader->get_asset_data( 'assets_css', $this->get_name() );
+		return Plugin::$instance->assets_loader->get_asset_data( $this->get_css_config() );
+	}
+
+	private function get_css_config() {
+		$widget_name = $this->get_name();
+
+		$css_file_path = 'css/000-production-' . $widget_name . '.min.css';
+
+		return [
+			'type' => 'css',
+			'key' => $widget_name,
+			'url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'version' => ELEMENTOR_VERSION,
+		];
 	}
 
 	private function print_widget_css() {
