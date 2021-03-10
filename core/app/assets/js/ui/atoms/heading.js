@@ -1,4 +1,4 @@
-import Utils from '../../utils/utils';
+import { arrayToClassName } from '../../utils/utils';
 
 export default function Heading( props ) {
 	const baseClassName = 'eps',
@@ -11,7 +11,7 @@ export default function Heading( props ) {
 	}
 
 	const Element = () => React.createElement( props.tag, {
-		className: Utils.arrayToClassName( classes ),
+		className: arrayToClassName( classes ),
 	}, props.children );
 
 	return <Element />;
