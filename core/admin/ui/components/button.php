@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Admin;
+namespace Elementor\Core\Admin\UI\Components;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Utils;
