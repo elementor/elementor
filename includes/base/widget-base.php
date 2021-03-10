@@ -959,7 +959,7 @@ abstract class Widget_Base extends Element_Base {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
-		if ( $is_preview_mode || ! $is_optimized_mode ) {
+		if ( Utils::is_script_debug() || $is_preview_mode || ! $is_optimized_mode ) {
 			return;
 		}
 

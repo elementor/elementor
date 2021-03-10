@@ -551,7 +551,8 @@ class Frontend extends App {
 
 		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
-		if ( $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode() ) {
+		// TODO: In dev mode = the legacy mode should be applied (script_debug).
+		if ( ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode() ) {
 			$frontend_file_url = $frontend_light_file_url;
 		}
 
