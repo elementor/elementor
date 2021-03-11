@@ -5,16 +5,18 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
                 hotspot: '.elementor-hotspot',
                 hotspotTrigger: '.elementor-hotspot-trigger',
                 tooltip: '.elementor-tooltip',
+                tooltipMask: '.animation-direction-mask',
             },
         };
     }
 
     getDefaultElements() {
-        const selectors = this.getSettings('selectors');
+        const selectors = this.getSettings( 'selectors' );
         return {
-            $hotspot: this.$element.find(selectors.hotspot),
-            $hotspotTrigger: this.$element.find(selectors.hotspotTrigger),
-            $tooltip: this.$element.find(selectors.tooltip),
+            $hotspot: this.$element.find( selectors.hotspot ),
+            $hotspotTrigger: this.$element.find( selectors.hotspotTrigger ),
+            $tooltip: this.$element.find( selectors.tooltip ),
+            $tooltipMask: this.$element.find( selectors.tooltipMask ),
         };
     }
 
@@ -22,69 +24,63 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
         const elementSettings = this.getElementSettings();
         var tooltipTriggerEvent = elementSettings.tooltip_trigger;
 
-        if (tooltipTriggerEvent !== 'none') {
-            //tooltipTriggerEvent = (tooltipTriggerEvent !== 'hover') ? 'mouseenter' : tooltipTriggerEvent;
-            this.elements.$hotspotTrigger.on(tooltipTriggerEvent, this.onHotspotTriggerEvent.bind(this));
+        if ( tooltipTriggerEvent !== 'none' ) {
+            this.elements.$hotspotTrigger.on( tooltipTriggerEvent, this.onHotspotTriggerEvent.bind( this ) );
         }
     }
 
-    onHotspotTriggerEvent(event) {
-        //hover or --click--
-        //console.log(event);
-        //console.log(event.type);
-        
+    onHotspotTriggerEvent( event ) {
         const elementSettings = this.getElementSettings();
         const tooltipAnimation = elementSettings.tooltip_animation;
-        //const animationDuration = elementSettings.tooltip_animation_duration.size;
 
-        var currentTooltip = jQuery(event.currentTarget).parent('.elementor-hotspot').find('.elementor-tooltip');
-        //var otherTooltips = this.elements.$tooltip.not(currentTooltip);
+        var currentTooltip = jQuery( event.currentTarget ).parent( '.elementor-hotspot' ).find( '.elementor-tooltip' );
 
-        if(event.type === 'mouseenter' && currentTooltip.is('.'+tooltipAnimation)){
+        if ( 'mouseenter' === event.type && currentTooltip.is( '.' + tooltipAnimation ) ) {
             return;
         }
 
-        this.elements.$tooltip.not(currentTooltip).removeClass(tooltipAnimation);
-        currentTooltip.toggleClass(tooltipAnimation);
-
-        // if(tooltipAnimation === 'elementor-fade-in-out'){
-        //     otherTooltips.fadeOut(animationDuration);
-        //     currentTooltip.fadeToggle(animationDuration);
-        // }else if(tooltipAnimation === 'elementor-slide-direction'){
-        //     otherTooltips.not(currentTooltip).slideUp(animationDuration);
-        //     currentTooltip.slideToggle(animationDuration);
-        // }else if(tooltipAnimation === 'elementor-fade-direction'){
-
-        // }else if(tooltipAnimation === 'elementor-fade-grow'){
-
-        // }else{
-
-        // }
-        
+        this.elements.$tooltip.not( currentTooltip ).removeClass( tooltipAnimation );
+        currentTooltip.toggleClass( tooltipAnimation );
     }
 
     hotspotSequencedAnimation() {
         const elementSettings = this.getElementSettings();
         const isSequencedAnimation = elementSettings.hotspot_sequenced_animation;
 
-        if (isSequencedAnimation) {
-            const hotspotObserver = elementorModules.utils.Scroll.scrollObserver({//start sequenced animation when element on viewport
-                callback: (event) => {
-                    if (event.isInViewport) {
-                        hotspotObserver.unobserve(this.$element[0]);
-                        this.elements.$hotspot.each(function (index) {//add delay for each hotspot
-                            this.style.animationDelay = (index + 1) * 0.7 + 's';
-                        });
-                        this.elements.$hotspot.addClass('elementor-sequenced-animation');//add sequenced animation class
+        if ( isSequencedAnimation ) {
+            const hotspotObserver = elementorModules.utils.Scroll.scrollObserver( { //start sequenced animation when element on viewport
+                callback: ( event ) => {
+                    if ( event.isInViewport ) {
+                        hotspotObserver.unobserve( this.$element[ 0 ] );
+                        this.elements.$hotspot.each( function( index ) { //add delay for each hotspot
+                            this.style.animationDelay = ( ( index + 1 ) * 0.7 ) + 's';
+                        } );
+                        this.elements.$hotspot.addClass( 'elementor-sequenced-animation' );//add sequenced animation class
                     }
                 },
-            });
-            hotspotObserver.observe(this.$element[0]);
+            } );
+            hotspotObserver.observe( this.$element[ 0 ] );
         }
     }
 
-    onInit(...args) {
-        super.onInit(...args);
-        this.hotspotSequencedAnimation();
+    setTooltipPositionControl() {
+        var getElementSettings = this.getElementSettings();
+        var isDirectionAnimation = ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-slide-direction' ) ) || ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-fade-direction' ) );
+        if ( isDirectionAnimation ) {
+            this.elements.$tooltipMask.removeClass( 'animation-slide-from-left animation-slide-from-top animation-slide-from-right animation-slide-from-bottom' );
+            this.elements.$tooltipMask.addClass( 'animation-slide-from-' + getElementSettings.tooltip_position );
+        }
     }
+
+    onInit( ...args ) {
+        super.onInit( ...args );
+        this.hotspotSequencedAnimation();
+        this.setTooltipPositionControl();
+    }
+
+    onElementChange( propertyName ) {
+		if ( 0 === propertyName.indexOf( 'tooltip_position' ) ) {
+            this.setTooltipPositionControl();
+		}
+	}
 }

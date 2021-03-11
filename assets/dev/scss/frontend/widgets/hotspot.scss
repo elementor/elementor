@@ -1,6 +1,3 @@
-// Use hotspot animation:
-//.elementor-pulse .elementor-pulse-fade-out .hotspot-overlay
-
 // Animation: Pulse
 @keyframes pulse {
     from {
@@ -64,17 +61,11 @@
     }
 
     .elementor-hotspot {
-        // --hotspot-offset-x: calc( var(--hotspot-offset-x) * var(--horizontal-orientation-right)  );
-        // transform: translate( calc( 50% * (-1 * var(--horizontal-orientation-right) )  ), -50%);
-        // left:  var( --hotspot-offset-x, auto  ) ;
-        // right:  var( --hotspot-offset-x, auto  ) ;
-
         z-index:1;
         display: flex;
         align-items: center;
         justify-content: center;
         position: absolute;
-        // transform: translate(-50%, -50%);
 
         &.elementor-hotspot-circle .outer-circle,
         &.elementor-hotspot-circle .inner-circle {
@@ -82,14 +73,10 @@
             cursor: pointer;
             display: inline-block;
             box-sizing: content-box;
-            // width: 100%;
-            // height: 100%;
             border-radius: 50%;
         }
 
         &.elementor-hotspot-circle .inner-circle {
-            // width: 50%;
-            // height: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -101,29 +88,11 @@
             box-sizing: content-box;
         }
 
-        // &.hotspot-position-from-right {
-        //     transform: translate(50%, 0);
-        // }
-
-        // &.hotspot-position-from-left {
-        //     transform: translate(-50%, 0);
-        // }
-
         .elementor-hotspot-trigger {
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
-            flex-shrink: 0;
-
-            &.hotspot-trigger-start {
-                flex-direction: row;
-            }
-
-            &.hotspot-trigger-end {
-                flex-direction: row-reverse;
-            }
+            display: grid;
+            grid-auto-flow: column;
         }
 
         & .elementor-hotspot-trigger.hotspot-overlay {
@@ -135,11 +104,6 @@
             opacity: 1;//
         }
 
-        &:not(.elementor-hotspot-circle) .elementor-hotspot-trigger {
-            // padding: 6px 8px;
-            // border-radius: 3px;
-        }
-
         .animation-direction-mask{
             overflow: hidden;
             position:absolute;
@@ -147,22 +111,24 @@
                 box-shadow: none!important;//
                 position: static;
                 cursor: auto;
-                // opacity: 1;
                 transition: transform 0.3s, opacity 0.3s;
-                // transform-origin: top center;
             }
         }
     
-        .animation-to-top .elementor-tooltip{//
+        .animation-slide-from-top .elementor-tooltip,
+        .animation-direction-mask.overide-animation-slide-from-top .elementor-tooltip{
             transform: translate(0, -100%);
         }
-        .animation-to-left .elementor-tooltip{
+        .animation-slide-from-left .elementor-tooltip,
+        .animation-direction-mask.overide-animation-slide-from-left .elementor-tooltip{
             transform: translate(-100%, 0);
         }
-        .animation-to-right .elementor-tooltip{
+        .animation-slide-from-right .elementor-tooltip,
+        .animation-direction-mask.overide-animation-slide-from-right .elementor-tooltip{
             transform: translate(100%, 0);//
         }
-        .animation-to-bottom .elementor-tooltip{
+        .animation-slide-from-bottom .elementor-tooltip,
+        .animation-direction-mask.overide-animation-slide-from-bottom .elementor-tooltip{
             transform: translate(0, 100%);
         }
         
@@ -172,10 +138,7 @@
             opacity:1;
         }
 
-    
         .elementor-tooltip {
-            // margin:5px;
-            // font-size: 11px;
             transition: opacity 0.3s, transform 0.3s;
             transform-origin: center center;
             cursor: default;
@@ -197,16 +160,6 @@
                 cursor: auto;
                 opacity: 1;
             }
-            // &.elementor-fade-direction{
-            //     cursor: auto;
-            // }
-            // &.elementor-slide-direction{
-            //     transform: translate(0, 0);
-            // }
         }
     }
-
-
-
-    
 }
