@@ -142,7 +142,9 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route();
+		$endpoint->register_item_route( \WP_REST_Server::READABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 
 		$endpoint->set_test_data( 'get_item', 'valid' );
 		$endpoint = trim( $endpoint->get_base_route(), '/' ) . '/fake_id';
@@ -208,7 +210,9 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route( \WP_REST_Server::CREATABLE );
+		$endpoint->register_item_route(  \WP_REST_Server::CREATABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 
 		$endpoint->set_test_data( 'create_item', 'valid' );
 		$endpoint = trim( $endpoint->get_base_route(), '/' ) . '/fake_id';
@@ -273,7 +277,9 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route( \WP_REST_Server::EDITABLE );
+		$endpoint->register_item_route(  \WP_REST_Server::EDITABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 
 		$endpoint->set_test_data( 'update_item', 'valid' );
 		$endpoint = trim( $endpoint->get_base_route(), '/' ) . '/fake_id';
@@ -339,7 +345,9 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route( \WP_REST_Server::DELETABLE );
+		$endpoint->register_item_route(  \WP_REST_Server::DELETABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 
 		$endpoint->set_test_data( 'delete_item', 'valid' );
 		$endpoint = trim( $endpoint->get_base_route(), '/' ) . '/fake_id';
@@ -436,7 +444,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint = new EndpointTemplate( $controller );
 		$endpoint->register_item_route();
 
-		$except_route = '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() . '/(?P<id>[\w]+)';
+		$except_route = '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() . '/(?P<id>[\d]+)';
 
 		// Act.
 		$data = $controller->get_controller_index()->get_data();

@@ -242,11 +242,18 @@ abstract class Base_Route {
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		$id_arg_name = 'id';
+		$id_arg_type_regex = '[\d]+';
 
 		if ( ! empty( $args['id_arg_name'] ) ) {
 			$id_arg_name = $args['id_arg_name'];
 
 			unset( $args['id_arg_name'] );
+		}
+
+		if ( ! empty( $args['id_arg_type_regex'] ) ) {
+			$id_arg_type_regex = $args['id_arg_type_regex'];
+
+			unset( $args['id_arg_type_regex'] );
 		}
 
 		$args = array_merge( [
@@ -256,7 +263,7 @@ abstract class Base_Route {
 			],
 		], $args );
 
-		$route .= '(?P<' . $id_arg_name . '>[\d]+)';
+		$route .= '(?P<' . $id_arg_name . '>' . $id_arg_type_regex . ')';
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
