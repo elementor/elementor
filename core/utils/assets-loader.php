@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assets_Loader extends Module {
 	const ASSETS_DATA_KEY =  'elementor_assets_data';
 
-	private $allowed_assets_data_types = [ 'assets_css' ];
+	const INLINE_CONTENT_KEY = 'inline-content';
 
 	private $assets;
 
@@ -63,63 +63,84 @@ class Assets_Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
-	public function get_asset_data( $data_type, $asset_name ) {
-//		delete_option( self::ASSETS_DATA_KEY );
-//		return;
-		if ( ! in_array( $data_type, $this->allowed_assets_data_types, TRUE ) ) {
-			return;
-		}
+	public function set_asset_data( $config ) {
+		list(
+			'type' => $asset_type,
+			'key' => $asset_key,
+			'url' => $asset_url,
+			'path' => $asset_path,
+			'current_version' => $current_version
+			) = $config;
 
 		if ( ! $this->assets_data ) {
-			$this->init_assets_data( $data_type );
+			$this->init_assets_data( $asset_type );
 		}
 
-		if ( 'assets_css' === $data_type && ! array_key_exists( $asset_name, $this->assets_data[ $data_type ] ) ) {
-			return $this->get_asset_css( $asset_name );
-		}
+		$assets_data = $this->assets_data[ self::INLINE_CONTENT_KEY ][ $asset_type ];
 
-		return $this->assets_data[ $data_type ][ $asset_name ];
+		$is_asset_data_exist = array_key_exists( $asset_key, $assets_data );
+
+		if ( 'css' === $asset_type && ( ! $is_asset_data_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) ) {
+			$asset_css = $this->get_asset_css( $asset_key, $asset_url, $asset_path );
+
+			$this->save_asset_data( 'css', $asset_key, $asset_css, $current_version );
+		}
 	}
 
-	public function save_asset_data( $data_type, $asset_name, $value ) {
-		if ( ! in_array( $data_type, $this->allowed_assets_data_types, TRUE ) ) {
-			return;
-		}
+	public function get_asset_data( $config ) {
+		$this->set_asset_data( $config );
 
+		list ( 'type' => $asset_type, 'key' => $asset_key ) = $config;
+
+		return $this->assets_data[ self::INLINE_CONTENT_KEY ][ $asset_type ][ $asset_key ]['data'];
+	}
+
+	public function save_asset_data( $data_type, $asset_key, $data, $version ) {
 		if ( ! $this->assets_data ) {
 			$this->init_assets_data( $data_type );
 		}
 
-		$this->assets_data[ $data_type ][ $asset_name ] = $value;
+		if ( ! array_key_exists( $asset_key, $this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ] ) ) {
+			$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ] = [];
+		}
+
+		$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ]['data'] = $data;
+
+		$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ]['version'] = $version;
 
 		update_option( self::ASSETS_DATA_KEY, $this->assets_data );
 	}
 
-	private function get_file_data( $asset_file, $data_type = '' ) {
+	private function is_asset_version_changed( $asset_data, $current_version ) {
+		if ( ! array_key_exists( 'version', $asset_data ) ) {
+			return false;
+		}
+
+		return $current_version !== $asset_data['version'];
+	}
+
+	private function get_file_data( $asset_key, $asset_path, $data_type = '' ) {
 		if ( ! $this->files_data ) {
 			$this->files_data = [];
 		}
 
-		if ( ! array_key_exists( $asset_file, $this->files_data ) ) {
-			$this->files_data[ $asset_file ] = [];
+		if ( ! array_key_exists( $asset_key, $this->files_data ) ) {
+			$this->files_data[ $asset_key ] = [];
 		}
 
 		if ( $data_type ) {
-			// Getting data from local file path.
-			$file_path = ELEMENTOR_ASSETS_PATH . $asset_file;
-
 			if ( 'content' === $data_type ) {
-				$data = file_get_contents( $file_path );
+				$data = file_get_contents( $asset_path );
 			} elseif ( 'size' === $data_type ) {
-				$data = filesize( $file_path );
+				$data = filesize( $asset_path );
 			}
 
-			$this->files_data[ $asset_file ][ $data_type ] = $data;
+			$this->files_data[ $asset_key ][ $data_type ] = $data;
 
 			return $data;
 		}
 
-		return $this->files_data[ $asset_file ];
+		return $this->files_data[ $asset_key ];
 	}
 
 	public function enqueue_assets() {
@@ -143,25 +164,25 @@ class Assets_Loader extends Module {
 	private function init_assets_data( $data_type = '' ) {
 		$this->assets_data = get_option( self::ASSETS_DATA_KEY, [] );
 
-		if ( $data_type && ! array_key_exists( $data_type, $this->assets_data )  ) {
-			$this->assets_data[ $data_type ] = [];
+		if ( ! array_key_exists( self::INLINE_CONTENT_KEY, $this->assets_data ) ) {
+			$this->assets_data[ self::INLINE_CONTENT_KEY ] = [];
+		}
+
+		if ( $data_type && ! array_key_exists( $data_type, $this->assets_data[ self::INLINE_CONTENT_KEY ] )  ) {
+			$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ] = [];
 		}
 	}
 
-	private function get_asset_css( $asset_name ) {
-		$asset_file = 'css/000-production-' . $asset_name . '.min.css';
-
-		$asset_css_file_size = $this->get_file_data( $asset_file, 'size' );
+	private function get_asset_css( $asset_key, $asset_url, $asset_path ) {
+		$asset_css_file_size = $this->get_file_data( $asset_key, $asset_path, 'size' );
 
 		// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
 		if ( $asset_css_file_size > 2000 ) {
-			$asset_css = sprintf( '<link rel="stylesheet" href="%s">', ELEMENTOR_ASSETS_URL . $asset_file );
+			$asset_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
 		} else {
-			$asset_css = $this->get_file_data( $asset_file, 'content' );
+			$asset_css = $this->get_file_data( $asset_key, $asset_path, 'content' );
 			$asset_css = sprintf( '<style>%s</style>', $asset_css );
 		}
-
-		$this->save_asset_data( 'assets_css', $asset_name, $asset_css );
 
 		return $asset_css;
 	}
