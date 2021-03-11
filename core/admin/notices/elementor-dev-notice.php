@@ -73,7 +73,6 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 */
 	public function get_config() {
 		return [
-			'dismissible' => true,
 			'id' => static::ID,
 			'title' => __( 'Elementor Developer Edition', 'elementor' ),
 			'description' => __(
@@ -86,7 +85,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
 					'install-plugin_' . static::PLUGIN_SLUG
 				),
-				'class' => 'button',
+				'type' => 'cta',
 			],
 		];
 	}

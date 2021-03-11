@@ -507,8 +507,7 @@ button.swiper-pagination-bullet {
 	font-size: 25px;
 	color: $slides_gui;
 	top: 50%;
-	// Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
-	transform: translate3d( 0, -50%, 1px );
+	transform: translateY(-50%);
 
 	&-prev {
 		left: 10px;
@@ -521,6 +520,11 @@ button.swiper-pagination-bullet {
 	&.swiper-button-disabled {
 		opacity: 0.3;
 	}
+}
+
+// Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
+.swiper-container-cube  .elementor-swiper-button {
+	transform: translate3d(0, -50%, 1px);
 }
 
 /* Preloader */
