@@ -1391,19 +1391,21 @@ abstract class Document extends Controls_Stack {
 
 	private function save_widgets_css( $page_widgets ) {
 		foreach ( $page_widgets as $widget_name ) {
-			Plugin::$instance->assets_loader->get_asset_data( $this->get_widget_css_config( $widget_name ) );
+			Plugin::$instance->assets_loader->set_asset_data( $this->get_widget_css_config( $widget_name ) );
 		}
 	}
 
 	private function get_widget_css_config( $widget_name ) {
-		$css_file_path = 'css/000-production-' . $widget_name . '.min.css';
+		$direction = is_rtl() ? '-rtl' : '';
+
+		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
 			'type' => 'css',
 			'key' => $widget_name,
 			'url' => ELEMENTOR_ASSETS_URL . $css_file_path,
 			'path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
-			'version' => ELEMENTOR_VERSION,
+			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
