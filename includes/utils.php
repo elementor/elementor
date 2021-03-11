@@ -20,6 +20,28 @@ class Utils {
 	const DEPRECATION_RANGE = 0.4;
 
 	/**
+	 * A list of safe tage for `validate_html_tag` method.
+	 */
+	const ALLOWED_HTML_WRAPPER_TAGS = [
+		'article',
+		'aside',
+		'div',
+		'footer',
+		'h1',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6',
+		'header',
+		'main',
+		'nav',
+		'p',
+		'section',
+		'span',
+	];
+
+	/**
 	 * Is ajax.
 	 *
 	 * Whether the current request is a WordPress ajax request.
@@ -637,5 +659,16 @@ class Utils {
 			$submenu[ $menu_slug ][0][0] = $new_label;
 			// @codingStandardsIgnoreEnd
 		}
+	}
+
+	/**
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param string $tag
+	 *
+	 * @return string
+	 */
+	public static function validate_html_tag( $tag ) {
+		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
 }
