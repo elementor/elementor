@@ -2,23 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals;
 
-use Elementor\Data\Manager;
-use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Editor\Data\Globals;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Data_Test_Base;
 
-class Test_Controller extends Elementor_Test_Base  {
-	/**
-	 * @var \Elementor\Data\Manager
-	 */
-	protected $manager;
-
-	public function setUp() {
-		parent::setUp();
-
-		$this->manager = Manager::instance();
-	}
-
+class Test_Controller extends Data_Test_Base  {
 	public function tearDown() {
 		parent::tearDown();
 
