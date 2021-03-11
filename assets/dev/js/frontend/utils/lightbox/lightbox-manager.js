@@ -27,7 +27,8 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	isLightboxLink( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
+		// Check for lowercase `a` to make sure it works also for links inside SVGs.
+		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
 			return false;
 		}
 

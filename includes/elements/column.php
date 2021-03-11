@@ -1049,6 +1049,6 @@ class Element_Column extends Element_Base {
 			$html_tag = 'div';
 		}
 
-		return $html_tag;
+		return Utils::validate_html_tag( $html_tag );
 	}
 }
