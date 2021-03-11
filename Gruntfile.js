@@ -35,14 +35,14 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'default', [
 		'i18n',
 		'scripts',
-		'create_temp_css_files',
+		'create_widgets_temp_scss_files',
 		'styles',
-		'remove_temp_css_files',
+		'remove_widgets_unused_files',
 	] );
 
-	grunt.registerTask( 'create_temp_css_files', () => widgetsCss.createWidgetsTempFiles() );
+	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
 
-	grunt.registerTask( 'remove_temp_css_files', () => widgetsCss.removeWidgetsTempFiles() );
+	grunt.registerTask( 'remove_widgets_unused_files', () => widgetsCss.removeWidgetsUnusedFiles() );
 
 	grunt.registerTask( 'i18n', [
 		'checktextdomain',
