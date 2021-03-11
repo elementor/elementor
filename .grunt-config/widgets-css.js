@@ -6,7 +6,7 @@ class WidgetsCss {
 	constructor( env ) {
 		this.env = env;
 
-		this.tempFilePrefix = '000-' + env + '-';
+		this.tempFilePrefix = 'widget-';
 
 		this.widgetsFolder = path.resolve( __dirname, '../includes/widgets' );
 		this.widgetsScssSourceFolder = path.resolve( __dirname, '../assets/dev/scss/frontend/widgets' );
@@ -14,8 +14,7 @@ class WidgetsCss {
 		this.widgetsCssFolder = path.resolve( __dirname, '../assets/css' );
 	}
 
-	createWidgetsTempFiles() {
-		console.log( '------------------------ creating widgets temp files with prefix: ', this.tempFilePrefix );
+	createWidgetsTempScssFiles() {
 		if ( fs.existsSync( this.widgetsScssSourceFolder ) ) {
 			fs.readdirSync( this.widgetsScssSourceFolder ).forEach( ( fileName ) => {
 				const widgetName = fileName.replace( '.scss', '' ),
@@ -51,7 +50,6 @@ class WidgetsCss {
 	}
 
 	injectCss() {
-		console.log( '------------------------------------------------------ INJECTING CSS from: ', this.tempFilePrefix );
 		const cssFolder = path.resolve( __dirname, '../assets/css' );
 
 		if ( fs.existsSync( this.widgetsFolder ) ) {
@@ -70,9 +68,7 @@ class WidgetsCss {
 						fileMinSuffix = 'development' === this.env ? '' : '.min',
 						cssFilePath = path.join( cssFolder, this.tempFilePrefix + widgetName + fileMinSuffix + '.css' );
 
-					console.log( 'Checking if exist cssFilePath', cssFilePath );
 					if ( fs.existsSync( cssFilePath ) ) {
-						console.log( 'YES - INJECTING!!!' );
 						const cssFileContent = fs.readFileSync( cssFilePath, 'utf8' ),
 							cssContent = cssFileContent.replace( /(\r\n|\n|\r|\t)/gm, '' ),
 							phpContent = `/* <InjectCss:${ widgetName }> */
@@ -92,17 +88,16 @@ class WidgetsCss {
 		}
 	}
 
-	removeWidgetsTempFiles() {
-		console.log( '------------------------------------------------------ REMOVING TEMP FILES: ', this.tempFilePrefix );
-		//const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
-		const tempFilesFolders = [ this.widgetsScssFolder ];
+	removeWidgetsUnusedFiles() {
+		const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
 
 		tempFilesFolders.forEach( ( folder ) => {
 			if ( fs.existsSync( folder ) ) {
 				fs.readdirSync( folder ).forEach( ( fileName ) => {
 					const filePath = path.join( folder, fileName );
 
-					if ( -1 !== fileName.indexOf( this.tempFilePrefix ) && fs.existsSync( filePath ) ) {
+					// In the assets/css folder we should only keep the .min.css files because the widgets CSS conditional loading is active only in production mode.
+					if ( 0 === fileName.indexOf( this.tempFilePrefix ) && fs.existsSync( filePath ) && -1 === fileName.indexOf( '.min.css' ) ) {
 						fs.unlink( filePath, err => {
 							if ( err ) throw err;
 						} );
