@@ -582,20 +582,20 @@ class Widget_Toggle extends Widget_Base {
 				</div>
 			<?php endforeach; ?>
 			<?php
-			if ( isset( $settings['faq_schema'] ) && 'yes' == $settings['faq_schema'] ) {
+			if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
 				$json = [
-					"@context" => "https://schema.org",
-					"@type" => "FAQPage",
-					"mainEntity" => [],
+					'@context' => 'https://schema.org',
+					'@type' => 'FAQPage',
+					'mainEntity' => [],
 				];
 
 				foreach ( $settings['tabs'] as $index => $item ){
-					$json["mainEntity"][] = [
-						"@type" => "Question",
-						"name" => wp_strip_all_tags( $item['tab_title'] ),
-						"acceptedAnswer" => [
-							"@type" => "Answer",
-							"text" => wp_strip_all_tags( $this->parse_text_editor( $item['tab_content'] ) ),
+					$json['mainEntity'][] = [
+						'@type' => 'Question',
+						'name' => wp_strip_all_tags( $item['tab_title'] ),
+						'acceptedAnswer' => [
+							'@type' => 'Answer',
+							'text' => $this->parse_text_editor( $item['tab_content'] ),
 						],
 					];
 				}
