@@ -559,7 +559,7 @@ class Widget_Accordion extends Widget_Base {
 					'mainEntity' => [],
 				];
 
-				foreach ( $settings['tabs'] as $index => $item ){
+				foreach ( $settings['tabs'] as $index => $item ) {
 					$json['mainEntity'][] = [
 						'@type' => 'Question',
 						'name' => wp_strip_all_tags( $item['tab_title'] ),
@@ -569,7 +569,7 @@ class Widget_Accordion extends Widget_Base {
 						],
 					];
 				}
-			?>
+				?>
 				<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
 			<?php } ?>
 		</div>
