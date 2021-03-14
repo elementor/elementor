@@ -34,8 +34,8 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviweResize );
 	}
 
-	addTipsyToBreakpointSwitch() {
-		this.ui.switcherLabel.tipsy(
+	addTipsyToIconButtons() {
+		this.ui.switcherLabel.add( this.ui.closeButton ).add( this.ui.breakpointSettingsButton ).tipsy(
 			{
 				gravity: 'n',
 				offset: 10,
