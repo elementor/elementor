@@ -27,6 +27,10 @@
 				font-size: 0.9em;
 				border: none;
 				border-radius: 0;
+
+				&.select2-selection__e-plus-button {
+					cursor: pointer;
+				}
 			}
 		}
 	}
@@ -46,24 +50,6 @@
 		.select2-selection--multiple {
 			border-color: $editor-light;
 		}
-	}
-
-	/* Due to the add-new-item button, we need to make the button vertically aligned to the selected item before it. */
-	.select2-selection--multiple .select2-search--inline {
-		padding-top: 0.6px;
-	}
-
-	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
-		content: '+';
-		cursor: pointer;
-		position: relative;
-		display: inline-block;
-		margin-right: 5px;
-		padding: 3px 5px;
-		background-color: #e4e4e4;
-		color: #999;
-		font-size: 0.9em;
-		text-align: center;
 	}
 }
 

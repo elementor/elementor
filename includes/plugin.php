@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
@@ -21,6 +22,7 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -421,6 +423,11 @@ class Plugin {
 	public $logger;
 
 	/**
+	 * @var Dev_Tools
+	 */
+	private $dev_tools;
+
+	/**
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
@@ -441,6 +448,11 @@ class Plugin {
 	 * @var Core\App\App
 	 */
 	public $app;
+
+	/**
+	 * @var Wp_Api
+	 */
+	public $wp;
 
 	/**
 	 * @var Experiments_Manager
@@ -596,14 +608,15 @@ class Plugin {
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
-		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
+		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
+		$this->wp = new Wp_Api();
 
 		User::init();
 		Api::init();

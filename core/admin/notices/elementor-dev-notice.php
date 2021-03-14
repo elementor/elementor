@@ -60,6 +60,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 		return current_user_can( 'install_plugins' ) &&
 			! User::is_user_notice_viewed( static::ID ) &&
 			! $this->is_elementor_dev_installed() &&
+			! $this->is_install_screen() &&
 			(
 				$this->has_at_least_one_active_experiment() ||
 				$this->is_promotion_plugins_installed() ||
@@ -112,6 +113,21 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 */
 	private function is_elementor_dev_installed() {
 		return in_array( static::PLUGIN_NAME, $this->get_plugins(), true );
+	}
+
+	/**
+	 * Checks if the admin screen is install screen.
+	 *
+	 * @return bool
+	 */
+	private function is_install_screen() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return 'update' === $screen->id;
 	}
 
 	/**

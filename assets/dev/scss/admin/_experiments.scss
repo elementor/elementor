@@ -4,7 +4,7 @@
 
 	&__title {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 
 		&__indicator {
 			height: 10px;
@@ -12,6 +12,7 @@
 			border-radius: 50%;
 			border: 2px solid white;
 			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			margin-top: 2px;
 
 			&--active {
 				background: $editor-success;

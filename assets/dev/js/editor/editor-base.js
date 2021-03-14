@@ -15,6 +15,7 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
+import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 
 const DEFAULT_DEVICE_MODE = 'desktop';
 
@@ -347,6 +348,11 @@ export default class EditorBase extends Marionette.Application {
 		this.devTools = new DevTools();
 
 		this.documents = $e.components.register( new EditorDocuments() );
+
+		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
+		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
+			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
@@ -786,14 +792,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getConfig() {
-		ElementorConfig.legacyMode = {
-			get elementsWrapper() {
-				elementorCommon.helpers.hardDeprecated( 'elementor.config.legacyMode.elementsWrapper', '3.1.0', 'elementor.config.experimentalFeatures.e_dom_optimization' );
-
-				return ! elementor.config.experimentalFeatures.e_dom_optimization;
-			},
-		};
-
 		return ElementorConfig;
 	}
 
