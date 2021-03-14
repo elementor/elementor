@@ -28,14 +28,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	initStylesheet: function() {
-		var breakpoints = elementorFrontend.config.breakpoints;
+		const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		this.stylesheet = new Stylesheet();
 
-		this.stylesheet
-			.addDevice( 'mobile', 0 )
-			.addDevice( 'tablet', breakpoints.md )
-			.addDevice( 'desktop', breakpoints.lg );
+		Object.entries( breakpoints ).forEach( ( [ breakpointName, breakpointConfig ] ) => {
+			this.stylesheet.addDevice( breakpointName, breakpointConfig.value );
+		} );
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
