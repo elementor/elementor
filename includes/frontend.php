@@ -1328,7 +1328,6 @@ class Frontend extends App {
 		$dependencies = [
 			'elementor-frontend-modules',
 			'elementor-waypoints',
-			'share-link',
 			'jquery-ui-position',
 		];
 
@@ -1342,6 +1341,7 @@ class Frontend extends App {
 			);
 
 			$dependencies[] = 'swiper';
+			$dependencies[] = 'share-link';
 			$dependencies[] = 'elementor-dialog';
 		}
 
