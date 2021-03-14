@@ -179,7 +179,7 @@ class TextPath extends Widget_Base {
 		);
 
 		$this->add_control(
-			'direction',
+			'text_path_direction',
 			[
 				'label' => __( 'Text Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,

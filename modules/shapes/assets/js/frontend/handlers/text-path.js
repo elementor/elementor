@@ -80,7 +80,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 				this.setText( text );
 				break;
 
-			case 'direction':
+			case 'text_path_direction':
 				this.setOffset( startPoint.size );
 				break;
 
@@ -174,7 +174,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 	 * @returns {boolean}
 	 */
 	isRTL() {
-		const { direction } = this.getElementSettings();
+		const { text_path_direction: direction } = this.getElementSettings();
 		let isRTL = elementorCommon.config.isRTL;
 
 		if ( direction ) {
