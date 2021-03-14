@@ -19,10 +19,6 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		};
 	}
 
-	getLightBox() {
-		return elementorFrontend.utils.lightbox;
-	}
-
 	handleVideo() {
 		if ( this.getElementSettings( 'lightbox' ) ) {
 			return;
@@ -73,12 +69,22 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	animateVideo() {
-		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
+	async animateVideo() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
 	}
 
-	handleAspectRatio() {
-		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	async handleAspectRatio() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	}
+
+	async hideLightbox() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.getModal().hide();
 	}
 
 	prepareYTVideo( YT, onOverlayClick ) {
@@ -188,7 +194,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		const isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
-			this.getLightBox().getModal().hide();
+			this.hideLightbox();
 
 			return;
 		}
