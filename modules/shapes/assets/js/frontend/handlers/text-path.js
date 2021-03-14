@@ -145,10 +145,10 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 		this.elements.textPath.innerHTML = newText;
 
 		// Remove the cloned element if exists.
-		const clone = this.elements.svg.querySelector( `#${ this.textPathId }-clone` );
+		const existingClone = this.elements.svg.querySelector( `#${ this.textPathId }-clone` );
 
-		if ( clone ) {
-			clone.remove();
+		if ( existingClone ) {
+			existingClone.remove();
 		}
 
 		// Reverse the text if needed.
