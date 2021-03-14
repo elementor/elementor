@@ -104,7 +104,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onRender() {
-		this.addTipsyToBreakpointSwitch();
+		this.addTipsyToIconButtons();
 	}
 
 	onCloseButtonClick() {
