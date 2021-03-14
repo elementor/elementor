@@ -30,13 +30,11 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     onHotspotTriggerEvent( event ) {
-        const elementSettings = this.getElementSettings();
-        const tooltipAnimation = elementSettings.tooltip_animation;
-
-        var currentTooltip = jQuery( event.currentTarget ).find( '.elementor-tooltip' );
-
-        this.elements.$tooltip.not( currentTooltip ).removeClass( tooltipAnimation );
-        currentTooltip.toggleClass( tooltipAnimation );
+        if ( jQuery( event.target ).is( '.elementor-hotspot-trigger' ) || jQuery( event.target ).parents( '.elementor-hotspot-trigger' ).length ) {
+            const currentHotspot = jQuery( event.currentTarget );
+            this.elements.$hotspot.not( currentHotspot ).removeClass( 'active' );
+            currentHotspot.toggleClass( 'active' );
+        }
     }
 
     hotspotSequencedAnimation() {

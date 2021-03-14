@@ -554,6 +554,8 @@ class Widget_Hotspot extends Widget_Base
 					'tooltip_trigger!' => 'none',
 				],
 				'frontend_available' => true,
+				'prefix_class' => '',
+				'render_type' => 'template',
 			]
 		);
 
@@ -989,16 +991,13 @@ class Widget_Hotspot extends Widget_Base
 		$settings = $this->get_settings_for_display();
 
 		$is_tooltip_direction_animation = ($settings['tooltip_animation'] === 'elementor-slide-direction' || $settings['tooltip_animation'] === 'elementor-fade-direction') ? true : false;
-		$tooltip_position = $settings['tooltip_position'];
 
 		//tooltip attributes
 		$show_tooltip = ($settings['tooltip_trigger'] === 'none') ? 'show-tooltip' : '';
-		$fade_animation = (!$show_tooltip && ($settings['tooltip_animation'] === 'elementor-fade-in-out' || $settings['tooltip_animation'] === 'elementor-fade-direction')) ? 'elementor-fade-animation' : '';
 		$this->add_render_attribute( 'tooltip', [
 			'class' => [
 				'elementor-tooltip',
-				$show_tooltip,
-				$fade_animation
+				$show_tooltip
 			]
 		] );
 ?>
@@ -1009,6 +1008,7 @@ class Widget_Hotspot extends Widget_Base
 		<?php foreach ($settings['hotspot'] as $key => $hotspot) :
 			$is_circle = !$hotspot['hotspot_label'] && !$hotspot['hotspot_icon']['value'];
 			$is_only_icon = !$hotspot['hotspot_label'] && $hotspot['hotspot_icon']['value'];
+
 			$tooltip_custom_position = $hotspot['hotspot_position'] ? 'overide-animation-slide-from-' . $hotspot['hotspot_position'] : '';
 
 			// hotspot attributes
@@ -1109,16 +1109,13 @@ class Widget_Hotspot extends Widget_Base
 
 		<#
 			var is_tooltip_direction_animation = (settings.tooltip_animation==='elementor-slide-direction' || settings.tooltip_animation==='elementor-fade-direction' ) ? true : false;
-			var tooltip_position = settings.tooltip_position;
 
 			//tooltip attributes
 			var show_tooltip = (settings.tooltip_trigger === 'none' ) ? 'show-tooltip' : '';
-			var fade_animation = (!show_tooltip && (settings.tooltip_animation==='elementor-fade-in-out' || settings.tooltip_animation==='elementor-fade-direction' )) ? 'elementor-fade-animation' : '' ;
 			view.addRenderAttribute( 'tooltip', {
 				'class': [
 					'elementor-tooltip',
 					show_tooltip,
-					fade_animation
 				],
 			});
 
