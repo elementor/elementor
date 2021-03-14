@@ -2,6 +2,11 @@
 // Mixins
 //
 
+// Simple PX to REM units converter
+@function pxToRem($size) {
+	@return $size / 16px * 1rem;
+}
+
 // Forms > Input Style
 @mixin input-style() {
 	border: 1px solid $gray;

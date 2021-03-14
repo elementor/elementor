@@ -44,6 +44,13 @@ class Kit extends PageBase {
 		return __( 'Kit', 'elementor' );
 	}
 
+	/**
+	 * @return Tabs\Tab_Base[]
+	 */
+	public function get_tabs() {
+		return $this->tabs;
+	}
+
 	protected function get_have_a_look_url() {
 		return '';
 	}

@@ -16,7 +16,7 @@ class Documents extends \WP_UnitTest_Factory_For_Post {
 			'post_title' => new \WP_UnitTest_Generator_Sequence( 'Elementor post title %s' ),
 			'post_content' => new \WP_UnitTest_Generator_Sequence( 'Elementor post content %s' ),
 			'post_excerpt' => new \WP_UnitTest_Generator_Sequence( 'Elementor post excerpt %s' ),
-			'post_type' => 'page',
+			'post_type' => 'post',
 		);
 	}
 
