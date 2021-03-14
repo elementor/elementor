@@ -99,6 +99,8 @@ class TextPath extends Widget_Base {
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
 				'default' => __( 'Add Your Curvy Text Here', 'elementor' ),
+				'frontend_available' => true,
+				'render_type' => 'none',
 			]
 		);
 
@@ -150,7 +152,7 @@ class TextPath extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'alignment',
+			'align',
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
