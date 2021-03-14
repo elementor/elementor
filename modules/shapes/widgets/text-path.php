@@ -179,6 +179,24 @@ class TextPath extends Widget_Base {
 		);
 
 		$this->add_control(
+			'text_direction',
+			[
+				'label' => __( 'Text Direction', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'left',
+				'options' => [
+					'' => __( 'Default', 'elementor' ),
+					'rtl' => __( 'RTL', 'elementor' ),
+					'ltr' => __( 'LTR', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--direction: {{VALUE}}',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'show_path',
 			[
 				'label' => __( 'Show Path', 'elementor' ),

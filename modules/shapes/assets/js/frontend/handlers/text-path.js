@@ -51,7 +51,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 			return;
 		}
 
-		if ( elementorCommon.config.isRTL ) {
+		if ( this.isRTL() ) {
 			offset = 100 - parseInt( offset );
 		}
 
@@ -78,6 +78,10 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 
 			case 'text':
 				this.setText( text );
+				break;
+
+			case 'text_direction':
+				this.setOffset( startPoint.size );
 				break;
 
 			default:
@@ -165,12 +169,28 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 	}
 
 	/**
+	 * Determine if the current layout should be RTL.
+	 *
+	 * @returns {boolean}
+	 */
+	isRTL() {
+		const { text_direction: direction } = this.getElementSettings();
+		let isRTL = elementorCommon.config.isRTL;
+
+		if ( direction ) {
+			isRTL = ( 'rtl' === direction );
+		}
+
+		return isRTL;
+	}
+
+	/**
 	 * Determine if it should RTL the text (reversing it, etc.).
 	 *
 	 * @returns {boolean}
 	 */
 	shouldReverseText() {
-		return ( elementorCommon.config.isRTL && -1 === navigator.userAgent.indexOf( 'Firefox' ) );
+		return ( -1 === navigator.userAgent.indexOf( 'Firefox' ) );
 	}
 
 	/**
@@ -182,8 +202,6 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 		// Make sure to use the inner `a` tag if exists.
 		let parentElement = this.elements.textPath;
 		parentElement = parentElement.querySelector( 'a' ) || parentElement;
-
-		this.elements.textPath.setAttribute( 'direction', 'rtl' );
 
 		const pattern = /([\u0591-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC-_\s]+)/ig;
 
