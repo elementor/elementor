@@ -1,0 +1,39 @@
+$e-app-import-export-page-header-border-bottom-color: tints(300);
+$e-app-import-export-page-header-border-bottom-dark-color: dark-tints(500);
+$e-app-import-export-page-header-heading-color: tints(600);
+$e-app-import-export-page-header-heading-dark-color: dark-tints(100);
+$e-app-import-export-page-header-description-color: tints(500);
+$e-app-import-export-page-header-description-dark-color: dark-tints(100);
+
+$root: e-app-import-export-page-header;
+
+.#{$root} {
+	--e-app-import-export-page-header-border-bottom-color: #{$e-app-import-export-page-header-border-bottom-color};
+	--e-app-import-export-page-header-heading-color: #{$e-app-import-export-page-header-heading-color};
+	--e-app-import-export-page-header-description-color: #{$e-app-import-export-page-header-description-color};
+
+	border-bottom: 1px solid var(--e-app-import-export-page-header-border-bottom-color);
+	margin-bottom: spacing(44);
+
+	&__content-wrapper {
+		max-width: 645px;
+	}
+
+	&__heading {
+		color: var(--e-app-import-export-page-header-heading-color);
+	}
+
+	&__description {
+		color: var(--e-app-import-export-page-header-description-color);
+		margin-top: spacing(20);
+	}
+
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-page-header-border-bottom-color: #{$e-app-import-export-page-header-border-bottom-dark-color};
+		--e-app-import-export-page-header-heading-color: #{$e-app-import-export-page-header-heading-dark-color};
+		--e-app-import-export-page-header-description-color: #{$e-app-import-export-page-header-description-dark-color};
+	}
+}
