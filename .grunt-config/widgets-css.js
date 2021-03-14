@@ -6,20 +6,23 @@ class WidgetsCss {
 	constructor( env ) {
 		this.env = env;
 
+		// Can't be empty.
 		this.tempFilePrefix = 'widget-';
 
-		this.widgetsFolder = path.resolve( __dirname, '../includes/widgets' );
-		this.widgetsScssSourceFolder = path.resolve( __dirname, '../assets/dev/scss/frontend/widgets' );
-		this.widgetsScssFolder = path.resolve( __dirname, '../assets/dev/scss/direction' );
-		this.widgetsCssFolder = path.resolve( __dirname, '../assets/css' );
+		this.sourceScssFolder = path.resolve( __dirname, '../assets/dev/scss/frontend/widgets' );
+
+		// Temporary SCSS files are created and eventually transpiled into production CSS files.
+		this.tempScssFolder = path.resolve( __dirname, '../assets/dev/scss/direction' );
+
+		this.cssDestinationFolder = path.resolve( __dirname, '../assets/css' );
 	}
 
 	createWidgetsTempScssFiles() {
-		if ( fs.existsSync( this.widgetsScssSourceFolder ) ) {
-			fs.readdirSync( this.widgetsScssSourceFolder ).forEach( ( fileName ) => {
+		if ( fs.existsSync( this.sourceScssFolder ) ) {
+			fs.readdirSync( this.sourceScssFolder ).forEach( ( fileName ) => {
 				const widgetName = fileName.replace( '.scss', '' ),
-					widgetScssFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName ),
-					widgetScssRtlFileDest = path.join( this.widgetsScssFolder, this.tempFilePrefix + fileName.replace( '.scss', '-rtl.scss' ) );
+					widgetScssFileDest = path.join( this.tempScssFolder, this.tempFilePrefix + fileName ),
+					widgetScssRtlFileDest = path.join( this.tempScssFolder, this.tempFilePrefix + fileName.replace( '.scss', '-rtl.scss' ) );
 
 				write.sync( widgetScssFileDest, this.getWidgetScssContent( widgetName, 'ltr' ) );
 				write.sync( widgetScssRtlFileDest, this.getWidgetScssContent( widgetName, 'rtl' ) );
@@ -49,47 +52,8 @@ class WidgetsCss {
 		} );
 	}
 
-	injectCss() {
-		const cssFolder = path.resolve( __dirname, '../assets/css' );
-
-		if ( fs.existsSync( this.widgetsFolder ) ) {
-			fs.readdirSync( this.widgetsFolder ).forEach( ( fileName ) => {
-				const widgetFilePath = path.join( this.widgetsFolder, fileName );
-				let widgetContent = fs.readFileSync( widgetFilePath, 'utf8' );
-
-				// Getting the content inside the InjectCSS tags (<InjectCSS:widgetName></InjectCSS>).
-				let widgetInjectCssContent = widgetContent.match( /\/\* <\InjectCss:[^]+?<\/InjectCss> \*\// );
-
-				if ( widgetInjectCssContent ) {
-					widgetInjectCssContent = widgetInjectCssContent[ 0 ];
-
-					// Getting the value inside the InjectCSS tag (<InjectCSS:*widgetName*>).
-					const widgetName = widgetInjectCssContent.match( /\/\* <InjectCss:[^]+?(?=>)/ )[ 0 ].replace( '/* <InjectCss:', '' ),
-						fileMinSuffix = 'development' === this.env ? '' : '.min',
-						cssFilePath = path.join( cssFolder, this.tempFilePrefix + widgetName + fileMinSuffix + '.css' );
-
-					if ( fs.existsSync( cssFilePath ) ) {
-						const cssFileContent = fs.readFileSync( cssFilePath, 'utf8' ),
-							cssContent = cssFileContent.replace( /(\r\n|\n|\r|\t)/gm, '' ),
-							phpContent = `/* <InjectCss:${ widgetName }> */
-			if ( $this->is_widget_css() ) {
-				echo '<style>${ cssContent }</style>';
-			}
-		/* </InjectCss> */`;
-
-						widgetContent = widgetContent.replace( widgetInjectCssContent, phpContent );
-
-						write.sync( widgetFilePath, widgetContent );
-					} else {
-						console.log( 'FILE does not exist' );
-					}
-				}
-			} );
-		}
-	}
-
 	removeWidgetsUnusedFiles() {
-		const tempFilesFolders = [ this.widgetsScssFolder, this.widgetsCssFolder ];
+		const tempFilesFolders = [ this.tempScssFolder, this.cssDestinationFolder ];
 
 		tempFilesFolders.forEach( ( folder ) => {
 			if ( fs.existsSync( folder ) ) {
