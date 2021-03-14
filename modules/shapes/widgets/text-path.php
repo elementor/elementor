@@ -183,7 +183,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => __( 'Text Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'left',
+				'default' => '',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					'rtl' => __( 'RTL', 'elementor' ),
