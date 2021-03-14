@@ -49,6 +49,9 @@ AssetsLoader.assets = {
 		'share-link': {
 			src: `${ elementorFrontendConfig.urls.assets }lib/share-link/share-link${ fileSuffix }.js?ver=${ elementorFrontendConfig.version }`,
 		},
+		swiper: {
+			src: `${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`,
+		},
 	},
 	style: {},
 };
