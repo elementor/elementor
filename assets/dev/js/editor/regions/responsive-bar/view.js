@@ -16,7 +16,6 @@ export default class View extends Marionette.ItemView {
 			switcher: prefix + '-switcher',
 			sizeInput: prefix + '__input-size',
 			closeButton: prefix + '__close-button',
-			flipButton: prefix + '__flip-button',
 			breakpointSettingsButton: prefix + '__settings-button',
 		};
 	}
@@ -25,7 +24,6 @@ export default class View extends Marionette.ItemView {
 		return {
 			'change @ui.switcherOption': 'onBreakpointSelected',
 			'change @ui.sizeInput': 'onSizeInputChange',
-			'click @ui.flipButton': 'onFlipButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 		};
