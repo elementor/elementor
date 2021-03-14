@@ -587,8 +587,8 @@ class Frontend extends App {
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
-				'preloaded-elements-handlers',
-				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				'preloaded-modules',
+				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
 				[
 					'elementor-frontend',
 				],
@@ -1177,7 +1177,6 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
@@ -1344,9 +1343,8 @@ class Frontend extends App {
 	private function get_elementor_frontend_dependencies() {
 		$dependencies = [
 			'elementor-frontend-modules',
-			'elementor-dialog',
 			'elementor-waypoints',
-			'share-link',
+			'jquery-ui-position',
 		];
 
 		if ( ! $this->is_improved_assets_loading() ) {
@@ -1359,6 +1357,8 @@ class Frontend extends App {
 			);
 
 			$dependencies[] = 'swiper';
+			$dependencies[] = 'share-link';
+			$dependencies[] = 'elementor-dialog';
 		}
 
 		return $dependencies;

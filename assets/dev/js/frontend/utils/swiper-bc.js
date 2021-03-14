@@ -13,22 +13,18 @@ export default class SwiperBC {
 		}
 
 		return new Promise( ( resolve ) => {
-			if ( ! elementorFrontendConfig.environmentMode.isImprovedAssetsLoading ) {
+			if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
 				return resolve( this.createSwiperInstance( container, this.config ) );
 			}
 
-			const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : '.min';
-
-			import(
-				/* webpackIgnore: true */
-				`${ elementorFrontendConfig.urls.assets }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`
-				).then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+			elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
+				.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
 		} );
 	}
 
 	createSwiperInstance( container, config ) {
 		// The condition should run only once to prevent an additional overwrite of the SwiperSource.
-		if ( ! SwiperBC.isSwiperLoaded && elementorFrontendConfig.environmentMode.isImprovedAssetsLoading ) {
+		if ( ! SwiperBC.isSwiperLoaded && elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
 			SwiperSource = window.Swiper;
 
 			SwiperBC.isSwiperLoaded = true;
