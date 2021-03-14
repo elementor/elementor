@@ -30,11 +30,13 @@ $breakpoints = [
 			</div>
 		</div>
 		<div class="e-responsive-bar__col">
-			<button class="e-responsive-bar__close-button e-responsive-bar__button">
+			<button class="e-responsive-bar__close-button e-responsive-bar__button"
+					data-tooltip="<?php echo __( 'Exit Responsive Mode', 'elementor')?>">
 				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
-			<button class="e-responsive-bar__settings-button e-responsive-bar__button">
+			<button class="e-responsive-bar__settings-button e-responsive-bar__button"
+					data-tooltip="<?php echo __( 'Manage Breakpoints', 'elementor')?>">
 				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
