@@ -93,6 +93,18 @@
             position: relative;
             display: grid;
             grid-auto-flow: column;
+            &:before{
+                z-index: -2;
+                content: "";
+                width: 100%;
+                height: 100%;
+                left: -5px;
+                top: -5px;
+                //background: red;
+                position: absolute;
+                padding: 5px;
+                box-sizing: content-box;
+            }
         }
 
         & .elementor-hotspot-trigger.hotspot-overlay {
@@ -100,7 +112,7 @@
             transition: opacity 0.2s;
         }
 
-        & .elementor-hotspot-trigger.hotspot-overlay:hover {//
+        &:hover .elementor-hotspot-trigger.hotspot-overlay {
             opacity: 1;//
         }
 
@@ -145,20 +157,24 @@
             position: absolute;
             &.elementor-fade-animation{
                 opacity: 0;
+                visibility: hidden;
             }
             &.show-tooltip {
                 cursor: auto;
                 transition: none;
                 display: block;
                 opacity: 1;
+                visibility:visible;
             }
             &.elementor-fade-in-out{
                 cursor: auto;
                 opacity: 1;
+                visibility:visible;
             }
             &.elementor-fade-in-out{
                 cursor: auto;
                 opacity: 1;
+                visibility:visible;
             }
         }
     }

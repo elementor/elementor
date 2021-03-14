@@ -22,10 +22,10 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 
     bindEvents() {
         const elementSettings = this.getElementSettings();
-        var tooltipTriggerEvent = elementSettings.tooltip_trigger;
+        var tooltipTriggerEvent = 'mouseenter' === elementSettings.tooltip_trigger ? 'mouseleave mouseenter' : elementSettings.tooltip_trigger;
 
         if ( tooltipTriggerEvent !== 'none' ) {
-            this.elements.$hotspotTrigger.on( tooltipTriggerEvent, this.onHotspotTriggerEvent.bind( this ) );
+            this.elements.$hotspot.on( tooltipTriggerEvent, this.onHotspotTriggerEvent.bind( this ) );
         }
     }
 
@@ -33,11 +33,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
         const elementSettings = this.getElementSettings();
         const tooltipAnimation = elementSettings.tooltip_animation;
 
-        var currentTooltip = jQuery( event.currentTarget ).parent( '.elementor-hotspot' ).find( '.elementor-tooltip' );
-
-        if ( 'mouseenter' === event.type && currentTooltip.is( '.' + tooltipAnimation ) ) {
-            return;
-        }
+        var currentTooltip = jQuery( event.currentTarget ).find( '.elementor-tooltip' );
 
         this.elements.$tooltip.not( currentTooltip ).removeClass( tooltipAnimation );
         currentTooltip.toggleClass( tooltipAnimation );

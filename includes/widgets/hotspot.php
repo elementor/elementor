@@ -528,7 +528,7 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Trigger', 'elementor'),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'mouseenter' => __('Hover', 'elementor'),
+					'mouseenter' => __('Hover', 'elementor'),//
 					'click' => __('Click', 'elementor'),
 					'none' => __('None', 'elementor'),
 				],
