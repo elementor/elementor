@@ -347,11 +347,11 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_group_control(
-				Group_Control_Text_Shadow::get_type(),
-				[
-					'name' => 'title_shadow',
-					'selector' => '{{WRAPPER}} .elementor-tab-title',
-				]
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
 		);
 
 		$this->add_control(
@@ -417,11 +417,11 @@ class Widget_Tabs extends Widget_Base {
 		);
 
 		$this->add_group_control(
-				Group_Control_Text_Shadow::get_type(),
-				[
-					'name' => 'content_shadow',
-					'selector' => '{{WRAPPER}} .elementor-tab-content',
-				]
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'content_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-content',
+			]
 		);
 
 		$this->end_controls_section();

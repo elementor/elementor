@@ -237,11 +237,11 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_group_control(
-				Group_Control_Text_Shadow::get_type(),
-				[
-					'name' => 'text_shadow',
-					'selector' => '{{WRAPPER}}',
-				]
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}}',
+			]
 		);
 
 		$this->end_controls_section();
@@ -303,11 +303,11 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_group_control(
-				Group_Control_Text_Shadow::get_type(),
-				[
-					'name' => 'drop_cap_shadow',
-					'selector' => '{{WRAPPER}} .elementor-drop-cap',
-				]
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'drop_cap_shadow',
+				'selector' => '{{WRAPPER}} .elementor-drop-cap',
+			]
 		);
 
 		$this->add_control(
