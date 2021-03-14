@@ -162,6 +162,8 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setSlideshowContent( options.slideshow );
 
 				break;
+			default:
+				self.setHTMLContent( options.html );
 		}
 
 		modal.show();
@@ -203,7 +205,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	setHTMLContent: function( html ) {
-		if ( window.elementorCommon ) {
+    if ( window.elementorCommon ) {
 			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
 		}
 

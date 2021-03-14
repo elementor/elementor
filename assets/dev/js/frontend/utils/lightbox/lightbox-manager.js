@@ -1,13 +1,14 @@
 export default class extends elementorModules.ViewModule {
 	static getLightbox() {
-		return new Promise( ( resolve ) => {
-			import(
-				/* webpackChunkName: 'lightbox' */
-				`elementor-frontend/utils/lightbox/lightbox`
-				).then( ( { default: LightboxModule } ) => {
-				resolve( new LightboxModule() );
-			} );
-		} );
+		const lightboxPromise = new Promise( ( resolveLightbox ) => {
+				import(
+					/* webpackChunkName: 'lightbox' */
+					`elementor-frontend/utils/lightbox/lightbox`
+				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
+			} ),
+			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' );
+
+		return Promise.all( [ lightboxPromise, dialogPromise ] ).then( () => lightboxPromise );
 	}
 
 	getDefaultSettings() {
