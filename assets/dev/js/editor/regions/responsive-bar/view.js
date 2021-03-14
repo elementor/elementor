@@ -119,8 +119,4 @@ export default class View extends Marionette.ItemView {
 
 		elementor.updatePreviewSize( size );
 	}
-
-	onFlipButtonClick() {
-		elementor.togglePreviewOrientation();
-	}
 }
