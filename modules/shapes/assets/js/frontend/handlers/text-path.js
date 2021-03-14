@@ -60,7 +60,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 
 	// Attach a unique id to the path.
 	attachIdToPath() {
-		const path = this.elements.svg.querySelector( '[data-path-anchor], path' );
+		const path = this.elements.svg.querySelector( '[data-path-anchor]' ) || this.elements.svg.querySelector( 'path' );
 		path.id = this.pathId;
 	}
 
