@@ -744,15 +744,28 @@ export default class EditorBase extends Marionette.Application {
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 		this.initPreviewResizable();
+
+		if ( DEFAULT_DEVICE_MODE === elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			elementor.changeDeviceMode( 'mobile' );
+		}
 	}
 
 	toggleDeviceMode() {
+		if ( DEFAULT_DEVICE_MODE !== elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
+		} else {
+			elementor.changeDeviceMode( 'mobile' );
+		}
+
 		elementorCommon.elements.$body.toggleClass( 'e-is-device-mode' );
 	}
 
 	exitDeviceMode() {
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
-		elementor.changeDeviceMode( 'desktop' );
+
+		if ( DEFAULT_DEVICE_MODE !== elementor.channels.deviceMode.request( 'currentMode' ) ) {
+			elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
+		}
 	}
 
 	updatePreviewSize( size ) {
