@@ -467,7 +467,6 @@ class Widget_Accordion extends Widget_Base {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'content_shadow',
-
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
 			]
 		);
