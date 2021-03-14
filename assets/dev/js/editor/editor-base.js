@@ -576,7 +576,7 @@ export default class EditorBase extends Marionette.Application {
 			case 'mobile': return {
 				width: 375,
 				height: 667,
-				maxWidth: 414,
+				maxWidth: 767,
 				minWidth: 320,
 				maxHeight: 896,
 				minHeight: 480,
