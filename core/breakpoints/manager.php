@@ -151,17 +151,17 @@ class Manager extends Module {
 				'default_value' => 767,
 				'direction' => 'max',
 			],
-			/*self::BREAKPOINT_KEY_MOBILE_EXTRA => [
+			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
 				'label' => __( 'Mobile Extra', 'elementor' ),
 				'default_value' => 880,
 				'direction' => 'max',
-			],*/
+			],
 			self::BREAKPOINT_KEY_TABLET => [
 				'label' => __( 'Tablet', 'elementor' ),
 				'default_value' => 1024,
 				'direction' => 'max',
 			],
-			/*self::BREAKPOINT_KEY_TABLET_EXTRA => [
+			self::BREAKPOINT_KEY_TABLET_EXTRA => [
 				'label' => __( 'Tablet Extra', 'elementor' ),
 				'default_value' => 1365,
 				'direction' => 'max',
@@ -175,7 +175,7 @@ class Manager extends Module {
 				'label' => __( 'Widescreen', 'elementor' ),
 				'default_value' => 2400,
 				'direction' => 'min',
-			],*/
+			],
 		];
 	}
 
