@@ -38,10 +38,7 @@ $breakpoints = [
 				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
-			<button class="e-responsive-bar__flip-button e-responsive-bar__button">
-				<span class="elementor-screen-only"><?php echo __( 'Flip', 'elementor' ); ?></span>
-				<i class="fas fa-sync-alt"></i>
-			</button>
+			<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
 			<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
 			<span class="e-responsive-bar__input-size-separator">x</span>
 			<input type="text" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
