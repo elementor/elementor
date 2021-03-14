@@ -252,8 +252,8 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-						'name' => 'content_shadow',
-						'selector' => '{{WRAPPER}} .elementor-testimonial-content',
+					'name' => 'content_shadow',
+					'selector' => '{{WRAPPER}} .elementor-testimonial-content',
 				]
 		);
 
@@ -350,8 +350,8 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-						'name' => 'name_shadow',
-						'selector' => '{{WRAPPER}} .elementor-testimonial-name',
+					'name' => 'name_shadow',
+					'selector' => '{{WRAPPER}} .elementor-testimonial-name',
 				]
 		);
 
@@ -395,8 +395,8 @@ class Widget_Testimonial extends Widget_Base {
 		$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-						'name' => 'job_shadow',
-						'selector' => '{{WRAPPER}} .elementor-testimonial-job',
+					'name' => 'job_shadow',
+					'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 				]
 		);
 

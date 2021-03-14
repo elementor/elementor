@@ -491,8 +491,8 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-						'name' => 'title_shadow',
-						'selector' => '{{WRAPPER}} .elementor-image-box-title',
+					'name' => 'title_shadow',
+					'selector' => '{{WRAPPER}} .elementor-image-box-title',
 				]
 		);
 
@@ -534,8 +534,8 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_group_control(
 				Group_Control_Text_Shadow::get_type(),
 				[
-						'name' => 'description_shadow',
-						'selector' => '{{WRAPPER}} .elementor-image-box-description',
+					'name' => 'description_shadow',
+					'selector' => '{{WRAPPER}} .elementor-image-box-description',
 				]
 		);
 
