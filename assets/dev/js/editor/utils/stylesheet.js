@@ -3,18 +3,44 @@
 		var self = this,
 			rules = {},
 			rawCSS = {},
-			devices = {};
+			devices = {},
+			activeBreakpoints,
+			// A object map of breakpoint database keys
+			breakpointKeys,
+			// A flat array of the breakpoint keys.
+			breakpointNames; //
 
-		var getDeviceMaxValue = function( deviceName ) {
-			var deviceNames = Object.keys( devices ),
-				deviceNameIndex = deviceNames.indexOf( deviceName ),
-				nextIndex = deviceNameIndex + 1;
+		const getDeviceMinBreakpoint = ( deviceName ) => {
+			let minBreakpoint;
 
-			if ( nextIndex >= deviceNames.length ) {
-				throw new RangeError( 'Max value for this device is out of range.' );
+			if ( ! activeBreakpoints ) {
+				// The breakpoints config object
+				activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 			}
 
-			return devices[ deviceNames[ nextIndex ] ] - 1;
+			if ( ! breakpointNames ) {
+				breakpointNames = Object.keys( activeBreakpoints );
+			}
+
+			if ( ! breakpointKeys ) {
+				breakpointKeys = elementor.config.breakpointKeys;
+			}
+
+			if ( breakpointNames[ 0 ] === deviceName ) {
+				// For the lowest breakpoint, the min point is always 0.
+				minBreakpoint = 0;
+			} else if ( 'min' === activeBreakpoints[ deviceName ].direction ) {
+				// Widescreen only has a minimum point. In this case, the breakpoint
+				// value in the Breakpoints config is itself the device min point.
+				minBreakpoint = activeBreakpoints[ deviceName ].value;
+			} else {
+				const deviceNameIndex = breakpointNames.indexOf( deviceName ),
+					previousIndex = deviceNameIndex - 1;
+
+				minBreakpoint = activeBreakpoints[ breakpointNames[ previousIndex ] ] + 1;
+			}
+
+			return minBreakpoint;
 		};
 
 		var queryToHash = function( query ) {
@@ -37,7 +63,7 @@
 					endPoint = queryParts[ 0 ],
 					deviceName = queryParts[ 1 ];
 
-				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
+				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : getDeviceMinBreakpoint( deviceName );
 			} );
 
 			return query;
