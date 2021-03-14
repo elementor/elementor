@@ -547,7 +547,7 @@ export default class EditorBase extends Marionette.Application {
 
 		$responsiveWrapper.resizable( {
 			disabled: true,
-			handles: 'n, e, s, w',
+			handles: 'e, s, w',
 
 			stop: () => {
 				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
