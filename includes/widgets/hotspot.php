@@ -391,9 +391,7 @@ class Widget_Hotspot extends Widget_Base
 					]
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}.elementor-hotspot .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
-					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
-					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;'
+					'{{WRAPPER}} {{CURRENT_ITEM}} .tooltip-position' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );'
 				],
 				'condition' => [
 					'hotspot_tooltip_position' => 'yes',
@@ -515,10 +513,7 @@ class Widget_Hotspot extends Widget_Base
 					]
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
-					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
-					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;'
-					//TODO: Replace class
+					'{{WRAPPER}} .tooltip-position' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );'
 				],
 				'frontend_available' => true,
 			]
@@ -999,7 +994,8 @@ class Widget_Hotspot extends Widget_Base
 		$this->add_render_attribute( 'tooltip', [
 			'class' => [
 				'elementor-tooltip',
-				$show_tooltip
+				$show_tooltip,
+				( !$is_tooltip_direction_animation ) ? 'tooltip-position' : ''
 			]
 		] );
 ?>
@@ -1043,7 +1039,8 @@ class Widget_Hotspot extends Widget_Base
 			$this->add_render_attribute($direction_mask_repeater_setting_key, [
 				'class' => [
 					'animation-direction-mask',
-					$tooltip_custom_position
+					$tooltip_custom_position,
+					( $is_tooltip_direction_animation ) ? 'tooltip-position' : ''
 				]
 			]);
 
@@ -1096,7 +1093,7 @@ class Widget_Hotspot extends Widget_Base
 	?>
 		<#
 
-		var image = {
+		const image = {
 			id: settings.background_image.id,
 			url: settings.background_image.url,
 			size: settings.thumbnail_size,
@@ -1104,33 +1101,32 @@ class Widget_Hotspot extends Widget_Base
 			model: view.getEditModel()
 		};
 
-		var image_url = elementor.imagesManager.getImageUrl( image );
+		const image_url = elementor.imagesManager.getImageUrl( image );
 
 		#>
 			<img src="{{ image_url }}" title="" alt="">
-
-
 		<#
-			var is_tooltip_direction_animation = (settings.tooltip_animation==='elementor-slide-direction' || settings.tooltip_animation==='elementor-fade-direction' ) ? true : false;
+		const is_tooltip_direction_animation = (settings.tooltip_animation==='elementor-slide-direction' || settings.tooltip_animation==='elementor-fade-direction' ) ? true : false;
 
 			//tooltip attributes
-			var show_tooltip = (settings.tooltip_trigger === 'none' ) ? 'show-tooltip' : '';
+		const show_tooltip = (settings.tooltip_trigger === 'none' ) ? 'show-tooltip' : '';
 			view.addRenderAttribute( 'tooltip', {
 				'class': [
 					'elementor-tooltip',
 					show_tooltip,
+					( !is_tooltip_direction_animation ) ? 'tooltip-position' : ''
 				],
 			});
 
-			_.each( settings.hotspot, function( hotspot, index ) {
-				var iconHTML = elementor.helpers.renderIcon( view, hotspot.hotspot_icon, {}, 'i' , 'object' );
+			_.each( settings.hotspot, ( hotspot, index ) => {
+				const iconHTML = elementor.helpers.renderIcon( view, hotspot.hotspot_icon, {}, 'i' , 'object' );
 
-				var is_circle = (!hotspot.hotspot_label && !hotspot.hotspot_icon.value) ? 'elementor-hotspot-circle' : '' ;
-				var is_only_icon = (!hotspot.hotspot_label && hotspot.hotspot_icon.value) ? 'elementor-hotspot-only-icon' : '' ;
-				var tooltip_custom_position = hotspot.hotspot_tooltip_position && hotspot.hotspot_position ? 'overide-animation-slide-from-' + hotspot.hotspot_position : '';
+				const is_circle = (!hotspot.hotspot_label && !hotspot.hotspot_icon.value) ? 'elementor-hotspot-circle' : '' ;
+				const is_only_icon = (!hotspot.hotspot_label && hotspot.hotspot_icon.value) ? 'elementor-hotspot-only-icon' : '' ;
+				const tooltip_custom_position = hotspot.hotspot_tooltip_position && hotspot.hotspot_position ? 'overide-animation-slide-from-' + hotspot.hotspot_position : '';
 
 				// hotspot attributes
-				var hotspot_repeater_setting_key = view.getRepeaterSettingKey('wrapper', 'hotspots', index);
+				const hotspot_repeater_setting_key = view.getRepeaterSettingKey('wrapper', 'hotspots', index);
 				view.addRenderAttribute(hotspot_repeater_setting_key, {
 					'class' : [
 						'elementor-hotspot',
@@ -1145,7 +1141,7 @@ class Widget_Hotspot extends Widget_Base
 				}
 
 				// hotspot trigger attributes
-				var trigger_repeater_setting_key = view.getRepeaterSettingKey('trigger', 'hotspots', index);
+				const trigger_repeater_setting_key = view.getRepeaterSettingKey('trigger', 'hotspots', index);
 				view.addRenderAttribute(trigger_repeater_setting_key, {
 					'class' : [
 						'elementor-hotspot-trigger',
@@ -1155,11 +1151,12 @@ class Widget_Hotspot extends Widget_Base
 				});
 
 				//direction mask attributes
-				var direction_mask_repeater_setting_key = view.getRepeaterSettingKey('animation-direction-mask', 'hotspots', index);
+				const direction_mask_repeater_setting_key = view.getRepeaterSettingKey('animation-direction-mask', 'hotspots', index);
 				view.addRenderAttribute(direction_mask_repeater_setting_key, {
 					'class' : [
 						'animation-direction-mask',
-						tooltip_custom_position
+						tooltip_custom_position,
+						( is_tooltip_direction_animation ) ? 'tooltip-position' : ''
 					]
 				});
 

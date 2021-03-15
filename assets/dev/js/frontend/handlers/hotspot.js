@@ -22,7 +22,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 
     bindEvents() {
         const elementSettings = this.getElementSettings();
-        var tooltipTriggerEvent = 'mouseenter' === elementSettings.tooltip_trigger ? 'mouseleave mouseenter' : elementSettings.tooltip_trigger;
+		const tooltipTriggerEvent = 'mouseenter' === elementSettings.tooltip_trigger ? 'mouseleave mouseenter' : elementSettings.tooltip_trigger;
 
         if ( tooltipTriggerEvent !== 'none' ) {
             this.elements.$hotspot.on( tooltipTriggerEvent, this.onHotspotTriggerEvent.bind( this ) );
@@ -30,7 +30,10 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     onHotspotTriggerEvent( event ) {
-        if ( jQuery( event.target ).is( '.elementor-hotspot-trigger' ) || jQuery( event.target ).parents( '.elementor-hotspot-trigger' ).length ) {
+		const isHotspotButtonEvent = jQuery( event.target ).is( '.elementor-hotspot-trigger' ) || jQuery( event.target ).parents( '.elementor-hotspot-trigger' ).length;
+		const isTooltipMouseLeave = ( 'mouseleave' === event.type && ( jQuery( event.target ).is( '.tooltip-position' ) || jQuery( event.target ).parents( '.tooltip-position' ).length ) );
+
+		if ( isHotspotButtonEvent || isTooltipMouseLeave ) {
             const currentHotspot = jQuery( event.currentTarget );
             this.elements.$hotspot.not( currentHotspot ).removeClass( 'active' );
             currentHotspot.toggleClass( 'active' );
@@ -38,16 +41,15 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     hotspotSequencedAnimation() {
-        const elementSettings = this.getElementSettings();
-        const isSequencedAnimation = elementSettings.hotspot_sequenced_animation;
+		const isSequencedAnimation = this.getElementSettings( 'hotspot_sequenced_animation' );
 
         if ( isSequencedAnimation ) {
             const hotspotObserver = elementorModules.utils.Scroll.scrollObserver( { //start sequenced animation when element on viewport
                 callback: ( event ) => {
                     if ( event.isInViewport ) {
                         hotspotObserver.unobserve( this.$element[ 0 ] );
-                        this.elements.$hotspot.each( function( index ) { //add delay for each hotspot
-                            this.style.animationDelay = ( ( index + 1 ) * 0.7 ) + 's';
+                        this.elements.$hotspot.each( ( index, element ) => { //add delay for each hotspot
+							element.style.animationDelay = ( ( index + 1 ) * 0.7 ) + 's';
                         } );
                         this.elements.$hotspot.addClass( 'elementor-sequenced-animation' );//add sequenced animation class
                     }
@@ -59,12 +61,11 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 
     setTooltipPositionControl() {
 		const getElementSettings = this.getElementSettings();
-		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-slide-direction' ) || 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-fade-direction' ) );
-        if ( isDirectionAnimation ) {
-            const transitionProperty = this.elements.$tooltip.css( 'transition-property' );
+		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'elementor-slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'elementor-fade-direction' ) );
+
+		if ( isDirectionAnimation ) {
             this.elements.$tooltipMask.removeClass( 'animation-slide-from-left animation-slide-from-top animation-slide-from-right animation-slide-from-bottom' );
             this.elements.$tooltipMask.addClass( 'animation-slide-from-' + getElementSettings.tooltip_position );
-            this.elements.$tooltip.css( 'transition-property', transitionProperty );
         }
     }
 
@@ -75,7 +76,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     onElementChange( propertyName ) {
-		if ( 0 === propertyName.indexOf( 'tooltip_position' ) ) {
+		if ( propertyName.startsWith( 'tooltip_position' ) ) {
             this.setTooltipPositionControl();
 		}
 	}

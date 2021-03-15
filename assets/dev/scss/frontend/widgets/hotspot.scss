@@ -1,5 +1,5 @@
 // Animation: Pulse
-@keyframes pulse {
+@keyframes hotspot-pulse {
     from {
         transform: scale(1);
     }
@@ -8,12 +8,12 @@
     }
 }
 .elementor-pulse {
-    animation: pulse 0.7s infinite alternate;
+    animation: hotspot-pulse 0.7s infinite alternate;
     animation-timing-function: ease;
 }
 
 // Animation: Pulse Fade Out
-@keyframes pulse-fade-out {
+@keyframes hotspot-pulse-fade-out {
     from {
         transform: scale(0.5);
         opacity: 1;
@@ -24,7 +24,7 @@
     }
 }
 .elementor-pulse-fade-out .outer-circle {
-    animation: pulse-fade-out 2s infinite;
+    animation: hotspot-pulse-fade-out 2s infinite;
 }
 .elementor-hotspot:not(.elementor-hotspot-circle) .elementor-hotspot-trigger.elementor-pulse-fade-out:before {
     content: "";
@@ -33,10 +33,10 @@
     position: absolute;
     z-index: -1;
     opacity: 0;
-    animation: pulse-fade-out 2s infinite;
+    animation: hotspot-pulse-fade-out 2s infinite;
 }
 // Animation: Sequenced
-@keyframes sequenced {
+@keyframes hotspot-sequenced {
     from {
         opacity: 0;
     }
@@ -45,7 +45,7 @@
     }
 }
 .elementor-sequenced-animation {
-    animation: sequenced 0.3s;
+    animation: hotspot-sequenced 0.3s;
     animation-iteration-count: 1;
     animation-fill-mode: both; //
 }
