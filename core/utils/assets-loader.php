@@ -62,13 +62,11 @@ class Assets_Loader extends Module {
 	}
 
 	public function set_asset_inline_content( $config ) {
-		list(
-			'content_type' => $content_type,
-			'asset_key' => $asset_key,
-			'asset_url' => $asset_url,
-			'asset_path' => $asset_path,
-			'current_version' => $current_version
-			) = $config;
+		$content_type = $config['content_type'];
+		$asset_key = $config['asset_key'];
+		$asset_url = $config['asset_url'];
+		$asset_path = $config['asset_path'];
+		$current_version = $config['current_version'];
 
 		if ( ! $this->assets_inline_content ) {
 			$this->init_assets_inline_content( $content_type );
@@ -86,11 +84,10 @@ class Assets_Loader extends Module {
 	}
 
 	public function get_asset_inline_content( $config ) {
-//		delete_option( self::INLINE_CONTENT_KEY );
-//		return;
 		$this->set_asset_inline_content( $config );
 
-		list ( 'content_type' => $content_type, 'asset_key' => $asset_key ) = $config;
+		$content_type = $config['content_type'];
+		$asset_key = $config['asset_key'];
 
 		return $this->assets_inline_content[ $content_type ][ $asset_key ]['content'];
 	}
