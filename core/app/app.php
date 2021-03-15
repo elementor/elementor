@@ -234,7 +234,7 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 
-		if ( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
 		}
 

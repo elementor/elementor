@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useEffect } from 'react';
 
 import { Context } from '../../../../../../../context/export/export-context';
 
@@ -13,6 +13,10 @@ export default function KitContentCheckbox( props ) {
 
 			exportContext.dispatch( { type: actionType, payload: props.type } );
 		};
+
+	useEffect( () => {
+		exportContext.dispatch( { type: 'ADD_INCLUDE', payload: props.type } );
+	}, [] );
 
 	return useMemo( () => (
 		<Checkbox checked={ isSelected() } onChange={ setIncludes } className={ props.className } />

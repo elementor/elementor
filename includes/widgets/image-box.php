@@ -469,7 +469,7 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -481,10 +481,18 @@ class Widget_Image_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-title',
+				'selector' => '{{WRAPPER}} .elementor-image-box-title',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-box-title',
 			]
 		);
 
@@ -504,7 +512,7 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-description' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_TEXT,
@@ -516,10 +524,18 @@ class Widget_Image_Box extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'selector' => '{{WRAPPER}} .elementor-image-box-content .elementor-image-box-description',
+				'selector' => '{{WRAPPER}} .elementor-image-box-description',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'description_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-box-description',
 			]
 		);
 

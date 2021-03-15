@@ -671,4 +671,27 @@ class Utils {
 	public static function validate_html_tag( $tag ) {
 		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
 	}
+
+	/**
+	 * Get recently edited posts query.
+	 *
+	 * Returns `WP_Query` of the recent edited posts.
+	 * By default max posts ( $args['posts_per_page'] ) is 3.
+	 *
+	 * @param array $args
+	 *
+	 * @return \WP_Query
+	 */
+	public static function get_recently_edited_posts_query( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		] );
+
+		return new \WP_Query( $args );
+	}
 }

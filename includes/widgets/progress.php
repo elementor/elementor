@@ -256,6 +256,14 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'bar_inner_shadow',
+				'selector' => '{{WRAPPER}} .elementor-progress-bar',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -288,6 +296,14 @@ class Widget_Progress extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-title',
 			]
 		);
 
