@@ -1393,24 +1393,6 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function save_widgets_css( $widget_name ) {
-		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
-	}
-
-	private function get_widget_css_config( $widget_file_name ) {
-		$direction = is_rtl() ? '-rtl' : '';
-
-		$css_file_path = 'css/widget-' . $widget_file_name . $direction . '.min.css';
-
-		return [
-			'content_type' => 'css',
-			'asset_key' => $widget_file_name,
-			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
-			'current_version' => ELEMENTOR_VERSION,
-		];
-	}
-
 	private function get_unique_page_widgets( $elements ) {
 		$page_widgets = [];
 
@@ -1433,5 +1415,23 @@ abstract class Document extends Controls_Stack {
 		self::$registered_widgets = $page_widgets;
 
 		return $page_widgets;
+	}
+
+	private function save_widgets_css( $widget_name ) {
+		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
+	}
+
+	private function get_widget_css_config( $widget_file_name ) {
+		$direction = is_rtl() ? '-rtl' : '';
+
+		$css_file_path = 'css/widget-' . $widget_file_name . $direction . '.min.css';
+
+		return [
+			'content_type' => 'css',
+			'asset_key' => $widget_file_name,
+			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'current_version' => ELEMENTOR_VERSION,
+		];
 	}
 }
