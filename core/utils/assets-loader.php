@@ -16,13 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.1.0
  */
 class Assets_Loader extends Module {
-	const ASSETS_DATA_KEY =  'elementor_assets_data';
-
-	const INLINE_CONTENT_KEY = 'inline-content';
+	const INLINE_CONTENT_KEY =  '_elementor_inline_content';
 
 	private $assets;
 
-	private $assets_data;
+	private $assets_inline_content;
 
 	private $files_data;
 
@@ -63,52 +61,54 @@ class Assets_Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
-	public function set_asset_data( $config ) {
+	public function set_asset_inline_content( $config ) {
 		list(
-			'type' => $asset_type,
-			'key' => $asset_key,
-			'url' => $asset_url,
-			'path' => $asset_path,
+			'content_type' => $content_type,
+			'asset_key' => $asset_key,
+			'asset_url' => $asset_url,
+			'asset_path' => $asset_path,
 			'current_version' => $current_version
 			) = $config;
 
-		if ( ! $this->assets_data ) {
-			$this->init_assets_data( $asset_type );
+		if ( ! $this->assets_inline_content ) {
+			$this->init_assets_inline_content( $content_type );
 		}
 
-		$assets_data = $this->assets_data[ self::INLINE_CONTENT_KEY ][ $asset_type ];
+		$assets_data = $this->assets_inline_content[ $content_type ];
 
-		$is_asset_data_exist = array_key_exists( $asset_key, $assets_data );
+		$is_asset_inline_content_exist = array_key_exists( $asset_key, $assets_data );
 
-		if ( 'css' === $asset_type && ( ! $is_asset_data_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) ) {
+		if ( 'css' === $content_type && ( ! $is_asset_inline_content_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) ) {
 			$asset_css = $this->get_asset_css( $asset_key, $asset_url, $asset_path );
 
-			$this->save_asset_data( 'css', $asset_key, $asset_css, $current_version );
+			$this->save_asset_inline_content( 'css', $asset_key, $asset_css, $current_version );
 		}
 	}
 
-	public function get_asset_data( $config ) {
-		$this->set_asset_data( $config );
+	public function get_asset_inline_content( $config ) {
+//		delete_option( self::INLINE_CONTENT_KEY );
+//		return;
+		$this->set_asset_inline_content( $config );
 
-		list ( 'type' => $asset_type, 'key' => $asset_key ) = $config;
+		list ( 'content_type' => $content_type, 'asset_key' => $asset_key ) = $config;
 
-		return $this->assets_data[ self::INLINE_CONTENT_KEY ][ $asset_type ][ $asset_key ]['data'];
+		return $this->assets_inline_content[ $content_type ][ $asset_key ]['content'];
 	}
 
-	public function save_asset_data( $data_type, $asset_key, $data, $version ) {
-		if ( ! $this->assets_data ) {
-			$this->init_assets_data( $data_type );
+	public function save_asset_inline_content( $content_type, $asset_key, $content, $version ) {
+		if ( ! $this->assets_inline_content ) {
+			$this->init_assets_inline_content( $content_type );
 		}
 
-		if ( ! array_key_exists( $asset_key, $this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ] ) ) {
-			$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ] = [];
+		if ( ! array_key_exists( $asset_key, $this->assets_inline_content[ $content_type ] ) ) {
+			$this->assets_inline_content[ $content_type ][ $asset_key ] = [];
 		}
 
-		$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ]['data'] = $data;
+		$this->assets_inline_content[ $content_type ][ $asset_key ]['content'] = $content;
 
-		$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ][ $asset_key ]['version'] = $version;
+		$this->assets_inline_content[ $content_type ][ $asset_key ]['version'] = $version;
 
-		update_option( self::ASSETS_DATA_KEY, $this->assets_data );
+		update_option( self::INLINE_CONTENT_KEY, $this->assets_inline_content );
 	}
 
 	private function is_asset_version_changed( $asset_data, $current_version ) {
@@ -161,19 +161,19 @@ class Assets_Loader extends Module {
 		}
 	}
 
-	private function init_assets_data( $data_type = '' ) {
-		$this->assets_data = get_option( self::ASSETS_DATA_KEY, [] );
+	private function init_assets_inline_content( $content_type = '' ) {
+		$this->assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
 
-		if ( ! array_key_exists( self::INLINE_CONTENT_KEY, $this->assets_data ) ) {
-			$this->assets_data[ self::INLINE_CONTENT_KEY ] = [];
-		}
-
-		if ( $data_type && ! array_key_exists( $data_type, $this->assets_data[ self::INLINE_CONTENT_KEY ] )  ) {
-			$this->assets_data[ self::INLINE_CONTENT_KEY ][ $data_type ] = [];
+		if ( $content_type && ! array_key_exists( $content_type, $this->assets_inline_content )  ) {
+			$this->assets_inline_content[ $content_type ] = [];
 		}
 	}
 
 	private function get_asset_css( $asset_key, $asset_url, $asset_path ) {
+		if ( ! file_exists( $asset_path ) ) {
+			return '';
+		}
+
 		$asset_css_file_size = $this->get_file_data( $asset_key, $asset_path, 'size' );
 
 		// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
