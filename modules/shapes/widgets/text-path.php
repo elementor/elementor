@@ -101,6 +101,9 @@ class TextPath extends Widget_Base {
 				'default' => __( 'Add Your Curvy Text Here', 'elementor' ),
 				'frontend_available' => true,
 				'render_type' => 'none',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
