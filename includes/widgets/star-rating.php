@@ -232,6 +232,14 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
+			]
+		);
+
 		$this->add_responsive_control(
 			'title_gap',
 			[

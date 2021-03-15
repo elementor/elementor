@@ -5,7 +5,7 @@ export default {
 		$window: jQuery( '#elementor-preview-iframe' ),
 		$body: jQuery( '#elementor-test' ),
 	},
-	config: { elements: { data: {}, editSettings: {} }, breakpoints: {} },
+	config: { elements: { data: {}, editSettings: {} }, breakpoints: {}, responsive: { breakpoints: {}, activeBreakpoints: {} } },
 	isEditMode: () => {},
 	elementsHandler: {
 		runReadyTrigger: () => {},
