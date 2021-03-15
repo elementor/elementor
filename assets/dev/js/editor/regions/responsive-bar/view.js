@@ -75,13 +75,7 @@ export default class View extends Marionette.ItemView {
 		const isInSettingsPanelActive = 'panel/global/menu' === elementor.documents.currentDocument.config.panel.default_route;
 
 		if ( isInSettingsPanelActive ) {
-			// Shake the panel
-			_( 6 ).times( ( n ) => {
-				_.delay( () => {
-						elementor.panel.$el.css( 'transform', 'translateX(' + ( ( ( n + 1 ) % 2 ) * 5 ) + 'px)' );
-					}, n * 70 );
-			} );
-
+			$e.route( 'panel/elements/categories' );
 			return;
 		}
 
