@@ -70,6 +70,8 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
+	private static $registered_widgets = [];
+
 	/**
 	 * Document post data.
 	 *
@@ -1016,6 +1018,8 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
+		$this->get_unique_page_widgets( $elements );
+
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
@@ -1383,5 +1387,31 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
+	}
+
+	private function get_unique_page_widgets( $elements ) {
+		$page_widgets = [];
+
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
+			$widget_name = $element_data['widgetType'];
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			$is_widget_already_registered = in_array( $widget_name, $page_widgets, TRUE );
+
+			if ( $widget_name && ! $is_widget_already_registered ) {
+				$page_widgets[] = $widget_name;
+
+				do_action( 'elementor/document/get_unique_page_widget', $element );
+			}
+
+			do_action( 'elementor/document/get_page_widget', $element );
+
+			return $element_data;
+		} );
+
+		self::$registered_widgets = $page_widgets;
+
+		return $page_widgets;
 	}
 }
