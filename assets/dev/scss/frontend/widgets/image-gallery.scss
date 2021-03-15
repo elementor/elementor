@@ -3,7 +3,6 @@
 //
 
 .elementor-image-gallery {
-
 	.gallery-item {
 		display: inline-block;
 		text-align: center;
@@ -18,6 +17,22 @@
 
 		.gallery-caption {
 			margin: 0;
+		}
+	}
+
+	figure  {
+		img {
+			display: block;
+		}
+
+		figcaption {
+			width: 100%;
+		}
+	}
+
+	.gallery-spacing-custom & {
+		.gallery-icon {
+			padding: 0; // Reset Style for some themes
 		}
 	}
 
@@ -105,24 +120,6 @@
 					max-width: 100%;
 				}
 			}
-		}
-	}
-}
-
-.elementor-image-gallery {
-	figure  {
-		img {
-			display: block;
-		}
-
-		figcaption {
-			width: 100%;
-		}
-	}
-
-	.gallery-spacing-custom & {
-		.gallery-icon {
-			padding: 0; // Reset Style for some themes
 		}
 	}
 }
