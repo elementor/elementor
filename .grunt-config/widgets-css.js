@@ -37,9 +37,6 @@ class WidgetsCss {
 
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
-@import "../../../../assets/dev/scss/editor/breakpoints";
-@import "../../../../assets/dev/scss/frontend/breakpoints/values";
-@import "../../../../assets/dev/scss/frontend/breakpoints/templates";
 @import "../../../../assets/dev/scss/frontend/breakpoints/breakpoints";
 
 @import "../frontend/widgets/${ widgetName }";
