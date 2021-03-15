@@ -62,13 +62,7 @@ class Assets_Loader extends Module {
 	}
 
 	public function set_asset_inline_content( $config ) {
-		list(
-			'content_type' => $content_type,
-			'asset_key' => $asset_key,
-			'asset_url' => $asset_url,
-			'asset_path' => $asset_path,
-			'current_version' => $current_version
-			) = $config;
+		list( 'content_type' => $content_type, 'asset_key' => $asset_key, 'asset_url' => $asset_url, 'asset_path' => $asset_path, 'current_version' => $current_version ) = $config;
 
 		if ( ! $this->assets_inline_content ) {
 			$this->init_assets_inline_content( $content_type );
