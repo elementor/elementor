@@ -2,8 +2,10 @@
 
 namespace Elementor\Core\Responsive\Files;
 
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,25 +32,29 @@ class Frontend extends Base {
 	 * @access public
 	 */
 	public function parse_content() {
-		$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
 		$file_content = file_get_contents( $this->template_file );
 
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
-			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys );
+			if ( 'DESKTOP' === $placeholder_data[1] ) {
+				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+			} else {
+				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
-			$is_max_point = 'MAX' === $placeholder_data[2];
+				$is_max_point = 'MAX' === $placeholder_data[2];
 
-			if ( $is_max_point ) {
-				$breakpoint_index++;
-			}
+				if ( ! $is_max_point ) {
+					$breakpoint_index--;
+				}
 
-			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ];
+				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
 
-			if ( $is_max_point ) {
-				$value--;
+				if ( ! $is_max_point ) {
+					$value++;
+				}
 			}
 
 			return $value . 'px';
