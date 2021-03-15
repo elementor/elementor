@@ -277,6 +277,19 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'frontend_available' => true,
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'show_image_overlay',
+							'value' => '',
+						],
+						[
+							'name' => 'image_overlay[url]',
+							'value' => '',
+						],
+					],
+				],
 			]
 		);
 

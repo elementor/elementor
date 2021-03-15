@@ -339,7 +339,8 @@ class Widget_Heading extends Widget_Base {
 
 		view.addInlineEditingAttributes( 'title' );
 
-		var title_html = '<' + settings.header_size  + ' ' + view.getRenderAttributeString( 'title' ) + '>' + title + '</' + settings.header_size + '>';
+		var headerSizeTag = elementor.helpers.validateHTMLTag( settings.header_size ),
+			title_html = '<' + headerSizeTag  + ' ' + view.getRenderAttributeString( 'title' ) + '>' + title + '</' + headerSizeTag + '>';
 
 		print( title_html );
 		#>
