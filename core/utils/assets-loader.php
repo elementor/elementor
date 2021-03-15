@@ -86,8 +86,6 @@ class Assets_Loader extends Module {
 	}
 
 	public function get_asset_inline_content( $config ) {
-//		delete_option( self::INLINE_CONTENT_KEY );
-//		return;
 		$this->set_asset_inline_content( $config );
 
 		list ( 'content_type' => $content_type, 'asset_key' => $asset_key ) = $config;
