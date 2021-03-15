@@ -58,11 +58,13 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     setTooltipPositionControl() {
-        var getElementSettings = this.getElementSettings();
-        var isDirectionAnimation = ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-slide-direction' ) ) || ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-fade-direction' ) );
+		const getElementSettings = this.getElementSettings();
+		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-slide-direction' ) || 0 === getElementSettings.tooltip_animation.indexOf( 'elementor-fade-direction' ) );
         if ( isDirectionAnimation ) {
+            const transitionProperty = this.elements.$tooltip.css( 'transition-property' );
             this.elements.$tooltipMask.removeClass( 'animation-slide-from-left animation-slide-from-top animation-slide-from-right animation-slide-from-bottom' );
             this.elements.$tooltipMask.addClass( 'animation-slide-from-' + getElementSettings.tooltip_position );
+            this.elements.$tooltip.css( 'transition-property', transitionProperty );
         }
     }
 

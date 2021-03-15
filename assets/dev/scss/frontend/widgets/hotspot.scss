@@ -122,6 +122,7 @@
         .animation-direction-mask {
             overflow: hidden;
             position: absolute;
+            pointer-events: none;
             .elementor-tooltip {
                 box-shadow: none !important; //Ask Kobi
                 position: static;
@@ -129,20 +130,21 @@
                 transition: transform 0.3s, opacity 0.3s;
             }
         }
+        &.active .elementor-tooltip{
+            pointer-events: visible;
+          }
 
         .elementor-tooltip {
             transition: opacity 0.3s, transform 0.3s;
             transform-origin: center center;
             cursor: default;
             position: absolute;
-            //visibility: hidden;
 			pointer-events: none;
             &.show-tooltip {
                 cursor: auto;
                 transition: none;
                 opacity: 1;
-                //visibility: visible;
-			  pointer-events: visible;
+			    pointer-events: visible;
             }
         }
 

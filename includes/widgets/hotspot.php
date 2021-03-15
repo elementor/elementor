@@ -352,7 +352,7 @@ class Widget_Hotspot extends Widget_Base
 				'label_on' => __('On', 'elementor'),
 				'default' => 'no',
 				'description' => sprintf(__('Set custom Tooltip opening that will only affect this specific hotspot.', 'elementor'), '<code>|</code>'),
-				'render_type' => 'ui',
+				//'render_type' => 'ui',
 			]
 		);
 
@@ -495,6 +495,7 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Position', 'elementor'),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'top',
+				'toggle' => false,
 				'options' => [
 					'right' => [
 						'title' => __('Left', 'elementor'),
@@ -517,6 +518,7 @@ class Widget_Hotspot extends Widget_Base
 					'{{WRAPPER}} {{CURRENT_ITEM}} .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
 					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask' => 'right: initial;bottom: initial;left: initial;top: initial;{{VALUE}}: calc(100% + 5px );',
 					'{{WRAPPER}} {{CURRENT_ITEM}} .animation-direction-mask .elementor-tooltip' => 'right: initial;bottom: initial;left: initial;top: initial;'
+					//TODO: Replace class
 				],
 				'frontend_available' => true,
 			]
@@ -720,7 +722,7 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'size_units' => ['px', '%'],
 				'default' => [
-					'size' => '20',
+					'size' => '12',
 					'unit' => 'px'
 				],
 				'selectors' => [
@@ -803,7 +805,7 @@ class Widget_Hotspot extends Widget_Base
 					'{{WRAPPER}} .elementor-hotspot.elementor-hotspot-circle .elementor-hotspot-trigger .outer-circle' => 'padding: {{SIZE}}{{UNIT}};width:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};height:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};',
 				],
 				'default' => [
-					'size' => '6',
+					'size' => '10',
 					'unit' => 'px'
 				]
 			]
@@ -1009,7 +1011,8 @@ class Widget_Hotspot extends Widget_Base
 			$is_circle = !$hotspot['hotspot_label'] && !$hotspot['hotspot_icon']['value'];
 			$is_only_icon = !$hotspot['hotspot_label'] && $hotspot['hotspot_icon']['value'];
 
-			$tooltip_custom_position = $hotspot['hotspot_position'] ? 'overide-animation-slide-from-' . $hotspot['hotspot_position'] : '';
+			$tooltip_custom_position = $hotspot['hotspot_tooltip_position'] && $hotspot['hotspot_position'] ? 'overide-animation-slide-from-' . $hotspot['hotspot_position'] : '';
+
 
 			// hotspot attributes
 			$hotspot_repeater_setting_key = $this->get_repeater_setting_key('wrapper', 'hotspots', $key);
@@ -1124,7 +1127,7 @@ class Widget_Hotspot extends Widget_Base
 
 				var is_circle = (!hotspot.hotspot_label && !hotspot.hotspot_icon.value) ? 'elementor-hotspot-circle' : '' ;
 				var is_only_icon = (!hotspot.hotspot_label && hotspot.hotspot_icon.value) ? 'elementor-hotspot-only-icon' : '' ;
-				var tooltip_custom_position = hotspot.hotspot_position ? 'overide-animation-slide-from-' + hotspot.hotspot_position : '';
+				var tooltip_custom_position = hotspot.hotspot_tooltip_position && hotspot.hotspot_position ? 'overide-animation-slide-from-' + hotspot.hotspot_position : '';
 
 				// hotspot attributes
 				var hotspot_repeater_setting_key = view.getRepeaterSettingKey('wrapper', 'hotspots', index);
