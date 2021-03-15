@@ -938,7 +938,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	private function get_widget_css() {
-		return Plugin::$instance->assets_loader->get_asset_data( $this->get_css_config() );
+		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
 	}
 
 	private function get_css_config() {
@@ -949,10 +949,10 @@ abstract class Widget_Base extends Element_Base {
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
-			'type' => 'css',
-			'key' => $widget_name,
-			'url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'content_type' => 'css',
+			'asset_key' => $widget_name,
+			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
