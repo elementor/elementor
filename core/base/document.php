@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
@@ -603,9 +604,6 @@ abstract class Document extends Controls_Stack {
 				}
 			}
 
-			// Process before save. Also save the result to `$data` for the `after_save` hook.
-			$data['settings'] = $this->before_save_controls( $data['settings'], $this->get_controls() );
-
 			$this->save_settings( $data['settings'] );
 
 			// Refresh post after save settings.
@@ -614,9 +612,6 @@ abstract class Document extends Controls_Stack {
 
 		// Don't check is_empty, because an empty array should be saved.
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-			// Process before save. Also save the result to `$data` for the `after_save` hook.
-			$data['elements'] = $this->before_save_elements_controls( $data['elements'] );
-
 			$this->save_elements( $data['elements'] );
 		}
 
@@ -1273,6 +1268,120 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
+	/*
+	 * Get Export Data
+	 *
+	 * Filters a document's data on export
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to export
+	 */
+	public function get_export_data() {
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
+			$element_data['id'] = Utils::generate_random_string();
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_export' );
+		} );
+
+		return [
+			'content' => $content,
+			'settings' => $this->get_data( 'settings' ),
+		];
+	}
+
+	/*
+	 * Get Import Data
+	 *
+	 * Filters a document's data on import
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to import
+	 */
+	public function get_import_data( array $data ) {
+		$data['content'] = Plugin::$instance->db->iterate_data( $data['content'], function( $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_import' );
+		} );
+
+		if ( ! empty( $data['settings'] ) ) {
+			$template_model = new Page_Model( [
+				'id' => 0,
+				'settings' => $data['settings'],
+			] );
+
+			$page_data = $this->process_element_import_export( $template_model, 'on_import' );
+
+			$data['settings'] = $page_data['settings'];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Import
+	 *
+	 * Allows to import an external data to a document
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @param array $data
+	 */
+	public function import( array $data ) {
+		$data = $this->get_import_data( $data );
+
+		$this->save( [
+			'elements' => $data['content'],
+			'settings' => $data['settings'],
+		] );
+	}
+
+	private function process_element_import_export( Controls_Stack $element, $method ) {
+		$element_data = $element->get_data();
+
+		if ( method_exists( $element, $method ) ) {
+			// TODO: Use the internal element data without parameters.
+			$element_data = $element->{$method}( $element_data );
+		}
+
+		foreach ( $element->get_controls() as $control ) {
+			$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			// If the control isn't exist, like a plugin that creates the control but deactivated.
+			if ( ! $control_class ) {
+				return $element_data;
+			}
+
+			if ( method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			}
+
+			// On Export, check if the control has an argument 'export' => false.
+			if ( 'on_export' === $method && isset( $control['export'] ) && false === $control['export'] ) {
+				unset( $element_data['settings'][ $control['name'] ] );
+			}
+		}
+
+		return $element_data;
+	}
+
 	protected function get_remote_library_config() {
 		$config = [
 			'type' => 'block',
@@ -1389,46 +1498,5 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
-	}
-
-	/**
-	 * Validate elements settings.
-	 *
-	 * Iterate all elements via the `validate_controls` method.
-	 *
-	 * @param array $elements
-	 *
-	 * @return array
-	 */
-	private function before_save_elements_controls( array $elements ) {
-		return Plugin::$instance->db->iterate_data( $elements, function ( $element_data ) {
-			$instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-			$element_data['settings'] = $this->before_save_controls( $element_data['settings'], $instance->get_controls() );
-
-			return $element_data;
-		} );
-	}
-
-	/**
-	 * Process settings of an element or a document.
-	 *
-	 * @param array $settings The setting to validate.
-	 * @param array $controls The controls config for the settings set.
-	 *
-	 * @return array
-	 */
-	private function before_save_controls( array $settings, array $controls ) {
-		foreach ( $controls as $control_id => $control_config ) {
-			if ( empty( $settings[ $control_id ] ) ) {
-				continue;
-			}
-
-			/** @var \Elementor\Control_Select|\Elementor\Control_Select2 $control_obj */
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control_config['type'] );
-			$settings[ $control_id ] = $control_obj->before_save( $settings[ $control_id ], $control_config );
-		}
-
-		return $settings;
 	}
 }

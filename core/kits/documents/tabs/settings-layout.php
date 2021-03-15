@@ -167,7 +167,7 @@ class Settings_Layout extends Tab_Base {
 			self::ACTIVE_BREAKPOINTS_CONTROL_ID,
 			[
 				'label' => __( 'Active Breakpoints', 'elementor' ),
-				'type' => Controls_Manager::SELECT2,
+				'type' => Controls_Manager::HIDDEN,
 				'description' => __( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
 				'options' => $options,
 				'default' => [
@@ -238,7 +238,7 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || ( isset( $data['settings']['post_status'] ) && Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) ) {
 			return;
 		}
 
