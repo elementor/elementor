@@ -31,7 +31,7 @@ export default class View extends Marionette.ItemView {
 
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
-		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviweResize );
+		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
 	}
 
 	addTipsyToIconButtons() {
@@ -89,7 +89,7 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
-	onPreviweResize() {
+	onPreviewResize() {
 		const width = elementor.channels.responsivePreview.request( 'width' );
 		const height = elementor.channels.responsivePreview.request( 'height' );
 
