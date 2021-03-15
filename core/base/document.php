@@ -1019,9 +1019,11 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		add_action( 'elementor/document/get_unique_page_widget', function( $element ) {
-			$this->save_widgets_css( $element->get_name() );
-		} );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+			add_action( 'elementor/document/get_unique_page_widget', function( $element ) {
+				$this->save_widgets_css( $element->get_name() );
+			} );
+		}
 
 		$this->get_unique_page_widgets( $elements );
 
