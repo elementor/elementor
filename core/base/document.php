@@ -70,6 +70,8 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
+	private static $registered_widgets = [];
+
 	/**
 	 * Document post data.
 	 *
@@ -1016,9 +1018,11 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$page_widgets = $this->get_page_widgets( $elements );
+		add_action( 'elementor/document/get_unique_page_widget', function( $element ) {
+			$this->save_widgets_css( $element->get_name() );
+		} );
 
-		$this->save_widgets_css( $page_widgets );
+		$this->get_unique_page_widgets( $elements );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
 
@@ -1389,40 +1393,44 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function save_widgets_css( $page_widgets ) {
-		foreach ( $page_widgets as $widget_name ) {
-			Plugin::$instance->assets_loader->set_asset_data( $this->get_widget_css_config( $widget_name ) );
-		}
+	private function save_widgets_css( $widget_name ) {
+		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
 	}
 
-	private function get_widget_css_config( $widget_name ) {
+	private function get_widget_css_config( $widget_file_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
-		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
+		$css_file_path = 'css/widget-' . $widget_file_name . $direction . '.min.css';
 
 		return [
-			'type' => 'css',
-			'key' => $widget_name,
-			'url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'content_type' => 'css',
+			'asset_key' => $widget_file_name,
+			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
-	private function get_page_widgets( $elements ) {
+	private function get_unique_page_widgets( $elements ) {
 		$page_widgets = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element ) use ( &$page_widgets ) {
-			$widget_name = $element['widgetType'];
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
+			$widget_name = $element_data['widgetType'];
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			$is_widget_already_registered = in_array( $widget_name, $page_widgets, TRUE );
 
 			if ( $widget_name && ! $is_widget_already_registered ) {
 				$page_widgets[] = $widget_name;
+
+				do_action( 'elementor/document/get_unique_page_widget', $element );
 			}
 
-			return $element;
+			return $element_data;
 		} );
+
+		self::$registered_widgets = $page_widgets;
 
 		return $page_widgets;
 	}
