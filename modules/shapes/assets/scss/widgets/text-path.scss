@@ -30,7 +30,7 @@
 		text {
 			--fill: var( --text-color );
 			fill: var( --fill );
-			direction: var( --direction );
+			direction: var( --direction, $direction );
 			transition: var( --transition ) stroke,
 						var( --transition ) stroke-width,
 						var( --transition ) fill;

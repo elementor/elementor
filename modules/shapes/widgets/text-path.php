@@ -159,7 +159,7 @@ class TextPath extends Widget_Base {
 			[
 				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'default' => 'left',
+				'default' => '',
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor' ),

@@ -82,6 +82,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 
 			case 'text_path_direction':
 				this.setOffset( startPoint.size );
+				this.setText( text );
 				break;
 
 			default:
@@ -190,7 +191,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 	 * @returns {boolean}
 	 */
 	shouldReverseText() {
-		return ( -1 === navigator.userAgent.indexOf( 'Firefox' ) );
+		return ( this.isRTL() && -1 === navigator.userAgent.indexOf( 'Firefox' ) );
 	}
 
 	/**
@@ -203,7 +204,7 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 		let parentElement = this.elements.textPath;
 		parentElement = parentElement.querySelector( 'a' ) || parentElement;
 
-		const pattern = /([\u0591-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC-_\s]+)/ig;
+		const pattern = /([\u0591-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC\s$&+,:;=?@#|'<>.^*()%!-]+)/ig;
 
 		// Reverse the text.
 		parentElement.textContent = parentElement.textContent.replace( pattern, ( word ) => {
