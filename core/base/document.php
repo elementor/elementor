@@ -1512,13 +1512,11 @@ abstract class Document extends Controls_Stack {
 		$page_widgets = [];
 
 		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
-			$widget_name = $element_data['widgetType'];
+			$widget_name = array_key_exists( 'widgetType', $element_data ) ? $element_data['widgetType'] : '';
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			$is_widget_already_registered = in_array( $widget_name, $page_widgets, TRUE );
-
-			if ( $widget_name && ! $is_widget_already_registered ) {
+			if ( $widget_name && ! in_array( $widget_name, $page_widgets, TRUE ) ) {
 				$page_widgets[] = $widget_name;
 
 				do_action( 'elementor/document/get_unique_page_widget', $element );
