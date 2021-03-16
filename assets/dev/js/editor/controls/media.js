@@ -24,15 +24,30 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
+	/**
+	 * Get library type for `wp.media` using a given media type.
+	 *
+	 * @param {String} mediaType - The media type to get the library for.
+	 * @returns {String}
+	 */
+	getLibraryType: function( mediaType ) {
+		if ( mediaType ) {
+			return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
+		}
+
+		return this.getMediaType();
+	},
+
 	getMediaType: function() {
-		return this.model.get( 'media_type' );
+		// `get( 'media_type' )` is for BC.
+		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
 	},
 
 	applySavedValue: function() {
-		var url = this.getControlValue( 'url' ),
-			mediaType = this.getMediaType();
+		const url = this.getControlValue( 'url' );
+		const mediaType = this.getMediaType();
 
-		if ( 'image' === mediaType ) {
+		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
@@ -46,6 +61,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	openFrame: function( e ) {
 		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
+		this.mediaType = mediaType;
+
+		if ( ! mediaType ) {
+			return;
+		}
 
 		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
@@ -53,7 +73,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return false;
 		}
 
-		if ( ! this.frame ) {
+		// If there is no frame, or the current initialized frame contains a different library than
+		// the `data-media-type` of the clicked button, (re)initialize the frame.
+		if ( ! this.frame || this.getLibraryType( mediaType ) !== this.currentLibraryType ) {
 			this.initFrame();
 		}
 
@@ -86,6 +108,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		const mediaType = this.getMediaType();
+		this.currentLibraryType = this.getLibraryType( mediaType );
+
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
@@ -95,7 +120,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			states: [
 				new wp.media.controller.Library( {
 					title: __( 'Insert Media', 'elementor' ),
-					library: wp.media.query( { type: this.getMediaType() } ),
+					library: wp.media.query( { type: this.getLibraryType( mediaType ) } ),
 					multiple: false,
 					date: false,
 				} ),
