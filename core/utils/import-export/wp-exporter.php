@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Utils;
+namespace Elementor\Core\Utils\ImportExport;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

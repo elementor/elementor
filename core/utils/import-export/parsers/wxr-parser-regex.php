@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Utils\Parsers;
+namespace Elementor\Core\Utils\ImportExport\Parsers;
 
 use WP_Error;
 

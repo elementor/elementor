@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
-use Elementor\Core\Utils\WP_Import;
+use Elementor\Core\Utils\ImportExport\WP_Import;
 use Elementor\Testing\Elementor_Test_Base;
 
 class Test_WP_Import extends Elementor_Test_Base {
