@@ -122,6 +122,9 @@ class TextPath extends Widget_Base {
 			[
 				'label' => __( 'SVG', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'media_types' => [
+					'svg',
+				],
 				'condition' => [
 					'path' => 'custom',
 				],
