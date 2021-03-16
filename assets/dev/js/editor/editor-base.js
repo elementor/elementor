@@ -564,6 +564,10 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	destroyPreviewResizable() {
+		this.$previewResponsiveWrapper.resizable( 'destroy' );
+	}
+
 	broadcastPreviewResize( size ) {
 		this.channels.responsivePreview
 			.reply( 'width', size.width )
@@ -593,40 +597,36 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
+	updatePreviewMaxHeight() {
+		console.log( jQuery( '#elementor-preview' ).outerHeight() );
+	}
+
 	updatePreviewResizeOptions() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
-		const isPreviewDisabled = $responsiveWrapper.resizable( 'option', 'disabled' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			if ( ! isPreviewDisabled ) {
-				$responsiveWrapper.resizable( 'disable' );
-			}
-
-			$responsiveWrapper.css( {
-				'--e-editor-preview-width': '',
-				'--e-editor-preview-height': '',
-			} );
+			$responsiveWrapper.resizable( 'disable' )
+				.css( {
+					'--e-editor-preview-width': '',
+					'--e-editor-preview-height': '',
+				} );
 
 			this.broadcastPreviewResize( {
 				width: this.$previewWrapper.outerWidth(),
 				height: this.$previewWrapper.outerHeight() - 40,
 			} );
 		} else {
-			if ( isPreviewDisabled ) {
-				$responsiveWrapper.resizable( 'enable' );
-			}
-
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			$responsiveWrapper.css( {
-				'--e-editor-preview-width': breakpointResizeOptions.width + 'px',
-				'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
-			} );
+			$responsiveWrapper.resizable( 'enable' )
+				.resizable( 'option', { ...breakpointResizeOptions } )
+				.css( {
+					'--e-editor-preview-width': breakpointResizeOptions.width + 'px',
+					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
+				} );
 
 			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
-
-			$responsiveWrapper.resizable( 'option', { ...breakpointResizeOptions } );
 		}
 	}
 
@@ -744,28 +744,26 @@ export default class EditorBase extends Marionette.Application {
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 		this.initPreviewResizable();
-
-		if ( DEFAULT_DEVICE_MODE === elementor.channels.deviceMode.request( 'currentMode' ) ) {
-			elementor.changeDeviceMode( 'mobile' );
-		}
+		elementor.changeDeviceMode( 'mobile' );
 	}
 
 	toggleDeviceMode() {
-		if ( DEFAULT_DEVICE_MODE !== elementor.channels.deviceMode.request( 'currentMode' ) ) {
-			elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
-		} else {
-			elementor.changeDeviceMode( 'mobile' );
+		if ( ! this.isDeviceModeActive() ) {
+			this.enterDeviceMode();
+			return;
 		}
 
-		elementorCommon.elements.$body.toggleClass( 'e-is-device-mode' );
+		this.exitDeviceMode();
 	}
 
 	exitDeviceMode() {
+		elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+		this.destroyPreviewResizable();
+	}
 
-		if ( DEFAULT_DEVICE_MODE !== elementor.channels.deviceMode.request( 'currentMode' ) ) {
-			elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
-		}
+	isDeviceModeActive() {
+		return elementorCommon.elements.$body.hasClass( 'e-is-device-mode' );
 	}
 
 	updatePreviewSize( size ) {
