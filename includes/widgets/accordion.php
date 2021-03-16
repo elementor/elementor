@@ -588,9 +588,11 @@ class Widget_Accordion extends Widget_Base {
 					} );
 
 					view.addInlineEditingAttributes( tabContentKey, 'advanced' );
+
+					var titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_html_tag );
 					#>
 					<div class="elementor-accordion-item">
-						<{{{ settings.title_html_tag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
 							<# if ( settings.icon || settings.selected_icon ) { #>
 							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
 								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
@@ -603,7 +605,7 @@ class Widget_Accordion extends Widget_Base {
 							</span>
 							<# } #>
 							<a class="elementor-accordion-title" href="">{{{ item.tab_title }}}</a>
-						</{{{ settings.title_html_tag }}}>
+						</{{{ titleHTMLTag }}}>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					</div>
 					<#
