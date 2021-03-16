@@ -1,5 +1,5 @@
 // Animation: Pulse
-@keyframes hotspot-pulse {
+@keyframes e-hotspot-pulse {
     from {
         transform: scale(1);
     }
@@ -7,13 +7,13 @@
         transform: scale(1.1);
     }
 }
-.elementor-pulse {
-    animation: hotspot-pulse 0.7s infinite alternate;
+.e-pulse {
+    animation: e-hotspot-pulse 0.7s infinite alternate;
     animation-timing-function: ease;
 }
 
 // Animation: Pulse Fade Out
-@keyframes hotspot-pulse-fade-out {
+@keyframes e-hotspot-pulse-fade-out {
     from {
         transform: scale(0.5);
         opacity: 1;
@@ -23,17 +23,17 @@
         opacity: 0;
     }
 }
-.elementor-pulse-fade-out .outer-circle {
-    animation: hotspot-pulse-fade-out 2s infinite;
+.e-pulse-fade-out .e-outer-circle {
+    animation: e-hotspot-pulse-fade-out 2s infinite;
 }
-.elementor-hotspot:not(.elementor-hotspot-circle) .elementor-hotspot-trigger.elementor-pulse-fade-out:before {
+.e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger.e-pulse-fade-out:before {
     content: "";
     width: 100%;
     height: 100%;
     position: absolute;
     z-index: -1;
     opacity: 0;
-    animation: hotspot-pulse-fade-out 2s infinite;
+    animation: e-hotspot-pulse-fade-out 2s infinite;
 }
 // Animation: Sequenced
 @keyframes hotspot-sequenced {
@@ -44,7 +44,7 @@
         opacity: 1;
     }
 }
-.elementor-sequenced-animation {
+.e-sequenced-animation {
     animation: hotspot-sequenced 0.3s;
     animation-iteration-count: 1;
     animation-fill-mode: both; //
@@ -60,18 +60,18 @@
         }
     }
 
-    .elementor-hotspot {
+    .e-hotspot {
         z-index: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         position: absolute;
-        &.active{
+        &.e-active{
             z-index: 2;
         }
 
-        &.elementor-hotspot-circle .outer-circle,
-        &.elementor-hotspot-circle .inner-circle {
+        &.e-hotspot-circle .e-outer-circle,
+        &.e-hotspot-circle .e-inner-circle {
             content: "";
             cursor: pointer;
             display: inline-block;
@@ -79,19 +79,19 @@
             border-radius: 50%;
         }
 
-        &.elementor-hotspot-circle .inner-circle {
+        &.e-hotspot-circle .e-inner-circle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
-        &.elementor-hotspot-only-icon .elementor-hotspot-trigger {
+        &.e-hotspot-only-icon .e-hotspot-trigger {
             line-height: 0;
             box-sizing: content-box;
         }
 
-        .elementor-hotspot-trigger {
+        .e-hotspot-trigger {
             cursor: pointer;
             position: relative;
             display: grid;
@@ -109,32 +109,32 @@
             }
         }
 
-        & .elementor-hotspot-trigger.hotspot-overlay {
+        & .e-hotspot-trigger.e-hotspot-overlay {
             opacity: 0.7;
             transition: opacity 0.2s;
         }
 
-        & .elementor-hotspot-trigger.hotspot-overlay:hover,
-        &.active .elementor-hotspot-trigger.hotspot-overlay{
+        & .e-hotspot-trigger.e-hotspot-overlay:hover,
+        &.e-active .e-hotspot-trigger.e-hotspot-overlay{
             opacity: 1;
         }
 
-        .animation-direction-mask {
+        .e-animation-direction-mask {
             overflow: hidden;
             position: absolute;
             pointer-events: none;
-            .elementor-tooltip {
+            .e-tooltip {
                 box-shadow: none !important; //Ask Kobi
                 position: static;
                 cursor: auto;
                 transition: transform 0.3s, opacity 0.3s;
             }
         }
-        &.active .elementor-tooltip{
+        &.e-active .e-tooltip{
             pointer-events: visible;
           }
 
-        .elementor-tooltip {
+        .e-tooltip {
             transition: opacity 0.3s, transform 0.3s;
             transform-origin: center center;
             cursor: default;
@@ -148,43 +148,43 @@
             }
         }
 
-		&.active .elementor-tooltip{
+		&.e-active .e-tooltip{
 		  pointer-events: visible;
 		}
     }
 
     // fade-in-out
-    &.elementor-fade-in-out .elementor-hotspot .elementor-tooltip {
+    &.e-fade-in-out .e-hotspot .e-tooltip {
         opacity: 0;
     }
-    &.elementor-fade-in-out .elementor-hotspot.active .elementor-tooltip {
+    &.e-fade-in-out .e-hotspot.e-active .e-tooltip {
         cursor: auto;
         opacity: 1;
     }
 
     // slide direction / fade direction
-    .elementor-hotspot .animation-slide-from-top .elementor-tooltip,
-    .elementor-hotspot .animation-direction-mask.overide-animation-slide-from-top .elementor-tooltip {
+    .e-hotspot .e-animation-slide-from-top .e-tooltip,
+    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-top .e-tooltip {
         transform: translate(0, -100%);
     }
-    .elementor-hotspot .animation-slide-from-left .elementor-tooltip,
-    .elementor-hotspot .animation-direction-mask.overide-animation-slide-from-left .elementor-tooltip {
+    .e-hotspot .e-animation-slide-from-left .e-tooltip,
+    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-left .e-tooltip {
         transform: translate(-100%, 0);
     }
-    .elementor-hotspot .animation-slide-from-right .elementor-tooltip,
-    .elementor-hotspot .animation-direction-mask.overide-animation-slide-from-right .elementor-tooltip {
+    .e-hotspot .e-animation-slide-from-right .e-tooltip,
+    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-right .e-tooltip {
         transform: translate(100%, 0);
     }
-    .elementor-hotspot .animation-slide-from-bottom .elementor-tooltip,
-    .elementor-hotspot .animation-direction-mask.overide-animation-slide-from-bottom .elementor-tooltip {
+    .e-hotspot .e-animation-slide-from-bottom .e-tooltip,
+    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-bottom .e-tooltip {
         transform: translate(0, 100%);
     }
-    &.elementor-fade-direction .elementor-hotspot .animation-direction-mask .elementor-tooltip {
+    &.e-fade-direction .e-hotspot .e-animation-direction-mask .e-tooltip {
         opacity: 0;
     }
 
-    &.elementor-slide-direction .elementor-hotspot.active .animation-direction-mask .elementor-tooltip,
-    &.elementor-fade-direction .elementor-hotspot.active .animation-direction-mask .elementor-tooltip {
+    &.e-slide-direction .e-hotspot.e-active .e-animation-direction-mask .e-tooltip,
+    &.e-fade-direction .e-hotspot.e-active .e-animation-direction-mask .e-tooltip {
         transform: translate(0, 0);
         opacity: 1;
     }

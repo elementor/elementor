@@ -2,10 +2,10 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     getDefaultSettings() {
         return {
             selectors: {
-                hotspot: '.elementor-hotspot',
-                hotspotTrigger: '.elementor-hotspot-trigger',
-                tooltip: '.elementor-tooltip',
-                tooltipMask: '.animation-direction-mask',
+                hotspot: '.e-hotspot',
+                hotspotTrigger: '.e-hotspot-trigger',
+                tooltip: '.e-tooltip',
+                tooltipMask: '.e-animation-direction-mask',
             },
         };
     }
@@ -30,18 +30,18 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     onHotspotTriggerEvent( event ) {
-		const isHotspotButtonEvent = jQuery( event.target ).is( '.elementor-hotspot-trigger' ) || jQuery( event.target ).parents( '.elementor-hotspot-trigger' ).length;
-		const isTooltipMouseLeave = ( 'mouseleave' === event.type && ( jQuery( event.target ).is( '.tooltip-position' ) || jQuery( event.target ).parents( '.tooltip-position' ).length ) );
+		const isHotspotButtonEvent = jQuery( event.target ).is( '.e-hotspot-trigger' ) || jQuery( event.target ).parents( '.e-hotspot-trigger' ).length;
+		const isTooltipMouseLeave = ( 'mouseleave' === event.type && ( jQuery( event.target ).is( '.e-tooltip-position' ) || jQuery( event.target ).parents( '.e-tooltip-position' ).length ) );
 
 		if ( isHotspotButtonEvent || isTooltipMouseLeave ) {
             const currentHotspot = jQuery( event.currentTarget );
-            this.elements.$hotspot.not( currentHotspot ).removeClass( 'active' );
-            currentHotspot.toggleClass( 'active' );
+            this.elements.$hotspot.not( currentHotspot ).removeClass( 'e-active' );
+            currentHotspot.toggleClass( 'e-active' );
         }
     }
 
     hotspotSequencedAnimation() {
-		const isSequencedAnimation = this.getElementSettings( 'hotspot_sequenced_animation' );
+		const isSequencedAnimation = this.getElementSettings( 'e-hotspot_sequenced_animation' );
 
         if ( isSequencedAnimation ) {
             const hotspotObserver = elementorModules.utils.Scroll.scrollObserver( { //start sequenced animation when element on viewport
@@ -51,7 +51,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
                         this.elements.$hotspot.each( ( index, element ) => { //add delay for each hotspot
 							element.style.animationDelay = ( ( index + 1 ) * 0.7 ) + 's';
                         } );
-                        this.elements.$hotspot.addClass( 'elementor-sequenced-animation' );//add sequenced animation class
+                        this.elements.$hotspot.addClass( 'e-sequenced-animation' );//add sequenced animation class
                     }
                 },
             } );
@@ -61,11 +61,11 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 
     setTooltipPositionControl() {
 		const getElementSettings = this.getElementSettings();
-		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'elementor-slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'elementor-fade-direction' ) );
+		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'e-slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'e-fade-direction' ) );
 
 		if ( isDirectionAnimation ) {
-            this.elements.$tooltipMask.removeClass( 'animation-slide-from-left animation-slide-from-top animation-slide-from-right animation-slide-from-bottom' );
-            this.elements.$tooltipMask.addClass( 'animation-slide-from-' + getElementSettings.tooltip_position );
+            this.elements.$tooltipMask.removeClass( 'e-animation-slide-from-left e-animation-slide-from-top e-animation-slide-from-right e-animation-slide-from-bottom' );
+            this.elements.$tooltipMask.addClass( 'e-animation-slide-from-' + getElementSettings.tooltip_position );
         }
     }
 
