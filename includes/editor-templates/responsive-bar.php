@@ -31,7 +31,7 @@ $breakpoints = [
 		</div>
 		<div class="e-responsive-bar__col">
 			<button class="e-responsive-bar__close-button e-responsive-bar__button"
-					data-tooltip="<?php echo __( 'Exit Responsive Mode', 'elementor')?>">
+					data-tooltip="<?php echo __( 'Exit', 'elementor')?>">
 				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
