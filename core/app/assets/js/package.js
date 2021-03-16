@@ -29,6 +29,7 @@ import Select from './ui/atoms/select';
 import Select2 from './ui/molecules/select2';
 import Text from './ui/atoms/text';
 import UploadFile from './molecules/upload-file';
+import InlineLink from './ui/molecules/inline-link';
 
 export default {
 	AddNewButton,
@@ -62,4 +63,5 @@ export default {
 	Select2,
 	Text,
 	UploadFile,
+	InlineLink,
 };

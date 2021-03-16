@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { pxToRem, arrayToClassName } from 'elementor-app/utils/utils.js';
 import ListItem from './list-item';
 
 import './list.scss';
@@ -11,7 +11,7 @@ export default function List( props ) {
 
 	if ( props.padding ) {
 		style = {
-			'--eps-list-padding': Utils.stringToRemValues( props.padding ),
+			'--eps-list-padding': pxToRem( props.padding ),
 		};
 
 		classes.push( baseClassName + '--padding' );
@@ -22,7 +22,7 @@ export default function List( props ) {
 	}
 
 	return (
-		<ul style={ style } className={ Utils.arrayToClassName( classes ) }>
+		<ul style={ style } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</ul>
 	);

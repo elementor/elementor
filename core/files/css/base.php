@@ -11,7 +11,6 @@ use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Element_Base;
 use Elementor\Plugin;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
 
@@ -702,12 +701,11 @@ abstract class Base extends Base_File {
 	private function init_stylesheet() {
 		$this->stylesheet_obj = new Stylesheet();
 
-		$breakpoints = Responsive::get_breakpoints();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$this->stylesheet_obj
-			->add_device( 'mobile', 0 )
-			->add_device( 'tablet', $breakpoints['md'] )
-			->add_device( 'desktop', $breakpoints['lg'] );
+		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
+			$this->stylesheet_obj->add_device( $breakpoint_name, $breakpoint->get_value() );
+		}
 	}
 
 	/**
