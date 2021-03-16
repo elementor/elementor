@@ -12,7 +12,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			classes += ' elementor-template-library-template-' + this.model.get( 'type' );
 		}
 
-		if ( 0 !== this.model.get( 'accessLevel' ) ) {
+		if ( elementor.config.library_connect.access_levels.core !== this.model.get( 'accessLevel' ) ) {
 			classes += ` elementor-template-library-pro-template elementor-template-library-pro-template__access-level-${ this.model.get( 'accessLevel' ) }`;
 		}
 
