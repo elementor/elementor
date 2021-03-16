@@ -30,6 +30,8 @@ export class ShowSwatches extends CommandBase {
 		const { event: e } = args;
 		const id = e.currentTarget.dataset.id;
 
+		e.stopPropagation();
+
 		// Calculate swatch location.
 		const rect = e.currentTarget.getBoundingClientRect();
 		const x = Math.round( e.clientX - rect.left ) + 'px';
@@ -44,23 +46,26 @@ export class ShowSwatches extends CommandBase {
 
 		const $activePicker = this.container.view.$el.find( this.pickerSelector );
 
-		// If there is a picker already, just move it to the click area.
+		// If there is a picker already, remove it.
 		if ( $activePicker.length ) {
-			$activePicker.css( {
-				'--left': x,
-				'--top': y,
-			} );
-
-			return;
+			$activePicker.remove();
 		}
 
-		this.extractColorsFromSettings();
+		this.container = elementor.getContainer( id );
 
 		// Hack to wait for the images to load before picking the colors from it
 		// when extracting colors from a background image control.
 		// TODO: Find a better solution.
 		setTimeout( () => {
-			this.extractColorsFromImages();
+			const isImage = ( 'img' === e.target.tagName.toLowerCase() );
+
+			if ( isImage ) {
+				this.extractColorsFromImage( e.target );
+			} else {
+				this.extractColorsFromSettings();
+				this.extractColorsFromImages();
+			}
+
 			this.initSwatch( x, y );
 		}, 100 );
 	}
@@ -130,6 +135,25 @@ export class ShowSwatches extends CommandBase {
 		this.backgroundImages.push( img );
 	}
 
+	extractColorsFromImage( image, suffix = '' ) {
+		const colorThief = new ColorThief();
+		const palette =	colorThief.getPalette( image );
+
+		// Add the palette to the colors array.
+		palette.forEach( ( color, index ) => {
+			const hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+
+			// Limit colors count.
+			if ( this.reachedColorsLimit() ) {
+				return;
+			}
+
+			if ( ! Object.values( this.colors ).includes( hex ) ) {
+				this.colors[ `palette-${ suffix }-${ index }` ] = hex;
+			}
+		} );
+	}
+
 	/**
 	 * Iterate over all images in the current selected element and extract colors from them.
 	 */
@@ -141,22 +165,7 @@ export class ShowSwatches extends CommandBase {
 		];
 
 		images.forEach( ( img, i ) => {
-			const colorThief = new ColorThief();
-			const palette =	colorThief.getPalette( img );
-
-			// Add the palette to the colors array.
-			palette.forEach( ( color, index ) => {
-			const hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
-
-				// Limit colors count.
-				if ( this.reachedColorsLimit() ) {
-					return;
-				}
-
-				if ( ! Object.values( this.colors ).includes( hex ) ) {
-					this.colors[ `palette-${ i }-${ index }` ] = hex;
-				}
-			} );
+			this.extractColorsFromImage( img, i );
 		} );
 
 		this.backgroundImages = [];
@@ -213,6 +222,13 @@ export class ShowSwatches extends CommandBase {
 					},
 				},
 			} )	);
+		} );
+
+		// Remove the picker on mouse leave.
+		this.container.view.$el.on( 'mouseleave.color-picker', () => {
+			jQuery( this ).off( 'mouseleave.color-picker' );
+
+			setTimeout( () => { $picker.remove() }, 300 );
 		} );
 	}
 
