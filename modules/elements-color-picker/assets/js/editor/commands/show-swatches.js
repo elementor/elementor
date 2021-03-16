@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import Utils from 'elementor/core/app/assets/js/utils/utils';
+import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
 
 export class ShowSwatches extends CommandBase {
 	constructor( args ) {
@@ -146,7 +146,7 @@ export class ShowSwatches extends CommandBase {
 
 			// Add the palette to the colors array.
 			palette.forEach( ( color, index ) => {
-				const hex = Utils.rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
+			const hex = rgbToHex( color[ 0 ], color[ 1 ], color[ 2 ] );
 
 				// Limit colors count.
 				if ( this.reachedColorsLimit() ) {
