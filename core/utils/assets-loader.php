@@ -183,4 +183,23 @@ class Assets_Loader extends Module {
 
 		return $asset_css;
 	}
+
+	private function reset_inline_content_css() {
+		$assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
+
+		if ( array_key_exists( 'css', $assets_inline_content ) ) {
+			unset( $assets_inline_content['css'] );
+
+			update_option( self::INLINE_CONTENT_KEY, $assets_inline_content );
+		}
+	}
+
+	public function __construct() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+			// Reset the inline content CSS when regenerating CSS from the dashboard.
+			add_action( 'elementor/core/files/clear_cache', function() {
+				$this->reset_inline_content_css();
+			} );
+		}
+	}
 }
