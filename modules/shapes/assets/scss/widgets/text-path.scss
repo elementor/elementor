@@ -11,7 +11,7 @@
 		word-spacing: var( --word-spacing );
 		transform: rotate( var( --rotate, 0 ) ) scaleX( var( --scale-x, 1 ) ) scaleY( var( --scale-y, 1 ) );
 
-		.elementor-text-path-shape {
+		path {
 			vector-effect: non-scaling-stroke; /* Prevent stroke size scaling when resizing the SVG. */
 			fill: var( --path-fill, transparent );
 			stroke: var( --stroke-color, transparent );
@@ -20,7 +20,7 @@
 		}
 
 		&:hover {
-			.elementor-text-path-shape {
+			path {
 				--path-fill: var( --path-fill-hover );
 				--stroke-color: var( --stroke-color-hover );
 				--stroke-width: var( --stroke-width-hover );
