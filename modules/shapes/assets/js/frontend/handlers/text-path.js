@@ -96,8 +96,10 @@ export default class WordArtHandler extends elementorModules.frontend.handlers.B
 	 * @returns {void}
 	 */
 	attachIdToPath() {
-		const path = this.elements.svg.querySelector( '[data-path-anchor]' ) || this.elements.svg.querySelector( 'path' );
+		const path = this.elements.svg.querySelector( '[data-path-anchor]' ) || this.elements.svg.querySelector( 'path, line, circle' );
 		path.id = this.pathId;
+
+		path.classList.add( 'elementor-text-path-shape' );
 	}
 
 	/**
