@@ -603,10 +603,10 @@ export default class EditorBase extends Marionette.Application {
 	updatePreviewResizeOptions() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
-		const isPreviewDisabled = $responsiveWrapper.resizable( 'option', 'disabled' );
+		const isResizable = $responsiveWrapper.is( '.ui-resizable' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			if ( ! isPreviewDisabled ) {
+			if ( isResizable ) {
 				$responsiveWrapper.resizable( 'disable' );
 			}
 
@@ -620,7 +620,7 @@ export default class EditorBase extends Marionette.Application {
 				height: this.$previewWrapper.outerHeight() - 40,
 			} );
 		} else {
-			if ( isPreviewDisabled ) {
+			if ( ! isResizable ) {
 				$responsiveWrapper.resizable( 'enable' );
 			}
 
