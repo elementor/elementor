@@ -1524,7 +1524,7 @@ abstract class Document extends Controls_Stack {
 				do_action( 'elementor/document/get_unique_page_widget', $element );
 			}
 
-			do_action( 'elementor/document/get_page_widget', $element );
+			do_action( 'elementor/document/get_page_element', $element );
 
 			return $element_data;
 		} );
