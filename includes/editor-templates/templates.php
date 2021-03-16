@@ -199,7 +199,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</a>
 </script>
 
-<script type="text/template" id="tmpl-elementor-template-library-get-pro-button">
+<script type="text/template" id="tmpl-elementor-template-library-upgrade-plan-button">
 	<a
 		class="elementor-template-library-template-action elementor-button elementor-go-pro"
 		href="{{{ '<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=panel-library&utm_campaign={UTM_CAMPAIGN}&utm_medium=wp-dash' ); ?>'.replace('%7BUTM_CAMPAIGN%7D', utmCampaign) }}}"
