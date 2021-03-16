@@ -173,8 +173,8 @@ class Assets_Loader extends Module {
 
 		$asset_css_file_size = $this->get_file_data( $asset_key, $asset_path, 'size' );
 
-		// If the file size is more than 2KB then calling the external CSS file, otherwise, printing inline CSS.
-		if ( $asset_css_file_size > 2000 ) {
+		// If the file size is more than 3KB then calling the external CSS file, otherwise, printing inline CSS.
+		if ( $asset_css_file_size > 3000 ) {
 			$asset_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
 		} else {
 			$asset_css = $this->get_file_data( $asset_key, $asset_path, 'content' );
