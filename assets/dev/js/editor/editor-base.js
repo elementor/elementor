@@ -548,7 +548,6 @@ export default class EditorBase extends Marionette.Application {
 		$responsiveWrapper.resizable( {
 			disabled: true,
 			handles: 'e, s, w',
-
 			stop: () => {
 				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
 			},
@@ -604,19 +603,27 @@ export default class EditorBase extends Marionette.Application {
 	updatePreviewResizeOptions() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
+		const isPreviewDisabled = $responsiveWrapper.resizable( 'option', 'disabled' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			$responsiveWrapper.resizable( 'disable' )
-				.css( {
-					'--e-editor-preview-width': '',
-					'--e-editor-preview-height': '',
-				} );
+			if ( ! isPreviewDisabled ) {
+				$responsiveWrapper.resizable( 'disable' );
+			}
+
+			$responsiveWrapper.css( {
+				'--e-editor-preview-width': '',
+				'--e-editor-preview-height': '',
+			} );
 
 			this.broadcastPreviewResize( {
 				width: this.$previewWrapper.outerWidth(),
 				height: this.$previewWrapper.outerHeight() - 40,
 			} );
 		} else {
+			if ( isPreviewDisabled ) {
+				$responsiveWrapper.resizable( 'enable' );
+			}
+
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
 			$responsiveWrapper.resizable( 'enable' )
