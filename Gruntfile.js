@@ -62,6 +62,7 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		grunt.task.run( 'create_widgets_temp_scss_files' );
+
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
