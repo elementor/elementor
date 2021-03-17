@@ -1025,7 +1025,7 @@ abstract class Document extends Controls_Stack {
 			} );
 		}
 
-		$this->get_unique_page_widgets( $elements );
+		$this->handle_page_elements( $elements );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
 
@@ -1510,7 +1510,7 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function get_unique_page_widgets( $elements ) {
+	private function handle_page_elements( $elements ) {
 		$page_widgets = [];
 
 		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
