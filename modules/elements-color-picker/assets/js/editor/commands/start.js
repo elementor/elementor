@@ -10,6 +10,9 @@ export class Start extends CommandBase {
 			initialColor: args.container.getSetting( args.control ),
 		};
 
+		// Prevent elements from triggering edit mode on click.
+		elementor.changeEditMode( 'picker' );
+
 		// Initialize a swatch on click.
 		elementor.$previewContents.on( 'click.color-picker', '.elementor-element', ( e ) => {
 			$e.run( 'elements-color-picker/show-swatches', { event: e } );

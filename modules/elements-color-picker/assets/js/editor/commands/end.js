@@ -17,5 +17,8 @@ export class End extends CommandBase {
 			control: null,
 			initialColor: null,
 		};
+
+		// Return to edit mode.
+		elementor.changeEditMode( 'edit' );
 	}
 }
