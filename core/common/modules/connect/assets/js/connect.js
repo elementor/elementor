@@ -17,11 +17,13 @@ export default class extends elementorModules.ViewModule {
 				counter++;
 
 				const $this = jQuery( this ),
-					callbackId = 'cb' + ( counter );
+					callbackId = 'cb' + ( counter ),
+					tabName = $e.routes.getCurrent( 'library' ).split( '/' )[ 2 ],
+					UTMSource = `utm_source=editor-panel&utm_medium=wp-dash&utm_campaign=insert_${ tabName }`;
 
 				$this.attr( {
 					target: '_blank',
-					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId,
+					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId + '&' + UTMSource,
 				} );
 
 				elementorCommon.elements.$window
