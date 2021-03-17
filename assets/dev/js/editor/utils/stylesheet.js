@@ -5,12 +5,14 @@
 			rawCSS = {},
 			devices = {},
 			activeBreakpoints,
-			// A object map of breakpoint database keys
-			breakpointKeys,
 			// A flat array of the breakpoint keys.
 			breakpointNames; //
 
 		const getDeviceMinBreakpoint = ( deviceName ) => {
+			if ( 'desktop' === deviceName ) {
+				return this.getDesktopMinPoint();
+			}
+
 			let minBreakpoint;
 
 			if ( ! activeBreakpoints ) {
@@ -20,10 +22,6 @@
 
 			if ( ! breakpointNames ) {
 				breakpointNames = Object.keys( activeBreakpoints );
-			}
-
-			if ( ! breakpointKeys ) {
-				breakpointKeys = elementor.config.breakpointKeys;
 			}
 
 			if ( breakpointNames[ 0 ] === deviceName ) {
@@ -41,6 +39,39 @@
 			}
 
 			return minBreakpoint;
+		};
+
+		this.getDesktopMinPoint = () => {
+			if ( ! activeBreakpoints ) {
+				// The breakpoints config object
+				activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+			}
+
+			const desktopPreviousDevice = getDesktopPreviousDeviceKey();
+
+			return activeBreakpoints[ desktopPreviousDevice ].value + 1;
+		};
+
+		const getDesktopPreviousDeviceKey = () => {
+			let desktopPreviousDevice = '';
+			if ( ! activeBreakpoints ) {
+				// The breakpoints config object
+				activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+			}
+
+			const breakpointKeys = Object.keys( activeBreakpoints ),
+				numOfDevices = breakpointKeys.length;
+
+			if ( 'min' === activeBreakpoints[ breakpointKeys[ numOfDevices - 1 ] ].direction ) {
+				// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
+				// widescreen.
+				desktopPreviousDevice = breakpointKeys[ numOfDevices - 2 ];
+			} else {
+				// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
+				desktopPreviousDevice = breakpointKeys[ numOfDevices - 1 ];
+			}
+
+			return desktopPreviousDevice;
 		};
 
 		var queryToHash = function( query ) {
