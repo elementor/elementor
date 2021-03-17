@@ -96,6 +96,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 * @returns {void}
 	 */
 	attachIdToPath() {
+		// Prioritize the custom `data` attribute over the `path` element, and fallback to the first `path`.
 		const path = this.elements.svg.querySelector( '[data-path-anchor]' ) || this.elements.svg.querySelector( 'path' );
 		path.id = this.pathId;
 	}
