@@ -130,11 +130,11 @@ class Control_Media extends Control_Base_Multiple {
 		?>
 		<#
 			// For BC.
-			if( data.media_type ) {
+			if ( data.media_type ) {
 				data.media_types = [ data.media_type ];
 			}
 
-			if( data.should_include_svg_inline_option ) {
+			if ( data.should_include_svg_inline_option ) {
 				data.media_types.push( 'svg' );
 			}
 
@@ -161,11 +161,11 @@ class Control_Media extends Control_Base_Multiple {
 
 			// Get the preview type for the current media type.
 			const getPreviewType = () => {
-				if( data.media_types.includes( 'video' ) ) {
+				if ( data.media_types.includes( 'video' ) ) {
 					return 'video';
 				}
 
-				if( data.media_types.includes( 'image' ) || data.media_types.includes( 'svg' ) ) {
+				if ( data.media_types.includes( 'image' ) || data.media_types.includes( 'svg' ) ) {
 					return 'image';
 				}
 

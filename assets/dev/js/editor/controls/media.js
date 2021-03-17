@@ -44,8 +44,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	applySavedValue: function() {
-		const url = this.getControlValue( 'url' );
-		const mediaType = this.getMediaType();
+		const url = this.getControlValue( 'url' ),
+			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
