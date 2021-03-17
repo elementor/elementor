@@ -18,6 +18,7 @@ class Module extends \Elementor\Core\Base\Module {
 			'wave' => __( 'Wave', 'elementor' ),
 			'arc' => __( 'Arc', 'elementor' ),
 			'circle' => __( 'Circle', 'elementor' ),
+			'line' => __( 'Line', 'elementor' ),
 			'oval' => __( 'Oval', 'elementor' ),
 			'spiral' => __( 'Spiral', 'elementor' ),
 		];
