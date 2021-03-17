@@ -3,9 +3,9 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
         return {
             selectors: {
                 hotspot: '.e-hotspot',
-                hotspotTrigger: '.e-hotspot-trigger',
-                tooltip: '.e-tooltip',
-                tooltipMask: '.e-animation-direction-mask',
+                hotspotTrigger: '.e-hotspot__button',
+                tooltip: '.e-hotspot__tooltip',
+                //tooltipMask: '.e-hotspot__direction-mask',
             },
         };
     }
@@ -16,7 +16,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
             $hotspot: this.$element.find( selectors.hotspot ),
             $hotspotTrigger: this.$element.find( selectors.hotspotTrigger ),
             $tooltip: this.$element.find( selectors.tooltip ),
-            $tooltipMask: this.$element.find( selectors.tooltipMask ),
+            //$tooltipMask: this.$element.find( selectors.tooltipMask ),
         };
     }
 
@@ -30,13 +30,13 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
     }
 
     onHotspotTriggerEvent( event ) {
-		const isHotspotButtonEvent = jQuery( event.target ).is( '.e-hotspot-trigger' ) || jQuery( event.target ).parents( '.e-hotspot-trigger' ).length;
+		const isHotspotButtonEvent = jQuery( event.target ).is( '.e-hotspot__button' ) || jQuery( event.target ).parents( '.e-hotspot__button' ).length;
 		const isTooltipMouseLeave = ( 'mouseleave' === event.type && ( jQuery( event.target ).is( '.e-tooltip-position' ) || jQuery( event.target ).parents( '.e-tooltip-position' ).length ) );
 
 		if ( isHotspotButtonEvent || isTooltipMouseLeave ) {
             const currentHotspot = jQuery( event.currentTarget );
-            this.elements.$hotspot.not( currentHotspot ).removeClass( 'e-active' );
-            currentHotspot.toggleClass( 'e-active' );
+            this.elements.$hotspot.not( currentHotspot ).removeClass( 'e-hotspot--active' );
+            currentHotspot.toggleClass( 'e-hotspot--active' );
         }
     }
 
@@ -51,7 +51,7 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
                         this.elements.$hotspot.each( ( index, element ) => { //add delay for each hotspot
 							element.style.animationDelay = ( ( index + 1 ) * 0.7 ) + 's';
                         } );
-                        this.elements.$hotspot.addClass( 'e-sequenced-animation' );//add sequenced animation class
+                        this.elements.$hotspot.addClass( 'e-hotspot--sequenced' );//add sequenced animation class
                     }
                 },
             } );
@@ -61,11 +61,11 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 
     setTooltipPositionControl() {
 		const getElementSettings = this.getElementSettings();
-		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'e-slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'e-fade-direction' ) );
+		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'e-hotspot--slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'e-hotspot--fade-direction' ) );
 
 		if ( isDirectionAnimation ) {
-            this.elements.$tooltipMask.removeClass( 'e-animation-slide-from-left e-animation-slide-from-top e-animation-slide-from-right e-animation-slide-from-bottom' );
-            this.elements.$tooltipMask.addClass( 'e-animation-slide-from-' + getElementSettings.tooltip_position );
+            this.elements.$tooltip.removeClass( 'e-hotspot--animation-slide-from-left e-hotspot--animation-slide-from-top e-hotspot--animation-slide-from-right e-hotspot--animation-slide-from-bottom' );
+            this.elements.$tooltip.addClass( 'e-hotspot--animation-slide-from-' + getElementSettings.tooltip_position );
         }
     }
 

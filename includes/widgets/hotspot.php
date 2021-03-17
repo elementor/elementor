@@ -220,7 +220,7 @@ class Widget_Hotspot extends Widget_Base
 					'unit' => 'px',
 				],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} .e-hotspot-trigger' => 'grid-gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} {{CURRENT_ITEM}} .e-hotspot__button' => 'grid-gap: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'hotspot_icon[value]!' => '',
@@ -419,7 +419,7 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'size_units' => ['px', '%'],
 				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}} .e-tooltip' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} {{CURRENT_ITEM}} .e-hotspot__tooltip' => 'width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
 					'hotspot_tooltip_position' => 'yes',
@@ -454,9 +454,9 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Animation', 'elementor'),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'e-pulse' => __('Soft Beat', 'elementor'),
-					'e-pulse-fade-out' => __('Expand', 'elementor'),
-					'e-hotspot-overlay' => __('Overlay', 'elementor'),
+					'e-hotspot--soft-beat' => __('Soft Beat', 'elementor'),
+					'e-hotspot--expand' => __('Expand', 'elementor'),
+					'e-hotspot--overlay' => __('Overlay', 'elementor'),
 					'' => __('None', 'elementor'),
 				],
 				'default' => '',
@@ -540,19 +540,19 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Animation', 'elementor'),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'e-fade-in-out' => __('Fade In/Out', 'elementor'),
-					'e-fade-grow' => __('Fade Grow', 'elementor'),
-					'e-fade-direction' => __('Fade By Direction', 'elementor'),
-					'e-slide-direction' => __('Slide By Direction', 'elementor'),
+					'e-hotspot--fade-in-out' => __('Fade In/Out', 'elementor'),
+					//'e-hotspot--fade-grow' => __('Fade Grow', 'elementor'),
+					'e-hotspot--fade-direction' => __('Fade By Direction', 'elementor'),
+					'e-hotspot--slide-direction' => __('Slide By Direction', 'elementor'),
 				],
-				'default' => 'e-fade-in-out',
+				'default' => 'e-hotspot--fade-in-out',
 				'placeholder' => __('Enter your image caption', 'elementor'),
 				'condition' => [
 					'tooltip_trigger!' => 'none',
 				],
 				'frontend_available' => true,
-				'prefix_class' => '',
-				'render_type' => 'template',
+				// 'prefix_class' => '',
+				// 'render_type' => 'template',
 			]
 		);
 
@@ -569,7 +569,7 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'default' => ['size' => 500],
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'transition-duration: {{SIZE}}ms;'
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'transition-duration: {{SIZE}}ms;'
 				],
 				'condition' => [
 					'tooltip_trigger!' => 'none',
@@ -690,8 +690,8 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Color', 'elementor'),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-inner-circle' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}} .e-hotspot-trigger' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot__inner-circle' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot__button' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -721,9 +721,9 @@ class Widget_Hotspot extends Widget_Base
 					'unit' => 'px'
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-hotspot-circle .e-hotspot-trigger .e-inner-circle' => 'padding: calc({{SIZE}}{{UNIT}} / 2);',
-					'{{WRAPPER}} .e-hotspot .e-hotspot-trigger' => 'font-size: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .e-hotspot-only-icon .e-hotspot-trigger' => 'font-size: {{SIZE}}{{UNIT}};width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot--circle .e-hotspot__button .e-hotspot__inner-circle' => 'padding: calc({{SIZE}}{{UNIT}} / 2);',
+					'{{WRAPPER}} .e-hotspot .e-hotspot__button' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot--icon .e-hotspot__button' => 'font-size: {{SIZE}}{{UNIT}};width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
 				]
 			]
 		);
@@ -757,7 +757,7 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'size_units' => ['px', '%'],
 				'selectors' => [
-					'{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button' => 'width: {{SIZE}}{{UNIT}}',
 				]
 			]
 		);
@@ -768,9 +768,9 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Box Color', 'elementor'),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger,
-					{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger.e-pulse-fade-out:before,
-					{{WRAPPER}} .e-outer-circle' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button,
+					{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button.e-hotspot--expand::before,
+					{{WRAPPER}} .e-hotspot__outer-circle' => 'background-color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_SECONDARY,
@@ -796,8 +796,8 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'size_units' => ['px', 'em'],
 				'selectors' => [
-					'{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger' => 'padding: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .e-hotspot.e-hotspot-circle .e-hotspot-trigger .e-outer-circle' => 'padding: {{SIZE}}{{UNIT}};width:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};height:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};',
+					'{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot.e-hotspot--circle .e-hotspot__button .e-hotspot__outer-circle' => 'padding: {{SIZE}}{{UNIT}};width:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};height:{{style_hotspot_size.SIZE}}{{style_hotspot_size.UNIT}};',
 				],
 				'default' => [
 					'size' => '10',
@@ -813,7 +813,8 @@ class Widget_Hotspot extends Widget_Base
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => ['px', 'em', '%'],
 				'selectors' => [
-					'{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button::before' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'default' => [
 					'top' => '3',
@@ -830,8 +831,8 @@ class Widget_Hotspot extends Widget_Base
 			[
 				'name' => 'style_hotspot_box_shadow',
 				'selector' => '
-					{{WRAPPER}} .e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger,
-					{{WRAPPER}} .e-hotspot.e-hotspot-circle .e-hotspot-trigger .e-outer-circle
+					{{WRAPPER}} .e-hotspot:not(.e-hotspot--circle) .e-hotspot__button,
+					{{WRAPPER}} .e-hotspot.e-hotspot--circle .e-hotspot__button .e-hotspot__outer-circle
 				',
 			]
 		);
@@ -855,7 +856,7 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Text Color', 'elementor'),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -867,7 +868,7 @@ class Widget_Hotspot extends Widget_Base
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'style_tooltip_typography',
-				'selector' => '{{WRAPPER}} .e-tooltip',
+				'selector' => '{{WRAPPER}} .e-hotspot__tooltip',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
@@ -898,7 +899,7 @@ class Widget_Hotspot extends Widget_Base
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -933,7 +934,7 @@ class Widget_Hotspot extends Widget_Base
 				],
 				'size_units' => ['px', '%'],
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'width: {{SIZE}}{{UNIT}}',
 				]
 			]
 		);
@@ -952,7 +953,7 @@ class Widget_Hotspot extends Widget_Base
 					'unit' => 'px'
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -963,7 +964,7 @@ class Widget_Hotspot extends Widget_Base
 				'label' => __('Color', 'elementor'),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .e-tooltip' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .e-hotspot__tooltip' => 'background-color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_SECONDARY,
@@ -975,7 +976,7 @@ class Widget_Hotspot extends Widget_Base
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'style_tooltip_box_shadow',
-				'selector' => '{{WRAPPER}} .e-tooltip',
+				'selector' => '{{WRAPPER}} .e-hotspot__tooltip',
 			]
 		);
 
@@ -987,17 +988,9 @@ class Widget_Hotspot extends Widget_Base
 	{
 		$settings = $this->get_settings_for_display();
 
-		$is_tooltip_direction_animation = ($settings['tooltip_animation'] === 'e-slide-direction' || $settings['tooltip_animation'] === 'e-fade-direction') ? true : false;
+		$is_tooltip_direction_animation = ($settings['tooltip_animation'] === 'e-hotspot--slide-direction' || $settings['tooltip_animation'] === 'e-hotspot--fade-direction') ? true : false;
+		$show_tooltip = ($settings['tooltip_trigger'] === 'none');
 
-		//tooltip attributes
-		$show_tooltip = ($settings['tooltip_trigger'] === 'none') ? 'show-tooltip' : '';
-		$this->add_render_attribute( 'tooltip', [
-			'class' => [
-				'e-tooltip',
-				$show_tooltip,
-				( !$is_tooltip_direction_animation ) ? 'e-tooltip-position' : ''
-			]
-		] );
 ?>
 		<!-- Main Image -->
 		<?= Group_Control_Image_Size::get_attachment_image_html($settings, 'thumbnail', 'background_image'); ?>
@@ -1007,11 +1000,8 @@ class Widget_Hotspot extends Widget_Base
 			$is_circle = !$hotspot['hotspot_label'] && !$hotspot['hotspot_icon']['value'];
 			$is_only_icon = !$hotspot['hotspot_label'] && $hotspot['hotspot_icon']['value'];
 
-			$tooltip_custom_position = $hotspot['hotspot_tooltip_position'] && $hotspot['hotspot_position'] ? 'e-overide-animation-slide-from-' . $hotspot['hotspot_position'] : '';
-
-
 			// hotspot attributes
-			$hotspot_repeater_setting_key = $this->get_repeater_setting_key('wrapper', 'hotspots', $key);
+			$hotspot_repeater_setting_key = $this->get_repeater_setting_key('hotspot', 'hotspots', $key);
 			$this->add_render_attribute($hotspot_repeater_setting_key, [
 				'class' => [
 					'e-hotspot',
@@ -1019,30 +1009,42 @@ class Widget_Hotspot extends Widget_Base
 				]
 			]);
 			if ($is_circle) {
-				$this->add_render_attribute($hotspot_repeater_setting_key, 'class', 'e-hotspot-circle');
+				$this->add_render_attribute($hotspot_repeater_setting_key, 'class', 'e-hotspot--circle');
 			}
 			if ($is_only_icon) {
-				$this->add_render_attribute($hotspot_repeater_setting_key, 'class', 'e-hotspot-only-icon');
+				$this->add_render_attribute($hotspot_repeater_setting_key, 'class', 'e-hotspot--icon');
 			}
 
 			// hotspot trigger attributes
 			$trigger_repeater_setting_key = $this->get_repeater_setting_key('trigger', 'hotspots', $key);
 			$this->add_render_attribute($trigger_repeater_setting_key, [
 				'class' => [
-					'e-hotspot-trigger',
+					'e-hotspot__button',
 					$settings['hotspot_animation'],
 				]
 			]);
 
 			//direction mask attributes
-			$direction_mask_repeater_setting_key = $this->get_repeater_setting_key('e-animation-direction-mask', 'hotspots', $key);
+			$direction_mask_repeater_setting_key = $this->get_repeater_setting_key('e-hotspot__direction-mask', 'hotspots', $key);
 			$this->add_render_attribute($direction_mask_repeater_setting_key, [
 				'class' => [
-					'e-animation-direction-mask',
-					$tooltip_custom_position,
+					'e-hotspot__direction-mask',
 					( $is_tooltip_direction_animation ) ? 'e-tooltip-position' : ''
 				]
 			]);
+
+			//tooltip attributes
+			$tooltip_custom_position = ( $hotspot['hotspot_tooltip_position'] && $hotspot['hotspot_position'] ) ? 'e-hotspot--overide-animation-slide-from-' . $hotspot['hotspot_position'] : '';
+			$tooltip_repeater_setting_key = $this->get_repeater_setting_key('tooltip', 'hotspots', $key);
+			$this->add_render_attribute( $tooltip_repeater_setting_key, [
+				'class' => [
+					'e-hotspot__tooltip',
+					( $show_tooltip ) ? 'e-hotspot--show-tooltip' : '',
+					( !$is_tooltip_direction_animation ) ? 'e-tooltip-position' : '',
+					( !$show_tooltip ) ? $settings['tooltip_animation'] : '' ,
+					$tooltip_custom_position
+				]
+			] );
 
 		?>
 
@@ -1051,8 +1053,8 @@ class Widget_Hotspot extends Widget_Base
 				<!-- Hotspot Trigger -->
 				<div <?= $this->get_render_attribute_string($trigger_repeater_setting_key) ?>>
 					<?php if ($is_circle) : ?>
-						<div class="e-outer-circle"></div>
-						<div class="e-inner-circle"></div>
+						<div class="e-hotspot__outer-circle"></div>
+						<div class="e-hotspot__inner-circle"></div>
 					<?php else : ?>
 						<?php if ($hotspot['hotspot_icon']['value']) : ?>
 							<div class="e-hotspot-icon"><?php Icons_Manager::render_icon($hotspot['hotspot_icon']); ?></div>
@@ -1067,7 +1069,7 @@ class Widget_Hotspot extends Widget_Base
 				<?php if ($is_tooltip_direction_animation) : ?>
 					<div <?= $this->get_render_attribute_string($direction_mask_repeater_setting_key) ?>>
 					<?php endif; ?>
-					<div <?= $this->get_render_attribute_string( 'tooltip' ) ?> >
+					<div <?= $this->get_render_attribute_string( $tooltip_repeater_setting_key ) ?> >
 						<?= $hotspot['hotspot_tooltip_content'] ?>
 					</div>
 					<?php if ($is_tooltip_direction_animation) : ?>
@@ -1076,7 +1078,7 @@ class Widget_Hotspot extends Widget_Base
 			</div>
 
 		<?php endforeach; ?>
-
+						
 	<?php
 	}
 
@@ -1106,58 +1108,60 @@ class Widget_Hotspot extends Widget_Base
 		#>
 			<img src="{{ image_url }}" title="" alt="">
 		<#
-		const is_tooltip_direction_animation = (settings.tooltip_animation==='e-slide-direction' || settings.tooltip_animation==='e-fade-direction' ) ? true : false;
-
-			//tooltip attributes
-		const show_tooltip = (settings.tooltip_trigger === 'none' ) ? 'show-tooltip' : '';
-			view.addRenderAttribute( 'tooltip', {
-				'class': [
-					'e-tooltip',
-					show_tooltip,
-					( !is_tooltip_direction_animation ) ? 'e-tooltip-position' : ''
-				],
-			});
+		const is_tooltip_direction_animation = (settings.tooltip_animation==='e-hotspot--slide-direction' || settings.tooltip_animation==='e-hotspot--fade-direction' ) ? true : false;
+		const show_tooltip = ( settings.tooltip_trigger === 'none' );
 
 			_.each( settings.hotspot, ( hotspot, index ) => {
 				const iconHTML = elementor.helpers.renderIcon( view, hotspot.hotspot_icon, {}, 'i' , 'object' );
 
-				const is_circle = (!hotspot.hotspot_label && !hotspot.hotspot_icon.value) ? 'e-hotspot-circle' : '' ;
-				const is_only_icon = (!hotspot.hotspot_label && hotspot.hotspot_icon.value) ? 'e-hotspot-only-icon' : '' ;
-				const tooltip_custom_position = hotspot.hotspot_tooltip_position && hotspot.hotspot_position ? 'e-overide-animation-slide-from-' + hotspot.hotspot_position : '';
+				const is_circle = !hotspot.hotspot_label && !hotspot.hotspot_icon.value;
+				const is_only_icon = !hotspot.hotspot_label && hotspot.hotspot_icon.value;
 
 				// hotspot attributes
-				const hotspot_repeater_setting_key = view.getRepeaterSettingKey('wrapper', 'hotspots', index);
+				const hotspot_repeater_setting_key = view.getRepeaterSettingKey('hotspot', 'hotspots', index);
 				view.addRenderAttribute(hotspot_repeater_setting_key, {
 					'class' : [
 						'e-hotspot',
-						'elementor-repeater-item-' + hotspot._id
+						'elementor-repeater-item-' + hotspot._id,
 					]
 				});
 				if (is_circle) {
-					view.addRenderAttribute(hotspot_repeater_setting_key, 'class', 'e-hotspot-circle');
+					view.addRenderAttribute(hotspot_repeater_setting_key, 'class', 'e-hotspot--circle');
 				}
 				if (is_only_icon) {
-					view.addRenderAttribute(hotspot_repeater_setting_key, 'class', 'e-hotspot-only-icon');
+					view.addRenderAttribute(hotspot_repeater_setting_key, 'class', 'e-hotspot--icon');
 				}
 
 				// hotspot trigger attributes
 				const trigger_repeater_setting_key = view.getRepeaterSettingKey('trigger', 'hotspots', index);
 				view.addRenderAttribute(trigger_repeater_setting_key, {
 					'class' : [
-						'e-hotspot-trigger',
+						'e-hotspot__button',
 						settings.hotspot_animation,
 						//'hotspot-trigger-' + hotspot.hotspot_icon_position
 					]
 				});
 
 				//direction mask attributes
-				const direction_mask_repeater_setting_key = view.getRepeaterSettingKey('e-animation-direction-mask', 'hotspots', index);
+				const direction_mask_repeater_setting_key = view.getRepeaterSettingKey('e-hotspot__direction-mask', 'hotspots', index);
 				view.addRenderAttribute(direction_mask_repeater_setting_key, {
 					'class' : [
-						'e-animation-direction-mask',
-						tooltip_custom_position,
+						'e-hotspot__direction-mask',
 						( is_tooltip_direction_animation ) ? 'e-tooltip-position' : ''
 					]
+				});
+
+				//tooltip attributes
+				const tooltip_custom_position = ( hotspot.hotspot_tooltip_position && hotspot.hotspot_position ) ? 'e-hotspot--overide-animation-slide-from-' + hotspot.hotspot_position : '';
+				const tooltip_repeater_setting_key = view.getRepeaterSettingKey('tooltip', 'hotspots', index);
+				view.addRenderAttribute( tooltip_repeater_setting_key, {
+					'class': [
+						'e-hotspot__tooltip',
+						( show_tooltip ) ? 'e-hotspot--show-tooltip' : '',
+						( !is_tooltip_direction_animation ) ? 'e-tooltip-position' : '',
+						( !show_tooltip ) ? settings.tooltip_animation : '',
+						tooltip_custom_position
+					],
 				});
 
 			#>
@@ -1166,8 +1170,8 @@ class Widget_Hotspot extends Widget_Base
 					<!-- Hotspot Trigger -->
 					<div {{{ view.getRenderAttributeString( trigger_repeater_setting_key ) }}} >
 						<# if (is_circle) { #>
-							<div class="e-outer-circle"></div>
-							<div class="e-inner-circle"></div>
+							<div class="e-hotspot__outer-circle"></div>
+							<div class="e-hotspot__inner-circle"></div>
 							<# } else { #>
 								<# if (hotspot.hotspot_icon.value){ #>
 									<div class="e-hotspot-icon">{{{ iconHTML.value }}}</div>
@@ -1182,7 +1186,7 @@ class Widget_Hotspot extends Widget_Base
 					<# if(is_tooltip_direction_animation){ #>
 						<div {{{ view.getRenderAttributeString( direction_mask_repeater_setting_key ) }}} >
 							<# } #>
-								<div {{{ view.getRenderAttributeString('tooltip') }}} >
+								<div {{{ view.getRenderAttributeString( tooltip_repeater_setting_key ) }}} >
 									{{{hotspot.hotspot_tooltip_content}}}
 								</div>
 								<# if(is_tooltip_direction_animation){ #>

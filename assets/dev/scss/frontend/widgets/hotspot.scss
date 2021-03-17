@@ -1,5 +1,5 @@
-// Animation: Pulse
-@keyframes e-hotspot-pulse {
+/* Animations */
+@keyframes e-hotspot-soft-beat {
     from {
         transform: scale(1);
     }
@@ -7,13 +7,8 @@
         transform: scale(1.1);
     }
 }
-.e-pulse {
-    animation: e-hotspot-pulse 0.7s infinite alternate;
-    animation-timing-function: ease;
-}
 
-// Animation: Pulse Fade Out
-@keyframes e-hotspot-pulse-fade-out {
+@keyframes e-hotspot-expand {
     from {
         transform: scale(0.5);
         opacity: 1;
@@ -23,170 +18,164 @@
         opacity: 0;
     }
 }
-.e-pulse-fade-out .e-outer-circle {
-    animation: e-hotspot-pulse-fade-out 2s infinite;
-}
-.e-hotspot:not(.e-hotspot-circle) .e-hotspot-trigger.e-pulse-fade-out:before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-    animation: e-hotspot-pulse-fade-out 2s infinite;
-}
-// Animation: Sequenced
-@keyframes hotspot-sequenced {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-.e-sequenced-animation {
-    animation: hotspot-sequenced 0.3s;
-    animation-iteration-count: 1;
-    animation-fill-mode: both; //
-}
-// End Animations
 
-.elementor-widget-hotspot {
-    .elementor-widget-container {
-        position: relative;
+/* Hotspot Container */
+.elementor-widget-hotspot .elementor-widget-container {
+    position: relative;
+    display: inline-block;
+    & > img {
         display: inline-block;
-        & > img {
-            display: inline-block;
-        }
+    }
+}
+
+/* Each Hotspot */
+.e-hotspot {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+
+    &--active {
+        z-index: 2;
     }
 
-    .e-hotspot {
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &__outer-circle,
+    &__inner-circle {
+        content: "";
+        display: inline-block;
+        box-sizing: content-box;
+        border-radius: 50%;
+    }
+
+    &__inner-circle {
         position: absolute;
-        &.e-active{
-            z-index: 2;
-        }
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 
-        &.e-hotspot-circle .e-outer-circle,
-        &.e-hotspot-circle .e-inner-circle {
+    &--icon &__button {
+        line-height: 0;
+        box-sizing: content-box;
+    }
+
+    &__button {
+        cursor: pointer;
+        position: relative;
+        display: grid;
+        grid-auto-flow: column;
+        &:before {
+            z-index: -2;
             content: "";
-            cursor: pointer;
-            display: inline-block;
-            box-sizing: content-box;
-            border-radius: 50%;
-        }
-
-        &.e-hotspot-circle .e-inner-circle {
+            width: 100%;
+            height: 100%;
+            left: -5px;
+            top: -5px;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        &.e-hotspot-only-icon .e-hotspot-trigger {
-            line-height: 0;
+            padding: 5px;
             box-sizing: content-box;
         }
-
-        .e-hotspot-trigger {
-            cursor: pointer;
-            position: relative;
-            display: grid;
-            grid-auto-flow: column;
-            &:before {
-                z-index: -2;
-                content: "";
-                width: 100%;
-                height: 100%;
-                left: -5px;
-                top: -5px;
-                position: absolute;
-                padding: 5px;
-                box-sizing: content-box;
-            }
-        }
-
-        & .e-hotspot-trigger.e-hotspot-overlay {
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        & .e-hotspot-trigger.e-hotspot-overlay:hover,
-        &.e-active .e-hotspot-trigger.e-hotspot-overlay{
-            opacity: 1;
-        }
-
-        .e-animation-direction-mask {
-            overflow: hidden;
-            position: absolute;
-            pointer-events: none;
-            .e-tooltip {
-                box-shadow: none !important; //Ask Kobi
-                position: static;
-                cursor: auto;
-                transition: transform 0.3s, opacity 0.3s;
-            }
-        }
-        &.e-active .e-tooltip{
-            pointer-events: visible;
-          }
-
-        .e-tooltip {
-            transition: opacity 0.3s, transform 0.3s;
-            transform-origin: center center;
-            cursor: default;
-            position: absolute;
-			pointer-events: none;
-            &.show-tooltip {
-                cursor: auto;
-                transition: none;
-                opacity: 1;
-			    pointer-events: visible;
-            }
-        }
-
-		&.e-active .e-tooltip{
-		  pointer-events: visible;
-		}
     }
 
-    // fade-in-out
-    &.e-fade-in-out .e-hotspot .e-tooltip {
-        opacity: 0;
+    /* Hotspot Button Animations */
+    &--overlay {
+        opacity: 0.7;
+        transition: opacity 0.2s;
     }
-    &.e-fade-in-out .e-hotspot.e-active .e-tooltip {
-        cursor: auto;
+
+    &--overlay:hover,
+    &--active &--overlay {
         opacity: 1;
     }
 
-    // slide direction / fade direction
-    .e-hotspot .e-animation-slide-from-top .e-tooltip,
-    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-top .e-tooltip {
+    &--soft-beat {
+        animation: e-hotspot-soft-beat 0.7s infinite alternate;
+        animation-timing-function: ease;
+    }
+
+    &--expand &__outer-circle {
+        animation: e-hotspot-expand 2s infinite;
+    }
+
+    &:not( &--circle ) &--expand::before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+        animation: e-hotspot-expand 2s infinite;
+    }
+    /* End: Hotspot Button Animations */
+
+    &--sequenced {
+        animation: fadeIn 0.3s;
+        animation-iteration-count: 1;
+        animation-fill-mode: both;
+    }
+
+    &__direction-mask {
+        overflow: hidden;
+        position: absolute;
+        pointer-events: none;
+    }
+
+    &__tooltip {
+        transition: opacity 0.3s, transform 0.3s;
+        transform-origin: center center;
+        position: absolute;
+        pointer-events: none;
+    }
+
+    &--show-tooltip {
+        transition: none;
+        opacity: 1;
+        pointer-events: visible;
+    }
+
+    &__direction-mask &__tooltip{
+        box-shadow: none !important; //Ask Kobi
+        position: static;
+        transition: transform 0.3s, opacity 0.3s;
+    }
+
+    &--active &__tooltip {
+        pointer-events: visible;
+    }
+
+    // Tooltip - fade-in-out
+    &--fade-in-out {
+        opacity: 0;
+    }
+    &--active &--fade-in-out {
+        opacity: 1; 
+    }
+
+    // Tooltip - slide direction / fade direction
+    &--animation-slide-from-top,
+    &--overide-animation-slide-from-top {
         transform: translate(0, -100%);
     }
-    .e-hotspot .e-animation-slide-from-left .e-tooltip,
-    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-left .e-tooltip {
+    &--animation-slide-from-left,
+    &--overide-animation-slide-from-left {
         transform: translate(-100%, 0);
     }
-    .e-hotspot .e-animation-slide-from-right .e-tooltip,
-    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-right .e-tooltip {
+    &--animation-slide-from-right,
+    &--overide-animation-slide-from-right {
         transform: translate(100%, 0);
     }
-    .e-hotspot .e-animation-slide-from-bottom .e-tooltip,
-    .e-hotspot .e-animation-direction-mask.e-overide-animation-slide-from-bottom .e-tooltip {
+    &--animation-slide-from-bottom,
+    &--overide-animation-slide-from-bottom {
         transform: translate(0, 100%);
     }
-    &.e-fade-direction .e-hotspot .e-animation-direction-mask .e-tooltip {
+    &--fade-direction {
         opacity: 0;
     }
 
-    &.e-slide-direction .e-hotspot.e-active .e-animation-direction-mask .e-tooltip,
-    &.e-fade-direction .e-hotspot.e-active .e-animation-direction-mask .e-tooltip {
+    &--active &--slide-direction,
+    &--active &--fade-direction {
         transform: translate(0, 0);
         opacity: 1;
     }
-
 }
