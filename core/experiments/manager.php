@@ -249,6 +249,15 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.1.0-beta',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_import_export',
+			'title' => __( 'Import Export Template Kit', 'elementor' ),
+			'description' => __( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
+				. '<br>'
+				. __( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
 	}
 
 	/**
