@@ -39,7 +39,7 @@
 		width: $panel-xl-width;
 	}
 
-	.ps-scrollbar-y-rail {
+	.ps__rail-y {
 		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
 	}
 
