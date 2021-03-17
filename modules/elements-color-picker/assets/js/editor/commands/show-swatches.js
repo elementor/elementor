@@ -243,7 +243,10 @@ export class ShowSwatches extends CommandBase {
 		this.container.view.$el.on( 'mouseleave.color-picker', () => {
 			jQuery( this ).off( 'mouseleave.color-picker' );
 
-			setTimeout( () => { $picker.remove() }, 300 );
+			// Remove only after the animation has finished.
+			setTimeout( () => {
+				$picker.remove();
+			}, 300 );
 		} );
 	}
 
