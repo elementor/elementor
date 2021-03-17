@@ -12,7 +12,7 @@ Marionette.TemplateCache.get = function( template ) {
 		return originalGet.apply( Marionette.TemplateCache, [ template ] );
 	}
 
-	return () => `<div class="${ template }"></div>`;
+	return () => `<div class="${ template.replace( '#tmpl-', '' ) }"><code>${ template }</code></div>`;
 };
 
 Marionette.Region.prototype._ensureElement = () => {
@@ -23,9 +23,15 @@ Marionette.Region.prototype.attachHtml = () => {
 };
 
 Marionette.CompositeView.prototype.getChildViewContainer = ( containerView ) => {
-	containerView.$childViewContainer = jQuery( containerView.el );
-	containerView.$childViewContainer.appendTo(
-		jQuery( '#elementor-preview-iframe' ).contents().find( '.elementor.elementor-1' )
-	);
+	const $currentEl = jQuery( containerView.el );
+
+	if ( ! containerView._parent?.$el ) {
+		containerView.$el.append( $currentEl );
+		containerView.$childViewContainer = $currentEl.children();
+	} else {
+		containerView._parent.$el.append( $currentEl );
+		containerView.$childViewContainer = $currentEl.children();
+	}
+
 	return containerView.$childViewContainer;
 };
