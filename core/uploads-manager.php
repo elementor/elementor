@@ -1,5 +1,5 @@
 <?php
-namespace Elementor;
+namespace Elementor\Core;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Files\File_Types\Base as File_Type_Base;
@@ -27,7 +27,6 @@ class Uploads_Manager extends Base_Object {
 	 * @var File_Type_Base[]
 	 */
 	private $file_type_handlers = [];
-
 	private $allowed_mime_types;
 	private $are_unfiltered_files_enabled;
 
@@ -47,11 +46,6 @@ class Uploads_Manager extends Base_Object {
 
 		foreach ( $file_types as $file_type => $file_handler ) {
 			$this->file_type_handlers[ $file_type ] = $file_handler;
-
-			// Add the mime type to the allowed mimes list only if unfiltered files upload is enabled.
-			if ( $this->are_unfiltered_uploads_enabled() ) {
-				$this->add_mime_type_to_allowed_mimes_list( $file_type );
-			}
 		}
 	}
 
@@ -60,17 +54,18 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * This method accepts a $file array (which minimally should include a 'tmp_name')
 	 *
-	 * @param array $file_path
+	 * @param array|null $file_path
+	 * @param array $allowed_file_types
 	 * @return array|\WP_Error
 	 */
-	public function extract_and_validate_zip( $file_path ) {
+	public function extract_and_validate_zip( $file_path, $allowed_file_types = null ) {
 		$validation_result = [];
 
-		/** @var Zip $handler - File Type */
-		$handler = $this->file_type_handlers['zip'];
+		/** @var Zip $zip_handler - File Type */
+		$zip_handler = $this->file_type_handlers['zip'];
 
 		// Returns an array of file paths.
-		$extracted = $handler->extract( $file_path );
+		$extracted = $zip_handler->extract( $file_path, $allowed_file_types );
 
 		// If there are no extracted file names, no files passed the extraction validation.
 		if ( empty( $extracted['files'] ) ) {
@@ -80,40 +75,37 @@ class Uploads_Manager extends Base_Object {
 
 		foreach ( $extracted['files'] as $extracted_file ) {
 			// Each file is an array with a 'name' (file path) and 'type' (mime type) properties.
-			$validation_result[] = $this->validate_file( $extracted_file );
+			if ( $this->validate_file( $extracted_file ) ) {
+				$validation_result[] = $extracted_file;
+			}
 		}
 
 		return $validation_result;
 	}
 
 	/**
-	 * @param array|null $file (If it is a $file array, it must include the 'name' and 'type' properties)
+	 * Handle Elementor Upload
+	 *
+	 * This method receives a $file array. If the received file is a Base64 stream, the method decodes it and stores
+	 * the contents in a temp file. The file goes through validation and the validation result is returned.
+	 *
+	 * @param array $file (If it is a $file array, it must include the 'name' and 'type' properties)
 	 * @return array|\WP_Error
 	 */
-	public function handle_elementor_upload( $file = null ) {
-		// If a file is passed to this method.
-		if ( $file ) {
-			// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be saved
-			// to a file.
-			if ( isset( $file['fileData'] ) ) {
-				$file = $this->save_base64_to_tmp_file( $file );
-
-				if ( is_wp_error( $file ) ) {
-					return $file;
-				}
-			}
-
-			$validation_result = $this->validate_file( $file );
-		} else {
-			$validation_result = [];
-
-			// If no files are passed to this method, check the $_FILES global,
-			foreach ( $_FILES as $file ) {
-				$validation_result[] = $this->validate_file( $file );
-			}
+	public function handle_elementor_upload( $file ) {
+		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be saved
+		// to a file.
+		if ( isset( $file['fileData'] ) ) {
+			return $this->save_base64_to_tmp_file( $file );
 		}
 
-		return $validation_result;
+		$validation_result = $this->validate_file( $file );
+
+		if ( is_wp_error( $validation_result ) ) {
+			return $validation_result;
+		}
+
+		return $file;
 	}
 
 	/**
@@ -143,11 +135,11 @@ class Uploads_Manager extends Base_Object {
 	 * Initialize the proper file type handler according to the file extension
 	 * and assign it to the file type handlers array.
 	 *
-	 * @param string $file_extension - file extension
+	 * @param string|null $file_extension - file extension
 	 * @return \WP_Error|File_Type_Base
 	 * @since 3.2.0
 	 */
-	public function get_file_type_handlers( $file_extension ) {
+	public function get_file_type_handlers( $file_extension = null ) {
 		return self::get_items( $this->file_type_handlers, $file_extension );
 	}
 
@@ -260,7 +252,7 @@ class Uploads_Manager extends Base_Object {
 	 * Validate File
 	 *
 	 * @param array $file (the array must include the 'name' and 'type' properties)
-	 * @return array|\WP_Error
+	 * @return bool|\WP_Error
 	 *
 	 * @since 3.2.0
 	 */
@@ -280,7 +272,7 @@ class Uploads_Manager extends Base_Object {
 
 		// If Elementor does not have a handler for this file type, don't block it.
 		if ( ! $file_type_handler ) {
-			return $file;
+			return true;
 		}
 
 		// Here is each file type handler's chance to run its own specific validations
@@ -295,11 +287,18 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.2.0
 	 *
 	 * @param string|null $file_extension
-	 * @return string $temp_dir
+	 * @return array mime type/s
 	 */
 	private function get_allowed_mime_types( $file_extension = null ) {
 		if ( ! $this->allowed_mime_types ) {
 			$this->allowed_mime_types = get_allowed_mime_types();
+
+			if ( $this->are_unfiltered_uploads_enabled() ) {
+				foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
+					// Add the mime type to the allowed mimes list only if unfiltered files upload is enabled.
+					$this->add_mime_type_to_allowed_mimes_list( $file_type );
+				}
+			}
 		}
 
 		return self::get_items( $this->allowed_mime_types, $file_extension );
