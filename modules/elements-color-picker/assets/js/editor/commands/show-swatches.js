@@ -30,8 +30,6 @@ export class ShowSwatches extends CommandBase {
 		const { event: e } = args;
 		const id = e.currentTarget.dataset.id;
 
-		e.stopPropagation();
-
 		// Calculate swatch location.
 		const rect = e.currentTarget.getBoundingClientRect();
 		const x = Math.round( e.clientX - rect.left ) + 'px';
@@ -58,6 +56,7 @@ export class ShowSwatches extends CommandBase {
 			const isImage = ( 'img' === e.target.tagName.toLowerCase() );
 
 			if ( isImage ) {
+				e.stopPropagation();
 				this.extractColorsFromImage( e.target );
 			} else {
 				this.extractColorsFromSettings();
@@ -65,7 +64,7 @@ export class ShowSwatches extends CommandBase {
 			}
 
 			this.initSwatch( x, y );
-		}, 100 );
+		}, 50 );
 	}
 
 	/**
@@ -83,9 +82,15 @@ export class ShowSwatches extends CommandBase {
 				return;
 			}
 
+			// Determine if the current control is active.
+			const isActive = () => {
+				return ( elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) );
+			};
+
 			// Handle background images.
-			if ( control.startsWith( '_background_image' ) ) {
+			if ( control.startsWith( '_background_image' ) && isActive() ) {
 				this.addTempBackgroundImage( this.container.getSetting( control ) );
+				return;
 			}
 
 			// Throw non-color controls.
@@ -94,7 +99,7 @@ export class ShowSwatches extends CommandBase {
 			}
 
 			// Throw non-active controls.
-			if ( ! elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) ) {
+			if ( ! isActive() ) {
 				return;
 			}
 
@@ -133,9 +138,21 @@ export class ShowSwatches extends CommandBase {
 		this.backgroundImages.push( img );
 	}
 
+	/**
+	 * Extract colors from image and push it ot the colors array.
+	 *
+	 * @param {Object} image    The image element to extract colors from
+	 * @param {String} suffix   An optional suffix for the key in the colors array.
+	 */
 	extractColorsFromImage( image, suffix = '' ) {
 		const colorThief = new ColorThief();
-		const palette =	colorThief.getPalette( image );
+		let palette;
+
+		try {
+			palette = colorThief.getPalette( image );
+		} catch ( e ) {
+			return;
+		}
 
 		// Add the palette to the colors array.
 		palette.forEach( ( color, index ) => {
