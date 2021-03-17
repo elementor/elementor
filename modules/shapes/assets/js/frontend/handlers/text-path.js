@@ -1,4 +1,4 @@
-export default class WordArtHandler extends elementorModules.frontend.handlers.Base {
+export default class TextPathHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
