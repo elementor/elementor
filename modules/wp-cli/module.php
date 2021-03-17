@@ -57,5 +57,6 @@ class Module extends BaseModule {
 		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
 		\WP_CLI::add_command( 'elementor update', '\Elementor\Modules\WpCli\Update' );
 		\WP_CLI::add_command( 'elementor library', '\Elementor\Modules\WpCli\Library' );
+		\WP_CLI::add_command( 'elementor i18n', '\Elementor\Modules\WpCli\I18n' );
 	}
 }

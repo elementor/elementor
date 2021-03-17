@@ -1,0 +1,357 @@
+<?php
+/**
+ * Based on https://wordpress.org/plugins/gp-auto-extract/
+ */
+namespace Elementor\Modules\WpCli\i18n;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+
+/**
+ * Responsible for extracting translatable strings from PHP/JS source files
+ * in the form of Translations instances
+ */
+class Translations_Extractor {
+
+	const DEFAULT_RULES = [
+		'__' => [ 'string' ],
+		'_e' => [ 'string' ], // Currently does no exist in '.JS'.
+		'_n' => [ 'singular', 'plural' ],
+	];
+
+	const DEFAULT_FILE_REGEX = '/\.php$/';
+
+	const PHP_DEFAULT_COMMENT_PREFIX = 'translators:';
+
+	private $rules;
+
+	public function __construct( $rules = self::DEFAULT_RULES ) {
+		if ( empty( $rules ) ) {
+			$rules = self::DEFAULT_RULES;
+		}
+
+		$this->rules = $rules;
+
+	}
+
+	public function extract_from_directory( $dir, $match_files_regex = self::DEFAULT_FILE_REGEX, $excludes = [], $includes = [], $prefix = '' ) {
+		$old_cwd = getcwd();
+		chdir( $dir );
+		$translations = new \Translations();
+		$file_names = (array) scandir( '.' );
+		foreach ( $file_names as $file_name ) {
+			if ( '.' == $file_name || '..' == $file_name ) {
+				continue;
+			}
+			if ( preg_match( $match_files_regex, $file_name ) && $this->does_file_name_match( $prefix . $file_name, $excludes, $includes ) ) {
+				$extracted = $this->extract_from_file( $file_name, $prefix );
+				$translations->merge_originals_with( $extracted );
+			}
+			if ( is_dir( $file_name ) ) {
+				$extracted = $this->extract_from_directory( $file_name, $match_files_regex, $excludes, $includes, $prefix . $file_name . '/' );
+				$translations->merge_originals_with( $extracted );
+			}
+		}
+		chdir( $old_cwd );
+		return $translations;
+	}
+
+	public function extract_from_file( $file_name, $prefix ) {
+		$code = file_get_contents( $file_name );
+		return $this->extract_from_code( $code, $prefix . $file_name );
+	}
+
+	public function extract_from_code( $code, $file_name ) {
+		$translations = new \Translations();
+
+		$rules = array_keys( $this->rules );
+
+		if ( strstr( $file_name, '.php' ) ) {
+			$function_calls = $this->find_function_calls_from_php( $rules, $code );
+		} else {
+			$function_calls = $this->find_function_calls_from_js( $rules, $code );
+		}
+
+		foreach ( $function_calls as $call ) {
+			$entry = $this->entry_from_call( $call, $file_name );
+			if ( is_array( $entry ) ) {
+				foreach ( $entry as $single_entry ) {
+					$translations->add_entry_or_merge( $single_entry );
+				}
+			} elseif ( $entry ) {
+				$translations->add_entry_or_merge( $entry );
+			}
+		}
+
+		return $translations;
+	}
+
+	private function does_file_name_match( $path, $excludes, $includes ) {
+		if ( $includes ) {
+			$matched_any_include = false;
+			foreach ( $includes as $include ) {
+				if ( preg_match( '|^' . $include . '$|', $path ) ) {
+					$matched_any_include = true;
+					break;
+				}
+			}
+			if ( ! $matched_any_include ) {
+				return false;
+			}
+		}
+		if ( $excludes ) {
+			foreach ( $excludes as $exclude ) {
+				if ( preg_match( '|^' . $exclude . '$|', $path ) ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private function entry_from_call( $call, $file_name ) {
+		$rule = isset( $this->rules[ $call['name'] ] ) ? $this->rules[ $call['name'] ] : null;
+		if ( ! $rule ) {
+			return null;
+		}
+		$entry = new \Translation_Entry();
+		$multiple = array();
+		$complete = false;
+		$rules_count = count( $rule );
+		for ( $i = 0; $i < $rules_count; ++$i ) {
+			if ( $rule[ $i ] && ( ! isset( $call['args'][ $i ] ) || ! is_string( $call['args'][ $i ] ) || '' == $call['args'][ $i ] ) ) {
+				return false;
+			}
+			switch ( $rule[ $i ] ) {
+				case 'string':
+					if ( $complete ) {
+						$multiple[] = $entry;
+						$entry = new \Translation_Entry();
+						$complete = false;
+					}
+					$entry->singular = $call['args'][ $i ];
+					$complete = true;
+					break;
+				case 'singular':
+					if ( $complete ) {
+						$multiple[] = $entry;
+						$entry = new \Translation_Entry();
+						$complete = false;
+					}
+					$entry->singular = $call['args'][ $i ];
+					$entry->is_plural = true;
+					break;
+				case 'plural':
+					$entry->plural = $call['args'][ $i ];
+					$entry->is_plural = true;
+					$complete = true;
+					break;
+				case 'context':
+					$entry->context = $call['args'][ $i ];
+					foreach ( $multiple as &$single_entry ) {
+						$single_entry->context = $entry->context;
+					}
+					break;
+			}
+		}
+		if ( isset( $call['line'] ) && $call['line'] ) {
+			$references = array( $file_name . ':' . $call['line'] );
+			$entry->references = $references;
+			foreach ( $multiple as &$single_entry ) {
+				$single_entry->references = $references;
+			}
+		}
+		if ( isset( $call['comment'] ) && $call['comment'] ) {
+			$comments = rtrim( $call['comment'] ) . "\n";
+			$entry->extracted_comments = $comments;
+			foreach ( $multiple as &$single_entry ) {
+				$single_entry->extracted_comments = $comments;
+			}
+		}
+		if ( $multiple && $entry ) {
+			$multiple[] = $entry;
+			return $multiple;
+		}
+
+		return $entry;
+	}
+
+	/**
+	 * Finds all function calls in $code and returns an array with an associative array for each function:
+	 *  - name - name of the function
+	 *  - args - array for the function arguments. Each string literal is represented by itself, other arguments are represented by null.
+	 *  - line - line number
+	 */
+	private function find_function_calls_from_php( $rules, $code ) {
+		$tokens = token_get_all( $code );
+		$function_calls = array();
+		$latest_comment = false;
+		$in_func = false;
+		foreach ( $tokens as $token ) {
+			$id = null;
+			$text = null;
+			if ( is_array( $token ) ) {
+				list( $id, $text, $line ) = $token;
+			}
+			if ( T_WHITESPACE == $id ) {
+				continue;
+			}
+			if ( T_STRING == $id && in_array( $text, $rules ) && ! $in_func ) {
+				$in_func = true;
+				$paren_level = -1;
+				$args = array();
+				$func_name = $text;
+				$func_line = $line;
+				$func_comment = $latest_comment ? $latest_comment : '';
+
+				$just_got_into_func = true;
+				$latest_comment = false;
+				continue;
+			}
+			if ( T_COMMENT == $id ) {
+				$text = preg_replace( '%^\s+\*\s%m', '', $text );
+				$text = str_replace( array( "\r\n", "\n" ), ' ', $text );
+
+				$text = trim( preg_replace( '%^/\*|//%', '', preg_replace( '%\*/$%', '', $text ) ) );
+				if ( 0 === stripos( $text, self::PHP_DEFAULT_COMMENT_PREFIX ) ) {
+					$latest_comment = $text;
+				}
+			}
+			if ( ! $in_func ) {
+				continue;
+			}
+			if ( '(' == $token ) {
+				$paren_level++;
+				if ( 0 == $paren_level ) { // start of first argument
+					$just_got_into_func = false;
+					$current_argument = null;
+					$current_argument_is_just_literal = true;
+				}
+				continue;
+			}
+			if ( $just_got_into_func ) {
+				// there wasn't a opening paren just after the function name -- this means it is not a function
+				$in_func = false;
+				$just_got_into_func = false;
+			}
+			if ( ')' == $token ) {
+				if ( 0 == $paren_level ) {
+					$in_func = false;
+					$args[] = $current_argument;
+					$call = array(
+						'name' => $func_name,
+						'args' => $args,
+						'line' => $func_line,
+					);
+					if ( $func_comment ) {
+						$call['comment'] = $func_comment;
+					}
+					$function_calls[] = $call;
+				}
+				$paren_level--;
+				continue;
+			}
+			if ( ',' == $token && 0 == $paren_level ) {
+				$args[] = $current_argument;
+				$current_argument = null;
+				$current_argument_is_just_literal = true;
+				continue;
+			}
+			if ( T_CONSTANT_ENCAPSED_STRING == $id && $current_argument_is_just_literal ) {
+				// we can use eval safely, because we are sure $text is just a string literal
+				eval( '$current_argument = ' . $text . ';' ); // phpcs:ignore
+				continue;
+			}
+			$current_argument_is_just_literal = false;
+			$current_argument = null;
+		}
+		return $function_calls;
+	}
+
+	private function find_function_calls_from_js( $rules, $code ) {
+		$result = [];
+		$collection = new Code_Collection( $code );
+
+		$collection->for_each_line( function ( $collection ) use ( &$result, $rules ) {
+			/**
+			 * @var $collection Code_Collection
+			 */
+			foreach ( $rules as $rule ) {
+				// If rule exist in current code line.
+				if ( $collection->line_contains( $rule . '(' ) ) {
+					$collection->cursor_reset_collector();
+
+					$rule_found = false;
+					$current_args = [];
+
+					$collection->for_each_cursor_inline( function( $collection ) use ( $rule, &$rule_found, &$current_args, &$result ) {
+						/**
+						 * @var $collection Code_Collection
+						 */
+						if ( ! $rule_found ) {
+							// Search for rule.
+							if ( $collection->cursor_includes( array_merge( str_split( $rule ), [ '(' ] ) ) ) {
+								$collection->cursor_collect();
+							}
+
+							if ( $rule . '(' === $collection->get_collector() ) {
+								$rule_found = true;
+
+								$collection->cursor_reset_collector();
+							}
+
+							return;
+						}
+
+						// Should stop collecting?.
+						if ( $collection->cursor_is_collecting() ) {
+							// Handling strings with escalations. EG: ( Don\'t ).
+							if ( '\\' === $collection->get_cursor_value() && "'" === $collection->get_cursor_next_value() ) {
+								$collection->cursor_collector_skip_and_replace( "'" );
+							} else if ( $collection->cursor_includes_string_delimiter() ) {
+								// If prev was escaping just remove it.
+								$collection->cursor_stop_collecting();
+
+								$current_args [] = $collection->get_collector();
+
+								$collection->cursor_reset_collector();
+							}
+
+							return;
+						}
+
+						// Should start collecting?
+						if ( $collection->cursor_includes_string_delimiter() ) {
+							$collection->cursor_start_collecting();
+
+							return;
+						}
+
+						// If it also have 'domain' it should be null between two first args and the domain ( same as PHP ).
+						if ( '_n' === $rule && 2 === count( $current_args ) ) {
+							$current_args [] = null;
+						}
+
+						// Should save the call?
+						if ( ! empty( $current_args ) && ')' === $collection->get_cursor_value() ) {
+							$collection->cursor_stop_collecting();
+
+							$result [] = [
+								'name' => $rule,
+								'line' => $collection->get_line_index() + 1, // Editor starts count from 1.
+								'args' => $current_args,
+							];
+
+							$collection->cursor_reset_collector();
+							$current_args = [];
+							$rule_found = false;
+						}
+					} );
+				}
+			}
+		} );
+
+		return $result;
+	}
+}
