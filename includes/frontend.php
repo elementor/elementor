@@ -517,7 +517,7 @@ class Frontend extends App {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
 		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
-		$frontend_light_file_name = 'frontend-light' . $direction_suffix . $min_suffix . '.css';
+		$frontend_lite_file_name = 'frontend-lite' . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
@@ -533,7 +533,7 @@ class Frontend extends App {
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
-			$frontend_light_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_light_file_name;
+			$frontend_lite_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_lite_file_name;
 		}
 
 		$frontend_dependencies = [];
@@ -554,7 +554,7 @@ class Frontend extends App {
 
 		// TODO: In dev mode = the legacy mode should be applied (script_debug).
 		if ( ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode() ) {
-			$frontend_file_url = $frontend_light_file_url;
+			$frontend_file_url = $frontend_lite_file_url;
 		}
 
 		wp_register_style(
