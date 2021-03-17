@@ -15,7 +15,6 @@
 
 #elementor-panel-elements {
 	overflow: hidden;
-	padding: 0 5px;
 }
 
 #elementor-panel-state-loading {
@@ -88,9 +87,6 @@
 		position: relative;
 
 		&-wrapper {
-			float: $start;
-			width: 50%;
-			padding: 5px;
 			text-align: center;
 			box-sizing: border-box;
 		}
