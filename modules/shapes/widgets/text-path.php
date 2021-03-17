@@ -136,15 +136,6 @@ class TextPath extends Widget_Base {
 		);
 
 		$this->add_control(
-			'shape_notice',
-			[
-				'type' => Controls_Manager::HIDDEN,
-				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/more-text-paths' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-			]
-		);
-
-		$this->add_control(
 			'link',
 			[
 				'label' => __( 'Link', 'elementor' ),
