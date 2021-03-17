@@ -51,8 +51,6 @@ export class ShowSwatches extends CommandBase {
 			$activePicker.remove();
 		}
 
-		this.container = elementor.getContainer( id );
-
 		// Hack to wait for the images to load before picking the colors from it
 		// when extracting colors from a background image control.
 		// TODO: Find a better solution.
