@@ -49,7 +49,7 @@ class WidgetsCss {
 		} );
 	}
 
-	removeWidgetsUnusedFiles() {
+	removeWidgetsUnusedStyleFiles() {
 		const tempFilesFolders = [ this.tempScssFolder, this.cssDestinationFolder ];
 
 		tempFilesFolders.forEach( ( folder ) => {

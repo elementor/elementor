@@ -35,14 +35,12 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'default', [
 		'i18n',
 		'scripts',
-		'create_widgets_temp_scss_files',
 		'styles',
-		'remove_widgets_unused_files',
 	] );
 
 	grunt.registerTask( 'create_widgets_temp_scss_files', () => widgetsCss.createWidgetsTempScssFiles() );
 
-	grunt.registerTask( 'remove_widgets_unused_files', () => widgetsCss.removeWidgetsUnusedFiles() );
+	grunt.registerTask( 'remove_widgets_unused_style_files', () => widgetsCss.removeWidgetsUnusedStyleFiles() );
 
 	grunt.registerTask( 'i18n', [
 		'checktextdomain',
@@ -63,12 +61,15 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
+		grunt.task.run( 'create_widgets_temp_scss_files' );
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
 			grunt.task.run( 'postcss' );
 			grunt.task.run( 'css_templates' );
 		}
+
+		grunt.task.run( 'remove_widgets_unused_style_files' );
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
