@@ -26,3 +26,6 @@ jobs:
           git checkout "release/${NEXT_PACKAGE_VERSION}"
           git merge origin/develop
           git push
+          git checkout developer-edition
+          git merge "release/${NEXT_PACKAGE_VERSION}"
+          git push
