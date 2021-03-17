@@ -52,9 +52,10 @@ module.exports = Marionette.Behavior.extend( {
 
 		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
 
-		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) );
+		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
+			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
 
-		$colorPicker.on( 'click', () => $e.run( 'elements-color-picker/start', { container: elementor.getCurrentElement().container, control: this.view.model.get( 'name' ) } ) );
+		$colorPicker.on( 'click', () => $e.run( 'elements-color-picker/start', { container: currentElement.container, control: this.view.model.get( 'name' ) } ) );
 
 		$colorPickerToolsContainer.append( $colorPicker );
 	},
