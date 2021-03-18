@@ -83,12 +83,16 @@ class Library extends \WP_CLI_Command {
 			\WP_CLI::error( 'Please set file path.' );
 		}
 
-		$file = $args[0];
+		// $args[0] is the file path.
+		$file = [
+			'name' => basename( $args[0] ),
+			'type' => mime_content_type( $args[0] ),
+		];
 
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
-		$imported_items = $source->import_template( basename( $file ), $file );
+		$imported_items = $source->import_template( $file );
 
 		if ( is_wp_error( $imported_items ) ) {
 			\WP_CLI::error( $imported_items->get_error_message() );
