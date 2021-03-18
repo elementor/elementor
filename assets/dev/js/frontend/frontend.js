@@ -312,8 +312,6 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		elementorFrontend.trigger( 'elementor/modules/init:before' );
 
-		handlers = elementorFrontend.hooks.applyFilters( 'elementor/frontend/handlers', handlers );
-
 		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
 			this.modulesHandlers[ moduleName ] = new ModuleClass();
 		} );
