@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Conditions;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -33,6 +34,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+	const ASSETS_META_KEY = '_elementor_page_assets';
+
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
@@ -72,6 +75,8 @@ abstract class Document extends Controls_Stack {
 	private static $properties = [];
 
 	private static $registered_widgets = [];
+
+	private static $page_assets = [];
 
 	/**
 	 * Document post data.
@@ -935,6 +940,12 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
+		$page_assets = $this->get_page_assets( $elements_data );
+
+		if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
+			Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
+		}
+
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
@@ -1019,6 +1030,10 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
+		$this->reset_page_assets();
+
+		$this->register_elements_assets_action();
+
 		$this->handle_page_elements( $elements );
 
 		$editor_data = $this->get_elements_raw_data( $elements );
@@ -1504,6 +1519,20 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
+	private function get_page_assets( $elements_data ) {
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+
+		if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
+			return $page_assets;
+		}
+
+		$this->register_elements_assets_action();
+
+		$this->handle_page_elements( $elements_data );
+
+		return self::$page_assets;
+	}
+
 	private function handle_page_elements( $elements ) {
 		$page_widgets = [];
 
@@ -1526,5 +1555,108 @@ abstract class Document extends Controls_Stack {
 		self::$registered_widgets = $page_widgets;
 
 		return $page_widgets;
+	}
+
+	private function register_elements_assets_action() {
+		add_action( 'elementor/document/get_page_element', function( $element ) {
+			$element_assets = $this->get_element_assets( $element );
+
+			if ( $element_assets ) {
+				$this->update_page_assets( $element_assets );
+			}
+		} );
+	}
+
+	private function reset_page_assets() {
+		$doc_id = get_the_ID();
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+
+		if ( array_key_exists( $doc_id, $page_assets ) ) {
+			unset( $page_assets[ $doc_id ] );
+
+			$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+		}
+	}
+
+	private function update_page_assets( $new_assets ) {
+		$doc_id = get_the_ID();
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+
+		if ( ! $page_assets ) {
+			$page_assets = [];
+		}
+
+		if ( ! array_key_exists( $doc_id, $page_assets ) ) {
+			$page_assets[ $doc_id ] = [];
+		}
+
+		foreach ( $new_assets as $assets_type => $assets_type_data ) {
+			if ( ! array_key_exists( $assets_type, $page_assets[ $doc_id ] ) ) {
+				$page_assets[ $doc_id ][ $assets_type ] = [];
+			}
+
+			$page_assets[ $doc_id ][ $assets_type ] = array_unique( array_merge( $page_assets[ $doc_id ][ $assets_type ], $new_assets[ $assets_type ] ) );
+		}
+
+		// Updating also the static variable so that the data will be available without the need to get it from the DB.
+		self::$page_assets = $page_assets;
+
+		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+	}
+
+	private function get_element_assets( $element ) {
+		$controls = $element->get_controls();
+		$settings = array_intersect_key( $element->get_settings(), $controls );
+		$element_assets = [];
+
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				continue;
+			}
+
+			$control = $controls[ $setting_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				// Enabling assets loading from the registered control fields.
+				if ( ! empty( $control['assets'] ) ) {
+					foreach ( $control['assets'] as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! empty( $dependency['conditions'] ) ) {
+								$is_condition_fulfilled = Conditions::check( $dependency['conditions'], $settings );
+
+								if ( ! $is_condition_fulfilled ) {
+									continue;
+								}
+							}
+
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency['name'];
+						}
+					}
+				}
+
+				// Enabling assets loading from the control object.
+				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				$control_conditional_assets = $control_obj::get_assets( $setting );
+
+				if ( $control_conditional_assets ) {
+					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency;
+						}
+					}
+				}
+			}
+		}
+
+		return $element_assets;
 	}
 }
