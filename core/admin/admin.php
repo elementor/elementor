@@ -218,7 +218,9 @@ class Admin extends App {
 	 * @return array A filtered array of post display states.
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( $document && $document->is_built_with_elementor() && $document->is_editable_by_current_user() ) {
 			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
 
@@ -245,7 +247,9 @@ class Admin extends App {
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_support() ) {
 			$post = get_post();
 
-			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
+			$document = Plugin::$instance->documents->get( $post->ID );
+
+			$mode_class = $document && $document->is_built_with_elementor() ? 'elementor-editor-active' : 'elementor-editor-inactive';
 
 			$classes .= ' ' . $mode_class;
 		}
@@ -373,17 +377,7 @@ class Admin extends App {
 	 */
 	public function elementor_dashboard_overview_widget() {
 		$elementor_feed = Api::get_feed_data();
-
-		$recently_edited_query_args = [
-			'post_type' => 'any',
-			'post_status' => [ 'publish', 'draft' ],
-			'posts_per_page' => '3',
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
-			'orderby' => 'modified',
-		];
-
-		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+		$recently_edited_query = Utils::get_recently_edited_posts_query();
 
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = __( 'Create New Page', 'elementor' );
