@@ -30,6 +30,8 @@ export class ShowSwatches extends CommandBase {
 		const { event: e } = args;
 		const id = e.currentTarget.dataset.id;
 
+		e.stopPropagation();
+
 		// Calculate swatch location.
 		const rect = e.currentTarget.getBoundingClientRect();
 		const x = Math.round( e.clientX - rect.left ) + 'px';
@@ -42,7 +44,7 @@ export class ShowSwatches extends CommandBase {
 
 		this.container = elementor.getContainer( id );
 
-		const $activePicker = this.container.view.$el.find( this.pickerSelector );
+		const $activePicker = elementor.$previewContents.find( this.pickerSelector );
 
 		// If there is a picker already, remove it.
 		if ( $activePicker.length ) {
@@ -56,7 +58,6 @@ export class ShowSwatches extends CommandBase {
 			const isImage = ( 'img' === e.target.tagName.toLowerCase() );
 
 			if ( isImage ) {
-				e.stopPropagation();
 				this.extractColorsFromImage( e.target );
 			} else {
 				this.extractColorsFromSettings();
@@ -88,7 +89,7 @@ export class ShowSwatches extends CommandBase {
 			};
 
 			// Handle background images.
-			if ( control.startsWith( '_background_image' ) && isActive() ) {
+			if ( control.includes( 'background_image' ) && isActive() ) {
 				this.addTempBackgroundImage( this.container.getSetting( control ) );
 				return;
 			}
@@ -175,8 +176,8 @@ export class ShowSwatches extends CommandBase {
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
 		const images = [
-			...this.container.view.$el[ 0 ].querySelectorAll( 'img' ),
 			...this.backgroundImages,
+			...this.container.view.$el[ 0 ].querySelectorAll( 'img' ),
 		];
 
 		images.forEach( ( img, i ) => {

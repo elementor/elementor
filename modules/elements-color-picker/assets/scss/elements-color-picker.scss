@@ -84,6 +84,7 @@
 	cursor: url( '../images/eyedropper.svg' ), pointer;
 
 	.e-element-color-picker:hover,
+	.elementor-element:hover > .e-element-color-picker,
 	.elementor-widget-container:hover + .e-element-color-picker {
 		opacity: 1;
 		pointer-events: all;
