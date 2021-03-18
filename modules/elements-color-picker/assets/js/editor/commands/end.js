@@ -11,11 +11,15 @@ export class End extends CommandBase {
 
 		elementor.$previewWrapper.off( 'mouseleave.color-picker' );
 
+		// Set the picking process trigger to in-active mode.
+		this.component.currentPicker.trigger.removeClass( 'e-control-tool-disabled' );
+
 		// Reset the current picker.
 		this.component.currentPicker = {
 			container: null,
 			control: null,
 			initialColor: null,
+			trigger: null,
 		};
 
 		// Return to edit mode.

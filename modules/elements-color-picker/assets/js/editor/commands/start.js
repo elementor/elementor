@@ -5,10 +5,12 @@ export class Start extends CommandBase {
 		elementor.$previewContents.find( 'body' ).addClass( 'elementor-editor__ui-state__color-picker' );
 
 		this.component.currentPicker = {
-			container: args.container,
-			control: args.control,
+			...args,
 			initialColor: args.container.getSetting( args.control ),
 		};
+
+		// Set the picking process trigger to active mode.
+		this.component.currentPicker.trigger.addClass( 'e-control-tool-disabled' );
 
 		// Prevent elements from triggering edit mode on click.
 		elementor.changeEditMode( 'picker' );

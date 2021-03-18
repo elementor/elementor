@@ -55,7 +55,13 @@ module.exports = Marionette.Behavior.extend( {
 		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
 			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
 
-		$colorPicker.on( 'click', () => $e.run( 'elements-color-picker/start', { container: currentElement.container, control: this.view.model.get( 'name' ) } ) );
+		$colorPicker.on( 'click', () => {
+			$e.run( 'elements-color-picker/start', {
+				container: currentElement.container,
+				control: this.view.model.get( 'name' ),
+				trigger: $colorPicker,
+			} );
+		} );
 
 		$colorPickerToolsContainer.append( $colorPicker );
 	},
