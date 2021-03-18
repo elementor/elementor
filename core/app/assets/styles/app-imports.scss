@@ -29,6 +29,9 @@
 @import "../js/ui/atoms/box.scss";
 @import "../js/ui/atoms/checkbox.scss";
 @import "../js/ui/atoms/drag-drop.scss";
+@import "../js/ui/atoms/collapse.scss";
+@import "../js/ui/atoms/badge.scss";
+@import "../js/ui/molecules/search-input.scss";
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
 @import "../js/ui/molecules/inline-link.scss";
@@ -37,9 +40,6 @@
 @import "../../modules/kit-library/assets/js/components/layout/header-back-button.scss";
 @import "../../modules/kit-library/assets/js/components/preview-iframe.scss";
 @import "../../modules/kit-library/assets/js/components/item-sidebar.scss";
-@import "../js/ui/atoms/collapse.scss";
-@import "../js/ui/atoms/badge.scss";
 @import "../../modules/kit-library/assets/js/app.scss";
 @import "../../modules/kit-library/assets/js/components/item-content-overview.scss";
 @import "../../modules/kit-library/assets/js/pages/index.scss";
-@import "../js/ui/molecules/search-input.scss";

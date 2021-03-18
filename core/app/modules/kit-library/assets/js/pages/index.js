@@ -1,4 +1,4 @@
-import { SearchInput, CssGrid } from '@elementor/app-ui';
+import { SearchInput, Grid } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
 import Header from '../components/layout/header';
@@ -23,18 +23,17 @@ export default function Index() {
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">
-					<CssGrid spacing={ 24 } colMinWidth={ 250 }>
-						<div style={ { gridColumn: 'auto / span 2' } }>
+					<Grid container>
+						<div style={ { flex: 1 } }>
 							<SearchInput
 								placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
 								value={ search }
-								onChange={ setSearch }
+								onChange={ ( e ) => setSearch( e.target.value ) }
 							/>
 						</div>
 						<div>
-							Here is the sort
 						</div>
-					</CssGrid>
+					</Grid>
 				</div>
 				<Content className="e-kit-library__index-layout-main">
 					<>
