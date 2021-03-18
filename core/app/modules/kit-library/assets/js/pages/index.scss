@@ -1,13 +1,22 @@
 .e-kit-library {
 	&__index-layout-container {
 		flex-grow: 1;
+		overflow-y: auto;
 	}
 
 	&__index-layout-search-area {
 		padding: spacing(44);
+		position: sticky;
+		top: -1px;
+		right: 0;
+		width: 100%;
+		z-index: 2;
+		background-color: var(--app-background-color);
 	}
 
 	&__index-layout-main {
 		padding-top: spacing(0);
+		overflow-y: hidden;
+		height: auto;
 	}
 }

@@ -9,7 +9,7 @@ export default function SearchInput( props ) {
 				className="eps-search-input"
 				placeholder={ props.placeholder }
 				value={ props.value || '' }
-				onChange={ props.onChange }
+				onChange={ ( e ) => props.onChange( e.target.value ) }
 			/>
 			<Icon className="eicon-search-bold eps-search-input__icon"/>
 		</div>

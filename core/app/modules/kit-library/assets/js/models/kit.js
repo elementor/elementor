@@ -14,6 +14,7 @@ export default class Kit extends BaseModel {
 	featuredIndex = null;
 	createdAt = null;
 	updatedAt = null;
+	keywords = [];
 	rawTags = [];
 	tags = [];
 	documents = [];
@@ -38,6 +39,7 @@ export default class Kit extends BaseModel {
 		instance.featuredIndex = kit.featured_index;
 		instance.createdAt = new Date( kit.created_at );
 		instance.updatedAt = new Date( kit.updated_at );
+		instance.keywords = kit.keywords;
 		instance.rawTags = kit.tags;
 		instance.tags = [];
 		instance.documents = kit.documents ?

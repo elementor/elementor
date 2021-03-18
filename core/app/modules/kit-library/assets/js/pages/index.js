@@ -1,4 +1,4 @@
-import { SearchInput, Grid } from '@elementor/app-ui';
+import { SearchInput, Grid, Text, Button } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
 import Header from '../components/layout/header';
@@ -9,12 +9,9 @@ import useHeadersButtons from '../hooks/use-headers-buttons';
 
 import './index.scss';
 
-const { useState } = React;
-
 export default function Index() {
 	const headerButtons = useHeadersButtons( [ 'info' ] );
-	const { data, isSuccess, isLoading, isError } = useKits();
-	const [ search, setSearch ] = useState( '' );
+	const { data, isSuccess, isLoading, isError, filter, setFilter, isFilterActive } = useKits();
 
 	return (
 		<Layout
@@ -27,9 +24,20 @@ export default function Index() {
 						<div style={ { flex: 1 } }>
 							<SearchInput
 								placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
-								value={ search }
-								onChange={ ( e ) => setSearch( e.target.value ) }
+								value={ filter.search }
+								onChange={ ( value ) => setFilter( ( prev ) => ( { ...prev, search: value } ) ) }
 							/>
+							{
+								isFilterActive &&
+									(
+										<>
+											<Text>
+												{ __( 'Showing %s Results', 'elementor' ) } { filter.search && __( 'For: "%s"', 'elementor' ) }
+											</Text>
+											<Button text={__( 'Clear All' )} variant="underlined" onClick={() => setFilter( {} )} />
+										</>
+									)
+							}
 						</div>
 						<div>
 						</div>
