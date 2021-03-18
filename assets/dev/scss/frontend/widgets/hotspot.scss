@@ -150,21 +150,31 @@
         opacity: 1; 
     }
 
-    // Tooltip - slide direction / fade direction
-    &--animation-slide-from-top,
-    &--overidde-animation-slide-from-top {
-        transform: translate(0, calc(-100% - 1px));    transform: translate(0, calc(-100% - 1px));
+    // Tooltip - fade-grow
+    &--fade-grow {
+        opacity: 0;
+        transform: scale(0);
     }
-    &--animation-slide-from-left,
-    &--overidde-animation-slide-from-left {
+    &--active &--fade-grow {
+        opacity: 1; 
+        transform: scale(1);
+    }
+
+    // Tooltip - slide direction / fade direction
+    &--tooltip-animation-from-top,
+    &--overidde-tooltip-animation-from-top {
+        transform: translate(0, calc(-100% - 1px));
+    }
+    &--tooltip-animation-from-left,
+    &--overidde-tooltip-animation-from-left {
         transform: translate(calc(-100% - 1px), 0);
     }
-    &--animation-slide-from-right,
-    &--overidde-animation-slide-from-right {
+    &--tooltip-animation-from-right,
+    &--overidde-tooltip-animation-from-right {
         transform: translate(calc(100% + 1px), 0);
     }
-    &--animation-slide-from-bottom,
-    &--overidde-animation-slide-from-bottom {
+    &--tooltip-animation-from-bottom,
+    &--overidde-tooltip-animation-from-bottom {
         transform: translate(0, calc(100% + 1px));
     }
     &--fade-direction {
@@ -172,8 +182,9 @@
     }
 
     &--active &--slide-direction,
-    &--active &--fade-direction {
-        transform: translate(0, 0);
+    &--active &--fade-direction
+    {
+        transform: translate(0, 0) scale(1);
         opacity: 1;
     }
 

@@ -542,7 +542,7 @@ class Widget_Hotspot extends Widget_Base
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'e-hotspot--fade-in-out' => __('Fade In/Out', 'elementor'),
-					//'e-hotspot--fade-grow' => __('Fade Grow', 'elementor'),
+					'e-hotspot--fade-grow' => __('Fade Grow', 'elementor'),
 					'e-hotspot--fade-direction' => __('Fade By Direction', 'elementor'),
 					'e-hotspot--slide-direction' => __('Slide By Direction', 'elementor'),
 				],
@@ -1036,7 +1036,7 @@ class Widget_Hotspot extends Widget_Base
 			]);
 
 			//tooltip attributes
-			$tooltip_custom_position = ( $is_tooltip_direction_animation && $hotspot['hotspot_tooltip_position'] && $hotspot['hotspot_position'] ) ? 'e-hotspot--overidde-animation-slide-from-' . $hotspot['hotspot_position'] : '';
+			$tooltip_custom_position = ( $is_tooltip_direction_animation && $hotspot['hotspot_tooltip_position'] && $hotspot['hotspot_position'] ) ? 'e-hotspot--overidde-tooltip-animation-from-' . $hotspot['hotspot_position'] : '';
 			$tooltip_repeater_setting_key = $this->get_repeater_setting_key('tooltip', 'hotspots', $key);
 			$this->add_render_attribute( $tooltip_repeater_setting_key, [
 				'class' => [
@@ -1156,7 +1156,7 @@ class Widget_Hotspot extends Widget_Base
 				});
 
 				//tooltip attributes
-				const tooltip_custom_position = ( is_tooltip_direction_animation && hotspot.hotspot_tooltip_position && hotspot.hotspot_position ) ? 'e-hotspot--overidde-animation-slide-from-' + hotspot.hotspot_position : '';
+				const tooltip_custom_position = ( is_tooltip_direction_animation && hotspot.hotspot_tooltip_position && hotspot.hotspot_position ) ? 'e-hotspot--overidde-tooltip-animation-from-' + hotspot.hotspot_position : '';
 				const tooltip_repeater_setting_key = view.getRepeaterSettingKey('tooltip', 'hotspots', index);
 				view.addRenderAttribute( tooltip_repeater_setting_key, {
 					'class': [

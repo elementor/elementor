@@ -64,8 +64,8 @@ export default class Hotspot extends elementorModules.frontend.handlers.Base {
 		const isDirectionAnimation = 'undefined' !== typeof getElementSettings.tooltip_animation && ( getElementSettings.tooltip_animation.startsWith( 'e-hotspot--slide-direction' ) || getElementSettings.tooltip_animation.startsWith( 'e-hotspot--fade-direction' ) );
 
 		if ( isDirectionAnimation ) {
-            this.elements.$tooltip.removeClass( 'e-hotspot--animation-slide-from-left e-hotspot--animation-slide-from-top e-hotspot--animation-slide-from-right e-hotspot--animation-slide-from-bottom' );
-            this.elements.$tooltip.addClass( 'e-hotspot--animation-slide-from-' + getElementSettings.tooltip_position );
+            this.elements.$tooltip.removeClass( 'e-hotspot--tooltip-animation-from-left e-hotspot--tooltip-animation-from-top e-hotspot--tooltip-animation-from-right e-hotspot--tooltip-animation-from-bottom' );
+            this.elements.$tooltip.addClass( 'e-hotspot--tooltip-animation-from-' + getElementSettings.tooltip_position );
         }
     }
 
