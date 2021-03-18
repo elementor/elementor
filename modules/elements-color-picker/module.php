@@ -29,7 +29,7 @@ class Module extends BaseModule {
 	public function enqueue_scripts() {
 		wp_enqueue_script(
 			'color-thief',
-			$this->get_js_assets_url( 'color-thief', 'assets/lib/color-thief/' ),
+			$this->get_js_assets_url( 'color-thief', 'assets/lib/color-thief/', true ),
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
