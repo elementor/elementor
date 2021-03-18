@@ -305,13 +305,18 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
+	 * Get the module's associated widgets.
+	 *
+	 * @return string[]
+	 */
+	protected function get_widgets() {
+		return [];
+	}
+
+	/**
 	 * Initialize the module related widgets.
 	 */
 	public function init_widgets() {
-		if ( ! method_exists( $this, 'get_widgets' ) ) {
-			return;
-		}
-
 		$widget_manager = Plugin::instance()->widgets_manager;
 
 		foreach ( $this->get_widgets() as $widget ) {

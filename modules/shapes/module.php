@@ -50,7 +50,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 *
 	 * @return string[]
 	 */
-	public function get_widgets() {
+	protected  function get_widgets() {
 		return [
 			'TextPath',
 		];
