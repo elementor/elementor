@@ -33,9 +33,9 @@ export class ShowSwatches extends CommandBase {
 		e.stopPropagation();
 
 		// Calculate swatch location.
-		const rect = e.currentTarget.getBoundingClientRect();
-		const x = Math.round( e.clientX - rect.left ) + 'px';
-		const y = Math.round( e.clientY - rect.top ) + 'px';
+		const rect = e.currentTarget.getBoundingClientRect(),
+			x = Math.round( e.clientX - rect.left ) + 'px',
+			y = Math.round( e.clientY - rect.top ) + 'px';
 
 		// Don't pick colors from the current widget.
 		if ( id === this.component.currentPicker.container.id ) {
