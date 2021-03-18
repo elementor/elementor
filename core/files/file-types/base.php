@@ -46,9 +46,9 @@ abstract class Base extends Base_Object {
 	 *
 	 * @since 3.2.0
 	 * @param $file
-	 * @return array $file
+	 * @return bool|\WP_Error
 	 */
 	public function validate_file( $file ) {
-		return $file;
+		return true;
 	}
 }

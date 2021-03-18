@@ -6,7 +6,6 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
-use Elementor\Uploads_Manager;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -461,6 +460,10 @@ class Manager {
 	 */
 	public function import_template( array $data ) {
 		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data );
+
+		if ( is_wp_error( $upload_result ) ) {
+			return $upload_result;
+		}
 
 		/** @var Source_Local $source_local */
 		$source_local = $this->get_source( 'local' );
