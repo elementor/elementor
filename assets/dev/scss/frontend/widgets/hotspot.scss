@@ -128,10 +128,8 @@
         pointer-events: none;
     }
 
-    &--show-tooltip {
-        transition: none;
-        opacity: 1;
-        pointer-events: visible;
+    &__tooltip p:last-of-type {
+        margin-bottom: 0;
     }
 
     &__direction-mask &__tooltip{
@@ -154,20 +152,20 @@
 
     // Tooltip - slide direction / fade direction
     &--animation-slide-from-top,
-    &--overide-animation-slide-from-top {
-        transform: translate(0, -100%);
+    &--overidde-animation-slide-from-top {
+        transform: translate(0, calc(-100% - 1px));    transform: translate(0, calc(-100% - 1px));
     }
     &--animation-slide-from-left,
-    &--overide-animation-slide-from-left {
-        transform: translate(-100%, 0);
+    &--overidde-animation-slide-from-left {
+        transform: translate(calc(-100% - 1px), 0);
     }
     &--animation-slide-from-right,
-    &--overide-animation-slide-from-right {
-        transform: translate(100%, 0);
+    &--overidde-animation-slide-from-right {
+        transform: translate(calc(100% + 1px), 0);
     }
     &--animation-slide-from-bottom,
-    &--overide-animation-slide-from-bottom {
-        transform: translate(0, 100%);
+    &--overidde-animation-slide-from-bottom {
+        transform: translate(0, calc(100% + 1px));
     }
     &--fade-direction {
         opacity: 0;
@@ -177,5 +175,12 @@
     &--active &--fade-direction {
         transform: translate(0, 0);
         opacity: 1;
+    }
+
+    &--show-tooltip {
+        transition: none;
+        opacity: 1;
+        pointer-events: visible;
+        transform: translate(0, 0);
     }
 }
