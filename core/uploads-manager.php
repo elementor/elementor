@@ -233,11 +233,18 @@ class Uploads_Manager extends Base_Object {
 
 		$temp_filename = $this->create_temp_file( $file_content );
 
-		return [
+		$new_file_array = [
 			'name' => $file['fileName'],
 			'tmp_name' => $temp_filename,
 			'type' => mime_content_type( $temp_filename ),
 		];
+
+
+		if ( isset( $file['allowedFileTypes'] ) ) {
+			$new_file_array['allowedFileTypes'] = $file['allowedFileTypes'];
+		}
+
+		return $new_file_array;
 	}
 
 	/**

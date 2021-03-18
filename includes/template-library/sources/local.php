@@ -7,10 +7,8 @@ use Elementor\Core\Files\File_Types\Zip;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
-use Elementor\Modules\LandingPages\Module as Landing_Page_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
-use Elementor\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -805,7 +803,9 @@ class Source_Local extends Source_Base {
 
 		// If the import file is a Zip file with potentially multiple JSON files
 		if ( 'application/zip' === $import_result['type'] ) {
-			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $import_result['tmp_name'] );
+			$allowed_file_types = isset( $import_result['allowedFileTypes'] ) ? $import_result['allowedFileTypes'] : null;
+
+			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $import_result['tmp_name'], $allowed_file_types );
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Remove the temporary zip file, since it's now not necessary.

@@ -59,7 +59,16 @@ class Zip extends Base {
 		return 'zip_upload';
 	}
 
-	public function extract( $file_path ) {
+	/**
+	 * Extract
+	 *
+	 * Performs the extraction of the zip files to a temporary directory.
+	 * Returns an error if for some reason the ZipArchive utility isn't available.
+	 * Otherwise, Returns an array containing the temporary extraction directory, and the list of extracted files.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function extract( $file_path, $allowed_file_types ) {
 		if ( ! class_exists( '\ZipArchive' ) ) {
 			return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded' );
 		}
@@ -72,7 +81,10 @@ class Zip extends Base {
 
 		$zip->open( $file_path );
 
-		$zip->extractTo( $temp_extraction_directory );
+		// if an array of allowed file types is provided, get the filtered file list to extract.
+		$allowed_files = $allowed_file_types ? $this->get_allowed_files( $zip, $allowed_file_types ) : null;
+
+		$zip->extractTo( $temp_extraction_directory, $allowed_files );
 
 		$zip->close();
 
@@ -80,6 +92,34 @@ class Zip extends Base {
 			'temp_extraction_directory' => $temp_extraction_directory,
 			'files' => $this->find_temp_files( $temp_extraction_directory ),
 		];
+	}
+
+	/**
+	 * Get Allowed Files
+	 *
+	 * Accepts a zipArchive instance and an array of allowed file types. Iterates over the zip archive's files and
+	 * checks if their extensions are in the list of allowed file types. Returns an array containing all valid files.
+	 * This method doesn't validate that the contents of the files (mime type) match the file extensions - that
+	 * validation happens in the Uploads Manager once the files are extracted.
+	 *
+	 * @param \ZipArchive $zip
+	 * @param array $allowed_file_types
+	 * @return array
+	 */
+	private function get_allowed_files( $zip, $allowed_file_types ) {
+		$allowed_files = [];
+
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+			$filename = $zip->getNameIndex( $i );
+			$extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+			if ( in_array( $extension, $allowed_file_types, true ) ) {
+				$allowed_files[] = $filename;
+			}
+		}
+
+		return $allowed_files;
 	}
 
 	/**
