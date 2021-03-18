@@ -2,8 +2,8 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	getDefaultSettings() {
 		return {
 			selectors: {
-				pathContainer: '.elementor-text-path',
-				svg: '.elementor-text-path > svg',
+				pathContainer: '.e-text-path',
+				svg: '.e-text-path > svg',
 			},
 		};
 	}
@@ -29,8 +29,8 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		this.elements = this.getDefaultElements();
 
 		// Generate unique IDs using the wrapper's `data-id`.
-		this.pathId = `elementor-path-${ this.elements.widgetWrapper.dataset.id }`;
-		this.textPathId = `elementor-text-path-${ this.elements.widgetWrapper.dataset.id }`;
+		this.pathId = `e-path-${ this.elements.widgetWrapper.dataset.id }`;
+		this.textPathId = `e-text-path-${ this.elements.widgetWrapper.dataset.id }`;
 
 		if ( ! this.elements.svg ) {
 			return;

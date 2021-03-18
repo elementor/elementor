@@ -675,7 +675,7 @@ class TextPath extends Widget_Base {
 
 		// Add Text Path text.
 		$this->add_render_attribute( 'text_path', [
-			'class' => 'elementor-text-path',
+			'class' => 'e-text-path',
 			'data-text' => $settings['text'],
 		] );
 
