@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor widget that displays text along SVG path.
  *
- * @since 1.0.0
  */
 class TextPath extends Widget_Base {
 
@@ -30,7 +29,6 @@ class TextPath extends Widget_Base {
 	 * Retrieve Text Path widget name.
 	 *
 	 * @return string Widget name.
-	 * @since  1.0.0
 	 * @access public
 	 *
 	 */
@@ -44,7 +42,6 @@ class TextPath extends Widget_Base {
 	 * Retrieve Text Path widget title.
 	 *
 	 * @return string Widget title.
-	 * @since  1.0.0
 	 * @access public
 	 *
 	 */
@@ -58,7 +55,6 @@ class TextPath extends Widget_Base {
 	 * Retrieve Text Path widget icon.
 	 *
 	 * @return string Widget icon.
-	 * @since  1.0.0
 	 * @access public
 	 *
 	 */
@@ -72,7 +68,6 @@ class TextPath extends Widget_Base {
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
 	 * @return array Widget keywords.
-	 * @since  2.1.0
 	 * @access public
 	 *
 	 */
@@ -645,7 +640,6 @@ class TextPath extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since  1.0.0
 	 * @access protected
 	 */
 	protected function register_controls() {
@@ -658,7 +652,6 @@ class TextPath extends Widget_Base {
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
-	 * @since  1.0.0
 	 * @access protected
 	 */
 	protected function render() {
