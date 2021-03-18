@@ -14,7 +14,8 @@ export default class View extends Marionette.ItemView {
 			switcherOption: prefix + '-switcher__option',
 			switcherLabel: prefix + '-switcher__label',
 			switcher: prefix + '-switcher',
-			sizeInput: prefix + '__input-size',
+			sizeInputWidth: prefix + '__input-width',
+			sizeInputHeight: prefix + '__input-height',
 			closeButton: prefix + '__close-button',
 			breakpointSettingsButton: prefix + '__settings-button',
 		};
@@ -23,7 +24,8 @@ export default class View extends Marionette.ItemView {
 	events() {
 		return {
 			'change @ui.switcherOption': 'onBreakpointSelected',
-			'change @ui.sizeInput': 'onSizeInputChange',
+			'change @ui.sizeInputWidth': 'onSizeInputChange',
+			'change @ui.sizeInputHeight': 'onSizeInputChange',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 		};
@@ -68,8 +70,7 @@ export default class View extends Marionette.ItemView {
 		const isWPPreviewMode = elementorCommon.elements.$body.hasClass( 'elementor-editor-preview' );
 
 		if ( isWPPreviewMode ) {
-			// Exit Preview Mode
-			elementor.panel.$el.find( '#elementor-mode-switcher-preview-input' ).trigger( 'click' );
+			elementor.exitPreviewMode();
 		}
 
 		const isInSettingsPanelActive = 'panel/global/menu' === elementor.documents.currentDocument.config.panel.default_route;
@@ -90,11 +91,10 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onPreviewResize() {
-		const width = elementor.channels.responsivePreview.request( 'width' );
-		const height = elementor.channels.responsivePreview.request( 'height' );
+		const size = elementor.channels.responsivePreview.request( 'size' );
 
-		this.ui.sizeInput.filter( '.e-responsive-bar__input-width' ).val( width );
-		this.ui.sizeInput.filter( '.e-responsive-bar__input-height' ).val( height );
+		this.ui.sizeInputWidth.val( size.width );
+		this.ui.sizeInputHeight.val( size.height );
 	}
 
 	onRender() {
@@ -107,8 +107,8 @@ export default class View extends Marionette.ItemView {
 
 	onSizeInputChange() {
 		const size = {
-			width: this.ui.sizeInput.filter( '.e-responsive-bar__input-width' ).val(),
-			height: this.ui.sizeInput.filter( '.e-responsive-bar__input-height' ).val(),
+			width: this.ui.sizeInputWidth.val(),
+			height: this.ui.sizeInputHeight.val(),
 		};
 
 		elementor.updatePreviewSize( size );

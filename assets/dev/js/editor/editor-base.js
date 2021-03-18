@@ -15,10 +15,9 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
-
-const DEFAULT_DEVICE_MODE = 'desktop';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -569,35 +568,38 @@ export default class EditorBase extends Marionette.Application {
 
 	broadcastPreviewResize( size ) {
 		this.channels.responsivePreview
-			.reply( 'width', size.width )
-			.reply( 'height', size.height )
+			.reply( 'size', size )
 			.trigger( 'resize' );
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		switch ( currentBreakpoint ) {
-			case 'mobile': return {
-				width: 375,
-				height: 667,
-				maxWidth: 767,
-				minWidth: 320,
-				maxHeight: 896,
-				minHeight: 480,
-			};
-			case 'tablet': return {
-				width: 768,
-				height: 1024,
-				maxWidth: 1024,
-				minWidth: 768,
-				maxHeight: 1024,
-				minHeight: 768,
-			};
-			default: return {};
-		}
-	}
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
+			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
 
-	updatePreviewMaxHeight() {
-		console.log( jQuery( '#elementor-preview' ).outerHeight() );
+		const specialBreakpointsHeights = {
+			mobile: {
+				minHeight: 480,
+				height: 667,
+				maxHeight: 896,
+			},
+			tablet: {
+				minHeight: 768,
+				height: 1024,
+				maxHeight: 1024,
+			},
+		};
+
+		let breakpointConstrains = {
+			maxWidth: currentBreakpointData.value,
+			minWidth: currentBreakpointMinPoint || 375,
+		};
+
+		if ( specialBreakpointsHeights[ currentBreakpoint ] ) {
+			breakpointConstrains = { ...breakpointConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
+		}
+
+		return breakpointConstrains;
 	}
 
 	updatePreviewResizeOptions() {
@@ -629,9 +631,11 @@ export default class EditorBase extends Marionette.Application {
 			$responsiveWrapper.resizable( 'enable' )
 				.resizable( 'option', { ...breakpointResizeOptions } )
 				.css( {
-					'--e-editor-preview-width': breakpointResizeOptions.width + 'px',
+					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
 					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
 				} );
+
+			breakpointResizeOptions.width = breakpointResizeOptions.minWidth;
 
 			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
 		}
@@ -764,7 +768,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	exitDeviceMode() {
-		elementor.changeDeviceMode( DEFAULT_DEVICE_MODE );
+		elementor.changeDeviceMode( 'desktop' );
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 		this.destroyPreviewResizable();
 	}
@@ -778,10 +782,6 @@ export default class EditorBase extends Marionette.Application {
 			'--e-editor-preview-width': size.width + 'px',
 			'--e-editor-preview-height': size.height + 'px',
 		} );
-	}
-
-	togglePreviewOrientation() {
-		this.$previewResponsiveWrapper.toggleClass( 'e-device-landscape' );
 	}
 
 	enterPreviewMode( hidePanel ) {
@@ -1005,7 +1005,7 @@ export default class EditorBase extends Marionette.Application {
 			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
-		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
+		this.changeDeviceMode( 'desktop' );
 
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
