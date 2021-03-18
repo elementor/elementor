@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,8 +15,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
 	<footer id="elementor-panel-footer">
-		<div class="elementor-panel-container">
-		</div>
+		<div class="elementor-panel-container"></div>
 	</footer>
 </script>
 

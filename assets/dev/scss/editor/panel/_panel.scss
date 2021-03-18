@@ -14,13 +14,15 @@
 	}
 }
 
+#elementor-editor-wrapper {
+}
+
+
 .elementor-panel {
-	position: fixed;
+	position: relative;
 	height: 100%;
+	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
 	width: var(--e-editor-panel-width);
-	@include start(calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode)));
-	top: 0;
-	bottom: 0;
 	overflow: visible;
 	background-color: $editor-background;
 	z-index: $first-layer;
