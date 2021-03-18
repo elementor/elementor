@@ -30,7 +30,18 @@ class Assets_Loader extends Module {
 
 	private function init_assets() {
 		$this->assets = [
-			'styles' => [],
+			'styles' => [
+				'e-animations' => [
+					'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
+				'e-icons' => [
+					'src' => $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
+					'version' => '5.9.1',
+					'dependencies' => [],
+				],
+			],
 			'scripts' => [],
 		];
 
@@ -45,12 +56,16 @@ class Assets_Loader extends Module {
 		return $this->assets;
 	}
 
-	public function enable_asset( $asset_type, $asset_name ) {
+	public function enable_assets( $assets_data ) {
 		if ( ! $this->assets ) {
 			$this->init_assets();
 		}
 
-		$this->assets[ $asset_type ][ $asset_name ]['enabled'] = true;
+		foreach ( $assets_data as $assets_type => $assets_list ) {
+			foreach ( $assets_list as $asset_name ) {
+				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
+			}
+		}
 	}
 
 	public function add_assets( $assets ) {
