@@ -93,13 +93,15 @@ class Uploads_Manager extends Base_Object {
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( $file ) {
-		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be saved
-		// to a file.
+		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
+		// saved to a temporary file.
 		if ( isset( $file['fileData'] ) ) {
-			return $this->save_base64_to_tmp_file( $file );
+			$validation_target = $this->save_base64_to_tmp_file( $file );
+		} else {
+			$validation_target = $file;
 		}
 
-		$validation_result = $this->validate_file( $file );
+		$validation_result = $this->validate_file( $validation_target );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
@@ -149,13 +151,24 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.2.0
 	 *
 	 * @param string $file_content
-	 * @return string $temp_filename
+	 * @param string $file_name
+	 * @return string|\WP_Error
 	 */
-	public function create_temp_file( $file_content ) {
+	public function create_temp_file( $file_content, $file_name ) {
+		$extension = pathinfo( $file_name, PATHINFO_EXTENSION );
 		// Get the directory for temporary Elementor uploads.
 		$temp_path = $this->get_temp_dir();
 		// Create a random temporary file name.
-		$temp_filename = $temp_path . uniqid() . '.tmp';
+		$temp_filename = $temp_path . uniqid() . '.' . $extension;
+
+		if ( 'json' === $extension ) {
+			$file_content = wp_json_encode( $file_content );
+
+			// If the JSON content is not json-encodable, it is not valid.
+			if ( ! $file_content ) {
+				return new \WP_Error( 'Invalid file contents' );
+			}
+		}
 
 		// Save the contents to a temporary file.
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
@@ -221,17 +234,21 @@ class Uploads_Manager extends Base_Object {
 	 * Saves a Base64 string as a .tmp file in Elementor's temporary files directory.
 	 *
 	 * @param $file
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	private function save_base64_to_tmp_file( $file ) {
 		$file_content = base64_decode( $file['fileData'] ); // phpcs:ignore
 
 		// If the decode fails
 		if ( ! $file_content ) {
-			return \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
+			return new \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
 		}
 
-		$temp_filename = $this->create_temp_file( $file_content );
+		$temp_filename = $this->create_temp_file( $file_content, $file['fileName'] );
+
+		if ( is_wp_error( $temp_filename ) ) {
+			return $temp_filename;
+		}
 
 		$new_file_array = [
 			'name' => $file['fileName'],
