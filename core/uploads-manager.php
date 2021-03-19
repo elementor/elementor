@@ -96,12 +96,10 @@ class Uploads_Manager extends Base_Object {
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
 		if ( isset( $file['fileData'] ) ) {
-			$validation_target = $this->save_base64_to_tmp_file( $file );
-		} else {
-			$validation_target = $file;
+			$file = $this->save_base64_to_tmp_file( $file );
 		}
 
-		$validation_result = $this->validate_file( $validation_target );
+		$validation_result = $this->validate_file( $file );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
