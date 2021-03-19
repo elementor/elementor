@@ -809,9 +809,9 @@ class Source_Local extends Source_Base {
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Remove the temporary zip file, since it's now not necessary.
-				unlink( $import_result['tmp_name'] );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result['tmp_name'] );
 				// Delete the temporary extraction directory, since it's now not necessary.
-				rmdir( $extracted_files['temp_extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -827,7 +827,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			rmdir( $extracted_files['temp_extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $import_result );
@@ -1382,7 +1382,7 @@ class Source_Local extends Source_Base {
 		] );
 
 		// Remove the temporary file, now that we're done with it.
-		unlink( $file_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $file_path );
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;

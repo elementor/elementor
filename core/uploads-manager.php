@@ -302,6 +302,45 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
+	 * Remove File Or Directory
+	 *
+	 * Directory is deleted recursively with all of its contents (subdirectories and files).
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $path
+	 */
+	public function remove_file_or_dir( $path ) {
+		if ( is_dir( $path ) ) {
+			$this->remove_directory_with_files( $path );
+		} else {
+			unlink( $path );
+		}
+	}
+
+	/**
+	 * Remove Directory with Files
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $dir
+	 * @return bool
+	 */
+	private function remove_directory_with_files( $dir ) {
+		$dir_iterator = new \RecursiveDirectoryIterator( $dir, \RecursiveDirectoryIterator::SKIP_DOTS );
+
+		foreach ( new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST ) as $name => $item ) {
+			if ( is_dir( $name ) ) {
+				rmdir( $name );
+			} else {
+				unlink( $name );
+			}
+		}
+
+		return rmdir( $dir );
+	}
+
+	/**
 	 * Get Allowed Mime Types
 	 *
 	 * Get the allowed mime types for a certain file extension.
