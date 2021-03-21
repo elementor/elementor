@@ -214,7 +214,7 @@ export class ShowSwatches extends CommandBase {
 			const swatch = document.createElement( 'div' );
 			swatch.classList.add( `${ this.pickerClass }__swatch` );
 			swatch.style = `--color: ${ value }`;
-			swatch.dataset.color = value;
+			swatch.dataset.color = value.replace( '#', '' );
 
 			swatch.addEventListener( 'mouseenter', () => {
 				$e.run( 'elements-color-picker/enter-preview', { value } );

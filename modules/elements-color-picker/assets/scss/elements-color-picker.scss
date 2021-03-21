@@ -65,6 +65,7 @@
 				opacity: 0;
 				color: var( --color );
 				font-size: 10px;
+				font-weight: 300;
 				font-family: $admin-font-family;
 				transform: translate( -50%, -50% );
 				filter: hue-rotate( 180deg ) grayscale( 1 ) contrast( 999 ) invert( 1 );
