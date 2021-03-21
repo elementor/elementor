@@ -940,10 +940,12 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$page_assets = $this->get_page_assets( $elements_data );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$page_assets = $this->get_page_assets( $elements_data );
 
-		if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
-			Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
+			if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
+				Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
+			}
 		}
 
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
@@ -1030,9 +1032,11 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$this->reset_page_assets();
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$this->reset_page_assets();
 
-		$this->register_elements_assets_action();
+			$this->register_elements_assets_action();
+		}
 
 		$this->handle_page_elements( $elements );
 
@@ -1534,15 +1538,15 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function handle_page_elements( $elements ) {
-		$page_widgets = [];
+		$unique_page_widgets = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets ) {
 			$widget_name = array_key_exists( 'widgetType', $element_data ) ? $element_data['widgetType'] : '';
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( $widget_name && ! in_array( $widget_name, $page_widgets, TRUE ) ) {
-				$page_widgets[] = $widget_name;
+			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, TRUE ) ) {
+				$unique_page_widgets[] = $widget_name;
 
 				do_action( 'elementor/document/get_unique_page_widget', $element );
 			}
@@ -1552,9 +1556,7 @@ abstract class Document extends Controls_Stack {
 			return $element_data;
 		} );
 
-		self::$registered_widgets = $page_widgets;
-
-		return $page_widgets;
+		self::$registered_widgets = $unique_page_widgets;
 	}
 
 	private function register_elements_assets_action() {
