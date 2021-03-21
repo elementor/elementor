@@ -156,19 +156,50 @@ class Assets_Loader extends Module {
 	}
 
 	public function enqueue_assets() {
-		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
+		add_action( 'elementor/assets_loader/get_asset', function( $asset ) use ( &$is_preview_mode, &$is_optimized_assets_loading ) {
+			$asset_data = $asset['data'];
+
+			if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode || ! $is_optimized_assets_loading ) {
+				if ( 'scripts' === $asset['type'] ) {
+					wp_enqueue_script( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+				} else {
+					wp_enqueue_style( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+				}
+			}
+		} );
+
+		$this->handle_assets();
+	}
+
+	private function register_assets() {
+		add_action( 'elementor/assets_loader/get_asset', function( $asset ) {
+			$asset_data = $asset['data'];
+
+			if ( 'scripts' === $asset['type'] ) {
+				wp_register_script( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+			} else {
+				wp_register_style( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+			}
+		} );
+
+		$this->handle_assets();
+	}
+
+	private function handle_assets() {
+		$assets = $this->get_assets();
+
 		foreach ( $assets as $assets_type => $assets_type_data ) {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
-				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode || ! $is_optimized_assets_loading ) {
-					if ( 'scripts' === $assets_type ) {
-						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
-					} else {
-						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
-					}
-				}
+				$asset = [
+					'type' => $assets_type,
+					'name' => $asset_name,
+					'data' => $asset_data,
+				];
+
+				do_action( 'elementor/assets_loader/get_asset', $asset );
 			}
 		}
 	}
@@ -197,5 +228,9 @@ class Assets_Loader extends Module {
 		}
 
 		return $asset_css;
+	}
+
+	public function __construct() {
+		$this->register_assets();
 	}
 }
