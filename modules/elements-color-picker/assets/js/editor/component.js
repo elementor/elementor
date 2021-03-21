@@ -8,6 +8,8 @@ export default class Component extends ComponentBase {
 		initialColor: null,
 	};
 
+	lightboxTriggers = [];
+
 	getNamespace() {
 		return 'elements-color-picker';
 	}

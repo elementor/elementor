@@ -22,6 +22,13 @@ export class End extends CommandBase {
 			trigger: null,
 		};
 
+		// Revert the lightbox block.
+		this.component.lightboxTriggers.forEach( ( item ) => {
+			item.dataset.elementorOpenLightbox= 'yes';
+		} );
+
+		this.component.lightboxTriggers = [];
+
 		// Return to edit mode.
 		elementor.changeEditMode( 'edit' );
 	}
