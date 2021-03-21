@@ -23,7 +23,7 @@ export default function Item( props ) {
 
 	return (
 		<Layout
-			header={ <Header rightSlot={ <HeaderBackButton/> } buttons={ headerButtons }/> }
+			header={ <Header startSlot={ <HeaderBackButton/> } buttons={ headerButtons }/> }
 			sidebar={ <ItemSidebar model={ data } groupedKitContent={ groupedKitContent }/> }
 		>
 			{

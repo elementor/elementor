@@ -6,5 +6,9 @@
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-	@include border-end( 1px solid #eee )
+	@include border-end( $eps-border );
+
+	.#{$eps-prefix}icon {
+		transform: getValueByDirection(rotate(0deg), rotate(180deg));
+	}
 }

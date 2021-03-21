@@ -19,7 +19,7 @@ export default function Preview( props ) {
 
 	return (
 		<Layout header={
-			<Header rightSlot={ <HeaderBackButton/> } buttons={ headerButtons }/>
+			<Header startSlot={ <HeaderBackButton/> } buttons={ headerButtons }/>
 		}>
 			<PreviewIframe previewUrl={ data.previewUrl }/>
 		</Layout>

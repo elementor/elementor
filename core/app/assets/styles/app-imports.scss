@@ -36,10 +36,12 @@
 @import "../js/ui/dialog/dialog.scss";
 @import "../js/ui/molecules/inline-link.scss";
 @import "../../modules/import-export/assets/js/shared/content-layout/content-layout.scss";
+
+// Kit library
+@import "../../modules/kit-library/assets/js/app.scss";
+@import "../../modules/kit-library/assets/js/components/item-content-overview.scss";
+@import "../../modules/kit-library/assets/js/components/item-sidebar.scss";
 @import "../../modules/kit-library/assets/js/components/kit-list-item.scss";
 @import "../../modules/kit-library/assets/js/components/layout/header-back-button.scss";
 @import "../../modules/kit-library/assets/js/components/preview-iframe.scss";
-@import "../../modules/kit-library/assets/js/components/item-sidebar.scss";
-@import "../../modules/kit-library/assets/js/app.scss";
-@import "../../modules/kit-library/assets/js/components/item-content-overview.scss";
 @import "../../modules/kit-library/assets/js/pages/index.scss";
