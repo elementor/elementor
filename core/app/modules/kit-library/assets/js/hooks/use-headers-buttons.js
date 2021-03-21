@@ -31,7 +31,7 @@ export default function useHeadersButtons( buttonsKeys, id ) {
 			variant: 'outlined',
 			color: 'primary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/${ id }/preview` ),
+			onClick: () => navigate( `/kit-library/preview/${ id }` ),
 		},
 	} ), [ navigate, id ] );
 

@@ -22,8 +22,8 @@ export default function App() {
 		<QueryClientProvider client={ queryClient }>
 			<Router>
 				<Index path="/"/>
+				<Preview path="/preview/:id"/>
 				<Item path="/:id"/>
-				<Preview path="/:id/preview"/>
 			</Router>
 			<ReactQueryDevtools initialIsOpen={ false }/>
 		</QueryClientProvider>

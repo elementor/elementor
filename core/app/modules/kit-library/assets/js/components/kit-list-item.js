@@ -30,7 +30,7 @@ export default function KitListItem( props ) {
 								className="e-kit-library__kit-item-overlay-demo-button"
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
-								url={ `/kit-library/${ props.model.id }/preview` }
+								url={ `/kit-library/preview/${ props.model.id }` }
 							/>
 						</Grid>
 					</CardOverlay>
