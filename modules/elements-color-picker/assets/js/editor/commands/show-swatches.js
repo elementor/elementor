@@ -49,6 +49,8 @@ export class ShowSwatches extends CommandBase {
 			activePicker.remove();
 		}
 
+		e.stopPropagation();
+
 		// Hack to wait for the images to load before picking the colors from it
 		// when extracting colors from a background image control.
 		// TODO: Find a better solution.
@@ -56,7 +58,6 @@ export class ShowSwatches extends CommandBase {
 			const isImage = ( 'img' === e.target.tagName.toLowerCase() );
 
 			if ( isImage ) {
-				e.stopPropagation();
 				this.extractColorsFromImage( e.target );
 			} else {
 				this.extractColorsFromSettings();
@@ -199,7 +200,7 @@ export class ShowSwatches extends CommandBase {
 
 		const picker = document.createElement( 'div' );
 		picker.dataset.count = count;
-		picker.classList.add( this.pickerClass );
+		picker.classList.add( this.pickerClass, 'e-picker-hidden' );
 		picker.style = `
 			--count: ${ count };
 			--left: ${ x };
@@ -210,6 +211,25 @@ export class ShowSwatches extends CommandBase {
 		// which will fire the `apply` command and will close everything.
 		this.container.view.$el[ 0 ].append( picker );
 
+		// Check if the picker is overflowing out of the parent.
+		const observer = elementorModules.utils.Scroll.scrollObserver( {
+			callback: ( event ) => {
+				observer.unobserve( picker );
+
+				if ( ! event.isInViewport ) {
+					picker.style.setProperty( '--left', 'unset' );
+					picker.style.setProperty( '--right', '0' );
+				}
+
+				picker.classList.remove( 'e-picker-hidden' );
+			},
+			root: this.container.view.$el[ 0 ],
+			offset: `0px -${ parseInt( picker.getBoundingClientRect().width ) }px 0px`,
+		} );
+
+		observer.observe( picker );
+
+		// Add the colors swatches.
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			const swatch = document.createElement( 'div' );
 			swatch.classList.add( `${ this.pickerClass }__swatch` );

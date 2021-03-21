@@ -9,7 +9,8 @@
 		width: calc( calc( var( --count ) + 1 ) * var( --swatch-size ) );
 		height: var( --swatch-size );
 		top: var( --top );
-		left:var( --left );
+		left: var( --left );
+		right: var( --right, unset );
 		border-radius: 3px;
 		opacity: 0;
 		pointer-events: none;
@@ -17,7 +18,12 @@
 		background-color: var( --primary-color );
 		padding: 1px;
 		box-sizing: content-box;
-		transition: opacity .3s, left .05s, top .05s, width .3s;
+		transition: opacity .3s, width .3s;
+
+		&.e-picker-hidden {
+			opacity: 0;
+			pointer-events: none;
+		}
 
 		&::before {
 			content: '';
@@ -89,9 +95,9 @@
 		cursor: url( '../images/eyedropper.svg' ), pointer;
 	}
 
-	.e-element-color-picker:hover,
-	.elementor-element:hover > .e-element-color-picker,
-	.elementor-widget-container:hover + .e-element-color-picker {
+	.e-element-color-picker:not( .e-picker-hidden ):hover,
+	.elementor-element:hover > .e-element-color-picker:not( .e-picker-hidden ),
+	.elementor-widget-container:hover + .e-element-color-picker:not( .e-picker-hidden ) {
 		opacity: 1;
 		pointer-events: all;
 	}
