@@ -164,7 +164,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortStart: function( event, ui ) {
-		if ( 'column' === this.options.elChildType ) {
+		// Section were added since, section with huge height cannot be moved ( probably because its not able to determine placement location ).
+		if ( 'column' === this.options.elChildType || 'section' === this.options.elChildType ) {
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
 				itemHeight = 0;
