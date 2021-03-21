@@ -16,7 +16,7 @@ export const Move = () => {
 
 				// Validate first section have 3 columns.
 				setTimeout( () => {
-					assert.equal( elementor.getPreviewContainer().children[ 0 ].children.length, 3, 3,
+					assert.equal( elementor.getPreviewContainer().children[ 0 ].children.length, 3,
 						'Section were moved.' );
 
 					done();
@@ -234,6 +234,26 @@ export const Move = () => {
 					'Widgets were removed from the first column.' );
 				assert.equal( eColumn2.view.collection.length, 2,
 					'Widgets were moved/create at the second column.' );
+			} );
+		} );
+
+		QUnit.module( 'Misc', () => {
+			QUnit.test( 'Swap column places -- Ensure valid containers', ( assert ) => {
+				// Arrange.
+				const eSection = ElementsHelper.createSectionStructure( 2 ),
+					columnsIds = [],
+					actualColumnsIds = [];
+
+				eSection.children.forEach( ( eColumn ) => columnsIds.push( eColumn.id ) );
+
+				// Act.
+				ElementsHelper.move( eSection.children[ 0 ], eSection, { at: 1 } );
+
+				eSection.children.forEach( ( eColumn ) => actualColumnsIds.push( eColumn.id ) );
+
+				// Assert.
+				assert.deepEqual( actualColumnsIds, columnsIds.reverse(),
+					'The column ids actually reversed' );
 			} );
 		} );
 	} );
