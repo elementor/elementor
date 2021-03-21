@@ -19,9 +19,10 @@ export class Apply extends CommandBase {
 			}, 1000 );
 
 			// End picking only after the user leaves the swatch container.
-			trigger.palette.on( 'mouseleave.color-picker', () => {
+			trigger.palette.addEventListener( 'mouseleave', function handler( e ) {
+				e.currentTarget.removeEventListener( 'mouseleave', handler );
+
 				$e.run( 'elements-color-picker/end' );
-				trigger.palette.off( 'mouseleave.color-picker' );
 			} );
 		} else {
 			$e.run( 'elements-color-picker/end' );

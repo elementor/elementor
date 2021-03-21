@@ -42,11 +42,11 @@ export class ShowSwatches extends CommandBase {
 
 		this.container = elementor.getContainer( id );
 
-		const $activePicker = elementor.$previewContents.find( this.pickerSelector );
+		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.pickerSelector );
 
 		// If there is a picker already, remove it.
-		if ( $activePicker.length ) {
-			$activePicker.remove();
+		if ( activePicker ) {
+			activePicker.remove();
 		}
 
 		// Hack to wait for the images to load before picking the colors from it
@@ -197,52 +197,55 @@ export class ShowSwatches extends CommandBase {
 			return;
 		}
 
-		const $picker = jQuery( '<div></div>', {
-			class: this.pickerClass,
-			css: {
-				'--count': count,
-				'--left': x,
-				'--top': y,
-			},
-			'data-count': count,
-		} );
+		const picker = document.createElement( 'div' );
+		picker.dataset.count = count;
+		picker.classList.add( this.pickerClass );
+		picker.style = `
+			--count: ${ count };
+			--left: ${ x };
+			--top: ${ y };
+		`;
 
 		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
 		// which will fire the `apply` command and will close everything.
-		this.container.view.$el.append( $picker );
+		this.container.view.$el[ 0 ].append( picker );
 
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
-			$picker.append( jQuery( `<div></div>`, {
-				class: `${ this.pickerClass }__swatch`,
-				css: {
-					'--color': value,
-				},
-				'data-color': value,
-				on: {
-					mouseenter: () => $e.run( 'elements-color-picker/enter-preview', { value } ),
-					mouseleave: () => $e.run( 'elements-color-picker/exit-preview' ),
-					click: ( event ) => {
-						$e.run( 'elements-color-picker/apply', {
-							value,
-							trigger: {
-								palette: $picker,
-								swatch: event.target,
-							},
-						} );
+			const swatch = document.createElement( 'div' );
+			swatch.classList.add( `${ this.pickerClass }__swatch` );
+			swatch.style = `--color: ${ value }`;
+			swatch.dataset.color = value;
 
-						event.stopPropagation();
+			swatch.addEventListener( 'mouseenter', () => {
+				$e.run( 'elements-color-picker/enter-preview', { value } );
+			} );
+
+			swatch.addEventListener( 'mouseleave', () => {
+				$e.run( 'elements-color-picker/exit-preview' );
+			} );
+
+			swatch.addEventListener( 'click', ( e ) => {
+				$e.run( 'elements-color-picker/apply', {
+					value,
+					trigger: {
+						palette: picker,
+						swatch: e.target,
 					},
-				},
-			} )	);
+				} );
+
+				e.stopPropagation();
+			} );
+
+			picker.append( swatch );
 		} );
 
 		// Remove the picker on mouse leave.
-		this.container.view.$el.on( 'mouseleave.color-picker', () => {
-			jQuery( this ).off( 'mouseleave.color-picker' );
+		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', function handler( e ) {
+			e.currentTarget.removeEventListener( 'mouseleave', handler );
 
 			// Remove only after the animation has finished.
 			setTimeout( () => {
-				$picker.remove();
+				picker.remove();
 			}, 300 );
 		} );
 	}

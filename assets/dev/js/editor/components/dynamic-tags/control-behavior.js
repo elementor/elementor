@@ -59,7 +59,7 @@ module.exports = Marionette.Behavior.extend( {
 			$e.run( 'elements-color-picker/start', {
 				container: currentElement.container,
 				control: this.view.model.get( 'name' ),
-				trigger: $colorPicker,
+				trigger: $colorPicker[ 0 ],
 			} );
 		} );
 

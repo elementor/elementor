@@ -5,7 +5,7 @@ export class Start extends CommandBase {
 		// Prevent elements from triggering edit mode on click.
 		elementor.changeEditMode( 'picker' );
 
-		elementor.$previewContents.find( 'body' ).addClass( 'elementor-editor__ui-state__color-picker' );
+		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.add( 'elementor-editor__ui-state__color-picker', 'elementor-edit-area-active' );
 
 		this.component.currentPicker = {
 			...args,
@@ -13,7 +13,7 @@ export class Start extends CommandBase {
 		};
 
 		// Set the picking process trigger to active mode.
-		this.component.currentPicker.trigger.addClass( 'e-control-tool-disabled' );
+		this.component.currentPicker.trigger.classList.add( 'e-control-tool-disabled' );
 
 		// Initialize a swatch on click.
 		elementor.$previewContents.on( 'click.color-picker', '.elementor-element', ( e ) => {
