@@ -91,6 +91,7 @@ class Modules_Manager {
 			'landing-pages',
 			'compatibility-tag',
 			'elements-color-picker',
+			'shapes',
 		];
 	}
 
