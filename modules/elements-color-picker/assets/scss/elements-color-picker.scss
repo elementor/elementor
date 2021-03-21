@@ -95,7 +95,7 @@
 		pointer-events: all;
 	}
 
-	.elementor-editor-element-settings {
-		display: none;
+	.elementor-section:hover {
+		outline: 1px solid $editor-info;
 	}
 }

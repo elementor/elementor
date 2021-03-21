@@ -30,8 +30,6 @@ export class ShowSwatches extends CommandBase {
 		const { event: e } = args;
 		const id = e.currentTarget.dataset.id;
 
-		e.stopPropagation();
-
 		// Calculate swatch location.
 		const rect = e.currentTarget.getBoundingClientRect(),
 			x = Math.round( e.clientX - rect.left ) + 'px',
@@ -58,6 +56,7 @@ export class ShowSwatches extends CommandBase {
 			const isImage = ( 'img' === e.target.tagName.toLowerCase() );
 
 			if ( isImage ) {
+				e.stopPropagation();
 				this.extractColorsFromImage( e.target );
 			} else {
 				this.extractColorsFromSettings();
@@ -65,7 +64,7 @@ export class ShowSwatches extends CommandBase {
 			}
 
 			this.initSwatch( x, y );
-		}, 50 );
+		}, 100 );
 	}
 
 	/**
