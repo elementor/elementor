@@ -57,6 +57,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
+			document.container.handleChildrenRecursive();
 
 			elementor.helpers.scrollToView( document.$element );
 

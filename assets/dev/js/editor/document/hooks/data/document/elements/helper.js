@@ -16,6 +16,8 @@ export default class Helper {
 				 */
 				container.view.addChildModel( model );
 
+				elementor.getContainer( model.id ).addToParent();
+
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`
 				 * For performance reasons.

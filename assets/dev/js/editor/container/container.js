@@ -194,6 +194,33 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	handleChildrenRecursive() {
+		if ( this.view.children ) {
+			// eslint-disable-next-line no-unused-vars
+			Object.entries( this.view.children._views ).forEach( ( [ id, view ] ) => {
+				if ( ! view.getContainer ) {
+					return;
+				}
+				const container = view.getContainer();
+
+				container.parent.children[ view._index ] = container;
+				container.handleChildrenRecursive();
+			} );
+		}
+	}
+
+	addToParent() {
+		// On create container tell the parent where it was created.
+		this.parent.children.splice( this.view._index, 0, this );
+	}
+
+	removeFromParent() {
+		// When delete container its should notify its parent, that his children is dead.
+		const parent = this.parent;
+
+		parent.children = parent.children.filter( ( filtered ) => filtered.id !== this.id );
+	}
+
 	handleRepeaterChildren() {
 		Object.values( this.controls ).forEach( ( control ) => {
 			if ( ! control.is_repeater ) {

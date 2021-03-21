@@ -31,7 +31,12 @@ export class Empty extends CommandHistory {
 	apply( args ) {
 		if ( args.force && elementor.elements ) {
 			elementor.elements.reset();
-			elementor.getPreviewContainer().panel.closeEditor();
+
+			const documentContainer = elementor.getPreviewContainer();
+
+			documentContainer.handleChildrenRecursive();
+			documentContainer.panel.closeEditor();
+
 			return;
 		}
 

@@ -1,26 +1,22 @@
 import After from 'elementor-api/modules/hooks/data/after';
 
-export class SectionsColumns extends After {
+export class CreateColumnSectionEmpty extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}
 
 	getId() {
-		return 'delete-section-columns';
+		return 'create-column-section-empty--document/elements/delete';
 	}
 
 	getContainerType() {
 		return 'column';
 	}
 
-	getConditions( args ) {
+	getConditions( args = {} ) {
 		const { containers = [ args.container ] } = args;
 
-		// On `document/elements/move` do not fire the hook!.
-		return ! $e.commands.isCurrentFirstTrace( 'document/elements/move' ) && containers.some( ( container ) =>
-			// If one of the targets is column.
-			'column' === container.model.get( 'elType' )
-		);
+		return containers.some( ( container ) => 0 === container.parent.children.length );
 	}
 
 	/**
@@ -39,25 +35,18 @@ export class SectionsColumns extends After {
 		containers.forEach( ( /**Container*/ container ) => {
 			const parent = container.parent;
 
-			// If its not column, continue.
-			if ( 'section' !== parent.model.get( 'elType' ) ) {
-				return;
-			}
-
 			// If deleted the last column, should recreate it.
-			if ( 0 === parent.view.collection.length ) {
+			if ( 0 === parent.children.length ) {
 				$e.run( 'document/elements/create', {
 					container: parent,
 					model: {
 						elType: 'column',
 					},
 				} );
-			} else {
-				// Else, just reset section layout.
-				parent.view.resetLayout();
 			}
 		} );
 	}
 }
 
-export default SectionsColumns;
+export default CreateColumnSectionEmpty;
+

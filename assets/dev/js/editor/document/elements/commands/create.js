@@ -58,6 +58,9 @@ export class Create extends CommandHistory {
 
 			const createdContainer = container.view.addElement( model, options ).getContainer();
 
+			createdContainer.addToParent();
+			createdContainer.handleChildrenRecursive();
+
 			result.push( createdContainer );
 
 			/**
