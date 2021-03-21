@@ -84,7 +84,7 @@ class Widget_Common extends Widget_Base {
 	private function get_mask_selectors( $rules ) {
 		$mask_selectors = [
 			'default' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container',
-			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-image > img',
+			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-widget-container > img',
 		];
 
 		return [
