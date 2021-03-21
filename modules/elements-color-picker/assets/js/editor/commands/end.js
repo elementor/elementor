@@ -26,7 +26,7 @@ export class End extends CommandBase {
 
 		// Revert the lightbox block.
 		this.component.lightboxTriggers.forEach( ( item ) => {
-			item.dataset.elementorOpenLightbox= 'yes';
+			item.dataset.elementorOpenLightbox = 'yes';
 		} );
 
 		this.component.lightboxTriggers = [];

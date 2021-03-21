@@ -24,9 +24,8 @@ export class Start extends CommandBase {
 		this.component.lightboxTriggers = elementor.$previewContents[ 0 ].querySelectorAll( '[data-elementor-open-lightbox="yes"]' );
 
 		this.component.lightboxTriggers.forEach( ( item ) => {
-			item.dataset.elementorOpenLightbox= 'no';
+			item.dataset.elementorOpenLightbox = 'no';
 		} );
-
 
 		// Stop the picking process when the user leaves the preview area.
 		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
