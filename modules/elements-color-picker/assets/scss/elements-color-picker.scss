@@ -48,7 +48,10 @@
 			position: relative;
 			overflow: hidden;
 			border-radius: inherit;
-			background-color: var( --color );
+			/* Hack to fix transparent `--color` on hover */
+			background:
+				linear-gradient( var( --color ), var( --color ) ),
+				linear-gradient( var( --primary-color ), var( --primary-color ) );
 
 			&:not( :first-child ) {
 				border-left: 1px solid var( --primary-color );
