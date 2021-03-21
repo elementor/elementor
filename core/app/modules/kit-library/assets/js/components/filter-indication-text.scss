@@ -1,0 +1,11 @@
+.e-kit-library__filter-indication {
+	margin-top: spacing(24);
+
+	&-text {
+		margin-bottom: spacing(0);
+	}
+
+	&-button {
+		@include margin-start(spacing(24));
+	}
+}

@@ -1,4 +1,5 @@
 import Icon from '../atoms/icon';
+import Button from './button';
 
 import './search-input.scss';
 
@@ -12,6 +13,13 @@ export default function SearchInput( props ) {
 				onChange={ ( e ) => props.onChange( e.target.value ) }
 			/>
 			<Icon className="eicon-search-bold eps-search-input__icon"/>
+			{
+				props.value &&
+					<Button
+						className="eicon-close-circle eps-search-input__clear-icon"
+						onClick={ () => props.onChange( '' ) }
+					/>
+			}
 		</div>
 	);
 }

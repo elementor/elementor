@@ -26,7 +26,21 @@
 		color: tints(500);
 		position: absolute;
 		top: 0;
+		@include start(0);
 		left: 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__clear-icon {
+		font-size: type(size, "14");
+		padding: spacing(10);
+		color: tints(500);
+		position: absolute;
+		top: 0;
+		@include end(0);
 		height: 100%;
 		display: flex;
 		align-items: center;

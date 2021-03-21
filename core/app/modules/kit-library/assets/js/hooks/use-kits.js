@@ -10,8 +10,6 @@ export default function useKits() {
 		search: '',
 	} );
 
-	const isFilterActive = useMemo( () => filter.search, [ filter ] );
-
 	const query = useQuery( [ KEY ], fetchKits );
 
 	const data = useFilteredData( query.data, filter );
@@ -21,7 +19,6 @@ export default function useKits() {
 		data,
 		filter,
 		setFilter,
-		isFilterActive,
 	};
 }
 
