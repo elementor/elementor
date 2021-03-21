@@ -40,21 +40,12 @@ export default class Kit extends BaseModel {
 		instance.createdAt = new Date( kit.created_at );
 		instance.updatedAt = new Date( kit.updated_at );
 		instance.keywords = kit.keywords;
-		instance.rawTags = kit.tags;
-		instance.tags = [];
+		instance.tags = kit.tags;
 		instance.documents = kit.documents ?
 			kit.documents.map( ( document ) => Document.createFromResponse( document ) ) :
 			[];
 
 		return instance;
-	}
-
-	transformRawTagsIntoTags( tags ) {
-		this.tags = this.rawTags.map( ( rawTag ) => {
-			return tags.find( ( tag ) => tag.id === rawTag );
-		} );
-
-		return this;
 	}
 
 	/**

@@ -1,9 +1,9 @@
 import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
 import Kit from '../models/kit';
 import environment from 'elementor-common/utils/environment';
+import ContentType from '../models/content-type';
 
 import './item-sidebar.scss';
-import ContentType from 'elementor/core/app/modules/kit-library/assets/js/models/content-type';
 
 const { useState } = React;
 
@@ -36,10 +36,10 @@ export default function ItemSidebar( props ) {
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.tags.map( ( tag ) => (
 							<Badge
-								key={ tag.id }
+								key={ tag }
 								className={ environment.safari ? 'e-kit-library__item-sidebar-tag--safari-support' : '' }
 							>
-								{ tag.label }
+								{ tag }
 							</Badge>
 						) ) }
 					</Grid>

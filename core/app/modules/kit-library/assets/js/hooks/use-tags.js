@@ -12,14 +12,16 @@ function fetchTags() {
 		data: {
 			data: [
 				{
-					id: 'blog',
-					label: 'Blog',
-					types: [ 'tag' ],
+					text: 'Hotels',
+					type: 'categories',
 				},
 				{
-					id: 'business',
-					label: 'Business',
-					types: [ 'tag' ],
+					text: 'Restaurants',
+					type: 'categories',
+				},
+				{
+					text: 'Fun',
+					type: 'tags',
 				},
 			],
 		},

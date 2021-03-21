@@ -11,26 +11,10 @@ export default function useKit( id ) {
 	const parsedId = useMemo( () => parseInt( id ), [ id ] );
 	const placeholderDataCallback = usePlaceholderDataCallback( parsedId );
 
-	const tagsQuery = useTags();
-	const kitQuery = useQuery( [ KEY, parsedId ], fetchKitItem, {
+	return useQuery( [ KEY, parsedId ], fetchKitItem, {
 			placeholderData: placeholderDataCallback,
 		}
 	);
-
-	const data = useMemo( () => {
-		const kit = kitQuery.data;
-
-		if ( kit && tagsQuery.data?.length > 0 ) {
-			kit.transformRawTagsIntoTags( tagsQuery.data );
-		}
-
-		return kit;
-	}, [ kitQuery.data, tagsQuery.data ] );
-
-	return {
-		...kitQuery,
-		data,
-	};
 }
 
 /**

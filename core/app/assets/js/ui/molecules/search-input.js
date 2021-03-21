@@ -15,10 +15,12 @@ export default function SearchInput( props ) {
 			<Icon className="eicon-search-bold eps-search-input__icon"/>
 			{
 				props.value &&
-					<Button
-						className="eicon-close-circle eps-search-input__clear-icon"
-						onClick={ () => props.onChange( '' ) }
-					/>
+				<Button
+					text={ __( 'Clear', 'elementor' ) }
+					hideText={ true }
+					className="eicon-close-circle eps-search-input__clear-icon"
+					onClick={ () => props.onChange( '' ) }
+				/>
 			}
 		</div>
 	);

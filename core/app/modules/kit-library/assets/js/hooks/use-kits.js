@@ -1,14 +1,27 @@
 import { useQuery } from 'react-query';
 import Kit from '../models/kit';
+import { tagTypes } from '../models/tag';
 
 export const KEY = 'kits';
 
-const { useState, useMemo } = React;
+const { useState, useMemo, useCallback } = React;
+
+const initiateFilterState = {
+	search: '',
+	tags: tagTypes.reduce( ( current, { key } ) => {
+		return {
+			...current,
+			[ key ]: [],
+		};
+	}, {} ),
+};
 
 export default function useKits() {
-	const [ filter, setFilter ] = useState( {
-		search: '',
-	} );
+	const [ filter, setFilter ] = useState( initiateFilterState );
+
+	const clearFilter = useCallback( () => {
+		setFilter( { ...initiateFilterState } );
+	}, [ setFilter ] );
 
 	const query = useQuery( [ KEY ], fetchKits );
 
@@ -19,6 +32,7 @@ export default function useKits() {
 		data,
 		filter,
 		setFilter,
+		clearFilter,
 	};
 }
 
@@ -34,6 +48,12 @@ function useFilteredData( data, filter ) {
 			filteredData = filteredData.filter( ( item ) => searchFilter( item, filter.search ) );
 		}
 
+		tagTypes.forEach( ( { key } ) => {
+			if ( filter.tags[ key ]?.length > 0 ) {
+				filteredData = filteredData.filter( ( item ) => tagsFilter( item, filter.tags[ key ] ) );
+			}
+		} );
+
 		return filteredData;
 	}, [ data, filter ] );
 }
@@ -48,4 +68,10 @@ function searchFilter( item, searchTerm ) {
 	const keywords = [ ...item.keywords, item.title ];
 
 	return keywords.some( ( keyword ) => keyword.includes( searchTerm ) );
+}
+
+function tagsFilter( item, tags ) {
+	return tags.some( ( tag ) =>
+		item.tags.some( ( itemTag ) => tag === itemTag )
+	);
 }
