@@ -30,18 +30,7 @@ class Assets_Loader extends Module {
 
 	private function init_assets() {
 		$this->assets = [
-			'styles' => [
-				'e-animations' => [
-					'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
-					'version' => ELEMENTOR_VERSION,
-					'dependencies' => [],
-				],
-				'e-icons' => [
-					'src' => $this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-					'version' => '5.9.1',
-					'dependencies' => [],
-				],
-			],
+			'styles' => [],
 			'scripts' => [],
 		];
 
