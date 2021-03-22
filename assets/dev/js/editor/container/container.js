@@ -344,7 +344,7 @@ export default class Container extends ArgsObject {
 
 			// If lookup were done, new container were created and parent does not know about it.
 			if ( result.parent.children ) {
-				result.parent.children[ this.view._index ] = result;
+				result.parent.children[ result.view._index ] = result;
 			}
 		}
 
