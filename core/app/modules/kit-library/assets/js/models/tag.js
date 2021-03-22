@@ -4,6 +4,7 @@ export const tagTypes = [
 	{
 		key: 'categories',
 		label: __( 'Categories', 'elementor' ),
+		isOpenByDefault: true,
 	},
 	{
 		key: 'tags',

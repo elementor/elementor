@@ -67,7 +67,9 @@ function fetchKits() {
 function searchFilter( item, searchTerm ) {
 	const keywords = [ ...item.keywords, item.title ];
 
-	return keywords.some( ( keyword ) => keyword.includes( searchTerm ) );
+	searchTerm = searchTerm.toLowerCase();
+
+	return keywords.some( ( keyword ) => keyword.toLowerCase().includes( searchTerm ) );
 }
 
 function tagsFilter( item, tags ) {

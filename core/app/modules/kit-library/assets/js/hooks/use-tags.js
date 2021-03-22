@@ -23,6 +23,74 @@ function fetchTags() {
 					text: 'Fun',
 					type: 'tags',
 				},
+				{
+					text: 'Fun1',
+					type: 'tags',
+				},
+				{
+					text: 'Fun2',
+					type: 'tags',
+				},
+				{
+					text: 'Fun3',
+					type: 'tags',
+				},
+				{
+					text: 'Fun4',
+					type: 'tags',
+				},
+				{
+					text: 'Fun5',
+					type: 'tags',
+				},
+				{
+					text: 'Fun6',
+					type: 'tags',
+				},
+				{
+					text: 'Fun7',
+					type: 'tags',
+				},
+				{
+					text: 'Fun8',
+					type: 'tags',
+				},
+				{
+					text: 'Fun9',
+					type: 'tags',
+				},
+				{
+					text: 'Fun10',
+					type: 'tags',
+				},
+				{
+					text: 'Fun11',
+					type: 'tags',
+				},
+				{
+					text: 'Fun12',
+					type: 'tags',
+				},
+				{
+					text: 'Fun13',
+					type: 'tags',
+				},
+				{
+					text: 'Fun14',
+					type: 'tags',
+				},
+				{
+					text: 'Fun15',
+					type: 'tags',
+				},
+				{
+					text: 'Fun16',
+					type: 'tags',
+				},
+				{
+					text: 'Fun17',
+					type: 'tags',
+				},
 			],
 		},
 	} )

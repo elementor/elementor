@@ -65,7 +65,8 @@ export default function Index() {
 					<>
 						{ isLoading && 'Loading...' }
 						{ isError && 'Error' }
-						{ isSuccess && <KitList data={ data }/> }
+						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
+						{ isSuccess && data.length <= 0 && 'No result' }
 					</>
 				</Content>
 			</div>

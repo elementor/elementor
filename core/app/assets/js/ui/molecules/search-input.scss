@@ -7,6 +7,11 @@
 	outline: none;
 	color: tints(700);
 
+	&--sm {
+		font-size: type(size, "13");
+		padding: spacing(8) spacing(30);
+	}
+
 	&:focus {
 		background: theme-colors(light);
 	}
@@ -32,6 +37,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		&--sm {
+			font-size: type(size, "12");
+		}
 	}
 
 	&__clear-icon {
@@ -45,5 +54,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		&--sm {
+			font-size: type(size, "11");
+		}
 	}
 }

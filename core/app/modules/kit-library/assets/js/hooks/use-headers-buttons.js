@@ -22,7 +22,7 @@ export default function useHeadersButtons( buttonsKeys, id ) {
 			variant: 'contained',
 			color: 'primary',
 			size: 'sm',
-			onClick: () => navigate( '/kit-library' ),
+			onClick: () => navigate( '/import' ),
 		},
 		'view-demo': {
 			id: 'view-demo',
