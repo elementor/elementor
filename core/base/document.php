@@ -74,8 +74,6 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
-	private static $registered_widgets = [];
-
 	private static $page_assets = [];
 
 	/**
@@ -1559,8 +1557,6 @@ abstract class Document extends Controls_Stack {
 
 			return $element_data;
 		} );
-
-		self::$registered_widgets = $unique_page_widgets;
 	}
 
 	private function register_elements_assets() {
