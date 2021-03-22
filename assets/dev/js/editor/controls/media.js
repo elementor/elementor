@@ -24,6 +24,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
+	getMediaType: function() {
+		// `get( 'media_type' )` is for BC.
+		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
+	},
+
 	/**
 	 * Get library type for `wp.media` using a given media type.
 	 *
@@ -36,11 +41,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 
 		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
-	},
-
-	getMediaType: function() {
-		// `get( 'media_type' )` is for BC.
-		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
 	},
 
 	applySavedValue: function() {
