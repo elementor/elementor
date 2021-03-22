@@ -8,6 +8,7 @@ import useKits from '../hooks/use-kits';
 import Content from '../../../../../assets/js/layout/content';
 import useHeadersButtons from '../hooks/use-headers-buttons';
 import FilterIndicationText from '../components/filter-indication-text';
+import { IndexNoResults } from '../components/index-no-results';
 
 import './index.scss';
 
@@ -66,7 +67,7 @@ export default function Index() {
 						{ isLoading && 'Loading...' }
 						{ isError && 'Error' }
 						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
-						{ isSuccess && data.length <= 0 && 'No result' }
+						{ isSuccess && data.length <= 0 && <IndexNoResults /> }
 					</>
 				</Content>
 			</div>
