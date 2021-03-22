@@ -940,14 +940,6 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$page_assets = $this->get_page_assets( $elements_data );
-
-			if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
-			}
-		}
-
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
@@ -1433,6 +1425,15 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		// Enable elements assets loading.
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$page_assets = $this->get_page_assets( $elements_data );
+
+			if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
+				Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
+			}
+		}
+
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
