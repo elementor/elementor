@@ -195,6 +195,10 @@ export default class Container extends ArgsObject {
 	}
 
 	handleChildrenRecursive() {
+		if ( this.isRepeater() ) {
+			return;
+		}
+
 		if ( this.view.children.length ) {
 			// eslint-disable-next-line no-unused-vars
 			Object.entries( this.view.children._views ).forEach( ( [ id, view ] ) => {
@@ -212,11 +216,19 @@ export default class Container extends ArgsObject {
 	}
 
 	addToParent() {
+		if ( this.isRepeater() ) {
+			return;
+		}
+
 		// On create container tell the parent where it was created.
 		this.parent.children.splice( this.view._index, 0, this );
 	}
 
 	removeFromParent() {
+		if ( this.isRepeater() ) {
+			return;
+		}
+
 		// When delete container its should notify its parent, that his children is dead.
 		const parent = this.parent;
 
@@ -331,7 +343,9 @@ export default class Container extends ArgsObject {
 			}
 
 			// If lookup were done, new container were created and parent does not know about it.
-			result.parent.children[ this.view._index ] = result;
+			if ( result.parent.children ) {
+				result.parent.children[ this.view._index ] = result;
+			}
 		}
 
 		return result;
@@ -368,5 +382,9 @@ export default class Container extends ArgsObject {
 
 	isDesignable() {
 		return elementor.userCan( 'design' ) && this.isEditable();
+	}
+
+	isRepeater() {
+		return Object.keys( this.repeaters ).length;
 	}
 }
