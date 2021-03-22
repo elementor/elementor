@@ -15,10 +15,9 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
-
-const DEFAULT_DEVICE_MODE = 'desktop';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -47,6 +46,7 @@ export default class EditorBase extends Marionette.Application {
 		dataEditMode: Backbone.Radio.channel( 'ELEMENTOR:editmode' ),
 		deviceMode: Backbone.Radio.channel( 'ELEMENTOR:deviceMode' ),
 		templates: Backbone.Radio.channel( 'ELEMENTOR:templates' ),
+		responsivePreview: Backbone.Radio.channel( 'ELEMENTOR:responsivePreview' ),
 	};
 
 	get debug() {
@@ -541,6 +541,106 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
+	initPreviewResizable() {
+		const $responsiveWrapper = this.$previewResponsiveWrapper;
+
+		$responsiveWrapper.resizable( {
+			disabled: true,
+			handles: 'e, s, w',
+			stop: () => {
+				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
+			},
+			resize: ( event, ui ) => {
+				$responsiveWrapper.css( {
+					right: '0', left: '0', top: '0', bottom: '0',
+					'--e-editor-preview-width': ui.size.width + 'px',
+					'--e-editor-preview-height': ui.size.height + 'px',
+				} );
+
+				this.broadcastPreviewResize( ui.size );
+			},
+		} );
+	}
+
+	destroyPreviewResizable() {
+		this.$previewResponsiveWrapper.resizable( 'destroy' );
+	}
+
+	broadcastPreviewResize( size ) {
+		this.channels.responsivePreview
+			.reply( 'size', size )
+			.trigger( 'resize' );
+	}
+
+	getBreakpointResizeOptions( currentBreakpoint ) {
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
+			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
+
+		const specialBreakpointsHeights = {
+			mobile: {
+				minHeight: 480,
+				height: 667,
+				maxHeight: 896,
+			},
+			tablet: {
+				minHeight: 768,
+				height: 1024,
+				maxHeight: 1024,
+			},
+		};
+
+		let breakpointConstrains = {
+			maxWidth: currentBreakpointData.value,
+			minWidth: currentBreakpointMinPoint || 375,
+		};
+
+		if ( specialBreakpointsHeights[ currentBreakpoint ] ) {
+			breakpointConstrains = { ...breakpointConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
+		}
+
+		return breakpointConstrains;
+	}
+
+	updatePreviewResizeOptions() {
+		const $responsiveWrapper = this.$previewResponsiveWrapper;
+		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
+		const isResizable = $responsiveWrapper.is( '.ui-resizable' );
+
+		if ( 'desktop' === currentBreakpoint ) {
+			if ( isResizable ) {
+				$responsiveWrapper.resizable( 'disable' );
+			}
+
+			$responsiveWrapper.css( {
+				'--e-editor-preview-width': '',
+				'--e-editor-preview-height': '',
+			} );
+
+			this.broadcastPreviewResize( {
+				width: this.$previewWrapper.outerWidth(),
+				height: this.$previewWrapper.outerHeight() - 40,
+			} );
+		} else {
+			if ( ! isResizable ) {
+				$responsiveWrapper.resizable( 'enable' );
+			}
+
+			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
+
+			$responsiveWrapper.resizable( 'enable' )
+				.resizable( 'option', { ...breakpointResizeOptions } )
+				.css( {
+					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
+					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
+				} );
+
+			breakpointResizeOptions.width = breakpointResizeOptions.minWidth;
+
+			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
+		}
+	}
+
 	preventClicksInsideEditor() {
 		this.$previewContents.on( 'submit', ( event ) =>
 			event.preventDefault()
@@ -654,15 +754,34 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
+		this.initPreviewResizable();
+		elementor.changeDeviceMode( 'mobile' );
 	}
 
 	toggleDeviceMode() {
-		elementorCommon.elements.$body.toggleClass( 'e-is-device-mode' );
+		if ( ! this.isDeviceModeActive() ) {
+			this.enterDeviceMode();
+			return;
+		}
+
+		this.exitDeviceMode();
 	}
 
 	exitDeviceMode() {
-		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 		elementor.changeDeviceMode( 'desktop' );
+		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+		this.destroyPreviewResizable();
+	}
+
+	isDeviceModeActive() {
+		return elementorCommon.elements.$body.hasClass( 'e-is-device-mode' );
+	}
+
+	updatePreviewSize( size ) {
+		this.$previewResponsiveWrapper.css( {
+			'--e-editor-preview-width': size.width + 'px',
+			'--e-editor-preview-height': size.height + 'px',
+		} );
 	}
 
 	enterPreviewMode( hidePanel ) {
@@ -833,6 +952,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
+		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOptions );
+
 		this.initClearPageDialog();
 
 		this.addBackgroundClickArea( document );
@@ -884,7 +1005,7 @@ export default class EditorBase extends Marionette.Application {
 			$frontendBody.addClass( 'elementor-editor-content-only' );
 		}
 
-		this.changeDeviceMode( DEFAULT_DEVICE_MODE );
+		this.changeDeviceMode( 'desktop' );
 
 		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
@@ -903,6 +1024,8 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
+
+		this.initPreviewResizable();
 
 		this.previewLoadedOnce = true;
 	}

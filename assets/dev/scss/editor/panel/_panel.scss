@@ -14,13 +14,15 @@
 	}
 }
 
+#elementor-editor-wrapper {
+}
+
+
 .elementor-panel {
-	position: fixed;
+	position: relative;
 	height: 100%;
+	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
 	width: var(--e-editor-panel-width);
-	@include start(calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode)));
-	top: 0;
-	bottom: 0;
 	overflow: visible;
 	background-color: $editor-background;
 	z-index: $first-layer;
@@ -35,8 +37,19 @@
 		}
 	}
 
-	.ps-scrollbar-y-rail {
+	.ps__rail-y {
 		z-index: 2; // Avoid panel elements (like divider control) from appearing above the scrollbar
+	}
+
+	.elementor-responsive-panel {
+		overflow: hidden;
+		padding: 5px 10px;
+		display: grid;
+		gap: 10px;
+		// The uppercase M in `Min` is used in order to avoid SASS conflicts with CSS `min` function.
+		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
+		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
+		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
 	}
 
 	@import "reset";

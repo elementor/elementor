@@ -13,18 +13,16 @@
 	position: relative;
 	display: flex;
 	font-family: $admin-font-family;
-
-	// Override WP padding
-	&.notice {
-		padding-left: 0;
-	}
-
-	// Based on WP:
 	background: var(--e-notice-bg);
 	border: 1px solid var(--e-notice-border-color);
 	border-inline-start-width: 4px;
 	box-shadow: var(--e-notice-box-shadow);
 	margin: 5px 20px 5px 2px;
+
+	// Override WP padding
+	&.notice {
+		padding: 0;
+	}
 
 	// An element that acts as the thick colorized border.
 	// Using a sudo element makes the corners look cleaner than the natural border look.
@@ -33,8 +31,8 @@
 		content: '';
 		position: absolute;
 		@include start(-4px);
-		top: 0;
-		bottom: 0;
+		top: -1px;
+		bottom: -1px;
 		width: 4px;
 		background-color: var(--e-notice-context-color);
 	}
@@ -83,7 +81,7 @@
 	}
 
 	&__content {
-		padding: 20px 15px;
+		padding: 20px;
 	}
 
 	&__actions {

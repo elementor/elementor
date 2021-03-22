@@ -96,6 +96,10 @@ class Manager extends Module {
 	 *@since 3.2.0
 	 */
 	public function get_device_min_breakpoint( $device_name ) {
+		if ( 'desktop' === $device_name ) {
+			return $this->get_desktop_min_point();
+		}
+
 		$active_breakpoints = $this->get_active_breakpoints();
 		$current_device_breakpoint = $active_breakpoints[ $device_name ];
 
