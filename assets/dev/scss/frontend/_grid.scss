@@ -142,9 +142,11 @@
 .elementor-widget {
 	position: relative;
 
-	&:not(:last-child) {
-		margin-bottom: 20px;
+	& + & {
+		margin-top: var( --widgets-gap, 20px );
+	}
 
+	&:not(:last-child) {
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
 		&.elementor-absolute {
@@ -191,6 +193,7 @@
 // Columns Gap
 .elementor-column {
 
+	&.elementor-element-populated,
 	> .elementor-element-populated {
 
 		.elementor-column-gap-narrow  > & {
