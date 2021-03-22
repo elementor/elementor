@@ -1027,7 +1027,7 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 			$this->reset_page_assets();
 
-			$this->register_elements_assets_action();
+			$this->register_elements_assets();
 		}
 
 		$this->handle_page_elements( $elements );
@@ -1428,9 +1428,10 @@ abstract class Document extends Controls_Stack {
 		// Enable elements assets loading.
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 			$page_assets = $this->get_page_assets( $elements_data );
+			$doc_id = $this->post->ID;
 
-			if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets[ get_the_ID() ] );
+			if ( $page_assets && array_key_exists( $doc_id, $page_assets ) && $page_assets[ $doc_id ] ) {
+				Plugin::$instance->assets_loader->enable_assets( $page_assets[ $doc_id ] );
 			}
 		}
 
@@ -1527,11 +1528,13 @@ abstract class Document extends Controls_Stack {
 	private function get_page_assets( $elements_data ) {
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
-		if ( $page_assets && array_key_exists( get_the_ID(), $page_assets ) ) {
+		if ( $page_assets && array_key_exists( $this->post->ID, $page_assets ) ) {
+			self::$page_assets = $page_assets;
+
 			return $page_assets;
 		}
 
-		$this->register_elements_assets_action();
+		$this->register_elements_assets();
 
 		$this->handle_page_elements( $elements_data );
 
@@ -1560,7 +1563,9 @@ abstract class Document extends Controls_Stack {
 		self::$registered_widgets = $unique_page_widgets;
 	}
 
-	private function register_elements_assets_action() {
+	private function register_elements_assets() {
+		$this->init_page_assets_data();
+
 		add_action( 'elementor/document/get_page_element', function( $element ) {
 			$element_assets = $this->get_element_assets( $element );
 
@@ -1571,7 +1576,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function reset_page_assets() {
-		$doc_id = get_the_ID();
+		$doc_id = $this->post->ID;
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
 		if ( array_key_exists( $doc_id, $page_assets ) ) {
@@ -1581,9 +1586,9 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	private function update_page_assets( $new_assets ) {
-		$doc_id = get_the_ID();
+	private function init_page_assets_data() {
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+		$doc_id = $this->post->ID;
 
 		if ( ! $page_assets ) {
 			$page_assets = [];
@@ -1592,6 +1597,13 @@ abstract class Document extends Controls_Stack {
 		if ( ! array_key_exists( $doc_id, $page_assets ) ) {
 			$page_assets[ $doc_id ] = [];
 		}
+
+		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+	}
+
+	private function update_page_assets( $new_assets ) {
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+		$doc_id = $this->post->ID;
 
 		foreach ( $new_assets as $assets_type => $assets_type_data ) {
 			if ( ! array_key_exists( $assets_type, $page_assets[ $doc_id ] ) ) {
@@ -1602,7 +1614,11 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// Updating also the static variable so that the data will be available without the need to get it from the DB.
-		self::$page_assets = $page_assets;
+		if ( ! array_key_exists( $doc_id, self::$page_assets ) ) {
+			self::$page_assets[ $doc_id ] = [];
+		}
+
+		self::$page_assets[ $doc_id ] = $page_assets[ $doc_id ];
 
 		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
 	}
