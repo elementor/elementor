@@ -37,6 +37,12 @@ export default class extends $e.modules.ComponentBase {
 
 	defaultShortcuts() {
 		return {
+			open: {
+				keys: 'ctrl+k',
+				dependency: () => {
+					return 'kit' !== elementor.documents.getCurrent().config.type;
+				},
+			},
 			back: {
 				keys: 'esc',
 				scopes: [ 'panel' ],

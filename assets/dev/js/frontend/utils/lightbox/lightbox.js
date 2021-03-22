@@ -162,6 +162,8 @@ module.exports = elementorModules.ViewModule.extend( {
 				self.setSlideshowContent( options.slideshow );
 
 				break;
+			default:
+				self.setHTMLContent( options.html );
 		}
 
 		modal.show();

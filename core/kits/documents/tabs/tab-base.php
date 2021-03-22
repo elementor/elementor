@@ -45,6 +45,18 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 
 	public function on_save( $data ) {}
 
+	/**
+	 * Before Save
+	 *
+	 * Allows for modifying the kit data before it is saved to the database.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function before_save( array $data ) {
+		return $data;
+	}
+
 	protected function register_tab() {
 		Controls_Manager::add_tab( $this->get_id(), $this->get_title() );
 	}

@@ -1,10 +1,11 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Document;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Settings_Layout extends Tab_Base {
+
+	const ACTIVE_BREAKPOINTS_CONTROL_ID = 'active_breakpoints';
 
 	public function get_id() {
 		return 'settings-layout';
@@ -34,7 +37,9 @@ class Settings_Layout extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints = Responsive::get_default_breakpoints();
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -53,10 +58,10 @@ class Settings_Layout extends Tab_Base {
 					'size' => '1140',
 				],
 				'tablet_default' => [
-					'size' => $default_breakpoints['lg'],
+					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
 				],
 				'mobile_default' => [
-					'size' => $default_breakpoints['md'],
+					'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
 				],
 				'range' => [
 					'px' => [
@@ -151,69 +156,150 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+		$options = [];
+
+		foreach ( $breakpoints_default_config as $breakpoint_key => $breakpoint ) {
+			$options[ $prefix . $breakpoint_key ] = $breakpoint['label'];
+		}
+
 		$this->add_control(
-			'breakpoint_md_heading',
+			self::ACTIVE_BREAKPOINTS_CONTROL_ID,
 			[
-				'label' => __( 'Mobile', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
+				'label' => __( 'Active Breakpoints', 'elementor' ),
+				'type' => Controls_Manager::HIDDEN,
+				'description' => __( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
+				'options' => $options,
+				'default' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
+				],
+				'select2options' => [
+					'allowClear' => false,
+				],
+				'lockedOptions' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
+				],
+				'label_block' => true,
+				'render_type' => 'none',
+				'frontend_available' => true,
+				'multiple' => true,
 			]
 		);
 
-		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'md',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['sm'] + 1,
-				'max' => $default_breakpoints['lg'] - 1,
-				'default' => $default_breakpoints['md'],
-				'placeholder' => $default_breakpoints['md'],
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
-			]
-		);
+		$this->add_breakpoints_controls();
 
-		$this->add_control(
-			'breakpoint_lg_heading',
-			[
-				'label' => __( 'Tablet', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-			]
-		);
-
-		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'lg',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['md'] + 1,
-				'max' => $default_breakpoints['xl'] - 1,
-				'default' => $default_breakpoints['lg'],
-				'placeholder' => $default_breakpoints['lg'],
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
-			]
-		);
+		// Include the old mobile and tablet breakpoint controls as hidden for backwards compatibility.
+		$this->add_control( 'viewport_md', [ 'type' => Controls_Manager::HIDDEN ] );
+		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Before Save
+	 *
+	 * Runs Before the Kit document is saved.
+	 *
+	 * For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
+	 * old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
+	 * is added is because the old breakpoints system was min-width based, and the new system introduced in
+	 * Elementor v3.2.0 is max-width based.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param array $data
+	 * @return array $data
+	 */
+	public function before_save( array $data ) {
+		// When creating a default kit, $data['settings'] is empty and should remain empty, so settings.
+		if ( empty( $data['settings'] ) ) {
+			return $data;
+		}
+
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
+		$default_breakpoint_config = Breakpoints_Manager::get_default_config();
+
+		// Update the old mobile breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'md' ] = empty( $data['settings'][ $mobile_breakpoint_key ] )
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]['default_value'] + 1
+			: $data['settings'][ $mobile_breakpoint_key ] + 1;
+
+		// Update the old tablet breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'lg' ] = empty( $data['settings'][ $tablet_breakpoint_key ] )
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]['default_value'] + 1
+			: $data['settings'][ $tablet_breakpoint_key ] + 1;
+
+		return $data;
+	}
+
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || ( isset( $data['settings']['post_status'] ) && Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) ) {
 			return;
 		}
 
 		$should_compile_css = false;
 
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
-			$setting_key = "viewport_{$breakpoint_key}";
-			if ( isset( $data['settings'][ $setting_key ] ) ) {
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+
+		foreach ( $breakpoints_default_config as $breakpoint_key => $default_config ) {
+			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $breakpoint_key;
+
+			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
 			}
 		}
 
 		if ( $should_compile_css ) {
-			Responsive::compile_stylesheet_templates();
+			Breakpoints_Manager::compile_stylesheet_templates();
+		}
+	}
+
+	private function add_breakpoints_controls() {
+		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+
+		// Add a control for each of the **default** breakpoints.
+		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
+			$this->add_control(
+				'breakpoint_' . $breakpoint_key . '_heading',
+				[
+					'label' => $default_breakpoint_config['label'],
+					'type' => Controls_Manager::HEADING,
+					'conditions' => [
+						'terms' => [
+							[
+								'name' => 'active_breakpoints',
+								'operator' => 'contains',
+								'value' => $prefix . $breakpoint_key,
+							],
+						],
+					],
+				]
+			);
+
+			$control_config = [
+				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::NUMBER,
+				'placeholder' => $default_breakpoint_config['default_value'],
+				'frontend_available' => true,
+				'conditions' => [
+					'terms' => [
+						[
+							'name' => 'active_breakpoints',
+							'operator' => 'contains',
+							'value' => $prefix . $breakpoint_key,
+						],
+					],
+				],
+			];
+
+			// Add the breakpoint Control itself.
+			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}
 	}
 }
