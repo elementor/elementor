@@ -47,5 +47,7 @@ export default class Helper {
 			// Focus on last container.
 			containers[ containers.length - 1 ].model.trigger( 'request:edit' );
 		}
+
+		containers.forEach( ( /* Container */ container ) => container.handleChildrenRecursive() );
 	}
 }
