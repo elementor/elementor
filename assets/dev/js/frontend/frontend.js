@@ -10,6 +10,8 @@ import Swiper from './utils/swiper-bc';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 
+import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
 	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
@@ -300,6 +302,21 @@ export default class Frontend extends elementorModules.ViewModule {
 		jQuery.migrateTrace = false;
 	}
 
+	/**
+	 * Initialize the modules' widgets handlers.
+	 */
+	initModules() {
+		let handlers = {
+			shapes: Shapes,
+		};
+
+		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
+			this.modulesHandlers[ moduleName ] = new ModuleClass();
+		} );
+	}
+
 	populateActiveBreakpointsConfig() {
 		this.config.responsive.activeBreakpoints = {};
 
@@ -317,6 +334,8 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.elementsHandler = new ElementsHandler( jQuery );
 
+		this.modulesHandlers = {};
+
 		this.addUserAgentClasses();
 
 		this.addIeCompatibility();
@@ -331,6 +350,8 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
+
+		this.initModules();
 
 		this.initOnReadyElements();
 

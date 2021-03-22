@@ -14,6 +14,8 @@ export default class View extends Marionette.ItemView {
 			switcherOption: prefix + '-switcher__option',
 			switcherLabel: prefix + '-switcher__label',
 			switcher: prefix + '-switcher',
+			sizeInputWidth: prefix + '__input-width',
+			sizeInputHeight: prefix + '__input-height',
 			closeButton: prefix + '__close-button',
 			breakpointSettingsButton: prefix + '__settings-button',
 		};
@@ -22,6 +24,8 @@ export default class View extends Marionette.ItemView {
 	events() {
 		return {
 			'change @ui.switcherOption': 'onBreakpointSelected',
+			'change @ui.sizeInputWidth': 'onSizeInputChange',
+			'change @ui.sizeInputHeight': 'onSizeInputChange',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 		};
@@ -29,10 +33,11 @@ export default class View extends Marionette.ItemView {
 
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
+		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
 	}
 
-	addTipsyToBreakpointSwitch() {
-		this.ui.switcherLabel.tipsy(
+	addTipsyToIconButtons() {
+		this.ui.switcherLabel.add( this.ui.closeButton ).add( this.ui.breakpointSettingsButton ).tipsy(
 			{
 				gravity: 'n',
 				offset: 10,
@@ -65,18 +70,13 @@ export default class View extends Marionette.ItemView {
 		const isWPPreviewMode = elementorCommon.elements.$body.hasClass( 'elementor-editor-preview' );
 
 		if ( isWPPreviewMode ) {
-			// Exit Preview Mode
-			elementor.panel.$el.find( '#elementor-mode-switcher-preview-input' ).trigger( 'click' );
+			elementor.exitPreviewMode();
 		}
 
 		const isInSettingsPanelActive = 'panel/global/menu' === elementor.documents.currentDocument.config.panel.default_route;
 
 		if ( isInSettingsPanelActive ) {
-			// Shake the panel
-			_( 6 ).times( ( n ) => {
-				_.delay( () => elementor.panel.$el.css( 'margin-left', ( ( ( n + 1 ) % 2 ) * 5 ) + 'px' ), n * 70 );
-			} );
-
+			$e.route( 'panel/elements/categories' );
 			return;
 		}
 
@@ -90,11 +90,27 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
+	onPreviewResize() {
+		const size = elementor.channels.responsivePreview.request( 'size' );
+
+		this.ui.sizeInputWidth.val( size.width );
+		this.ui.sizeInputHeight.val( size.height );
+	}
+
 	onRender() {
-		this.addTipsyToBreakpointSwitch();
+		this.addTipsyToIconButtons();
 	}
 
 	onCloseButtonClick() {
 		elementor.exitDeviceMode();
+	}
+
+	onSizeInputChange() {
+		const size = {
+			width: this.ui.sizeInputWidth.val(),
+			height: this.ui.sizeInputHeight.val(),
+		};
+
+		elementor.updatePreviewSize( size );
 	}
 }

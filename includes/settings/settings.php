@@ -502,6 +502,21 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
+							'font_display' => [
+								'label' => __( 'Google Fonts Load', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => 'auto',
+									'options' => [
+										'auto' => __( 'Default', 'elementor' ),
+										'block' => __( 'Blocking', 'elementor' ),
+										'swap' => __( 'Swap', 'elementor' ),
+										'fallback' => __( 'Fallback', 'elementor' ),
+										'optional' => __( 'Optional', 'elementor' ),
+									],
+									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' . __( 'Default - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Blocking - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - Hides the text for a minimal period and will use the custom font only if loaded within a few seconds.', 'elementor' ) . '<br>' . __( 'Optional - Hides the text for a minimal period and will use the fallback font unless the custom font is already fully loaded.', 'elementor' ),
+								],
+							],
 						],
 					],
 				],

@@ -30,13 +30,18 @@ $breakpoints = [
 			</div>
 		</div>
 		<div class="e-responsive-bar__col">
-			<button class="e-responsive-bar__settings-button e-responsive-bar__button">
-				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
-				<i class="eicon-cog" aria-hidden="true"></i>
-			</button>
-			<button class="e-responsive-bar__close-button e-responsive-bar__button">
+			<button class="e-responsive-bar__close-button e-responsive-bar__button"
+					data-tooltip="<?php echo __( 'Exit', 'elementor' ); ?>">
 				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
+			<button class="e-responsive-bar__settings-button e-responsive-bar__button"
+					data-tooltip="<?php echo __( 'Manage Breakpoints', 'elementor' ); ?>">
+				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
+				<i class="eicon-cog" aria-hidden="true"></i>
+			</button>
+			<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
+			<span class="e-responsive-bar__input-size-separator">x</span>
+			<input type="text" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
 		</div>
 </script>
