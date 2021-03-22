@@ -195,7 +195,7 @@ export default class Container extends ArgsObject {
 	}
 
 	handleChildrenRecursive() {
-		if ( this.view.children ) {
+		if ( this.view.children.length ) {
 			// eslint-disable-next-line no-unused-vars
 			Object.entries( this.view.children._views ).forEach( ( [ id, view ] ) => {
 				if ( ! view.getContainer ) {
@@ -206,6 +206,8 @@ export default class Container extends ArgsObject {
 				container.parent.children[ view._index ] = container;
 				container.handleChildrenRecursive();
 			} );
+		} else {
+			this.children = [];
 		}
 	}
 
@@ -327,6 +329,9 @@ export default class Container extends ArgsObject {
 				this.settings = result.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 				return this;
 			}
+
+			// If lookup were done, new container were created and parent does not know about it.
+			result.parent.children[ this.view._index ] = result;
 		}
 
 		return result;
