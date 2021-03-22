@@ -31,11 +31,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * @returns {String}
 	 */
 	getLibraryType: function( mediaType ) {
-		if ( mediaType ) {
-			return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
+		if ( ! mediaType ) {
+			mediaType = this.getMediaType();
 		}
 
-		return this.getMediaType();
+		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 
 	getMediaType: function() {
@@ -120,7 +120,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			states: [
 				new wp.media.controller.Library( {
 					title: __( 'Insert Media', 'elementor' ),
-					library: wp.media.query( { type: this.getLibraryType( mediaType ) } ),
+					library: wp.media.query( { type: this.currentLibraryType } ),
 					multiple: false,
 					date: false,
 				} ),
@@ -131,7 +131,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.frame.on( 'insert select', this.select.bind( this ) );
 
 		if ( elementor.config.filesUpload.unfilteredFiles ) {
-			this.setUploadMimeType( this.frame, this.getMediaType() );
+			this.setUploadMimeType( this.frame, mediaType );
 		}
 	},
 

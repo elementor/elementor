@@ -146,17 +146,8 @@ class Control_Media extends Control_Base_Multiple {
 					'svg',
 				];
 
-				let output = true;
-
 				// Make sure that all media types are viewable.
-				data.media_types.forEach( ( type ) => {
-					if ( ! viewable.includes( type ) ) {
-						output = false;
-						return;
-					}
-				} );
-
-				return output;
+				return data.media_types.every( ( type ) => viewable.includes( type ) );
 			};
 
 			// Get the preview type for the current media type.
@@ -177,19 +168,15 @@ class Control_Media extends Control_Base_Multiple {
 				switch( mediaType ) {
 					case 'image':
 						return '<?php echo __( 'Choose Image', 'elementor' ); ?>';
-						break;
 
 					case 'video':
 						return '<?php echo __( 'Choose Video', 'elementor' ); ?>';
-						break;
 
 					case 'svg':
 						return '<?php echo __( 'Choose SVG', 'elementor' ); ?>';
-						break;
 
 					default:
 						return '<?php echo __( 'Choose File', 'elementor' ); ?>';
-						break;
 				}
 			}
 		#>
