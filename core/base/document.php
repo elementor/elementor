@@ -1025,10 +1025,10 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 			$this->reset_page_assets();
 
-			$this->register_elements_assets();
-		}
+			$this->register_elements_assets_action();
 
-		$this->handle_page_elements( $elements );
+			$this->handle_page_elements( $elements );
+		}
 
 		$editor_data = $this->get_elements_raw_data( $elements );
 
@@ -1515,6 +1515,14 @@ abstract class Document extends Controls_Stack {
 		return $post_has_changed;
 	}
 
+	public function on_get_page_element( $element ) {
+		$element_assets = $this->get_element_assets( $element );
+
+		if ( $element_assets ) {
+			$this->update_page_assets( $element_assets );
+		}
+	}
+
 	private function add_handle_revisions_changed_filter() {
 		add_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ], 10, 3 );
 	}
@@ -1527,14 +1535,15 @@ abstract class Document extends Controls_Stack {
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
 		if ( $page_assets && array_key_exists( $this->post->ID, $page_assets ) ) {
-			self::$page_assets = $page_assets;
-
 			return $page_assets;
 		}
 
-		$this->register_elements_assets();
+		$this->register_elements_assets_action();
 
 		$this->handle_page_elements( $elements_data );
+
+		// Removing the action to make sure that it only runs once due to being added multiple times by each document.
+		remove_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
 
 		return self::$page_assets;
 	}
@@ -1559,16 +1568,10 @@ abstract class Document extends Controls_Stack {
 		} );
 	}
 
-	private function register_elements_assets() {
+	private function register_elements_assets_action() {
 		$this->init_page_assets_data();
 
-		add_action( 'elementor/document/get_page_element', function( $element ) {
-			$element_assets = $this->get_element_assets( $element );
-
-			if ( $element_assets ) {
-				$this->update_page_assets( $element_assets );
-			}
-		} );
+		add_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
 	}
 
 	private function reset_page_assets() {
@@ -1609,11 +1612,11 @@ abstract class Document extends Controls_Stack {
 			$page_assets[ $doc_id ][ $assets_type ] = array_unique( array_merge( $page_assets[ $doc_id ][ $assets_type ], $new_assets[ $assets_type ] ) );
 		}
 
-		// Updating also the static variable so that the data will be available without the need to get it from the DB.
 		if ( ! array_key_exists( $doc_id, self::$page_assets ) ) {
 			self::$page_assets[ $doc_id ] = [];
 		}
 
+		// Updating also the static variable so that the data will be available without the need to get it from the DB.
 		self::$page_assets[ $doc_id ] = $page_assets[ $doc_id ];
 
 		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
