@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class ChangeDeviceMode extends CommandBase {
+export class ChangeDeviceMode extends Command {
 	apply( args = {} ) {
 		const devices = [ 'desktop', 'tablet', 'mobile' ];
 		let { device } = args;

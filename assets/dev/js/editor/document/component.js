@@ -1,7 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
-import CommandHistory from './commands/base/command-history';
-import CommandHistoryDebounce from './commands/base/command-history-debounce';
+import CommandHistory from './base/command-history';
+import CommandHistoryDebounce from './base/command-history-debounce';
 
 import * as components from './';
 import * as hooks from './hooks/';
@@ -13,7 +13,7 @@ export default class Component extends ComponentBase {
 				elementorCommon.helpers.hardDeprecated(
 					'$e.modules.document.CommandHistoryBase',
 					'3.0.0',
-					'$e.modules.document.CommandHistory'
+					'$e.modules.editor.document.CommandHistory'
 				);
 
 				return this.CommandHistory;
@@ -22,7 +22,7 @@ export default class Component extends ComponentBase {
 				elementorCommon.helpers.hardDeprecated(
 					'$e.modules.document.CommandHistoryDebounceBase',
 					'3.0.0',
-					'$e.modules.document.CommandHistoryDebounce'
+					'$e.modules.editor.document.CommandHistoryDebounce'
 				);
 
 				return this.CommandHistoryDebounce;

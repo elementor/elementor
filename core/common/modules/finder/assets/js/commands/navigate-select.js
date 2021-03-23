@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class NavigateSelect extends CommandBase {
+export class NavigateSelect extends Command {
 	apply( args ) {
 		this.component.getItemsView().goToActiveItem( args );
 	}

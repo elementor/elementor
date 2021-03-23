@@ -1,3 +1,6 @@
+import Command from 'elementor-api/modules/command';
+import CommandCallback from 'elementor-api/modules/command-callback';
+
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
@@ -18,6 +21,11 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	registerAPI() {
+		if ( ! $e.components.isRegistering ) {
+			// Should be something like doingItWrong().
+			throw RangeError( 'Doing it wrong: $e.components.isRegistering is false' );
+		}
+
 		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
 		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
@@ -103,8 +111,34 @@ export default class ComponentBase extends elementorModules.Module {
 		return this.data;
 	}
 
-	registerCommand( command, callback ) {
-		$e.commands.register( this, command, callback );
+	/**
+	 * @param {string} command
+	 * @param {(function()|CommandBase)} context
+	 */
+	registerCommand( command, context, commandsAPI = $e.commands ) {
+		const fullCommand = this.getNamespace() + '/' + command,
+			instanceType = context.getInstanceType ? context.getInstanceType() : false,
+			registerArgs = {
+				__command: fullCommand,
+				__component: this,
+			};
+
+		// Support pure callback.
+		if ( ! instanceType ) {
+			if ( $e.devTools ) {
+				$e.devTools.log.warn( `Attach command-callback, on command: '${ fullCommand }', context is unknown type.` );
+			}
+			registerArgs.__callback = context;
+			context = CommandCallback;
+		}
+
+		const instance = new context( registerArgs );
+
+		if ( ! ( instance instanceof Command ) ) {
+			throw Error( `Command: '${ fullCommand }' should inherent "Command" class.` );
+		}
+
+		commandsAPI.register( this, command, context );
 	}
 
 	/**
@@ -114,16 +148,16 @@ export default class ComponentBase extends elementorModules.Module {
 		return instance.register();
 	}
 
-	registerCommandInternal( command, callback ) {
-		$e.commandsInternal.register( this, command, callback );
+	registerCommandInternal( command, context ) {
+		this.registerCommand( command, context, $e.commandsInternal );
 	}
 
 	registerRoute( route, callback ) {
 		$e.routes.register( this, route, callback );
 	}
 
-	registerData( command, callback ) {
-		$e.data.register( this, command, callback );
+	registerData( command, context ) {
+		this.registerCommand( command, context, $e.data );
 	}
 
 	unregisterRoute( route ) {
@@ -264,17 +298,18 @@ export default class ComponentBase extends elementorModules.Module {
 		return commandName.replace( /[A-Z]/g, ( match, offset ) => ( offset > 0 ? '-' : '' ) + match.toLowerCase() );
 	}
 
+	/**
+	 * @param {Object.<string, Command>} commandsFromImport
+	 * @returns {{}} imported commands
+	 */
 	importCommands( commandsFromImport ) {
 		const commands = {};
 
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
-			commands[ command ] = ( args ) => ( new Class( args ) ).run();
 
-			// TODO: Temporary code, remove after merge with 'require-commands-base' branch.
-			// should not return callback, but Class or Instance without run ( gain performance ).
-			$e.commands.classes[ this.getNamespace() + '/' + command ] = Class;
+			commands[ command ] = Class;
 		} );
 
 		return commands;

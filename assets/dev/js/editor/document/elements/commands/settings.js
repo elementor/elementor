@@ -1,4 +1,4 @@
-import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
+import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 
 export class Settings extends CommandHistoryDebounce {
 	/**

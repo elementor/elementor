@@ -1,4 +1,4 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
+import CommandHistory from 'elementor-document/base/command-history';
 
 export class Insert extends CommandHistory {
 	static restore( historyItem, isRedo ) {

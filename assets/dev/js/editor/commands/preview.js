@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Preview extends CommandBase {
+export class Preview extends Command {
 	validateArgs( args ) {
 		this.requireArgument( 'id', args );
 	}

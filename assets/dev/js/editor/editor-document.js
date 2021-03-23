@@ -1,3 +1,5 @@
+import CommandEditor from './base/command-editor';
+import CommandEditorInternal from './base/command-editor-internal';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 
@@ -11,4 +13,33 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 	elementor.saver = $e.components.get( 'document/save' );
 } );
 
-$e.modules.document = DocumentComponent.getModules();
+$e.modules.editor = {
+	CommandEditor,
+	CommandEditorInternal,
+
+	document: DocumentComponent.getModules(),
+};
+
+// TODO: Remove, BC.
+$e.modules.document = {
+	get CommandHistory() {
+		elementorCommon.helpers.hardDeprecated(
+			'$e.modules.document.CommandHistory',
+			'3.0.0',
+			'$e.modules.editor.document.CommandHistory'
+		);
+
+		return $e.modules.editor.document.CommandHistory;
+	},
+
+	get CommandHistoryDebounce() {
+		elementorCommon.helpers.hardDeprecated(
+			'$e.modules.CommandHistoryDebounce',
+			'3.0.0',
+			'$e.modules.editor.document.CommandHistoryDebounce'
+		);
+
+		return $e.modules.editor.document.CommandHistoryDebounce;
+	},
+};
+

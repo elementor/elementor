@@ -1,7 +1,7 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 import DocumentHelper from 'elementor-document/helper';
 
-export class Paste extends CommandBase {
+export class Paste extends Command {
 	initialize( args ) {
 		const { containers = [ args.container ] } = args;
 

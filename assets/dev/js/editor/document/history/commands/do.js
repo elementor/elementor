@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import Command from 'elementor-api/modules/command';
 
-export class Do extends CommandBase {
+export class Do extends Command {
 	apply( args ) {
 		const { index } = args;
 

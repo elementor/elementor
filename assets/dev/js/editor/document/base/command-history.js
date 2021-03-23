@@ -1,13 +1,11 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandEditor from 'elementor-editor/base/command-editor';
 
-export default class CommandHistory extends CommandBase {
+export default class CommandHistory extends CommandEditor {
 	static getInstanceType() {
 		return 'CommandHistory';
 	}
 
-	constructor( args ) {
-		super( args );
-
+	initialize( args = {} ) {
 		/**
 		 * Get History from child command.
 		 *
