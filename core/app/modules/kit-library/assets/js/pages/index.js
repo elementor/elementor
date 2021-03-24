@@ -1,4 +1,4 @@
-import { SearchInput, Grid } from '@elementor/app-ui';
+import { SearchInput, CssGrid } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
 import TagsFilter from '../components/tags-filter';
@@ -14,7 +14,16 @@ import './index.scss';
 
 export default function Index() {
 	const headerButtons = useHeadersButtons( [ 'info' ] );
-	const { data, isSuccess, isLoading, isError, filter, setFilter, clearFilter } = useKits();
+
+	const {
+		data,
+		isSuccess,
+		isLoading,
+		isError,
+		filter,
+		setFilter,
+		clearFilter,
+	} = useKits();
 
 	return (
 		<Layout
@@ -38,8 +47,8 @@ export default function Index() {
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">
-					<Grid container>
-						<div style={ { flex: 1 } }>
+					<CssGrid spacing={ 24 } colMinWidth={ 250 }>
+						<div style={ { gridColumn: '1 / span 2' } }>
 							<SearchInput
 								placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
 								value={ filter.search }
@@ -60,7 +69,10 @@ export default function Index() {
 								} )}
 							/>
 						</div>
-					</Grid>
+						<div style={{ background: 'red' }}>
+							This is try
+						</div>
+					</CssGrid>
 				</div>
 				<Content className="e-kit-library__index-layout-main">
 					<>
