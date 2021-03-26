@@ -1,6 +1,9 @@
-import After from 'elementor-api/modules/hooks/ui/after';
+import Base from '../../../base/base';
 
-export class NavigatorToggleList extends After {
+/**
+ * Navigator toggle list hook, is responsible for recursive toggling of selected widget for user indication.
+ */
+export class NavigatorToggleList extends Base {
 	getCommand() {
 		return 'panel/editor/open';
 	}
@@ -10,7 +13,20 @@ export class NavigatorToggleList extends After {
 	}
 
 	getConditions( args ) {
-		return args.view.container.navigator.view;
+		if ( ! super.getConditions() ) {
+			return false;
+		}
+
+		/**
+		 * Since on the first creation of new dragged widget there is no yet 'navigator.view'
+		 * And the navigator is open its required to re-run the hook to apply it on first time.
+		 */
+		if ( ! args.view.container.navigator.view ) {
+			setTimeout( () => $e.hooks.ui.get( this.getId() ).callback( args ) );
+			return false;
+		}
+
+		return true;
 	}
 
 	apply( args ) {

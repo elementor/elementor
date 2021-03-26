@@ -129,7 +129,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	isOpen() {
-		return this.$el.is( ':visible' );
+		return this.component.isOpen;
 	}
 
 	dock() {

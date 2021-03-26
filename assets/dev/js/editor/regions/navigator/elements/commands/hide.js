@@ -1,7 +1,7 @@
 import CommandNavigatorVisibility from './base/command-navigator-visibility';
 
 export class Hide extends CommandNavigatorVisibility {
-	getVisibility() {
+	shouldHide() {
 		return true;
 	}
 }

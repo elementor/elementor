@@ -2,11 +2,11 @@ import CommandNavigator from './command-navigator';
 
 export class CommandNavigatorVisibility extends CommandNavigator {
 	/**
-	 * Function getVisibility().
+	 * Function shouldHide().
 	 *
 	 * @returns {Boolean}
 	 */
-	getVisibility() {
+	shouldHide() {
 		elementorModules.ForceMethodImplementation();
 	}
 
@@ -16,7 +16,7 @@ export class CommandNavigatorVisibility extends CommandNavigator {
 		containers.forEach( ( container ) => {
 			const { view, model } = container.navigator;
 
-			model.set( 'hidden', this.getVisibility() );
+			model.set( 'hidden', this.shouldHide() );
 
 			view.toggleHiddenClass();
 		} );

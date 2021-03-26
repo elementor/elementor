@@ -1,6 +1,6 @@
-import After from 'elementor-api/modules/hooks/ui/after';
+import Base from '../../../base/base';
 
-export class NavigatorRenderIndicators extends After {
+export class NavigatorRenderIndicators extends Base {
 	getCommand() {
 		return 'document/elements/settings';
 	}
@@ -10,7 +10,7 @@ export class NavigatorRenderIndicators extends After {
 	}
 
 	getConditions( args ) {
-		return 'string' === typeof args.settings._title;
+		return super.getConditions() && 'string' === typeof args.settings._title;
 	}
 
 	apply( args ) {
