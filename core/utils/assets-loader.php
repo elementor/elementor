@@ -163,7 +163,7 @@ class Assets_Loader extends Module {
 		$this->handle_assets();
 	}
 
-	private function register_assets() {
+	private function add_register_assets_action() {
 		add_action( 'elementor/assets_loader/get_asset', function( $asset ) {
 			$asset_data = $asset['data'];
 
@@ -173,8 +173,6 @@ class Assets_Loader extends Module {
 				wp_register_style( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 			}
 		} );
-
-		$this->handle_assets();
 	}
 
 	private function handle_assets() {
@@ -220,6 +218,6 @@ class Assets_Loader extends Module {
 	}
 
 	public function __construct() {
-		$this->register_assets();
+		$this->add_register_assets_action();
 	}
 }
