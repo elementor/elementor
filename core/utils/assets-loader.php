@@ -144,7 +144,7 @@ class Assets_Loader extends Module {
 		return $this->files_data[ $asset_key ];
 	}
 
-	public function enqueue_assets() {
+	private function add_enqueue_assets_action() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
@@ -159,8 +159,6 @@ class Assets_Loader extends Module {
 				}
 			}
 		} );
-
-		$this->handle_assets();
 	}
 
 	private function add_register_assets_action() {
@@ -175,7 +173,7 @@ class Assets_Loader extends Module {
 		} );
 	}
 
-	private function handle_assets() {
+	public function handle_assets() {
 		$assets = $this->get_assets();
 
 		foreach ( $assets as $assets_type => $assets_type_data ) {
@@ -219,5 +217,6 @@ class Assets_Loader extends Module {
 
 	public function __construct() {
 		$this->add_register_assets_action();
+		$this->add_enqueue_assets_action();
 	}
 }
