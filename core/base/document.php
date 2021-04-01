@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Conditions;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -33,6 +34,8 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+	const ASSETS_META_KEY = '_elementor_page_assets';
+
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
@@ -71,7 +74,7 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
-	private static $registered_widgets = [];
+	private static $page_assets = [];
 
 	/**
 	 * Document post data.
@@ -1019,13 +1022,24 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+		if ( $is_optimized_css_loading ) {
 			add_action( 'elementor/document/get_unique_page_widget', function( $element ) {
 				$this->save_widgets_css( $element->get_name() );
 			} );
 		}
 
-		$this->handle_page_elements( $elements );
+		if ( $is_optimized_assets_loading ) {
+			$this->reset_page_assets();
+
+			$this->register_elements_assets_action();
+		}
+
+		if ( $is_optimized_assets_loading || $is_optimized_css_loading ) {
+			$this->handle_page_elements( $elements );
+		}
 
 		$editor_data = $this->get_elements_raw_data( $elements );
 
@@ -1420,6 +1434,16 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		// Enable elements assets loading.
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$page_assets = $this->get_page_assets( $elements_data );
+			$doc_id = $this->post->ID;
+
+			if ( $page_assets && array_key_exists( $doc_id, $page_assets ) && $page_assets[ $doc_id ] ) {
+				Plugin::$instance->assets_loader->enable_assets( $page_assets[ $doc_id ] );
+			}
+		}
+
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
@@ -1502,6 +1526,14 @@ abstract class Document extends Controls_Stack {
 		return $post_has_changed;
 	}
 
+	public function on_get_page_element( $element ) {
+		$element_assets = $this->get_element_assets( $element );
+
+		if ( $element_assets ) {
+			$this->update_page_assets( $element_assets );
+		}
+	}
+
 	private function add_handle_revisions_changed_filter() {
 		add_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ], 10, 3 );
 	}
@@ -1510,16 +1542,33 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function handle_page_elements( $elements ) {
-		$page_widgets = [];
+	private function get_page_assets( $elements_data ) {
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$page_widgets ) {
+		if ( $page_assets && array_key_exists( $this->post->ID, $page_assets ) ) {
+			return $page_assets;
+		}
+
+		$this->register_elements_assets_action();
+
+		$this->handle_page_elements( $elements_data );
+
+		// Removing the action to make sure that it only runs once due to being added multiple times by each document.
+		remove_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
+
+		return self::$page_assets;
+	}
+
+	private function handle_page_elements( $elements ) {
+		$unique_page_widgets = [];
+
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets ) {
 			$widget_name = array_key_exists( 'widgetType', $element_data ) ? $element_data['widgetType'] : '';
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( $widget_name && ! in_array( $widget_name, $page_widgets, TRUE ) ) {
-				$page_widgets[] = $widget_name;
+			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, TRUE ) ) {
+				$unique_page_widgets[] = $widget_name;
 
 				do_action( 'elementor/document/get_unique_page_widget', $element );
 			}
@@ -1528,10 +1577,116 @@ abstract class Document extends Controls_Stack {
 
 			return $element_data;
 		} );
+	}
 
-		self::$registered_widgets = $page_widgets;
+	private function register_elements_assets_action() {
+		$this->init_page_assets_data();
 
-		return $page_widgets;
+		add_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
+	}
+
+	private function reset_page_assets() {
+		$doc_id = $this->post->ID;
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+
+		if ( array_key_exists( $doc_id, $page_assets ) ) {
+			unset( $page_assets[ $doc_id ] );
+
+			$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+		}
+	}
+
+	private function init_page_assets_data() {
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+		$doc_id = $this->post->ID;
+
+		if ( ! $page_assets ) {
+			$page_assets = [];
+		}
+
+		if ( ! array_key_exists( $doc_id, $page_assets ) ) {
+			$page_assets[ $doc_id ] = [];
+		}
+
+		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+	}
+
+	private function update_page_assets( $new_assets ) {
+		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+		$doc_id = $this->post->ID;
+
+		foreach ( $new_assets as $assets_type => $assets_type_data ) {
+			if ( ! array_key_exists( $assets_type, $page_assets[ $doc_id ] ) ) {
+				$page_assets[ $doc_id ][ $assets_type ] = [];
+			}
+
+			$page_assets[ $doc_id ][ $assets_type ] = array_unique( array_merge( $page_assets[ $doc_id ][ $assets_type ], $new_assets[ $assets_type ] ) );
+		}
+
+		if ( ! array_key_exists( $doc_id, self::$page_assets ) ) {
+			self::$page_assets[ $doc_id ] = [];
+		}
+
+		// Updating also the static variable so that the data will be available without the need to get it from the DB.
+		self::$page_assets[ $doc_id ] = $page_assets[ $doc_id ];
+
+		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+	}
+
+	private function get_element_assets( $element ) {
+		$controls = $element->get_controls();
+		$settings = array_intersect_key( $element->get_settings(), $controls );
+		$element_assets = [];
+
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				continue;
+			}
+
+			$control = $controls[ $setting_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				// Enabling assets loading from the registered control fields.
+				if ( ! empty( $control['assets'] ) ) {
+					foreach ( $control['assets'] as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! empty( $dependency['conditions'] ) ) {
+								$is_condition_fulfilled = Conditions::check( $dependency['conditions'], $settings );
+
+								if ( ! $is_condition_fulfilled ) {
+									continue;
+								}
+							}
+
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency['name'];
+						}
+					}
+				}
+
+				// Enabling assets loading from the control object.
+				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				$control_conditional_assets = $control_obj::get_assets( $setting );
+
+				if ( $control_conditional_assets ) {
+					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency;
+						}
+					}
+				}
+			}
+		}
+
+		return $element_assets;
 	}
 
 	private function save_widgets_css( $widget_name ) {
