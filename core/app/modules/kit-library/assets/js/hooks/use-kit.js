@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from 'react-query';
 import Kit from '../models/kit';
 import { KEY as LIST_KEY } from './use-kits';
-import useTags from './use-tags';
 
 export const KEY = 'kit';
 

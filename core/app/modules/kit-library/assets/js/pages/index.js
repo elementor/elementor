@@ -43,7 +43,7 @@ export default function Index() {
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">
-					<CssGrid spacing={ 24 } colMinWidth={ 250 }>
+					{/*<CssGrid spacing={ 24 } colMinWidth={ 250 }>*/}
 						<div style={ { gridColumn: '1 / span 2' } }>
 							<SearchInput
 								placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
@@ -58,7 +58,7 @@ export default function Index() {
 							/>
 						</div>
 						<div />
-					</CssGrid>
+					{/*</CssGrid>*/}
 				</div>
 				<Content className="e-kit-library__index-layout-main">
 					<>
