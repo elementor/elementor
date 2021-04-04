@@ -12,6 +12,8 @@ import { IndexNoResults } from '../components/index-no-results';
 
 import './index.scss';
 
+const { useCallback } = React;
+
 export default function Index() {
 	const headerButtons = useHeadersButtons( [ 'info' ] );
 
@@ -25,21 +27,15 @@ export default function Index() {
 		clearFilter,
 	} = useKits();
 
+	const [ selectTag, unselectTag ] = useTagSelection( setFilter );
+
 	return (
 		<Layout
 			sidebar={
 				<IndexSidebar
 					tagsFilterSlot={ <TagsFilter
 						selected={ filter.tags }
-						onSelect={ ( type, callback ) => setFilter(
-							( prev ) => {
-								const tags = { ...prev.tags };
-
-								tags[ type ] = callback( prev.tags[ type ] );
-
-								return { ...prev, tags };
-							}
-						) }
+						onSelect={ selectTag }
 					/> }
 				/>
 			}
@@ -58,20 +54,10 @@ export default function Index() {
 								filter={ filter }
 								resultCount={ data.length || 0 }
 								onClear={ clearFilter }
-								onRemoveTag={( tag ) => setFilter( ( prev ) => {
-									const tags = Object.entries( prev.tags )
-										.reduce( ( current, [ key, groupedTags ] ) => ( {
-											...current,
-											[ key ]: groupedTags.filter( ( item ) => item !== tag ),
-										} ), {} );
-
-									return { ...prev, tags };
-								} )}
+								onRemoveTag={ unselectTag }
 							/>
 						</div>
-						<div style={{ background: 'red' }}>
-							This is try
-						</div>
+						<div />
 					</CssGrid>
 				</div>
 				<Content className="e-kit-library__index-layout-main">
@@ -85,4 +71,28 @@ export default function Index() {
 			</div>
 		</Layout>
 	);
+}
+
+function useTagSelection( setFilter ) {
+	const selectTag = useCallback( ( type, callback ) => setFilter(
+		( prev ) => {
+			const tags = { ...prev.tags };
+
+			tags[ type ] = callback( prev.tags[ type ] );
+
+			return { ...prev, tags };
+		}
+	), [ setFilter ] );
+
+	const unselectTag = useCallback( ( tag ) => setFilter( ( prev ) => {
+		const tags = Object.entries( prev.tags )
+			.reduce( ( current, [ key, groupedTags ] ) => ( {
+				...current,
+				[ key ]: groupedTags.filter( ( item ) => item !== tag ),
+			} ), {} );
+
+		return { ...prev, tags };
+	} ), [ setFilter ] );
+
+	return [ selectTag, unselectTag ];
 }
