@@ -571,7 +571,7 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-widget-container">
 			<?php
 			if ( $this->is_widget_first_render() ) {
-				$this->register_runtime_widget( $this->get_name() );
+				$this->register_runtime_widget( $this->get_widget_type() );
 
 				$this->print_widget_css();
 			}
@@ -597,7 +597,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function is_widget_first_render() {
-		return ! in_array( $this->get_name(), self::$registered_runtime_widgets, TRUE );
+		return ! in_array( $this->get_widget_type(), self::$registered_runtime_widgets, TRUE );
 	}
 
 	/**
@@ -941,8 +941,12 @@ abstract class Widget_Base extends Element_Base {
 		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
 	}
 
-	private function get_css_config() {
-		$widget_name = $this->get_name();
+	protected function get_widget_type() {
+		return $this->get_name();
+	}
+
+	protected function get_css_config() {
+		$widget_name = $this->get_widget_type();
 
 		$direction = is_rtl() ? '-rtl' : '';
 
