@@ -27,8 +27,10 @@ export default function useUploadFile( fileName, action, data ) {
 				cache: false,
 				contentType: false,
 				processData: false,
-				success: () => {
-					setUploadFileStatus( ( prevState ) => ( { ...prevState, status: 'success' } ) );
+				success: ( response ) => {
+					const status = response.success ? 'success' : 'error';
+
+					setUploadFileStatus( ( prevState ) => ( { ...prevState, status } ) );
 				},
 				error: () => {
 					setUploadFileStatus( ( prevState ) => ( { ...prevState, status: 'error' } ) );
