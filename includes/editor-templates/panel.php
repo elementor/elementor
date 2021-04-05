@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Responsive\Responsive;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,8 +15,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
 	<footer id="elementor-panel-footer">
-		<div class="elementor-panel-container">
-		</div>
+		<div class="elementor-panel-container"></div>
 	</footer>
 </script>
 
@@ -78,30 +75,10 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<span class="elementor-screen-only"><?php echo __( 'History', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-desktop tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only">
 			<?php echo __( 'Responsive Mode', 'elementor' ); ?>
 		</span>
-		<div class="elementor-panel-footer-sub-menu-wrapper">
-			<div class="elementor-panel-footer-sub-menu">
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="desktop">
-					<i class="elementor-icon eicon-device-desktop" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Desktop', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo __( 'Default Preview', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="tablet">
-					<i class="elementor-icon eicon-device-tablet" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Tablet', 'elementor' ); ?></span>
-					<?php $breakpoints = Responsive::get_breakpoints(); ?>
-					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), $breakpoints['md'] . 'px' ); ?></span>
-				</div>
-				<div class="elementor-panel-footer-sub-menu-item" data-device-mode="mobile">
-					<i class="elementor-icon eicon-device-mobile" aria-hidden="true"></i>
-					<span class="elementor-title"><?php echo __( 'Mobile', 'elementor' ); ?></span>
-					<span class="elementor-description"><?php echo sprintf( __( 'Preview for %s', 'elementor' ), '360px' ); ?></span>
-				</div>
-			</div>
-		</div>
 	</div>
 	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-footer-saver-preview-label">

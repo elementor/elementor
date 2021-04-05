@@ -45,7 +45,7 @@ abstract class Files_Upload_Handler {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $enabled Weather upload is enabled or not.
+		 * @param bool $enabled Whether upload is enabled or not.
 		 */
 		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
 
@@ -53,7 +53,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
-		if ( $this->is_elementor_media_upload() ) {
+		if ( $this->is_elementor_media_upload() && $this->is_enabled() ) {
 			$existing_mimes[ $this->get_file_type() ] = $this->get_mime_type();
 		}
 
@@ -89,7 +89,9 @@ abstract class Files_Upload_Handler {
 	}
 
 	protected function is_file_should_handled( $file ) {
-		return $this->is_elementor_media_upload() && $this->get_mime_type() === $file['type'];
+		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
+
+		return $this->is_elementor_media_upload() && $this->get_file_type() === $ext;
 	}
 
 	/**

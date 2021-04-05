@@ -614,6 +614,21 @@ class Group_Control_Background extends Group_Control_Base {
 			'frontend_available' => true,
 		];
 
+		// This control was added to handle a bug with the Youtube Embed API. The bug: If there is a video with Privacy
+		// Mode on, and at the same time the page contains another video WITHOUT privacy mode on, one of the videos
+		// will not run properly. This added control allows users to align all their videos to one host (either
+		// youtube.com or youtube-nocookie.com, depending on whether the user wants privacy mode on or not).
+		$fields['privacy_mode'] = [
+			'label' => __( 'Privacy mode', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'description' => __( 'Only works for YouTube videos.', 'elementor' ),
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+			'frontend_available' => true,
+		];
+
 		$fields['video_fallback'] = [
 			'label' => _x( 'Background Fallback', 'Background Control', 'elementor' ),
 			'description' => __( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
