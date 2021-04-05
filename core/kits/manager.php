@@ -1,14 +1,14 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Documents_Manager;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Kits\Controls\Repeater;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
-use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
-use Elementor\Core\Documents_Manager;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
@@ -29,7 +29,16 @@ class Manager {
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
+
 			update_option( self::OPTION_ACTIVE, $id );
+
+			// Before publish, to prevent recursive loop, update the post status, after kit id is saved.
+			remove_action( 'post_updated', 'wp_save_post_revision' );
+			wp_update_post( [
+				'ID' => $id,
+				'post_status' => 'publish',
+			] );
+			add_action( 'post_updated', 'wp_save_post_revision' );
 		}
 
 		return $id;
@@ -98,14 +107,17 @@ class Manager {
 	}
 
 	private function create_default() {
-		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
+		return $this->create( [
+			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_status' => 'new',
+		] );
 	}
 
 	/**
 	 * @param Documents_Manager $documents_manager
 	 */
 	public function register_document( $documents_manager ) {
-		$documents_manager->register_document_type( 'kit', Kit::get_class_full_name() );
+		$documents_manager->register_document_type( Kit::NAME, Kit::get_class_full_name() );
 	}
 
 	public function localize_settings( $settings ) {

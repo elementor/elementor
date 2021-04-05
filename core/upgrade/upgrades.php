@@ -724,7 +724,7 @@ class Upgrades {
 				return;
 			}
 
-			$kit = Plugin::$instance->documents->get( $kit_id );
+			$kit = Plugin::$instance->documents->get( $kit_id, false );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
@@ -766,7 +766,7 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
-			$kit = Plugin::$instance->documents->get( $kit_id );
+			$kit = Plugin::$instance->documents->get( $kit_id, false );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
@@ -831,7 +831,7 @@ class Upgrades {
 				return;
 			}
 
-			$kit = Plugin::$instance->documents->get( $kit_id );
+			$kit = Plugin::$instance->documents->get( $kit_id, false );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
@@ -910,6 +910,15 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	/**
+	 * Don't use the old data anymore.
+	 * Since 3.1.0 the key was changed from `elementor_controls_usage` to `elementor_elements_usage`.
+	 */
+	public static function _v_3_2_0_remove_old_elements_usage() {
+		delete_option( 'elementor_controls_usage' );
+		delete_post_meta_by_key( '_elementor_controls_usage' );
 	}
 
 	/**

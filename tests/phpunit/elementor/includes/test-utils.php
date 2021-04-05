@@ -199,4 +199,24 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertSame( '1 row affected.', $affected_rows );
 		$this->assertSame( [ $setting_key => $to_url ], $document->get_meta( Manager::META_KEY ) );
 	}
+
+	public function test_remove_empty_array_recursive() {
+		// Assert.
+		$array = [ [ [] ], [ [ 0 ] ] ];
+
+		// Act.
+		$actual = Utils::remove_empty_array_recursive( $array );
+
+		$this->assertEquals( [], $actual );
+	}
+
+	public function test_remove_empty_array_recursive__ensure_value_not_removed() {
+		// Assert.
+		$array = [ [ [ 1 ] ], [ [ 1 ] ] ];
+
+		// Act.
+		$actual = Utils::remove_empty_array_recursive( $array );
+
+		$this->assertEquals( $array, $actual );
+	}
 }
