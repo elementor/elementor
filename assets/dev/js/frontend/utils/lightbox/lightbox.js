@@ -169,7 +169,46 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.show();
 	},
 
+	createLightbox: function( element ) {
+		let lightboxData = {};
+
+		if ( element.dataset.elementorLightbox ) {
+			lightboxData = JSON.parse( element.dataset.elementorLightbox );
+		}
+
+		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
+			this.showModal( lightboxData );
+
+			return;
+		}
+
+		if ( ! element.dataset.elementorLightboxSlideshow ) {
+			const slideshowID = 'single-img';
+
+			this.showModal( {
+				type: 'image',
+				id: slideshowID,
+				url: element.href,
+				title: element.dataset.elementorLightboxTitle,
+				description: element.dataset.elementorLightboxDescription,
+				modalOptions: {
+					id: 'elementor-lightbox-slideshow-' + slideshowID,
+				},
+			} );
+
+			return;
+		}
+
+		const initialSlideURL = element.dataset.elementorLightboxVideo || element.href;
+
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
+	},
+
 	setHTMLContent: function( html ) {
+		if ( window.elementorCommon ) {
+			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+		}
+
 		this.getModal().setMessage( html );
 	},
 
@@ -822,18 +861,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 	},
 
-	isLightboxLink: function( element ) {
-		// Check for lowercase `a` to make sure it works also for links inside SVGs.
-		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
-			return false;
-		}
-
-		const generalOpenInLightbox = elementorFrontend.getKitSettings( 'global_image_lightbox' ),
-			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
-
-		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
-	},
-
 	openSlideshow: function( slideshowID, initialSlideURL ) {
 		const $allSlideshowLinks = jQuery( this.getSettings( 'selectors.links' ) ).filter( ( index, element ) => {
 			const $element = jQuery( element );
@@ -887,64 +914,6 @@ module.exports = elementorModules.ViewModule.extend( {
 				},
 			},
 		} );
-	},
-
-	openLink: function( event ) {
-		const element = event.currentTarget,
-			$target = jQuery( event.target ),
-			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
-
-		if ( ! this.isLightboxLink( element ) ) {
-			if ( editMode && isClickInsideElementor ) {
-				event.preventDefault();
-			}
-
-			return;
-		}
-
-		event.preventDefault();
-
-		if ( editMode && ! elementor.getPreferences( 'lightbox_in_editor' ) ) {
-			return;
-		}
-
-		let lightboxData = {};
-
-		if ( element.dataset.elementorLightbox ) {
-			lightboxData = JSON.parse( element.dataset.elementorLightbox );
-		}
-
-		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
-			this.showModal( lightboxData );
-
-			return;
-		}
-
-		if ( ! element.dataset.elementorLightboxSlideshow ) {
-			const slideshowID = 'single-img';
-
-			this.showModal( {
-				type: 'image',
-				id: slideshowID,
-				url: element.href,
-				title: element.dataset.elementorLightboxTitle,
-				description: element.dataset.elementorLightboxDescription,
-				modalOptions: {
-					id: 'elementor-lightbox-slideshow-' + slideshowID,
-				},
-			} );
-
-			return;
-		}
-
-		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
-
-		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
-	},
-
-	bindEvents: function() {
-		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onSlideChange: function() {

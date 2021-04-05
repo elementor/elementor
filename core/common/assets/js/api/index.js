@@ -9,6 +9,7 @@ import ComponentBase from './modules/component-base';
 import ComponentModalBase from './modules/component-modal-base';
 import Components from './core/components';
 import Data from './core/data.js';
+import HashCommands from './extras/hash-commands';
 import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
@@ -49,6 +50,10 @@ export default class API {
 
 			hookData,
 			hookUI,
+		};
+
+		this.extras = {
+			hashCommands: new HashCommands(),
 		};
 
 		// Backwards compatibility should be last, in order to handle others.

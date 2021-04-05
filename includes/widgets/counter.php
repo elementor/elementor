@@ -249,6 +249,14 @@ class Widget_Counter extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'number_shadow',
+				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -280,6 +288,14 @@ class Widget_Counter extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				],
+				'selector' => '{{WRAPPER}} .elementor-counter-title',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
 			]
 		);

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Settings\Page\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -150,9 +152,22 @@ class Utils {
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
 
+		$second_rows_affected = $wpdb->query(
+			"UPDATE {$wpdb->postmeta} " .
+			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
+			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
+		);
+
+		if ( $second_rows_affected ) {
+			$rows_affected += $second_rows_affected;
+		}
+
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
 		}
+
+		// Allow externals to replace-urls, when they have to.
+		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
 
@@ -655,5 +670,28 @@ class Utils {
 	 */
 	public static function validate_html_tag( $tag ) {
 		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+	}
+
+	/**
+	 * Get recently edited posts query.
+	 *
+	 * Returns `WP_Query` of the recent edited posts.
+	 * By default max posts ( $args['posts_per_page'] ) is 3.
+	 *
+	 * @param array $args
+	 *
+	 * @return \WP_Query
+	 */
+	public static function get_recently_edited_posts_query( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		] );
+
+		return new \WP_Query( $args );
 	}
 }
