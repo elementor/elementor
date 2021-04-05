@@ -89,9 +89,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
-			button: {
-				text: __( 'Insert Media', 'elementor' ),
-			},
 			frame: 'post',
 			type: 'image',
 			multiple: false,
@@ -120,7 +117,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Hack to remove unwanted elements from modal.
 	 */
 	onFrameReady() {
-		const frameElement = document.querySelector( '.media-modal.wp-core-ui' );
+		const frameElement = this.frame.el;
 
 		const elementsToRemove = [
 			'#menu-item-insert',
@@ -138,11 +135,24 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			}
 		} );
 
+		// Change the default button text using CSS by passing the text as a variable.
+		frameElement.style.setProperty( '--button-text', `'${ __( 'Insert Media', 'elementor' ) }'` );
+
 		// Remove elements from the URL upload tab.
 		frameElement.classList.add( 'elementor-wp-media-elements-removed' );
 
-		// Go to the custom upload tab.
-		frameElement.querySelector( '#menu-item-library' ).click();
+		if ( 'url' === this.getControlValue( 'source' ) ) {
+			// Go to the url tab.
+			frameElement.querySelector( '#menu-item-embed' ).click();
+
+			// Load the image URL.
+			this.frame.views.get( '.media-frame-content' )[ 0 ].url.model.set( {
+				url: this.getControlValue( 'url' ),
+			} );
+		} else {
+			// Go to the upload tab.
+			frameElement.querySelector( '#menu-item-library' ).click();
+		}
 	},
 
 	setUploadMimeType( frame, ext ) {
@@ -174,16 +184,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			attachment = {
 				url: state.props.get( 'url' ),
 				id: '',
+				alt: state.props.get( 'alt' ),
+				source: 'url',
 			};
 		} else {
 			// Get the attachment from the modal frame.
 			attachment = this.frame.state().get( 'selection' ).first().toJSON();
+			attachment.source = 'library';
 		}
 
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
 				id: attachment.id,
+				alt: attachment.alt,
+				source: attachment.source,
 			} );
 
 			this.applySavedValue();

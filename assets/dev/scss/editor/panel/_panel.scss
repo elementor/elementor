@@ -118,10 +118,38 @@
 	}
 
 	// Hack to remove unwanted elements from the modal
-	&.elementor-wp-media-elements-removed {
+	.elementor-wp-media-elements-removed {
 		.embed-link-settings,
 		.embed-media-settings > :not( .wp-clearfix ){
 			display: none;
+		}
+
+		#embed-url-field {
+			width: 70%;
+		}
+
+		.media-embed {
+			.thumbnail {
+				margin-top: 20px;
+				
+				&,
+				img {
+					max-height: initial;
+				}
+
+				&::after {
+					box-shadow: none;
+				}
+			}
+		}
+
+		.media-button-select {
+			font-size: 0;
+
+			&::before {
+				content: var( --button-text );
+				font-size: 13px;
+			}
 		}
 	}
 }
