@@ -1,6 +1,7 @@
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Router } from '@reach/router';
+import { SettingsProvider } from './context/settings-context';
 import Index from './pages';
 import Item from './pages/item';
 import Preview from './pages/preview';
@@ -20,11 +21,16 @@ const queryClient = new QueryClient( {
 export default function App() {
 	return (
 		<QueryClientProvider client={ queryClient }>
-			<Router>
-				<Index path="/"/>
-				<Preview path="/preview/:id"/>
-				<Item path="/:id"/>
-			</Router>
+			<SettingsProvider value={ {
+				isLibraryConnected: elementorAppConfig.library_connect.is_connected,
+				libraryConnectUrl: elementorAppConfig.library_connect.connect_url,
+			} }>
+				<Router>
+					<Index path="/"/>
+					<Preview path="/preview/:id"/>
+					<Item path="/:id"/>
+				</Router>
+			</SettingsProvider>
 			<ReactQueryDevtools initialIsOpen={ false }/>
 		</QueryClientProvider>
 	);

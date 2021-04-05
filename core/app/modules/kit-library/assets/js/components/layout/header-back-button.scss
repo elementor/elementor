@@ -8,6 +8,11 @@
 	height: 100%;
 	@include border-end( $eps-border );
 
+	&-container {
+		flex: 1;
+		height: 100%;
+	}
+
 	.#{$eps-prefix}icon {
 		transform: getValueByDirection(rotate(0deg), rotate(180deg));
 	}

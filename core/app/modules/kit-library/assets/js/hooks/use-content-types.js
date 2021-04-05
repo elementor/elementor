@@ -11,25 +11,25 @@ function fetchContentTypes() {
 	return Promise.resolve( [
 		{
 			id: 'site-parts',
-			label: 'Site Parts',
+			label: __( 'Site Parts', 'elementor' ),
 			doc_types: [ 'header', 'footer', 'single', 'archive', '404' ],
 			order: 1,
 		},
 		{
 			id: 'page',
-			label: 'Pages',
+			label: __( 'Pages', 'elementor' ),
 			doc_types: [ 'page' ],
 			order: 0,
 		},
 		{
 			id: 'popup',
-			label: 'Popups',
+			label: __( 'Popups', 'elementor' ),
 			doc_types: [ 'popup' ],
 			order: 2,
 		},
 		{
 			id: 'post',
-			label: 'Posts',
+			label: __( 'Posts', 'elementor' ),
 			doc_types: [ 'post' ],
 			order: 3,
 		},

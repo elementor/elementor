@@ -1,17 +1,18 @@
 import Layout from '../components/layout';
-import Header from '../components/layout/header';
-import HeaderBackButton from '../components/layout/header-back-button';
 import useKit from '../hooks/use-kit';
 import Content from '../../../../../assets/js/layout/content';
-import useHeadersButtons from '../hooks/use-headers-buttons';
 import ItemSidebar from '../components/item-sidebar';
 import ItemContentOverview from '../components/item-content-overview';
 import useGroupedKitContent from '../hooks/use-grouped-kit-content';
+import ItemHeader from '../components/layout/item-header';
+import { useNavigate } from '@reach/router';
+
+const { useMemo } = React;
 
 export default function Item( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
 	const { data: groupedKitContent } = useGroupedKitContent( data );
-	const headerButtons = useHeadersButtons( [ 'info', 'insert-kit', 'view-demo' ], props.id );
+	const headerButtons = useHeaderButtons( props.id );
 
 	if ( isError ) {
 		return 'Error!';
@@ -23,7 +24,7 @@ export default function Item( props ) {
 
 	return (
 		<Layout
-			header={ <Header startSlot={ <HeaderBackButton/> } buttons={ headerButtons }/> }
+			header={ <ItemHeader model={ data } buttons={ headerButtons }/> }
 			sidebar={ <ItemSidebar model={ data } groupedKitContent={ groupedKitContent }/> }
 		>
 			{
@@ -39,3 +40,19 @@ export default function Item( props ) {
 Item.propTypes = {
 	id: PropTypes.string,
 };
+
+function useHeaderButtons( id ) {
+	const navigate = useNavigate();
+
+	return useMemo( () => [
+		{
+			id: 'view-demo',
+			text: __( 'View Demo', 'elementor' ),
+			hideText: false,
+			variant: 'outlined',
+			color: 'primary',
+			size: 'sm',
+			onClick: () => navigate( `/kit-library/preview/${ id }` ),
+		},
+	], [ id ] );
+}

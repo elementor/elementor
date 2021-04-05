@@ -2,11 +2,10 @@ import { SearchInput, CssGrid } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
 import TagsFilter from '../components/tags-filter';
-import Header from '../components/layout/header';
+import IndexHeader from '../components/layout/index-header';
 import KitList from '../components/kit-list';
 import useKits from '../hooks/use-kits';
 import Content from '../../../../../assets/js/layout/content';
-import useHeadersButtons from '../hooks/use-headers-buttons';
 import FilterIndicationText from '../components/filter-indication-text';
 import { IndexNoResults } from '../components/index-no-results';
 
@@ -15,8 +14,6 @@ import './index.scss';
 const { useCallback } = React;
 
 export default function Index() {
-	const headerButtons = useHeadersButtons( [ 'info' ] );
-
 	const {
 		data,
 		isSuccess,
@@ -39,7 +36,7 @@ export default function Index() {
 					/> }
 				/>
 			}
-			header={ <Header buttons={ headerButtons }/> }
+			header={ <IndexHeader /> }
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">
@@ -62,8 +59,8 @@ export default function Index() {
 				</div>
 				<Content className="e-kit-library__index-layout-main">
 					<>
-						{ isLoading && 'Loading...' }
-						{ isError && 'Error' }
+						{ isLoading && __( 'Loading...', 'elementor' ) }
+						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
 						{ isSuccess && data.length <= 0 && <IndexNoResults /> }
 					</>
@@ -73,6 +70,12 @@ export default function Index() {
 	);
 }
 
+/**
+ * Generate select and unselect tag functions.
+ *
+ * @param setFilter
+ * @returns {((function(*, *): *)|(function(*=): *))[]}
+ */
 function useTagSelection( setFilter ) {
 	const selectTag = useCallback( ( type, callback ) => setFilter(
 		( prev ) => {

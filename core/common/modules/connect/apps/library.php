@@ -2,6 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\User;
+use Elementor\Core\App\App;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -92,6 +93,12 @@ class Library extends Common_App {
 
 	protected function init() {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_action( 'elementor/app/before-print-config', function ( App $app ) {
+			$app->set_settings( 'library_connect', [
+				'is_connected' => $this->is_connected(),
+				'connect_url' => $this->get_admin_url( 'authorize' ),
+			] );
+		} );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }
