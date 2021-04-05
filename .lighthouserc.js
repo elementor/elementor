@@ -22,6 +22,7 @@ module.exports = {
 		},
 		"assert": {
 			// https://github.com/GoogleChrome/lighthouse-ci/blob/main/packages/utils/src/presets/recommended.js
+			// https://github.com/GoogleChrome/lighthouse-ci/blob/main/packages/utils/src/presets/no-pwa.js
 			"preset": "lighthouse:no-pwa",
 			assertions,
 		},
