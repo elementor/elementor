@@ -724,7 +724,7 @@ class Upgrades {
 				return;
 			}
 
-			$kit = Plugin::$instance->documents->get( $kit_id, false );
+			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
@@ -766,7 +766,7 @@ class Upgrades {
 	 */
 	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
-			$kit = Plugin::$instance->documents->get( $kit_id, false );
+			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
@@ -831,7 +831,7 @@ class Upgrades {
 				return;
 			}
 
-			$kit = Plugin::$instance->documents->get( $kit_id, false );
+			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
 			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
