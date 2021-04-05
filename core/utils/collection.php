@@ -200,6 +200,34 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Get the first item.
+	 *
+	 * @param null $default
+	 *
+	 * @return mixed|null
+	 */
+	public function first( $default = null ) {
+		if ( $this->is_empty() ) {
+			return $default;
+		}
+
+		foreach ( $this->items as $item ) {
+			return $item;
+		}
+	}
+
+	/**
+	 * Make sure all the values inside the array are uniques.
+	 *
+	 * @return $this
+	 */
+	public function unique() {
+		return new static(
+			array_unique( $this->items )
+		);
+	}
+
+	/**
 	 * @return array
 	 */
 	public function keys() {
@@ -218,6 +246,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 */
 	public function all() {
 		return $this->items;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function values() {
+		return array_values( $this->all() );
 	}
 
 	/**

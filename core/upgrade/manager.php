@@ -37,7 +37,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public function get_updater_label() {
-		return sprintf( '<strong>%s </strong> &#8211;', __( 'Elementor Data Updater', 'elementor' ) );
+		return __( 'Elementor Data Updater', 'elementor' );
 	}
 
 	public function get_new_version() {
