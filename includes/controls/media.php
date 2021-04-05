@@ -183,12 +183,12 @@ class Control_Media extends Control_Base_Multiple {
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<#
-				if ( isViewable() ) {
-				var inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
+			if ( isViewable() ) {
+				let inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
 
-					if ( ! data.label_block ) {
-						inputWrapperClasses += ' elementor-control-unit-5';
-					}
+				if ( ! data.label_block ) {
+					inputWrapperClasses += ' elementor-control-unit-5';
+				}
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
