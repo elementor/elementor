@@ -32,11 +32,17 @@ class Manager {
 
 			update_option( self::OPTION_ACTIVE, $id );
 
-			// Before publish, to prevent recursive loop, update the post status, after kit id is saved.
+			/**
+			 * A. Before publish, to prevent recursive loop in cases where the use of `get_active_id` called within a saving process
+			 * update the post status, after kit id is saved.
+			 * B. Since `wp_update_post` will trigger revision creation 'post_updated' action is disabled.
+			 */
+			remove_action( 'post_updated', 'wp_save_post_revision' );
 			wp_update_post( [
 				'ID' => $id,
 				'post_status' => 'publish',
 			] );
+			add_action( 'post_updated', 'wp_save_post_revision' );
 		}
 
 		return $id;
