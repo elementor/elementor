@@ -160,15 +160,6 @@ class Uploads_Manager extends Base_Object {
 		// Create a random temporary file name.
 		$temp_filename = $temp_path . uniqid() . '.' . $extension;
 
-		if ( 'json' === $extension ) {
-			$file_content = wp_json_encode( $file_content );
-
-			// If the JSON content is not json-encodable, it is not valid.
-			if ( ! $file_content ) {
-				return new \WP_Error( 'Invalid file contents' );
-			}
-		}
-
 		// Save the contents to a temporary file.
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
 
