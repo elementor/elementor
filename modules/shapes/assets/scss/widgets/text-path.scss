@@ -1,0 +1,43 @@
+.elementor-widget-text-path {
+
+	font-size: 20px;
+	text-align: var( --alignment, #{$start} );
+
+	svg {
+		width: var( --width );
+		max-width: 100%;
+		height: auto;
+		overflow: visible;
+		word-spacing: var( --word-spacing );
+		transform: rotate( var( --rotate, 0 ) ) scaleX( var( --scale-x, 1 ) ) scaleY( var( --scale-y, 1 ) );
+
+		path {
+			vector-effect: non-scaling-stroke; /* Prevent stroke size scaling when resizing the SVG. */
+			fill: var( --path-fill, transparent );
+			stroke: var( --stroke-color, transparent );
+			stroke-width: var( --stroke-width, 1px );
+			transition: var( --stroke-transition ) stroke, var( --stroke-transition ) fill;
+		}
+
+		&:hover {
+			path {
+				--path-fill: var( --path-fill-hover );
+				--stroke-color: var( --stroke-color-hover );
+				--stroke-width: var( --stroke-width-hover );
+			}
+		}
+
+		text {
+			--fill: var( --text-color );
+			fill: var( --fill );
+			direction: var( --direction, $direction );
+			transition: var( --transition ) stroke,
+						var( --transition ) stroke-width,
+						var( --transition ) fill;
+
+			&:hover {
+				--text-color: var( --text-color-hover );
+			}
+		}
+	}
+}

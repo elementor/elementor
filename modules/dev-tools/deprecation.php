@@ -323,4 +323,30 @@ class Deprecation {
 
 		do_action_ref_array( $hook, $args );
 	}
+
+	/**
+	 * Apply Deprecated Filter
+	 *
+	 * A method used to run deprecated filters through Elementor's deprecation process.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @param string $version
+	 * @param string $replacement
+	 * @param null|string $base_version
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
+		if ( ! has_action( $hook ) ) {
+			return;
+		}
+
+		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
+
+		return apply_filters_ref_array( $hook, $args );
+	}
 }
