@@ -177,7 +177,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 */
 	isRTL() {
 		const { text_path_direction: direction } = this.getElementSettings();
-		let isRTL = elementorCommon.config.isRTL;
+		let isRTL = elementorFrontend.config.is_rtl;
 
 		if ( direction ) {
 			isRTL = ( 'rtl' === direction );
