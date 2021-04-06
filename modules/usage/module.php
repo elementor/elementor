@@ -167,7 +167,7 @@ class Module extends BaseModule {
 		$new_status = isset( $data['settings']['post_status'] ) ? $data['settings']['post_status'] : '';
 
 		if ( $current_status === $new_status ) {
-			$this->remove_from_global( $document );
+			$this->remove_document_usage( $document );
 		}
 
 		$this->is_document_saving = true;
@@ -217,7 +217,7 @@ class Module extends BaseModule {
 		$is_private_unpublish = 'private' === $old_status && 'private' !== $new_status;
 
 		if ( $is_public_unpublish || $is_private_unpublish ) {
-			$this->remove_from_global( $document );
+			$this->remove_document_usage( $document );
 		}
 
 		$is_public_publish = 'publish' !== $old_status && 'publish' === $new_status;
@@ -242,7 +242,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->remove_from_global( $document );
+		$this->remove_document_usage( $document );
 	}
 
 	/**
@@ -447,7 +447,7 @@ class Module extends BaseModule {
 	 *
 	 * @param Document $document
 	 */
-	private function remove_document_elements_from_global( $document ) {
+	private function remove_from_global( $document ) {
 		$prev_usage = $document->get_meta( self::ELEMENTS_META_KEY );
 
 		if ( empty( $prev_usage ) ) {
@@ -588,8 +588,8 @@ class Module extends BaseModule {
 			->save();
 	}
 
-	private function remove_from_global( $document ) {
-		$this->remove_document_elements_from_global( $document );
+	private function remove_document_usage( $document ) {
+		$this->remove_from_global( $document );
 
 		DocumentSettingsUsage::instance()
 			->remove( $document )
