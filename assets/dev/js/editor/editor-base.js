@@ -59,6 +59,44 @@ export default class EditorBase extends Marionette.Application {
 		return elementorCommon.debug;
 	}
 
+	backgroundClickListeners = {
+		popover: {
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__popover-toggle',
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-dynamic-switcher',
+		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool.elementor-toggle-state',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
+		panelResponsiveSwitchers: {
+			element: '.elementor-control-responsive-switchers',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
+			},
+		},
+	};
+
 	/**
 	 * Exporting modules that can be used externally
 	 * TODO: All of the following entries should move to `elementorModules.editor`
@@ -169,44 +207,6 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
-			},
-		},
-	};
-
-	backgroundClickListeners = {
-		popover: {
-			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
-		},
-		globalControlsSelect: {
-			element: '.e-global__popover',
-			ignore: '.e-global__popover-toggle',
-		},
-		tagsList: {
-			element: '.elementor-tags-list',
-			ignore: '.elementor-control-dynamic-switcher',
-		},
-		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool.elementor-toggle-state',
-			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-open' );
-			},
-		},
-		panelResponsiveSwitchers: {
-			element: '.elementor-control-responsive-switchers',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
-			},
-		},
-		promotion: {
-			ignore: '.elementor-panel-category-items',
-			callback: () => {
-				const dialog = elementor.promotion.dialog;
-
-				if ( dialog ) {
-					dialog.hide();
-				}
 			},
 		},
 	};
