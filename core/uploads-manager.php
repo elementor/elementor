@@ -86,10 +86,14 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Handle Elementor Upload
 	 *
-	 * This method receives a $file array. If the received file is a Base64 stream, the method decodes it and stores
-	 * the contents in a temp file. The file goes through validation and the validation result is returned.
+	 * This method receives a $file array. If the received file is a Base64 string, the $file array should include a
+	 * 'fileData' property containing the string, which is decoded and has its contents stored in a temporary file.
+	 * If the $file parameter passed is a standard $file array, the 'name' and 'tmp_name' properties are used for
+	 * validation.
 	 *
-	 * @param array $file (If it is a $file array, it must include the 'name' and 'type' properties)
+	 * The file goes through validation; if it passes validation, the file is returned. Otherwise, an error is returned.
+	 *
+	 * @param array $file (If it is a $file array, it must include the 'name' and 'type' properties).
 	 * @return array|\WP_Error
 	 */
 	public function handle_elementor_upload( $file ) {
@@ -249,7 +253,6 @@ class Uploads_Manager extends Base_Object {
 			'tmp_name' => $temp_filename,
 			'type' => mime_content_type( $temp_filename ),
 		];
-
 
 		if ( isset( $file['allowedFileTypes'] ) ) {
 			$new_file_array['allowedFileTypes'] = $file['allowedFileTypes'];
