@@ -72,7 +72,7 @@ class TestDocumentSettingsUsage extends Elementor_Test_Base {
 		}
 
 		// Assert - Validate nothing left.
-		$this->assertEmpty( $usage->all() );
+		$this->assertEmpty( $usage->get('wp-post') );
 	}
 
 	public function test_save() {
