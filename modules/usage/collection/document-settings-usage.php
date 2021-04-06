@@ -8,7 +8,14 @@ use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 
 class DocumentSettingsUsage extends Collection {
-	public static function instance() {
+	/**
+	 * Create new collection from 'get_option' of global document settings usage.
+	 *
+	 * Cannot be called 'instance' since its create new instance and not singleton.
+	 *
+	 * @return $this
+	 */
+	public static function create() {
 		return new static( get_option( Module::DOCUMENT_OPTION_NAME, [] ) );
 	}
 

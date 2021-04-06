@@ -256,7 +256,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
-		$params['usages']['documents'] = DocumentSettingsUsage::instance()->all();
+		$params['usages']['documents'] = DocumentSettingsUsage::create()->all();
 
 		return $params;
 	}
@@ -447,7 +447,7 @@ class Module extends BaseModule {
 	 *
 	 * @param Document $document
 	 */
-	private function remove_from_global( $document ) {
+	private function remove_document_elements_from_global( $document ) {
 		$prev_usage = $document->get_meta( self::ELEMENTS_META_KEY );
 
 		if ( empty( $prev_usage ) ) {
@@ -583,15 +583,15 @@ class Module extends BaseModule {
 			$this->add_to_global( $document->get_name(), $elements_usage );
 		}
 
-		DocumentSettingsUsage::instance()
+		DocumentSettingsUsage::create()
 			->add( $document )
 			->save();
 	}
 
 	private function remove_document_usage( $document ) {
-		$this->remove_from_global( $document );
+		$this->remove_document_elements_from_global( $document );
 
-		DocumentSettingsUsage::instance()
+		DocumentSettingsUsage::create()
 			->remove( $document )
 			->save();
 	}
