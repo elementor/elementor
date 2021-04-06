@@ -181,9 +181,9 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function get_temp_dir() {
 		$wp_upload_dir = wp_upload_dir();
-		$tmp_dir = $wp_upload_dir['basedir'] . '/elementor/tmp';
+		$tmp_dir = $wp_upload_dir['basedir'] . '/elementor/tmp/';
 
-		if ( ! file_exists( $tmp_dir ) && ! is_dir( $tmp_dir ) ) {
+		if ( ! is_dir( $tmp_dir ) ) {
 			wp_mkdir_p( $tmp_dir );
 		}
 
