@@ -40,7 +40,6 @@ export default class View extends Marionette.ItemView {
 		this.ui.switcherLabel.add( this.ui.closeButton ).add( this.ui.breakpointSettingsButton ).tipsy(
 			{
 				gravity: 'n',
-				offset: 10,
 				title() {
 					return jQuery( this ).data( 'tooltip' );
 				},
