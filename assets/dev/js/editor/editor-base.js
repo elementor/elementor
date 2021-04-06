@@ -752,10 +752,11 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	enterDeviceMode() {
+	enterDeviceMode( device = 'mobile' ) {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 		this.initPreviewResizable();
-		elementor.changeDeviceMode( 'mobile' );
+		elementor.changeDeviceMode( device );
+		document.getElementById( 'e-responsive-bar-switch-' + device ).click();
 	}
 
 	toggleDeviceMode() {
