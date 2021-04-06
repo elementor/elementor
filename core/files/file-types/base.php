@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The File Types Base class provides base methods used by all file type handler classes.
  * These methods are used in file upl
  *
- * @since 3.2.0
+ * @since 3.3.0
  */
 abstract class Base extends Base_Object {
 
@@ -24,7 +24,8 @@ abstract class Base extends Base_Object {
 	 *
 	 * Returns an array of the mime types allowed for upload
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
+	 *
 	 * @return array mime types
 	 */
 	abstract public function get_mime_types();
@@ -34,7 +35,8 @@ abstract class Base extends Base_Object {
 	 *
 	 * Returns the file type's file extension
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
+	 *
 	 * @return string - file extension
 	 */
 	abstract public function get_file_extension();
@@ -44,7 +46,8 @@ abstract class Base extends Base_Object {
 	 *
 	 * This method give file types the chance to run file-type-specific validations before returning the file for upload.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
+	 *
 	 * @param $file
 	 * @return bool|\WP_Error
 	 */

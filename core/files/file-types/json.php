@@ -12,8 +12,9 @@ class Json extends Base {
 	 *
 	 * Return an array of mime types compatible with this file type
 	 *
+	 * @since 3.3.0
+	 *
 	 * @return array
-	 * @since 3.2.0
 	 */
 	public function get_mime_types() {
 		return [
@@ -28,7 +29,8 @@ class Json extends Base {
 	 *
 	 * Returns the file type's file extension
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
+	 *
 	 * @return string - file extension
 	 */
 	public function get_file_extension() {

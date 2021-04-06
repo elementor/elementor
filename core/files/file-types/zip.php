@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The File Types Base class provides base methods used by all file type handler classes.
  * These methods are used in file upl
  *
- * @since 3.2.0
+ * @since 3.3.0
  */
 class Zip extends Base {
 
@@ -24,8 +24,9 @@ class Zip extends Base {
 	 *
 	 * Return an array of mime types compatible with this file type
 	 *
+	 * @since 3.3.0
+	 *
 	 * @return array
-	 * @since 3.2.0
 	 */
 	public function get_mime_types() {
 		return [
@@ -41,7 +42,8 @@ class Zip extends Base {
 	 *
 	 * Returns the file type's file extension
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
+	 *
 	 * @return string - file extension
 	 */
 	public function get_file_extension() {
@@ -52,6 +54,8 @@ class Zip extends Base {
 	 * Get File Property Name
 	 *
 	 * Get the property name to look for in the $_FILES superglobal
+	 *
+	 * @since 3.3.0
 	 *
 	 * @return string
 	 */
@@ -65,6 +69,8 @@ class Zip extends Base {
 	 * Performs the extraction of the zip files to a temporary directory.
 	 * Returns an error if for some reason the ZipArchive utility isn't available.
 	 * Otherwise, Returns an array containing the temporary extraction directory, and the list of extracted files.
+	 *
+	 * @since 3.3.0
 	 *
 	 * @return array|\WP_Error
 	 */
@@ -101,6 +107,8 @@ class Zip extends Base {
 	 * checks if their extensions are in the list of allowed file types. Returns an array containing all valid files.
 	 * This method doesn't validate that the contents of the files (mime type) match the file extensions - that
 	 * validation happens in the Uploads Manager once the files are extracted.
+	 *
+	 * @since 3.3.0
 	 *
 	 * @param \ZipArchive $zip
 	 * @param array $allowed_file_types

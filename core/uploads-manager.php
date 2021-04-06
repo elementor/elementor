@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor uploads manager handler class is responsible for handling file uploads that are not done with WP Media.
  *
- * @since 3.2.0
+ * @since 3.3.0
  */
 class Uploads_Manager extends Base_Object {
 
@@ -35,7 +35,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * To Add a new file type to Elementor, with its own handling logic, you need to add it to the $file_types array here.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 */
 	public function register_file_types() {
 		// All file types that have handlers should be included here.
@@ -135,9 +135,10 @@ class Uploads_Manager extends Base_Object {
 	 * Initialize the proper file type handler according to the file extension
 	 * and assign it to the file type handlers array.
 	 *
+	 * @since 3.3.0
+	 *
 	 * @param string|null $file_extension - file extension
 	 * @return \WP_Error|File_Type_Base
-	 * @since 3.2.0
 	 */
 	public function get_file_type_handlers( $file_extension = null ) {
 		return self::get_items( $this->file_type_handlers, $file_extension );
@@ -146,7 +147,7 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Create Temp File
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 *
 	 * @param string $file_content
 	 * @param string $file_name
@@ -179,7 +180,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * Get the temporary files directory path. If the directory does not exist, this method creates it.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 *
 	 * @return string $temp_dir
 	 */
@@ -199,8 +200,9 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * Checks if the user allowed uploading unfiltered files.
 	 *
+	 * @since 3.3.0
+	 *
 	 * @return bool
-	 * @since 3.2.0
 	 */
 	private function are_unfiltered_uploads_enabled() {
 		if ( ! $this->are_unfiltered_files_enabled ) {
@@ -213,8 +215,9 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Add Mime Type To Allowed Mimes List
 	 *
+	 * @since 3.3.0
+	 *
 	 * @param string $file_type
-	 * @since 3.2.0
 	 */
 	private function add_mime_type_to_allowed_mimes_list( $file_type ) {
 		$file_handler = $this->file_type_handlers[ $file_type ];
@@ -230,6 +233,8 @@ class Uploads_Manager extends Base_Object {
 	 * Save Base64 as File
 	 *
 	 * Saves a Base64 string as a .tmp file in Elementor's temporary files directory.
+	 *
+	 * @since 3.3.0
 	 *
 	 * @param $file
 	 * @return array|\WP_Error
@@ -264,6 +269,9 @@ class Uploads_Manager extends Base_Object {
 
 	/**
 	 * is_elementor_wp_media_upload
+	 *
+	 * @since 3.3.0
+	 *
 	 * @return bool
 	 */
 	private function is_elementor_wp_media_upload() {
@@ -273,10 +281,11 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Validate File
 	 *
+	 * @since 3.3.0
+	 *
 	 * @param array $file (the array must include the 'name' and 'type' properties)
 	 * @return bool|\WP_Error
 	 *
-	 * @since 3.2.0
 	 */
 	private function validate_file( array $file ) {
 		// Get the file's extension (Not to be trusted, will be checked for matching mime types).
@@ -306,7 +315,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * Directory is deleted recursively with all of its contents (subdirectories and files).
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 *
 	 * @param string $path
 	 */
@@ -321,7 +330,7 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Remove Directory with Files
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 *
 	 * @param string $dir
 	 * @return bool
@@ -345,7 +354,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * Get the allowed mime types for a certain file extension.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 *
 	 * @param string|null $file_extension
 	 * @return array mime type/s
