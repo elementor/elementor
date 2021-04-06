@@ -702,7 +702,7 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addInlineEditingAttributes( 'description_text' );
 		#>
 		<div class="elementor-icon-box-wrapper">
-			<# if ( settings.icon || settings.selected_icon ) { #>
+			<# if ( settings.selected_icon.value ) { #>
 			<div class="elementor-icon-box-icon">
 				<{{{ iconTag + ' ' + link }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}">
 					<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
