@@ -113,9 +113,15 @@
 	  	line-height: 22px;
 		border-radius: 3px;
 		font-size: 14px;
+	  	transition: background-color .3s ease-out;
 
-		&:hover {
+		&:hover, &[aria-selected="true"] {
 		  	color: $editor-lighter;
+		 	background-color: rgba(255, 255, 255, 0.1);
+		}
+
+	  	&:not(:last-child) {
+		  	margin-inline-end: 4px;
 		}
 
 	  	input {
