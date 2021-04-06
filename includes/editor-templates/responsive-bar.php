@@ -16,21 +16,17 @@ $breakpoints = [
 		<div class="e-responsive-bar__col"></div>
 		<div class="e-responsive-bar__col">
 			<div class="e-responsive-bar-switcher">
-			<?php
-				$checked = 'checked';
+			<?php foreach ( $breakpoints as $name => $label ) {
+				printf( '<label
+					class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
+					for="e-responsive-bar-switch-%1$s"
+					data-tooltip="%2$s">
 
-				foreach ( $breakpoints as $name => $label ) {
-					printf( '<label
-						class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
-						for="e-responsive-bar-switch-%1$s"
-						data-tooltip="%2$s">
-
-						<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s" %3$s>
-						<i class="eicon-device-%1$s" aria-hidden="true"></i>
-						<span class="screen-reader-text">%2$s</span>
-					</label>', $name, $label, $checked );
-					$checked = '';
-				} ?>
+					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
+					<i class="eicon-device-%1$s" aria-hidden="true"></i>
+					<span class="screen-reader-text">%2$s</span>
+				</label>', $name, $label );
+			} ?>
 			</div>
 		</div>
 		<div class="e-responsive-bar__col">
