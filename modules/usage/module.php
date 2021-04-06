@@ -6,9 +6,9 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\System_Info\Module as System_Info;
+use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
 use Elementor\Plugin;
 use Elementor\Settings;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -399,30 +399,10 @@ class Module extends BaseModule {
 		return $settings_controls;
 	}
 
-	private function add_document_settings_to_global( $doc_name, $doc_usage ) {
-		$global_usage = get_option( self::DOCUMENT_OPTION_NAME, [] );
-
-		foreach ( $doc_usage as $control_name => $control_count ) {
-			$global_document_usage_ref = &$global_usage[ $doc_name ];
-
-			if ( ! is_array( $global_document_usage_ref ) ) {
-				$global_document_usage_ref = [];
-			}
-
-			if ( Kit::NAME !== $doc_name && isset( $global_document_usage_ref[ $control_name ] ) ) {
-				$global_document_usage_ref[ $control_name ] += $control_count;
-			} else {
-				$global_document_usage_ref[ $control_name ] = $control_count;
-			}
-		}
-
-		update_option( self::DOCUMENT_OPTION_NAME, $global_usage, false );
-	}
-
 	/**
-	 * Add to global.
+	 * Add document elements to global.
 	 *
-	 * Add's usage to global (update database).
+	 * Adds usage of document elements (update database).
 	 *
 	 * @param string $doc_name
 	 * @param array $doc_usage
@@ -459,34 +439,6 @@ class Module extends BaseModule {
 		}
 
 		update_option( self::ELEMENTS_OPTION_NAME, $global_usage, false );
-	}
-
-	private function remove_document_settings_from_global( $document ) {
-		$prev_usage = $document->get_meta( self::DOCUMENT_META_KEY );
-
-		if ( empty( $prev_usage ) ) {
-			return;
-		}
-
-		$doc_name = $document->get_name();
-
-		$global_usage = get_option( self::DOCUMENT_OPTION_NAME, [] );
-
-		foreach ( $prev_usage as $control_name => $control_count ) {
-			if ( ! empty( $global_usage[ $doc_name ][ $control_name ] ) ) {
-				$global_usage[ $doc_name ][ $control_name ] -= $control_count;
-
-				if ( 0 === $global_usage[ $doc_name ][ $control_name ] ) {
-					unset( $global_usage[ $doc_name ][ $control_name ] );
-				}
-			}
-		}
-
-		$global_usage = Utils::remove_empty_array_recursive( $global_usage );
-
-		update_option( self::DOCUMENT_OPTION_NAME, $global_usage, false );
-
-		$document->delete_meta( self::DOCUMENT_META_KEY );
 	}
 
 	/**
@@ -542,58 +494,6 @@ class Module extends BaseModule {
 		update_option( self::ELEMENTS_OPTION_NAME, $global_usage, false );
 
 		$document->delete_meta( self::ELEMENTS_META_KEY );
-	}
-
-	/**
-	 * Get document settings usage.
-	 *
-	 * @param Document $document
-	 * @return array
-	 */
-	private function get_document_settings_usage( $document ) {
-		$usage  = [];
-
-		// Ensure not from cache.
-		$document = Plugin::$instance->documents->get( $document->get_id(), false );
-		$controls = $document->get_controls();
-
-		$is_default = function( $is_repeater, $control_default_value, $setting_value ) {
-			$is_default = $control_default_value === $setting_value;
-
-			// Some repeater settings have empty controls, which are not exist in the default, it should be analyzed.
-			if ( $is_repeater && ! $is_default && ! empty( $control_default_value ) ) {
-				$clear_repeater_settings = [];
-
-				// Using the control defaults, clean unused keys from $setting_value ( repeater values ).
-				foreach ( $control_default_value as $key => $control_repeater_item_default ) {
-					$clear_repeater_settings[ $key ] = array_intersect_key(
-						$setting_value[ $key ],
-						array_flip( /* allowed keys*/ array_keys( $control_repeater_item_default ) )
-					);
-				}
-
-				$is_default = $clear_repeater_settings === $control_default_value;
-			}
-
-			return $is_default;
-		};
-
-		foreach ( $document->get_settings() as $setting_name => $setting_value ) {
-			if ( isset( $controls[ $setting_name ] ) ) {
-				$control = $controls[ $setting_name ];
-				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
-
-				if ( ! $is_default( $is_repeater, $controls[ $setting_name ]['default'], $setting_value ) ) {
-					if ( $is_repeater ) {
-						$usage[ $setting_name ] = count( $setting_value );
-					} else {
-						$usage[ $setting_name ] = 1;
-					}
-				}
-			}
-		}
-
-		return $usage;
 	}
 
 	/**
@@ -676,8 +576,6 @@ class Module extends BaseModule {
 	}
 
 	private function add_document_usage( $document, $data ) {
-		$document_usage = $this->get_document_settings_usage( $document );
-
 		if ( $data ) {
 			$elements_usage = $this->get_document_elements_usage( $document->get_elements_raw_data( $data ) );
 
@@ -686,14 +584,17 @@ class Module extends BaseModule {
 			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
 		}
 
-		$document->update_meta( self::DOCUMENT_META_KEY, $document_usage );
-
-		$this->add_document_settings_to_global( $document->get_name(), $document_usage );
+		DocumentSettingsUsage::instance()
+			->add( $document )
+			->save();
 	}
 
 	private function remove_document_usage( $document ) {
 		$this->remove_document_elements_from_global( $document );
-		$this->remove_document_settings_from_global( $document );
+
+		DocumentSettingsUsage::instance()
+			->remove( $document )
+			->save();
 	}
 
 	/**
