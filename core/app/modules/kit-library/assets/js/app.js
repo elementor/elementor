@@ -21,10 +21,7 @@ const queryClient = new QueryClient( {
 export default function App() {
 	return (
 		<QueryClientProvider client={ queryClient }>
-			<SettingsProvider value={ {
-				isLibraryConnected: elementorAppConfig.library_connect.is_connected,
-				libraryConnectUrl: elementorAppConfig.library_connect.connect_url,
-			} }>
+			<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
 				<Router>
 					<Index path="/"/>
 					<Preview path="/preview/:id"/>

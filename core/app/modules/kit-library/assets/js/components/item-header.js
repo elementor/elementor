@@ -1,18 +1,21 @@
 import { useNavigate } from '@reach/router';
 import { Dialog, Text } from '@elementor/app-ui';
-import { useSettingsContext } from '../../context/settings-context';
-import Header from './header';
-import HeaderBackButton from './header-back-button';
-import HeaderButtons from './header-buttons';
-import Kit from '../../models/kit';
+import { useSettingsContext } from '../context/settings-context';
+import Header from './layout/header';
+import HeaderBackButton from './layout/header-back-button';
+import HeaderButtons from './layout/header-buttons';
+import Kit from '../models/kit';
+import ConnectDialog from './connect-dialog';
 
 const { useMemo, useState } = React;
 
 export default function ItemHeader( props ) {
 	const navigate = useNavigate();
-	const { isLibraryConnected, libraryConnectUrl } = useSettingsContext();
+	const { is_library_connected: isLibraryConnected } = useSettingsContext();
+
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
+	const [ error, setError ] = useState( false );
 
 	const buttons = useMemo( () => [
 		{
@@ -38,22 +41,22 @@ export default function ItemHeader( props ) {
 	return (
 		<>
 			{
-				isConnectDialogOpen && <Dialog
-					title={ __( 'Connect to Template Library', 'elementor' ) }
-					text={ __( 'Access this template and our entire library by creating an account', 'elementor' ) }
-					approveButtonText={ __( 'Get Started', 'elementor' ) }
-					approveButtonOnClick={ () => {
-						const tab = window.open(
-							libraryConnectUrl,
-							'_blank',
-						);
-
-						setIsConnectDialogOpen( false );
-					} }
-					approveButtonColor="primary"
-					dismissButtonText={ __( 'Cancel', 'elementor-pro' ) }
-					dismissButtonOnClick={ () => setIsConnectDialogOpen( false ) }
+				error && <Dialog
+					title={ error }
+					approveButtonText={ __( 'Learn More', 'elementor-pro' ) }
+					approveButtonColor="link"
+					approveButtonUrl="#"
+					approveButtonOnClick={ () => setError( false ) }
+					dismissButtonText={ __( 'Close', 'elementor-pro' ) }
+					dismissButtonOnClick={ () => setError( false ) }
+					onClose={ () => setError( false ) }
+				/>
+			}
+			{
+				isConnectDialogOpen && <ConnectDialog
 					onClose={ () => setIsConnectDialogOpen( false ) }
+					onSuccess={ () => setIsImportDialogOpen( true ) }
+					onError={ ( message ) => setError( message ) }
 				/>
 			}
 			{

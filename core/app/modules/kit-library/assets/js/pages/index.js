@@ -2,7 +2,7 @@ import { SearchInput, CssGrid } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
 import TagsFilter from '../components/tags-filter';
-import IndexHeader from '../components/layout/index-header';
+import IndexHeader from '../components/index-header';
 import KitList from '../components/kit-list';
 import useKits from '../hooks/use-kits';
 import Content from '../../../../../assets/js/layout/content';

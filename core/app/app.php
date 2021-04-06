@@ -214,8 +214,6 @@ class App extends BaseApp {
 		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
 		wp_set_script_translations( 'elementor-app', 'elementor' );
 
-		do_action( 'elementor/app/before-print-config', $this );
-
 		$this->print_config();
 	}
 

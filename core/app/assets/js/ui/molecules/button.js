@@ -19,6 +19,7 @@ export default class Button extends React.Component {
 		size: PropTypes.oneOf( [ 'sm', 'md', 'lg' ] ),
 		target: PropTypes.string,
 		rel: PropTypes.string,
+		elRef: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -101,6 +102,10 @@ export default class Button extends React.Component {
 
 		if ( this.props.rel ) {
 			attributes.rel = this.props.rel;
+		}
+
+		if ( this.props.elRef ) {
+			attributes.ref = this.props.elRef;
 		}
 
 		const buttonContent = (

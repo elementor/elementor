@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\KitLibrary;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,6 +36,20 @@ class Module extends BaseModule {
 		);
 	}
 
+	protected function set_kit_library_settings() {
+		if ( ! Plugin::$instance->common ) {
+			return;
+		}
+
+		/** @var Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+
+		Plugin::$instance->app->set_settings( 'kit-library', [
+			'is_library_connected' => $library->is_connected(),
+			'library_connect_url'  => $library->get_admin_url( 'authorize' ),
+		] );
+	}
+
 	/**
 	 * Module constructor.
 	 */
@@ -44,5 +59,9 @@ class Module extends BaseModule {
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();
 		}, 50 /* after Elementor page */ );
+
+		add_action( 'elementor/init', function () {
+			$this->set_kit_library_settings();
+		}, 12 /** after the initiation of the connect library */ );
 	}
 }

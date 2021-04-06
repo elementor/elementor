@@ -4,7 +4,7 @@ import Content from '../../../../../assets/js/layout/content';
 import ItemSidebar from '../components/item-sidebar';
 import ItemContentOverview from '../components/item-content-overview';
 import useGroupedKitContent from '../hooks/use-grouped-kit-content';
-import ItemHeader from '../components/layout/item-header';
+import ItemHeader from '../components/item-header';
 import { useNavigate } from '@reach/router';
 
 const { useMemo } = React;
