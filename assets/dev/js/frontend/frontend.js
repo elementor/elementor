@@ -7,11 +7,14 @@ import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import URLActions from './utils/url-actions';
 import Swiper from './utils/swiper-bc';
+import LightboxManager from './utils/lightbox/lightbox-manager';
+import AssetsLoader from './utils/assets-loader';
+
+import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
-	LightboxModule = require( 'elementor-frontend/utils/lightbox/lightbox' );
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -28,6 +31,8 @@ export default class Frontend extends elementorModules.ViewModule {
 				return ! elementorFrontend.config.experimentalFeatures.e_dom_optimization;
 			},
 		};
+
+		this.populateActiveBreakpointsConfig();
 	}
 
 	// TODO: BC since 2.5.0
@@ -151,10 +156,13 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			anchors: new AnchorsModule(),
-			lightbox: new LightboxModule(),
+			get lightbox() {
+				return LightboxManager.getLightbox();
+			},
 			urlActions: new URLActions(),
 			swiper: Swiper,
 			environment: environment,
+			assetsLoader: new AssetsLoader(),
 		};
 
 		// TODO: BC since 2.4.0
@@ -294,12 +302,39 @@ export default class Frontend extends elementorModules.ViewModule {
 		jQuery.migrateTrace = false;
 	}
 
+	/**
+	 * Initialize the modules' widgets handlers.
+	 */
+	initModules() {
+		let handlers = {
+			shapes: Shapes,
+		};
+
+		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
+			this.modulesHandlers[ moduleName ] = new ModuleClass();
+		} );
+	}
+
+	populateActiveBreakpointsConfig() {
+		this.config.responsive.activeBreakpoints = {};
+
+		Object.entries( this.config.responsive.breakpoints ).forEach( ( [ breakpointKey, breakpointData ] ) => {
+			if ( breakpointData.is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = breakpointData;
+			}
+		} );
+	}
+
 	init() {
 		this.hooks = new EventManager();
 
 		this.storage = new Storage();
 
 		this.elementsHandler = new ElementsHandler( jQuery );
+
+		this.modulesHandlers = {};
 
 		this.addUserAgentClasses();
 
@@ -316,6 +351,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		// Keep this line before `initOnReadyComponents` call
 		this.elements.$window.trigger( 'elementor/frontend/init' );
 
+		this.initModules();
+
 		this.initOnReadyElements();
 
 		this.initOnReadyComponents();
@@ -325,6 +362,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.documentsManager = new DocumentsManager();
 
 		this.trigger( 'components:init' );
+
+		new LightboxManager();
 	}
 }
 

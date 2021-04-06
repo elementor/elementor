@@ -9,11 +9,27 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	},
 
 	getSelect2DefaultOptions: function() {
-		return {
+		const defaultOptions = {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
 			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
-		};
+		},
+			lockedOptions = this.model.get( 'lockedOptions' );
+
+		// If any non-deletable options are passed, remove the 'x' element from the template for selected items.
+		if ( lockedOptions ) {
+			defaultOptions.templateSelection = ( data, container ) => {
+				if ( lockedOptions.includes( data.id ) ) {
+					jQuery( container )
+						.addClass( 'e-non-deletable' )
+						.find( '.select2-selection__choice__remove' ).remove();
+				}
+
+				return data.text;
+			};
+		}
+
+		return defaultOptions;
 	},
 
 	getSelect2Options: function() {
@@ -31,8 +47,22 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 				$element: this.ui.select,
 				options: this.getSelect2Options(),
 			} );
+
+			this.handleLockedOptions();
 		} else {
 			this.ui.select.trigger( 'change' );
+		}
+	},
+
+	handleLockedOptions() {
+		const lockedOptions = this.model.get( 'lockedOptions' );
+
+		if ( lockedOptions ) {
+			this.ui.select.on( 'select2:unselecting', ( event ) => {
+				if ( lockedOptions.includes( event.params.args.data.id ) ) {
+					event.preventDefault();
+				}
+			} );
 		}
 	},
 

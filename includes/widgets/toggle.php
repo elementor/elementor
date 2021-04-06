@@ -246,8 +246,8 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -258,8 +258,8 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -276,7 +276,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-toggle-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -285,7 +285,7 @@ class Widget_Toggle extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-item',
+				'selector' => '{{WRAPPER}} .elementor-toggle-item',
 			]
 		);
 
@@ -305,7 +305,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -343,10 +343,18 @@ class Widget_Toggle extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-toggle-title',
+				'selector' => '{{WRAPPER}} .elementor-toggle-title',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-toggle-title',
 			]
 		);
 
@@ -357,7 +365,7 @@ class Widget_Toggle extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-title' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -401,8 +409,8 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -413,8 +421,8 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-title.elementor-active .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
 				],
 			]
 		);
@@ -431,8 +439,8 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-toggle .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -453,7 +461,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
 				],
 			]
 		);
@@ -464,7 +472,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_TEXT,
@@ -476,10 +484,18 @@ class Widget_Toggle extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'content_typography',
-				'selector' => '{{WRAPPER}} .elementor-toggle .elementor-tab-content',
+				'selector' => '{{WRAPPER}} .elementor-tab-content',
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'content_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-content',
 			]
 		);
 
@@ -490,7 +506,7 @@ class Widget_Toggle extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle .elementor-tab-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
