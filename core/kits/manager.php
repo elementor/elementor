@@ -315,7 +315,7 @@ class Manager {
 				'title' => __( 'Site Settings', 'elementor' ),
 				'sub_title' => __( 'Site', 'elementor' ),
 				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
-				'class' => 'elementor-general-section first',
+				'class' => 'elementor-general-section first elementor-site-settings',
 			];
 		}
 
