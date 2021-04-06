@@ -541,11 +541,14 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
-	initPreviewResizable() {
+	activatePreviewResizable() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 
+		if ( $responsiveWrapper.resizable( 'instance' ) ) {
+			return;
+		}
+
 		$responsiveWrapper.resizable( {
-			disabled: true,
 			handles: 'e, s, w',
 			stop: () => {
 				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
@@ -563,7 +566,9 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	destroyPreviewResizable() {
-		this.$previewResponsiveWrapper.resizable( 'destroy' );
+		if ( this.$previewResponsiveWrapper.resizable( 'instance' ) ) {
+			this.$previewResponsiveWrapper.resizable( 'destroy' );
+		}
 	}
 
 	broadcastPreviewResize( size ) {
@@ -603,14 +608,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	updatePreviewResizeOptions() {
-		const $responsiveWrapper = this.$previewResponsiveWrapper;
-		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
-		const isResizable = $responsiveWrapper.is( '.ui-resizable' );
+		const $responsiveWrapper = this.$previewResponsiveWrapper,
+			currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			if ( isResizable ) {
-				$responsiveWrapper.resizable( 'disable' );
-			}
+			this.destroyPreviewResizable();
 
 			$responsiveWrapper.css( {
 				'--e-editor-preview-width': '',
@@ -622,13 +624,11 @@ export default class EditorBase extends Marionette.Application {
 				height: this.$previewWrapper.outerHeight() - 40,
 			} );
 		} else {
-			if ( ! isResizable ) {
-				$responsiveWrapper.resizable( 'enable' );
-			}
+			this.activatePreviewResizable();
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			$responsiveWrapper.resizable( 'enable' )
+			$responsiveWrapper
 				.resizable( 'option', { ...breakpointResizeOptions } )
 				.css( {
 					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
@@ -754,22 +754,15 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
-		this.initPreviewResizable();
-		elementor.changeDeviceMode( 'mobile' );
-	}
 
-	toggleDeviceMode() {
-		if ( ! this.isDeviceModeActive() ) {
-			this.enterDeviceMode();
-			return;
-		}
-
-		this.exitDeviceMode();
+		this.activatePreviewResizable();
 	}
 
 	exitDeviceMode() {
 		elementor.changeDeviceMode( 'desktop' );
+
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+
 		this.destroyPreviewResizable();
 	}
 
@@ -1024,8 +1017,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
-
-		this.initPreviewResizable();
 
 		this.previewLoadedOnce = true;
 	}
