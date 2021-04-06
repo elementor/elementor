@@ -4,7 +4,6 @@ namespace Elementor\Modules\Usage;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
 use Elementor\Plugin;
@@ -168,7 +167,7 @@ class Module extends BaseModule {
 		$new_status = isset( $data['settings']['post_status'] ) ? $data['settings']['post_status'] : '';
 
 		if ( $current_status === $new_status ) {
-			$this->remove_document_usage( $document );
+			$this->remove_from_global( $document );
 		}
 
 		$this->is_document_saving = true;
@@ -218,7 +217,7 @@ class Module extends BaseModule {
 		$is_private_unpublish = 'private' === $old_status && 'private' !== $new_status;
 
 		if ( $is_public_unpublish || $is_private_unpublish ) {
-			$this->remove_document_usage( $document );
+			$this->remove_from_global( $document );
 		}
 
 		$is_public_publish = 'publish' !== $old_status && 'publish' === $new_status;
@@ -243,7 +242,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->remove_document_usage( $document );
+		$this->remove_from_global( $document );
 	}
 
 	/**
@@ -257,7 +256,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
-		$params['usages']['documents'] = get_option( self::DOCUMENT_OPTION_NAME );
+		$params['usages']['documents'] = DocumentSettingsUsage::instance()->all();
 
 		return $params;
 	}
@@ -316,7 +315,7 @@ class Module extends BaseModule {
 	 * @param string $control
 	 * @param int $amount
 	 */
-	private function increase_elements_controls_count( &$element_ref, $tab, $section, $control, $amount ) {
+	private function increase_controls_count( &$element_ref, $tab, $section, $control, $amount ) {
 		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
 			$element_ref['controls'][ $tab ] = [];
 		}
@@ -343,7 +342,7 @@ class Module extends BaseModule {
 	 *
 	 * @return int ($changed_controls_count).
 	 */
-	private function add_elements_controls( $settings_controls, $element_controls, &$element_ref ) {
+	private function add_controls( $settings_controls, $element_controls, &$element_ref ) {
 		$changed_controls_count = 0;
 
 		// Loop over all element settings.
@@ -363,7 +362,7 @@ class Module extends BaseModule {
 
 			// If setting value is not the control default.
 			if ( $value !== $control_config['default'] ) {
-				$this->increase_elements_controls_count( $element_ref, $tab, $section, $control, 1 );
+				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
 				$changed_controls_count++;
 			}
@@ -387,7 +386,7 @@ class Module extends BaseModule {
 			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
 
 			// Add dynamic count to controls under `general` tab.
-			$this->increase_elements_controls_count(
+			$this->increase_controls_count(
 				$element_ref,
 				Settings::TAB_GENERAL,
 				Manager::DYNAMIC_SETTING_KEY,
@@ -407,7 +406,7 @@ class Module extends BaseModule {
 	 * @param string $doc_name
 	 * @param array $doc_usage
 	 */
-	private function add_document_elements_to_global( $doc_name, $doc_usage ) {
+	private function add_to_global( $doc_name, $doc_usage ) {
 		$global_usage = get_option( self::ELEMENTS_OPTION_NAME, [] );
 
 		foreach ( $doc_usage as $element_type => $element_usage_data ) {
@@ -432,7 +431,7 @@ class Module extends BaseModule {
 			foreach ( $element_usage_data['controls'] as $tab => $sections ) {
 				foreach ( $sections as $section => $controls ) {
 					foreach ( $controls as $control => $count ) {
-						$this->increase_elements_controls_count( $global_usage_ref, $tab, $section, $control, $count );
+						$this->increase_controls_count( $global_usage_ref, $tab, $section, $control, $count );
 					}
 				}
 			}
@@ -505,7 +504,7 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	private function get_document_elements_usage( $elements ) {
+	private function get_elements_usage( $elements ) {
 		$usage = [];
 
 		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
@@ -540,7 +539,7 @@ class Module extends BaseModule {
 				// Add dynamic values.
 				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
 
-				$changed_controls_count = $this->add_elements_controls( $settings_controls, $element_controls, $element_ref );
+				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
 
 				$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
 
@@ -577,11 +576,11 @@ class Module extends BaseModule {
 
 	private function add_document_usage( $document, $data ) {
 		if ( $data ) {
-			$elements_usage = $this->get_document_elements_usage( $document->get_elements_raw_data( $data ) );
+			$elements_usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
 			$document->update_meta( self::ELEMENTS_META_KEY, $elements_usage );
 
-			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
+			$this->add_to_global( $document->get_name(), $elements_usage );
 		}
 
 		DocumentSettingsUsage::instance()
@@ -589,7 +588,7 @@ class Module extends BaseModule {
 			->save();
 	}
 
-	private function remove_document_usage( $document ) {
+	private function remove_from_global( $document ) {
 		$this->remove_document_elements_from_global( $document );
 
 		DocumentSettingsUsage::instance()

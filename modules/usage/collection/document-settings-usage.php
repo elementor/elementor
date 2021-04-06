@@ -76,6 +76,13 @@ class DocumentSettingsUsage extends Collection {
 		return $usage;
 	}
 
+	/**
+	 * Add, adds the document to collection.
+	 *
+	 * @param Document $document
+	 *
+	 * @return $this
+	 */
 	public function add( $document ) {
 		$current_usage = $this->get_usage( $document );
 		$document_name = $document->get_name();
@@ -102,6 +109,13 @@ class DocumentSettingsUsage extends Collection {
 		return new static( $this->all() );
 	}
 
+	/**
+	 * Remove, remove's the document from the collection.
+	 *
+	 * @param Document $document
+	 *
+	 * @return $this
+	 */
 	public function remove( $document ) {
 		$current_usage = $document->get_meta( Module::DOCUMENT_META_KEY );
 
@@ -122,6 +136,11 @@ class DocumentSettingsUsage extends Collection {
 		return new static( $this->all() );
 	}
 
+	/**
+	 * Save, saves the current collection using `update_option`.
+	 *
+	 * @return $this
+	 */
 	public function save() {
 		update_option( Module::DOCUMENT_OPTION_NAME, $this->all(), false );
 

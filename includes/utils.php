@@ -694,18 +694,4 @@ class Utils {
 
 		return new \WP_Query( $args );
 	}
-
-	public static function remove_empty_array_recursive( $array ) {
-		foreach ( $array as $key => &$value ) {
-			if ( is_array( $value ) ) {
-				$value = self::remove_empty_array_recursive( $value );
-			}
-
-			if ( empty( $value ) ) {
-				unset( $array[ $key ] );
-			}
-		}
-
-		return $array;
-	}
 }
