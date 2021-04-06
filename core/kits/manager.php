@@ -315,6 +315,7 @@ class Manager {
 				'title' => __( 'Site Settings', 'elementor' ),
 				'sub_title' => __( 'Site', 'elementor' ),
 				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'class' => 'elementor-general-section first',
 			];
 		}
 
@@ -351,6 +352,6 @@ class Manager {
 
 		add_filter( 'elementor/frontend/admin_bar/settings', function ( $admin_bar_config ) {
 			return $this->add_menu_in_admin_bar( $admin_bar_config );
-		} );
+		}, 0 /* Before site-editor (theme-builder) */ );
 	}
 }
