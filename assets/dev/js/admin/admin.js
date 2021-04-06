@@ -300,12 +300,13 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 		},
 
 		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
 			Object.entries( environment ).forEach( ( [ key, value ] ) => {
 				if ( ! value ) {
 					return;
 				}
 
-				document.querySelector( 'body' ).classList.add( 'e--ua-' + key );
+				body.classList.add( 'e--ua-' + key );
 			} );
 		},
 
