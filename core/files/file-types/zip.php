@@ -20,24 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Zip extends Base {
 
 	/**
-	 * Get Mime Types
-	 *
-	 * Return an array of mime types compatible with this file type
-	 *
-	 * @since 3.3.0
-	 *
-	 * @return array
-	 */
-	public function get_mime_types() {
-		return [
-			'application/zip',
-			'application/x-zip',
-			'application/octet-stream',
-			'application/x-zip-compressed',
-		];
-	}
-
-	/**
 	 * Get File Extension
 	 *
 	 * Returns the file type's file extension
@@ -72,6 +54,8 @@ class Zip extends Base {
 	 *
 	 * @since 3.3.0
 	 *
+	 * @param string $file_path
+	 * @param array|null $allowed_file_types
 	 * @return array|\WP_Error
 	 */
 	public function extract( $file_path, $allowed_file_types ) {
@@ -105,8 +89,6 @@ class Zip extends Base {
 	 *
 	 * Accepts a zipArchive instance and an array of allowed file types. Iterates over the zip archive's files and
 	 * checks if their extensions are in the list of allowed file types. Returns an array containing all valid files.
-	 * This method doesn't validate that the contents of the files (mime type) match the file extensions - that
-	 * validation happens in the Uploads Manager once the files are extracted.
 	 *
 	 * @since 3.3.0
 	 *
@@ -162,7 +144,6 @@ class Zip extends Base {
 			} else {
 				$file_names[] = [
 					'name' => $full_possible_file_name,
-					'type' => mime_content_type( $full_possible_file_name ),
 				];
 			}
 		}

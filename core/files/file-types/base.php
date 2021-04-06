@@ -20,17 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base extends Base_Object {
 
 	/**
-	 * Get Allowed Mime Types
-	 *
-	 * Returns an array of the mime types allowed for upload
-	 *
-	 * @since 3.3.0
-	 *
-	 * @return array mime types
-	 */
-	abstract public function get_mime_types();
-
-	/**
 	 * Get File Extension
 	 *
 	 * Returns the file type's file extension

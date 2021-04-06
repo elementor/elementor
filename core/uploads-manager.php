@@ -27,7 +27,7 @@ class Uploads_Manager extends Base_Object {
 	 * @var File_Type_Base[]
 	 */
 	private $file_type_handlers = [];
-	private $allowed_mime_types;
+	private $allowed_file_extensions;
 	private $are_unfiltered_files_enabled;
 
 	/**
@@ -74,7 +74,7 @@ class Uploads_Manager extends Base_Object {
 		}
 
 		foreach ( $extracted['files'] as $extracted_file ) {
-			// Each file is an array with a 'name' (file path) and 'type' (mime type) properties.
+			// Each file is an array with a 'name' (file path) property.
 			if ( $this->validate_file( $extracted_file ) ) {
 				$validation_result[] = $extracted_file;
 			}
@@ -208,20 +208,21 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
-	 * Add Mime Type To Allowed Mimes List
+	 * Add File Extension To Allowed Extensions List
 	 *
 	 * @since 3.3.0
 	 *
 	 * @param string $file_type
 	 */
-	private function add_mime_type_to_allowed_mimes_list( $file_type ) {
+	private function add_file_extension_to_allowed_extensions_list( $file_type ) {
 		$file_handler = $this->file_type_handlers[ $file_type ];
-
-		$mime_types = $file_handler->get_mime_types();
 
 		$file_extension = $file_handler->get_file_extension();
 
-		$this->allowed_mime_types[ $file_extension ] = $mime_types;
+		// Only add the file extension to the list if it doesn't already exist in it.
+		if ( ! in_array( $file_extension, $this->allowed_file_extensions, true ) ) {
+			$this->allowed_file_extensions[] = $file_extension;
+		}
 	}
 
 	/**
@@ -249,9 +250,10 @@ class Uploads_Manager extends Base_Object {
 		}
 
 		$new_file_array = [
+			// the original uploaded file name
 			'name' => $file['fileName'],
+			// The path to the temporary file
 			'tmp_name' => $temp_filename,
-			'type' => mime_content_type( $temp_filename ),
 		];
 
 		if ( isset( $file['allowedFileTypes'] ) ) {
@@ -282,14 +284,13 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 */
 	private function validate_file( array $file ) {
-		// Get the file's extension (Not to be trusted, will be checked for matching mime types).
 		$file_extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
-		$file_allowed_mime_types = $this->get_allowed_mime_types( $file_extension );
+		$allowed_file_extensions = $this->get_allowed_file_extensions();
 
-		// Check if the file type is in the allowed mime types list. If it is a non-standard mime type (not enabled by
-		// default in WordPress) and unfiltered file uploads are not enabled, it will not be in the allowed mime types
-		// list.
-		if ( ! $file_allowed_mime_types || ! in_array( $file['type'], $file_allowed_mime_types, true ) ) {
+		// Check if the file type (extension) is in the allowed extensions list. If it is a non-standard file type (not
+		// enabled by default in WordPress) and unfiltered file uploads are not enabled, it will not be in the allowed
+		// file extensions list.
+		if ( ! in_array( $file_extension, $allowed_file_extensions, true ) ) {
 			return new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
 		}
 
@@ -344,28 +345,27 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
-	 * Get Allowed Mime Types
+	 * Get Allowed File Extensions
 	 *
-	 * Get the allowed mime types for a certain file extension.
+	 * Retrieve an array containing the list of file extensions allowed for upload.
 	 *
 	 * @since 3.3.0
 	 *
-	 * @param string|null $file_extension
-	 * @return array mime type/s
+	 * @return array file extension/s
 	 */
-	private function get_allowed_mime_types( $file_extension = null ) {
-		if ( ! $this->allowed_mime_types ) {
-			$this->allowed_mime_types = get_allowed_mime_types();
+	private function get_allowed_file_extensions() {
+		if ( ! $this->allowed_file_extensions ) {
+			$this->allowed_file_extensions = array_keys( get_allowed_mime_types() );
 
 			if ( $this->are_unfiltered_uploads_enabled() ) {
 				foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
-					// Add the mime type to the allowed mimes list only if unfiltered files upload is enabled.
-					$this->add_mime_type_to_allowed_mimes_list( $file_type );
+					// Add the file extension to the allowed extensions list only if unfiltered files upload is enabled.
+					$this->add_file_extension_to_allowed_extensions_list( $file_type );
 				}
 			}
 		}
 
-		return self::get_items( $this->allowed_mime_types, $file_extension );
+		return $this->allowed_file_extensions;
 	}
 
 	public function __construct() {
