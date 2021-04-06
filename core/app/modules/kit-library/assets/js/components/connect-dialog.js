@@ -4,7 +4,7 @@ import { useSettingsContext } from '../context/settings-context';
 const { useEffect, useRef } = React;
 
 export default function ConnectDialog( props ) {
-	const { library_connect_url: libraryConnectUrl } = useSettingsContext();
+	const { settings: { library_connect_url: libraryConnectUrl } } = useSettingsContext();
 	const approveButtonRef = useRef();
 
 	useEffect( () => {

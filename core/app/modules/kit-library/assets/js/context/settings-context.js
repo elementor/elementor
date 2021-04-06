@@ -1,4 +1,4 @@
-const { createContext, useContext } = React;
+const { createContext, useContext, useState, useEffect, useCallback } = React;
 
 const SettingsContext = createContext( {} );
 
@@ -19,8 +19,18 @@ export function useSettingsContext() {
  * @constructor
  */
 export function SettingsProvider( props ) {
+	const [ settings, setSettings ] = useState( {} );
+
+	const updateSettings = useCallback( ( newSettings ) => {
+		setSettings( ( prev ) => ( { ...prev, ...newSettings } ) );
+	}, [ setSettings ] );
+
+	useEffect( () => {
+		setSettings( props.value );
+	}, [ setSettings ] );
+
 	return (
-		<SettingsContext.Provider value={ props.value }>
+		<SettingsContext.Provider value={ { settings, setSettings, updateSettings } }>
 			{ props.children }
 		</SettingsContext.Provider>
 	);

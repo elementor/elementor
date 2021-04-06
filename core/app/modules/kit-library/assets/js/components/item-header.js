@@ -11,7 +11,10 @@ const { useMemo, useState } = React;
 
 export default function ItemHeader( props ) {
 	const navigate = useNavigate();
-	const { is_library_connected: isLibraryConnected } = useSettingsContext();
+	const {
+		settings: { is_library_connected: isLibraryConnected },
+		updateSettings,
+	} = useSettingsContext();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
@@ -36,7 +39,7 @@ export default function ItemHeader( props ) {
 			},
 		},
 		...props.buttons,
-	], [ props.buttons ] );
+	], [ props.buttons, isLibraryConnected ] );
 
 	return (
 		<>
@@ -55,7 +58,10 @@ export default function ItemHeader( props ) {
 			{
 				isConnectDialogOpen && <ConnectDialog
 					onClose={ () => setIsConnectDialogOpen( false ) }
-					onSuccess={ () => setIsImportDialogOpen( true ) }
+					onSuccess={ () => {
+						updateSettings( { is_library_connected: true } );
+						setIsImportDialogOpen( true );
+					} }
 					onError={ ( message ) => setError( message ) }
 				/>
 			}
