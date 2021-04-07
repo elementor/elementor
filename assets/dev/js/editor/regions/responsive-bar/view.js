@@ -40,7 +40,6 @@ export default class View extends Marionette.ItemView {
 		this.ui.switcherLabel.add( this.ui.closeButton ).add( this.ui.breakpointSettingsButton ).tipsy(
 			{
 				gravity: 'n',
-				offset: 5,
 				title() {
 					return jQuery( this ).data( 'tooltip' );
 				},
@@ -79,7 +78,8 @@ export default class View extends Marionette.ItemView {
 		const isInSettingsPanelActive = 'panel/global/menu' === elementor.documents.currentDocument.config.panel.default_route;
 
 		if ( isInSettingsPanelActive ) {
-			$e.route( 'panel/elements/categories' );
+			$e.run( 'panel/global/close' );
+
 			return;
 		}
 

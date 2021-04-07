@@ -12,7 +12,7 @@ body {
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
-	z-index: 2;
+	z-index: 100; // Above the Responsive Bar
 	display: none;
 
 	body.elementor-navigator-docked & {

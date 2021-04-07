@@ -12,8 +12,8 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			classes += ' elementor-template-library-template-' + this.model.get( 'type' );
 		}
 
-		if ( this.model.get( 'isPro' ) ) {
-			classes += ' elementor-template-library-pro-template';
+		if ( elementor.config.library_connect.access_levels.core !== this.model.get( 'accessLevel' ) ) {
+			classes += ` elementor-template-library-pro-template elementor-template-library-pro-template__access-level-${ this.model.get( 'accessLevel' ) }`;
 		}
 
 		return classes;
