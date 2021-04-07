@@ -984,9 +984,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				this.initNavigator();
 			} );
-
-		this.initNavigator();
 
 		this.logSite();
 	}
