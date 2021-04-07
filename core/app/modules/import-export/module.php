@@ -201,18 +201,18 @@ class Module extends BaseModule {
 			<?php foreach ( $content_data as $data ) { ?>
 				<div class="tab-import-export-kit__container">
 					<div class="tab-import-export-kit__box">
-						<h2><?php echo $data['title'] ?></h2>
-						<a href="<?php echo $data['button']['url'] ?>" class="elementor-button elementor-button-success">
-							<?php echo $data['button']['text'] ?>
+						<h2><?php echo $data['title']; ?></h2>
+						<a href="<?php echo $data['button']['url']; ?>" class="elementor-button elementor-button-success">
+							<?php echo $data['button']['text']; ?>
 						</a>
 					</div>
-					<p><?php echo $data['description'] ?></p>
-					<a href="<?php echo $data['button']['url'] ?>"><?php echo $data['link']['text'] ?></a>
+					<p><?php echo $data['description']; ?></p>
+					<a href="<?php echo $data['button']['url']; ?>"><?php echo $data['link']['text']; ?></a>
 				</div>
 			<?php } ?>
 		</div>
 
-		<p class="tab-import-export-kit__info"><?php echo $info_text ?></p>
+		<p class="tab-import-export-kit__info"><?php echo $info_text; ?></p>
 		<?php
 	}
 
