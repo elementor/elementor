@@ -21,7 +21,6 @@
 
 .e-responsive-bar {
 	width: 100%;
-	height: 100%;
 	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
 	z-index: 1;
 	transition: margin-top .2s ease-in-out;
@@ -74,7 +73,7 @@
 			display: block;
 			height: 20px;
 			width: 1px;
-			background-color: #6D7882;
+			background-color: $editor-dark;
 			position: absolute;
 			@include end(0);
 			top: calc(50% - 10px);
@@ -82,14 +81,16 @@
 	}
 
   	&__size-inputs-wrapper {
+		display: flex;
+		align-items: center;
 	  	margin-inline-end: 8px;
-	  	color: #6D7882;
+	  	color: $editor-dark;
 	}
 
 	&__input-size {
 		background-color: transparent;
 		color: $editor-light;
-		border: 1px solid #6D7882 !important;
+		border: 1px solid $editor-dark !important;
 		padding: 0 3px;
 		width: 38px;
 		font-size: 12px;
@@ -98,7 +99,7 @@
 		margin: auto 8px auto 4px;
 
 		&-separator {
-			color: #6D7882;
+			color: $editor-dark;
 		}
 	}
 

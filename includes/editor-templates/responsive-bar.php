@@ -1,22 +1,30 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Breakpoints\Breakpoint;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 // TODO: Use API data instead of this static array, once it is available.
-$breakpoints = [
-	'mobile' => __( 'Mobile', 'elementor' ),
-	'tablet' => __( 'Tablet', 'elementor' ),
-	'desktop' => __( 'Desktop', 'elementor' ),
-]; ?>
+$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+$breakpoints['desktop'] = [];
+
+$breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
+?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
 		<div class="e-responsive-bar__col"></div>
 		<div class="e-responsive-bar__col">
 			<div class="e-responsive-bar-switcher">
-			<?php foreach ( $breakpoints as $name => $label ) {
+			<?php foreach ( $breakpoints as $name => $breakpoint ) {
+				if ( 'desktop' === $name ) {
+					$tooltip_label = __( 'Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
+				} else {
+					$tooltip_label = sprintf( $breakpoint_label, $breakpoint->get_label(), $breakpoint->get_value() );
+				}
 				printf( '<label
 					class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
 					for="e-responsive-bar-switch-%1$s"
@@ -25,7 +33,7 @@ $breakpoints = [
 					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
 					<i class="eicon-device-%1$s" aria-hidden="true"></i>
 					<span class="screen-reader-text">%2$s</span>
-				</label>', $name, $label );
+				</label>', $name, $tooltip_label );
 			} ?>
 			</div>
 		</div>
