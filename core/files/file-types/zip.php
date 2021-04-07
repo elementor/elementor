@@ -65,9 +65,7 @@ class Zip extends Base {
 
 		$zip = new \ZipArchive();
 
-		$wp_upload_dir = wp_upload_dir();
-
-		$temp_extraction_directory = $wp_upload_dir['basedir'] . '/elementor/tmp/' . uniqid();
+		$temp_extraction_directory = Plugin::$instance->uploads_manager->get_temp_dir() . uniqid();
 
 		$zip->open( $file_path );
 
