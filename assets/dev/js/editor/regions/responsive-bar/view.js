@@ -11,8 +11,8 @@ export default class View extends Marionette.ItemView {
 		const prefix = '.' + this.className();
 
 		return {
-			switcherOption: prefix + '-switcher__option',
-			switcherLabel: prefix + '-switcher__label',
+			switcherInput: prefix + '-switcher__option input',
+			switcherLabel: prefix + '-switcher__option',
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
 			sizeInputHeight: prefix + '__input-height',
@@ -23,7 +23,7 @@ export default class View extends Marionette.ItemView {
 
 	events() {
 		return {
-			'change @ui.switcherOption': 'onBreakpointSelected',
+			'change @ui.switcherInput': 'onBreakpointSelected',
 			'change @ui.sizeInputWidth': 'onSizeInputChange',
 			'change @ui.sizeInputHeight': 'onSizeInputChange',
 			'click @ui.closeButton': 'onCloseButtonClick',
@@ -49,10 +49,13 @@ export default class View extends Marionette.ItemView {
 
 	onDeviceModeChange() {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-			$currentDeviceSwitcherOption = this.ui.switcherOption.filter( '[value=' + currentDeviceMode + ']' );
+			$currentDeviceSwitcherInput = this.ui.switcherInput.filter( '[value=' + currentDeviceMode + ']' );
 
-		if ( ! $currentDeviceSwitcherOption.prop( 'checked' ) ) {
-			$currentDeviceSwitcherOption.prop( 'checked', true );
+		this.ui.switcherLabel.attr( 'aria-selected', false );
+		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true );
+
+		if ( ! $currentDeviceSwitcherInput.prop( 'checked' ) ) {
+			$currentDeviceSwitcherInput.prop( 'checked', true );
 		}
 	}
 
