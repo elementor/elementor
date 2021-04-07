@@ -9,37 +9,22 @@ import ConnectDialog from './connect-dialog';
 
 const { useMemo, useState } = React;
 
+import './item-header.scss';
+
 export default function ItemHeader( props ) {
 	const navigate = useNavigate();
-	const {
-		settings: { is_library_connected: isLibraryConnected },
-		updateSettings,
-	} = useSettingsContext();
+	const { updateSettings } = useSettingsContext();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
 
-	const buttons = useMemo( () => [
-		{
-			id: 'apply-kit',
-			text: __( 'Apply Kit', 'elementor' ),
-			hideText: false,
-			variant: 'contained',
-			color: 'primary',
-			size: 'sm',
-			onClick: () => {
-				if ( ! isLibraryConnected ) {
-					setIsConnectDialogOpen( true );
+	const applyButton = useApplyButton( props.model, {
+		onConnect: () => setIsConnectDialogOpen( true ),
+		onApply: () => setIsImportDialogOpen( true ),
+	} );
 
-					return;
-				}
-
-				setIsImportDialogOpen( true );
-			},
-		},
-		...props.buttons,
-	], [ props.buttons, isLibraryConnected ] );
+	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
 
 	return (
 		<>
@@ -58,8 +43,16 @@ export default function ItemHeader( props ) {
 			{
 				isConnectDialogOpen && <ConnectDialog
 					onClose={ () => setIsConnectDialogOpen( false ) }
-					onSuccess={ () => {
-						updateSettings( { is_library_connected: true } );
+					onSuccess={ ( data ) => {
+						updateSettings( {
+							is_library_connected: true,
+							access_level: data.access_level || 0,
+						} );
+
+						if ( data.access_level < props.model.accessLevel ) {
+							return;
+						}
+
 						setIsImportDialogOpen( true );
 					} }
 					onError={ ( message ) => setError( message ) }
@@ -101,3 +94,52 @@ ItemHeader.propTypes = {
 	centerSlot: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
 };
+
+function useApplyButton( model, { onConnect, onApply } ) {
+	const {
+		settings: {
+			is_library_connected: isLibraryConnected,
+			access_level: accessLevel,
+			is_pro: isPro,
+			subscription_plans: subscriptionPlans,
+		},
+	} = useSettingsContext();
+
+	return useMemo( () => {
+		if ( ! isLibraryConnected && ( isPro || model.accessLevel <= accessLevel ) ) {
+			return {
+				id: 'connect',
+				text: __( 'Apply Kit', 'elementor' ), // The label is Apply kit but the this is connect button
+				hideText: false,
+				variant: 'contained',
+				color: 'primary',
+				size: 'sm',
+				onClick: onConnect,
+			};
+		}
+		if ( model.accessLevel > accessLevel ) {
+			const subscriptionPlan = subscriptionPlans[ model.accessLevel ];
+
+			return {
+				id: 'promotion',
+				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+				hideText: false,
+				variant: 'contained',
+				color: 'cta',
+				size: 'sm',
+				url: subscriptionPlan.url,
+				target: '_blank',
+			};
+		}
+
+		return {
+			id: 'apply',
+			text: __( 'Apply Kit', 'elementor' ),
+			hideText: false,
+			variant: 'contained',
+			color: 'primary',
+			size: 'sm',
+			onClick: onApply,
+		};
+	}, [ model, isLibraryConnected, isPro, accessLevel ] );
+}

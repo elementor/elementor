@@ -6,8 +6,6 @@ import Index from './pages';
 import Item from './pages/item';
 import Preview from './pages/preview';
 
-import './app.scss';
-
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {

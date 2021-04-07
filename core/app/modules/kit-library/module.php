@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary;
 
+use Elementor\Utils;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -36,7 +37,28 @@ class Module extends BaseModule {
 		);
 	}
 
-	protected function set_kit_library_settings() {
+	private function get_subscription_plans() {
+		// TODO ACCESS LEVEL: should come from server or consts.
+		return [
+			0 => [
+				'label' => null,
+				'promotion_url' => null,
+				'color' => null,
+			],
+			1 => [
+				'label' => __( 'Pro', 'elementor' ),
+				'promotion_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro' ),
+				'color' => '#92003B',
+			],
+			20 => [
+				'label' => __( 'Expert', 'elementor' ),
+				'promotion_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=goexpert' ),
+				'color' => '#010051',
+			],
+		];
+	}
+
+	private function set_kit_library_settings() {
 		if ( ! Plugin::$instance->common ) {
 			return;
 		}
@@ -45,8 +67,11 @@ class Module extends BaseModule {
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
+			'subscription_plans' => $this->get_subscription_plans(),
+			'is_pro' => false,
 			'is_library_connected' => $library->is_connected(),
 			'library_connect_url'  => $library->get_admin_url( 'authorize' ),
+			'access_level' => 0, // TODO ACCESS LEVEL: Use CORE const.
 		] );
 	}
 

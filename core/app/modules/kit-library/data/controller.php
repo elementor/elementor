@@ -41,10 +41,10 @@ class Controller extends Controller_Base {
 				],
 				[
 					'id' => 3,
-					'title' => 'Something',
+					'title' => 'Hotel 2',
 					'is_favorite' => false,
 					'thumbnail_url' => 'https://library.elementor.com/wp-content/uploads/2017/03/lp2-l.png',
-					'access_level' => 20,
+					'access_level' => 0,
 					'trend_index' => 80,
 					'popularity_index' => 80,
 					'featured_index' => 80,

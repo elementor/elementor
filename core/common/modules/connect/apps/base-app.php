@@ -487,15 +487,25 @@ abstract class Base_App {
 		$this->set( 'state', wp_generate_password( 12, false ) );
 	}
 
+	protected function get_popup_success_event_data() {
+		return [];
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access protected
 	 */
 	protected function print_popup_close_script( $url ) {
+		$data = $this->get_popup_success_event_data();
+
 		?>
 		<script>
 			if ( opener && opener !== window ) {
-				opener.jQuery( 'body' ).trigger( 'elementor/connect/success/<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>' );
+				opener.jQuery( 'body' ).trigger(
+					'elementor/connect/success/<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>',
+					<?php echo wp_json_encode( $data ); ?>
+				);
+
 				window.close();
 				opener.focus();
 			} else {

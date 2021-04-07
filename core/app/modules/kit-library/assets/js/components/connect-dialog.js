@@ -9,7 +9,7 @@ export default function ConnectDialog( props ) {
 
 	useEffect( () => {
 		jQuery( approveButtonRef.current ).elementorConnect( {
-			success: props.onSuccess,
+			success: ( e, data ) => props.onSuccess( data ),
 			error: () => props.onError( __( 'Unable to connect', 'elementor' ) ),
 			UTMSource: () => '&utm_source=kit-library&utm_medium=wp-dash&utm_campaign=',
 		} );
