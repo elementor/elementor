@@ -568,7 +568,10 @@ export default class EditorBase extends Marionette.Application {
 
 	broadcastPreviewResize( size ) {
 		this.channels.responsivePreview
-			.reply( 'size', size )
+			.reply( 'size', size || {
+				width: this.$previewResponsiveWrapper.outerWidth(),
+				height: this.$previewResponsiveWrapper.outerHeight(),
+			} )
 			.trigger( 'resize' );
 	}
 
@@ -784,13 +787,6 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
-	desktopResizeHandler() {
-		console.log( jQuery( '#elementor-preview-responsive-wrapper' ).outerWidth(), jQuery( '#elementor-preview-responsive-wrapper' ).outerHeight() );
-
-		jQuery( '#viewport_height' ).val( jQuery( '#elementor-preview-responsive-wrapper' ).outerHeight() );
-		jQuery( '#viewport_width' ).val( jQuery( '#elementor-preview-responsive-wrapper' ).outerWidth() );
-	}
-
 	enterPreviewMode( hidePanel ) {
 		let $elements = elementorFrontend.elements.$body;
 
@@ -840,8 +836,23 @@ export default class EditorBase extends Marionette.Application {
 	changeDeviceMode( newDeviceMode ) {
 		const oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
-		if ( 'desktop' === newDeviceMode && elementor.isDeviceModeActive() ) {
-			elementorCommon.elements.$window.on( 'resize', elementor.desktopResizeHandler );
+		if ( 'desktop' === newDeviceMode && this.isDeviceModeActive() ) {
+			this.resizeListenerThrottled = false;
+
+			elementorCommon.elements.$window.on( 'resize', () => {
+				if ( this.resizeListenerThrottled ) {
+					return;
+				}
+
+				this.resizeListenerThrottled = true;
+				this.broadcastPreviewResize();
+
+				setTimeout( () => {
+					this.resizeListenerThrottled = false;
+
+					this.broadcastPreviewResize();
+				}, 300 );
+			} );
 		} else {
 			elementorCommon.elements.$window.off( 'resize' );
 		}
