@@ -43,7 +43,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			data: {
 				fileName: fileName,
 				fileData: fileData,
-				allowedFileTypes: [ 'json' ],
 			},
 			success: ( successData ) => {
 				elementor.templates.getTemplatesCollection().add( successData );
