@@ -1,4 +1,4 @@
-import Utils from '../../utils/utils';
+import { arrayToClassName } from '../../utils/utils';
 
 export default function Text( props ) {
 	const baseClassName = 'eps',
@@ -10,7 +10,7 @@ export default function Text( props ) {
 	classes.push( baseClassName + '-text' + variant );
 
 	const Element = () => React.createElement( props.tag, {
-		className: Utils.arrayToClassName( classes ),
+		className: arrayToClassName( classes ),
 	}, props.children );
 
 	return <Element />;

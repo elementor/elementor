@@ -2,9 +2,10 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.6
+Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 3.1.3
+Beta tag: 3.2.0-beta1
+Stable tag: 3.1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -217,6 +218,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.1.4 - 2021-03-08 =
+* Fix: Self hosted video didn't work with Image Overlay ([#14038](https://github.com/elementor/elementor/issues/14038))
+* Fix: Clicking on Video widget Image Overlay doesn't plat video for Vimeo ([#14095](https://github.com/elementor/elementor/issues/14095))
+* Fix: Carousels navigation arrows `z-index` issue in Safari ([#13791](https://github.com/elementor/elementor/issues/13791))
+* Fix: Landing Pages can cause a fatal error for Author roles in the WordPress dashboard
+* Fix: `<a>` tags placed in an SVG file trigger the Lightbox
+* Fix: Hardened allowed options in the editor to enforce better security policies
+* Fix: Removed `html` option in Lightbox module to prevent security issues
 
 = 3.1.3 - 2021-03-03 =
 * Tweak: Added `aria-expanded` property to Tabs, Accordion and Toggle widgets ([#11246](https://github.com/elementor/elementor/issues/11246), [#3576](https://github.com/elementor/elementor/issues/3576))

@@ -18,6 +18,7 @@ export default class Button extends React.Component {
 		color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 		size: PropTypes.oneOf( [ 'sm', 'md', 'lg' ] ),
 		target: PropTypes.string,
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -96,6 +97,10 @@ export default class Button extends React.Component {
 
 		if ( this.props.onClick ) {
 			attributes.onClick = this.props.onClick;
+		}
+
+		if ( this.props.rel ) {
+			attributes.rel = this.props.rel;
 		}
 
 		const buttonContent = (
