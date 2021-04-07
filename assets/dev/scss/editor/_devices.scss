@@ -4,6 +4,17 @@
 
 body {
 	--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
+
+  	&.elementor-device-desktop {
+
+		#elementor-preview {
+			overflow-y: hidden;
+		}
+  	}
+
+	&:not(.elementor-device-desktop) & {
+		overflow-y: auto;
+	}
 }
 
 #elementor-preview {
@@ -15,18 +26,6 @@ body {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-
-	.elementor-device-desktop & {
-		overflow-y: hidden;
-
-		.ui-resizable-handle {
-			display: none;
-		}
-	}
-
-	body:not(.elementor-device-desktop) & {
-		overflow-y: auto;
-	}
 }
 
 #elementor-preview-responsive-wrapper {

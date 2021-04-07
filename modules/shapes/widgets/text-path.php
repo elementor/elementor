@@ -274,36 +274,6 @@ class TextPath extends Widget_Base {
 		);
 
 		$this->add_control(
-			'flip_horizontally',
-			[
-				'label' => __( 'Flip Horizontally', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
-				'return_value' => '-1',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => '--scale-x: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'flip_vertically',
-			[
-				'label' => __( 'Flip Vertically', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'label_on' => __( 'Yes', 'elementor' ),
-				'label_off' => __( 'No', 'elementor' ),
-				'return_value' => '-1',
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => '--scale-y: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
 			'text_heading',
 			[
 				'label' => __( 'Text', 'elementor' ),
