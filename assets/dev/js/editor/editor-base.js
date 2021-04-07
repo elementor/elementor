@@ -608,7 +608,7 @@ export default class EditorBase extends Marionette.Application {
 		return breakpointConstrains;
 	}
 
-	updatePreviewResizeOptions() {
+	updatePreviewResizeOptions( preserveCurrentSize = false ) {
 		const $responsiveWrapper = this.$previewResponsiveWrapper,
 			currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
 
@@ -624,10 +624,22 @@ export default class EditorBase extends Marionette.Application {
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
+			let widthToShow = breakpointResizeOptions.minWidth;
+
+			if ( preserveCurrentSize ) {
+				const currentSize = elementor.channels.responsivePreview.request( 'size' );
+
+				if ( currentSize.width > breakpointResizeOptions.maxWidth ) {
+					widthToShow = breakpointResizeOptions.maxWidth;
+				} else if ( currentSize.width >= breakpointResizeOptions.minWidth ) {
+					widthToShow = currentSize.width;
+				}
+			}
+
 			$responsiveWrapper
 				.resizable( 'option', { ...breakpointResizeOptions } )
 				.css( {
-					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
+					'--e-editor-preview-width': widthToShow + 'px',
 					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
 				} );
 		}
@@ -972,9 +984,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				this.initNavigator();
 			} );
-
-		this.initNavigator();
 
 		this.logSite();
 	}
