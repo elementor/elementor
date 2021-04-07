@@ -27,23 +27,6 @@ class Test_Breakpoint extends Elementor_Test_Base {
 	}
 
 	/**
-	 * Test Get Config
-	 *
-	 * Tests Breakpoint::get_config() for all breakpoints.
-	 *
-	 * @since 3.2.0
-	 */
-	public function test_get_config() {
-		$breakpoint = $this->create_breakpoint();
-		$breakpoint_config = $breakpoint->get_config();
-
-		$this->assertArrayHaveKeys( [ 'value', 'direction', 'is_enabled', 'label' ], $breakpoint_config );
-		$this->assertTrue( is_int( $breakpoint_config['value'] ) );
-		$this->assertTrue( is_string( $breakpoint_config['direction'] ) );
-		$this->assertTrue( is_bool( $breakpoint_config['is_enabled'] ) );
-	}
-
-	/**
 	 * Test Is Enabled
 	 *
 	 * Tests Breakpoint::get_config().
