@@ -54,12 +54,12 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * This method accepts a $file array (which minimally should include a 'tmp_name')
 	 *
-	 * @param array|null $file_path
+	 * @param string $file_path
 	 * @param array $allowed_file_types
 	 * @return array|\WP_Error
 	 */
 	public function extract_and_validate_zip( $file_path, $allowed_file_types = null ) {
-		$validation_result = [];
+		$result = [];
 
 		/** @var Zip $zip_handler - File Type */
 		$zip_handler = $this->file_type_handlers['zip'];
@@ -73,14 +73,16 @@ class Uploads_Manager extends Base_Object {
 			return new \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
 		}
 
+		$result['temp_extraction_directory'] = $extracted['temp_extraction_directory'];
+
 		foreach ( $extracted['files'] as $extracted_file ) {
 			// Each file is an array with a 'name' (file path) property.
-			if ( $this->validate_file( $extracted_file ) ) {
-				$validation_result[] = $extracted_file;
+			if ( ! is_wp_error( $this->validate_file( $extracted_file ) ) ) {
+				$result['files'] = $extracted_file;
 			}
 		}
 
-		return $validation_result;
+		return $result;
 	}
 
 	/**

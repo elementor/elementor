@@ -791,33 +791,35 @@ class Source_Local extends Source_Base {
 	 *
 	 * Import template from a file.
 	 *
-	 * @param array $import_result a file array that should include 'name' (original file name), 'type' (mime type),
-	 * and 'tmp_name' (the path to the uploaded file) properties.
-	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 * @since 1.0.0
 	 * @access public
 	 *
+	 * @param string $name - The file name
+	 * @param string $path - The file path
+	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template( $import_result ) {
+	public function import_template( $name, $path ) {
+		if ( empty( $path ) ) {
+			return new \WP_Error( 'file_error', 'Please upload a file to import' );
+		}
+
 		$items = [];
 
 		// If the import file is a Zip file with potentially multiple JSON files
-		if ( 'application/zip' === $import_result['type'] ) {
-			$allowed_file_types = isset( $import_result['allowedFileTypes'] ) ? $import_result['allowedFileTypes'] : null;
-
-			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $import_result['tmp_name'], $allowed_file_types );
+		if ( 'zip' === pathinfo( $name, PATHINFO_EXTENSION ) ) {
+			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
 
 			if ( is_wp_error( $extracted_files ) ) {
 				// Remove the temporary zip file, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result['tmp_name'] );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
 
 				return $extracted_files;
 			}
 
-			foreach ( $extracted_files as $file_name ) {
-				$import_result = $this->import_single_template( $file_name );
+			foreach ( $extracted_files as $file_path ) {
+				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
 					return $import_result;
@@ -830,7 +832,7 @@ class Source_Local extends Source_Base {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
-			$import_result = $this->import_single_template( $import_result );
+			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
 				return $import_result;
@@ -1327,25 +1329,25 @@ class Source_Local extends Source_Base {
 	 *
 	 * Import template from a file to the database.
 	 *
-	 * @param array $file File name.
+	 * @since 1.6.0
+	 * @access private
+	 *
+	 * @param string $file_path File name.
 	 *
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
-	 *@since 1.6.0
-	 * @access private
-	 *
 	 */
-	public function import_single_template( array $file ) {
-		$basename = basename( $file['name'] );
-		$extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
+	private function import_single_template( $file_path ) {
+		$basename = basename( $file_path );
+		$extension = pathinfo( $file_path, PATHINFO_EXTENSION );
 		// In some cases, the uploaded file's path will be passed in the 'tmp_name' property, and sometimes under 'name'
-		$file_path = isset( $file['tmp_name'] ) ? $file['tmp_name'] : $file['name'];
+		$file_path = isset( $file['tmp_name'] ) ? $file['tmp_name'] : $file_path;
 
 		if ( 'manifest.json' === $basename || 'json' !== $extension ) {
 			return false;
 		}
 
-		$data = json_decode( file_get_contents( $file_path ), true ); // phpcs:ignore
+		$data = json_decode( file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
