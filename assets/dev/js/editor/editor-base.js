@@ -569,8 +569,8 @@ export default class EditorBase extends Marionette.Application {
 	broadcastPreviewResize( size ) {
 		this.channels.responsivePreview
 			.reply( 'size', size || {
-				width: this.$previewResponsiveWrapper.outerWidth(),
-				height: this.$previewResponsiveWrapper.outerHeight(),
+				width: this.$previewResponsiveWrapper.innerWidth(),
+				height: this.$previewResponsiveWrapper.innerHeight(),
 			} )
 			.trigger( 'resize' );
 	}
@@ -773,6 +773,7 @@ export default class EditorBase extends Marionette.Application {
 	exitDeviceMode() {
 		elementor.changeDeviceMode( 'desktop' );
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
 		this.destroyPreviewResizable();
 	}
 
@@ -839,7 +840,7 @@ export default class EditorBase extends Marionette.Application {
 		if ( 'desktop' === newDeviceMode && this.isDeviceModeActive() ) {
 			this.resizeListenerThrottled = false;
 
-			elementorCommon.elements.$window.on( 'resize', () => {
+			elementorCommon.elements.$window.on( 'resize.deviceModeDesktop', () => {
 				if ( this.resizeListenerThrottled ) {
 					return;
 				}
@@ -854,7 +855,7 @@ export default class EditorBase extends Marionette.Application {
 				}, 300 );
 			} );
 		} else {
-			elementorCommon.elements.$window.off( 'resize' );
+			elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
 		}
 
 		if ( oldDeviceMode === newDeviceMode ) {
