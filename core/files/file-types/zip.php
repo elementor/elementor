@@ -140,9 +140,7 @@ class Zip extends Base {
 			if ( is_dir( $full_possible_file_name ) ) {
 				$file_names = $file_names + $this->find_temp_files( $full_possible_file_name );
 			} else {
-				$file_names[] = [
-					'name' => $full_possible_file_name,
-				];
+				$file_names[] = $full_possible_file_name;
 			}
 		}
 
