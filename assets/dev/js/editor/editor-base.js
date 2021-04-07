@@ -559,8 +559,6 @@ export default class EditorBase extends Marionette.Application {
 					'--e-editor-preview-width': ui.size.width + 'px',
 					'--e-editor-preview-height': ui.size.height + 'px',
 				} );
-
-				this.broadcastPreviewResize( ui.size );
 			},
 		} );
 	}
@@ -571,9 +569,12 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
-	broadcastPreviewResize( size ) {
+	broadcastPreviewResize() {
 		this.channels.responsivePreview
-			.reply( 'size', size )
+			.reply( 'size', {
+				width: this.$preview.innerWidth(),
+				height: this.$preview.innerHeight(),
+			} )
 			.trigger( 'resize' );
 	}
 
@@ -618,11 +619,6 @@ export default class EditorBase extends Marionette.Application {
 				'--e-editor-preview-width': '',
 				'--e-editor-preview-height': '',
 			} );
-
-			this.broadcastPreviewResize( {
-				width: this.$previewWrapper.outerWidth(),
-				height: this.$previewWrapper.outerHeight() - 40,
-			} );
 		} else {
 			this.activatePreviewResizable();
 
@@ -634,10 +630,6 @@ export default class EditorBase extends Marionette.Application {
 					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
 					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
 				} );
-
-			breakpointResizeOptions.width = breakpointResizeOptions.minWidth;
-
-			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
 		}
 	}
 
@@ -756,6 +748,26 @@ export default class EditorBase extends Marionette.Application {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 
 		this.activatePreviewResizable();
+
+		this.resizeListenerThrottled = false;
+
+		this.broadcastPreviewResize();
+
+		elementorFrontend.elements.$window.on( 'resize.deviceModeDesktop', () => {
+			if ( this.resizeListenerThrottled ) {
+				return;
+			}
+
+			this.resizeListenerThrottled = true;
+
+			this.broadcastPreviewResize();
+
+			setTimeout( () => {
+				this.resizeListenerThrottled = false;
+
+				this.broadcastPreviewResize();
+			}, 300 );
+		} );
 	}
 
 	exitDeviceMode() {
@@ -764,6 +776,8 @@ export default class EditorBase extends Marionette.Application {
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 
 		this.destroyPreviewResizable();
+
+		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
 	}
 
 	isDeviceModeActive() {
