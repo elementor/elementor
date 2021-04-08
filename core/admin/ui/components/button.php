@@ -25,7 +25,7 @@ class Button extends Base_Object {
 			return;
 		}
 
-		$html_tag = ! empty( $options['link'] ) ? 'a' : 'button';
+		$html_tag = ! empty( $options['url'] ) ? 'a' : 'button';
 		$before = '';
 		$icon = '';
 		$attributes = [];
@@ -52,8 +52,8 @@ class Button extends Base_Object {
 			$before = '<span>' . $options['before'] . '</span>';
 		}
 
-		if ( ! empty( $options['link'] ) ) {
-			$attributes['href'] = $options['link'];
+		if ( ! empty( $options['url'] ) ) {
+			$attributes['href'] = $options['url'];
 			if ( isset( $options['new_tab'] ) ) {
 				$attributes['target'] = '_blank';
 			}

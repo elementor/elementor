@@ -5,6 +5,8 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 
 	id: 'elementor-panel-elements',
 
+	className: 'elementor-responsive-panel',
+
 	initialize: function() {
 		this.listenTo( elementor.channels.panelElements, 'filter:change', this.onFilterChanged );
 	},

@@ -275,12 +275,20 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const $switcher = jQuery( event.currentTarget ),
 			device = $switcher.data( 'device' ),
 			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
-			selectedOption = $switcher.index();
+			selectedOption = $switcher.index(),
+			isDeviceModeActive = elementor.isDeviceModeActive(),
+			isDesktopDevice = 'desktop' === device;
 
 		$switchersWrapper.toggleClass( 'elementor-responsive-switchers-open' );
 		$switchersWrapper[ 0 ].style.setProperty( '--selected-option', selectedOption );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
+
+		if ( isDeviceModeActive && isDesktopDevice ) {
+			elementor.exitDeviceMode();
+		} else if ( ! isDesktopDevice ) {
+			elementor.enterDeviceMode();
+		}
 
 		elementor.changeDeviceMode( device );
 	},

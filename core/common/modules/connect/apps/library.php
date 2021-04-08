@@ -8,6 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Library extends Common_App {
+	const ACCESS_LEVEL_CORE = 0;
+	const ACCESS_LEVEL_PRO = 1;
+	const ACCESS_LEVEL_EXPERT = 20;
+
+
 	public function get_title() {
 		return __( 'Library', 'elementor' );
 	}
@@ -56,6 +61,12 @@ class Library extends Common_App {
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
+				'access_levels' => [
+					'core' => static::ACCESS_LEVEL_CORE,
+					'pro' => static::ACCESS_LEVEL_PRO,
+					'expert' => static::ACCESS_LEVEL_EXPERT,
+				],
+				'current_access_level' => static::ACCESS_LEVEL_CORE,
 			],
 		] );
 	}
