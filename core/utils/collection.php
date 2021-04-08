@@ -94,6 +94,22 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 
 	/**
 	 * @param callable $callback
+	 * @param null     $initial
+	 *
+	 * @return mixed|null
+	 */
+	public function reduce( callable $callback, $initial = null ) {
+		$result = $initial;
+
+		foreach ( $this->all() as $key => $value ) {
+			$result = $callback( $result, $value, $key );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param callable $callback
 	 *
 	 * @return $this
 	 */
@@ -214,6 +230,24 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		foreach ( $this->items as $item ) {
 			return $item;
 		}
+	}
+
+	/**
+	 * Find an element from the items.
+	 *
+	 * @param callable $callback
+	 * @param null     $default
+	 *
+	 * @return mixed|null
+	 */
+	public function find( callable $callback, $default = null ) {
+		foreach ( $this->all() as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return $item;
+			}
+		}
+
+		return $default;
 	}
 
 	/**

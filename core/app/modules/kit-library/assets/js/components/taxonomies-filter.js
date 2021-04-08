@@ -1,19 +1,19 @@
-import { tagTypes } from '../models/tag';
-import useTags from '../hooks/use-tags';
-import TagsFilterList from './tags-filter-list';
+import { taxonomyType } from '../models/taxonomy';
+import useTaxonomies from '../hooks/use-taxonomies';
+import TaxonomiesFilterList from './taxonomies-filter-list';
 
 import './tags-filter.scss';
 
 const { useMemo } = React;
 
-export default function TagsFilter( props ) {
-	const { data } = useTags();
+export default function TaxonomiesFilter( props ) {
+	const { data } = useTaxonomies();
 	const groupedTags = useMemo( () => {
 		if ( ! data ) {
 			return [];
 		}
 
-		return tagTypes.map( ( tagType ) => ( {
+		return taxonomyType.map( ( tagType ) => ( {
 			...tagType,
 			data: data.filter( ( item ) => item.type === tagType.key ),
 		} ) );
@@ -24,7 +24,7 @@ export default function TagsFilter( props ) {
 			{
 				groupedTags.map( ( group ) => (
 					group.data.length > 0 &&
-					<TagsFilterList
+					<TaxonomiesFilterList
 						key={ group.key }
 						groupedTags={ group }
 						selected={ props.selected }
@@ -36,7 +36,7 @@ export default function TagsFilter( props ) {
 	);
 }
 
-TagsFilter.propTypes = {
+TaxonomiesFilter.propTypes = {
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
 };

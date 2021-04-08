@@ -26,7 +26,7 @@ export default function ItemSidebar( props ) {
 			/>
 			<Text className="e-kit-library__item-sidebar-description">{ props.model.description || '' }</Text>
 			{
-				props.model.tags.length > 0 &&
+				props.model.taxonomies.length > 0 &&
 				<Collapse
 					isOpen={ isTagsCollapseOpen }
 					onChange={ setIsTagsCollapseOpen }
@@ -34,12 +34,12 @@ export default function ItemSidebar( props ) {
 					className="e-kit-library__item-sidebar-collapse"
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
-						{ props.model.tags.map( ( tag ) => (
+						{ props.model.taxonomies.map( ( taxonomy ) => (
 							<Badge
-								key={ tag }
+								key={ taxonomy }
 								className={ environment.safari ? 'e-kit-library__item-sidebar-tag--safari-support' : '' }
 							>
-								{ tag }
+								{ taxonomy }
 							</Badge>
 						) ) }
 					</Grid>

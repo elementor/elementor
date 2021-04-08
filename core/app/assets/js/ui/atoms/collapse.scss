@@ -10,8 +10,8 @@
 		border: none;
 		color: inherit;
 
-		&::-webkit-details-marker {
-			display:none
+		&:focus {
+			outline: none;
 		}
 	}
 

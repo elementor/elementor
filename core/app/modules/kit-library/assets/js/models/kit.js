@@ -2,7 +2,7 @@ import Document from './document';
 import BaseModel from './base-model';
 
 export default class Kit extends BaseModel {
-	id = 0;
+	id = '';
 	title = '';
 	description = '';
 	isFavorite = false;
@@ -15,8 +15,7 @@ export default class Kit extends BaseModel {
 	createdAt = null;
 	updatedAt = null;
 	keywords = [];
-	rawTags = [];
-	tags = [];
+	taxonomies = [];
 	documents = [];
 
 	/**
@@ -40,7 +39,7 @@ export default class Kit extends BaseModel {
 		instance.createdAt = new Date( kit.created_at );
 		instance.updatedAt = new Date( kit.updated_at );
 		instance.keywords = kit.keywords;
-		instance.tags = kit.tags;
+		instance.taxonomies = kit.taxonomies;
 		instance.documents = kit.documents ?
 			kit.documents.map( ( document ) => Document.createFromResponse( document ) ) :
 			[];

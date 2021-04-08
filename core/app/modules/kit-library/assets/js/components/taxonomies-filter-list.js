@@ -1,12 +1,12 @@
 import { sprintf } from '@wordpress/i18n';
 import { Collapse, Checkbox, SearchInput } from '@elementor/app-ui';
-import Tag from '../models/tag';
+import Taxonomy from '../models/taxonomy';
 
 const { useState, useEffect, useMemo } = React;
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
-export default function TagsFilterList( props ) {
+export default function TaxonomiesFilterList( props ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ search, setSearch ] = useState( '' );
 
@@ -43,20 +43,20 @@ export default function TagsFilterList( props ) {
 			}
 			<div className="e-kit-library__tags-filter-list-container">
 				{
-					tags.map( ( tag ) => (
-						<label key={ tag.text } className="e-kit-library__tags-filter-list-item">
+					tags.map( ( taxonomy ) => (
+						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">
 							<Checkbox
-								checked={ props.selected[ tag.type ]?.includes( tag.text ) || false }
+								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
 
-									props.onSelect( tag.type, ( prev ) => {
+									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked ?
-											[ ...prev, tag.text ] :
-											prev.filter( ( tagId ) => tagId !== tag.text );
+											[ ...prev, taxonomy.text ] :
+											prev.filter( ( tagId ) => tagId !== taxonomy.text );
 									} );
 								} }/>
-							{ tag.text }
+							{ taxonomy.text }
 						</label>
 					) )
 				}
@@ -65,11 +65,11 @@ export default function TagsFilterList( props ) {
 	);
 }
 
-TagsFilterList.propTypes = {
+TaxonomiesFilterList.propTypes = {
 	groupedTags: PropTypes.shape( {
 		key: PropTypes.string,
 		label: PropTypes.string,
-		data: PropTypes.arrayOf( PropTypes.instanceOf( Tag ) ),
+		data: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),
 		isOpenByDefault: PropTypes.bool,
 	} ),
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),

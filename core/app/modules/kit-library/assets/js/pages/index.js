@@ -1,7 +1,7 @@
 import { SearchInput, CssGrid } from '@elementor/app-ui';
 import Layout from '../components/layout';
 import IndexSidebar from '../components/index-sidebar';
-import TagsFilter from '../components/tags-filter';
+import TaxonomiesFilter from '../components/taxonomies-filter';
 import IndexHeader from '../components/index-header';
 import KitList from '../components/kit-list';
 import useKits from '../hooks/use-kits';
@@ -24,15 +24,15 @@ export default function Index() {
 		clearFilter,
 	} = useKits();
 
-	const [ selectTag, unselectTag ] = useTagSelection( setFilter );
+	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setFilter );
 
 	return (
 		<Layout
 			sidebar={
 				<IndexSidebar
-					tagsFilterSlot={ <TagsFilter
-						selected={ filter.tags }
-						onSelect={ selectTag }
+					tagsFilterSlot={ <TaxonomiesFilter
+						selected={ filter.taxonomies }
+						onSelect={ selectTaxonomy }
 					/> }
 				/>
 			}
@@ -51,7 +51,7 @@ export default function Index() {
 								filter={ filter }
 								resultCount={ data.length || 0 }
 								onClear={ clearFilter }
-								onRemoveTag={ unselectTag }
+								onRemoveTag={ unselectTaxonomy }
 							/>
 						</div>
 						<div />
@@ -71,31 +71,31 @@ export default function Index() {
 }
 
 /**
- * Generate select and unselect tag functions.
+ * Generate select and unselect taxonomy functions.
  *
  * @param setFilter
  * @returns {((function(*, *): *)|(function(*=): *))[]}
  */
-function useTagSelection( setFilter ) {
-	const selectTag = useCallback( ( type, callback ) => setFilter(
+function useTaxonomiesSelection( setFilter ) {
+	const selectTaxonomy = useCallback( ( type, callback ) => setFilter(
 		( prev ) => {
-			const tags = { ...prev.tags };
+			const taxonomies = { ...prev.taxonomies };
 
-			tags[ type ] = callback( prev.tags[ type ] );
+			taxonomies[ type ] = callback( prev.taxonomies[ type ] );
 
-			return { ...prev, tags };
+			return { ...prev, taxonomies };
 		}
 	), [ setFilter ] );
 
-	const unselectTag = useCallback( ( tag ) => setFilter( ( prev ) => {
-		const tags = Object.entries( prev.tags )
-			.reduce( ( current, [ key, groupedTags ] ) => ( {
+	const unselectTaxonomy = useCallback( ( taxonomy ) => setFilter( ( prev ) => {
+		const taxonomies = Object.entries( prev.taxonomies )
+			.reduce( ( current, [ key, groupedTaxonomies ] ) => ( {
 				...current,
-				[ key ]: groupedTags.filter( ( item ) => item !== tag ),
+				[ key ]: groupedTaxonomies.filter( ( item ) => item !== taxonomy ),
 			} ), {} );
 
-		return { ...prev, tags };
+		return { ...prev, taxonomies };
 	} ), [ setFilter ] );
 
-	return [ selectTag, unselectTag ];
+	return [ selectTaxonomy, unselectTaxonomy ];
 }

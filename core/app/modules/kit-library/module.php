@@ -6,7 +6,10 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Core\App\Modules\KitLibrary\Data\Controller;
+use Elementor\Core\App\Modules\KitLibrary\Data\Api_Client;
+use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
+use Elementor\Core\App\Modules\KitLibrary\Data\Kits_Controller;
+use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -74,11 +77,26 @@ class Module extends BaseModule {
 		] );
 	}
 
+	private function initiate_repository() {
+		$base_endpoint = defined( 'ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT' ) ?
+			ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT :
+			Api_Client::DEFAULT_BASE_ENDPOINT;
+
+		$licence_key = apply_filters( 'elementor/app/kit-library/license_key', null );
+
+		return new Repository(
+			new Api_Client( $base_endpoint, $licence_key )
+		);
+	}
+
 	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Controller::class );
+		$repository = $this->initiate_repository();
+
+		Plugin::$instance->data_manager->register_controller_instance( new Kits_Controller( $repository ) );
+		Plugin::$instance->data_manager->register_controller_instance( new Taxonomies_Controller( $repository ) );
 
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();

@@ -6,15 +6,15 @@ const { useMemo } = React;
 import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
-	const selectedTags = useMemo( () =>
-			Object.values( props.filter.tags ).reduce( ( current, groupedTags ) => [ ...current, ...groupedTags ] ),
-		[ props.filter.tags ]
+	const selectedTaxonomies = useMemo( () =>
+			Object.values( props.filter.taxonomies ).reduce( ( current, groupedTaxonomies ) => [ ...current, ...groupedTaxonomies ] ),
+		[ props.filter.taxonomies ]
 	);
 
 	const isFilterActive = useMemo(
 		() =>
 			props.filter.search ||
-			selectedTags.length,
+			selectedTaxonomies.length,
 		[ props.filter ]
 	);
 
@@ -29,19 +29,19 @@ export default function FilterIndicationText( props ) {
 				{ ' ' }
 				{ props.filter.search && sprintf( __( 'For: "%s"', 'elementor' ), props.filter.search ) }
 				{ ' ' }
-				{ selectedTags.length > 0 && (
+				{ selectedTaxonomies.length > 0 && (
 					<>
 						{ __( 'In', 'elementor' ) }
 						{ ' ' }
-						{ selectedTags.map( ( tag ) => (
-							<Badge key={ tag } className="e-kit-library__filter-indication-badge">
-								{ tag }
+						{ selectedTaxonomies.map( ( taxonomy ) => (
+							<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
+								{ taxonomy }
 								<Button
 									text={ __( 'Remove', 'elementor' ) }
 									hideText={ true }
 									icon="eicon-editor-close"
 									className="e-kit-library__filter-indication-badge-remove"
-									onClick={ () => props.onRemoveTag( tag ) }
+									onClick={ () => props.onRemoveTag( taxonomy ) }
 								/>
 							</Badge>
 						) ) }
@@ -62,7 +62,7 @@ export default function FilterIndicationText( props ) {
 FilterIndicationText.propTypes = {
 	filter: PropTypes.shape( {
 		search: PropTypes.string,
-		tags: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
+		taxonomies: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	} ),
 	resultCount: PropTypes.number.isRequired,
 	onClear: PropTypes.func.isRequired,

@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import Kit from '../models/kit';
-import { tagTypes } from '../models/tag';
+import { taxonomyType } from '../models/taxonomy';
 
 export const KEY = 'kits';
 
@@ -8,7 +8,7 @@ const { useState, useMemo, useCallback } = React;
 
 const initiateFilterState = {
 	search: '',
-	tags: tagTypes.reduce( ( current, { key } ) => {
+	taxonomies: taxonomyType.reduce( ( current, { key } ) => {
 		return {
 			...current,
 			[ key ]: [],
@@ -48,9 +48,9 @@ function useFilteredData( data, filter ) {
 			filteredData = filteredData.filter( ( item ) => searchFilter( item, filter.search ) );
 		}
 
-		tagTypes.forEach( ( { key } ) => {
-			if ( filter.tags[ key ]?.length > 0 ) {
-				filteredData = filteredData.filter( ( item ) => tagsFilter( item, filter.tags[ key ] ) );
+		taxonomyType.forEach( ( { key } ) => {
+			if ( filter.taxonomies[ key ]?.length > 0 ) {
+				filteredData = filteredData.filter( ( item ) => taxonomiesFilter( item, filter.taxonomies[ key ] ) );
 			}
 		} );
 
@@ -72,8 +72,8 @@ function searchFilter( item, searchTerm ) {
 	return keywords.some( ( keyword ) => keyword.toLowerCase().includes( searchTerm ) );
 }
 
-function tagsFilter( item, tags ) {
-	return tags.some( ( tag ) =>
-		item.tags.some( ( itemTag ) => tag === itemTag )
+function taxonomiesFilter( item, taxonomies ) {
+	return taxonomies.some( ( taxonomy ) =>
+		item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
 	);
 }

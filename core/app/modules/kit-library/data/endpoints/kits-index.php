@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Index extends Endpoint {
+class Kits_Index extends Endpoint {
 	public function get_name() {
 		return 'index';
 	}
@@ -23,7 +23,7 @@ class Index extends Endpoint {
 		);
 
 		$this->register_route(
-			'(?P<id>[\d]+)/',
+			'(?P<id>[\w-]+)/',
 			\WP_REST_Server::READABLE,
 			function ( $request ) {
 				return $this->base_callback( \WP_REST_Server::READABLE, $request, false );
@@ -31,7 +31,7 @@ class Index extends Endpoint {
 			[
 				'id' => [
 					'description' => 'Unique identifier for the object.',
-					'type' => 'integer',
+					'type' => 'string',
 					'required' => true,
 				],
 			]

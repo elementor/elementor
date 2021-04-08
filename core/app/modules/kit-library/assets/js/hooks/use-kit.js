@@ -4,13 +4,12 @@ import { KEY as LIST_KEY } from './use-kits';
 
 export const KEY = 'kit';
 
-const { useMemo, useCallback } = React;
+const { useCallback } = React;
 
 export default function useKit( id ) {
-	const parsedId = useMemo( () => parseInt( id ), [ id ] );
-	const placeholderDataCallback = usePlaceholderDataCallback( parsedId );
+	const placeholderDataCallback = usePlaceholderDataCallback( id );
 
-	return useQuery( [ KEY, parsedId ], fetchKitItem, {
+	return useQuery( [ KEY, id ], fetchKitItem, {
 			placeholderData: placeholderDataCallback,
 		}
 	);

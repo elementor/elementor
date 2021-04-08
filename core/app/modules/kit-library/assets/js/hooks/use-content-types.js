@@ -27,12 +27,6 @@ function fetchContentTypes() {
 			doc_types: [ 'popup' ],
 			order: 2,
 		},
-		{
-			id: 'post',
-			label: __( 'Posts', 'elementor' ),
-			doc_types: [ 'post' ],
-			order: 3,
-		},
 	] ).then( ( data ) => {
 		return data.map( ( contentType ) => ContentType.createFromResponse( contentType ) );
 	} );

@@ -1,6 +1,6 @@
 import BaseModel from './base-model';
 
-export const tagTypes = [
+export const taxonomyType = [
 	{
 		key: 'categories',
 		label: __( 'Categories', 'elementor' ),
@@ -11,7 +11,7 @@ export const tagTypes = [
 		label: __( 'Tags', 'elementor' ),
 	},
 	{
-		key: 'type',
+		key: 'types',
 		label: __( 'Kit Types', 'elementor' ),
 	},
 	{
@@ -20,20 +20,20 @@ export const tagTypes = [
 	},
 ];
 
-export default class Tag extends BaseModel {
+export default class Taxonomy extends BaseModel {
 	text = '';
 	type = 'tag';
 
 	/**
 	 * Create a tag from server response
 	 *
-	 * @param tag
+	 * @param taxonomy
 	 */
-	static createFromResponse( tag ) {
-		const instance = new Tag();
+	static createFromResponse( taxonomy ) {
+		const instance = new Taxonomy();
 
-		instance.text = tag.text;
-		instance.type = tag.type;
+		instance.text = taxonomy.text;
+		instance.type = taxonomy.type;
 
 		return instance;
 	}
