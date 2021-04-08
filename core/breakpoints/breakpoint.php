@@ -33,27 +33,6 @@ class Breakpoint extends Base_Object {
 	}
 
 	/**
-	 * Get Initial Config
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param null|string $item
-	 * @return array Initial config
-	 */
-	public function get_config( $item = null ) {
-		if ( ! $this->config ) {
-			$this->config = [
-				'label' => $this->label,
-				'value' => $this->get_value(),
-				'direction' => $this->direction,
-				'is_enabled' => $this->is_enabled(),
-			];
-		}
-
-		return self::get_items( $this->config, $item );
-	}
-
-	/**
 	 * Is Enabled
 	 *
 	 * Check if the breakpoint is enabled or not. The breakpoint instance receives this data from
@@ -63,6 +42,19 @@ class Breakpoint extends Base_Object {
 	 */
 	public function is_enabled() {
 		return $this->is_enabled;
+	}
+
+	/**
+	 * Get Label
+	 *
+	 * Retrieve the breakpoint label.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return string $label class variable
+	 */
+	public function get_label() {
+		return $this->label;
 	}
 
 	/**
