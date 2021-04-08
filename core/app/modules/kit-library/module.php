@@ -38,19 +38,18 @@ class Module extends BaseModule {
 	}
 
 	private function get_subscription_plans() {
-		// TODO ACCESS LEVEL: should come from server or consts.
 		return [
-			0 => [
+			Library::ACCESS_LEVEL_CORE => [
 				'label' => null,
 				'promotion_url' => null,
 				'color' => null,
 			],
-			1 => [
+			Library::ACCESS_LEVEL_PRO => [
 				'label' => __( 'Pro', 'elementor' ),
 				'promotion_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=gopro' ),
 				'color' => '#92003B',
 			],
-			20 => [
+			Library::ACCESS_LEVEL_EXPERT => [
 				'label' => __( 'Expert', 'elementor' ),
 				'promotion_url' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=kit-library&utm_medium=wp-dash&utm_campaign=goexpert' ),
 				'color' => '#010051',
@@ -71,7 +70,7 @@ class Module extends BaseModule {
 			'is_pro' => false,
 			'is_library_connected' => $library->is_connected(),
 			'library_connect_url'  => $library->get_admin_url( 'authorize' ),
-			'access_level' => 0, // TODO ACCESS LEVEL: Use CORE const.
+			'access_level' => Library::ACCESS_LEVEL_CORE,
 		] );
 	}
 
