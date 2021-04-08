@@ -22,4 +22,4 @@ require( './repeater/component.spec' );
 require( './dynamic/component.spec' );
 require( './history/component.spec' );
 require( './ui/component.spec' );
-require( './save/component.spec' );
+//require( './save/component.spec' );
