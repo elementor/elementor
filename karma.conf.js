@@ -104,6 +104,7 @@ module.exports = function( config ) {
 			qunit: {
 				isDebug,
 				showUI: false,
+				validateContainersAlive: false,
 				testTimeout: 5000,
 			},
 		},

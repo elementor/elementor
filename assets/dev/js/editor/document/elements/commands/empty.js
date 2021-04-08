@@ -34,7 +34,6 @@ export class Empty extends CommandHistory {
 
 			const documentContainer = elementor.getPreviewContainer();
 
-			documentContainer.handleChildrenRecursive();
 			documentContainer.panel.closeEditor();
 
 			return;

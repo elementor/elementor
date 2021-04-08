@@ -16,8 +16,6 @@ export default class Helper {
 				 */
 				container.view.addChildModel( model );
 
-				elementor.getContainer( model.id ).addToParent();
-
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`
 				 * For performance reasons.
@@ -47,7 +45,5 @@ export default class Helper {
 			// Focus on last container.
 			containers[ containers.length - 1 ].model.trigger( 'request:edit' );
 		}
-
-		containers.forEach( ( /* Container */ container ) => container.handleChildrenRecursive() );
 	}
 }

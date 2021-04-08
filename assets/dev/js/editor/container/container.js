@@ -7,6 +7,10 @@ import Panel from './panel';
  */
 
 export default class Container extends ArgsObject {
+	// TODO: Swap those backwards compatibility is required.
+	static TYPE_REPEATER = 'repeater-control';
+	static TYPE_REPEATER_ITEM = 'repeater';
+
 	/**
 	 * Container type.
 	 *
@@ -151,6 +155,17 @@ export default class Container extends ArgsObject {
 		this.globals = new Backbone.Model( this.settings.get( '__globals__' ) );
 		this.panel = new Panel( this );
 
+		this.initialize();
+	}
+
+	initialize() {
+		if ( this.view ) {
+			this.addToParent();
+			this.handleChildrenRecursive();
+
+			this.view.on( 'destroy', this.removeFromParent.bind( this ) );
+		}
+
 		this.handleRepeaterChildren();
 	}
 
@@ -200,12 +215,11 @@ export default class Container extends ArgsObject {
 		}
 
 		if ( this.view.children.length ) {
-			// eslint-disable-next-line no-unused-vars
-			Object.entries( this.view.children._views ).forEach( ( [ id, view ] ) => {
-				if ( ! view.getContainer ) {
+			Object.values( this.view.children._views ).forEach( ( view ) => {
+				if ( ! view.container ) {
 					return;
 				}
-				const container = view.getContainer();
+				const container = view.container;
 
 				container.parent.children[ view._index ] = container;
 				container.handleChildrenRecursive();
@@ -216,7 +230,7 @@ export default class Container extends ArgsObject {
 	}
 
 	addToParent() {
-		if ( this.isRepeater() ) {
+		if ( ! this.parent.children || this.isRepeaterItem() ) {
 			return;
 		}
 
@@ -225,14 +239,12 @@ export default class Container extends ArgsObject {
 	}
 
 	removeFromParent() {
-		if ( this.isRepeater() ) {
+		if ( ! this.parent.children || this.isRepeater() ) {
 			return;
 		}
 
 		// When delete container its should notify its parent, that his children is dead.
-		const parent = this.parent;
-
-		parent.children = parent.children.filter( ( filtered ) => filtered.id !== this.id );
+		this.parent.children = this.parent.children.filter( ( filtered ) => filtered.id !== this.id );
 	}
 
 	handleRepeaterChildren() {
@@ -246,8 +258,7 @@ export default class Container extends ArgsObject {
 			} );
 
 			this.repeaters[ control.name ] = new elementorModules.editor.Container( {
-				// TODO: replace to `repeater`, and the item should by `repeater-item`.
-				type: 'repeater-control',
+				type: Container.TYPE_REPEATER,
 				id: control.name,
 				model,
 				settings: model,
@@ -289,7 +300,7 @@ export default class Container extends ArgsObject {
 		}
 
 		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
-			type: 'repeater',
+			type: Container.TYPE_REPEATER_ITEM,
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
 				name: repeaterName,
@@ -325,7 +336,7 @@ export default class Container extends ArgsObject {
 
 		if ( undefined === this.view || ! this.view.lookup || ! this.view.isDisconnected() ) {
 			// Hack For repeater item the result is the parent container.
-			if ( 'repeater' === this.type ) {
+			if ( Container.TYPE_REPEATER_ITEM === this.type ) {
 				this.settings = this.parent.parent.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 			}
 			return result;
@@ -337,7 +348,7 @@ export default class Container extends ArgsObject {
 			result = lookup.getContainer();
 
 			// Hack For repeater item the result is the parent container.
-			if ( 'repeater' === this.type ) {
+			if ( Container.REPEATER === this.type ) {
 				this.settings = result.settings.get( this.model.get( 'name' ) ).findWhere( { _id: this.id } );
 				return this;
 			}
@@ -385,6 +396,10 @@ export default class Container extends ArgsObject {
 	}
 
 	isRepeater() {
-		return Object.keys( this.repeaters ).length;
+		return Container.TYPE_REPEATER === this.type;
+	}
+
+	isRepeaterItem() {
+		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 }
