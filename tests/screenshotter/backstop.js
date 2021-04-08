@@ -12,8 +12,8 @@ const getScenarios = () => {
 			readyEvent: '',
 			readySelector: '',
 			delay: 2000,
+			selectors: [ 'document' ], // With the `document` selector it takes a full page shot.
 			onBeforeScript: `${ __dirname }/scripts/on-before-ready.js`,
-			onReadyScript: `${ __dirname }/scripts/on-ready.js`,
 			misMatchThreshold: 0,
 			requireSameDimensions: true,
 		} );

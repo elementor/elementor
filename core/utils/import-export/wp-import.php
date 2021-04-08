@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Core\Utils;
+namespace Elementor\Core\Utils\ImportExport;
 
-use Elementor\Core\Utils\Parsers\WXR_Parser;
+use Elementor\Core\Utils\ImportExport\Parsers\WXR_Parser;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {

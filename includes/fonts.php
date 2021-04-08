@@ -1186,4 +1186,8 @@ class Fonts {
 			return in_array( $font, $groups );
 		} );
 	}
+
+	public static function get_font_display_setting() {
+		return get_option( 'elementor_font_display', 'auto' );
+	}
 }
