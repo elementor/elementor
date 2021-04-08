@@ -65,7 +65,7 @@ class Zip extends Base {
 
 		$zip = new \ZipArchive();
 
-		$temp_extraction_directory = Plugin::$instance->uploads_manager->get_temp_dir() . uniqid();
+		$temp_extraction_directory = Plugin::$instance->uploads_manager->create_unique_temp_dir();
 
 		$zip->open( $file_path );
 
