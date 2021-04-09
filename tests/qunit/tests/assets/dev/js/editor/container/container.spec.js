@@ -35,6 +35,25 @@ jQuery( () => {
 
 			assert.deepEqual( Object.keys( controls ), excepted );
 		} );
+
+		QUnit.test( 'findChildrenRecursive(): Ensure children found', ( assert ) => {
+			// Arrange.
+			const eColumn = ElementsHelper.createSection( 1, 1 ),
+				eWidgets = [
+					ElementsHelper.createButton( eColumn ),
+					ElementsHelper.createButton( eColumn ),
+				];
+
+			eWidgets.forEach( ( eWidget ) => {
+				// Act.
+				const foundChildren = elementor.getPreviewContainer().findChildrenRecursive(
+					( container ) => container.id === eWidget.id
+				);
+
+				// Assert.
+				assert.equal( foundChildren, eWidget );
+			} );
+		} );
 	} );
 } );
 

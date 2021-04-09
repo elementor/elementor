@@ -306,6 +306,33 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
+	 * Function findChildrenRecursive().
+	 *
+	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	findChildrenRecursive( callback ) {
+		if ( callback( this ) ) {
+			return this;
+		}
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				const foundChildren = container.findChildrenRecursive( callback );
+
+				if ( foundChildren ) {
+					return foundChildren;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Function render().
 	 *
 	 * Call view render.
