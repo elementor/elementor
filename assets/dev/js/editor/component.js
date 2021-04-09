@@ -85,6 +85,17 @@ export default class Component extends ComponentBase {
 	}
 
 	/**
+	 * Function getInitial()
+	 *
+	 * Get initial document.
+	 *
+	 * @returns {Document|boolean}
+	 */
+	getInitial() {
+		return this.get( elementor.config.initial_document.id );
+	}
+
+	/**
 	 * Function getCurrent().
 	 *
 	 * Return's current document.
