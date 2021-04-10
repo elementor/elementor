@@ -1451,8 +1451,7 @@ abstract class Document extends Controls_Stack {
 
 		// Updating also the static variable so that the data will be available without the need to get it from the DB.
 		self::$page_assets = $page_assets;
-
-		$this->delete_meta( self::ASSETS_META_KEY );
+		
 		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
 	}
 
