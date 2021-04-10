@@ -74,7 +74,17 @@ abstract class Document extends Controls_Stack {
 
 	private static $properties = [];
 
-	private static $page_assets = [];
+	/**
+	 * @var array
+	 *
+	 * Default value must be null.
+	 */
+	private static $page_assets;
+
+	/**
+	 * @var array
+	 */
+	private $data_updaters = [];
 
 	/**
 	 * Document post data.
@@ -493,6 +503,62 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
+	}
+
+	public function get_element_assets( $element ) {
+		$controls = $element->get_controls();
+		$settings = array_intersect_key( $element->get_settings(), $controls );
+		$element_assets = [];
+
+		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				continue;
+			}
+
+			$control = $controls[ $setting_key ];
+
+			if ( $this->is_control_visible( $control, $settings ) ) {
+				// Enabling assets loading from the registered control fields.
+				if ( ! empty( $control['assets'] ) ) {
+					foreach ( $control['assets'] as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! empty( $dependency['conditions'] ) ) {
+								$is_condition_fulfilled = Conditions::check( $dependency['conditions'], $settings );
+
+								if ( ! $is_condition_fulfilled ) {
+									continue;
+								}
+							}
+
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency['name'];
+						}
+					}
+				}
+
+				// Enabling assets loading from the control object.
+				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+				$control_conditional_assets = $control_obj::get_assets( $setting );
+
+				if ( $control_conditional_assets ) {
+					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
+						foreach ( $dependencies as $dependency ) {
+							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+								$element_assets[ $assets_type ] = [];
+							}
+
+							$element_assets[ $assets_type ][] = $dependency;
+						}
+					}
+				}
+			}
+		}
+
+		return $element_assets;
 	}
 
 	/**
@@ -1022,25 +1088,6 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-		if ( $is_optimized_css_loading ) {
-			add_action( 'elementor/document/get_unique_page_widget', function( $element ) {
-				$this->save_widgets_css( $element->get_name() );
-			} );
-		}
-
-		if ( $is_optimized_assets_loading ) {
-			$this->reset_page_assets();
-
-			$this->register_elements_assets_action();
-		}
-
-		if ( $is_optimized_assets_loading || $is_optimized_css_loading ) {
-			$this->handle_page_elements( $elements );
-		}
-
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
@@ -1062,6 +1109,17 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/db/before_save', $this->post->post_status, $is_meta_updated );
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
+
+		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+		if ( $is_optimized_assets_loading ) {
+			$this->reset_page_assets();
+		}
+
+		if ( $is_optimized_assets_loading || $is_optimized_css_loading ) {
+			$this->handle_page_elements( $elements, $this->data_updaters );
+		}
 
 		/**
 		 * After saving data.
@@ -1289,6 +1347,16 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
+		$assets_data_updater = new Assets_Data_Updater( $this );
+
+		$this->register_data_updater( $assets_data_updater );
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+			$widgets_css_data_updater = new Widgets_Css_Data_Updater( $this );
+
+			$this->register_data_updater( $widgets_css_data_updater );
+		}
+
 		parent::__construct( $data );
 	}
 
@@ -1377,6 +1445,45 @@ abstract class Document extends Controls_Stack {
 		] );
 	}
 
+	public function update_page_assets( $new_assets ) {
+		$page_assets = $this->get_page_assets();
+
+		if ( ! $page_assets ) {
+			$page_assets = [];
+		}
+
+		foreach ( $new_assets as $assets_type => $assets_type_data ) {
+			if ( ! isset( $page_assets[ $assets_type ] ) ) {
+				$page_assets[ $assets_type ] = [];
+			}
+
+			$page_assets[ $assets_type ] = array_unique( array_merge( $page_assets[ $assets_type ], $new_assets[ $assets_type ] ) );
+		}
+
+		// Updating also the static variable so that the data will be available without the need to get it from the DB.
+		self::$page_assets = $page_assets;
+
+		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+	}
+
+	public function get_page_assets( $force_fetch = false ) {
+		static $is_meta_fetched;
+
+		if ( ! $is_meta_fetched || $force_fetch ) {
+			$is_meta_fetched = true;
+
+			$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+
+			if ( is_array( $page_assets ) ) {
+				self::$page_assets = $page_assets;
+
+				return $page_assets;
+			}
+		}
+
+		return self::$page_assets;
+	}
+
 	private function process_element_import_export( Controls_Stack $element, $method ) {
 		$element_data = $element->get_data();
 
@@ -1434,13 +1541,19 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		// Collect all data updaters that should be updated on runtime.
+		$runtime_data_updaters = $this->get_runtime_data_updaters();
+
+		if ( $runtime_data_updaters ) {
+			$this->handle_page_elements( $elements_data, $runtime_data_updaters );
+		}
+
 		// Enable elements assets loading.
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$page_assets = $this->get_page_assets( $elements_data );
-			$doc_id = $this->post->ID;
+			$page_assets = $this->get_page_assets();
 
-			if ( $page_assets && array_key_exists( $doc_id, $page_assets ) && $page_assets[ $doc_id ] ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets[ $doc_id ] );
+			if ( $page_assets ) {
+				Plugin::$instance->assets_loader->enable_assets( $page_assets );
 			}
 		}
 
@@ -1526,14 +1639,6 @@ abstract class Document extends Controls_Stack {
 		return $post_has_changed;
 	}
 
-	public function on_get_page_element( $element ) {
-		$element_assets = $this->get_element_assets( $element );
-
-		if ( $element_assets ) {
-			$this->update_page_assets( $element_assets );
-		}
-	}
-
 	private function add_handle_revisions_changed_filter() {
 		add_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ], 10, 3 );
 	}
@@ -1542,151 +1647,52 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function get_page_assets( $elements_data ) {
-		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
+	private function get_runtime_data_updaters() {
+		$runtime_data_updaters = [];
 
-		if ( $page_assets && array_key_exists( $this->post->ID, $page_assets ) ) {
-			return $page_assets;
+		foreach ( $this->data_updaters as $data_updater ) {
+			if ( $data_updater->is_update_needed() ) {
+				$runtime_data_updaters[] = $data_updater;
+			}
 		}
 
-		$this->register_elements_assets_action();
-
-		$this->handle_page_elements( $elements_data );
-
-		// Removing the action to make sure that it only runs once due to being added multiple times by each document.
-		remove_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
-
-		return self::$page_assets;
+		return $runtime_data_updaters;
 	}
 
-	private function handle_page_elements( $elements ) {
+	private function handle_page_elements( $elements, $data_updaters ) {
 		$unique_page_widgets = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets ) {
-			$widget_name = array_key_exists( 'widgetType', $element_data ) ? $element_data['widgetType'] : '';
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, &$data_updaters ) {
+			$widget_name = isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : '';
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, TRUE ) ) {
 				$unique_page_widgets[] = $widget_name;
 
-				do_action( 'elementor/document/get_unique_page_widget', $element );
+				foreach ( $data_updaters as $data_updater ) {
+					$data_updater->update_unique_widget( $element );
+				}
 			}
 
-			do_action( 'elementor/document/get_page_element', $element );
+			foreach ( $data_updaters as $data_updater ) {
+				$data_updater->update_element( $element );
+			}
 
 			return $element_data;
 		} );
 	}
 
-	private function register_elements_assets_action() {
-		$this->init_page_assets_data();
-
-		add_action( 'elementor/document/get_page_element', [ $this, 'on_get_page_element' ] );
-	}
-
 	private function reset_page_assets() {
-		$doc_id = $this->post->ID;
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
-		if ( array_key_exists( $doc_id, $page_assets ) ) {
-			unset( $page_assets[ $doc_id ] );
-
-			$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+		if ( $page_assets ) {
+			$this->update_meta( self::ASSETS_META_KEY, '' );
 		}
 	}
 
-	private function init_page_assets_data() {
-		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
-		$doc_id = $this->post->ID;
-
-		if ( ! $page_assets ) {
-			$page_assets = [];
-		}
-
-		if ( ! array_key_exists( $doc_id, $page_assets ) ) {
-			$page_assets[ $doc_id ] = [];
-		}
-
-		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
-	}
-
-	private function update_page_assets( $new_assets ) {
-		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
-		$doc_id = $this->post->ID;
-
-		foreach ( $new_assets as $assets_type => $assets_type_data ) {
-			if ( ! array_key_exists( $assets_type, $page_assets[ $doc_id ] ) ) {
-				$page_assets[ $doc_id ][ $assets_type ] = [];
-			}
-
-			$page_assets[ $doc_id ][ $assets_type ] = array_unique( array_merge( $page_assets[ $doc_id ][ $assets_type ], $new_assets[ $assets_type ] ) );
-		}
-
-		if ( ! array_key_exists( $doc_id, self::$page_assets ) ) {
-			self::$page_assets[ $doc_id ] = [];
-		}
-
-		// Updating also the static variable so that the data will be available without the need to get it from the DB.
-		self::$page_assets[ $doc_id ] = $page_assets[ $doc_id ];
-
-		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
-	}
-
-	private function get_element_assets( $element ) {
-		$controls = $element->get_controls();
-		$settings = array_intersect_key( $element->get_settings(), $controls );
-		$element_assets = [];
-
-		foreach ( $settings as $setting_key => $setting ) {
-			if ( ! isset( $controls[ $setting_key ] ) ) {
-				continue;
-			}
-
-			$control = $controls[ $setting_key ];
-
-			if ( $this->is_control_visible( $control, $settings ) ) {
-				// Enabling assets loading from the registered control fields.
-				if ( ! empty( $control['assets'] ) ) {
-					foreach ( $control['assets'] as $assets_type => $dependencies ) {
-						foreach ( $dependencies as $dependency ) {
-							if ( ! empty( $dependency['conditions'] ) ) {
-								$is_condition_fulfilled = Conditions::check( $dependency['conditions'], $settings );
-
-								if ( ! $is_condition_fulfilled ) {
-									continue;
-								}
-							}
-
-							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
-								$element_assets[ $assets_type ] = [];
-							}
-
-							$element_assets[ $assets_type ][] = $dependency['name'];
-						}
-					}
-				}
-
-				// Enabling assets loading from the control object.
-				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-				$control_conditional_assets = $control_obj::get_assets( $setting );
-
-				if ( $control_conditional_assets ) {
-					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
-						foreach ( $dependencies as $dependency ) {
-							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
-								$element_assets[ $assets_type ] = [];
-							}
-
-							$element_assets[ $assets_type ][] = $dependency;
-						}
-					}
-				}
-			}
-		}
-
-		return $element_assets;
+	private function register_data_updater( $data_updater ) {
+		$this->data_updaters[] = $data_updater;
 	}
 
 	private function save_widgets_css( $widget_name ) {
