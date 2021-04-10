@@ -1088,12 +1088,6 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$this->reset_page_assets();
-
-			$this->handle_page_elements( $elements, $this->data_updaters );
-		}
-
 		$editor_data = $this->get_elements_raw_data( $elements );
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
@@ -1115,6 +1109,12 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/db/before_save', $this->post->post_status, $is_meta_updated );
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$this->reset_page_assets();
+
+			$this->handle_page_elements( $elements, $this->data_updaters );
+		}
 
 		/**
 		 * After saving data.
@@ -1452,14 +1452,19 @@ abstract class Document extends Controls_Stack {
 		// Updating also the static variable so that the data will be available without the need to get it from the DB.
 		self::$page_assets = $page_assets;
 
+		$this->delete_meta( self::ASSETS_META_KEY );
 		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
 	}
 
-	public function get_page_assets() {
-		if ( ! self::$page_assets ) {
+	public function get_page_assets( $force_fetch = false ) {
+		static $is_meta_fetched;
+
+		if ( ! $is_meta_fetched || $force_fetch ) {
+			$is_meta_fetched = true;
+
 			$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
-			if ( $page_assets ) {
+			if ( is_array( $page_assets ) ) {
 				self::$page_assets = $page_assets;
 
 				return $page_assets;
@@ -1672,9 +1677,7 @@ abstract class Document extends Controls_Stack {
 		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
 
 		if ( $page_assets ) {
-			$page_assets = [];
-
-			$this->update_meta( self::ASSETS_META_KEY, $page_assets );
+			$this->update_meta( self::ASSETS_META_KEY, '' );
 		}
 	}
 
