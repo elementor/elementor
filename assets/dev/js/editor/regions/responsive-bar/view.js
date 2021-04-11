@@ -66,7 +66,9 @@ export default class View extends Marionette.ItemView {
 		const delay = 1 > speed ? 500 : 120 - ( speed * 1.5 );
 
 		setTimeout( () => {
-			if ( ! this.isScalingPreview ) { return; }
+			if ( ! this.isScalingPreview ) {
+				return;
+			}
 
 			this.incrementScale( increment, speed += 1 );
 		}, delay );
