@@ -52,6 +52,10 @@ module.exports = Marionette.Behavior.extend( {
 
 		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
 
+		if ( ! elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
+			return;
+		}
+
 		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
 			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
 
@@ -202,7 +206,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion: function() {
-		let message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
+		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
 
 		elementor.promotion.showDialog( {
 			headerMessage: __( 'Dynamic Content', 'elementor' ),
