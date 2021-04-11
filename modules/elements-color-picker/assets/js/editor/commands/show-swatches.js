@@ -83,24 +83,27 @@ export class ShowSwatches extends CommandBase {
 				return;
 			}
 
+			const isColor = ( 'color' === this.container.controls[ control ]?.type );
+			const isBgImage = control.includes( 'background_image' );
+
 			// Determine if the current control is active.
 			const isActive = () => {
 				return ( elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) );
 			};
 
-			// Handle background images.
-			if ( control.includes( 'background_image' ) && isActive() ) {
-				this.addTempBackgroundImage( this.container.getSetting( control ) );
-				return;
-			}
-
-			// Throw non-color controls.
-			if ( 'color' !== this.container.controls[ control ]?.type ) {
+			// Throw non-color and non-background-image controls.
+			if ( ! isColor && ! isBgImage ) {
 				return;
 			}
 
 			// Throw non-active controls.
 			if ( ! isActive() ) {
+				return;
+			}
+
+			// Handle background images.
+			if ( isBgImage ) {
+				this.addTempBackgroundImage( this.container.getSetting( control ) );
 				return;
 			}
 
