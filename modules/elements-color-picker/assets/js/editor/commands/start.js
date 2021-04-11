@@ -12,7 +12,7 @@ export class Start extends CommandBase {
 			initialColor: args.container.getSetting( args.control ),
 		};
 
-		// Set the picking process trigger to active mode.
+		// Disable the picking button in order to prevent restart.
 		this.component.currentPicker.trigger.classList.add( 'e-control-tool-disabled' );
 
 		// Initialize a swatch on click.

@@ -4,8 +4,8 @@ export class Apply extends CommandBase {
 	/**
 	 * Execute the color apply command.
 	 *
-	 * @param value The new color to apply.
-	 * @param trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
+	 * @param {string} value The new color to apply.
+	 * @param {HTMLElement} trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
 	 */
 	apply( { value, trigger } ) {
 		this.setColor( value );
