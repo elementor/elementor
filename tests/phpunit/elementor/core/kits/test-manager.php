@@ -180,7 +180,8 @@ class Test_Manager extends Elementor_Test_Base {
 			'title' => 'Site Settings',
 			'sub_title' => 'Site',
 			'href' => $document->get_edit_url() . '#' . Manager::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
-			'class' => 'elementor-general-section first elementor-site-settings',
+			'class' => 'elementor-site-settings',
+			'parent_class' => 'elementor-second-section',
 		];
 
 		$adminbar_settings = ( new Adminbar_Module() )->get_settings();
