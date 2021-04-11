@@ -1,6 +1,10 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
 export class Apply extends CommandBase {
+	validateArgs( args ) {
+		this.requireArgumentType( 'value', 'string' );
+	}
+
 	/**
 	 * Execute the color apply command.
 	 *
