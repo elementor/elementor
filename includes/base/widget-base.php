@@ -597,7 +597,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function is_widget_first_render() {
-		return ! in_array( $this->get_widget_type(), self::$registered_runtime_widgets, TRUE );
+		return ! in_array( $this->get_widget_type(), self::$registered_runtime_widgets, true );
 	}
 
 	/**
