@@ -78,7 +78,7 @@ class Assets_Loader extends Module {
 
 		$assets_data = $this->assets_inline_content[ $content_type ];
 
-		$is_asset_inline_content_exist = array_key_exists( $asset_key, $assets_data );
+		$is_asset_inline_content_exist = isset( $assets_data[ $asset_key ] );
 
 		if ( 'css' === $content_type && ( ! $is_asset_inline_content_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) ) {
 			$asset_css = $this->get_asset_css( $asset_key, $asset_url, $asset_path );
@@ -101,7 +101,7 @@ class Assets_Loader extends Module {
 			$this->init_assets_inline_content( $content_type );
 		}
 
-		if ( ! array_key_exists( $asset_key, $this->assets_inline_content[ $content_type ] ) ) {
+		if ( ! isset( $this->assets_inline_content[ $content_type ][ $asset_key ] ) ) {
 			$this->assets_inline_content[ $content_type ][ $asset_key ] = [];
 		}
 
@@ -113,7 +113,7 @@ class Assets_Loader extends Module {
 	}
 
 	private function is_asset_version_changed( $asset_data, $current_version ) {
-		if ( ! array_key_exists( 'version', $asset_data ) ) {
+		if ( ! isset( $asset_data['version'] ) ) {
 			return false;
 		}
 
@@ -125,7 +125,7 @@ class Assets_Loader extends Module {
 			$this->files_data = [];
 		}
 
-		if ( ! array_key_exists( $asset_key, $this->files_data ) ) {
+		if ( ! isset( $this->files_data[ $asset_key ] ) ) {
 			$this->files_data[ $asset_key ] = [];
 		}
 
@@ -192,7 +192,7 @@ class Assets_Loader extends Module {
 	private function init_assets_inline_content( $content_type = '' ) {
 		$this->assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
 
-		if ( $content_type && ! array_key_exists( $content_type, $this->assets_inline_content )  ) {
+		if ( $content_type && ! isset( $this->assets_inline_content[ $content_type ] ) ) {
 			$this->assets_inline_content[ $content_type ] = [];
 		}
 	}
