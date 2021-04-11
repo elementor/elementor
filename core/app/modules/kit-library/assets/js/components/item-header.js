@@ -127,7 +127,7 @@ function useApplyButton( model, { onConnect, onApply } ) {
 				variant: 'contained',
 				color: 'cta',
 				size: 'sm',
-				url: subscriptionPlan.url,
+				url: subscriptionPlan.promotion_url,
 				target: '_blank',
 			};
 		}
