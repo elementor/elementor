@@ -1482,6 +1482,9 @@ abstract class Document extends Controls_Stack {
 				self::$page_assets = $page_assets;
 
 				return $page_assets;
+			} else {
+				// The meta data initial value should be an array as an indication that the page assets have been evaluated at lease once.
+				$this->update_meta( self::ASSETS_META_KEY, [] );
 			}
 		}
 
@@ -1692,7 +1695,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function reset_page_assets() {
-		$this->update_meta( self::ASSETS_META_KEY, '' );
+		$this->update_meta( self::ASSETS_META_KEY, [] );
 	}
 
 	private function register_data_updater( $data_updater ) {
