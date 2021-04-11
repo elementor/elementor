@@ -3,45 +3,7 @@
 		var self = this,
 			rules = {},
 			rawCSS = {},
-			devices = {},
-			activeBreakpoints,
-			// A object map of breakpoint database keys
-			breakpointKeys,
-			// A flat array of the breakpoint keys.
-			breakpointNames; //
-
-		const getDeviceMinBreakpoint = ( deviceName ) => {
-			let minBreakpoint;
-
-			if ( ! activeBreakpoints ) {
-				// The breakpoints config object
-				activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
-			}
-
-			if ( ! breakpointNames ) {
-				breakpointNames = Object.keys( activeBreakpoints );
-			}
-
-			if ( ! breakpointKeys ) {
-				breakpointKeys = elementor.config.breakpointKeys;
-			}
-
-			if ( breakpointNames[ 0 ] === deviceName ) {
-				// For the lowest breakpoint, the min point is always 0.
-				minBreakpoint = 0;
-			} else if ( 'min' === activeBreakpoints[ deviceName ].direction ) {
-				// Widescreen only has a minimum point. In this case, the breakpoint
-				// value in the Breakpoints config is itself the device min point.
-				minBreakpoint = activeBreakpoints[ deviceName ].value;
-			} else {
-				const deviceNameIndex = breakpointNames.indexOf( deviceName ),
-					previousIndex = deviceNameIndex - 1;
-
-				minBreakpoint = activeBreakpoints[ breakpointNames[ previousIndex ] ] + 1;
-			}
-
-			return minBreakpoint;
-		};
+			devices = {};
 
 		var queryToHash = function( query ) {
 			var hash = [];
@@ -63,7 +25,7 @@
 					endPoint = queryParts[ 0 ],
 					deviceName = queryParts[ 1 ];
 
-				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : getDeviceMinBreakpoint( deviceName );
+				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : Stylesheet.getDeviceMinBreakpoint( deviceName );
 			} );
 
 			return query;
@@ -249,6 +211,59 @@
 		} );
 
 		return parsedProperties;
+	};
+
+	Stylesheet.getDesktopPreviousDeviceKey = () => {
+		let desktopPreviousDevice = '';
+
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			breakpointKeys = Object.keys( activeBreakpoints ),
+			numOfDevices = breakpointKeys.length;
+
+		if ( 'min' === activeBreakpoints[ breakpointKeys[ numOfDevices - 1 ] ].direction ) {
+			// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
+			// widescreen.
+			desktopPreviousDevice = breakpointKeys[ numOfDevices - 2 ];
+		} else {
+			// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
+			desktopPreviousDevice = breakpointKeys[ numOfDevices - 1 ];
+		}
+
+		return desktopPreviousDevice;
+	};
+
+	Stylesheet.getDesktopMinPoint = () => {
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			desktopPreviousDevice = Stylesheet.getDesktopPreviousDeviceKey();
+
+		return activeBreakpoints[ desktopPreviousDevice ].value + 1;
+	};
+
+	Stylesheet.getDeviceMinBreakpoint = ( deviceName ) => {
+		if ( 'desktop' === deviceName ) {
+			return Stylesheet.getDesktopMinPoint();
+		}
+
+		const activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
+			breakpointNames = Object.keys( activeBreakpoints );
+
+		let minBreakpoint;
+
+		if ( breakpointNames[ 0 ] === deviceName ) {
+			// For the lowest breakpoint, the min point is always 0.
+			minBreakpoint = 0;
+		} else if ( 'min' === activeBreakpoints[ deviceName ].direction ) {
+			// Widescreen only has a minimum point. In this case, the breakpoint
+			// value in the Breakpoints config is itself the device min point.
+			minBreakpoint = activeBreakpoints[ deviceName ].value;
+		} else {
+			const deviceNameIndex = breakpointNames.indexOf( deviceName ),
+				previousIndex = deviceNameIndex - 1;
+
+			minBreakpoint = activeBreakpoints[ breakpointNames[ previousIndex ] ].value + 1;
+		}
+
+		return minBreakpoint;
 	};
 
 	module.exports = Stylesheet;

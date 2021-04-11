@@ -1283,10 +1283,16 @@ class Frontend extends App {
 
 	private function get_breakpoints_config() {
 		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+
 		$config = [];
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$config[ $breakpoint_name ] = $breakpoint->get_config();
+			$config[ $breakpoint_name ] = [
+				'label' => $breakpoint->get_label(),
+				'value' => $breakpoint->get_value(),
+				'direction' => $breakpoint->get_direction(),
+				'is_enabled' => $breakpoint->is_enabled(),
+			];
 		}
 
 		return $config;
