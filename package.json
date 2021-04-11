@@ -43,6 +43,7 @@
 		"grunt-contrib-watch": "^1.1.0",
 		"grunt-karma": "4.0.0",
 		"grunt-postcss": "~0.9.0",
+		"grunt-release": "0.14.0",
 		"grunt-sass": "^2.1.0",
 		"grunt-shell": "~2.1.0",
 		"grunt-text-replace": "~0.4.0",
