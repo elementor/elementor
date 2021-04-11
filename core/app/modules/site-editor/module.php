@@ -31,13 +31,14 @@ class Module extends BaseModule {
 			'title' => __( 'Theme Builder', 'elementor' ),
 			'sub_title' => __( 'Site', 'elementor' ),
 			'href' => Plugin::$instance->app->get_settings( 'menu_url' ),
-			'class' => 'elementor-general-section elementor-app-link',
+			'class' => 'elementor-app-link',
+			'parent_class' => 'elementor-second-section',
 		];
 
 		return $admin_bar_config;
 	}
 
 	public function __construct() {
-		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ], 0 /* After kit (Site settings) */ );
+		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] ); // After kit (Site settings)
 	}
 }
