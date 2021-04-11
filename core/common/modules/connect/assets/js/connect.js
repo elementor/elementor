@@ -18,7 +18,8 @@ export default class extends elementorModules.ViewModule {
 
 				const $this = jQuery( this ),
 					callbackId = 'cb' + ( counter ),
-					tabName = $e.routes.getCurrent( 'library' ).split( '/' )[ 2 ],
+					prevLibraryRoute = $e.routes.getHistory( 'library' ).reverse()[ 0 ].route,
+					tabName = prevLibraryRoute.split( '/' )[ 2 ],
 					UTMSource = `utm_source=editor-panel&utm_medium=wp-dash&utm_campaign=insert_${ tabName }`;
 
 				$this.attr( {
