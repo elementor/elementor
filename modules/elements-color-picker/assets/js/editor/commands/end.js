@@ -17,6 +17,7 @@ export class End extends CommandBase {
 		removeNsHandler( elementor.$previewWrapper[ 0 ], 'mouseleave.color-picker' );
 
 		// Set the picking process trigger to inactive mode.
+		// eslint-disable-next-line no-unused-expressions
 		this.component.currentPicker.trigger?.classList.remove( 'e-control-tool-disabled' );
 
 		// Reset the current picker.
