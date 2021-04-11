@@ -16,13 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.1.0
  */
 class Assets_Loader extends Module {
-	const INLINE_CONTENT_KEY = '_elementor_inline_content';
-
 	private $assets;
-
-	private $assets_inline_content;
-
-	private $files_data;
 
 	public function get_name() {
 		return 'assets-loader';
@@ -63,85 +57,6 @@ class Assets_Loader extends Module {
 		}
 
 		$this->assets = array_replace_recursive( $this->assets, $assets );
-	}
-
-	public function set_asset_inline_content( $config ) {
-		$content_type = $config['content_type'];
-		$asset_key = $config['asset_key'];
-		$asset_url = $config['asset_url'];
-		$asset_path = $config['asset_path'];
-		$current_version = $config['current_version'];
-
-		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content( $content_type );
-		}
-
-		$assets_data = $this->assets_inline_content[ $content_type ];
-
-		$is_asset_inline_content_exist = isset( $assets_data[ $asset_key ] );
-
-		if ( 'css' === $content_type && ( ! $is_asset_inline_content_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) ) {
-			$asset_css = $this->get_asset_css( $asset_key, $asset_url, $asset_path );
-
-			$this->save_asset_inline_content( 'css', $asset_key, $asset_css, $current_version );
-		}
-	}
-
-	public function get_asset_inline_content( $config ) {
-		$this->set_asset_inline_content( $config );
-
-		$content_type = $config['content_type'];
-		$asset_key = $config['asset_key'];
-
-		return $this->assets_inline_content[ $content_type ][ $asset_key ]['content'];
-	}
-
-	public function save_asset_inline_content( $content_type, $asset_key, $content, $version ) {
-		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content( $content_type );
-		}
-
-		if ( ! isset( $this->assets_inline_content[ $content_type ][ $asset_key ] ) ) {
-			$this->assets_inline_content[ $content_type ][ $asset_key ] = [];
-		}
-
-		$this->assets_inline_content[ $content_type ][ $asset_key ]['content'] = $content;
-
-		$this->assets_inline_content[ $content_type ][ $asset_key ]['version'] = $version;
-
-		update_option( self::INLINE_CONTENT_KEY, $this->assets_inline_content );
-	}
-
-	private function is_asset_version_changed( $asset_data, $current_version ) {
-		if ( ! isset( $asset_data['version'] ) ) {
-			return false;
-		}
-
-		return $current_version !== $asset_data['version'];
-	}
-
-	private function get_file_data( $asset_key, $asset_path, $data_type = '' ) {
-		if ( ! $this->files_data ) {
-			$this->files_data = [];
-		}
-
-		if ( ! isset( $this->files_data[ $asset_key ] ) ) {
-			$this->files_data[ $asset_key ] = [];
-		}
-
-		if ( $data_type ) {
-			if ( 'content' === $data_type ) {
-				$data = file_get_contents( $asset_path );
-			} elseif ( 'size' === $data_type ) {
-				$data = filesize( $asset_path );
-			}
-
-			$this->files_data[ $asset_key ][ $data_type ] = $data;
-
-			return $data;
-		}
-
-		return $this->files_data[ $asset_key ];
 	}
 
 	private function add_enqueue_assets_action() {
@@ -189,33 +104,9 @@ class Assets_Loader extends Module {
 		}
 	}
 
-	private function init_assets_inline_content( $content_type = '' ) {
-		$this->assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
-
-		if ( $content_type && ! isset( $this->assets_inline_content[ $content_type ] ) ) {
-			$this->assets_inline_content[ $content_type ] = [];
-		}
-	}
-
-	private function get_asset_css( $asset_key, $asset_url, $asset_path ) {
-		if ( ! file_exists( $asset_path ) ) {
-			return '';
-		}
-
-		$asset_css_file_size = $this->get_file_data( $asset_key, $asset_path, 'size' );
-
-		// If the file size is more than 3KB then calling the external CSS file, otherwise, printing inline CSS.
-		if ( $asset_css_file_size > 3000 ) {
-			$asset_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
-		} else {
-			$asset_css = $this->get_file_data( $asset_key, $asset_path, 'content' );
-			$asset_css = sprintf( '<style>%s</style>', $asset_css );
-		}
-
-		return $asset_css;
-	}
-
 	public function __construct() {
+		parent::__construct();
+		
 		$this->add_register_assets_action();
 		$this->add_enqueue_assets_action();
 	}
