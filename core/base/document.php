@@ -1484,6 +1484,10 @@ abstract class Document extends Controls_Stack {
 		return self::$page_assets;
 	}
 
+	public function save_widgets_css( $widget_name ) {
+		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
+	}
+
 	private function process_element_import_export( Controls_Stack $element, $method ) {
 		$element_data = $element->get_data();
 
@@ -1693,10 +1697,6 @@ abstract class Document extends Controls_Stack {
 
 	private function register_data_updater( $data_updater ) {
 		$this->data_updaters[] = $data_updater;
-	}
-
-	private function save_widgets_css( $widget_name ) {
-		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
 	}
 
 	private function get_widget_css_config( $widget_file_name ) {
