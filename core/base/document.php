@@ -1342,9 +1342,11 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		$assets_data_updater = new Assets_Data_Updater( $this );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$assets_data_updater = new Assets_Data_Updater( $this );
 
-		$this->register_data_updater( $assets_data_updater );
+			$this->register_data_updater( $assets_data_updater );
+		}
 
 		parent::__construct( $data );
 	}
@@ -1451,7 +1453,7 @@ abstract class Document extends Controls_Stack {
 
 		// Updating also the static variable so that the data will be available without the need to get it from the DB.
 		self::$page_assets = $page_assets;
-		
+
 		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
 	}
 
@@ -1673,11 +1675,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function reset_page_assets() {
-		$page_assets = $this->get_meta( self::ASSETS_META_KEY );
-
-		if ( $page_assets ) {
-			$this->update_meta( self::ASSETS_META_KEY, '' );
-		}
+		$this->update_meta( self::ASSETS_META_KEY, '' );
 	}
 
 	private function register_data_updater( $data_updater ) {
