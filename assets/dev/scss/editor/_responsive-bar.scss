@@ -22,6 +22,7 @@
 .e-responsive-bar {
 	width: 100%;
 	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+  	font-size: 12px;
 	z-index: 1;
 	transition: margin-top .2s ease-in-out;
 	display: flex;
@@ -38,15 +39,19 @@
 		justify-content: center;
 		align-items: center;
 
+	  	&:first-child {
+		  	justify-content: flex-start;
+		}
+
 		&:last-child {
 			justify-content: flex-start;
 			flex-direction: row-reverse;
 		}
 	}
 
-	&__close-button,
-	&__settings-button {
-		padding: 10px 8px;
+  	&__scale-control {
+	  	display: flex;
+	  	align-self: center;
 	}
 
 	&__button {
@@ -55,6 +60,7 @@
 		border: 0 none;
 		cursor: pointer;
 		color: inherit;
+		padding: 10px 8px;
 
 		&:focus:not(:focus-visible) {
 			outline: none;
@@ -62,6 +68,34 @@
 
 		&:hover {
 			color: $editor-lighter;
+		}
+
+	  	i {
+			width: 14px;
+			height: 14px;
+		}
+
+	  	&-scale-down {
+		  	display: flex;
+		  	align-items: center;
+
+			i {
+			  line-height: 1;
+			  display: inline-flex;
+			  align-items: center;
+			  justify-content: center;
+			  width: 14px;
+			  height: 14px;
+
+			  &::before {
+				content: '';
+				display: block;
+				height: 0.15em;
+				width: .7em;
+				border-radius: 0.5px;
+				background-color: currentColor;
+			  }
+			}
 		}
 	}
 
@@ -87,8 +121,25 @@
 	  	color: $editor-dark;
 	}
 
+	&__input-scale,
 	&__input-size {
 		background-color: transparent;
+		-moz-appearance: textfield;
+		text-align: center;
+	}
+
+  	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+		 -webkit-appearance: none;
+		 margin: 0;
+	}
+
+	&__input-scale {
+		border: 0 none;
+		width: 50px;
+	}
+
+	&__input-size {
 		color: $editor-light;
 		border: 1px solid $editor-dark !important;
 		padding: 0 3px;
@@ -126,7 +177,7 @@
 		}
 
 	  	input {
-			appearance: none;
+			-webkit-appearance: none;
 			overflow: hidden;
 			opacity: 0;
 			width: 0 !important;
@@ -141,4 +192,3 @@
 		}
 	}
 }
-

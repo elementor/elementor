@@ -128,10 +128,17 @@ body {
 	}
 }
 
+:root {
+  	--e-editor-preview-scale: 100;
+}
+
 #elementor-preview-iframe {
-	width: 100%;
-	height: 100%;
 	background-color: #fff;
 	box-shadow: 0 0 3px rgba(0, 0, 0, .3), 0 0 20px rgba(0, 0, 0, .15);
+  	--e-editor-preview-scale-ratio: calc(10000% / var(--e-editor-preview-scale));
+	width: var(--e-editor-preview-scale-ratio);
+	height: var(--e-editor-preview-scale-ratio);
+	transform: scale(calc(var(--e-editor-preview-scale) * 0.01));
+	transform-origin: 0 0;
 }
 
