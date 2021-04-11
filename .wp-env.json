@@ -5,7 +5,7 @@
         "./build"
     ],
     "themes": [
-        "https://downloads.wordpress.org/theme/hello-elementor.2.3.1.zip"
+        "https://downloads.wordpress.org/theme/hello-elementor.zip"
     ],
     "mappings": {
         "elementor-templates": "./tests/lighthouse/templates",
