@@ -783,8 +783,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	exitDeviceMode() {
-		elementor.changeDeviceMode( 'desktop' );
-
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 
 		this.destroyPreviewResizable();
@@ -864,6 +862,14 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+
+		if ( this.isDeviceModeActive() ) {
+			if ( 'desktop' === newDeviceMode ) {
+				this.exitDeviceMode();
+			}
+		} else if ( 'desktop' !== newDeviceMode ) {
+			this.enterDeviceMode();
+		}
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
