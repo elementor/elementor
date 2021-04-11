@@ -1,12 +1,12 @@
 import After from 'elementor-api/modules/hooks/data/after';
 
-export class CreateColumnSectionEmpty extends After {
+export class CreateColumnForEmptySection extends After {
 	getCommand() {
 		return 'document/elements/delete';
 	}
 
 	getId() {
-		return 'create-column-section-empty--document/elements/delete';
+		return 'create-column-for-empty-section--document/elements/delete';
 	}
 
 	getContainerType() {
@@ -48,5 +48,5 @@ export class CreateColumnSectionEmpty extends After {
 	}
 }
 
-export default CreateColumnSectionEmpty;
+export default CreateColumnForEmptySection;
 
