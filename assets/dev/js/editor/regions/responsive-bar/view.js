@@ -105,7 +105,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onCloseButtonClick() {
-		elementor.exitDeviceMode();
+		elementor.changeDeviceMode( 'desktop' );
 	}
 
 	onSizeInputChange() {
