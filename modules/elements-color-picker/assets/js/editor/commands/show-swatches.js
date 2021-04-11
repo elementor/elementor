@@ -35,11 +35,6 @@ export class ShowSwatches extends CommandBase {
 			x = Math.round( e.clientX - rect.left ) + 'px',
 			y = Math.round( e.clientY - rect.top ) + 'px';
 
-		// Don't pick colors from the current widget.
-		if ( id === this.component.currentPicker.container.id ) {
-			return;
-		}
-
 		this.container = elementor.getContainer( id );
 
 		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.pickerSelector );
