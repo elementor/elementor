@@ -20,13 +20,6 @@ export class Start extends CommandBase {
 			$e.run( 'elements-color-picker/show-swatches', { event: e } );
 		} );
 
-		// Prevent lightbox from opening.
-		this.component.lightboxTriggers = elementor.$previewContents[ 0 ].querySelectorAll( '[data-elementor-open-lightbox="yes"]' );
-
-		this.component.lightboxTriggers.forEach( ( item ) => {
-			item.dataset.elementorOpenLightbox = 'no';
-		} );
-
 		// Stop the picking process when the user leaves the preview area.
 		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
 			$e.run( 'elements-color-picker/end' );
