@@ -668,7 +668,7 @@ class Frontend extends App {
 	 * @access private
 	 */
 	private function enqueue_conditional_assets() {
-		Plugin::$instance->assets_loader->handle_assets();
+		Plugin::$instance->assets_loader->enqueue_assets();
 	}
 
 	/**
