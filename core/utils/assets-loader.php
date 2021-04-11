@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.1.0
  */
 class Assets_Loader extends Module {
-	const INLINE_CONTENT_KEY =  '_elementor_inline_content';
+	const INLINE_CONTENT_KEY = '_elementor_inline_content';
 
 	private $assets;
 
