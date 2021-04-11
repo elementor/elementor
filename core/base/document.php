@@ -1658,7 +1658,7 @@ abstract class Document extends Controls_Stack {
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, TRUE ) ) {
+			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, true ) ) {
 				$unique_page_widgets[] = $widget_name;
 
 				foreach ( $data_updaters as $data_updater ) {
