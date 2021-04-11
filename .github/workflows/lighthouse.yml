@@ -1,0 +1,89 @@
+name: Lighthouse
+
+on: [push, pull_request]
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx grunt build
+      - name: Save build to cache
+        uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+
+  lighthouse:
+    name: Lighthouse test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    strategy:
+      matrix:
+        include:
+          - phpVersion: '7.3'
+            wpCoreVersion: '5.6'
+          - phpVersion: '8.0'
+            wpCoreVersion: 'latest'
+          - phpVersion: '7.4'
+            wpCoreVersion: 'latest'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Restore build from cache
+        uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+      - name: Update wp-env.json file
+        env:
+          PHP_VERSION: ${{ matrix.phpVersion }}
+          WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
+        run: node ./.github/scripts/build-wp-env.js
+      - name: Install wp-env and lhci
+        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.0
+      - name: Install WordPress environment
+        run: |
+          npx wp-env start
+          # change wp-env folder owner to www-data
+          sudo chown 33:33 -R ~/wp-env/
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/import-temapltes.sh'"
+      - name: WordPress debug information
+        run: |
+          npx wp-env run tests-cli "wp core version"
+          npx wp-env run tests-cli "wp --info"
+      - name: Run Lighthouse tests
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
+      - name: Upload Lighthouse reports on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lighthouseci-reports
+          path: ${{ github.workspace }}/.lighthouseci/reports/**/*
