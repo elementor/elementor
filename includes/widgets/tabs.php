@@ -475,6 +475,8 @@ class Widget_Tabs extends Widget_Base {
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
+				<<?php echo Utils::validate_html_tag( $settings['title_html_tag'] ); ?> <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>>
+						<?php if ( $has_icon ) : ?>
 				<?php
 				foreach ( $tabs as $index => $item ) :
 					$tab_count = $index + 1;
@@ -506,8 +508,6 @@ class Widget_Tabs extends Widget_Base {
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
-					<?php echo $settings['html_tag'] . ' ' . $this->get_render_attribute_string( 'tab_title' ); ?> <?php echo $settings['tab_title']; ?></<?php echo $settings['html_tag']; ?
-					<?php endforeach; ?>
 			</div>
 		</div>
 		<?php
@@ -561,6 +561,24 @@ class Widget_Tabs extends Widget_Base {
 						<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
 						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 					<# } ); #>
+						var titleHTMLTag = elementor.helpers.validateHTMLTag( settings.title_html_tag );
+					#>
+					<div class="elementor-accordion-item">
+						<{{{ titleHTMLTag }}} {{{ view.getRenderAttributeString( tabTitleKey ) }}}>
+							<# if ( settings.icon || settings.selected_icon ) { #>
+							<span class="elementor-accordion-icon elementor-accordion-icon-{{ settings.icon_align }}" aria-hidden="true">
+								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+									<span class="elementor-accordion-icon-closed">{{{ iconHTML.value }}}</span>
+									<span class="elementor-accordion-icon-opened">{{{ iconActiveHTML.value }}}</span>
+								<# } else { #>
+									<i class="elementor-accordion-icon-closed {{ settings.icon }}"></i>
+									<i class="elementor-accordion-icon-opened {{ settings.icon_active }}"></i>
+								<# } #>
+							</span>
+							<# } #>
+							<a class="elementor-accordion-title" href="">{{{ item.tab_title }}}</a>
+						</{{{ titleHTMLTag }}}>
+						<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>{{{ item.tab_content }}}</div>
 				</div>
 			<# } #>
 		</div>
