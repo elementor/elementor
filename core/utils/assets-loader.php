@@ -45,7 +45,7 @@ class Assets_Loader extends Module {
 		return $this->assets;
 	}
 
-	public function enable_assets( $assets_data ) {
+	public function enable_assets( array $assets_data ) {
 		if ( ! $this->assets ) {
 			$this->init_assets();
 		}
@@ -57,7 +57,7 @@ class Assets_Loader extends Module {
 		}
 	}
 
-	public function add_assets( $assets ) {
+	public function add_assets( array $assets ) {
 		if ( ! $this->assets ) {
 			$this->init_assets();
 		}
@@ -144,47 +144,34 @@ class Assets_Loader extends Module {
 		return $this->files_data[ $asset_key ];
 	}
 
-	private function add_enqueue_assets_action() {
-		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-
-		add_action( 'elementor/assets_loader/get_asset', function( $asset ) use ( &$is_preview_mode, &$is_optimized_assets_loading ) {
-			$asset_data = $asset['data'];
-
-			if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode || ! $is_optimized_assets_loading ) {
-				if ( 'scripts' === $asset['type'] ) {
-					wp_enqueue_script( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
-				} else {
-					wp_enqueue_style( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
-				}
-			}
-		} );
-	}
-
-	private function add_register_assets_action() {
-		add_action( 'elementor/assets_loader/get_asset', function( $asset ) {
-			$asset_data = $asset['data'];
-
-			if ( 'scripts' === $asset['type'] ) {
-				wp_register_script( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
-			} else {
-				wp_register_style( $asset['name'], $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
-			}
-		} );
-	}
-
-	public function handle_assets() {
+	private function register_assets() {
 		$assets = $this->get_assets();
 
 		foreach ( $assets as $assets_type => $assets_type_data ) {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
-				$asset = [
-					'type' => $assets_type,
-					'name' => $asset_name,
-					'data' => $asset_data,
-				];
+				if ( 'scripts' === $assets_type ) {
+					wp_register_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+				} else {
+					wp_register_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+				}
+			}
+		}
+	}
 
-				do_action( 'elementor/assets_loader/get_asset', $asset );
+	public function enqueue_assets() {
+		$assets = $this->get_assets();
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+
+		foreach ( $assets as $assets_type => $assets_type_data ) {
+			foreach ( $assets_type_data as $asset_name => $asset_data ) {
+				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode || ! $is_optimized_assets_loading ) {
+					if ( 'scripts' === $assets_type ) {
+						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+					} else {
+						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+					}
+				}
 			}
 		}
 	}
@@ -215,18 +202,6 @@ class Assets_Loader extends Module {
 		return $asset_css;
 	}
 
-	public function __construct() {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
-			// Reset the inline content CSS when regenerating CSS from the dashboard.
-			add_action( 'elementor/core/files/clear_cache', function() {
-				$this->reset_inline_content_css();
-			} );
-		}
-
-		$this->add_register_assets_action();
-		$this->add_enqueue_assets_action();
-	}
-
 	private function reset_inline_content_css() {
 		$assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
 
@@ -235,5 +210,18 @@ class Assets_Loader extends Module {
 
 			update_option( self::INLINE_CONTENT_KEY, $assets_inline_content );
 		}
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+			// Reset the inline content CSS when regenerating CSS from the dashboard.
+			add_action( 'elementor/core/files/clear_cache', function() {
+				$this->reset_inline_content_css();
+			} );
+		}
+
+		$this->register_assets();
 	}
 }
