@@ -64,7 +64,7 @@
 			}
 
 			&::before {
-				content: attr( data-color );
+				content: attr( data-text );
 				position: absolute;
 				left: 50%;
 				top: 50%;

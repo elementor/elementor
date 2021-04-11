@@ -11,11 +11,14 @@ export class Apply extends CommandBase {
 		this.setColor( value );
 
 		if ( trigger ) {
-			// Show `Selected!` message.
-			trigger.swatch.dataset.color = __( 'Selected!', 'elementor' );
+			const prevText = trigger.swatch.dataset.text;
 
+			// Show `Selected!` message.
+			trigger.swatch.dataset.text = __( 'Selected!', 'elementor' );
+
+			// Hide message after a second.
 			setTimeout( () => {
-				trigger.swatch.dataset.color = value;
+				trigger.swatch.dataset.text = prevText;
 			}, 1000 );
 
 			// End picking only after the user leaves the swatch container.
