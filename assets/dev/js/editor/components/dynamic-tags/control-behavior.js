@@ -51,23 +51,6 @@ module.exports = Marionette.Behavior.extend( {
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
 
 		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
-
-		if ( ! elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
-			return;
-		}
-
-		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
-			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' );
-
-		$colorPicker.on( 'click', () => {
-			$e.run( 'elements-color-picker/start', {
-				container: currentElement.container,
-				control: this.view.model.get( 'name' ),
-				trigger: $colorPicker[ 0 ],
-			} );
-		} );
-
-		$colorPickerToolsContainer.append( $colorPicker );
 	},
 
 	toggleDynamicClass: function() {
