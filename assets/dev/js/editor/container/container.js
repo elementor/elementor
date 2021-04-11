@@ -346,13 +346,13 @@ export default class Container extends ArgsObject {
 		}
 
 		// Try to get the value in the order: Global, Local, Global default.
+		let globalValue;
+
 		if ( this.getGlobalKey( name ) ) {
-			const globalValue = this.getGlobalValue( name );
-			if ( globalValue ) {
-				return globalValue;
-			}
+			globalValue = this.getGlobalValue( name );
 		}
-		return localValue || this.getGlobalDefault( name );
+
+		return globalValue || localValue || this.getGlobalDefault( name );
 	}
 
 	getGlobalKey( name ) {
