@@ -1,7 +1,5 @@
 <?php
-namespace Elementor\Core\Base;
-
-use Elementor\Plugin;
+namespace Elementor\Core\Base\Data_Updaters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

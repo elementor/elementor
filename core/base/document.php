@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Conditions;
+use Elementor\Core\Base\Data_Updaters\Assets_Data_Updater;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
