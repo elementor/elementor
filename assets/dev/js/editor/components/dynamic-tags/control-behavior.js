@@ -50,7 +50,13 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
 
-		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		const $eyedropper = $colorPickerToolsContainer.find( '.elementor-control-element-color-picker' );
+
+		if ( $eyedropper.length ) {
+			this.ui.dynamicSwitcher.insertBefore( $eyedropper );
+		} else {
+			$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		}
 	},
 
 	toggleDynamicClass: function() {
