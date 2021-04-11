@@ -1,6 +1,8 @@
+// TODO: The molecules, atoms and such generics should be at top level.
 @import "../js/app.scss";
 @import "../js/molecules/upload-file.scss";
 @import "../js/organisms/drop-zone.scss";
+@import "../js/ui/molecules/buttons.scss";
 @import "../../modules/site-editor/assets/js/molecules/site-part.scss";
 @import "../../modules/site-editor/assets/js/templates/site-editor.scss";
 @import "../../modules/site-editor/assets/scss/loading.scss";
@@ -20,7 +22,6 @@
 @import "../js/ui/menu/menu.scss";
 @import "../js/ui/modal/modal.scss";
 @import "../js/ui/molecules/add-new-button.scss";
-@import "../js/ui/molecules/buttons.scss";
 @import "../js/ui/molecules/select2.scss";
 @import "../js/ui/molecules/notice.scss";
 @import "../js/ui/molecules/list.scss";
