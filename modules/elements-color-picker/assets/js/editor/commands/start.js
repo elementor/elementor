@@ -1,4 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
+import { addNsHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
 export class Start extends CommandBase {
 	apply( args ) {
@@ -16,12 +17,14 @@ export class Start extends CommandBase {
 		this.component.currentPicker.trigger.classList.add( 'e-control-tool-disabled' );
 
 		// Initialize a swatch on click.
-		elementor.$previewContents.on( 'click.color-picker', '.elementor-element', ( e ) => {
+		const elementorElements = elementor.$previewContents[ 0 ].querySelectorAll( '.elementor-element' );
+
+		addNsHandler( elementorElements, 'click.color-picker', ( e ) => {
 			$e.run( 'elements-color-picker/show-swatches', { event: e } );
 		} );
 
 		// Stop the picking process when the user leaves the preview area.
-		elementor.$previewWrapper.on( 'mouseleave.color-picker', () => {
+		addNsHandler( elementor.$previewWrapper[ 0 ], 'mouseleave.color-picker', () => {
 			$e.run( 'elements-color-picker/end' );
 		} );
 	}

@@ -1,4 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
+import { removeNsHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
 export class End extends CommandBase {
 	apply() {
@@ -9,9 +10,11 @@ export class End extends CommandBase {
 			picker.remove();
 		} );
 
-		elementor.$previewContents.off( 'click.color-picker' );
+		const elementorElements = elementor.$previewContents[ 0 ].querySelectorAll( '.elementor-element' );
 
-		elementor.$previewWrapper.off( 'mouseleave.color-picker' );
+		removeNsHandler( elementorElements, 'click.color-picker' );
+
+		removeNsHandler( elementor.$previewWrapper[ 0 ], 'mouseleave.color-picker' );
 
 		// Set the picking process trigger to inactive mode.
 		this.component.currentPicker.trigger?.classList.remove( 'e-control-tool-disabled' );
