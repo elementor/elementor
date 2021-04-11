@@ -224,6 +224,15 @@ class Widget_Toggle extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'faq_schema',
+			[
+				'label' => __( 'FAQ Schema', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'separator' => 'before',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -588,6 +597,27 @@ class Widget_Toggle extends Widget_Base {
 					<div <?php echo $this->get_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
 				</div>
 			<?php endforeach; ?>
+			<?php
+			if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
+				$json = [
+					'@context' => 'https://schema.org',
+					'@type' => 'FAQPage',
+					'mainEntity' => [],
+				];
+
+				foreach ( $settings['tabs'] as $index => $item ) {
+					$json['mainEntity'][] = [
+						'@type' => 'Question',
+						'name' => wp_strip_all_tags( $item['tab_title'] ),
+						'acceptedAnswer' => [
+							'@type' => 'Answer',
+							'text' => $this->parse_text_editor( $item['tab_content'] ),
+						],
+					];
+				}
+				?>
+				<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>
+			<?php } ?>
 		</div>
 		<?php
 	}

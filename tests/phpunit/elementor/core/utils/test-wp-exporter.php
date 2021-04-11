@@ -39,6 +39,11 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 
 	public function test_run__ensure_match_to_export_wp() {
 		// Arrange.
+		$replace_pub_date_timestamp = function ( $xml_data ) {
+			// Since the pubDate depends on time they cannot be always the same.
+			return preg_replace( '#(<pubDate.*?>).*?(</pubDate>)#', '<pubDate>same-for-tests</pubDate>', $xml_data );
+		};
+
 		require ABSPATH . 'wp-admin/includes/export.php';
 
 		$this->expected_error( 'Cannot modify header information' );
@@ -52,6 +57,9 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		// Act.
 		$elementor_export_output = ( new WP_Exporter() )->run();
 		$clean_elementor_export_output = $this->remove_space_eols_and_tabulation( $elementor_export_output );
+
+		$clean_wp_export_output = $replace_pub_date_timestamp( $clean_wp_export_output );
+		$clean_elementor_export_output = $replace_pub_date_timestamp( $clean_elementor_export_output );
 
 		// Assert.
 		$this->assertEquals( $clean_wp_export_output, $clean_elementor_export_output );

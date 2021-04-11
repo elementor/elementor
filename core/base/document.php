@@ -530,7 +530,7 @@ abstract class Document extends Controls_Stack {
 								}
 							}
 
-							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+							if ( ! isset( $element_assets[ $assets_type ] ) ) {
 								$element_assets[ $assets_type ] = [];
 							}
 
@@ -547,7 +547,7 @@ abstract class Document extends Controls_Stack {
 				if ( $control_conditional_assets ) {
 					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
 						foreach ( $dependencies as $dependency ) {
-							if ( ! array_key_exists( $assets_type, $element_assets ) ) {
+							if ( ! isset( $element_assets[ $assets_type ] ) ) {
 								$element_assets[ $assets_type ] = [];
 							}
 
