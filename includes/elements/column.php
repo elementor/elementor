@@ -939,7 +939,7 @@ class Element_Column extends Element_Base {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
 
-		$column_wrap_classes = $is_dom_optimization_active ? '' : [ 'elementor-column-wrap' ];
+		$column_wrap_classes = $is_dom_optimization_active ? [] : [ 'elementor-column-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
