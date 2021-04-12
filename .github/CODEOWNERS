@@ -115,6 +115,7 @@
 /modules/compatibility-tag              @nevoss
 /modules/dev-tools                      @matipojo @inewlegend
 /modules/dynamic-tags             		@matipojo @kobizz
+/modules/landing-pages           		@kobizz @udidol
 /modules/library             			@matipojo @kobizz
 /modules/system-info             		@matipojo @kobizz
 /modules/gutenberg                		@kingyes

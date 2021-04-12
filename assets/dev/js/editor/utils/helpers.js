@@ -1,6 +1,25 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper';
 
+const allowedHTMLWrapperTags = [
+	'article',
+	'aside',
+	'div',
+	'footer',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'header',
+	'main',
+	'nav',
+	'p',
+	'section',
+	'span',
+];
+
 module.exports = {
 	document: DocumentHelper,
 
@@ -31,7 +50,7 @@ module.exports = {
 		}
 
 		if ( ! $document.find( selector ).length ) {
-			$document.find( 'link:last' ).after( link );
+			$document.find( 'link' ).last().after( link );
 		}
 	},
 
@@ -641,5 +660,18 @@ module.exports = {
 
 	hasPro() {
 		return !! window.elementorPro;
+	},
+
+	/**
+	 * Function validateHTMLTag().
+	 *
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param {string} tag
+	 *
+	 * @returns {string}
+	 */
+	validateHTMLTag( tag ) {
+		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
 	},
 };

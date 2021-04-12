@@ -1,4 +1,5 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
+import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -291,6 +292,8 @@ import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 				new LandingPagesModule();
 			}
+
+			new ExperimentsModule();
 		},
 
 		openGetHelpInNewTab: function() {
@@ -308,7 +311,7 @@ import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/
 
 			self.elements.$formAnchor = $( 'h1' );
 
-			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
 			self.elements.$formAnchor.after( $importArea );
 

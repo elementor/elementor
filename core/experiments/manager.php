@@ -406,14 +406,22 @@ class Manager extends Base_Object {
 	private function get_feature_settings_label_html( array $feature ) {
 		ob_start();
 
+		$is_feature_active = $this->is_feature_active( $feature['name'] );
+
 		$indicator_classes = 'e-experiment__title__indicator';
 
-		if ( $this->is_feature_active( $feature['name'] ) ) {
+		if ( $is_feature_active ) {
 			$indicator_classes .= ' e-experiment__title__indicator--active';
+		}
+
+		if ( self::STATE_DEFAULT === $feature['state'] ) {
+			$indicator_tooltip = $is_feature_active ? __( 'Active by default', 'elementor' ) : __( 'Inactive by default', 'elementor' );
+		} else {
+			$indicator_tooltip = self::STATE_ACTIVE === $feature['state'] ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' );
 		}
 		?>
 		<div class="e-experiment__title">
-			<div class="<?php echo $indicator_classes; ?>"></div>
+			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; ?>"><?php echo $feature['title']; ?></label>
 		</div>
 		<?php

@@ -13,11 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Compatibility_Tag extends Elementor_Test_Base {
 	public function test_check() {
 		// Arrange
-		$service = $this->getMockBuilder( Compatibility_Tag::class )
-            ->setConstructorArgs( [ Module::PLUGIN_VERSION_TESTED_HEADER ] )
-            ->setMethods( [ 'get_plugins' ] )
-            ->getMock();
-
 		$plugins = [
 			'old' => [
 				'Name' => 'old version plugin',
@@ -41,7 +36,11 @@ class Test_Compatibility_Tag extends Elementor_Test_Base {
 			],
 		];
 
-		$service->method( 'get_plugins' )->willReturn( $plugins );
+		$this->mock_wp_api( [
+			'get_plugins' => $plugins,
+		] );
+
+		$service = new Compatibility_Tag( Module::PLUGIN_VERSION_TESTED_HEADER );
 
 		// Act
 		/** @var Compatibility_Tag $service */
