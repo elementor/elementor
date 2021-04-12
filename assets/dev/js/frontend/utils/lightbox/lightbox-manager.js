@@ -28,10 +28,8 @@ export default class extends elementorModules.ViewModule {
 
 	isLightboxLink( element ) {
 		// Check for lowercase `a` to make sure it works also for links inside SVGs.
-		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
-			if ( ! element.dataset.elementorLightboxVideo ) {
-				return false;
-			}
+		if ( ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) && ! element.dataset.elementorLightboxVideo ) {
+			return false;
 		}
 
 		const generalOpenInLightbox = elementorFrontend.getKitSettings( 'global_image_lightbox' ),
