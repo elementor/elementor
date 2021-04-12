@@ -852,7 +852,7 @@ export default class EditorBase extends Marionette.Application {
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
-	changeDeviceMode( newDeviceMode ) {
+	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
 		const oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
 		if ( oldDeviceMode === newDeviceMode ) {
@@ -868,7 +868,7 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
 
-		if ( this.isDeviceModeActive() ) {
+		if ( this.isDeviceModeActive() && hideBarOnDesktop ) {
 			if ( 'desktop' === newDeviceMode ) {
 				this.exitDeviceMode();
 			}

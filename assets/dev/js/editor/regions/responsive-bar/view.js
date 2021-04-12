@@ -82,7 +82,7 @@ export default class View extends Marionette.ItemView {
 			selectedDeviceMode = e.target.value;
 
 		if ( currentDeviceMode !== selectedDeviceMode ) {
-			elementor.changeDeviceMode( selectedDeviceMode );
+			elementor.changeDeviceMode( selectedDeviceMode, false );
 		}
 	}
 
