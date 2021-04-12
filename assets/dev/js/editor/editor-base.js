@@ -590,11 +590,19 @@ export default class EditorBase extends Marionette.Application {
 			.trigger( 'resize' );
 	}
 
-	getBreakpointResizeOptions( currentBreakpoint ) {
-		const { activeBreakpoints } = elementorFrontend.config.responsive,
+	getCurrentDeviceConstrains() {
+		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
+			{ activeBreakpoints } = elementorFrontend.config.responsive,
 			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
 			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
 
+		return {
+			maxWidth: currentBreakpointData.value,
+			minWidth: currentBreakpointMinPoint || 375,
+		};
+	}
+
+	getBreakpointResizeOptions( currentBreakpoint ) {
 		const specialBreakpointsHeights = {
 			mobile: {
 				minHeight: 480,
@@ -608,16 +616,13 @@ export default class EditorBase extends Marionette.Application {
 			},
 		};
 
-		let breakpointConstrains = {
-			maxWidth: currentBreakpointData.value,
-			minWidth: currentBreakpointMinPoint || 375,
-		};
+		let deviceConstrains = this.getCurrentDeviceConstrains();
 
 		if ( specialBreakpointsHeights[ currentBreakpoint ] ) {
-			breakpointConstrains = { ...breakpointConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
+			deviceConstrains = { ...deviceConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
 		}
 
-		return breakpointConstrains;
+		return deviceConstrains;
 	}
 
 	updatePreviewResizeOptions( preserveCurrentSize = false ) {
@@ -795,8 +800,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	exitDeviceMode() {
-		elementor.changeDeviceMode( 'desktop' );
-
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 
 		this.destroyPreviewResizable();
@@ -861,7 +864,7 @@ export default class EditorBase extends Marionette.Application {
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
-	changeDeviceMode( newDeviceMode ) {
+	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
 		const oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
 		if ( oldDeviceMode === newDeviceMode ) {
@@ -876,6 +879,14 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+
+		if ( this.isDeviceModeActive() && hideBarOnDesktop ) {
+			if ( 'desktop' === newDeviceMode ) {
+				this.exitDeviceMode();
+			}
+		} else if ( 'desktop' !== newDeviceMode ) {
+			this.enterDeviceMode();
+		}
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
