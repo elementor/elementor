@@ -181,9 +181,8 @@ ColumnView = BaseElementView.extend( {
 
 	changeChildContainerClasses: function() {
 		const emptyClass = 'elementor-element-empty',
-			populatedClass = 'elementor-element-populated';
-
-		const columnInner = ( this.ui.columnInner.length ) ? this.ui.columnInner : this.$el;
+			populatedClass = 'elementor-element-populated',
+			columnInner = ( this.ui.columnInner.length ) ? this.ui.columnInner : this.$el;
 
 		if ( columnInner ) {
 			if ( this.collection.isEmpty() ) {
