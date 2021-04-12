@@ -153,7 +153,7 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.3.0
 	 *
 	 * @param string|null $file_extension - file extension
-	 * @return \WP_Error|File_Type_Base
+	 * @return File_Type_Base[]|File_Type_Base
 	 */
 	public function get_file_type_handlers( $file_extension = null ) {
 		return self::get_items( $this->file_type_handlers, $file_extension );
@@ -387,8 +387,8 @@ class Uploads_Manager extends Base_Object {
 		if ( ! $this->allowed_file_extensions ) {
 			$this->allowed_file_extensions = array_keys( get_allowed_mime_types() );
 
-			if ( $this->are_unfiltered_uploads_enabled() ) {
-				foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
+			foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
+				if ( $handler->is_upload_allowed() ) {
 					// Add the file extension to the allowed extensions list only if unfiltered files upload is enabled.
 					$this->add_file_extension_to_allowed_extensions_list( $file_type );
 				}
