@@ -4,10 +4,7 @@ jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/core/commands.js', ( hooks ) => {
 		QUnit.test( 'Error on register command without component', ( assert ) => {
 			assert.throws(
-				() => {
-					$e.commands.register( '', 'save', () => {
-					} );
-				},
+				() => $e.commands.register( '', 'save', () => {} ),
 				new Error( "Commands: '' component is not exist." )
 			);
 		} );
@@ -21,20 +18,14 @@ jQuery( () => {
 				}
 
 				defaultCommands() {
-					return {
-						commandA: () => {
-						},
-					};
+					return { commandA: () => {} };
 				}
 			};
 
 			$e.components.register( new Component() );
 
 			assert.throws(
-				() => {
-					$e.commands.register( namespace, 'commandA', () => {
-					} );
-				},
+				() => $e.commands.register( namespace, 'commandA', () => {} ),
 				new Error( `Commands: \`${ namespace + '/commandA' }\` is already registered.` )
 			);
 		} );
@@ -118,10 +109,7 @@ jQuery( () => {
 				}
 
 				defaultCommands() {
-					return {
-						commandA: () => {
-						},
-					};
+					return { commandA: () => {} };
 				}
 			};
 
@@ -149,10 +137,7 @@ jQuery( () => {
 				}
 
 				defaultRoutes() {
-					return {
-						routeA: () => {
-						},
-					};
+					return { routeA: () => {} };
 				}
 			};
 
@@ -174,10 +159,7 @@ jQuery( () => {
 				}
 
 				defaultCommands() {
-					return {
-						commandA: () => {
-						},
-					};
+					return { commandA: () => {} };
 				}
 			};
 
@@ -203,9 +185,7 @@ jQuery( () => {
 				}
 
 				defaultCommands() {
-					return {
-						commandA: () => commandStatus = 'afterRun',
-					};
+					return { commandA: () => commandStatus = 'afterRun' };
 				}
 			};
 
