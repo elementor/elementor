@@ -5,7 +5,7 @@ export default class Document extends BaseModel {
 	title = '';
 	documentType = '';
 	thumbnailUrl = '';
-	preview = '';
+	previewUrl = '';
 
 	/**
 	 * Create a tag from server response

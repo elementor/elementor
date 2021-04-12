@@ -53,6 +53,17 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Union the collection with the given items.
+	 *
+	 * @param array $items
+	 *
+	 * @return $this
+	 */
+	public function union( array $items ) {
+		return new static( $this->all() + $items );
+	}
+
+	/**
 	 * Merge array recursively
 	 *
 	 * @param $items

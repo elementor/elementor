@@ -58,7 +58,9 @@ class Repository {
 			return null;
 		}
 
-		return $this->transform_kit_api_response( $item );
+		$manifest = $this->api_client->get_manifest( $id );
+
+		return $this->transform_kit_api_response( $item, $manifest );
 	}
 
 	/**
@@ -127,22 +129,55 @@ class Repository {
 	}
 
 	/**
-	 * @param $kit
+	 * @param      $kit
+	 * @param null|array $manifest
 	 *
 	 * @return array
 	 */
-	private function transform_kit_api_response( $kit ) {
+	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
 			return array_merge( $current, $kit[ $key ] );
 		}, [] );
 
+		return array_merge(
+			[
+				'id' => $kit['_id'],
+				'title' => $kit['title'],
+				'thumbnail_url' => $kit['thumbnail'],
+				'access_level' => $kit['access_level'],
+				'keywords' => $kit['keywords'],
+				'taxonomies' => $taxonomies,
+			],
+			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
+		);
+	}
+
+	/**
+	 * @param $manifest
+	 *
+	 * @return array
+	 */
+	private function transform_manifest_api_response( $manifest ) {
+		$content = ( new Collection( $manifest['templates'] ) )
+			->union(
+				array_reduce( $manifest['content'], function ( $carry, $content ) {
+					return $carry + $content;
+				}, [] )
+			)
+			->map( function ( $manifest_item, $key ) {
+				return [
+					'id' => $key,
+					'title' => $manifest_item['title'],
+					'doc_type' => $manifest_item['doc_type'],
+					'thumbnail_url' => $manifest_item['thumbnail'],
+					'preview_url' => isset( $manifest_item['url'] ) ? $manifest_item['url'] : null,
+				];
+			} );
+
 		return [
-			'id' => $kit['_id'],
-			'title' => $kit['title'],
-			'thumbnail_url' => $kit['thumbnail'],
-			'access_level' => $kit['access_level'],
-			'keywords' => $kit['keywords'],
-			'taxonomies' => $taxonomies,
+			'description' => $manifest['description'],
+			'preview_url' => isset( $manifest['site'] ) ? $manifest['site'] : '',
+			'documents' => $content->values(),
 		];
 	}
 
