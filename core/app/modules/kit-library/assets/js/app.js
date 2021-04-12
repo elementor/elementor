@@ -18,15 +18,17 @@ const queryClient = new QueryClient( {
 
 export default function App() {
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
-				<Router>
-					<Index path="/"/>
-					<Preview path="/preview/:id"/>
-					<Item path="/:id"/>
-				</Router>
-			</SettingsProvider>
-			<ReactQueryDevtools initialIsOpen={ false }/>
-		</QueryClientProvider>
+		<div className="e-kit-library">
+			<QueryClientProvider client={ queryClient }>
+				<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
+					<Router>
+						<Index path="/"/>
+						<Preview path="/preview/:id"/>
+						<Item path="/:id"/>
+					</Router>
+				</SettingsProvider>
+				<ReactQueryDevtools initialIsOpen={ false }/>
+			</QueryClientProvider>
+		</div>
 	);
 }

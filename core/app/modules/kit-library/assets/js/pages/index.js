@@ -5,6 +5,7 @@ import TaxonomiesFilter from '../components/taxonomies-filter';
 import IndexHeader from '../components/index-header';
 import KitList from '../components/kit-list';
 import useKits from '../hooks/use-kits';
+import useTaxonomies from '../hooks/use-taxonomies';
 import Content from '../../../../../assets/js/layout/content';
 import FilterIndicationText from '../components/filter-indication-text';
 import { IndexNoResults } from '../components/index-no-results';
@@ -18,11 +19,19 @@ export default function Index() {
 		data,
 		isSuccess,
 		isLoading,
+		isFetching,
 		isError,
 		filter,
 		setFilter,
 		clearFilter,
+		forceRefetch,
 	} = useKits();
+
+	const {
+		data: taxonomiesData,
+		forceRefetch: forceRefetchTaxonomies,
+		isFetching: isFetchingTaxonomies,
+	} = useTaxonomies();
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setFilter );
 
@@ -33,10 +42,19 @@ export default function Index() {
 					tagsFilterSlot={ <TaxonomiesFilter
 						selected={ filter.taxonomies }
 						onSelect={ selectTaxonomy }
+						taxonomies={ taxonomiesData }
 					/> }
 				/>
 			}
-			header={ <IndexHeader /> }
+			header={
+				<IndexHeader
+					refetch={ () => {
+						forceRefetch();
+						forceRefetchTaxonomies();
+					} }
+					isFetching={ isFetching || isFetchingTaxonomies }
+				/>
+			}
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">

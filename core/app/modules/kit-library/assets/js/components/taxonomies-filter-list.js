@@ -10,7 +10,7 @@ export default function TaxonomiesFilterList( props ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ search, setSearch ] = useState( '' );
 
-	const tags = useMemo( () => {
+	const taxonomies = useMemo( () => {
 		if ( ! search ) {
 			return props.groupedTags.data;
 		}
@@ -43,7 +43,7 @@ export default function TaxonomiesFilterList( props ) {
 			}
 			<div className="e-kit-library__tags-filter-list-container">
 				{
-					tags.map( ( taxonomy ) => (
+					taxonomies.map( ( taxonomy ) => (
 						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">
 							<Checkbox
 								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }

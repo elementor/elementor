@@ -1,5 +1,4 @@
-import { taxonomyType } from '../models/taxonomy';
-import useTaxonomies from '../hooks/use-taxonomies';
+import Taxonomy, { taxonomyType } from '../models/taxonomy';
 import TaxonomiesFilterList from './taxonomies-filter-list';
 
 import './tags-filter.scss';
@@ -7,17 +6,16 @@ import './tags-filter.scss';
 const { useMemo } = React;
 
 export default function TaxonomiesFilter( props ) {
-	const { data } = useTaxonomies();
 	const groupedTags = useMemo( () => {
-		if ( ! data ) {
+		if ( ! props.taxonomies ) {
 			return [];
 		}
 
 		return taxonomyType.map( ( tagType ) => ( {
 			...tagType,
-			data: data.filter( ( item ) => item.type === tagType.key ),
+			data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
 		} ) );
-	}, [ data ] );
+	}, [ props.taxonomies ] );
 
 	return (
 		<div className="e-kit-library__tags-filter">
@@ -39,4 +37,5 @@ export default function TaxonomiesFilter( props ) {
 TaxonomiesFilter.propTypes = {
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
+	taxonomies: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),
 };

@@ -21,7 +21,7 @@ class Kits_Controller extends Controller_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$data = $this->repository->get_all();
+			$data = $this->repository->get_all( $request->get_param( 'force' ) );
 		} catch ( Api_Response_Exception $exception ) {
 			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ) );
 		} catch ( \Exception $exception ) {

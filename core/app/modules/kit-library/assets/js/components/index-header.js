@@ -2,7 +2,9 @@ import Header from './layout/header';
 
 const { useMemo } = React;
 
-export default function IndexHeader() {
+import './index-header.scss';
+
+export default function IndexHeader( props ) {
 	const buttons = useMemo( () => [
 		{
 			id: 'info',
@@ -13,7 +15,19 @@ export default function IndexHeader() {
 				// TODO: Open info modal.
 			},
 		},
-	], [] );
+		{
+			id: 'refetch',
+			text: __( 'Refetch', 'elementor-pro' ),
+			hideText: true,
+			icon: `eicon-sync ${ props.isFetching ? 'eicon-animation-spin' : '' }`,
+			onClick: props.refetch,
+		},
+	], [ props.isFetching, props.refetch ] );
 
 	return ( <Header buttons={ buttons }/> );
 }
+
+IndexHeader.propTypes = {
+	refetch: PropTypes.func.isRequired,
+	isFetching: PropTypes.bool,
+};

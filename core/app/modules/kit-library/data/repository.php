@@ -13,8 +13,8 @@ class Repository {
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
 	const KITS_TAXONOMIES_CACHE_KEY = 'elementor_remote_kits_taxonomies';
 
-	const KITS_CACHE_TTL = 1000 * 60 * 12; // 12 hours
-	const KITS_TAXONOMIES_CACHE_TTL = 1000 * 60 * 12; // 12 hours
+	const KITS_CACHE_TTL_HOURS = 12;
+	const KITS_TAXONOMIES_CACHE_TTL_HOURS = 12;
 
 	/**
 	 * @var Api_Client
@@ -24,12 +24,14 @@ class Repository {
 	/**
 	 * Get all kits.
 	 *
+	 * @param false $force_api_request
+	 *
 	 * @return Collection
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
-	public function get_all() {
-		$data = $this->get_kits_data();
+	public function get_all( $force_api_request = false ) {
+		$data = $this->get_kits_data( $force_api_request );
 
 		return ( new Collection( $data ) )->map( function ( $kit ) {
 			return $this->transform_kit_api_response( $kit );
@@ -62,15 +64,20 @@ class Repository {
 	/**
 	 * Get all the available taxonomies
 	 *
-	 * @return Collection
+	 * @param false $force_api_request
+	 *
+	 * @return mixed|null
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
-	public function get_taxonomies() {
-		$data = $this->get_taxonomies_data();
+	public function get_taxonomies( $force_api_request = false ) {
+		$data = $this->get_taxonomies_data( $force_api_request );
 
 		return ( new Collection( $data ) )
 			->only( static::TAXONOMIES_KEYS )
+			->map( function ( $values ) {
+				return array_unique( $values );
+			} )
 			->reduce( function ( Collection $carry, $taxonomies, $type ) {
 				return $carry->merge( array_map( function ( $text ) use ( $type ) {
 					return [
@@ -82,34 +89,38 @@ class Repository {
 	}
 
 	/**
-	 * @return array
+	 * @param false $force_api_request
+	 *
+	 * @return array|mixed
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
-	private function get_kits_data() {
+	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
 
-		if ( ! $data ) {
+		if ( ! $data || $force_api_request ) {
 			$data = $this->api_client->get_all();
 
-			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL );
+			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
 		return $data;
 	}
 
 	/**
-	 * @return array
+	 * @param false $force_api_request
+	 *
+	 * @return array|mixed
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
-	private function get_taxonomies_data() {
+	private function get_taxonomies_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_TAXONOMIES_CACHE_KEY );
 
-		if ( ! $data ) {
+		if ( ! $data || $force_api_request ) {
 			$data = $this->api_client->get_taxonomies();
 
-			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL );
+			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
 		return $data;
