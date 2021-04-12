@@ -91,9 +91,11 @@ jobs:
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
+          retention-days: 7
       - name: Upload Lighthouse HTML dumps on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
+          retention-days: 7
