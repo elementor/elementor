@@ -26,14 +26,4 @@ module.exports = {
 			},
 		},
 	},
-	'unitContainersAlive': {
-		configFile: 'karma.conf.js',
-		reporters: [ 'dots', 'fail-fast'],
-		client: {
-			qunit: {
-				validateContainersAlive: true,
-				testTimeout: 10000, // Since its take much more time to validate all the containers alive.
-			},
-		},
-	},
 };
