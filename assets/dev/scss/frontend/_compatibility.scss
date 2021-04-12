@@ -68,33 +68,44 @@
 }
 
 .e--ua-appleWebkit {
-
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
 	&.rtl { --flex-right: flex-start; }
 
-	.elementor-widget-social-icons.e-grid-align-right, .elementor-share-buttons--align-right {
+	@mixin social-icons-align-right-safari($device: '') {
+	  .elementor-widget-social-icons.e-grid-align#{$device}-right, .elementor-share-buttons#{$device}--align-right {
 		--justify-content: var(--flex-right, flex-end);
+	  }
+
+	  .elementor-grid-0 {
+		&.elementor-widget-social-icons.e-grid-align#{$device}-right,
+		&.elementor-share-buttons--align#{$device}-right,
+		&.elementor-share-buttons--align#{$device}-justify {
+		  .elementor-widget-container {
+			margin-left: calc(-0.5 * var(--grid-column-gap));
+			margin-right: calc(-0.5 * var(--grid-column-gap));
+
+			.elementor-grid {
+			  display: flex;
+			  flex-wrap: wrap;
+			  justify-content: var(--justify-content, space-between);
+
+			  &-item {
+				margin-left: calc(0.5 * var(--grid-column-gap));
+				margin-right: calc(0.5 * var(--grid-column-gap));
+			  }
+			}
+		  }
+		}
+	  }
 	}
 
-	.elementor-grid-0 {
-		&.elementor-widget-social-icons.e-grid-align-right,
-		&.elementor-share-buttons--align-right,
-		&.elementor-share-buttons--align-justify {
-			.elementor-widget-container {
-				margin-left: calc(-0.5 * var(--grid-column-gap));
-				margin-right: calc(-0.5 * var(--grid-column-gap));
+	@include social-icons-align-right-safari();
 
-				.elementor-grid {
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: var(--justify-content, space-between);
+	@media (max-width: $screen-md-max) {
+	  	@include social-icons-align-right-safari('tablet');
+	}
 
-					&-item {
-						margin-left: calc(0.5 * var(--grid-column-gap));
-						margin-right: calc(0.5 * var(--grid-column-gap));
-					}
-				}
-			}
-		}
+	@media (max-width: $screen-sm-max) {
+	  	@include social-icons-align-right-safari('mobile');
 	}
 }
