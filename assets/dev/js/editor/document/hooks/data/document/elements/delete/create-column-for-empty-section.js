@@ -16,7 +16,10 @@ export class CreateColumnForEmptySection extends After {
 	getConditions( args = {} ) {
 		const { containers = [ args.container ] } = args;
 
-		return containers.some( ( container ) => 0 === container.parent.children.length );
+		// Validate also that its a section, this is hook should not work with new flex container.
+		return containers.some(
+			( container ) => 'section' === container.parent.type && 0 === container.parent.children.length
+		);
 	}
 
 	/**
