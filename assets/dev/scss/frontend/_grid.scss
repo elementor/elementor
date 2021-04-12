@@ -142,8 +142,10 @@
 .elementor-widget {
 	position: relative;
 
-	& + & {
-		margin-top: var( --widgets-gap, 20px );
+	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(.elementor-absolute) {
+		& + & {
+			margin-top: var( --widgets-gap, 20px );
+		}
 	}
 
 	&:not(:last-child) {
