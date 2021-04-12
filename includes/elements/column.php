@@ -941,6 +941,10 @@ class Element_Column extends Element_Base {
 
 		$column_wrap_classes = $is_dom_optimization_active ? '' : [ 'elementor-column-wrap' ];
 
+		if ( $this->get_children() ) {
+			$column_wrap_classes[] = 'elementor-element-populated';
+		}
+
 		$this->add_render_attribute( [
 			'_inner_wrapper' => [
 				'class' => $column_wrap_classes,
