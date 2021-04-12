@@ -818,7 +818,7 @@ class Source_Local extends Source_Base {
 				return $extracted_files;
 			}
 
-			foreach ( $extracted_files as $file_path ) {
+			foreach ( $extracted_files['files'] as $file_path ) {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
