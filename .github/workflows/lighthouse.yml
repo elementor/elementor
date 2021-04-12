@@ -95,5 +95,5 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: lighthouseci-reports
+          name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
