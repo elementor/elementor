@@ -44,5 +44,7 @@ export class KitUpdateBreakpointsPreview extends $e.modules.hookUI.After {
 				elementorFrontend.config.responsive.breakpoints[ keyWithoutPrefix ].value = value;
 			}
 		} );
+
+		elementor.updatePreviewResizeOptions( true );
 	}
 }

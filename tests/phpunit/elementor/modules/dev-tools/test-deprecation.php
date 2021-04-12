@@ -235,4 +235,18 @@ class Test_Deprecation extends Elementor_Test_Base {
 			'',
 		], $settings['soft_notices']['elementor/test/deprecated_action_soft'] );
 	}
+
+	public function test_apply_deprecated_filter() {
+		$hook = 'elementor/test/deprecated_filter';
+
+		$this->setExpectedDeprecated( $hook );
+
+		add_filter( $hook, function() {
+			return 'Testing Apply Deprecated Filter';
+		} );
+
+		$result = $this->deprecation->apply_deprecated_filter( $hook, [ '' ], '0.0.0', '', '0.5.0' );
+
+		$this->assertEquals( $result, 'Testing Apply Deprecated Filter' );
+	}
 }
