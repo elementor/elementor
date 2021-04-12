@@ -338,32 +338,32 @@ export default class Container extends ArgsObject {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 
-	getSetting( name, localOnly = false ) {
-		const localValue = this.settings.get( name );
+	getSetting( controlName, localOnly = false ) {
+		const localValue = this.settings.get( controlName );
 
 		if ( localOnly ) {
 			return localValue;
 		}
 
 		// Try to get the value in the order: Global, Local, Global default.
-		if ( this.getGlobalKey( name ) ) {
-			const globalValue = this.getGlobalValue( name );
+		if ( this.getGlobalKey( controlName ) ) {
+			const globalValue = this.getGlobalValue( controlName );
 
 			if ( globalValue ) {
 				return globalValue;
 			}
 		}
 
-		return localValue || this.getGlobalDefault( name );
+		return localValue || this.getGlobalDefault( controlName );
 	}
 
-	getGlobalKey( name ) {
-		return this.globals.get( name );
+	getGlobalKey( controlName ) {
+		return this.globals.get( controlName );
 	}
 
-	getGlobalValue( name ) {
-		const control = this.controls[ name ],
-			globalKey = this.getGlobalKey( name ),
+	getGlobalValue( controlName ) {
+		const control = this.controls[ controlName ],
+			globalKey = this.getGlobalKey( controlName ),
 			globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
@@ -401,19 +401,19 @@ export default class Container extends ArgsObject {
 	 * Determine if a control's global value is applied.
 	 * It actually checks if the local value is different than the global value.
 	 *
-	 * @param {string} name - Control name
+	 * @param {string} controlName - Control name
 	 * @returns {boolean}
 	 */
-	isGlobalApplied( name ) {
-		return this.getSetting( name ) !== this.getSetting( name, true );
+	isGlobalApplied( controlName ) {
+		return this.getSetting( controlName ) !== this.settings.get( controlName );
 	}
 
-	getGlobalDefault( name ) {
-		const controlGlobalArgs = this.controls[ name ].global;
+	getGlobalDefault( controlName ) {
+		const controlGlobalArgs = this.controls[ controlName ].global;
 
 		if ( controlGlobalArgs?.default ) {
 			// Temp fix.
-			let controlType = this.controls[ name ].type;
+			let controlType = this.controls[ controlName ].type;
 
 			if ( 'color' === controlType ) {
 				controlType = 'colors';
