@@ -50,9 +50,9 @@ $breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx scre
 			</button>
 			<div class="e-flex e-align-items-center e-responsive-bar__size-inputs-wrapper">
 				<label for="viewport_width">W</label>
-				<input type="text" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
+				<input type="number" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
 				<label for="viewport_height">H</label>
-				<input type="text" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
+				<input type="number" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
 			</div>
 		</div>
 </script>
