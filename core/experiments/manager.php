@@ -258,6 +258,15 @@ class Manager extends Base_Object {
 				. __( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
+
+		$this->add_feature( [
+			'name' => 'elementor_optimizer',
+			'title' => __( 'Elementor Optimizer', 'elementor' ),
+			'description' => __( 'A set of optimizations that will make your pages load fast and score well.', 'elementor' )
+				. '<br>'
+				. __( 'For all settings, go to - Optimizer Settings Page', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**

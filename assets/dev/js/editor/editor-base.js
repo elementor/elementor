@@ -6,6 +6,7 @@ import EditorDocuments from 'elementor-editor/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
+import Optimizer from './regions/optimizer/optimizer';
 import IconsManager from './components/icons-manager/icons-manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
@@ -495,6 +496,17 @@ export default class EditorBase extends Marionette.Application {
 			responsiveBar: {
 				el: '#elementor-responsive-bar',
 				regionClass: ResponsiveBar,
+			},
+		} );
+
+		this.trigger( 'responsiveBar:init' );
+	}
+
+	initOptimizer() {
+		this.addRegions( {
+			responsiveBar: {
+				el: '#elementor-optimizer',
+				regionClass: Optimizer,
 			},
 		} );
 
@@ -1042,6 +1054,10 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
+
+		if ( elementorCommon.config.experimentalFeatures[ 'elementor_optimizer' ] ) {
+			this.initOptimizer();
+		}
 
 		this.previewLoadedOnce = true;
 	}
