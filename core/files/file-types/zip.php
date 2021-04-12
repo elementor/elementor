@@ -138,7 +138,7 @@ class Zip extends Base {
 		foreach ( $possible_file_names as $possible_file_name ) {
 			$full_possible_file_name = $temp_path . '/' . $possible_file_name;
 			if ( is_dir( $full_possible_file_name ) ) {
-				$file_names = $file_names + $this->find_temp_files( $full_possible_file_name );
+				$file_names = array_merge( $file_names, $this->find_temp_files( $full_possible_file_name ) );
 			} else {
 				$file_names[] = $full_possible_file_name;
 			}
