@@ -59,6 +59,44 @@ export default class EditorBase extends Marionette.Application {
 		return elementorCommon.debug;
 	}
 
+	backgroundClickListeners = {
+		popover: {
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__popover-toggle',
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-dynamic-switcher',
+		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool.elementor-toggle-state',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
+		panelResponsiveSwitchers: {
+			element: '.elementor-control-responsive-switchers',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
+			},
+		},
+	};
+
 	/**
 	 * Exporting modules that can be used externally
 	 * TODO: All of the following entries should move to `elementorModules.editor`
@@ -169,44 +207,6 @@ export default class EditorBase extends Marionette.Application {
 				elementorCommon.helpers.hardDeprecated( 'elementor.modules.views.ControlsStack', '2.4.0', 'elementorModules.editor.views.ControlsStack' );
 
 				return elementorModules.editor.views.ControlsStack;
-			},
-		},
-	};
-
-	backgroundClickListeners = {
-		popover: {
-			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
-		},
-		globalControlsSelect: {
-			element: '.e-global__popover',
-			ignore: '.e-global__popover-toggle',
-		},
-		tagsList: {
-			element: '.elementor-tags-list',
-			ignore: '.elementor-control-dynamic-switcher',
-		},
-		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool.elementor-toggle-state',
-			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-open' );
-			},
-		},
-		panelResponsiveSwitchers: {
-			element: '.elementor-control-responsive-switchers',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
-			},
-		},
-		promotion: {
-			ignore: '.elementor-panel-category-items',
-			callback: () => {
-				const dialog = elementor.promotion.dialog;
-
-				if ( dialog ) {
-					dialog.hide();
-				}
 			},
 		},
 	};
@@ -541,11 +541,14 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
-	initPreviewResizable() {
+	activatePreviewResizable() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 
+		if ( $responsiveWrapper.resizable( 'instance' ) ) {
+			return;
+		}
+
 		$responsiveWrapper.resizable( {
-			disabled: true,
 			handles: 'e, s, w',
 			stop: () => {
 				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
@@ -556,19 +559,22 @@ export default class EditorBase extends Marionette.Application {
 					'--e-editor-preview-width': ui.size.width + 'px',
 					'--e-editor-preview-height': ui.size.height + 'px',
 				} );
-
-				this.broadcastPreviewResize( ui.size );
 			},
 		} );
 	}
 
 	destroyPreviewResizable() {
-		this.$previewResponsiveWrapper.resizable( 'destroy' );
+		if ( this.$previewResponsiveWrapper.resizable( 'instance' ) ) {
+			this.$previewResponsiveWrapper.resizable( 'destroy' );
+		}
 	}
 
-	broadcastPreviewResize( size ) {
+	broadcastPreviewResize() {
 		this.channels.responsivePreview
-			.reply( 'size', size )
+			.reply( 'size', {
+				width: this.$preview.innerWidth(),
+				height: this.$preview.innerHeight(),
+			} )
 			.trigger( 'resize' );
 	}
 
@@ -602,42 +608,40 @@ export default class EditorBase extends Marionette.Application {
 		return breakpointConstrains;
 	}
 
-	updatePreviewResizeOptions() {
-		const $responsiveWrapper = this.$previewResponsiveWrapper;
-		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
-		const isResizable = $responsiveWrapper.is( '.ui-resizable' );
+	updatePreviewResizeOptions( preserveCurrentSize = false ) {
+		const $responsiveWrapper = this.$previewResponsiveWrapper,
+			currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			if ( isResizable ) {
-				$responsiveWrapper.resizable( 'disable' );
-			}
+			this.destroyPreviewResizable();
 
 			$responsiveWrapper.css( {
 				'--e-editor-preview-width': '',
 				'--e-editor-preview-height': '',
 			} );
-
-			this.broadcastPreviewResize( {
-				width: this.$previewWrapper.outerWidth(),
-				height: this.$previewWrapper.outerHeight() - 40,
-			} );
 		} else {
-			if ( ! isResizable ) {
-				$responsiveWrapper.resizable( 'enable' );
-			}
+			this.activatePreviewResizable();
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			$responsiveWrapper.resizable( 'enable' )
+			let widthToShow = breakpointResizeOptions.minWidth;
+
+			if ( preserveCurrentSize ) {
+				const currentSize = elementor.channels.responsivePreview.request( 'size' );
+
+				if ( currentSize.width > breakpointResizeOptions.maxWidth ) {
+					widthToShow = breakpointResizeOptions.maxWidth;
+				} else if ( currentSize.width >= breakpointResizeOptions.minWidth ) {
+					widthToShow = currentSize.width;
+				}
+			}
+
+			$responsiveWrapper
 				.resizable( 'option', { ...breakpointResizeOptions } )
 				.css( {
-					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
+					'--e-editor-preview-width': widthToShow + 'px',
 					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
 				} );
-
-			breakpointResizeOptions.width = breakpointResizeOptions.minWidth;
-
-			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
 		}
 	}
 
@@ -754,23 +758,38 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
-		this.initPreviewResizable();
-		elementor.changeDeviceMode( 'mobile' );
-	}
 
-	toggleDeviceMode() {
-		if ( ! this.isDeviceModeActive() ) {
-			this.enterDeviceMode();
-			return;
-		}
+		this.activatePreviewResizable();
 
-		this.exitDeviceMode();
+		this.resizeListenerThrottled = false;
+
+		this.broadcastPreviewResize();
+
+		elementorFrontend.elements.$window.on( 'resize.deviceModeDesktop', () => {
+			if ( this.resizeListenerThrottled ) {
+				return;
+			}
+
+			this.resizeListenerThrottled = true;
+
+			this.broadcastPreviewResize();
+
+			setTimeout( () => {
+				this.resizeListenerThrottled = false;
+
+				this.broadcastPreviewResize();
+			}, 300 );
+		} );
 	}
 
 	exitDeviceMode() {
 		elementor.changeDeviceMode( 'desktop' );
+
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+
 		this.destroyPreviewResizable();
+
+		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
 	}
 
 	isDeviceModeActive() {
@@ -965,9 +984,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				this.initNavigator();
 			} );
-
-		this.initNavigator();
 
 		this.logSite();
 	}
@@ -1024,8 +1042,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
-
-		this.initPreviewResizable();
 
 		this.previewLoadedOnce = true;
 	}
