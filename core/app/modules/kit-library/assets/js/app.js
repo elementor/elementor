@@ -11,10 +11,12 @@ const queryClient = new QueryClient( {
 		queries: {
 			refetchOnWindowFocus: false,
 			retry: false,
-			staleTime: 60 * 3000, // 30 minutes
+			staleTime: 1000 * 60 * 30, // 30 minutes
 		},
 	},
 } );
+
+const isDebug = elementorCommon.config.isDebug || false;
 
 export default function App() {
 	return (
@@ -27,7 +29,7 @@ export default function App() {
 						<Item path="/:id"/>
 					</Router>
 				</SettingsProvider>
-				<ReactQueryDevtools initialIsOpen={ false }/>
+				{ isDebug && <ReactQueryDevtools initialIsOpen={ false }/> }
 			</QueryClientProvider>
 		</div>
 	);
