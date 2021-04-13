@@ -40,7 +40,7 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Global Colors', 'elementor' ),
-					__( 'Global  Typography', 'elementor' ),
+					__( 'Global Fonts', 'elementor' ),
 					__( 'Theme Style settings', 'elementor' ),
 					__( 'Layout Settings', 'elementor' ),
 					__( 'Lightbox Settings', 'elementor' ),
