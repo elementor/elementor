@@ -25,9 +25,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	getTemplateActionButton: function( templateData ) {
-		const accessLevels = elementor.config.library_connect.access_levels;
+		const subscriptionPlans = elementor.config.library_connect.subscription_plans;
+		const baseAccessLevel = elementor.config.library_connect.base_access_level;
 
-		var viewId = '#tmpl-elementor-template-library-' + ( accessLevels.core !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
+		var viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
@@ -36,25 +37,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		// In case the access level of the template is not one of the defined.
 		// it will find the next access level that was defined.
 		// Example: access_level = 15, and access_level 15 is not exists in the plans the button will be "Go Expert" which is 20
-		const closestAccessLevel = Object.values( accessLevels )
+		const closestAccessLevel = Object.keys( subscriptionPlans )
 			.sort()
 			.find( ( accessLevel ) => {
 				return accessLevel >= templateData.accessLevel;
 			} );
 
-		const config = {
-			[ accessLevels.core ]: null, // Core does not need params to its view.
-			[ accessLevels.pro ]: {
-				buttonText: __( 'Go Pro', 'elementor' ),
-				utmCampaign: 'gopro',
-			},
-			[ accessLevels.expert ]: {
-				buttonText: __( 'Go Expert', 'elementor' ),
-				utmCampaign: 'goexpert',
-			},
-		};
+		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
 
-		return Marionette.Renderer.render( template, config[ closestAccessLevel ] );
+		return Marionette.Renderer.render( template, {
+			buttonText: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+			promotionLink: subscriptionPlan.promotion_url,
+		} );
 	},
 
 	setHeaderDefaultParts: function() {

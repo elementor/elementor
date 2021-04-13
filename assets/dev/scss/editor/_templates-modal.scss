@@ -349,23 +349,10 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
-		&__access-level-1 {
-			.elementor-template-library-template-body:before {
-				content: 'pro';
-				background-color: $editor-accent;
-				color: $editor-lightest;
-			}
-		}
-
-		&__access-level-20 {
-			.elementor-template-library-template-body:before {
-				content: 'expert';
-				background-color: $brand-color-royal-blue;
-				color: $editor-lightest;
-			}
-		}
-
 		.elementor-template-library-template-body:before {
+			content: var( --elementor-template-library-subscription-plan-label);
+			background-color: var( --elementor-template-library-subscription-plan-color );
+			color: $editor-lightest;
 			position: absolute;
 			text-transform: uppercase;
 			top: 5px;
