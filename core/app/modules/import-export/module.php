@@ -92,7 +92,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="#">%s</a>', __( 'Learn more', 'elementor' ) );
+		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', __( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
 		/* translators: %1$s: New line break, %2$s: Learn More link. */
@@ -110,7 +110,7 @@ class Module extends BaseModule {
 				],
 				'description' => __( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
-					'url' => '#',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow',
 					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
@@ -122,13 +122,13 @@ class Module extends BaseModule {
 				],
 				'description' => __( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
-					'url' => '#',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow',
 					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
 		];
 
-		$info_text_link = sprintf( '<a href="#">%s</a>', __( 'Click here.', 'elementor' ) );
+		$info_text_link = sprintf( '<a href="%2$s">%1$s</a>', __( 'Click here.', 'elementor' ), "#e:route:panel/histor" );
 
 		$info_text = sprintf(
 		/* translators: %s: Click here. */
@@ -150,7 +150,7 @@ class Module extends BaseModule {
 						</a>
 					</div>
 					<p><?php echo $data['description']; ?></p>
-					<a href="<?php echo $data['button']['url']; ?>"><?php echo $data['link']['text']; ?></a>
+					<a href="<?php echo $data['link']['url']; ?>" target="_blank"><?php echo $data['link']['text']; ?></a>
 				</div>
 			<?php } ?>
 			</div>
