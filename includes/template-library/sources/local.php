@@ -818,10 +818,12 @@ class Source_Local extends Source_Base {
 				return $extracted_files;
 			}
 
-			foreach ( $extracted_files as $file_path ) {
+			foreach ( $extracted_files['files'] as $file_path ) {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
+					Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
+
 					return $import_result;
 				}
 
@@ -835,6 +837,8 @@ class Source_Local extends Source_Base {
 			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
+
 				return $import_result;
 			}
 
@@ -1338,15 +1342,6 @@ class Source_Local extends Source_Base {
 	 *                             `WP_Error`.
 	 */
 	private function import_single_template( $file_path ) {
-		$basename = basename( $file_path );
-		$extension = pathinfo( $file_path, PATHINFO_EXTENSION );
-		// In some cases, the uploaded file's path will be passed in the 'tmp_name' property, and sometimes under 'name'
-		$file_path = isset( $file['tmp_name'] ) ? $file['tmp_name'] : $file_path;
-
-		if ( 'manifest.json' === $basename || 'json' !== $extension ) {
-			return false;
-		}
-
 		$data = json_decode( file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {

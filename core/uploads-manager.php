@@ -27,8 +27,15 @@ class Uploads_Manager extends Base_Object {
 	 * @var File_Type_Base[]
 	 */
 	private $file_type_handlers = [];
+
 	private $allowed_file_extensions;
+
 	private $are_unfiltered_files_enabled;
+
+	/**
+	 * @var string
+	 */
+	private $temp_dir;
 
 	/**
 	 * Register File Types
@@ -78,7 +85,7 @@ class Uploads_Manager extends Base_Object {
 		foreach ( $extracted['files'] as $extracted_file_path ) {
 			// Each file is an array with a 'name' (file path) property.
 			if ( ! is_wp_error( $this->validate_file( $extracted_file_path ) ) ) {
-				$result['files'] = $extracted_file_path;
+				$result['files'][] = $extracted_file_path;
 			}
 		}
 
@@ -96,51 +103,24 @@ class Uploads_Manager extends Base_Object {
 	 * The file goes through validation; if it passes validation, the file is returned. Otherwise, an error is returned.
 	 *
 	 * @param array $file
-	 * @param array|null $file_types_whitelist an array of file types that are allowed to pass validation for each
+	 * @param array $allowed_file_extensions Optional. an array of file types that are allowed to pass validation for each
 	 * upload.
 	 * @return array|\WP_Error
 	 */
-	public function handle_elementor_upload( $file, $file_types_whitelist = null ) {
+	public function handle_elementor_upload( array $file, $allowed_file_extensions = null ) {
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
 		if ( isset( $file['fileData'] ) ) {
 			$file = $this->save_base64_to_tmp_file( $file );
 		}
 
-		if ( $file_types_whitelist ) {
-			// If there is a non-standard file type passed, make sure unfiltered file uploads are active.
-			$checked_file_types = $this->check_whitelist_for_unfiltered_file_types( $file_types_whitelist );
-
-			if ( is_wp_error( $checked_file_types ) ) {
-				return $checked_file_types;
-			}
-		}
-
-		$validation_result = $this->validate_file( $file['tmp_name'], $file_types_whitelist );
+		$validation_result = $this->validate_file( $file['tmp_name'], $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
 		}
 
 		return $file;
-	}
-
-	/**
-	 * Check Whitelist for Unfiltered File Types
-	 *
-	 * Iterates over the passed whitelist of file extensions, and checks they are allowed for upload.
-	 *
-	 * @param $file_types_whitelist array
-	 * @return \WP_Error
-	 */
-	private function check_whitelist_for_unfiltered_file_types( $file_types_whitelist ) {
-		$allowed_file_extensions = $this->get_allowed_file_extensions();
-
-		foreach ( $file_types_whitelist as $file_type ) {
-			if ( ! in_array( $file_type, $allowed_file_extensions, true ) ) {
-				return new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
-			}
-		}
 	}
 
 	/**
@@ -173,7 +153,7 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.3.0
 	 *
 	 * @param string|null $file_extension - file extension
-	 * @return \WP_Error|File_Type_Base
+	 * @return File_Type_Base[]|File_Type_Base
 	 */
 	public function get_file_type_handlers( $file_extension = null ) {
 		return self::get_items( $this->file_type_handlers, $file_extension );
@@ -182,6 +162,8 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Create Temp File
 	 *
+	 * Create a random temporary file.
+	 *
 	 * @since 3.3.0
 	 *
 	 * @param string $file_content
@@ -189,13 +171,8 @@ class Uploads_Manager extends Base_Object {
 	 * @return string|\WP_Error
 	 */
 	public function create_temp_file( $file_content, $file_name ) {
-		$extension = pathinfo( $file_name, PATHINFO_EXTENSION );
-		// Get the directory for temporary Elementor uploads.
-		$temp_path = $this->get_temp_dir();
-		// Create a random temporary file name.
-		$temp_filename = $temp_path . uniqid() . '.' . $extension;
+		$temp_filename = $this->create_unique_temp_dir() . $file_name;
 
-		// Save the contents to a temporary file.
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
 
 		return $temp_filename;
@@ -211,14 +188,34 @@ class Uploads_Manager extends Base_Object {
 	 * @return string $temp_dir
 	 */
 	public function get_temp_dir() {
-		$wp_upload_dir = wp_upload_dir();
-		$tmp_dir = $wp_upload_dir['basedir'] . '/elementor/tmp/';
+		if ( ! $this->temp_dir ) {
+			$wp_upload_dir = wp_upload_dir();
 
-		if ( ! is_dir( $tmp_dir ) ) {
-			wp_mkdir_p( $tmp_dir );
+			$this->temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
+
+			if ( ! is_dir( $this->temp_dir ) ) {
+				wp_mkdir_p( $this->temp_dir );
+			}
 		}
 
-		return $tmp_dir;
+		return $this->temp_dir;
+	}
+
+	/**
+	 * Create Unique Temp Dir
+	 *
+	 * Create a unique temporary directory
+	 *
+	 * @since 3.3.0
+	 *
+	 * @return string the new directory path
+	 */
+	public function create_unique_temp_dir() {
+		$unique_dir_path = $this->get_temp_dir() . uniqid() . DIRECTORY_SEPARATOR;
+
+		wp_mkdir_p( $unique_dir_path );
+
+		return $unique_dir_path;
 	}
 
 	/**
@@ -307,12 +304,18 @@ class Uploads_Manager extends Base_Object {
 	 * @since 3.3.0
 	 *
 	 * @param string $file_path
-	 * @param array|null $allowed_file_extensions
+	 * @param array $file_extensions Optional
 	 * @return bool|\WP_Error
 	 *
 	 */
-	private function validate_file( $file_path, $allowed_file_extensions ) {
+	private function validate_file( $file_path, $file_extensions = [] ) {
 		$file_extension = pathinfo( $file_path, PATHINFO_EXTENSION );
+
+		$allowed_file_extensions = $this->get_allowed_file_extensions();
+
+		if ( $file_extensions ) {
+			$allowed_file_extensions = array_intersect( $allowed_file_extensions, $file_extensions );
+		}
 
 		// Check if the file type (extension) is in the allowed extensions list. If it is a non-standard file type (not
 		// enabled by default in WordPress) and unfiltered file uploads are not enabled, it will not be in the allowed
@@ -384,8 +387,8 @@ class Uploads_Manager extends Base_Object {
 		if ( ! $this->allowed_file_extensions ) {
 			$this->allowed_file_extensions = array_keys( get_allowed_mime_types() );
 
-			if ( $this->are_unfiltered_uploads_enabled() ) {
-				foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
+			foreach ( $this->get_file_type_handlers() as $file_type => $handler ) {
+				if ( $handler->is_upload_allowed() ) {
 					// Add the file extension to the allowed extensions list only if unfiltered files upload is enabled.
 					$this->add_file_extension_to_allowed_extensions_list( $file_type );
 				}

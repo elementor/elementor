@@ -43,4 +43,17 @@ abstract class Base extends Base_Object {
 	public function validate_file( $file ) {
 		return true;
 	}
+
+	/**
+	 * Is Upload Allowed
+	 *
+	 * This method returns whether the file type is allowed to be uploaded, even if unfiltered uploads are disabled.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @return bool
+	 */
+	public function is_upload_allowed() {
+		return true;
+	}
 }
