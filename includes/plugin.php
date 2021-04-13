@@ -25,6 +25,7 @@ use Elementor\Core\Utils\Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
+use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -462,6 +463,11 @@ class Plugin {
 	public $experiments;
 
 	/**
+	 * @var Uploads_Manager
+	 */
+	public $uploads_manager;
+
+	/**
 	 * @var Breakpoints_Manager
 	 */
 	public $breakpoints;
@@ -631,6 +637,7 @@ class Plugin {
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
 		$this->assets_loader = new Assets_Loader();
+		$this->uploads_manager = new Uploads_Manager();
 
 		User::init();
 		Api::init();
