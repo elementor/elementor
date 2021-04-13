@@ -17,11 +17,6 @@ class Api_Client {
 	private $base_endpoint;
 
 	/**
-	 * @var string|null
-	 */
-	private $license_key;
-
-	/**
 	 * Get all the kits
 	 *
 	 * @return array
@@ -97,10 +92,8 @@ class Api_Client {
 	 * API constructor.
 	 *
 	 * @param string $base_endpoint
-	 * @param string $license_key
 	 */
-	public function __construct( $base_endpoint, $license_key = null ) {
+	public function __construct( $base_endpoint ) {
 		$this->base_endpoint = $base_endpoint;
-		$this->license_key   = $license_key;
 	}
 }

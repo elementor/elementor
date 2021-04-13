@@ -82,10 +82,8 @@ class Module extends BaseModule {
 			ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT :
 			Api_Client::DEFAULT_BASE_ENDPOINT;
 
-		$licence_key = apply_filters( 'elementor/app/kit-library/license_key', null );
-
 		return new Repository(
-			new Api_Client( $base_endpoint, $licence_key )
+			new Api_Client( $base_endpoint )
 		);
 	}
 
