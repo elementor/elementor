@@ -21,6 +21,7 @@ export default class extends elementorModules.ViewModule {
 
 				$this.attr( {
 					target: '_blank',
+					rel: 'opener',
 					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId,
 				} );
 
