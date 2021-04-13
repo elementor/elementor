@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core;
+namespace Elementor\Core\Files;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Files\File_Types\Base as File_Type_Base;
