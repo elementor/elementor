@@ -128,7 +128,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		$info_text_link = sprintf( '<a href="%2$s">%1$s</a>', __( 'Click here.', 'elementor' ), "#e:route:panel/histor" );
+		$info_text_link = sprintf( '<a href="#">%s</a>', __( 'Click here.', 'elementor' ) );
 
 		$info_text = sprintf(
 		/* translators: %s: Click here. */
