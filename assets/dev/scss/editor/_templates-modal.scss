@@ -350,7 +350,7 @@ label.elementor-template-library-order-label {
 
 	&.elementor-template-library-pro-template {
 		.elementor-template-library-template-body:before {
-			content: var( --elementor-template-library-subscription-plan-label);
+			content: var( --elementor-template-library-subscription-plan-label );
 			background-color: var( --elementor-template-library-subscription-plan-color );
 			color: $editor-lightest;
 			position: absolute;

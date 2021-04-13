@@ -206,7 +206,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		target="_blank"
 	>
 		<i class="eicon-external-link-square" aria-hidden="true"></i>
-		<span class="elementor-button-title">{{{ buttonText }}}</span>
+		<span class="elementor-button-title">{{{ promotionText }}}</span>
 	</a>
 </script>
 

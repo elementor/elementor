@@ -25,14 +25,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	getTemplateActionButton: function( templateData ) {
-		const subscriptionPlans = elementor.config.library_connect.subscription_plans;
-		const baseAccessLevel = elementor.config.library_connect.base_access_level;
+		const subscriptionPlans = elementor.config.library_connect.subscription_plans,
+			baseAccessLevel = elementor.config.library_connect.base_access_level;
 
-		var viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
+		let viewId = '#tmpl-elementor-template-library-' + ( baseAccessLevel !== templateData.accessLevel ? 'upgrade-plan-button' : 'insert-button' );
 
 		viewId = elementor.hooks.applyFilters( 'elementor/editor/template-library/template/action-button', viewId, templateData );
 
-		var template = Marionette.TemplateCache.get( viewId );
+		const template = Marionette.TemplateCache.get( viewId );
 
 		// In case the access level of the template is not one of the defined.
 		// it will find the next access level that was defined.
@@ -46,7 +46,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const subscriptionPlan = subscriptionPlans[ closestAccessLevel ];
 
 		return Marionette.Renderer.render( template, {
-			buttonText: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+			promotionText: `Go ${ subscriptionPlan.label }`,
 			promotionLink: subscriptionPlan.promotion_url,
 		} );
 	},
