@@ -128,7 +128,13 @@ class Module extends BaseModule {
 			],
 		];
 
-		$info_text_link = sprintf( '<a href="#">%s</a>', __( 'Click here.', 'elementor' ) );
+		$front_page_id = get_option( 'page_on_front' );
+
+		$front_page_link_Action = sprintf( '/post.php?post=%s&action=elementor#e:route:panel/history/revisions', $front_page_id );
+
+		$front_page_url = wp_nonce_url( admin_url( $front_page_link_Action ), 'elementor' );
+
+		$info_text_link = sprintf( '<a href="%2$s">%1$s</a>', __( 'Click here.', 'elementor' ), $front_page_url );
 
 		$info_text = sprintf(
 		/* translators: %s: Click here. */
