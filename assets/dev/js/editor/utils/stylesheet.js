@@ -213,7 +213,37 @@
 		return parsedProperties;
 	};
 
+	Stylesheet.getDesktopPreviousDeviceKey = () => {
+		let desktopPreviousDevice = '';
+
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			breakpointKeys = Object.keys( activeBreakpoints ),
+			numOfDevices = breakpointKeys.length;
+
+		if ( 'min' === activeBreakpoints[ breakpointKeys[ numOfDevices - 1 ] ].direction ) {
+			// If the widescreen breakpoint is active, the device that's previous to desktop is the last one before
+			// widescreen.
+			desktopPreviousDevice = breakpointKeys[ numOfDevices - 2 ];
+		} else {
+			// If the widescreen breakpoint isn't active, we just take the last device returned by the config.
+			desktopPreviousDevice = breakpointKeys[ numOfDevices - 1 ];
+		}
+
+		return desktopPreviousDevice;
+	};
+
+	Stylesheet.getDesktopMinPoint = () => {
+		const { activeBreakpoints } = elementorFrontend.config.responsive,
+			desktopPreviousDevice = Stylesheet.getDesktopPreviousDeviceKey();
+
+		return activeBreakpoints[ desktopPreviousDevice ].value + 1;
+	};
+
 	Stylesheet.getDeviceMinBreakpoint = ( deviceName ) => {
+		if ( 'desktop' === deviceName ) {
+			return Stylesheet.getDesktopMinPoint();
+		}
+
 		const activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
 			breakpointNames = Object.keys( activeBreakpoints );
 
