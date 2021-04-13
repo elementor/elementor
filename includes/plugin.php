@@ -25,7 +25,7 @@ use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
-use Elementor\Core\Uploads_Manager as Uploads_Manager;
+use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
