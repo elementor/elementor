@@ -14,10 +14,6 @@ WP_VERSION=${5-latest}
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
 
-WP_PLUGIN_DIR=${WP_PLUGIN_DIR-/tmp/wordpress/wp-content/plugins}
-
-REPO_DIR="$(cd .. ; pwd)"
-
 download() {
     if [ `which curl` ]; then
         curl -s "$1" > "$2";
@@ -121,14 +117,8 @@ install_jshint() {
 	npm install -g jshint
 }
 
-create_symbolic_link_to_plugin() {
-	rm -rf ${WP_PLUGIN_DIR}/elementor
-	ln -s ${REPO_DIR}/elementor ${WP_PLUGIN_DIR}/elementor
-}
-
 install_wp
 install_test_suite
 install_db
-create_symbolic_link_to_plugin
 #install_jscs
 #install_jshint

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Schemas;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\ImportExport\WP_Import;
+use Elementor\Modules\CompatibilityTag\Module;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tracker;
 use JsonSchema\Exception\ValidationException;
@@ -43,7 +45,36 @@ class Test_Usage extends Elementor_Test_Base {
 		return $this->run_validation_against_schema( Tracker::get_tracking_data() );
 	}
 
+	protected function generate_plugins_mock() {
+		// Arrange
+		$plugins = new Collection( [
+			'elementor/elementor.php' => [
+				Module::PLUGIN_VERSION_TESTED_HEADER => '',
+				'Name' => 'Elementor',
+				'PluginURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash',
+				'Version' => ELEMENTOR_VERSION,
+				'Description' => 'The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!',
+				'Author' => "Elementor.com",
+				'AuthorURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash',
+				'TextDomain' => 'elementor',
+				'DomainPath' => '',
+				'Network' => false,
+				'RequiresWP' => '',
+				'RequiresPHP' => '',
+				'Title' => 'Elementor',
+				'AuthorName' => 'Elementor.com',
+			],
+		] );
+
+		$this->mock_wp_api( [
+			'get_plugins' => $plugins,
+		] );
+	}
+
 	public function test__ensure_clean_is_valid() {
+		// Arrange.
+		$this->generate_plugins_mock();
+
 		// Act + Assert.
 		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );
 	}
@@ -95,6 +126,8 @@ class Test_Usage extends Elementor_Test_Base {
 		$importer = new WP_Import( ELEMENTOR_PATH . 'tests/phpunit/elementor/core/utils/mock/fresh-wordpress-database.xml' );
 
 		$this->assertEquals( 'success', $importer->run()['status'] );
+
+		$this->generate_plugins_mock();
 
 		// Act + Assert.
 		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );

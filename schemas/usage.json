@@ -48,6 +48,7 @@
 					"$id": "#/system/plugins/active_plugins/$plugin",
 					"type": "object",
 					"required": [
+						"Elementor tested up to",
 						"Name",
 						"PluginURI",
 						"Version",
