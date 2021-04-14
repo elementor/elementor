@@ -2,8 +2,6 @@ import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 import Icon from 'elementor-app/ui/atoms/icon';
 
-import './buttons.scss';
-
 export default class Button extends React.Component {
 	static propTypes = {
 		text: PropTypes.string.isRequired,

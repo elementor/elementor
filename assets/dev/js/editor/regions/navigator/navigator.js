@@ -140,8 +140,7 @@ export default class extends BaseRegion {
 	dock() {
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
-		const side = elementorCommon.config.isRTL ? 'left' : 'right',
-			resizableOptions = this.getResizableOptions();
+		const resizableOptions = this.getResizableOptions();
 
 		this.$el.css( {
 			height: '',
@@ -151,17 +150,11 @@ export default class extends BaseRegion {
 			right: '',
 		} );
 
-		elementor.$previewWrapper.css( side, this.storage.size.width );
-
 		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
 		}
 
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-
-		resizableOptions.resize = ( event, ui ) => {
-			elementor.$previewWrapper.css( side, ui.size.width );
-		};
 
 		this.$el.resizable( resizableOptions );
 
@@ -172,8 +165,6 @@ export default class extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
-
-		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
 		this.setSize();
 
