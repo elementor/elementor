@@ -30,7 +30,7 @@
 		"eslint-plugin-jsx-a11y": "^6.1.1",
 		"eslint-plugin-no-jquery": "^2.5.0",
 		"eslint-plugin-react": "^7.11.1",
-		"eslint-plugin-wordpress": "git://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
+		"eslint-plugin-wordpress": "git+https://github.com/WordPress-Coding-Standards/eslint-plugin-wordpress.git#1774343f6226052a46b081e01db3fca8793cc9f1",
 		"extract-text-webpack-plugin": "^3.0.2",
 		"grunt": "^1.0.4",
 		"grunt-banner": "~0.6.0",
