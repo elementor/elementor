@@ -19,7 +19,6 @@ body {
 		top: 0;
 		@include end(0);
 		height: 100%;
-		position: relative;
 	}
 
 	body:not(.elementor-navigator-docked) & {
