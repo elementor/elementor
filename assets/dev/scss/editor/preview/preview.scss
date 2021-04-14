@@ -15,6 +15,46 @@
 // Hidden WP Admin Bar
 html.elementor-html {
 	margin-top: 0 !important;
+  	overflow-y: overlay;
+
+	::-webkit-scrollbar {
+	  	width: 10px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+	  	background: rgba(255, 255, 255, 0.2);
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+	  	border-radius: 10px;
+	  	background: rgba(73, 81, 87, 0.5);
+	  	transition: 0.2s;
+	  	width: 10px;
+
+	  	&:hover {
+			background: rgb(73, 81, 87);
+		}
+	}
+
+	::-webkit-scrollbar-thumb:window-inactive {
+	  	box-shadow: none;
+		background: rgba(73, 81, 87, 0.25);
+	}
+
+	::-webkit-scrollbar-thumb {
+		opacity: 0.5;
+	}
+
+  	@media screen and (max-width: $editor-screen-md-max) {
+	  	overflow-y: hidden;
+
+		&:hover {
+		  	overflow-y: overlay;
+		}
+	}
 }
 
 .elementor-edit-area {
