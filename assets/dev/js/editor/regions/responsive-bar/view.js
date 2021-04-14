@@ -26,8 +26,8 @@ export default class View extends Marionette.ItemView {
 	events() {
 		return {
 			'change @ui.switcherInput': 'onBreakpointSelected',
-			'change @ui.sizeInputWidth': 'onSizeInputChange',
-			'change @ui.sizeInputHeight': 'onSizeInputChange',
+			'input @ui.sizeInputWidth': 'onSizeInputChange',
+			'input @ui.sizeInputHeight': 'onSizeInputChange',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 			'mousedown @ui.scaleButton': 'onScaleButtonMousedown',
@@ -35,9 +35,7 @@ export default class View extends Marionette.ItemView {
 			'mouseup @ui.scaleButton': 'onScaleButtonMouseup',
 			'keyup @ui.scaleButton': 'onScaleButtonMouseup',
 			'mouseout @ui.scaleButton': 'onScaleButtonMouseup',
-			'change @ui.scaleInput': 'onScaleInputChange',
-			'keyup @ui.scaleInput': 'onScaleInputChange',
-			'keydown @ui.scaleInput': 'onScaleInputChange',
+			'input @ui.scaleInput': 'onScaleInputChange',
 		};
 	}
 
@@ -58,6 +56,24 @@ export default class View extends Marionette.ItemView {
 				},
 			}
 		);
+	}
+
+	restoreLastValidPreviewSize() {
+		const lastSize = elementor.channels.responsivePreview.request( 'size' );
+
+		this.ui.sizeInputWidth
+			.val( lastSize.width )
+			.tipsy( {
+				trigger: 'manual',
+				gravity: 'n',
+				title: () => __( 'The value inserted isn\'t in the breakpoint boundaries', 'elementor' ),
+			} );
+
+		const tipsy = this.ui.sizeInputWidth.data( 'tipsy' );
+
+		tipsy.show();
+
+		setTimeout( () => tipsy.hide(), 3000 );
 	}
 
 	incrementScale( increment = 1, speed = 0 ) {
@@ -105,7 +121,7 @@ export default class View extends Marionette.ItemView {
 			selectedDeviceMode = e.target.value;
 
 		if ( currentDeviceMode !== selectedDeviceMode ) {
-			elementor.changeDeviceMode( selectedDeviceMode );
+			elementor.changeDeviceMode( selectedDeviceMode, false );
 		}
 	}
 
@@ -135,6 +151,10 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onPreviewResize() {
+		if ( this.updatingPreviewSize ) {
+			return;
+		}
+
 		const size = elementor.channels.responsivePreview.request( 'size' );
 
 		this.ui.sizeInputWidth.val( size.width );
@@ -150,10 +170,24 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onSizeInputChange() {
+		clearTimeout( this.restorePreviewSizeTimeout );
+
 		const size = {
 			width: this.ui.sizeInputWidth.val(),
 			height: this.ui.sizeInputHeight.val(),
 		};
+
+		const currentDeviceConstrains = elementor.getCurrentDeviceConstrains();
+
+		if ( size.width < currentDeviceConstrains.minWidth || size.width > currentDeviceConstrains.maxWidth ) {
+			this.restorePreviewSizeTimeout = setTimeout( () => this.restoreLastValidPreviewSize(), 1500 );
+
+			return;
+		}
+
+		this.updatingPreviewSize = true;
+
+		setTimeout( () => this.updatingPreviewSize = false, 300 );
 
 		elementor.updatePreviewSize( size );
 	}
