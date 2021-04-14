@@ -35,17 +35,19 @@
 
 	&__col {
 		display: flex;
-		width: 25%;
 		justify-content: center;
 		align-items: center;
+	  	flex-shrink: 0;
 
-	  	&:first-child {
-		  	justify-content: flex-start;
+	  	&:first-child,
+		&:last-child {
+		  	width: 50%;
+			justify-content: flex-start;
+		  	flex-shrink: 1;
 		}
 
 		&:last-child {
-			justify-content: flex-start;
-			flex-direction: row-reverse;
+		  	flex-direction: row-reverse;
 		}
 	}
 
@@ -152,6 +154,12 @@
 		&-separator {
 			color: $editor-dark;
 		}
+	}
+
+	&__switcher {
+  		width: 110px;
+	  	display: flex;
+	  	padding: 0 24px;
 	}
 
 	&-switcher__option {
