@@ -80,7 +80,7 @@ export default class View extends Marionette.ItemView {
 
 	incrementScale( increment = 1, speed = 0 ) {
 		const incrementedScale = parseInt( this.ui.scaleInput.val() ) + increment;
-		const scale = Math.round( incrementedScale * 1000 ) / 1000;
+		const scale = this.roundNumber( incrementedScale );
 		const delay = 1 > speed ? 500 : 120 - ( speed * 1.5 );
 
 		setTimeout( () => {
