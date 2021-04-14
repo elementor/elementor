@@ -2,17 +2,14 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\User;
+use Elementor\Plugin;
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Library extends Common_App {
-	const ACCESS_LEVEL_CORE = 0;
-	const ACCESS_LEVEL_PRO = 1;
-	const ACCESS_LEVEL_EXPERT = 20;
-
-
 	public function get_title() {
 		return __( 'Library', 'elementor' );
 	}
@@ -58,15 +55,15 @@ class Library extends Common_App {
 	public function localize_settings( $settings ) {
 		$is_connected = $this->is_connected();
 
+		/** @var ConnectModule $connect */
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
-				'access_levels' => [
-					'core' => static::ACCESS_LEVEL_CORE,
-					'pro' => static::ACCESS_LEVEL_PRO,
-					'expert' => static::ACCESS_LEVEL_EXPERT,
-				],
-				'current_access_level' => static::ACCESS_LEVEL_CORE,
+				'subscription_plans' => $connect->get_subscription_plans( 'panel-library' ),
+				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
+				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			],
 		] );
 	}
