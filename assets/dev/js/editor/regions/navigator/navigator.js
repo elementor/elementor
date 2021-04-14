@@ -167,7 +167,6 @@ export default class extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
-
 		this.setSize();
 
 		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
@@ -197,6 +196,7 @@ export default class extends BaseRegion {
 			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
 		}
 
+		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
 		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
 		this.$el.css( 'width', '' );
 	}
