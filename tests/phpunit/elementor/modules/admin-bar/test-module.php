@@ -29,10 +29,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$this->module = new Module();
 
-		remove_filter( 'elementor/frontend/admin_bar/settings', [
-			Plugin::instance()->app->get_component( 'site-editor' ),
-			'add_menu_in_admin_bar',
-		] );
+		remove_all_filters( 'elementor/frontend/admin_bar/settings' );
 	}
 
 	public function test_enqueue_scripts() {
