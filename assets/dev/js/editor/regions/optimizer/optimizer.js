@@ -3,13 +3,6 @@ import View from './view';
 export default class extends Marionette.Region {
 	initialize() {
 		this.show( new View() );
-/*
-		elementor.panel.$el.on( {
-			resizestart: () => this.onPanelResizeStart(),
-			resizestop: () => this.onPanelResizeStop(),
-
-		} );
-*/
 	}
 
 /*	onPanelResizeStart() {

@@ -503,14 +503,15 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initOptimizer() {
+		console.log('trying to init optimizer');
 		this.addRegions( {
-			responsiveBar: {
+			optimizer: {
 				el: '#elementor-optimizer',
 				regionClass: Optimizer,
 			},
 		} );
 
-		this.trigger( 'responsiveBar:init' );
+		this.trigger( 'optimizer:init' );
 	}
 
 	initNavigator() {
@@ -1067,6 +1068,7 @@ export default class EditorBase extends Marionette.Application {
 		this.initResponsiveBar();
 
 		if ( elementorCommon.config.experimentalFeatures[ 'elementor_optimizer' ] ) {
+			'attempting to init optimizer'
 			this.initOptimizer();
 		}
 

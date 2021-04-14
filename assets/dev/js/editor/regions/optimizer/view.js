@@ -1,6 +1,6 @@
 export default class View extends Marionette.ItemView {
 	getTemplate() {
-		return '#elementor-optimizer';
+		return '#tmpl-elementor-templates-optimizer';
 	}
 
 	className() {
@@ -9,8 +9,7 @@ export default class View extends Marionette.ItemView {
 
 	ui() {
 		return {
-			iframe: 'iframe',
-			wrapper: '.elementor-optimizer',
+			iframe: '#optimizer-iframe',
 		};
 	}
 
@@ -21,14 +20,25 @@ export default class View extends Marionette.ItemView {
 	}
 
 	initialize() {
-		const $iframe = jQuery( document.createElement( 'iframe' ) );
+		const previewUrl = elementor.config.initial_document.urls.wp_preview;
 
-		$iframe.attr( 'src', 'https://google.com/' );
+		setTimeout( () => {
+			this.ui.iframe.attr( 'src', previewUrl )
+				.css( {
+					position: 'absolute',
+					top: '50px',
+					right: '50px',
+					width: '1200px',
+					height: '1000px',
+					transform: 'scale(0.25)',
+				} );
+			this.ui.iframe.trigger( 'load' );
 
-		elementorCommon.elements.$body.append( $iframe );
+			console.error( this.ui.iframe );
+		}, 500 );
 	}
 
 	onIframeLoad() {
-		console.log('iframe loaded');
+		console.error( 'iframeloaded', this.ui.iframe );
 	}
 }
