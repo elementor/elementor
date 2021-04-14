@@ -14,6 +14,7 @@ export default class View extends Marionette.ItemView {
 			switcherInput: prefix + '-switcher__option input',
 			switcherLabel: prefix + '-switcher__option',
 			scaleButton: prefix + '__button-scale',
+			scaleResetButton: prefix + '__button-scale-reset',
 			scaleInput: prefix + '__input-scale',
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
@@ -36,6 +37,7 @@ export default class View extends Marionette.ItemView {
 			'keyup @ui.scaleButton': 'onScaleButtonMouseup',
 			'mouseout @ui.scaleButton': 'onScaleButtonMouseup',
 			'input @ui.scaleInput': 'onScaleInputChange',
+			'click @ui.scaleResetButton': 'onScaleReset',
 		};
 	}
 
@@ -250,5 +252,9 @@ export default class View extends Marionette.ItemView {
 		}
 
 		this.updateScale( scale, true );
+	}
+
+	onScaleReset() {
+		this.updateScale( 100 );
 	}
 }
