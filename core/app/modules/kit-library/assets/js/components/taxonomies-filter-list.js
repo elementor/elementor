@@ -2,41 +2,39 @@ import { sprintf } from '@wordpress/i18n';
 import { Collapse, Checkbox, SearchInput } from '@elementor/app-ui';
 import Taxonomy from '../models/taxonomy';
 
-const { useState, useEffect, useMemo } = React;
+const { useState, useMemo } = React;
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
 export default function TaxonomiesFilterList( props ) {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
 
 	const taxonomies = useMemo( () => {
 		if ( ! search ) {
-			return props.groupedTags.data;
+			return props.taxonomiesByType.data;
 		}
 
 		const lowerCaseSearch = search.toLowerCase();
 
-		return props.groupedTags.data.filter(
+		return props.taxonomiesByType.data.filter(
 			( tag ) => tag.text.toLowerCase().includes( lowerCaseSearch )
 		);
-	}, [ props.groupedTags.data, search ] );
-
-	useEffect( () => setIsOpen( props.groupedTags.isOpenByDefault ), [] );
+	}, [ props.taxonomiesByType.data, search ] );
 
 	return (
 		<Collapse
 			className="e-kit-library__tags-filter-list"
-			title={ props.groupedTags.label }
+			title={ props.taxonomiesByType.label }
 			isOpen={ isOpen }
 			onChange={ setIsOpen }
 		>
 			{
-				props.groupedTags.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
+				props.taxonomiesByType.data.length >= MIN_TAGS_LENGTH_FOR_SEARCH_INPUT &&
 					<SearchInput
 						size="sm"
 						className="e-kit-library__tags-filter-list-search"
-						placeholder={ sprintf( __( 'Search in %s', 'elementor' ), props.groupedTags.label ) }
+						placeholder={ sprintf( __( 'Search in %s', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
 					/>
@@ -66,7 +64,7 @@ export default function TaxonomiesFilterList( props ) {
 }
 
 TaxonomiesFilterList.propTypes = {
-	groupedTags: PropTypes.shape( {
+	taxonomiesByType: PropTypes.shape( {
 		key: PropTypes.string,
 		label: PropTypes.string,
 		data: PropTypes.arrayOf( PropTypes.instanceOf( Taxonomy ) ),

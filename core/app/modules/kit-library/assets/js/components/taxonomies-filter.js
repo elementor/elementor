@@ -6,25 +6,26 @@ import './tags-filter.scss';
 const { useMemo } = React;
 
 export default function TaxonomiesFilter( props ) {
-	const groupedTags = useMemo( () => {
+	const taxonomiesByType = useMemo( () => {
 		if ( ! props.taxonomies ) {
 			return [];
 		}
 
-		return taxonomyType.map( ( tagType ) => ( {
-			...tagType,
-			data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
-		} ) );
+		return taxonomyType
+			.map( ( tagType ) => ( {
+				...tagType,
+				data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
+			} ) )
+			.filter( ( { data } ) => data.length > 0 );
 	}, [ props.taxonomies ] );
 
 	return (
 		<div className="e-kit-library__tags-filter">
 			{
-				groupedTags.map( ( group ) => (
-					group.data.length > 0 &&
+				taxonomiesByType.map( ( group ) => (
 					<TaxonomiesFilterList
 						key={ group.key }
-						groupedTags={ group }
+						taxonomiesByType={ group }
 						selected={ props.selected }
 						onSelect={ props.onSelect }
 					/>

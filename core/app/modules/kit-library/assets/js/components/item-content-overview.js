@@ -4,13 +4,13 @@ import ItemContentOverviewGroup from './item-content-overview-group';
 import './item-content-overview.scss';
 
 export default function ItemContentOverview( props ) {
-	return props.groupedKitContent.map( ( contentType ) => (
+	return props.documentsByType.map( ( contentType ) => (
 		<ItemContentOverviewGroup key={ contentType.id } contentType={ contentType }/>
 	) );
 }
 
 ItemContentOverview.propTypes = {
-	groupedKitContent: PropTypes.arrayOf(
+	documentsByType: PropTypes.arrayOf(
 		PropTypes.instanceOf( ContentType )
 	),
 };

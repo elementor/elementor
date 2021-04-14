@@ -1,22 +1,11 @@
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Badge } from '@elementor/app-ui';
 import Kit from '../models/kit';
-import { useSettingsContext } from '../context/settings-context';
+import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 
 import './kit-list-item.scss';
 
-const { useMemo } = React;
-
 export default function KitListItem( props ) {
-	const {
-		settings: {
-			access_level: accessLevel,
-			subscription_plans: subscriptionPlans,
-			is_library_connected: isLibraryConnected,
-			is_pro: isPro,
-		},
-	} = useSettingsContext();
-
-	const subscriptionPlan = useMemo( () => subscriptionPlans[ props.model.accessLevel ], [] );
+	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
 
 	return (
 		<Card>
@@ -51,7 +40,7 @@ export default function KitListItem( props ) {
 								url={ `/kit-library/preview/${ props.model.id }` }
 							/>
 							{
-								( ( isPro && isLibraryConnected ) || ! isPro ) && accessLevel < props.model.accessLevel && <Button
+								type === TYPE_PROMOTION && <Button
 									className="e-kit-library__kit-item-overlay-promotion-button"
 									text={ __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ) }
 									icon="eicon-external-link-square"

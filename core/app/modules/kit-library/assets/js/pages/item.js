@@ -3,7 +3,7 @@ import useKit from '../hooks/use-kit';
 import Content from '../../../../../assets/js/layout/content';
 import ItemSidebar from '../components/item-sidebar';
 import ItemContentOverview from '../components/item-content-overview';
-import useGroupedKitContent from '../hooks/use-grouped-kit-content';
+import useKitDocumentByType from '../hooks/use-kit-document-by-type';
 import ItemHeader from '../components/item-header';
 import { useNavigate } from '@reach/router';
 
@@ -11,7 +11,7 @@ const { useMemo } = React;
 
 export default function Item( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
-	const { data: groupedKitContent } = useGroupedKitContent( data );
+	const { data: documentsByType } = useKitDocumentByType( data );
 	const headerButtons = useHeaderButtons( props.id );
 
 	if ( isError ) {
@@ -25,12 +25,12 @@ export default function Item( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ data } buttons={ headerButtons }/> }
-			sidebar={ <ItemSidebar model={ data } groupedKitContent={ groupedKitContent }/> }
+			sidebar={ <ItemSidebar model={ data } groupedKitContent={ documentsByType }/> }
 		>
 			{
-				groupedKitContent.length > 0 &&
+				documentsByType.length > 0 &&
 				<Content>
-					<ItemContentOverview groupedKitContent={ groupedKitContent }/>
+					<ItemContentOverview documentsByType={ documentsByType }/>
 				</Content>
 			}
 		</Layout>

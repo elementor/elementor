@@ -1,15 +1,63 @@
 import { useNavigate } from '@reach/router';
 import { Dialog, Text } from '@elementor/app-ui';
 import { useSettingsContext } from '../context/settings-context';
+import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
-import HeaderButtons from './layout/header-buttons';
 import Kit from '../models/kit';
 import ConnectDialog from './connect-dialog';
 
 const { useMemo, useState } = React;
 
 import './item-header.scss';
+
+/**
+ * Returns the right call to action button.
+ *
+ * @param model
+ * @param onConnect
+ * @param onApply
+ * @returns {object}
+ */
+function useKitCallToActionButton( model, { onConnect, onApply } ) {
+	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
+
+	return useMemo( () => {
+		if ( type === TYPE_CONNECT ) {
+			return {
+				id: 'connect',
+				text: __( 'Apply Kit', 'elementor' ), // The label is Apply kit but the this is connect button
+				hideText: false,
+				variant: 'contained',
+				color: 'primary',
+				size: 'sm',
+				onClick: onConnect,
+			};
+		}
+		if ( type === TYPE_PROMOTION ) {
+			return {
+				id: 'promotion',
+				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
+				hideText: false,
+				variant: 'contained',
+				color: 'cta',
+				size: 'sm',
+				url: subscriptionPlan.promotion_url,
+				target: '_blank',
+			};
+		}
+
+		return {
+			id: 'apply',
+			text: __( 'Apply Kit', 'elementor' ),
+			hideText: false,
+			variant: 'contained',
+			color: 'primary',
+			size: 'sm',
+			onClick: onApply,
+		};
+	}, [ type, subscriptionPlan ] );
+}
 
 export default function ItemHeader( props ) {
 	const navigate = useNavigate();
@@ -19,7 +67,7 @@ export default function ItemHeader( props ) {
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
 
-	const applyButton = useApplyButton( props.model, {
+	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
 		onApply: () => setIsImportDialogOpen( true ),
 	} );
@@ -83,7 +131,7 @@ export default function ItemHeader( props ) {
 			<Header
 				startSlot={ <HeaderBackButton/> }
 				centerSlot={ props.centerSlot }
-				endSlot={ <HeaderButtons buttons={ buttons }/> }
+				buttons={ buttons }
 			/>
 		</>
 	);
@@ -94,52 +142,3 @@ ItemHeader.propTypes = {
 	centerSlot: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
 };
-
-function useApplyButton( model, { onConnect, onApply } ) {
-	const {
-		settings: {
-			is_library_connected: isLibraryConnected,
-			access_level: accessLevel,
-			is_pro: isPro,
-			subscription_plans: subscriptionPlans,
-		},
-	} = useSettingsContext();
-
-	return useMemo( () => {
-		if ( ! isLibraryConnected && ( isPro || model.accessLevel <= accessLevel ) ) {
-			return {
-				id: 'connect',
-				text: __( 'Apply Kit', 'elementor' ), // The label is Apply kit but the this is connect button
-				hideText: false,
-				variant: 'contained',
-				color: 'primary',
-				size: 'sm',
-				onClick: onConnect,
-			};
-		}
-		if ( model.accessLevel > accessLevel ) {
-			const subscriptionPlan = subscriptionPlans[ model.accessLevel ];
-
-			return {
-				id: 'promotion',
-				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
-				hideText: false,
-				variant: 'contained',
-				color: 'cta',
-				size: 'sm',
-				url: subscriptionPlan.promotion_url,
-				target: '_blank',
-			};
-		}
-
-		return {
-			id: 'apply',
-			text: __( 'Apply Kit', 'elementor' ),
-			hideText: false,
-			variant: 'contained',
-			color: 'primary',
-			size: 'sm',
-			onClick: onApply,
-		};
-	}, [ model, isLibraryConnected, isPro, accessLevel ] );
-}

@@ -9,7 +9,9 @@ export default function Header( props ) {
 				<h1 className="eps-app__title">{ __( 'Kit Library', 'elementor' ) }</h1>
 			</a> }
 			{ props.centerSlot || <span/> }
-			{ props.endSlot || <HeaderButtons buttons={ props.buttons }/> }
+			{ props.endSlot || <div style={ { flex: 1 } }>
+				<HeaderButtons buttons={ props.buttons }/>
+			</div> }
 		</Grid>
 	);
 }

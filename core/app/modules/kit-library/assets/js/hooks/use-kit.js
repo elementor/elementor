@@ -7,6 +7,7 @@ export const KEY = 'kit';
 const { useCallback } = React;
 
 export default function useKit( id ) {
+	// A function that returns existing data from the kit list for a placeholder data before the kit request will resolved.
 	const placeholderDataCallback = usePlaceholderDataCallback( id );
 
 	return useQuery( [ KEY, id ], fetchKitItem, {

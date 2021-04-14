@@ -4,7 +4,7 @@ import { useSettingsContext } from '../context/settings-context';
 const { useEffect, useRef } = React;
 
 export default function ConnectDialog( props ) {
-	const { settings: { library_connect_url: libraryConnectUrl } } = useSettingsContext();
+	const { settings } = useSettingsContext();
 	const approveButtonRef = useRef();
 
 	useEffect( () => {
@@ -20,7 +20,7 @@ export default function ConnectDialog( props ) {
 			title={ __( 'Connect to Template Library', 'elementor' ) }
 			text={ __( 'Access this template and our entire library by creating an account', 'elementor' ) }
 			approveButtonText={ __( 'Get Started', 'elementor' ) }
-			approveButtonUrl={ libraryConnectUrl }
+			approveButtonUrl={ settings.library_connect_url }
 			approveButtonOnClick={ () => props.onClose() }
 			approveButtonColor="primary"
 			approveButtonRef={ approveButtonRef }

@@ -2,7 +2,7 @@ import useContentTypes from './use-content-types';
 
 const { useMemo } = React;
 
-export default function useGroupedKitContent( kit ) {
+export default function useKitDocumentByType( kit ) {
 	const contentTypesQuery = useContentTypes();
 
 	const data = useMemo( () => {
@@ -10,7 +10,7 @@ export default function useGroupedKitContent( kit ) {
 			return [];
 		}
 
-		return kit.getGroupedDocumentsByContentTypes( contentTypesQuery.data )
+		return kit.getDocumentsByTypes( contentTypesQuery.data )
 			.sort( ( a, b ) => a.order - b.order );
 	}, [ kit, contentTypesQuery.data ] );
 

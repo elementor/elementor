@@ -53,7 +53,7 @@ export default class Kit extends BaseModel {
 	 * @param {ContentType[]} contentTypes
 	 * @returns {ContentType[]}
 	 */
-	getGroupedDocumentsByContentTypes( contentTypes ) {
+	getDocumentsByTypes( contentTypes ) {
 		return contentTypes.map( ( contentType ) => {
 			contentType = contentType.clone();
 
