@@ -128,19 +128,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		$front_page_id = get_option( 'page_on_front' );
-
-		$front_page_link_Action = sprintf( '/post.php?post=%s&action=elementor#e:route:panel/history/revisions', $front_page_id );
-
-		$front_page_url = wp_nonce_url( admin_url( $front_page_link_Action ), 'elementor' );
-
-		$info_text_link = sprintf( '<a href="%2$s">%1$s</a>', __( 'Click here.', 'elementor' ), $front_page_url );
-
-		$info_text = sprintf(
-		/* translators: %s: Click here. */
-			__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site. %s', 'elementor' ),
-			$info_text_link
-		);
+		$info_text = __( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . __( 'Open Site Settings > History > Revisions.', 'elementor' );
 		?>
 
 		<div class="tab-import-export-kit__content">
