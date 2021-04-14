@@ -54,7 +54,20 @@
   	&__scale-control {
 	  	display: flex;
 	  	align-self: center;
+	  	margin-inline-end: auto;
+
+		&:before { // separator
+		  content: '';
+		  display: block;
+		  align-self: center;
+		  border-inline-start: 1px solid #6d7882;
+		  height: 20px;
+		  margin: 0 24px;
+		}
 	}
+
+  	// Temporarily hide the scale control
+  	&__scale-control { display: none; }
 
 	&__button {
 		appearance: none;
@@ -125,9 +138,14 @@
 
 	&__input-scale,
 	&__input-size {
+	  	color: $editor-light;
 		background-color: transparent;
 		-moz-appearance: textfield;
 		text-align: center;
+
+	  	&:focus {
+		  	color: $editor-lighter;
+		}
 	}
 
   	input[type=number]::-webkit-inner-spin-button,
@@ -138,11 +156,12 @@
 
 	&__input-scale {
 		border: 0 none;
-		width: 50px;
+		width: 44px;
+		padding: 0;
+		max-width: fit-content;
 	}
 
 	&__input-size {
-		color: $editor-light;
 		border: 1px solid $editor-dark !important;
 		padding: 0 3px;
 		width: 38px;
