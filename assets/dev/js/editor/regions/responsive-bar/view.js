@@ -94,7 +94,53 @@ export default class View extends Marionette.ItemView {
 		this.updateScale( scale );
 	}
 
+	isScaleUpToDate( scale ) {
+		if ( scale !== this.scale ) {
+			return false;
+		}
+
+		if ( scale !== this.ui.scaleInput.val() ) {
+			return false;
+		}
+
+		if ( scale !== elementorCommon.elements.$body.css( '--e-editor-preview-scale' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	isValidScale( scale ) {
+		if ( NaN === parseFloat( scale ) ) {
+			return false;
+		}
+
+		if ( 25 > scale || 200 < scale ) {
+			return;
+		}
+
+		return true;
+	}
+
+	updateScale( scale, changed = false ) {
+		if ( ! this.isValidScale( scale ) || this.isScaleUpToDate( scale ) ) {
+			return;
+		}
+
+		this.scale = scale;
+		this.ui.scaleInput.val( this.scale );
+		elementorCommon.elements.$body.css( '--e-editor-preview-scale', this.scale );
+
+		if ( parseFloat( scale ) !== parseFloat( this.ui.scaleInput.val() ) && ! changed ) {
+			this.ui.scaleInput.trigger( 'change' );
+		}
+	}
+
 	onScaleButtonMousedown( e ) {
+		if ( 'keydown' === e.type && 'Enter' !== e.key ) {
+			return;
+		}
+
 		this.isScalingPreview = true;
 
 		const increment = jQuery( e.target.closest( 'button' ) ).is( '#scaleUp' ) ? 1 : -1;
@@ -202,48 +248,6 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => this.updatingPreviewSize = false, 300 );
 
 		elementor.updatePreviewSize( size );
-	}
-
-	isScaleUpToDate( scale ) {
-		if ( scale !== this.scale ) {
-			return false;
-		}
-
-		if ( scale !== this.ui.scaleInput.val() ) {
-			return false;
-		}
-
-		if ( scale !== elementorCommon.elements.$body.css( '--e-editor-preview-scale' ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	isValidScale( scale ) {
-		if ( NaN === parseFloat( scale ) ) {
-			return false;
-		}
-
-		if ( 25 > scale || 200 < scale ) {
-			return;
-		}
-
-		return true;
-	}
-
-	updateScale( scale, changed = false ) {
-		if ( ! this.isValidScale( scale ) || this.isScaleUpToDate( scale ) ) {
-			return;
-		}
-
-		this.scale = scale;
-		this.ui.scaleInput.val( this.scale );
-		elementorCommon.elements.$body.css( '--e-editor-preview-scale', this.scale );
-
-		if ( parseFloat( scale ) !== parseFloat( this.ui.scaleInput.val() ) && ! changed ) {
-			this.ui.scaleInput.trigger( 'change' );
-		}
 	}
 
 	onScaleInputChange() {
