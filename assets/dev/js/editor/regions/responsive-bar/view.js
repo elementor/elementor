@@ -152,6 +152,13 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
+	roundNumber( number ) {
+		if ( ! number ) {
+			return;
+		}
+		return Math.round( number * 1000 ) / 1000;
+	}
+
 	onPreviewResize() {
 		if ( this.updatingPreviewSize ) {
 			return;
@@ -175,9 +182,12 @@ export default class View extends Marionette.ItemView {
 		clearTimeout( this.restorePreviewSizeTimeout );
 
 		const size = {
-			width: this.ui.sizeInputWidth.val(),
-			height: this.ui.sizeInputHeight.val(),
+			width: this.roundNumber( this.ui.sizeInputWidth.val() ),
+			height: this.roundNumber( this.ui.sizeInputHeight.val() ),
 		};
+
+		this.ui.sizeInputWidth.val( size.width );
+		this.ui.sizeInputHeight.val( size.height );
 
 		const currentDeviceConstrains = elementor.getCurrentDeviceConstrains();
 
