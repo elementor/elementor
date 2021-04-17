@@ -92,7 +92,7 @@
 		color: $editor-light;
 		border: 1px solid $editor-dark !important;
 		padding: 0 3px;
-		width: 38px;
+		width: 50px;
 		font-size: 12px;
 		line-height: 16px;
 		height: 18px;
@@ -113,7 +113,7 @@
 		height: 22px;
 	  	line-height: 22px;
 		border-radius: 3px;
-		font-size: 14px;
+		font-size: 17px;
 	  	transition: background-color .3s ease-out;
 
 		&:hover, &[aria-selected="true"] {
@@ -122,7 +122,7 @@
 		}
 
 	  	&:not(:last-child) {
-		  	margin-inline-end: 4px;
+		  	margin-inline-end: 7px;
 		}
 
 	  	input {
