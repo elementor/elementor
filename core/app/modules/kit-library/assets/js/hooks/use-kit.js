@@ -1,10 +1,9 @@
-import { useQuery, useQueryClient } from 'react-query';
 import Kit from '../models/kit';
 import { KEY as LIST_KEY } from './use-kits';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 export const KEY = 'kit';
-
-const { useCallback } = React;
 
 export default function useKit( id ) {
 	// A function that returns existing data from the kit list for a placeholder data before the kit request will resolved.

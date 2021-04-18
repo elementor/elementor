@@ -1,5 +1,5 @@
-import Document from './document';
 import BaseModel from './base-model';
+import Document from './document';
 
 export default class Kit extends BaseModel {
 	id = '';

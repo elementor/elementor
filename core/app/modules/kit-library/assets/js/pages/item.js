@@ -1,13 +1,12 @@
+import Content from '../../../../../assets/js/layout/content';
+import ItemContentOverview from '../components/item-content-overview';
+import ItemHeader from '../components/item-header';
+import ItemSidebar from '../components/item-sidebar';
 import Layout from '../components/layout';
 import useKit from '../hooks/use-kit';
-import Content from '../../../../../assets/js/layout/content';
-import ItemSidebar from '../components/item-sidebar';
-import ItemContentOverview from '../components/item-content-overview';
 import useKitDocumentByType from '../hooks/use-kit-document-by-type';
-import ItemHeader from '../components/item-header';
+import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
-
-const { useMemo } = React;
 
 function useHeaderButtons( id ) {
 	const navigate = useNavigate();

@@ -1,5 +1,5 @@
-import router from '@elementor/router';
 import KitsComponent from './data/component';
+import router from '@elementor/router';
 import TaxonomiesComponent from './data/taxonomies-component';
 
 export default class KitLibrary {

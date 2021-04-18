@@ -1,6 +1,5 @@
 import Header from './layout/header';
-
-const { useMemo } = React;
+import { useMemo } from 'react';
 
 import './index-header.scss';
 

@@ -1,7 +1,6 @@
-import { useQuery } from 'react-query';
 import Taxonomy from '../models/taxonomy';
-
-const { useState, useCallback, useEffect } = React;
+import { useQuery } from 'react-query';
+import { useState, useCallback, useEffect } from 'react';
 
 export const KEY = 'tags';
 

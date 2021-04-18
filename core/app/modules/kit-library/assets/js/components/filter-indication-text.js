@@ -1,7 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { Text, Button, Grid, Badge } from '@elementor/app-ui';
-
-const { useMemo } = React;
+import { useMemo } from 'react';
 
 import './filter-indication-text.scss';
 

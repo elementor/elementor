@@ -1,8 +1,7 @@
-import { sprintf } from '@wordpress/i18n';
-import { Collapse, Checkbox, SearchInput } from '@elementor/app-ui';
 import Taxonomy from '../models/taxonomy';
-
-const { useState, useMemo } = React;
+import { Collapse, Checkbox, SearchInput } from '@elementor/app-ui';
+import { sprintf } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 

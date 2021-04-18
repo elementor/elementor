@@ -1,18 +1,17 @@
-import { SearchInput, CssGrid } from '@elementor/app-ui';
-import Layout from '../components/layout';
-import IndexSidebar from '../components/index-sidebar';
-import TaxonomiesFilter from '../components/taxonomies-filter';
-import IndexHeader from '../components/index-header';
-import KitList from '../components/kit-list';
-import useKits from '../hooks/use-kits';
-import useTaxonomies from '../hooks/use-taxonomies';
 import Content from '../../../../../assets/js/layout/content';
 import FilterIndicationText from '../components/filter-indication-text';
+import IndexHeader from '../components/index-header';
+import IndexSidebar from '../components/index-sidebar';
+import KitList from '../components/kit-list';
+import Layout from '../components/layout';
+import TaxonomiesFilter from '../components/taxonomies-filter';
+import useKits from '../hooks/use-kits';
+import useTaxonomies from '../hooks/use-taxonomies';
 import { IndexNoResults } from '../components/index-no-results';
+import { SearchInput } from '@elementor/app-ui';
+import { useCallback } from 'react';
 
 import './index.scss';
-
-const { useCallback } = React;
 
 /**
  * Generate select and unselect taxonomy functions.
@@ -88,22 +87,19 @@ export default function Index() {
 		>
 			<div className="e-kit-library__index-layout-container">
 				<div className="e-kit-library__index-layout-search-area">
-					{/*<CssGrid spacing={ 24 } colMinWidth={ 250 }>*/}
-						<div style={ { gridColumn: '1 / span 2' } }>
-							<SearchInput
-								placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
-								value={ filter.search }
-								onChange={ ( value ) => setFilter( ( prev ) => ( { ...prev, search: value } ) ) }
-							/>
-							<FilterIndicationText
-								filter={ filter }
-								resultCount={ data.length || 0 }
-								onClear={ clearFilter }
-								onRemoveTag={ unselectTaxonomy }
-							/>
-						</div>
-						<div />
-					{/*</CssGrid>*/}
+					<div>
+						<SearchInput
+							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
+							value={ filter.search }
+							onChange={ ( value ) => setFilter( ( prev ) => ( { ...prev, search: value } ) ) }
+						/>
+						<FilterIndicationText
+							filter={ filter }
+							resultCount={ data.length || 0 }
+							onClear={ clearFilter }
+							onRemoveTag={ unselectTaxonomy }
+						/>
+					</div>
 				</div>
 				<Content className="e-kit-library__index-layout-main">
 					<>

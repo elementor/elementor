@@ -1,13 +1,12 @@
-import { useNavigate } from '@reach/router';
-import { Dialog, Text } from '@elementor/app-ui';
-import { useSettingsContext } from '../context/settings-context';
-import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
+import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
-import ConnectDialog from './connect-dialog';
-
-const { useMemo, useState } = React;
+import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
+import { Dialog, Text } from '@elementor/app-ui';
+import { useMemo, useState } from 'react';
+import { useNavigate } from '@reach/router';
+import { useSettingsContext } from '../context/settings-context';
 
 import './item-header.scss';
 

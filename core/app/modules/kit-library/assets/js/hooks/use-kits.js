@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import Kit from '../models/kit';
 import { taxonomyType } from '../models/taxonomy';
+import { useQuery } from 'react-query';
 
 export const KEY = 'kits';
 

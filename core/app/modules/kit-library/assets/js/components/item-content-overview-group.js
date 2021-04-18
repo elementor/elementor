@@ -1,6 +1,6 @@
-import { Heading, CssGrid } from '@elementor/app-ui';
 import ContentType from '../models/content-type';
 import ItemContentOverviewGroupItem from './item-content-overview-group-item';
+import { Heading, CssGrid } from '@elementor/app-ui';
 
 export default function ItemContentOverviewGroup( props ) {
 	if ( props.contentType?.documents?.length <= 0 ) {

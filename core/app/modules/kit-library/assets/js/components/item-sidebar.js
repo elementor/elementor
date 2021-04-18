@@ -1,11 +1,10 @@
-import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
-import Kit from '../models/kit';
-import environment from 'elementor-common/utils/environment';
 import ContentType from '../models/content-type';
+import environment from 'elementor-common/utils/environment';
+import Kit from '../models/kit';
+import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
+import { useState } from 'react';
 
 import './item-sidebar.scss';
-
-const { useState } = React;
 
 export default function ItemSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );

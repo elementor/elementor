@@ -1,5 +1,5 @@
-import { Card, CardBody, CardHeader, CardImage, Heading } from '@elementor/app-ui';
 import Document from '../models/document';
+import { Card, CardBody, CardHeader, CardImage, Heading } from '@elementor/app-ui';
 
 export default function ItemContentOverviewGroupItem( props ) {
 	return (

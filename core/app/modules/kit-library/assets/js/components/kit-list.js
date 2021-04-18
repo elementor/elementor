@@ -1,6 +1,6 @@
-import { CssGrid } from '@elementor/app-ui';
-import KitListItem from './kit-list-item';
 import Kit from '../models/kit';
+import KitListItem from './kit-list-item';
+import { CssGrid } from '@elementor/app-ui';
 
 export default function KitList( props ) {
 	return (

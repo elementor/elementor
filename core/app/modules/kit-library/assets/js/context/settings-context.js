@@ -1,4 +1,4 @@
-const { createContext, useContext, useState, useEffect, useCallback } = React;
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const SettingsContext = createContext( {} );
 

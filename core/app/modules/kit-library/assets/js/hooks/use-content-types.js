@@ -1,5 +1,5 @@
-import { useQuery } from 'react-query';
 import ContentType from '../models/content-type';
+import { useQuery } from 'react-query';
 
 export const KEY = 'content-types';
 

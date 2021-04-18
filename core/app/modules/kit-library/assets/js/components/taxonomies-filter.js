@@ -1,5 +1,5 @@
-import Taxonomy, { taxonomyType } from '../models/taxonomy';
 import TaxonomiesFilterList from './taxonomies-filter-list';
+import Taxonomy, { taxonomyType } from '../models/taxonomy';
 
 import './tags-filter.scss';
 

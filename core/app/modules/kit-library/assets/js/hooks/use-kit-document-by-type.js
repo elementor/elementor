@@ -1,6 +1,5 @@
 import useContentTypes from './use-content-types';
-
-const { useMemo } = React;
+import { useMemo } from 'react';
 
 export default function useKitDocumentByType( kit ) {
 	const contentTypesQuery = useContentTypes();

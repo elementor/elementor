@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Badge } from '@elementor/app-ui';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
+import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Badge } from '@elementor/app-ui';
 
 import './kit-list-item.scss';
 
@@ -42,7 +42,7 @@ export default function KitListItem( props ) {
 							{
 								type === TYPE_PROMOTION && <Button
 									className="e-kit-library__kit-item-overlay-promotion-button"
-									text={ __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ) }
+									text={ `Go ${ subscriptionPlan.label }` }
 									icon="eicon-external-link-square"
 									url={ subscriptionPlan.promotion_url }
 									target="_blank"
