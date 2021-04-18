@@ -586,7 +586,7 @@ export default class EditorBase extends Marionette.Application {
 
 		return {
 			maxWidth: currentBreakpointData.value,
-			minWidth: currentBreakpointMinPoint || 375,
+			minWidth: currentBreakpointMinPoint || 320,
 		};
 	}
 
