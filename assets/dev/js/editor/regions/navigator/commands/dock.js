@@ -9,8 +9,9 @@ export class Dock extends CommandBase {
 		// TODO: Move to UI hook.
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
-		const side = elementorCommon.config.isRTL ? 'left' : 'right',
-			resizableOptions = elementor.navigator.getResizableOptions();
+		elementor.navigator.setSize();
+
+		const resizableOptions = elementor.navigator.getResizableOptions();
 
 		elementor.navigator.$el.css( {
 			height: '',
@@ -20,13 +21,11 @@ export class Dock extends CommandBase {
 			right: '',
 		} );
 
-		elementor.$previewWrapper.css( side, elementor.navigator.storage.size.width );
+		if ( elementor.navigator.$el.resizable( 'instance' ) ) {
+			elementor.navigator.$el.resizable( 'destroy' );
+		}
 
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-
-		resizableOptions.resize = ( event, ui ) => {
-			elementor.$previewWrapper.css( side, ui.size.width );
-		};
 
 		elementor.navigator.$el.resizable( resizableOptions );
 

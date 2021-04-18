@@ -11,13 +11,15 @@ export class Undock extends CommandBase {
 		// TODO: Move to UI hook
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
 
-		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
-
 		elementor.navigator.setSize();
 
-		elementor.navigator.$el.resizable( 'destroy' );
+		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
-		elementor.navigator.$el.resizable( elementor.navigator.getResizableOptions() );
+		if ( elementor.navigator.$el.resizable( 'instance' ) ) {
+			elementor.navigator.$el.resizable( 'destroy' );
+
+			elementor.navigator.$el.resizable( elementor.navigator.getResizableOptions() );
+		}
 
 		elementor.navigator.isDocked = false;
 

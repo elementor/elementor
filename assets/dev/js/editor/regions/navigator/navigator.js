@@ -10,7 +10,7 @@ export default class Navigator extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
+		this.setSize();
 
 		this.indicators = {
 			customPosition: {
@@ -78,6 +78,9 @@ export default class Navigator extends BaseRegion {
 					this.saveSize();
 				}
 			},
+			resize: ( event, ui ) => {
+				this.setSize( ui.size.width + 'px' );
+			},
 		};
 	}
 
@@ -91,12 +94,10 @@ export default class Navigator extends BaseRegion {
 	open( model ) {
 		this.$el.show();
 
+		this.setSize();
+
 		if ( this.storage.docked ) {
 			$e.run( 'navigator/dock' );
-
-			this.setDockedSize();
-		} else {
-			this.setSize();
 		}
 
 		if ( model ) {
@@ -150,14 +151,21 @@ export default class Navigator extends BaseRegion {
 		$e.run( 'navigator/undock', { silent } );
 	}
 
-	setSize() {
-		if ( this.storage.size ) {
-			this.$el.css( this.storage.size );
+	/**
+	 * Set the navigator size to a specific value or default to the storage-saved value.
+	 *
+	 * @param {String} size A specific new size.
+	 */
+	setSize( size = null ) {
+		if ( size ) {
+			this.storage.size.width = size;
+		} else {
+			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
 		}
-	}
 
-	setDockedSize() {
-		this.$el.css( 'width', this.storage.size.width );
+		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
+		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
+		this.$el.css( 'width', '' );
 	}
 
 	ensurePosition() {
