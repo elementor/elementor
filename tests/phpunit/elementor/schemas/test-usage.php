@@ -126,6 +126,8 @@ class Test_Usage extends Elementor_Test_Base {
 
 	// The aim of the test is to fill all the possible tracking 'usage' data.
 	public function test__ensure_tracking_data_with_usage_full_mock() {
+		$this->generate_plugins_mock();
+
 		// Arrange - Posts
 		$this->factory()->create_post();
 
