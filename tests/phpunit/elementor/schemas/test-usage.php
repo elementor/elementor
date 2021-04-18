@@ -2,9 +2,12 @@
 namespace Elementor\Tests\Phpunit\Schemas;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Core\Utils\ImportExport\WP_Import;
 use Elementor\Modules\CompatibilityTag\Module;
+use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Factories\Documents;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
+use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
 use JsonSchema\Exception\ValidationException;
 use JsonSchema\SchemaStorage;
@@ -21,7 +24,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$_SERVER['HTTP_USER_AGENT'] = self::HTTP_USER_AGENT;
 	}
 
-	protected function run_validation_against_schema( $data ) {
+	protected function validation_against_schema( $data ) {
 		// Since the usage system represents objects as array instead of stdClass.
 		$data = json_decode( json_encode( $data ) );
 
@@ -42,7 +45,7 @@ class Test_Usage extends Elementor_Test_Base {
 	}
 
 	protected function validation_current_tracking_data_against_schema() {
-		return $this->run_validation_against_schema( Tracker::get_tracking_data() );
+		return $this->validation_against_schema( Tracker::get_tracking_data() );
 	}
 
 	protected function generate_plugins_mock() {
@@ -84,7 +87,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->expectException( ValidationException::class );
 
 		// Assert.
-		$this->run_validation_against_schema( [] );
+		$this->validation_against_schema( [] );
 	}
 
 	public function test__ensure_all_objects_have_no_additional_properties() {
@@ -121,21 +124,33 @@ class Test_Usage extends Elementor_Test_Base {
 		} );
 	}
 
-	public function test__ensure_tracking_data_with_fresh_wordpress_is_valid() {
-		// Arrange.
-		$importer = new WP_Import( ELEMENTOR_PATH . 'tests/phpunit/elementor/core/utils/mock/fresh-wordpress-database.xml' );
+	// The aim of the test is to fill all the possible tracking 'usage' data.
+	public function test__ensure_tracking_data_with_usage_full_mock() {
+		// Arrange - Posts
+		$this->factory()->create_post();
 
-		$this->assertEquals( 'success', $importer->run()['status'] );
+		// Library
+		$this->factory()->create_and_get_custom_post( [
+			'post_type' => 'elementor_library',
+			'meta_input' => [
+				'_elementor_template_type' => 'popup'
+			],
+		]);
 
-		$this->generate_plugins_mock();
+		// Elements
+		$this->factory()->documents->publish_and_get();
+
+		// Elements with dynamic
+		Plugin::$instance->dynamic_tags->register_tag( new Title() );
+		Plugin::$instance->dynamic_tags->register_tag( new Link() );
+
+		$this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => Documents::DOCUMENT_DATA_MOCK_WITH_DYNAMIC_WIDGET,
+			]
+		] );
 
 		// Act + Assert.
 		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );
-	}
-
-	// The aim of the test is to fill all the possible tracking 'usage' data.
-	public function test__ensure_tracking_data_with_usage_full_mock() {
-		// TODO
-		$this->markTestSkipped();
 	}
 }
