@@ -1,6 +1,6 @@
 /**
  * Add custom namespaced event using ES6. Equivalent to jQuery's `.on()`.
- * NOTE: Might cause memory leaks if the elements is removed from then dom without removing its `nsEvents`.
+ * NOTE: Might cause memory leaks if the element is removed from then DOM without removing its `nsEvents`.
  *
  * @param {HTMLElement|NodeList} elements - An HTML element to attach the event to.
  * @param {string} nsEvent - Namespaced event name, e.g. `click.color-picker`.
