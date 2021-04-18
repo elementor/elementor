@@ -21,7 +21,6 @@
 
 .e-responsive-bar {
 	width: 100%;
-	height: 100%;
 	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
 	z-index: 1;
 	transition: margin-top .2s ease-in-out;
@@ -47,7 +46,7 @@
 
 	&__close-button,
 	&__settings-button {
-		padding: 10px;
+		padding: 10px 8px;
 	}
 
 	&__button {
@@ -68,38 +67,65 @@
 
 	&__close-button + &__button {
 		position: relative;
-		margin-inline-end: 10px;
 
 		&::before {
 			content: '';
 			display: block;
 			height: 20px;
 			width: 1px;
-			background-color: #6D7882;
+			background-color: $editor-dark;
 			position: absolute;
-			@include end(-5px);
+			@include end(0);
 			top: calc(50% - 10px);
 		}
+	}
+
+  	&__size-inputs-wrapper {
+		display: flex;
+		align-items: center;
+	  	margin-inline-end: 8px;
+	  	color: $editor-dark;
 	}
 
 	&__input-size {
 		background-color: transparent;
 		color: $editor-light;
-		border: 1px solid #6D7882;
+		border: 1px solid $editor-dark !important;
 		padding: 0 3px;
-		width: 38px;
+		width: 50px;
 		font-size: 12px;
 		line-height: 16px;
 		height: 18px;
-		margin: auto 10px;
+		margin: auto 8px auto 4px;
 
 		&-separator {
-			color: #6D7882;
+			color: $editor-dark;
 		}
 	}
 
-	&-switcher {
-		&__option {
+	&-switcher__option {
+		display: block;
+		float: left;
+		position: relative;
+		cursor: pointer;
+		text-align: center;
+		width: 22px;
+		height: 22px;
+	  	line-height: 22px;
+		border-radius: 3px;
+		font-size: 17px;
+	  	transition: background-color .3s ease-out;
+
+		&:hover, &[aria-selected="true"] {
+		  	color: $editor-lighter;
+		 	background-color: rgba(255, 255, 255, 0.1);
+		}
+
+	  	&:not(:last-child) {
+		  	margin-inline-end: 7px;
+		}
+
+	  	input {
 			appearance: none;
 			overflow: hidden;
 			opacity: 0;
@@ -109,29 +135,10 @@
 			padding: 0 !important;
 			position: absolute;
 
-			+ .e-responsive-bar-switcher__label {
-				display: block;
-				float: left;
-				position: relative;
-				cursor: pointer;
-
-				i {
-					width: 20px;
-					line-height: 24px;
-					text-align: center;
-					font-size: 14px;
-				}
-
-				i:hover {
-					color: $editor-lighter;
-				}
-			}
-
-			&:checked + label {
-				i {
-					color: $editor-info;
-				}
+			&:checked + i {
+			  color: $editor-info;
 			}
 		}
 	}
 }
+
