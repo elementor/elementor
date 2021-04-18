@@ -23,13 +23,23 @@ class Manager {
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
-		$id = get_option( self::OPTION_ACTIVE );
+		$id = get_option( self::OPTION_ACTIVE, null );
 
 		$kit_document = Plugin::$instance->documents->get( $id );
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
+			$is_option_exits = $id !== null;
 			$id = $this->create_default();
-			update_option( self::OPTION_ACTIVE, $id );
+
+			/**
+			 * For new users that does not have option for default kit it will add the option with autoload=no (which will prevent caching the kit)
+			 * For users which already have the option for default kit we will update the exists option since adding new one will cause infinite loop.
+			 */
+			if( $is_option_exits ) {
+				update_option( self::OPTION_ACTIVE, $id );
+			} else {
+				add_option(self::OPTION_ACTIVE, $id, '', 'no' );
+			}
 		}
 
 		return $id;
