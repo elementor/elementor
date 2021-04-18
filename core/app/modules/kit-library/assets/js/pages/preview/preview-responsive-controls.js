@@ -1,4 +1,4 @@
-import { breakpoints } from '../pages/preview';
+import { breakpoints } from './preview';
 import { Button, Grid } from '@elementor/app-ui';
 
 import './preview-responsive-controls.scss';

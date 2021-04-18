@@ -1,12 +1,12 @@
-import ContentType from '../models/content-type';
+import ContentType from '../../models/content-type';
 import environment from 'elementor-common/utils/environment';
-import Kit from '../models/kit';
+import Kit from '../../models/kit';
 import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
 
-import './item-sidebar.scss';
+import './overview-sidebar.scss';
 
-export default function ItemSidebar( props ) {
+export default function OverviewSidebar( props ) {
 	const [ isTagsCollapseOpen, setIsTagsCollapseOpen ] = useState( true );
 	const [ isInformationCollapseOpen, setIsInformationCollapseOpen ] = useState( false );
 
@@ -71,7 +71,7 @@ export default function ItemSidebar( props ) {
 	);
 }
 
-ItemSidebar.propTypes = {
+OverviewSidebar.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	groupedKitContent: PropTypes.arrayOf(
 		PropTypes.instanceOf( ContentType )

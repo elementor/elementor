@@ -1,6 +1,6 @@
-import Index from './pages';
-import Item from './pages/item';
-import Preview from './pages/preview';
+import Index from './pages/index';
+import Overview from './pages/overview/overview';
+import Preview from './pages/preview/preview';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Router } from '@reach/router';
@@ -26,7 +26,7 @@ export default function App() {
 					<Router>
 						<Index path="/"/>
 						<Preview path="/preview/:id"/>
-						<Item path="/:id"/>
+						<Overview path="/overview/:id"/>
 					</Router>
 				</SettingsProvider>
 				{ isDebug && <ReactQueryDevtools initialIsOpen={ false }/> }

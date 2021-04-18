@@ -1,10 +1,10 @@
-import Content from '../../../../../assets/js/layout/content';
-import ItemContentOverview from '../components/item-content-overview';
-import ItemHeader from '../components/item-header';
-import ItemSidebar from '../components/item-sidebar';
-import Layout from '../components/layout';
-import useKit from '../hooks/use-kit';
-import useKitDocumentByType from '../hooks/use-kit-document-by-type';
+import Content from '../../../../../../assets/js/layout/content';
+import OverviewContent from './overview-content';
+import ItemHeader from '../../components/item-header';
+import OverviewSidebar from './overview-sidebar';
+import Layout from '../../components/layout';
+import useKit from '../../hooks/use-kit';
+import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
@@ -40,12 +40,12 @@ export default function Item( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
-			sidebar={ <ItemSidebar model={ kit } groupedKitContent={ documentsByType }/> }
+			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
 		>
 			{
 				documentsByType.length > 0 &&
 				<Content>
-					<ItemContentOverview documentsByType={ documentsByType }/>
+					<OverviewContent documentsByType={ documentsByType }/>
 				</Content>
 			}
 		</Layout>

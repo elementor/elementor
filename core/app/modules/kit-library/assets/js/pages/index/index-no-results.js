@@ -2,7 +2,7 @@ import { Heading, Text, Grid } from '@elementor/app-ui';
 
 import './index-no-results.scss';
 
-export function IndexNoResults() {
+export default function IndexNoResults() {
 	return (
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__not-results">
 			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` }/>

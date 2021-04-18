@@ -1,7 +1,7 @@
-import Document from '../models/document';
+import Document from '../../models/document';
 import { Card, CardBody, CardHeader, CardImage, Heading } from '@elementor/app-ui';
 
-export default function ItemContentOverviewGroupItem( props ) {
+export default function OverviewContentGroupItem( props ) {
 	return (
 		<Card>
 			<CardHeader>
@@ -21,6 +21,6 @@ export default function ItemContentOverviewGroupItem( props ) {
 	);
 }
 
-ItemContentOverviewGroupItem.propTypes = {
+OverviewContentGroupItem.propTypes = {
 	document: PropTypes.instanceOf( Document ),
 };

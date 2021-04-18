@@ -1,13 +1,13 @@
-import Content from '../../../../../assets/js/layout/content';
-import FilterIndicationText from '../components/filter-indication-text';
-import IndexHeader from '../components/index-header';
-import IndexSidebar from '../components/index-sidebar';
-import KitList from '../components/kit-list';
-import Layout from '../components/layout';
-import TaxonomiesFilter from '../components/taxonomies-filter';
-import useKits from '../hooks/use-kits';
-import useTaxonomies from '../hooks/use-taxonomies';
-import { IndexNoResults } from '../components/index-no-results';
+import Content from '../../../../../../assets/js/layout/content';
+import FilterIndicationText from '../../components/filter-indication-text';
+import IndexHeader from './index-header';
+import IndexNoResults from './index-no-results';
+import IndexSidebar from './index-sidebar';
+import KitList from '../../components/kit-list';
+import Layout from '../../components/layout';
+import TaxonomiesFilter from '../../components/taxonomies-filter';
+import useKits from '../../hooks/use-kits';
+import useTaxonomies from '../../hooks/use-taxonomies';
 import { SearchInput } from '@elementor/app-ui';
 import { useCallback } from 'react';
 

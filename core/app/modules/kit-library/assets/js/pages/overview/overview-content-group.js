@@ -1,8 +1,8 @@
-import ContentType from '../models/content-type';
-import ItemContentOverviewGroupItem from './item-content-overview-group-item';
+import ContentType from '../../models/content-type';
+import OverviewContentGroupItem from './overview-content-group-item';
 import { Heading, CssGrid } from '@elementor/app-ui';
 
-export default function ItemContentOverviewGroup( props ) {
+export default function OverviewContentGroup( props ) {
 	if ( props.contentType?.documents?.length <= 0 ) {
 		return '';
 	}
@@ -14,13 +14,13 @@ export default function ItemContentOverviewGroup( props ) {
 			</Heading>
 			<CssGrid spacing={ 24 } colMinWidth={ 250 }>
 				{ props.contentType.documents.map( ( document ) => {
-					return <ItemContentOverviewGroupItem key={ document.id } document={ document }/>;
+					return <OverviewContentGroupItem key={ document.id } document={ document }/>;
 				} ) }
 			</CssGrid>
 		</div>
 	);
 }
 
-ItemContentOverviewGroup.propTypes = {
+OverviewContentGroup.propTypes = {
 	contentType: PropTypes.instanceOf( ContentType ),
 };

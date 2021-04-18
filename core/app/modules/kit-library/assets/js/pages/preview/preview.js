@@ -1,8 +1,8 @@
-import ItemHeader from '../components/item-header';
-import Layout from '../components/layout';
-import PreviewResponsiveControls from '../components/preview-responsive-controls';
-import useKit from '../hooks/use-kit';
-import { PreviewIframe } from '../components/preview-iframe';
+import ItemHeader from '../../components/item-header';
+import Layout from '../../components/layout';
+import PreviewResponsiveControls from './preview-responsive-controls';
+import useKit from '../../hooks/use-kit';
+import { PreviewIframe } from './preview-iframe';
 import { useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
 
@@ -48,7 +48,7 @@ function useHeaderButtons( id ) {
 			variant: 'outlined',
 			color: 'primary',
 			size: 'sm',
-			onClick: () => navigate( `/kit-library/${ id }` ),
+			onClick: () => navigate( `/kit-library/overview/${ id }` ),
 		},
 	], [ id ] );
 }
