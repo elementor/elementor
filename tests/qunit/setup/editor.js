@@ -23,15 +23,9 @@ Marionette.Region.prototype.attachHtml = () => {
 };
 
 Marionette.CompositeView.prototype.getChildViewContainer = ( containerView ) => {
-	const $currentEl = jQuery( containerView.el );
-
-	if ( ! containerView._parent?.$el ) {
-		containerView.$el.append( $currentEl );
-		containerView.$childViewContainer = $currentEl.children();
-	} else {
-		containerView._parent.$el.append( $currentEl );
-		containerView.$childViewContainer = $currentEl.children();
-	}
-
+	containerView.$childViewContainer = jQuery( containerView.el );
+	containerView.$childViewContainer.appendTo(
+		jQuery( '#elementor-preview-iframe' ).contents().find( '.elementor.elementor-1' )
+	);
 	return containerView.$childViewContainer;
 };
