@@ -11,7 +11,7 @@ export default class extends elementorModules.ViewModule {
 						message: __( 'Unable to connect', 'elementor' ),
 					} );
 				},
-				UTMSource: () => {
+				UTM: () => {
 					const prevLibraryRoute = $e.routes.getHistory( 'library' ).reverse()[ 0 ].route,
 						tabName = prevLibraryRoute.split( '/' )[ 2 ];
 
@@ -28,7 +28,7 @@ export default class extends elementorModules.ViewModule {
 				$this.attr( {
 					target: '_blank',
 					rel: 'opener',
-					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId + settings.UTMSource(),
+					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId + settings.UTM(),
 				} );
 
 				elementorCommon.elements.$window

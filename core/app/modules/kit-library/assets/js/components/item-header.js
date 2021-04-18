@@ -129,8 +129,8 @@ export default function ItemHeader( props ) {
 				</Dialog>
 			}
 			<Header
-				startSlot={ <HeaderBackButton/> }
-				centerSlot={ props.centerSlot }
+				startColumn={ <HeaderBackButton/> }
+				centerColumn={ props.centerColumn }
 				buttons={ buttons }
 			/>
 		</>
@@ -139,6 +139,6 @@ export default function ItemHeader( props ) {
 
 ItemHeader.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
-	centerSlot: PropTypes.node,
+	centerColumn: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
 };

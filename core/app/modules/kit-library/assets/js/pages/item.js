@@ -9,17 +9,33 @@ import { useNavigate } from '@reach/router';
 
 const { useMemo } = React;
 
+function useHeaderButtons( id ) {
+	const navigate = useNavigate();
+
+	return useMemo( () => [
+		{
+			id: 'view-demo',
+			text: __( 'View Demo', 'elementor' ),
+			hideText: false,
+			variant: 'outlined',
+			color: 'primary',
+			size: 'sm',
+			onClick: () => navigate( `/kit-library/preview/${ id }` ),
+		},
+	], [ id ] );
+}
+
 export default function Item( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( data );
 	const headerButtons = useHeaderButtons( props.id );
 
 	if ( isError ) {
-		return 'Error!';
+		return __( 'Error!', 'elementor' );
 	}
 
 	if ( isLoading ) {
-		return 'Loading...';
+		return __( 'Loading...', 'elementor' );
 	}
 
 	return (
@@ -40,19 +56,3 @@ export default function Item( props ) {
 Item.propTypes = {
 	id: PropTypes.string,
 };
-
-function useHeaderButtons( id ) {
-	const navigate = useNavigate();
-
-	return useMemo( () => [
-		{
-			id: 'view-demo',
-			text: __( 'View Demo', 'elementor' ),
-			hideText: false,
-			variant: 'outlined',
-			color: 'primary',
-			size: 'sm',
-			onClick: () => navigate( `/kit-library/preview/${ id }` ),
-		},
-	], [ id ] );
-}

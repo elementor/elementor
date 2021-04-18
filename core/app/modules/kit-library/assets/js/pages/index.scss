@@ -1,3 +1,5 @@
+$e-kit-library-sticky-search-z-index = 2;
+
 .e-kit-library {
 	&__index-layout-container {
 		flex-grow: 1;
@@ -8,9 +10,8 @@
 		padding: spacing(44);
 		position: sticky;
 		top: -1px;
-		right: 0;
 		width: 100%;
-		z-index: 2;
+		z-index: $e-kit-library-sticky-search-z-index;
 		background-color: var(--app-background-color);
 	}
 

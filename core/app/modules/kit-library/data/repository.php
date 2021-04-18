@@ -31,11 +31,10 @@ class Repository {
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
 	public function get_all( $force_api_request = false ) {
-		$data = $this->get_kits_data( $force_api_request );
-
-		return ( new Collection( $data ) )->map( function ( $kit ) {
-			return $this->transform_kit_api_response( $kit );
-		} );
+		return $this->get_kits_data( $force_api_request )
+			->map( function ( $kit ) {
+				return $this->transform_kit_api_response( $kit );
+			} );
 	}
 
 	/**
@@ -48,11 +47,10 @@ class Repository {
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
 	public function find( $id ) {
-		$data = $this->get_kits_data();
-
-		$item = ( new Collection( $data ) )->find( function ( $kit ) use ( $id ) {
-			return $kit['_id'] === $id;
-		} );
+		$item = $this->get_kits_data()
+			->find( function ( $kit ) use ( $id ) {
+				return $kit['_id'] === $id;
+			} );
 
 		if ( ! $item ) {
 			return null;
@@ -73,9 +71,7 @@ class Repository {
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
 	public function get_taxonomies( $force_api_request = false ) {
-		$data = $this->get_taxonomies_data( $force_api_request );
-
-		return ( new Collection( $data ) )
+		return $this->get_taxonomies_data( $force_api_request )
 			->only( static::TAXONOMIES_KEYS )
 			->map( function ( $values ) {
 				return array_unique( $values );
@@ -91,9 +87,9 @@ class Repository {
 	}
 
 	/**
-	 * @param false $force_api_request
+	 * @param bool $force_api_request
 	 *
-	 * @return array|mixed
+	 * @return Collection
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
@@ -106,13 +102,13 @@ class Repository {
 			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
-		return $data;
+		return new Collection( $data );
 	}
 
 	/**
 	 * @param false $force_api_request
 	 *
-	 * @return array|mixed
+	 * @return Collection
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
@@ -125,7 +121,7 @@ class Repository {
 			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
-		return $data;
+		return new Collection( $data );
 	}
 
 	/**

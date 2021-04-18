@@ -14,6 +14,36 @@ import './index.scss';
 
 const { useCallback } = React;
 
+/**
+ * Generate select and unselect taxonomy functions.
+ *
+ * @param setFilter
+ * @returns {((function(*, *): *)|(function(*=): *))[]}
+ */
+function useTaxonomiesSelection( setFilter ) {
+	const selectTaxonomy = useCallback( ( type, callback ) => setFilter(
+		( prev ) => {
+			const taxonomies = { ...prev.taxonomies };
+
+			taxonomies[ type ] = callback( prev.taxonomies[ type ] );
+
+			return { ...prev, taxonomies };
+		}
+	), [ setFilter ] );
+
+	const unselectTaxonomy = useCallback( ( taxonomy ) => setFilter( ( prev ) => {
+		const taxonomies = Object.entries( prev.taxonomies )
+			.reduce( ( current, [ key, groupedTaxonomies ] ) => ( {
+				...current,
+				[ key ]: groupedTaxonomies.filter( ( item ) => item !== taxonomy ),
+			} ), {} );
+
+		return { ...prev, taxonomies };
+	} ), [ setFilter ] );
+
+	return [ selectTaxonomy, unselectTaxonomy ];
+}
+
 export default function Index() {
 	const {
 		data,
@@ -86,34 +116,4 @@ export default function Index() {
 			</div>
 		</Layout>
 	);
-}
-
-/**
- * Generate select and unselect taxonomy functions.
- *
- * @param setFilter
- * @returns {((function(*, *): *)|(function(*=): *))[]}
- */
-function useTaxonomiesSelection( setFilter ) {
-	const selectTaxonomy = useCallback( ( type, callback ) => setFilter(
-		( prev ) => {
-			const taxonomies = { ...prev.taxonomies };
-
-			taxonomies[ type ] = callback( prev.taxonomies[ type ] );
-
-			return { ...prev, taxonomies };
-		}
-	), [ setFilter ] );
-
-	const unselectTaxonomy = useCallback( ( taxonomy ) => setFilter( ( prev ) => {
-		const taxonomies = Object.entries( prev.taxonomies )
-			.reduce( ( current, [ key, groupedTaxonomies ] ) => ( {
-				...current,
-				[ key ]: groupedTaxonomies.filter( ( item ) => item !== taxonomy ),
-			} ), {} );
-
-		return { ...prev, taxonomies };
-	} ), [ setFilter ] );
-
-	return [ selectTaxonomy, unselectTaxonomy ];
 }

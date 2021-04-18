@@ -38,40 +38,6 @@ export const breakpoints = [
 	},
 ];
 
-export default function Preview( props ) {
-	const { data, isError, isLoading } = useKit( props.id );
-	const headersButtons = useHeaderButtons( props.id );
-	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
-	const iframeStyle = useMemo(
-		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
-		[ activeDevice ]
-	);
-
-	if ( isError ) {
-		return 'Error!';
-	}
-
-	if ( isLoading ) {
-		return 'Loading...';
-	}
-
-	return (
-		<Layout header={
-			<ItemHeader
-				model={ data }
-				buttons={ headersButtons }
-				centerSlot={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
-			/>
-		}>
-			{ data.previewUrl && <PreviewIframe previewUrl={ data.previewUrl } style={ iframeStyle }/> }
-		</Layout>
-	);
-}
-
-Preview.propTypes = {
-	id: PropTypes.string,
-};
-
 function useHeaderButtons( id ) {
 	const navigate = useNavigate();
 
@@ -87,4 +53,38 @@ function useHeaderButtons( id ) {
 		},
 	], [ id ] );
 }
+
+export default function Preview( props ) {
+	const { data, isError, isLoading } = useKit( props.id );
+	const headersButtons = useHeaderButtons( props.id );
+	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
+	const iframeStyle = useMemo(
+		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
+		[ activeDevice ]
+	);
+
+	if ( isError ) {
+		return __( 'Error!', 'elementor' );
+	}
+
+	if ( isLoading ) {
+		return __( 'Loading...', 'elementor' );
+	}
+
+	return (
+		<Layout header={
+			<ItemHeader
+				model={ data }
+				buttons={ headersButtons }
+				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
+			/>
+		}>
+			{ data.previewUrl && <PreviewIframe previewUrl={ data.previewUrl } style={ iframeStyle }/> }
+		</Layout>
+	);
+}
+
+Preview.propTypes = {
+	id: PropTypes.string,
+};
 

@@ -7,7 +7,7 @@ export default class Kit extends BaseModel {
 	description = '';
 	isFavorite = false;
 	thumbnailUrl = null;
-	previewUrl = 'https://library.elementor.com/law-firm';
+	previewUrl = '';
 	accessLevel = 0;
 	trendIndex = null;
 	popularityIndex = null;

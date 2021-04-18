@@ -21,7 +21,7 @@ class Taxonomies_index extends Endpoint {
 			},
 			[
 				'force' => [
-					'description' => 'Force an api request and skip the cache',
+					'description' => 'Force an API request and skip the cache.',
 					'required' => false,
 					'default' => false,
 					'type' => 'boolean',
