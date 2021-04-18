@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Taxonomies_index extends Endpoint {
+class Taxonomies_Index extends Endpoint {
 	public function get_name() {
 		return 'index';
 	}
