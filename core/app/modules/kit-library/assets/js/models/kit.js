@@ -24,27 +24,25 @@ export default class Kit extends BaseModel {
 	 * @param kit
 	 */
 	static createFromResponse( kit ) {
-		const instance = new Kit();
-
-		instance.id = kit.id;
-		instance.title = kit.title;
-		instance.description = kit.description;
-		instance.isFavorite = kit.is_favorite;
-		instance.thumbnailUrl = kit.thumbnail_url;
-		instance.previewUrl = kit.preview_url;
-		instance.accessLevel = kit.access_level;
-		instance.trendIndex = kit.trend_index;
-		instance.popularityIndex = kit.popularity_index;
-		instance.featuredIndex = kit.featured_index;
-		instance.createdAt = new Date( kit.created_at );
-		instance.updatedAt = new Date( kit.updated_at );
-		instance.keywords = kit.keywords;
-		instance.taxonomies = kit.taxonomies;
-		instance.documents = kit.documents ?
-			kit.documents.map( ( document ) => Document.createFromResponse( document ) ) :
-			[];
-
-		return instance;
+		return new Kit().init( {
+			id: kit.id,
+			title: kit.title,
+			description: kit.description,
+			isFavorite: kit.is_favorite,
+			thumbnailUrl: kit.thumbnail_url,
+			previewUrl: kit.preview_url,
+			accessLevel: kit.access_level,
+			trendIndex: kit.trend_index,
+			popularityIndex: kit.popularity_index,
+			featuredIndex: kit.featured_index,
+			createdAt: new Date( kit.created_at ),
+			updatedAt: new Date( kit.updated_at ),
+			keywords: kit.keywords,
+			taxonomies: kit.taxonomies,
+			documents: kit.documents ?
+				kit.documents.map( ( document ) => Document.createFromResponse( document ) ) :
+				[],
+		} );
 	}
 
 	/**

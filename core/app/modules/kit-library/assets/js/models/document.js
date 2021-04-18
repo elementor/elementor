@@ -13,14 +13,12 @@ export default class Document extends BaseModel {
 	 * @param document
 	 */
 	static createFromResponse( document ) {
-		const instance = new Document();
-
-		instance.id = document.id;
-		instance.title = document.title;
-		instance.documentType = document.doc_type;
-		instance.thumbnailUrl = document.thumbnail_url;
-		instance.previewUrl = document.preview_url;
-
-		return instance;
+		return new Document().init( {
+			id: document.id,
+			title: document.title,
+			documentType: document.doc_type,
+			thumbnailUrl: document.thumbnail_url,
+			previewUrl: document.preview_url,
+		} );
 	}
 }

@@ -8,14 +8,12 @@ export default class ContentType extends BaseModel {
 	order = 0;
 
 	static createFromResponse( documentType ) {
-		const instance = new ContentType();
-
-		instance.id = documentType.id;
-		instance.label = documentType.label;
-		instance.documentTypes = documentType.doc_types;
-		instance.order = documentType.order;
-		instance.documents = [];
-
-		return instance;
+		return new ContentType().init( {
+			id: documentType.id,
+			label: documentType.label,
+			documentTypes: documentType.doc_types,
+			order: documentType.order,
+			documents: [],
+		} );
 	}
 }

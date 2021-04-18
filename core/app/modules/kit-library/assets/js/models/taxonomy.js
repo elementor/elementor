@@ -30,11 +30,9 @@ export default class Taxonomy extends BaseModel {
 	 * @param taxonomy
 	 */
 	static createFromResponse( taxonomy ) {
-		const instance = new Taxonomy();
-
-		instance.text = taxonomy.text;
-		instance.type = taxonomy.type;
-
-		return instance;
+		return new Taxonomy().init( {
+			text: taxonomy.text,
+			type: taxonomy.type,
+		} );
 	}
 }

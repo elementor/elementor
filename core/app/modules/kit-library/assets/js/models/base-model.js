@@ -8,4 +8,12 @@ export default class BaseModel {
 
 		return instance;
 	}
+
+	init( data = {} ) {
+		Object.entries( data ).forEach( ( [ key, value ] ) => {
+			this[ key ] = value;
+		} );
+
+		return this;
+	}
 }

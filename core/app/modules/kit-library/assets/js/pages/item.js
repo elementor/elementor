@@ -25,8 +25,8 @@ function useHeaderButtons( id ) {
 }
 
 export default function Item( props ) {
-	const { data, isError, isLoading } = useKit( props.id );
-	const { data: documentsByType } = useKitDocumentByType( data );
+	const { data: kit, isError, isLoading } = useKit( props.id );
+	const { data: documentsByType } = useKitDocumentByType( kit );
 	const headerButtons = useHeaderButtons( props.id );
 
 	if ( isError ) {
@@ -39,8 +39,8 @@ export default function Item( props ) {
 
 	return (
 		<Layout
-			header={ <ItemHeader model={ data } buttons={ headerButtons }/> }
-			sidebar={ <ItemSidebar model={ data } groupedKitContent={ documentsByType }/> }
+			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
+			sidebar={ <ItemSidebar model={ kit } groupedKitContent={ documentsByType }/> }
 		>
 			{
 				documentsByType.length > 0 &&
