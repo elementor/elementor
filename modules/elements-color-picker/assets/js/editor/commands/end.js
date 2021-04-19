@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import { removeNsHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
+import { removeNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
 export class End extends CommandBase {
 	apply() {
@@ -12,9 +12,9 @@ export class End extends CommandBase {
 
 		const elementorElements = elementor.$previewContents[ 0 ].querySelectorAll( '.elementor-element' );
 
-		removeNsHandler( elementorElements, 'click.color-picker' );
+		removeNamespaceHandler( elementorElements, 'click.color-picker' );
 
-		removeNsHandler( elementor.$previewWrapper[ 0 ], 'mouseleave.color-picker' );
+		removeNamespaceHandler( elementor.$previewWrapper[ 0 ], 'mouseleave.color-picker' );
 
 		// Set the picking process trigger to inactive mode.
 		// eslint-disable-next-line no-unused-expressions
