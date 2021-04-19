@@ -646,6 +646,16 @@ class Upgrades {
 		return self::recalc_usage_data( $updater );
 	}
 
+	public static function _v_3_3_0_kit_options_update_autoload() {
+		global $wpdb;
+		$id = get_option( 'elementor_active_kit', null );
+
+		if ( null !== $id) {
+			// Query the row and update autoload
+			$wpdb->query( $wpdb->prepare("UPDATE $wpdb->options SET autoload='no' WHERE option_value=%d", $id ) );
+		}
+	}
+
 	/**
 	 * Move general & lightbox settings to active kit and all it's revisions.
 	 *
