@@ -26,6 +26,10 @@ class Assets_Data_Updater extends Document_Data_Updater {
 	}
 
 	public function is_update_needed() {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return false;
+		}
+
 		$page_assets = $this->get_page_assets();
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
