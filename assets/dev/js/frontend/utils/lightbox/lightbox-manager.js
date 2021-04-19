@@ -1,4 +1,4 @@
-export default class extends elementorModules.ViewModule {
+export default class LightboxManager extends elementorModules.ViewModule {
 	static getLightbox() {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
@@ -58,7 +58,7 @@ export default class extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = this.isOptimizedAssetsLoading() ? await this.constructor.getLightbox() : elementorFrontend.utils.lightbox;
+		const lightbox = this.isOptimizedAssetsLoading() ? await LightboxManager.getLightbox() : elementorFrontend.utils.lightbox;
 
 		lightbox.createLightbox( element );
 	}
@@ -85,7 +85,7 @@ export default class extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				this.constructor.getLightbox();
+				LightboxManager.getLightbox();
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;
