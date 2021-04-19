@@ -76,7 +76,7 @@ class Post_Type extends Base {
 
 	protected function import( array $import_settings ) {
 		$result = [
-			'success' => [],
+			'succeed' => [],
 			'failed' => [],
 		];
 
@@ -90,7 +90,7 @@ class Post_Type extends Base {
 					continue;
 				}
 
-				$result['success'][] = $import;
+				$result['succeed'][] = $import;
 			} catch ( \Error $error ) {
 				$result['failed'][ $id ] = $error->getMessage();
 			}
