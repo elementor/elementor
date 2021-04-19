@@ -17,6 +17,10 @@ abstract class Iterator extends Base_Object {
 		return $this->get_current_archive_path() . $file_name;
 	}
 
+	public function get_archive_file_full_path( $file_name ) {
+		return $this->temp_dir . $this->get_archive_file_path( $file_name );
+	}
+
 	public function get_current_archive_path() {
 		return $this->current_archive_path;
 	}
