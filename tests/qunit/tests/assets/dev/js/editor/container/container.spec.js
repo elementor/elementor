@@ -54,6 +54,22 @@ jQuery( () => {
 				assert.equal( foundChildren, eWidget );
 			} );
 		} );
+
+		QUnit.test( 'forEachChildrenRecursive(): Ensure works', ( assert ) => {
+			// Arrange.
+			const eSection = ElementsHelper.createSection( 1 ),
+				eColumn = eSection.children[ 0 ],
+				eWidgetsIds = [
+					ElementsHelper.createButton( eColumn ).id,
+					ElementsHelper.createButton( eColumn ).id,
+				],
+				expectedIds = [ eSection.id, eColumn.id, ... eWidgetsIds ],
+				actualIds = [];
+
+			eSection.forEachChildrenRecursive( ( container ) => actualIds.push( container.id ) );
+
+			assert.deepEqual( actualIds, expectedIds );
+		} );
 	} );
 } );
 

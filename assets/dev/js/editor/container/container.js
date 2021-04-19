@@ -333,6 +333,27 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
+	 * Function forEachChildrenRecursive().
+	 *
+	 * Will run over children recursively.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	forEachChildrenRecursive( callback ) {
+		callback( this );
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				container.forEachChildrenRecursive( callback );
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Function render().
 	 *
 	 * Call view render.
