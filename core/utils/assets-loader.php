@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * A class that is responsible for conditionally enqueuing styles and script assets that were pre-enabled.
  *
- * @since 3.1.0
+ * @since 3.3.0
  */
 class Assets_Loader extends Module {
 	const INLINE_CONTENT_KEY = '_elementor_inline_content';

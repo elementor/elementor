@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Base;
 
-use Elementor\Conditions;
 use Elementor\Core\Base\Data_Updaters\Assets_Data_Updater;
 use Elementor\Core\Base\Data_Updaters\Widgets_Css_Data_Updater;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -36,7 +35,6 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
-	const ASSETS_META_KEY = '_elementor_page_assets';
 
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
@@ -75,13 +73,6 @@ abstract class Document extends Controls_Stack {
 	private $is_saving = false;
 
 	private static $properties = [];
-
-	/**
-	 * @var array
-	 *
-	 * Default value must be null.
-	 */
-	private static $page_assets;
 
 	/**
 	 * @var array
@@ -505,62 +496,6 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
-	}
-
-	public function get_element_assets( $element ) {
-		$controls = $element->get_controls();
-		$settings = array_intersect_key( $element->get_settings(), $controls );
-		$element_assets = [];
-
-		foreach ( $settings as $setting_key => $setting ) {
-			if ( ! isset( $controls[ $setting_key ] ) ) {
-				continue;
-			}
-
-			$control = $controls[ $setting_key ];
-
-			if ( $this->is_control_visible( $control, $settings ) ) {
-				// Enabling assets loading from the registered control fields.
-				if ( ! empty( $control['assets'] ) ) {
-					foreach ( $control['assets'] as $assets_type => $dependencies ) {
-						foreach ( $dependencies as $dependency ) {
-							if ( ! empty( $dependency['conditions'] ) ) {
-								$is_condition_fulfilled = Conditions::check( $dependency['conditions'], $settings );
-
-								if ( ! $is_condition_fulfilled ) {
-									continue;
-								}
-							}
-
-							if ( ! isset( $element_assets[ $assets_type ] ) ) {
-								$element_assets[ $assets_type ] = [];
-							}
-
-							$element_assets[ $assets_type ][] = $dependency['name'];
-						}
-					}
-				}
-
-				// Enabling assets loading from the control object.
-				$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
-
-				$control_conditional_assets = $control_obj::get_assets( $setting );
-
-				if ( $control_conditional_assets ) {
-					foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
-						foreach ( $dependencies as $dependency ) {
-							if ( ! isset( $element_assets[ $assets_type ] ) ) {
-								$element_assets[ $assets_type ] = [];
-							}
-
-							$element_assets[ $assets_type ][] = $dependency;
-						}
-					}
-				}
-			}
-		}
-
-		return $element_assets;
 	}
 
 	/**
@@ -1112,15 +1047,8 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		$is_optimized_assets_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-		if ( $is_optimized_assets_loading ) {
-			$this->reset_page_assets();
-		}
-
-		if ( $is_optimized_assets_loading || $is_optimized_css_loading ) {
-			$this->handle_page_elements( $elements, $this->data_updaters );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$this->handle_page_elements( $elements, $this->data_updaters, 'save' );
 		}
 
 		/**
@@ -1350,9 +1278,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$assets_data_updater = new Assets_Data_Updater( $this );
-
-			$this->register_data_updater( $assets_data_updater );
+			$this->register_data_updater( new Assets_Data_Updater( $this ) );
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
@@ -1449,48 +1375,6 @@ abstract class Document extends Controls_Stack {
 		] );
 	}
 
-	public function update_page_assets( $new_assets ) {
-		$page_assets = $this->get_page_assets();
-
-		if ( ! $page_assets ) {
-			$page_assets = [];
-		}
-
-		foreach ( $new_assets as $assets_type => $assets_type_data ) {
-			if ( ! isset( $page_assets[ $assets_type ] ) ) {
-				$page_assets[ $assets_type ] = [];
-			}
-
-			$page_assets[ $assets_type ] = array_unique( array_merge( $page_assets[ $assets_type ], $new_assets[ $assets_type ] ) );
-		}
-
-		// Updating also the static variable so that the data will be available without the need to get it from the DB.
-		self::$page_assets = $page_assets;
-
-		$this->update_meta( self::ASSETS_META_KEY, $page_assets );
-	}
-
-	public function get_page_assets( $force_fetch = false ) {
-		static $is_meta_fetched;
-
-		if ( ! $is_meta_fetched || $force_fetch ) {
-			$is_meta_fetched = true;
-
-			$page_assets = $this->get_meta( self::ASSETS_META_KEY );
-
-			if ( is_array( $page_assets ) ) {
-				self::$page_assets = $page_assets;
-
-				return $page_assets;
-			} else {
-				// The meta data initial value should be an array as an indication that the page assets have been evaluated at lease once.
-				$this->update_meta( self::ASSETS_META_KEY, [] );
-			}
-		}
-
-		return self::$page_assets;
-	}
-
 	public function save_widgets_css( $widget_name ) {
 		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
 	}
@@ -1552,19 +1436,12 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		// Collect all data updaters that should be updated on runtime.
-		$runtime_data_updaters = $this->get_runtime_data_updaters();
-
-		if ( $runtime_data_updaters ) {
-			$this->handle_page_elements( $elements_data, $runtime_data_updaters );
-		}
-
-		// Enable elements assets loading.
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$page_assets = $this->get_page_assets();
+			// Collect all data updaters that should be updated on runtime.
+			$runtime_data_updaters = $this->get_runtime_data_updaters();
 
-			if ( $page_assets ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets );
+			if ( $runtime_data_updaters ) {
+				$this->handle_page_elements( $elements_data, $runtime_data_updaters, 'render' );
 			}
 		}
 
@@ -1670,7 +1547,7 @@ abstract class Document extends Controls_Stack {
 		return $runtime_data_updaters;
 	}
 
-	private function handle_page_elements( $elements, $data_updaters ) {
+	private function handle_page_elements( $elements, $data_updaters, $event ) {
 		$unique_page_widgets = [];
 
 		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, &$data_updaters ) {
@@ -1692,10 +1569,10 @@ abstract class Document extends Controls_Stack {
 
 			return $element_data;
 		} );
-	}
 
-	private function reset_page_assets() {
-		$this->update_meta( self::ASSETS_META_KEY, [] );
+		foreach ( $data_updaters as $data_updater ) {
+			$data_updater->after_elements_iteration( $event );
+		}
 	}
 
 	private function register_data_updater( $data_updater ) {
