@@ -13,6 +13,9 @@ export default class View extends Marionette.ItemView {
 		return {
 			switcherInput: prefix + '-switcher__option input',
 			switcherLabel: prefix + '-switcher__option',
+			scaleButton: prefix + '__button-scale',
+			scaleResetButton: prefix + '__button-scale-reset',
+			scaleInput: prefix + '__input-scale',
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
 			sizeInputHeight: prefix + '__input-height',
@@ -28,12 +31,22 @@ export default class View extends Marionette.ItemView {
 			'input @ui.sizeInputHeight': 'onSizeInputChange',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
+			'mousedown @ui.scaleButton': 'onScaleButtonMousedown',
+			'keydown @ui.scaleButton': 'onScaleButtonMousedown',
+			'mouseup @ui.scaleButton': 'onScaleButtonMouseup',
+			'keyup @ui.scaleButton': 'onScaleButtonMouseup',
+			'mouseout @ui.scaleButton': 'onScaleButtonMouseup',
+			'input @ui.scaleInput': 'onScaleInputChange',
+			'click @ui.scaleResetButton': 'onScaleReset',
 		};
 	}
 
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
+
+		this.scale = 100;
+		this.isScalingPreview = false;
 	}
 
 	addTipsyToIconButtons() {
@@ -63,6 +76,80 @@ export default class View extends Marionette.ItemView {
 		tipsy.show();
 
 		setTimeout( () => tipsy.hide(), 3000 );
+	}
+
+	incrementScale( increment = 1, speed = 0 ) {
+		const incrementedScale = parseInt( this.ui.scaleInput.val() ) + increment;
+		const scale = this.roundNumber( incrementedScale );
+		const delay = 1 > speed ? 500 : 120 - ( speed * 1.5 );
+
+		setTimeout( () => {
+			if ( ! this.isScalingPreview ) {
+				return;
+			}
+
+			this.incrementScale( increment, speed += 1 );
+		}, delay );
+
+		this.updateScale( scale );
+	}
+
+	isScaleUpToDate( scale ) {
+		if ( scale !== this.scale ) {
+			return false;
+		}
+
+		if ( scale !== this.ui.scaleInput.val() ) {
+			return false;
+		}
+
+		if ( scale !== elementorCommon.elements.$body.css( '--e-editor-preview-scale' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	isValidScale( scale ) {
+		if ( NaN === parseFloat( scale ) ) {
+			return false;
+		}
+
+		if ( 25 > scale || 200 < scale ) {
+			return;
+		}
+
+		return true;
+	}
+
+	updateScale( scale, changed = false ) {
+		if ( ! this.isValidScale( scale ) || this.isScaleUpToDate( scale ) ) {
+			return;
+		}
+
+		this.scale = scale;
+		this.ui.scaleInput.val( this.scale );
+		elementorCommon.elements.$body.css( '--e-editor-preview-scale', this.scale );
+
+		if ( parseFloat( scale ) !== parseFloat( this.ui.scaleInput.val() ) && ! changed ) {
+			this.ui.scaleInput.trigger( 'change' );
+		}
+	}
+
+	onScaleButtonMousedown( e ) {
+		if ( 'keydown' === e.type && 'Enter' !== e.key ) {
+			return;
+		}
+
+		this.isScalingPreview = true;
+
+		const increment = jQuery( e.target.closest( 'button' ) ).is( '#scaleUp' ) ? 1 : -1;
+
+		this.incrementScale( increment );
+	}
+
+	onScaleButtonMouseup() {
+		this.isScalingPreview = false;
 	}
 
 	onDeviceModeChange() {
@@ -111,6 +198,13 @@ export default class View extends Marionette.ItemView {
 			.then( () => jQuery( '.elementor-control-section_breakpoints' ).trigger( 'click' ) );
 	}
 
+	roundNumber( number ) {
+		if ( ! number ) {
+			return;
+		}
+		return Math.round( number * 1000 ) / 1000;
+	}
+
 	onPreviewResize() {
 		if ( this.updatingPreviewSize ) {
 			return;
@@ -154,5 +248,27 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => this.updatingPreviewSize = false, 300 );
 
 		elementor.updatePreviewSize( size );
+	}
+
+	onScaleInputChange() {
+		const scale = this.ui.scaleInput.val();
+
+		if ( this.isScaleUpToDate( scale ) ) {
+			return;
+		}
+
+		if ( ! this.isValidScale( scale ) ) {
+			// We wait 1.5s, and we reset it to the active scale
+			setTimeout( () => {
+				this.ui.scaleInput.val( this.scale );
+			}, 1500 );
+			return;
+		}
+
+		this.updateScale( scale, true );
+	}
+
+	onScaleReset() {
+		this.updateScale( 100 );
 	}
 }

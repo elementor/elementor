@@ -51,6 +51,24 @@
 		}
 	}
 
+  	&__scale-control {
+	  	display: flex;
+	  	align-self: center;
+	  	margin-inline-end: auto;
+
+		&:before { // separator
+		  content: '';
+		  display: block;
+		  align-self: center;
+		  border-inline-start: 1px solid #6d7882;
+		  height: 20px;
+		  margin: 0 24px;
+		}
+	}
+
+  	// Temporarily hide the scale control
+  	&__scale-control { display: none; }
+
 	&__button {
 		appearance: none;
 		background: none;
@@ -70,6 +88,29 @@
 	  	i {
 			width: 14px;
 			height: 14px;
+		}
+
+	  	&-scale-down {
+		  	display: flex;
+		  	align-items: center;
+
+			i {
+				line-height: 1;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 14px;
+				height: 14px;
+
+				&::before {
+					content: '';
+					display: block;
+					height: 0.15em;
+					width: .7em;
+					border-radius: 0.5px;
+					background-color: currentColor;
+				}
+			}
 		}
 	}
 
@@ -95,6 +136,7 @@
 	  	color: $editor-dark;
 	}
 
+	&__input-scale,
 	&__input-size {
 	  	color: $editor-light;
 		background-color: transparent;
@@ -110,6 +152,13 @@
 	input[type=number]::-webkit-outer-spin-button {
 		 -webkit-appearance: none;
 		 margin: 0;
+	}
+
+	&__input-scale {
+		border: 0 none;
+		width: 44px;
+		padding: 0;
+		max-width: fit-content;
 	}
 
 	&__input-size {

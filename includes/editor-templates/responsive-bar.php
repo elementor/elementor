@@ -16,7 +16,8 @@ $breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx scre
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
-		<div class="e-responsive-bar__col"></div>
+		<div class="e-responsive-bar__col">
+		</div>
 		<div class="e-responsive-bar__col">
 			<div class="e-responsive-bar-switcher">
 			<?php foreach ( $breakpoints as $name => $breakpoint ) {
@@ -29,7 +30,6 @@ $breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx scre
 					class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
 					for="e-responsive-bar-switch-%1$s"
 					data-tooltip="%2$s">
-
 					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
 					<i class="eicon-device-%1$s" aria-hidden="true"></i>
 					<span class="screen-reader-text">%2$s</span>
@@ -53,6 +53,15 @@ $breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx scre
 				<input type="number" id="viewport_width" class="e-responsive-bar__input-size e-responsive-bar__input-width" autocomplete="off">
 				<label for="viewport_height">H</label>
 				<input type="number" id="viewport_height" class="e-responsive-bar__input-size e-responsive-bar__input-height" autocomplete="off">
+			</div>
+			<div class="e-responsive-bar__scale-control">
+				<button id="scaleDown" class="e-responsive-bar__button e-responsive-bar__button-scale e-responsive-bar__button-scale-down"
+						label="<?php echo __( 'Down', 'elementor' ); ?>"><i></i></button>
+				<input type="number" value="100" step="0.1" min="25" max="200" class="e-responsive-bar__input-scale" tabindex="0"/>
+				<button id="scaleUp" class="e-responsive-bar__button e-responsive-bar__button-scale e-responsive-bar__button-scale-up"
+						label="<?php echo __( 'Up', 'elementor' ); ?>"><i class="eicon-plus"></i></button>
+				<button class="e-responsive-bar__button e-responsive-bar__button-scale-reset"
+						label="<?php echo __( 'Reset Scale', 'elementor' ); ?>"><i class="eicon-undo"></i></button>
 			</div>
 		</div>
 </script>
