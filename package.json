@@ -1,8 +1,8 @@
 {
 	"name": "elementor",
 	"slug": "elementor",
-	"version": "3.1.4",
-	"prev_stable_version": "3.0.16",
+	"version": "3.2.0",
+	"prev_stable_version": "3.1.4",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
