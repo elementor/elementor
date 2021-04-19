@@ -533,7 +533,7 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function get_site_key() {
+	public function get_site_key() {
 		$site_key = get_option( 'elementor_connect_site_key' );
 
 		if ( ! $site_key ) {

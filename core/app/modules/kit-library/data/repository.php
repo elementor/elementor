@@ -87,6 +87,25 @@ class Repository {
 	}
 
 	/**
+	 * @param $id
+	 *
+	 * @return mixed
+	 * @throws Exceptions\Api_Response_Exception
+	 * @throws Exceptions\Api_Wp_Error_Exception
+	 */
+	public function get_download_link( $id ) {
+//		$response = $this->api_client->download_link( $id );
+
+//		return [
+//			'download_link' => $response['download_link']
+//		];
+
+		return [
+			'download_link' => 'https://storage.googleapis.com/kits-library-dev/wss/1.0.1.zip?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=kits-to-bucket%40elementor-website.iam.gserviceaccount.com%2F20210419%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20210419T104844Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=6d4182d74c9652b0f29198d0000a850c209dad7df7f9d435a57950c25d29f16e1977584e406b13aa00c7c28d6e482b81b6082231046800ca7a8ebb5d7f53fc5539229922415de3245241d287029f56bd98aef41486357ea0808a658c7e95c67aecb262d17dff237aeba0467431456aa94b9f467407d827dad0ab7ecedb2a21632ac9fa6956629ae9bc73825169e3ee5cd41235981989875a7086d00cbf4779dff65bcf8fc1f1a36daad31fc4f40492ba5ccc23d0c8f7d34e3abc0fdd513ecde7e1dec7b80aa9ebbba0e623e2c84c12c7df2d9a1ccea9a03055e593c5b4546ceebf43d1f69e508e68af4688d95a2043a39352eb33cc04a86854dd792c4b8a4bd'
+		];
+	}
+
+	/**
 	 * @param bool $force_api_request
 	 *
 	 * @return Collection

@@ -12,7 +12,7 @@ class Kits_Controller extends Controller_Base {
 	/**
 	 * @var Repository
 	 */
-	private $repository;
+	public $repository;
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -67,7 +67,7 @@ class Kits_Controller extends Controller_Base {
 	 * Must implement.
 	 */
 	public function register_endpoints() {
-		//
+		$this->register_endpoint( Endpoints\Kits_Download_Link::class );
 	}
 
 	/**
