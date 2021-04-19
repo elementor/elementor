@@ -8,7 +8,7 @@ export const TYPE_APPLY = 'apply';
 export default function useKitCallToAction( kitAccessLevel ) {
 	const { settings } = useSettingsContext();
 
-	const subscriptionPlan = useMemo( () => settings.subscription_plans[ kitAccessLevel ], [ settings, kitAccessLevel ] );
+	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessLevel ], [ settings, kitAccessLevel ] );
 
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).

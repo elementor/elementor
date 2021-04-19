@@ -17,9 +17,10 @@ function useHeaderButtons( id ) {
 			text: __( 'View Demo', 'elementor' ),
 			hideText: false,
 			variant: 'outlined',
-			color: 'primary',
+			color: 'secondary',
 			size: 'sm',
 			onClick: () => navigate( `/kit-library/preview/${ id }` ),
+			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
 }

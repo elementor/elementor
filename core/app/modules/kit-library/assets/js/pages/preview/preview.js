@@ -46,9 +46,10 @@ function useHeaderButtons( id ) {
 			text: __( 'Overview', 'elementor' ),
 			hideText: false,
 			variant: 'outlined',
-			color: 'primary',
+			color: 'secondary',
 			size: 'sm',
 			onClick: () => navigate( `/kit-library/overview/${ id }` ),
+			includeHeaderBtnClass: false,
 		},
 	], [ id ] );
 }

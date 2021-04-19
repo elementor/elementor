@@ -31,6 +31,7 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 				color: 'primary',
 				size: 'sm',
 				onClick: onConnect,
+				includeHeaderBtnClass: false,
 			};
 		}
 		if ( type === TYPE_PROMOTION ) {
@@ -43,6 +44,7 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 				size: 'sm',
 				url: subscriptionPlan.promotion_url,
 				target: '_blank',
+				includeHeaderBtnClass: false,
 			};
 		}
 
@@ -54,6 +56,7 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 			color: 'primary',
 			size: 'sm',
 			onClick: onApply,
+			includeHeaderBtnClass: false,
 		};
 	}, [ type, subscriptionPlan ] );
 }

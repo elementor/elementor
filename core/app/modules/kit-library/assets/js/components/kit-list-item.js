@@ -40,7 +40,7 @@ export default function KitListItem( props ) {
 								url={ `/kit-library/preview/${ props.model.id }` }
 							/>
 							{
-								type === TYPE_PROMOTION && <Button
+								type === TYPE_PROMOTION && subscriptionPlan?.label && <Button
 									className="e-kit-library__kit-item-overlay-promotion-button"
 									text={ `Go ${ subscriptionPlan.label }` }
 									icon="eicon-external-link-square"
