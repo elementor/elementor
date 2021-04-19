@@ -95,6 +95,7 @@ module.exports = function( config ) {
 		logLevel: config.LOG_INFO,
 		browsers: [ 'ChromeHeadless' ],
 		browserDisconnectTimeout: 4000,
+		pingTimeout: 10000,
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,
