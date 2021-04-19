@@ -66,8 +66,10 @@ jQuery( () => {
 				expectedIds = [ eSection.id, eColumn.id, ... eWidgetsIds ],
 				actualIds = [];
 
+			// Act.
 			eSection.forEachChildrenRecursive( ( container ) => actualIds.push( container.id ) );
 
+			// Assert.
 			assert.deepEqual( actualIds, expectedIds );
 		} );
 	} );
