@@ -1,4 +1,4 @@
-import Content from '../../../../../../assets/js/layout/content';
+import Content from 'elementor/core/app/assets/js/layout/content';
 import OverviewContent from './overview-content';
 import ItemHeader from '../../components/item-header';
 import OverviewSidebar from './overview-sidebar';

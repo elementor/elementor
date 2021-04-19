@@ -11,6 +11,7 @@ export default class Button extends BaseButton {
 	}
 
 	getClassName() {
+		// Avoid using the 'eps-app__header-btn' class to make sure it is not override custom styles.
 		if ( ! this.props.includeHeaderBtnClass ) {
 			return super.getClassName();
 		}

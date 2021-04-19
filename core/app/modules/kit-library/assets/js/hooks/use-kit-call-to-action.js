@@ -8,6 +8,7 @@ export const TYPE_APPLY = 'apply';
 export default function useKitCallToAction( kitAccessLevel ) {
 	const { settings } = useSettingsContext();
 
+	// subscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessLevel ], [ settings, kitAccessLevel ] );
 
 	const type = useMemo( () => {
