@@ -664,7 +664,7 @@ class Frontend extends App {
 	 *
 	 * Enqueue all assets that were pre-enabled.
 	 *
-	 * @since 3.1.0
+	 * @since 3.3.0
 	 * @access private
 	 */
 	private function enqueue_conditional_assets() {
