@@ -518,8 +518,8 @@ class Test_Upgrades extends Elementor_Test_Base {
 		Upgrades::_v_3_3_0_kit_options_update_autoload();
 
 		// Assert
-		$actual_value = $autoload_value = $wpdb->get_var(
-			$wpdb->prepare("SELECT autoload FROM $wpdb->options WHERE option_id=%s", 'elementor_active_kit' )
+		$actual_value = $wpdb->get_var(
+			$wpdb->prepare("SELECT autoload FROM $wpdb->options WHERE option_name=%s", 'elementor_active_kit' )
 		);
 
 		$this->assertEquals( $expected_value, $actual_value );
