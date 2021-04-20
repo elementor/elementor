@@ -245,6 +245,14 @@ class TextPath extends Widget_Base {
 					'unit' => 'px',
 					'size' => 500,
 				],
+				'tablet_default' => [
+					'unit' => 'px',
+					'size' => 500,
+				],
+				'mobile_default' => [
+					'unit' => 'px',
+					'size' => 500,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
@@ -265,6 +273,14 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'mobile_default' => [
 					'unit' => 'deg',
 					'size' => '',
 				],
@@ -316,6 +332,14 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'px',
+					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'px',
+					'size' => '',
+				],
+				'mobile_default' => [
 					'unit' => 'px',
 					'size' => '',
 				],
@@ -647,7 +671,7 @@ class TextPath extends Widget_Base {
 
 		// Render.
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'text_path' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( 'text_path' ); ?> data-text="<?php echo $settings['text']; ?>">
 			<?php echo $path_svg; ?>
 		</div>
 		<?php

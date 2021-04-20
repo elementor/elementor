@@ -338,8 +338,8 @@ export default class Container extends ArgsObject {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
 
-	getSetting( name, localOnly = false ) {
-		const localValue = this.settings.get( name );
+	getSetting( controlName, localOnly = false ) {
+		const localValue = this.settings.get( controlName );
 
 		if ( localOnly ) {
 			return localValue;
@@ -395,12 +395,23 @@ export default class Container extends ArgsObject {
 		return value;
 	}
 
-	getGlobalDefault( name ) {
-		const controlGlobalArgs = this.controls[ name ].global;
+	/**
+	 * Determine if a control's global value is applied.
+	 * It actually checks if the local value is different than the global value.
+	 *
+	 * @param {string} controlName - Control name
+	 * @returns {boolean}
+	 */
+	isGlobalApplied( controlName ) {
+		return this.getSetting( controlName ) !== this.settings.get( controlName );
+	}
+
+	getGlobalDefault( controlName ) {
+		const controlGlobalArgs = this.controls[ controlName ].global;
 
 		if ( controlGlobalArgs?.default ) {
 			// Temp fix.
-			let controlType = this.controls[ name ].type;
+			let controlType = this.controls[ controlName ].type;
 
 			if ( 'color' === controlType ) {
 				controlType = 'colors';
