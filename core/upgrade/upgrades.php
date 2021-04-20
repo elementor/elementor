@@ -3,8 +3,6 @@ namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
@@ -24,6 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+
+	public static function _on_each_version( $updater ) {
+		self::recalc_usage_data( $updater );
+	}
 
 	/**
 	 * Upgrade Elementor 0.3.2
