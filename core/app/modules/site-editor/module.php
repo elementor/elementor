@@ -32,12 +32,13 @@ class Module extends BaseModule {
 			'sub_title' => __( 'Site', 'elementor' ),
 			'href' => Plugin::$instance->app->get_settings( 'menu_url' ),
 			'class' => 'elementor-app-link',
+			'parent_class' => 'elementor-second-section',
 		];
 
 		return $admin_bar_config;
 	}
 
 	public function __construct() {
-		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] );
+		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] ); // After kit (Site settings)
 	}
 }
