@@ -259,7 +259,15 @@ class Icons_Manager {
 
 	public static function get_icon_svg_data( $icon ) {
 		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
-		$icon_data = get_option( $icon_option_key );
+		// TODO: should we check the version per library?
+		$icon_data_key = 'font_icon_svg';
+		$icon_library_version = 5;
+		$icon_data_config = [
+			'content_type' => $icon_data_key,
+			'asset_key' => $icon_option_key,
+			'version' => $icon_library_version,
+		];
+		$icon_data = Plugin::$instance->assets_loader->get_asset_inline_content( $icon_data_config );
 
 		if ( empty( $icon_data ) ) {
 			// On first use, load the SVG from the Font Awesome json file
@@ -271,13 +279,8 @@ class Icons_Manager {
 				'path' => $icon_data[4],
 			];
 
-			// Save the $icon_data in the database for future renders
-			// Call assets loader.
-			// TODO: should we check the version per library?
-			$version = 5;
-			Plugin::$instance->assets_loader->save_asset_inline_content( 'font_icon_svg', $icon_option_key, $icon_data, $version );
-			//TODO: remove.
-			//update_option( $icon_option_key, $icon_data );
+			// Save the $icon_data in the database for future renders.
+			Plugin::$instance->assets_loader->save_asset_inline_content( $icon_data_key, $icon_option_key, $icon_data, $icon_library_version );
 		}
 
 		return $icon_data;
