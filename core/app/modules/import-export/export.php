@@ -15,8 +15,6 @@ class Export extends Iterator {
 	 */
 	private $zip_archive;
 
-	private $temp_dir;
-
 	private $archive_file_name;
 
 	final public function run() {

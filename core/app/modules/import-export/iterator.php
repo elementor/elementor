@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Iterator extends Base_Object {
 
+	protected $temp_dir;
+
 	private $current_archive_path = '';
 
 	abstract public function run();

@@ -53,7 +53,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function on_elementor_init() {
+	private function on_admin_init() {
 		if ( isset( $_POST['action'] ) && self::IMPORT_TRIGGER_KEY === $_POST['action'] ) {
 			if ( ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
 				return;
@@ -73,7 +73,9 @@ class Module extends BaseModule {
 				wp_send_json_error( $error->getMessage() );
 			}
 		}
+	}
 
+	private function on_elementor_init() {
 		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
 			if ( ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
 				return;
@@ -172,6 +174,10 @@ class Module extends BaseModule {
 	public function __construct() {
 		add_action( 'elementor/init', function() {
 			$this->on_elementor_init();
+		} );
+
+		add_action( 'admin_init', function() {
+			$this->on_admin_init();
 		} );
 
 		$page_id = Tools::PAGE_ID;

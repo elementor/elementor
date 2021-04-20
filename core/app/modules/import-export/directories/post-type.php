@@ -90,7 +90,7 @@ class Post_Type extends Base {
 					continue;
 				}
 
-				$result['succeed'][] = $import;
+				$result['succeed'][ $id ] = $import;
 			} catch ( \Error $error ) {
 				$result['failed'][ $id ] = $error->getMessage();
 			}

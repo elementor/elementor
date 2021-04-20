@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Import extends Iterator {
 
-	private $temp_dir;
-
 	final public function run() {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $this->get_settings( 'file_name' ), [ 'json', 'xml' ] );
 
