@@ -71,7 +71,7 @@ class Api_Client {
 	 * @throws Api_Wp_Error_Exception
 	 */
 	public function download_link( $id ) {
-		return $this->send_request( 'GET', "manifests/{$id}", [
+		return $this->send_request( 'GET', "kits/{$id}/download-link", [
 			'headers' => $this->get_headers_for_connect(),
 		] );
 	}
@@ -88,7 +88,7 @@ class Api_Client {
 	 * @throws Api_Wp_Error_Exception
 	 */
 	public function send_request( $method, $path, $args = [] ) {
-		$args = wp_parse_args( [
+		$args = array_merge_recursive( [
 			'method' => $method,
 			'headers' => [
 				'X-Elementor-Local-Id' => get_current_user_id(),
@@ -140,8 +140,10 @@ class Api_Client {
 		$this->http = new \WP_Http();
 		$this->base_endpoint = $base_endpoint;
 
-		add_action( 'rest_api_init', function () {
-			$this->connect = Plugin::$instance->common->get_component( 'connect' );
-		}, 11 );
+		add_action('rest_api_init', function () {
+			$this->connect = Plugin::$instance->common
+				->get_component( 'connect' )
+				->get_app( 'connect' );
+		}, 12 );
 	}
 }
