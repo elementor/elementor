@@ -1298,6 +1298,14 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	public function get_export_summary() {
+		return [
+			'title' => $this->post->post_title,
+			'doc_type' => $this->get_name(),
+			'thumbnail' => get_the_post_thumbnail_url( $this->post ),
+		];
+	}
+
 	/*
 	 * Get Import Data
 	 *
