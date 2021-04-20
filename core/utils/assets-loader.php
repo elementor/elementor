@@ -65,7 +65,7 @@ class Assets_Loader extends Module {
 		$this->assets = array_replace_recursive( $this->assets, $assets );
 	}
 
-	public function set_asset_inline_content( $config ) {
+	public function init_asset_inline_content( $config ) {
 		$content_type = $config['content_type'];
 		$asset_key = $config['asset_key'];
 		$asset_url = $config['asset_url'];
@@ -73,7 +73,7 @@ class Assets_Loader extends Module {
 		$current_version = $config['current_version'];
 
 		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content( $content_type );
+			$this->set_assets_inline_content( $content_type );
 		}
 
 		$assets_data = $this->assets_inline_content[ $content_type ];
@@ -88,7 +88,7 @@ class Assets_Loader extends Module {
 	}
 
 	public function get_asset_inline_content( $config ) {
-		$this->set_asset_inline_content( $config );
+		$this->init_asset_inline_content( $config );
 
 		$content_type = $config['content_type'];
 		$asset_key = $config['asset_key'];
@@ -98,7 +98,7 @@ class Assets_Loader extends Module {
 
 	public function save_asset_inline_content( $content_type, $asset_key, $content, $version ) {
 		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content( $content_type );
+			$this->set_assets_inline_content( $content_type );
 		}
 
 		if ( ! isset( $this->assets_inline_content[ $content_type ][ $asset_key ] ) ) {
@@ -176,7 +176,7 @@ class Assets_Loader extends Module {
 		}
 	}
 
-	private function init_assets_inline_content( $content_type = '' ) {
+	private function set_assets_inline_content( $content_type = '' ) {
 		$this->assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
 
 		if ( $content_type && ! isset( $this->assets_inline_content[ $content_type ] ) ) {

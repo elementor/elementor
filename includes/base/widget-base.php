@@ -571,7 +571,7 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-widget-container">
 			<?php
 			if ( $this->is_widget_first_render() ) {
-				$this->register_runtime_widget( $this->get_widget_type() );
+				$this->register_runtime_widget( $this->get_group_name() );
 
 				$this->print_widget_css();
 			}
@@ -597,7 +597,7 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function is_widget_first_render() {
-		return ! in_array( $this->get_widget_type(), self::$registered_runtime_widgets, true );
+		return ! in_array( $this->get_group_name(), self::$registered_runtime_widgets, true );
 	}
 
 	/**
@@ -901,6 +901,21 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get group name.
+	 *
+	 * Some widgets need to use group names, this method allows you to create them.
+	 * By default it retrieves the regular name.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return string Unique name.
+	 */
+	public function get_group_name() {
+		return $this->get_name();
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -937,35 +952,32 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	private function get_widget_css() {
-		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
-	}
-
-	protected function get_widget_type() {
-		return $this->get_name();
-	}
-
 	protected function get_css_config() {
-		$widget_name = $this->get_widget_type();
+		$widget_name = $this->get_group_name();
 
 		$direction = is_rtl() ? '-rtl' : '';
 
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
-			'content_type' => 'css',
-			'asset_key' => $widget_name,
-			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
-			'current_version' => ELEMENTOR_VERSION,
+				'content_type' => 'css',
+				'asset_key' => $widget_name,
+				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+				'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+				'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
+	private function get_widget_css() {
+		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
+	}
+
 	private function print_widget_css() {
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
-		if ( Utils::is_script_debug() || $is_preview_mode || ! $is_optimized_mode ) {
+		if ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) {
 			return;
 		}
 
