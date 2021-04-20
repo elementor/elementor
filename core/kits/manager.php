@@ -28,18 +28,8 @@ class Manager {
 		$kit_document = Plugin::$instance->documents->get( $id );
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
-			$is_option_exits = null !== $id;
 			$id = $this->create_default();
-
-			/**
-			 * For new users that does not have option for default kit it will add the option with autoload=no (which will prevent caching the kit)
-			 * For users which already have the option for default kit we will update the exists option since adding new one will cause infinite loop.
-			 */
-			if ( $is_option_exits ) {
-				update_option( self::OPTION_ACTIVE, $id );
-			} else {
-				add_option( self::OPTION_ACTIVE, $id, '', 'no' );
-			}
+			update_option( self::OPTION_ACTIVE, $id, 'no' );
 		}
 
 		return $id;

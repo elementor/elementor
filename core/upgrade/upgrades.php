@@ -652,7 +652,7 @@ class Upgrades {
 
 		if ( null !== $id ) {
 			// Query the row and update autoload
-			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->options SET autoload='no' WHERE option_value=%d", $id ) );
+			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->options SET autoload='no' WHERE option_name=%d", 'elementor_active_kit' ) );
 		}
 	}
 
