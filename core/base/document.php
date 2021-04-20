@@ -1282,9 +1282,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
-			$widgets_css_data_updater = new Widgets_Css_Data_Updater( $this );
-
-			$this->register_data_updater( $widgets_css_data_updater );
+			$this->register_data_updater( new Widgets_Css_Data_Updater( $this ) );
 		}
 
 		parent::__construct( $data );
@@ -1373,10 +1371,6 @@ abstract class Document extends Controls_Stack {
 			'elements' => $data['content'],
 			'settings' => $data['settings'],
 		] );
-	}
-
-	public function save_widgets_css( $widget_name ) {
-		Plugin::$instance->assets_loader->set_asset_inline_content( $this->get_widget_css_config( $widget_name ) );
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {
@@ -1577,19 +1571,5 @@ abstract class Document extends Controls_Stack {
 
 	private function register_data_updater( $data_updater ) {
 		$this->data_updaters[] = $data_updater;
-	}
-
-	private function get_widget_css_config( $widget_file_name ) {
-		$direction = is_rtl() ? '-rtl' : '';
-
-		$css_file_path = 'css/widget-' . $widget_file_name . $direction . '.min.css';
-
-		return [
-			'content_type' => 'css',
-			'asset_key' => $widget_file_name,
-			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
-			'current_version' => ELEMENTOR_VERSION,
-		];
 	}
 }
