@@ -81,9 +81,21 @@ jobs:
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
+      - name: Save HTML dumps on failure
+        if: failure()
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
       - name: Upload Lighthouse reports on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
+          retention-days: 7
+      - name: Upload Lighthouse HTML dumps on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lighthouseci-htmls
+          path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
+          retention-days: 7
