@@ -67,7 +67,7 @@ jobs:
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.0
+        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.1
       - name: Install WordPress environment
         run: |
           npx wp-env start
