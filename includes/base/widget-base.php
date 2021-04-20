@@ -960,11 +960,11 @@ abstract class Widget_Base extends Element_Base {
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
-				'content_type' => 'css',
-				'asset_key' => $widget_name,
-				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-				'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
-				'current_version' => ELEMENTOR_VERSION,
+			'content_type' => 'css',
+			'asset_key' => $widget_name,
+			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'current_version' => ELEMENTOR_VERSION,
 		];
 	}
 
