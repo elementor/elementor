@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Import extends Iterator {
 
-	private $temp_dir;
-
 	final public function run() {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $this->get_settings( 'file_name' ), [ 'json', 'xml' ] );
 
@@ -29,7 +27,7 @@ class Import extends Iterator {
 	}
 
 	final public function read_json_file( $name ) {
-		$name = $this->temp_dir . $this->get_archive_file_path( $name . '.json' );
+		$name = $this->get_archive_file_full_path( $name . '.json' );
 
 		return json_decode( file_get_contents( $name ), true );
 	}

@@ -86,6 +86,8 @@ class Root extends Base {
 
 		if ( in_array( 'content', $include, true ) ) {
 			$sub_directories[] = new Content( $this->iterator, $this );
+
+			$sub_directories[] = new WP_Content( $this->iterator, $this );
 		}
 
 		return $sub_directories;
