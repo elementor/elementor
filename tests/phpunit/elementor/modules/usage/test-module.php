@@ -59,7 +59,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$this->act_as_admin();
 
 		$this->module = $module = Module::instance();
 	}
@@ -75,28 +75,6 @@ class Test_Module extends Elementor_Test_Base {
 		return $global_usage;
 	}
 
-	private function generate_document_with_duplicated_widget() {
-		$document = $this->factory()->documents->create_and_get();
-		$elementor_data = $document->get_json_meta( '_elementor_data' );
-
-		$section = &$elementor_data[ 0 ];
-		$column = &$section['elements'][ 0 ];
-		$widget = &$column['elements'][ 0 ];
-
-		// Duplicate widget.
-		$column['elements'][] = $widget;
-
-		// Find better way.
-		$document->save( [
-			'settings' => [
-				'post_status' => 'publish'
-			],
-			'elements' => $elementor_data,
-		] );
-
-		return $document;
-	}
-
 	private function ensure_dynamic_tags() {
 		if ( ! $this->isDynamicTags ) {
 			Plugin::$instance->dynamic_tags->register_tag( new Title() );
@@ -106,7 +84,6 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Old name 'test_doc_type_count'.
 	public function test_get_doc_type_count() {
 		// Arrange.
 		$doc_type = self::factory()->documents->publish_and_get()->get_name();
@@ -119,7 +96,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 1, $doc_count );
 	}
 
-	// Old name 'test_formatted_usage'.
 	public function test_get_formatted_usage() {
 		// Arrange.
 		$document = self::factory()->documents->publish_and_get();
@@ -131,7 +107,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 1, $formatted_usage[ $document->get_name() ]['elements']['Button'] );
 	}
 
-	// Old name 'test_recalc'.
 	public function test_recalc_usage() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get();
@@ -148,7 +123,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 2, $this->get_global_usage_by_document( $document )['button']['count'] );
 	}
 
-	// Old part of ' test_add_to_global'
 	public function test_add_to_global() {
 		// Act.
 		$document = $this->factory()->documents->publish_and_get();
@@ -157,7 +131,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	// Old part of 'test_add_to_global'.
 	public function test_add_to_global__ensure_elements() {
 		// Arrange.
 		$count = 2;
@@ -171,17 +144,15 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Part of old 'test_elements'
 	public function test_add_to_global__ensure_elements__from_same_document() {
 		// Act.
-		$document = $this->generate_document_with_duplicated_widget();
+		$document = $this->factory()->documents->publish_with_duplicated_widget();
 
 		// Assert.
 		$global_document_usage = $this->get_global_usage_by_document( $document );
 		$this->assertEquals( 2, $global_document_usage['button']['count'] );
 	}
 
-	// Old part of 'test_controls'.
 	public function test_add_to_global__ensure_controls() {
 		// Arrange.
 		$count = 2;
@@ -195,7 +166,6 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Old name: 'test_remove_data_after_delete_post'.
 	public function test_remove_from_global() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get();
@@ -210,7 +180,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	// New test.
 	public function test_remove_from_global__ensure_elements() {
 		// Arrange.
 		$count = 2;
@@ -234,10 +203,9 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Part of old 'test_elements'
 	public function test_remove_from_global__ensure_elements_from_same_document() {
 		// Arrange.
-		$document = $this->generate_document_with_duplicated_widget();
+		$document = $this->factory()->documents->publish_with_duplicated_widget();
 		$elementor_data = $document->get_json_meta( '_elementor_data' );
 
 		$section = &$elementor_data[ 0 ];
@@ -258,7 +226,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 1, $global_document_usage['button']['count'] );
 	}
 
-	// Old part of 'test_controls'.
 	public function test_remove_from_global__ensure_controls() {
 		// Arrange.
 		$count = 2;
@@ -280,7 +247,6 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Old name 'test_dynamic_control'.
 	public function test_remove_from_global__ensure_dynamic_controls() {
 		// Arrange.
 		$this->ensure_dynamic_tags();
@@ -318,7 +284,6 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	// Old name 'test_remove_from_global'.
 	public function test_remove_from_global__ensure_elements_removed_by_empty_document() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get();
@@ -330,7 +295,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	// Old name: 'test_draft_and_republish'.
 	public function test_remove_from_global__ensure__draft_removed_and_can_be_republished() {
 		// Arrange.
 		$document = self::factory()->documents->publish_and_get();
@@ -352,7 +316,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	// Old name: 'test_draft_and_private'.
 	public function test_remove_from_global__ensure_draft_removed_and_private_can_be_republished() {
 		// Arrange.
 		$document = self::factory()->documents->publish_and_get();
@@ -374,10 +337,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	/**
-	 * Old name: 'test_autosave_and_publish'.
-	 * Cover issue: 'Widgets count shows negative values in some cases'.
-	 */
+	// Cover issue: 'Widgets count shows negative values in some cases'.
 	public function test_remove_from_global__ensure_autosave_not_affecting() {
 		// Arrange - Create additional document in order that after remove from global the usage will not be empty.
 		$this->factory()->documents->publish_and_get(); // Adds one button.
