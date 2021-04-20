@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
+use Elementor\Core\Base\Data_Updaters\Assets_Data_Updater;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -33,6 +34,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
@@ -70,6 +72,11 @@ abstract class Document extends Controls_Stack {
 	private $is_saving = false;
 
 	private static $properties = [];
+
+	/**
+	 * @var array
+	 */
+	private $data_updaters = [];
 
 	/**
 	 * Document post data.
@@ -1039,6 +1046,10 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$this->handle_page_elements( $elements, $this->data_updaters, 'save' );
+		}
+
 		/**
 		 * After saving data.
 		 *
@@ -1265,6 +1276,10 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			$this->register_data_updater( new Assets_Data_Updater( $this ) );
+		}
+
 		parent::__construct( $data );
 	}
 
@@ -1410,6 +1425,15 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+			// Collect all data updaters that should be updated on runtime.
+			$runtime_data_updaters = $this->get_runtime_data_updaters();
+
+			if ( $runtime_data_updaters ) {
+				$this->handle_page_elements( $elements_data, $runtime_data_updaters, 'render' );
+			}
+		}
+
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
@@ -1498,5 +1522,49 @@ abstract class Document extends Controls_Stack {
 
 	private function remove_handle_revisions_changed_filter() {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
+	}
+
+	private function get_runtime_data_updaters() {
+		$runtime_data_updaters = [];
+
+		foreach ( $this->data_updaters as $data_updater ) {
+			if ( $data_updater->is_update_needed() ) {
+				$runtime_data_updaters[] = $data_updater;
+			}
+		}
+
+		return $runtime_data_updaters;
+	}
+
+	private function handle_page_elements( $elements, $data_updaters, $event ) {
+		$unique_page_widgets = [];
+
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, &$data_updaters ) {
+			$widget_name = isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : '';
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, true ) ) {
+				$unique_page_widgets[] = $widget_name;
+
+				foreach ( $data_updaters as $data_updater ) {
+					$data_updater->update_unique_widget( $element );
+				}
+			}
+
+			foreach ( $data_updaters as $data_updater ) {
+				$data_updater->update_element( $element );
+			}
+
+			return $element_data;
+		} );
+
+		foreach ( $data_updaters as $data_updater ) {
+			$data_updater->after_elements_iteration( $event );
+		}
+	}
+
+	private function register_data_updater( $data_updater ) {
+		$this->data_updaters[] = $data_updater;
 	}
 }
