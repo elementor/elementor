@@ -237,6 +237,15 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'e_optimized_css_loading',
+			'title' => __( 'Improved CSS Loading', 'elementor' ),
+			'description' => __( 'Please Note! The "Improved CSS Loading" mode reduces the amount of CSS code that is loaded on the page by default. When activated, parts of the infrastructure CSS code will be loaded only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_font_awesome_inline',
 			'title' => __( 'FontAwesome Inline', 'elementor' ),
 			'description' => __( 'Loading FontAwesome inline will reduce total asset loading and increase page rendering speed.', 'elementor' )

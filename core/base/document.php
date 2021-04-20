@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Data_Updaters\Assets_Data_Updater;
+use Elementor\Core\Base\Data_Updaters\Widgets_Css_Data_Updater;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -1278,6 +1279,10 @@ abstract class Document extends Controls_Stack {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 			$this->register_data_updater( new Assets_Data_Updater( $this ) );
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
+			$this->register_data_updater( new Widgets_Css_Data_Updater( $this ) );
 		}
 
 		parent::__construct( $data );
