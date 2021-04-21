@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Elementor\Autoloader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
