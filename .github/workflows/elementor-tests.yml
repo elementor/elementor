@@ -1,0 +1,19 @@
+name: Elementor Tests / Init
+
+on: [push, pull_request]
+
+jobs:
+  run:
+    runs-on: ubuntu-16.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Elementor Tests / Init
+        env:
+          TOKEN: ${{ secrets.DEVOPS_TOKEN }}
+          REPO: ${{ secrets.REMOTE_REPO }}
+        run: |
+          curl -X POST https://api.github.com/repos/${{ env.REPO }}/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u ${{ env.TOKEN }} \
+          --data '{"event_type": "Elementor Tests", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'", "sha": "${{ github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }}'
