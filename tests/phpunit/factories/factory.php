@@ -91,13 +91,6 @@ class Factory extends \WP_UnitTest_Factory {
 	}
 
 	/**
-	 * @return int|\WP_Error
-	 */
-	public function get_local_template_id() {
-		return $this->create_template();
-	}
-
-	/**
 	 * @return \WP_User
 	 */
 	public function create_and_get_administrator_user() {
@@ -143,14 +136,5 @@ class Factory extends \WP_UnitTest_Factory {
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		return $document;
-	}
-
-	public function create_and_get_template( $template_type, $args = [] ) {
-		return $this->create_and_get_custom_post( array_merge( [
-			'post_type' => 'elementor_library',
-			'meta_input' => [
-				'_elementor_template_type' => $template_type,
-			],
-		], $args ) );
 	}
 }

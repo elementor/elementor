@@ -99,7 +99,7 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 			'post_title' => new \WP_UnitTest_Generator_Sequence( 'Elementor post title %s' ),
 			'post_content' => new \WP_UnitTest_Generator_Sequence( 'Elementor post content %s' ),
 			'post_excerpt' => new \WP_UnitTest_Generator_Sequence( 'Elementor post excerpt %s' ),
-			'post_type' => 'post',
+			'type' => 'post',
 		];
 	}
 
@@ -107,10 +107,10 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 		$type = 'page';
 		$meta = [];
 
-		if ( isset( $args['post_type'] ) ) {
-			$type = $args['post_type'];
+		if ( isset( $args['type'] ) ) {
+			$type = $args['type'];
 
-			unset( $args['post_type'] );
+			unset( $args['type'] );
 		}
 
 		if ( isset( $args['meta_input'] ) ) {
@@ -177,5 +177,12 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 		] );
 
 		return $document;
+	}
+
+	public function create_and_get_template( $template_type, $args = [] ) {
+		return $this->create_and_get( array_merge( [
+			'type' => $template_type,
+			'post_type' => 'elementor_library',
+		], $args ) );
 	}
 }
