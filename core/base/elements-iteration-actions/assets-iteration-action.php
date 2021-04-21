@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Base\Data_Updaters;
+namespace Elementor\Core\Base\Elements_Iteration_Actions;
 
 use Elementor\Conditions;
 use Elementor\Element_Base;
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Assets_Data_Updater extends Document_Data_Updater {
+class Assets_Iteration_Action extends Document_Iteration_Action {
 	const ASSETS_META_KEY = '_elementor_page_assets';
 
 	/**

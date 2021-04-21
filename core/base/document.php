@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Base;
 
-use Elementor\Core\Base\Data_Updaters\Assets_Data_Updater;
+use Elementor\Core\Base\Elements_Iteration_Actions\Assets_Iteration_Action;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -76,7 +76,7 @@ abstract class Document extends Controls_Stack {
 	/**
 	 * @var array
 	 */
-	private $data_updaters = [];
+	private $elements_iteration_actions = [];
 
 	/**
 	 * Document post data.
@@ -1047,7 +1047,7 @@ abstract class Document extends Controls_Stack {
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$this->handle_page_elements( $elements, $this->data_updaters, 'save' );
+			$this->iterate_elements( $elements, $this->elements_iteration_actions, 'save' );
 		}
 
 		/**
@@ -1277,7 +1277,7 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$this->register_data_updater( new Assets_Data_Updater( $this ) );
+			$this->register_elements_iteration_action( new Assets_Iteration_Action( $this ) );
 		}
 
 		parent::__construct( $data );
@@ -1427,10 +1427,10 @@ abstract class Document extends Controls_Stack {
 	protected function print_elements( $elements_data ) {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 			// Collect all data updaters that should be updated on runtime.
-			$runtime_data_updaters = $this->get_runtime_data_updaters();
+			$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
 
-			if ( $runtime_data_updaters ) {
-				$this->handle_page_elements( $elements_data, $runtime_data_updaters, 'render' );
+			if ( $runtime_elements_iteration_actions ) {
+				$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
 			}
 		}
 
@@ -1524,22 +1524,22 @@ abstract class Document extends Controls_Stack {
 		remove_filter( 'wp_save_post_revision_post_has_changed', [ $this, 'handle_revisions_changed' ] );
 	}
 
-	private function get_runtime_data_updaters() {
-		$runtime_data_updaters = [];
+	private function get_runtime_elements_iteration_actions() {
+		$runtime_elements_iteration_actions = [];
 
-		foreach ( $this->data_updaters as $data_updater ) {
-			if ( $data_updater->is_update_needed() ) {
-				$runtime_data_updaters[] = $data_updater;
+		foreach ( $this->elements_iteration_actions as $elements_iteration_action ) {
+			if ( $elements_iteration_action->is_update_needed() ) {
+				$runtime_elements_iteration_actions[] = $elements_iteration_action;
 			}
 		}
 
-		return $runtime_data_updaters;
+		return $runtime_elements_iteration_actions;
 	}
 
-	private function handle_page_elements( $elements, $data_updaters, $event ) {
+	private function iterate_elements( $elements, $elements_iteration_actions, $mode ) {
 		$unique_page_widgets = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, &$data_updaters ) {
+		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, $elements_iteration_actions ) {
 			$widget_name = isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : '';
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -1547,24 +1547,24 @@ abstract class Document extends Controls_Stack {
 			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, true ) ) {
 				$unique_page_widgets[] = $widget_name;
 
-				foreach ( $data_updaters as $data_updater ) {
-					$data_updater->update_unique_widget( $element );
+				foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+					$elements_iteration_action->update_unique_widget( $element );
 				}
 			}
 
-			foreach ( $data_updaters as $data_updater ) {
-				$data_updater->update_element( $element );
+			foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+				$elements_iteration_action->update_element( $element );
 			}
 
 			return $element_data;
 		} );
 
-		foreach ( $data_updaters as $data_updater ) {
-			$data_updater->after_elements_iteration( $event );
+		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+			$elements_iteration_action->after_elements_iteration( $mode );
 		}
 	}
 
-	private function register_data_updater( $data_updater ) {
-		$this->data_updaters[] = $data_updater;
+	private function register_elements_iteration_action( $elements_iteration_action ) {
+		$this->elements_iteration_actions[] = $elements_iteration_action;
 	}
 }

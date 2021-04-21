@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Base\Data_Updaters;
+namespace Elementor\Core\Base\Elements_Iteration_Actions;
 
 use Elementor\Element_Base;
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Document_Data_Updater {
+abstract class Document_Iteration_Action {
 	protected $document;
 
 	abstract public function is_update_needed();
