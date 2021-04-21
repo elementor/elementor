@@ -578,6 +578,7 @@ abstract class Base_App {
 					$options = [
 						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
 						'type' => $notice['type'],
+						'icon' => false,
 					];
 
 					$admin_notices->print_admin_notice( $options );
