@@ -179,4 +179,13 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 		return $document;
 	}
 
+	public function create_and_get_template( $template_type, $args = [] ) {
+		return $this->create_and_get( array_merge( [
+			'post_type' => 'post', // TODO: Should be 'elementor_library' but 'elementor_library' is not registered type.
+			'meta_input' => [
+				'_elementor_template_type' => $template_type,
+			],
+		], $args ));
+	}
+
 }

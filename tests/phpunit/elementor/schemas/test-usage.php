@@ -24,56 +24,6 @@ class Test_Usage extends Elementor_Test_Base {
 		$_SERVER['HTTP_USER_AGENT'] = self::HTTP_USER_AGENT;
 	}
 
-	protected function validation_against_schema( $data ) {
-		// Since the usage system represents objects as array instead of stdClass.
-		$data = json_decode( json_encode( $data ) );
-
-		// Validate
-		$validator = new Validator;
-		$validator->validate($data, (object) ['$ref' => 'file://' . ELEMENTOR_PATH . 'schemas/usage.json'] );
-
-		if ( ! $validator->isValid() ) {
-			$error_message = 'JSON does not validate. Violations:' . PHP_EOL;
-			foreach ( $validator->getErrors() as $error ) {
-				$error_message .= sprintf( '[%s] %s' . PHP_EOL, $error['property'], $error['message'] );
-			}
-
-			throw new ValidationException( $error_message );
-		}
-
-		return true;
-	}
-
-	protected function validation_current_tracking_data_against_schema() {
-		return $this->validation_against_schema( Tracker::get_tracking_data() );
-	}
-
-	protected function generate_plugins_mock() {
-		// Arrange
-		$plugins = new Collection( [
-			'elementor/elementor.php' => [
-				Module::PLUGIN_VERSION_TESTED_HEADER => '',
-				'Name' => 'Elementor',
-				'PluginURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash',
-				'Version' => ELEMENTOR_VERSION,
-				'Description' => 'The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!',
-				'Author' => "Elementor.com",
-				'AuthorURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash',
-				'TextDomain' => 'elementor',
-				'DomainPath' => '',
-				'Network' => false,
-				'RequiresWP' => '',
-				'RequiresPHP' => '',
-				'Title' => 'Elementor',
-				'AuthorName' => 'Elementor.com',
-			],
-		] );
-
-		$this->mock_wp_api( [
-			'get_plugins' => $plugins,
-		] );
-	}
-
 	public function test__ensure_clean_is_valid() {
 		// Arrange.
 		$this->generate_plugins_mock();
@@ -132,12 +82,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->factory()->create_post();
 
 		// Library
-		$this->factory()->create_and_get_custom_post( [
-			'post_type' => 'elementor_library',
-			'meta_input' => [
-				'_elementor_template_type' => 'popup'
-			],
-		]);
+		$this->factory()->documents->create_and_get_template( 'popup' );
 
 		// Elements
 		$this->factory()->documents->publish_and_get();
@@ -154,5 +99,55 @@ class Test_Usage extends Elementor_Test_Base {
 
 		// Act + Assert.
 		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );
+	}
+
+	protected function validation_against_schema( $data ) {
+		// Since the usage system represents objects as array instead of stdClass.
+		$data = json_decode( json_encode( $data ) );
+
+		// Validate
+		$validator = new Validator;
+		$validator->validate($data, (object) ['$ref' => 'file://' . ELEMENTOR_PATH . 'schemas/usage.json'] );
+
+		if ( ! $validator->isValid() ) {
+			$error_message = 'JSON does not validate. Violations:' . PHP_EOL;
+			foreach ( $validator->getErrors() as $error ) {
+				$error_message .= sprintf( '[%s] %s' . PHP_EOL, $error['property'], $error['message'] );
+			}
+
+			throw new ValidationException( $error_message );
+		}
+
+		return true;
+	}
+
+	protected function validation_current_tracking_data_against_schema() {
+		return $this->validation_against_schema( Tracker::get_tracking_data() );
+	}
+
+	protected function generate_plugins_mock() {
+		// Arrange
+		$plugins = new Collection( [
+			'elementor/elementor.php' => [
+				Module::PLUGIN_VERSION_TESTED_HEADER => '',
+				'Name' => 'Elementor',
+				'PluginURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash',
+				'Version' => ELEMENTOR_VERSION,
+				'Description' => 'The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!',
+				'Author' => "Elementor.com",
+				'AuthorURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash',
+				'TextDomain' => 'elementor',
+				'DomainPath' => '',
+				'Network' => false,
+				'RequiresWP' => '',
+				'RequiresPHP' => '',
+				'Title' => 'Elementor',
+				'AuthorName' => 'Elementor.com',
+			],
+		] );
+
+		$this->mock_wp_api( [
+			'get_plugins' => $plugins,
+		] );
 	}
 }

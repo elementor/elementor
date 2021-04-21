@@ -64,26 +64,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->module = $module = Module::instance();
 	}
 
-	private function get_global_usage_by_document( $document ) {
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		$document_name = $document->get_name();
-		if ( ! empty( $global_usage[ $document_name] ) ) {
-			$global_usage = $global_usage[ $document_name ];
-		}
-
-		return $global_usage;
-	}
-
-	private function ensure_dynamic_tags() {
-		if ( ! $this->isDynamicTags ) {
-			Plugin::$instance->dynamic_tags->register_tag( new Title() );
-			Plugin::$instance->dynamic_tags->register_tag( new Link() );
-
-			$this->isDynamicTags = true;
-		}
-	}
-
 	public function test_get_doc_type_count() {
 		// Arrange.
 		$doc_type = self::factory()->documents->publish_and_get()->get_name();
@@ -359,5 +339,25 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 1, $usage['button']['count'] );
+	}
+
+	private function get_global_usage_by_document( $document ) {
+		$global_usage = get_option( Module::OPTION_NAME, [] );
+
+		$document_name = $document->get_name();
+		if ( ! empty( $global_usage[ $document_name] ) ) {
+			$global_usage = $global_usage[ $document_name ];
+		}
+
+		return $global_usage;
+	}
+
+	private function ensure_dynamic_tags() {
+		if ( ! $this->isDynamicTags ) {
+			Plugin::$instance->dynamic_tags->register_tag( new Title() );
+			Plugin::$instance->dynamic_tags->register_tag( new Link() );
+
+			$this->isDynamicTags = true;
+		}
 	}
 }
