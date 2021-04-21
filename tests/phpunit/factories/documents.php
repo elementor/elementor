@@ -104,7 +104,7 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 	}
 
 	public function create_object( $args ) {
-		$type = 'page';
+		$type = $this->default_generation_definitions['type'];
 		$meta = [];
 
 		if ( isset( $args['type'] ) ) {
