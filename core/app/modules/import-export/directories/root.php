@@ -40,6 +40,7 @@ class Root extends Base {
 			'created' => gmdate( 'Y-m-d H:i:s' ),
 			'description' => $kit_post->post_excerpt,
 			'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
+			'site' => get_site_url(),
 		];
 
 		if ( $include_site_settings ) {
@@ -86,6 +87,8 @@ class Root extends Base {
 
 		if ( in_array( 'content', $include, true ) ) {
 			$sub_directories[] = new Content( $this->iterator, $this );
+
+			$sub_directories[] = new WP_Content( $this->iterator, $this );
 		}
 
 		return $sub_directories;

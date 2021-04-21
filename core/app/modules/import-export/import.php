@@ -2,6 +2,7 @@
 namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\App\Modules\ImportExport\Directories\Root;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -10,13 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Import extends Iterator {
 
 	final public function run() {
-		$zip = new \ZipArchive();
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $this->get_settings( 'file_name' ), [ 'json', 'xml' ] );
 
-		$zip->open( $this->get_settings( 'file_name' ) );
-
-		$temp_dir = $this->get_temp_dir();
-
-		$zip->extractTo( $temp_dir );
+		$this->temp_dir = $extraction_result['temp_extraction_directory'];
 
 		$settings = $this->read_json_file( 'manifest' );
 
@@ -24,28 +21,14 @@ class Import extends Iterator {
 
 		$import_result = $root_directory->run_import( $settings );
 
-		$this->remove_dir( $temp_dir );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->temp_dir );
 
 		return $import_result;
 	}
 
 	final public function read_json_file( $name ) {
-		$name = $this->get_temp_dir() . $this->get_archive_file_path( $name . '.json' );
+		$name = $this->get_archive_file_full_path( $name . '.json' );
 
 		return json_decode( file_get_contents( $name ), true );
-	}
-
-	private function remove_dir( $dir ) {
-		$dir_iterator = new \RecursiveDirectoryIterator( $dir, \RecursiveDirectoryIterator::SKIP_DOTS );
-
-		foreach ( new \RecursiveIteratorIterator( $dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST ) as $name => $item ) {
-			if ( is_dir( $name ) ) {
-				rmdir( $name );
-			} else {
-				unlink( $name );
-			}
-		}
-
-		return rmdir( $dir );
 	}
 }
