@@ -1,5 +1,5 @@
 # Default
-# To stay with fixed indent use tabs allways.
+# To stay with fixed indent use spaces always.
 *                                                                @kingyes
 *.js                                                             @kobizz @matipojo
 *.php                                                            @matipojo @kobizz
