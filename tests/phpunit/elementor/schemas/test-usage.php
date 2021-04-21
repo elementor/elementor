@@ -82,7 +82,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->factory()->create_post();
 
 		// Library
-		$this->factory()->documents->create_and_get_template( 'popup' );
+		$this->factory()->create_and_get_template( 'popup' );
 
 		// Elements
 		$this->factory()->documents->publish_and_get();

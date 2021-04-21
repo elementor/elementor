@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Testing\Factories;
 
-use Elementor\Plugin;
 use Elementor\Core\Base\Document;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -98,17 +98,6 @@ class Factory extends \WP_UnitTest_Factory {
 	}
 
 	/**
-	 * create new template and return it.
-	 *
-	 * @param $rags
-	 *
-	 * @return int|\WP_Error template id
-	 */
-	public function create_and_get_template_id( $rags ) {
-		return $this->create_template( $rags );
-	}
-
-	/**
 	 * @return \WP_User
 	 */
 	public function create_and_get_administrator_user() {
@@ -156,17 +145,12 @@ class Factory extends \WP_UnitTest_Factory {
 		return $document;
 	}
 
-	private function create_template( $template_data = [ 'title' => 'new template' ] ) {
-		$template_id = $this->post->create(
-			[
-				'post_title' => ! empty( $template_data['title'] ) ? $template_data['title'] : __( '(no title)', 'elementor' ),
-				'post_status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
-				'post_type' => \Elementor\TemplateLibrary\Source_Local::CPT,
-				'post_content' => '<ul><li title="Edit">Edit</li></ul><h3>This is the heading</h3>Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<h3>This is the heading</h3>Lorem ipsum dolor sit amet consectetur adipiscing elit dolor<a href="#">Click Here</a>',
-			]
-		);
-		update_post_meta( $template_id, '_elementor_data', '["type":"bla"]' );
-
-		return $template_id;
+	public function create_and_get_template( $template_type, $args = [] ) {
+		return $this->create_and_get_custom_post( array_merge( [
+			'post_type' => 'elementor_library',
+			'meta_input' => [
+				'_elementor_template_type' => $template_type,
+			],
+		], $args ) );
 	}
 }
