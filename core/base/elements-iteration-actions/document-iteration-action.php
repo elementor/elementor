@@ -10,13 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Document_Iteration_Action {
 	protected $document;
 
-	abstract public function is_update_needed();
+	protected $mode;
 
-	public function update_unique_widget( Element_Base $element_data ) {}
+	abstract public function is_action_needed();
 
-	public function update_element( Element_Base $element_data ) {}
+	public function unique_element_action( Element_Base $element_data ) {}
 
-	public function after_elements_iteration( $event ) {}
+	public function element_action( Element_Base $element_data ) {}
+
+	public function after_elements_iteration() {}
+
+	public function set_mode( $mode ) {
+		$this->mode = $mode;
+	}
 
 	public function __construct( $document ) {
 		$this->document = $document;

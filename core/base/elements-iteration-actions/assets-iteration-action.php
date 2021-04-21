@@ -17,7 +17,7 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	 */
 	private $page_assets = [];
 
-	public function update_element( Element_Base $element_data ) {
+	public function element_action( Element_Base $element_data ) {
 		$element_assets = $this->get_element_assets( $element_data );
 
 		if ( $element_assets ) {
@@ -25,7 +25,7 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 		}
 	}
 
-	public function is_update_needed() {
+	public function is_action_needed() {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return false;
 		}
@@ -34,28 +34,32 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
 		if ( is_array( $page_assets ) ) {
-			// If $page_assets is not empty then enabling the assets for loading.
-			if ( $page_assets ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets );
-			}
-
 			return false;
 		}
 
 		return true;
 	}
 
-	public function after_elements_iteration( $event ) {
+	public function after_elements_iteration() {
 		// Saving the page assets data.
 		$this->document->update_meta( self::ASSETS_META_KEY, $this->page_assets );
 
-		if ( 'render' === $event && $this->page_assets ) {
+		if ( 'render' === $this->mode && $this->page_assets ) {
 			Plugin::$instance->assets_loader->enable_assets( $this->page_assets );
 		}
 	}
 
-	private function get_page_assets() {
-		return $this->document->get_meta( self::ASSETS_META_KEY );
+	private function get_page_assets( $force_meta_fetch = false ) {
+		static $is_meta_fetched;
+		static $page_assets;
+
+		if ( ! $is_meta_fetched || $force_meta_fetch  ) {
+			$is_meta_fetched = true;
+
+			$page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
+		}
+
+		return $page_assets;
 	}
 
 	private function update_page_assets( $new_assets ) {
@@ -78,10 +82,6 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 		$element_assets = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
-			if ( ! isset( $controls[ $setting_key ] ) ) {
-				continue;
-			}
-
 			$control = $controls[ $setting_key ];
 
 			// Enabling assets loading from the registered control fields.
@@ -124,5 +124,16 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 		}
 
 		return $element_assets;
+	}
+
+	public function __construct( $document ) {
+		parent::__construct( $document );
+
+		$page_assets = $this->get_page_assets();
+
+		 // If $page_assets is not empty then enabling the assets for loading.
+		if ( $page_assets ) {
+			Plugin::$instance->assets_loader->enable_assets( $page_assets );
+		}
 	}
 }

@@ -1528,7 +1528,7 @@ abstract class Document extends Controls_Stack {
 		$runtime_elements_iteration_actions = [];
 
 		foreach ( $this->elements_iteration_actions as $elements_iteration_action ) {
-			if ( $elements_iteration_action->is_update_needed() ) {
+			if ( $elements_iteration_action->is_action_needed() ) {
 				$runtime_elements_iteration_actions[] = $elements_iteration_action;
 			}
 		}
@@ -1537,30 +1537,34 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function iterate_elements( $elements, $elements_iteration_actions, $mode ) {
-		$unique_page_widgets = [];
+		$unique_page_elements = [];
 
-		Plugin::$instance->db->iterate_data( $elements, function( $element_data ) use ( &$unique_page_widgets, $elements_iteration_actions ) {
-			$widget_name = isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : '';
+		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+			$elements_iteration_action->set_mode( $mode );
+		}
+
+		Plugin::$instance->db->iterate_data( $elements, function( array $element_data ) use ( &$unique_page_elements, $elements_iteration_actions ) {
+			$element_type = 'widget' === $element_data['elType'] ? $element_data['widgetType'] : $element_data['elType'];
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( $widget_name && ! in_array( $widget_name, $unique_page_widgets, true ) ) {
-				$unique_page_widgets[] = $widget_name;
+			if ( ! in_array( $element_type, $unique_page_elements, true ) ) {
+				$unique_page_elements[] = $element_type;
 
 				foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-					$elements_iteration_action->update_unique_widget( $element );
+					$elements_iteration_action->unique_element_action( $element );
 				}
 			}
 
 			foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-				$elements_iteration_action->update_element( $element );
+				$elements_iteration_action->element_action( $element );
 			}
 
 			return $element_data;
 		} );
 
 		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-			$elements_iteration_action->after_elements_iteration( $mode );
+			$elements_iteration_action->after_elements_iteration();
 		}
 	}
 
