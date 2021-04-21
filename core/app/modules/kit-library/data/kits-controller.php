@@ -3,6 +3,7 @@ namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
 use Elementor\Data\Base\Controller as Controller_Base;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Api_Response_Exception;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,7 +13,7 @@ class Kits_Controller extends Controller_Base {
 	/**
 	 * @var Repository
 	 */
-	private $repository;
+	public $repository;
 
 	/**
 	 * @param \WP_REST_Request $request
@@ -21,7 +22,10 @@ class Kits_Controller extends Controller_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$data = $this->repository->get_all( $request->get_param( 'force' ) );
+			$data = $this->repository->get_all(
+				get_current_user_id(),
+				$request->get_param( 'force' )
+			);
 		} catch ( Api_Response_Exception $exception ) {
 			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ) );
 		} catch ( \Exception $exception ) {
@@ -40,15 +44,16 @@ class Kits_Controller extends Controller_Base {
 	 */
 	public function get_item( $request ) {
 		try {
-			$data = $this->repository->find( $request->get_param( 'id' ) );
+			$data = $this->repository->find(
+				$request->get_param( 'id' ),
+				get_current_user_id()
+			);
 		} catch ( Api_Response_Exception $exception ) {
 			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
+		} catch ( Kit_Not_Found_Exception $exception ) {
+			return new \WP_Error( 'not_found', $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
-		}
-
-		if ( ! $data ) {
-			return new \WP_Error( 'not_found', __( 'Kit not found.', 'elementor' ), [ 'status' => 404 ] );
 		}
 
 		return new \WP_REST_Response( [
@@ -67,7 +72,7 @@ class Kits_Controller extends Controller_Base {
 	 * Must implement.
 	 */
 	public function register_endpoints() {
-		//
+		$this->register_endpoint( Endpoints\Kits_Favorites::class );
 	}
 
 	/**

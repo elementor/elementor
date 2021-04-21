@@ -2,12 +2,15 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Repository {
+	const FAVORITES_USER_META_KEY = 'elementor_kit_library_favorites';
+
 	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'features', 'types' ];
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
@@ -24,41 +27,55 @@ class Repository {
 	/**
 	 * Get all kits.
 	 *
+	 * @param null  $user_id
 	 * @param false $force_api_request
 	 *
 	 * @return Collection
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 */
-	public function get_all( $force_api_request = false ) {
+	public function get_all( $user_id = null, $force_api_request = false ) {
+		$favorites = $this->get_user_favorites_meta( $user_id );
+
 		return $this->get_kits_data( $force_api_request )
-			->map( function ( $kit ) {
-				return $this->transform_kit_api_response( $kit );
+			->map( function ( $kit ) use ( $favorites ) {
+				return $this->transform_kit_api_response( $kit, $favorites );
 			} );
 	}
 
 	/**
 	 * Get specific kit.
 	 *
-	 * @param $id
+	 * @param      $id
+	 * @param null $user_id
+	 * @param bool $manifest_included
 	 *
-	 * @return array|null
+	 * @return array
 	 * @throws Exceptions\Api_Response_Exception
 	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Kit_Not_Found_Exception
 	 */
-	public function find( $id ) {
+	public function find( $id, $user_id = null, $manifest_included = true ) {
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
 				return $kit['_id'] === $id;
 			} );
 
 		if ( ! $item ) {
-			return null;
+			throw new Kit_Not_Found_Exception( $id );
 		}
 
-		$manifest = $this->api_client->get_manifest( $id );
+		$manifest = null;
 
-		return $this->transform_kit_api_response( $item, $manifest );
+		if ( $manifest_included ) {
+			$manifest = $this->api_client->get_manifest( $id );
+		}
+
+		return $this->transform_kit_api_response(
+			$item,
+			$this->get_user_favorites_meta( $user_id ),
+			$manifest
+		);
 	}
 
 	/**
@@ -84,6 +101,62 @@ class Repository {
 					];
 				}, $taxonomies ) );
 			}, new Collection( [] ) );
+	}
+
+	/**
+	 * @param $user_id
+	 * @param $id
+	 *
+	 * @return array
+	 * @throws Exceptions\Api_Response_Exception
+	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Kit_Not_Found_Exception
+	 */
+	public function add_to_favorite( $user_id, $id ) {
+		// To check that the kit is exists.
+		$kit = $this->find( $id, $user_id, false );
+		$favorites = $this->get_user_favorites_meta( $user_id );
+
+		if ( in_array( $kit['id'], $favorites, true ) ) {
+			return $kit;
+		}
+
+		$favorites[] = $kit['id'];
+
+		$this->save_user_favorites_meta( $user_id, $favorites );
+
+		$kit['is_favorite'] = true;
+
+		return $kit;
+	}
+
+	/**
+	 * @param $user_id
+	 * @param $id
+	 *
+	 * @return array
+	 * @throws Exceptions\Api_Response_Exception
+	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Kit_Not_Found_Exception
+	 */
+	public function remove_from_favorite( $user_id, $id ) {
+		// To check that the kit is exists.
+		$kit = $this->find( $id, $user_id, false );
+		$favorites = $this->get_user_favorites_meta( $user_id );
+
+		if ( ! in_array( $kit['id'], $favorites, true ) ) {
+			return $kit;
+		}
+
+		$favorites = array_filter( $favorites, function ( $item ) use ( $kit ) {
+			return $item !== $kit['id'];
+		} );
+
+		$this->save_user_favorites_meta( $user_id, $favorites );
+
+		$kit['is_favorite'] = false;
+
+		return $kit;
 	}
 
 	/**
@@ -125,12 +198,13 @@ class Repository {
 	}
 
 	/**
-	 * @param      $kit
-	 * @param null|array $manifest
+	 * @param             $kit
+	 * @param array       $favorites
+	 * @param array|null  $manifest
 	 *
 	 * @return array
 	 */
-	private function transform_kit_api_response( $kit, $manifest = null ) {
+	private function transform_kit_api_response( $kit, $favorites = [], $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
 			return array_merge( $current, $kit[ $key ] );
 		}, [] );
@@ -143,6 +217,7 @@ class Repository {
 				'access_level' => $kit['access_level'],
 				'keywords' => $kit['keywords'],
 				'taxonomies' => $taxonomies,
+				'is_favorite' => in_array( $kit['_id'], $favorites, true ),
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
 		);
@@ -175,6 +250,29 @@ class Repository {
 			'preview_url' => isset( $manifest['site'] ) ? $manifest['site'] : '',
 			'documents' => $content->values(),
 		];
+	}
+
+	/**
+	 * @param $user_id
+	 *
+	 * @return array|mixed
+	 */
+	private function get_user_favorites_meta( $user_id ) {
+		$meta = get_user_meta( $user_id, static::FAVORITES_USER_META_KEY, true );
+
+		if ( ! $meta || ! is_array( $meta ) ) {
+			return [];
+		}
+
+		return $meta;
+	}
+
+	/**
+	 * @param       $user_id
+	 * @param array $favorites
+	 */
+	private function save_user_favorites_meta( $user_id, array $favorites ) {
+		update_user_meta( $user_id, static::FAVORITES_USER_META_KEY, $favorites );
 	}
 
 	/**

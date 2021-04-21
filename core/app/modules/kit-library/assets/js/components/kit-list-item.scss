@@ -49,4 +49,18 @@
 		color: theme-colors( light );
 		text-transform: uppercase;
 	}
+
+	&-favorite {
+		padding: spacing(5);
+		transition: $transition-hover;
+		border-radius: 4px;
+
+		&--active {
+			color: theme-colors( danger );
+		}
+
+		&:hover {
+			background-color: tints(200);
+		}
+	}
 }

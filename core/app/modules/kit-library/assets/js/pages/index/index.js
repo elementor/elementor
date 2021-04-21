@@ -73,6 +73,8 @@ export default function Index() {
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
 					/> }
+					onChange={ ( value ) => setFilter( value ) }
+					filter={ filter }
 				/>
 			}
 			header={
@@ -106,7 +108,10 @@ export default function Index() {
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
-						{ isSuccess && data.length <= 0 && <IndexNoResults /> }
+						{
+							isSuccess && data.length <= 0 &&
+							<IndexNoResults isFilteredByFavorite={ filter.favorite } clearFilter={ clearFilter }/>
+						}
 					</>
 				</Content>
 			</div>

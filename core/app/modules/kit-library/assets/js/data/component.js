@@ -1,4 +1,4 @@
-import * as dataCommands from './commands';
+import { Index, KitsFavorites } from './commands';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
@@ -6,6 +6,9 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	defaultData() {
-		return this.importCommands( dataCommands );
+		return this.importCommands( {
+			index: Index,
+			favorites: KitsFavorites,
+		} );
 	}
 }

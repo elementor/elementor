@@ -6,7 +6,8 @@ export const KEY = 'kits';
 
 const { useState, useMemo, useCallback, useEffect } = React;
 
-const initiateFilterState = {
+export const initialFilterState = {
+	favorite: false,
 	search: '',
 	taxonomies: taxonomyType.reduce( ( current, { key } ) => {
 		return {
@@ -18,10 +19,10 @@ const initiateFilterState = {
 
 export default function useKits() {
 	const [ force, setForce ] = useState( false );
-	const [ filter, setFilter ] = useState( initiateFilterState );
+	const [ filter, setFilter ] = useState( initialFilterState );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
-	const clearFilter = useCallback( () => setFilter( { ...initiateFilterState } ), [ setFilter ] );
+	const clearFilter = useCallback( () => setFilter( { ...initialFilterState } ), [ setFilter ] );
 
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 
@@ -52,6 +53,10 @@ function useFilteredData( data, filter ) {
 		}
 
 		let filteredData = [ ...data ];
+
+		if ( filter.favorite ) {
+			filteredData = filteredData.filter( favoriteFilter );
+		}
 
 		if ( filter.search ) {
 			filteredData = filteredData.filter( ( item ) => searchFilter( item, filter.search ) );
@@ -87,4 +92,8 @@ function taxonomiesFilter( item, taxonomies ) {
 	return taxonomies.some( ( taxonomy ) =>
 		item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
 	);
+}
+
+function favoriteFilter( item ) {
+	return item.isFavorite;
 }

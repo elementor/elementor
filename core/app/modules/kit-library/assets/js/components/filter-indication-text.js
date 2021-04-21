@@ -13,7 +13,8 @@ export default function FilterIndicationText( props ) {
 	const isFilterActive = useMemo(
 		() =>
 			props.filter.search ||
-			selectedTaxonomies.length,
+			selectedTaxonomies.length ||
+			props.filter.favorite,
 		[ props.filter ]
 	);
 
@@ -62,6 +63,7 @@ FilterIndicationText.propTypes = {
 	filter: PropTypes.shape( {
 		search: PropTypes.string,
 		taxonomies: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
+		favorite: PropTypes.bool,
 	} ),
 	resultCount: PropTypes.number.isRequired,
 	onClear: PropTypes.func.isRequired,
