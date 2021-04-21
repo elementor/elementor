@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -220,7 +221,9 @@ class Frontend extends App {
 
 		$this->post_id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $this->post_id ) ) {
+		$document = Plugin::$instance->documents->get( $this->post_id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
@@ -280,7 +283,9 @@ class Frontend extends App {
 
 		$id = get_the_ID();
 
-		if ( is_singular() && Plugin::$instance->db->is_built_with_elementor( $id ) ) {
+		$document = Plugin::$instance->documents->get( $id );
+
+		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
 			$classes[] = 'elementor-page elementor-page-' . $id;
 		}
 
@@ -483,7 +488,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.9.1'
+			'5.11.0'
 		);
 
 		wp_register_style(
@@ -513,10 +518,10 @@ class Frontend extends App {
 
 		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
 
-		$has_custom_file = Responsive::has_custom_breakpoints();
+		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Responsive::get_stylesheet_templates_path() . $frontend_file_name );
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
 
 			$time = $frontend_file->get_meta( 'time' );
 
@@ -580,10 +585,10 @@ class Frontend extends App {
 
 		wp_enqueue_script( 'elementor-frontend' );
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
-				'preloaded-elements-handlers',
-				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				'preloaded-modules',
+				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
 				[
 					'elementor-frontend',
 				],
@@ -624,7 +629,10 @@ class Frontend extends App {
 		 */
 		do_action( 'elementor/frontend/before_enqueue_styles' );
 
-		wp_enqueue_style( 'elementor-icons' );
+		// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
+		if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+			wp_enqueue_style( 'elementor-icons' );
+		}
 		wp_enqueue_style( 'elementor-animations' );
 		wp_enqueue_style( 'elementor-frontend' );
 
@@ -793,7 +801,10 @@ class Frontend extends App {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $google_fonts['google'] ) );
+			// Defining a font-display type to google fonts.
+			$font_display_url_str = '&display=' . Fonts::get_font_display_setting();
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $google_fonts['google'] ), $font_display_url_str );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -927,11 +938,11 @@ class Frontend extends App {
 			return '';
 		}
 
-		if ( ! Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
 			return '';
 		}
-
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		// Change the current post, so widgets can use `documents->get_current`.
 		Plugin::$instance->documents->switch_to_document( $document );
@@ -1160,12 +1171,15 @@ class Frontend extends App {
 	protected function get_init_settings() {
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode( Plugin::$instance->preview->get_post_id() );
 
+		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
+
+		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isOptimizedJS' => $this->is_optimized_js_mode(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
@@ -1182,11 +1196,17 @@ class Frontend extends App {
 				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
+			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
+			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
+			'responsive' => [
+				'breakpoints' => $this->get_breakpoints_config(),
+			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
+			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => ELEMENTOR_ASSETS_URL,
+				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
 			],
 		];
 
@@ -1200,11 +1220,21 @@ class Frontend extends App {
 
 			$title = Utils::urlencode_html_entities( wp_get_document_title() );
 
+			// Try to use the 'large' WP image size because the Pinterest share API
+			// has problems accepting shares with large images sometimes, and the WP 'large' thumbnail is
+			// the largest default WP image size that will probably not be changed in most sites
+			$featured_image_url = get_the_post_thumbnail_url( null, 'large' );
+
+			// If the large size was nullified, use the full size which cannot be nullified/deleted
+			if ( ! $featured_image_url ) {
+				$featured_image_url = get_the_post_thumbnail_url( null, 'full' );
+			}
+
 			$settings['post'] = [
 				'id' => $post->ID,
 				'title' => $title,
 				'excerpt' => $post->post_excerpt,
-				'featuredImage' => get_the_post_thumbnail_url(),
+				'featuredImage' => $featured_image_url,
 			];
 		} else {
 			$settings['post'] = [
@@ -1235,6 +1265,23 @@ class Frontend extends App {
 		}
 
 		return $settings;
+	}
+
+	private function get_breakpoints_config() {
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+
+		$config = [];
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
+			$config[ $breakpoint_name ] = [
+				'label' => $breakpoint->get_label(),
+				'value' => $breakpoint->get_value(),
+				'direction' => $breakpoint->get_direction(),
+				'is_enabled' => $breakpoint->is_enabled(),
+			];
+		}
+
+		return $config;
 	}
 
 	/**
@@ -1298,19 +1345,18 @@ class Frontend extends App {
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
 
-	private function is_optimized_js_mode() {
-		return 'enabled' === get_option( 'elementor_optimized_js_loading' );
+	private function is_improved_assets_loading() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 	}
 
 	private function get_elementor_frontend_dependencies() {
 		$dependencies = [
 			'elementor-frontend-modules',
-			'elementor-dialog',
 			'elementor-waypoints',
-			'share-link',
+			'jquery-ui-position',
 		];
 
-		if ( ! $this->is_optimized_js_mode() ) {
+		if ( ! $this->is_improved_assets_loading() ) {
 			wp_register_script(
 				'swiper',
 				$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/' ),
@@ -1320,6 +1366,8 @@ class Frontend extends App {
 			);
 
 			$dependencies[] = 'swiper';
+			$dependencies[] = 'share-link';
+			$dependencies[] = 'elementor-dialog';
 		}
 
 		return $dependencies;

@@ -1,5 +1,4 @@
 import AddSectionView from './add-section/independent';
-import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
 import DocumentHelper from 'elementor-document/helper';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
@@ -24,13 +23,6 @@ const Preview = BaseSectionsContainerView.extend( {
 				},
 			};
 
-		// TODO: the `2` check is for BC reasons
-		if ( ! elementor.config.user.introduction.rightClick && ! elementor.config.user.introduction[ 2 ] ) {
-			behaviors.introduction = {
-				behaviorClass: RightClickIntroductionBehavior,
-			};
-		}
-
 		return jQuery.extend( parentBehaviors, behaviors );
 	},
 
@@ -49,7 +41,7 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
+						title: __( 'Paste', 'elementor' ),
 						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
@@ -65,12 +57,12 @@ const Preview = BaseSectionsContainerView.extend( {
 				actions: [
 					{
 						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
+						title: __( 'Copy All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
-						title: elementor.translate( 'delete_all_content' ),
+						title: __( 'Delete All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
 					},
@@ -82,7 +74,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	onRender: function() {
 		let $contentContainer;
 
-		if ( elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
 			$contentContainer = this.$el;
 		} else {
 			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );

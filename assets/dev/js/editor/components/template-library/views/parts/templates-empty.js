@@ -12,16 +12,16 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 
 	modesStrings: {
 		empty: {
-			title: elementor.translate( 'templates_empty_title' ),
-			message: elementor.translate( 'templates_empty_message' ),
+			title: __( 'Haven’t Saved Templates Yet?', 'elementor' ),
+			message: __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
 		},
 		noResults: {
-			title: elementor.translate( 'templates_no_results_title' ),
-			message: elementor.translate( 'templates_no_results_message' ),
+			title: __( 'No Results Found', 'elementor' ),
+			message: __( 'Please make sure your search is spelled correctly or try a different words.', 'elementor' ),
 		},
 		noFavorites: {
-			title: elementor.translate( 'templates_no_favorites_title' ),
-			message: elementor.translate( 'templates_no_favorites_message' ),
+			title: __( 'No Favorite Templates', 'elementor' ),
+			message: __( 'You can mark any pre-designed template as a favorite.', 'elementor' ),
 		},
 	},
 

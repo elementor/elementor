@@ -100,10 +100,10 @@ class Element_Column extends Element_Base {
 	 *
 	 * Used to add new controls to the column element.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		// Section Layout.
 		$this->start_controls_section(
 			'layout',
@@ -993,7 +993,7 @@ class Element_Column extends Element_Base {
 	 * @since 1.3.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
+	protected function add_render_attributes() {
 
 		$is_inner = $this->get_data( 'isInner' );
 
@@ -1009,7 +1009,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		parent::_add_render_attributes();
+		parent::add_render_attributes();
 	}
 
 	/**
@@ -1049,6 +1049,6 @@ class Element_Column extends Element_Base {
 			$html_tag = 'div';
 		}
 
-		return $html_tag;
+		return Utils::validate_html_tag( $html_tag );
 	}
 }

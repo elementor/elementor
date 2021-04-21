@@ -139,9 +139,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
-					elementor.translate( 'enable_fa5' ),
-					elementor.translate( 'dialog_confirm_enable_fa5' ),
-					elementor.translate( 'update' ),
+					__( 'Elementor\'s New Icon Library', 'elementor' ),
+					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Upgrade".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					__( 'Update', 'elementor' ),
 					onConfirm
 				);
 				enableMigrationDialog.show();
@@ -170,12 +170,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 			library: { type: [ 'image/svg+xml' ] },
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
+					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: [ 'image/svg+xml' ] } ),
 					multiple: false,
 					date: false,

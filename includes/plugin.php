@@ -1,7 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
@@ -16,11 +18,14 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
+use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
+use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -361,7 +366,7 @@ class Plugin {
 	 *
 	 * @var Files_Manager
 	 */
-	public $posts_css_manager;
+	private $posts_css_manager;
 
 	/**
 	 * WordPress widgets manager.
@@ -421,6 +426,11 @@ class Plugin {
 	public $logger;
 
 	/**
+	 * @var Dev_Tools
+	 */
+	private $dev_tools;
+
+	/**
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
@@ -443,9 +453,24 @@ class Plugin {
 	public $app;
 
 	/**
+	 * @var Wp_Api
+	 */
+	public $wp;
+
+	/**
 	 * @var Experiments_Manager
 	 */
 	public $experiments;
+
+	/**
+	 * @var Uploads_Manager
+	 */
+	public $uploads_manager;
+
+	/**
+	 * @var Breakpoints_Manager
+	 */
+	public $breakpoints;
 
 	/**
 	 * Clone.
@@ -575,6 +600,7 @@ class Plugin {
 	 */
 	private function init_components() {
 		$this->experiments = new Experiments_Manager();
+		$this->breakpoints = new Breakpoints_Manager();
 		$this->inspector = new Inspector();
 		$this->debugger = $this->inspector;
 
@@ -591,23 +617,21 @@ class Plugin {
 		$this->files_manager = new Files_Manager();
 		$this->assets_manager = new Assets_Manager();
 		$this->icons_manager = new Icons_Manager();
-		/*
-		 * @TODO: Remove deprecated alias
-		 */
-		$this->posts_css_manager = $this->files_manager;
 		$this->settings = new Settings();
 		$this->tools = new Tools();
 		$this->editor = new Editor();
 		$this->preview = new Preview();
 		$this->frontend = new Frontend();
-		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->maintenance_mode = new Maintenance_Mode();
 		$this->dynamic_tags = new Dynamic_Tags_Manager();
 		$this->modules_manager = new Modules_Manager();
+		$this->templates_manager = new TemplateLibrary\Manager();
 		$this->role_manager = new Core\RoleManager\Role_Manager();
 		$this->system_info = new System_Info_Module();
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
+		$this->wp = new Wp_Api();
+		$this->uploads_manager = new Uploads_Manager();
 
 		User::init();
 		Api::init();
@@ -701,6 +725,30 @@ class Plugin {
 		require_once ELEMENTOR_PATH . '/includes/autoloader.php';
 
 		Autoloader::run();
+	}
+
+	/**
+	 * Plugin Magic Getter
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param $property
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function __get( $property ) {
+		if ( 'posts_css_manager' === $property ) {
+			self::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument( 'Plugin::$instance->posts_css_manager', '2.7.0', 'Plugin::$instance->files_manager' );
+
+			return $this->files_manager;
+		}
+
+		if ( property_exists( $this, $property ) ) {
+			throw new \Exception( 'Cannot access private property' );
+		}
+
+		return null;
 	}
 
 	/**

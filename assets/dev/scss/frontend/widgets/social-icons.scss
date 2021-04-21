@@ -31,13 +31,17 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 }
 
-.elementor-social-icon {
-	display: inline-flex;
-	background-color: $gray;
+// This is for specificity, to avoid being overridden by Theme Style Link Typography.
+.elementor-icon.elementor-social-icon {
 	font-size: $icon-size;
 	line-height: $icon-size;
 	width: $icon-total-size;
 	height: $icon-total-size;
+}
+
+.elementor-social-icon {
+	display: inline-flex;
+	background-color: $gray;
 	align-items: center;
 	justify-content: center;
 	text-align: center;

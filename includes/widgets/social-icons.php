@@ -75,10 +75,10 @@ class Widget_Social_Icons extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_social_icon',
 			[
@@ -310,6 +310,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
+				'prefix_class' => 'e-grid-align%s-',
 				'default' => 'center',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
@@ -609,7 +610,7 @@ class Widget_Social_Icons extends Widget_Base {
 				$this->add_link_attributes( $link_key, $item['link'] );
 
 				?>
-				<div class="elementor-grid-item">
+				<span class="elementor-grid-item">
 					<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
 						<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
 						<?php
@@ -619,7 +620,7 @@ class Widget_Social_Icons extends Widget_Base {
 							<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
 						<?php } ?>
 					</a>
-				</div>
+				</span>
 			<?php } ?>
 		</div>
 		<?php
@@ -642,7 +643,7 @@ class Widget_Social_Icons extends Widget_Base {
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
-				<div class="elementor-grid-item">
+				<span class="elementor-grid-item">
 					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
 						<span class="elementor-screen-only">{{{ social }}}</span>
 						<#
@@ -654,7 +655,7 @@ class Widget_Social_Icons extends Widget_Base {
 							<# }
 						#>
 					</a>
-				</div>
+				</span>
 			<# } ); #>
 		</div>
 		<?php

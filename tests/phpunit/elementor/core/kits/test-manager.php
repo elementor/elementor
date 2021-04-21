@@ -1,13 +1,19 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Files\Manager as Files_Manager;
+use Elementor\Modules\AdminBar\Module as Adminbar_Module;
 
 class Test_Manager extends Elementor_Test_Base {
 	public function test_get_active_id() {
+		// Make sure the the 'wp_trash_post' function will actually throw the kit to trash
+		$_GET['force_delete_kit'] = '1';
+
 		// Test deleted kit.
 		$test_description = 'active id should return a new kit id after delete kit';
 		$active_id = Plugin::$instance->kits_manager->get_active_id();
@@ -96,5 +102,107 @@ class Test_Manager extends Elementor_Test_Base {
 		$kit->save( [] );
 
 		Plugin::instance()->files_manager = $file_manager;
+	}
+
+	public function test_before_trash_kit() {
+		// Arrange
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Assert (Expect)
+		$this->expectException(\WPDieException::class);
+
+		// Act
+		do_action( 'wp_trash_post', $kit_id );
+	}
+
+	public function test_before_trash_kit__when_permanently_deleting() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// Assert (Expect)
+		$this->expectException(\WPDieException::class);
+
+		// Act
+		do_action( 'before_delete_post', $kit->get_id() );
+	}
+
+	public function test_before_trash_kit__when_permanently_deleting_and_kit_in_trash() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		wp_update_post([
+			'ID' => $kit->get_id(),
+			'post_status' => 'trash'
+		]);
+
+		// Refresh cache.
+		Plugin::$instance->documents->get( $kit->get_id(), false );
+
+		// Act
+		do_action( 'before_delete_post', $kit->get_id() );
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
+	}
+
+	public function test_before_trash_kit__should_not_die_if_the_post_is_not_a_kit() {
+		// Arrange
+		$post_id = $this->factory()->post->create_and_get()->ID;
+
+		// Act
+		do_action( 'wp_trash_post', $post_id);
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
+	}
+
+	public function test_before_trash_kit__should_not_die_if_force_trash_query_string_param_passed(  ) {
+		// Arrange
+		$_GET['force_delete_kit'] = '1';
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Act
+		do_action( 'wp_trash_post', $kit_id );
+
+		// This assert is just to make sure that the test is passed the exception.
+		$this->assertTrue( true );
+	}
+
+	public function test_add_menu_in_admin_bar__ensure_menu_item() {
+		global $post;
+
+		$document = self::factory()->create_post();
+
+		$post = $document->get_post();
+
+		$expected = [
+			'id' => 'elementor_site_settings',
+			'title' => 'Site Settings',
+			'sub_title' => 'Site',
+			'href' => $document->get_edit_url() . '#' . Manager::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+			'class' => 'elementor-site-settings',
+			'parent_class' => 'elementor-second-section',
+		];
+
+		$adminbar_settings = ( new Adminbar_Module() )->get_settings();
+
+		$this->assertEqualSets( $expected, $adminbar_settings['elementor_edit_page']['children'][0] );
+	}
+
+	public function test_add_menu_in_admin_bar__not_built_with_elementor_ensure_item_from_recent_edited_post() {
+		global $post;
+
+		$document_that_built_with_elementor = self::factory()->create_post();
+		wp_update_post( $document_that_built_with_elementor->get_post() );
+
+		$document_not_built_with_elementor = self::factory()->create_post();
+		$document_not_built_with_elementor->update_meta( Document::BUILT_WITH_ELEMENTOR_META_KEY, false );
+
+		$post = $document_not_built_with_elementor->get_post();
+
+		$adminbar_settings = ( new Adminbar_Module() )->get_settings();
+		$expected = $document_that_built_with_elementor->get_edit_url() . '#' . Manager::E_HASH_COMMAND_OPEN_SITE_SETTINGS;
+
+		$this->assertEquals( $expected, $adminbar_settings['elementor_edit_page']['children'][0]['href'] );
 	}
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -554,6 +556,13 @@ class Group_Control_Background extends Group_Control_Base {
 			'description' => __( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
+			'dynamic' => [
+				'active' => true,
+				'categories' => [
+					TagsModule::POST_META_CATEGORY,
+					TagsModule::URL_CATEGORY,
+				],
+			],
 			'condition' => [
 				'background' => [ 'video' ],
 			],
@@ -598,6 +607,21 @@ class Group_Control_Background extends Group_Control_Base {
 		$fields['play_on_mobile'] = [
 			'label' => __( 'Play On Mobile', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
+			'condition' => [
+				'background' => [ 'video' ],
+			],
+			'of_type' => 'video',
+			'frontend_available' => true,
+		];
+
+		// This control was added to handle a bug with the Youtube Embed API. The bug: If there is a video with Privacy
+		// Mode on, and at the same time the page contains another video WITHOUT privacy mode on, one of the videos
+		// will not run properly. This added control allows users to align all their videos to one host (either
+		// youtube.com or youtube-nocookie.com, depending on whether the user wants privacy mode on or not).
+		$fields['privacy_mode'] = [
+			'label' => __( 'Privacy mode', 'elementor' ),
+			'type' => Controls_Manager::SWITCHER,
+			'description' => __( 'Only works for YouTube videos.', 'elementor' ),
 			'condition' => [
 				'background' => [ 'video' ],
 			],

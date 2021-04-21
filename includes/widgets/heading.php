@@ -94,10 +94,10 @@ class Widget_Heading extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
 			[
@@ -313,7 +313,7 @@ class Widget_Heading extends Widget_Base {
 			$title = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $title );
 		}
 
-		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', $settings['header_size'], $this->get_render_attribute_string( 'title' ), $title );
+		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['header_size'] ), $this->get_render_attribute_string( 'title' ), $title );
 
 		echo $title_html;
 	}
@@ -339,7 +339,8 @@ class Widget_Heading extends Widget_Base {
 
 		view.addInlineEditingAttributes( 'title' );
 
-		var title_html = '<' + settings.header_size  + ' ' + view.getRenderAttributeString( 'title' ) + '>' + title + '</' + settings.header_size + '>';
+		var headerSizeTag = elementor.helpers.validateHTMLTag( settings.header_size ),
+			title_html = '<' + headerSizeTag  + ' ' + view.getRenderAttributeString( 'title' ) + '>' + title + '</' + headerSizeTag + '>';
 
 		print( title_html );
 		#>

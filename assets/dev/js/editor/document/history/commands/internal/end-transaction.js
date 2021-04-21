@@ -14,7 +14,7 @@ export class EndTransaction extends Base {
 
 		// 'elements' title for multiple containers.
 		if ( transactions.length > 1 ) {
-			title = elementor.translate( 'elements' );
+			title = __( 'Elements', 'elementor' );
 			subTitle = '';
 		}
 
