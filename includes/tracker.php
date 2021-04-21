@@ -293,7 +293,7 @@ class Tracker {
 
 		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
+				$usage[ $result->post_type ][ $result->post_status ] = (int) $result->hits;
 			}
 		}
 
@@ -319,17 +319,25 @@ class Tracker {
 		$usage = [];
 
 		$results = $wpdb->get_results(
-			"SELECT `meta_value`, COUNT(`ID`) `hits`
+			"SELECT `meta_value`, COUNT(`ID`) `hits`, `post_status`
 				FROM {$wpdb->posts} `p`
 				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
 				WHERE `post_type` = 'elementor_library'
 					AND `meta_key` = '_elementor_template_type'
-				GROUP BY `post_type`, `meta_value`;"
+				GROUP BY `post_type`, `meta_value`, `post_status`;"
 		);
 
 		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[ $result->meta_value ] = $result->hits;
+				if ( empty( $usage[ $result->meta_value ] ) ) {
+					$usage[ $result->meta_value ] = [];
+				}
+
+				if ( empty( $usage[ $result->meta_value ][ $result->post_status ] ) ) {
+					$usage[ $result->meta_value ][ $result->post_status ] = 0;
+				}
+
+				$usage[ $result->meta_value ][ $result->post_status ] += $result->hits;
 			}
 		}
 

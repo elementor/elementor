@@ -45,7 +45,7 @@
 			"type": "object",
 			"patternProperties": {
 				".*\\.php$": {
-					"$id": "#/system/plugins/active_plugins/$plugin",
+					"$id": "#/definitions/plugins/plugin",
 					"type": "object",
 					"required": [
 						"Elementor tested up to",
@@ -165,6 +165,18 @@
 						}
 					},
 					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"count_per_post_status": {
+			"$id": "#/definitions/count_per_post_status",
+			"type": "object",
+			"patternProperties": {
+				"(draft|pending|private|publish|inherit|trash)$": {
+					"$id": "#/definitions/count_per_post_status/count",
+					"type": "integer",
+					"title": "Count per post-status"
 				}
 			},
 			"additionalProperties": false
@@ -579,17 +591,8 @@
 						"([^\\s]+)": {
 							"$id": "#/usages/posts/$post-type",
 							"$comment": "Not including 'elementor-library'",
-							"type": "object",
-							"title": "Posts per post-type",
-							"patternProperties": {
-								"(draft|pending|private|publish|inherit|trash)$": {
-									"$id": "#/usages/posts/$post-type/$post-status",
-									"$comment": "TODO: Should be number",
-									"type": "string",
-									"title": "Count of post(s) per post-type"
-								}
-							},
-							"additionalProperties": false
+							"$ref": "#/definitions/count_per_post_status",
+							"title": "Posts per post-type"
 						}
 					},
 					"additionalProperties": false
@@ -606,9 +609,8 @@
 					"patternProperties": {
 						"([^\\s]+)": {
 							"$id": "#/usages/library/$template_type",
-							"$comment": "TODO: Should be number",
-							"title": "Count of template-type usage",
-							"type": "string"
+							"$ref": "#/definitions/count_per_post_status",
+							"title": "Libraries per template type"
 						}
 					},
 					"additionalProperties": false
