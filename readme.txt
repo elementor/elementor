@@ -219,6 +219,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.2.1 - 2021-04-21 =
+* Tweak: Changed the minimum width of Mobile breakpoint to 320px
+* Fix: Global Typography settings were printed as undefined variables
+* Fix: Close button in responsive bar didn't worked in the Desktop breakpoint
+* Fix: UI glitch in the dashboard admin notices
+* Fix: Right click contextual menu appears underneath the Navigator
+* Fix: Panel resize caused UI glitches in RTL websites
+* Fix: Responsive device icons adjustments in RTL websites
+
 = 3.2.0 - 2021-04-19 =
 * New: Meet Text Path widget - Add more text design options to your headings
 * New: Meet the new Responsive Mode * Easily edit your responsive design
