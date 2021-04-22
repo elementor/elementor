@@ -8,6 +8,11 @@ jobs:
     strategy:
       fail-fast: false
     steps:
+      - uses: actions/checkout@master
+      - name: Block non-permitted users
+        uses: StyleShit/action-whitelist-users@master
+        with:
+          whitelist-file: '.github/workflows/whitelist.txt'
       - name: Elementor Tests / Init
         env:
           TOKEN: ${{ secrets.DEVOPS_TOKEN }}
