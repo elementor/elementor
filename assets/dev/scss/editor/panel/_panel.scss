@@ -28,6 +28,7 @@
 	z-index: $first-layer;
 	font-family: $admin-font-family;
 	font-size: 13px;
+	@include start(0);
 
 	.elementor-editor-preview & {
 		--e-is-preview-mode: 1;
