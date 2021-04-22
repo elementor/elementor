@@ -346,24 +346,22 @@ export default class Container extends ArgsObject {
 		}
 
 		// Try to get the value in the order: Global, Local, Global default.
-		if ( this.getGlobalKey( controlName ) ) {
-			const globalValue = this.getGlobalValue( controlName );
+		let globalValue;
 
-			if ( globalValue ) {
-				return globalValue;
-			}
+		if ( this.getGlobalKey( name ) ) {
+			globalValue = this.getGlobalValue( name );
 		}
 
-		return localValue || this.getGlobalDefault( controlName );
+		return globalValue || localValue || this.getGlobalDefault( name );
 	}
 
-	getGlobalKey( controlName ) {
-		return this.globals.get( controlName );
+	getGlobalKey( name ) {
+		return this.globals.get( name );
 	}
 
-	getGlobalValue( controlName ) {
-		const control = this.controls[ controlName ],
-			globalKey = this.getGlobalKey( controlName ),
+	getGlobalValue( name ) {
+		const control = this.controls[ name ],
+			globalKey = this.getGlobalKey( name ),
 			globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
