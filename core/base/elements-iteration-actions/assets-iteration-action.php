@@ -29,6 +29,11 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	}
 
 	public function is_action_needed() {
+		// No need to evaluate in preview mode, will be made in the saving process.
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return false;
+		}
+		
 		$page_assets = $this->get_page_assets();
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
