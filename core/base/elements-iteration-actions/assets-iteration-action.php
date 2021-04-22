@@ -33,7 +33,7 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return false;
 		}
-		
+
 		$page_assets = $this->get_page_assets();
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
@@ -139,7 +139,7 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	public function __construct( $document ) {
 		parent::__construct( $document );
 
-		// No need to enable assets in preview mode.
+		// No need to enable assets in preview mode, all assets will be loaded by default by the assets loader.
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return;
 		}
