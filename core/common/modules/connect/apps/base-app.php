@@ -23,6 +23,11 @@ abstract class Base_App {
 	protected $auth_mode = '';
 
 	/**
+	 * @var \WP_Http
+	 */
+	protected $http;
+
+	/**
 	 * @since 2.3.0
 	 * @access protected
 	 * @abstract
@@ -331,35 +336,48 @@ abstract class Base_App {
 	}
 
 	/**
-	 * @since 2.3.0
-	 * @access protected
+	 * Get all the connect info
+	 *
+	 * @return array
 	 */
-	protected function request( $action, $request_body = [], $as_array = false ) {
-		$request_body = [
+	protected function get_connect_info() {
+		return [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
 			'client_id' => $this->get( 'client_id' ),
 			'local_id' => get_current_user_id(),
 			'site_key' => $this->get_site_key(),
 			'home_url' => trailingslashit( home_url() ),
-		] + $request_body;
+		];
+	}
 
-		$headers = [];
-
-		if ( $this->is_connected() ) {
-			$headers['X-Elementor-Signature'] = hash_hmac( 'sha256', wp_json_encode( $request_body, JSON_NUMERIC_CHECK ), $this->get( 'access_token_secret' ) );
-		}
-
-		$response = wp_remote_post( $this->get_api_url() . '/' . $action, [
-			'body' => $request_body,
-			'headers' => $headers,
-			'timeout' => 25,
+	/**
+	 * Send an http request
+	 *
+	 * @param       $method
+	 * @param       $endpoint
+	 * @param array $args
+	 *
+	 * @return mixed|\WP_Error
+	 */
+	protected function http_request( $method, $endpoint, $args = [] ) {
+		$connect_info = array_merge_recursive( $this->get_connect_info(), [
+			'endpoint' => $endpoint,
 		] );
 
+		$args = array_replace_recursive( [
+			'headers' => [
+				'X-Elementor-Connect-Info' => wp_json_encode( $connect_info, JSON_NUMERIC_CHECK ),
+				'X-Elementor-Signature' => $this->is_connected() ? $this->generate_signature( $connect_info ) : null,
+			],
+			'method' => $method,
+			'timeout' => 25,
+		], $args );
+
+		$response = $this->http->request( $this->get_api_url() . '/' . $endpoint, $args );
+
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, [
-				'back_link' => true,
-			] );
+			wp_die( $response, [ 'back_link' => true ] );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -367,7 +385,6 @@ abstract class Base_App {
 
 		if ( ! $response_code ) {
 			return new \WP_Error( 500, 'No Response' );
-
 		}
 
 		// Server sent a success message without content.
@@ -375,16 +392,11 @@ abstract class Base_App {
 			$body = true;
 		}
 
-		$body = json_decode( $body, $as_array );
-
 		if ( false === $body ) {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
 		if ( 200 !== $response_code ) {
-			// In case $as_array = true.
-			$body = (object) $body;
-
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = isset( $body->code ) ? $body->code : $response_code;
 
@@ -396,7 +408,119 @@ abstract class Base_App {
 			return new \WP_Error( $code, $message );
 		}
 
+		$body = json_decode( $body, true );
+
 		return $body;
+	}
+//
+//	/**
+//	 * @since 2.3.0
+//	 * @access protected
+//	 */
+//	protected function request( $action, $request_body = [], $as_array = false ) {
+//		$request_body = [
+//			'app' => $this->get_slug(),
+//			'access_token' => $this->get( 'access_token' ),
+//			'client_id' => $this->get( 'client_id' ),
+//			'local_id' => get_current_user_id(),
+//			'site_key' => $this->get_site_key(),
+//			'home_url' => trailingslashit( home_url() ),
+//		] + $request_body;
+//
+//		$headers = [];
+//
+//		if ( $this->is_connected() ) {
+//			$headers['X-Elementor-Signature'] = hash_hmac( 'sha256', wp_json_encode( $request_body, JSON_NUMERIC_CHECK ), $this->get( 'access_token_secret' ) );
+//		}
+//
+//		$response = wp_remote_post( $this->get_api_url() . '/' . $action, [
+//			'body' => $request_body,
+//			'headers' => $headers,
+//			'timeout' => 25,
+//		] );
+//
+//		if ( is_wp_error( $response ) ) {
+//			wp_die( $response, [
+//				'back_link' => true,
+//			] );
+//		}
+//
+//		$body = wp_remote_retrieve_body( $response );
+//		$response_code = (int) wp_remote_retrieve_response_code( $response );
+//
+//		if ( ! $response_code ) {
+//			return new \WP_Error( 500, 'No Response' );
+//
+//		}
+//
+//		// Server sent a success message without content.
+//		if ( 'null' === $body ) {
+//			$body = true;
+//		}
+//
+//		$body = json_decode( $body, $as_array );
+//
+//		if ( false === $body ) {
+//			return new \WP_Error( 422, 'Wrong Server Response' );
+//		}
+//
+//		if ( 200 !== $response_code ) {
+//			// In case $as_array = true.
+//			$body = (object) $body;
+//
+//			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
+//			$code = isset( $body->code ) ? $body->code : $response_code;
+//
+//			if ( 401 === $code ) {
+//				$this->delete();
+//				$this->action_authorize();
+//			}
+//
+//			return new \WP_Error( $code, $message );
+//		}
+//
+//		return $body;
+//	}
+
+	/**
+	 * @deprecated Please use `http_request` method instead of this method.
+	 *
+	 * @param       $action
+	 * @param array $request_body
+	 * @param false $as_array
+	 *
+	 * @return mixed|\WP_Error
+	 */
+	protected function request( $action, $request_body = [], $as_array = false ) {
+		$request_body = $this->get_connect_info() + $request_body;
+
+		$response = $this->http_request( 'POST', $action, [
+			'body' => $request_body,
+			'headers' => $this->is_connected() ?
+				[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
+				[],
+		] );
+
+		if ( ! $as_array && ! is_wp_error( $response ) ) {
+			return (object) $response;
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Create a signature for the http request
+	 *
+	 * @param array $payload
+	 *
+	 * @return false|string
+	 */
+	private function generate_signature( $payload = [] ) {
+		return hash_hmac(
+			'sha256',
+			wp_json_encode( $payload, JSON_NUMERIC_CHECK ),
+			$this->get( 'access_token_secret' )
+		);
 	}
 
 	/**
@@ -638,6 +762,8 @@ abstract class Base_App {
 				$this->auth_mode = $mode;
 			}
 		}
+
+		$this->http = new \WP_Http();
 
 		/**
 		 * Allow extended apps to customize the __construct without call parent::__construct.

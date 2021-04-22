@@ -4,8 +4,8 @@ namespace Elementor\Core\App\Modules\KitLibrary;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Api_Client;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Kits_Controller;
@@ -48,14 +48,14 @@ class Module extends BaseModule {
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 
-		/** @var Library $library */
-		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		/** @var Kit_Library $kit_library */
+		$kit_library = $connect->get_app( 'kit-library' );
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
 			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
 			'is_pro' => false,
-			'is_library_connected' => $library->is_connected(),
-			'library_connect_url'  => $library->get_admin_url( 'authorize' ),
+			'is_library_connected' => $kit_library->is_connected(),
+			'library_connect_url'  => $kit_library->get_admin_url( 'authorize' ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 		] );
 	}
@@ -82,6 +82,10 @@ class Module extends BaseModule {
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();
 		}, 50 /* after Elementor page */ );
+
+		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
+			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
+		} );
 
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
