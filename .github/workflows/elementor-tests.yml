@@ -22,4 +22,4 @@ jobs:
           curl -X POST https://api.github.com/repos/${{ env.REMOTE_EPO }}/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
           -u ${{ env.TOKEN }} \
-          --data '{"event_type": "Elementor Tests", "client_payload": { "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }}'
+          --data '{"event_type": "remote-tests", "client_payload": { "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }}'
