@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Base\Data_Updaters;
+namespace Elementor\Core\Base\Elements_Iteration_Actions;
 
 use Elementor\Element_Base;
 use Elementor\Plugin;
@@ -8,12 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Widgets_Css_Data_Updater extends Document_Data_Updater {
-	public function update_unique_widget( Element_Base $element_data ) {
+class Widgets_Css_Iteration_Action extends Document_Iteration_Action {
+	public function unique_element_action( Element_Base $element_data ) {
 		$this->save_widgets_css( $element_data->get_group_name() );
 	}
 
-	public function is_update_needed() {
+	public function is_action_needed() {
 		return false;
 	}
 
