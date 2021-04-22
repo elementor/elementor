@@ -1,9 +1,17 @@
 var ControlBaseView = require( 'elementor-controls/base' ),
 	TagsBehavior = require( 'elementor-dynamic-tags/control-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
+	NumberValidator = require( 'elementor-validator/number' ),
+	BreakpointValidator = require( 'elementor-validator/breakpoint' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
+	validatorTypes: {
+		base: Validator,
+		number: NumberValidator,
+		breakpoint: BreakpointValidator,
+	},
+
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
@@ -217,6 +225,16 @@ ControlBaseDataView = ControlBaseView.extend( {
 			this.addValidator( new Validator( {
 				validationTerms: validationTerms,
 			} ) );
+		}
+
+		const validators = this.model.get( 'validators' );
+
+		if ( validators ) {
+			Object.entries( validators ).forEach( ( [ key, args ] ) => {
+				this.addValidator( new this.validatorTypes[ key ]( {
+					validationTerms: args,
+				} ) );
+			} );
 		}
 	},
 
