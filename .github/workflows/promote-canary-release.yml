@@ -63,7 +63,7 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-readme-to-wordpress-org.sh"
       - name: Upload zip file to GitHub actions artifact
         uses: actions/upload-artifact@v2
         with:
