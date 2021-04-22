@@ -22,14 +22,20 @@ const octokit = new Octokit({ auth: TOKEN });
 const { owner, repo } = repoToOwnerAndRepo(REPOSITORY);
 
 const mergeBranch = async (branchName, commitMessage) => {
-	await octokit.request('POST /repos/{owner}/{repo}/merges', {
-		owner,
-		repo,
-		base: TARGET_BRANCH,
-		head: branchName,
-		commit_message: commitMessage
-	});
+	try {
+		await octokit.request('POST /repos/{owner}/{repo}/merges', {
+			owner,
+			repo,
+			base: TARGET_BRANCH,
+			head: branchName,
+			commit_message: commitMessage
+		});
+	} catch (err) {
+		err.branchName = branchName;
+		throw err;
+	}
 }
+
 
 (async () => {
 	try {
@@ -42,7 +48,7 @@ const mergeBranch = async (branchName, commitMessage) => {
 			await mergeBranch(branchName, `Auto merge feature branch: ${branchName}`);
 		}
 	} catch (err) {
-		console.error(`Failed to merge feature branches to ${TARGET_BRANCH} branch error: ${err.message}`);
+		console.error(`Failed to merge feature branches to: ${TARGET_BRANCH} branch ${err.branchName ? `from: ${err.branchName} branch` : ''} error: ${err.message}`);
 		process.exit(1);
 	}
 })();
