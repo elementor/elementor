@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\App\Modules\ImportExport;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Plugin;
@@ -45,51 +46,89 @@ class Module extends BaseModule {
 	}
 
 	public function get_init_settings() {
+		if ( ! Plugin::$instance->app->is_current() ) {
+			return [];
+		}
+
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
+		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
+
+		$document_types = Plugin::$instance->documents->get_document_types();
+
+		$summary_titles = [];
+
+		foreach ( $document_types as $document_type ) {
+			$category = '';
+
+			if ( $document_type::get_property( 'show_in_library' ) ) {
+				$category = 'templates';
+			} elseif ( $document_type::get_property( 'support_wp_page_templates' ) && $document_type::get_property( 'has_elements' ) ) {
+				$category = 'content';
+			}
+
+			if ( ! $category ) {
+				continue;
+			}
+
+			/**
+			 * @var Document $instance
+			 */
+			$instance = new $document_type();
+
+			$summary_titles[ $category ][ $instance->get_name() ] = [
+				'single' => $document_type::get_title(),
+				'plural' => $document_type::get_plural_title(),
+			];
+		}
+
 		return [
 			'exportURL' => $export_url,
+			'defaultKit' => [
+				'title' => $kit_post->post_title,
+				'description' => $kit_post->post_excerpt,
+				'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
+			],
+			'summaryTitles' => $summary_titles,
 		];
 	}
 
 	private function on_admin_init() {
-		if ( isset( $_POST['action'] ) && self::IMPORT_TRIGGER_KEY === $_POST['action'] ) {
-			if ( ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
-				return;
-			}
+		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
+			return;
+		}
 
-			try {
-				$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
+		try {
+			$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
-				if ( ! empty( $_POST['e_import_file'] ) ) {
-					$remote_zip_request = wp_remote_get( $_POST['e_import_file'] );
+			if ( ! empty( $_POST['e_import_file'] ) ) {
+				$remote_zip_request = wp_remote_get( $_POST['e_import_file'] );
 
-					if ( is_wp_error( $remote_zip_request ) ) {
-						throw new \Error( $remote_zip_request->get_error_message() );
-					}
-
-					if ( 200 !== $remote_zip_request['response']['code'] ) {
-						throw new \Error( $remote_zip_request['response']['message'] );
-					}
-
-					$import_settings['file_name'] = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-				} else {
-					$import_settings['file_name'] = $_FILES['e_import_file']['tmp_name'];
+				if ( is_wp_error( $remote_zip_request ) ) {
+					throw new \Error( $remote_zip_request->get_error_message() );
 				}
 
-				$this->import = new Import( $import_settings );
-
-				$result = $this->import->run();
-
-				if ( ! empty( $_POST['e_import_file'] ) ) {
-					Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $import_settings['file_name'] ) );
+				if ( 200 !== $remote_zip_request['response']['code'] ) {
+					throw new \Error( $remote_zip_request['response']['message'] );
 				}
 
-				wp_send_json_success( $result );
-			} catch ( \Error $error ) {
-				wp_send_json_error( $error->getMessage() );
+				$import_settings['file_name'] = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
+			} else {
+				$import_settings['file_name'] = $_FILES['e_import_file']['tmp_name'];
 			}
+
+			$this->import = new Import( $import_settings );
+
+			$result = $this->import->run();
+
+			if ( ! empty( $_POST['e_import_file'] ) ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $import_settings['file_name'] ) );
+			}
+
+			wp_send_json_success( $result );
+		} catch ( \Error $error ) {
+			wp_send_json_error( $error->getMessage() );
 		}
 	}
 
@@ -104,7 +143,18 @@ class Module extends BaseModule {
 			try {
 				$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
 
-				$this->export->run();
+				$export_result = $this->export->run();
+
+				$file_name = $export_result['file_name'];
+
+				$file = file_get_contents( $file_name, true );
+
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+
+				wp_send_json_success( [
+					'manifest' => $export_result['manifest'],
+					'file' => base64_encode( $file ),
+				] );
 			} catch ( \Error $error ) {
 				wp_die( $error->getMessage() );
 			}
@@ -115,7 +165,7 @@ class Module extends BaseModule {
 		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', __( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
-		/* translators: %1$s: New line break, %2$s: Learn More link. */
+			/* translators: %1$s: New line break, %2$s: Learn More link. */
 			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link

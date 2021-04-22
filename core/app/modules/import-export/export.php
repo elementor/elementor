@@ -34,24 +34,10 @@ class Export extends Iterator {
 
 		$this->zip_archive->close();
 
-		$file_name = $this->archive_file_name;
-
-		$downloaded_file_name = 'elementor-kit-' . $manifest_data['name'] . '.zip';
-
-		// Clear any output before sending the file
-		ob_end_clean();
-
-		header( 'Content-type: application/zip' );
-
-		header( 'Content-Disposition: attachment; filename=' . $downloaded_file_name );
-
-		header( 'Content-length: ' . filesize( $file_name ) );
-
-		readfile( $file_name );
-
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->temp_dir );
-
-		die;
+		return [
+			'manifest' => $manifest_data,
+			'file_name' => $this->archive_file_name,
+		];
 	}
 
 	public function add_json_file( $name, $content, $json_flags = null ) {
