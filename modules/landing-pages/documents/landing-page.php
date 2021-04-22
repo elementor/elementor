@@ -43,6 +43,14 @@ class Landing_Page extends PageBase {
 	}
 
 	/**
+	 * @access public
+	 * @static
+	 */
+	public static function get_plural_title() {
+		return __( 'Landing Pages', 'elementor' );
+	}
+
+	/**
 	 * Save Document.
 	 *
 	 * Save an Elementor document.
