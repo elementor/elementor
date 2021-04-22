@@ -48,7 +48,7 @@ const mergeBranch = async (branchName, commitMessage) => {
 			await mergeBranch(branchName, `Auto merge feature branch: ${branchName}`);
 		}
 	} catch (err) {
-		console.error(`Failed to merge feature branches to: ${TARGET_BRANCH} branch ${err.branchName ? `from: ${err.branchName}` : ''} error: ${err.message}`);
+		console.error(`Failed to merge feature branches to: ${TARGET_BRANCH} branch ${err.branchName ? `from: ${err.branchName} branch` : ''} error: ${err.message}`);
 		process.exit(1);
 	}
 })();
