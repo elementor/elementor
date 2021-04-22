@@ -12,10 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assets_Iteration_Action extends Document_Iteration_Action {
 	const ASSETS_META_KEY = '_elementor_page_assets';
 
+	// Default value must be empty.
+	private $page_assets;
+
 	/**
-	 * @var array
+	 * @var boolean
 	 */
-	private $page_assets = [];
+	private $is_meta_fetched = false;
 
 	public function element_action( Element_Base $element_data ) {
 		$element_assets = $this->get_element_assets( $element_data );
@@ -26,10 +29,6 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	}
 
 	public function is_action_needed() {
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return false;
-		}
-
 		$page_assets = $this->get_page_assets();
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
@@ -41,6 +40,11 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	}
 
 	public function after_elements_iteration() {
+		// In case that the page assets value is empty, it should still be saved as an empty array as an indication that at lease one iteration has occurred.
+		if ( ! is_array( $this->page_assets ) ) {
+			$this->page_assets = [];
+		}
+
 		// Saving the page assets data.
 		$this->document->update_meta( self::ASSETS_META_KEY, $this->page_assets );
 
@@ -50,19 +54,20 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 	}
 
 	private function get_page_assets( $force_meta_fetch = false ) {
-		static $is_meta_fetched;
-		static $page_assets;
+		if ( ! $this->is_meta_fetched || $force_meta_fetch  ) {
+			$this->is_meta_fetched = true;
 
-		if ( ! $is_meta_fetched || $force_meta_fetch  ) {
-			$is_meta_fetched = true;
-
-			$page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
+			$this->page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
 		}
 
-		return $page_assets;
+		return $this->page_assets;
 	}
 
 	private function update_page_assets( $new_assets ) {
+		if ( ! is_array( $this->page_assets ) ) {
+			$this->page_assets = [];
+		}
+
 		foreach ( $new_assets as $assets_type => $assets_type_data ) {
 			if ( ! isset( $this->page_assets[ $assets_type ] ) ) {
 				$this->page_assets[ $assets_type ] = [];
@@ -128,6 +133,11 @@ class Assets_Iteration_Action extends Document_Iteration_Action {
 
 	public function __construct( $document ) {
 		parent::__construct( $document );
+
+		// No need to enable assets in preview mode.
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return;
+		}
 
 		$page_assets = $this->get_page_assets();
 

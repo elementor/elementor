@@ -1047,7 +1047,9 @@ abstract class Document extends Controls_Stack {
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$this->iterate_elements( $elements, $this->elements_iteration_actions, 'save' );
+			$elements_iteration_actions = $this->get_elements_iteration_actions();
+
+			$this->iterate_elements( $elements, $elements_iteration_actions, 'save' );
 		}
 
 		/**
@@ -1274,10 +1276,6 @@ abstract class Document extends Controls_Stack {
 			if ( ! empty( $saved_settings ) && is_array( $saved_settings ) ) {
 				$data['settings'] += $saved_settings;
 			}
-		}
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$this->register_elements_iteration_action( new Assets_Iteration_Action( $this ) );
 		}
 
 		parent::__construct( $data );
@@ -1527,7 +1525,9 @@ abstract class Document extends Controls_Stack {
 	private function get_runtime_elements_iteration_actions() {
 		$runtime_elements_iteration_actions = [];
 
-		foreach ( $this->elements_iteration_actions as $elements_iteration_action ) {
+		$elements_iteration_actions = $this->get_elements_iteration_actions();
+
+		foreach ( $elements_iteration_actions as $elements_iteration_action ) {
 			if ( $elements_iteration_action->is_action_needed() ) {
 				$runtime_elements_iteration_actions[] = $elements_iteration_action;
 			}
@@ -1568,7 +1568,13 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	private function register_elements_iteration_action( $elements_iteration_action ) {
-		$this->elements_iteration_actions[] = $elements_iteration_action;
+	private function get_elements_iteration_actions() {
+		if ( ! $this->elements_iteration_actions ) {
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
+				$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
+			}
+		}
+
+		return $this->elements_iteration_actions;
 	}
 }
