@@ -92,15 +92,16 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss, .elementor-button-notice-dismiss', function( event ) {
+			$( '.e-notice--dismissible' ).on( 'click', '.e-notice__dismiss, .e-notice-dismiss', function( event ) {
 				event.preventDefault();
+
+				const $wrapperElm = $( this ).closest( '.e-notice--dismissible' );
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' ),
+					notice_id: $wrapperElm.data( 'notice_id' ),
 				} );
 
-				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
 				$wrapperElm.fadeTo( 100, 0, function() {
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
