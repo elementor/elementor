@@ -1,6 +1,6 @@
 'use strict';
 
-const { repoToOwnerAndRepo } = require('./repo-utils');
+const { repoToOwnerAndOwner } = require('./repo-utils');
 const { Octokit } = require("@octokit/core");
 const { REPOSITORY, TOKEN } = process.env;
 
@@ -19,7 +19,7 @@ if (!REPOSITORY) {
 }
 
 const octokit = new Octokit({ auth: TOKEN });
-const { owner, repo } = repoToOwnerAndRepo(REPOSITORY);
+const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 
 const mergeBranch = async (branchName, commitMessage) => {
 	try {
