@@ -6,7 +6,7 @@ on:
       canary:
         description: 'Canary release (true/false)'
         required: true
-        default: 'true'
+        default: 'false'
       version:
         description: 'Release branch version'
         required: false

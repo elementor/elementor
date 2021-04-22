@@ -8,26 +8,18 @@ jobs:
     if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     steps:
-      - name: Checkout master branch
+      - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: master
-      - name: Get release branch
-        run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
-      - name: Checkout next release branch
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: ${{ env.RELEASE_BRANCH }}
+          ref: develop
       - name: Bump version
         run: |
           npm install --no-package-lock --no-save semver@7.3.4
           NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js beta)
           PACKAGE_VERSION=$(node -p "require('./package.json').last_beta_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
-      - name: Push new version to beta version to release branch
+      - name: Push new version to beta version to develop branch
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
@@ -38,16 +30,23 @@ jobs:
     needs: bump-version
     runs-on: ubuntu-16.04
     steps:
-      - name: Checkout master branch
+      - name: Checkout develop branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: master
+          ref: develop
       - name: Get release branch
         env:
           INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
+      - name: Merge develop -> release
+        uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
+        with:
+          type: now
+          from_branch: develop
+          target_branch: ${{ env.RELEASE_BRANCH }}
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Checkout next release branch
         uses: actions/checkout@v2
         with:

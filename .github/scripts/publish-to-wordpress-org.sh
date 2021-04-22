@@ -26,7 +26,7 @@ mkdir -p $SVN_PATH
 cd $SVN_PATH
 svn co https://plugins.svn.wordpress.org/elementor/trunk
 rm -rf trunk/*
-rsync -ah --progress  $ELEMENTOR_PATH/* $SVN_PATH/trunk
+rsync -ah --progress $ELEMENTOR_PATH/* $SVN_PATH/trunk
 
 echo "Preparing files"
 cd $SVN_PATH/trunk
