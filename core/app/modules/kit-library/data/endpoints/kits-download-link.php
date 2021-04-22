@@ -45,9 +45,6 @@ class Kits_Download_Link extends Endpoint {
 
 		return new \WP_REST_Response( [
 			'data' => $data,
-			'meta' => [
-				'nonce' => wp_create_nonce( "kit-download-link-{$data['download_link']}" ),
-			],
 		] );
 	}
 }

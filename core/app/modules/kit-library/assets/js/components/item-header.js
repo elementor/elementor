@@ -71,7 +71,7 @@ export default function ItemHeader( props ) {
 	const apply = useCallback( () => {
 		$e.data.get( 'kits/download-link', { id: props.model.id }, { refresh: true } )
 			.then( ( { data } ) => {
-				navigate( `/import?download_link=${ data.data.download_link }&nonce=${ data.meta.nonce }` );
+				navigate( `/import/process?file_url=${ data.data.download_link }` );
 			} );
 	}, [ props.model ] );
 
