@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Base\Data_Updaters;
+namespace Elementor\Core\Base\Elements_Iteration_Actions;
 
 use Elementor\Conditions;
 use Elementor\Element_Base;
@@ -9,15 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Assets_Data_Updater extends Document_Data_Updater {
+class Assets_Iteration_Action extends Document_Iteration_Action {
 	const ASSETS_META_KEY = '_elementor_page_assets';
 
-	/**
-	 * @var array
-	 */
-	private $page_assets = [];
+	// Default value must be empty.
+	private $page_assets;
 
-	public function update_element( Element_Base $element_data ) {
+	/**
+	 * @var boolean
+	 */
+	private $is_meta_fetched = false;
+
+	public function element_action( Element_Base $element_data ) {
 		$element_assets = $this->get_element_assets( $element_data );
 
 		if ( $element_assets ) {
@@ -25,7 +28,8 @@ class Assets_Data_Updater extends Document_Data_Updater {
 		}
 	}
 
-	public function is_update_needed() {
+	public function is_action_needed() {
+		// No need to evaluate in preview mode, will be made in the saving process.
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			return false;
 		}
@@ -34,31 +38,41 @@ class Assets_Data_Updater extends Document_Data_Updater {
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
 		if ( is_array( $page_assets ) ) {
-			// If $page_assets is not empty then enabling the assets for loading.
-			if ( $page_assets ) {
-				Plugin::$instance->assets_loader->enable_assets( $page_assets );
-			}
-
 			return false;
 		}
 
 		return true;
 	}
 
-	public function after_elements_iteration( $event ) {
+	public function after_elements_iteration() {
+		// In case that the page assets value is empty, it should still be saved as an empty array as an indication that at lease one iteration has occurred.
+		if ( ! is_array( $this->page_assets ) ) {
+			$this->page_assets = [];
+		}
+
 		// Saving the page assets data.
 		$this->document->update_meta( self::ASSETS_META_KEY, $this->page_assets );
 
-		if ( 'render' === $event && $this->page_assets ) {
+		if ( 'render' === $this->mode && $this->page_assets ) {
 			Plugin::$instance->assets_loader->enable_assets( $this->page_assets );
 		}
 	}
 
-	private function get_page_assets() {
-		return $this->document->get_meta( self::ASSETS_META_KEY );
+	private function get_page_assets( $force_meta_fetch = false ) {
+		if ( ! $this->is_meta_fetched || $force_meta_fetch  ) {
+			$this->is_meta_fetched = true;
+
+			$this->page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
+		}
+
+		return $this->page_assets;
 	}
 
 	private function update_page_assets( $new_assets ) {
+		if ( ! is_array( $this->page_assets ) ) {
+			$this->page_assets = [];
+		}
+
 		foreach ( $new_assets as $assets_type => $assets_type_data ) {
 			if ( ! isset( $this->page_assets[ $assets_type ] ) ) {
 				$this->page_assets[ $assets_type ] = [];
@@ -78,10 +92,6 @@ class Assets_Data_Updater extends Document_Data_Updater {
 		$element_assets = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
-			if ( ! isset( $controls[ $setting_key ] ) ) {
-				continue;
-			}
-
 			$control = $controls[ $setting_key ];
 
 			// Enabling assets loading from the registered control fields.
@@ -124,5 +134,21 @@ class Assets_Data_Updater extends Document_Data_Updater {
 		}
 
 		return $element_assets;
+	}
+
+	public function __construct( $document ) {
+		parent::__construct( $document );
+
+		// No need to enable assets in preview mode, all assets will be loaded by default by the assets loader.
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return;
+		}
+
+		$page_assets = $this->get_page_assets();
+
+		 // If $page_assets is not empty then enabling the assets for loading.
+		if ( $page_assets ) {
+			Plugin::$instance->assets_loader->enable_assets( $page_assets );
+		}
 	}
 }

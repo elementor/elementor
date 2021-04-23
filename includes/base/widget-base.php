@@ -961,10 +961,13 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'content_type' => 'css',
+			'assets_category' => 'widgets',
 			'asset_key' => $widget_name,
-			'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'current_version' => ELEMENTOR_VERSION,
+			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'data' => [
+				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			],
 		];
 	}
 
