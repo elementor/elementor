@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
+use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -112,7 +112,7 @@ class Repository {
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 * @throws Kit_Not_Found_Exception
 	 */
-	public function add_to_favorite( $user_id, $id ) {
+	public function add_to_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
 		$kit = $this->find( $id, $user_id, false );
 		$favorites = $this->get_user_favorites_meta( $user_id );
@@ -139,7 +139,7 @@ class Repository {
 	 * @throws Exceptions\Api_Wp_Error_Exception
 	 * @throws Kit_Not_Found_Exception
 	 */
-	public function remove_from_favorite( $user_id, $id ) {
+	public function remove_from_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
 		$kit = $this->find( $id, $user_id, false );
 		$favorites = $this->get_user_favorites_meta( $user_id );

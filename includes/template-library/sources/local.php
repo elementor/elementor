@@ -429,7 +429,7 @@ class Source_Local extends Source_Base {
 			foreach ( $templates_query->get_posts() as $post ) {
 				$templates[] = $this->get_item( $post->ID );
 			}
-		}
+		};
 
 		return $templates;
 	}

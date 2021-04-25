@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Endpoints;
 
-use Elementor\Data\Base\Endpoint;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Api_Response_Exception;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
+use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
+use Elementor\Data\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -58,7 +58,7 @@ class Kits_Favorites extends Endpoint {
 		$repository = $this->controller->repository;
 
 		try {
-			$kit = $repository->add_to_favorite( get_current_user_id(), $id );
+			$kit = $repository->add_to_favorites( get_current_user_id(), $id );
 		} catch ( Api_Response_Exception $exception ) {
 			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
 		} catch ( Kit_Not_Found_Exception $exception ) {
@@ -83,7 +83,7 @@ class Kits_Favorites extends Endpoint {
 		$repository = $this->controller->repository;
 
 		try {
-			$kit = $repository->remove_from_favorite( get_current_user_id(), $id );
+			$kit = $repository->remove_from_favorites( get_current_user_id(), $id );
 		} catch ( Api_Response_Exception $exception ) {
 			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
 		} catch ( Kit_Not_Found_Exception $exception ) {

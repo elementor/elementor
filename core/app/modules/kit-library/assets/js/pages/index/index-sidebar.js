@@ -8,27 +8,16 @@ export default function IndexSidebar( props ) {
 				text={ __( 'All Kits', 'elementor' ) }
 				className={ `eps-menu-item__link ${ ! props.filter.favorite ? 'eps-menu-item--active' : '' }` }
 				icon="eicon-filter"
-				onClick={ () => {
-					if ( ! props.filter.favorite ) {
-						return;
-					}
-					props.onChange( { ...initialFilterState } );
-				} }
+				onClick={ () => props.filter.favorite && props.onChange( { ...initialFilterState } ) }
 			/>
 			<MenuItem
 				text={ __( 'Favorites', 'elementor' ) }
 				className={ `eps-menu-item__link ${ props.filter.favorite ? 'eps-menu-item--active' : '' }` }
 				icon="eicon-heart-o"
-				onClick={ () => {
-					if ( props.filter.favorite ) {
-						return;
-					}
-
-					props.onChange( {
-						...initialFilterState,
-						favorite: true,
-					} );
-				} }
+				onClick={ () => ! props.filter.favorite && props.onChange( {
+					...initialFilterState,
+					favorite: true,
+				} ) }
 			/>
 			{ props.tagsFilterSlot }
 		</>
