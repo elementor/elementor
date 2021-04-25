@@ -5,7 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Plugin;
-use Elementor\Settings;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,25 +50,12 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
-		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
+		$summary_titles = [];
 
 		$document_types = Plugin::$instance->documents->get_document_types();
 
-		$summary_titles = [];
-
 		foreach ( $document_types as $document_type ) {
-			$category = '';
-
-			if ( $document_type::get_property( 'show_in_library' ) ) {
-				$category = 'templates';
-			} elseif ( $document_type::get_property( 'support_wp_page_templates' ) && $document_type::get_property( 'has_elements' ) ) {
-				$category = 'content';
-			}
-
-			if ( ! $category ) {
+			if ( ! $document_type::get_property( 'show_in_library' ) ) {
 				continue;
 			}
 
@@ -77,11 +64,34 @@ class Module extends BaseModule {
 			 */
 			$instance = new $document_type();
 
-			$summary_titles[ $category ][ $instance->get_name() ] = [
+			$summary_titles['templates'][ $instance->get_name() ] = [
 				'single' => $document_type::get_title(),
 				'plural' => $document_type::get_plural_title(),
 			];
 		}
+
+		$post_types = get_post_types_by_support( 'elementor' );
+
+		foreach ( $post_types as $post_type ) {
+			if ( Source_Local::CPT === $post_type ) {
+				continue;
+			}
+
+			$post_type_object = get_post_type_object( $post_type );
+
+			$summary_titles['content'][ $post_type ] = [
+				'single' => $post_type_object->labels->singular_name,
+				'plural' => $post_type_object->label,
+			];
+		}
+
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+
+		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$kit_post = $active_kit->get_post();
 
 		return [
 			'exportURL' => $export_url,
