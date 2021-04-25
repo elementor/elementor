@@ -167,16 +167,16 @@ class Control_Media extends Control_Base_Multiple {
 			const getButtonLabel = ( mediaType ) => {
 				switch( mediaType ) {
 					case 'image':
-						return '<?php echo __( 'Choose Image', 'elementor' ); ?>';
+						return wp.i18n.__( 'Choose Image', 'elementor' );
 
 					case 'video':
-						return '<?php echo __( 'Choose Video', 'elementor' ); ?>';
+						return wp.i18n.__( 'Choose Video', 'elementor' );
 
 					case 'svg':
-						return '<?php echo __( 'Choose SVG', 'elementor' ); ?>';
+						return wp.i18n.__( 'Choose SVG', 'elementor' );
 
 					default:
-						return '<?php echo __( 'Choose File', 'elementor' ); ?>';
+						return wp.i18n.__( 'Choose File', 'elementor' );
 				}
 			}
 		#>
