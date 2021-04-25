@@ -17,7 +17,7 @@ export default class AssetsLoader {
 	}
 
 	load( type, key ) {
-		const assetData = this.constructor.assets[ type ][ key ];
+		const assetData = AssetsLoader.assets[ type ][ key ];
 
 		if ( ! assetData.loader ) {
 			assetData.loader = new Promise( ( resolve ) => {
