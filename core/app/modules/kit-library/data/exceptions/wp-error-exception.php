@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Api_Wp_Error_Exception extends \Exception {
+class Wp_Error_Exception extends \Exception {
 	/**
 	 * @var \WP_Error
 	 */
 	protected $error;
 
 	public function __construct( \WP_Error $error ) {
-		parent::__construct( $error->get_error_message() );
+		parent::__construct( $error->get_error_message(), $error->get_error_code() );
 
 		$this->error = $error;
 	}

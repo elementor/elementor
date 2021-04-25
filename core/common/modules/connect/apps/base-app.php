@@ -361,7 +361,7 @@ abstract class Base_App {
 	 * @return mixed|\WP_Error
 	 */
 	protected function http_request( $method, $endpoint, $args = [] ) {
-		$connect_info = array_merge_recursive( $this->get_connect_info(), [
+		$connect_info = array_replace_recursive( $this->get_connect_info(), [
 			'endpoint' => $endpoint,
 		] );
 
@@ -408,79 +408,8 @@ abstract class Base_App {
 			return new \WP_Error( $code, $message );
 		}
 
-		$body = json_decode( $body, true );
-
-		return $body;
+		return json_decode( $body, true );
 	}
-//
-//	/**
-//	 * @since 2.3.0
-//	 * @access protected
-//	 */
-//	protected function request( $action, $request_body = [], $as_array = false ) {
-//		$request_body = [
-//			'app' => $this->get_slug(),
-//			'access_token' => $this->get( 'access_token' ),
-//			'client_id' => $this->get( 'client_id' ),
-//			'local_id' => get_current_user_id(),
-//			'site_key' => $this->get_site_key(),
-//			'home_url' => trailingslashit( home_url() ),
-//		] + $request_body;
-//
-//		$headers = [];
-//
-//		if ( $this->is_connected() ) {
-//			$headers['X-Elementor-Signature'] = hash_hmac( 'sha256', wp_json_encode( $request_body, JSON_NUMERIC_CHECK ), $this->get( 'access_token_secret' ) );
-//		}
-//
-//		$response = wp_remote_post( $this->get_api_url() . '/' . $action, [
-//			'body' => $request_body,
-//			'headers' => $headers,
-//			'timeout' => 25,
-//		] );
-//
-//		if ( is_wp_error( $response ) ) {
-//			wp_die( $response, [
-//				'back_link' => true,
-//			] );
-//		}
-//
-//		$body = wp_remote_retrieve_body( $response );
-//		$response_code = (int) wp_remote_retrieve_response_code( $response );
-//
-//		if ( ! $response_code ) {
-//			return new \WP_Error( 500, 'No Response' );
-//
-//		}
-//
-//		// Server sent a success message without content.
-//		if ( 'null' === $body ) {
-//			$body = true;
-//		}
-//
-//		$body = json_decode( $body, $as_array );
-//
-//		if ( false === $body ) {
-//			return new \WP_Error( 422, 'Wrong Server Response' );
-//		}
-//
-//		if ( 200 !== $response_code ) {
-//			// In case $as_array = true.
-//			$body = (object) $body;
-//
-//			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
-//			$code = isset( $body->code ) ? $body->code : $response_code;
-//
-//			if ( 401 === $code ) {
-//				$this->delete();
-//				$this->action_authorize();
-//			}
-//
-//			return new \WP_Error( $code, $message );
-//		}
-//
-//		return $body;
-//	}
 
 	/**
 	 * @deprecated Please use `http_request` method instead of this method.

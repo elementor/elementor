@@ -15,10 +15,24 @@ class Kit_Library extends Library {
 		return __( 'Kit Library', 'elementor' );
 	}
 
+	public function get_all() {
+		return $this->http_request( 'GET', 'kits' );
+	}
+
+	public function get_taxonomies() {
+		return $this->http_request( 'GET', 'taxonomies' );
+	}
+
+	public function get_manifest( $id ) {
+		return $this->http_request( 'GET', "manifests/{$id}" );
+	}
+
+	public function download_link( $id ) {
+		return $this->http_request( 'GET', "kits/{$id}/download-link" );
+	}
+
 	protected function get_api_url() {
-		return defined( 'ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT' ) ?
-			ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT :
-			static::DEFAULT_BASE_ENDPOINT;
+		return static::DEFAULT_BASE_ENDPOINT;
 	}
 
 	protected function init() {

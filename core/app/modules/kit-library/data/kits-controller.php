@@ -2,7 +2,7 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
 use Elementor\Data\Base\Controller as Controller_Base;
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Api_Response_Exception;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,8 +22,8 @@ class Kits_Controller extends Controller_Base {
 	public function get_items( $request ) {
 		try {
 			$data = $this->repository->get_all( $request->get_param( 'force' ) );
-		} catch ( Api_Response_Exception $exception ) {
-			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ) );
+		} catch ( Wp_Error_Exception $exception ) {
+			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ) );
 		}
@@ -41,8 +41,8 @@ class Kits_Controller extends Controller_Base {
 	public function get_item( $request ) {
 		try {
 			$data = $this->repository->find( $request->get_param( 'id' ) );
-		} catch ( Api_Response_Exception $exception ) {
-			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
+		} catch ( Wp_Error_Exception $exception ) {
+			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
@@ -80,12 +80,12 @@ class Kits_Controller extends Controller_Base {
 
 	/**
 	 * Kits_Controller constructor.
-	 *
-	 * @param Repository $repository
 	 */
-	public function __construct( Repository $repository ) {
+	public function __construct() {
 		parent::__construct();
 
-		$this->repository = $repository;
+		add_action('rest_api_init', function () {
+			$this->repository = new Repository();
+		} );
 	}
 }

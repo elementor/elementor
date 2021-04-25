@@ -60,24 +60,12 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function initiate_repository() {
-		$base_endpoint = defined( 'ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT' ) ?
-			ELEMENTOR_KIT_LIBRARY_BASE_ENDPOINT :
-			Api_Client::DEFAULT_BASE_ENDPOINT;
-
-		return new Repository(
-			new Api_Client( $base_endpoint )
-		);
-	}
-
 	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
-		$repository = $this->initiate_repository();
-
-		Plugin::$instance->data_manager->register_controller_instance( new Kits_Controller( $repository ) );
-		Plugin::$instance->data_manager->register_controller_instance( new Taxonomies_Controller( $repository ) );
+		Plugin::$instance->data_manager->register_controller( Kits_Controller::class );
+		Plugin::$instance->data_manager->register_controller( Taxonomies_Controller::class );
 
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();
@@ -89,6 +77,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
-		}, 12 /** after the initiation of the connect library */ );
+		}, 12 /** after the initiation of the connect kit library */ );
 	}
 }

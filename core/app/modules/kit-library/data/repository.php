@@ -1,7 +1,10 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
+use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,9 +20,9 @@ class Repository {
 	const KITS_TAXONOMIES_CACHE_TTL_HOURS = 12;
 
 	/**
-	 * @var Api_Client
+	 * @var Kit_Library
 	 */
-	protected $api_client;
+	protected $api;
 
 	/**
 	 * Get all kits.
@@ -27,8 +30,7 @@ class Repository {
 	 * @param false $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function get_all( $force_api_request = false ) {
 		return $this->get_kits_data( $force_api_request )
@@ -43,8 +45,7 @@ class Repository {
 	 * @param $id
 	 *
 	 * @return array|null
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function find( $id ) {
 		$item = $this->get_kits_data()
@@ -56,19 +57,20 @@ class Repository {
 			return null;
 		}
 
-		$manifest = $this->api_client->get_manifest( $id );
+		$manifest = $this->api->get_manifest( $id );
+
+		if ( is_wp_error( $manifest ) ) {
+			throw new Wp_Error_Exception( $manifest );
+		}
 
 		return $this->transform_kit_api_response( $item, $manifest );
 	}
 
 	/**
-	 * Get all the available taxonomies
-	 *
 	 * @param false $force_api_request
 	 *
 	 * @return mixed|null
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function get_taxonomies( $force_api_request = false ) {
 		return $this->get_taxonomies_data( $force_api_request )
@@ -89,12 +91,15 @@ class Repository {
 	/**
 	 * @param $id
 	 *
-	 * @return mixed
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @return array
+	 * @throws Wp_Error_Exception
 	 */
 	public function get_download_link( $id ) {
-		$response = $this->api_client->download_link( $id );
+		$response = $this->api->download_link( $id );
+
+		if ( is_wp_error( $response ) ) {
+			throw new Wp_Error_Exception( $response );
+		}
 
 		return [ 'download_link' => $response['download_link'] ];
 	}
@@ -103,14 +108,17 @@ class Repository {
 	 * @param bool $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
 
 		if ( ! $data || $force_api_request ) {
-			$data = $this->api_client->get_all();
+			$data = $this->api->get_all();
+
+			if ( is_wp_error( $data ) ) {
+				throw new Wp_Error_Exception( $data );
+			}
 
 			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
@@ -119,17 +127,20 @@ class Repository {
 	}
 
 	/**
-	 * @param false $force_api_request
+	 * @param bool $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	private function get_taxonomies_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_TAXONOMIES_CACHE_KEY );
 
 		if ( ! $data || $force_api_request ) {
-			$data = $this->api_client->get_taxonomies();
+			$data = $this->api->get_taxonomies();
+
+			if ( is_wp_error( $data ) ) {
+				throw new Wp_Error_Exception( $data );
+			}
 
 			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
@@ -192,10 +203,8 @@ class Repository {
 
 	/**
 	 * Repository constructor.
-	 *
-	 * @param Api_Client $api_client
 	 */
-	public function __construct( Api_Client $api_client ) {
-		$this->api_client = $api_client;
+	public function __construct() {
+		$this->api = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
 	}
 }

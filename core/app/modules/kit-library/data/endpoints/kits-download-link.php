@@ -3,7 +3,7 @@ namespace Elementor\Core\App\Modules\KitLibrary\Data\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Api_Response_Exception;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,8 +37,8 @@ class Kits_Download_Link extends Endpoint {
 
 		try {
 			$data = $repository->get_download_link( $id );
-		} catch ( Api_Response_Exception $exception ) {
-			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ) );
+		} catch ( Wp_Error_Exception $exception ) {
+			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ) );
 		}
