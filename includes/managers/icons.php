@@ -241,49 +241,29 @@ class Icons_Manager {
 		echo $svg;
 	}
 
-	/**
-	 * get_font_awesome_svg_from_library
-	 * @param $icon array ( 'value' => string, 'library' => string )
-	 *
-	 * @return array|mixed
-	 */
-	private static function get_font_awesome_svg_from_library( $icon ) {
+	public static function get_icon_svg_config( $icon ) {
+		$icon_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
 		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
 		$icon_name = str_replace( $matches[0], '', $icon['value'] );
-		$filename = str_replace( 'fa-', '', $icon['library'] );
-		$icon_list_url = self::get_fa_asset_url( $filename, 'json', false );
-		$icon_list = json_decode( file_get_contents( $icon_list_url ), true );
+		$icon_file_name = str_replace( 'fa-', '', $icon['library'] );
+		$icon_file_path = self::get_fa_asset_url( $icon_file_name, 'json', false );
 
-		return $icon_list[ 'icons' ][ $icon_name ];
+		$icon['name'] = $icon_name;
+
+		return [
+			'content_type' => 'svg',
+			'assets_category' => 'font_awesome',
+			'asset_key' => $icon_key,
+			'current_version' => 5,
+			'asset_path' => $icon_file_path,
+			'data' => [
+				'icon_data' => $icon,
+			],
+		];
 	}
 
 	public static function get_icon_svg_data( $icon ) {
-		$icon_option_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
-		// TODO: should we check the version per library?
-		$icon_data_key = 'font_icon_svg';
-		$icon_library_version = 5;
-		$icon_data_config = [
-			'content_type' => $icon_data_key,
-			'asset_key' => $icon_option_key,
-			'version' => $icon_library_version,
-		];
-		$icon_data = Plugin::$instance->assets_loader->get_asset_inline_content( $icon_data_config );
-
-		if ( empty( $icon_data ) ) {
-			// On first use, load the SVG from the Font Awesome json file
-			$icon_data = self::get_font_awesome_svg_from_library( $icon );
-			$icon_data = [
-				'width' => $icon_data[0],
-				'height' => $icon_data[1],
-				'key' => $icon_option_key,
-				'path' => $icon_data[4],
-			];
-
-			// Save the $icon_data in the database for future renders.
-			Plugin::$instance->assets_loader->save_asset_inline_content( $icon_data_key, $icon_option_key, $icon_data, $icon_library_version );
-		}
-
-		return $icon_data;
+		return Plugin::$instance->assets_loader->get_asset_inline_content( self::get_icon_svg_config( $icon ) );
 	}
 
 	/**

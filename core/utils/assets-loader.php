@@ -122,6 +122,8 @@ class Assets_Loader extends Module {
 		if ( ! $is_asset_inline_content_exist || $this->is_asset_version_changed( $assets_data[ $asset_key ], $current_version ) ) {
 			if ( 'css' === $content_type ) {
 				$asset_content = $this->get_asset_css( $config );
+			} elseif ( 'svg' === $content_type ) {
+				$asset_content = $this->get_svg( $config );
 			}
 
 			$this->save_asset_inline_content( $content_type, $assets_category, $asset_key, $asset_content, $current_version );
@@ -274,6 +276,20 @@ class Assets_Loader extends Module {
 				}
 			}
 		}
+	}
+
+	private function get_svg( $config ) {
+		$data = $config['data']['icon_data'];
+		$svg_file_data = json_decode( $this->get_file_data( $config['content_type'], $config['assets_category'], $data['library'], $config['asset_path'], 'content' ), true );
+		$icon_name = $data['name'];
+		$svg_data = $svg_file_data['icons'][ $icon_name ];
+
+		return [
+			'width' => $svg_data[0],
+			'height' => $svg_data[1],
+			'key' => $config['asset_key'],
+			'path' => $svg_data[4],
+		];
 	}
 
 	public function __construct() {
