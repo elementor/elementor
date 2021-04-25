@@ -16,7 +16,7 @@ export default function useKitCallToAction( kitAccessLevel ) {
 		const isAuthorizeToApplyKit = settings.access_level >= kitAccessLevel;
 
 		// The user in not connected and has pro plugin or the kit is a free kit.
-		if ( ! settings.is_library_connected && ( settings.isPro || isAuthorizeToApplyKit ) ) {
+		if ( ! settings.is_library_connected && ( settings.is_pro || isAuthorizeToApplyKit ) ) {
 			return TYPE_CONNECT;
 		}
 
