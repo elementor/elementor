@@ -112,7 +112,15 @@ class Assets_Loader extends Module {
 		$current_version = $config['current_version'];
 
 		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content_data( $content_type, $assets_category );
+			$this->init_assets_inline_content_data();
+		}
+
+		if ( ! isset( $this->assets_inline_content[ $content_type ] ) ) {
+			$this->assets_inline_content[ $content_type ] = [];
+		}
+
+		if ( ! isset( $this->assets_inline_content[ $content_type ][ $assets_category ] ) ) {
+			$this->assets_inline_content[ $content_type ][ $assets_category ] = [];
 		}
 
 		$assets_data = $this->assets_inline_content[ $content_type ][ $assets_category ];
@@ -222,7 +230,15 @@ class Assets_Loader extends Module {
 	 */
 	private function save_asset_inline_content( $content_type, $assets_category, $asset_key, $content, $version ) {
 		if ( ! $this->assets_inline_content ) {
-			$this->init_assets_inline_content_data( $content_type, $assets_category );
+			$this->init_assets_inline_content_data();
+		}
+
+		if ( ! isset( $this->assets_inline_content[ $content_type ] ) ) {
+			$this->assets_inline_content[ $content_type ] = [];
+		}
+
+		if ( ! isset( $this->assets_inline_content[ $content_type ][ $assets_category ] ) ) {
+			$this->assets_inline_content[ $content_type ][ $assets_category ] = [];
 		}
 
 		if ( ! isset( $this->assets_inline_content[ $content_type ][ $assets_category ][ $asset_key ] ) ) {
@@ -236,20 +252,8 @@ class Assets_Loader extends Module {
 		update_option( self::INLINE_CONTENT_KEY, $this->assets_inline_content );
 	}
 
-	/**
-	 * @param string $content_type
-	 * @param string $assets_category
-	 */
-	private function init_assets_inline_content_data( $content_type, $assets_category ) {
+	private function init_assets_inline_content_data() {
 		$this->assets_inline_content = get_option( self::INLINE_CONTENT_KEY, [] );
-
-		if ( ! isset( $this->assets_inline_content[ $content_type ] ) ) {
-			$this->assets_inline_content[ $content_type ] = [];
-		}
-
-		if ( ! isset( $this->assets_inline_content[ $content_type ][ $assets_category ] ) ) {
-			$this->assets_inline_content[ $content_type ][ $assets_category ] = [];
-		}
 	}
 
 	private function reset_inline_content_css() {
