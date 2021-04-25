@@ -336,6 +336,32 @@ abstract class Base_App {
 	}
 
 	/**
+	 * @deprecated Please use `http_request` method instead of this method.
+	 *
+	 * @param       $action
+	 * @param array $request_body
+	 * @param false $as_array
+	 *
+	 * @return mixed|\WP_Error
+	 */
+	protected function request( $action, $request_body = [], $as_array = false ) {
+		$request_body = $this->get_connect_info() + $request_body;
+
+		$response = $this->http_request( 'POST', $action, [
+			'body' => $request_body,
+			'headers' => $this->is_connected() ?
+				[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
+				[],
+		] );
+
+		if ( ! $as_array && ! is_wp_error( $response ) ) {
+			return (object) $response;
+		}
+
+		return $response;
+	}
+
+	/**
 	 * Get all the connect info
 	 *
 	 * @return array
@@ -409,32 +435,6 @@ abstract class Base_App {
 		}
 
 		return json_decode( $body, true );
-	}
-
-	/**
-	 * @deprecated Please use `http_request` method instead of this method.
-	 *
-	 * @param       $action
-	 * @param array $request_body
-	 * @param false $as_array
-	 *
-	 * @return mixed|\WP_Error
-	 */
-	protected function request( $action, $request_body = [], $as_array = false ) {
-		$request_body = $this->get_connect_info() + $request_body;
-
-		$response = $this->http_request( 'POST', $action, [
-			'body' => $request_body,
-			'headers' => $this->is_connected() ?
-				[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
-				[],
-		] );
-
-		if ( ! $as_array && ! is_wp_error( $response ) ) {
-			return (object) $response;
-		}
-
-		return $response;
 	}
 
 	/**
