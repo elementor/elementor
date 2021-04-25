@@ -15,9 +15,9 @@ jobs:
           whitelist-file: '.github/workflows/whitelist.txt'
       - name: Elementor Tests / Init
         env:
-          TOKEN: ${{ secrets.DEVOPS_TOKEN }}
-          REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          TOKEN: ${{ secrets.DEVOPS_TOKEN }} # GitHub access token to access the remote repo.
+          REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
         run: |
           curl -X POST https://api.github.com/repos/${{ env.REMOTE_TESTS_REPO }}/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
