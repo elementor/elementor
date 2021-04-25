@@ -283,15 +283,28 @@ class Assets_Loader extends Module {
 	}
 
 	private function get_svg_data( $config ) {
-		$file_data_key = isset( $config['data']['file_data_key'] ) ? $config['data']['file_data_key'] : $config['asset_key'];
+		$asset_key = $config['asset_key'];
+
+		/**
+		 * Using the file_data_key to read the JSON file only once per icons type.
+		 * When multiple icons are being read from the same file, the key should be the same for all icons.
+		 * In case that the file_data_key was the asset_key, the file data was fetched repeatedly for each icon.
+		 */
+		$file_data_key = isset( $config['data']['file_data_key'] ) ? $config['data']['file_data_key'] : $asset_key;
+
 		$svg_file_data = json_decode( $this->get_file_data( $config['content_type'], $config['assets_category'], $file_data_key, $config['asset_path'], 'content' ), true );
-		$svg_data = call_user_func( $config['actions']['get_svg_data_from_file'], $svg_file_data );
+
+		/**
+		 * Each JSON file can have a different structure, therefore using a callback from the config to get the svg data.
+		 * The callback should get the file_data and return an associative array with the width, height and path values.
+		 */
+		$svg_data = isset( $config['actions']['get_svg_data_from_file'] ) ? call_user_func( $config['actions']['get_svg_data_from_file'], $svg_file_data ) : $svg_file_data[ $asset_key ];
 
 		return [
 			'width' => $svg_data['width'],
 			'height' => $svg_data['height'],
 			'path' => $svg_data['path'],
-			'key' => $config['asset_key'],
+			'key' => $asset_key,
 		];
 	}
 

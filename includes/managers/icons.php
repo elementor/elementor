@@ -242,7 +242,7 @@ class Icons_Manager {
 	}
 
 	public static function get_icon_svg_config( $icon ) {
-		$icon_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'
+		$icon_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'.
 		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
 		$icon_name = str_replace( $matches[0], '', $icon['value'] );
 		$icon_file_name = str_replace( 'fa-', '', $icon['library'] );
@@ -298,8 +298,10 @@ class Icons_Manager {
 			return $symbols;
 		} );
 
-		// If in edit mode inline the full svg, otherwise use the symbol
-		// TODO: Will be displayed only after the widget "blur" or page update.
+		/**
+		 * If in edit mode inline the full svg, otherwise use the symbol.
+		 * Will be displayed only after the widget "blur" or page update.
+		 */
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return '<svg xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'] . '">
