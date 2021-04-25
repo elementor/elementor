@@ -46,6 +46,7 @@ require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
 require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/ajax-class.php';
+require __DIR__ . '/phpunit/base-schema.php';
 require __DIR__ . '/phpunit/factories/factory.php';
 require __DIR__ . '/phpunit/factories/documents.php';
 
