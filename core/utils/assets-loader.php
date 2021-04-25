@@ -123,7 +123,7 @@ class Assets_Loader extends Module {
 			if ( 'css' === $content_type ) {
 				$asset_content = $this->get_asset_css( $config );
 			} elseif ( 'svg' === $content_type ) {
-				$asset_content = $this->get_svg( $config );
+				$asset_content = $this->get_svg_data( $config );
 			}
 
 			$this->save_asset_inline_content( $content_type, $assets_category, $asset_key, $asset_content, $current_version );
@@ -278,17 +278,16 @@ class Assets_Loader extends Module {
 		}
 	}
 
-	private function get_svg( $config ) {
-		$data = $config['data']['icon_data'];
-		$svg_file_data = json_decode( $this->get_file_data( $config['content_type'], $config['assets_category'], $data['library'], $config['asset_path'], 'content' ), true );
-		$icon_name = $data['name'];
-		$svg_data = $svg_file_data['icons'][ $icon_name ];
+	private function get_svg_data( $config ) {
+		$file_data_key = isset( $config['data']['file_data_key'] ) ? $config['data']['file_data_key'] : $config['asset_key'];
+		$svg_file_data = json_decode( $this->get_file_data( $config['content_type'], $config['assets_category'], $file_data_key, $config['asset_path'], 'content' ), true );
+		$svg_data = call_user_func( $config['actions']['get_svg_data_from_file'], $svg_file_data );
 
 		return [
-			'width' => $svg_data[0],
-			'height' => $svg_data[1],
+			'width' => $svg_data['width'],
+			'height' => $svg_data['height'],
+			'path' => $svg_data['path'],
 			'key' => $config['asset_key'],
-			'path' => $svg_data[4],
 		];
 	}
 

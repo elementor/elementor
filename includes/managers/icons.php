@@ -257,7 +257,20 @@ class Icons_Manager {
 			'current_version' => 5,
 			'asset_path' => $icon_file_path,
 			'data' => [
-				'icon_data' => $icon,
+				'file_data_key' => $icon['library'],
+			],
+			'actions' => [
+				'get_svg_data_from_file' => function( $file_data ) use ( $icon ) {
+					$icon_name = $icon['name'];
+
+					$svg_data = $file_data['icons'][ $icon_name ];
+
+					return [
+						'width' => $svg_data[0],
+						'height' => $svg_data[1],
+						'path' => $svg_data[4],
+					];
+				},
 			],
 		];
 	}
