@@ -35,8 +35,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
-
-
+	
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
 	/**
