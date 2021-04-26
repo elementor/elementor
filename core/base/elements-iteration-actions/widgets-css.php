@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Widgets_Css_Iteration_Action extends Document_Iteration_Action {
+class Widgets_Css extends Base {
 	public function unique_element_action( Element_Base $element_data ) {
 		if ( 'widget' === $element_data->get_type() ) {
 			$this->save_widgets_css( $element_data->get_group_name() );

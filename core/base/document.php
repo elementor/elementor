@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Base;
 
-use Elementor\Core\Base\Elements_Iteration_Actions\Assets_Iteration_Action;
-use Elementor\Core\Base\Elements_Iteration_Actions\Document_Iteration_Action;
-use Elementor\Core\Base\Elements_Iteration_Actions\Widgets_Css_Iteration_Action;
+use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
+use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
+use Elementor\Core\Base\Elements_Iteration_Actions\Widgets_Css as Widgets_Css_Iteration_Action;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -36,7 +36,6 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
-
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
@@ -76,7 +75,7 @@ abstract class Document extends Controls_Stack {
 	private static $properties = [];
 
 	/**
-	 * @var Document_Iteration_Action[]
+	 * @var Elements_Iteration_Action[]
 	 */
 	private $elements_iteration_actions = [];
 
