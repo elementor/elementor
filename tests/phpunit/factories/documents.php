@@ -107,10 +107,10 @@ class Documents extends WP_UnitTest_Factory_For_Thing {
 		$type = $this->default_generation_definitions['type'];
 		$meta = [];
 
-		if ( isset( $args['type'] ) ) {
-			$type = $args['type'];
+		if ( isset( $args['post_type'] ) ) {
+			$type = $args['post_type'];
 
-			unset( $args['type'] );
+			unset( $args['post_type'] );
 		}
 
 		if ( isset( $args['meta_input'] ) ) {

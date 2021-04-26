@@ -5,6 +5,10 @@
 body {
 	--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
 
+	&.elementor-navigator-docked {
+		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px));
+	}
+
   	&.elementor-device-desktop {
 
 		#elementor-preview {
