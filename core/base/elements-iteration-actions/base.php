@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-abstract class Document_Iteration_Action {
+abstract class Base {
 	protected $document;
 
 	protected $mode;
