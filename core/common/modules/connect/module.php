@@ -70,10 +70,10 @@ class Module extends BaseModule {
 		// so this part of code make sure to register the module "apps".
 		if ( did_action( 'elementor/init' ) ) {
 			$this->init();
+		} else {
+			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
+			add_action( 'elementor/init', [ $this, 'init' ], 11 );
 		}
-
-		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-		add_action( 'elementor/init', [ $this, 'init' ], 11 );
 	}
 
 	/**

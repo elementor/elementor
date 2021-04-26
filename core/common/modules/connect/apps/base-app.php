@@ -18,6 +18,9 @@ abstract class Base_App {
 
 	const API_URL = 'https://my.elementor.com/api/connect/v1';
 
+	const HTTP_RETURN_TYPE_OBJECT = 'object';
+	const HTTP_RETURN_TYPE_ARRAY = 'array';
+
 	protected $data = [];
 
 	protected $auth_mode = '';
@@ -347,18 +350,19 @@ abstract class Base_App {
 	protected function request( $action, $request_body = [], $as_array = false ) {
 		$request_body = $this->get_connect_info() + $request_body;
 
-		$response = $this->http_request( 'POST', $action, [
-			'body' => $request_body,
-			'headers' => $this->is_connected() ?
-				[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
-				[],
-		] );
-
-		if ( ! $as_array && ! is_wp_error( $response ) ) {
-			return (object) $response;
-		}
-
-		return $response;
+		return $this->http_request(
+			'POST',
+			$action,
+			[
+				'body' => $request_body,
+				'headers' => $this->is_connected() ?
+					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
+					[],
+			],
+			[
+				'return_type' => $as_array ? static::HTTP_RETURN_TYPE_ARRAY : static::HTTP_RETURN_TYPE_OBJECT,
+			]
+		);
 	}
 
 	/**
@@ -383,10 +387,15 @@ abstract class Base_App {
 	 * @param       $method
 	 * @param       $endpoint
 	 * @param array $args
+	 * @param array $options
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	protected function http_request( $method, $endpoint, $args = [] ) {
+	protected function http_request( $method, $endpoint, $args = [], $options = [] ) {
+		$options = wp_parse_args( $options, [
+			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
+		] );
+
 		$connect_info = array_replace_recursive( $this->get_connect_info(), [
 			'endpoint' => $endpoint,
 		] );
@@ -418,13 +427,18 @@ abstract class Base_App {
 			$body = true;
 		}
 
+		$body = json_decode( $body, static::HTTP_RETURN_TYPE_ARRAY === $options['return_type'] );
+
 		if ( false === $body ) {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
 		if ( 200 !== $response_code ) {
+			// In case $as_array = true.
+			$body = (object) $body;
+
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = isset( $body->code ) ? $body->code : $response_code;
+			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
 			if ( 401 === $code ) {
 				$this->delete();
@@ -434,7 +448,7 @@ abstract class Base_App {
 			return new \WP_Error( $code, $message );
 		}
 
-		return json_decode( $body, true );
+		return $body;
 	}
 
 	/**

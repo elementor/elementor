@@ -2,7 +2,6 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
@@ -43,7 +42,7 @@ class Download_Link extends Endpoint {
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
-			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ) );
+			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
 
 		return [

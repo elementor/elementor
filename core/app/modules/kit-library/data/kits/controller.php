@@ -26,7 +26,7 @@ class Controller extends Controller_Base {
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
-			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ) );
+			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
 
 		return [
