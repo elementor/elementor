@@ -4,7 +4,7 @@ import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog, Text } from '@elementor/app-ui';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { useSettingsContext } from '../context/settings-context';
 
@@ -34,7 +34,7 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 				includeHeaderBtnClass: false,
 			};
 		}
-		if ( type === TYPE_PROMOTION ) {
+		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
 				text: __( 'Go %s', 'elementor' ).replace( '%s', subscriptionPlan.label ),
@@ -66,12 +66,18 @@ export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
-	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
+
+	const apply = useCallback( () => {
+		$e.data.get( 'kits/download-link', { id: props.model.id }, { refresh: true } )
+			.then( ( { data } ) => {
+				navigate( `/import/process?file_url=${ data.data.download_link }` );
+			} );
+	}, [ props.model ] );
 
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
-		onApply: () => setIsImportDialogOpen( true ),
+		onApply: apply,
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
@@ -103,32 +109,10 @@ export default function ItemHeader( props ) {
 							return;
 						}
 
-						setIsImportDialogOpen( true );
+						apply();
 					} }
 					onError={ ( message ) => setError( message ) }
 				/>
-			}
-			{
-				isImportDialogOpen && <Dialog
-					title={ __( 'Apply %s?', 'elementor' ).replace( '%s', props.model.title ) }
-					approveButtonText={ __( 'Apply All', 'elementor' ) }
-					approveButtonOnClick={ () => {
-						navigate( '/import' );
-					} }
-					approveButtonColor="primary"
-					dismissButtonText={ __( 'Customize', 'elementor-pro' ) }
-					dismissButtonOnClick={ () => {
-						navigate( '/import' );
-					} }
-					onClose={ () => setIsImportDialogOpen( false ) }
-				>
-					<Text>
-						{ __( 'You can use everything in this kit, or Customize to only include some items.', 'elementor' ) }
-					</Text>
-					<Text>
-						{ __( 'By applying the entire kit, you\'ll override any styles, settings or content already on your site.', 'elementor' ) }
-					</Text>
-				</Dialog>
 			}
 			<Header
 				startColumn={ <HeaderBackButton/> }

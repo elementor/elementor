@@ -1,4 +1,4 @@
-import { TaxonomiesIndex } from './commands/taxonimies-index';
+import * as commandsData from './commands-data/';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
@@ -6,8 +6,6 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	defaultData() {
-		return this.importCommands( {
-			index: TaxonomiesIndex,
-		} );
+		return this.importCommands( commandsData );
 	}
 }
