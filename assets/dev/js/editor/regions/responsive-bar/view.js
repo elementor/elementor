@@ -155,6 +155,7 @@ export default class View extends Marionette.ItemView {
 
 	onCloseButtonClick() {
 		elementor.changeDeviceMode( 'desktop' );
+		// Force exit if device mode is already desktop
 		elementor.exitDeviceMode();
 	}
 

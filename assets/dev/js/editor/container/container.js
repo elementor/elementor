@@ -337,4 +337,99 @@ export default class Container extends ArgsObject {
 	isDesignable() {
 		return elementor.userCan( 'design' ) && this.isEditable();
 	}
+
+	getSetting( controlName, localOnly = false ) {
+		const localValue = this.settings.get( controlName );
+
+		if ( localOnly ) {
+			return localValue;
+		}
+
+		// Try to get the value in the order: Global, Local, Global default.
+		let globalValue;
+
+		if ( this.getGlobalKey( name ) ) {
+			globalValue = this.getGlobalValue( name );
+		}
+
+		return globalValue || localValue || this.getGlobalDefault( name );
+	}
+
+	getGlobalKey( name ) {
+		return this.globals.get( name );
+	}
+
+	getGlobalValue( name ) {
+		const control = this.controls[ name ],
+			globalKey = this.getGlobalKey( name ),
+			globalArgs = $e.data.commandExtractArgs( globalKey ),
+			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
+
+		if ( ! data?.value ) {
+			return;
+		}
+
+		const id = data.id;
+
+		let value;
+
+		// it's a global settings with additional controls in group.
+		if ( control.groupType ) {
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+
+			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
+				return;
+			}
+
+			propertyName = propertyName.replace( '_', '-' );
+
+			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+
+			if ( elementor.config.ui.defaultGenericFonts && control.groupPrefix + 'font_family' === control.name ) {
+				value += `, ${ elementor.config.ui.defaultGenericFonts }`;
+			}
+		} else {
+			value = `var( --e-global-${ control.type }-${ id } )`;
+		}
+
+		return value;
+	}
+
+	/**
+	 * Determine if a control's global value is applied.
+	 * It actually checks if the local value is different than the global value.
+	 *
+	 * @param {string} controlName - Control name
+	 * @returns {boolean}
+	 */
+	isGlobalApplied( controlName ) {
+		return this.getSetting( controlName ) !== this.settings.get( controlName );
+	}
+
+	getGlobalDefault( controlName ) {
+		const controlGlobalArgs = this.controls[ controlName ].global;
+
+		if ( controlGlobalArgs?.default ) {
+			// Temp fix.
+			let controlType = this.controls[ controlName ].type;
+
+			if ( 'color' === controlType ) {
+				controlType = 'colors';
+			}
+			// End temp fix
+
+			// If the control is a color/typography control and default colors/typography are disabled, don't return the global value.
+			if ( ! elementor.config.globals.defaults_enabled[ controlType ] ) {
+				return '';
+			}
+
+			const { command, args } = $e.data.commandExtractArgs( controlGlobalArgs.default ),
+				result = $e.data.getCache( $e.components.get( 'globals' ), command, args.query );
+
+			return result?.value;
+		}
+
+		// No global default.
+		return '';
+	}
 }
