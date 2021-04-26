@@ -17,39 +17,19 @@ class Kit_Library extends Library {
 	}
 
 	public function get_all() {
-		return $this->http_request(
-			'GET',
-			'kits',
-			[],
-			[ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ]
-		);
+		return $this->http_request( 'GET', 'kits' );
 	}
 
 	public function get_taxonomies() {
-		return $this->http_request(
-			'GET',
-			'taxonomies',
-			[],
-			[ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ]
-		);
+		return $this->http_request( 'GET', 'taxonomies' );
 	}
 
 	public function get_manifest( $id ) {
-		return $this->http_request(
-			'GET',
-			"manifests/{$id}",
-			[],
-			[ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ]
-		);
+		return $this->http_request( 'GET', "manifests/{$id}" );
 	}
 
 	public function download_link( $id ) {
-		return $this->http_request(
-			'GET',
-			"kits/{$id}/download-link",
-			[],
-			[ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ]
-		);
+		return $this->http_request( 'GET', "kits/{$id}/download-link" );
 	}
 
 	protected function get_api_url() {

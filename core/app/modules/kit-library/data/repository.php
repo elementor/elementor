@@ -50,7 +50,7 @@ class Repository {
 	public function find( $id ) {
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
-				return $kit['_id'] === $id;
+				return $kit->_id === $id;
 			} );
 
 		if ( ! $item ) {
@@ -101,7 +101,7 @@ class Repository {
 			throw new Wp_Error_Exception( $response );
 		}
 
-		return [ 'download_link' => $response['download_link'] ];
+		return [ 'download_link' => $response->download_link ];
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Repository {
 			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
-		return new Collection( $data );
+		return new Collection( (array) $data );
 	}
 
 	/**
@@ -156,16 +156,16 @@ class Repository {
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, $kit[ $key ] );
+			return array_merge( $current, $kit->{$key} );
 		}, [] );
 
 		return array_merge(
 			[
-				'id' => $kit['_id'],
-				'title' => $kit['title'],
-				'thumbnail_url' => $kit['thumbnail'],
-				'access_level' => $kit['access_level'],
-				'keywords' => $kit['keywords'],
+				'id' => $kit->_id,
+				'title' => $kit->title,
+				'thumbnail_url' => $kit->thumbnail,
+				'access_level' => $kit->access_level,
+				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
@@ -178,25 +178,25 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_manifest_api_response( $manifest ) {
-		$content = ( new Collection( $manifest['templates'] ) )
+		$content = ( new Collection( (array) $manifest->templates ) )
 			->union(
-				array_reduce( $manifest['content'], function ( $carry, $content ) {
+				array_reduce( (array) $manifest->content, function ( $carry, $content ) {
 					return $carry + $content;
 				}, [] )
 			)
 			->map( function ( $manifest_item, $key ) {
 				return [
-					'id' => $key,
-					'title' => $manifest_item['title'],
-					'doc_type' => $manifest_item['doc_type'],
-					'thumbnail_url' => $manifest_item['thumbnail'],
-					'preview_url' => isset( $manifest_item['url'] ) ? $manifest_item['url'] : null,
+					'id' => isset( $manifest_item->id ) ? $manifest_item->id : $key,
+					'title' => $manifest_item->title,
+					'doc_type' => $manifest_item->doc_type,
+					'thumbnail_url' => $manifest_item->thumbnail,
+					'preview_url' => isset( $manifest_item->url ) ? $manifest_item->url : null,
 				];
 			} );
 
 		return [
-			'description' => $manifest['description'],
-			'preview_url' => isset( $manifest['site'] ) ? $manifest['site'] : '',
+			'description' => $manifest->description,
+			'preview_url' => isset( $manifest->site ) ? $manifest->site : '',
 			'documents' => $content->values(),
 		];
 	}
