@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets_Iteration_Action;
+use Elementor\Core\Base\Elements_Iteration_Actions\Document_Iteration_Action;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -74,7 +75,7 @@ abstract class Document extends Controls_Stack {
 	private static $properties = [];
 
 	/**
-	 * @var array
+	 * @var Document_Iteration_Action[]
 	 */
 	private $elements_iteration_actions = [];
 
