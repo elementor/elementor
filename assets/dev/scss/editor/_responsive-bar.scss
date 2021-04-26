@@ -27,20 +27,21 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 10px;
 	height: 40px;
 	color: $editor-light;
 	background-color: $editor-darkest;
 
-	&__col {
+	&__center, &__start, &-scale, &-switcher {
 		display: flex;
-		width: 25%;
 		justify-content: center;
 		align-items: center;
+	  	font-size: 13px;
+	}
 
-		&:last-child {
-			justify-content: flex-start;
-			flex-direction: row-reverse;
+	@media ( min-width:1000px ) {
+		&__center {
+			margin-#{ $start }: 50%;
+			transform: translate( -50%, 0 );
 		}
 	}
 
@@ -65,18 +66,18 @@
 		}
 	}
 
-	&__close-button + &__button {
+  	&--pipe {
 		position: relative;
 
 		&::before {
-			content: '';
-			display: block;
-			height: 20px;
-			width: 1px;
-			background-color: $editor-dark;
-			position: absolute;
-			@include end(0);
-			top: calc(50% - 10px);
+		  content: '';
+		  display: block;
+		  height: 20px;
+		  width: 1px;
+		  background-color: $editor-dark;
+		  position: absolute;
+		  @include end(0);
+		  top: calc(50% - 10px);
 		}
 	}
 
@@ -103,6 +104,10 @@
 		}
 	}
 
+	&-switcher, &-scale {
+	  	padding: 0 20px;
+	}
+
 	&-switcher__option {
 		display: block;
 		float: left;
@@ -113,16 +118,15 @@
 		height: 22px;
 	  	line-height: 22px;
 		border-radius: 3px;
-		font-size: 17px;
 	  	transition: background-color .3s ease-out;
 
-		&:hover, &[aria-selected="true"] {
+		&:hover {
 		  	color: $editor-lighter;
 		 	background-color: rgba(255, 255, 255, 0.1);
 		}
 
 	  	&:not(:last-child) {
-		  	margin-inline-end: 7px;
+		  	margin-inline-end: 6px;
 		}
 
 	  	input {
@@ -140,5 +144,41 @@
 			}
 		}
 	}
+
+	&-scale {
+
+		&__value {
+			margin: 0 14px;
+			min-width: 32px;
+			text-align: center;
+		}
+
+	  	&__plus, &__minus, &__reset {
+			cursor:pointer;
+			width: 20px;
+			height: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		&__minus {
+			&:before {
+			content: "";
+			display: block;
+			width: 13px;
+			height: 2px;
+			background: #a4afb7;
+			border-radius: 3px;
+			}
+		}
+
+		&__reset {
+			margin: 0px 8px;
+		}
+
+	}
+
+
 }
 

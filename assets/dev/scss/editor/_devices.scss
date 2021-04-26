@@ -22,6 +22,7 @@ body {
 }
 
 #elementor-preview {
+	overflow: auto;
 	background-color: #333;
 	height: 100%;
 	border: 0;
@@ -118,13 +119,23 @@ body {
 
 	.ui-resizable-s {
 		bottom: 0;
+		transform-origin: top center;
 	}
 
 	.ui-resizable-e {
 		right: 0;
+		transform-origin: top left;
 	}
 	.ui-resizable-w {
 		left: 0;
+		transform-origin: top right;
+	}
+}
+
+.elementor-preview-responsive-wrapper--scrollable {
+	overflow: auto;
+	& #elementor-preview-iframe {
+		transform-origin: $start top;
 	}
 }
 
@@ -133,5 +144,6 @@ body {
 	height: 100%;
 	background-color: #fff;
 	box-shadow: 0 0 3px rgba(0, 0, 0, .3), 0 0 20px rgba(0, 0, 0, .15);
+	transform-origin: top center;
 }
 
