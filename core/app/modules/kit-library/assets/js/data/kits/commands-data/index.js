@@ -1,4 +1,4 @@
-export { KitsDownloadLink } from './kits-download-link';
+export { DownloadLink } from './download-link';
 
 export class Index extends $e.modules.CommandData {
 	static getEndpointFormat() {

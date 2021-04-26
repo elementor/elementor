@@ -6,10 +6,8 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Core\App\Modules\KitLibrary\Data\Api_Client;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
-use Elementor\Core\App\Modules\KitLibrary\Data\Kits_Controller;
-use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies_Controller;
+use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
+use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

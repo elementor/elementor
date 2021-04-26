@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// TODO: Maybe transfer into base/data
 class Wp_Error_Exception extends \Exception {
 	/**
 	 * @var \WP_Error

@@ -1,15 +1,19 @@
 <?php
-namespace Elementor\Core\App\Modules\KitLibrary\Data\Endpoints;
+namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits\Endpoints;
 
 use Elementor\Data\Base\Endpoint;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
+use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Kits_Download_Link extends Endpoint {
+/**
+ * @property Controller $controller
+ */
+class Download_Link extends Endpoint {
 	public function get_name() {
 		return 'download-link';
 	}
@@ -32,8 +36,7 @@ class Kits_Download_Link extends Endpoint {
 	}
 
 	public function get_item( $id, $request ) {
-		/** @var Repository $repository */
-		$repository = $this->controller->repository;
+		$repository = $this->controller->get_repository();
 
 		try {
 			$data = $repository->get_download_link( $id );
@@ -43,8 +46,8 @@ class Kits_Download_Link extends Endpoint {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ) );
 		}
 
-		return new \WP_REST_Response( [
+		return [
 			'data' => $data,
-		] );
+		];
 	}
 }
