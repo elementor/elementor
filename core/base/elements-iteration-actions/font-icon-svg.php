@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Font_Icon_Svg_Iteration_Action extends Document_Iteration_Action {
+class Font_Icon_Svg extends Base {
 	public function element_action( Element_Base $element_data ) {
 		if ( 'icon' === $element_data->get_name() ) {
 			$icon = $element_data->get_settings( 'selected_icon' );
