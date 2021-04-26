@@ -599,6 +599,8 @@ class Frontend extends App {
 
 		$this->print_config();
 
+		$this->enqueue_conditional_assets();
+
 		/**
 		 * After frontend enqueue scripts.
 		 *
@@ -655,6 +657,18 @@ class Frontend extends App {
 				$css_file->enqueue();
 			}
 		}
+	}
+
+	/**
+	 * Enqueue assets conditionally.
+	 *
+	 * Enqueue all assets that were pre-enabled.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	private function enqueue_conditional_assets() {
+		Plugin::$instance->assets_loader->enqueue_assets();
 	}
 
 	/**
