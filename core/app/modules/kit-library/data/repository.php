@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
+use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,9 +22,9 @@ class Repository {
 	const KITS_TAXONOMIES_CACHE_TTL_HOURS = 12;
 
 	/**
-	 * @var Api_Client
+	 * @var Kit_Library
 	 */
-	protected $api_client;
+	protected $api;
 
 	/**
 	 * Get all kits.
@@ -31,8 +33,7 @@ class Repository {
 	 * @param false $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function get_all( $user_id = null, $force_api_request = false ) {
 		$favorites = $this->get_user_favorites_meta( $user_id );
@@ -51,24 +52,28 @@ class Repository {
 	 * @param bool $manifest_included
 	 *
 	 * @return array
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
-	 * @throws Kit_Not_Found_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function find( $id, $user_id = null, $manifest_included = true ) {
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
-				return $kit['_id'] === $id;
+				return $kit->_id === $id;
 			} );
 
 		if ( ! $item ) {
-			throw new Kit_Not_Found_Exception( $id );
+			throw new Wp_Error_Exception(
+				new \WP_Error( 404, 'Kit not found' )
+			);
 		}
 
 		$manifest = null;
 
 		if ( $manifest_included ) {
-			$manifest = $this->api_client->get_manifest( $id );
+			$manifest = $this->api->get_manifest( $id );
+
+			if ( is_wp_error( $manifest ) ) {
+				throw new Wp_Error_Exception( $manifest );
+			}
 		}
 
 		return $this->transform_kit_api_response(
@@ -79,13 +84,10 @@ class Repository {
 	}
 
 	/**
-	 * Get all the available taxonomies
-	 *
 	 * @param false $force_api_request
 	 *
 	 * @return mixed|null
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function get_taxonomies( $force_api_request = false ) {
 		return $this->get_taxonomies_data( $force_api_request )
@@ -104,13 +106,27 @@ class Repository {
 	}
 
 	/**
+	 * @param $id
+	 *
+	 * @return array
+	 * @throws Wp_Error_Exception
+	 */
+	public function get_download_link( $id ) {
+		$response = $this->api->download_link( $id );
+
+		if ( is_wp_error( $response ) ) {
+			throw new Wp_Error_Exception( $response );
+		}
+
+		return [ 'download_link' => $response->download_link ];
+	}
+
+	/**
 	 * @param $user_id
 	 * @param $id
 	 *
 	 * @return array
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
-	 * @throws Kit_Not_Found_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function add_to_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
@@ -135,9 +151,7 @@ class Repository {
 	 * @param $id
 	 *
 	 * @return array
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
-	 * @throws Kit_Not_Found_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	public function remove_from_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
@@ -163,14 +177,17 @@ class Repository {
 	 * @param bool $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	private function get_kits_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_CACHE_KEY );
 
 		if ( ! $data || $force_api_request ) {
-			$data = $this->api_client->get_all();
+			$data = $this->api->get_all();
+
+			if ( is_wp_error( $data ) ) {
+				throw new Wp_Error_Exception( $data );
+			}
 
 			set_transient( static::KITS_CACHE_KEY, $data, static::KITS_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
@@ -179,22 +196,25 @@ class Repository {
 	}
 
 	/**
-	 * @param false $force_api_request
+	 * @param bool $force_api_request
 	 *
 	 * @return Collection
-	 * @throws Exceptions\Api_Response_Exception
-	 * @throws Exceptions\Api_Wp_Error_Exception
+	 * @throws Wp_Error_Exception
 	 */
 	private function get_taxonomies_data( $force_api_request = false ) {
 		$data = get_transient( static::KITS_TAXONOMIES_CACHE_KEY );
 
 		if ( ! $data || $force_api_request ) {
-			$data = $this->api_client->get_taxonomies();
+			$data = $this->api->get_taxonomies();
+
+			if ( is_wp_error( $data ) ) {
+				throw new Wp_Error_Exception( $data );
+			}
 
 			set_transient( static::KITS_TAXONOMIES_CACHE_KEY, $data, static::KITS_TAXONOMIES_CACHE_TTL_HOURS * HOUR_IN_SECONDS );
 		}
 
-		return new Collection( $data );
+		return new Collection( (array) $data );
 	}
 
 	/**
@@ -206,18 +226,18 @@ class Repository {
 	 */
 	private function transform_kit_api_response( $kit, $favorites = [], $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, $kit[ $key ] );
+			return array_merge( $current, $kit->{$key} );
 		}, [] );
 
 		return array_merge(
 			[
-				'id' => $kit['_id'],
-				'title' => $kit['title'],
-				'thumbnail_url' => $kit['thumbnail'],
-				'access_level' => $kit['access_level'],
-				'keywords' => $kit['keywords'],
+				'id' => $kit->_id,
+				'title' => $kit->title,
+				'thumbnail_url' => $kit->thumbnail,
+				'access_level' => $kit->access_level,
+				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
-				'is_favorite' => in_array( $kit['_id'], $favorites, true ),
+				'is_favorite' => in_array( $kit->_id, $favorites, true ),
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
 		);
@@ -229,25 +249,25 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_manifest_api_response( $manifest ) {
-		$content = ( new Collection( $manifest['templates'] ) )
+		$content = ( new Collection( (array) $manifest->templates ) )
 			->union(
-				array_reduce( $manifest['content'], function ( $carry, $content ) {
+				array_reduce( (array) $manifest->content, function ( $carry, $content ) {
 					return $carry + $content;
 				}, [] )
 			)
 			->map( function ( $manifest_item, $key ) {
 				return [
-					'id' => $key,
-					'title' => $manifest_item['title'],
-					'doc_type' => $manifest_item['doc_type'],
-					'thumbnail_url' => $manifest_item['thumbnail'],
-					'preview_url' => isset( $manifest_item['url'] ) ? $manifest_item['url'] : null,
+					'id' => isset( $manifest_item->id ) ? $manifest_item->id : $key,
+					'title' => $manifest_item->title,
+					'doc_type' => $manifest_item->doc_type,
+					'thumbnail_url' => $manifest_item->thumbnail,
+					'preview_url' => isset( $manifest_item->url ) ? $manifest_item->url : null,
 				];
 			} );
 
 		return [
-			'description' => $manifest['description'],
-			'preview_url' => isset( $manifest['site'] ) ? $manifest['site'] : '',
+			'description' => $manifest->description,
+			'preview_url' => isset( $manifest->site ) ? $manifest->site : '',
 			'documents' => $content->values(),
 		];
 	}
@@ -277,10 +297,8 @@ class Repository {
 
 	/**
 	 * Repository constructor.
-	 *
-	 * @param Api_Client $api_client
 	 */
-	public function __construct( Api_Client $api_client ) {
-		$this->api_client = $api_client;
+	public function __construct() {
+		$this->api = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
 	}
 }

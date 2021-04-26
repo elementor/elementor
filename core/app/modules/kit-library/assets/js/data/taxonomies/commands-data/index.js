@@ -1,4 +1,4 @@
-export class TaxonomiesIndex extends $e.modules.CommandData {
+export class Index extends $e.modules.CommandData {
 	static getEndpointFormat() {
 		return 'kit-taxonomies/{id}';
 	}

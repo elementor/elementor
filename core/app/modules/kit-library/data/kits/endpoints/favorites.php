@@ -1,16 +1,18 @@
 <?php
-namespace Elementor\Core\App\Modules\KitLibrary\Data\Endpoints;
+namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits\Endpoints;
 
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Api_Response_Exception;
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Kit_Not_Found_Exception;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
+use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
+use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 use Elementor\Data\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Kits_Favorites extends Endpoint {
+/**
+ * @property Controller $controller
+ */
+class Favorites extends Endpoint {
 	public function get_name() {
 		return 'favorites';
 	}
@@ -54,15 +56,12 @@ class Kits_Favorites extends Endpoint {
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function create_item( $id, $request ) {
-		/** @var Repository $repository */
-		$repository = $this->controller->repository;
+		$repository = $this->controller->get_repository();
 
 		try {
 			$kit = $repository->add_to_favorites( get_current_user_id(), $id );
-		} catch ( Api_Response_Exception $exception ) {
-			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
-		} catch ( Kit_Not_Found_Exception $exception ) {
-			return new \WP_Error( 'not_found', $exception->getMessage(), [ 'status' => $exception->getCode() ] );
+		} catch ( Wp_Error_Exception $exception ) {
+			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
@@ -79,15 +78,12 @@ class Kits_Favorites extends Endpoint {
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function delete_item( $id, $request ) {
-		/** @var Repository $repository */
-		$repository = $this->controller->repository;
+		$repository = $this->controller->get_repository();
 
 		try {
 			$kit = $repository->remove_from_favorites( get_current_user_id(), $id );
-		} catch ( Api_Response_Exception $exception ) {
-			return new \WP_Error( 'http_response_error', __( 'Connection error.', 'elementor' ), [ 'status' => 500 ] );
-		} catch ( Kit_Not_Found_Exception $exception ) {
-			return new \WP_Error( 'not_found', $exception->getMessage(), [ 'status' => $exception->getCode() ] );
+		} catch ( Wp_Error_Exception $exception ) {
+			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
