@@ -1,15 +1,16 @@
+import BreakpointValidator from 'elementor-validator/breakpoint';
+
 var ControlBaseView = require( 'elementor-controls/base' ),
 	TagsBehavior = require( 'elementor-dynamic-tags/control-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
 	NumberValidator = require( 'elementor-validator/number' ),
-	BreakpointValidator = require( 'elementor-validator/breakpoint' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
 	validatorTypes: {
-		base: Validator,
-		number: NumberValidator,
-		breakpoint: BreakpointValidator,
+		Base: Validator,
+		Number: NumberValidator,
+		Breakpoint: BreakpointValidator,
 	},
 
 	ui: function() {

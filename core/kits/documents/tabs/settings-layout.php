@@ -288,7 +288,7 @@ class Settings_Layout extends Tab_Base {
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
 				'validators' => [
-					'breakpoint' => [
+					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,
 					],
 				],

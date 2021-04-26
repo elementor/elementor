@@ -1,20 +1,18 @@
+import Stylesheet from 'elementor-editor-utils/stylesheet';
+
 const NumberValidator = require( 'elementor-validator/number' );
 
-module.exports = NumberValidator.extend( {
-	breakpointKeysArray: [],
-
-	getDefaultSettings: function() {
+export default class BreakpointValidator extends NumberValidator {
+	getDefaultSettings() {
 		return {
 			validationTerms: {
-				// Min width we allow for mobile
-				min: 320,
 				// Max width we allow in general
 				max: 5120,
 			},
 		};
-	},
+	}
 
-	validationMethod: function( newValue ) {
+	validationMethod( newValue ) {
 		const validationTerms = this.getSettings( 'validationTerms' ),
 			errors = NumberValidator.prototype.validationMethod.call( this, newValue );
 
@@ -25,22 +23,28 @@ module.exports = NumberValidator.extend( {
 		}
 
 		return errors;
-	},
+	}
 
-	validateMinMaxForBreakpoint: function( newValue, validationTerms ) {
+	validateMinMaxForBreakpoint( newValue, validationTerms ) {
 		let isValid = true;
 
-		if ( ! this.breakpointKeysArray.length ) {
+		if ( ! this.breakpointKeysArray ) {
 			this.breakpointKeysArray = Object.keys( elementorFrontend.config.responsive.activeBreakpoints );
 		}
 
 		const breakpointIndex = this.breakpointKeysArray.indexOf( validationTerms.breakpointName ),
-			bottomBreakpointKey = this.breakpointKeysArray[ breakpointIndex - 1 ],
 			topBreakpointKey = this.breakpointKeysArray[ breakpointIndex + 1 ];
+
+		let bottomBreakpoint = Stylesheet.getDeviceMinBreakpoint( validationTerms.breakpointName );
+
+		// Since the following comparison is <=, allow usage of the 320px value for the mobile breakpoint.
+		if ( 'mobile' === validationTerms.breakpointName ) {
+			bottomBreakpoint -= 1;
+		}
 
 		// If there is a breakpoint below the currently edited breakpoint, check that the value is not under the bottom
 		// breakpoint's value.
-		if ( bottomBreakpointKey && newValue <= elementorFrontend.config.responsive.activeBreakpoints[ bottomBreakpointKey ].value ) {
+		if ( bottomBreakpoint && ( newValue <= bottomBreakpoint ) ) {
 			isValid = false;
 		}
 
@@ -51,5 +55,5 @@ module.exports = NumberValidator.extend( {
 		}
 
 		return isValid;
-	},
-} );
+	}
+}
