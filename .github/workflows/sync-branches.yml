@@ -35,5 +35,5 @@ jobs:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
           SLACK_BOT_NAME: ElementorBot
-          MESSAGE_TEXT: '@here Workflow *${{ github.workflow }}* is FAILED - <${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}|link>'
+          MESSAGE_TEXT: '@channel Workflow *${{ github.workflow }}* is FAILED - <${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}|link>'
         run: curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
