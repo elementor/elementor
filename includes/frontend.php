@@ -160,6 +160,10 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
+		
+		add_action( 'elementor/frontend/before_enqueue_styles', function() {
+			$this->add_elementor_icons_inline_css();
+		} );
 
 		$this->add_content_filter();
 
@@ -1371,5 +1375,23 @@ class Frontend extends App {
 		}
 
 		return $dependencies;
+	}
+
+	private function add_elementor_icons_inline_css() {
+		static $is_elementor_icons_inline_css_printed;
+
+		if ( ! $is_elementor_icons_inline_css_printed ) {
+			$is_elementor_icons_inline_css_printed = true;
+
+			/**
+			 * The e-icons font-face must be printed inline due to custom breakpoints.
+			 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
+			 * The custom frontend file is located in a different path ('uploads' folder).
+			 * Therefore, it cannot be called from a CSS file that its relative path can vary.
+			 */
+			$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$s/lib/eicons/fonts/eicons.eot?5.10.0);src:url(%1$s/lib/eicons/fonts/eicons.eot?5.10.0#iefix) format("embedded-opentype"),url(%1$s/lib/eicons/fonts/eicons.woff2?5.10.0) format("woff2"),url(%1$s/lib/eicons/fonts/eicons.woff?5.10.0) format("woff"),url(%1$s/lib/eicons/fonts/eicons.ttf?5.10.0) format("truetype"),url(%1$s/lib/eicons/fonts/eicons.svg?5.10.0#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL );
+
+			wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
+		}
 	}
 }
