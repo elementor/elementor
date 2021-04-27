@@ -3,12 +3,12 @@ export default class View extends Marionette.ItemView {
 		return '#tmpl-elementor-templates-responsive-bar';
 	}
 
-	className() {
+	id() {
 		return 'e-responsive-bar';
 	}
 
 	ui() {
-		const prefix = '.' + this.className();
+		const prefix = '#' + this.id();
 
 		return {
 			switcherInput: prefix + '-switcher__option input',
@@ -16,7 +16,7 @@ export default class View extends Marionette.ItemView {
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
 			sizeInputHeight: prefix + '__input-height',
-			scaleValue: prefix + '-scale__value span',
+			scaleValue: prefix + '-scale__value',
 			scalePlusButton: prefix + '-scale__plus',
 			scaleMinusButton: prefix + '-scale__minus',
 			scaleResetButton: prefix + '-scale__reset',
@@ -39,8 +39,6 @@ export default class View extends Marionette.ItemView {
 	}
 
 	initialize() {
-		this.setScalePresentage();
-
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
@@ -73,6 +71,40 @@ export default class View extends Marionette.ItemView {
 		tipsy.show();
 
 		setTimeout( () => tipsy.hide(), 3000 );
+	}
+
+	autoScale() {
+		const handlesWidth = 40 * this.scalePercentage / 100,
+			previewWidth = elementor.$previewWrapper.width() - handlesWidth,
+			iframeScaleWidth = this.ui.sizeInputWidth.val() * this.scalePercentage / 100;
+
+		if ( iframeScaleWidth > previewWidth ) {
+			const scalePercentage = previewWidth / this.ui.sizeInputWidth.val() * 100;
+
+			this.setScalePercentage( scalePercentage );
+		}
+
+		this.scalePreview();
+	}
+
+	scalePreview() {
+		const scale = this.scalePercentage / 100;
+		elementor.$previewResponsiveWrapper.css( 'transform', 'scale(' + ( scale ) + ')' );
+	}
+
+	resetScale() {
+		this.setScalePercentage();
+		this.scalePreview();
+	}
+
+	setScalePercentage( scalePercentage = 100 ) {
+		this.scalePercentage = scalePercentage;
+		this.ui.scaleValue.text( parseInt( this.scalePercentage ) );
+	}
+
+	onRender() {
+		this.addTipsyToIconButtons();
+		this.setScalePercentage();
 	}
 
 	onDeviceModeChange() {
@@ -130,12 +162,6 @@ export default class View extends Marionette.ItemView {
 
 		this.ui.sizeInputWidth.val( size.width );
 		this.ui.sizeInputHeight.val( size.height );
-
-		this.scalePreview();
-	}
-
-	onRender() {
-		this.addTipsyToIconButtons();
 	}
 
 	onCloseButtonClick() {
@@ -165,62 +191,33 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => this.updatingPreviewSize = false, 300 );
 
 		elementor.updatePreviewSize( size );
+
 		this.autoScale();
 	}
 
-	autoScale() {
-		const handlesWidth = 40 * this.scalePresentage / 100,
-			previewWidth = elementor.$previewWrapper.width() - handlesWidth,
-			iframeScaleWidth = this.ui.sizeInputWidth.val() * this.scalePresentage / 100;
+	onScalePlusButtonClick() {
+		const scaleUp = 0 === this.scalePercentage % 10 ? this.scalePercentage + 10 : Math.ceil( this.scalePercentage / 10 ) * 10;
 
-		if ( iframeScaleWidth > previewWidth ) {
-			const scalePresentage = previewWidth / this.ui.sizeInputWidth.val() * 100;
-
-			this.setScalePresentage( scalePresentage );
+		if ( scaleUp > 200 ) {
+			return;
 		}
 
-		this.scalePreview();
-	}
-
-	scalePreview() {
-		const scale = this.scalePresentage / 100;
-		elementor.$previewResponsiveWrapper.css( 'transform', 'scale(' + ( scale ) + ')' );
-	}
-
-	scalePreviewDesktop() {
-		const scale = this.scalePresentage / 100;
-		elementor.$previewResponsiveWrapper.css( 'transform', 'scale(' + ( scale ) + ')' );
-	}
-
-	onScalePlusButtonClick() {
-		const scaleUp = 0 === this.scalePresentage % 10 ? this.scalePresentage + 10 : Math.ceil( this.scalePresentage / 10 ) * 10,
-			scalePresentage = scaleUp > 200 ? 200 : scaleUp;
-
-		this.setScalePresentage( scalePresentage );
+		this.setScalePercentage( scaleUp );
 		this.scalePreview();
 	}
 
 	onScaleMinusButtonClick() {
-		const scaleDown = 0 === this.scalePresentage % 10 ? this.scalePresentage - 10 : Math.floor( this.scalePresentage / 10 ) * 10,
-			scalePresentage = scaleDown < 50 ? 50 : scaleDown;
+		const scaleDown = 0 === this.scalePercentage % 10 ? this.scalePercentage - 10 : Math.floor( this.scalePercentage / 10 ) * 10;
 
-		this.setScalePresentage( scalePresentage );
+		if ( scaleDown < 50 ) {
+			return;
+		}
+
+		this.setScalePercentage( scaleDown );
 		this.scalePreview();
 	}
 
 	onScaleResetButtonClick() {
 		this.resetScale();
-	}
-
-	resetScale() {
-		this.setScalePresentage();
-		this.scalePreview();
-	}
-
-	setScalePresentage( scalePresentage = 100 ) {
-		this.scalePresentage = scalePresentage;
-		if ( this.ui.scaleValue ) {
-			this.ui.scaleValue.text( parseInt( this.scalePresentage ) );
-		}
 	}
 }

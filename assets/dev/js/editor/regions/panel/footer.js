@@ -115,6 +115,9 @@ module.exports = Marionette.ItemView.extend( {
 	onDeviceModeIconClick: function() {
 		if ( elementor.isDeviceModeActive() ) {
 			elementor.changeDeviceMode( 'desktop' );
+
+			// Force exit if device mode is already desktop
+			elementor.exitDeviceMode();
 		} else {
 			elementor.changeDeviceMode( 'mobile' );
 		}
