@@ -13,7 +13,7 @@ class Test_String extends Elementor_Test_Base {
 	/**
 	 * Assert that `Str::encode_idn_url()` encodes non-IDN URLs properly.
 	 */
-	public function test_encode_idn_url_encodes_non_idn_url() {
+	public function test_encode_idn_url__encodes_non_idn_url() {
 		// Arrange.
 		$url = 'https://www.example.com/some/path/to/file.php';
 		$expected = $url;
@@ -28,7 +28,7 @@ class Test_String extends Elementor_Test_Base {
 	/**
 	 * Assert that `Str::encode_idn_url()` encodes IDN URLs properly.
 	 */
-	public function test_encode_idn_url_encodes_idn_url() {
+	public function test_encode_idn_url__encodes_idn_url() {
 		// Arrange.
 		$url = 'https://é.com/some/path/to/file.php';
 		$expected = 'https://xn--9ca.com/some/path/to/file.php';
