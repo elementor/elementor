@@ -468,7 +468,7 @@ export default class Container extends ArgsObject {
 	}
 
 	getGlobalDefault( controlName ) {
-		const controlGlobalArgs = this.controls[ controlName ].global;
+		const controlGlobalArgs = this.controls[ controlName ]?.global;
 
 		if ( controlGlobalArgs?.default ) {
 			// Temp fix.
