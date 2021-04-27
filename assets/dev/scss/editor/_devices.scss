@@ -34,6 +34,7 @@ body {
 }
 
 #elementor-preview-responsive-wrapper {
+	transform-origin: top center;
 	padding: 20px;
 
 	.elementor-device-desktop & {
@@ -119,23 +120,13 @@ body {
 
 	.ui-resizable-s {
 		bottom: 0;
-		transform-origin: top center;
 	}
 
 	.ui-resizable-e {
 		right: 0;
-		transform-origin: top left;
 	}
 	.ui-resizable-w {
 		left: 0;
-		transform-origin: top right;
-	}
-}
-
-.elementor-preview-responsive-wrapper--scrollable {
-	overflow: auto;
-	& #elementor-preview-iframe {
-		transform-origin: $start top;
 	}
 }
 
@@ -144,6 +135,5 @@ body {
 	height: 100%;
 	background-color: #fff;
 	box-shadow: 0 0 3px rgba(0, 0, 0, .3), 0 0 20px rgba(0, 0, 0, .15);
-	transform-origin: top center;
 }
 
