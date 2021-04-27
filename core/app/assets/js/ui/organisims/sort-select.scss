@@ -1,0 +1,22 @@
+.eps-sort-select {
+	width: 100%;
+	font-size: type(size, "15");
+	display: flex;
+
+	&__select {
+		flex: 1;
+		padding: spacing(10) spacing(10);
+		border: none;
+		background: tints(100);
+		outline: none;
+		color: tints(700);
+		line-height: type( line-height, 'flat' );
+	}
+
+	&__button {
+		padding: spacing(12) spacing(12);
+		background: tints(100);
+		@include border-start( $eps-border );
+		line-height: type( line-height, 'flat' );
+	}
+}

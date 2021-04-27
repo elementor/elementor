@@ -16,16 +16,22 @@ const initiateFilterState = {
 	}, {} ),
 };
 
+const initialSortState = {
+	direction: 'desc',
+	by: 'createdAt',
+};
+
 export default function useKits() {
 	const [ force, setForce ] = useState( false );
 	const [ filter, setFilter ] = useState( initiateFilterState );
+	const [ sort, setSort ] = useState( initialSortState );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
 	const clearFilter = useCallback( () => setFilter( { ...initiateFilterState } ), [ setFilter ] );
 
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 
-	const data = useFilteredData( query.data, filter );
+	const data = useFilteredData( query.data, filter, sort );
 
 	useEffect( () => {
 		if ( ! force ) {
@@ -41,11 +47,13 @@ export default function useKits() {
 		filter,
 		setFilter,
 		clearFilter,
+		sort,
+		setSort,
 		forceRefetch,
 	};
 }
 
-function useFilteredData( data, filter ) {
+function useFilteredData( data, filter, sort ) {
 	return useMemo( () => {
 		if ( ! data ) {
 			return [];
@@ -63,8 +71,16 @@ function useFilteredData( data, filter ) {
 			}
 		} );
 
+		filteredData.sort( ( item, item2 ) => {
+			if ( 'asc' === sort.direction ) {
+				return item[ sort.by ] - item2[ sort.by ];
+			}
+
+			return item2[ sort.by ] - item[ sort.by ];
+		} );
+
 		return filteredData;
-	}, [ data, filter ] );
+	}, [ data, filter, sort ] );
 }
 
 function fetchKits( force ) {

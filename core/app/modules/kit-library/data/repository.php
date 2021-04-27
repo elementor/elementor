@@ -167,6 +167,10 @@ class Repository {
 				'access_level' => $kit->access_level,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
+				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
+				'popularity_index' => isset( $kit->popularity_index ) ? $kit->popularity_index : 0,
+				'created_at' => isset( $kit->created_at ) ? $kit->created_at : null,
+				'updated_at' => isset( $kit->updated_at ) ? $kit->updated_at : null,
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
 		);

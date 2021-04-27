@@ -8,7 +8,7 @@ import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { SearchInput } from '@elementor/app-ui';
+import { SearchInput, CssGrid, SortSelect } from '@elementor/app-ui';
 import { useCallback } from 'react';
 
 import './index.scss';
@@ -53,6 +53,8 @@ export default function Index() {
 		filter,
 		setFilter,
 		clearFilter,
+		sort,
+		setSort,
 		forceRefetch,
 	} = useKits();
 
@@ -86,7 +88,7 @@ export default function Index() {
 			}
 		>
 			<div className="e-kit-library__index-layout-container">
-				<div className="e-kit-library__index-layout-search-area">
+				<CssGrid className="e-kit-library__index-layout-search-area" spacing={ 24 } colMinWidth={ 250 } >
 					<div>
 						<SearchInput
 							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
@@ -100,7 +102,17 @@ export default function Index() {
 							onRemoveTag={ unselectTaxonomy }
 						/>
 					</div>
-				</div>
+					<div>
+						<SortSelect
+							options={ [
+								{ label: 'New', value: 'createdAt' },
+								{ label: 'Popular', value: 'popularityIndex' },
+								{ label: 'Trending', value: 'trendIndex' },
+							] }
+							value={ sort }
+							onChange={ setSort }/>
+					</div>
+				</CssGrid>
 				<Content className="e-kit-library__index-layout-main">
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
