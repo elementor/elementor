@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_String extends Elementor_Test_Base {
+class Test_Str extends Elementor_Test_Base {
 
 	/**
 	 * Assert that `Str::encode_idn_url()` encodes non-IDN URLs properly.
