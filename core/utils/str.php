@@ -16,7 +16,7 @@ class Str {
 	 */
 	public static function encode_idn_url( $url ) {
 		return preg_replace_callback( '/(https?:\/\/)(.+)/', function ( $matches ) {
-			return $matches[ 1 ] . \Requests_IDNAEncoder::encode( $matches[ 2 ] );
+			return $matches[1] . \Requests_IDNAEncoder::encode( $matches[2] );
 		}, $url );
 	}
 }
