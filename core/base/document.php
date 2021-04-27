@@ -162,6 +162,10 @@ abstract class Document extends Controls_Stack {
 		return __( 'Document', 'elementor' );
 	}
 
+	public static function get_plural_title() {
+		return static::get_title();
+	}
+
 	/**
 	 * Get property.
 	 *
