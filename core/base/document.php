@@ -1376,6 +1376,12 @@ abstract class Document extends Controls_Stack {
 			'elements' => $data['content'],
 			'settings' => $data['settings'],
 		] );
+
+		if ( $data['import_settings']['thumbnail'] ) {
+			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [ 'url' => $data['import_settings']['thumbnail'] ] );
+
+			set_post_thumbnail( $this->get_main_post(), $attachment['id'] );
+		}
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {

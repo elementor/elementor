@@ -93,6 +93,8 @@ class Templates extends Base {
 			return $new_document;
 		}
 
+		$template['import_settings'] = $template_settings;
+
 		$new_document->import( $template );
 
 		return $new_document->get_main_id();
