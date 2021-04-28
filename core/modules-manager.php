@@ -92,6 +92,8 @@ class Modules_Manager {
 			'compatibility-tag',
 			'elements-color-picker',
 			'shapes',
+			// Must be the last module.
+			'admin-top-bar',
 		];
 	}
 
