@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Base\Assets_Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
-
 	/**
 	 * Whether the widget has content.
 	 *
@@ -37,13 +38,15 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Registering in runtime all widgets that are being used on the page.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 * @access public
 	 * @static
 	 *
 	 * @var array
 	 */
 	public static $registered_runtime_widgets = [];
+
+	private static $widgets_css_data_manager;
 
 	/**
 	 * Get element type.
@@ -972,7 +975,22 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	private function get_widget_css() {
-		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
+		$widget_name = $this->get_group_name();
+
+		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
+
+		$widget_css = $widgets_css_data_manager->get_asset_data( $widget_name );
+
+		/**
+		 * In case that the value is null it means that the widget CSS was not evaluated even once.
+		 * Otherwise, an empty string is an indication that the CSS was already been evaluated and the widget doesn't have CSS content.
+		 */
+//		if ( ! is_null( $widget_css_data ) ) {
+//			return $widget_css_data['content'];
+//		}
+
+		return $widget_css;
+
 	}
 
 	private function print_widget_css() {
@@ -985,5 +1003,13 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		echo $this->get_widget_css();
+	}
+
+	private function get_widgets_css_data_manager() {
+		if ( ! self::$widgets_css_data_manager ) {
+			self::$widgets_css_data_manager = new Widgets_Css_Data_Manager();
+		}
+
+		return self::$widgets_css_data_manager;
 	}
 }
