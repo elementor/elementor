@@ -223,7 +223,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
-			this.addValidator( new Validator( {
+			this.addValidator( new this.validatorTypes.Base( {
 				validationTerms: validationTerms,
 			} ) );
 		}
