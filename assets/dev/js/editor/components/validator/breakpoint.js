@@ -50,7 +50,7 @@ export default class BreakpointValidator extends NumberValidator {
 
 		// If there is a breakpoint above the currently edited breakpoint, check that the value is not above the top
 		// breakpoint's value.
-		if ( topBreakpointKey && newValue >= elementorFrontend.config.responsive.activeBreakpoints[ topBreakpointKey ].value ) {
+		if ( topBreakpointKey && newValue > elementorFrontend.config.responsive.activeBreakpoints[ topBreakpointKey ].value ) {
 			isValid = false;
 		}
 
