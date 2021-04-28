@@ -6,13 +6,27 @@ $e-kit-library-sticky-search-z-index: 2;
 		overflow-y: auto;
 	}
 
-	&__index-layout-search-area {
+	&__index-layout-top-area {
 		padding: spacing(44);
 		position: sticky;
 		top: -1px;
 		width: 100%;
 		z-index: $e-kit-library-sticky-search-z-index;
 		background-color: var(--app-background-color);
+		gap: spacing( 24 );
+
+		&-search {
+			flex: 1;
+			min-width: 265px;
+		}
+
+		&-sort {
+			min-width: 265px;
+
+			&--safari-support {
+				@include margin-start( spacing( 24 ) );
+			}
+		}
 	}
 
 	&__index-layout-main {

@@ -185,7 +185,7 @@ class Repository {
 		$content = ( new Collection( (array) $manifest->templates ) )
 			->union(
 				array_reduce( (array) $manifest->content, function ( $carry, $content ) {
-					return $carry + $content;
+					return $carry + ( (array) $content );
 				}, [] )
 			)
 			->map( function ( $manifest_item, $key ) {

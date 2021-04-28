@@ -6,16 +6,18 @@ import './sort-select.scss';
 export default function SortSelect( props ) {
 	return (
 		<div className="eps-sort-select">
-			<Select
-				options={ props.options }
-				value={ props.value.by }
-				onChange={ ( e ) => {
-					const value = e.target.value;
+			<div className="eps-sort-select__select-wrapper">
+				<Select
+					options={ props.options }
+					value={ props.value.by }
+					onChange={ ( e ) => {
+						const value = e.target.value;
 
-					props.onChange( ( prev ) => ( { ...prev, by: value } ) );
-				} }
-				className="eps-sort-select__select"
-			/>
+						props.onChange( ( prev ) => ( { ...prev, by: value } ) );
+					} }
+					className="eps-sort-select__select"
+				/>
+			</div>
 			<Button
 				text={ 'asc' === props.value.direction ? __( 'Sort Descending', 'elementor' ) : __( 'Sort Ascending', 'elementor' ) }
 				hideText={ true }

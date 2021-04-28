@@ -1,4 +1,5 @@
 import Content from '../../../../../../assets/js/layout/content';
+import environment from 'elementor-common/utils/environment';
 import FilterIndicationText from '../../components/filter-indication-text';
 import IndexHeader from './index-header';
 import IndexNoResults from './index-no-results';
@@ -8,7 +9,7 @@ import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { SearchInput, CssGrid, SortSelect } from '@elementor/app-ui';
+import { SearchInput, Grid, SortSelect } from '@elementor/app-ui';
 import { useCallback } from 'react';
 
 import './index.scss';
@@ -88,8 +89,8 @@ export default function Index() {
 			}
 		>
 			<div className="e-kit-library__index-layout-container">
-				<CssGrid className="e-kit-library__index-layout-search-area" spacing={ 24 } colMinWidth={ 250 } >
-					<div>
+				<Grid container className="e-kit-library__index-layout-top-area">
+					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
 							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
 							value={ filter.search }
@@ -101,8 +102,11 @@ export default function Index() {
 							onClear={ clearFilter }
 							onRemoveTag={ unselectTaxonomy }
 						/>
-					</div>
-					<div>
+					</Grid>
+					<Grid
+						item
+						className={ `e-kit-library__index-layout-top-area-sort ${ environment.safari ? 'e-kit-library__index-layout-top-area-sort--safari-support' : '' }` }
+					>
 						<SortSelect
 							options={ [
 								{ label: 'New', value: 'createdAt' },
@@ -110,15 +114,16 @@ export default function Index() {
 								{ label: 'Trending', value: 'trendIndex' },
 							] }
 							value={ sort }
-							onChange={ setSort }/>
-					</div>
-				</CssGrid>
+							onChange={ setSort }
+						/>
+					</Grid>
+				</Grid>
 				<Content className="e-kit-library__index-layout-main">
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
-						{ isSuccess && data.length <= 0 && <IndexNoResults /> }
+						{ isSuccess && data.length <= 0 && <IndexNoResults/> }
 					</>
 				</Content>
 			</div>

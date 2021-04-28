@@ -71,15 +71,7 @@ function useFilteredData( data, filter, sort ) {
 			}
 		} );
 
-		filteredData.sort( ( item, item2 ) => {
-			if ( 'asc' === sort.direction ) {
-				return item[ sort.by ] - item2[ sort.by ];
-			}
-
-			return item2[ sort.by ] - item[ sort.by ];
-		} );
-
-		return filteredData;
+		return filteredData.sort( ( item1, item2 ) => sortData( item1, item2, sort ) );
 	}, [ data, filter, sort ] );
 }
 
@@ -103,4 +95,12 @@ function taxonomiesFilter( item, taxonomies ) {
 	return taxonomies.some( ( taxonomy ) =>
 		item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
 	);
+}
+
+function sortData( item1, item2, sortValue ) {
+	if ( 'asc' === sortValue.direction ) {
+		return item1[ sortValue.by ] - item2[ sortValue.by ];
+	}
+
+	return item2[ sortValue.by ] - item1[ sortValue.by ];
 }
