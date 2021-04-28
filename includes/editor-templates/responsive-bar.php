@@ -25,8 +25,8 @@ $breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx scre
 					$tooltip_label = sprintf( $breakpoint_label, $breakpoint->get_label(), $breakpoint->get_value() );
 				}
 				printf( '<label
-					id="e-responsive-bar-switcher__option"
-					class="e-responsive-bar-switcher__option-%1$s"
+					id="e-responsive-bar-switcher__option-%1$s"
+					class="e-responsive-bar-switcher__option"
 					for="e-responsive-bar-switch-%1$s"
 					data-tooltip="%2$s">
 

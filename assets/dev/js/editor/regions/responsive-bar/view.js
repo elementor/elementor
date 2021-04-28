@@ -11,8 +11,8 @@ export default class View extends Marionette.ItemView {
 		const prefix = '#' + this.id();
 
 		return {
-			switcherInput: prefix + '-switcher__option input',
-			switcherLabel: prefix + '-switcher__option',
+			switcherInput: '.e-responsive-bar-switcher__option input',
+			switcherLabel: '.e-responsive-bar-switcher__option',
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
 			sizeInputHeight: prefix + '__input-height',
