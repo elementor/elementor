@@ -1050,9 +1050,9 @@ abstract class Document extends Controls_Stack {
 
 		Plugin::$instance->db->save_plain_text( $this->post->ID );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			$elements_iteration_actions = $this->get_elements_iteration_actions();
+		$elements_iteration_actions = $this->get_elements_iteration_actions();
 
+		if ( $elements_iteration_actions ) {
 			$this->iterate_elements( $elements, $elements_iteration_actions, 'save' );
 		}
 
@@ -1435,13 +1435,11 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-			// Collect all data updaters that should be updated on runtime.
-			$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
+		// Collect all data updaters that should be updated on runtime.
+		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
 
-			if ( $runtime_elements_iteration_actions ) {
-				$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
-			}
+		if ( $runtime_elements_iteration_actions ) {
+			$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
 		}
 
 		foreach ( $elements_data as $element_data ) {
