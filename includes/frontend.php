@@ -161,6 +161,15 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
+		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
+		add_action( 'wp_enqueue_scripts', function() {
+			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
+				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
+
+				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
+			}
+		}, 30 );
+
 		$this->add_content_filter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
