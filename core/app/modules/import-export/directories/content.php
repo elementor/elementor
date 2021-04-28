@@ -2,7 +2,6 @@
 
 namespace Elementor\Core\App\Modules\ImportExport\Directories;
 
-use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {

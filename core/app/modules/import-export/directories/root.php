@@ -64,9 +64,11 @@ class Root extends Base {
 
 			$new_settings = $new_settings['settings'];
 
-			if ( $old_settings ) {
+			if ( ! empty( $old_settings[ 'custom_colors' ] ) ) {
 				$new_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_settings['custom_colors'] );
+			}
 
+			if ( ! empty( $old_settings[ 'custom_typography' ] ) ) {
 				$new_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_settings['custom_typography'] );
 			}
 
