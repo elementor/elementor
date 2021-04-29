@@ -7,6 +7,9 @@
 @import "grid";
 @import "devices";
 
+// E-icons classes being used in the frontend.
+@import "eicons";
+
 //Forms (Input, Textarea, Select Etc..)
 @import "forms";
 
@@ -36,3 +39,6 @@
 
 // Visibility (for preview mode or front-end)
 @import "visibility";
+
+// Modules
+@import "modules";

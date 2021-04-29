@@ -1,4 +1,3 @@
-@import "../styles/common";
 @import "./app-api";
 @import "../styles/base";
 
@@ -54,7 +53,7 @@
 		font-size: $app-header-btn-font-size;
 		line-height: $app-header-btn-line-height;
 
-		&:first-child:not(:last-child) {
+		&:first-child {
 			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
 		}
 

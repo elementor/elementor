@@ -2,11 +2,12 @@
 namespace Elementor\Core\Editor;
 
 use Elementor\Api;
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -521,11 +522,7 @@ class Editor {
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
 
-		$page_title_selector .= ', .elementor-page-title';
-
-		$active_experimental_features = Plugin::$instance->experiments->get_active_features();
-
-		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
+		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
 		$config = [
 			'initial_document' => $document->get_config(),
@@ -563,7 +560,6 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
@@ -591,7 +587,6 @@ class Editor {
 			],
 			// Empty array for BC to avoid errors.
 			'i18n' => [],
-			'experimentalFeatures' => $active_experimental_features,
 		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
@@ -724,10 +719,14 @@ class Editor {
 			);
 		}
 
-		if ( Responsive::has_custom_breakpoints() ) {
-			$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
-			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		// The two breakpoints under 'tablet' need to be checked for values.
+		if ( $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->is_custom() || $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA ]->is_enabled() ) {
+			wp_add_inline_style(
+				'elementor-editor',
+				'.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_TABLET ) . 'px; }'
+			);
 		}
 
 		/**
@@ -1042,6 +1041,7 @@ class Editor {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'responsive-bar',
 		];
 
 		foreach ( $template_names as $template_name ) {

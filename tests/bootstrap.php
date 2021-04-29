@@ -1,6 +1,9 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
 use Elementor\Autoloader;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
@@ -38,9 +41,12 @@ require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/traits/base-elementor.php';
 require __DIR__ . '/phpunit/traits/extra-assertions.php';
 require __DIR__ . '/phpunit/traits/auth-helpers.php';
+require __DIR__ . '/phpunit/traits/elementor-library-trait.php';
+require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
 require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/ajax-class.php';
+require __DIR__ . '/phpunit/base-schema.php';
 require __DIR__ . '/phpunit/factories/factory.php';
 require __DIR__ . '/phpunit/factories/documents.php';
 
@@ -51,6 +57,11 @@ Autoloader::run();
 remove_action( 'admin_init', '_maybe_update_themes' );
 remove_action( 'admin_init', '_maybe_update_core' );
 remove_action( 'admin_init', '_maybe_update_plugins' );
+
+// The following action activates all registered experiments in order for them to be able to be tested.
+add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
+	$experiments_manager->set_feature_default_state( $experimental_data['name'], $experiments_manager::STATE_ACTIVE );
+}, 10, 2 );
 
 // Make sure the main class is running
 \Elementor\Plugin::instance();

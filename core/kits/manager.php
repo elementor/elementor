@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manager {
 
 	const OPTION_ACTIVE = 'elementor_active_kit';
+
+	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
@@ -80,14 +83,22 @@ class Manager {
 		return $kit->get_settings( $setting );
 	}
 
-	private function create_default() {
-		$kit = Plugin::$instance->documents->create( 'kit', [
-			'post_type' => Source_Local::CPT,
-			'post_title' => __( 'Default Kit', 'elementor' ),
+	public function create( array $kit_data = [], array $kit_meta_data = [] ) {
+		$default_kit_data = [
 			'post_status' => 'publish',
-		] );
+		];
+
+		$kit_data = array_merge( $default_kit_data, $kit_data );
+
+		$kit_data['post_type'] = Source_Local::CPT;
+
+		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
 		return $kit->get_id();
+	}
+
+	private function create_default() {
+		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
 	}
 
 	/**
@@ -277,6 +288,41 @@ class Manager {
 		);
 	}
 
+	/**
+	 * Add 'Edit with elementor -> Site Settings' in admin bar.
+	 *
+	 * @param [] $admin_bar_config
+	 *
+	 * @return array $admin_bar_config
+	 */
+	private function add_menu_in_admin_bar( $admin_bar_config ) {
+		$document = Plugin::$instance->documents->get( get_the_ID() );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			$recent_edited_post = Utils::get_recently_edited_posts_query( [
+				'posts_per_page' => 1,
+			] );
+
+			if ( $recent_edited_post->post_count ) {
+				$posts = $recent_edited_post->get_posts();
+				$document = Plugin::$instance->documents->get( reset( $posts )->ID );
+			}
+		}
+
+		if ( $document ) {
+			$admin_bar_config['elementor_edit_page']['children'][] = [
+				'id' => 'elementor_site_settings',
+				'title' => __( 'Site Settings', 'elementor' ),
+				'sub_title' => __( 'Site', 'elementor' ),
+				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'class' => 'elementor-site-settings',
+				'parent_class' => 'elementor-second-section',
+			];
+		}
+
+		return $admin_bar_config;
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -304,5 +350,9 @@ class Manager {
 		add_action( 'wp_head', function() {
 			$this->add_body_class();
 		} );
+
+		add_filter( 'elementor/frontend/admin_bar/settings', function ( $admin_bar_config ) {
+			return $this->add_menu_in_admin_bar( $admin_bar_config );
+		}, 9 /* Before site-editor (theme-builder) */ );
 	}
 }

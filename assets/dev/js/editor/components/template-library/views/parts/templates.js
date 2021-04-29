@@ -182,6 +182,12 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-templates-filter-active', ! ! ( elementor.templates.getFilter( 'text' ) || elementor.templates.getFilter( 'favorite' ) ) );
 	},
 
+	isPageOrLandingPageTemplates: function() {
+		const templatesType = elementor.templates.getFilter( 'type' );
+
+		return 'page' === templatesType || 'lp' === templatesType;
+	},
+
 	onRender() {
 		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
@@ -193,7 +199,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) ) {
+		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
 		}
 	},

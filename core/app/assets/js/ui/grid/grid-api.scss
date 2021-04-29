@@ -1,11 +1,12 @@
 // COMPONENT API: GRID
-@import "assets/dev/scss/editor/_breakpoints.scss";
+// Used specific path here since, pro loads the grid and 'current path' will be wrong.
+@import "../../../../../../assets/dev/scss/editor/_breakpoints.scss";
 
 
 // MIXIN: Grid Coll generator
 $eps-grid-columns: 12;
 $eps-grid-spacing-keys: (5 8 10 12 16);
-$grid-spacing-gutter: calc( var(--grid-spacing-gutter) * #{px-to-rem(1)} );
+$grid-spacing-gutter: calc( var(--grid-spacing-gutter) * #{spacing(10) / 10} );
 
 //defining flex traits
 @mixin grid-item-auto($size) {
@@ -38,8 +39,8 @@ $grid-spacing-gutter: calc( var(--grid-spacing-gutter) * #{px-to-rem(1)} );
 
 // exporting custom properties
 @mixin grid-custom-properties {
-	& {
-		--grid-spacing-gutters: calc(2 * var(--grid-spacing-gutter));
-		--grid-spacing-width: calc(100% + var(--grid-spacing-gutters));
+	:root {
+		--grid-spacing-width: calc(100% + var(#{--grid-container-gutters}));
+		--grid-spacing-gutters: calc(2 * var(#{--grid-spacing-gutter}));
 	}
 }

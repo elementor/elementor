@@ -71,7 +71,9 @@ class Revisions_Manager {
 	public static function avoid_delete_auto_save( $post_content, $post_id ) {
 		// Add a temporary string in order the $post will not be equal to the $autosave
 		// in edit-form-advanced.php:210
-		if ( $post_id && Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document && $document->is_built_with_elementor() ) {
 			$post_content .= '<!-- Created with Elementor -->';
 		}
 
@@ -86,9 +88,13 @@ class Revisions_Manager {
 	public static function remove_temp_post_content() {
 		global $post;
 
-		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return;
 		}
+
+		$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
 	}
 
 	/**

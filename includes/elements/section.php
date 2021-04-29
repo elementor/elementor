@@ -318,7 +318,7 @@ class Element_Section extends Element_Base {
 				],
 				'size_units' => [ 'px', '%', 'vh', 'vw' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-column-gap-custom > .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-column-gap-custom .elementor-column > .elementor-element-populated' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'gap' => 'custom',
@@ -367,7 +367,6 @@ class Element_Section extends Element_Base {
 				'size_units' => [ 'px', 'vh', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'min-height: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} > .elementor-container:after' => 'content: ""; min-height: inherit;', // Hack for IE11
 				],
 				'condition' => [
 					'height' => [ 'min-height' ],
@@ -384,6 +383,7 @@ class Element_Section extends Element_Base {
 				'default' => 'default',
 				'options' => [
 					'default' => __( 'Default', 'elementor' ),
+					'full' => __( 'Fit To Screen', 'elementor' ),
 					'min-height' => __( 'Min Height', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-section-height-',
@@ -411,6 +411,7 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'height_inner' => [ 'min-height' ],
 				],
+				'size_units' => [ 'px', 'vh', 'vw' ],
 				'hide_in_top' => true,
 			]
 		);
@@ -1447,7 +1448,7 @@ class Element_Section extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 		?>
-		<<?php echo esc_html( $this->get_html_tag() ); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php echo $this->get_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -1513,7 +1514,7 @@ class Element_Section extends Element_Base {
 				</div>
 		<?php } ?>
 			</div>
-		</<?php echo esc_html( $this->get_html_tag() ); ?>>
+		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
 
@@ -1572,7 +1573,7 @@ class Element_Section extends Element_Base {
 			$html_tag = 'section';
 		}
 
-		return $html_tag;
+		return Utils::validate_html_tag( $html_tag );
 	}
 
 	/**
