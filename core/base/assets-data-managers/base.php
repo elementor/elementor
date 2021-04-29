@@ -15,32 +15,91 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base {
 	const ASSETS_DATA_KEY = '_elementor_assets_data';
 
+	/**
+	 * @var array
+	 */
 	protected $assets_data;
 
+	/**
+	 * @var string
+	 */
 	protected $content_type;
 
+	/**
+	 * @var string
+	 */
 	protected $assets_category;
 
+	/**
+	 * @var array
+	 */
 	private $assets_config;
 
-	abstract protected function get_asset_content( $asset_key );
+	/**
+	 * Get Asset Content.
+	 *
+	 * Responsible for extracting the asset data from a certain file.
+	 * Will be triggered automatically when the asset data does not exist, or when the asset version was changed.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return string
+	 */
+	abstract protected function get_asset_content();
 
+	/**
+	 * Get Asset Key.
+	 *
+	 * The asset data will be saved in the DB under this key.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return string
+	 */
+	protected function get_asset_key() {
+		return $this->assets_config['asset_key'];
+	}
+
+	/**
+	 * Get Relative Version.
+	 *
+	 * The asset data will be re-evaluated according the version number.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return string
+	 */
 	protected function get_relative_version() {
-		if ( isset( $this->assets_config['relative_version'] ) ) {
-			return $this->assets_config['relative_version'];
-		}
-
-		return '';
+		return $this->assets_config['relative_version'];
 	}
 
+	/**
+	 * Get Asset Path.
+	 *
+	 * The asset data will be extracted from the file path.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return string
+	 */
 	protected function get_asset_path() {
-		if ( isset( $this->assets_config['asset_path'] ) ) {
-			return $this->assets_config['asset_path'];
-		}
-
-		return '';
+		return $this->assets_config['asset_path'];
 	}
 
+	/**
+	 * Get Config Data.
+	 *
+	 * Holds a unique data relevant for the specific assets category type.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return string|array
+	 */
 	protected function get_config_data( $key = '' ) {
 		if ( isset( $this->assets_config['data'] ) ) {
 			if ( $key ) {
@@ -57,8 +116,18 @@ abstract class Base {
 		return [];
 	}
 
+	/**
+	 * Set Asset Data.
+	 *
+	 * Responsible for setting the current asset data.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return void
+	 */
 	protected function set_asset_data( $asset_key ) {
-		$asset_content = $this->get_asset_content( $asset_key );
+		$asset_content = $this->get_asset_content();
 		$relative_version = $this->get_relative_version();
 
 		if ( ! isset( $this->assets_data[ $asset_key ] ) ) {
@@ -71,6 +140,16 @@ abstract class Base {
 		$this->save_asset_data( $asset_key );
 	}
 
+	/**
+	 * Save Asset Data.
+	 *
+	 * Responsible for saving the asset data in the DB.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return void
+	 */
 	protected function save_asset_data( $asset_key ) {
 		$assets_data = get_option( self::ASSETS_DATA_KEY, [] );
 		$content_type = $this->content_type;
@@ -89,6 +168,16 @@ abstract class Base {
 		update_option( self::ASSETS_DATA_KEY, $assets_data );
 	}
 
+	/**
+	 * Is Asset Version Changed.
+	 *
+	 * Responsible for comparing the saved asset data version to the current relative version.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return boolean
+	 */
 	protected function is_asset_version_changed( $asset_data ) {
 		if ( ! isset( $asset_data['version'] ) ) {
 			return true;

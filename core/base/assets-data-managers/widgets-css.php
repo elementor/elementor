@@ -17,14 +17,16 @@ class Widgets_Css extends Base {
 
 	protected $assets_category = 'widgets';
 
-	protected function get_asset_content( $widget_name ) {
+	protected function get_asset_content() {
 		$content_type = $this->content_type;
 
 		$assets_category = $this->assets_category;
 
+		$asset_key = $this->get_asset_key();
+
 		$asset_path = $this->get_asset_path();
 
-		$asset_css_file_size = Plugin::$instance->assets_loader->get_file_data( $content_type, $assets_category, $widget_name, $asset_path, 'size' );
+		$asset_css_file_size = Plugin::$instance->assets_loader->get_file_data( $content_type, $assets_category, $asset_key, $asset_path, 'size' );
 
 		$widget_css = '';
 
@@ -35,7 +37,7 @@ class Widgets_Css extends Base {
 
 				$widget_css = sprintf( '<link rel="stylesheet" href="%s">', $asset_url );
 			} else {
-				$widget_css = Plugin::$instance->assets_loader->get_file_data( $content_type, $assets_category, $widget_name, $asset_path, 'content' );
+				$widget_css = Plugin::$instance->assets_loader->get_file_data( $content_type, $assets_category, $asset_key, $asset_path, 'content' );
 				$widget_css = sprintf( '<style>%s</style>', $widget_css );
 			}
 		}

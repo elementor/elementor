@@ -149,11 +149,6 @@ class Assets_Loader extends Module {
 		return $data;
 	}
 
-	public function register_asset_data( $content_type, $assets_category, $asset_key, $content, $version ) {
-		$this->registered_assets_data[ $content_type ][ $assets_category ][ $asset_key ][ 'content' ] = $content;
-		$this->registered_assets_data[ $content_type ][ $assets_category ][ $asset_key ][ 'version' ] = $version;
-	}
-
 	public function get_registered_assets_data() {
 		return $this->registered_assets_data;
 	}
