@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
+use Elementor\Utils;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
@@ -12,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const ACCESS_LEVEL_CORE = 0;
+	const ACCESS_LEVEL_PRO = 1;
+	const ACCESS_LEVEL_EXPERT = 20;
 
 	/**
 	 * @since 2.3.0
@@ -167,6 +171,31 @@ class Module extends BaseModule {
 	 */
 	public function get_categories() {
 		return $this->categories;
+	}
+
+	/**
+	 * @param $context
+	 *
+	 * @return array
+	 */
+	public function get_subscription_plans( $context ) {
+		return [
+			static::ACCESS_LEVEL_CORE => [
+				'label' => null,
+				'promotion_url' => null,
+				'color' => null,
+			],
+			static::ACCESS_LEVEL_PRO => [
+				'label' => 'Pro',
+				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro" ),
+				'color' => '#92003B',
+			],
+			static::ACCESS_LEVEL_EXPERT => [
+				'label' => 'Expert',
+				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert" ),
+				'color' => '#010051',
+			],
+		];
 	}
 
 }

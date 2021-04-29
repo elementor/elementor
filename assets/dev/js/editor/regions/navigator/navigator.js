@@ -11,7 +11,7 @@ export default class extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.storage.size.width = this.storage.size.width || this.$el.css( 'width' );
+		this.setSize();
 
 		this.indicators = {
 			customPosition: {
@@ -83,6 +83,9 @@ export default class extends BaseRegion {
 					this.saveSize();
 				}
 			},
+			resize: ( event, ui ) => {
+				this.setSize( ui.size.width + 'px' );
+			},
 		};
 	}
 
@@ -96,12 +99,10 @@ export default class extends BaseRegion {
 	open( model ) {
 		this.$el.show();
 
+		this.setSize();
+
 		if ( this.storage.docked ) {
 			this.dock();
-
-			this.setDockedSize();
-		} else {
-			this.setSize();
 		}
 
 		if ( model ) {
@@ -139,6 +140,7 @@ export default class extends BaseRegion {
 
 	dock() {
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
+		this.setSize();
 
 		const resizableOptions = this.getResizableOptions();
 
@@ -165,8 +167,9 @@ export default class extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
-
 		this.setSize();
+
+		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
 		if ( this.$el.resizable( 'instance' ) ) {
 			this.$el.resizable( 'destroy' );
@@ -181,14 +184,21 @@ export default class extends BaseRegion {
 		}
 	}
 
-	setSize() {
-		if ( this.storage.size ) {
-			this.$el.css( this.storage.size );
+	/**
+	 * Set the navigator size to a specific value or default to the storage-saved value.
+	 *
+	 * @param {String} size A specific new size.
+	 */
+	setSize( size = null ) {
+		if ( size ) {
+			this.storage.size.width = size;
+		} else {
+			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
 		}
-	}
 
-	setDockedSize() {
-		this.$el.css( 'width', this.storage.size.width );
+		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
+		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
+		this.$el.css( 'width', '' );
 	}
 
 	ensurePosition() {
