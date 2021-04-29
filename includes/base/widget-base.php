@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
-
 	/**
 	 * Whether the widget has content.
 	 *
@@ -37,13 +38,15 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Registering in runtime all widgets that are being used on the page.
 	 *
-	 * @since 3.2.0
+	 * @since 3.3.0
 	 * @access public
 	 * @static
 	 *
 	 * @var array
 	 */
 	public static $registered_runtime_widgets = [];
+
+	private static $widgets_css_data_manager;
 
 	/**
 	 * Get element type.
@@ -571,6 +574,7 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-widget-container">
 			<?php
 			if ( $this->is_widget_first_render() ) {
+
 				$this->register_runtime_widget( $this->get_group_name() );
 
 				$this->print_widget_css();
@@ -952,7 +956,7 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	protected function get_css_config() {
+	public function get_css_config() {
 		$widget_name = $this->get_group_name();
 
 		$direction = is_rtl() ? '-rtl' : '';
@@ -960,19 +964,22 @@ abstract class Widget_Base extends Element_Base {
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
-			'content_type' => 'css',
-			'assets_category' => 'widgets',
-			'asset_key' => $widget_name,
-			'current_version' => ELEMENTOR_VERSION,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'key' => $widget_name,
+			'version' => ELEMENTOR_VERSION,
+			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'data' => [
-				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
 			],
 		];
 	}
 
 	private function get_widget_css() {
-		return Plugin::$instance->assets_loader->get_asset_inline_content( $this->get_css_config() );
+		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
+
+		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
+
+		return $widget_css;
+
 	}
 
 	private function print_widget_css() {
@@ -985,5 +992,13 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		echo $this->get_widget_css();
+	}
+
+	private function get_widgets_css_data_manager() {
+		if ( ! self::$widgets_css_data_manager ) {
+			self::$widgets_css_data_manager = new Widgets_Css_Data_Manager();
+		}
+
+		return self::$widgets_css_data_manager;
 	}
 }
