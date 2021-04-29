@@ -17,13 +17,13 @@ class Base_Schema extends Elementor_Test_Base {
 		$_SERVER['HTTP_USER_AGENT'] = self::HTTP_USER_AGENT;
 	}
 
-	protected function validate_against_schema( $data ) {
+	protected function validate_against_schema( $data_for_validation, $schema_file ) {
 		// Since the usage system represents objects as array instead of stdClass.
-		$data = json_decode( json_encode( $data ) );
+		$data_for_validation = json_decode( json_encode( $data_for_validation ) );
 
 		// Validate
 		$validator = new Validator;
-		$validator->validate( $data, (object) [ '$ref' => 'file://' . ELEMENTOR_PATH . 'schemas/usage.json' ] );
+		$validator->validate( $data_for_validation, (object) [ '$ref' => 'file://' . $schema_file ] );
 
 		if ( ! $validator->isValid() ) {
 			$error_message = 'JSON does not validate. Violations:' . PHP_EOL;
@@ -37,12 +37,12 @@ class Base_Schema extends Elementor_Test_Base {
 		return true;
 	}
 
-	protected function validate_current_tracking_data_against_schema() {
-		return $this->validate_against_schema( Tracker::get_tracking_data() );
+	protected function validate_current_tracking_data_against_schema( $schema_file ) {
+		return $this->validate_against_schema( Tracker::get_tracking_data(), $schema_file );
 	}
 
-	protected function assert_schema_has_no_additional_properties( $path_to_schema ) {
-		$json_schema_object = json_decode( file_get_contents( $path_to_schema ) );
+	protected function assert_schema_has_no_additional_properties( $schema_file ) {
+		$json_schema_object = json_decode( file_get_contents( $schema_file ) );
 
 		$schema_storage = new SchemaStorage();
 		$schema_storage->addSchema( 'validation', $json_schema_object );
@@ -72,6 +72,7 @@ class Base_Schema extends Elementor_Test_Base {
 		} );
 	}
 
+	// TODO: Should be in batter place, like dedicated factory.
 	protected function generate_plugins_mock() {
 		// Arrange
 		$plugins = new Collection( [
