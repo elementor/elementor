@@ -18,6 +18,7 @@ import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
+import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -58,6 +59,44 @@ export default class EditorBase extends Marionette.Application {
 
 		return elementorCommon.debug;
 	}
+
+	backgroundClickListeners = {
+		popover: {
+			element: '.elementor-controls-popover',
+			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
+		},
+		globalControlsSelect: {
+			element: '.e-global__popover',
+			ignore: '.e-global__popover-toggle',
+		},
+		tagsList: {
+			element: '.elementor-tags-list',
+			ignore: '.elementor-control-dynamic-switcher',
+		},
+		panelFooterSubMenus: {
+			element: '.elementor-panel-footer-tool.elementor-toggle-state',
+			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-open' );
+			},
+		},
+		panelResponsiveSwitchers: {
+			element: '.elementor-control-responsive-switchers',
+			callback: ( $elementsToHide ) => {
+				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
+			},
+		},
+		promotion: {
+			ignore: '.elementor-panel-category-items',
+			callback: () => {
+				const dialog = elementor.promotion.dialog;
+
+				if ( dialog ) {
+					dialog.hide();
+				}
+			},
+		},
+	};
 
 	/**
 	 * Exporting modules that can be used externally
@@ -173,44 +212,6 @@ export default class EditorBase extends Marionette.Application {
 		},
 	};
 
-	backgroundClickListeners = {
-		popover: {
-			element: '.elementor-controls-popover',
-			ignore: '.elementor-control-popover-toggle-toggle, .elementor-control-popover-toggle-toggle-label, .select2-container, .pcr-app',
-		},
-		globalControlsSelect: {
-			element: '.e-global__popover',
-			ignore: '.e-global__popover-toggle',
-		},
-		tagsList: {
-			element: '.elementor-tags-list',
-			ignore: '.elementor-control-dynamic-switcher',
-		},
-		panelFooterSubMenus: {
-			element: '.elementor-panel-footer-tool.elementor-toggle-state',
-			ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-open' );
-			},
-		},
-		panelResponsiveSwitchers: {
-			element: '.elementor-control-responsive-switchers',
-			callback: ( $elementsToHide ) => {
-				$elementsToHide.removeClass( 'elementor-responsive-switchers-open' );
-			},
-		},
-		promotion: {
-			ignore: '.elementor-panel-category-items',
-			callback: () => {
-				const dialog = elementor.promotion.dialog;
-
-				if ( dialog ) {
-					dialog.hide();
-				}
-			},
-		},
-	};
-
 	userCan( capability ) {
 		return -1 === this.config.user.restrictions.indexOf( capability );
 	}
@@ -306,6 +307,9 @@ export default class EditorBase extends Marionette.Application {
 		return this.previewView;
 	}
 
+	/**
+	 * @returns {Container}
+	 */
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
 	}
@@ -353,6 +357,10 @@ export default class EditorBase extends Marionette.Application {
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
+
+		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
+			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
@@ -541,42 +549,63 @@ export default class EditorBase extends Marionette.Application {
 		return message + '.';
 	}
 
-	initPreviewResizable() {
+	activatePreviewResizable() {
 		const $responsiveWrapper = this.$previewResponsiveWrapper;
 
+		if ( $responsiveWrapper.resizable( 'instance' ) ) {
+			return;
+		}
+
 		$responsiveWrapper.resizable( {
-			disabled: true,
 			handles: 'e, s, w',
 			stop: () => {
 				$responsiveWrapper.css( { width: '', height: '', left: '', right: '', top: '', bottom: '' } );
 			},
 			resize: ( event, ui ) => {
 				$responsiveWrapper.css( {
-					right: '0', left: '0', top: '0', bottom: '0',
-					'--e-editor-preview-width': ui.size.width + 'px',
-					'--e-editor-preview-height': ui.size.height + 'px',
+					right: '0',
+					left: '0',
+					top: '0',
+					bottom: '0',
 				} );
 
-				this.broadcastPreviewResize( ui.size );
+				// Old versions of jQuery don't support custom properties
+				const style = $responsiveWrapper[ 0 ].style;
+
+				style.setProperty( '--e-editor-preview-width', ui.size.width + 'px' );
+				style.setProperty( '--e-editor-preview-height', ui.size.height + 'px' );
 			},
 		} );
 	}
 
 	destroyPreviewResizable() {
-		this.$previewResponsiveWrapper.resizable( 'destroy' );
+		if ( this.$previewResponsiveWrapper.resizable( 'instance' ) ) {
+			this.$previewResponsiveWrapper.resizable( 'destroy' );
+		}
 	}
 
-	broadcastPreviewResize( size ) {
+	broadcastPreviewResize() {
 		this.channels.responsivePreview
-			.reply( 'size', size )
+			.reply( 'size', {
+				width: this.$preview.innerWidth(),
+				height: this.$preview.innerHeight(),
+			} )
 			.trigger( 'resize' );
 	}
 
-	getBreakpointResizeOptions( currentBreakpoint ) {
-		const { activeBreakpoints } = elementorFrontend.config.responsive,
+	getCurrentDeviceConstrains() {
+		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
+			{ activeBreakpoints } = elementorFrontend.config.responsive,
 			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
 			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
 
+		return {
+			maxWidth: currentBreakpointData.value,
+			minWidth: currentBreakpointMinPoint,
+		};
+	}
+
+	getBreakpointResizeOptions( currentBreakpoint ) {
 		const specialBreakpointsHeights = {
 			mobile: {
 				minHeight: 480,
@@ -590,54 +619,51 @@ export default class EditorBase extends Marionette.Application {
 			},
 		};
 
-		let breakpointConstrains = {
-			maxWidth: currentBreakpointData.value,
-			minWidth: currentBreakpointMinPoint || 375,
-		};
+		let deviceConstrains = this.getCurrentDeviceConstrains();
 
 		if ( specialBreakpointsHeights[ currentBreakpoint ] ) {
-			breakpointConstrains = { ...breakpointConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
+			deviceConstrains = { ...deviceConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
 		}
 
-		return breakpointConstrains;
+		return deviceConstrains;
 	}
 
-	updatePreviewResizeOptions() {
-		const $responsiveWrapper = this.$previewResponsiveWrapper;
-		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
-		const isResizable = $responsiveWrapper.is( '.ui-resizable' );
+	updatePreviewResizeOptions( preserveCurrentSize = false ) {
+		const $responsiveWrapper = this.$previewResponsiveWrapper,
+			currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' );
 
 		if ( 'desktop' === currentBreakpoint ) {
-			if ( isResizable ) {
-				$responsiveWrapper.resizable( 'disable' );
-			}
+			this.destroyPreviewResizable();
 
-			$responsiveWrapper.css( {
-				'--e-editor-preview-width': '',
-				'--e-editor-preview-height': '',
-			} );
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
 
-			this.broadcastPreviewResize( {
-				width: this.$previewWrapper.outerWidth(),
-				height: this.$previewWrapper.outerHeight() - 40,
-			} );
+			style.setProperty( '--e-editor-preview-width', '' );
+			style.setProperty( '--e-editor-preview-height', '' );
 		} else {
-			if ( ! isResizable ) {
-				$responsiveWrapper.resizable( 'enable' );
-			}
+			this.activatePreviewResizable();
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			$responsiveWrapper.resizable( 'enable' )
-				.resizable( 'option', { ...breakpointResizeOptions } )
-				.css( {
-					'--e-editor-preview-width': breakpointResizeOptions.minWidth + 'px',
-					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
-				} );
+			let widthToShow = breakpointResizeOptions.minWidth;
 
-			breakpointResizeOptions.width = breakpointResizeOptions.minWidth;
+			if ( preserveCurrentSize ) {
+				const currentSize = elementor.channels.responsivePreview.request( 'size' );
 
-			this.broadcastPreviewResize( { ...breakpointResizeOptions } );
+				if ( currentSize.width > breakpointResizeOptions.maxWidth ) {
+					widthToShow = breakpointResizeOptions.maxWidth;
+				} else if ( currentSize.width >= breakpointResizeOptions.minWidth ) {
+					widthToShow = currentSize.width;
+				}
+			}
+
+			$responsiveWrapper.resizable( 'option', { ...breakpointResizeOptions } );
+
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
+
+			style.setProperty( '--e-editor-preview-width', widthToShow + 'px' );
+			style.setProperty( '--e-editor-preview-height', breakpointResizeOptions.height + 'px' );
 		}
 	}
 
@@ -754,23 +780,36 @@ export default class EditorBase extends Marionette.Application {
 
 	enterDeviceMode() {
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
-		this.initPreviewResizable();
-		elementor.changeDeviceMode( 'mobile' );
-	}
 
-	toggleDeviceMode() {
-		if ( ! this.isDeviceModeActive() ) {
-			this.enterDeviceMode();
-			return;
-		}
+		this.activatePreviewResizable();
 
-		this.exitDeviceMode();
+		this.resizeListenerThrottled = false;
+
+		this.broadcastPreviewResize();
+
+		elementorFrontend.elements.$window.on( 'resize.deviceModeDesktop', () => {
+			if ( this.resizeListenerThrottled ) {
+				return;
+			}
+
+			this.resizeListenerThrottled = true;
+
+			this.broadcastPreviewResize();
+
+			setTimeout( () => {
+				this.resizeListenerThrottled = false;
+
+				this.broadcastPreviewResize();
+			}, 300 );
+		} );
 	}
 
 	exitDeviceMode() {
-		elementor.changeDeviceMode( 'desktop' );
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
+
 		this.destroyPreviewResizable();
+
+		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
 	}
 
 	isDeviceModeActive() {
@@ -778,10 +817,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	updatePreviewSize( size ) {
-		this.$previewResponsiveWrapper.css( {
-			'--e-editor-preview-width': size.width + 'px',
-			'--e-editor-preview-height': size.height + 'px',
-		} );
+		// Old versions of jQuery don't support custom properties
+		const style = this.$previewResponsiveWrapper[ 0 ].style;
+
+		style.setProperty( '--e-editor-preview-width', size.width + 'px' );
+		style.setProperty( '--e-editor-preview-height', size.height + 'px' );
 	}
 
 	enterPreviewMode( hidePanel ) {
@@ -830,7 +870,7 @@ export default class EditorBase extends Marionette.Application {
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
-	changeDeviceMode( newDeviceMode ) {
+	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
 		const oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
 		if ( oldDeviceMode === newDeviceMode ) {
@@ -845,6 +885,14 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+
+		if ( this.isDeviceModeActive() && hideBarOnDesktop ) {
+			if ( 'desktop' === newDeviceMode ) {
+				this.exitDeviceMode();
+			}
+		} else if ( 'desktop' !== newDeviceMode ) {
+			this.enterDeviceMode();
+		}
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {
@@ -965,9 +1013,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
 				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				this.initNavigator();
 			} );
-
-		this.initNavigator();
 
 		this.logSite();
 	}
@@ -1024,8 +1071,6 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.initResponsiveBar();
-
-		this.initPreviewResizable();
 
 		this.previewLoadedOnce = true;
 	}
