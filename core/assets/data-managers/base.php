@@ -63,8 +63,8 @@ abstract class Base {
 	 *
 	 * @return string
 	 */
-	protected function get_asset_key() {
-		return $this->assets_config['asset_key'];
+	protected function get_key() {
+		return $this->assets_config['key'];
 	}
 
 	/**
@@ -77,8 +77,8 @@ abstract class Base {
 	 *
 	 * @return string
 	 */
-	protected function get_relative_version() {
-		return $this->assets_config['relative_version'];
+	protected function get_version() {
+		return $this->assets_config['version'];
 	}
 
 	/**
@@ -91,8 +91,8 @@ abstract class Base {
 	 *
 	 * @return string
 	 */
-	protected function get_asset_path() {
-		return $this->assets_config['asset_path'];
+	protected function get_file_path() {
+		return $this->assets_config['file_path'];
 	}
 
 	/**
@@ -137,7 +137,7 @@ abstract class Base {
 		}
 
 		$this->assets_data[ $asset_key ]['content'] = $this->get_asset_content();
-		$this->assets_data[ $asset_key ]['version'] = $this->get_relative_version();
+		$this->assets_data[ $asset_key ]['version'] = $this->get_version();
 
 		$this->save_asset_data( $asset_key );
 	}
@@ -185,7 +185,7 @@ abstract class Base {
 	 * @return boolean
 	 */
 	protected function is_asset_version_changed( $version ) {
-		return $this->get_relative_version() !== $version;
+		return $this->get_version() !== $version;
 	}
 
 	/**
@@ -196,10 +196,12 @@ abstract class Base {
 	 * @since 3.3.0
 	 * @access protected
 	 *
+	 * @param string $data_type (content|size)
+	 *
 	 * @return string|number
 	 */
 	protected function get_file_data( $data_type ) {
-		$asset_key = $this->get_asset_key();
+		$asset_key = $this->get_key();
 
 		if ( isset( $this->files_data[ $asset_key ][ $data_type ] ) ) {
 			return $this->files_data[ $asset_key ][ $data_type ];
@@ -209,7 +211,7 @@ abstract class Base {
 			$this->files_data[ $asset_key ] = [];
 		}
 
-		$asset_path = $this->get_asset_path();
+		$asset_path = $this->get_file_path();
 
 		if ( 'content' === $data_type ) {
 			$data = file_get_contents( $asset_path );
@@ -241,17 +243,26 @@ abstract class Base {
 	}
 
 	/**
+	 * Init Asset Data.
+	 *
+	 * Initialize the asset data and handles the asset content updates when needed.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @param array $config {
-	 *     @type string 'asset_key'
-	 *     @type string 'relative_version'
-	 *     @type string 'asset_path'
+	 *     @type string 'key'
+	 *     @type string 'version'
+	 *     @type string 'file_path'
 	 *     @type array 'data'
 	 * }
+	 *
+	 * @return void
 	 */
 	public function init_asset_data( $config ) {
 		$this->assets_config = $config;
 
-		$asset_key = $config['asset_key'];
+		$asset_key = $config['key'];
 
 		$asset_data = isset( $this->assets_data[ $asset_key ] ) ? $this->assets_data[ $asset_key ] : [];
 
@@ -261,17 +272,26 @@ abstract class Base {
 	}
 
 	/**
+	 * Get Asset Data.
+	 *
+	 * Getting the asset data content.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @param array $config {
-	 *     @type string 'asset_key'
-	 *     @type string 'relative_version'
-	 *     @type string 'asset_path'
+	 *     @type string 'key'
+	 *     @type string 'version'
+	 *     @type string 'file_path'
 	 *     @type array 'data'
 	 * }
+	 *
+	 * @return void
 	 */
 	public function get_asset_data( $config ) {
 		$this->init_asset_data( $config );
 
-		$asset_key = $config['asset_key'];
+		$asset_key = $config['key'];
 
 		return $this->assets_data[ $asset_key ]['content'];
 	}

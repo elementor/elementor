@@ -963,13 +963,12 @@ abstract class Widget_Base extends Element_Base {
 
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
-		// TODO: remove asset from all properties.
 		return [
-			'asset_key' => $widget_name,
-			'relative_version' => ELEMENTOR_VERSION,
-			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'key' => $widget_name,
+			'version' => 2,
+			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'data' => [
-				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
 			],
 		];
 	}
