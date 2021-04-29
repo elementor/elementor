@@ -1,5 +1,4 @@
 import Content from '../../../../../../assets/js/layout/content';
-import environment from 'elementor-common/utils/environment';
 import FilterIndicationText from '../../components/filter-indication-text';
 import IndexHeader from './index-header';
 import IndexNoResults from './index-no-results';
@@ -105,7 +104,7 @@ export default function Index() {
 					</Grid>
 					<Grid
 						item
-						className={ `e-kit-library__index-layout-top-area-sort ${ environment.safari ? 'e-kit-library__index-layout-top-area-sort--safari-support' : '' }` }
+						className="e-kit-library__index-layout-top-area-sort"
 					>
 						<SortSelect
 							options={ [

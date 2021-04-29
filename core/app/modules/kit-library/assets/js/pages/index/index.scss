@@ -15,17 +15,12 @@ $e-kit-library-sticky-search-z-index: 2;
 		background-color: var(--app-background-color);
 		gap: spacing( 24 );
 
-		&-search {
-			flex: 1;
+		&-search, &-sort {
 			min-width: 265px;
 		}
 
-		&-sort {
-			min-width: 265px;
-
-			&--safari-support {
-				@include margin-start( spacing( 24 ) );
-			}
+		&-search {
+			flex: 1;
 		}
 	}
 
