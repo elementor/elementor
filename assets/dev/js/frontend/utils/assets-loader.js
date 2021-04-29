@@ -17,25 +17,21 @@ export default class AssetsLoader {
 	}
 
 	load( type, key ) {
-		return new Promise( ( resolve ) => {
-			const assetData = this.constructor.assets[ type ][ key ];
+		const assetData = AssetsLoader.assets[ type ][ key ];
 
-			if ( assetData.isLoaded ) {
-				resolve( true );
+		if ( ! assetData.loader ) {
+			assetData.loader = new Promise( ( resolve ) => {
+				const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
 
-				return;
-			}
+				element.onload = () => resolve( true );
 
-			this.constructor.assets[ type ][ key ].isLoaded = true;
+				const parent = 'head' === assetData.parent ? assetData.parent : 'body';
 
-			const element = 'style' === type ? this.getStyleElement( assetData.src ) : this.getScriptElement( assetData.src );
+				document[ parent ].appendChild( element );
+			} );
+		}
 
-			element.onload = () => resolve( true );
-
-			const parent = 'head' === assetData.parent ? assetData.parent : 'body';
-
-			document[ parent ].appendChild( element );
-		} );
+		return assetData.loader;
 	}
 }
 

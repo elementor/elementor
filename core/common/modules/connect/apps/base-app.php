@@ -3,6 +3,7 @@ namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -228,9 +229,7 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		// Encode base url, the encode is limited to 64 chars.
-		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
-
+		$admin_url = Str::encode_idn_url( get_admin_url() );
 		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
 
 		return add_query_arg( $params, $admin_url );
@@ -386,7 +385,7 @@ abstract class Base_App {
 			$body = (object) $body;
 
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = isset( $body->code ) ? $body->code : $response_code;
+			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
 			if ( 401 === $code ) {
 				$this->delete();
@@ -578,6 +577,7 @@ abstract class Base_App {
 					$options = [
 						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
 						'type' => $notice['type'],
+						'icon' => false,
 					];
 
 					$admin_notices->print_admin_notice( $options );

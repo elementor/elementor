@@ -1,77 +1,24 @@
 <?php
 namespace Elementor\Tests\Phpunit\Schemas;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\CompatibilityTag\Module;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Base_Schema;
 use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
 use JsonSchema\Exception\ValidationException;
-use JsonSchema\SchemaStorage;
-use JsonSchema\Validator;
 
+class Test_Usage extends Base_Schema {
+	/**
+	 * @var string
+	 */
+	private $schema_file;
 
-class Test_Usage extends Elementor_Test_Base {
-	const HTTP_USER_AGENT = 'test-agent';
+	public function __construct( $name = null, array $data = [], $dataName = '' ) {
+		parent::__construct( $name, $data, $dataName );
 
-	public function setUp() {
-		parent::setUp();
-
-		// Required by `Tracker::get_tracking_data`.
-		$_SERVER['HTTP_USER_AGENT'] = self::HTTP_USER_AGENT;
-	}
-
-	protected function validation_against_schema( $data ) {
-		// Since the usage system represents objects as array instead of stdClass.
-		$data = json_decode( json_encode( $data ) );
-
-		// Validate
-		$validator = new Validator;
-		$validator->validate($data, (object) ['$ref' => 'file://' . ELEMENTOR_PATH . 'schemas/usage.json'] );
-
-		if ( ! $validator->isValid() ) {
-			$error_message = 'JSON does not validate. Violations:' . PHP_EOL;
-			foreach ( $validator->getErrors() as $error ) {
-				$error_message .= sprintf( '[%s] %s' . PHP_EOL, $error['property'], $error['message'] );
-			}
-
-			throw new ValidationException( $error_message );
-		}
-
-		return true;
-	}
-
-	protected function validation_current_tracking_data_against_schema() {
-		return $this->validation_against_schema( Tracker::get_tracking_data() );
-	}
-
-	protected function generate_plugins_mock() {
-		// Arrange
-		$plugins = new Collection( [
-			'elementor/elementor.php' => [
-				Module::PLUGIN_VERSION_TESTED_HEADER => '',
-				'Name' => 'Elementor',
-				'PluginURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash',
-				'Version' => ELEMENTOR_VERSION,
-				'Description' => 'The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!',
-				'Author' => "Elementor.com",
-				'AuthorURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash',
-				'TextDomain' => 'elementor',
-				'DomainPath' => '',
-				'Network' => false,
-				'RequiresWP' => '',
-				'RequiresPHP' => '',
-				'Title' => 'Elementor',
-				'AuthorName' => 'Elementor.com',
-			],
-		] );
-
-		$this->mock_wp_api( [
-			'get_plugins' => $plugins,
-		] );
+		$this->schema_file = ELEMENTOR_PATH . 'schemas/usage.json';
 	}
 
 	public function test__ensure_clean_is_valid() {
@@ -79,7 +26,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->generate_plugins_mock();
 
 		// Act + Assert.
-		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );
+		$this->assertTrue( $this->validate_current_tracking_data_against_schema( $this->schema_file ) );
 	}
 
 	public function test__ensure_invalid_exception() {
@@ -87,41 +34,12 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->expectException( ValidationException::class );
 
 		// Assert.
-		$this->validation_against_schema( [] );
+		$this->validate_against_schema( [], $this->schema_file );
 	}
 
 	public function test__ensure_all_objects_have_no_additional_properties() {
-		// Arrange.
-		$json_schema_object = json_decode( file_get_contents( ELEMENTOR_PATH . 'schemas/usage.json' ) );
-
-		$schema_storage = new SchemaStorage();
-		$schema_storage->addSchema('usage', $json_schema_object);
-
-		$properties_all_objects_recursive = function( $node, callable $callback ) use ( &$properties_all_objects_recursive ) {
-			if ( ! ( $node instanceof \stdClass ) ) {
-				return;
-			}
-
-			if ( isset( $node->properties ) || isset( $node->patternProperties ) ) {
-				$callback( $node );
-			}
-
-			foreach ( $node as $part ) {
-				$properties_all_objects_recursive( $part, $callback );
-			}
-		};
-
-		// Act.
-		$usage_schema = $schema_storage->getSchema( 'usage' );
-
 		// Assert.
-		$properties_all_objects_recursive( $usage_schema, function ( $node ) {
-			$id = $node->{'$id'};
-			$this->assertTrue( isset( $node->additionalProperties ),
-				"Ensure node: '$id' 'additionalProperties' exists" );
-			$this->assertFalse( $node->additionalProperties,
-				"Ensure node: '$id' 'additionalProperties' is false" );
-		} );
+		$this->assert_schema_has_no_additional_properties( $this->schema_file );
 	}
 
 	// The aim of the test is to fill all the possible tracking 'usage' data.
@@ -132,12 +50,7 @@ class Test_Usage extends Elementor_Test_Base {
 		$this->factory()->create_post();
 
 		// Library
-		$this->factory()->create_and_get_custom_post( [
-			'post_type' => 'elementor_library',
-			'meta_input' => [
-				'_elementor_template_type' => 'popup'
-			],
-		]);
+		$this->factory()->documents->create_and_get_template( 'not-supported' );
 
 		// Elements
 		$this->factory()->documents->publish_and_get();
@@ -152,7 +65,18 @@ class Test_Usage extends Elementor_Test_Base {
 			]
 		] );
 
-		// Act + Assert.
-		$this->assertTrue( $this->validation_current_tracking_data_against_schema() );
+		// Act.
+		$tracking_data = Tracker::get_tracking_data();
+		$usage = $tracking_data[ 'usages' ];
+
+		// Assert - Ensure tracking data have arranged data.
+		$this->assertArrayHaveKeys( ['publish'], $usage['posts']['post'] );
+		$this->assertArrayHaveKeys( ['not-supported'], $usage['library'] );
+		$this->assertArrayHaveKeys( ['wp-post'], $usage['elements'] );
+		$this->assertCount( 4, $usage['elements']['wp-post'] );
+		$this->assertArrayHaveKeys( ['__dynamic__'], $usage['elements']['wp-post']['heading']['controls']['general'] );
+
+		// Assert - Validate schema.
+		$this->assertTrue( $this->validate_against_schema( $tracking_data, $this->schema_file ) );
 	}
 }
