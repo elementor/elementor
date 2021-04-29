@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Base\Elements_Iteration_Actions;
 
-use Elementor\Core\Base\Assets_Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 use Elementor\Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ class Widgets_Css extends Base {
 
 	public function unique_element_action( Element_Base $element_data ) {
 		if ( 'widget' === $element_data->get_type() ) {
-			$this->data_manager->init_asset_data( $element_data->get_css_config() );
+			//$this->data_manager->init_asset_data( $element_data->get_css_config() );
 		}
 	}
 

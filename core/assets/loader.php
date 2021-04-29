@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Utils;
+namespace Elementor\Core\Assets;
 
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.3.0
  */
-class Assets_Loader extends Module {
+class Loader extends Module {
 	const ASSETS_DATA_KEY = '_elementor_assets_data';
 
 	private $assets;

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Base\Assets_Data_Managers;
+namespace Elementor\Core\Assets\Data_Managers;
 
 use Elementor\Plugin;
 

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Base\Assets_Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -574,6 +574,7 @@ abstract class Widget_Base extends Element_Base {
 		<div class="elementor-widget-container">
 			<?php
 			if ( $this->is_widget_first_render() ) {
+
 				$this->register_runtime_widget( $this->get_group_name() );
 
 				$this->print_widget_css();
@@ -962,6 +963,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
+		// TODO: remove asset from all properties.
 		return [
 			'asset_key' => $widget_name,
 			'relative_version' => ELEMENTOR_VERSION,
