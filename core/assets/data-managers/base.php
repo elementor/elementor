@@ -36,6 +36,11 @@ abstract class Base {
 	private $assets_config;
 
 	/**
+	 * @var array
+	 */
+	private $files_data;
+
+	/**
 	 * Get Asset Content.
 	 *
 	 * Responsible for extracting the asset data from a certain file.
@@ -127,15 +132,12 @@ abstract class Base {
 	 * @return void
 	 */
 	protected function set_asset_data( $asset_key ) {
-		$asset_content = $this->get_asset_content();
-		$relative_version = $this->get_relative_version();
-
 		if ( ! isset( $this->assets_data[ $asset_key ] ) ) {
 			$this->assets_data[ $asset_key ] = [];
 		}
 
-		$this->assets_data[ $asset_key ]['content'] = $asset_content;
-		$this->assets_data[ $asset_key ]['version'] = $relative_version;
+		$this->assets_data[ $asset_key ]['content'] = $this->get_asset_content();
+		$this->assets_data[ $asset_key ]['version'] = $this->get_relative_version();
 
 		$this->save_asset_data( $asset_key );
 	}
@@ -147,6 +149,8 @@ abstract class Base {
 	 *
 	 * @since 3.3.0
 	 * @access protected
+	 *
+	 * @param string $asset_key
 	 *
 	 * @return void
 	 */
@@ -176,14 +180,64 @@ abstract class Base {
 	 * @since 3.3.0
 	 * @access protected
 	 *
+	 * @param string $asset_key
+	 *
 	 * @return boolean
 	 */
-	protected function is_asset_version_changed( $asset_data ) {
-		if ( ! isset( $asset_data['version'] ) ) {
-			return true;
+	protected function is_asset_version_changed( $version ) {
+		return $this->get_relative_version() !== $version;
+	}
+
+	/**
+	 * Get File Data.
+	 *
+	 * Getting a file content or size.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return string|number
+	 */
+	protected function get_file_data( $data_type ) {
+		$asset_key = $this->get_asset_key();
+
+		if ( isset( $this->files_data[ $asset_key ][ $data_type ] ) ) {
+			return $this->files_data[ $asset_key ][ $data_type ];
 		}
 
-		return $this->get_relative_version() !== $asset_data['version'];
+		if ( ! isset( $this->files_data[ $asset_key ] ) ) {
+			$this->files_data[ $asset_key ] = [];
+		}
+
+		$asset_path = $this->get_asset_path();
+
+		if ( 'content' === $data_type ) {
+			$data = file_get_contents( $asset_path );
+
+			if ( ! $data ) {
+				$data = '';
+			}
+		} elseif ( 'size' === $data_type ) {
+			$data = file_exists( $asset_path ) ? filesize( $asset_path ) : 0;
+		}
+
+		$this->files_data[ $asset_key ][ $data_type ] = $data;
+
+		return $data;
+	}
+
+	/**
+	 * Get Saved Assets Data.
+	 *
+	 * Getting the assets data from the DB.
+	 *
+	 * @since 3.3.0
+	 * @access protected
+	 *
+	 * @return array
+	 */
+	protected function get_saved_assets_data() {
+		return get_option( self::ASSETS_DATA_KEY, [] );
 	}
 
 	/**
@@ -201,7 +255,7 @@ abstract class Base {
 
 		$asset_data = isset( $this->assets_data[ $asset_key ] ) ? $this->assets_data[ $asset_key ] : [];
 
-		if ( ! $asset_data || $this->is_asset_version_changed( $asset_data ) ) {
+		if ( ! $asset_data || $this->is_asset_version_changed( $asset_data['version'] ) ) {
 			$this->set_asset_data( $asset_key );
 		}
 	}
@@ -223,7 +277,7 @@ abstract class Base {
 	}
 
 	public function __construct() {
-		$assets_data = Plugin::$instance->assets_loader->get_assets_data();
+		$assets_data = $this->get_saved_assets_data();
 
 		$content_type = $this->content_type;
 		$assets_category = $this->assets_category;
