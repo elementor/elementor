@@ -955,7 +955,7 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	protected function get_css_config() {
+	public function get_css_config() {
 		$widget_name = $this->get_group_name();
 
 		$direction = is_rtl() ? '-rtl' : '';
@@ -963,10 +963,8 @@ abstract class Widget_Base extends Element_Base {
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
 
 		return [
-			'content_type' => 'css',
-			'assets_category' => 'widgets',
 			'asset_key' => $widget_name,
-			'current_version' => ELEMENTOR_VERSION,
+			'relative_version' => ELEMENTOR_VERSION,
 			'asset_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'data' => [
 				'asset_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
@@ -975,19 +973,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	private function get_widget_css() {
-		$widget_name = $this->get_group_name();
-
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
-		$widget_css = $widgets_css_data_manager->get_asset_data( $widget_name );
-
-		/**
-		 * In case that the value is null it means that the widget CSS was not evaluated even once.
-		 * Otherwise, an empty string is an indication that the CSS was already been evaluated and the widget doesn't have CSS content.
-		 */
-//		if ( ! is_null( $widget_css_data ) ) {
-//			return $widget_css_data['content'];
-//		}
+		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
 
 		return $widget_css;
 

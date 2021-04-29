@@ -21,11 +21,41 @@ abstract class Base {
 
 	protected $assets_category;
 
-	protected $assets_relative_version;
-
-	abstract protected function get_relative_version();
+	private $assets_config;
 
 	abstract protected function get_asset_content( $asset_key );
+
+	protected function get_relative_version() {
+		if ( isset( $this->assets_config['relative_version'] ) ) {
+			return $this->assets_config['relative_version'];
+		}
+
+		return '';
+	}
+
+	protected function get_asset_path() {
+		if ( isset( $this->assets_config['asset_path'] ) ) {
+			return $this->assets_config['asset_path'];
+		}
+
+		return '';
+	}
+
+	protected function get_config_data( $key = '' ) {
+		if ( isset( $this->assets_config['data'] ) ) {
+			if ( $key ) {
+				if ( isset( $this->assets_config['data'][ $key ] ) ) {
+					return $this->assets_config['data'][ $key ];
+				}
+
+				return '';
+			}
+
+			return $this->assets_config['data'];
+		}
+
+		return [];
+	}
 
 	protected function set_asset_data( $asset_key ) {
 		$asset_content = $this->get_asset_content( $asset_key );
@@ -67,7 +97,19 @@ abstract class Base {
 		return $this->get_relative_version() !== $asset_data['version'];
 	}
 
-	public function init_asset_data( $asset_key ) {
+	/**
+	 * @param array $config {
+	 *     @type string 'asset_key'
+	 *     @type string 'relative_version'
+	 *     @type string 'asset_path'
+	 *     @type array 'data'
+	 * }
+	 */
+	public function init_asset_data( $config ) {
+		$this->assets_config = $config;
+
+		$asset_key = $config['asset_key'];
+
 		$asset_data = isset( $this->assets_data[ $asset_key ] ) ? $this->assets_data[ $asset_key ] : [];
 
 		if ( ! $asset_data || $this->is_asset_version_changed( $asset_data ) ) {
@@ -75,8 +117,18 @@ abstract class Base {
 		}
 	}
 
-	public function get_asset_data( $asset_key ) {
-		$this->init_asset_data( $asset_key );
+	/**
+	 * @param array $config {
+	 *     @type string 'asset_key'
+	 *     @type string 'relative_version'
+	 *     @type string 'asset_path'
+	 *     @type array 'data'
+	 * }
+	 */
+	public function get_asset_data( $config ) {
+		$this->init_asset_data( $config );
+
+		$asset_key = $config['asset_key'];
 
 		return $this->assets_data[ $asset_key ]['content'];
 	}
