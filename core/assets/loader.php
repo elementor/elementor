@@ -20,12 +20,6 @@ class Loader extends Module {
 
 	private $assets;
 
-	private $assets_data;
-
-	private $registered_assets_data;
-
-	private $files_data;
-
 	public function get_name() {
 		return 'assets-loader';
 	}
@@ -95,84 +89,6 @@ class Loader extends Module {
 				}
 			}
 		}
-	}
-
-	public function get_asset_data( $content_type, $assets_category, $asset_key ) {
-		if ( ! $this->assets_data ) {
-			$this->init_assets_inline_content_data();
-		}
-
-		if ( isset( $this->assets_data[ $content_type ][ $assets_category ][ $asset_key ] ) ) {
-			return $this->assets_data[ $content_type ][ $assets_category ][ $asset_key ];
-		}
-
-		return null;
-	}
-
-	public function get_assets_data() {
-		return get_option( self::ASSETS_DATA_KEY, [] );
-	}
-
-	public function get_file_data( $content_type, $assets_category, $asset_key, $asset_path, $data_type = '' ) {
-		if ( isset( $this->files_data[ $content_type ][ $assets_category ][ $asset_key ][ $data_type ] ) ) {
-			return $this->files_data[ $content_type ][ $assets_category ][ $asset_key ][ $data_type ];
-		}
-
-		if ( ! $this->files_data ) {
-			$this->files_data = [];
-		}
-
-		if ( ! isset( $this->files_data[ $content_type ] ) ) {
-			$this->files_data[ $content_type ] = [];
-		}
-
-		if ( ! isset( $this->files_data[ $content_type ][ $assets_category ] ) ) {
-			$this->files_data[ $content_type ][ $assets_category ] = [];
-		}
-
-		if ( ! isset( $this->files_data[ $content_type ][ $assets_category ][ $asset_key ] ) ) {
-			$this->files_data[ $content_type ][ $assets_category ][ $asset_key ] = [];
-		}
-
-		if ( 'content' === $data_type ) {
-			$data = file_get_contents( $asset_path );
-
-			if ( ! $data ) {
-				$data = '';
-			}
-		} elseif ( 'size' === $data_type ) {
-			$data = file_exists( $asset_path ) ? filesize( $asset_path ) : 0;
-		}
-
-		$this->files_data[ $content_type ][ $assets_category ][ $asset_key ][ $data_type ] = $data;
-
-		return $data;
-	}
-
-	public function get_registered_assets_data() {
-		return $this->registered_assets_data;
-	}
-
-	public function save_registered_assets_data( $content_type, $assets_category ) {
-		$assets_data = get_option( self::ASSETS_DATA_KEY, [] );
-
-		if ( ! isset( $assets_data[ $content_type ] ) ) {
-			$assets_data[ $content_type ] = [];
-		}
-
-		if ( ! isset( $assets_data[ $content_type ][ $assets_category ] ) ) {
-			$assets_data[ $content_type ][ $assets_category ] = [];
-		}
-
-		$updated_category_assets_data = array_replace_recursive( $assets_data[ $content_type ][ $assets_category ], $this->registered_assets_data[ $content_type ][ $assets_category ] );
-
-		$assets_data[ $content_type ][ $assets_category ] = $updated_category_assets_data;
-
-		update_option( self::ASSETS_DATA_KEY, $assets_data );
-	}
-
-	private function init_assets_inline_content_data() {
-		$this->assets_data = get_option( self::ASSETS_DATA_KEY, [] );
 	}
 
 	private function reset_inline_content_css() {
