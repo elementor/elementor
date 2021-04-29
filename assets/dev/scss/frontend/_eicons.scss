@@ -1,0 +1,90 @@
+[class^="eicon"],
+[class*=" eicon-"] {
+	display: inline-block;
+	font-family: eicons;
+	font-size: inherit;
+	font-weight: normal;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 1;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes eicon-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+.eicon-animation-spin {
+	animation: eicon-spin 2s infinite linear;
+}
+
+.eicon-loading:before {
+	content: '\e8fb';
+}
+
+.eicon-menu-bar:before {
+	content: '\e816';
+}
+
+.eicon-chevron-right:before {
+	content: '\e87d';
+}
+
+.eicon-chevron-left:before {
+	content: '\e87e';
+}
+
+.eicon-close:before {
+	content: '\e87f';
+}
+
+.eicon-share-arrow:before {
+	content: '\e96c';
+}
+
+.eicon-zoom-in:before {
+	content: '\e882';
+}
+
+.eicon-zoom-in-bold:before {
+	content: '\e92e';
+}
+
+.eicon-zoom-out-bold:before {
+	content: '\e943';
+}
+
+.eicon-frame-expand:before {
+	content: '\e95c';
+}
+
+.eicon-frame-minimize:before {
+	content: '\e95d';
+}
+
+.eicon-play:before {
+	content: '\e89d';
+}
+
+.eicon-facebook:before {
+	content: '\e959';
+}
+
+.eicon-twitter:before {
+	content: '\e95a';
+}
+
+.eicon-pinterest:before {
+	content: '\e95b';
+}
+
+.eicon-download-bold:before {
+	content: '\e96b';
+}

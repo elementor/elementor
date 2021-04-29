@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -45,6 +47,9 @@ class Control_Code extends Base_Data_Control {
 			'label_block' => true,
 			'language' => 'html', // html/css
 			'rows' => 10,
+			'dynamic' => [
+				'categories' => [ TagsModule::TEXT_CATEGORY ],
+			],
 		];
 	}
 
@@ -63,8 +68,8 @@ class Control_Code extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper">
-				<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows }}" class="elementor-input-style elementor-code-editor" data-setting="{{ data.name }}"></textarea>
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
+				<textarea id="<?php echo $control_uid; ?>" rows="{{ data.rows }}" class="elementor-input-style elementor-code-editor elementor-control-tag-area" data-setting="{{ data.name }}"></textarea>
 			</div>
 		</div>
 		<# if ( data.description ) { #>

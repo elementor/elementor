@@ -136,6 +136,10 @@
 		}
 
 		@media (max-width: $screen-sm-max) {
+			&:focus {
+				outline: none;
+			}
+
 			&-prev, &-next {
 				width: 20%;
 				i {
