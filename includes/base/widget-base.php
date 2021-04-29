@@ -965,7 +965,7 @@ abstract class Widget_Base extends Element_Base {
 
 		return [
 			'key' => $widget_name,
-			'version' => 2,
+			'version' => ELEMENTOR_VERSION,
 			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
 			'data' => [
 				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
