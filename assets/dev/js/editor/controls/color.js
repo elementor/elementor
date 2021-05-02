@@ -87,6 +87,14 @@ export default class extends ControlBaseDataView {
 			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ),
 			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer;
 
+		// Add a tooltip to the Eye Dropper.
+		$colorPicker.tipsy( {
+			title() {
+				return `${ __( 'Eye Dropper', 'elementor' ) }`;
+			},
+			gravity: 's',
+		} );
+
 		$colorPicker.on( 'click', () => {
 			$e.run( 'elements-color-picker/start', {
 				container: currentElement.container,
