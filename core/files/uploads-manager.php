@@ -171,7 +171,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return string|\WP_Error
 	 */
 	public function create_temp_file( $file_content, $file_name ) {
-		$temp_filename = $this->create_unique_temp_dir() . $file_name;
+		$temp_filename = $this->create_unique_dir() . $file_name;
 
 		file_put_contents( $temp_filename, $file_content ); // phpcs:ignore
 
@@ -210,7 +210,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * @return string the new directory path
 	 */
-	public function create_unique_temp_dir() {
+	public function create_unique_dir() {
 		$unique_dir_path = $this->get_temp_dir() . uniqid() . DIRECTORY_SEPARATOR;
 
 		wp_mkdir_p( $unique_dir_path );
