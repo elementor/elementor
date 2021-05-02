@@ -11,9 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Import extends Iterator {
 
 	final public function run() {
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $this->get_settings( 'file_name' ), [ 'json', 'xml' ] );
-
-		$this->temp_dir = $extraction_result['temp_extraction_directory'];
+		$this->temp_dir = $this->get_settings( 'directory' );
 
 		$settings = $this->read_json_file( 'manifest' );
 
@@ -21,14 +19,12 @@ class Import extends Iterator {
 
 		$import_result = $root_directory->run_import( $settings );
 
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $this->temp_dir );
-
 		return $import_result;
 	}
 
 	final public function read_json_file( $name ) {
 		$name = $this->get_archive_file_full_path( $name . '.json' );
 
-		return json_decode( file_get_contents( $name ), true );
+		return json_decode( file_get_contents( $name, true ), true );
 	}
 }

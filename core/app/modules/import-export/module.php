@@ -104,36 +104,63 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function import_stage_1() {
+		if ( ! empty( $_POST['e_import_file'] ) ) {
+			$remote_zip_request = wp_remote_get( $_POST['e_import_file'] );
+
+			if ( is_wp_error( $remote_zip_request ) ) {
+				throw new \Error( $remote_zip_request->get_error_message() );
+			}
+
+			if ( 200 !== $remote_zip_request['response']['code'] ) {
+				throw new \Error( $remote_zip_request['response']['message'] );
+			}
+
+			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
+		} else {
+			$file_name = $_FILES['e_import_file']['tmp_name'];
+		}
+
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $file_name, [ 'json', 'xml' ] );
+
+		if ( ! empty( $_POST['e_import_file'] ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		}
+
+		$session_dir = $extraction_result['extraction_directory'];
+
+		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ) );
+
+		return [
+			'session' => basename( $session_dir ),
+			'manifest' => $manifest_data,
+		];
+	}
+
+	private function import_stage_2( array $import_settings ) {
+		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
+
+		$this->import = new Import( $import_settings );
+
+		$result = $this->import->run();
+
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
+
+		return $result;
+	}
+
 	private function on_admin_init() {
 		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
+		$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
+
 		try {
-			$import_settings = json_decode( stripslashes( $_POST['data'] ), true );
-
-			if ( ! empty( $_POST['e_import_file'] ) ) {
-				$remote_zip_request = wp_remote_get( $_POST['e_import_file'] );
-
-				if ( is_wp_error( $remote_zip_request ) ) {
-					throw new \Error( $remote_zip_request->get_error_message() );
-				}
-
-				if ( 200 !== $remote_zip_request['response']['code'] ) {
-					throw new \Error( $remote_zip_request['response']['message'] );
-				}
-
-				$import_settings['file_name'] = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-			} else {
-				$import_settings['file_name'] = $_FILES['e_import_file']['tmp_name'];
-			}
-
-			$this->import = new Import( $import_settings );
-
-			$result = $this->import->run();
-
-			if ( ! empty( $_POST['e_import_file'] ) ) {
-				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $import_settings['file_name'] ) );
+			if ( 1 === $import_settings['stage'] ) {
+				$result = $this->import_stage_1();
+			} elseif ( 2 === $import_settings['stage'] ) {
+				$result = $this->import_stage_2( $import_settings );
 			}
 
 			wp_send_json_success( $result );

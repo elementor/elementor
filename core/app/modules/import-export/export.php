@@ -51,7 +51,7 @@ class Export extends Iterator {
 	private function init_zip_archive() {
 		$zip_archive = new \ZipArchive();
 
-		$this->temp_dir = Plugin::$instance->uploads_manager->create_unique_temp_dir();
+		$this->temp_dir = Plugin::$instance->uploads_manager->create_unique_dir();
 
 		$this->archive_file_name = $this->temp_dir . 'kit.zip';
 
