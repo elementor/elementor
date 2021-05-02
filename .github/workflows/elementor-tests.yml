@@ -1,6 +1,6 @@
 name: Elementor Tests / Init
 
-on: [push, pull_request]
+on: [push, pull_request_target]
 
 jobs:
   run:
@@ -17,7 +17,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
           REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
+          HEAD_REPO: ${{ github.event.pull_request_target.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
         uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
         with:
           token: ${{ env.TOKEN }}
