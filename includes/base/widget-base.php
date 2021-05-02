@@ -949,10 +949,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function register_runtime_widget( $widget_name ) {
-		if ( ! $widget_name ) {
-			return;
-		}
-
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
