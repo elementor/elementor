@@ -153,17 +153,10 @@ abstract class Base {
 	 * @return void
 	 */
 	protected function save_asset_data( $asset_key ) {
-		$assets_data = get_option( self::ASSETS_DATA_KEY, [] );
+		$assets_data = $this->get_saved_assets_data();
+
 		$content_type = $this->content_type;
 		$assets_category = $this->assets_category;
-
-		if ( ! isset( $assets_data[ $content_type ] ) ) {
-			$assets_data[ $content_type ] = [];
-		}
-
-		if ( ! isset( $assets_data[ $content_type ][ $assets_category ] ) ) {
-			$assets_data[ $content_type ][ $assets_category ] = [];
-		}
 
 		$assets_data[ $content_type ][ $assets_category ][ $asset_key ] = $this->assets_data[ $asset_key ];
 
@@ -238,7 +231,19 @@ abstract class Base {
 	 * @return array
 	 */
 	protected function get_saved_assets_data() {
-		return get_option( self::ASSETS_DATA_KEY, [] );
+		$assets_data = get_option( self::ASSETS_DATA_KEY, [] );
+
+		$content_type = $this->content_type;
+		$assets_category = $this->assets_category;
+
+		if ( ! isset( $assets_data[ $content_type ] ) ) {
+			$assets_data[ $content_type ] = [];
+		}
+
+		if ( ! isset( $assets_data[ $content_type ][ $assets_category ] ) ) {
+			$assets_data[ $content_type ][ $assets_category ] = [];
+		}
+		return $assets_data;
 	}
 
 	/**
@@ -300,14 +305,6 @@ abstract class Base {
 
 		$content_type = $this->content_type;
 		$assets_category = $this->assets_category;
-
-		if ( ! isset( $assets_data[ $content_type ] ) ) {
-			$assets_data[ $content_type ] = [];
-		}
-
-		if ( ! isset( $assets_data[ $content_type ][ $assets_category ] ) ) {
-			$assets_data[ $content_type ][ $assets_category ] = [];
-		}
 
 		$this->assets_data = $assets_data[ $content_type ][ $assets_category ];
 	}
