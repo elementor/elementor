@@ -516,8 +516,9 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
-		$frontend_lite_file_name = 'frontend-lite' . $direction_suffix . $min_suffix . '.css';
+		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
+
+		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
@@ -533,7 +534,6 @@ class Frontend extends App {
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
-			$frontend_lite_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_lite_file_name;
 		}
 
 		$frontend_dependencies = [];
@@ -548,13 +548,6 @@ class Frontend extends App {
 			);
 
 			$frontend_dependencies[] = 'elementor-frontend-legacy';
-		}
-
-		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
-
-		// TODO: In dev mode = the legacy mode should be applied (script_debug).
-		if ( ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode() ) {
-			$frontend_file_url = $frontend_lite_file_url;
 		}
 
 		wp_register_style(
@@ -1394,5 +1387,11 @@ class Frontend extends App {
 		}
 
 		return $dependencies;
+	}
+
+	private function is_optimized_css_mode() {
+		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }
