@@ -61,16 +61,18 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
-		grunt.task.run( 'create_widgets_temp_scss_files' );
+		if ( ! isDevMode ) {
+			grunt.task.run( 'create_widgets_temp_scss_files' );
+		}
 
 		grunt.task.run( 'sass' );
 
 		if ( ! isDevMode ) {
 			grunt.task.run( 'postcss' );
 			grunt.task.run( 'css_templates' );
-		}
 
-		grunt.task.run( 'remove_widgets_unused_style_files' );
+			grunt.task.run( 'remove_widgets_unused_style_files' );
+		}
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
