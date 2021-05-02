@@ -197,6 +197,7 @@ abstract class Base {
 	 * @access protected
 	 *
 	 * @param string $data_type (content|size)
+	 * @param string $file_key - In case that the same file data is needed for multiple assets (like a JSON file), the file data key should be the same for all shared assets to make sure that the file is being read only once.
 	 *
 	 * @return string|number
 	 */
