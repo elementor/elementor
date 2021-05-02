@@ -4,21 +4,17 @@ import { MenuItem } from '@elementor/app-ui';
 export default function IndexSidebar( props ) {
 	return (
 		<>
-			<MenuItem
-				text={ __( 'All Kits', 'elementor' ) }
-				className={ `eps-menu-item__link ${ ! props.filter.favorite ? 'eps-menu-item--active' : '' }` }
-				icon="eicon-filter"
-				onClick={ () => props.filter.favorite && props.onChange( { ...initialFilterState } ) }
-			/>
-			<MenuItem
-				text={ __( 'Favorites', 'elementor' ) }
-				className={ `eps-menu-item__link ${ props.filter.favorite ? 'eps-menu-item--active' : '' }` }
-				icon="eicon-heart-o"
-				onClick={ () => ! props.filter.favorite && props.onChange( {
-					...initialFilterState,
-					favorite: true,
-				} ) }
-			/>
+			{
+				props.menuItems.map( ( item ) => (
+					<MenuItem
+						key={ item.label }
+						text={ item.label }
+						className={ `eps-menu-item__link ${ item.isActive ? 'eps-menu-item--active' : '' }` }
+						icon={ item.icon }
+						onClick={ item.onClick }
+					/>
+				) )
+			}
 			{ props.tagsFilterSlot }
 		</>
 	);
@@ -26,6 +22,10 @@ export default function IndexSidebar( props ) {
 
 IndexSidebar.propTypes = {
 	tagsFilterSlot: PropTypes.node,
-	onChange: PropTypes.func.isRequired,
-	filter: PropTypes.object.isRequired,
+	menuItems: PropTypes.arrayOf( PropTypes.shape( {
+		label: PropTypes.string,
+		icon: PropTypes.string,
+		isActive: PropTypes.bool,
+		onClick: PropTypes.func,
+	} ) ),
 };

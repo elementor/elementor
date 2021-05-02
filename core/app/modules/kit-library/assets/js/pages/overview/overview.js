@@ -26,7 +26,7 @@ function useHeaderButtons( id ) {
 }
 
 export default function Item( props ) {
-	const { data: kit, isError, isLoading, isFetching } = useKit( props.id );
+	const { data: kit, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( kit );
 	const headerButtons = useHeaderButtons( props.id );
 
@@ -41,7 +41,7 @@ export default function Item( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
-			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType } isLoading={ isFetching } /> }
+			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType } /> }
 		>
 			{
 				documentsByType.length > 0 &&

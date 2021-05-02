@@ -11,10 +11,7 @@ export default function FilterIndicationText( props ) {
 	);
 
 	const isFilterActive = useMemo(
-		() =>
-			props.filter.search ||
-			selectedTaxonomies.length ||
-			props.filter.favorite,
+		() => props.filter.search || !! selectedTaxonomies.length,
 		[ props.filter ]
 	);
 

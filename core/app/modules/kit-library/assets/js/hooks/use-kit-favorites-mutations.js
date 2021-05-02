@@ -8,8 +8,10 @@ export function useKitFavoritesMutations() {
 	const queryClient = useQueryClient();
 
 	const onSuccess = useCallback( ( { data } ) => {
-		const kit = Kit.createFromResponse( data.data );
+		const id = data.data.id;
+		const isFavorite = data.data.is_favorite;
 
+		// Update the kit list if the list exists.
 		if ( queryClient.getQueryData( [ kitsKey ] ) ) {
 			queryClient.setQueryData(
 				[ kitsKey ],
@@ -18,12 +20,26 @@ export function useKitFavoritesMutations() {
 						return kits;
 					}
 
-					return kits.map( ( item ) => item.id === kit.id ? kit : item );
+					const currentKit = kits.find( ( item ) => item.id === id );
+
+					currentKit.isFavorite = isFavorite;
+
+					return kits;
 				}
 			);
 		}
 
-		queryClient.invalidateQueries( [ kitKey, data.data.id ] );
+		// Update specific kit if the kit exists
+		if ( queryClient.getQueryData( [ kitKey, id ] ) ) {
+			queryClient.setQueryData(
+				[ kitKey, id ],
+				( currentKit ) => {
+					currentKit.isFavorite = isFavorite;
+
+					return currentKit;
+				}
+			);
+		}
 	}, [ queryClient ] );
 
 	const addToFavorites = useMutation(

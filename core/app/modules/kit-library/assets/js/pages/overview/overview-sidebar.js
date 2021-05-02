@@ -23,7 +23,6 @@ export default function OverviewSidebar( props ) {
 				<FavoritesActions
 					isFavorite={ props.model.isFavorite }
 					id={ props.model.id }
-					isLoading={ props.isLoading }
 				/>
 			</div>
 			<CardImage
@@ -80,7 +79,6 @@ export default function OverviewSidebar( props ) {
 }
 
 OverviewSidebar.propTypes = {
-	isLoading: PropTypes.bool,
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	groupedKitContent: PropTypes.arrayOf(
 		PropTypes.instanceOf( ContentType )

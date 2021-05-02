@@ -6,6 +6,8 @@ export const KEY = 'kits';
 
 const { useState, useMemo, useCallback, useEffect } = React;
 
+const pageFiltersKeys = [ 'favorite' ];
+
 export const initialFilterState = {
 	favorite: false,
 	search: '',
@@ -22,7 +24,20 @@ export default function useKits() {
 	const [ filter, setFilter ] = useState( initialFilterState );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
-	const clearFilter = useCallback( () => setFilter( { ...initialFilterState } ), [ setFilter ] );
+
+	const clearFilter = useCallback(
+		() => setFilter( ( prev ) => {
+			const pageFilters = pageFiltersKeys.reduce( ( current, pageFilterKey ) => {
+				return { ...current, [ pageFilterKey ]: prev[ pageFilterKey ] };
+			}, {} );
+
+			return {
+				...initialFilterState,
+				...pageFilters,
+			};
+		} ),
+		[ setFilter ]
+	);
 
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 

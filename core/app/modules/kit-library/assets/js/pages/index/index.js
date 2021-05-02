@@ -6,10 +6,10 @@ import IndexSidebar from './index-sidebar';
 import KitList from '../../components/kit-list';
 import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
-import useKits from '../../hooks/use-kits';
+import useKits, { initialFilterState } from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { SearchInput } from '@elementor/app-ui';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import './index.scss';
 
@@ -43,6 +43,40 @@ function useTaxonomiesSelection( setFilter ) {
 	return [ selectTaxonomy, unselectTaxonomy ];
 }
 
+/**
+ * Generate the menu items for the index page.
+ *
+ * @param filter
+ * @param setFilter
+ * @returns {[{onClick: function(): *, icon: string, label: *, isActive: boolean}, {onClick: function(): *, icon: string, label: *, isActive: boolean}]}
+ */
+function useMenuItems( filter, setFilter ) {
+	const activeMenu = useMemo( () => {
+		if ( filter.favorite ) {
+			return 'favorite';
+		}
+
+		return 'all';
+	}, [ filter ] );
+
+	return useMemo( () => {
+		return [
+			{
+				label: __( 'All Kits', 'elementor' ),
+				icon: 'eicon-filter',
+				isActive: 'all' === activeMenu,
+				onClick: () => setFilter( { ...initialFilterState } ),
+			},
+			{
+				label: __( 'Favorites', 'elementor' ),
+				icon: 'eicon-heart-o',
+				isActive: 'favorite' === activeMenu,
+				onClick: () => setFilter( { ...initialFilterState, favorite: true } ),
+			},
+		];
+	}, [ activeMenu, setFilter ] );
+}
+
 export default function Index() {
 	const {
 		data,
@@ -62,6 +96,8 @@ export default function Index() {
 		isFetching: isFetchingTaxonomies,
 	} = useTaxonomies();
 
+	const menuItems = useMenuItems( filter, setFilter );
+
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setFilter );
 
 	return (
@@ -73,8 +109,7 @@ export default function Index() {
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
 					/> }
-					onChange={ ( value ) => setFilter( value ) }
-					filter={ filter }
+					menuItems={ menuItems }
 				/>
 			}
 			header={
@@ -107,10 +142,10 @@ export default function Index() {
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
-						{ isSuccess && data.length > 0 && <KitList data={ data }/> }
+						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
 						{
-							isSuccess && data.length <= 0 &&
-							<IndexNoResults isFilteredByFavorite={ filter.favorite } clearFilter={ clearFilter }/>
+							isSuccess && 0 === data.length &&
+								<IndexNoResults isFilteredByFavorite={ filter.favorite } clearFilter={ clearFilter }/>
 						}
 					</>
 				</Content>

@@ -47,14 +47,18 @@ class Repository {
 	/**
 	 * Get specific kit.
 	 *
-	 * @param      $id
-	 * @param null $user_id
-	 * @param bool $manifest_included
+	 * @param       $id
+	 * @param null  $user_id
+	 * @param array $options
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
 	 */
-	public function find( $id, $user_id = null, $manifest_included = true ) {
+	public function find( $id, $user_id = null, $options = [] ) {
+		$options = wp_parse_args( $options, [
+			'manifest_included' => true,
+		] );
+
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
 				return $kit->_id === $id;
@@ -68,7 +72,7 @@ class Repository {
 
 		$manifest = null;
 
-		if ( $manifest_included ) {
+		if ( $options['manifest_included'] ) {
 			$manifest = $this->api->get_manifest( $id );
 
 			if ( is_wp_error( $manifest ) ) {
@@ -130,7 +134,10 @@ class Repository {
 	 */
 	public function add_to_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
-		$kit = $this->find( $id, $user_id, false );
+		$kit = $this->find( $id, $user_id, [
+			'manifest_included' => false,
+		] );
+
 		$favorites = $this->get_user_favorites_meta( $user_id );
 
 		if ( in_array( $kit['id'], $favorites, true ) ) {
@@ -155,12 +162,11 @@ class Repository {
 	 */
 	public function remove_from_favorites( $user_id, $id ) {
 		// To check that the kit is exists.
-		$kit = $this->find( $id, $user_id, false );
-		$favorites = $this->get_user_favorites_meta( $user_id );
+		$kit = $this->find( $id, $user_id, [
+			'manifest_included' => false,
+		] );
 
-		if ( ! in_array( $kit['id'], $favorites, true ) ) {
-			return $kit;
-		}
+		$favorites = $this->get_user_favorites_meta( $user_id );
 
 		$favorites = array_filter( $favorites, function ( $item ) use ( $kit ) {
 			return $item !== $kit['id'];

@@ -1,12 +1,12 @@
 import { useKitFavoritesMutations } from '../hooks/use-kit-favorites-mutations';
-import { Button, Icon } from '@elementor/app-ui';
+import { Button } from '@elementor/app-ui';
+
+import './favorites-actions.scss';
 
 export default function FavoritesActions( props ) {
 	const { addToFavorites, removeFromFavorites, isLoading } = useKitFavoritesMutations();
 
-	if ( isLoading || props.isLoading ) {
-		return <Icon className="eicon-loading eicon-animation-spin e-kit-library__kit-item-favorite"/>;
-	}
+	const loadingClasses = isLoading ? 'e-kit-library__kit-favorite-actions--loading' : '';
 
 	return (
 		props.isFavorite ?
@@ -14,14 +14,14 @@ export default function FavoritesActions( props ) {
 				text={ __( 'Remove From Favorites', 'elementor' ) }
 				hideText={ true }
 				icon="eicon-heart"
-				className="e-kit-library__kit-item-favorite e-kit-library__kit-item-favorite--active"
+				className={ `e-kit-library__kit-favorite-actions e-kit-library__kit-favorite-actions--active ${ loadingClasses }` }
 				onClick={ () => ! isLoading && removeFromFavorites.mutate( props.id ) }
 			/> :
 			<Button
 				text={ __( 'Add To Favorites', 'elementor' ) }
 				hideText={ true }
 				icon="eicon-heart-o"
-				className="e-kit-library__kit-item-favorite"
+				className={ `e-kit-library__kit-favorite-actions ${ loadingClasses }` }
 				onClick={ () => ! isLoading && addToFavorites.mutate( props.id ) }
 			/>
 	);
@@ -29,6 +29,5 @@ export default function FavoritesActions( props ) {
 
 FavoritesActions.propTypes = {
 	isFavorite: PropTypes.bool,
-	isLoading: PropTypes.bool,
 	id: PropTypes.string,
 };
