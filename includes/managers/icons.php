@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Assets\Data_Managers\Font_Icon_Svg as Font_Icon_Svg_Data_Manager;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,8 @@ class Icons_Manager {
 	 * @var array
 	 */
 	private static $tabs;
+
+	private static $data_manager;
 
 	private static function get_needs_upgrade_option() {
 		return get_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, null );
@@ -251,32 +254,17 @@ class Icons_Manager {
 		$icon['name'] = $icon_name;
 
 		return [
-			'content_type' => 'svg',
-			'assets_category' => 'font_awesome',
-			'asset_key' => $icon_key,
-			'current_version' => 5,
-			'asset_path' => $icon_file_path,
+			'key' => $icon_key,
+			'version' => 5,
+			'file_path' => $icon_file_path,
 			'data' => [
-				'file_data_key' => $icon['library'],
-			],
-			'actions' => [
-				'get_svg_data_from_file' => function( $file_data ) use ( $icon ) {
-					$icon_name = $icon['name'];
-
-					$svg_data = $file_data['icons'][ $icon_name ];
-
-					return [
-						'width' => $svg_data[0],
-						'height' => $svg_data[1],
-						'path' => $svg_data[4],
-					];
-				},
+				'icon_data' => $icon,
 			],
 		];
 	}
 
 	public static function get_icon_svg_data( $icon ) {
-		return Plugin::$instance->assets_loader->get_asset_inline_content( self::get_icon_svg_config( $icon ) );
+		return self::$data_manager->get_asset_data( self::get_icon_svg_config( $icon ) );
 	}
 
 	/**
@@ -606,6 +594,8 @@ class Icons_Manager {
 		}
 
 		if ( self::is_font_awesome_inline() ) {
+			self::$data_manager = new Font_Icon_Svg_Data_Manager();
+
 			add_action( 'wp_footer', [ $this, 'store_svg_symbols' ], 10 );
 			// TODO: check if the 10 is needed.
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );

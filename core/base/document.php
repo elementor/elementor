@@ -3,8 +3,6 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
 use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
-use Elementor\Core\Base\Elements_Iteration_Actions\Font_Icon_Svg as Font_Icon_Svg_Iteration_Action;
-use Elementor\Core\Base\Elements_Iteration_Actions\Widgets_Css as Widgets_Css_Iteration_Action;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -1572,14 +1570,6 @@ abstract class Document extends Controls_Stack {
 		if ( ! $this->elements_iteration_actions ) {
 			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 				$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
-			}
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
-				$this->elements_iteration_actions[] = new Widgets_Css_Iteration_Action( $this );
-			}
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_font_awesome_inline' ) ) {
-				$this->elements_iteration_actions[] = new Font_Icon_Svg_Iteration_Action( $this );
 			}
 		}
 

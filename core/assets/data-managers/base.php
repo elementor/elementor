@@ -200,8 +200,8 @@ abstract class Base {
 	 *
 	 * @return string|number
 	 */
-	protected function get_file_data( $data_type ) {
-		$asset_key = $this->get_key();
+	protected function get_file_data( $data_type, $file_key = '' ) {
+		$asset_key = $file_key ? $file_key : $this->get_key();
 
 		if ( isset( $this->files_data[ $asset_key ][ $data_type ] ) ) {
 			return $this->files_data[ $asset_key ][ $data_type ];
@@ -286,7 +286,7 @@ abstract class Base {
 	 *     @type array 'data'
 	 * }
 	 *
-	 * @return void
+	 * @return string
 	 */
 	public function get_asset_data( $config ) {
 		$this->init_asset_data( $config );
