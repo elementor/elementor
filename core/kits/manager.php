@@ -23,7 +23,7 @@ class Manager {
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
-		$id = get_option( self::OPTION_ACTIVE, null );
+		$id = get_option( self::OPTION_ACTIVE );
 
 		$kit_document = Plugin::$instance->documents->get( $id );
 

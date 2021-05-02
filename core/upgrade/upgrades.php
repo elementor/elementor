@@ -650,7 +650,7 @@ class Upgrades {
 		global $wpdb;
 		$id = get_option( 'elementor_active_kit', null );
 
-		if ( null !== $id ) {
+		if ( ! $id ) {
 			// Query the row and update autoload
 			$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->options SET autoload='no' WHERE option_name=%d", 'elementor_active_kit' ) );
 		}
