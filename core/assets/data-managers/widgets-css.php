@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Core\Assets\Data_Managers;
 
-use Elementor\Plugin;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
