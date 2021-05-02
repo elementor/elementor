@@ -67,7 +67,7 @@ jobs:
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.0
+        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.1
       - name: Install WordPress environment
         run: |
           npx wp-env start
@@ -81,9 +81,21 @@ jobs:
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
+      - name: Save HTML dumps on failure
+        if: failure()
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
       - name: Upload Lighthouse reports on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
+          retention-days: 7
+      - name: Upload Lighthouse HTML dumps on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lighthouseci-htmls
+          path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
+          retention-days: 7

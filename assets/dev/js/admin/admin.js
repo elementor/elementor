@@ -1,5 +1,6 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
+import environment from '../../../../core/common/assets/js/utils/environment';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -288,6 +289,8 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			this.openGetHelpInNewTab();
 
+			this.addUserAgentClasses();
+
 			this.roleManager.init();
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -295,6 +298,17 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			}
 
 			new ExperimentsModule();
+		},
+
+		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
+			Object.entries( environment ).forEach( ( [ key, value ] ) => {
+				if ( ! value ) {
+					return;
+				}
+
+				body.classList.add( 'e--ua-' + key );
+			} );
 		},
 
 		openGetHelpInNewTab: function() {

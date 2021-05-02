@@ -18,6 +18,7 @@ import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
+import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -306,6 +307,9 @@ export default class EditorBase extends Marionette.Application {
 		return this.previewView;
 	}
 
+	/**
+	 * @returns {Container}
+	 */
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
 	}
@@ -353,6 +357,10 @@ export default class EditorBase extends Marionette.Application {
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
+
+		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
+			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
@@ -555,10 +563,17 @@ export default class EditorBase extends Marionette.Application {
 			},
 			resize: ( event, ui ) => {
 				$responsiveWrapper.css( {
-					right: '0', left: '0', top: '0', bottom: '0',
-					'--e-editor-preview-width': ui.size.width + 'px',
-					'--e-editor-preview-height': ui.size.height + 'px',
+					right: '0',
+					left: '0',
+					top: '0',
+					bottom: '0',
 				} );
+
+				// Old versions of jQuery don't support custom properties
+				const style = $responsiveWrapper[ 0 ].style;
+
+				style.setProperty( '--e-editor-preview-width', ui.size.width + 'px' );
+				style.setProperty( '--e-editor-preview-height', ui.size.height + 'px' );
 			},
 		} );
 	}
@@ -578,11 +593,19 @@ export default class EditorBase extends Marionette.Application {
 			.trigger( 'resize' );
 	}
 
-	getBreakpointResizeOptions( currentBreakpoint ) {
-		const { activeBreakpoints } = elementorFrontend.config.responsive,
+	getCurrentDeviceConstrains() {
+		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
+			{ activeBreakpoints } = elementorFrontend.config.responsive,
 			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
 			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
 
+		return {
+			maxWidth: currentBreakpointData.value,
+			minWidth: currentBreakpointMinPoint,
+		};
+	}
+
+	getBreakpointResizeOptions( currentBreakpoint ) {
 		const specialBreakpointsHeights = {
 			mobile: {
 				minHeight: 480,
@@ -596,16 +619,13 @@ export default class EditorBase extends Marionette.Application {
 			},
 		};
 
-		let breakpointConstrains = {
-			maxWidth: currentBreakpointData.value,
-			minWidth: currentBreakpointMinPoint || 375,
-		};
+		let deviceConstrains = this.getCurrentDeviceConstrains();
 
 		if ( specialBreakpointsHeights[ currentBreakpoint ] ) {
-			breakpointConstrains = { ...breakpointConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
+			deviceConstrains = { ...deviceConstrains, ...specialBreakpointsHeights[ currentBreakpoint ] };
 		}
 
-		return breakpointConstrains;
+		return deviceConstrains;
 	}
 
 	updatePreviewResizeOptions( preserveCurrentSize = false ) {
@@ -615,10 +635,11 @@ export default class EditorBase extends Marionette.Application {
 		if ( 'desktop' === currentBreakpoint ) {
 			this.destroyPreviewResizable();
 
-			$responsiveWrapper.css( {
-				'--e-editor-preview-width': '',
-				'--e-editor-preview-height': '',
-			} );
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
+
+			style.setProperty( '--e-editor-preview-width', '' );
+			style.setProperty( '--e-editor-preview-height', '' );
 		} else {
 			this.activatePreviewResizable();
 
@@ -636,12 +657,13 @@ export default class EditorBase extends Marionette.Application {
 				}
 			}
 
-			$responsiveWrapper
-				.resizable( 'option', { ...breakpointResizeOptions } )
-				.css( {
-					'--e-editor-preview-width': widthToShow + 'px',
-					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
-				} );
+			$responsiveWrapper.resizable( 'option', { ...breakpointResizeOptions } );
+
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
+
+			style.setProperty( '--e-editor-preview-width', widthToShow + 'px' );
+			style.setProperty( '--e-editor-preview-height', breakpointResizeOptions.height + 'px' );
 		}
 	}
 
@@ -783,8 +805,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	exitDeviceMode() {
-		elementor.changeDeviceMode( 'desktop' );
-
 		elementorCommon.elements.$body.removeClass( 'e-is-device-mode' );
 
 		this.destroyPreviewResizable();
@@ -797,10 +817,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	updatePreviewSize( size ) {
-		this.$previewResponsiveWrapper.css( {
-			'--e-editor-preview-width': size.width + 'px',
-			'--e-editor-preview-height': size.height + 'px',
-		} );
+		// Old versions of jQuery don't support custom properties
+		const style = this.$previewResponsiveWrapper[ 0 ].style;
+
+		style.setProperty( '--e-editor-preview-width', size.width + 'px' );
+		style.setProperty( '--e-editor-preview-height', size.height + 'px' );
 	}
 
 	enterPreviewMode( hidePanel ) {
@@ -849,7 +870,7 @@ export default class EditorBase extends Marionette.Application {
 		this.$preview[ 0 ].contentWindow.location.reload( true );
 	}
 
-	changeDeviceMode( newDeviceMode ) {
+	changeDeviceMode( newDeviceMode, hideBarOnDesktop = true ) {
 		const oldDeviceMode = this.channels.deviceMode.request( 'currentMode' );
 
 		if ( oldDeviceMode === newDeviceMode ) {
@@ -864,6 +885,14 @@ export default class EditorBase extends Marionette.Application {
 			.reply( 'previousMode', oldDeviceMode )
 			.reply( 'currentMode', newDeviceMode )
 			.trigger( 'change' );
+
+		if ( this.isDeviceModeActive() && hideBarOnDesktop ) {
+			if ( 'desktop' === newDeviceMode ) {
+				this.exitDeviceMode();
+			}
+		} else if ( 'desktop' !== newDeviceMode ) {
+			this.enterDeviceMode();
+		}
 	}
 
 	translate( stringKey, templateArgs, i18nStack ) {

@@ -108,8 +108,8 @@ class Manager extends Module {
 		$breakpoint_keys = array_keys( $active_breakpoints );
 
 		if ( $breakpoint_keys[0] === $device_name ) {
-			// For the lowest breakpoint, the min point is always 0.
-			$min_breakpoint = 0;
+			// For the lowest breakpoint, the min point is always 320.
+			$min_breakpoint = 320;
 		} elseif ( 'min' === $current_device_breakpoint->get_direction() ) {
 			// 'min-width' breakpoints only have a minimum point. The breakpoint value itself the device min point.
 			$min_breakpoint = $current_device_breakpoint->get_value();
