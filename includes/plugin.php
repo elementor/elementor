@@ -21,7 +21,7 @@ use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
-use Elementor\Core\Assets\Loader;
+use Elementor\Core\Assets\Loader as Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
@@ -473,7 +473,7 @@ class Plugin {
 	public $breakpoints;
 
 	/**
-	 * @var Loader
+	 * @var Assets_Loader
 	 */
 	public $assets_loader;
 
@@ -636,7 +636,7 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
-		$this->assets_loader = new Loader();
+		$this->assets_loader = new Assets_Loader();
 		$this->uploads_manager = new Uploads_Manager();
 
 		User::init();
