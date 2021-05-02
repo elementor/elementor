@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Assets\Data_Managers;
+namespace Elementor\Core\Page_Assets\Data_Managers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Assets;
+namespace Elementor\Core\Page_Assets;
 
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;

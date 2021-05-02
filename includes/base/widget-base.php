@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
