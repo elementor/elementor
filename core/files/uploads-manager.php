@@ -80,7 +80,7 @@ class Uploads_Manager extends Base_Object {
 			return new \WP_Error( 'file_error', self::INVALID_FILE_CONTENT );
 		}
 
-		$result['temp_extraction_directory'] = $extracted['temp_extraction_directory'];
+		$result['extraction_directory'] = $extracted['extraction_directory'];
 
 		foreach ( $extracted['files'] as $extracted_file_path ) {
 			// Each file is an array with a 'name' (file path) property.
