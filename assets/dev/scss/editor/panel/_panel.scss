@@ -127,7 +127,7 @@
 	}
 
 	// Hack to remove unwanted elements from the modal
-	.elementor-wp-media-elements-removed {
+	.e-wp-media-elements-removed {
 		.embed-link-settings,
 		.embed-media-settings > :not( .wp-clearfix ){
 			display: none;
@@ -152,6 +152,7 @@
 			}
 		}
 
+		/* Hack to change the media button selection text, because for some reason the text gets changed when switching tabs. */
 		.media-button-select {
 			font-size: 0;
 

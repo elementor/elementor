@@ -139,10 +139,10 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	/**
-	 * Hack to remove unwanted elements from modal.
+	 * Hack to remove unwanted elements from modal & Open the `Insert from URL` tab.
 	 */
 	onFrameReady() {
-		const frameElement = this.frame.el;
+		const $frame = this.frame.$el;
 
 		const elementsToRemove = [
 			'#menu-item-insert',
@@ -152,23 +152,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			'.embed-link-settings',
 		];
 
-		elementsToRemove.forEach( ( selector ) => {
-			const el = frameElement.querySelector( selector );
-
-			if ( el ) {
-				el.remove();
-			}
-		} );
+		const $elements = $frame.find( elementsToRemove.join( ',' ) );
+		$elements.remove();
 
 		// Change the default button text using CSS by passing the text as a variable.
-		frameElement.style.setProperty( '--button-text', `'${ __( 'Insert Media', 'elementor' ) }'` );
+		$frame.css( '--button-text', `'${ __( 'Insert Media', 'elementor' ) }'` );
 
 		// Remove elements from the URL upload tab.
-		frameElement.classList.add( 'elementor-wp-media-elements-removed' );
+		$frame.addClass( 'e-wp-media-elements-removed' );
 
 		if ( 'url' === this.getControlValue( 'source' ) ) {
 			// Go to the url tab.
-			frameElement.querySelector( '#menu-item-embed' ).click();
+			$frame.find( '#menu-item-embed' ).trigger( 'click' );
+
+			// Hide the top media tabs ( WordPress does that automatically if a real user clicks the url tab ).
+			$frame.addClass( 'hide-router' );
 
 			// Load the image URL.
 			this.frame.views.get( '.media-frame-content' )[ 0 ].url.model.set( {
@@ -176,7 +174,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			} );
 		} else {
 			// Go to the upload tab.
-			frameElement.querySelector( '#menu-item-library' ).click();
+			$frame.find( '#menu-item-library' ).trigger( 'click' );
 		}
 	},
 
