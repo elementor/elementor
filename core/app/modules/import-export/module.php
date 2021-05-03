@@ -27,12 +27,12 @@ class Module extends BaseModule {
 	/**
 	 * @var Export
 	 */
-	private $export;
+	public $export;
 
 	/**
 	 * @var Import
 	 */
-	private $import;
+	public $import;
 
 	/**
 	 * Get name.

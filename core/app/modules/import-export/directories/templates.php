@@ -94,6 +94,7 @@ class Templates extends Base {
 		}
 
 		$template['import_settings'] = $template_settings;
+		$template['id'] = $id;
 
 		$new_document->import( $template );
 
