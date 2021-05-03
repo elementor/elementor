@@ -65,8 +65,8 @@ class Test_Tracker extends Elementor_Test_Base {
 		$actual = Tracker::get_tools_general_usage();
 
 		$this->assertEqualSets( [
-			'safe_mode' => 'enabled',
-			'debug_bar' => 'enabled',
+			'safe_mode' => true,
+			'debug_bar' => true,
 		], $actual );
 	}
 

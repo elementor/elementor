@@ -373,10 +373,10 @@ class Tracker {
 	 */
 	public static function get_settings_advanced_usage() {
 		return [
-			'css_print_method' => get_option( 'elementor_css_print_method' ),
-			'switch_editor_loader_method' => get_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY ),
-			'enable_unfiltered_file_uploads' => get_option( Files_Upload_Handler::OPTION_KEY ),
-			'font_awesome_support' => get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY ),
+			'css_print_method' => get_option( 'elementor_css_print_method', 'internal' ),
+			'switch_editor_loader_method' => boolval( get_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY ) ),
+			'enable_unfiltered_file_uploads' => boolval( get_option( Files_Upload_Handler::OPTION_KEY ) ),
+			'font_awesome_support' => get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'No' ),
 		];
 	}
 
@@ -421,8 +421,8 @@ class Tracker {
 	 */
 	public static function get_tools_general_usage() {
 		return [
-			'safe_mode' => get_option( 'elementor_safe_mode' ),
-			'debug_bar' => get_option( 'elementor_enable_inspector' ),
+			'safe_mode' => boolval( get_option( 'elementor_safe_mode' ) ),
+			'debug_bar' => boolval( get_option( 'elementor_enable_inspector' ) ),
 		];
 	}
 
@@ -472,10 +472,14 @@ class Tracker {
 			'usages' => [
 				'posts' => self::get_posts_usage(),
 				'library' => self::get_library_usage(),
-				'settings-general' => self::get_settings_general_usage(),
-				'settings-advanced' => self::get_settings_advanced_usage(),
-				'settings-experiments' => self::get_settings_experiments_usage(),
-				'tools-general' => self::get_tools_general_usage(),
+				'settings' => [
+					'general' => self::get_settings_general_usage(),
+					'advanced' => self::get_settings_advanced_usage(),
+					'experiments' => self::get_settings_experiments_usage(),
+				],
+				'tools' => [
+					'general' => self::get_tools_general_usage(),
+				],
 			],
 			'is_first_time' => $is_first_time,
 			'install_time' => Plugin::instance()->get_install_time(),
