@@ -516,7 +516,9 @@ class Frontend extends App {
 
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
+		$frontend_base_file_name = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
+
+		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
 		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
@@ -1385,5 +1387,11 @@ class Frontend extends App {
 		}
 
 		return $dependencies;
+	}
+
+	private function is_optimized_css_mode() {
+		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
 	}
 }
