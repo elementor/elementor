@@ -857,7 +857,7 @@
 							"properties": {
 								"beta_tester": {
 									"$id": "#/usages/tools/version/beta_tester",
-									"$ref": "#/definitions/global/enums/yes_no",
+									"$ref": "#/definitions/global/enums/yes_no_lowercase",
 									"title": "Is beta tester?",
 									"default": "no"
 								}
