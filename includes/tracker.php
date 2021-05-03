@@ -434,7 +434,7 @@ class Tracker {
 	 */
 	public static function get_tools_version_control_usage() {
 		return [
-			'beta_tester' => get_option( 'elementor_beta' ),
+			'beta_tester' => get_option( 'elementor_beta', 'No' ),
 		];
 	}
 
@@ -446,9 +446,9 @@ class Tracker {
 	 */
 	public static function get_tools_maintenance_usage() {
 		return [
-			'mode' => get_option( 'elementor_maintenance_mode_mode' ),
-			'exclude' => get_option( 'elementor_maintenance_mode_exclude_mode' ),
-			'template_id' => get_option( 'elementor_maintenance_mode_template_id' ),
+			'mode' => get_option( 'elementor_maintenance_mode_mode', '' ),
+			'exclude' => get_option( 'elementor_maintenance_mode_exclude_mode', 'logged_in' ),
+			'template_id' => get_option( 'elementor_maintenance_mode_template_id', '' ),
 		];
 	}
 
@@ -479,6 +479,8 @@ class Tracker {
 				],
 				'tools' => [
 					'general' => self::get_tools_general_usage(),
+					'version' => self::get_tools_version_control_usage(),
+					'maintenance' => self::get_tools_maintenance_usage(),
 				],
 			],
 			'is_first_time' => $is_first_time,

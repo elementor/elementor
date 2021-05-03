@@ -843,6 +843,51 @@
 								}
 							},
 							"additionalProperties": false
+						},
+						"version": {
+							"$id": "#/usages/tools/version",
+							"properties": {
+								"beta_tester": {
+									"$id": "#/usages/tools/version/beta_tester",
+									"$ref": "#/definitions/global/enums/yes_no",
+									"title": "Is beta tester?",
+									"default": "no"
+								}
+							},
+							"additionalProperties": false
+						},
+						"maintenance": {
+							"$id": "#/usages/tools/maintenance",
+							"properties": {
+								"mode": {
+									"$id": "#/usages/tools/maintenance/mode",
+									"type": "string",
+									"title": "Maintenance mode",
+									"enum": [
+										"",
+										"coming_soon",
+										"maintenance"
+									],
+									"default": ""
+								},
+								"exclude": {
+									"$id": "#/usages/tools/maintenance/exclude",
+									"title": "Exclude who can access?",
+									"type": "string",
+									"enum": [
+										"logged_in",
+										"custom"
+									],
+									"default": "logged_in"
+								},
+								"template_id": {
+									"$id": "#/usages/tools/maintenance/template_id",
+									"title": "Maintenance template id",
+									"type": "string",
+									"default": ""
+								}
+							},
+							"additionalProperties": false
 						}
 					},
 					"additionalProperties": false
