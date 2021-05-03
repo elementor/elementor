@@ -47,26 +47,26 @@ function useTaxonomiesSelection( setQueryParams ) {
  * Generate the menu items for the index page.
  *
  * @param path
- * @returns {{"": {icon: string, label: *, isActive, url: string}, favorites: {icon: string, label: *, isActive: boolean, url: string}}}
+ * @returns {array}
  */
 function useMenuItems( path ) {
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
 
-		return {
-			'': {
+		return [
+			{
 				label: __( 'All Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
 			},
-			favorites: {
+			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
 				isActive: 'favorites' === page,
 				url: '/kit-library/favorites',
 			},
-		};
+		];
 	}, [ path ] );
 }
 
@@ -104,7 +104,7 @@ export default function Index( props ) {
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
 					/> }
-					menuItems={ Object.values( menuItems ) }
+					menuItems={ menuItems }
 				/>
 			}
 			header={

@@ -13,7 +13,7 @@ class Controller extends Controller_Base {
 	/**
 	 * @var Repository
 	 */
-	public $repository;
+	private $repository;
 
 	/**
 	 * @param \WP_REST_Request $request
