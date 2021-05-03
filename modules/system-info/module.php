@@ -65,6 +65,16 @@ class Module extends BaseModule {
 		'experiments' => [],
 	];
 
+	private static $tracked_reports = [
+		'server' => [],
+		'wordpress' => [],
+		'theme' => [],
+		'user' => [],
+		'plugins' => [],
+		'network_plugins' => [],
+		'mu_plugins' => [],
+	];
+
 	/**
 	 * Main system info page constructor.
 	 *
@@ -343,6 +353,15 @@ class Module extends BaseModule {
 	 */
 	public static function get_allowed_reports() {
 		return self::$reports;
+	}
+
+	/**
+	 * Get allowed reports for tracking data.
+	 *
+	 * @return array
+	 */
+	public static function get_allowed_tracked_reports() {
+		return self::$tracked_reports;
 	}
 
 	/**
