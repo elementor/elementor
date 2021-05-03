@@ -5,7 +5,7 @@ Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 5.6
 Beta tag: 3.2.0-beta4
-Stable tag: 3.1.4
+Stable tag: 3.2.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -218,6 +218,20 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.2.2 - 2021-04-26 =
+* Fix: Multiple carousels in the same page stoped functioning when Improved Asset Load experiment is active ([#14663](https://github.com/elementor/elementor/issues/14663), [#14675](https://github.com/elementor/elementor/issues/14675))
+* Fix: Section Style tab panel is grayed in several site languages ([#14642](https://github.com/elementor/elementor/issues/14642))
+* Fix: Responsive mode UI glitch in WordPress versions under 5.6
+
+= 3.2.1 - 2021-04-21 =
+* Tweak: Changed the minimum width of Mobile breakpoint to 320px
+* Fix: Global Typography settings were printed as undefined variables
+* Fix: Close button in responsive bar didn't worked in the Desktop breakpoint
+* Fix: UI glitch in the dashboard admin notices
+* Fix: Right click contextual menu appears underneath the Navigator
+* Fix: Panel resize caused UI glitches in RTL websites
+* Fix: Responsive device icons adjustments in RTL websites
 
 = 3.2.0 - 2021-04-19 =
 * New: Meet Text Path widget - Add more text design options to your headings
