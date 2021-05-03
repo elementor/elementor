@@ -22,6 +22,14 @@
 					],
 					"type": "string"
 				},
+				"yes_no_lowercase": {
+					"$id": "#/definitions/global/enums/yes_no_lowercase",
+					"enum": [
+						"yes",
+						"no"
+					],
+					"type": "string"
+				},
 				"active_inactive": {
 					"$id": "#/definitions/global/enums/active_inactive",
 					"enum": [
@@ -31,7 +39,7 @@
 					"type": "string"
 				},
 				"active_inactive_lowercase": {
-					"$id": "#/definitions/global/enums/active_inactive",
+					"$id": "#/definitions/global/enums/active_inactive_lowercase",
 					"enum": [
 						"active",
 						"inactive"

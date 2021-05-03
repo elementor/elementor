@@ -434,7 +434,7 @@ class Tracker {
 	 */
 	public static function get_tools_version_control_usage() {
 		return [
-			'beta_tester' => get_option( 'elementor_beta', 'No' ),
+			'beta_tester' => get_option( 'elementor_beta', 'no' ),
 		];
 	}
 
