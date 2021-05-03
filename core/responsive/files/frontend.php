@@ -39,6 +39,9 @@ class Frontend extends Base {
 		$file_content = file_get_contents( $this->template_file );
 
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
+			// Handle BC for legacy template files.
+			$placeholder_data = $this->maybe_convert_placeholder_data( $placeholder_data );
+
 			if ( 'DESKTOP' === $placeholder_data[1] ) {
 				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
 			} else {
@@ -145,5 +148,30 @@ class Frontend extends Base {
 		}
 
 		return $option;
+	}
+
+	/**
+	 * Maybe Convert Placeholder Data
+	 *
+	 * Converts responsive placeholders in Elementor CSS template files from the legacy format into the new format.
+	 *
+	 * @since 3.2.3
+	 *
+	 * @param $placeholder_data
+	 * @return mixed
+	 */
+	private function maybe_convert_placeholder_data( $placeholder_data ) {
+		switch ( $placeholder_data[1] ) {
+			case 'SM':
+				$placeholder_data[1] = 'MOBILE';
+				break;
+			case 'MD':
+				$placeholder_data[1] = 'TABLET';
+				break;
+			case 'LG':
+				$placeholder_data[1] = 'DESKTOP';
+		}
+
+		return $placeholder_data;
 	}
 }
