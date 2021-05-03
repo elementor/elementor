@@ -131,10 +131,14 @@ class Module extends BaseModule {
 
 		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
 
-		return [
+		$result = [
 			'session' => basename( $session_dir ),
 			'manifest' => $manifest_data,
 		];
+
+		$result = apply_filters( 'elementor/import/stage_1/result', $result );
+
+		return $result;
 	}
 
 	private function import_stage_2( array $import_settings ) {
