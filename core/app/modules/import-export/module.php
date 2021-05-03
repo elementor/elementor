@@ -129,7 +129,7 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ) );
+		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
 
 		return [
 			'session' => basename( $session_dir ),
