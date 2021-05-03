@@ -50,12 +50,12 @@ export default class BreakpointValidator extends NumberValidator {
 		// If there is a breakpoint below the currently edited breakpoint
 		if ( this.bottomBreakpoint ) {
 			// Check that the new value is not under the bottom breakpoint's value.
-			if ( newValue && newValue <= this.bottomBreakpoint ) {
+			if ( '' !== newValue && newValue <= this.bottomBreakpoint ) {
 				isValid = false;
 			}
 
 			// If the new value is empty, check that the default breakpoint value is not below the bottom breakpoint.
-			if ( ! newValue && breakpointDefaultValue <= this.bottomBreakpoint ) {
+			if ( '' === newValue && breakpointDefaultValue <= this.bottomBreakpoint ) {
 				isValid = false;
 			}
 		}
@@ -63,12 +63,12 @@ export default class BreakpointValidator extends NumberValidator {
 		// If there is a breakpoint above the currently edited breakpoint.
 		if ( this.topBreakpoint ) {
 			// Check that the value is not above the top breakpoint's value.
-			if ( newValue && newValue >= this.topBreakpoint ) {
+			if ( '' !== newValue && newValue >= this.topBreakpoint ) {
 				isValid = false;
 			}
 
 			// If the new value is empty, check that the default breakpoint value is not above the top breakpoint.
-			if ( ! newValue && breakpointDefaultValue >= this.topBreakpoint ) {
+			if ( '' === newValue && breakpointDefaultValue >= this.topBreakpoint ) {
 				isValid = false;
 			}
 		}
