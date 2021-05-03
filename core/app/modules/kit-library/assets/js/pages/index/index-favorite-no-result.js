@@ -2,7 +2,7 @@ import { Heading, Text, Grid, Button } from '@elementor/app-ui';
 
 import './index-no-results.scss';
 
-export default function IndexNoResults( props ) {
+export default function IndexFavoriteNoResult( props ) {
 	return (
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__not-results">
 			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` }/>
@@ -11,10 +11,10 @@ export default function IndexNoResults( props ) {
 				variant="h1"
 				className="e-kit-library__not-results-title"
 			>
-				{ __( 'No Results Found', 'elementor' ) }
+				{ __( 'No favorites here yet...', 'elementor' ) }
 			</Heading>
 			<Text variant="xl" className="e-kit-library__not-results-description">
-				{ __( 'Try retyping another keyword or explore the most popular kits bellow.', 'elementor' ) }
+				{ __( 'Use the heart icon to save kits that inspire you. You\'ll be able to find them here', 'elementor' ) }
 				<br/>
 				<Button text={ __( 'Continue Browsing', 'elementor' ) } color="link" onClick={ props.clearFilter }/>
 			</Text>
@@ -22,6 +22,6 @@ export default function IndexNoResults( props ) {
 	);
 }
 
-IndexNoResults.propTypes = {
+IndexFavoriteNoResult.propTypes = {
 	clearFilter: PropTypes.func.isRequired,
 };

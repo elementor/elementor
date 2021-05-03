@@ -6,7 +6,7 @@ import IndexSidebar from './index-sidebar';
 import KitList from '../../components/kit-list';
 import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
-import useKits, { initialFilterState } from '../../hooks/use-kits';
+import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { SearchInput } from '@elementor/app-ui';
 import { useCallback, useMemo } from 'react';
@@ -16,11 +16,11 @@ import './index.scss';
 /**
  * Generate select and unselect taxonomy functions.
  *
- * @param setFilter
+ * @param setQueryParams
  * @returns {((function(*, *): *)|(function(*=): *))[]}
  */
-function useTaxonomiesSelection( setFilter ) {
-	const selectTaxonomy = useCallback( ( type, callback ) => setFilter(
+function useTaxonomiesSelection( setQueryParams ) {
+	const selectTaxonomy = useCallback( ( type, callback ) => setQueryParams(
 		( prev ) => {
 			const taxonomies = { ...prev.taxonomies };
 
@@ -28,9 +28,9 @@ function useTaxonomiesSelection( setFilter ) {
 
 			return { ...prev, taxonomies };
 		}
-	), [ setFilter ] );
+	), [ setQueryParams ] );
 
-	const unselectTaxonomy = useCallback( ( taxonomy ) => setFilter( ( prev ) => {
+	const unselectTaxonomy = useCallback( ( taxonomy ) => setQueryParams( ( prev ) => {
 		const taxonomies = Object.entries( prev.taxonomies )
 			.reduce( ( current, [ key, groupedTaxonomies ] ) => ( {
 				...current,
@@ -38,7 +38,7 @@ function useTaxonomiesSelection( setFilter ) {
 			} ), {} );
 
 		return { ...prev, taxonomies };
-	} ), [ setFilter ] );
+	} ), [ setQueryParams ] );
 
 	return [ selectTaxonomy, unselectTaxonomy ];
 }
@@ -46,49 +46,44 @@ function useTaxonomiesSelection( setFilter ) {
 /**
  * Generate the menu items for the index page.
  *
- * @param filter
- * @param setFilter
- * @returns {[{onClick: function(): *, icon: string, label: *, isActive: boolean}, {onClick: function(): *, icon: string, label: *, isActive: boolean}]}
+ * @param path
+ * @returns {{"": {icon: string, label: *, isActive, url: string}, favorites: {icon: string, label: *, isActive: boolean, url: string}}}
  */
-function useMenuItems( filter, setFilter ) {
-	const activeMenu = useMemo( () => {
-		if ( filter.favorite ) {
-			return 'favorite';
-		}
-
-		return 'all';
-	}, [ filter ] );
-
+function useMenuItems( path ) {
 	return useMemo( () => {
-		return [
-			{
+		const page = path.replace( '/', '' );
+
+		return {
+			'': {
 				label: __( 'All Kits', 'elementor' ),
 				icon: 'eicon-filter',
-				isActive: 'all' === activeMenu,
-				onClick: () => setFilter( { ...initialFilterState } ),
+				isActive: ! page,
+				url: '/kit-library',
 			},
-			{
+			favorites: {
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
-				isActive: 'favorite' === activeMenu,
-				onClick: () => setFilter( { ...initialFilterState, favorite: true } ),
+				isActive: 'favorites' === page,
+				url: '/kit-library/favorites',
 			},
-		];
-	}, [ activeMenu, setFilter ] );
+		};
+	}, [ path ] );
 }
 
-export default function Index() {
+export default function Index( props ) {
+	const menuItems = useMenuItems( props.path );
+
 	const {
 		data,
 		isSuccess,
 		isLoading,
 		isFetching,
 		isError,
-		filter,
-		setFilter,
-		clearFilter,
+		queryParams,
+		setQueryParams,
+		clearQueryParams,
 		forceRefetch,
-	} = useKits();
+	} = useKits( props.initialQueryParams );
 
 	const {
 		data: taxonomiesData,
@@ -96,20 +91,20 @@ export default function Index() {
 		isFetching: isFetchingTaxonomies,
 	} = useTaxonomies();
 
-	const menuItems = useMenuItems( filter, setFilter );
+	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
-	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setFilter );
+	const NoResultComponent = props.noResultComponent;
 
 	return (
 		<Layout
 			sidebar={
 				<IndexSidebar
 					tagsFilterSlot={ <TaxonomiesFilter
-						selected={ filter.taxonomies }
+						selected={ queryParams.taxonomies }
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
 					/> }
-					menuItems={ menuItems }
+					menuItems={ Object.values( menuItems ) }
 				/>
 			}
 			header={
@@ -127,13 +122,13 @@ export default function Index() {
 					<div>
 						<SearchInput
 							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
-							value={ filter.search }
-							onChange={ ( value ) => setFilter( ( prev ) => ( { ...prev, search: value } ) ) }
+							value={ queryParams.search }
+							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
 						<FilterIndicationText
-							filter={ filter }
+							queryParams={ queryParams }
 							resultCount={ data.length || 0 }
-							onClear={ clearFilter }
+							onClear={ clearQueryParams }
 							onRemoveTag={ unselectTaxonomy }
 						/>
 					</div>
@@ -143,13 +138,20 @@ export default function Index() {
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
-						{
-							isSuccess && 0 === data.length &&
-								<IndexNoResults isFilteredByFavorite={ filter.favorite } clearFilter={ clearFilter }/>
-						}
+						{ isSuccess && 0 === data.length && <NoResultComponent clearFilter={ clearQueryParams }/> }
 					</>
 				</Content>
 			</div>
 		</Layout>
 	);
 }
+
+Index.propTypes = {
+	path: PropTypes.string,
+	initialQueryParams: PropTypes.object,
+	noResultComponent: PropTypes.any,
+};
+
+Index.defaultProps = {
+	noResultComponent: IndexNoResults,
+};

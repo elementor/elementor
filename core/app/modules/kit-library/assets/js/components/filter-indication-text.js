@@ -6,13 +6,13 @@ import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useMemo( () =>
-			Object.values( props.filter.taxonomies ).reduce( ( current, groupedTaxonomies ) => [ ...current, ...groupedTaxonomies ] ),
-		[ props.filter.taxonomies ]
+			Object.values( props.queryParams.taxonomies ).reduce( ( current, groupedTaxonomies ) => [ ...current, ...groupedTaxonomies ] ),
+		[ props.queryParams.taxonomies ]
 	);
 
 	const isFilterActive = useMemo(
-		() => props.filter.search || !! selectedTaxonomies.length,
-		[ props.filter ]
+		() => props.queryParams.search || !! selectedTaxonomies.length,
+		[ props.queryParams ]
 	);
 
 	if ( ! isFilterActive ) {
@@ -24,7 +24,7 @@ export default function FilterIndicationText( props ) {
 			<Text className="e-kit-library__filter-indication-text">
 				{ sprintf( __( 'Showing %s Results', 'elementor' ), props.resultCount ) }
 				{ ' ' }
-				{ props.filter.search && sprintf( __( 'For: "%s"', 'elementor' ), props.filter.search ) }
+				{ props.queryParams.search && sprintf( __( 'For: "%s"', 'elementor' ), props.queryParams.search ) }
 				{ ' ' }
 				{ selectedTaxonomies.length > 0 && (
 					<>
@@ -57,7 +57,7 @@ export default function FilterIndicationText( props ) {
 }
 
 FilterIndicationText.propTypes = {
-	filter: PropTypes.shape( {
+	queryParams: PropTypes.shape( {
 		search: PropTypes.string,
 		taxonomies: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 		favorite: PropTypes.bool,

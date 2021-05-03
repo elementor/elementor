@@ -1,4 +1,3 @@
-import { initialFilterState } from '../../hooks/use-kits';
 import { MenuItem } from '@elementor/app-ui';
 
 export default function IndexSidebar( props ) {
@@ -11,7 +10,7 @@ export default function IndexSidebar( props ) {
 						text={ item.label }
 						className={ `eps-menu-item__link ${ item.isActive ? 'eps-menu-item--active' : '' }` }
 						icon={ item.icon }
-						onClick={ item.onClick }
+						url={ item.url }
 					/>
 				) )
 			}
@@ -26,6 +25,6 @@ IndexSidebar.propTypes = {
 		label: PropTypes.string,
 		icon: PropTypes.string,
 		isActive: PropTypes.bool,
-		onClick: PropTypes.func,
+		url: PropTypes.string,
 	} ) ),
 };
