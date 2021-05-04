@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits;
 
+use Elementor\Plugin;
+use Elementor\Modules\Library\User_Favorites;
 use Elementor\Data\Base\Controller as Controller_Base;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
@@ -22,10 +24,7 @@ class Controller extends Controller_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$data = $this->repository->get_all(
-				get_current_user_id(),
-				$request->get_param( 'force' )
-			);
+			$data = $this->repository->get_all( $request->get_param( 'force' ) );
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
@@ -44,10 +43,7 @@ class Controller extends Controller_Base {
 	 */
 	public function get_item( $request ) {
 		try {
-			$data = $this->repository->find(
-				$request->get_param( 'id' ),
-				get_current_user_id()
-			);
+			$data = $this->repository->find( $request->get_param( 'id' ) );
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
@@ -96,7 +92,10 @@ class Controller extends Controller_Base {
 		parent::__construct();
 
 		add_action('rest_api_init', function () {
-			$this->repository = new Repository();
+			$this->repository = new Repository(
+				Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' ),
+				new User_Favorites( get_current_user_id() )
+			);
 		} );
 	}
 }

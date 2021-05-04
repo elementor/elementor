@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
-use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Library\User_Favorites;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
-	const FAVORITES_USER_META_KEY = 'elementor_kit_library_favorites';
-
 	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'features', 'types' ];
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
@@ -27,16 +25,20 @@ class Repository {
 	protected $api;
 
 	/**
+	 * @var User_Favorites
+	 */
+	protected $user_favorites;
+
+	/**
 	 * Get all kits.
 	 *
-	 * @param null  $user_id
 	 * @param false $force_api_request
 	 *
 	 * @return Collection
 	 * @throws Wp_Error_Exception
 	 */
-	public function get_all( $user_id = null, $force_api_request = false ) {
-		$favorites = $this->get_user_favorites_meta( $user_id );
+	public function get_all( $force_api_request = false ) {
+		$favorites = $this->user_favorites->get( 'elementor', 'kits' );
 
 		return $this->get_kits_data( $force_api_request )
 			->map( function ( $kit ) use ( $favorites ) {
@@ -48,13 +50,12 @@ class Repository {
 	 * Get specific kit.
 	 *
 	 * @param       $id
-	 * @param null  $user_id
 	 * @param array $options
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
 	 */
-	public function find( $id, $user_id = null, $options = [] ) {
+	public function find( $id, $options = [] ) {
 		$options = wp_parse_args( $options, [
 			'manifest_included' => true,
 		] );
@@ -82,7 +83,7 @@ class Repository {
 
 		return $this->transform_kit_api_response(
 			$item,
-			$this->get_user_favorites_meta( $user_id ),
+			$this->user_favorites->get( 'elementor', 'kits' ),
 			$manifest
 		);
 	}
@@ -126,27 +127,16 @@ class Repository {
 	}
 
 	/**
-	 * @param $user_id
 	 * @param $id
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
 	 */
-	public function add_to_favorites( $user_id, $id ) {
+	public function add_to_favorites( $id ) {
 		// To check that the kit is exists.
-		$kit = $this->find( $id, $user_id, [
-			'manifest_included' => false,
-		] );
+		$kit = $this->find( $id, [ 'manifest_included' => false ] );
 
-		$favorites = $this->get_user_favorites_meta( $user_id );
-
-		if ( in_array( $kit['id'], $favorites, true ) ) {
-			return $kit;
-		}
-
-		$favorites[] = $kit['id'];
-
-		$this->save_user_favorites_meta( $user_id, $favorites );
+		$this->user_favorites->add( 'elementor', 'kits', $kit['id'] );
 
 		$kit['is_favorite'] = true;
 
@@ -154,25 +144,16 @@ class Repository {
 	}
 
 	/**
-	 * @param $user_id
 	 * @param $id
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
 	 */
-	public function remove_from_favorites( $user_id, $id ) {
+	public function remove_from_favorites( $id ) {
 		// To check that the kit is exists.
-		$kit = $this->find( $id, $user_id, [
-			'manifest_included' => false,
-		] );
+		$kit = $this->find( $id, [ 'manifest_included' => false ] );
 
-		$favorites = $this->get_user_favorites_meta( $user_id );
-
-		$favorites = array_filter( $favorites, function ( $item ) use ( $kit ) {
-			return $item !== $kit['id'];
-		} );
-
-		$this->save_user_favorites_meta( $user_id, $favorites );
+		$this->user_favorites->remove( 'elementor', 'kits', $kit['id'] );
 
 		$kit['is_favorite'] = false;
 
@@ -279,32 +260,13 @@ class Repository {
 	}
 
 	/**
-	 * @param $user_id
-	 *
-	 * @return array|mixed
-	 */
-	private function get_user_favorites_meta( $user_id ) {
-		$meta = get_user_meta( $user_id, static::FAVORITES_USER_META_KEY, true );
-
-		if ( ! $meta || ! is_array( $meta ) ) {
-			return [];
-		}
-
-		return $meta;
-	}
-
-	/**
-	 * @param       $user_id
-	 * @param array $favorites
-	 */
-	private function save_user_favorites_meta( $user_id, array $favorites ) {
-		update_user_meta( $user_id, static::FAVORITES_USER_META_KEY, $favorites );
-	}
-
-	/**
 	 * Repository constructor.
+	 *
+	 * @param Kit_Library    $kit_library
+	 * @param User_Favorites $user_favorites
 	 */
-	public function __construct() {
-		$this->api = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
+	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites ) {
+		$this->api = $kit_library;
+		$this->user_favorites = $user_favorites;
 	}
 }

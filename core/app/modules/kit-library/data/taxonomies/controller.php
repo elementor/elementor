@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies;
 
+use Elementor\Plugin;
+use Elementor\Modules\Library\User_Favorites;
 use Elementor\Data\Base\Controller as Controller_Base;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
@@ -57,7 +59,10 @@ class Controller extends Controller_Base {
 		parent::__construct();
 
 		add_action( 'rest_api_init', function () {
-			$this->repository = new Repository();
+			$this->repository = new Repository(
+				Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' ),
+				new User_Favorites( get_current_user_id() )
+			);
 		} );
 	}
 }

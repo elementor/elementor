@@ -59,7 +59,7 @@ class Favorites extends Endpoint {
 		$repository = $this->controller->get_repository();
 
 		try {
-			$kit = $repository->add_to_favorites( get_current_user_id(), $id );
+			$kit = $repository->add_to_favorites( $id );
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
@@ -81,7 +81,7 @@ class Favorites extends Endpoint {
 		$repository = $this->controller->get_repository();
 
 		try {
-			$kit = $repository->remove_from_favorites( get_current_user_id(), $id );
+			$kit = $repository->remove_from_favorites( $id );
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
