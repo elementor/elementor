@@ -1295,6 +1295,7 @@ class Frontend extends App {
 				'value' => $breakpoint->get_value(),
 				'direction' => $breakpoint->get_direction(),
 				'is_enabled' => $breakpoint->is_enabled(),
+				'default_value' => $breakpoint->get_default_value(),
 			];
 		}
 
