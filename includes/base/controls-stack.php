@@ -939,22 +939,20 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_frontend_settings_keys() {
 		if ( $this instanceof Element_Base ) {
-			$frontend_settings_from_db = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id(), 'frontend_available_keys' );
+			$controls_data = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id() );
+		} else {
+			$controls_data = $this->get_controls();
+		}
 
-			if ( $frontend_settings_from_db ) {
-				return $frontend_settings_from_db;
+		$frontend_controls = [];
+
+		foreach ( $controls_data as $control_name => $control_data ) {
+			if ( ! empty( $control_data['frontend_available'] ) ) {
+				$frontend_controls[] = $control_name;
 			}
 		}
 
-		$controls = [];
-
-		foreach ( $this->get_controls() as $control ) {
-			if ( ! empty( $control['frontend_available'] ) ) {
-				$controls[] = $control['name'];
-			}
-		}
-
-		return $controls;
+		return $frontend_controls;
 	}
 
 	/**
@@ -1099,11 +1097,18 @@ abstract class Controls_Stack extends Base_Object {
 		// Only fetch parsed settings in the front end.
 		if ( ! $this->parsed_active_settings ) {
 			// Parsed control data is stored only for frontend elements.
-			if ( $this instanceof Element_Base ) {
-				$parsed_settings_from_db = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id(), 'settings' );
+			if ( Plugin::$instance->editor->is_edit_mode() && $this instanceof Element_Base ) {
+				$parsed_data_from_db = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id() );
 
-				if ( $parsed_settings_from_db ) {
-					$this->parsed_active_settings = $parsed_settings_from_db;
+				// The settings values need to be extracted from the parsed data.
+				if ( $parsed_data_from_db ) {
+					$parsed_settings = [];
+
+					foreach ( $parsed_data_from_db as $control_setting ) {
+						$parsed_settings[] = $control_setting['value'];
+					}
+
+					$this->parsed_active_settings = $parsed_settings;
 				} else {
 					// Fallback in case there was a problem fetching element settings from the DB.
 					$parse_settings = true;

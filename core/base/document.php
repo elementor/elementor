@@ -880,10 +880,9 @@ abstract class Document extends Controls_Stack {
 	 * @since 3.3.0
 	 *
 	 * @param string $element_id
-	 * @param string|null $data_type 'settings'|'frontend_available_keys'|'prefix_class_settings'
 	 * @return array|mixed|null
 	 */
-	public function get_elements_parsed_data( $element_id, $data_type = null ) {
+	public function get_elements_parsed_data( $element_id ) {
 		if ( ! $this->elements_parsed_data ) {
 			$parsed_data = $this->get_json_meta( Elements_Settings_Parser::PARSED_ELEMENTS_META_KEY );
 
@@ -892,18 +891,12 @@ abstract class Document extends Controls_Stack {
 			} else {
 				// Make sure this does not return null.
 				$this->elements_parsed_data = [
-					$element_id => [
-						'settings' => [],
-						'frontend_available_keys' => [],
-						'prefix_class_settings' => [],
-					],
+					$element_id => [],
 				];
 			}
 		}
 
-		$element_parsed_data = self::get_items( $this->elements_parsed_data, $element_id );
-
-		return self::get_items( $element_parsed_data, $data_type );
+		return self::get_items( $this->elements_parsed_data, $element_id );
 	}
 
 	/**

@@ -39,31 +39,46 @@ class Elements_Settings_Parser extends Base {
 	 * Element Action
 	 *
 	 * This method is called on each element in the document after a document has been saved.
+	 * The data for each document is saved in the database as an associative array of element IDs.
+	 * Each Element ID property contains its own associative array of element setting keys.
+	 * Each setting key contains an associative array with 3 properties:
+	 * 'value' - Contains the parsed setting's value
+	 * 'prefix_class' - If the control has a 'prefix_class' property, this will contain the prefix class value
+	 * 'frontend_available' - If the control is available in the frontend, the setting array will contain this property
+	 *  with a boolean value of `true`. If the control is not available in the frontend, this key will not exist as a
+	 *  property in that setting's array.
 	 *
 	 * @since 3.3.0
 	 *
 	 * @param Element_Base $element
 	 */
 	public function element_action( Element_Base $element ) {
+		$element_id = $element->get_id();
 		$controls = $element->get_controls();
-		$prefix_class_settings = [];
-		$frontend_available_keys = [];
+		$active_settings = $element->get_active_settings();
 
 		foreach ( $controls as $control ) {
+			// If the control is not active, it does not need to be parsed and saved.
+			if ( ! isset( $active_settings[ $control['name'] ] ) ) {
+				continue;
+			}
+
+			// Create an associative array for each setting, with a 'value', 'prefix_class', and 'frontend_available'
+			// properties when they exist.
+			$setting_data = [
+				'value' => $active_settings[ $control['name'] ],
+			];
+
 			if ( isset( $control['prefix_class'] ) ) {
-				$prefix_class_settings[ $control['name'] ] = $control['prefix_class'];
+				$setting_data['prefix_class'] = $control['prefix_class'];
 			}
 
 			if ( ! empty( $control['frontend_available'] ) ) {
-				$frontend_available_keys[] = $control['name'];
+				$setting_data['frontend_available'] = true;
 			}
-		}
 
-		$this->parsed_elements_data[ $element->get_id() ] = [
-			'frontend_available_keys' => $frontend_available_keys,
-			'prefix_class_settings' => $prefix_class_settings,
-			'settings' => $element->get_active_settings(),
-		];
+			$this->parsed_elements_data[ $element_id ][ $control['name'] ] = $setting_data;
+		}
 	}
 
 	/**
