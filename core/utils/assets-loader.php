@@ -27,8 +27,6 @@ class Assets_Loader extends Module {
 			'styles' => [],
 			'scripts' => [],
 		];
-
-		do_action( 'elementor/assets_loader/assets_registered' );
 	}
 
 	public function get_assets() {
