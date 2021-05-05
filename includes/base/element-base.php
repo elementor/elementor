@@ -803,7 +803,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		$settings = $this->get_settings_for_display();
 		$frontend_settings = $this->get_frontend_settings();
-		$controls = $this->get_controls();
+		$element_prefix_class_settings = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id(), 'prefix_class_settings' );
 
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
@@ -817,7 +817,7 @@ abstract class Element_Base extends Controls_Stack {
 		$class_settings = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
-			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
+			if ( array_key_exists( $setting_key, $element_prefix_class_settings ) ) {
 				$class_settings[ $setting_key ] = $setting;
 			}
 		}
@@ -827,7 +827,7 @@ abstract class Element_Base extends Controls_Stack {
 				continue;
 			}
 
-			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
+			$this->add_render_attribute( '_wrapper', 'class', $element_prefix_class_settings[ $setting_key ] . $setting );
 		}
 
 		$_animation = ! empty( $settings['_animation'] );

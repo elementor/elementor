@@ -938,6 +938,14 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Settings keys for each control.
 	 */
 	final public function get_frontend_settings_keys() {
+		if ( $this instanceof Element_Base ) {
+			$frontend_settings_from_db = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id(), 'frontend_available_keys' );
+
+			if ( $frontend_settings_from_db ) {
+				return $frontend_settings_from_db;
+			}
+		}
+
 		$controls = [];
 
 		foreach ( $this->get_controls() as $control ) {
@@ -1086,7 +1094,26 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed The settings.
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
+		$parse_settings = false;
+
+		// Only fetch parsed settings in the front end.
 		if ( ! $this->parsed_active_settings ) {
+			// Parsed control data is stored only for frontend elements.
+			if ( $this instanceof Element_Base ) {
+				$parsed_settings_from_db = Plugin::$instance->documents->get_current()->get_elements_parsed_data( $this->get_id(), 'settings' );
+
+				if ( $parsed_settings_from_db ) {
+					$this->parsed_active_settings = $parsed_settings_from_db;
+				} else {
+					// Fallback in case there was a problem fetching element settings from the DB.
+					$parse_settings = true;
+				}
+			} else {
+				$parse_settings = true;
+			}
+		}
+
+		if ( null === $this->parsed_active_settings || $parse_settings ) {
 			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 

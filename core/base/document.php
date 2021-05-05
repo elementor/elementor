@@ -3,6 +3,7 @@ namespace Elementor\Core\Base;
 
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets as Assets_Iteration_Action;
 use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Action;
+use Elementor\Core\Base\Elements_Iteration_Actions\Elements_Settings_Parser;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
@@ -89,6 +90,10 @@ abstract class Document extends Controls_Stack {
 	 * @var \WP_Post WordPress post data.
 	 */
 	protected $post;
+	/**
+	 * @var array
+	 */
+	private $elements_parsed_data;
 
 	/**
 	 * @since 2.1.0
@@ -868,6 +873,40 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
+	 * Get Elements Parsed Data
+	 *
+	 * Retrieve the document's parsed elements data that has been presaved in the Database.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param string $element_id
+	 * @param string|null $data_type 'settings'|'frontend_available_keys'|'prefix_class_settings'
+	 * @return array|mixed|null
+	 */
+	public function get_elements_parsed_data( $element_id, $data_type = null ) {
+		if ( ! $this->elements_parsed_data ) {
+			$parsed_data = $this->get_json_meta( Elements_Settings_Parser::PARSED_ELEMENTS_META_KEY );
+
+			if ( $parsed_data ) {
+				$this->elements_parsed_data = $parsed_data;
+			} else {
+				// Make sure this does not return null.
+				$this->elements_parsed_data = [
+					$element_id => [
+						'settings' => [],
+						'frontend_available_keys' => [],
+						'prefix_class_settings' => [],
+					],
+				];
+			}
+		}
+
+		$element_parsed_data = self::get_items( $this->elements_parsed_data, $element_id );
+
+		return self::get_items( $element_parsed_data, $data_type );
+	}
+
+	/**
 	 * Get document setting from DB.
 	 *
 	 * @return array
@@ -1571,6 +1610,8 @@ abstract class Document extends Controls_Stack {
 			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
 				$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
 			}
+
+			$this->elements_iteration_actions[] = new Elements_Settings_Parser( $this );
 		}
 
 		return $this->elements_iteration_actions;

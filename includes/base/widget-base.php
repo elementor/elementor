@@ -385,7 +385,7 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	protected function parse_text_editor( $content ) {
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
-		$content = apply_filters( 'widget_text', $content, $this->get_settings() );
+		$content = apply_filters( 'widget_text', $content, $this->get_settings_for_display() );
 
 		$content = shortcode_unautop( $content );
 		$content = do_shortcode( $content );
@@ -429,9 +429,9 @@ abstract class Widget_Base extends Element_Base {
 			]
 		);
 
-		$settings = $this->get_settings();
+		$skin = $this->get_settings_for_display( '_skin' );
 
-		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $settings['_skin'] ) ? $settings['_skin'] : 'default' ) );
+		$this->add_render_attribute( '_wrapper', 'data-widget_type', $this->get_name() . '.' . ( ! empty( $skin ) ? $skin : 'default' ) );
 	}
 
 	/**
@@ -829,7 +829,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string Current skin.
 	 */
 	public function get_current_skin_id() {
-		return $this->get_settings( '_skin' );
+		return $this->get_settings_for_display( '_skin' );
 	}
 
 	/**
