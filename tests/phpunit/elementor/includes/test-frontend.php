@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Frontend extends Elementor_Test_Base {
 	public function test_get_builder_content__should_switch_back_to_to_the_last_document() {
 		$main_document = $this->factory()->documents->create_and_get();
-		$sub_document = $this->factory()->documents->create_elementor_document();
+		$sub_document = $this->factory()->documents->create_and_get();
 
 		Plugin::$instance->documents->switch_to_document( $main_document );
 
@@ -24,7 +24,7 @@ class Test_Frontend extends Elementor_Test_Base {
 
 	public function test_get_builder_content__should_switch_back_to_the_last_document_for_empty_document() {
 		$main_document = $this->factory()->documents->create_and_get();
-		$sub_document = $this->factory()->documents->create_elementor_document( [ 'meta_input' => [ '_elementor_data' => null ] ] );
+		$sub_document = $this->factory()->documents->create_and_get( [ 'meta_input' => [ '_elementor_data' => null ] ] );
 
 		Plugin::$instance->documents->switch_to_document( $main_document );
 
@@ -35,7 +35,7 @@ class Test_Frontend extends Elementor_Test_Base {
 
 	public function test_body_classes() {
 		// Arrange
-		$document = $this->factory()->documents->create_elementor_document();
+		$document = $this->factory()->documents->publish_and_get();
 
 		query_posts( [
 			'p' => $document->get_id(),
