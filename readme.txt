@@ -218,7 +218,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
-= 3.2.1 - 2021-05-05 =
+= 3.2.3 - 2021-05-05 =
 * Fix: `eicons` file couldn't be found when using Custom Breakpoints ([#14718](https://github.com/elementor/elementor/issues/14718), [#14712](https://github.com/elementor/elementor/issues/14712))
 * Fix: Deregister `eicons` fonts action is not working ([#14712](https://github.com/elementor/elementor/issues/14712))
 * Fix: Responsive custom CSS is not properly generated when using custom breakpoints ([#14711](https://github.com/elementor/elementor/issues/14711))
