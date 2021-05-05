@@ -4,6 +4,7 @@ on: [push, pull_request_target]
 
 jobs:
   run:
+    if: github.repository_owner == 'Elementor'
     runs-on: ubuntu-16.04
     strategy:
       fail-fast: false
