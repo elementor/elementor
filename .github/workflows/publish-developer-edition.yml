@@ -50,12 +50,15 @@ jobs:
             echo "CANCEL_WORKFLOW=1" >> $GITHUB_ENV
           fi
       - name: Bump version
+        id: bump_version_step
         if: ${{ !env.CANCEL_WORKFLOW }}
         run: |
           npm install --no-package-lock --no-save semver@7.3.4
+          PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
           NEW_PACKAGE_VERSION=$(node ./.github/scripts/update-prerelease-version.js dev)
           PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
       - name: Push new version to developer-edition
         if: ${{ !env.CANCEL_WORKFLOW }}
         env:
