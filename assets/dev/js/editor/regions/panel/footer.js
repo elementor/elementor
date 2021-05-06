@@ -114,14 +114,16 @@ module.exports = Marionette.ItemView.extend( {
 
 	onDeviceModeIconClick: function() {
 		if ( elementor.isDeviceModeActive() ) {
-			elementor.exitDeviceMode();
+			elementor.changeDeviceMode( 'desktop' );
+		} else {
+			const deviceView = 'default' === elementor.getPreferences( 'default_device_view' ) ? 'mobile' : elementor.getPreferences( 'default_device_view' );
 
-			return;
+			elementor.changeDeviceMode( deviceView );
+
+			if ( 'desktop' === deviceView ) {
+				elementor.enterDeviceMode();
+			}
 		}
-
-		elementor.enterDeviceMode();
-
-		elementor.changeDeviceMode( 'mobile' );
 	},
 
 	onSaveTemplateClick: function() {

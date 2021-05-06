@@ -1,9 +1,18 @@
+import BreakpointValidator from 'elementor-validator/breakpoint';
+
 var ControlBaseView = require( 'elementor-controls/base' ),
 	TagsBehavior = require( 'elementor-dynamic-tags/control-behavior' ),
 	Validator = require( 'elementor-validator/base' ),
+	NumberValidator = require( 'elementor-validator/number' ),
 	ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend( {
+	validatorTypes: {
+		Base: Validator,
+		Number: NumberValidator,
+		Breakpoint: BreakpointValidator,
+	},
+
 	ui: function() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
@@ -214,9 +223,19 @@ ControlBaseDataView = ControlBaseView.extend( {
 		}
 
 		if ( ! jQuery.isEmptyObject( validationTerms ) ) {
-			this.addValidator( new Validator( {
+			this.addValidator( new this.validatorTypes.Base( {
 				validationTerms: validationTerms,
 			} ) );
+		}
+
+		const validators = this.model.get( 'validators' );
+
+		if ( validators ) {
+			Object.entries( validators ).forEach( ( [ key, args ] ) => {
+				this.addValidator( new this.validatorTypes[ key ]( {
+					validationTerms: args,
+				} ) );
+			} );
 		}
 	},
 
@@ -275,20 +294,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const $switcher = jQuery( event.currentTarget ),
 			device = $switcher.data( 'device' ),
 			$switchersWrapper = this.ui.responsiveSwitchersWrapper,
-			selectedOption = $switcher.index(),
-			isDeviceModeActive = elementor.isDeviceModeActive(),
-			isDesktopDevice = 'desktop' === device;
+			selectedOption = $switcher.index();
 
 		$switchersWrapper.toggleClass( 'elementor-responsive-switchers-open' );
 		$switchersWrapper[ 0 ].style.setProperty( '--selected-option', selectedOption );
 
 		this.triggerMethod( 'responsive:switcher:click', device );
-
-		if ( isDeviceModeActive && isDesktopDevice ) {
-			elementor.exitDeviceMode();
-		} else if ( ! isDesktopDevice ) {
-			elementor.enterDeviceMode();
-		}
 
 		elementor.changeDeviceMode( device );
 	},
