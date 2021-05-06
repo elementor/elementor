@@ -27,12 +27,12 @@ class Module extends BaseModule {
 	/**
 	 * @var Export
 	 */
-	private $export;
+	public $export;
 
 	/**
 	 * @var Import
 	 */
-	private $import;
+	public $import;
 
 	/**
 	 * Get name.
@@ -129,12 +129,16 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ) );
+		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
 
-		return [
+		$result = [
 			'session' => basename( $session_dir ),
 			'manifest' => $manifest_data,
 		];
+
+		$result = apply_filters( 'elementor/import/stage_1/result', $result );
+
+		return $result;
 	}
 
 	private function import_stage_2( array $import_settings ) {
