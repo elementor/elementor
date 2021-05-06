@@ -28,6 +28,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-direction: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['flex_wrap'] = [
@@ -41,6 +42,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-wrap: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['justify_content'] = [
@@ -59,6 +61,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'justify-content: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['align_items'] = [
@@ -75,6 +78,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'align-items: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['align_content'] = [
@@ -93,6 +97,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'align-content: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['gap'] = [
@@ -112,6 +117,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'gap: {{SIZE}}{{UNIT}};',
 			],
+			'responsive' => true,
 		];
 
 		return $fields;

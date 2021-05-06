@@ -33,6 +33,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-basis: {{SIZE}}{{UNIT}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['flex_grow'] = [
@@ -41,6 +42,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-grow: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['flex_shrink'] = [
@@ -49,6 +51,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-shrink: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['order'] = [
@@ -57,6 +60,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'order: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		$fields['align_self'] = [
@@ -73,6 +77,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'align-self: {{VALUE}};',
 			],
+			'responsive' => true,
 		];
 
 		return $fields;
