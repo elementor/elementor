@@ -50,6 +50,10 @@ class Controller extends Controller_Base {
 			return new \WP_Error( 'server_error', __( 'Something went wrong.', 'elementor' ), [ 'status' => 500 ] );
 		}
 
+		if ( ! $data ) {
+			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 404 ] );
+		}
+
 		return [
 			'data' => $data,
 		];

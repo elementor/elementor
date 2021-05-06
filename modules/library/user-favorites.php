@@ -53,18 +53,35 @@ class User_Favorites {
 	}
 
 	/**
+	 * @param $vendor
+	 * @param $resource
+	 * @param $id
+	 *
+	 * @return bool
+	 */
+	public function exists( $vendor, $resource, $id ) {
+		return in_array( $id, $this->get( $vendor, $resource ), true );
+	}
+
+	/**
 	 * @param       $vendor
 	 * @param       $resource
 	 * @param array $value
 	 *
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function save( $vendor, $resource, $value = [] ) {
 		$all_favorites = $this->get();
 
 		$all_favorites[ $this->get_key( $vendor, $resource ) ] = $value;
 
-		update_user_meta( $this->user_id, self::USER_META_KEY, $all_favorites );
+		$result = update_user_meta( $this->user_id, self::USER_META_KEY, $all_favorites );
+
+		if ( false === $result ) {
+			throw new \Exception( 'Failed to save user favorites.' );
+		}
+
 		$this->cache = $all_favorites;
 
 		return $this;
@@ -76,6 +93,7 @@ class User_Favorites {
 	 * @param $id
 	 *
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function add( $vendor, $resource, $id ) {
 		$favorites = $this->get( $vendor, $resource );
@@ -97,9 +115,14 @@ class User_Favorites {
 	 * @param $id
 	 *
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function remove( $vendor, $resource, $id ) {
 		$favorites = $this->get( $vendor, $resource );
+
+		if ( ! in_array( $id, $favorites, true ) ) {
+			return $this;
+		}
 
 		$favorites = array_filter( $favorites, function ( $item ) use ( $id ) {
 			return $item !== $id;

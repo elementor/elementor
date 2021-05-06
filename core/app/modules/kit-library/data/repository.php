@@ -38,11 +38,9 @@ class Repository {
 	 * @throws Wp_Error_Exception
 	 */
 	public function get_all( $force_api_request = false ) {
-		$favorites = $this->user_favorites->get( 'elementor', 'kits' );
-
 		return $this->get_kits_data( $force_api_request )
-			->map( function ( $kit ) use ( $favorites ) {
-				return $this->transform_kit_api_response( $kit, $favorites );
+			->map( function ( $kit ) {
+				return $this->transform_kit_api_response( $kit );
 			} );
 	}
 
@@ -52,7 +50,7 @@ class Repository {
 	 * @param       $id
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return array|null
 	 * @throws Wp_Error_Exception
 	 */
 	public function find( $id, $options = [] ) {
@@ -66,9 +64,7 @@ class Repository {
 			} );
 
 		if ( ! $item ) {
-			throw new Wp_Error_Exception(
-				new \WP_Error( 404, 'Kit not found' )
-			);
+			return null;
 		}
 
 		$manifest = null;
@@ -81,11 +77,7 @@ class Repository {
 			}
 		}
 
-		return $this->transform_kit_api_response(
-			$item,
-			$this->user_favorites->get( 'elementor', 'kits' ),
-			$manifest
-		);
+		return $this->transform_kit_api_response( $item, $manifest );
 	}
 
 	/**
@@ -131,10 +123,16 @@ class Repository {
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
+	 * @throws \Exception
 	 */
 	public function add_to_favorites( $id ) {
-		// To check that the kit is exists.
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+
+		if ( ! $kit ) {
+			throw new Wp_Error_Exception(
+				new \WP_Error( 404, __( 'Kit not found', 'elementor' ) )
+			);
+		}
 
 		$this->user_favorites->add( 'elementor', 'kits', $kit['id'] );
 
@@ -148,10 +146,16 @@ class Repository {
 	 *
 	 * @return array
 	 * @throws Wp_Error_Exception
+	 * @throws \Exception
 	 */
 	public function remove_from_favorites( $id ) {
-		// To check that the kit is exists.
 		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+
+		if ( ! $kit ) {
+			throw new Wp_Error_Exception(
+				new \WP_Error( 404, __( 'Kit not found', 'elementor' ) )
+			);
+		}
 
 		$this->user_favorites->remove( 'elementor', 'kits', $kit['id'] );
 
@@ -205,13 +209,12 @@ class Repository {
 	}
 
 	/**
-	 * @param             $kit
-	 * @param array       $favorites
-	 * @param array|null  $manifest
+	 * @param      $kit
+	 * @param null $manifest
 	 *
 	 * @return array
 	 */
-	private function transform_kit_api_response( $kit, $favorites = [], $manifest = null ) {
+	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
 			return array_merge( $current, $kit->{$key} );
 		}, [] );
@@ -224,7 +227,7 @@ class Repository {
 				'access_level' => $kit->access_level,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
-				'is_favorite' => in_array( $kit->_id, $favorites, true ),
+				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
 		);
