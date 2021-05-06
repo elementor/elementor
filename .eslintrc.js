@@ -10,6 +10,7 @@ module.exports = {
 		'babel',
 		'react',
 		'no-jquery',
+		'prettier',
 	],
 	parser: 'babel-eslint',
 	globals: {
@@ -36,6 +37,7 @@ module.exports = {
 		},
 	},
 	rules: {
+		"prettier/prettier": "warn",
 		// custom canceled rules
 		'no-var': 'off',
 		'vars-on-top': 'off',
@@ -115,8 +117,8 @@ module.exports = {
 		semi: 'error',
 		'space-before-blocks': [ 'error', 'always' ],
 		'space-before-function-paren': [ 'error', {
-			anonymous: 'never',
-			named: 'never',
+			anonymous: 'always',
+			named: 'always',
 			asyncArrow: 'always',
 		} ],
 		'space-infix-ops': [ 'error', { int32Hint: false } ],
