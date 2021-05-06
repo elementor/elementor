@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-add-new-section">
+			<div class="elementor-add-section-area-button elementor-add-container-button" title="<?php echo __( 'Add New Container', 'elementor' ); ?>">
+				<i class="eicon-gallery-justified"></i>
+			</div>
 			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo __( 'Add New Section', 'elementor' ); ?>">
 				<i class="eicon-plus"></i>
 			</div>

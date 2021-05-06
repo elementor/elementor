@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Includes\Elements\Container;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -247,6 +249,8 @@ class Elements_Manager {
 
 			$this->register_element_type( new $class_name() );
 		}
+
+		$this->register_element_type( new Container() );
 
 		/**
 		 * After elements registered.

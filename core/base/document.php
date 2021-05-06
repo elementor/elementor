@@ -4,6 +4,7 @@ namespace Elementor\Core\Base;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
@@ -535,6 +536,8 @@ abstract class Document extends Controls_Stack {
 		if ( static::get_property( 'has_elements' ) ) {
 			$config['elements'] = $this->get_elements_raw_data( null, true );
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets']['container'] = ( new Container() )->get_config();
+			$config['widgets']['container']['show_in_panel'] = true;
 		}
 
 		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );

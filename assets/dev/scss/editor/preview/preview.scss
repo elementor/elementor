@@ -736,8 +736,13 @@ html.elementor-html {
 		}
 	}
 
+	.elementor-add-container-button {
+		background-color: $editor-info;
+	}
+
 	.elementor-add-section-button {
 		background-color: $editor-accent;
+		@include margin-start(5px);
 	}
 
 	.elementor-add-template-button {

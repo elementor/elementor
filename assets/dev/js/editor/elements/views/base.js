@@ -87,12 +87,22 @@ BaseElementView = BaseContainer.extend( {
 		let ChildView;
 		const elType = model.get( 'elType' );
 
-		if ( 'section' === elType ) {
-			ChildView = require( 'elementor-elements/views/section' );
-		} else if ( 'column' === elType ) {
-			ChildView = require( 'elementor-elements/views/column' );
-		} else {
-			ChildView = elementor.modules.elements.views.Widget;
+		switch ( elType ) {
+			case 'section':
+				ChildView = require( 'elementor-elements/views/section' );
+				break;
+
+			case 'column':
+				ChildView = require( 'elementor-elements/views/column' );
+				break;
+
+			case 'container':
+				ChildView = require( 'elementor-elements/views/container' );
+				break;
+
+			default:
+				ChildView = elementor.modules.elements.views.Widget;
+				break;
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
@@ -336,7 +346,7 @@ BaseElementView = BaseContainer.extend( {
 			model.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === model.elType ) {
 			model.isInner = true;
-		} else {
+		} else if ( 'container' !== model.elType ) {
 			return;
 		}
 
