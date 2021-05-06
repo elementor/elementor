@@ -73,6 +73,39 @@ const ContainerView = BaseElementView.extend( {
 		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
 	},
 
+	getEditButtons: function() {
+		const elementData = elementor.getElementData( this.model ),
+			editTools = {};
+
+		editTools.add = {
+			/* translators: %s: Element Name. */
+			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
+			icon: 'plus',
+		};
+
+		editTools.edit = {
+			/* translators: %s: Element Name. */
+			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
+			icon: 'handle',
+		};
+
+		if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			editTools.duplicate = {
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
+				icon: 'clone',
+			};
+		}
+
+		editTools.remove = {
+			/* translators: %s: Element Name. */
+			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+			icon: 'close',
+		};
+
+		return editTools;
+	},
+
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 

@@ -120,6 +120,7 @@ html.elementor-html {
 	> .elementor-element-overlay {
 		position: absolute;
 		top: 0;
+		width: 100%;
 		@include end(0);
 		letter-spacing: 0; // Hack for front-end style themes
 		z-index: $element-overlay;
@@ -217,8 +218,9 @@ html.elementor-html {
 	}
 }
 
-// Section
-.elementor-section {
+// Section & Container
+.elementor-section,
+.e-container {
 
 	> .elementor-element-overlay {
 		@include start(0);
@@ -351,8 +353,9 @@ html.elementor-html {
 	}
 }
 
-// Section - Overlay Settings
-.elementor-editor-section-settings {
+// Section & Container - Overlay Settings
+.elementor-editor-section-settings,
+.elementor-editor-container-settings {
 	height: 24px;
 	top: 1px;
 	@include start(50%);
