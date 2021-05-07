@@ -248,7 +248,7 @@ class Widget_Button extends Widget_Base {
 				'label_off' => __( 'Off', 'elementor' ),
 				'label_on' => __( 'On', 'elementor' ),
 				'selector' => [
-					'{{WRAPPER}} .elementor-button-icon' => 'icon:hover;',
+					'{{WRAPPER}} .elementor-button-icon:hover' => 'display: block;',
 				],
 			]
 		);
