@@ -7,7 +7,7 @@
 	"require": {},
 	"require-dev": {
 		"justinrainbow/json-schema": "^5.2",
-		"phpunit/phpunit": "^7"
+		"phpunit/phpunit": "^5"
 	},
 	"scripts": {
 		"test": "phpunit",
