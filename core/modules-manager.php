@@ -92,7 +92,7 @@ class Modules_Manager {
 			'compatibility-tag',
 			'elements-color-picker',
 			'shapes',
-			// Must be the last module.
+			// Must be the last module in the list.
 			'admin-top-bar',
 		];
 	}

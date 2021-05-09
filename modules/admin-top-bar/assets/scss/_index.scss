@@ -1,0 +1,89 @@
+$top-bar-height: 50px;
+
+#e-admin-top-bar {
+	background: #fff;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: calc(100% - 160px);
+	z-index: 9999;
+
+
+	#elementor-admin-top-bar {
+		display: flex;
+		height: $top-bar-height;
+		justify-content: space-between;
+		padding: 0 16px;
+	}
+
+	.bar-action-area,
+	.top-bar-heading-wrapper {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.top-bar-heading-logo {
+		width: 30px;
+	}
+
+	.top-bar-heading-title {
+		color: #495157;
+		font-size: 15px;
+		font-weight: 700;
+		font-family: 'Roboto';
+		padding: 0 8px;
+		line-height: normal;
+		text-transform: uppercase;
+	}
+
+	~ #wpbody {
+		#wpbody-content {
+			margin-top: $top-bar-height;
+		}
+	}
+
+	.top-bar-button-wrapper {
+		//color: #6d7882;
+		border: none;
+		background: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 10px;
+		cursor: pointer;
+
+		:hover {
+			h1 {
+				color: #93003F;
+			}
+		}
+	}
+
+	.top-bar-button-title {
+		font-size: 13px;
+		font-weight: 500;
+		font-family: 'Roboto';
+		margin-left: 8px;
+		line-height: normal;
+	}
+}
+
+@media screen and (max-width: 960px) {
+	#e-admin-top-bar {
+		width: calc(100% - 36px);
+	}
+}
+
+@media screen and (max-width: 782px) {
+	#e-admin-top-bar {
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	#e-admin-top-bar {
+		top: 46px;
+	}
+}

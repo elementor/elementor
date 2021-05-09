@@ -42,7 +42,9 @@ class Module extends BaseApp {
 
 	private function render_admin_top_bar() {
 		?>
-			<div>bla bla bla</div>
+			<div id="e-admin-top-bar">
+				<div id="elementor-admin-top-bar"></div>
+			</div>
 		<?php
 	}
 
@@ -50,22 +52,20 @@ class Module extends BaseApp {
 	 * Enqueue admin scripts
 	 */
 	private function enqueue_scripts() {
-		//wp_enqueue_style(
-		//	'elementor-app-base',
-		//	$this->get_css_assets_url( 'modules/forms/submissions/admin', null, 'default', true ),
-		//	[],
-		//	ELEMENTOR_PRO_VERSION
-		//);
+		wp_enqueue_style(
+			'elementor-app-base',
+			$this->get_css_assets_url( 'modules/admin-top-bar/admin', null, 'default', true ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 
 		// form-submission-admin
 		wp_enqueue_script(
-			'tob-bar-admin',
-			$this->get_js_assets_url( 'tob-bar-admin' ),
+			'admin-top-bar',
+			$this->get_js_assets_url( 'admin-top-bar' ),   // create path in directory tree
 			[
-				'wp-url',
-				'wp-i18n',
-				'wp-date',
-				'react',
+				'react',     //dependencies
 				'react-dom',
 			],
 			ELEMENTOR_VERSION,
@@ -97,12 +97,16 @@ class Module extends BaseApp {
 //--------DONE--------
 // make it experiment
 // make it work only if it is an admin page (done automatically with "is_admin_header" action
+// create a react app and basic components
+// style the top bar
+// make the finder work
+// make the "my elementor" work
 
-//--------TODOs--------
-// make a function "is_elementor_page" and use it (where to put the function that checks for is_elementor_page)
-// make it work only when it is elementor page too
-// make js load
-// make a react app to load with js
-//// make style load
-/// make it load in dashboared with an option to hide it from dashboared
+//--------TODOs-------
+// button hover and tooltip
+// title
+// make it work only when it is elementor page too ("is_elementor_page")
+// make it load in dashboared with an option to hide it from dashboared
+// make sure that scripts and styles load just when needed
+// support RTL (use elementor helpers)
 
