@@ -6,8 +6,8 @@
 	"minimum-stability": "stable",
 	"require": {},
 	"require-dev": {
-		"justinrainbow/json-schema": "^5.2",
-		"phpunit/phpunit": "^5"
+		"phpunit/phpunit": "^5",
+		"justinrainbow/json-schema": "^5.2"
 	},
 	"scripts": {
 		"test": "phpunit",
