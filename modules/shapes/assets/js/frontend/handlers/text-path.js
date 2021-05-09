@@ -1,3 +1,5 @@
+import { escapeHTML } from 'elementor-frontend/utils/utils';
+
 export default class TextPathHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
@@ -107,10 +109,8 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 * @returns {void}
 	 */
 	initTextPath() {
-		const {
-			text,
-			startOffset,
-		} = this.elements.pathContainer.dataset;
+		const { start_point: startPoint } = this.getElementSettings();
+		const text = this.elements.pathContainer.dataset.text;
 
 		this.attachIdToPath();
 
@@ -124,7 +124,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		// Regenerate the elements object to have access to `this.elements.textPath`.
 		this.elements.textPath = this.elements.svg.querySelector( `#${ this.textPathId }` );
 
-		this.setOffset( startOffset );
+		this.setOffset( startPoint.size );
 		this.setText( text );
 	}
 
@@ -136,15 +136,18 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	 * @returns {void}
 	 */
 	setText( newText ) {
-		let {
-			href,
-			target,
-			rel,
-		} = this.elements.pathContainer.dataset;
+		const {
+			url,
+			is_external: isExternal,
+			nofollow,
+		} = this.getElementSettings()?.link;
+
+		const target = isExternal ? '_blank' : '',
+			rel = nofollow ? 'nofollow' : '';
 
 		// Add link attributes.
-		if ( href ) {
-			newText = `<a href="${ href }" rel="${ rel }" target="${ target }">${ newText }</a>`;
+		if ( url ) {
+			newText = `<a href="${ escapeHTML( url ) }" rel="${ rel }" target="${ target }">${ escapeHTML( newText ) }</a>`;
 		}
 
 		// Set the text.

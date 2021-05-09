@@ -140,6 +140,7 @@ class TextPath extends Widget_Base {
 					'active' => true,
 				],
 				'placeholder' => __( 'Paste URL or type', 'elementor' ),
+				'frontend_available' => true,
 			]
 		);
 
@@ -244,6 +245,14 @@ class TextPath extends Widget_Base {
 					'unit' => 'px',
 					'size' => 500,
 				],
+				'tablet_default' => [
+					'unit' => 'px',
+					'size' => 500,
+				],
+				'mobile_default' => [
+					'unit' => 'px',
+					'size' => 500,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
@@ -264,6 +273,14 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'deg',
+					'size' => '',
+				],
+				'mobile_default' => [
 					'unit' => 'deg',
 					'size' => '',
 				],
@@ -315,6 +332,14 @@ class TextPath extends Widget_Base {
 					],
 				],
 				'default' => [
+					'unit' => 'px',
+					'size' => '',
+				],
+				'tablet_default' => [
+					'unit' => 'px',
+					'size' => '',
+				],
+				'mobile_default' => [
 					'unit' => 'px',
 					'size' => '',
 				],
@@ -637,36 +662,16 @@ class TextPath extends Widget_Base {
 		}
 
 		// Add Text Path text.
-		$this->add_render_attribute( 'text_path', [
-			'class' => 'e-text-path',
-			'data-text' => $settings['text'],
-		] );
-
-		// Add link attributes.
-		if ( ! empty( $settings['link']['url'] ) ) {
-			$link = $settings['link'];
-
-			$link_settings = [
-				'data-href' => $link['url'],
-				'data-target' => $link['is_external'] ? '_blank' : '',
-				'data-rel' => $link['nofollow'] ? 'nofollow' : '',
-			];
-
-			$this->add_render_attribute( 'text_path', $link_settings );
-		}
+		$this->add_render_attribute( 'text_path', 'class', 'e-text-path' );
 
 		// Add hover animation.
 		if ( ! empty( $settings['hover_animation'] ) ) {
 			$this->add_render_attribute( 'text_path', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
-		$offset = $settings['start_point']['size'];
-
-		$this->add_render_attribute( 'text_path', 'data-start-offset', $offset );
-
 		// Render.
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'text_path' ); ?>>
+		<div <?php echo $this->get_render_attribute_string( 'text_path' ); ?> data-text="<?php echo $settings['text']; ?>">
 			<?php echo $path_svg; ?>
 		</div>
 		<?php
