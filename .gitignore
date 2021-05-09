@@ -4,6 +4,7 @@ node_modules/
 log/
 vendor/
 local-site/
+tmp/
 
 # build outputs
 build/

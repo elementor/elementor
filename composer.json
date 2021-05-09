@@ -6,7 +6,12 @@
 	"minimum-stability": "stable",
 	"require": {},
 	"require-dev": {
-		"justinrainbow/json-schema": "^5.2"
+		"justinrainbow/json-schema": "^5.2",
+		"phpunit/phpunit": "^7"
+	},
+	"scripts": {
+		"test": "phpunit",
+		"test:install": "bash ./bin/install-wp-tests-local.sh"
 	},
 	"authors": [
 		{
