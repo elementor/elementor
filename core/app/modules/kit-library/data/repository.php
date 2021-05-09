@@ -75,17 +75,15 @@ class Repository {
 	public function get_taxonomies( $force_api_request = false ) {
 		return $this->get_taxonomies_data( $force_api_request )
 			->only( static::TAXONOMIES_KEYS )
-			->map( function ( $values ) {
-				return array_unique( $values );
-			} )
 			->reduce( function ( Collection $carry, $taxonomies, $type ) {
-				return $carry->merge( array_map( function ( $text ) use ( $type ) {
+				return $carry->merge( array_map( function ( $taxonomy ) use ( $type ) {
 					return [
-						'text' => $text,
+						'text' => $taxonomy->name,
 						'type' => $type,
 					];
 				}, $taxonomies ) );
-			}, new Collection( [] ) );
+			}, new Collection( [] ) )
+			->unique( 'text' );
 	}
 
 	/**
@@ -156,7 +154,9 @@ class Repository {
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, $kit->{$key} );
+			return array_merge( $current, array_map( function ( $taxonomy ) {
+				return $taxonomy->name;
+			}, $kit->{$key} ) );
 		}, [] );
 
 		return array_merge(
