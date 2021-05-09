@@ -112,7 +112,7 @@ const ContainerView = BaseElementView.extend( {
 		this.changeChildContainerClasses();
 
 		this.$el.html5Droppable( {
-			items: '',
+			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),

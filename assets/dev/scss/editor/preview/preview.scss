@@ -652,6 +652,10 @@ html.elementor-html {
 		height: $widget-placeholder-size;
 		animation: placeholder-widget 500ms;
 		width: 100%;
+
+		.e-container & {
+			display: none;
+		}
 	}
 
 	.elementor-icon {
