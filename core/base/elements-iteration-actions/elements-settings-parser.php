@@ -67,6 +67,7 @@ class Elements_Settings_Parser extends Base {
 			// properties when they exist.
 			$setting_data = [
 				'value' => $active_settings[ $control['name'] ],
+				'control_type' => $control['type'],
 			];
 
 			if ( isset( $control['prefix_class'] ) ) {
