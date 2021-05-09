@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div>
 		<div class="e-major-update-warning__message">
 			<strong>
-				<?php echo __( 'Compatibility Alert', 'elementor' ); ?>
+				<?php echo esc_html__( 'Compatibility Alert', 'elementor' ); ?>
 			</strong> -
 			<?php
 			/* translators: %1$s: Plugin name %s: Plugin version */
@@ -39,10 +39,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<br />
 		<table class="e-compatibility-update-table">
 			<tr>
-				<th><?php echo __( 'Plugin', 'elementor' ); ?></th>
+				<th><?php echo esc_html__( 'Plugin', 'elementor' ); ?></th>
 				<th><?php
 					/* translators: %s - Elementor plugin name */
-					echo sprintf( __( 'Tested up to %s version', 'elementor' ), $this->get_plugin_label() );
+					echo sprintf( esc_html__( 'Tested up to %s version', 'elementor' ), $this->get_plugin_label() );
 				?></th>
 			</tr>
 			<?php foreach ( $plugins as $plugin_name => $plugin_data ) : ?>
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					Compatibility_Tag::INVALID_VERSION,
 				], true )
 				) {
-					$plugin_data[ $this->get_plugin_header() ] = __( 'Unknown', 'elementor' );
+					$plugin_data[ $this->get_plugin_header() ] = esc_html__( 'Unknown', 'elementor' );
 				}
 				?>
 

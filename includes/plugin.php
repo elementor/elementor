@@ -779,7 +779,7 @@ class Plugin {
 	}
 
 	final public static function get_title() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 }
 
