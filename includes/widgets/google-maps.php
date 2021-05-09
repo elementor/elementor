@@ -41,7 +41,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Google Maps', 'elementor' );
+		return esc_html__( 'Google Maps', 'elementor' );
 	}
 
 	/**
@@ -100,15 +100,15 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map',
 			[
-				'label' => __( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Map', 'elementor' ),
 			]
 		);
 
-		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
+		$default_address = esc_html__( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
 			'address',
 			[
-				'label' => __( 'Location', 'elementor' ),
+				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
@@ -125,7 +125,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'zoom',
 			[
-				'label' => __( 'Zoom', 'elementor' ),
+				'label' => esc_html__( 'Zoom', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 10,
@@ -143,7 +143,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_responsive_control(
 			'height',
 			[
-				'label' => __( 'Height', 'elementor' ),
+				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -165,7 +165,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'view',
 			[
-				'label' => __( 'View', 'elementor' ),
+				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 			]
@@ -176,7 +176,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => __( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Map', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -185,7 +185,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		$this->start_controls_tab( 'normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -201,7 +201,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		$this->start_controls_tab( 'hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -216,7 +216,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

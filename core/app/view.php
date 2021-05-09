@@ -18,7 +18,7 @@ $theme_class = 'dark' === $this->get_elementor_ui_theme_preference() ? 'eps-them
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title><?php echo __( 'Elementor', 'elementor' ) . ' ... '; ?></title>
+		<title><?php echo esc_html__( 'Elementor', 'elementor' ) . ' ... '; ?></title>
 		<base target="_parent">
 		<?php wp_print_styles(); ?>
 	</head>
