@@ -22,8 +22,8 @@ class Module extends BaseApp {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'admin-top-bar',
-			'title' => __( 'Admin Top Bar', 'elementor-pro' ),
-			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor-pro' ),
+			'title' => __( 'Admin Top Bar', 'elementor' ),
+			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'default' => Manager::STATE_INACTIVE,
 		];
@@ -59,7 +59,6 @@ class Module extends BaseApp {
 			ELEMENTOR_VERSION
 		);
 
-
 		// form-submission-admin
 		wp_enqueue_script(
 			'admin-top-bar',
@@ -74,7 +73,7 @@ class Module extends BaseApp {
 
 		//wp_set_script_translations(
 		//	'form-submission-admin',
-		//	'elementor-pro',
+		//	'elementor',
 		//	ELEMENTOR_PRO_PATH . 'languages'
 		//);
 	}
