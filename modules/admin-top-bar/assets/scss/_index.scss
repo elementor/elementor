@@ -54,11 +54,11 @@ $top-bar-height: 50px;
 		margin: 0 10px;
 		cursor: pointer;
 
-		:hover {
-			h1 {
+		&:hover {
+			h1, i {
 				color: #93003F;
 			}
-		}
+
 	}
 
 	.top-bar-button-title {
