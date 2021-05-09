@@ -27,7 +27,7 @@ class Container extends Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-columns';
+		return 'eicon-gallery-justified';
 	}
 
 	protected function add_render_attributes() {
