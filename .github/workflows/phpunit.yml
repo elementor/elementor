@@ -10,6 +10,8 @@ jobs:
       matrix:
         wordpress_versions: ['latest', '5.5', '5.4', '5.3']
     name: WordPress ${{ matrix.wordpress_versions }}
+    env:
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
     steps:
       - name: Startup MySQL service
         run: sudo /etc/init.d/mysql start
@@ -21,7 +23,6 @@ jobs:
           wget --quiet -O /tmp/phpunit-5 https://phar.phpunit.de/phpunit-5.phar
           wget --quiet -O /tmp/phpunit-6 https://phar.phpunit.de/phpunit-6.phar
           wget --quiet -O /tmp/phpunit-7 https://phar.phpunit.de/phpunit-7.phar
-          export WP_TESTS_DIR=/tmp/wordpress-tests-lib
           composer install
       - name: PHP5.6
         run: php5.6 /tmp/phpunit-5
