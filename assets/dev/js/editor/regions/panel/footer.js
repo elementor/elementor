@@ -119,7 +119,13 @@ module.exports = Marionette.ItemView.extend( {
 			// Force exit if device mode is already desktop
 			elementor.exitDeviceMode();
 		} else {
-			elementor.changeDeviceMode( 'mobile' );
+			const deviceView = 'default' === elementor.getPreferences( 'default_device_view' ) ? 'mobile' : elementor.getPreferences( 'default_device_view' );
+
+			elementor.changeDeviceMode( deviceView );
+
+			if ( 'desktop' === deviceView ) {
+				elementor.enterDeviceMode();
+			}
 		}
 	},
 
