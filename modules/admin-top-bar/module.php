@@ -3,6 +3,7 @@ namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,12 +49,40 @@ class Module extends BaseApp {
 		<?php
 	}
 
+	protected function get_init_settings() {
+		//$screen_id = get_current_screen()->id;
+		//
+		//$page = Plugin::$instance->admin->pages->get($screen_id);
+
+		//if( ! $page ) {
+		//	return;
+		//}
+
+		return [
+			'page_title' => 'bla bla',
+			'page_buttons' => [
+				[
+					'label' => __( 'Add New', 'elementor' ),
+					'href' => 'https://google.com',
+					'className' => 'my-class',
+					'id' => 'my-id',
+				],
+				[
+					'label' => __( 'Add New', 'elementor' ),
+					'href' => 'https://google.com',
+					'className' => 'my-class',
+					'id' => 'my-id',
+				],
+			]
+		];
+	}
+
 	/**
 	 * Enqueue admin scripts
 	 */
 	private function enqueue_scripts() {
 		wp_enqueue_style(
-			'elementor-app-base',
+			'elementor-admin-top-bar',
 			$this->get_css_assets_url( 'modules/admin-top-bar/admin', null, 'default', true ),
 			[],
 			ELEMENTOR_VERSION
@@ -61,7 +90,7 @@ class Module extends BaseApp {
 
 		// form-submission-admin
 		wp_enqueue_script(
-			'admin-top-bar',
+			'elementor-admin-top-bar',
 			$this->get_js_assets_url( 'admin-top-bar' ),   // create path in directory tree
 			[
 				'react',     //dependencies
@@ -70,6 +99,8 @@ class Module extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		$this->print_config();
 
 		//wp_set_script_translations(
 		//	'form-submission-admin',

@@ -1,7 +1,8 @@
 import BarHeading from 'elementor/modules/admin-top-bar/assets/js/components/bar-heading/bar-heading';
 import BarButton from 'elementor/modules/admin-top-bar/assets/js/components/bar-button/bar-button';
+import PageButton from 'elementor/modules/admin-top-bar/assets/js/components/page-button/page-button';
 
-export default function App() {
+export default function AdminTopBar( props ) {
 	const isUserConnected = elementorCommonConfig.connect.is_user_connected;
 	let connectUrl = '';
 	const finderAction = () => {
@@ -23,7 +24,13 @@ export default function App() {
 
 	return (
 		<div id="elementor-admin-top-bar">
-			<BarHeading>Elementor</BarHeading>
+			<div className="bar-main-area">
+				<BarHeading>{props.title}</BarHeading>
+				{props.buttons.map( ( button, index ) => {
+					return <PageButton key={ index } { ...button }></PageButton>;
+				} )}
+			</div>
+
 			<div className="bar-action-area">
 				<BarButton onClick={finderAction} icon="eicon-search-bold">Finder</BarButton>
 				{renderConnectButton()}
@@ -31,3 +38,8 @@ export default function App() {
 		</div>
 	);
 }
+
+AdminTopBar.propTypes = {
+	title: PropTypes.any,
+	buttons: PropTypes.array,
+};

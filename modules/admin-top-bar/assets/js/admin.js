@@ -1,20 +1,13 @@
-import App from './app';
+import AdminTopBar from './app';
+
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
-//
-// const title = '';
-// const buttons = [
-// 	{
-// 		label: 'asda',
-// 		href: 'https://google.com',
-// 	},
-// 	{
-//
-// 	},
-// ];
+
+const title = elementorAdminTopBarConfig.page_title;
+const buttons = elementorAdminTopBarConfig.page_buttons;
 
 ReactDOM.render(
 	<AppWrapper>
-		<App />
+		<AdminTopBar title={title} buttons={buttons}/>
 	</AppWrapper>,
 	document.getElementById( 'e-admin-top-bar' )
 );
