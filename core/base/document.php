@@ -1586,9 +1586,7 @@ abstract class Document extends Controls_Stack {
 
 	private function get_elements_iteration_actions() {
 		if ( ! $this->elements_iteration_actions ) {
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-				$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
-			}
+			$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
 		}
 
 		return $this->elements_iteration_actions;
