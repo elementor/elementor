@@ -153,7 +153,7 @@ class Settings_Controls {
 		?>
 		<select name="<?php echo esc_attr( $field['id'] ); ?>">
 			<?php if ( ! empty( $field['show_select'] ) ) : ?>
-				<option value="">— <?php echo esc_html__( 'Select', 'elementor' ); ?> —</option>
+				<option value="">— <?php echo __( 'Select', 'elementor' ); ?> —</option>
 			<?php endif; ?>
 
 			<?php foreach ( $field['options'] as $value => $label ) : ?>
@@ -234,7 +234,7 @@ class Settings_Controls {
 		if ( is_multisite() ) {
 			$roles = [
 				'super_admin' => [
-					'name' => esc_html__( 'Super Admin', 'elementor' ),
+					'name' => __( 'Super Admin', 'elementor' ),
 				],
 			] + $roles;
 		}

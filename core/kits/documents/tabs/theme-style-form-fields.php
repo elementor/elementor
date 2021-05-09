@@ -18,7 +18,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Form Fields', 'elementor' );
+		return __( 'Form Fields', 'elementor' );
 	}
 
 	public function get_group() {
@@ -57,7 +57,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_section(
 			'section_form_fields',
 			[
-				'label' => esc_html__( 'Form Fields', 'elementor' ),
+				'label' => __( 'Form Fields', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -68,14 +68,14 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			'form_label_heading',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => esc_html__( 'Label', 'elementor' ),
+				'label' => __( 'Label', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'form_label_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -87,7 +87,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
+				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_label_typography',
 				'selector' => $label_selector,
 			]
@@ -97,7 +97,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 			'form_field_heading',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => esc_html__( 'Field', 'elementor' ),
+				'label' => __( 'Field', 'elementor' ),
 				'separator' => 'before',
 			]
 		);
@@ -105,7 +105,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
-				'label' => esc_html__( 'Typography', 'elementor' ),
+				'label' => __( 'Typography', 'elementor' ),
 				'name' => 'form_field_typography',
 				'selector' => $input_selector,
 			]
@@ -116,7 +116,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_form_field_normal',
 			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -127,7 +127,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_form_field_focus',
 			[
-				'label' => esc_html__( 'Focus', 'elementor' ),
+				'label' => __( 'Focus', 'elementor' ),
 			]
 		);
 
@@ -136,7 +136,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			'form_field_focus_transition_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
+				'label' => __( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					$input_selector => 'transition: {{SIZE}}ms',
@@ -157,7 +157,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_responsive_control(
 			'form_field_padding',
 			[
-				'label' => esc_html__( 'Padding', 'elementor' ),
+				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
@@ -174,7 +174,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -186,7 +186,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_background_color',
 			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'dynamic' => [],
 				'selectors' => [
@@ -219,7 +219,7 @@ class Theme_Style_Form_Fields extends Tab_Base {
 		$this->add_control(
 			$prefix . '_border_radius',
 			[
-				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [

@@ -26,10 +26,16 @@
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
+		<exclude name="WordPress.CSRF.NonceVerification.NoNonceVerification" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
+		<exclude name="WordPress.Security.EscapeOutput.UnsafePrintingFunction" />
+		<exclude name="WordPress.Security.NonceVerification.NoNonceVerification"/>
+		<exclude name="WordPress.Security.NonceVerification.Missing"/>
 		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
+		<exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped" />
 		<exclude name="WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />

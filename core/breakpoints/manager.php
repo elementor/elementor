@@ -151,32 +151,32 @@ class Manager extends Module {
 	public static function get_default_config() {
 		return [
 			self::BREAKPOINT_KEY_MOBILE => [
-				'label' => esc_html__( 'Mobile', 'elementor' ),
+				'label' => __( 'Mobile', 'elementor' ),
 				'default_value' => 767,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
-				'label' => esc_html__( 'Mobile Extra', 'elementor' ),
+				'label' => __( 'Mobile Extra', 'elementor' ),
 				'default_value' => 880,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_TABLET => [
-				'label' => esc_html__( 'Tablet', 'elementor' ),
+				'label' => __( 'Tablet', 'elementor' ),
 				'default_value' => 1024,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
-				'label' => esc_html__( 'Tablet Extra', 'elementor' ),
+				'label' => __( 'Tablet Extra', 'elementor' ),
 				'default_value' => 1365,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
-				'label' => esc_html__( 'Laptop', 'elementor' ),
+				'label' => __( 'Laptop', 'elementor' ),
 				'default_value' => 1620,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
-				'label' => esc_html__( 'Widescreen', 'elementor' ),
+				'label' => __( 'Widescreen', 'elementor' ),
 				'default_value' => 2400,
 				'direction' => 'min',
 			],

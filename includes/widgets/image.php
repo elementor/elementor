@@ -42,7 +42,7 @@ class Widget_Image extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Image', 'elementor' );
+		return __( 'Image', 'elementor' );
 	}
 
 	/**
@@ -101,14 +101,14 @@ class Widget_Image extends Widget_Base {
 		$this->start_controls_section(
 			'section_image',
 			[
-				'label' => esc_html__( 'Image', 'elementor' ),
+				'label' => __( 'Image', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'image',
 			[
-				'label' => esc_html__( 'Choose Image', 'elementor' ),
+				'label' => __( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'dynamic' => [
 					'active' => true,
@@ -131,19 +131,19 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
@@ -156,12 +156,12 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption_source',
 			[
-				'label' => esc_html__( 'Caption', 'elementor' ),
+				'label' => __( 'Caption', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'attachment' => esc_html__( 'Attachment Caption', 'elementor' ),
-					'custom' => esc_html__( 'Custom Caption', 'elementor' ),
+					'none' => __( 'None', 'elementor' ),
+					'attachment' => __( 'Attachment Caption', 'elementor' ),
+					'custom' => __( 'Custom Caption', 'elementor' ),
 				],
 				'default' => 'none',
 			]
@@ -170,10 +170,10 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption',
 			[
-				'label' => esc_html__( 'Custom Caption', 'elementor' ),
+				'label' => __( 'Custom Caption', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
-				'placeholder' => esc_html__( 'Enter your image caption', 'elementor' ),
+				'placeholder' => __( 'Enter your image caption', 'elementor' ),
 				'condition' => [
 					'caption_source' => 'custom',
 				],
@@ -186,13 +186,13 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link_to',
 			[
-				'label' => esc_html__( 'Link', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'none',
 				'options' => [
-					'none' => esc_html__( 'None', 'elementor' ),
-					'file' => esc_html__( 'Media File', 'elementor' ),
-					'custom' => esc_html__( 'Custom URL', 'elementor' ),
+					'none' => __( 'None', 'elementor' ),
+					'file' => __( 'Media File', 'elementor' ),
+					'custom' => __( 'Custom URL', 'elementor' ),
 				],
 			]
 		);
@@ -200,12 +200,12 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'link',
 			[
-				'label' => esc_html__( 'Link', 'elementor' ),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'condition' => [
 					'link_to' => 'custom',
 				],
@@ -216,13 +216,13 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'open_lightbox',
 			[
-				'label' => esc_html__( 'Lightbox', 'elementor' ),
+				'label' => __( 'Lightbox', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
-					'yes' => esc_html__( 'Yes', 'elementor' ),
-					'no' => esc_html__( 'No', 'elementor' ),
+					'default' => __( 'Default', 'elementor' ),
+					'yes' => __( 'Yes', 'elementor' ),
+					'no' => __( 'No', 'elementor' ),
 				],
 				'condition' => [
 					'link_to' => 'file',
@@ -233,7 +233,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'view',
 			[
-				'label' => esc_html__( 'View', 'elementor' ),
+				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 			]
@@ -244,7 +244,7 @@ class Widget_Image extends Widget_Base {
 		$this->start_controls_section(
 			'section_style_image',
 			[
-				'label' => esc_html__( 'Image', 'elementor' ),
+				'label' => __( 'Image', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -252,7 +252,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'width',
 			[
-				'label' => esc_html__( 'Width', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => '%',
@@ -287,7 +287,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'space',
 			[
-				'label' => esc_html__( 'Max Width', 'elementor' ),
+				'label' => __( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => '%',
@@ -322,7 +322,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'height',
 			[
-				'label' => esc_html__( 'Height', 'elementor' ),
+				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => 'px',
@@ -353,16 +353,16 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'object-fit',
 			[
-				'label' => esc_html__( 'Object Fit', 'elementor' ),
+				'label' => __( 'Object Fit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'condition' => [
 					'height[size]!' => '',
 				],
 				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'fill' => esc_html__( 'Fill', 'elementor' ),
-					'cover' => esc_html__( 'Cover', 'elementor' ),
-					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
+					'fill' => __( 'Fill', 'elementor' ),
+					'cover' => __( 'Cover', 'elementor' ),
+					'contain' => __( 'Contain', 'elementor' ),
 				],
 				'default' => '',
 				'selectors' => [
@@ -383,14 +383,14 @@ class Widget_Image extends Widget_Base {
 
 		$this->start_controls_tab( 'normal',
 			[
-				'label' => esc_html__( 'Normal', 'elementor' ),
+				'label' => __( 'Normal', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'opacity',
 			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -417,14 +417,14 @@ class Widget_Image extends Widget_Base {
 
 		$this->start_controls_tab( 'hover',
 			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
+				'label' => __( 'Hover', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'opacity_hover',
 			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'label' => __( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -450,7 +450,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => __( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -467,7 +467,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'hover_animation',
 			[
-				'label' => esc_html__( 'Hover Animation', 'elementor' ),
+				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
 			]
 		);
@@ -488,7 +488,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'image_border_radius',
 			[
-				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -513,7 +513,7 @@ class Widget_Image extends Widget_Base {
 		$this->start_controls_section(
 			'section_style_caption',
 			[
-				'label' => esc_html__( 'Caption', 'elementor' ),
+				'label' => __( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'caption_source!' => 'none',
@@ -524,23 +524,23 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
@@ -554,7 +554,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -569,7 +569,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_control(
 			'caption_background_color',
 			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .widget-image-caption' => 'background-color: {{VALUE}};',
@@ -599,7 +599,7 @@ class Widget_Image extends Widget_Base {
 		$this->add_responsive_control(
 			'caption_space',
 			[
-				'label' => esc_html__( 'Spacing', 'elementor' ),
+				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

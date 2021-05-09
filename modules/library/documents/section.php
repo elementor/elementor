@@ -49,7 +49,7 @@ class Section extends Library_Document {
 	 * @return string Document title.
 	 */
 	public static function get_title() {
-		return esc_html__( 'Section', 'elementor' );
+		return __( 'Section', 'elementor' );
 	}
 
 	public static function get_plural_title() {

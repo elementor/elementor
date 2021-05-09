@@ -308,7 +308,7 @@ abstract class Background_Task extends WP_Background_Process {
 		$schedules[ $this->identifier . '_cron_interval' ] = array(
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			/* translators: %d: interval */
-			'display' => sprintf( esc_html__( 'Every %d minutes', 'elementor' ), $interval ),
+			'display' => sprintf( __( 'Every %d minutes', 'elementor' ), $interval ),
 		);
 
 		return $schedules;

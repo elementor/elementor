@@ -42,7 +42,7 @@ class Widget_Progress extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Progress Bar', 'elementor' );
+		return __( 'Progress Bar', 'elementor' );
 	}
 
 	/**
@@ -85,20 +85,20 @@ class Widget_Progress extends Widget_Base {
 		$this->start_controls_section(
 			'section_progress',
 			[
-				'label' => esc_html__( 'Progress Bar', 'elementor' ),
+				'label' => __( 'Progress Bar', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => __( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'Enter your title', 'elementor' ),
-				'default' => esc_html__( 'My Skill', 'elementor' ),
+				'placeholder' => __( 'Enter your title', 'elementor' ),
+				'default' => __( 'My Skill', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -106,15 +106,15 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'progress_type',
 			[
-				'label' => esc_html__( 'Type', 'elementor' ),
+				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'info' => esc_html__( 'Info', 'elementor' ),
-					'success' => esc_html__( 'Success', 'elementor' ),
-					'warning' => esc_html__( 'Warning', 'elementor' ),
-					'danger' => esc_html__( 'Danger', 'elementor' ),
+					'' => __( 'Default', 'elementor' ),
+					'info' => __( 'Info', 'elementor' ),
+					'success' => __( 'Success', 'elementor' ),
+					'warning' => __( 'Warning', 'elementor' ),
+					'danger' => __( 'Danger', 'elementor' ),
 				],
 			]
 		);
@@ -122,7 +122,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'percent',
 			[
-				'label' => esc_html__( 'Percentage', 'elementor' ),
+				'label' => __( 'Percentage', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 50,
@@ -135,25 +135,25 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control( 'display_percentage', [
-			'label' => esc_html__( 'Display Percentage', 'elementor' ),
+			'label' => __( 'Display Percentage', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'show',
 			'options' => [
-				'show' => esc_html__( 'Show', 'elementor' ),
-				'hide' => esc_html__( 'Hide', 'elementor' ),
+				'show' => __( 'Show', 'elementor' ),
+				'hide' => __( 'Hide', 'elementor' ),
 			],
 		] );
 
 		$this->add_control(
 			'inner_text',
 			[
-				'label' => esc_html__( 'Inner Text', 'elementor' ),
+				'label' => __( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => esc_html__( 'e.g. Web Designer', 'elementor' ),
-				'default' => esc_html__( 'Web Designer', 'elementor' ),
+				'placeholder' => __( 'e.g. Web Designer', 'elementor' ),
+				'default' => __( 'Web Designer', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -161,7 +161,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'view',
 			[
-				'label' => esc_html__( 'View', 'elementor' ),
+				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 			]
@@ -172,7 +172,7 @@ class Widget_Progress extends Widget_Base {
 		$this->start_controls_section(
 			'section_progress_style',
 			[
-				'label' => esc_html__( 'Progress Bar', 'elementor' ),
+				'label' => __( 'Progress Bar', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -180,7 +180,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -194,7 +194,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_bg_color',
 			[
-				'label' => esc_html__( 'Background Color', 'elementor' ),
+				'label' => __( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-wrapper' => 'background-color: {{VALUE}};',
@@ -205,7 +205,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_height',
 			[
-				'label' => esc_html__( 'Height', 'elementor' ),
+				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
@@ -216,7 +216,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_border_radius',
 			[
-				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -228,7 +228,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'inner_text_heading',
 			[
-				'label' => esc_html__( 'Inner Text', 'elementor' ),
+				'label' => __( 'Inner Text', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
 			]
@@ -237,7 +237,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'bar_inline_color',
 			[
-				'label' => esc_html__( 'Color', 'elementor' ),
+				'label' => __( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-progress-bar' => 'color: {{VALUE}};',
@@ -269,7 +269,7 @@ class Widget_Progress extends Widget_Base {
 		$this->start_controls_section(
 			'section_title',
 			[
-				'label' => esc_html__( 'Title Style', 'elementor' ),
+				'label' => __( 'Title Style', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -277,7 +277,7 @@ class Widget_Progress extends Widget_Base {
 		$this->add_control(
 			'title_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-title' => 'color: {{VALUE}};',

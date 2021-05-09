@@ -215,7 +215,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
+		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', __( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
 			/* translators: %1$s: New line break, %2$s: Learn More link. */
@@ -226,32 +226,32 @@ class Module extends BaseModule {
 
 		$content_data = [
 			'export' => [
-				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
+				'title' => __( 'Export a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
-					'text' => esc_html__( 'Start Export', 'elementor' ),
+					'text' => __( 'Start Export', 'elementor' ),
 				],
-				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
+				'description' => __( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
 					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
+					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
 			'import' => [
-				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
+				'title' => __( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => esc_html__( 'Start Import', 'elementor' ),
+					'text' => __( 'Start Import', 'elementor' ),
 				],
-				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
+				'description' => __( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
 					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
+					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
 		];
 
-		$info_text = esc_html__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . esc_html__( 'Open Site Settings > History > Revisions.', 'elementor' );
+		$info_text = __( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . __( 'Open Site Settings > History > Revisions.', 'elementor' );
 		?>
 
 		<div class="tab-import-export-kit__content">
@@ -279,10 +279,10 @@ class Module extends BaseModule {
 
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
+			'label' => __( 'Import / Export Kit', 'elementor' ),
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'label' => __( 'Template Kits', 'elementor' ),
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},

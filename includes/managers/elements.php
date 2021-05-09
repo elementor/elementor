@@ -269,22 +269,22 @@ class Elements_Manager {
 	private function init_categories() {
 		$this->categories = [
 			'basic' => [
-				'title' => esc_html__( 'Basic', 'elementor' ),
+				'title' => __( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 			'pro-elements' => [
-				'title' => esc_html__( 'Pro', 'elementor' ),
+				'title' => __( 'Pro', 'elementor' ),
 			],
 			'general' => [
-				'title' => esc_html__( 'General', 'elementor' ),
+				'title' => __( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 			'theme-elements' => [
-				'title' => esc_html__( 'Site', 'elementor' ),
+				'title' => __( 'Site', 'elementor' ),
 				'active' => false,
 			],
 			'woocommerce-elements' => [
-				'title' => esc_html__( 'WooCommerce', 'elementor' ),
+				'title' => __( 'WooCommerce', 'elementor' ),
 				'active' => false,
 			],
 		];
@@ -305,12 +305,12 @@ class Elements_Manager {
 		do_action( 'elementor/elements/categories_registered', $this );
 
 		$this->categories['pojo'] = [
-			'title' => esc_html__( 'Pojo Themes', 'elementor' ),
+			'title' => __( 'Pojo Themes', 'elementor' ),
 			'icon' => 'eicon-pojome',
 		];
 
 		$this->categories['wordpress'] = [
-			'title' => esc_html__( 'WordPress', 'elementor' ),
+			'title' => __( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
 			'active' => false,
 		];

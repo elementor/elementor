@@ -27,7 +27,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title><?php echo esc_html__( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
+	<title><?php echo __( 'Elementor', 'elementor' ) . ' | ' . get_the_title(); ?></title>
 	<?php wp_head(); ?>
 	<script>
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
@@ -47,7 +47,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 						<div class="elementor-loader-box"></div>
 					</div>
 				</div>
-				<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
+				<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
 			</div>
 		</div>
 		<div id="elementor-responsive-bar"></div>

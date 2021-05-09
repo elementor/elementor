@@ -39,7 +39,7 @@ class Landing_Page extends PageBase {
 	 * @static
 	 */
 	public static function get_title() {
-		return esc_html__( 'Landing Page', 'elementor' );
+		return __( 'Landing Page', 'elementor' );
 	}
 
 	/**

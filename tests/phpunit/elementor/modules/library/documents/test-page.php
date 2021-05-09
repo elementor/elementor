@@ -29,7 +29,7 @@ class Elementor_Test_Page extends Elementor_Test_Base {
 	public function test_should_return_title() {
 		$title = Page::get_title();
 
-		$this->assertEquals( esc_html__( 'Page', 'elementor' ), $title );
+		$this->assertEquals( __( 'Page', 'elementor' ), $title );
 	}
 
 	public function test_should_return_css_wrapper_selector() {

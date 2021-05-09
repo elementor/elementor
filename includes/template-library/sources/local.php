@@ -197,7 +197,7 @@ class Source_Local extends Source_Base {
 	 * @return string The local template title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Local', 'elementor' );
+		return __( 'Local', 'elementor' );
 	}
 
 	/**
@@ -362,7 +362,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -449,11 +449,11 @@ class Source_Local extends Source_Base {
 	 */
 	public function save_item( $template_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
-			return new \WP_Error( 'save_error', esc_html__( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		$defaults = [
-			'title' => esc_html__( '(no title)', 'elementor' ),
+			'title' => __( '(no title)', 'elementor' ),
 			'page_settings' => [],
 			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 		];
@@ -528,13 +528,13 @@ class Source_Local extends Source_Base {
 	 */
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
-			return new \WP_Error( 'save_error', esc_html__( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		$document = Plugin::$instance->documents->get( $new_data['id'] );
 
 		if ( ! $document ) {
-			return new \WP_Error( 'save_error', esc_html__( 'Template not exist.', 'elementor' ) );
+			return new \WP_Error( 'save_error', __( 'Template not exist.', 'elementor' ) );
 		}
 
 		$document->save( [
@@ -670,7 +670,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'template_error', __( 'Access denied.', 'elementor' ) );
 		}
 
 		return wp_delete_post( $template_id, true );
@@ -866,7 +866,7 @@ class Source_Local extends Source_Base {
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
-				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), esc_html__( 'Export Template', 'elementor' ) );
+				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
 			}
 		}
 
@@ -894,9 +894,9 @@ class Source_Local extends Source_Base {
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo esc_html__( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo __( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
 					<input type="hidden" name="library_action" value="direct_import_template">
@@ -1081,7 +1081,7 @@ class Source_Local extends Source_Base {
 	 * @return array An array of the available bulk actions.
 	 */
 	public function admin_add_bulk_export_action( $actions ) {
-		$actions[ self::BULK_EXPORT_ACTION ] = esc_html__( 'Export', 'elementor' );
+		$actions[ self::BULK_EXPORT_ACTION ] = __( 'Export', 'elementor' );
 
 		return $actions;
 	}
@@ -1162,7 +1162,7 @@ class Source_Local extends Source_Base {
 				<?php
 				$all_title = $this->get_library_title();
 				if ( ! $all_title ) {
-					$all_title = esc_html__( 'All', 'elementor' );
+					$all_title = __( 'All', 'elementor' );
 				}
 				echo $all_title; ?>
 			</a>
@@ -1257,7 +1257,7 @@ class Source_Local extends Source_Base {
 		$args = wp_parse_args( $args, [
 			'additional_inline_style' => '',
 			'href' => '',
-			'description' => esc_html__( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
+			'description' => __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
 		] );
 		$inline_style .= $args['additional_inline_style'];
 		?>
@@ -1290,14 +1290,14 @@ class Source_Local extends Source_Base {
 				<h2>
 					<?php
 					/* translators: %s: Template type label. */
-					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label );
+					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
 				<p><?php echo $description; ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
 					<?php
 					/* translators: %s: Template type label. */
-					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label );
+					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
 			</div>
@@ -1582,7 +1582,7 @@ class Source_Local extends Source_Base {
 		$offset = 2;
 
 		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
-			'elementor_library_type' => esc_html__( 'Type', 'elementor' ),
+			'elementor_library_type' => __( 'Type', 'elementor' ),
 		] + array_slice( $posts_columns, $offset, null, true );
 
 		return $posts_columns;
@@ -1611,9 +1611,9 @@ class Source_Local extends Source_Base {
 
 			if ( $current_tab_group ) {
 				$titles = [
-					'library' => esc_html__( 'Saved Templates', 'elementor' ),
-					'theme' => esc_html__( 'Theme Builder', 'elementor' ),
-					'popup' => esc_html__( 'Popups', 'elementor' ),
+					'library' => __( 'Saved Templates', 'elementor' ),
+					'theme' => __( 'Theme Builder', 'elementor' ),
+					'popup' => __( 'Popups', 'elementor' ),
 				];
 
 				if ( ! empty( $titles[ $current_tab_group ] ) ) {

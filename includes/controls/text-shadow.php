@@ -63,17 +63,17 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 	public function get_sliders() {
 		return [
 			'blur' => [
-				'label' => esc_html__( 'Blur', 'elementor' ),
+				'label' => __( 'Blur', 'elementor' ),
 				'min' => 0,
 				'max' => 100,
 			],
 			'horizontal' => [
-				'label' => esc_html__( 'Horizontal', 'elementor' ),
+				'label' => __( 'Horizontal', 'elementor' ),
 				'min' => -100,
 				'max' => 100,
 			],
 			'vertical' => [
-				'label' => esc_html__( 'Vertical', 'elementor' ),
+				'label' => __( 'Vertical', 'elementor' ),
 				'min' => -100,
 				'max' => 100,
 			],
@@ -94,7 +94,7 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 		?>
 		<div class="elementor-shadow-box">
 			<div class="elementor-control-field elementor-color-picker-wrapper">
-				<label class="elementor-control-title"><?php echo esc_html__( 'Color', 'elementor' ); ?></label>
+				<label class="elementor-control-title"><?php echo __( 'Color', 'elementor' ); ?></label>
 				<div class="elementor-control-input-wrapper elementor-control-unit-1">
 					<div class="elementor-color-picker-placeholder"></div>
 				</div>

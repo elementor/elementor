@@ -66,12 +66,12 @@ class Control_Popover_Toggle extends Base_Data_Control {
 				<input id="<?php echo $control_uid; ?>-custom" class="elementor-control-popover-toggle-toggle" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="{{ data.return_value }}">
 				<label class="elementor-control-popover-toggle-toggle-label elementor-control-unit-1" for="<?php echo $control_uid; ?>-custom">
 					<i class="eicon-edit" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Edit', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo __( 'Edit', 'elementor' ); ?></span>
 				</label>
 				<input id="<?php echo $control_uid; ?>-default" class="elementor-control-popover-toggle-reset" type="radio" name="elementor-choose-{{ data.name }}-{{ data._cid }}" value="">
-				<label class="elementor-control-popover-toggle-reset-label tooltip-target" for="<?php echo $control_uid; ?>-default" data-tooltip="<?php echo esc_html__( 'Back to default', 'elementor' ); ?>" data-tooltip-pos="s">
+				<label class="elementor-control-popover-toggle-reset-label tooltip-target" for="<?php echo $control_uid; ?>-default" data-tooltip="<?php echo __( 'Back to default', 'elementor' ); ?>" data-tooltip-pos="s">
 					<i class="eicon-undo" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Back to default', 'elementor' ); ?></span>
+					<span class="elementor-screen-only"><?php echo __( 'Back to default', 'elementor' ); ?></span>
 				</label>
 			</div>
 		</div>

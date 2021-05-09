@@ -282,11 +282,11 @@ class Deprecation {
 
 			if ( $replacement ) {
 				/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
-				$translation_string = esc_html__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', 'elementor' );
+				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', 'elementor' );
 				$error_message_args[] = $replacement;
 			} else {
 				/* translators: 1: Function argument, 2: Elementor version number. */
-				$translation_string = esc_html__( 'The %1$s argument is <strong>deprecated</strong> since version %2$s!', 'elementor' );
+				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s!', 'elementor' );
 			}
 
 			trigger_error(

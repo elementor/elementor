@@ -106,17 +106,17 @@ abstract class Base_UI extends Base {
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-reset">
 					<button class="elementor-button">
 						<i class="fa fa-undo" aria-hidden="true"></i>
-						<?php echo esc_html__( 'Reset', 'elementor' ); ?>
+						<?php echo __( 'Reset', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-discard">
 					<button class="elementor-button">
 						<i class="eicon-close" aria-hidden="true"></i>
-						<?php echo esc_html__( 'Discard', 'elementor' ); ?>
+						<?php echo __( 'Discard', 'elementor' ); ?>
 					</button>
 				</div>
 				<div class="elementor-panel-scheme-button-wrapper elementor-panel-scheme-save">
-					<button class="elementor-button elementor-button-success" disabled><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+					<button class="elementor-button elementor-button-success" disabled><?php echo __( 'Apply', 'elementor' ); ?></button>
 				</div>
 			</div>
 			<?php $this->print_template_content(); ?>

@@ -17,9 +17,9 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'elements-color-picker',
-			'title' => esc_html__( 'Elements Color Picker', 'elementor' ),
+			'title' => __( 'Elements Color Picker', 'elementor' ),
 			'default' => Manager::STATE_ACTIVE,
-			'description' => esc_html__( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
+			'description' => __( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
 		];
 	}
 

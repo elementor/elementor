@@ -809,7 +809,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => esc_html__( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}

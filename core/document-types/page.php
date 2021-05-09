@@ -39,7 +39,7 @@ class Page extends PageBase {
 	 * @static
 	 */
 	public static function get_title() {
-		return esc_html__( 'Page', 'elementor' );
+		return __( 'Page', 'elementor' );
 	}
 
 	public static function get_plural_title() {

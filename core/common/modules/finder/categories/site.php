@@ -23,7 +23,7 @@ class Site extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return esc_html__( 'Site', 'elementor' );
+		return __( 'Site', 'elementor' );
 	}
 
 	/**
@@ -39,43 +39,43 @@ class Site extends Base_Category {
 	public function get_category_items( array $options = [] ) {
 		return [
 			'homepage' => [
-				'title' => esc_html__( 'Homepage', 'elementor' ),
+				'title' => __( 'Homepage', 'elementor' ),
 				'url' => home_url(),
 				'icon' => 'home-heart',
 				'keywords' => [ 'home', 'page' ],
 			],
 			'wordpress-dashboard' => [
-				'title' => esc_html__( 'Dashboard', 'elementor' ),
+				'title' => __( 'Dashboard', 'elementor' ),
 				'icon' => 'dashboard',
 				'url' => admin_url(),
 				'keywords' => [ 'dashboard', 'wordpress' ],
 			],
 			'wordpress-menus' => [
-				'title' => esc_html__( 'Menus', 'elementor' ),
+				'title' => __( 'Menus', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'nav-menus.php' ),
 				'keywords' => [ 'menu', 'wordpress' ],
 			],
 			'wordpress-themes' => [
-				'title' => esc_html__( 'Themes', 'elementor' ),
+				'title' => __( 'Themes', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'themes.php' ),
 				'keywords' => [ 'themes', 'wordpress' ],
 			],
 			'wordpress-customizer' => [
-				'title' => esc_html__( 'Customizer', 'elementor' ),
+				'title' => __( 'Customizer', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'customize.php' ),
 				'keywords' => [ 'customizer', 'wordpress' ],
 			],
 			'wordpress-plugins' => [
-				'title' => esc_html__( 'Plugins', 'elementor' ),
+				'title' => __( 'Plugins', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'plugins.php' ),
 				'keywords' => [ 'plugins', 'wordpress' ],
 			],
 			'wordpress-users' => [
-				'title' => esc_html__( 'Users', 'elementor' ),
+				'title' => __( 'Users', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'users.php' ),
 				'keywords' => [ 'users', 'profile', 'wordpress' ],

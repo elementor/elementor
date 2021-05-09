@@ -72,8 +72,8 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
-			$label = esc_html__( 'Disconnect', 'elementor' );
+			$title = sprintf( __( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
+			$label = __( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
@@ -87,7 +87,7 @@ abstract class Base_App {
 		$this->print_app_info();
 
 		if ( current_user_can( 'manage_options' ) ) {
-			printf( '<div><a href="%s">%s</a></div>', $this->get_admin_url( 'reset' ), esc_html__( 'Reset Data', 'elementor' ) );
+			printf( '<div><a href="%s">%s</a></div>', $this->get_admin_url( 'reset' ), __( 'Reset Data', 'elementor' ) );
 		}
 
 		echo '<hr>';
@@ -138,7 +138,7 @@ abstract class Base_App {
 	 */
 	public function action_authorize() {
 		if ( $this->is_connected() ) {
-			$this->add_notice( esc_html__( 'Already connected.', 'elementor' ), 'info' );
+			$this->add_notice( __( 'Already connected.', 'elementor' ), 'info' );
 			$this->redirect_to_admin_page();
 			return;
 		}
@@ -197,7 +197,7 @@ abstract class Base_App {
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( __( 'Connected Successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -209,7 +209,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( __( 'Disconnected Successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();

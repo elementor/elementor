@@ -12,7 +12,7 @@ $breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 $breakpoints['desktop'] = [];
 
-$breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
+$breakpoint_label = __( 'Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
@@ -20,7 +20,7 @@ $breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$
 			<div id="e-responsive-bar-switcher" class="e-responsive-bar--pipe">
 			<?php foreach ( $breakpoints as $name => $breakpoint ) {
 				if ( 'desktop' === $name ) {
-					$tooltip_label = esc_html__( 'Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
+					$tooltip_label = __( 'Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
 				} else {
 					$tooltip_label = sprintf( $breakpoint_label, $breakpoint->get_label(), $breakpoint->get_value() );
 				}

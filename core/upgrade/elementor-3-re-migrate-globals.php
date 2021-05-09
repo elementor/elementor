@@ -47,7 +47,7 @@ class Elementor_3_Re_Migrate_Globals {
 				],
 			],
 			're_migrate_globals' => [
-				'label' => esc_html__( 'Rerun Update Script', 'elementor' ),
+				'label' => __( 'Rerun Update Script', 'elementor' ),
 				'field_args' => [
 					'type' => 'raw_html',
 					'html' => sprintf(
@@ -55,7 +55,7 @@ class Elementor_3_Re_Migrate_Globals {
 						wp_create_nonce( 'elementor_re_migrate_globals' ),
 						__( 'Migrate to v3.0', 'elementor' )
 					),
-					'desc' => '<span style="color: red;">' . esc_html__( 'Warning: This will reset your current Global Fonts and Colors, and will migrate your previous settings from v2.x versions.', 'elementor' ) . '</span>',
+					'desc' => '<span style="color: red;">' . __( 'Warning: This will reset your current Global Fonts and Colors, and will migrate your previous settings from v2.x versions.', 'elementor' ) . '</span>',
 				],
 			],
 		] );
