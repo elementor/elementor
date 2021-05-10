@@ -194,7 +194,7 @@ class Module extends BaseModule {
 
 		if ( ! empty( $trashed_posts ) ) : ?>
 			<div class="e-trashed-items">
-				<?php echo sprintf( esc_html__( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ); ?>
+				<?php echo sprintf( esc_html__( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ) ); ?>
 			</div>
 		<?php endif; ?>
 		</div>

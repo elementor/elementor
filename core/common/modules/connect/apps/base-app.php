@@ -60,16 +60,25 @@ abstract class Base_App {
 	 * @abstract
 	 */
 	public function render_admin_widget() {
-		echo '<h2>' . $this->get_title() . '</h2>';
+		// PHPCS - the method get_title return a plain string.
+		echo '<h2>' . $this->get_title() . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
+			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
-			echo sprintf( '%s <a %s href="%s">%s</a>', $title, $attr, esc_attr( $url ), esc_html( $label ) );
+			echo sprintf(
+				'%s <a %s href="%s">%s</a>',
+				// PHPCS - the variable $title is already escaped above.
+				$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// PHPCS - the variable $attr is a plain string.
+				$attr, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_attr( $url ),
+				esc_html( $label )
+			);
 		} else {
 			echo 'Not Connected';
 		}
@@ -79,7 +88,7 @@ abstract class Base_App {
 		$this->print_app_info();
 
 		if ( current_user_can( 'manage_options' ) ) {
-			printf( '<div><a href="%s">%s</a></div>', $this->get_admin_url( 'reset' ), esc_html__( 'Reset Data', 'elementor' ) );
+			printf( '<div><a href="%s">%s</a></div>', esc_url( $this->get_admin_url( 'reset' ) ), esc_html__( 'Reset Data', 'elementor' ) );
 		}
 
 		echo '<hr>';
@@ -117,7 +126,8 @@ abstract class Base_App {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, $response->get_error_message() );
+			// PHPCS - the variable $response does not contain a user input value.
+			wp_die( $response, $response->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		// Use state as usual.
@@ -357,9 +367,10 @@ abstract class Base_App {
 		] );
 
 		if ( is_wp_error( $response ) ) {
+			// PHPCS - the variable $response does not contain a user input value.
 			wp_die( $response, [
 				'back_link' => true,
-			] );
+			] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -472,7 +483,8 @@ abstract class Base_App {
 		$response = $this->request( 'get_client_id' );
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, $response->get_error_message() );
+			// PHPCS - the variable $response does not contain a user input value.
+			wp_die( $response, $response->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$this->set( 'client_id', $response->client_id );
@@ -499,7 +511,7 @@ abstract class Base_App {
 				window.close();
 				opener.focus();
 			} else {
-				location = '<?php echo $url; ?>';
+				location = '<?php echo esc_url( $url ); ?>';
 			}
 		</script>
 		<?php
@@ -565,7 +577,7 @@ abstract class Base_App {
 		switch ( $this->auth_mode ) {
 			case 'cli':
 				foreach ( $notices as $notice ) {
-					printf( '[%s] %s', $notice['type'], $notice['content'] );
+					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( wpautop( $notice['content'] ) ) );
 				}
 				break;
 			default:
@@ -602,7 +614,8 @@ abstract class Base_App {
 				$color = 'red';
 			}
 
-			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status );
+			// PHPCS - the values of $item['label'], $color, $status are plain strings.
+			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 	}

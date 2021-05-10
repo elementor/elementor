@@ -913,7 +913,10 @@ class Element_Column extends Element_Base {
 		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
 
 		?>
-		<div class="elementor-<?php echo $wrapper_element; ?>-wrap">
+		<div class="elementor-<?php
+			// PHPCS - the variable $wrapper_element holds a plain string.
+			echo $wrapper_element; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>-wrap">
 			<div class="elementor-background-overlay"></div>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
@@ -957,7 +960,10 @@ class Element_Column extends Element_Base {
 			],
 		] );
 		?>
-		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<<?php
+			// PHPCS - the method get_html_tag is safe.
+			echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( $wrapper_attribute_string ); ?>>
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php $this->print_render_attribute_string( '_background_overlay' ); ?>></div>
@@ -981,7 +987,10 @@ class Element_Column extends Element_Base {
 				</div>
 		<?php } ?>
 			</div>
-		</<?php echo $this->get_html_tag(); ?>>
+		</<?php
+			// PHPCS - the method get_html_tag is safe.
+			echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>>
 		<?php
 	}
 
