@@ -386,7 +386,7 @@ abstract class Base_App {
 			$body = (object) $body;
 
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = isset( $body->code ) ? $body->code : $response_code;
+			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
 			if ( 401 === $code ) {
 				$this->delete();
@@ -578,6 +578,7 @@ abstract class Base_App {
 					$options = [
 						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
 						'type' => $notice['type'],
+						'icon' => false,
 					];
 
 					$admin_notices->print_admin_notice( $options );

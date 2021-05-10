@@ -4,8 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 5.6
-Beta tag: 3.2.0-beta4
-Stable tag: 3.1.4
+Stable tag: 3.2.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -218,6 +217,79 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 3.2.3 - 2021-05-05 =
+* Fix: `eicons` file couldn't be found when using Custom Breakpoints ([#14718](https://github.com/elementor/elementor/issues/14718), [#14712](https://github.com/elementor/elementor/issues/14712))
+* Fix: Deregister `eicons` fonts action is not working ([#14712](https://github.com/elementor/elementor/issues/14712))
+* Fix: Responsive custom CSS is not properly generated when using custom breakpoints ([#14711](https://github.com/elementor/elementor/issues/14711))
+* Fix: Minimize the Editor window caused to preview to collapse behind the Panel
+
+= 3.2.2 - 2021-04-26 =
+* Fix: Multiple carousels in the same page stoped functioning when Improved Asset Load experiment is active ([#14663](https://github.com/elementor/elementor/issues/14663), [#14675](https://github.com/elementor/elementor/issues/14675))
+* Fix: Section Style tab panel is grayed in several site languages ([#14642](https://github.com/elementor/elementor/issues/14642))
+* Fix: Responsive mode UI glitch in WordPress versions under 5.6
+
+= 3.2.1 - 2021-04-21 =
+* Tweak: Changed the minimum width of Mobile breakpoint to 320px
+* Fix: Global Typography settings were printed as undefined variables
+* Fix: Close button in responsive bar didn't worked in the Desktop breakpoint
+* Fix: UI glitch in the dashboard admin notices
+* Fix: Right click contextual menu appears underneath the Navigator
+* Fix: Panel resize caused UI glitches in RTL websites
+* Fix: Responsive device icons adjustments in RTL websites
+
+= 3.2.0 - 2021-04-19 =
+* New: Meet Text Path widget - Add more text design options to your headings
+* New: Meet the new Responsive Mode * Easily edit your responsive design
+* New: Introducing Mask option - Add a mask to every element on your page ([#13736](https://github.com/elementor/elementor/issues/13736))
+* Experiment: Template Kit Import & Export feature - Move all of your Elementor content from one site to another
+* Experiment: Added `elementor-image` & `elementor-text-editor` classes to DOM Optimization Experiment
+* Tweak: Split `eicons` library CSS file to Editor & Frontend usages as part of the Improved Asset Loading Experiment ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Load the Lightbox assets only if Lightbox is used on the page as part of the Improved Asset Loading Experiment ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Added Google Fonts loading method option in Elementor settings screen to control over `font-display` option ([#14236](https://github.com/elementor/elementor/issues/14236))
+* Tweak: Added Gradient background option to Button widget ([#3142](https://github.com/elementor/elementor/issues/3142))
+* Tweak: Added FAQ Schema support to Accordion and Toggle Widgets (Props [@pacotole](https://github.com/pacotole), [#13425](https://github.com/elementor/elementor/issues/13425), [#9053](https://github.com/elementor/elementor/issues/9053))
+* Tweak: Improved the widgets panel responsiveness ([#14026](https://github.com/elementor/elementor/issues/14026))
+* Tweak: Added dynamic option to video link inside Sections ([#6116](https://github.com/elementor/elementor/issues/6116))
+* Tweak: Added Text shadow control to Text widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Icon Box widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Start Rating widget([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Icon List widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Icon widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Image Gallery widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Image Carousel widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Counter widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Progress Bar widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Testimonials widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Tabs widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Toggle widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Accordion widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added Text shadow control to Alert widget ([#10033](https://github.com/elementor/elementor/issues/10033), [#2263](https://github.com/elementor/elementor/issues/2263), [#5579](https://github.com/elementor/elementor/issues/5579))
+* Tweak: Added support for Expert tier templates in Templates Library
+* Tweak: Adjusted Media control to better handle SVG uploads
+* Tweak: Converted script loading method to use an independent Util instead of JS `import` function for better performance
+* Tweak: Changed the widgets search field to be sticky
+* Tweak: Added "Fit to Screen" height option in Inner Section widget
+* Tweak: Added `vh` and `vw` units to Min-height control in Inner Section widget
+* Tweak: Added `vh` unit to Height control in Google Maps widget
+* Tweak: Changed breakpoints mechanism to use dynamic breakpoint references to allow future addition of breakpoints
+* Tweak: Added Dynamic capabilities support in Code Highlight widget
+* Tweak: Added ability to access Site Settings using `Cmd + K` / `CTRL + K`
+* Tweak: Added ability to access Site Settings via Admin top bar
+* Tweak: Updated Elementor admin notices UI
+* Tweak: Added userAgent/browser classes to the admin area body class
+* Tweak: Manage all the subscription plans from Connect module in Template Library
+* Tweak: Removed "Meet right click" introduction
+* Fix: Edit section labels in Navigator didn't triggered the Update button ([#10772](https://github.com/elementor/elementor/issues/10772))
+* Fix: Custom fonts file URLs are static and are not changed using the Replace URL tool ([#10382](https://github.com/elementor/elementor/issues/10382))
+* Fix: "Undefined" error message is thrown when server fails to save or insert a template ([#12377](https://github.com/elementor/elementor/issues/12377))
+* Fix: Popup Dynamic Link options modal is misplaced ([#13257](https://github.com/elementor/elementor/issues/13257))
+* Fix: Navigator indicators are missing since WordPress v5.7 ([#14094](https://github.com/elementor/elementor/issues/14094))
+* Fix: PHP error was thrown when using PHP 8 in the System Info screen
+* Fix: Hardened SVG uploads capabilities to enforce better security policies
+* Fix: Redundant space when deleting an icon from Icon Box widget
+* Fix: Library Connect completion redirects to wrong page
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-2-planned-deprecations/)
 
 = 3.1.4 - 2021-03-08 =
 * Fix: Self hosted video didn't work with Image Overlay ([#14038](https://github.com/elementor/elementor/issues/14038))
