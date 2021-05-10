@@ -700,6 +700,7 @@ class Utils {
 	public static function print_unescaped_internal_string( $string ) {
 		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
+
 	/**
 	 * Get recently edited posts query.
 	 *
