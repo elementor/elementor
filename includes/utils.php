@@ -695,6 +695,13 @@ class Utils {
 	}
 
 	/**
+	 * Print internal content (not user input) without escaping.
+	 */
+	public static function print_unescaped_internal_string( $string ) {
+		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
 	 * Get recently edited posts query.
 	 *
 	 * Returns `WP_Query` of the recent edited posts.
