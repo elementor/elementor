@@ -33,7 +33,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php', 'relative' ); ?>';
 	</script>
 </head>
-<body class="<?php echo implode( ' ', $body_classes ); ?>">
+<body class="<?php echo esc_attr( implode( ' ', $body_classes ) ); ?>">
 <div id="elementor-editor-wrapper">
 	<div id="elementor-panel" class="elementor-panel"></div>
 	<div id="elementor-preview">
@@ -58,8 +58,8 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 			<?php if ( $notice ) { ?>
 				<div id="elementor-notice-bar">
 					<i class="eicon-elementor-square"></i>
-					<div id="elementor-notice-bar__message"><?php echo sprintf( $notice['message'], $notice['action_url'] ); ?></div>
-					<div id="elementor-notice-bar__action"><a href="<?php echo $notice['action_url']; ?>" target="_blank"><?php echo $notice['action_title']; ?></a></div>
+					<div id="elementor-notice-bar__message"><?php Utils::print_unescaped_internal_string( sprintf( $notice['message'], $notice['action_url'] ) ); ?></div>
+					<div id="elementor-notice-bar__action"><a href="<?php Utils::print_unescaped_internal_string( $notice['action_url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $notice['action_title'] ); ?></a></div>
 					<i id="elementor-notice-bar__close" class="eicon-close"></i>
 				</div>
 			<?php } // IFrame will be created here by the Javascript later. ?>
