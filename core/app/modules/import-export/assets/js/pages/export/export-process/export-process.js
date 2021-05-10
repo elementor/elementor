@@ -8,25 +8,25 @@ import { Context } from '../../../context/import/import-context';
 
 import useUploadFile from 'elementor-app/hooks/use-upload-file';
 
-export default function ImportProcess() {
+export default function ExportProcess() {
 	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
-		importContext = useContext( Context ),
+		exportContent = useContext( Context ),
 		navigate = useNavigate(),
 		onLoad = () => {
-			let fileURL = location.hash.match( 'file_url=(.+)' );
-
-			if ( fileURL ) {
-				fileURL = fileURL[ 1 ];
-			}
-
-			setUploadFile( fileURL || importContext.data.file );
+			// let fileURL = location.hash.match( 'file_url=(.+)' );
+			//
+			// if ( fileURL ) {
+			// 	fileURL = fileURL[ 1 ];
+			// }
+			//
+			// setUploadFile( fileURL || exportContent.data.file );
 		},
 		onSuccess = () => navigate( '/import/success' ),
 		onRetry = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
-			navigate( '/import' );
+			// exportContent.dispatch( { type: 'SET_FILE', payload: null } );
+			// navigate( '/complete' );
 		};
 
 	return (
