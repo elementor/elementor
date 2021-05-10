@@ -307,8 +307,9 @@ class Tools extends Settings_Page {
 							$intro_text = '<p>' . $intro_text . '</p>';
 							$newsletter_opt_in_text = sprintf( esc_html__( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
 
-							echo $intro_text;
-							echo $newsletter_opt_in_text;
+							// PHP Lint: Ignore statements added because these variables are escaped above.
+							echo $intro_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo $newsletter_opt_in_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						},
 						'fields' => [
 							'beta' => [
@@ -341,6 +342,6 @@ class Tools extends Settings_Page {
 	 * @return string Tools page title.
 	 */
 	protected function get_page_title() {
-		return esc_html__( 'Tools', 'elementor' );
+		return __( 'Tools', 'elementor' );
 	}
 }

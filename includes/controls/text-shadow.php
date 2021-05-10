@@ -104,7 +104,7 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 				$control_uid = $this->get_control_uid( $slider_name );
 				?>
 				<div class="elementor-shadow-slider elementor-control-type-slider">
-					<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-title"><?php echo $slider['label']; ?></label>
+					<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-title"><?php echo esc_html( $slider['label'] ); ?></label>
 					<div class="elementor-control-input-wrapper">
 						<div class="elementor-slider" data-input="<?php echo esc_attr( $slider_name ); ?>"></div>
 						<div class="elementor-slider-input elementor-control-unit-2">

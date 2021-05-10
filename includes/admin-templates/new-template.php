@@ -52,7 +52,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 	<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="elementor_library">
 		<input type="hidden" name="action" value="elementor_new_post">
-		<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); ?>">
+		<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 		<div id="elementor-new-template__form__title"><?php echo esc_html__( 'Choose Template Type', 'elementor' ); ?></div>
 		<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">
 			<label for="elementor-new-template__form__template-type" class="elementor-form-field__label"><?php echo esc_html__( 'Select the type of template you want to work on', 'elementor' ); ?></label>
@@ -61,7 +61,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 					<option value=""><?php echo esc_html__( 'Select', 'elementor' ); ?>...</option>
 					<?php
 					foreach ( $types as $value => $type_title ) {
-						printf( '<option value="%1$s" %2$s>%3$s</option>', $value, selected( $selected, $value, false ), $type_title );
+						printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $selected, $value, false ), esc_html( $type_title ) );
 					}
 					?>
 				</select>

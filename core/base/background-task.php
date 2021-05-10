@@ -26,7 +26,7 @@ abstract class Background_Task extends WP_Background_Process {
 		$dispatched = parent::dispatch();
 
 		if ( is_wp_error( $dispatched ) ) {
-			wp_die( $dispatched );
+			wp_die( esc_html( $dispatched ) );
 		}
 	}
 
