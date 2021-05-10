@@ -40,20 +40,21 @@ class View extends Marionette.ItemView {
 			this.ui.iframe.attr( 'src', previewUrl )
 				.css( {
 					position: 'absolute',
-					top: '50px',
+					bottom: '50px',
 					right: '50px',
 					width: '1200px',
 					height: '1000px',
 					transform: 'scale(0.25)',
+					'transform-origin': 'bottom right',
 				} );
 			this.ui.iframe.trigger( 'load' );
 
-			console.error( this.ui.iframe );
-		}, 500 );
+			console.log( this.ui.iframe );
+		}, 2000 );
 	}
 
 	onIframeLoad() {
-		console.error( 'iframeloaded', this.ui.iframe );
+		console.log( 'iframeloaded', this.ui.iframe );
 	}
 }
 

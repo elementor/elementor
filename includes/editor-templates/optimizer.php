@@ -8,5 +8,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-optimizer">
-	<iframe id="optimizer-iframe"></iframe>
+	<iframe id="optimizer-iframe" name="elementor-analyzer"></iframe>
 </script>
