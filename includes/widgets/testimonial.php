@@ -478,7 +478,7 @@ class Widget_Testimonial extends Widget_Base {
 
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_name' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
 								<?php
 							else :
 								?>
