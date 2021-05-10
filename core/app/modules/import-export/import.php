@@ -33,6 +33,10 @@ class Import extends Iterator {
 				$new_template = $original_template;
 				// Elementor looks for "doc_type" instead of "type"
 				$new_template['doc_type'] = $original_template['type'];
+				// Envato template kits store their global kit styles as a separate JSON file, these need to be imported as a "kit" document type
+				if ( ! empty( $original_template['metadata']['template_type'] ) && $original_template['metadata']['template_type'] === 'global-styles' ) {
+					$new_template['doc_type'] = 'kit';
+				}
 				// Elementor looks for "title" instead of "name"
 				$new_template['title'] = $original_template['name'];
 				// Elementor uses the template file name as the "ID" of its indexing, rather than specifying an exact path to the template.
