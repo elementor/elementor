@@ -128,7 +128,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-template-library-templates-container"></div>
 	<# if ( 'remote' === activeSource ) { #>
 		<div id="elementor-template-library-footer-banner">
-			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
+			<img class="elementor-nerd-box-icon" src="<?php
+				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );
+			?>" />
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
@@ -286,6 +288,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
 
 	foreach ( $images as $image ) : ?>
-		<img id="elementor-template-library-connect__background-image-<?php echo $image; ?>" class="elementor-template-library-connect__background-image" src="<?php echo $base_images_url . $image; ?>.png" draggable="false"/>
+		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false"/>
 	<?php endforeach; ?>
 </script>
