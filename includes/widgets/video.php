@@ -935,7 +935,7 @@ class Widget_Video extends Widget_Base {
 				?>
 				<div <?php $this->print_render_attribute_string( 'image-overlay' ); ?>>
 					<?php if ( $settings['lightbox'] ) : ?>
-						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
+						<?php Group_Control_Image_Size::print_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">

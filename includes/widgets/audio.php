@@ -281,7 +281,7 @@ class Widget_Audio extends Widget_Base {
 
 		if ( $video_html ) : ?>
 			<div class="elementor-soundcloud-wrapper">
-				<?php echo $video_html; ?>
+				<?php echo wp_kses_post( $video_html ); ?>
 			</div>
 			<?php
 		endif;

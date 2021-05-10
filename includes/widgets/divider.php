@@ -1056,7 +1056,11 @@ class Widget_Divider extends Widget_Base {
 				$this->add_inline_editing_attributes( 'text' );
 				$this->add_render_attribute( 'text', [ 'class' => [ 'elementor-divider__text', 'elementor-divider__element' ] ] );
 				?>
-				<<?php Utils::print_validated_html_tag( $settings['html_tag'] ) . ' ' . $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></<?php Utils::print_validated_html_tag( $settings['html_tag'] ); ?>>
+				<<?php Utils::print_validated_html_tag( $settings['html_tag'] ) ?> <?php $this->print_render_attribute_string( 'text' ); ?>>
+				<?php
+				// PHPCS - the main text of a widget should not be escaped.
+				echo $settings['text']; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				</<?php Utils::print_validated_html_tag( $settings['html_tag'] ); ?>>
 			<?php endif; ?>
 			</span>
 		</div>

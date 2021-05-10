@@ -116,7 +116,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		printf( '<!--more %s-->', $this->get_settings_for_display( 'link_text' ) );
+		printf( '<!--more %s-->', wp_kses_post( $this->get_settings_for_display( 'link_text' ) ) );
 	}
 
 	/**
