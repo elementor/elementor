@@ -358,12 +358,12 @@ class Widget_Progress extends Widget_Base {
 		$this->add_inline_editing_attributes( 'inner_text' );
 
 		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
-			<span <?php echo $this->get_render_attribute_string( 'title' ); ?>><?php echo $settings['title']; ?></span>
+			<span <?php $this->print_render_attribute_string( 'title' ); ?>><?php echo $settings['title']; ?></span>
 		<?php } ?>
 
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<div <?php echo $this->get_render_attribute_string( 'progress-bar' ); ?>>
-				<span <?php echo $this->get_render_attribute_string( 'inner_text' ); ?>><?php echo $settings['inner_text']; ?></span>
+		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'progress-bar' ); ?>>
+				<span <?php $this->print_render_attribute_string( 'inner_text' ); ?>><?php echo $settings['inner_text']; ?></span>
 				<?php if ( 'hide' !== $settings['display_percentage'] ) { ?>
 					<span class="elementor-progress-percentage"><?php echo $progress_percentage; ?>%</span>
 				<?php } ?>

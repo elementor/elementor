@@ -1460,7 +1460,7 @@ class Element_Section extends Element_Base {
 						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 					}
 					?>
-					<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
+					<div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
 						<?php if ( $video_properties ) : ?>
 							<div class="elementor-background-video-embed"></div>
 							<?php

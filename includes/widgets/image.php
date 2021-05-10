@@ -690,15 +690,15 @@ class Widget_Image extends Widget_Base {
 			}
 		} ?>
 		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 		<?php } ?>
 			<?php if ( $has_caption ) : ?>
 				<figure class="wp-caption">
 			<?php endif; ?>
 			<?php if ( $link ) : ?>
-					<a <?php echo $this->get_render_attribute_string( 'link' ); ?>>
+					<a <?php $this->print_render_attribute_string( 'link' ); ?>>
 			<?php endif; ?>
-				<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings ); ?>
+				<?php Group_Control_Image_Size::print_attachment_image_html( $settings ); ?>
 			<?php if ( $link ) : ?>
 					</a>
 			<?php endif; ?>
