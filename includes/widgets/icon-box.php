@@ -669,9 +669,7 @@ class Widget_Icon_Box extends Widget_Base {
 					?><i <?php $this->print_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
-				</<?php
-					echo $icon_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>>
+				</<?php echo $icon_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			</div>
 			<?php endif; ?>
 			<div class="elementor-icon-box-content">
