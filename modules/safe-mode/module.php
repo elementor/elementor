@@ -269,8 +269,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function print_safe_mode_notice() {
-		// PHPCS - the method print_safe_mode_css holds a plain string.
-		echo $this->print_safe_mode_css(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		Utils::print_unescaped_internal_string( $this->print_safe_mode_css() );
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
 			<header>
@@ -378,10 +377,7 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 			<div class="elementor-toast-content">
 				<?php echo esc_html__( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
-				<a href="<?php
-					// PHPCS - the constant	DOCS_TRY_SAFE_MODE_URL holds a plain string.
-					echo self::DOCS_TRY_SAFE_MODE_URL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php else : ?>
 			<header>
@@ -390,10 +386,7 @@ class Module extends \Elementor\Core\Base\Module {
 			</header>
 			<div class="elementor-toast-content">
 				<?php echo esc_html__( 'If you are experiencing a loading issue, contact your site administrator to troubleshoot the problem using Safe Mode.', 'elementor' ); ?>
-				<a href="<?php
-					// PHPCS - the constant	DOCS_TRY_SAFE_MODE_URL holds a plain string.
-					echo self::DOCS_TRY_SAFE_MODE_URL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php endif; ?>
 		</div>
@@ -461,10 +454,7 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var init = function() {
-					setTimeout( handleTrySafeModeNotice, <?php
-						// PHPCS - The constant EDITOR_NOTICE_TIMEOUT holds a plain string.
-						echo self::EDITOR_NOTICE_TIMEOUT; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					?> );
+					setTimeout( handleTrySafeModeNotice, <?php Utils::print_unescaped_internal_string( self::EDITOR_NOTICE_TIMEOUT ); ?> );
 
 					attachEvents();
 				};
