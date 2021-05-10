@@ -65,7 +65,7 @@ class Not_Supported extends Library_Document {
 	 * @return string Document title.
 	 */
 	public static function get_title() {
-		return __( 'Not Supported', 'elementor' );
+		return esc_html__( 'Not Supported', 'elementor' );
 	}
 
 	public function save_template_type() {

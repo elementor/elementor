@@ -39,7 +39,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Shortcode', 'elementor' );
+		return esc_html__( 'Shortcode', 'elementor' );
 	}
 
 	/**
@@ -96,14 +96,14 @@ class Widget_Shortcode extends Widget_Base {
 		$this->start_controls_section(
 			'section_shortcode',
 			[
-				'label' => __( 'Shortcode', 'elementor' ),
+				'label' => esc_html__( 'Shortcode', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'shortcode',
 			[
-				'label' => __( 'Enter your shortcode', 'elementor' ),
+				'label' => esc_html__( 'Enter your shortcode', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'dynamic' => [
 					'active' => true,

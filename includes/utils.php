@@ -135,12 +135,12 @@ class Utils {
 		$to = trim( $to );
 
 		if ( $from === $to ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
 		}
 
 		global $wpdb;
@@ -163,7 +163,7 @@ class Utils {
 		}
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
 		}
 
 		// Allow externals to replace-urls, when they have to.

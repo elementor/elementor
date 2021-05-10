@@ -244,7 +244,7 @@ abstract class Widget_Base extends Element_Base {
 			$skin_options = [];
 
 			if ( $this->_has_template_content ) {
-				$skin_options[''] = __( 'Default', 'elementor' );
+				$skin_options[''] = esc_html__( 'Default', 'elementor' );
 			}
 
 			foreach ( $skins as $skin_id => $skin ) {
@@ -259,7 +259,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::HIDDEN,
 						'default' => $default_value,
 					]
@@ -268,7 +268,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::SELECT,
 						'default' => $default_value,
 						'options' => $skin_options,
@@ -885,7 +885,7 @@ abstract class Widget_Base extends Element_Base {
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
 		$this->start_controls_section( 'Deprecated',
 			[
-				'label' => __( 'Deprecated', 'elementor' ),
+				'label' => esc_html__( 'Deprecated', 'elementor' ),
 			]
 		);
 

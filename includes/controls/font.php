@@ -64,7 +64,7 @@ class Control_Font extends Base_Data_Control {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-control-unit-5">
 				<select id="<?php echo $control_uid; ?>" class="elementor-control-font-family" data-setting="{{ data.name }}">
-					<option value=""><?php echo __( 'Default', 'elementor' ); ?></option>
+					<option value=""><?php echo esc_html__( 'Default', 'elementor' ); ?></option>
 					<# _.each( data.groups, function( group_label, group_name ) {
 						var groupFonts = getFontsByGroups( group_name );
 						if ( ! _.isEmpty( groupFonts ) ) { #>
