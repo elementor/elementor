@@ -391,13 +391,13 @@ class Manager extends Base_Object {
 	private function render_feature_settings_field( array $feature ) {
 		?>
 		<div class="e-experiment__content">
-			<select id="e-experiment-<?php echo $feature['name']; ?>" class="e-experiment__select" name="<?php echo $this->get_feature_option_key( $feature['name'] ); ?>">
+			<select id="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" class="e-experiment__select" name="<?php echo $this->get_feature_option_key( $feature['name'] ); ?>">
 				<?php foreach ( $this->states as $state_key => $state_title ) { ?>
-					<option value="<?php echo $state_key; ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
+					<option value="<?php echo $state_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" <?php selected( $state_key, $feature['state'] ); ?>><?php echo $state_title; ?></option>
 				<?php } ?>
 			</select>
-			<p class="description"><?php echo $feature['description']; ?></p>
-			<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] ); ?></div>
+			<p class="description"><?php echo $feature['description']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+			<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 		</div>
 		<?php
 	}
@@ -430,8 +430,8 @@ class Manager extends Base_Object {
 		}
 		?>
 		<div class="e-experiment__title">
-			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; ?>"></div>
-			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; ?>"><?php echo $feature['title']; ?></label>
+			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
+			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
 		</div>
 		<?php
 

@@ -353,9 +353,9 @@ class Maintenance_Mode {
 		}
 
 		?>
-		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo $edit_url; ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
+		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
 		<div class="elementor-maintenance-mode-error"><?php echo esc_html__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
-		<div class="elementor-maintenance-mode-error"><?php echo sprintf( esc_html__( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ); ?></div>
+		<div class="elementor-maintenance-mode-error"><?php echo sprintf( esc_html__( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) ); ?></div>
 		<?php
 	}
 }
