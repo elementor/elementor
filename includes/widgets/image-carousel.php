@@ -767,8 +767,8 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'carousel-wrapper' ); ?>>
-			<div <?php echo $this->get_render_attribute_string( 'carousel' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
 				<?php echo implode( '', $slides ); ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
