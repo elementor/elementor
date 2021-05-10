@@ -698,7 +698,7 @@ class Widget_Image extends Widget_Base {
 			<?php if ( $link ) : ?>
 					<a <?php $this->print_render_attribute_string( 'link' ); ?>>
 			<?php endif; ?>
-				<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings ); ?>
+				<?php Group_Control_Image_Size::print_attachment_image_html( $settings ); ?>
 			<?php if ( $link ) : ?>
 					</a>
 			<?php endif; ?>
