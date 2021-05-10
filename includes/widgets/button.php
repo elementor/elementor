@@ -479,8 +479,8 @@ class Widget_Button extends Widget_Base {
 		}
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<a <?php echo $this->get_render_attribute_string( 'button' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
+			<a <?php $this->print_render_attribute_string( 'button' ); ?>>
 				<?php $this->render_text(); ?>
 			</a>
 		</div>
@@ -560,9 +560,9 @@ class Widget_Button extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
-		<span <?php echo $this->get_render_attribute_string( 'content-wrapper' ); ?>>
+		<span <?php $this->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-			<span <?php echo $this->get_render_attribute_string( 'icon-align' ); ?>>
+			<span <?php $this->print_render_attribute_string( 'icon-align' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -570,7 +570,7 @@ class Widget_Button extends Widget_Base {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php echo $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
+			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
 		</span>
 		<?php
 	}

@@ -1043,7 +1043,7 @@ class Widget_Divider extends Widget_Base {
 		}
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 			<span class="elementor-divider-separator">
 			<?php if ( $has_icon ) : ?>
 				<div class="elementor-icon elementor-divider__element">
@@ -1056,7 +1056,7 @@ class Widget_Divider extends Widget_Base {
 				$this->add_inline_editing_attributes( 'text' );
 				$this->add_render_attribute( 'text', [ 'class' => [ 'elementor-divider__text', 'elementor-divider__element' ] ] );
 				?>
-				<<?php echo Utils::validate_html_tag( $settings['html_tag'] ) . ' ' . $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></<?php echo Utils::validate_html_tag( $settings['html_tag'] ); ?>>
+				<<?php Utils::print_validated_html_tag( $settings['html_tag'] ) . ' ' . $this->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></<?php Utils::print_validated_html_tag( $settings['html_tag'] ); ?>>
 			<?php endif; ?>
 			</span>
 		</div>
