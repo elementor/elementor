@@ -696,7 +696,7 @@ abstract class Widget_Base extends Element_Base {
 			$output = $this->get_settings_for_display( $setting );
 		}
 
-		echo $output;
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
