@@ -264,6 +264,8 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
+	 * @param null $key
+	 *
 	 * @return $this
 	 */
 	public function unique( $key = null ) {
@@ -291,7 +293,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 			}
 
 			return false;
-		});
+		} );
 	}
 
 	/**
