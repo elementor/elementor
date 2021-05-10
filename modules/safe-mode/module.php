@@ -6,6 +6,7 @@ use Elementor\Settings;
 use Elementor\Tools;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -364,8 +365,7 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		// PHPCS - the method print_safe_mode_css holds a plain string.
-		echo $this->print_safe_mode_css(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		Utils::print_unescaped_internal_string( $this->print_safe_mode_css() );
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
 		<?php if ( current_user_can( 'install_plugins' ) ) : ?>

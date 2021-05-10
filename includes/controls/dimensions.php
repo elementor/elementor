@@ -126,7 +126,8 @@ class Control_Dimensions extends Control_Base_Units {
 								<# } #>
 									/>
 							<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-dimension-label"><?php
-								echo $dimension_title;
+								// PHPCS - the variable $dimension_title holds an escaped translated value.
+								echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?></label>
 						</li>
 					<?php endforeach; ?>

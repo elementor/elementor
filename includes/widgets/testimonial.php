@@ -449,10 +449,7 @@ class Widget_Testimonial extends Widget_Base {
 				$this->add_render_attribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 				$this->add_inline_editing_attributes( 'testimonial_content' );
 				?>
-				<div <?php $this->print_render_attribute_string( 'testimonial_content' ); ?>><?php
-					// PHPCS - the main text of a widget should not be escaped.
-					echo $settings['testimonial_content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?></div>
+				<div <?php $this->print_render_attribute_string( 'testimonial_content' ); ?>><?php $this->print_unescaped_setting( 'testimonial_content' ); ?></div>
 			<?php endif; ?>
 
 			<?php if ( $has_image || $has_name || $has_job ) : ?>

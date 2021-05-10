@@ -368,9 +368,7 @@ abstract class Base_App {
 
 		if ( is_wp_error( $response ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
-			wp_die( $response, [
-				'back_link' => true,
-			] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$body = wp_remote_retrieve_body( $response );

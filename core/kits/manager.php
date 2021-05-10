@@ -284,9 +284,7 @@ class Manager {
 		$confirmation_content = ob_get_clean();
 
 		// PHPCS - the content does not contain user input value.
-		wp_die(
-			new \WP_Error( 'cant_delete_kit', $confirmation_content ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		);
+		wp_die( new \WP_Error( 'cant_delete_kit', $confirmation_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

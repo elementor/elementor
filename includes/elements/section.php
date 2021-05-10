@@ -1448,8 +1448,10 @@ class Element_Section extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 		?>
-		<?php // PHPCS - the method get_html_tag is safe. ?>
-		<<?php echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php
+			// PHPCS - the method get_html_tag is safe.
+			echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
@@ -1471,8 +1473,10 @@ class Element_Section extends Element_Base {
 								$video_tag_attributes .= ' loop';
 							endif;
 							?>
-							<?php // PHPCS - the variable $video_tag_attributes is a plain string. ?>
-							<video class="elementor-background-video-hosted elementor-html5-video" <?php echo $video_tag_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>></video>
+							<video class="elementor-background-video-hosted elementor-html5-video" <?php
+								// PHPCS - the variable $video_tag_attributes is a plain string.
+								echo $video_tag_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>></video>
 						<?php endif; ?>
 					</div>
 					<?php
@@ -1516,8 +1520,10 @@ class Element_Section extends Element_Base {
 				</div>
 		<?php } ?>
 			</div>
-		<?php // PHPCS - the method get_html_tag is safe. ?>
-		</<?php echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		</<?php
+			// PHPCS - the method get_html_tag is safe.
+			echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>>
 		<?php
 	}
 
@@ -1598,10 +1604,14 @@ class Element_Section extends Element_Base {
 			return;
 		}
 		?>
-		<?php // PHPCS - the variable $negative is getting a setting value with a strict structure. ?>
-		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php echo var_export( $negative ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
-			<?php // PHPCS - The file content is being read from a strict file path structure. ?>
-			<?php echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
+			// PHPCS - the variable $negative is getting a setting value with a strict structure.
+			echo var_export( $negative ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>">
+			<?php
+				// PHPCS - The file content is being read from a strict file path structure.
+				echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			?>
 		</div>
 		<?php
 	}
