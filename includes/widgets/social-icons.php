@@ -611,7 +611,7 @@ class Widget_Social_Icons extends Widget_Base {
 
 				?>
 				<span class="elementor-grid-item">
-					<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
+					<a <?php $this->print_render_attribute_string( $link_key ); ?>>
 						<span class="elementor-screen-only"><?php echo ucwords( $social ); ?></span>
 						<?php
 						if ( $is_new || $migrated ) {

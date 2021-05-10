@@ -662,18 +662,18 @@ class Widget_Icon_Box extends Widget_Base {
 				if ( $is_new || $migrated ) {
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				} elseif ( ! empty( $settings['icon'] ) ) {
-					?><i <?php echo $this->get_render_attribute_string( 'i' ); ?>></i><?php
+					?><i <?php $this->print_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
 				</<?php echo $icon_tag; ?>>
 			</div>
 			<?php endif; ?>
 			<div class="elementor-icon-box-content">
-				<<?php echo Utils::validate_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
-					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?><?php echo $this->get_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
-				</<?php echo Utils::validate_html_tag( $settings['title_size'] ); ?>>
+				<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
+					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?><?php $this->print_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+				</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
-				<p <?php echo $this->get_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
+				<p <?php $this->print_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
 				<?php endif; ?>
 			</div>
 		</div>
