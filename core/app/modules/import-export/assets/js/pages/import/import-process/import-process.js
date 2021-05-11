@@ -6,10 +6,10 @@ import FileProcess from '../../../shared/file-process/file-process';
 
 import { Context } from '../../../context/import/import-context';
 
-import useUploadFile from 'elementor-app/hooks/use-upload-file';
+import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ImportProcess() {
-	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
+	const { ajaxState, setAjax } = useAjax( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
 		importContext = useContext( Context ),
@@ -21,7 +21,15 @@ export default function ImportProcess() {
 				fileURL = fileURL[ 1 ];
 			}
 
-			setUploadFile( fileURL || importContext.data.file );
+			setAjax( {
+				data: {
+					e_import_file: fileURL || importContext.data.file,
+					action: 'elementor_import_kit',
+					data: JSON.stringify( {
+						include: [ 'templates', 'content', 'site-settings' ],
+					} ),
+				},
+			} );
 		},
 		onSuccess = () => navigate( '/import/success' ),
 		onRetry = () => {
@@ -32,7 +40,7 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<FileProcess
-				status={ uploadFileStatus.status }
+				status={ ajaxState.status }
 				onLoad={ onLoad }
 				onSuccess={ onSuccess }
 				onRetry={ onRetry }
