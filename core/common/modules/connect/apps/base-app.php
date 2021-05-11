@@ -357,7 +357,7 @@ abstract class Base_App {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, [
+			wp_die( $response, [ // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'back_link' => true,
 			] );
 		}
