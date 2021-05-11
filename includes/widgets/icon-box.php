@@ -658,10 +658,7 @@ class Widget_Icon_Box extends Widget_Base {
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
 			<div class="elementor-icon-box-icon">
-				<<?php
-					// PHPCS - Already escaped with 'get_render_attribute_string'
-					echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				?>>
+				<<?php Utils::print_validated_html_tag( $icon_tag ); ?> <?php $this->print_render_attribute_string( 'icon' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>>
 				<?php
 				if ( $is_new || $migrated ) {
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
@@ -669,16 +666,14 @@ class Widget_Icon_Box extends Widget_Base {
 					?><i <?php $this->print_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
-				</<?php echo $icon_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 			</div>
 			<?php endif; ?>
 			<div class="elementor-icon-box-content">
 				<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
-					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php $this->print_render_attribute_string( 'title_text' ); ?>
-					>
+					<<?php Utils::print_validated_html_tag( $icon_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
 						<?php $this->print_unescaped_setting( 'title_text' ); ?>
-					</<?php echo $icon_tag; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+					</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 				</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
 					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
