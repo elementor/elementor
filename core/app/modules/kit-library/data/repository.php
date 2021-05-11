@@ -268,8 +268,7 @@ class Repository {
 	 * @param Kit_Library    $kit_library
 	 * @param User_Favorites $user_favorites
 	 */
-	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites ) {
+	public function __construct( Kit_Library $kit_library ) {
 		$this->api = $kit_library;
-		$this->user_favorites = $user_favorites;
 	}
 }
