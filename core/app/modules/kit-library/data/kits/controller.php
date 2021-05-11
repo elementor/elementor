@@ -1,9 +1,6 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits;
 
-use Elementor\Plugin;
-use Elementor\Modules\Library\User_Favorites;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
