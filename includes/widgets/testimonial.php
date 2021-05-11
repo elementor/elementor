@@ -443,17 +443,17 @@ class Widget_Testimonial extends Widget_Base {
 			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 			<?php
 			if ( $has_content ) :
 				$this->add_render_attribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 				$this->add_inline_editing_attributes( 'testimonial_content' );
 				?>
-				<div <?php echo $this->get_render_attribute_string( 'testimonial_content' ); ?>><?php echo $settings['testimonial_content']; ?></div>
+				<div <?php $this->print_render_attribute_string( 'testimonial_content' ); ?>><?php echo $settings['testimonial_content']; ?></div>
 			<?php endif; ?>
 
 			<?php if ( $has_image || $has_name || $has_job ) : ?>
-			<div <?php echo $this->get_render_attribute_string( 'meta' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'meta' ); ?>>
 				<div class="elementor-testimonial-meta-inner">
 					<?php if ( $has_image ) : ?>
 						<div class="elementor-testimonial-image">
@@ -478,11 +478,11 @@ class Widget_Testimonial extends Widget_Base {
 
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php echo $this->get_render_attribute_string( 'testimonial_name' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
 								<?php
 							else :
 								?>
-								<div <?php echo $this->get_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
 								<?php
 							endif;
 						endif; ?>
@@ -496,11 +496,11 @@ class Widget_Testimonial extends Widget_Base {
 
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php echo $this->get_render_attribute_string( 'testimonial_job' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_job_html; ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_job' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_job_html; ?></a>
 								<?php
 							else :
 								?>
-								<div <?php echo $this->get_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
 								<?php
 							endif;
 						endif; ?>

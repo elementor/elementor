@@ -879,7 +879,7 @@ class Widget_Video extends Widget_Base {
 
 		$this->add_render_attribute( 'video-wrapper', 'class', 'elementor-open-' . ( $settings['lightbox'] ? 'lightbox' : 'inline' ) );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'video-wrapper' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
 				echo $video_html; // XSS ok.
@@ -933,9 +933,9 @@ class Widget_Video extends Widget_Base {
 					$this->add_render_attribute( 'image-overlay', 'style', 'background-image: url(' . $image_url . ');' );
 				}
 				?>
-				<div <?php echo $this->get_render_attribute_string( 'image-overlay' ); ?>>
+				<div <?php $this->print_render_attribute_string( 'image-overlay' ); ?>>
 					<?php if ( $settings['lightbox'] ) : ?>
-						<?php echo Group_Control_Image_Size::get_attachment_image_html( $settings, 'image_overlay' ); ?>
+						<?php Group_Control_Image_Size::print_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">

@@ -419,7 +419,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
 		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-			<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
 			<?php echo $editor_content; ?>
 		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
