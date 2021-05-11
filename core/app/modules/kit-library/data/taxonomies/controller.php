@@ -1,22 +1,14 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies;
 
-use Elementor\Plugin;
-use Elementor\Modules\Library\User_Favorites;
-use Elementor\Data\Base\Controller as Controller_Base;
-use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
+use Elementor\Core\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Controller extends Controller_Base {
-	/**
-	 * @var Repository
-	 */
-	private $repository;
-
+class Controller extends Base_Controller {
 	public function get_name() {
 		return 'kit-taxonomies';
 	}
@@ -40,7 +32,7 @@ class Controller extends Controller_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$data = $this->repository->get_taxonomies( $request->get_param( 'force' ) );
+			$data = $this->get_repository()->get_taxonomies( $request->get_param( 'force' ) );
 		} catch ( Wp_Error_Exception $exception ) {
 			return new \WP_Error( $exception->getCode(), $exception->getMessage(), [ 'status' => $exception->getCode() ] );
 		} catch ( \Exception $exception ) {
@@ -50,19 +42,5 @@ class Controller extends Controller_Base {
 		return [
 			'data' => $data->all(),
 		];
-	}
-
-	/**
-	 * Taxonomies_Controller constructor.
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'rest_api_init', function () {
-			$this->repository = new Repository(
-				Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' )
-//				new User_Favorites( get_current_user_id() )
-			);
-		} );
 	}
 }
