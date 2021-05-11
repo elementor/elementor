@@ -41,7 +41,7 @@ export default function Item( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
-			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
+			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType } /> }
 		>
 			{
 				documentsByType.length > 0 &&

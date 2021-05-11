@@ -264,12 +264,36 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
+	 * @param null $key
+	 *
 	 * @return $this
 	 */
-	public function unique() {
-		return new static(
-			array_unique( $this->items )
-		);
+	public function unique( $key = null ) {
+		if ( ! $key ) {
+			return new static(
+				array_unique( $this->items )
+			);
+		}
+
+		$exists = [];
+
+		return $this->filter( function ( $item ) use ( $key, &$exists ) {
+			$value = null;
+
+			if ( is_object( $item ) && isset( $item->{$key} ) ) {
+				$value = $item->{$key};
+			} elseif ( is_array( $item ) && isset( $item[ $key ] ) ) {
+				$value = $item[ $key ];
+			}
+
+			if ( null !== $value && ! in_array( $value, $exists, true ) ) {
+				$exists[] = $value;
+
+				return true;
+			}
+
+			return false;
+		} );
 	}
 
 	/**

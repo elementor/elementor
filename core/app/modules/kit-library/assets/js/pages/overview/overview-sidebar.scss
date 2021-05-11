@@ -4,7 +4,14 @@
 	}
 
 	&__item-sidebar-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__item-sidebar-header-title {
 		color: tints(600);
+		margin-bottom: 0;
 	}
 
 	&__item-sidebar-thumbnail {

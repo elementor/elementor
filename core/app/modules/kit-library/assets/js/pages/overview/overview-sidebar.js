@@ -1,4 +1,5 @@
 import ContentType from '../../models/content-type';
+import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
 import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
@@ -11,12 +12,18 @@ export default function OverviewSidebar( props ) {
 
 	return (
 		<div className="e-kit-library__item-sidebar">
-			<Heading
-				tag="h1"
-				variant="h5"
-				className="e-kit-library__item-sidebar-header">
-				{ props.model.title }
-			</Heading>
+			<div className="e-kit-library__item-sidebar-header">
+				<Heading
+					tag="h1"
+					variant="h5"
+					className="e-kit-library__item-sidebar-header-title">
+					{ props.model.title }
+				</Heading>
+				<FavoritesActions
+					isFavorite={ props.model.isFavorite }
+					id={ props.model.id }
+				/>
+			</div>
 			<CardImage
 				className="e-kit-library__item-sidebar-thumbnail"
 				alt={ props.model.title }

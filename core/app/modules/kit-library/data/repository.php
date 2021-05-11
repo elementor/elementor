@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Core\App\Modules\KitLibrary\Data;
 
-use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Library\User_Favorites;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 
@@ -25,6 +25,11 @@ class Repository {
 	protected $api;
 
 	/**
+	 * @var User_Favorites
+	 */
+	protected $user_favorites;
+
+	/**
 	 * Get all kits.
 	 *
 	 * @param false $force_api_request
@@ -42,12 +47,17 @@ class Repository {
 	/**
 	 * Get specific kit.
 	 *
-	 * @param $id
+	 * @param       $id
+	 * @param array $options
 	 *
 	 * @return array|null
 	 * @throws Wp_Error_Exception
 	 */
-	public function find( $id ) {
+	public function find( $id, $options = [] ) {
+		$options = wp_parse_args( $options, [
+			'manifest_included' => true,
+		] );
+
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
 				return $kit->_id === $id;
@@ -57,10 +67,14 @@ class Repository {
 			return null;
 		}
 
-		$manifest = $this->api->get_manifest( $id );
+		$manifest = null;
 
-		if ( is_wp_error( $manifest ) ) {
-			throw new Wp_Error_Exception( $manifest );
+		if ( $options['manifest_included'] ) {
+			$manifest = $this->api->get_manifest( $id );
+
+			if ( is_wp_error( $manifest ) ) {
+				throw new Wp_Error_Exception( $manifest );
+			}
 		}
 
 		return $this->transform_kit_api_response( $item, $manifest );
@@ -75,17 +89,15 @@ class Repository {
 	public function get_taxonomies( $force_api_request = false ) {
 		return $this->get_taxonomies_data( $force_api_request )
 			->only( static::TAXONOMIES_KEYS )
-			->map( function ( $values ) {
-				return array_unique( $values );
-			} )
 			->reduce( function ( Collection $carry, $taxonomies, $type ) {
-				return $carry->merge( array_map( function ( $text ) use ( $type ) {
+				return $carry->merge( array_map( function ( $taxonomy ) use ( $type ) {
 					return [
-						'text' => $text,
+						'text' => $taxonomy->name,
 						'type' => $type,
 					];
 				}, $taxonomies ) );
-			}, new Collection( [] ) );
+			}, new Collection( [] ) )
+			->unique( 'text' );
 	}
 
 	/**
@@ -102,6 +114,52 @@ class Repository {
 		}
 
 		return [ 'download_link' => $response->download_link ];
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return array
+	 * @throws Wp_Error_Exception
+	 * @throws \Exception
+	 */
+	public function add_to_favorites( $id ) {
+		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+
+		if ( ! $kit ) {
+			throw new Wp_Error_Exception(
+				new \WP_Error( 404, __( 'Kit not found', 'elementor' ) )
+			);
+		}
+
+		$this->user_favorites->add( 'elementor', 'kits', $kit['id'] );
+
+		$kit['is_favorite'] = true;
+
+		return $kit;
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return array
+	 * @throws Wp_Error_Exception
+	 * @throws \Exception
+	 */
+	public function remove_from_favorites( $id ) {
+		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+
+		if ( ! $kit ) {
+			throw new Wp_Error_Exception(
+				new \WP_Error( 404, __( 'Kit not found', 'elementor' ) )
+			);
+		}
+
+		$this->user_favorites->remove( 'elementor', 'kits', $kit['id'] );
+
+		$kit['is_favorite'] = false;
+
+		return $kit;
 	}
 
 	/**
@@ -150,13 +208,15 @@ class Repository {
 
 	/**
 	 * @param      $kit
-	 * @param null|array $manifest
+	 * @param null $manifest
 	 *
 	 * @return array
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, $kit->{$key} );
+			return array_merge( $current, array_map( function ( $taxonomy ) {
+				return $taxonomy->name;
+			}, $kit->{$key} ) );
 		}, [] );
 
 		return array_merge(
@@ -167,6 +227,7 @@ class Repository {
 				'access_level' => $kit->access_level,
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
+				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
 				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
 				'popularity_index' => isset( $kit->popularity_index ) ? $kit->popularity_index : 0,
 				'created_at' => isset( $kit->created_at ) ? $kit->created_at : null,
@@ -207,8 +268,12 @@ class Repository {
 
 	/**
 	 * Repository constructor.
+	 *
+	 * @param Kit_Library    $kit_library
+	 * @param User_Favorites $user_favorites
 	 */
-	public function __construct() {
-		$this->api = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
+	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites ) {
+		$this->api = $kit_library;
+		$this->user_favorites = $user_favorites;
 	}
 }

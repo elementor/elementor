@@ -247,6 +247,48 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a', 'b', 'c' ], $result->all() );
 	}
 
+	public function test_unique__with_key_array() {
+		// Arrange
+		$collection = new Collection( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'b', 'id' => 3 ],
+			[ 'id' => 4 ],
+			[ 'text' => 'c', 'id' => 5 ],
+		] );
+
+		// Act
+		$result = $collection->unique( 'text' );
+
+		// Assert
+		$this->assertEqualSets( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'c', 'id' => 5 ],
+		], $result->all() );
+	}
+
+	public function test_unique__with_key_object() {
+		// Arrange
+		$collection = new Collection( [
+			(object) [ 'text' => 'a', 'id' => 1 ],
+			(object) [ 'text' => 'b', 'id' => 2 ],
+			(object) [ 'text' => 'b', 'id' => 3 ],
+			(object) [ 'id' => 4 ],
+			(object) [ 'text' => 'c', 'id' => 5 ],
+		] );
+
+		// Act
+		$result = $collection->unique( 'text' );
+
+		// Assert
+		$this->assertEqualSets( [
+			(object) [ 'text' => 'a', 'id' => 1 ],
+			(object) [ 'text' => 'b', 'id' => 2 ],
+			(object) [ 'text' => 'c', 'id' => 5 ],
+		], $result->all() );
+	}
+
 	public function test_first() {
 		// Arrange
 		$collection = new Collection( [ 20 => 'c', 21 => 'a', 30 => 'b' ] );
