@@ -1,38 +1,44 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/export/export-context';
 
-import useUploadFile from 'elementor-app/hooks/use-upload-file';
+import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ExportProcess() {
-	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
+	const { ajaxState, setAjax } = useAjax( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
-		exportContent = useContext( Context ),
+		exportContext = useContext( Context ),
 		navigate = useNavigate(),
 		onLoad = () => {
-			// let fileURL = location.hash.match( 'file_url=(.+)' );
-			//
-			// if ( fileURL ) {
-			// 	fileURL = fileURL[ 1 ];
-			// }
-			//
-			// setUploadFile( fileURL || exportContent.data.file );
+			if ( exportContext.data.downloadUrl ) {
+				setAjax( {
+					url: exportContext.data.downloadUrl,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				} );
+			}
 		},
-		onSuccess = () => navigate( '/import/success' ),
+		onSuccess = () => exportContext.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response.data } ),
 		onRetry = () => {
-			// exportContent.dispatch( { type: 'SET_FILE', payload: null } );
-			// navigate( '/complete' );
+			console.log( 'retry...' );
 		};
+
+	useEffect( () => {
+		if ( exportContext.data.fileResponse ) {
+			navigate( 'export/complete' );
+		}
+	}, [ exportContext.data.fileResponse ] );
 
 	return (
 		<Layout type="import">
 			<FileProcess
-				status={ uploadFileStatus.status }
+				status={ ajaxState.status }
 				onLoad={ onLoad }
 				onSuccess={ onSuccess }
 				onRetry={ onRetry }

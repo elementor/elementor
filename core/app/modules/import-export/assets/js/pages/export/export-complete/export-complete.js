@@ -15,33 +15,25 @@ export default function ExportComplete() {
 				<DashboardButton />
 			</WizardFooter>
 		),
-		download = () => {
-			fetch( exportContext.data.downloadURL, {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			} )
-				.then( ( response ) => response.json() )
-				.then( ( response ) => {
-					const link = document.createElement( 'a' );
+		downloadFile = () => {
+			const link = document.createElement( 'a' );
 
-					link.href = 'data:text/plain;base64,' + response.data.file;
-					link.download = 'elementor-kit.zip';
+			link.href = 'data:text/plain;base64,' + exportContext.data.fileResponse.file;
+			link.download = 'elementor-kit.zip';
 
-					link.click();
-			} );
+			link.click();
 		},
 		getDownloadLink = () => (
-			<InlineLink url={ exportContext.data.downloadURL } target="_parent" italic>
+			<InlineLink url={ exportContext.data.downloadUrl } target="_parent" italic>
 				{ __( 'Click Here', 'elementor' ) }
 			</InlineLink>
 		);
 
 	useEffect( () => {
-		if ( exportContext.data.downloadURL ) {
-			download();
+		if ( exportContext.data.downloadUrl ) {
+			downloadFile();
 		}
-	}, [ exportContext.data.downloadURL ] );
+	}, [ exportContext.data.downloadUrl ] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>

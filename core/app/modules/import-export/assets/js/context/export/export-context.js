@@ -7,7 +7,8 @@ export const Context = React.createContext();
 export default function ExportContext( props ) {
 	const initialState = {
 		includes: [],
-		downloadURL: '',
+		downloadUrl: '',
+		fileResponse: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 
