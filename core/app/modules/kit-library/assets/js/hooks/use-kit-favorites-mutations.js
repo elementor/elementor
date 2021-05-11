@@ -20,11 +20,16 @@ export function useKitFavoritesMutations() {
 						return kits;
 					}
 
-					const currentKit = kits.find( ( item ) => item.id === id );
+					return kits.map( ( item ) => {
+						if ( item.id === id ) {
+							item.isFavorite = isFavorite;
 
-					currentKit.isFavorite = isFavorite;
+							// Should return a new kit to trigger rerender.
+							return item.clone();
+						}
 
-					return kits;
+						return item;
+					} );
 				}
 			);
 		}
@@ -36,7 +41,8 @@ export function useKitFavoritesMutations() {
 				( currentKit ) => {
 					currentKit.isFavorite = isFavorite;
 
-					return currentKit;
+					// Should return a new kit to trigger rerender.
+					return currentKit.clone();
 				}
 			);
 		}
