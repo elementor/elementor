@@ -1,4 +1,5 @@
 import Kit from '../models/kit';
+import FavoritesActions from '../components/favorites-actions';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Badge } from '@elementor/app-ui';
 
@@ -18,6 +19,7 @@ export default function KitListItem( props ) {
 				>
 					{ props.model.title }
 				</Heading>
+				<FavoritesActions id={ props.model.id } isFavorite={ props.model.isFavorite }/>
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>

@@ -1,12 +1,17 @@
 import Kit from '../models/kit';
 import { taxonomyType } from '../models/taxonomy';
 import { useQuery } from 'react-query';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 
 export const KEY = 'kits';
 
-const { useState, useMemo, useCallback, useEffect } = React;
-
-const initiateFilterState = {
+/**
+ * The default query params
+ *
+ * @type {object}
+ */
+export const defaultQueryParams = {
+	favorite: false,
 	search: '',
 	taxonomies: taxonomyType.reduce( ( current, { key } ) => {
 		return {
@@ -16,16 +21,111 @@ const initiateFilterState = {
 	}, {} ),
 };
 
-export default function useKits() {
+const kitsPipeFunctions = {
+	/**
+	 * Filter by favorite
+	 *
+	 * @param data
+	 * @param queryParams
+	 * @returns {array}
+	 */
+	favoriteFilter: ( data, queryParams ) => {
+		if ( ! queryParams.favorite ) {
+			return data;
+		}
+
+		return data.filter( ( item ) => item.isFavorite );
+	},
+
+	/**
+	 * filter by search term.
+	 *
+	 * @param data
+	 * @param queryParams
+	 * @returns {array}
+	 */
+	searchFilter: ( data, queryParams ) => {
+		if ( ! queryParams.search ) {
+			return data;
+		}
+
+		return data.filter( ( item ) => {
+			const keywords = [ ...item.keywords, item.title ];
+			const searchTerm = queryParams.search.toLowerCase();
+
+			return keywords.some( ( keyword ) => keyword.toLowerCase().includes( searchTerm ) );
+		} );
+	},
+
+	/**
+	 * Filter by taxonomies.
+	 * In each taxonomy type it use the OR operator and between types it uses the AND operator.
+	 *
+	 * @param data
+	 * @param queryParams
+	 * @returns {array}
+	 */
+	taxonomiesFilter: ( data, queryParams ) => {
+		return Object.values( queryParams.taxonomies )
+			.filter( ( taxonomies ) => taxonomies.length )
+			.reduce( ( current, taxonomies ) => current.filter( ( item ) =>
+				taxonomies.some( ( taxonomy ) =>
+					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
+				) ),
+				data
+			);
+	},
+};
+
+/**
+ * A util function to transform data throw transform functions
+ *
+ * @param functions
+ * @returns {function(*=, ...[*]): *}
+ */
+function pipe( ...functions ) {
+	return ( value, ...args ) =>
+		functions.reduce(
+			( currentValue, currentFunction ) => currentFunction( currentValue, ...args ),
+			value
+		);
+}
+
+/**
+ * Fetch kits
+ *
+ * @param force
+ * @returns {*}
+ */
+function fetchKits( force ) {
+	return $e.data.get( 'kits/index', {
+		force: force ? 1 : undefined,
+	}, { refresh: true } )
+		.then( ( response ) => response.data )
+		.then( ( { data } ) => data.map( ( item ) => Kit.createFromResponse( item ) ) );
+}
+
+/**
+ * Main function.
+ *
+ * @param initialQueryParams
+ * @returns {object}
+ */
+export default function useKits( initialQueryParams = {} ) {
 	const [ force, setForce ] = useState( false );
-	const [ filter, setFilter ] = useState( initiateFilterState );
+	const [ queryParams, setQueryParams ] = useState( () => ( { ...defaultQueryParams, ...initialQueryParams } ) );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
-	const clearFilter = useCallback( () => setFilter( { ...initiateFilterState } ), [ setFilter ] );
-
+	const clearQueryParams = useCallback( () => setQueryParams( { ...defaultQueryParams, ...initialQueryParams } ), [ setQueryParams ] );
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 
-	const data = useFilteredData( query.data, filter );
+	const data = useMemo(
+		() => ! query.data ?
+			[] :
+			pipe( ...Object.values( kitsPipeFunctions ) )( [ ...query.data ], queryParams )
+		,
+		[ query.data, queryParams ]
+	);
 
 	useEffect( () => {
 		if ( ! force ) {
@@ -38,53 +138,9 @@ export default function useKits() {
 	return {
 		...query,
 		data,
-		filter,
-		setFilter,
-		clearFilter,
+		queryParams,
+		setQueryParams,
+		clearQueryParams,
 		forceRefetch,
 	};
-}
-
-function useFilteredData( data, filter ) {
-	return useMemo( () => {
-		if ( ! data ) {
-			return [];
-		}
-
-		let filteredData = [ ...data ];
-
-		if ( filter.search ) {
-			filteredData = filteredData.filter( ( item ) => searchFilter( item, filter.search ) );
-		}
-
-		taxonomyType.forEach( ( { key } ) => {
-			if ( filter.taxonomies[ key ]?.length > 0 ) {
-				filteredData = filteredData.filter( ( item ) => taxonomiesFilter( item, filter.taxonomies[ key ] ) );
-			}
-		} );
-
-		return filteredData;
-	}, [ data, filter ] );
-}
-
-function fetchKits( force ) {
-	return $e.data.get( 'kits/index', {
-		force: force ? 1 : undefined,
-	}, { refresh: true } )
-		.then( ( response ) => response.data )
-		.then( ( { data } ) => data.map( ( item ) => Kit.createFromResponse( item ) ) );
-}
-
-function searchFilter( item, searchTerm ) {
-	const keywords = [ ...item.keywords, item.title ];
-
-	searchTerm = searchTerm.toLowerCase();
-
-	return keywords.some( ( keyword ) => keyword.toLowerCase().includes( searchTerm ) );
-}
-
-function taxonomiesFilter( item, taxonomies ) {
-	return taxonomies.some( ( taxonomy ) =>
-		item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy )
-	);
 }
