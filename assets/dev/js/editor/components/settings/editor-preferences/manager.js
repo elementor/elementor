@@ -14,7 +14,10 @@ export default class extends BaseManager {
 			ui_theme: this.onUIThemeChanged,
 			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
+			show_hidden_elements: this.OnShowHiddenElementsChange,
 		};
+
+		elementor.on( 'globals:loaded', this.OnShowHiddenElementsChange );
 	}
 
 	createDarkModeStylesheetLink() {
@@ -62,5 +65,16 @@ export default class extends BaseManager {
 	onEditButtonsChanged() {
 		// Let the button change before the high-performance action of rendering the entire page
 		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
+	}
+
+	OnShowHiddenElementsChange( newValue ) {
+		const showHiddenElements = 'undefined' === typeof newValue ? elementor.config.settings.editorPreferences.settings.show_hidden_elements : newValue;
+
+		if ( 'yes' === showHiddenElements ) {
+			elementor.$previewContents.find( 'body' ).addClass( 'show-hidden-elements' );
+			return;
+		}
+
+		elementor.$previewContents.find( 'body' ).removeClass( 'show-hidden-elements' );
 	}
 }
