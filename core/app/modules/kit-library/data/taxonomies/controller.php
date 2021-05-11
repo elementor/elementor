@@ -58,11 +58,11 @@ class Controller extends Controller_Base {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'rest_api_init', function () {
-			$this->repository = new Repository(
-				Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' ),
-				new User_Favorites( get_current_user_id() )
-			);
-		} );
+//		add_action( 'rest_api_init', function () {
+//			$this->repository = new Repository(
+//				Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' ),
+//				new User_Favorites( get_current_user_id() )
+//			);
+//		} );
 	}
 }
