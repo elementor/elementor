@@ -7,7 +7,7 @@
 	outline: none;
 	color: tints(700);
 	line-height: type( line-height, 'flat' );
-	height: 42px;
+	height: spacing(44);
 
 	&--sm {
 		font-size: type(size, "13");

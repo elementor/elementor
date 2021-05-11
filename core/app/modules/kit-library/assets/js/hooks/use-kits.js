@@ -19,6 +19,10 @@ export const defaultQueryParams = {
 			[ key ]: [],
 		};
 	}, {} ),
+	order: {
+		direction: 'desc',
+		by: 'createdAt',
+	},
 };
 
 const kitsPipeFunctions = {
@@ -75,6 +79,25 @@ const kitsPipeFunctions = {
 				data
 			);
 	},
+
+	/**
+	 * Sort all the data by the "order" query param
+	 *
+	 * @param data
+	 * @param queryParams
+	 * @returns {array}
+	 */
+	sort: ( data, queryParams ) => {
+		const order = queryParams.order;
+
+		return data.sort( ( item1, item2 ) => {
+			if ( 'asc' === order.direction ) {
+				return item1[ order.by ] - item2[ order.by ];
+			}
+
+			return item2[ order.by ] - item1[ order.by ];
+		} );
+	},
 };
 
 /**
@@ -122,8 +145,7 @@ export default function useKits( initialQueryParams = {} ) {
 	const data = useMemo(
 		() => ! query.data ?
 			[] :
-			pipe( ...Object.values( kitsPipeFunctions ) )( [ ...query.data ], queryParams )
-		,
+			pipe( ...Object.values( kitsPipeFunctions ) )( [ ...query.data ], queryParams ),
 		[ query.data, queryParams ]
 	);
 
@@ -143,12 +165,4 @@ export default function useKits( initialQueryParams = {} ) {
 		clearQueryParams,
 		forceRefetch,
 	};
-}
-
-function sortData( item1, item2, sortValue ) {
-	if ( 'asc' === sortValue.direction ) {
-		return item1[ sortValue.by ] - item2[ sortValue.by ];
-	}
-
-	return item2[ sortValue.by ] - item1[ sortValue.by ];
 }

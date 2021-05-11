@@ -35,8 +35,10 @@ export default class Kit extends BaseModel {
 			trendIndex: kit.trend_index,
 			popularityIndex: kit.popularity_index,
 			featuredIndex: kit.featured_index,
+			// TODO: Remove when the API is stable (when date params always exists)
 			createdAt: kit.created_at ? new Date( kit.created_at ) : null,
 			updatedAt: kit.updated_at ? new Date( kit.updated_at ) : null,
+			//
 			keywords: kit.keywords,
 			taxonomies: kit.taxonomies,
 			documents: kit.documents ?

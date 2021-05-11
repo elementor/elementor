@@ -138,12 +138,12 @@ export default function Index( props ) {
 					>
 						<SortSelect
 							options={ [
-								{ label: 'New', value: 'createdAt' },
-								{ label: 'Popular', value: 'popularityIndex' },
-								{ label: 'Trending', value: 'trendIndex' },
+								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
+								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
+								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
 							] }
 							value={ queryParams.order }
-							onChange={ ( order ) => setQueryParams( ( prev ) => ({ ...prev, order }) ) }
+							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
 						/>
 					</Grid>
 				</Grid>

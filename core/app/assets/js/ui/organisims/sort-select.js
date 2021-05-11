@@ -13,7 +13,7 @@ export default function SortSelect( props ) {
 					onChange={ ( e ) => {
 						const value = e.target.value;
 
-						props.onChange( ( prev ) => ( { ...prev, by: value } ) );
+						props.onChange( { by: value, direction: props.value.direction } );
 					} }
 					className="eps-sort-select__select"
 				/>
@@ -24,10 +24,10 @@ export default function SortSelect( props ) {
 				icon={ 'asc' === props.value.direction ? 'eicon-arrow-up' : 'eicon-arrow-down' }
 				className="eps-sort-select__button"
 				onClick={ () => {
-					props.onChange( ( prev ) => ( {
-						...prev,
-						direction: 'asc' === prev.direction ? 'desc' : 'asc',
-					} ) );
+					props.onChange( {
+						by: props.value.by,
+						direction: 'asc' === props.value.direction ? 'desc' : 'asc',
+					} );
 				} }
 			/>
 		</div>
