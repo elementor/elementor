@@ -26,7 +26,7 @@ jobs:
       - name: PHP5.6 - Multisite
         run: WP_MULTISITE=1 php5.6 /tmp/phpunit-5
       - name: PHP7.0
-        run: php7.0 /tmp/phpunit-6 ---testdox
+        run: php7.0 /tmp/phpunit-6 --testdox
       - name: PHP7.0 - Multisite
         run: WP_MULTISITE=1 php7.0 /tmp/phpunit-6
       - name: PHP7.1
