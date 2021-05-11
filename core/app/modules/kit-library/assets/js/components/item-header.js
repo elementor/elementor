@@ -3,7 +3,7 @@ import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
-import { Dialog, Text } from '@elementor/app-ui';
+import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 import { useSettingsContext } from '../context/settings-context';
