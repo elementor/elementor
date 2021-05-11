@@ -575,6 +575,7 @@
 			"required": [
 				"posts",
 				"library",
+				"library-details",
 				"elements"
 			],
 			"properties": {
@@ -609,6 +610,25 @@
 					"patternProperties": {
 						"([^\\s]+)": {
 							"$id": "#/usages/library/$template_type",
+							"$comment": "TODO: Should be number",
+							"title": "Count of template-type usage",
+							"type": "string"
+						}
+					},
+					"additionalProperties": false
+				},
+				"library-details": {
+					"$id": "#/usages/library-details",
+					"$comment": "Array ( [] ) means the value is empty",
+					"type": [
+						"object",
+						"array"
+					],
+					"title": "The library details schema",
+					"description": "The usage of library templates by template-type and post-status, the value is the count.",
+					"patternProperties": {
+						"([^\\s]+)": {
+							"$id": "#/usages/library-details/$template_type",
 							"$ref": "#/definitions/count_per_post_status",
 							"title": "Libraries per template type"
 						}

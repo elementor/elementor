@@ -5,7 +5,7 @@ use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tracker;
 
 class Test_Tracker extends Elementor_Test_Base {
-	public function test_get_library_usage() {
+	public function test_get_library_usage_extend() {
 		// Arrange.
 		$post_types = [ 'section', 'page' ];
 		$post_statuses = [ 'draft', 'private', 'publish' ];
@@ -22,7 +22,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		}
 
 		// Act.
-		$library_usage = Tracker::get_library_usage();
+		$library_usage = Tracker::get_library_usage_extend();
 
 		// Assert.
 		foreach ( $post_types as $post_type ) {
