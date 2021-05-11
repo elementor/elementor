@@ -570,7 +570,7 @@ class Widget_Button extends Widget_Base {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
+			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
 		</span>
 		<?php
 	}

@@ -23,6 +23,7 @@ class Utils {
 	 * A list of safe tage for `validate_html_tag` method.
 	 */
 	const ALLOWED_HTML_WRAPPER_TAGS = [
+		'a',
 		'article',
 		'aside',
 		'div',
