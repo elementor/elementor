@@ -26,11 +26,13 @@ export default function ExportProcess() {
 		},
 		onSuccess = () => exportContext.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response } ),
 		onRetry = () => {
-			console.log( 'retry...' );
+			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
+			navigate( 'export' );
 		};
 
 	useEffect( () => {
 		if ( exportContext.data.fileResponse ) {
+			console.log( 'exportContext.data.fileResponse', exportContext.data.fileResponse );
 			navigate( 'export/complete' );
 		}
 	}, [ exportContext.data.fileResponse ] );
