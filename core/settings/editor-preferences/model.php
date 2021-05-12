@@ -111,7 +111,7 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-		'default_device_view',
+			'default_device_view',
 			[
 				'label' => __( 'Default Device View ', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
