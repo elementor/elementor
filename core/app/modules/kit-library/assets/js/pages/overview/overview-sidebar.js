@@ -1,9 +1,9 @@
 import ContentType from '../../models/content-type';
-import environment from 'elementor-common/utils/environment';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
-import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
+import { Heading, CardImage, Text, Collapse, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
+import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 
 import './overview-sidebar.scss';
 
@@ -41,12 +41,7 @@ export default function OverviewSidebar( props ) {
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<Badge
-								key={ taxonomy }
-								className={ environment.safari ? 'e-kit-library__item-sidebar-tag--safari-support' : '' }
-							>
-								{ taxonomy }
-							</Badge>
+							<OverviewTaxonomyBadge key={ taxonomy }>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>
