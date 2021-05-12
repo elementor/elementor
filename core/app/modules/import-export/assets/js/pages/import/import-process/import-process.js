@@ -29,7 +29,7 @@ export default function ImportProcess() {
 				},
 			} );
 		},
-		onSuccess = () => navigate( '/import/success' ),
+		onSuccess = () => navigate( '/import/complete' ),
 		onRetry = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );

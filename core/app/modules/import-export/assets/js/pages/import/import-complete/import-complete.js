@@ -5,7 +5,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-export default function ImportSuccess() {
+export default function ImportComplete() {
 	const getFooter = () => (
 		<WizardFooter separator justify="end">
 			<DashboardButton />
