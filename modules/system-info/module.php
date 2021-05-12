@@ -176,7 +176,7 @@ class Module extends BaseModule {
 				</script>
 			</div>
 			<hr>
-			<form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" method="post">
+			<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="post">
 				<input type="hidden" name="action" value="elementor_system_info_download_file">
 				<input type="submit" class="button button-primary" value="<?php echo esc_html__( 'Download System Info', 'elementor' ); ?>">
 			</form>

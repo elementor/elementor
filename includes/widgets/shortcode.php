@@ -129,7 +129,7 @@ class Widget_Shortcode extends Widget_Base {
 
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>
-		<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
+		<div class="elementor-shortcode"><?php echo $shortcode; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 		<?php
 	}
 
@@ -143,7 +143,7 @@ class Widget_Shortcode extends Widget_Base {
 	 */
 	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $this->get_settings( 'shortcode' );
+		$this->print_unescaped_setting( 'shortcode' );
 	}
 
 	/**
