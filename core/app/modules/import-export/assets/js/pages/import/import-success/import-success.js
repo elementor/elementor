@@ -1,5 +1,6 @@
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
+import KitData from '../../../shared/kit-data/kit-data';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
@@ -24,7 +25,9 @@ export default function ImportSuccess() {
 						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
 					</>
 				) }
-			/>
+			>
+				<KitData data={ { test: 123 } } />
+			</WizardStep>
 		</Layout>
 	);
 }

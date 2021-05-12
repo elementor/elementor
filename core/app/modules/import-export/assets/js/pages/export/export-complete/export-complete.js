@@ -4,10 +4,10 @@ import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
+import KitData from '../../../shared/kit-data/kit-data';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
-import KitData from './components/kit-data';
 
 import './export-complete.scss';
 
@@ -55,7 +55,7 @@ export default function ExportComplete() {
 					</>
 				) }
 			>
-				<KitData />
+				<KitData data={ context.data.fileResponse?.manifest } />
 			</WizardStep>
 		</Layout>
 	);
