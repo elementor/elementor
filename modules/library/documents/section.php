@@ -51,4 +51,8 @@ class Section extends Library_Document {
 	public static function get_title() {
 		return __( 'Section', 'elementor' );
 	}
+
+	public static function get_plural_title() {
+		return __( 'Sections', 'elementor' );
+	}
 }

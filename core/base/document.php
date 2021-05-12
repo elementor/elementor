@@ -162,6 +162,10 @@ abstract class Document extends Controls_Stack {
 		return __( 'Document', 'elementor' );
 	}
 
+	public static function get_plural_title() {
+		return static::get_title();
+	}
+
 	/**
 	 * Get property.
 	 *
@@ -1311,6 +1315,14 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	public function get_export_summary() {
+		return [
+			'title' => $this->post->post_title,
+			'doc_type' => $this->get_name(),
+			'thumbnail' => get_the_post_thumbnail_url( $this->post ),
+		];
+	}
+
 	/*
 	 * Get Import Data
 	 *
@@ -1364,6 +1376,12 @@ abstract class Document extends Controls_Stack {
 			'elements' => $data['content'],
 			'settings' => $data['settings'],
 		] );
+
+		if ( $data['import_settings']['thumbnail'] ) {
+			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [ 'url' => $data['import_settings']['thumbnail'] ] );
+
+			set_post_thumbnail( $this->get_main_post(), $attachment['id'] );
+		}
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {
@@ -1546,16 +1564,18 @@ abstract class Document extends Controls_Stack {
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( ! in_array( $element_type, $unique_page_elements, true ) ) {
-				$unique_page_elements[] = $element_type;
+			if ( $element ) {
+				if ( ! in_array( $element_type, $unique_page_elements, true ) ) {
+					$unique_page_elements[] = $element_type;
+
+					foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+						$elements_iteration_action->unique_element_action( $element );
+					}
+				}
 
 				foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-					$elements_iteration_action->unique_element_action( $element );
+					$elements_iteration_action->element_action( $element );
 				}
-			}
-
-			foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-				$elements_iteration_action->element_action( $element );
 			}
 
 			return $element_data;
@@ -1568,9 +1588,7 @@ abstract class Document extends Controls_Stack {
 
 	private function get_elements_iteration_actions() {
 		if ( ! $this->elements_iteration_actions ) {
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' ) ) {
-				$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
-			}
+			$this->elements_iteration_actions[] = new Assets_Iteration_Action( $this );
 		}
 
 		return $this->elements_iteration_actions;
