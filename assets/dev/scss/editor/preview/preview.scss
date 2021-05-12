@@ -607,6 +607,11 @@ html.elementor-html {
 		opacity: .9;
 		width: 100%;
 		align-self: stretch;
+
+		// Hide the placeholder, since swappable containers don't need one.
+		.e-swappable--active & {
+			display: none;
+		}
 	}
 }
 

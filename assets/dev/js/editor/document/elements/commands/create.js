@@ -1,4 +1,5 @@
 import CommandHistory from 'elementor-document/commands/base/command-history';
+import Helper from 'elementor-document/hooks/data/document/elements/helper';
 
 export class Create extends CommandHistory {
 	static restore( historyItem, isRedo ) {
@@ -56,7 +57,20 @@ export class Create extends CommandHistory {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			const isContainerElement = ( 'container' === container.model.get( 'elType' ) ),
+				position = options.at;
+
+			// Ignore the insert position if the parent is a container element.
+			if ( isContainerElement ) {
+				delete options.at;
+			}
+
 			const createdContainer = container.view.addElement( model, options ).getContainer();
+
+			// Set the element's position if it's inside a container element.
+			if ( isContainerElement ) {
+				Helper.reOrderFlexItems( createdContainer, position );
+			}
 
 			result.push( createdContainer );
 

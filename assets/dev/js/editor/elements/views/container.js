@@ -38,10 +38,10 @@ const ContainerView = BaseElementView.extend( {
 
 	getSortableOptions: function() {
 		return {
-			connectWith: '.e-container',
+			connectWith: '.e-container, .elementor-widget-wrap',
 			items: '> .elementor-element',
-			forcePlaceholderSize: true,
 			tolerance: 'pointer',
+			swappable: true,
 		};
 	},
 
@@ -125,7 +125,12 @@ const ContainerView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const newIndex = jQuery( event.currentTarget ).index();
+				let newIndex = jQuery( event.currentTarget ).css( 'order' ) || 0;
+
+				// Plus one in order to insert it after the current target element.
+				if ( 'bottom' === side ) {
+					newIndex++;
+				}
 
 				this.addElementFromPanel( { at: newIndex } );
 			},

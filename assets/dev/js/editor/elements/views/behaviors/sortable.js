@@ -40,6 +40,57 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
+	/**
+	 * Return a settings object for jQuery UI sortable to make it swappable.
+	 *
+	 * @returns {{stop: stop, start: start}}
+	 */
+	getSwappableOptions() {
+		const $childViewContainer = this.getChildViewContainer(),
+			activeClass = 'e-swappable--active';
+
+		return {
+			start: ( event, ui ) => {
+				$childViewContainer.addClass( activeClass );
+
+				// Keep the original item visible.
+				ui.item.css( 'display', '' );
+
+				// Remove the pointer events for the helper in order to allow `mouseenter` event
+				// on other widgets while dragging.
+				ui.helper.css( 'pointer-events', 'none' );
+
+				// Initialize the swap listeners.
+				$childViewContainer.on( 'mouseenter.swappable', '.elementor-widget', ( e ) => {
+					e.stopPropagation();
+
+					const $target = jQuery( e.currentTarget ),
+						originalPosition = ui.item.css( 'order' ),
+						newPosition = $target.css( 'order' );
+
+					// Get the associated containers.
+					const itemContainer = elementor.channels.data.request( 'dragging:view' ).getContainer(),
+						targetContainer = elementor.getContainer( $target.attr( 'data-id' ) );
+
+					// Do the CSS `order` property swap ( UI ).
+					$target.css( 'order', originalPosition );
+					ui.item.css( 'order', newPosition );
+
+					// Change the actual setting ( Data ).
+					// TODO: Find a better and more performant solution.
+					//  Those lines are being executed too many times due to the event.
+					this.moveChild( targetContainer, originalPosition );
+					this.moveChild( itemContainer, newPosition );
+				} );
+			},
+			stop: () => {
+				// Remove the swap listener & class.
+				$childViewContainer.off( 'mouseenter.swappable' );
+				$childViewContainer.removeClass( activeClass );
+			},
+		};
+	},
+
 	activate: function() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
@@ -61,6 +112,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
+
+		// Add a swappable behavior ( used for flex containers ).
+		if ( this.isSwappable() ) {
+			$childViewContainer.addClass( 'e-swappable' );
+			sortableOptions = _.extend( this.getSwappableOptions(), sortableOptions );
+		}
 
 		$childViewContainer.sortable( sortableOptions );
 	},
@@ -101,6 +158,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
+	/**
+	 * Determine if the current instance of Sortable is swappable.
+	 * @returns {boolean}
+	 */
+	isSwappable: function() {
+		return ! ! this.view.getSortableOptions().swappable;
+	},
+
 	startSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -116,22 +181,27 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	// On sorting element
 	updateSort: function( ui, newIndex ) {
+		// Don't move when it's a swappable container ( the move command is being handled in the swappable callback ).
+		if ( this.isSwappable() ) {
+			return;
+		}
+
 		if ( undefined === newIndex ) {
 			newIndex = ui.item.index();
 		}
 
-		$e.run( 'document/elements/move', {
-			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
-			target: this.view.getContainer(),
-			options: {
-				at: newIndex,
-			},
-		} );
+		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
+		this.moveChild( child, newIndex );
 	},
 
 	// On receiving element from another container
 	receiveSort: function( event, ui, newIndex ) {
 		event.stopPropagation();
+
+		// Don't move when it's a swappable container ( the move command is being handled in the swappable callback ).
+		if ( this.isSwappable() ) {
+			return;
+		}
 
 		if ( this.view.isCollectionFilled() ) {
 			jQuery( ui.sender ).sortable( 'cancel' );
@@ -154,13 +224,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 			newIndex = ui.item.index();
 		}
 
-		$e.run( 'document/elements/move', {
-			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
-			target: this.view.getContainer(),
-			options: {
-				at: newIndex,
-			},
-		} );
+		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
+		this.moveChild( child, newIndex );
 	},
 
 	onSortStart: function( event, ui ) {
@@ -223,6 +288,22 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onAddChild: function( view ) {
 		view.$el.attr( 'data-model-cid', view.model.cid );
+	},
+
+	/**
+	 * Move a child container to another position.
+	 *
+	 * @param {Container} child - The child container to move.
+	 * @param {int|string} index - New index.
+	 */
+	moveChild: function( child, index ) {
+		$e.run( 'document/elements/move', {
+			container: child,
+			target: this.view.getContainer(),
+			options: {
+				at: index,
+			},
+		} );
 	},
 } );
 

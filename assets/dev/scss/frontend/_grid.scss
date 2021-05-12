@@ -145,6 +145,7 @@
 	&:not(:last-child) {
 		margin-bottom: 20px;
 
+		.e-container > &,
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
 		&.elementor-absolute {
