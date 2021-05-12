@@ -124,7 +124,7 @@ class Model extends BaseModel {
 				],
 			]
 		);
-		
+
 		$this->end_controls_section();
 	}
 }
