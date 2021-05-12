@@ -34,7 +34,7 @@ export default function useAjax() {
 				success: ( response ) => {
 					const status = response.success ? 'success' : 'error';
 
-					setAjaxState( ( prevState ) => ( { ...prevState, status, response } ) );
+					setAjaxState( ( prevState ) => ( { ...prevState, status, response: response?.data } ) );
 				},
 				error: () => {
 					setAjaxState( ( prevState ) => ( { ...prevState, status: 'error' } ) );

@@ -7,6 +7,9 @@ import WizardStep from '../../../ui/wizard-step/wizard-step';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
+import KitData from './components/kit-data';
+
+import './export-complete.scss';
 
 export default function ExportComplete() {
 	const exportContext = useContext( Context ),
@@ -40,19 +43,15 @@ export default function ExportComplete() {
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
 				heading={ __( 'Your export is ready!', 'elementor' ) }
-				description={
-					<>
-						{ __( 'The download should start in a few seconds.', 'elementor' ) }
-						<br />
-						{ __( 'You can then import the file and use it on other sites.', 'elementor' ) }
-					</>
-				}
+				description={ __( 'Now you can import this kit and use it on other sites.', 'elementor' ) }
 				notice={ (
 					<>
 						{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to download', 'elementor' ) }
 					</>
 				) }
-			/>
+			>
+				<KitData />
+			</WizardStep>
 		</Layout>
 	);
 }

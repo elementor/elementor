@@ -24,7 +24,7 @@ export default function ExportProcess() {
 				} );
 			}
 		},
-		onSuccess = () => exportContext.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response.data } ),
+		onSuccess = () => exportContext.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response } ),
 		onRetry = () => {
 			console.log( 'retry...' );
 		};
@@ -36,7 +36,7 @@ export default function ExportProcess() {
 	}, [ exportContext.data.fileResponse ] );
 
 	return (
-		<Layout type="import">
+		<Layout type="export">
 			<FileProcess
 				status={ ajaxState.status }
 				onLoad={ onLoad }
