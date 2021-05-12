@@ -6,10 +6,12 @@ import KitContent from '../../../shared/kit-content/kit-content';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
+import ImportButton from './components/import-button/import-button';
+
 export default function ImportContent() {
 	const getFooter = () => (
 			<WizardFooter separator justify="end">
-				<button>Next</button>
+				<ImportButton />
 			</WizardFooter>
 		),
 		getLearnMoreLink = () => (
