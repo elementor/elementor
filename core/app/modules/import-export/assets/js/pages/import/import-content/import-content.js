@@ -2,15 +2,14 @@ import React from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-export default function ExportKit() {
+export default function ImportContent() {
 	const getFooter = () => (
 			<WizardFooter separator justify="end">
-				<ExportButton />
+				<button>Next</button>
 			</WizardFooter>
 		),
 		getLearnMoreLink = () => (
@@ -20,10 +19,10 @@ export default function ExportKit() {
 		);
 
 	return (
-		<Layout type="export" footer={ getFooter() }>
+		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
-					heading={ __( 'Export a Template Kit', 'elementor' ) }
+					heading={ __( 'Import a Template Kit', 'elementor' ) }
 					description={ [
 						__( 'Choose which Elementor components - pages, site settings, headers, etc. - to include in your kit file.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">

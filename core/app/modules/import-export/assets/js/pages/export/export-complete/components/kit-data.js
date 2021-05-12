@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { Context } from '../../../../context/export/export-context';
+import { Context } from '../../../../context/context-provider';
 
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
@@ -9,8 +9,8 @@ import List from 'elementor-app/ui/molecules/list';
 import './kit-data.scss';
 
 export default function KitData() {
-	const exportContext = useContext( Context ),
-		kitData = exportContext.data.fileResponse?.manifest,
+	const context = useContext( Context ),
+		kitData = context.data.fileResponse?.manifest,
 		getSummaryTitle = ( type, key, amount, showAmount ) => {
 			if ( ! amount ) {
 				return '';

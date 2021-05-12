@@ -25,6 +25,8 @@ export const reducer = ( state, action ) => {
 			return ReducerActions.updateIncludes( state, action.payload, 'remove' );
 		case 'SET_FILE_RESPONSE':
 			return { ...state, fileResponse: action.payload };
+		case 'SET_FILE':
+			return { ...state, file: action.payload };
 		default:
 			return state;
 	}

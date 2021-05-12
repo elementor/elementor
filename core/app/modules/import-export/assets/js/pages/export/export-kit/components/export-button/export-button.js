@@ -1,19 +1,19 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../../../context/export/export-context';
+import { Context } from '../../../../../context/context-provider';
 
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ExportButton() {
-	const exportContext = useContext( Context ),
+	const context = useContext( Context ),
 		navigate = useNavigate(),
 		[ isDownloadAllowed, setIsDownloadAllowed ] = useState( false ),
 		getDownloadUrl = () => {
 			const exportURL = elementorAppConfig[ 'import-export' ].exportURL,
 				exportData = {
 					elementor_export_kit: {
-						include: exportContext.data.includes,
+						include: context.data.includes,
 					},
 				};
 
@@ -21,14 +21,14 @@ export default function ExportButton() {
 	};
 
 	useEffect( () => {
-		setIsDownloadAllowed( ! ! exportContext.data.includes.length );
-	}, [ exportContext.data.includes ] );
+		setIsDownloadAllowed( ! ! context.data.includes.length );
+	}, [ context.data.includes ] );
 
 	useEffect( () => {
-		if ( exportContext.data.downloadUrl ) {
+		if ( context.data.downloadUrl ) {
 			navigate( '/export/process' );
 		}
-	}, [ exportContext.data.downloadUrl ] );
+	}, [ context.data.downloadUrl ] );
 
 	return (
 		<Button
@@ -37,7 +37,7 @@ export default function ExportButton() {
 			color={ isDownloadAllowed ? 'primary' : 'disabled' }
 			onClick={ () => {
 				if ( isDownloadAllowed ) {
-					exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: getDownloadUrl() } );
+					context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: getDownloadUrl() } );
 				}
 			} }
 		/>

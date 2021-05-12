@@ -4,7 +4,7 @@ import { useNavigate } from '@reach/router';
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
@@ -12,7 +12,7 @@ export default function ImportProcess() {
 	const { ajaxState, setAjax } = useAjax( 'e_import_file', 'elementor_import_kit', {
 			include: [ 'templates', 'content', 'site-settings' ],
 		} ),
-		importContext = useContext( Context ),
+		context = useContext( Context ),
 		navigate = useNavigate(),
 		onLoad = () => {
 			let fileURL = location.hash.match( 'file_url=(.+)' );
@@ -23,7 +23,7 @@ export default function ImportProcess() {
 
 			setAjax( {
 				data: {
-					e_import_file: fileURL || importContext.data.file,
+					e_import_file: fileURL || context.data.file,
 					action: 'elementor_import_kit',
 					data: JSON.stringify( {
 						include: [ 'templates', 'content', 'site-settings' ],
@@ -33,7 +33,7 @@ export default function ImportProcess() {
 		},
 		onSuccess = () => navigate( '/import/success' ),
 		onRetry = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );
 		};
 

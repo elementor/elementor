@@ -1,14 +1,15 @@
 import { useReducer } from 'react';
 
-import { reducer } from './export-context-reducer';
+import { reducer } from './context-reducer';
 
 export const Context = React.createContext();
 
-export default function ExportContext( props ) {
+export default function ContextProvider( props ) {
 	const initialState = {
 		includes: [],
 		downloadUrl: '',
 		fileResponse: null,
+		file: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 
@@ -19,6 +20,6 @@ export default function ExportContext( props ) {
 	);
 }
 
-ExportContext.propTypes = {
+ContextProvider.propTypes = {
 	children: PropTypes.object.isRequired,
 };

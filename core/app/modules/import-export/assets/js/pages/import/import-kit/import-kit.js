@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -14,10 +14,10 @@ import './import-kit.scss';
 
 export default function ImportKit() {
 	const [ isImportFailed, setIsImportFailed ] = useState( false ),
-		importContext = useContext( Context ),
+		context = useContext( Context ),
 		navigate = useNavigate(),
 		resetImportProcess = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
 		},
 		getLearnMoreLink = () => (
@@ -27,10 +27,10 @@ export default function ImportKit() {
 		);
 
 	useEffect( () => {
-		if ( importContext.data.file ) {
+		if ( context.data.file ) {
 			navigate( '/import/process' );
 		}
-	}, [ importContext.data.file ] );
+	}, [ context.data.file ] );
 
 	return (
 		<Layout type="import">
@@ -55,7 +55,7 @@ export default function ImportKit() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
-						importContext.dispatch( { type: 'SET_FILE', payload: file } );
+						context.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
 					onError={ () => setIsImportFailed( true ) }
 				/>
