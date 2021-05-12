@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Setup PHP with PECL extension
+      - name: Setup PHP 7.4
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
           php-version: '7.4'
