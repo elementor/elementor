@@ -15,6 +15,12 @@ jobs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
+      - name: Check developer-edition GitHub checks
+        uses: maael/confirm-checks-action@34a392d22e36c0cc7aace0ed98958169f36e16a7 # master
+        with:
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+          commit: developer-edition
+          checks: 'JS-Lint,PHP-Lint,Qunit,Lighthouse test - WP latest on PHP 7.4'
       - name: Checkout master branch
         if: github.event_name == 'repository_dispatch' && github.event.action == 'new-release'
         uses: actions/checkout@v2
