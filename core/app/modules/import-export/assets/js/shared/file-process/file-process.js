@@ -31,7 +31,7 @@ export default function FileProcess( props ) {
 			<Text variant="xl" className="e-app-import-export-file-process__text">
 				{ __( 'This usually takes a few moments.', 'elementor' ) }
 				<br />
-				{ __( 'Don\'t close this window until your import is finished.', 'elementor' ) }
+				{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
 			</Text>
 
 			{ 'error' === props.status && <ImportFailedDialog onRetry={ props.onRetry } /> }
