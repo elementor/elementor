@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
 import { Context } from '../../../context/export/export-context';
 
@@ -13,21 +13,26 @@ import './export-complete.scss';
 
 export default function ExportComplete() {
 	const exportContext = useContext( Context ),
+		downloadLink = useRef( null ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<DashboardButton />
 			</WizardFooter>
 		),
 		downloadFile = () => {
-			const link = document.createElement( 'a' );
+			if ( ! downloadLink.current ) {
+				const link = document.createElement( 'a' );
 
-			link.href = 'data:text/plain;base64,' + exportContext.data.fileResponse.file;
-			link.download = 'elementor-kit.zip';
+				link.href = 'data:text/plain;base64,' + exportContext.data.fileResponse.file;
+				link.download = 'elementor-kit.zip';
 
-			link.click();
+				downloadLink.current = link;
+			}
+
+			downloadLink.current.click();
 		},
 		getDownloadLink = () => (
-			<InlineLink url={ exportContext.data.downloadUrl } target="_parent" italic>
+			<InlineLink onClick={ downloadFile } italic>
 				{ __( 'Click Here', 'elementor' ) }
 			</InlineLink>
 		);
