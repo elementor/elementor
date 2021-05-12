@@ -268,9 +268,9 @@ class Module extends BaseModule {
 			header( 'Content-Encoding: gzip' );
 			header( 'Content-Length: ' . strlen( $response ) );
 
-			echo $response;
+			echo $response; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
-			echo $json;
+			echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		wp_die( '', '', [ 'response' => null ] );
