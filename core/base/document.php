@@ -1564,16 +1564,18 @@ abstract class Document extends Controls_Stack {
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-			if ( ! in_array( $element_type, $unique_page_elements, true ) ) {
-				$unique_page_elements[] = $element_type;
+			if ( $element ) {
+				if ( ! in_array( $element_type, $unique_page_elements, true ) ) {
+					$unique_page_elements[] = $element_type;
+
+					foreach ( $elements_iteration_actions as $elements_iteration_action ) {
+						$elements_iteration_action->unique_element_action( $element );
+					}
+				}
 
 				foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-					$elements_iteration_action->unique_element_action( $element );
+					$elements_iteration_action->element_action( $element );
 				}
-			}
-
-			foreach ( $elements_iteration_actions as $elements_iteration_action ) {
-				$elements_iteration_action->element_action( $element );
 			}
 
 			return $element_data;
