@@ -45,6 +45,8 @@ class Container extends Element_Base {
 
 		$config['controls'] = $this->get_controls();
 		$config['tabs_controls'] = $this->get_tabs_controls();
+		$config['show_in_panel'] = true;
+		$config['categories'] = [ 'basic' ];
 
 		return $config;
 	}

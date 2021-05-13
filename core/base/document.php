@@ -534,10 +534,12 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
+			$container = [
+				'container' => ( new Container() )->get_config()
+			];
+
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
-			$config['widgets']['container'] = ( new Container() )->get_config();
-			$config['widgets']['container']['show_in_panel'] = true;
+			$config['widgets'] = $container + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
