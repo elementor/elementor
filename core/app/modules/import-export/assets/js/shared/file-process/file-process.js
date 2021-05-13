@@ -34,7 +34,12 @@ export default function FileProcess( props ) {
 				{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
 			</Text>
 
-			{ 'error' === props.status && <ImportFailedDialog onRetry={ props.onRetry } /> }
+			{ 'error' === props.status &&
+				<ImportFailedDialog
+					onApprove={ props.onDialogApprove }
+					onDismiss={ props.onDialogDismiss }
+				/>
+			}
 		</Message>
 	);
 }
@@ -44,7 +49,8 @@ FileProcess.propTypes = {
 	status: PropTypes.oneOf( [ 'initial', 'success', 'error' ] ),
 	onLoad: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired,
-	onRetry: PropTypes.func.isRequired,
+	onDialogApprove: PropTypes.func.isRequired,
+	onDialogDismiss: PropTypes.func.isRequired,
 };
 
 FileProcess.defaultProps = {

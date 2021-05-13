@@ -25,14 +25,13 @@ export default function ExportProcess() {
 			}
 		},
 		onSuccess = () => context.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response } ),
-		onRetry = () => {
+		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		};
 
 	useEffect( () => {
 		if ( context.data.fileResponse ) {
-			console.log( 'context.data.fileResponse', context.data.fileResponse );
 			navigate( 'export/complete' );
 		}
 	}, [ context.data.fileResponse ] );
@@ -43,7 +42,8 @@ export default function ExportProcess() {
 				status={ ajaxState.status }
 				onLoad={ onLoad }
 				onSuccess={ onSuccess }
-				onRetry={ onRetry }
+				onDialogApprove={ () => {} }
+				onDialogDismiss={ onDialogDismiss }
 			/>
 		</Layout>
 	);
