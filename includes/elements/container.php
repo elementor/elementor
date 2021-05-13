@@ -54,6 +54,18 @@ class Container extends Element_Base {
 		echo ' ';
 	}
 
+	public function before_render() {
+		?>
+		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<?php
+	}
+
+	public function after_render() {
+		?>
+		</div>
+		<?php
+	}
+
 	protected function _get_default_child_type( array $element_data ) {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
