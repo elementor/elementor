@@ -77,11 +77,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 					const itemContainer = elementor.channels.data.request( 'dragging:view' ).getContainer(),
 						targetContainer = elementor.getContainer( $target.attr( 'data-id' ) );
 
-					// Do the CSS `order` property swap ( UI ).
-					$target.css( 'order', originalPosition );
-					ui.item.css( 'order', newPosition );
-
-					// Change the actual setting ( Data ).
+					// Change the order setting.
 					this.moveChild( targetContainer, originalPosition );
 					this.moveChild( itemContainer, newPosition );
 				} );
