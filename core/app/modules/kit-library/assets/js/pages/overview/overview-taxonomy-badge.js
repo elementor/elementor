@@ -6,15 +6,17 @@ import { Link } from '@reach/router';
 export default function OverviewTaxonomyBadge( props ) {
 	const { data } = useTaxonomies();
 
+	const taxonomyText = props.children;
+
 	const type = useMemo(
 		() => {
 			if ( ! data ) {
 				return null;
 			}
 
-			return data.find( ( item ) => item.text === props.children )?.type;
+			return data.find( ( item ) => item.text === taxonomyText )?.type;
 		},
-		[ data, props.children ]
+		[ data, taxonomyText ]
 	);
 
 	if ( ! type ) {
@@ -22,7 +24,7 @@ export default function OverviewTaxonomyBadge( props ) {
 	}
 
 	return (
-		<Link to={ `/kit-library?taxonomies[${ type }][]=${ props.children }` }>
+		<Link to={ `/kit-library?taxonomies[${ type }][]=${ taxonomyText }` }>
 			<Badge>
 				{ props.children }
 			</Badge>

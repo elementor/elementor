@@ -88,8 +88,8 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 		);
 
 		history.replaceState(
-			undefined,
-			undefined,
+			null,
+			'',
 			decodeURI(
 				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`
 			)
@@ -97,7 +97,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	}, [ queryParams ] );
 
 	useEffect( () => {
-		const routerQueryParams = wp.url.getQueryArgs( location.pathname ) || {};
+		const routerQueryParams = wp.url.getQueryArgs( location.pathname );
 
 		setQueryParams( ( prev ) => ( {
 			...prev,
