@@ -69,6 +69,10 @@ class Container extends Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
+		if ( 'container' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'container' );
+		}
+
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
