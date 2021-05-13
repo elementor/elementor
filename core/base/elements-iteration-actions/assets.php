@@ -57,7 +57,7 @@ class Assets extends Base {
 	}
 
 	private function get_saved_page_assets( $force_meta_fetch = false ) {
-		if ( ! is_array( $this->saved_page_assets ) || $force_meta_fetch  ) {
+		if ( ! is_array( $this->saved_page_assets ) || $force_meta_fetch ) {
 			$this->saved_page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
 		}
 
