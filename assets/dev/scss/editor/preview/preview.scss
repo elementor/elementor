@@ -609,7 +609,7 @@ html.elementor-html {
 		align-self: stretch;
 
 		// Hide the placeholder, since swappable containers don't need one.
-		.e-swappable--active & {
+		.e-swappable--active > & {
 			display: none;
 		}
 	}
