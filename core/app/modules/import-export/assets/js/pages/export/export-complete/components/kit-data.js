@@ -12,19 +12,23 @@ export default function KitData() {
 	const exportContext = useContext( Context ),
 		kitData = exportContext.data.fileResponse?.manifest,
 		getSummaryTitle = ( type, key, amount, showAmount ) => {
-			if ( ! amount ) {
-				return '';
-			}
-
 			const data = elementorAppConfig[ 'import-export' ].summaryTitles[ type ][ key ];
 
-			let title = amount > 1 ? data.plural : data.single;
+			if ( data.single ) {
+				if ( ! amount ) {
+					return '';
+				}
 
-			if ( showAmount ) {
-				title = amount + ' ' + title;
+				let title = amount > 1 ? data.plural : data.single;
+
+				if ( showAmount ) {
+					title = amount + ' ' + title;
+				}
+
+				return title;
 			}
 
-			return title;
+			return data;
 		},
 		getTemplates = () => {
 			const templates = {};
@@ -48,7 +52,7 @@ export default function KitData() {
 
 			return Object
 				.entries( siteSettings )
-				.map( ( item ) => item[ 1 ] );
+				.map( ( item ) => getSummaryTitle( 'site-settings', item[ 1 ] ) );
 		},
 		getContent = () => {
 			const content = kitData?.content || {};
