@@ -103,21 +103,20 @@ class Control_Dimensions extends Control_Base_Units {
 							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="number" data-setting="<?php
 								// PHPCS - the variable $dimension_key is a plain text.
 								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							?>"
-								   placeholder="<#
-							   if ( _.isObject( data.placeholder ) ) {
-								if ( ! _.isUndefined( data.placeholder.<?php
-								   // PHPCS - the variable $dimension_key is a plain text.
-								   echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								   	?> ) ) {
-									print( data.placeholder.<?php
-								   // PHPCS - the variable $dimension_key is a plain text.
-								   echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								   	?> );
-								}
-							   } else {
+							?>" placeholder="<#
+								if ( _.isObject( data.placeholder ) ) {
+									if ( ! _.isUndefined( data.placeholder.<?php
+										// PHPCS - the variable $dimension_key is a plain text.
+										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									?> ) ) {
+										print( data.placeholder.<?php
+											// PHPCS - the variable $dimension_key is a plain text.
+											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										?> );
+									}
+								} else {
 								print( data.placeholder );
-							   } #>"
+								} #>"
 							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
 								// PHPCS - the variable $dimension_key is a plain text.
 								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

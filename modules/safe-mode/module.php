@@ -285,21 +285,15 @@ class Module extends \Elementor\Core\Base\Module {
 					<li class="elementor-safe-mode-list-item">
 						<div class="elementor-safe-mode-list-item-title"><?php echo esc_html__( 'Editor successfully loaded?', 'elementor' ); ?></div>
 						<div class="elementor-safe-mode-list-item-content"><?php echo esc_html__( 'The issue was probably caused by one of your plugins or theme.', 'elementor' ); ?> <?php
-							printf(
-								esc_html__( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ),
-								// PHPCS - the constant DOCS_HELPED_URL holds a plain string.
-								self::DOCS_HELPED_URL // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							);
+							// PHPCS - the constant DOCS_HELPED_URL holds a plain string.
+							printf( esc_html__( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?></div>
 					</li>
 					<li class="elementor-safe-mode-list-item">
 						<div class="elementor-safe-mode-list-item-title"><?php echo esc_html__( 'Still experiencing issues?', 'elementor' ); ?></div>
 						<div class="elementor-safe-mode-list-item-content"><?php
-							printf(
-								esc_html__( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ),
-								// PHPCS - the constant DOCS_DIDNT_HELP_URL holds a plain string.
-								self::DOCS_DIDNT_HELP_URL // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							);
+							// PHPCS - the constant DOCS_DIDNT_HELP_URL holds a plain string.
+							printf( esc_html__( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?></div>
 					</li>
 				</ul>
@@ -308,11 +302,8 @@ class Module extends \Elementor\Core\Base\Module {
 
 				if ( 1 < count( $mu_plugins ) ) : ?>
 					<div class="elementor-safe-mode-mu-plugins"><?php
-						printf(
-							esc_html__( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ),
-							// PHPCS - the constant DOCS_MU_PLUGINS_URL holds a plain string.
-							self::DOCS_MU_PLUGINS_URL // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-						);
+						// PHPCS - the constant DOCS_MU_PLUGINS_URL holds a plain string.
+						printf( esc_html__( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ), self::DOCS_MU_PLUGINS_URL ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?></div>
 				<?php endif; ?>
 			</div>

@@ -460,11 +460,9 @@ class Widget_Testimonial extends Widget_Base {
 							<?php
 							$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'testimonial_image' );
 							if ( ! empty( $settings['link']['url'] ) ) :
-								// PHPCS - the method get_render_attribute_string is safe.
-								$link_attrs = $this->get_render_attribute_string( 'link' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								$image_html = '<a ' . $link_attrs . '>' . $image_html . '</a>';
+								$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
 							endif;
-							echo $image_html;
+							echo wp_kses_post( $image_html );
 							?>
 						</div>
 					<?php endif; ?>
