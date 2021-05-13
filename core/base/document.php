@@ -535,7 +535,7 @@ abstract class Document extends Controls_Stack {
 
 		if ( static::get_property( 'has_elements' ) ) {
 			$container = [
-				'container' => ( new Container() )->get_config()
+				'container' => ( new Container() )->get_config(),
 			];
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
