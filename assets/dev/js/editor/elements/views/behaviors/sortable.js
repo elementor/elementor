@@ -197,11 +197,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 	receiveSort: function( event, ui, newIndex ) {
 		event.stopPropagation();
 
-		// Don't move when it's a swappable container ( the move command is being handled in the swappable callback ).
-		if ( this.isSwappable() ) {
-			return;
-		}
-
 		if ( this.view.isCollectionFilled() ) {
 			jQuery( ui.sender ).sortable( 'cancel' );
 

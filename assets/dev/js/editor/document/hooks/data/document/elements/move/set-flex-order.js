@@ -18,13 +18,14 @@ export class SetFlexOrder extends Dependency {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
+		const { containers = [ args.container ], target } = args;
 
 		containers.forEach( ( container ) => {
 			Helper.setFlexOrder( container, args.options?.at );
 		} );
 
-		return false;
+		// Don't proceed with the move if it's the same container.
+		return containers.some( ( container ) => container.parent.id !== target.id );
 	}
 }
 
