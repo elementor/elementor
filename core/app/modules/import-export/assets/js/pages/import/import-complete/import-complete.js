@@ -1,3 +1,7 @@
+import { useContext } from 'react';
+
+import { Context } from '../../../context/context-provider';
+
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
@@ -6,11 +10,23 @@ import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ImportComplete() {
-	const getFooter = () => (
-		<WizardFooter separator justify="end">
-			<DashboardButton />
-		</WizardFooter>
-	);
+	const context = useContext( Context ),
+		getFooter = () => (
+			<WizardFooter separator justify="end">
+				<DashboardButton />
+			</WizardFooter>
+		),
+		getKitData = () => {
+			if ( ! context.data.fileResponse ) {
+				return {};
+			}
+
+			console.log( 'context.data.fileResponse', context.data.fileResponse );
+
+			return {
+
+			};
+		};
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -26,7 +42,7 @@ export default function ImportComplete() {
 					</>
 				) }
 			>
-				<KitData data={ { test: 123 } } />
+				<KitData data={ getKitData() } />
 			</WizardStep>
 		</Layout>
 	);

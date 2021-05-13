@@ -37,7 +37,7 @@ export default function ImportKit() {
 					e_import_file: context.data.file,
 					action: 'elementor_import_kit',
 					data: JSON.stringify( {
-						include: [ 'templates', 'content', 'site-settings' ],
+						stage: 1,
 					} ),
 				},
 			} );
@@ -45,11 +45,11 @@ export default function ImportKit() {
 	}, [ context.data.file ] );
 
 	useEffect( () => {
-		console.log( 'ajaxState.status', ajaxState );
 		if ( 'success' === ajaxState.status ) {
+			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { 1: ajaxState.response } } );
 			navigate( '/import/content' );
 		}
-	}, [ ajaxState.status ] );
+	}, [ ajaxState ] );
 
 	return (
 		<Layout type="import">
@@ -81,7 +81,12 @@ export default function ImportKit() {
 					isLoading={ isLoading }
 				/>
 
-				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
+				{ isImportFailed &&
+					<ImportFailedDialog
+						onApprove={ () => window.open( 'https://www.elementor.com', '_blank' ) }
+						onDismiss={ resetImportProcess }
+					/>
+				}
 			</section>
 		</Layout>
 	);
