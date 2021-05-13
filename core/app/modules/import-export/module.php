@@ -7,6 +7,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -312,5 +313,9 @@ class Module extends BaseModule {
 		$page_id = Tools::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+
+		if ( Utils::is_wp_cli() ) {
+			\WP_CLI::add_command( 'elementor site', WP_CLI::class );
+		}
 	}
 }
