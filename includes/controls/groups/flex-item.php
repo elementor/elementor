@@ -75,8 +75,8 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'stretch' => _x( 'Stretch', 'Flex Item Control', 'elementor' ),
 			],
 			'desktop_default' => 'auto',
-			'tablet_default' => 'auto',
-			'mobile_default' => 'auto',
+			'tablet_default' => '',
+			'mobile_default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'align-self: {{VALUE}};',
 			],

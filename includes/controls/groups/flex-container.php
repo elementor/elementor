@@ -26,8 +26,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'column-reverse' => _x( 'Column Reverse', 'Flex Container Control', 'elementor' ),
 			],
 			'desktop_default' => 'row',
-			'tablet_default' => 'row',
-			'mobile_default' => 'row',
+			'tablet_default' => '',
+			'mobile_default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-direction: {{VALUE}};',
 			],
@@ -43,8 +43,8 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'wrap-reverse' => _x( 'Wrap Reverse', 'Flex Container Control', 'elementor' ),
 			],
 			'desktop_default' => 'nowrap',
-			'tablet_default' => 'nowrap',
-			'mobile_default' => 'nowrap',
+			'tablet_default' => '',
+			'mobile_default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-wrap: {{VALUE}};',
 			],
