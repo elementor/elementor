@@ -68,6 +68,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 						originalPosition = ui.item.css( 'order' ),
 						newPosition = $target.css( 'order' );
 
+					// Don't act when it's the same container.
+					if ( $target.attr( 'data-id' ) === ui.item.attr( 'data-id' ) ) {
+						return;
+					}
+
 					// Get the associated containers.
 					const itemContainer = elementor.channels.data.request( 'dragging:view' ).getContainer(),
 						targetContainer = elementor.getContainer( $target.attr( 'data-id' ) );
@@ -77,8 +82,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 					ui.item.css( 'order', newPosition );
 
 					// Change the actual setting ( Data ).
-					// TODO: Find a better and more performant solution.
-					//  Those lines are being executed too many times due to the event.
 					this.moveChild( targetContainer, originalPosition );
 					this.moveChild( itemContainer, newPosition );
 				} );
