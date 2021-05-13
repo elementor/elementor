@@ -42,7 +42,6 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	background: var(--eps-modal-background-color);
 	border-radius: $eps-modal-border-radius;
 	animation: $eps-modal-animation;
-	overflow: hidden;
 
 	&__overlay {
 		background: $eps-modal-overlay;
@@ -63,6 +62,7 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 		color: $eps-modal-header-color;
 		height: $eps-modal-header-height;
 		padding: $eps-modal-header-padding;
+		border-radius: $eps-modal-border-radius;
 	}
 
 	&__icon {
