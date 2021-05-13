@@ -67,6 +67,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'label' => _x( 'Align Self', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
+				'' => _x( 'Default', 'Flex Item Control', 'elementor' ),
 				'auto' => _x( 'Auto', 'Flex Item Control', 'elementor' ),
 				'flex-start' => _x( 'Flex Start', 'Flex Item Control', 'elementor' ),
 				'flex-end' => _x( 'Flex End', 'Flex Item Control', 'elementor' ),
@@ -74,9 +75,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'baseline' => _x( 'Baseline', 'Flex Item Control', 'elementor' ),
 				'stretch' => _x( 'Stretch', 'Flex Item Control', 'elementor' ),
 			],
-			'desktop_default' => 'auto',
-			'tablet_default' => '',
-			'mobile_default' => '',
+			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'align-self: {{VALUE}};',
 			],

@@ -20,14 +20,13 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'label' => _x( 'Flex Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
+				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
 				'row' => _x( 'Row', 'Flex Container Control', 'elementor' ),
 				'row-reverse' => _x( 'Row Reverse', 'Flex Container Control', 'elementor' ),
 				'column' => _x( 'Column', 'Flex Container Control', 'elementor' ),
 				'column-reverse' => _x( 'Column Reverse', 'Flex Container Control', 'elementor' ),
 			],
-			'desktop_default' => 'row',
-			'tablet_default' => '',
-			'mobile_default' => '',
+			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-direction: {{VALUE}};',
 			],
@@ -38,13 +37,12 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'label' => _x( 'Flex Wrap', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
+				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
 				'nowrap' => _x( 'No Wrap', 'Flex Container Control', 'elementor' ),
 				'wrap' => _x( 'Wrap', 'Flex Container Control', 'elementor' ),
 				'wrap-reverse' => _x( 'Wrap Reverse', 'Flex Container Control', 'elementor' ),
 			],
-			'desktop_default' => 'nowrap',
-			'tablet_default' => '',
-			'mobile_default' => '',
+			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => 'flex-wrap: {{VALUE}};',
 			],
