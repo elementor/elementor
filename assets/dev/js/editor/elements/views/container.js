@@ -45,16 +45,14 @@ const ContainerView = BaseElementView.extend( {
 		};
 	},
 
-	changeChildContainerClasses: function() {
-		const emptyClass = 'elementor-element-empty',
-			populatedClass = 'elementor-element-populated';
+	changeContainerClasses: function() {
+		const emptyClass = 'e-element-empty',
+			populatedClass = 'e-element-populated';
 
-		if ( this.ui.columnInner ) {
-			if ( this.collection.isEmpty() ) {
-				this.ui.columnInner.removeClass( populatedClass ).addClass( emptyClass );
-			} else {
-				this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
-			}
+		if ( this.collection.isEmpty() ) {
+			this.$el.removeClass( populatedClass ).addClass( emptyClass );
+		} else {
+			this.$el.removeClass( emptyClass ).addClass( populatedClass );
 		}
 	},
 
@@ -109,7 +107,7 @@ const ContainerView = BaseElementView.extend( {
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		this.changeChildContainerClasses();
+		this.changeContainerClasses();
 
 		this.$el.html5Droppable( {
 			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',

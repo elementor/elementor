@@ -172,7 +172,7 @@ ColumnView = BaseElementView.extend( {
 
 	getSortableOptions: function() {
 		return {
-			connectWith: '.elementor-widget-wrap',
+			connectWith: '.elementor-widget-wrap, .e-container',
 			items: '> .elementor-element',
 		};
 	},
