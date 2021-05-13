@@ -7,19 +7,23 @@ import './kit-data.scss';
 export default function KitData( props ) {
 	const kitData = props.data,
 		getSummaryTitle = ( type, key, amount, showAmount ) => {
-			if ( ! amount ) {
-				return '';
-			}
-
 			const data = elementorAppConfig[ 'import-export' ].summaryTitles[ type ][ key ];
 
-			let title = amount > 1 ? data.plural : data.single;
+			if ( data.single ) {
+				if ( ! amount ) {
+					return '';
+				}
 
-			if ( showAmount ) {
-				title = amount + ' ' + title;
+				let title = amount > 1 ? data.plural : data.single;
+
+				if ( showAmount ) {
+					title = amount + ' ' + title;
+				}
+
+				return title;
 			}
 
-			return title;
+			return data;
 		},
 		getTemplates = () => {
 			const templates = {};
@@ -43,7 +47,7 @@ export default function KitData( props ) {
 
 			return Object
 				.entries( siteSettings )
-				.map( ( item ) => item[ 1 ] );
+				.map( ( item ) => getSummaryTitle( 'site-settings', item[ 1 ] ) );
 		},
 		getContent = () => {
 			const content = kitData?.content || {};
@@ -66,6 +70,8 @@ export default function KitData( props ) {
 				data: getContent(),
 			},
 		];
+
+	console.log( 'kitData', kitData );
 
 	return (
 		<>
