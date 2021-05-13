@@ -50,6 +50,24 @@ class Module extends BaseModule {
 			return [];
 		}
 
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+
+		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
+
+		return [
+			'exportURL' => $export_url,
+			'kitInfo' => [
+				'title' => $kit_post->post_title,
+				'description' => $kit_post->post_excerpt,
+				'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
+			],
+			'summaryTitles' => $this->get_summary_titles(),
+		];
+	}
+
+	public function get_summary_titles() {
 		$summary_titles = [];
 
 		$document_types = Plugin::$instance->documents->get_document_types();
@@ -85,23 +103,13 @@ class Module extends BaseModule {
 			];
 		}
 
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$kit_post = $active_kit->get_post();
+		foreach ( $active_kit->get_tabs() as $key => $tab ) {
+			$summary_titles['site-settings'][ $key ] = $tab->get_title();
+		}
 
-		return [
-			'exportURL' => $export_url,
-			'kitInfo' => [
-				'title' => $kit_post->post_title,
-				'description' => $kit_post->post_excerpt,
-				'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
-			],
-			'summaryTitles' => $summary_titles,
-		];
+		return $summary_titles;
 	}
 
 	private function import_stage_1() {
