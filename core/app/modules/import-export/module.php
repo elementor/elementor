@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tools;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -86,7 +87,8 @@ class Module extends BaseModule {
 
 				$this->export->run();
 			} catch ( \Error $error ) {
-				wp_die( $error->getMessage() );
+				// PHPCS - Not user input.
+				wp_die( $error->getMessage() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 	}
@@ -132,24 +134,24 @@ class Module extends BaseModule {
 		?>
 
 		<div class="tab-import-export-kit__content">
-			<p class="tab-import-export-kit__info"><?php echo $intro_text; ?></p>
+			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
 			<?php foreach ( $content_data as $data ) { ?>
 				<div class="tab-import-export-kit__container">
 					<div class="tab-import-export-kit__box">
-						<h2><?php echo $data['title']; ?></h2>
-						<a href="<?php echo $data['button']['url']; ?>" class="elementor-button elementor-button-success">
-							<?php echo $data['button']['text']; ?>
+						<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+						<a href="<?php echo esc_url( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+							<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 						</a>
 					</div>
-					<p><?php echo $data['description']; ?></p>
-					<a href="<?php echo $data['link']['url']; ?>" target="_blank"><?php echo $data['link']['text']; ?></a>
+					<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
+					<a href="<?php echo esc_url( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 				</div>
 			<?php } ?>
 			</div>
 
-			<p class="tab-import-export-kit__info"><?php echo $info_text; ?></p>
+			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
 		</div>
 		<?php
 	}

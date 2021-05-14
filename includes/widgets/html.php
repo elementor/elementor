@@ -109,7 +109,7 @@ class Widget_Html extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		 echo $this->get_settings_for_display( 'html' );
+		$this->print_unescaped_setting( 'html' );
 	}
 
 	/**
