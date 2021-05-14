@@ -438,7 +438,7 @@ class Element_Section extends Element_Base {
 
 		$content_position_selector = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ?
 				'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' :
-				'{{WRAPPER}} > .elementor-container > .elementor-row { width: auto; } > .elementor-column > .elementor-column-wrap > .elementor-widget-wrap';
+				'{{WRAPPER}} > .elementor-container > .elementor-row > .elementor-column { width: auto; } > .elementor-column-wrap > .elementor-widget-wrap';
 
 		$this->add_control(
 			'content_position',
