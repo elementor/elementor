@@ -427,6 +427,7 @@ class Element_Section extends Element_Base {
 					'top' => __( 'Top', 'elementor' ),
 					'middle' => __( 'Middle', 'elementor' ),
 					'bottom' => __( 'Bottom', 'elementor' ),
+					'auto' => __('Auto', 'elementor'),
 				],
 				'prefix_class' => 'elementor-section-items-',
 				'condition' => [
