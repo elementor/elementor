@@ -39,10 +39,10 @@ echo "Preparing files"
 cd $SVN_PATH/trunk
 
 echo "svn delete"
-svn status | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs svn delete;
+svn status | grep -v '^.[ \t]*\\..*' | { grep '^!' || true; } | awk '{print $2}' | xargs -r svn delete;
 
 echo "svn add"
-svn status | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs svn add;
+svn status | grep -v '^.[ \t]*\\..*' | { grep '^?' || true; } | awk '{print $2}' | xargs -r svn add;
 
 svn status
 
