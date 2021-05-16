@@ -563,14 +563,14 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => __( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
-				'size' => 5,
-			],
-				'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 10,
-			],
-			'selectors' => [
+					'size' => 5,
+				],
+					'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+				],
+				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'spacing: {{SIZE}}{{UNIT}};',
 				]
 			],
