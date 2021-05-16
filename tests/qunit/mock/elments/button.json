@@ -256,8 +256,7 @@
 			"return_value": "custom",
 			"render_type": "ui",
 			"name": "typography_typography",
-			"default": "",
-			"groupPrefix": "typography_"
+			"default": ""
 		},
 		"typography_font_family": {
 			"type": "font",

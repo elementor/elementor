@@ -117,16 +117,6 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
-	 * Run all the catch hooks.
-	 *
-	 * @param {Error} e
-	 */
-	runCatchHooks( e ) {
-		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
-		$e.hooks.runUICatch( this.currentCommand, this.args, e );
-	}
-
-	/**
 	 * Function onBeforeRun.
 	 *
 	 * Called before run().

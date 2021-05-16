@@ -33,7 +33,7 @@ export default class Command extends CommandBase {
 	 * @param {Error} e
 	 */
 	runCatchHooks( e ) {
-		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
-		$e.hooks.runUICatch( this.currentCommand, this.args, e );
+		$e.hooks.runDataCatch( this.command, this.args, e );
+		$e.hooks.runUICatch( this.command, this.args, e );
 	}
 }

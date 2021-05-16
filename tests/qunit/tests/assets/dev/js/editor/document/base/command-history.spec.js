@@ -34,8 +34,6 @@ jQuery( () => {
 				},
 					instance = new fakeHistory( {} );
 
-				$e.components.isRegistering = false;
-
 				instance.historyId = Math.random();
 
 				let tempCommand = '',
@@ -46,12 +44,9 @@ jQuery( () => {
 					tempArgs = args;
 				} );
 
-				// Use `instance.historyId` for error.
-				try {
-					instance.onCatchApply( new $e.modules.HookBreak( instance.id ) );
-				} catch ( e ) {
-					assert.equal( e, instance.historyId );
-				}
+				assert.throws( () => {
+					instance.onCatchApply( new $e.modules.HookBreak() );
+				} );
 
 				assert.equal( tempCommand, 'document/history/delete-log' );
 				assert.equal( tempArgs.id, instance.historyId );

@@ -60,11 +60,11 @@ export default class CommandHistory extends CommandEditor {
 	}
 
 	onCatchApply( e ) {
-		super.onCatchApply( e );
-
 		// Rollback history on failure.
 		if ( e instanceof $e.modules.HookBreak && this.historyId ) {
 			$e.internal( 'document/history/delete-log', { id: this.historyId } );
 		}
+
+		super.onCatchApply( e );
 	}
 }

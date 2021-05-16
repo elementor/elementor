@@ -14,12 +14,12 @@ QUnit.module( 'Component: document', () => {
 			} );
 		} );
 	} );
-} );
 
-require( './elements/component.spec' );
-require( './globals/component.spec' );
-require( './repeater/component.spec' );
-require( './dynamic/component.spec' );
-require( './history/component.spec' );
-require( './ui/component.spec' );
-require( './save/component.spec' );
+	require( './elements/component.spec' );
+	require( './globals/component.spec' );
+	require( './repeater/component.spec' );
+	require( './dynamic/component.spec' );
+	require( './history/component.spec' );
+	require( './ui/component.spec' );
+	require( './save/component.spec' );
+} );
