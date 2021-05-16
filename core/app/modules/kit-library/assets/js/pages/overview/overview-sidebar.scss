@@ -37,9 +37,4 @@
 		color: tints(600);
 		margin-bottom: spacing(5);
 	}
-
-	&__item-sidebar-tag--safari-support {
-		@include margin-end(spacing(10));
-		margin-bottom: spacing(10);
-	}
 }

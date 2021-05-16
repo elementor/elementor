@@ -8,8 +8,8 @@ import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { SearchInput } from '@elementor/app-ui';
 import { useCallback, useMemo } from 'react';
+import { SearchInput, Grid, SortSelect } from '@elementor/app-ui';
 
 import './index.scss';
 
@@ -118,8 +118,8 @@ export default function Index( props ) {
 			}
 		>
 			<div className="e-kit-library__index-layout-container">
-				<div className="e-kit-library__index-layout-search-area">
-					<div>
+				<Grid container className="e-kit-library__index-layout-top-area">
+					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
 							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
 							value={ queryParams.search }
@@ -131,8 +131,22 @@ export default function Index( props ) {
 							onClear={ clearQueryParams }
 							onRemoveTag={ unselectTaxonomy }
 						/>
-					</div>
-				</div>
+					</Grid>
+					<Grid
+						item
+						className="e-kit-library__index-layout-top-area-sort"
+					>
+						<SortSelect
+							options={ [
+								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
+								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
+								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
+							] }
+							value={ queryParams.order }
+							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
+						/>
+					</Grid>
+				</Grid>
 				<Content className="e-kit-library__index-layout-main">
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
