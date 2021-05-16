@@ -493,26 +493,6 @@ class Widget_Image_Carousel extends Widget_Base {
 				],
 			]
 		);
-		
-		$this->add_responsive_control(
-			'dots_spacing',
-			[
-				'label' => __( 'Space Between', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-				'size' => 5,
-			],
-				'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 10,
-			],
-			'selectors' => [
-					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'font-spacing: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'navigation' => [ 'arrows', 'both' ],
-		);
 
 		$this->add_control(
 			'arrows_color',
@@ -571,6 +551,29 @@ class Widget_Image_Carousel extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'dots_spacing',
+			[
+				'label' => __( 'Space Between', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'default' => [
+				'size' => 5,
+			],
+				'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 10,
+			],
+			'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet' => 'spacing: {{SIZE}}{{UNIT}};',
+				]
+			],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
 				],
