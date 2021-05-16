@@ -228,6 +228,12 @@ class Repository {
 				'keywords' => $kit->keywords,
 				'taxonomies' => $taxonomies,
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
+				// TODO: Remove all the isset when the API stable.
+				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
+				'popularity_index' => isset( $kit->popularity_index ) ? $kit->popularity_index : 0,
+				'created_at' => isset( $kit->created_at ) ? $kit->created_at : null,
+				'updated_at' => isset( $kit->updated_at ) ? $kit->updated_at : null,
+				//
 			],
 			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
 		);
@@ -242,7 +248,7 @@ class Repository {
 		$content = ( new Collection( (array) $manifest->templates ) )
 			->union(
 				array_reduce( (array) $manifest->content, function ( $carry, $content ) {
-					return $carry + $content;
+					return $carry + ( (array) $content );
 				}, [] )
 			)
 			->map( function ( $manifest_item, $key ) {

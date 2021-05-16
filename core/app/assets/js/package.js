@@ -30,6 +30,7 @@ import Popover from './ui/molecules/popover';
 import SearchInput from './ui/molecules/search-input';
 import Select from './ui/atoms/select';
 import Select2 from './ui/molecules/select2';
+import SortSelect from './ui/organisims/sort-select';
 import Text from './ui/atoms/text';
 import UploadFile from './molecules/upload-file';
 import InlineLink from './ui/molecules/inline-link';
@@ -67,6 +68,7 @@ export default {
 	SearchInput,
 	Select,
 	Select2,
+	SortSelect,
 	Text,
 	UploadFile,
 	InlineLink,
