@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manager {
 
 	const OPTION_ACTIVE = 'elementor_active_kit';
+
+	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
 		$id = get_option( self::OPTION_ACTIVE );
@@ -44,6 +47,19 @@ class Manager {
 		return Plugin::$instance->documents->get_doc_for_frontend( $id );
 	}
 
+	/**
+	 * Checks if specific post is a kit.
+	 *
+	 * @param $post_id
+	 *
+	 * @return bool
+	 */
+	public function is_kit( $post_id ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		return $document && $document instanceof Kit && ! $document->is_revision();
+	}
+
 
 	/**
 	 * Init kit controls.
@@ -67,14 +83,22 @@ class Manager {
 		return $kit->get_settings( $setting );
 	}
 
-	private function create_default() {
-		$kit = Plugin::$instance->documents->create( 'kit', [
-			'post_type' => Source_Local::CPT,
-			'post_title' => __( 'Default Kit', 'elementor' ),
+	public function create( array $kit_data = [], array $kit_meta_data = [] ) {
+		$default_kit_data = [
 			'post_status' => 'publish',
-		] );
+		];
+
+		$kit_data = array_merge( $default_kit_data, $kit_data );
+
+		$kit_data['post_type'] = Source_Local::CPT;
+
+		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
 		return $kit->get_id();
+	}
+
+	private function create_default() {
+		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
 	}
 
 	/**
@@ -100,32 +124,6 @@ class Manager {
 			],
 			'user' => [
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
-			],
-			'i18n' => [
-				'close' => __( 'Close', 'elementor' ),
-				'back' => __( 'Back', 'elementor' ),
-				'site_identity' => __( 'Site Identity', 'elementor' ),
-				'lightbox' => __( 'Lightbox', 'elementor' ),
-				'layout' => __( 'Layout', 'elementor' ),
-				'theme_style' => __( 'Theme Style', 'elementor' ),
-				'add_color' => __( 'Add Color', 'elementor' ),
-				'add_style' => __( 'Add Style', 'elementor' ),
-				'new_item' => __( 'New Item', 'elementor' ),
-				'global_color' => __( 'Global Color', 'elementor' ),
-				'global_fonts' => __( 'Global Fonts', 'elementor' ),
-				'global_colors' => __( 'Global Colors', 'elementor' ),
-				'invalid' => __( 'Invalid', 'elementor' ),
-				'color_cannot_be_deleted' => __( 'System Color can\'t be deleted', 'elementor' ),
-				'font_cannot_be_deleted' => __( 'System Font can\'t be deleted', 'elementor' ),
-				'design_system' => __( 'Design System', 'elementor' ),
-				'buttons' => __( 'Buttons', 'elementor' ),
-				'images' => __( 'Images', 'elementor' ),
-				'form_fields' => __( 'Form Fields', 'elementor' ),
-				'background' => __( 'Background', 'elementor' ),
-				'custom_css' => __( 'Custom CSS', 'elementor' ),
-				'additional_settings' => __( 'Additional Settings', 'elementor' ),
-				'kit_changes_updated' => __( 'Your changes have been updated.', 'elementor' ),
-				'back_to_editor' => __( 'Back to Editor', 'elementor' ),
 			],
 		] );
 
@@ -154,8 +152,6 @@ class Manager {
 			}
 
 			$css_file->enqueue();
-
-			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
 		}
 	}
 
@@ -250,6 +246,83 @@ class Manager {
 		return ! get_option( 'elementor_disable_typography_schemes' );
 	}
 
+	/**
+	 * Add kit wrapper body class.
+	 *
+	 * It should be added even for non Elementor pages,
+	 * in order to support embedded templates.
+	 */
+	private function add_body_class() {
+		$kit = $this->get_kit_for_frontend();
+
+		if ( $kit ) {
+			Plugin::$instance->frontend->add_body_class( 'elementor-kit-' . $kit->get_main_id() );
+		}
+	}
+
+	/**
+	 * Send a confirm message before move a kit to trash, or if delete permanently not for trash.
+	 *
+	 * @param       $post_id
+	 * @param false $is_permanently_delete
+	 */
+	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if (
+			! $document ||
+			! $this->is_kit( $post_id ) ||
+			isset( $_GET['force_delete_kit'] ) ||  // phpcs:ignore -- nonce validation is not require here.
+			( $is_permanently_delete && $document->is_trash() )
+		) {
+			return;
+		}
+
+		ob_start();
+		require __DIR__ . '/views/trash-kit-confirmation.php';
+
+		$confirmation_content = ob_get_clean();
+
+		wp_die(
+			new \WP_Error( 'cant_delete_kit', $confirmation_content )
+		);
+	}
+
+	/**
+	 * Add 'Edit with elementor -> Site Settings' in admin bar.
+	 *
+	 * @param [] $admin_bar_config
+	 *
+	 * @return array $admin_bar_config
+	 */
+	private function add_menu_in_admin_bar( $admin_bar_config ) {
+		$document = Plugin::$instance->documents->get( get_the_ID() );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			$recent_edited_post = Utils::get_recently_edited_posts_query( [
+				'posts_per_page' => 1,
+			] );
+
+			if ( $recent_edited_post->post_count ) {
+				$posts = $recent_edited_post->get_posts();
+				$document = Plugin::$instance->documents->get( reset( $posts )->ID );
+			}
+		}
+
+		if ( $document ) {
+			$admin_bar_config['elementor_edit_page']['children'][] = [
+				'id' => 'elementor_site_settings',
+				'title' => __( 'Site Settings', 'elementor' ),
+				'sub_title' => __( 'Site', 'elementor' ),
+				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'class' => 'elementor-site-settings',
+				'parent_class' => 'elementor-second-section',
+			];
+		}
+
+		return $admin_bar_config;
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -258,6 +331,14 @@ class Manager {
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
 		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
 
+		add_action( 'wp_trash_post', function ( $post_id ) {
+			$this->before_delete_kit( $post_id );
+		} );
+
+		add_action( 'before_delete_post', function ( $post_id ) {
+			$this->before_delete_kit( $post_id, true );
+		} );
+
 		add_action( 'update_option_blogname', function ( $old_value, $value ) {
 			$this->update_kit_settings_based_on_option( 'site_name', $value );
 		}, 10, 2 );
@@ -265,5 +346,13 @@ class Manager {
 		add_action( 'update_option_blogdescription', function ( $old_value, $value ) {
 			$this->update_kit_settings_based_on_option( 'site_description', $value );
 		}, 10, 2 );
+
+		add_action( 'wp_head', function() {
+			$this->add_body_class();
+		} );
+
+		add_filter( 'elementor/frontend/admin_bar/settings', function ( $admin_bar_config ) {
+			return $this->add_menu_in_admin_bar( $admin_bar_config );
+		}, 9 /* Before site-editor (theme-builder) */ );
 	}
 }

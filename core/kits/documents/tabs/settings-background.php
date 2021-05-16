@@ -18,6 +18,18 @@ class Settings_Background extends Tab_Base {
 		return __( 'Background', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-background';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-background';
+	}
+
 	protected function register_tab_controls() {
 		$this->start_controls_section(
 			'section_background',
@@ -53,6 +65,7 @@ class Settings_Background extends Tab_Base {
 				'label' => __( 'Mobile Browser Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'description' => __( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
+				'separator' => 'before',
 			]
 		);
 

@@ -25,14 +25,29 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	getMediaType: function() {
-		return this.model.get( 'media_type' );
+		// `get( 'media_type' )` is for BC.
+		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
+	},
+
+	/**
+	 * Get library type for `wp.media` using a given media type.
+	 *
+	 * @param {String} mediaType - The media type to get the library for.
+	 * @returns {String}
+	 */
+	getLibraryType: function( mediaType ) {
+		if ( ! mediaType ) {
+			mediaType = this.getMediaType();
+		}
+
+		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 
 	applySavedValue: function() {
-		var url = this.getControlValue( 'url' ),
+		const url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType();
 
-		if ( 'image' === mediaType ) {
+		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
@@ -44,14 +59,23 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
 	},
 
-	openFrame: function() {
-		if ( ! FilesUploadHandler.isUploadEnabled( this.getMediaType() ) ) {
-			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame() ).show();
+	openFrame: function( e ) {
+		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
+		this.mediaType = mediaType;
+
+		if ( ! mediaType ) {
+			return;
+		}
+
+		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
 
 			return false;
 		}
 
-		if ( ! this.frame ) {
+		// If there is no frame, or the current initialized frame contains a different library than
+		// the `data-media-type` of the clicked button, (re)initialize the frame.
+		if ( ! this.frame || this.getLibraryType( mediaType ) !== this.currentLibraryType ) {
 			this.initFrame();
 		}
 
@@ -84,16 +108,19 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		const mediaType = this.getMediaType();
+		this.currentLibraryType = this.getLibraryType( mediaType );
+
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
-					library: wp.media.query( { type: this.getMediaType() } ),
+					title: __( 'Insert Media', 'elementor' ),
+					library: wp.media.query( { type: this.currentLibraryType } ),
 					multiple: false,
 					date: false,
 				} ),
@@ -102,6 +129,24 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
+
+		if ( elementor.config.filesUpload.unfilteredFiles ) {
+			this.setUploadMimeType( this.frame, mediaType );
+		}
+	},
+
+	setUploadMimeType( frame, ext ) {
+		// Add unfiltered files to the allowed upload extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+
+		frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ( 'application/json' === ext ) ? 'json' : oldExtensions + ',svg';
+		} );
+
+		this.frame.on( 'close', () => {
+			// Restore allowed upload extensions
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
 	},
 
 	/**

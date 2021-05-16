@@ -19,7 +19,7 @@ export class AttachPreview extends CommandInternal {
 
 				elementor.trigger( 'document:loaded', document );
 
-				$e.internal( 'panel/open-default', {
+				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
 		} );

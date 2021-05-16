@@ -14,7 +14,9 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	renderTools: function() {
-		if ( this.getOption( 'dynamicSettings' ).default ) {
+		// If the user has Elementor Pro and the current control has no dynamic tags available, don't generate the dynamic switcher.
+		// If the user has the core version only, we do display the dynamic switcher for the promotion.
+		if ( this.getOption( 'dynamicSettings' ).default || ( elementor.helpers.hasPro() && ! this.getOption( 'tags' ).length ) ) {
 			return;
 		}
 
@@ -48,7 +50,13 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.ui.dynamicSwitcher.removeClass( 'elementor-control-unit-1' ).addClass( 'e-control-tool' );
 
-		$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		const $eyedropper = $colorPickerToolsContainer.find( '.elementor-control-element-color-picker' );
+
+		if ( $eyedropper.length ) {
+			this.ui.dynamicSwitcher.insertBefore( $eyedropper );
+		} else {
+			$colorPickerToolsContainer.append( this.ui.dynamicSwitcher );
+		}
 	},
 
 	toggleDynamicClass: function() {
@@ -187,10 +195,10 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	showPromotion: function() {
-		let message = elementor.translate( 'dynamic_promotion_message' );
+		const message = __( 'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.', 'elementor' );
 
 		elementor.promotion.showDialog( {
-			headerMessage: elementor.translate( 'dynamic_content' ),
+			headerMessage: __( 'Dynamic Content', 'elementor' ),
 			message: message,
 			top: '-10',
 			element: this.ui.dynamicSwitcher,

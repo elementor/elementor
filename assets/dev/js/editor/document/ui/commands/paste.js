@@ -7,7 +7,7 @@ export class Paste extends Command {
 
 		super.initialize( args );
 
-		this.storage = elementorCommon.storage.get( 'clipboard' );
+		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
 
 		this.storage = this.storage.map( ( model ) =>
 			new Backbone.Model( model )
@@ -22,7 +22,7 @@ export class Paste extends Command {
 	}
 
 	apply( args ) {
-		if ( ! this.target ) {
+		if ( ! this.target || 0 === this.storage.length ) {
 			return false;
 		}
 

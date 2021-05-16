@@ -18,7 +18,7 @@ export default class Component extends ComponentModalBase {
 	defaultTabs() {
 		return {
 			'templates/blocks': {
-				title: elementor.translate( 'blocks' ),
+				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
 					source: 'remote',
 					type: 'block',
@@ -26,14 +26,14 @@ export default class Component extends ComponentModalBase {
 				} ),
 			},
 			'templates/pages': {
-				title: elementor.translate( 'pages' ),
+				title: __( 'Pages', 'elementor' ),
 				filter: {
 					source: 'remote',
 					type: 'page',
 				},
 			},
 			'templates/my-templates': {
-				title: elementor.translate( 'my_templates' ),
+				title: __( 'My Templates', 'elementor' ),
 				filter: {
 					source: 'local',
 				},
@@ -54,9 +54,9 @@ export default class Component extends ComponentModalBase {
 			},
 			connect: ( args ) => {
 				args.texts = {
-					title: elementor.translate( 'library/connect:title' ),
-					message: elementor.translate( 'library/connect:message' ),
-					button: elementor.translate( 'library/connect:button' ),
+					title: __( 'Connect to Template Library', 'elementor' ),
+					message: __( 'Access this template and our entire library by creating a free personal account', 'elementor' ),
+					button: __( 'Get Started', 'elementor' ),
 				};
 
 				this.manager.layout.showConnectView( args );
@@ -209,11 +209,11 @@ export default class Component extends ComponentModalBase {
 			initDialog: function() {
 				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'elementor-insert-template-settings-dialog',
-					headerMessage: elementor.translate( 'import_template_dialog_header' ),
-					message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
+					headerMessage: __( 'Import Document Settings', 'elementor' ),
+					message: __( 'Do you want to also import the document settings of the template?', 'elementor' ) + '<br>' + __( 'Attention: Importing may override previous settings.', 'elementor' ),
 					strings: {
-						confirm: elementor.translate( 'yes' ),
-						cancel: elementor.translate( 'no' ),
+						confirm: __( 'Yes', 'elementor' ),
+						cancel: __( 'No', 'elementor' ),
 					},
 				} );
 			},

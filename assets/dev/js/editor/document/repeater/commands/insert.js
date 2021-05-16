@@ -43,7 +43,7 @@ export class Insert extends CommandHistory {
 		return {
 			containers,
 			type: 'add',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 			data: {
 				model,
 				name,

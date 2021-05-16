@@ -276,6 +276,10 @@ select {
 		}
 	}
 
+	#elementor-panel-elements-search-area {
+		background-color: $theme-dark-gray-darkest;
+	}
+
 	#elementor-panel-elements-search-input {
 		background-color: $theme-dark-gray;
 		color: $theme-dark-light;
@@ -869,6 +873,11 @@ body.rtl .elementor-control-type-gallery {
 		}
 	}
 
+	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
+		background-color: $theme-dark-gray;
+		color: $theme-dark-gray-lightest;
+	}
+
 	&.select2-container--open,
 	&.select2-container--focus {
 
@@ -902,6 +911,10 @@ body.rtl .elementor-control-type-gallery {
 		.select2-selection__choice {
 			background-color: $theme-dark-gray;
 			border-color: $theme-dark-gray;
+
+			&__remove {
+				color: $theme-dark-gray-lightest;
+			}
 		}
 	}
 

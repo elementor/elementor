@@ -34,7 +34,7 @@ export class Remove extends CommandHistory {
 		return {
 			containers,
 			type: 'remove',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 		};
 	}
 

@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Plugin;
 use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -384,7 +386,7 @@ abstract class Base_App {
 			$body = (object) $body;
 
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
-			$code = isset( $body->code ) ? $body->code : $response_code;
+			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
 			if ( 401 === $code ) {
 				$this->delete();
@@ -567,13 +569,20 @@ abstract class Base_App {
 				}
 				break;
 			default:
-				echo '<div id="message" class="updated notice is-dismissible"><p>';
+				/**
+				 * @var Admin_Notices $admin_notices
+				 */
+				$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 				foreach ( $notices as $notice ) {
-					echo wp_kses_post( sprintf( '<div class="%s"><p>%s</p></div>', $notice['type'], wpautop( $notice['content'] ) ) );
-				}
+					$options = [
+						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
+						'type' => $notice['type'],
+						'icon' => false,
+					];
 
-				echo '</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">' . __( 'Dismiss', 'elementor' ) . '</span></button></div>';
+					$admin_notices->print_admin_notice( $options );
+				}
 		}
 	}
 

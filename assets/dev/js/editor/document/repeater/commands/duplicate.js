@@ -14,7 +14,7 @@ export class Duplicate extends CommandHistory {
 		return {
 			containers,
 			type: 'duplicate',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 		};
 	}
 

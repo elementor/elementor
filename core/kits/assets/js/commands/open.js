@@ -1,6 +1,12 @@
 import Command from 'elementor-api/modules/command';
 
 export class Open extends Command {
+	static getInfo() {
+		return {
+			isSafe: true,
+		};
+	}
+
 	apply() {
 		const kit = elementor.documents.get( elementor.config.kit_id );
 

@@ -8,6 +8,17 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
+	 * Get info of command.
+	 *
+	 * Use to provide 'extra' information about the command.
+	 *
+	 * @returns {Object}
+	 */
+	static getInfo() {
+		return {};
+	}
+
+	/**
 	 * Self command name.
 	 *
 	 * @returns {string}
@@ -103,6 +114,16 @@ export default class CommandBase extends ArgsObject {
 	 */
 	run() {
 		return this.apply( this.args );
+	}
+
+	/**
+	 * Run all the catch hooks.
+	 *
+	 * @param {Error} e
+	 */
+	runCatchHooks( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}
 
 	/**

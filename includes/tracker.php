@@ -342,14 +342,14 @@ class Tracker {
 	 *
 	 * Retrieve tracking data and apply filter
 	 *
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @param bool $is_first_time
 	 *
 	 * @return array
 	 */
-	private static function get_tracking_data( $is_first_time = false ) {
+	public static function get_tracking_data( $is_first_time = false ) {
 		$params = [
 			'system' => self::get_system_reports_data(),
 			'site_lang' => get_bloginfo( 'language' ),

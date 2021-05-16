@@ -3,7 +3,8 @@
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
-use Elementor\DB;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -19,12 +20,27 @@ class Settings_Site_Identity extends Tab_Base {
 		return __( 'Site Identity', 'elementor' );
 	}
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-site-identity';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-site-identity';
+	}
+
 	protected function register_tab_controls() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 
 		$site_icon_id = get_option( 'site_icon' );
 		$site_icon_src = wp_get_attachment_image_src( $site_icon_id, 'full' );
+
+		// If CANNOT upload svg normally, it will add a custom inline option to force svg upload if requested. (in logo and favicon)
+		$should_include_svg_inline_option = ! Files_Upload_Handler::is_enabled();
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -50,6 +66,7 @@ class Settings_Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogname' ),
 				'placeholder' => __( 'Choose name', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
@@ -60,6 +77,7 @@ class Settings_Site_Identity extends Tab_Base {
 				'default' => get_option( 'blogdescription' ),
 				'placeholder' => __( 'Choose description', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
@@ -68,11 +86,13 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Logo', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
 				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 
@@ -81,11 +101,13 @@ class Settings_Site_Identity extends Tab_Base {
 			[
 				'label' => __( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $site_icon_id,
 					'url' => $site_icon_src ? $site_icon_src[0] : '',
 				],
 				'description' => __( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 
@@ -94,8 +116,8 @@ class Settings_Site_Identity extends Tab_Base {
 
 	public function on_save( $data ) {
 		if (
-			! isset( $data['settings'] ) ||
-			DB::STATUS_PUBLISH !== $data['settings']['post_status'] ||
+			! isset( $data['settings']['post_status'] ) ||
+			Document::STATUS_PUBLISH !== $data['settings']['post_status'] ||
 			// Should check for the current action to avoid infinite loop
 			// when updating options like: "blogname" and "blogdescription".
 			strpos( current_action(), 'update_option_' ) === 0

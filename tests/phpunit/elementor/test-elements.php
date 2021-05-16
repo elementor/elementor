@@ -36,10 +36,9 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		$this->assertTrue( $this->elementor()->elements_manager->register_element_type( new $element_class( [ 'id' => $element_id ] ) ) );
 	}
 
-	/**
-	 * @expectedIncorrectUsage Elementor\Controls_Manager::add_control_to_stack
-	 */
 	public function test_redeclareControl() {
+		$this->expectDoingItWrong('Elementor\Controls_Manager::add_control_to_stack');
+
 		$element_obj = $this->elementor()->elements_manager->get_element_types( 'section' );
 
 		$control_id = 'test_redeclare_control';

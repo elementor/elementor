@@ -22,10 +22,18 @@ export default class Command extends CommandBase {
 	}
 
 	onCatchApply( e ) {
-		$e.hooks.runDataCatch( this.command, this.args, e );
+		this.runCatchHooks( e );
 
 		elementorCommon.helpers.consoleError( e );
+	}
 
-		$e.hooks.runUICatch( this.command, this.args, e );
+	/**
+	 * Run all the catch hooks.
+	 *
+	 * @param {Error} e
+	 */
+	runCatchHooks( e ) {
+		$e.hooks.runDataCatch( this.currentCommand, this.args, e );
+		$e.hooks.runUICatch( this.currentCommand, this.args, e );
 	}
 }

@@ -349,25 +349,22 @@ label.elementor-template-library-order-label {
 	}
 
 	&.elementor-template-library-pro-template {
-
-		.elementor-template-library-template-body {
-
-			&:before {
-				position: absolute;
-				content: 'pro';
-				text-transform: uppercase;
-				top: 5px;
-				@include end(5px);
-				background-color: $editor-accent;
-				color: $editor-lightest;
-				padding: 2px 4px 0;
-				font-size: 9px;
-				border-radius: 2px;
-			}
+		.elementor-template-library-template-body:before {
+			content: var( --elementor-template-library-subscription-plan-label );
+			background-color: var( --elementor-template-library-subscription-plan-color );
+			color: $editor-lightest;
+			position: absolute;
+			text-transform: uppercase;
+			top: 5px;
+			@include end(5px);
+			padding: 2px 4px 0;
+			font-size: 9px;
+			border-radius: 2px;
 		}
 	}
 
-	&:not(.elementor-template-library-template-page) {
+	// For blocks
+	&:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp) {
 		position: relative;
 		width: calc(33.333% - #{$remote-templates-items-space});
 		overflow: hidden;
@@ -488,7 +485,9 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.elementor-template-library-template-page {
+.elementor-template-library-template-page,
+.elementor-template-library-template-lp {
+
 	@media (max-width: $library_screen_breakpoint) {
 		width: calc(25% - #{$remote-templates-items-space});
 	}
@@ -856,6 +855,7 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-footer-banner {
+	padding-bottom: 45px;
 
 	i {
 		color: $editor-lighter;
@@ -871,7 +871,7 @@ label.elementor-template-library-order-label {
 		color: $editor-light;
 		font-size: 15px;
 		font-weight: 500;
-		margin: 20px 0;
+		margin-top: 20px;
 	}
 }
 
