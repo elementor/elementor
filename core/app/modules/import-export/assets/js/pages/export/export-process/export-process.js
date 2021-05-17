@@ -9,9 +9,7 @@ import { Context } from '../../../context/context-provider';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ExportProcess() {
-	const { ajaxState, setAjax } = useAjax( 'e_import_file', 'elementor_import_kit', {
-			include: [ 'templates', 'content', 'site-settings' ],
-		} ),
+	const { ajaxState, setAjax } = useAjax(),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		onLoad = () => {

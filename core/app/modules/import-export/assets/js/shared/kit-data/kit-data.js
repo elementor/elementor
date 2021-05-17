@@ -71,8 +71,6 @@ export default function KitData( props ) {
 			},
 		];
 
-	console.log( 'kitData', kitData );
-
 	return (
 		<>
 			<Heading variant="h6" tag="h3" className="e-app-export-complete__kit-content-title">
