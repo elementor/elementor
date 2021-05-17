@@ -565,10 +565,10 @@ class Widget_Image_Carousel extends Widget_Base {
 				'default' => [
 					'size' => 5,
 				],
-					'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 10,
+				'range' => [
+				'px' => [
+					'min' => 0,
+					'max' => 10,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'spacing: {{SIZE}}{{UNIT}};',
