@@ -1,4 +1,4 @@
-import ExportContext from './context/export/export-context';
+import ContextProvider from './context/context-provider';
 import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
 
@@ -8,7 +8,7 @@ import ExportProcess from './pages/export/export-process/export-process';
 
 export default function Export() {
 	return (
-		<ExportContext>
+		<ContextProvider>
 			<LocationProvider history={ router.appHistory }>
 				<Router>
 					<ExportComplete path="complete" />
@@ -16,6 +16,6 @@ export default function Export() {
 					<ExportKit default />
 				</Router>
 			</LocationProvider>
-		</ExportContext>
+		</ContextProvider>
 	);
 }

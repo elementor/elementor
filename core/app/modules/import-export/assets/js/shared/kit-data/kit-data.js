@@ -1,16 +1,11 @@
-import { useContext } from 'react';
-
-import { Context } from '../../../../context/export/export-context';
-
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import List from 'elementor-app/ui/molecules/list';
 
 import './kit-data.scss';
 
-export default function KitData() {
-	const exportContext = useContext( Context ),
-		kitData = exportContext.data.fileResponse?.manifest,
+export default function KitData( props ) {
+	const kitData = props.data,
 		getSummaryTitle = ( type, key, amount, showAmount ) => {
 			const data = elementorAppConfig[ 'import-export' ].summaryTitles[ type ][ key ];
 
@@ -76,6 +71,8 @@ export default function KitData() {
 			},
 		];
 
+	console.log( 'kitData', kitData );
+
 	return (
 		<>
 			<Heading variant="h6" tag="h3" className="e-app-export-complete__kit-content-title">
@@ -94,3 +91,7 @@ export default function KitData() {
 		</>
 	);
 }
+
+KitData.propTypes = {
+	data: PropTypes.object,
+};

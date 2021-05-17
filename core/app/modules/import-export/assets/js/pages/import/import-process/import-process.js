@@ -1,39 +1,48 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ImportProcess() {
 	const { ajaxState, setAjax } = useAjax(),
-		importContext = useContext( Context ),
+		context = useContext( Context ),
 		navigate = useNavigate(),
 		onLoad = () => {
-			let fileURL = location.hash.match( 'file_url=(.+)' );
-
-			if ( fileURL ) {
-				fileURL = fileURL[ 1 ];
+			// Preventing the ajax request when entering directly to the page.
+			if ( context.data.fileResponse ) {
+				setAjax( {
+					data: {
+						action: 'elementor_import_kit',
+						data: JSON.stringify( {
+							stage: 2,
+							session: context.data.fileResponse[ 1 ].session,
+							include: context.data.includes,
+						} ),
+					},
+				} );
 			}
-
-			setAjax( {
-				data: {
-					e_import_file: fileURL || importContext.data.file,
-					action: 'elementor_import_kit',
-					data: JSON.stringify( {
-						include: [ 'templates', 'content', 'site-settings' ],
-					} ),
-				},
-			} );
 		},
-		onSuccess = () => navigate( '/import/success' ),
-		onRetry = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+		onSuccess = () => {
+			const previousFileResponse = context.data.fileResponse,
+				fileResponse = { ...previousFileResponse, 2: ajaxState.response };
+
+			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
+		},
+		onDialogDismiss = () => {
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );
 		};
+
+	useEffect( () => {
+		if ( 'success' === ajaxState.status ) {
+			navigate( '/import/complete' );
+		}
+	}, [ context.data.fileResponse ] );
 
 	return (
 		<Layout type="import">
@@ -41,7 +50,8 @@ export default function ImportProcess() {
 				status={ ajaxState.status }
 				onLoad={ onLoad }
 				onSuccess={ onSuccess }
-				onRetry={ onRetry }
+				onDialogApprove={ () => {} }
+				onDialogDismiss={ onDialogDismiss }
 			/>
 		</Layout>
 	);

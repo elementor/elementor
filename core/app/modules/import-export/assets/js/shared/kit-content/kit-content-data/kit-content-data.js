@@ -16,6 +16,7 @@ const kitContentData = [
 					__( 'Search Results', 'elementor' ),
 					__( '404 Error Page', 'elementor' ),
 					__( 'Popups', 'elementor' ),
+					__( 'Global widgets', 'elementor' ),
 				],
 				tooltip: __( 'These components can only be exported with Elementor Pro', 'elementor' ),
 			},
@@ -29,6 +30,10 @@ const kitContentData = [
 				open: [
 					__( 'Elementor Pages', 'elementor' ),
 					__( 'Landing Pages', 'elementor' ),
+					__( 'Elementor Posts', 'elementor' ),
+					__( 'WP Pages', 'elementor' ),
+					__( 'WP Posts', 'elementor' ),
+					__( 'Custom Post Type', 'elementor' ),
 				],
 			},
 		},
