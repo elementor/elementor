@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useNavigate } from '@reach/router';
+
+import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import Button from 'elementor-app/ui/molecules/button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import ImportButton from './components/import-button/import-button';
 
 export default function ImportContent() {
-	const getFooter = () => (
+	const context = useContext( Context ),
+		navigate = useNavigate(),
+		getFooter = () => (
 			<WizardFooter separator justify="end">
+				<Button
+					text={ __( 'Previous', 'elementor' ) }
+					variant="contained"
+					onClick={ () => {
+						context.dispatch( { type: 'SET_FILE', payload: null } );
+						navigate( 'import' );
+					} }
+				/>
 				<ImportButton />
 			</WizardFooter>
 		),
