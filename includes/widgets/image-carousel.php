@@ -102,6 +102,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		$slides_to_show = range( 1, 10 );
+		$slides_to_show = array_combine( $slides_to_show, $slides_to_show );
+
 		$this->add_responsive_control(
 			'slides_to_show',
 			[
