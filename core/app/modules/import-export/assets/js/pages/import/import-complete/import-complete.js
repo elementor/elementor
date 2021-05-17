@@ -64,7 +64,7 @@ export default function ImportComplete() {
 				importData = context.data.fileResponse.stage2;
 
 			return {
-				templates: getTemplates( manifest.templates, importData.templates.succeed ),
+				templates: getTemplates( manifest.templates, importData.templates?.succeed ),
 				content: getContent( manifest.content, importData.content ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importData[ 'wp-content' ] ),
 				'site-settings': context.data.includes.includes( 'settings' ) && manifest[ 'site-settings' ],
