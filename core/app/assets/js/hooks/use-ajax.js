@@ -25,12 +25,13 @@ export default function useAjax() {
 
 			const options = {
 				type: 'post',
-				url: ajax.url || elementorCommon.config.ajax.url,
-				headers: ajax.headers || {},
-				data: formData,
+				url: elementorCommon.config.ajax.url,
+				headers: {},
 				cache: false,
 				contentType: false,
 				processData: false,
+				...ajax,
+				data: formData,
 				success: ( response ) => {
 					const status = response.success ? 'success' : 'error';
 
