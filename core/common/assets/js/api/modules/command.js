@@ -23,8 +23,6 @@ export default class Command extends CommandBase {
 
 	onCatchApply( e ) {
 		this.runCatchHooks( e );
-
-		elementorCommon.helpers.consoleError( e );
 	}
 
 	/**

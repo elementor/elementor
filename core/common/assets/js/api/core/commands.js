@@ -336,7 +336,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 			results = instance.run();
 		} catch ( e ) {
-			instance.onCatchApply( e );
+			this.catchApply( e, instance );
 
 			if ( e instanceof $e.modules.HookBreak ) {
 				this.afterRun( command, args, e ); // To clear current.
@@ -374,7 +374,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			},
 			handleResultJQueryDeferred = ( _result ) => {
 				_result.fail( ( e ) => {
-					instance.onCatchApply( e );
+					this.catchApply( e, instance );
 					this.afterRun( command, instance.args, e );
 				} );
 				_result.done( onAfter );
@@ -385,7 +385,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 				// Override initial result ( promise ) to await onAfter promises, first!.
 				return ( async () => {
 					await result.catch( ( e ) => {
-						instance.onCatchApply( e );
+						this.catchApply( e, instance );
 						this.afterRun( command, instance.args, e );
 					} );
 					await result.then( ( __result ) => asyncOnAfter( __result ) );
@@ -397,14 +397,24 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			handleResultJQueryDeferred( result );
+			return handleResultJQueryDeferred( result );
 		} else if ( result instanceof Promise ) {
 			return handleResultPromise( result );
-		} else {
-			handleResultNormal( result );
 		}
+			handleResultNormal( result );
 
 		return result;
+	}
+
+	/**
+	 * @param {Error} e
+	 * @param {Command} instance
+	 */
+	catchApply( e, instance ) {
+		instance.onCatchApply( e );
+
+		// TODO: Should be part of of $e. API.
+		elementorCommon.helpers.consoleError( e );
 	}
 
 	/**

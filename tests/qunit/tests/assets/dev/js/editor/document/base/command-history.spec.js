@@ -44,9 +44,7 @@ jQuery( () => {
 					tempArgs = args;
 				} );
 
-				assert.throws( () => {
-					instance.onCatchApply( new $e.modules.HookBreak() );
-				} );
+				instance.onCatchApply( new $e.modules.HookBreak() );
 
 				assert.equal( tempCommand, 'document/history/delete-log' );
 				assert.equal( tempArgs.id, instance.historyId );
