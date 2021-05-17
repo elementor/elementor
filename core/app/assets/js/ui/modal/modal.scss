@@ -8,6 +8,7 @@ $eps-modal-header-background-color: theme-colors(info);
 $eps-modal-header-color: theme-colors(light);
 $eps-modal-header-height: spacing(44);
 $eps-modal-header-padding: spacing(10) spacing(16);
+$eps-modal-header-border-radius: $eps-radius;
 $eps-modal-icon-spacing: spacing(10);
 $eps-modal-body-padding: spacing(30);
 $eps-modal-close-button-spacing: spacing(16);
@@ -62,7 +63,7 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 		color: $eps-modal-header-color;
 		height: $eps-modal-header-height;
 		padding: $eps-modal-header-padding;
-		border-radius: $eps-modal-border-radius;
+		border-radius: $eps-modal-header-border-radius;
 	}
 
 	&__icon {
