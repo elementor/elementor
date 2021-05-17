@@ -32,7 +32,6 @@ export default function ExportProcess() {
 
 	useEffect( () => {
 		if ( exportContext.data.fileResponse ) {
-			console.log( 'exportContext.data.fileResponse', exportContext.data.fileResponse );
 			navigate( 'export/complete' );
 		}
 	}, [ exportContext.data.fileResponse ] );
