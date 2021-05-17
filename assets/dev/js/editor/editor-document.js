@@ -23,9 +23,9 @@ $e.modules.editor = {
 // TODO: Remove, BC.
 $e.modules.document = {
 	get CommandHistory() {
-		elementorCommon.helpers.hardDeprecated(
+		elementorCommon.helpers.softDeprecated(
 			'$e.modules.document.CommandHistory',
-			'3.0.0',
+			'3.0.3',
 			'$e.modules.editor.document.CommandHistory'
 		);
 
@@ -33,9 +33,9 @@ $e.modules.document = {
 	},
 
 	get CommandHistoryDebounce() {
-		elementorCommon.helpers.hardDeprecated(
+		elementorCommon.helpers.softDeprecated(
 			'$e.modules.CommandHistoryDebounce',
-			'3.0.0',
+			'3.0.3',
 			'$e.modules.editor.document.CommandHistoryDebounce'
 		);
 

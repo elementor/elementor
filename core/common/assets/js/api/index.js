@@ -39,9 +39,9 @@ export default class API {
 
 		this.modules = {
 			get CommandBase() {
-				elementorCommon.helpers.hardDeprecated(
+				elementorCommon.helpers.softDeprecated(
 					'$e.modules.CommandBase',
-					'3.0.0',
+					'3.0.3',
 					'$e.modules.Command'
 				);
 
@@ -49,9 +49,9 @@ export default class API {
 			},
 
 			get CommandInternalBase() {
-				elementorCommon.helpers.hardDeprecated(
+				elementorCommon.helpers.softDeprecated(
 					'$e.modules.CommandInternalBase',
-					'3.0.0',
+					'3.0.3',
 					'$e.modules.CommandInternal'
 				);
 

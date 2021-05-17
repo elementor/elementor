@@ -10,18 +10,18 @@ export default class Component extends ComponentBase {
 	static getModules() {
 		const modules = {
 			get CommandHistoryBase() {
-				elementorCommon.helpers.hardDeprecated(
+				elementorCommon.helpers.softDeprecated(
 					'$e.modules.document.CommandHistoryBase',
-					'3.0.0',
+					'3.0.3',
 					'$e.modules.editor.document.CommandHistory'
 				);
 
 				return this.CommandHistory;
 			},
 			get CommandHistoryDebounceBase() {
-				elementorCommon.helpers.hardDeprecated(
+				elementorCommon.helpers.softDeprecated(
 					'$e.modules.document.CommandHistoryDebounceBase',
-					'3.0.0',
+					'3.0.3',
 					'$e.modules.editor.document.CommandHistoryDebounce'
 				);
 
