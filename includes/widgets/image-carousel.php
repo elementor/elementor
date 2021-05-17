@@ -566,16 +566,33 @@ class Widget_Image_Carousel extends Widget_Base {
 					'size' => 5,
 				],
 				'range' => [
-				'px' => [
-					'min' => 0,
-					'max' => 10,
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'spacing: {{SIZE}}{{UNIT}};',
-				]
-			],
+				],
 				'condition' => [
 					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'title_bottom_space',
+			[
+				'label' => __( 'Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-carousel' => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
