@@ -20,7 +20,7 @@ export default function ImportProcess() {
 						action: 'elementor_import_kit',
 						data: JSON.stringify( {
 							stage: 2,
-							session: context.data.fileResponse[ 1 ].session,
+							session: context.data.fileResponse.stage1.session,
 							include: context.data.includes,
 						} ),
 					},
@@ -29,7 +29,7 @@ export default function ImportProcess() {
 		},
 		onSuccess = () => {
 			const previousFileResponse = context.data.fileResponse,
-				fileResponse = { ...previousFileResponse, 2: ajaxState.response };
+				fileResponse = { ...previousFileResponse, stage2: ajaxState.response };
 
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
 		},
