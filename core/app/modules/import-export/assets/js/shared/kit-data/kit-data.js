@@ -79,11 +79,17 @@ export default function KitData( props ) {
 
 			<List className="e-app-export-complete-kit-data-list">
 				{
-					kitContent.map( ( item, index ) => (
-						<List.Item key={ index } className="e-app-export-complete-kit-data-list__item">
-							<Text tag="strong" variant="sm"><strong>{ item.title }</strong></Text> <Text tag="span" variant="sm">{ item.data.filter( ( value ) => value ).join( ' | ' ) }</Text>
-						</List.Item>
-					) )
+					kitContent.map( ( item, index ) => {
+						if ( ! item.data.length ) {
+							return;
+						}
+
+						return (
+							<List.Item key={ index } className="e-app-export-complete-kit-data-list__item">
+								<Text tag="strong" variant="sm"><strong>{ item.title }</strong></Text> <Text tag="span" variant="sm">{ item.data.filter( ( value ) => value ).join( ' | ' ) }</Text>
+							</List.Item>
+						);
+					} )
 				}
 			</List>
 		</>

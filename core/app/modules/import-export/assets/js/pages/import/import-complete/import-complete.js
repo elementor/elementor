@@ -16,15 +16,58 @@ export default function ImportComplete() {
 				<DashboardButton />
 			</WizardFooter>
 		),
+		getTemplates = ( templates, succeed ) => {
+			const kitTemplates = {};
+
+			for ( const key in succeed ) {
+				kitTemplates[ key ] = templates[ key ];
+			}
+
+			return kitTemplates;
+		},
+		getContent = ( content, data ) => {
+			const kitContent = {};
+
+			for ( const contentType in data ) {
+				for ( const key in data[ contentType ].succeed ) {
+					if ( ! kitContent[ contentType ] ) {
+						kitContent[ contentType ] = {};
+					}
+
+					kitContent[ contentType ][ key ] = content[ contentType ][ key ];
+				}
+			}
+
+			return kitContent;
+		},
+		getWPContent = ( content, data ) => {
+			const kitWPContent = {};
+
+			for ( const contentType in data ) {
+				for ( const key in data[ contentType ].succeed ) {
+					if ( ! kitWPContent[ contentType ] ) {
+						kitWPContent[ contentType ] = [];
+					}
+
+					kitWPContent[ contentType ].push( key );
+				}
+			}
+
+			return kitWPContent;
+		},
 		getKitData = () => {
 			if ( ! context.data.fileResponse ) {
 				return {};
 			}
 
-			console.log( 'context.data.fileResponse', context.data.fileResponse );
+			const manifest = context.data.fileResponse.stage1.manifest,
+				importData = context.data.fileResponse.stage2;
 
 			return {
-
+				templates: getTemplates( manifest.templates, importData.templates.succeed ),
+				content: getContent( manifest.content, importData.content ),
+				'wp-content': getWPContent( manifest[ 'wp-content' ], importData[ 'wp-content' ] ),
+				'site-settings': context.data.includes.includes( 'settings' ) && manifest[ 'site-settings' ],
 			};
 		};
 
