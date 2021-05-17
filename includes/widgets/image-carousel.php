@@ -573,7 +573,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'title_bottom_space',
+			'bottom_space',
 			[
 				'label' => __( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
