@@ -16,20 +16,20 @@ export default function ImportComplete() {
 				<DashboardButton />
 			</WizardFooter>
 		),
-		getTemplates = ( templates, succeed ) => {
+		getTemplates = ( templates, importedData ) => {
 			const kitTemplates = {};
 
-			for ( const key in succeed ) {
+			for ( const key in importedData?.templates?.succeed ) {
 				kitTemplates[ key ] = templates[ key ];
 			}
 
 			return kitTemplates;
 		},
-		getContent = ( content, data ) => {
+		getContent = ( content, importedData ) => {
 			const kitContent = {};
 
-			for ( const contentType in data ) {
-				for ( const key in data[ contentType ].succeed ) {
+			for ( const contentType in importedData?.content ) {
+				for ( const key in importedData.content[ contentType ]?.succeed ) {
 					if ( ! kitContent[ contentType ] ) {
 						kitContent[ contentType ] = {};
 					}
@@ -40,11 +40,11 @@ export default function ImportComplete() {
 
 			return kitContent;
 		},
-		getWPContent = ( content, data ) => {
+		getWPContent = ( content, importedData ) => {
 			const kitWPContent = {};
 
-			for ( const contentType in data ) {
-				for ( const key in data[ contentType ].succeed ) {
+			for ( const contentType in importedData?.[ 'wp-content' ] ) {
+				for ( const key in importedData[ 'wp-content' ][ contentType ]?.succeed ) {
 					if ( ! kitWPContent[ contentType ] ) {
 						kitWPContent[ contentType ] = [];
 					}
@@ -61,12 +61,12 @@ export default function ImportComplete() {
 			}
 
 			const manifest = context.data.fileResponse.stage1.manifest,
-				importData = context.data.fileResponse.stage2;
+				importedData = context.data.fileResponse.stage2;
 
 			return {
-				templates: getTemplates( manifest.templates, importData?.templates?.succeed ),
-				content: getContent( manifest.content, importData.content ),
-				'wp-content': getWPContent( manifest[ 'wp-content' ], importData[ 'wp-content' ] ),
+				templates: getTemplates( manifest.templates, importedData ),
+				content: getContent( manifest.content, importedData ),
+				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) && manifest[ 'site-settings' ],
 			};
 		};
