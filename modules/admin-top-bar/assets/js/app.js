@@ -1,8 +1,30 @@
 import BarHeading from 'elementor/modules/admin-top-bar/assets/js/components/bar-heading/bar-heading';
 import BarButton from 'elementor/modules/admin-top-bar/assets/js/components/bar-button/bar-button';
-import PageButton from 'elementor/modules/admin-top-bar/assets/js/components/page-button/page-button';
+import { useEffect, useState, useRef } from 'react';
 
-export default function AdminTopBar( props ) {
+export default function AdminTopBar() {
+	const actionButtonsRef = useRef();
+	const [ pageTitle, setPageTitle ] = useState( null );
+	// const [ actionButtons, setActionButtons ] = useState( null );
+
+	useEffect( () => {
+		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
+		if ( pageTitleElement ) {
+			const pageTitleText = pageTitleElement.innerText;
+			pageTitleElement.remove();
+			setPageTitle( pageTitleText );
+		}
+	}, [] );
+
+	useEffect( () => {
+		const actionButtonElements = document.querySelectorAll( '.page-title-action' );
+		if ( actionButtonElements ) {
+			actionButtonElements.forEach( ( actionButtonElement ) => {
+				actionButtonsRef.current.appendChild( actionButtonElement );
+			} );
+		}
+	}, [] );
+
 	const isUserConnected = elementorCommonConfig.connect.is_user_connected;
 	let connectUrl = '';
 	const finderAction = () => {
@@ -24,22 +46,15 @@ export default function AdminTopBar( props ) {
 
 	return (
 		<div id="elementor-admin-top-bar">
-			<div className="bar-main-area">
-				<BarHeading>{props.title}</BarHeading>
-				{props.buttons.map( ( button, index ) => {
-					return <PageButton key={ index } { ...button }></PageButton>;
-				} )}
+			<div className="bar-main-area bar-flex">
+				<BarHeading>{ pageTitle }</BarHeading>
+				<div className="top-bar-action-buttons-wrapper" ref={ actionButtonsRef } ></div>
 			</div>
 
-			<div className="bar-action-area">
+			<div className="bar-action-area bar-flex">
 				<BarButton onClick={finderAction} icon="eicon-search-bold">Finder</BarButton>
 				{renderConnectButton()}
 			</div>
 		</div>
 	);
 }
-
-AdminTopBar.propTypes = {
-	title: PropTypes.any,
-	buttons: PropTypes.array,
-};

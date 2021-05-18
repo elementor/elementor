@@ -17,31 +17,30 @@ $top-bar-height: 50px;
 		padding: 0 16px;
 	}
 
-	.bar-action-area,
-	.top-bar-heading-wrapper,
-	.bar-main-area {
+	.bar-flex {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 	}
 
-	.bar-main-area {
-		button {
-			min-height: 30px;
-			padding: 0 10px;
-			cursor: pointer;
-			border-width: 1px;
-			border-style: solid;
-			border-radius: 3px;
-			color: #2271b1;
-			border-color: #2271b1;
-			background: #f6f7f7;
+	.page-title-action {
+		background: #f6f7f7;
+		border: 1px solid #2271b1;
+		border-radius: 3px;
+		box-sizing: border-box;
+		color: #2271b1;
+		cursor: pointer;
+		display: inline-block;
+		line-height: 30px;
+		margin: 0 4px;
+		min-height: 30px;
+		padding: 0 10px;
+		text-decoration: none;
 
-			&:hover {
-				background: #f0f0f1;
-				border-color: #0a4b78;
-				color: #0a4b78;
-			}
+		&:hover {
+			background: #f0f0f1;
+			border-color: #0a4b78;
+			color: #0a4b78;
 		}
 	}
 
@@ -53,10 +52,6 @@ $top-bar-height: 50px;
 		button {
 			margin: 0 4px
 		}
-	}
-
-	.top-bar-heading-wrapper {
-
 	}
 
 	.top-bar-heading-logo {
