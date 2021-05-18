@@ -12,7 +12,7 @@ echo "What is your database username [admin]?"
 read -r DB_USER
 echo "What is your database password [admin]?"
 read -r DB_PASS
-echo "What is your database host including port if needed [127.0.0.1]?"
+echo "What is your database host (specify port if needed) [127.0.0.1:PORT]?"
 read -r DB_HOST
 echo "Choose WordPress version for testing [latest]:"
 read -r WP_VERSION
