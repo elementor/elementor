@@ -2,20 +2,19 @@
 
 A quote from "phpunit" website that describes the tool ([https://phpunit.de/](https://phpunit.de/)):
 
-"PHPUnit is a programmer-oriented testing framework for PHP.
- It is an instance of the xUnit architecture for unit testing frameworks."
+"PHPUnit is a programmer-oriented testing framework for PHP. It is an instance of the xUnit architecture for unit testing frameworks."
  
- ## Installation
+## Installation
  
- **Note:** Make sure to install `composer` before jumping to this section (a guide to install `composer` locate next to this guide).
+**Note:** Make sure to install `composer` before jumping to this section (a guide to install `composer` locate next to this guide).
  
- To make sure we can run `phpunit` we have to install few things:
- 1. Fresh WordPress installation just for the test (to make sure tests not affected by your current WordPress installation)
- 2. Fresh database (to make sure tests not affected by your current database)
- 3. `wp-testing-tools` - set of utils that helps us to test WordPress plugins and themes.
- 4. `phpunit` bin file.
+To make sure we can run `phpunit` we have to install few things:
+1. Fresh WordPress installation just for the test (to make sure tests not affected by your current WordPress installation)
+2. Fresh database (to make sure tests not affected by your current database)
+3. `wp-testing-tools` - set of utils that helps us to test WordPress plugins and themes.
+4. `phpunit` bin file.
  
- There is a script that handles all those requirements
+There is a script that handles all those requirements
   
 #### SVN
 
