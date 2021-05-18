@@ -29,11 +29,9 @@ export default function ImportComplete() {
 			const kitContent = {};
 
 			for ( const contentType in importedData?.content ) {
-				for ( const key in importedData.content[ contentType ]?.succeed ) {
-					if ( ! kitContent[ contentType ] ) {
-						kitContent[ contentType ] = {};
-					}
+				kitContent[ contentType ] = {};
 
+				for ( const key in importedData.content[ contentType ]?.succeed ) {
 					kitContent[ contentType ][ key ] = content[ contentType ][ key ];
 				}
 			}
@@ -44,13 +42,7 @@ export default function ImportComplete() {
 			const kitWPContent = {};
 
 			for ( const contentType in importedData?.[ 'wp-content' ] ) {
-				for ( const key in importedData[ 'wp-content' ][ contentType ]?.succeed ) {
-					if ( ! kitWPContent[ contentType ] ) {
-						kitWPContent[ contentType ] = [];
-					}
-
-					kitWPContent[ contentType ].push( key );
-				}
+				kitWPContent[ contentType ] = Object.keys( importedData[ 'wp-content' ][ contentType ].succeed );
 			}
 
 			return kitWPContent;
@@ -67,7 +59,7 @@ export default function ImportComplete() {
 				templates: getTemplates( manifest.templates, importedData ),
 				content: getContent( manifest.content, importedData ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
-				'site-settings': context.data.includes.includes( 'settings' ) && manifest[ 'site-settings' ],
+				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
 			};
 		};
 
