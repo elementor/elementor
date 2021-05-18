@@ -55,7 +55,20 @@ export class ShowSwatches extends CommandBase {
 			if ( isImage ) {
 				this.extractColorsFromImage( e.target );
 			} else {
+				// Colors from the parent container.
 				this.extractColorsFromSettings();
+
+				// Colors from repeaters.
+				if ( 0 !== Object.keys( this.container.repeaters ).length ) {
+					// Iterate over repeaters.
+					Object.values( this.container.repeaters ).forEach( ( repeater ) => {
+						// Iterate over each repeater items.
+						repeater.children.forEach( ( child ) => {
+							this.extractColorsFromSettings( child );
+						} );
+					} );
+				}
+
 				this.extractColorsFromImages();
 			}
 
@@ -65,25 +78,27 @@ export class ShowSwatches extends CommandBase {
 
 	/**
 	 * Extract colors from color controls of the current selected element.
+	 *
+	 * @param {Container} container - A container to extract colors from its settings.
 	 */
-	extractColorsFromSettings() {
+	extractColorsFromSettings( container = this.container ) {
 		// Iterate over the widget controls.
-		Object.keys( this.container.settings.attributes ).map( ( control ) => {
+		Object.keys( container.settings.attributes ).map( ( control ) => {
 			// Limit colors count.
 			if ( this.reachedColorsLimit() ) {
 				return;
 			}
 
-			if ( ! ( control in this.container.controls ) ) {
+			if ( ! ( control in container.controls ) ) {
 				return;
 			}
 
-			const isColor = ( 'color' === this.container.controls[ control ]?.type );
+			const isColor = ( 'color' === container.controls[ control ]?.type );
 			const isBgImage = control.includes( 'background_image' );
 
 			// Determine if the current control is active.
 			const isActive = () => {
-				return ( elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) );
+				return ( elementor.helpers.isActiveControl( container.controls[ control ], container.settings.attributes ) );
 			};
 
 			// Throw non-color and non-background-image controls.
@@ -98,11 +113,11 @@ export class ShowSwatches extends CommandBase {
 
 			// Handle background images.
 			if ( isBgImage ) {
-				this.addTempBackgroundImage( this.container.getSetting( control ) );
+				this.addTempBackgroundImage( container.getSetting( control ) );
 				return;
 			}
 
-			let value = this.container.getSetting( control );
+			let value = container.getSetting( control );
 
 			if ( value && ! Object.values( this.colors ).includes( value ) ) {
 				// If it's a global color, it will return a css variable which needs to be resolved to a HEX value.
@@ -110,10 +125,12 @@ export class ShowSwatches extends CommandBase {
 				const matches = value.match( pattern );
 
 				if ( matches ) {
-					value = getComputedStyle( this.container.view.$el[ 0 ] ).getPropertyValue( matches[ 1 ].trim() );
+					value = getComputedStyle( container.view.$el[ 0 ] ).getPropertyValue( matches[ 1 ].trim() );
 				}
 
-				this.colors[ control ] = value;
+				// Create a unique index based on the container ID and the control name.
+				// Used in order to avoid key overriding when used with repeaters (which share the same controls names).
+				this.colors[ `${ container.id } - ${ control }` ] = value;
 			}
 		} );
 	}
