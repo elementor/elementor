@@ -118,16 +118,22 @@ export class ShowSwatches extends CommandBase {
 			}
 
 			let value = container.getSetting( control );
+			const globalValue = container.globals.get( control );
+
+			// Extract global value if present.
+			if ( globalValue ) {
+				const matches = globalValue.match( /id=(.+)/i );
+
+				// Build the global color CSS variable & resolve it to a HEX value.
+				// It's used instead of `$e.data.get( globalValue )` in order to avoid async/await hell.
+				if ( matches ) {
+					const cssVar = `--e-global-color-${ matches[ 1 ] }`;
+
+					value = getComputedStyle( container.view.$el[ 0 ] ).getPropertyValue( cssVar );
+				}
+			}
 
 			if ( value && ! Object.values( this.colors ).includes( value ) ) {
-				// If it's a global color, it will return a css variable which needs to be resolved to a HEX value.
-				const pattern = /var\(([^)]+)\)/i;
-				const matches = value.match( pattern );
-
-				if ( matches ) {
-					value = getComputedStyle( container.view.$el[ 0 ] ).getPropertyValue( matches[ 1 ].trim() );
-				}
-
 				// Create a unique index based on the container ID and the control name.
 				// Used in order to avoid key overriding when used with repeaters (which share the same controls names).
 				this.colors[ `${ container.id } - ${ control }` ] = value;
