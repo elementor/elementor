@@ -1,6 +1,6 @@
 # Composer
 
-A quote from composer website that describe the tool ([https://getcomposer.org](https://getcomposer.org)):
+A quote from composer website that describes the tool ([https://getcomposer.org](https://getcomposer.org)):
 
 "Composer is a tool for dependency management in PHP. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you."
 
