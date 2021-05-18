@@ -6,7 +6,14 @@ A quote from composer website that describes the tool ([https://getcomposer.org]
 
 ## Installation
 
-**Note:** Windows users please use a unix shell like `Windows Subsystem for Linux`([https://docs.microsoft.com/en-us/windows/wsl/install-win10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)) or `git bash`([https://git-scm.com/downloads](https://git-scm.com/downloads))
+#### Windows
+Use the installer: 
+[https://getcomposer.org/doc/00-intro.md#using-the-installer](https://getcomposer.org/doc/00-intro.md#using-the-installer) 
+
+Or the manual installation: 
+[https://getcomposer.org/doc/00-intro.md#manual-installation](https://getcomposer.org/doc/00-intro.md#manual-installation)
+
+#### Mac or Linux (including `wsl`)
 
 1. Run the commands as described here: [https://getcomposer.org/download/](https://getcomposer.org/download/) (the commands changed from time to time based on the composer version).
 
@@ -15,5 +22,3 @@ A quote from composer website that describes the tool ([https://getcomposer.org]
 3. Run: `composer -v` and make sure it returns the expected version, if not restart your shell client.
 
 4. `cd` into Elementor root directory and run `composer install`
-
- 

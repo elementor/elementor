@@ -30,7 +30,4 @@ Installing `svn` in Linux subsystem: `sudo apt-get install subversion`
 
 Run `composer run test:install`. it should prompt questions about your database credentials make sure to fill correct credentials.
 
-That's all you can run `composer test` which will run the whole "Elementor" test suite, any argument that allowed to pass to `phpunit` command you can pass to `composer test` command, e.g: `composer test -- --filter Elementor_Test_Bootstrap`. just make sure to pass extra ` -- ` before your argument. 
- 
- 
-
+That's all you can run `composer test` which will run the whole "Elementor" test suite, any argument that allowed to pass to `phpunit` command you can pass to `composer test` command, e.g: `composer test -- --filter Elementor_Test_Bootstrap`. just make sure to pass extra ` -- ` before your argument.
