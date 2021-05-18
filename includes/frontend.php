@@ -298,6 +298,14 @@ class Frontend extends App {
 			$classes[] = 'elementor-page elementor-page-' . $id;
 		}
 
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+		
+		$show_hidden_elements = $editor_preferences->get_model()->get_settings( 'show_hidden_elements' );
+
+		if( 'yes' === $show_hidden_elements ){
+			$classes[] = 'show-hidden-elements';
+		}
+
 		return $classes;
 	}
 

@@ -16,8 +16,6 @@ export default class extends BaseManager {
 			edit_buttons: this.onEditButtonsChanged,
 			show_hidden_elements: this.OnShowHiddenElementsChange,
 		};
-
-		elementor.on( 'globals:loaded', this.OnShowHiddenElementsChange );
 	}
 
 	createDarkModeStylesheetLink() {
@@ -68,9 +66,7 @@ export default class extends BaseManager {
 	}
 
 	OnShowHiddenElementsChange( newValue ) {
-		const showHiddenElements = 'undefined' === typeof newValue ? elementor.config.settings.editorPreferences.settings.show_hidden_elements : newValue;
-
-		if ( 'yes' === showHiddenElements ) {
+		if ( 'yes' === newValue ) {
 			elementor.$previewContents.find( 'body' ).addClass( 'show-hidden-elements' );
 			return;
 		}
