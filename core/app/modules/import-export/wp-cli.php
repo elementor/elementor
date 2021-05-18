@@ -19,10 +19,10 @@ class Wp_Cli extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * 1. wp elementor site export path/to/export-file-name.zip
+	 * 1. wp elementor kit export path/to/export-file-name.zip
 	 *      - This will export all site data to the specified file name.
 	 *
-	 * 2. wp elementor site export path/to/export-file-name.zip --include=site-settings,content
+	 * 2. wp elementor kit export path/to/export-file-name.zip --include=kit-settings,content
 	 *      - This will export only site settings and content.
 	 *
 	 * @param array $args
@@ -70,13 +70,13 @@ class Wp_Cli extends \WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 * 1. wp elementor site import path/to/elementor-kit.zip
+	 * 1. wp elementor kit import path/to/elementor-kit.zip
 	 *      - This will import the whole kit file content.
 	 *
-	 * 2. wp elementor site import path/to/elementor-kit.zip --include=site-settings,content
+	 * 2. wp elementor kit import path/to/elementor-kit.zip --include=site-settings,content
 	 *      - This will import only site settings and content.
 	 *
-	 * 3. wp elementor site import path/to/elementor-kit.zip --overrideConditions=3478,4520
+	 * 3. wp elementor kit import path/to/elementor-kit.zip --overrideConditions=3478,4520
 	 *      - This will import all content and will override conditions for the given template ids.
 	 *
 	 * @param array $args

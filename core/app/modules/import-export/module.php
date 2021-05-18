@@ -315,7 +315,7 @@ class Module extends BaseModule {
 		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
 
 		if ( Utils::is_wp_cli() ) {
-			\WP_CLI::add_command( 'elementor site', WP_CLI::class );
+			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
 		}
 	}
 }
