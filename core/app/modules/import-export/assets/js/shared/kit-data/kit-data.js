@@ -43,18 +43,28 @@ export default function KitData( props ) {
 					.map( ( item ) => getSummaryTitle( 'templates', item[ 0 ], item[ 1 ], true ) );
 		},
 		getSiteSettings = () => {
-			const siteSettings = ( kitData && kitData[ 'site-settings' ] ) || {};
+			const siteSettings = kitData?.[ 'site-settings' ] || {};
 
 			return Object
 				.entries( siteSettings )
 				.map( ( item ) => getSummaryTitle( 'site-settings', item[ 1 ] ) );
 		},
 		getContent = () => {
-			const content = kitData?.content || {};
+			const content = kitData?.content || {},
+				wpContent = kitData?.[ 'wp-content' ] || {};
+
+			let mergedContent = { ...content };
+
+			for ( const key in mergedContent ) {
+				mergedContent[ key ] = Object.keys( mergedContent[ key ] ).concat( wpContent[ key ] );
+			}
+
+			// In case that wpContent has properties that doesn't exist in the content object.
+			mergedContent = { ...wpContent, ...mergedContent };
 
 			return Object
-					.entries( content )
-					.map( ( item ) => getSummaryTitle( 'content', item[ 0 ], Object.entries( item[ 1 ] ).length ) );
+				.entries( mergedContent )
+				.map( ( item ) => getSummaryTitle( 'content', item[ 0 ], item[ 1 ].length ) );
 		},
 		kitContent = [
 			{
