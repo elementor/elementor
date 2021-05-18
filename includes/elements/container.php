@@ -178,8 +178,34 @@ class Container extends Element_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Register style controls under advanced tab.
+	 */
+	protected function register_advanced_tab() {
+		// Section Flex.
+		$this->start_controls_section(
+			'section_flex',
+			[
+				'label' => __( 'Flex', 'elementor' ),
+				'type' => Controls_Manager::SECTION,
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Flex_Item::get_type(),
+			[
+				'name' => '_flex',
+				'selector' => '{{WRAPPER}}',
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
 	protected function register_controls() {
 		$this->register_content_tab();
 		$this->register_style_tab();
+		$this->register_advanced_tab();
 	}
 }

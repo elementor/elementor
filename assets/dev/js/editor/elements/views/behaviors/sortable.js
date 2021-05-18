@@ -47,7 +47,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 */
 	getSwappableOptions() {
 		const $childViewContainer = this.getChildViewContainer(),
-			activeClass = 'e-swappable--active';
+			activeClass = 'e-swappable--active',
+			dragOverClass = 'e-swappable--dragging-over',
+			elementsSelector = '> .elementor-widget';
 
 		return {
 			start: ( event, ui ) => {
@@ -61,31 +63,62 @@ SortableBehavior = Marionette.Behavior.extend( {
 				ui.helper.css( 'pointer-events', 'none' );
 
 				// Initialize the swap listeners.
-				$childViewContainer.on( 'mouseenter.swappable', '.elementor-widget', ( e ) => {
+				$childViewContainer.on( 'mouseenter.swappable', elementsSelector, ( e ) => {
 					e.stopPropagation();
 
-					const $target = jQuery( e.currentTarget ),
-						originalPosition = ui.item.css( 'order' ),
-						newPosition = $target.css( 'order' );
+					const $target = jQuery( e.currentTarget );
 
-					// Don't act when it's the same container.
-					if ( $target.attr( 'data-id' ) === ui.item.attr( 'data-id' ) ) {
-						return;
-					}
+					$target.addClass( dragOverClass );
 
-					// Get the associated containers.
-					const itemContainer = elementor.channels.data.request( 'dragging:view' ).getContainer(),
-						targetContainer = elementor.getContainer( $target.attr( 'data-id' ) );
+					// Pass the swappable data over the a `data` attribute.
+					ui.item.attr( 'data-swappable', JSON.stringify( {
+						origin: {
+							position: ui.item.css( 'order' ),
+							id: ui.item.attr( 'data-id' ),
+						},
+						target: {
+							position: $target.css( 'order' ),
+							id: $target.attr( 'data-id' ),
+						},
+					} ) );
+				} );
 
-					// Change the order setting.
-					this.moveChild( targetContainer, originalPosition );
-					this.moveChild( itemContainer, newPosition );
+				// Remove the `data-swappable` attribute on mouse leave to prevent moving the element accidentally.
+				$childViewContainer.on( 'mouseleave.swappable', elementsSelector, ( e ) => {
+					jQuery( e.currentTarget ).removeClass( dragOverClass );
+					ui.item.removeAttr( 'data-swappable' );
 				} );
 			},
-			stop: () => {
-				// Remove the swap listener & class.
+			stop: ( event, ui ) => {
+				// Get the swappable data.
+				const { origin, target } = JSON.parse( ui.item.attr( 'data-swappable' ) || '{}' );
+
+				// Remove the swappable data attribute.
+				ui.item.removeAttr( 'data-swappable' );
+
+				// Remove the swap listeners & class.
 				$childViewContainer.off( 'mouseenter.swappable' );
+				$childViewContainer.off( 'mouseleave.swappable' );
 				$childViewContainer.removeClass( activeClass );
+				$childViewContainer.find( `.${ dragOverClass }` ).removeClass( dragOverClass );
+
+				// Exit when there are no containers.
+				if ( ! origin || ! target ) {
+					return;
+				}
+
+				// Don't act when it's the same container.
+				if ( origin.id === target.id ) {
+					return;
+				}
+
+				// Get the associated containers.
+				const itemContainer = elementor.getContainer( origin.id ),
+					targetContainer = elementor.getContainer( target.id );
+
+				// Change the order setting.
+				this.moveChild( targetContainer, origin.position );
+				this.moveChild( itemContainer, target.position );
 			},
 		};
 	},
@@ -159,6 +192,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	/**
 	 * Determine if the current instance of Sortable is swappable.
+	 *
 	 * @returns {boolean}
 	 */
 	isSwappable: function() {
@@ -289,6 +323,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 *
 	 * @param {Container} child - The child container to move.
 	 * @param {int|string} index - New index.
+	 *
+	 * @returns {void}
 	 */
 	moveChild: function( child, index ) {
 		$e.run( 'document/elements/move', {
