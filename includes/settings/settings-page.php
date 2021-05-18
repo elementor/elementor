@@ -309,7 +309,7 @@ abstract class Settings_Page {
 					$sanitized_tab_id = esc_attr( $tab_id );
 					$sanitized_tab_label = esc_html( $tab['label'] );
 
-					// Escaped the relevant strings above.
+					// PHPCS - Escaped the relevant strings above.
 					echo "<a id='elementor-settings-tab-{$sanitized_tab_id}' class='nav-tab{$active_class}' href='#tab-{$sanitized_tab_id}'>{$sanitized_tab_label}</a>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				?>
@@ -331,6 +331,7 @@ abstract class Settings_Page {
 
 					$sanitized_tab_id = esc_attr( $tab_id );
 
+					// PHPCS - $active_class is a non-dynamic string and $sanitized_tab_id is escaped above.
 					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {

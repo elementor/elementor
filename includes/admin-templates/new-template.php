@@ -44,7 +44,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 		/*
 		<div id="elementor-new-template__take_a_tour">
 			<i class="eicon-play-o"></i>
-			<a href="#"><?php echo esc_html__( 'Take The Video Tour', 'elementor' ); ?></a>
+			<a href="#"><?php echo esc_html__( 'Take The Video Tour', 'elementor\' ); ?></a>
 		</div>
 		*/
 		?>
@@ -52,6 +52,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 	<form id="elementor-new-template__form" action="<?php esc_url( admin_url( '/edit.php' ) ); ?>">
 		<input type="hidden" name="post_type" value="elementor_library">
 		<input type="hidden" name="action" value="elementor_new_post">
+		<?php // PHPCS - a nonce doesn't have to be escaped. ?>
 		<input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'elementor_action_new_post' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 		<div id="elementor-new-template__form__title"><?php echo esc_html__( 'Choose Template Type', 'elementor' ); ?></div>
 		<div id="elementor-new-template__form__template-type__wrapper" class="elementor-form-field">

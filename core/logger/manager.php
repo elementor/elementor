@@ -106,10 +106,12 @@ class Manager extends BaseModule {
 			wp_send_json_error();
 		}
 
+		// PHPCS - See comment above.
 		array_walk_recursive( $_POST['data'], function( &$value ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$value = sanitize_text_field( $value );
 		} );
 
+		// PHPCS - See comment above.
 		foreach ( $_POST['data'] as $error ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$error['type'] = Logger_Interface::LEVEL_ERROR;
 

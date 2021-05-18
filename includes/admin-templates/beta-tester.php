@@ -23,6 +23,7 @@ $beta_tester_email = $user->user_email;
 ?>
 <script type="text/template" id="tmpl-elementor-beta-tester">
 	<form id="elementor-beta-tester-form" method="post">
+		<?php // PHPCS - This is a nonce, doesn't need to be escaped. ?>
 		<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
 		<input type="hidden" name="action" value="elementor_beta_tester_signup" />
 		<div id="elementor-beta-tester-form__caption"><?php echo esc_html__( 'Get Beta Updates', 'elementor' ); ?></div>
@@ -37,10 +38,8 @@ $beta_tester_email = $user->user_email;
 			</button>
 		</div>
 		<div id="elementor-beta-tester-form__terms">
-			<?php
-			// PHP Lint: The content is escaped inside the sprintf.
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<?php echo sprintf( esc_html__( 'By clicking Sign Up, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); ?>
+			<?php // PHPCS - The content is escaped inside the sprintf. ?>
+			<?php echo sprintf( esc_html__( 'By clicking Sign Up, you agree to Elementor\'s <a href="%1$s">Terms of Service</a> and <a href="%2$s">Privacy Policy</a>', 'elementor' ), Beta_Testers::NEWSLETTER_TERMS_URL, Beta_Testers::NEWSLETTER_PRIVACY_URL ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 	</form>
 </script>

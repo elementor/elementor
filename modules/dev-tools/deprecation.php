@@ -235,7 +235,7 @@ class Deprecation {
 		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
 
 		if ( $print_deprecated ) {
-			// We need to echo special characters because they can exist in function calls.
+			// PHPCS - We need to echo special characters because they can exist in function calls.
 			_deprecated_function( $function, esc_html( $version ), $replacement );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
@@ -293,9 +293,9 @@ class Deprecation {
 
 			trigger_error(
 				vsprintf(
-					// $translation_string is already escaped above.
+					// PHPCS - $translation_string is already escaped above.
 					$translation_string,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					// $error_message_args is an array.
+					// PHPCS - $error_message_args is an array.
 					$error_message_args  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				) . esc_html( $message ),
 				E_USER_DEPRECATED

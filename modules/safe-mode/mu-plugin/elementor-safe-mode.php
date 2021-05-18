@@ -60,9 +60,8 @@ class Safe_Mode {
 	}
 
 	public function is_editor_ajax() {
-		// There is already nonce verification in the Ajax Manager
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];
+		// PHPCS - There is already nonce verification in the Ajax Manager
+		return is_admin() && isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'];// phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	public function add_hooks() {

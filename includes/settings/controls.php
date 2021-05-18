@@ -156,7 +156,7 @@ class Settings_Controls {
 			<?php endif; ?>
 
 			<?php foreach ( $field['options'] as $value => $label ) : ?>
-				<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $old_value ); ?>><?php echo esc_html( $label ); ?></option>
+				<option value="<?php echo esc_attr( $value ); ?>"<?php esc_attr( selected( $value, $old_value ) ); ?>><?php echo esc_html( $label ); ?></option>
 			<?php endforeach; ?>
 		</select>
 
@@ -267,8 +267,8 @@ class Settings_Controls {
 		?>
 		<div id="<?php echo esc_attr( $field['id'] ); ?>">
 
-			<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			<div><?php echo $field['html']; ?></div>
+			<?php // PHPCS - This is a Raw HTML control, it is not escaped on purpose. ?>
+			<div><?php echo $field['html']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 			<?php
 			if ( ! empty( $field['sub_desc'] ) ) :
 				echo esc_html( $field['sub_desc'] );
