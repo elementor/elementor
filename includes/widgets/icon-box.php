@@ -641,9 +641,6 @@ class Widget_Icon_Box extends Widget_Base {
 			$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
 		}
 
-		$icon_attributes = $this->get_render_attribute_string( 'icon' );
-		$link_attributes = $this->get_render_attribute_string( 'link' );
-
 		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
 		$this->add_inline_editing_attributes( 'title_text', 'none' );
