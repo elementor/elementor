@@ -41,13 +41,8 @@ jobs:
     needs: [build-plugin]
     strategy:
       matrix:
-        include:
-          - phpVersion: '7.3'
-            wpCoreVersion: '5.6'
-          - phpVersion: '8.0'
-            wpCoreVersion: 'latest'
-          - phpVersion: '7.4'
-            wpCoreVersion: 'latest'
+        phpVersion: ['8.0', '7.4']
+        wpCoreVersion: ['latest', 'master']
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
