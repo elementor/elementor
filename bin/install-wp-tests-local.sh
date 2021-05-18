@@ -1,19 +1,27 @@
 #!/usr/bin/env bash
 
+WORKING_DIR=$(pwd)
+
+# Remove old tmp folder
+rm -rf "$WORKING_DIR/tmp"
+
 # Ask for some parameters to install the test env.
-read -p "Choose a database Name for tests [elementor-tests]: " DB_NAME
-read -p "What is your database username [admin]? " DB_USER
-read -p "What is your database password [admin]? " DB_PASS
-read -p "What is your database host [127.0.0.1]? " DB_HOST
-read -p "Choose WordPress version for testing [latest]: " WP_VERSION
+echo "Choose a database Name for tests [elementor-tests]:"
+read -r DB_NAME
+echo "What is your database username [admin]?"
+read -r DB_USER
+echo "What is your database password [admin]?"
+read -r DB_PASS
+echo "What is your database host including port if needed [127.0.0.1]?"
+read -r DB_HOST
+echo "Choose WordPress version for testing [latest]:"
+read -r WP_VERSION
 
 DB_NAME=${DB_NAME:-"elementor-tests"}
 DB_USER=${DB_USER:-"admin"}
 DB_PASS=${DB_PASS:-"admin"}
 DB_HOST=${DB_HOST:-"127.0.0.1"}
 WP_VERSION=${WP_VERSION:-"latest"}
-
-WORKING_DIR=$(pwd)
 
 WP_TESTS_UTILS_DIR=${WP_TESTS_UTILS_DIR-$WORKING_DIR/tmp/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-$WORKING_DIR/tmp/wordpress/}
