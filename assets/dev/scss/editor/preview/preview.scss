@@ -120,7 +120,6 @@ html.elementor-html {
 	> .elementor-element-overlay {
 		position: absolute;
 		top: 0;
-		width: 100%;
 		@include end(0);
 		letter-spacing: 0; // Hack for front-end style themes
 		z-index: $element-overlay;
@@ -608,6 +607,11 @@ html.elementor-html {
 		width: 100%;
 		align-self: stretch;
 
+		// Make the placeholder centered in container element, like in other places.
+		.e-container & {
+			align-self: center;
+		}
+
 		// Hide the placeholder, since swappable containers don't need one.
 		.e-swappable--active > & {
 			display: none;
@@ -659,6 +663,7 @@ html.elementor-html {
 		width: 100%;
 
 		.e-container & {
+			// Fix for multiple dragging placeholders in container element.
 			display: none;
 		}
 	}

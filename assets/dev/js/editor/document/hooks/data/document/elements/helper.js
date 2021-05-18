@@ -87,10 +87,12 @@ export default class Helper {
 		// Move the triggering container to the new position.
 		const index = flexItems.findIndex( ( item ) => item.id === container.id );
 
+		// Delete the element if it already exists.
 		if ( -1 !== index ) {
 			flexItems.splice( index, 1 );
 		}
 
+		// Insert the element in the new position.
 		flexItems.splice( position, 0, container );
 
 		// Re order the items.

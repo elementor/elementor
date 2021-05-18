@@ -347,6 +347,7 @@ BaseElementView = BaseContainer.extend( {
 		} else if ( 'section' === model.elType ) {
 			model.isInner = true;
 		} else if ( 'container' !== model.elType ) {
+			// Don't allow adding anything other than widget, inner-section or a container.
 			return;
 		}
 
