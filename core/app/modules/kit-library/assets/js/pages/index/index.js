@@ -83,6 +83,7 @@ export default function Index( props ) {
 		setQueryParams,
 		clearQueryParams,
 		forceRefetch,
+		isFilterActive,
 	} = useKits( props.initialQueryParams );
 
 	const {
@@ -92,8 +93,6 @@ export default function Index( props ) {
 	} = useTaxonomies();
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
-
-	const NoResultComponent = props.noResultComponent;
 
 	return (
 		<Layout
@@ -125,12 +124,12 @@ export default function Index( props ) {
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
-						<FilterIndicationText
+						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
 							resultCount={ data.length || 0 }
 							onClear={ clearQueryParams }
 							onRemoveTag={ unselectTaxonomy }
-						/>
+						/> }
 					</div>
 				</div>
 				<Content className="e-kit-library__index-layout-main">
@@ -138,7 +137,10 @@ export default function Index( props ) {
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
-						{ isSuccess && 0 === data.length && <NoResultComponent clearFilter={ clearQueryParams }/> }
+						{
+							isSuccess && 0 === data.length &&
+								<IndexNoResults isFilterActive={ isFilterActive } clearFilter={ clearQueryParams }/>
+						}
 					</>
 				</Content>
 			</div>
@@ -149,9 +151,4 @@ export default function Index( props ) {
 Index.propTypes = {
 	path: PropTypes.string,
 	initialQueryParams: PropTypes.object,
-	noResultComponent: PropTypes.any,
-};
-
-Index.defaultProps = {
-	noResultComponent: IndexNoResults,
 };

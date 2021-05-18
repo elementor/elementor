@@ -1,5 +1,4 @@
 import Index from './pages/index';
-import IndexFavoriteNoResult from './pages/index/index-favorite-no-result';
 import Overview from './pages/overview/overview';
 import Preview from './pages/preview/preview';
 import { QueryClientProvider, QueryClient } from 'react-query';
@@ -26,7 +25,7 @@ export default function App() {
 				<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
 					<Router>
 						<Index path="/" initialQueryParams={{}}/>
-						<Index path="/favorites" initialQueryParams={{ favorite: true }} noResultComponent={IndexFavoriteNoResult}/>
+						<Index path="/favorites" initialQueryParams={{ favorite: true }}/>
 						<Preview path="/preview/:id"/>
 						<Overview path="/overview/:id"/>
 					</Router>

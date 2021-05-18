@@ -1,4 +1,5 @@
 import Kit from '../models/kit';
+import useSelectedTaxonomies from './use-selected-taxonomies';
 import { taxonomyType } from '../models/taxonomy';
 import { useQuery } from 'react-query';
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -127,6 +128,13 @@ export default function useKits( initialQueryParams = {} ) {
 		[ query.data, queryParams ]
 	);
 
+	const selectedTaxonomies = useSelectedTaxonomies( queryParams.taxonomies );
+
+	const isFilterActive = useMemo(
+		() => queryParams.search || !! selectedTaxonomies.length,
+		[ queryParams ]
+	);
+
 	useEffect( () => {
 		if ( ! force ) {
 			return;
@@ -142,5 +150,6 @@ export default function useKits( initialQueryParams = {} ) {
 		setQueryParams,
 		clearQueryParams,
 		forceRefetch,
+		isFilterActive,
 	};
 }
