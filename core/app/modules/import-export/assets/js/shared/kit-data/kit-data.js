@@ -6,7 +6,7 @@ import './kit-data.scss';
 
 export default function KitData( props ) {
 	const kitData = props.data,
-		getSummaryTitle = ( type, key, amount, showAmount ) => {
+		getSummaryTitle = ( type, key, amount ) => {
 			const data = elementorAppConfig[ 'import-export' ].summaryTitles[ type ][ key ];
 
 			if ( data.single ) {
@@ -14,13 +14,9 @@ export default function KitData( props ) {
 					return '';
 				}
 
-				let title = amount > 1 ? data.plural : data.single;
+				const title = amount > 1 ? data.plural : data.single;
 
-				if ( showAmount ) {
-					title = amount + ' ' + title;
-				}
-
-				return title;
+				return amount + ' ' + title;
 			}
 
 			return data;
@@ -40,7 +36,7 @@ export default function KitData( props ) {
 
 			return Object
 					.entries( templates )
-					.map( ( item ) => getSummaryTitle( 'templates', item[ 0 ], item[ 1 ], true ) );
+					.map( ( item ) => getSummaryTitle( 'templates', item[ 0 ], item[ 1 ] ) );
 		},
 		getSiteSettings = () => {
 			const siteSettings = kitData?.[ 'site-settings' ] || {};

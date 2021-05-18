@@ -42,7 +42,9 @@ export default function ImportComplete() {
 			const kitWPContent = {};
 
 			for ( const contentType in importedData?.[ 'wp-content' ] ) {
-				kitWPContent[ contentType ] = Object.keys( importedData[ 'wp-content' ][ contentType ].succeed );
+				const succeededItems = importedData[ 'wp-content' ][ contentType ]?.succeed;
+
+				kitWPContent[ contentType ] = succeededItems ? Object.keys( succeededItems ) : [];
 			}
 
 			return kitWPContent;
