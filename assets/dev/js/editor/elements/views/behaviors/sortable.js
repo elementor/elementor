@@ -112,7 +112,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
-		// Add a swappable behavior ( used for flex containers ).
+		// Add a swappable behavior (used for flex containers).
 		if ( this.isSwappable() ) {
 			$childViewContainer.addClass( 'e-swappable' );
 			sortableOptions = _.extend( this.getSwappableOptions(), sortableOptions );
