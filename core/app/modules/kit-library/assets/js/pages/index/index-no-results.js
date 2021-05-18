@@ -13,15 +13,15 @@ function useNoResultContent( isFilterActive, clearFilter ) {
 			{
 				title: __( 'No favorites here yet...', 'elementor' ),
 				description: __( 'Use the heart icon to save kits that inspire you. You\'ll be able to find them here', 'elementor' ),
-				CTAText: __( 'Continue Browsing', 'elementor' ),
-				CTAAction: () => navigate( '/kit-library' ),
+				ctaText: __( 'Continue Browsing', 'elementor' ),
+				ctaAction: () => navigate( '/kit-library' ),
 				condition: () => location.pathname.includes( '/kit-library/favorites' ) && ! isFilterActive,
 			},
 			{
 				title: __( 'No Results Found', 'elementor' ),
 				description: __( 'Try retyping another keyword', 'elementor' ),
-				CTAText: __( 'Continue Browsing', 'elementor' ),
-				CTAAction: clearFilter,
+				ctaText: __( 'Continue Browsing', 'elementor' ),
+				ctaAction: clearFilter,
 				condition: () => true,
 			},
 		];
@@ -49,7 +49,7 @@ export default function IndexNoResults( props ) {
 			<Text variant="xl" className="e-kit-library__not-results-description">
 				{ content.description }
 				<br/>
-				<Button text={ content.CTAText } color="link" onClick={ content.CTAAction }/>
+				<Button text={ content.ctaText } color="link" onClick={ content.ctaAction }/>
 			</Text>
 		</Grid>
 	);
