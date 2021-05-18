@@ -47,7 +47,7 @@ export default function ImportContent() {
 					] }
 				/>
 
-				<KitContent />
+				<KitContent manifest={ context.data.fileResponse?.stage1?.manifest } />
 			</section>
 		</Layout>
 	);
