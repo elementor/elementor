@@ -521,7 +521,7 @@ class Admin_Notices extends Module {
 
 		if ( $options['icon'] ) {
 			$notice_classes[] = 'e-notice--extended';
-			$icon = '<div class="e-notice__icon-wrapper"><i class="' . $options['icon'] . '" aria-hidden="true"></i></div>';
+			$icon = '<div class="e-notice__icon-wrapper"><i class="' . esc_attr( $options['icon'] ) . '" aria-hidden="true"></i></div>';
 		}
 
 		$wrapper_attributes = [
@@ -532,18 +532,18 @@ class Admin_Notices extends Module {
 			$wrapper_attributes['data-notice_id'] = $options['id'];
 		}
 		?>
-		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
-			<?php echo $dismiss_button; ?>
+		<div <?php Utils::print_html_attributes( $wrapper_attributes ); ?>>
+			<?php echo $dismiss_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<div class="e-notice__aside">
-				<?php echo $icon; ?>
+				<?php echo $icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="e-notice__content">
 			<?php if ( $options['title'] ) { ?>
-				<h3><?php echo $options['title']; ?></h3>
+				<h3><?php echo wp_kses_post( $options['title'] ); ?></h3>
 			<?php } ?>
 
 			<?php if ( $options['description'] ) { ?>
-				<p><?php echo $options['description']; ?></p>
+				<p><?php echo wp_kses_post( $options['description'] ); ?></p>
 			<?php } ?>
 
 			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
