@@ -4,13 +4,15 @@ on: [push]
 jobs:
   test-jira:
     runs-on: ubuntu-latest
+    env:
+      PACKAGE_VERSION: 3.3.0-dev5
     steps:
       - uses: actions/checkout@v2
       - name: Generate changelog
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: v3.3.0-dev5
+          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
           BASE_TAG_NAME: v3.3.0-dev4
         run: |
           npm install --no-package-lock --no-save @octokit/core@3.4.0
@@ -36,12 +38,12 @@ jobs:
           client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
           cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
           issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
-          display-name: "3.3.0-dev5"
+          display-name: "${{ env.PACKAGE_VERSION }}"
           url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
           description: "This PR was merged to the following release(s)"
           last-updated: '${{ env.NOW }}'
           state: 'successful'
           pipeline-url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
-          environment-id: "3.3.0-dev5"
-          environment-display-name: "3.3.0-dev5"
+          environment-id: "${{ env.PACKAGE_VERSION }}"
+          environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'staging'
