@@ -292,7 +292,7 @@ abstract class Settings_Page {
 		$tabs = $this->get_tabs();
 		?>
 		<div class="wrap">
-			<h1><?php echo $this->get_page_title(); ?></h1>
+			<h1><?php echo esc_html( $this->get_page_title() ); ?></h1>
 			<div id="elementor-settings-tabs-wrapper" class="nav-tab-wrapper">
 				<?php
 				foreach ( $tabs as $tab_id => $tab ) {
@@ -306,7 +306,11 @@ abstract class Settings_Page {
 						$active_class = ' nav-tab-active';
 					}
 
-					echo "<a id='elementor-settings-tab-{$tab_id}' class='nav-tab{$active_class}' href='#tab-{$tab_id}'>{$tab['label']}</a>";
+					$sanitized_tab_id = esc_attr( $tab_id );
+					$sanitized_tab_label = esc_html( $tab['label'] );
+
+					// PHPCS - Escaped the relevant strings above.
+					echo "<a id='elementor-settings-tab-{$sanitized_tab_id}' class='nav-tab{$active_class}' href='#tab-{$sanitized_tab_id}'>{$sanitized_tab_label}</a>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				?>
 			</div>
@@ -325,13 +329,16 @@ abstract class Settings_Page {
 						$active_class = ' elementor-active';
 					}
 
-					echo "<div id='tab-{$tab_id}' class='elementor-settings-form-page{$active_class}'>";
+					$sanitized_tab_id = esc_attr( $tab_id );
+
+					// PHPCS - $active_class is a non-dynamic string and $sanitized_tab_id is escaped above.
+					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
-							echo "<h2>{$section['label']}</h2>";
+							echo '<h2>' . esc_html( $section['label'] ) . '</h2>';
 						}
 
 						if ( ! empty( $section['callback'] ) ) {
