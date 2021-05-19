@@ -16,6 +16,7 @@ jobs:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
       - name: Bump version
+        id: bump_version_step
         run: |
           npm install --no-package-lock --no-save semver@7.3.4
           PREV_PACKAGE_VERSION=$(node -p "require('./package.json').last_beta_version")
