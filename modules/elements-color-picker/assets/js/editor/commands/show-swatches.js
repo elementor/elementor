@@ -59,15 +59,7 @@ export class ShowSwatches extends CommandBase {
 				this.extractColorsFromSettings();
 
 				// Colors from repeaters.
-				if ( 0 !== Object.keys( this.container.repeaters ).length ) {
-					// Iterate over repeaters.
-					Object.values( this.container.repeaters ).forEach( ( repeater ) => {
-						// Iterate over each repeater items.
-						repeater.children.forEach( ( child ) => {
-							this.extractColorsFromSettings( child );
-						} );
-					} );
-				}
+				this.extractColorsFromRepeaters();
 
 				this.extractColorsFromImages();
 			}
@@ -138,6 +130,19 @@ export class ShowSwatches extends CommandBase {
 				// Used in order to avoid key overriding when used with repeaters (which share the same controls names).
 				this.colors[ `${ container.id } - ${ control }` ] = value;
 			}
+		} );
+	}
+
+	/**
+	 * Extract colors from repeater controls.
+	 */
+	extractColorsFromRepeaters() {
+		// Iterate over repeaters.
+		Object.values( this.container.repeaters ).forEach( ( repeater ) => {
+			// Iterate over each repeater items.
+			repeater.children.forEach( ( child ) => {
+				this.extractColorsFromSettings( child );
+			} );
 		} );
 	}
 
