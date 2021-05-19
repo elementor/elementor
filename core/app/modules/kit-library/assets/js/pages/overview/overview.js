@@ -1,12 +1,12 @@
 import Content from 'elementor/core/app/assets/js/layout/content';
 import ItemHeader from '../../components/item-header';
-import OverviewSidebar from './overview-sidebar';
 import Layout from '../../components/layout';
+import OverviewContentGroup from './overview-content-group';
+import OverviewSidebar from './overview-sidebar';
 import useKit from '../../hooks/use-kit';
 import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
-import OverviewContentGroup from './overview-content-group';
 
 import './overview.scss';
 

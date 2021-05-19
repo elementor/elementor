@@ -3,7 +3,7 @@ import Layout from '../../components/layout';
 import PreviewResponsiveControls from './preview-responsive-controls';
 import useKit from '../../hooks/use-kit';
 import { PreviewIframe } from './preview-iframe';
-import { useNavigate, useLocation } from '@reach/router';
+import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
 
 export const breakpoints = [
