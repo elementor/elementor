@@ -41,6 +41,8 @@ jobs:
   bump-version:
     needs: merge-release-branch-to-develop
     runs-on: ubuntu-16.04
+    outputs:
+      prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
@@ -48,11 +50,14 @@ jobs:
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: develop
       - name: Bump version
+        id: bump_version_step
         run: |
           npm config set git-tag-version false
+          PREV_PACKAGE_VERSION=$(node -p "require('./package.json').version")
           npm version minor
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "::set-output name=prev_version::${PREV_PACKAGE_VERSION}"
       - name: Update readme.txt file
         if: github.event.inputs.canary != 'true'
         run: |
@@ -115,11 +120,21 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/create-git-tag.sh"
+      - name: Generate changelog
+        env:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_BRANCH_NAME: v${{ env.PACKAGE_VERSION }}
+          BASE_TAG_NAME: v${{ needs.bump-version.outputs.prev_version }}
+        run: |
+          npm install --no-package-lock --no-save @octokit/core@3.4.0
+          node ./.github/scripts/generate-changelog.js
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
+          body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Trigger developer-edition release
