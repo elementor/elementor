@@ -15,7 +15,9 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Validate the command arguments.
 	 *
-	 * @param args
+	 * @param {Object} args
+	 *
+	 * @returns {void}
 	 */
 	validateArgs( args ) {
 		this.requireArgument( 'event', args );
@@ -24,7 +26,9 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Execute the command.
 	 *
-	 * @param args
+	 * @param {Object} args
+	 *
+	 * @returns {void}
 	 */
 	apply( args ) {
 		const { event: e } = args;
@@ -72,6 +76,8 @@ export class ShowSwatches extends CommandBase {
 	 * Extract colors from color controls of the current selected element.
 	 *
 	 * @param {Container} container - A container to extract colors from its settings.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromSettings( container = this.container ) {
 		// Iterate over the widget controls.
@@ -135,6 +141,8 @@ export class ShowSwatches extends CommandBase {
 
 	/**
 	 * Extract colors from repeater controls.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromRepeaters() {
 		// Iterate over repeaters.
@@ -150,7 +158,10 @@ export class ShowSwatches extends CommandBase {
 	 * Create a temporary image element in order to extract colors from it using ColorThief.
 	 * Used with background images from background controls.
 	 *
-	 * @param url
+	 * @param {Object} setting - A settings object from URL control.
+	 * @param {string} setting.url
+	 *
+	 * @returns {void}
 	 */
 	addTempBackgroundImage( { url } ) {
 		if ( ! url ) {
@@ -168,8 +179,10 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Extract colors from image and push it ot the colors array.
 	 *
-	 * @param {Object} image    The image element to extract colors from
-	 * @param {String} suffix   An optional suffix for the key in the colors array.
+	 * @param {Object} image - The image element to extract colors from
+	 * @param {String} suffix - An optional suffix for the key in the colors array.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromImage( image, suffix = '' ) {
 		const colorThief = new ColorThief();
@@ -198,6 +211,8 @@ export class ShowSwatches extends CommandBase {
 
 	/**
 	 * Iterate over all images in the current selected element and extract colors from them.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
@@ -213,8 +228,10 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
 	 *
-	 * @param x
-	 * @param y
+	 * @param {int} x
+	 * @param {int} y
+	 *
+	 * @returns {void}
 	 */
 	initSwatch( x = 0, y = 0 ) {
 		const count = Object.entries( this.colors ).length;
