@@ -69,8 +69,7 @@ export default function ImportComplete() {
 		<Layout type="import" footer={ getFooter() }>
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
-				heading={ __( 'Your file is ready!', 'elementor' ) }
-				description={ __( 'You can find the components of this file in the Library.', 'elementor' ) }
+				heading={ __( 'Your kit is now live on your site!', 'elementor' ) }
 				notice={ (
 					<>
 						<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
