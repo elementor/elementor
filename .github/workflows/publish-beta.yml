@@ -141,7 +141,7 @@ jobs:
           pipeline-url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
           environment-id: "${{ env.PACKAGE_VERSION }}"
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
-          environment-type: 'staging
+          environment-type: 'staging'
       - name: Notify Slack
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
