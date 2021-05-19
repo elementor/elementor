@@ -168,6 +168,32 @@
 				}
 			},
 			"additionalProperties": false
+		},
+		"posts_per_type_per_post_status": {
+			"$id": "#/definitions/posts",
+			"$comment": "Array ( [] ) means the value is empty",
+			"description": "Describes usage of documents per post-type for each post-type, post-status the value is the count",
+			"type": [
+				"object",
+				"array"
+			],
+			"patternProperties": {
+				"([^\\s]+)": {
+					"$id": "#/definitions/posts/$post-type",
+					"type": "object",
+					"title": "Posts per post-type",
+					"patternProperties": {
+						"(draft|pending|private|publish|inherit|trash)$": {
+							"$id": "#/usages/posts/$post-type/$post-status",
+							"$comment": "TODO: Should be number",
+							"type": "string",
+							"title": "Count of post(s) per post-type"
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
 		}
 	},
 	"properties": {
@@ -562,37 +588,20 @@
 			"description": "The usages of various components in Elementor.",
 			"required": [
 				"posts",
+				"non-elementor-posts",
 				"library",
 				"elements"
 			],
 			"properties": {
 				"posts": {
 					"$id": "#/usages/posts",
-					"$comment": "Array ( [] ) means the value is empty",
-					"type": [
-						"object",
-						"array"
-					],
-					"title": "The posts schema",
-					"description": "Describes usage of documents per post-type for each post-type, post-status the value is the count",
-					"patternProperties": {
-						"([^\\s]+)": {
-							"$id": "#/usages/posts/$post-type",
-							"$comment": "Not including 'elementor-library'",
-							"type": "object",
-							"title": "Posts per post-type",
-							"patternProperties": {
-								"(draft|pending|private|publish|inherit|trash)$": {
-									"$id": "#/usages/posts/$post-type/$post-status",
-									"$comment": "TODO: Should be number",
-									"type": "string",
-									"title": "Count of post(s) per post-type"
-								}
-							},
-							"additionalProperties": false
-						}
-					},
-					"additionalProperties": false
+					"$ref": "#/definitions/posts_per_type_per_post_status",
+					"title": "The posts schema"
+				},
+				"non-elementor-posts": {
+					"$id": "#/usages/non-elementor-posts",
+					"$ref": "#/definitions/posts_per_type_per_post_status",
+					"title": "The non-elementor-posts schema"
 				},
 				"library": {
 					"$id": "#/usages/library",
