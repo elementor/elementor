@@ -578,6 +578,8 @@ abstract class Document extends Controls_Stack {
 		 *
 		 * @param array $data.
 		 * @param \Elementor\Core\Base\Document $this The current document.
+		 *
+		 * @since 3.3.0
 		 */
 		$data = apply_filters( 'elementor/document/save/data', $data, $this );
 
