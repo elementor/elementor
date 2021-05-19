@@ -49,7 +49,7 @@ export default function ImportKit() {
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
 			navigate( '/import/content' );
 		}
-	}, [ ajaxState ] );
+	}, [ ajaxState.status ] );
 
 	return (
 		<Layout type="import">
