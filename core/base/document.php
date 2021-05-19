@@ -579,7 +579,7 @@ abstract class Document extends Controls_Stack {
 		 * @param array $data.
 		 * @param \Elementor\Core\Base\Document $this The current document.
 		 */
-		$data = apply_filters( 'elementor/document/get_data', $data, $this );
+		$data = apply_filters( 'elementor/document/save/data', $data, $this );
 
 		$this->add_handle_revisions_changed_filter();
 
