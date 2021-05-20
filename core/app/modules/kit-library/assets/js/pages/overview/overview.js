@@ -1,12 +1,14 @@
 import Content from 'elementor/core/app/assets/js/layout/content';
-import OverviewContent from './overview-content';
 import ItemHeader from '../../components/item-header';
-import OverviewSidebar from './overview-sidebar';
 import Layout from '../../components/layout';
+import OverviewContentGroup from './overview-content-group';
+import OverviewSidebar from './overview-sidebar';
 import useKit from '../../hooks/use-kit';
 import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
+
+import './overview.scss';
 
 function useHeaderButtons( id ) {
 	const navigate = useNavigate();
@@ -41,12 +43,20 @@ export default function Item( props ) {
 	return (
 		<Layout
 			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
-			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType } /> }
+			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
 		>
 			{
 				documentsByType.length > 0 &&
 				<Content>
-					<OverviewContent documentsByType={ documentsByType }/>
+					{
+						documentsByType.map( ( contentType ) => (
+							<OverviewContentGroup
+								key={ contentType.id }
+								contentType={ contentType }
+								kitId={ props.id }
+							/>
+						) )
+					}
 				</Content>
 			}
 		</Layout>
