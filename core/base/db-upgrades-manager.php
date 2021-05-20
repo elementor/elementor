@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Base;
 
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -76,27 +77,64 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 	}
 
 	public function admin_notice_start_upgrade() {
-		$upgrade_link = $this->get_start_action_url();
-		$message = '<p>' . sprintf( __( '%s Your site database needs to be updated to the latest version.', 'elementor' ), $this->get_updater_label() ) . '</p>';
-		$message .= '<p>' . sprintf( '<a href="%s" class="button-primary">%s</a>', $upgrade_link, __( 'Update Now', 'elementor' ) ) . '</p>';
+		/**
+		 * @var Admin_Notices $admin_notices
+		 */
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
-		echo '<div class="notice notice-error is-dismissible">' . $message . '</div>';
+		$options = [
+			'title' => $this->get_updater_label(),
+			'description' => __( 'Your site database needs to be updated to the latest version.', 'elementor' ),
+			'type' => 'error',
+			'icon' => false,
+			'button' => [
+				'text' => __( 'Update Now', 'elementor' ),
+				'url' => $this->get_start_action_url(),
+				'class' => 'e-button e-button--cta',
+			],
+		];
+
+		$admin_notices->print_admin_notice( $options );
 	}
 
 	public function admin_notice_upgrade_is_running() {
-		$upgrade_link = $this->get_continue_action_url();
-		$message = '<p>' . sprintf( __( '%s Database update process is running in the background.', 'elementor' ), $this->get_updater_label() ) . '</p>';
-		$message .= '<p>' . __( 'Taking a while?', 'elementor' ) . ' <a href="' . $upgrade_link . '" class="button-primary">' . __( 'Click here to run it now', 'elementor' ) . '</a></p>';
+		/**
+		 * @var Admin_Notices $admin_notices
+		 */
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
-		echo '<div class="notice notice-warning is-dismissible">' . $message . '</div>';
+		$options = [
+			'title' => $this->get_updater_label(),
+			'description' => __( 'Database update process is running in the background. Taking a while?', 'elementor' ),
+			'type' => 'warning',
+			'icon' => false,
+			'button' => [
+				'text' => __( 'Click here to run it now', 'elementor' ),
+				'url' => $this->get_continue_action_url(),
+				'class' => 'e-button e-button--primary',
+			],
+		];
+
+		$admin_notices->print_admin_notice( $options );
 	}
 
 	public function admin_notice_upgrade_is_completed() {
 		$this->delete_flag( 'completed' );
 
-		$message = '<p>' . sprintf( __( '%s The database update process is now complete. Thank you for updating to the latest version!', 'elementor' ), $this->get_updater_label() ) . '</p>';
+		$message = __( 'The database update process is now complete. Thank you for updating to the latest version!', 'elementor' );
 
-		echo '<div class="notice notice-success is-dismissible">' . $message . '</div>';
+		/**
+		 * @var Admin_Notices $admin_notices
+		 */
+		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
+
+		$options = [
+			'description' => '<b>' . $this->get_updater_label() . '</b> - ' . $message,
+			'type' => 'success',
+			'icon' => false,
+		];
+
+		$admin_notices->print_admin_notice( $options );
 	}
 
 	/**

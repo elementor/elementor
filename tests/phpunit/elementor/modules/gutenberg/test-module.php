@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Module extends Elementor_Test_Base {
 	public function test_register_elementor_rest_field() {
 		// Arrange
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$this->act_as_admin();
 
 		$post = $this->factory()->create_and_get_custom_post( [
 			'type' => 'post',

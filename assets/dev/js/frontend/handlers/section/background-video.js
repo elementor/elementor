@@ -161,9 +161,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 			startStateCode = YT.PlayerState.UNSTARTED;
 		}
 
-		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
-
-		this.player = new YT.Player( this.elements.$backgroundVideoEmbed[ 0 ], {
+		const playerOptions = {
 			videoId: videoID,
 			events: {
 				onReady: () => {
@@ -194,7 +192,17 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				rel: 0,
 				playsinline: 1,
 			},
-		} );
+		};
+
+		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
+		if ( elementSettings.background_privacy_mode ) {
+			playerOptions.host = 'https://www.youtube-nocookie.com';
+			playerOptions.origin = window.location.hostname;
+		}
+
+		$backgroundVideoContainer.addClass( 'elementor-loading elementor-invisible' );
+
+		this.player = new YT.Player( this.elements.$backgroundVideoEmbed[ 0 ], playerOptions );
 	}
 
 	activate() {

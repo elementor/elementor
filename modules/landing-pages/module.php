@@ -464,5 +464,18 @@ class Module extends BaseModule {
 
 			$document->admin_columns_content( $column_name );
 		}, 10, 2 );
+
+		// Overwrite the Admin Bar's 'New +' Landing Page URL with the link that creates the new LP in Elementor
+		// with the Template Library modal open.
+		add_action( 'admin_bar_menu', function( $admin_bar ) {
+			// Get the Landing Page menu node.
+			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
+
+			if ( $new_landing_page_node ) {
+				$new_landing_page_node->href = $this->get_add_new_landing_page_url();
+
+				$admin_bar->add_node( $new_landing_page_node );
+			}
+		}, 100 );
 	}
 }
