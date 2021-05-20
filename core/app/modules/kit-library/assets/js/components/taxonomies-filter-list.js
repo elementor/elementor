@@ -33,7 +33,7 @@ export default function TaxonomiesFilterList( props ) {
 					<SearchInput
 						size="sm"
 						className="e-kit-library__tags-filter-list-search"
-						placeholder={ sprintf( __( 'Search in %s', 'elementor' ), props.taxonomiesByType.label ) }
+						placeholder={ sprintf( __( 'Search %s...', 'elementor' ), props.taxonomiesByType.label ) }
 						value={ search }
 						onChange={ setSearch }
 					/>

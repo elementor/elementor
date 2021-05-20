@@ -55,7 +55,7 @@ function useMenuItems( path ) {
 
 		return [
 			{
-				label: __( 'All Kits', 'elementor' ),
+				label: __( 'All Template Kits', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
@@ -121,7 +121,7 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-top-area">
 					<Grid item className="e-kit-library__index-layout-top-area-search">
 						<SearchInput
-							placeholder={ __( 'Search a kit theme or style', 'elementor' ) }
+							placeholder={ __( 'Search all Template Kits...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
