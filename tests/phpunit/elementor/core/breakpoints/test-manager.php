@@ -103,8 +103,8 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_device_min_breakpoint_mobile() {
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		// Test for mobile specifically, which always has a min point of 0.
-		$this->assertEquals( 0, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
+		// Test for mobile specifically, which always has a min point of 320.
+		$this->assertEquals( 320, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
 	}
 
 	/**

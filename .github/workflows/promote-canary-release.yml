@@ -1,0 +1,71 @@
+name: Promote Canary Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-readme-develop:
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout develop branch
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: develop
+      - name: Bump version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+      - name: Push new version to develop
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/remove-readme-beta-tag.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+          bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+  promote:
+    needs: update-readme-develop
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: master
+      - name: Merge develop -> master
+        uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
+        with:
+          type: now
+          from_branch: develop
+          target_branch: master
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Checkout updated master branch
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: master
+      - name: Install Dependencies
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          npm install
+      - name: Build
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
+      - name: Publish to WordPress.org SVN
+        env:
+          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-readme-to-wordpress-org.sh"
+      - name: Upload zip file to GitHub actions artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: elementor-${{ env.PACKAGE_VERSION }}
+          path: ${{ github.workspace }}/elementor/**/*
