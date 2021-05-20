@@ -120,6 +120,8 @@ class Manager {
 		delete_option( Global_CSS::META_KEY );
 		delete_option( Frontend::META_KEY );
 
+		$this->reset_assets_data_css();
+
 		/**
 		 * Elementor clear files.
 		 *
@@ -157,5 +159,25 @@ class Manager {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+	}
+
+	/**
+	 * Reset Assets Data CSS.
+	 *
+	 * Reset the page assets CSS data.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	private function reset_assets_data_css() {
+		$assets_data_key = '_elementor_assets_data';
+
+		$assets_inline_content = get_option( $assets_data_key, [] );
+
+		if ( isset( $assets_inline_content['css'] ) ) {
+			unset( $assets_inline_content['css'] );
+
+			update_option( $assets_data_key, $assets_inline_content );
+		}
 	}
 }

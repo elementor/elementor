@@ -506,8 +506,6 @@ class Widgets_Manager {
 		$this->require_files();
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-
-		$this->add_widgets_css_reset_action();
 	}
 
 	/**
@@ -524,30 +522,5 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
-	}
-
-	private function reset_inline_content_css() {
-		$assets_data_key = '_elementor_assets_data';
-
-		$assets_inline_content = get_option( $assets_data_key, [] );
-
-		if ( isset( $assets_inline_content['css'] ) ) {
-			unset( $assets_inline_content['css'] );
-
-			update_option( $assets_data_key, $assets_inline_content );
-		}
-	}
-
-	private function add_widgets_css_reset_action() {
-		static $is_action_added;
-
-		if ( ! $is_action_added ) {
-			$is_action_added = true;
-
-			// Reset the inline content CSS when regenerating CSS from the dashboard.
-			add_action( 'elementor/core/files/clear_cache', function() {
-				$this->reset_inline_content_css();
-			} );
-		}
 	}
 }
