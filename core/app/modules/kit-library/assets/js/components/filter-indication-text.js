@@ -22,14 +22,12 @@ export default function FilterIndicationText( props ) {
 	return (
 		<Grid container className="e-kit-library__filter-indication">
 			<Text className="e-kit-library__filter-indication-text">
-				{ sprintf( __( 'Showing %s Results', 'elementor' ), props.resultCount ) }
+				{ sprintf( __( 'Showing %s Results For', 'elementor' ), props.resultCount ) }
 				{ ' ' }
-				{ props.queryParams.search && sprintf( __( 'For: "%s"', 'elementor' ), props.queryParams.search ) }
+				{ props.queryParams.search && `"${ props.queryParams.search }"` }
 				{ ' ' }
 				{ selectedTaxonomies.length > 0 && (
 					<>
-						{ __( 'In', 'elementor' ) }
-						{ ' ' }
 						{ selectedTaxonomies.map( ( taxonomy ) => (
 							<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
 								{ taxonomy }
