@@ -58,7 +58,27 @@ export default function ImportResolver( props ) {
 					<Card.Body padding="20" passive>
 						<Box>
 							<List separated className="e-app-export-kit-content">
-								<List.Item separated padding="20" key={ 1 } className="e-app-export-kit-content__item">
+								<List.Item padding="20" key={ 1 } className="e-app-export-kit-content__item">
+									<div>
+										<Grid container noWrap>
+											<ResolverCheckbox type="main-type" className="e-app-export-kit-content__checkbox" />
+
+											<Grid item>
+												<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
+													title
+												</Heading>
+
+												<Grid item>
+													<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
+														description
+													</Text>
+												</Grid>
+											</Grid>
+										</Grid>
+									</div>
+								</List.Item>
+
+								<List.Item padding="20" key={ 1 } className="e-app-export-kit-content__item">
 									<div>
 										<Grid container noWrap>
 											<ResolverCheckbox type="main-type" className="e-app-export-kit-content__checkbox" />
