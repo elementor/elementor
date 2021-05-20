@@ -19,6 +19,7 @@ module.exports.mergeBranch = async (auth, owner, repo, base, head, commitMessage
 		});
 	} catch (err) {
 		err.head = head;
+		err.base = base;
 		throw err;
 	}
 }
