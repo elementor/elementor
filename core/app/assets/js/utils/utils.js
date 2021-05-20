@@ -11,8 +11,15 @@ export const pxToRem = ( pixels ) => {
 		.join( ' ' );
 };
 
-export const arrayToClassName = ( array ) => {
-	return array.filter( ( classItem ) => '' !== classItem ).join( ' ' );
+export const arrayToClassName = ( array, action ) => {
+	return array
+		.filter( ( item ) => 'object' === typeof ( item ) ? Object.entries( item )[ 0 ][ 1 ] : item )
+		.map( ( item ) => {
+			const value = 'object' === typeof ( item ) ? Object.entries( item )[ 0 ][ 0 ] : item;
+
+			return action ? action( value ) : value;
+		} )
+		.join( ' ' );
 };
 
 export const isOneOf = ( filetype, filetypeOptions ) => {
