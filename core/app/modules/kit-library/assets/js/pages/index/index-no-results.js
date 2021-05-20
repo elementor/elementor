@@ -11,10 +11,10 @@ export default function IndexNoResults( props ) {
 				variant="h1"
 				className="e-kit-library__not-results-title"
 			>
-				{ __( 'No Results Found', 'elementor' ) }
+				{ __( 'No results matched your search.', 'elementor' ) }
 			</Heading>
 			<Text variant="xl" className="e-kit-library__not-results-description">
-				{ __( 'Try retyping another keyword or explore the most popular kits bellow.', 'elementor' ) }
+				{ __( 'Try different keywords or continue browsing.', 'elementor' ) }
 				<br/>
 				<Button text={ __( 'Continue Browsing', 'elementor' ) } color="link" onClick={ props.clearFilter }/>
 			</Text>
