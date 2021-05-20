@@ -25,7 +25,7 @@ export default function ExportKit() {
 				<PageHeader
 					heading={ __( 'Export a Template Kit', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - pages, site settings, headers, etc. - to include in your kit file.', 'elementor' ),
+						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit file.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
 							{ __( 'By default, all of your components will be exported.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,

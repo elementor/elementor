@@ -56,11 +56,10 @@ export default function ImportKit() {
 			<section className="e-app-import">
 				<PageHeader
 					heading={ __( 'Import a Template Kit', 'elementor' ) }
-					description={
-						<>
-							{ __( 'Upload a file with Elementor components - pages, site settings, headers, etc. - so you can access them later and quickly apply them to your site.', 'elementor' ) } { getLearnMoreLink() }
-						</>
-					}
+					description={ [
+						__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
+						getLearnMoreLink(),
+					] }
 				/>
 
 				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
