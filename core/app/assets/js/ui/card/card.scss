@@ -9,6 +9,11 @@
 	border-radius: $card-border-radius;
 	transition: $card-transition;
 	font-size: $card-font-size;
+	overflow: hidden;
+
+	&:hover {
+		background-color: var(--card-background-color-hover);
+	}
 
 	&__header {
 		padding: $card-header-padding;
@@ -16,6 +21,21 @@
 		min-height: $card-header-height;
 		display: flex;
 		align-items: center;
+
+		&--padding {
+			padding: var(--eps-card-header-padding);
+		}
+
+		&--passive,
+		&--passive:hover {
+			background-color: var(--card-header-passive-background-color);
+		}
+
+		&--active,
+		&--active:hover {
+			background-color: var(--card-header-active-background-color);
+			border-bottom: var(--card-header-footer-active-border);
+		}
 	}
 
 	/*
@@ -32,6 +52,20 @@
 
 	&__body {
 		padding: $card-body-padding-y $card-body-padding-x;
+
+		&--padding {
+			padding: var(--eps-card-body-padding);
+		}
+
+		&--passive,
+		&--passive:hover {
+			background-color: var(--card-body-passive-background-color);
+		}
+
+		&--active,
+		&--active:hover {
+			background-color: var(--card-body-active-background-color);
+		}
 	}
 
 	// figure is here to assist with aspect ratio, and dealing with different image sizes and bg-color for shorter images e.g. header, footer.
@@ -71,10 +105,30 @@
 		padding: $card-padding;
 		border-top: var(--card-header-footer-border);
 		font-size: $card-footer-font-size;
+
+		&--padding {
+			padding: var(--eps-card-footer-padding);
+		}
+
+		&--passive,
+		&--passive:hover {
+			background-color: var(--card-footer-passive-background-color);
+		}
+
+		&--active,
+		&--active:hover {
+			background-color: var(--card-footer-active-background-color);
+			border-top: var(--card-header-footer-active-border);
+		}
 	}
 
-	&:hover {
-		background-color: var(--card-background-color-hover);
+	&__title {
+		font-size: $card-font-size;
+	}
+
+	&__divider {
+		border-top: 1px solid red;
+		margin: 0;
 	}
 }
 
