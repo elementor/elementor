@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Settings\Page\Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Testing\Elementor_Test_Base;
@@ -88,7 +89,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertNull( Plugin::$instance->documents->get( $post_id )->get_exit_to_dashboard_url() );
 	}
 
-
 	public function test_should_get_updated_timezone_string() {
 		for ( $time_offset = 0; $time_offset < 13; $time_offset++ ) {
 			update_option( 'gmt_offset', $time_offset );
@@ -117,12 +117,6 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	public function test_should_get_post_auto_save() {
 		$posts = $this->factory()->create_and_get_parent_and_child_posts();
 		$this->assertEquals( $posts['child_id'], Utils::get_post_autosave( $posts['parent_id'], $posts['user_id'] )->ID );
-	}
-
-	public function test_should_create_and_get_new_post_url() {
-		$new_post_url = esc_url( Utils::get_create_new_post_url() );
-		$this->assertContains( 'edit.php?action=elementor_new_post&#038;post_type=', $new_post_url );
-		$this->assertContains( '&#038;_wpnonce=', $new_post_url );
 	}
 
 	public function test_getYoutubeId() {
@@ -179,5 +173,23 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		$this->assertEquals( false, Utils::is_empty( [ 'key' => '0' ], 'key' ),
 			"[ 'key' => '0' ] is empty" );
+	}
+
+	public function test_replace_urls__ensure_page_settings() {
+		// Arrange.
+		$setting_key = 'some-url';
+		$from_url = 'http://localhost/';
+		$to_url = 'http://127.0.0.1/';
+
+		$document = self::factory()->create_post();
+
+		$document->update_meta( Manager::META_KEY, [ $setting_key => $from_url ] );
+
+		// Act.
+		$affected_rows = Utils::replace_urls( $from_url, $to_url );
+
+		// Assert.
+		$this->assertSame( '1 row affected.', $affected_rows );
+		$this->assertSame( [ $setting_key => $to_url ], $document->get_meta( Manager::META_KEY ) );
 	}
 }
