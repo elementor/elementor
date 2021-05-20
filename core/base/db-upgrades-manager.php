@@ -86,7 +86,7 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 			'title' => $this->get_updater_label(),
 			'description' => __( 'Your site database needs to be updated to the latest version.', 'elementor' ),
 			'type' => 'error',
-			'icon' => 'eicon-database',
+			'icon' => false,
 			'button' => [
 				'text' => __( 'Update Now', 'elementor' ),
 				'url' => $this->get_start_action_url(),
@@ -105,12 +105,10 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 
 		$options = [
 			'title' => $this->get_updater_label(),
-			'description' => __( 'Database update process is running in the background.', 'elementor' ),
+			'description' => __( 'Database update process is running in the background. Taking a while?', 'elementor' ),
 			'type' => 'warning',
-			'icon' => 'eicon-database',
-
+			'icon' => false,
 			'button' => [
-				'before' => __( 'Taking a while?', 'elementor' ),
 				'text' => __( 'Click here to run it now', 'elementor' ),
 				'url' => $this->get_continue_action_url(),
 				'class' => 'e-button e-button--primary',
@@ -131,10 +129,9 @@ abstract class DB_Upgrades_Manager extends Background_Task_Manager {
 		$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 		$options = [
-			'title' => $this->get_updater_label(),
-			'description' => $message,
+			'description' => '<b>' . $this->get_updater_label() . '</b> - ' . $message,
 			'type' => 'success',
-			'icon' => 'eicon-database',
+			'icon' => false,
 		];
 
 		$admin_notices->print_admin_notice( $options );

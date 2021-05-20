@@ -10,6 +10,7 @@ use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -159,6 +160,15 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
+
+		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
+		add_action( 'wp_enqueue_scripts', function() {
+			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
+				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
+
+				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
+			}
+		}, 30 );
 
 		$this->add_content_filter();
 
@@ -517,10 +527,10 @@ class Frontend extends App {
 
 		$frontend_file_name = 'frontend' . $direction_suffix . $min_suffix . '.css';
 
-		$has_custom_file = Responsive::has_custom_breakpoints();
+		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Responsive::get_stylesheet_templates_path() . $frontend_file_name );
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
 
 			$time = $frontend_file->get_meta( 'time' );
 
@@ -586,8 +596,8 @@ class Frontend extends App {
 
 		if ( ! $this->is_improved_assets_loading() ) {
 			wp_enqueue_script(
-				'preloaded-elements-handlers',
-				$this->get_js_assets_url( 'preloaded-elements-handlers', 'assets/js/' ),
+				'preloaded-modules',
+				$this->get_js_assets_url( 'preloaded-modules', 'assets/js/' ),
 				[
 					'elementor-frontend',
 				],
@@ -619,36 +629,47 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function enqueue_styles() {
-		/**
-		 * Before frontend styles enqueued.
-		 *
-		 * Fires before Elementor frontend styles are enqueued.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'elementor/frontend/before_enqueue_styles' );
+		static $is_enqueue_styles_already_triggered;
 
-		wp_enqueue_style( 'elementor-icons' );
-		wp_enqueue_style( 'elementor-animations' );
-		wp_enqueue_style( 'elementor-frontend' );
+		if ( ! $is_enqueue_styles_already_triggered ) {
+			$is_enqueue_styles_already_triggered = true;
 
-		/**
-		 * After frontend styles enqueued.
-		 *
-		 * Fires after Elementor frontend styles are enqueued.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'elementor/frontend/after_enqueue_styles' );
+			/**
+			 * Before frontend styles enqueued.
+			 *
+			 * Fires before Elementor frontend styles are enqueued.
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'elementor/frontend/before_enqueue_styles' );
 
-		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-			$this->parse_global_css_code();
+			$this->add_elementor_icons_inline_css();
 
-			$post_id = get_the_ID();
-			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
-			if ( $post_id && is_singular() ) {
-				$css_file = Post_CSS::create( get_the_ID() );
-				$css_file->enqueue();
+			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
+			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+				wp_enqueue_style( 'elementor-icons' );
+			}
+			wp_enqueue_style( 'elementor-animations' );
+			wp_enqueue_style( 'elementor-frontend' );
+
+			/**
+			 * After frontend styles enqueued.
+			 *
+			 * Fires after Elementor frontend styles are enqueued.
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'elementor/frontend/after_enqueue_styles' );
+
+			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+				$this->parse_global_css_code();
+
+				$post_id = get_the_ID();
+				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
+				if ( $post_id && is_singular() ) {
+					$css_file = Post_CSS::create( get_the_ID() );
+					$css_file->enqueue();
+				}
 			}
 		}
 	}
@@ -797,7 +818,10 @@ class Frontend extends App {
 				$font = str_replace( ' ', '+', $font ) . ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 			}
 
-			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%s', implode( rawurlencode( '|' ), $google_fonts['google'] ) );
+			// Defining a font-display type to google fonts.
+			$font_display_url_str = '&display=' . Fonts::get_font_display_setting();
+
+			$fonts_url = sprintf( 'https://fonts.googleapis.com/css?family=%1$s%2$s', implode( rawurlencode( '|' ), $google_fonts['google'] ), $font_display_url_str );
 
 			$subsets = [
 				'ru_RU' => 'cyrillic',
@@ -1173,7 +1197,6 @@ class Frontend extends App {
 				'edit' => $is_preview_mode,
 				'wpPreview' => is_preview(),
 				'isScriptDebug' => Utils::is_script_debug(),
-				'isImprovedAssetsLoading' => $this->is_improved_assets_loading(),
 			],
 			'i18n' => [
 				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
@@ -1190,7 +1213,12 @@ class Frontend extends App {
 				'close' => __( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
+			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
+			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
+			'responsive' => [
+				'breakpoints' => $this->get_breakpoints_config(),
+			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
@@ -1254,6 +1282,24 @@ class Frontend extends App {
 		}
 
 		return $settings;
+	}
+
+	private function get_breakpoints_config() {
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
+
+		$config = [];
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
+			$config[ $breakpoint_name ] = [
+				'label' => $breakpoint->get_label(),
+				'value' => $breakpoint->get_value(),
+				'direction' => $breakpoint->get_direction(),
+				'is_enabled' => $breakpoint->is_enabled(),
+				'default_value' => $breakpoint->get_default_value(),
+			];
+		}
+
+		return $config;
 	}
 
 	/**
@@ -1324,9 +1370,8 @@ class Frontend extends App {
 	private function get_elementor_frontend_dependencies() {
 		$dependencies = [
 			'elementor-frontend-modules',
-			'elementor-dialog',
 			'elementor-waypoints',
-			'share-link',
+			'jquery-ui-position',
 		];
 
 		if ( ! $this->is_improved_assets_loading() ) {
@@ -1339,8 +1384,24 @@ class Frontend extends App {
 			);
 
 			$dependencies[] = 'swiper';
+			$dependencies[] = 'share-link';
+			$dependencies[] = 'elementor-dialog';
 		}
 
 		return $dependencies;
+	}
+
+	private function add_elementor_icons_inline_css() {
+		$elementor_icons_library_version = '5.10.0';
+
+		/**
+		 * The e-icons font-face must be printed inline due to custom breakpoints.
+		 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
+		 * The custom frontend file is located in a different path ('uploads' folder).
+		 * Therefore, it cannot be called from a CSS file that its relative path can vary.
+		 */
+		$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$slib/eicons/fonts/eicons.eot?%2$s);src:url(%1$slib/eicons/fonts/eicons.eot?%2$s#iefix) format("embedded-opentype"),url(%1$slib/eicons/fonts/eicons.woff2?%2$s) format("woff2"),url(%1$slib/eicons/fonts/eicons.woff?%2$s) format("woff"),url(%1$slib/eicons/fonts/eicons.ttf?%2$s) format("truetype"),url(%1$slib/eicons/fonts/eicons.svg?%2$s#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL, $elementor_icons_library_version );
+
+		wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
 	}
 }

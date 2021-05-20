@@ -25,7 +25,7 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
 			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
-			elementorBreakpoints = elementorFrontend.config.breakpoints;
+			elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
@@ -36,12 +36,12 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.mobile.value ] = {
 			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
 			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
 		};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.tablet.value ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};

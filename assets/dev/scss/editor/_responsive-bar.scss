@@ -1,0 +1,135 @@
+:root {
+	--e-is-device-mode: 0;
+}
+
+.e-is-device-mode {
+	--e-is-device-mode: 1;
+}
+
+#elementor-responsive-bar {
+	position: sticky;
+	height: calc(40px * var(--e-is-device-mode));
+	overflow: hidden;
+	align-self: stretch;
+	flex-shrink: 0;
+	transition: height .2s ease-in-out, opacity .1s ;
+	top: 0;
+	z-index: 100;
+	opacity: var(--e-is-device-mode);
+	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
+}
+
+.e-responsive-bar {
+	width: 100%;
+	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+	z-index: 1;
+	transition: margin-top .2s ease-in-out;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 10px;
+	height: 40px;
+	color: $editor-light;
+	background-color: $editor-darkest;
+
+	&__col {
+		display: flex;
+		width: 25%;
+		justify-content: center;
+		align-items: center;
+
+		&:last-child {
+			justify-content: flex-start;
+			flex-direction: row-reverse;
+		}
+	}
+
+	&__close-button,
+	&__settings-button {
+		padding: 10px 8px;
+	}
+
+	&__button {
+		appearance: none;
+		background: none;
+		border: 0 none;
+		cursor: pointer;
+		color: inherit;
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+		}
+
+		&:hover {
+			color: $editor-lighter;
+		}
+	}
+
+	&__close-button + &__button {
+		position: relative;
+
+		&::before {
+			content: '';
+			display: block;
+			height: 20px;
+			width: 1px;
+			background-color: $editor-dark;
+			position: absolute;
+			@include end(0);
+			top: calc(50% - 10px);
+		}
+	}
+
+  	&__size-inputs-wrapper {
+		display: flex;
+		align-items: center;
+	  	margin-inline-end: 8px;
+	  	color: $editor-dark;
+	}
+
+	&__input-size {
+		background-color: transparent;
+		color: $editor-light;
+		border: 1px solid $editor-dark !important;
+		padding: 0 3px;
+		width: 60px;
+		font-size: 12px;
+		line-height: 16px;
+		height: 18px;
+		margin: auto 8px auto 4px;
+
+		&-separator {
+			color: $editor-dark;
+		}
+	}
+
+	&-switcher {
+		display: flex;
+
+		&__option {
+			cursor: pointer;
+			text-align: center;
+			width: 22px;
+			height: 22px;
+			margin: 0 3.5px;
+			line-height: 22px;
+			border-radius: 3px;
+			font-size: 17px;
+			transition: background-color .3s ease-out;
+
+			&:hover, &[aria-selected="true"] {
+				color: $editor-lighter;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+
+			input {
+				display: none;
+
+				&:checked + i {
+					color: $editor-info;
+				}
+			}
+		}
+	}
+}
+
