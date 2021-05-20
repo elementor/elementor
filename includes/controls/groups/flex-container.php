@@ -28,7 +28,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'default' => '',
 			'selectors' => [
-				'{{SELECTOR}}' => 'flex-direction: {{VALUE}};',
+				'{{SELECTOR}}' => '--flex-direction: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -44,7 +44,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'default' => '',
 			'selectors' => [
-				'{{SELECTOR}}' => 'flex-wrap: {{VALUE}};',
+				'{{SELECTOR}}' => '--flex-wrap: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -63,7 +63,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'space-evenly' => _x( 'Space Evenly', 'Flex Container Control', 'elementor' ),
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => 'justify-content: {{VALUE}};',
+				'{{SELECTOR}}' => '--justify-content: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -80,7 +80,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'flex-end' => _x( 'Flex End', 'Flex Container Control', 'elementor' ),
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => 'align-items: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -99,7 +99,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'space-evenly' => _x( 'Space Evenly', 'Flex Container Control', 'elementor' ),
 			],
 			'selectors' => [
-				'{{SELECTOR}}' => 'align-content: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-content: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -119,7 +119,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'size_units' => [ 'px', '%' ],
 			'selectors' => [
-				'{{SELECTOR}}' => 'gap: {{SIZE}}{{UNIT}};',
+				'{{SELECTOR}}' => '--gap: {{SIZE}}{{UNIT}};',
 			],
 			'responsive' => true,
 		];

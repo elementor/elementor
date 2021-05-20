@@ -31,7 +31,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			],
 			'size_units' => [ 'px', '%' ],
 			'selectors' => [
-				'{{SELECTOR}}' => 'flex-basis: {{SIZE}}{{UNIT}};',
+				'{{SELECTOR}}' => '--flex-basis: {{SIZE}}{{UNIT}};',
 			],
 			'responsive' => true,
 		];
@@ -40,7 +40,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'label' => _x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
-				'{{SELECTOR}}' => 'flex-grow: {{VALUE}};',
+				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -49,7 +49,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'label' => _x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
-				'{{SELECTOR}}' => 'flex-shrink: {{VALUE}};',
+				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -58,7 +58,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
-				'{{SELECTOR}}' => 'order: {{VALUE}};',
+				'{{SELECTOR}}' => '--order: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -77,7 +77,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			],
 			'default' => '',
 			'selectors' => [
-				'{{SELECTOR}}' => 'align-self: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-self: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
