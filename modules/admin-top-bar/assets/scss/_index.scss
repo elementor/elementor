@@ -1,13 +1,16 @@
+@import "../../../../assets/dev/scss/helpers/direction";
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../assets/dev/scss/helpers/mixins";
 $top-bar-height: 50px;
 
 #e-admin-top-bar {
-	background: #fff;
+	background: $white;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
 	position: absolute;
 	top: 0;
 	right: 0;
 	width: calc(100% - 160px);
-	z-index: 9999;
+	z-index: $first-layer;
 
 
 	#elementor-admin-top-bar {
@@ -24,11 +27,11 @@ $top-bar-height: 50px;
 	}
 
 	.page-title-action {
-		background: #f6f7f7;
-		border: 1px solid #2271b1;
+		background: $gray-lightest;
+		border: 1px solid $blue;
 		border-radius: 3px;
 		box-sizing: border-box;
-		color: #2271b1;
+		color: $blue;
 		cursor: pointer;
 		display: inline-block;
 		line-height: 30px;
@@ -38,9 +41,9 @@ $top-bar-height: 50px;
 		text-decoration: none;
 
 		&:hover {
-			background: #f0f0f1;
-			border-color: #0a4b78;
-			color: #0a4b78;
+			background: $gray-lighter;
+			border-color: $blue-flat;
+			color: $blue-flat;
 		}
 	}
 
@@ -58,8 +61,20 @@ $top-bar-height: 50px;
 		width: 30px;
 	}
 
+	.top-bar-heading-logo {
+		background: $editor-accent;
+		border-radius: 15px;
+		color: $white;
+		display: inline-block;
+		font-size: pxToRem(14px);
+		height: pxToRem(30px);
+		line-height: pxToRem(30px);
+		text-align: center;
+		width: pxToRem(30px);
+	}
+
 	.top-bar-heading-title {
-		color: #495157;
+		color: $editor-darkest;
 		font-size: 15px;
 		font-weight: 700;
 		font-family: 'Roboto';
@@ -75,7 +90,6 @@ $top-bar-height: 50px;
 	}
 
 	.top-bar-button-wrapper {
-		//color: #6d7882;
 		border: none;
 		background: none;
 		display: inline-flex;
@@ -86,7 +100,7 @@ $top-bar-height: 50px;
 
 		&:hover {
 			h1, i {
-				color: #93003F;
+				color: $editor-accent;
 			}
 		}
 	}
