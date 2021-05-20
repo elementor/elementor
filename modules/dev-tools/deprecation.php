@@ -267,15 +267,35 @@ class Deprecation {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param string $function
+	 * @param string $argument
 	 * @param string $version
+	 * @param string $replacement
+	 * @param string $message
 	 * @throws \Exception
 	 */
-	public function deprecated_argument( $function, $version ) {
-		$print_deprecated = $this->check_deprecation( $function, $version, '' );
+	public function deprecated_argument( $argument, $version, $replacement = '', $message = '' ) {
+		$print_deprecated = $this->check_deprecation( $argument, $version, $replacement );
 
 		if ( $print_deprecated ) {
-			_deprecated_argument( $function, $version );
+			$message = empty( $message ) ? '' : ' ' . $message;
+			$error_message_args = [ $argument, $version ];
+
+			if ( $replacement ) {
+				/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
+				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', 'elementor' );
+				$error_message_args[] = $replacement;
+			} else {
+				/* translators: 1: Function argument, 2: Elementor version number. */
+				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s!', 'elementor' );
+			}
+
+			trigger_error(
+				vsprintf(
+					$translation_string,
+					$error_message_args
+				) . $message,
+				E_USER_DEPRECATED
+			);
 		}
 	}
 
@@ -302,5 +322,31 @@ class Deprecation {
 		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
 
 		do_action_ref_array( $hook, $args );
+	}
+
+	/**
+	 * Apply Deprecated Filter
+	 *
+	 * A method used to run deprecated filters through Elementor's deprecation process.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $hook
+	 * @param array $args
+	 * @param string $version
+	 * @param string $replacement
+	 * @param null|string $base_version
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function apply_deprecated_filter( $hook, $args, $version, $replacement = '', $base_version = null ) {
+		if ( ! has_action( $hook ) ) {
+			return;
+		}
+
+		$this->deprecated_hook( $hook, $version, $replacement, $base_version );
+
+		return apply_filters_ref_array( $hook, $args );
 	}
 }

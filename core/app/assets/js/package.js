@@ -20,7 +20,7 @@ import Icon from './ui/atoms/icon';
 import List from './ui/molecules/list';
 import Menu from './ui/menu/menu';
 import MenuItem from './ui/menu/menu-item';
-import ModalProvider from './ui/modal/modal';
+import { Modal, default as ModalProvider } from './ui/modal/modal';
 import NotFound from './pages/not-found';
 import Notice from './ui/molecules/notice';
 import Page from './layout/page';
@@ -29,6 +29,7 @@ import Select from './ui/atoms/select';
 import Select2 from './ui/molecules/select2';
 import Text from './ui/atoms/text';
 import UploadFile from './molecules/upload-file';
+import InlineLink from './ui/molecules/inline-link';
 
 export default {
 	AddNewButton,
@@ -52,6 +53,7 @@ export default {
 	List,
 	Menu,
 	MenuItem,
+	Modal,
 	ModalProvider,
 	NotFound,
 	Notice,
@@ -61,4 +63,5 @@ export default {
 	Select2,
 	Text,
 	UploadFile,
+	InlineLink,
 };

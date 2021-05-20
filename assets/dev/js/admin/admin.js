@@ -1,3 +1,7 @@
+import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
+import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
+import environment from '../../../../core/common/assets/js/utils/environment';
+
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
 
@@ -48,11 +52,11 @@
 
 				if ( self.isElementorMode() ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: self.translate( 'back_to_wordpress_editor_message' ),
-						headerMessage: self.translate( 'back_to_wordpress_editor_header' ),
+						message: __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
+						headerMessage: __( 'Back to WordPress Editor', 'elementor' ),
 						strings: {
-							confirm: self.translate( 'yes' ),
-							cancel: self.translate( 'cancel' ),
+							confirm: __( 'Continue', 'elementor' ),
+							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
 						onConfirm: function() {
@@ -88,15 +92,16 @@
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss, .elementor-button-notice-dismiss', function( event ) {
+			$( '.e-notice--dismissible' ).on( 'click', '.e-notice__dismiss, .e-notice-dismiss', function( event ) {
 				event.preventDefault();
+
+				const $wrapperElm = $( this ).closest( '.e-notice--dismissible' );
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' ),
+					notice_id: $wrapperElm.data( 'notice_id' ),
 				} );
 
-				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
 				$wrapperElm.fadeTo( 100, 0, function() {
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
@@ -168,11 +173,11 @@
 				$updateButton.addClass( 'loading' );
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'confirm_fa_migration_admin_modal',
-					message: self.translate( 'confirm_fa_migration_admin_modal_body' ),
-					headerMessage: self.translate( 'confirm_fa_migration_admin_modal_head' ),
+					message: __( 'I understand that by upgrading to Font Awesome 5,', 'elementor' ) + '<br>' + __( 'I acknowledge that some changes may affect my website and that this action cannot be undone.', 'elementor' ),
+					headerMessage: __( 'Font Awesome 5 Migration', 'elementor' ),
 					strings: {
-						confirm: self.translate( 'yes' ),
-						cancel: self.translate( 'cancel' ),
+						confirm: __( 'Continue', 'elementor' ),
+						cancel: __( 'Cancel', 'elementor' ),
 					},
 					defaultOption: 'confirm',
 					onConfirm: () => {
@@ -229,11 +234,11 @@
 				var $this = $( this );
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					headerMessage: self.translate( 'rollback_to_previous_version' ),
-					message: self.translate( 'rollback_confirm' ),
+					headerMessage: __( 'Rollback to Previous Version', 'elementor' ),
+					message: __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
 					strings: {
-						confirm: self.translate( 'yes' ),
-						cancel: self.translate( 'cancel' ),
+						confirm: __( 'Continue', 'elementor' ),
+						cancel: __( 'Cancel', 'elementor' ),
 					},
 					onConfirm: function() {
 						$this.addClass( 'loading' );
@@ -249,11 +254,11 @@
 				const $this = $( event.currentTarget );
 
 				elementorCommon.dialogsManager.createWidget( 'confirm', {
-					headerMessage: self.translate( 're_migrate_globals' ),
-					message: self.translate( 're_migrate_globals_confirm' ),
+					headerMessage: __( 'Migrate to v3.0', 'elementor' ),
+					message: __( 'Please note that this process will revert all changes made to Global Colors and Fonts since upgrading to v3.x.', 'elementor' ),
 					strings: {
-						confirm: self.translate( 'yes' ),
-						cancel: self.translate( 'cancel' ),
+						confirm: __( 'Continue', 'elementor' ),
+						cancel: __( 'Cancel', 'elementor' ),
 					},
 					onConfirm: () => {
 						$this.removeClass( 'success' ).addClass( 'loading' );
@@ -284,7 +289,26 @@
 
 			this.openGetHelpInNewTab();
 
+			this.addUserAgentClasses();
+
 			this.roleManager.init();
+
+			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
+				new LandingPagesModule();
+			}
+
+			new ExperimentsModule();
+		},
+
+		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
+			Object.entries( environment ).forEach( ( [ key, value ] ) => {
+				if ( ! value ) {
+					return;
+				}
+
+				body.classList.add( 'e--ua-' + key );
+			} );
 		},
 
 		openGetHelpInNewTab: function() {
@@ -302,7 +326,7 @@
 
 			self.elements.$formAnchor = $( 'h1' );
 
-			$( '#wpbody-content' ).find( '.page-title-action:last' ).after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
 			self.elements.$formAnchor.after( $importArea );
 

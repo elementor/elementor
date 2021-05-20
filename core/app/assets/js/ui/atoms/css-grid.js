@@ -1,13 +1,13 @@
-import Utils from '../../utils/utils';
+import { pxToRem } from '../../utils/utils';
 
 import './css-grid.scss';
 
 export default function CssGrid( props ) {
 	const gridStyle = {
 		'--eps-grid-columns': props.columns,
-		'--eps-grid-spacing': Utils.pxToRem( props.spacing ),
-		'--eps-grid-col-min-width': Utils.pxToRem( props.colMinWidth ),
-		'--eps-grid-col-max-width': Utils.pxToRem( props.colMaxWidth ),
+		'--eps-grid-spacing': pxToRem( props.spacing ),
+		'--eps-grid-col-min-width': pxToRem( props.colMinWidth ),
+		'--eps-grid-col-max-width': pxToRem( props.colMaxWidth ),
 	};
 
 	return (

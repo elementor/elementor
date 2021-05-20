@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -262,7 +261,7 @@ class Settings extends Settings_Page {
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
 							<?php if ( ! empty( $create_new_cpt ) ) : ?>
-							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
 							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
@@ -502,30 +501,19 @@ class Settings extends Settings_Page {
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
-							'optimized_dom_output' => [
-								'label' => __( 'Optimized DOM Output', 'elementor' ),
+							'font_display' => [
+								'label' => __( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => 'auto',
 									'options' => [
-										'' => __( 'Default', 'elementor' ),
-										'enabled' => __( 'Enable', 'elementor' ),
-										'disabled' => __( 'Disable', 'elementor' ),
+										'auto' => __( 'Default', 'elementor' ),
+										'block' => __( 'Blocking', 'elementor' ),
+										'swap' => __( 'Swap', 'elementor' ),
+										'fallback' => __( 'Fallback', 'elementor' ),
+										'optional' => __( 'Optional', 'elementor' ),
 									],
-									'desc' => __( 'Developers, Please Note! If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Legacy DOM Output allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
-										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
-								],
-							],
-							'optimized_js_loading' => [
-								'label' => __( 'Optimized JS Loading', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'options' => [
-										'' => __( 'Default', 'elementor' ),
-										'enabled' => __( 'Enable', 'elementor' ),
-										'disabled' => __( 'Disable', 'elementor' ),
-									],
-									'desc' => __( 'Please Note! Optimized JS mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed.', 'elementor' )
-										. '<a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank"> ' . __( 'Learn More', 'elementor' ) . '</a>',
+									'desc' => __( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . __( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
 						],
@@ -593,7 +581,6 @@ class Settings extends Settings_Page {
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
 			'elementor_css_print_method',
-			'elementor_optimized_dom_output',
 		];
 
 		foreach ( $css_settings as $option_name ) {

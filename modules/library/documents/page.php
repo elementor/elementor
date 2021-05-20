@@ -37,17 +37,7 @@ class Page extends Library_Document {
 		return $properties;
 	}
 
-	/**
-	 * Get document name.
-	 *
-	 * Retrieve the document name.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return string Document name.
-	 */
-	public function get_name() {
+	public static function get_type() {
 		return 'page';
 	}
 
@@ -75,11 +65,11 @@ class Page extends Library_Document {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		Post::register_hide_title_control( $this );
 

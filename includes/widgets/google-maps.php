@@ -93,10 +93,10 @@ class Widget_Google_Maps extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_map',
 			[
@@ -150,7 +150,12 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
+				'size_units' => [ 'px', 'vh' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],

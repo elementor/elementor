@@ -507,8 +507,11 @@ class Svg_Handler extends Files_Upload_Handler {
 
 		$content = substr( $content, $start, ( $end - $start + 6 ) );
 
-		// Make sure to Disable the ability to load external entities
-		$libxml_disable_entity_loader = libxml_disable_entity_loader( true );
+		// If the server's PHP version is 8 or up, make sure to Disable the ability to load external entities
+		$php_version_under_eight = version_compare( PHP_VERSION, '8.0.0', '<' );
+		if ( $php_version_under_eight ) {
+			$libxml_disable_entity_loader = libxml_disable_entity_loader( true ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
+		}
 		// Suppress the errors
 		$libxml_use_internal_errors = libxml_use_internal_errors( true );
 
@@ -531,7 +534,9 @@ class Svg_Handler extends Files_Upload_Handler {
 		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
 
 		// Restore defaults
-		libxml_disable_entity_loader( $libxml_disable_entity_loader );
+		if ( $php_version_under_eight ) {
+			libxml_disable_entity_loader( $libxml_disable_entity_loader ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
+		}
 		libxml_use_internal_errors( $libxml_use_internal_errors );
 
 		return $sanitized;

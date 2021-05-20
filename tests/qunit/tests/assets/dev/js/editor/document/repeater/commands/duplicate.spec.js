@@ -67,7 +67,7 @@ export const Duplicate = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'duplicate', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

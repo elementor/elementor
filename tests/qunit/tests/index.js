@@ -7,6 +7,8 @@ export const tests = () => {
 
 	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
+	require( './core/common/assets/js/api/extras/hash-commands.spec' );
+
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	require( './assets/dev/js/editor/document/commands/base/command-history.spec' );
@@ -18,6 +20,7 @@ export const tests = () => {
 
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
+	require( './core/kits/assets/js/manager.spec' );
 	require( './core/kits/assets/js/component.spec' );
 
 	require( './assets/dev/js/editor/data/globals/component.spec' );

@@ -28,6 +28,7 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/backbone.min.js',
 			'tests/qunit/vendor/wp-includes/react.min.js',
 			'tests/qunit/vendor/wp-includes/react-dom.min.js',
+			'tests/qunit/vendor/wp-includes/i18n.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
@@ -93,6 +94,8 @@ module.exports = function( config ) {
 		colors: true,
 		logLevel: config.LOG_INFO,
 		browsers: [ 'ChromeHeadless' ],
+		browserDisconnectTimeout: 4000,
+		pingTimeout: 10000,
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,
@@ -103,6 +106,7 @@ module.exports = function( config ) {
 			qunit: {
 				isDebug,
 				showUI: false,
+				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.
 				testTimeout: 5000,
 			},
 		},

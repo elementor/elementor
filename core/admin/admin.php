@@ -218,7 +218,9 @@ class Admin extends App {
 	 * @return array A filtered array of post display states.
 	 */
 	public function add_elementor_post_state( $post_states, $post ) {
-		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( $document && $document->is_built_with_elementor() && $document->is_editable_by_current_user() ) {
 			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
 
@@ -245,7 +247,9 @@ class Admin extends App {
 		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_support() ) {
 			$post = get_post();
 
-			$mode_class = Plugin::$instance->db->is_built_with_elementor( $post->ID ) ? 'elementor-editor-active' : 'elementor-editor-inactive';
+			$document = Plugin::$instance->documents->get( $post->ID );
+
+			$mode_class = $document && $document->is_built_with_elementor() ? 'elementor-editor-active' : 'elementor-editor-inactive';
 
 			$classes .= ' ' . $mode_class;
 		}
@@ -373,17 +377,7 @@ class Admin extends App {
 	 */
 	public function elementor_dashboard_overview_widget() {
 		$elementor_feed = Api::get_feed_data();
-
-		$recently_edited_query_args = [
-			'post_type' => 'any',
-			'post_status' => [ 'publish', 'draft' ],
-			'posts_per_page' => '3',
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
-			'orderby' => 'modified',
-		];
-
-		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+		$recently_edited_query = Utils::get_recently_edited_posts_query();
 
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = __( 'Create New Page', 'elementor' );
@@ -411,7 +405,7 @@ class Admin extends App {
 				</div>
 				<?php if ( ! empty( $create_new_post_type ) ) : ?>
 					<div class="e-overview__create">
-						<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+						<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -638,9 +632,17 @@ class Admin extends App {
 			return;
 		}
 		?>
+		<hr class="e-major-update-warning__separator" />
 		<div class="e-major-update-warning">
-			<div class="e-major-update-warning__title"><?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?></div>
-			<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			<div class="e-major-update-warning__icon">
+				<i class="eicon-info-circle"></i>
+			</div>
+			<div>
+				<div class="e-major-update-warning__title">
+					<?php echo __( 'Heads up, Please backup before upgrade!', 'elementor' ); ?>
+				</div>
+				<div class="e-major-update-warning__message"><?php echo sprintf( __( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+			</div>
 		</div>
 		<?php
 	}
@@ -713,17 +715,6 @@ class Admin extends App {
 		$settings = [
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
-			'i18n' => [
-				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
-				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
-				'yes' => __( 'Continue', 'elementor' ),
-				'cancel' => __( 'Cancel', 'elementor' ),
-				'new_template' => __( 'New Template', 'elementor' ),
-				'back_to_wordpress_editor_message' => __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
-				'back_to_wordpress_editor_header' => __( 'Back to WordPress Editor', 'elementor' ),
-				'beta_tester_sign_up' => __( 'Sign Up', 'elementor' ),
-				'do_not_show_again' => __( 'Don\'t Show Again', 'elementor' ),
-			],
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
 			],

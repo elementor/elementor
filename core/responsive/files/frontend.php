@@ -2,8 +2,10 @@
 
 namespace Elementor\Core\Responsive\Files;
 
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Files\Base;
 use Elementor\Core\Responsive\Responsive;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,25 +32,32 @@ class Frontend extends Base {
 	 * @access public
 	 */
 	public function parse_content() {
-		$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		$breakpoints_keys = array_keys( $breakpoints );
 
 		$file_content = file_get_contents( $this->template_file );
 
 		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
-			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys );
+			// Handle BC for legacy template files and Elementor Pro builds.
+			$placeholder_data = $this->maybe_convert_placeholder_data( $placeholder_data );
 
-			$is_max_point = 'MAX' === $placeholder_data[2];
+			if ( 'DESKTOP' === $placeholder_data[1] ) {
+				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+			} else {
+				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
-			if ( $is_max_point ) {
-				$breakpoint_index++;
-			}
+				$is_max_point = 'MAX' === $placeholder_data[2];
 
-			$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ];
+				if ( ! $is_max_point ) {
+					$breakpoint_index--;
+				}
 
-			if ( $is_max_point ) {
-				$value--;
+				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
+
+				if ( ! $is_max_point ) {
+					$value++;
+				}
 			}
 
 			return $value . 'px';
@@ -139,5 +148,31 @@ class Frontend extends Base {
 		}
 
 		return $option;
+	}
+
+	/**
+	 * Maybe Convert Placeholder Data
+	 *
+	 * Converts responsive placeholders in Elementor CSS template files from the legacy format into the new format.
+	 * Used for backwards compatibility for old Pro versions that were built with an Elementor Core version <3.2.0.
+	 *
+	 * @since 3.2.3
+	 *
+	 * @param $placeholder_data
+	 * @return mixed
+	 */
+	private function maybe_convert_placeholder_data( $placeholder_data ) {
+		switch ( $placeholder_data[1] ) {
+			case 'SM':
+				$placeholder_data[1] = 'MOBILE';
+				break;
+			case 'MD':
+				$placeholder_data[1] = 'TABLET';
+				break;
+			case 'LG':
+				$placeholder_data[1] = 'DESKTOP';
+		}
+
+		return $placeholder_data;
 	}
 }

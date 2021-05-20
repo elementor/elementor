@@ -78,10 +78,10 @@ class Widget_Alert extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_alert',
 			[
@@ -237,6 +237,14 @@ class Widget_Alert extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-alert-title',
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -266,6 +274,14 @@ class Widget_Alert extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'description_shadow',
+				'selector' => '{{WRAPPER}} .elementor-alert-description',
 			]
 		);
 

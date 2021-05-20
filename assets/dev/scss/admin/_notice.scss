@@ -1,0 +1,161 @@
+// Elementor Notice
+// Private API
+:root {
+	--e-notice-bg: #fff;
+	--e-notice-border-color: #ccd0d4;
+	--e-notice-context-color: #{$editor-accent};
+	--e-notice-context-tint: var(--e-context-cta-tint-1);
+	--e-notice-box-shadow: 0 1px 4px rgba(0,0,0,.15);
+	--e-notice-dismiss-color: #{$editor-dark};
+}
+
+.e-notice {
+	position: relative;
+	display: flex;
+	font-family: $admin-font-family;
+	background: var(--e-notice-bg);
+	border: 1px solid var(--e-notice-border-color);
+	border-inline-start-width: 4px;
+	box-shadow: var(--e-notice-box-shadow);
+	margin: 5px 20px 5px 2px;
+
+	// Override WP padding
+	&.notice {
+		padding: 0;
+	}
+
+	// An element that acts as the thick colorized border.
+	// Using a sudo element makes the corners look cleaner than the natural border look.
+	&::before {
+		display: block;
+		content: '';
+		position: absolute;
+		@include start(-4px);
+		top: -1px;
+		bottom: -1px;
+		width: 4px;
+		background-color: var(--e-notice-context-color);
+	}
+
+
+	// Notice context colors modifiers
+	@each $context, $color in $e-context-colors {
+		&--#{$context} {
+			--e-notice-context-color: var(--e-context-#{$context}-color);
+			--e-notice-context-color-dark: var(--e-context-#{$context}-color-dark);
+			--e-notice-context-tint: var(--e-context-#{$context}-tint-1);
+		}
+	}
+
+	// Notice extended style (with optional icon)
+	&--extended {
+		--e-notice-is-extended: 1;
+	}
+
+	// Notice dismissible modifier
+	&--dismissible {
+		padding-right: 38px;
+	}
+
+	// Layout
+	&__aside {
+		overflow: hidden;
+		background-color: var(--e-notice-context-tint);
+		width: calc(var(--e-notice-is-extended, 0) * 50px);
+		text-align: center;
+		padding-top: 15px;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	&__icon-wrapper {
+		display: inline-block;
+		font-size: pxToRem(10px);
+		max-height: pxToRem(24px);
+		width: pxToRem(24px);
+		line-height: pxToRem(24px);
+		border-radius: 100px;
+		background: var(--e-notice-context-color);
+		color: #fff;
+		text-shadow: 0 0 3px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark);
+	}
+
+	&__content {
+		padding: 20px;
+	}
+
+	&__actions {
+		display: flex;
+		> * + * {
+			margin-inline-start: 8px;
+		}
+	}
+
+	// Dismiss button
+	&__dismiss {
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+		font-size: pxToRem(13px);
+		text-align: center;
+		background: none;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 1px;
+		border: none;
+		margin: 0;
+		padding: 9px;
+		cursor: pointer;
+		font-style: normal;
+
+		&:before {
+			font-family: eicons;
+			display: inline-block;
+			content: "\e87f";
+			color: var(--e-notice-dismiss-color);
+			width: 20px;
+			border-radius: 20px;
+			speak: none;
+			text-align: center;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+
+		&:hover:before,
+		&:active:before,
+		&:focus:before {
+			font-weight: bold;
+		}
+
+		&:focus:before {
+			color: #fff;
+			background: var(--e-notice-dismiss-color);
+			outline: none;
+		}
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	p {
+		line-height: 1.2;
+		padding: 0;
+		margin: 0;
+
+		+ .e-notice__actions {
+			margin-top: pxToRem(16px);
+		}
+	}
+
+	h3 {
+		font-size: pxToRem(17px);
+		line-height: 1.2;
+		margin: 0;
+
+		+ p {
+			margin-top: 8px;
+		}
+	}
+}

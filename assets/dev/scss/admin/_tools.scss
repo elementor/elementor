@@ -1,6 +1,8 @@
-#tab-replace_url.elementor-active,
-#tab-fontawesome4_migration.elementor-active {
 
+// Tools
+#tab-replace_url.elementor-active,
+#tab-fontawesome4_migration.elementor-active,
+#tab-import-export-kit.elementor-active {
 	~ p.submit {
 		display: none;
 	}
@@ -9,7 +11,6 @@
 #elementor_rollback,
 #elementor_rollback_pro,
 #elementor_replace_url {
-
 	> div {
 		display: flex;
 
@@ -20,48 +21,57 @@
 	}
 }
 
-#tab-experiments.elementor-active {
-	font-family: $admin-font-family;
-}
+// Import / Export Kit
+.tab-import-export-kit {
+	&__wrapper {
+		margin: 40px 0;
+		max-width: 700px;
+	}
 
-.e-experiments__description {
-	max-width: 810px;
-}
+	&__container {
+		background-color: white;
+		font-size: 16px;
+		max-width: 700px;
+		padding: 30px;
 
-.e-experiment {
+		&:not(:first-child) {
+			margin-top: 5px;
+		}
 
-	&__title {
+		p {
+			color: #A4AFB7;
+			font-size: 16px;
+			margin: 20px 0 25px;
+		}
+	}
+
+	&__info {
+		font-size: 14px;
+	}
+
+	&__container a:not(.elementor-button),
+	&__info a {
+		color: #58d0f5;
+		text-decoration: underline;
+	}
+
+	&__box {
 		display: flex;
-		align-items: center;
+		justify-content: space-between;
+		align-items: flex-start;
 
-		&__indicator {
-			height: 10px;
-			width: 10px;
-			border-radius: 50%;
-			border: 2px solid white;
-			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-			&--active {
-				background: $editor-success;
-			}
+		h2 {
+			color: #6D7882;
+			font-size: 28px;
+			font-weight: normal;
+			line-height: 1;
+			margin: 0;
 		}
 
-		&__label {
-			@include margin-start(10px);
+		.elementor-button.elementor-button-success {
+			font-weight: bold;
+			padding: 8px 16px;
+			text-transform: initial;
 		}
-	}
-
-	&__description {
-		max-width: 400px;
-		font-size: 13px;
-		font-weight: 400;
-		margin-top: 10px;
-	}
-
-	&__status {
-		margin-top: 5px;
-		font-size: 13px;
-		font-weight: bold;
-		font-style: italic;
 	}
 }

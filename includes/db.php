@@ -135,6 +135,8 @@ class DB {
 	 * @return array Decoded JSON data from post meta.
 	 */
 	protected function _get_json_meta( $post_id, $key ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
 		$meta = get_post_meta( $post_id, $key, true );
 
 		if ( is_string( $meta ) && ! empty( $meta ) ) {
@@ -146,32 +148,6 @@ class DB {
 		}
 
 		return $meta;
-	}
-
-	/**
-	 * Get new editor from WordPress editor.
-	 *
-	 * When editing the with Elementor the first time, the current page content
-	 * is parsed into Text Editor Widget that contains the original data.
-	 *
-	 * @since 2.1.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->documents->get( $post_id )->convert_to_elementor()` instead
-	 * @access public
-	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return array Content in Elementor format.
-	 */
-	public function get_new_editor_from_wp_editor( $post_id ) {
-		 _deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->documents->get( $post_id )->convert_to_elementor()' );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( $document ) {
-			return $document->convert_to_elementor();
-		}
-
-		return [];
 	}
 
 	/**
@@ -317,8 +293,9 @@ class DB {
 	public function safe_copy_elementor_meta( $from_post_id, $to_post_id ) {
 		// It's from  WP-Admin & not from Elementor.
 		if ( ! did_action( 'elementor/db/before_save' ) ) {
+			$from_document = Plugin::$instance->documents->get( $from_post_id );
 
-			if ( ! Plugin::$instance->db->is_built_with_elementor( $from_post_id ) ) {
+			if ( ! $from_document || ! $from_document->is_built_with_elementor() ) {
 				return;
 			}
 
@@ -375,6 +352,7 @@ class DB {
 	 * Check whether the post was built with Elementor.
 	 *
 	 * @since 1.0.10
+	 * @deprecated 3.2.0 Use `Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()` instead
 	 * @access public
 	 *
 	 * @param int $post_id Post ID.
@@ -382,7 +360,22 @@ class DB {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor( $post_id ) {
-		return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
+		Plugin::$instance->modules_manager
+			->get_modules( 'dev-tools' )
+			->deprecation
+			->deprecated_function(
+				__METHOD__,
+				'3.2.0',
+				'Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()'
+			);
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return false;
+		}
+
+		return $document->is_built_with_elementor();
 	}
 
 	/**

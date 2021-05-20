@@ -1,0 +1,37 @@
+
+// Experiments
+.e-experiment {
+
+	&__title {
+		display: flex;
+		align-items: flex-start;
+
+		&__indicator {
+			height: 10px;
+			width: 10px;
+			border-radius: 50%;
+			border: 2px solid white;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			margin-top: 2px;
+
+			&--active {
+				background: $editor-success;
+			}
+		}
+
+		&__label {
+			@include margin-start(10px);
+		}
+	}
+
+	&__description {
+		max-width: 800px;
+	}
+
+	&__status {
+		margin-top: 5px;
+		font-size: 13px;
+		font-weight: bold;
+		font-style: italic;
+	}
+}
