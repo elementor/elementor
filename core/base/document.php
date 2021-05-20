@@ -564,6 +564,16 @@ abstract class Document extends Controls_Stack {
 	 * @return bool
 	 */
 	public function save( $data ) {
+		/**
+		 * Fires when document save starts on Elementor.
+		 *
+		 * @param array $data.
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 *
+		 * @since 3.3.0
+		 */
+		$data = apply_filters( 'elementor/document/save/data', $data, $this );
+
 		$this->add_handle_revisions_changed_filter();
 
 		if ( ! $this->is_editable_by_current_user() ) {
