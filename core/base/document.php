@@ -217,15 +217,6 @@ abstract class Document extends Controls_Stack {
 	}
 
 	/**
-	 * @since 2.0.12
-	 * @deprecated 2.4.0 Use `Document::get_remote_library_config()` instead
-	 * @access public
-	 */
-	public function get_remote_library_type() {
-		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_remote_library_config()' );
-	}
-
-	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
@@ -279,17 +270,6 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_main_post() {
 		return get_post( $this->get_main_id() );
-	}
-
-	/**
-	 * @since 2.0.6
-	 * @deprecated 2.4.0 Use `Document::get_container_attributes()` instead
-	 * @access public
-	 */
-	public function get_container_classes() {
-		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_container_attributes()' );
-
-		return '';
 	}
 
 	public function get_container_attributes() {
