@@ -35,7 +35,7 @@ const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 			await mergeBranch(TOKEN, owner, repo, branchName, NEXT_RELEASE_BRANCH, `Auto merge ${NEXT_RELEASE_BRANCH} branch into feature branch: ${branchName}`);
 		}
 	} catch (err) {
-		console.error(`Failed to merge ${NEXT_RELEASE_BRANCH} branch into ${err.head || ''} error: ${err.message}`);
+		console.error(`Failed to merge ${NEXT_RELEASE_BRANCH} branch into ${err.base || ''} error: ${err.message}`);
 		process.exit(1);
 	}
 })();
