@@ -82,7 +82,7 @@ export default function ImportKit() {
 
 				{ isImportFailed &&
 					<ImportFailedDialog
-						onApprove={ () => window.open( 'https://www.elementor.com', '_blank' ) }
+						onApprove={ () => window.open( 'https://elementor.com/help/import-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
 						onDismiss={ resetImportProcess }
 					/>
 				}

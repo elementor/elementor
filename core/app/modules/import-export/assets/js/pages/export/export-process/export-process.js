@@ -40,7 +40,7 @@ export default function ExportProcess() {
 				status={ ajaxState.status }
 				onLoad={ onLoad }
 				onSuccess={ onSuccess }
-				onDialogApprove={ () => {} }
+				onDialogApprove={ () => window.open( 'https://elementor.com/help/export-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
 				onDialogDismiss={ onDialogDismiss }
 			/>
 		</Layout>
