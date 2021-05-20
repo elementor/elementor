@@ -29,6 +29,17 @@ jobs:
         run: |
           npm install --no-package-lock --no-save @octokit/core@3.3.1
           node "${GITHUB_WORKSPACE}/.github/scripts/sync-features-branch-to-developer-branch.js"
+      - name: Get release branch
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
+      - name: Sync next release branch into feature branches
+        env:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          NEXT_RELEASE_BRANCH: ${{ env.RELEASE_BRANCH }}
+        run: |
+          npm install --no-package-lock --no-save @octokit/core@3.3.1
+          node "${GITHUB_WORKSPACE}/.github/scripts/sync-next-release-to-features-branch.js"
       - name: Notify slack on failure
         if: failure()
         env:
