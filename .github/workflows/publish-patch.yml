@@ -140,11 +140,12 @@ jobs:
           cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
           issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
           display-name: "${{ env.PACKAGE_VERSION }}"
-          url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
+          url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
           description: "This PR was merged to the following release(s)"
           last-updated: '${{ env.NOW }}'
           state: 'successful'
-          pipeline-url: '${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
           environment-id: "${{ env.PACKAGE_VERSION }}"
           environment-display-name: "${{ env.PACKAGE_VERSION }}"
           environment-type: 'production'
