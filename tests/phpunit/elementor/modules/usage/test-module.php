@@ -13,11 +13,6 @@ use Elementor\Utils;
 
 class Test_Module extends Elementor_Test_Base {
 	/**
-	 * @var Document
-	 */
-	static $document;
-
-	/**
 	 * TODO: Remove - Backwards compatibility.
 	 *
 	 * @var array
