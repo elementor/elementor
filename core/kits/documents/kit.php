@@ -38,8 +38,8 @@ class Kit extends PageBase {
 		return $properties;
 	}
 
-	public function get_name() {
-		return self::NAME;
+	public static function get_type() {
+		return 'kit';
 	}
 
 	public static function get_title() {

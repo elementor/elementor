@@ -167,28 +167,28 @@ class Control_Media extends Control_Base_Multiple {
 			const getButtonLabel = ( mediaType ) => {
 				switch( mediaType ) {
 					case 'image':
-						return '<?php echo __( 'Choose Image', 'elementor' ); ?>';
+						return '<?php esc_html_e( 'Choose Image', 'elementor' ); ?>';
 
 					case 'video':
-						return '<?php echo __( 'Choose Video', 'elementor' ); ?>';
+						return '<?php esc_html_e( 'Choose Video', 'elementor' ); ?>';
 
 					case 'svg':
-						return '<?php echo __( 'Choose SVG', 'elementor' ); ?>';
+						return '<?php esc_html_e( 'Choose SVG', 'elementor' ); ?>';
 
 					default:
-						return '<?php echo __( 'Choose File', 'elementor' ); ?>';
+						return '<?php esc_html_e( 'Choose File', 'elementor' ); ?>';
 				}
 			}
 		#>
 		<div class="elementor-control-field elementor-control-media">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<#
-				if ( isViewable() ) {
-				var inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
+			if ( isViewable() ) {
+				let inputWrapperClasses = 'elementor-control-input-wrapper elementor-aspect-ratio-219';
 
-					if ( ! data.label_block ) {
-						inputWrapperClasses += ' elementor-control-unit-5';
-					}
+				if ( ! data.label_block ) {
+					inputWrapperClasses += ' elementor-control-unit-5';
+				}
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">

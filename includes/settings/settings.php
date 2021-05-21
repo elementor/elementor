@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -262,7 +261,7 @@ class Settings extends Settings_Page {
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
 							<?php if ( ! empty( $create_new_cpt ) ) : ?>
-							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
 							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
@@ -514,7 +513,7 @@ class Settings extends Settings_Page {
 										'fallback' => __( 'Fallback', 'elementor' ),
 										'optional' => __( 'Optional', 'elementor' ),
 									],
-									'desc' => __( 'font-display property defines how font files are loaded and displayed by the browser. ', 'elementor' ) . '<br>' . __( 'Default - The font display strategy is defined by the browser.', 'elementor' ) . '<br>' . __( 'Blocking - Hides the text until the font has fully loaded.', 'elementor' ) . '<br>' . __( 'Swap - Use fallback font to display until the custom font has fully loaded.', 'elementor' ) . '<br>' . __( 'Fallback - Hides the text for a minimal period and will use the custom font only if loaded within a few seconds.', 'elementor' ) . '<br>' . __( 'Optional - Hides the text for a minimal period and will use the fallback font unless the custom font is already fully loaded.', 'elementor' ),
+									'desc' => __( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . __( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
 						],

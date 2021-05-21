@@ -250,8 +250,8 @@
 		let minBreakpoint;
 
 		if ( breakpointNames[ 0 ] === deviceName ) {
-			// For the lowest breakpoint, the min point is always 0.
-			minBreakpoint = 0;
+			// For the lowest breakpoint, the min point is always 320.
+			minBreakpoint = 320;
 		} else if ( 'min' === activeBreakpoints[ deviceName ].direction ) {
 			// Widescreen only has a minimum point. In this case, the breakpoint
 			// value in the Breakpoints config is itself the device min point.
