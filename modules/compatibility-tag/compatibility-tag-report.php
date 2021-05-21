@@ -96,9 +96,13 @@ class Compatibility_Tag_Report extends Base {
 	 * @return Collection
 	 */
 	private function merge_compatibility_status_with_plugins( array $compatibility_status ) {
+		$labels = $this->get_report_labels();
+
 		$compatibility_status = ( new Collection( $compatibility_status ) )
-			->map( function ( $value ) {
-				return [ 'is_compatible' => $value ];
+			->map( function ( $value ) use ( $labels ) {
+				$status = isset( $labels[ $value ] ) ? $labels[ $value ] : __( 'Unknown', 'elementor' );
+
+				return [ 'compatibility_status' => $status ];
 			} );
 
 		return Plugin::$instance->wp
@@ -117,7 +121,7 @@ class Compatibility_Tag_Report extends Base {
 	private function get_html_from_compatibility_status( array $compatibility_status ) {
 		return $this->merge_compatibility_status_with_plugins( $compatibility_status )
 			->map( function ( array $plugin ) {
-				return "<tr><td> {$plugin['Name']} </td><td> {$plugin['is_compatible']} </td></tr>";
+				return "<tr><td> {$plugin['Name']} </td><td> {$plugin['compatibility_status']} </td></tr>";
 			} )
 			->implode( '' );
 	}
@@ -132,8 +136,21 @@ class Compatibility_Tag_Report extends Base {
 	private function get_raw_from_compatibility_status( array $compatibility_status ) {
 		return PHP_EOL . $this->merge_compatibility_status_with_plugins( $compatibility_status )
 			->map( function ( array $plugin ) {
-				return "\t{$plugin['Name']}: {$plugin['is_compatible']}";
+				return "\t{$plugin['Name']}: {$plugin['compatibility_status']}";
 			} )
 			->implode( PHP_EOL );
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_report_labels() {
+		return [
+			Compatibility_Tag::COMPATIBLE   => __( 'Compatible', 'elementor' ),
+			Compatibility_Tag::INCOMPATIBLE => __( 'Incompatible', 'elementor' ),
+			Compatibility_Tag::HEADER_NOT_EXISTS => __( 'Compatibility not specified', 'elementor' ),
+			Compatibility_Tag::INVALID_VERSION => __( 'Compatibility unknown', 'elementor' ),
+			Compatibility_Tag::PLUGIN_NOT_EXISTS => __( 'Error', 'elementor' ),
+		];
 	}
 }
