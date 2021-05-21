@@ -406,7 +406,7 @@ class Module extends BaseModule {
 	 * @param string $doc_name
 	 * @param array $doc_usage
 	 */
-	private function add_to_global( $doc_name, $doc_usage ) {
+	private function add_document_elements_to_global( $doc_name, $doc_usage ) {
 		$global_usage = get_option( self::ELEMENTS_OPTION_NAME, [] );
 
 		foreach ( $doc_usage as $element_type => $element_usage_data ) {
@@ -441,9 +441,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Remove from global.
+	 * Remove document elements from global.
 	 *
-	 * Remove's usage from global (update database).
+	 * Remove's usage of elements from global (update database).
 	 *
 	 * @param Document $document
 	 */
@@ -580,7 +580,7 @@ class Module extends BaseModule {
 
 			$document->update_meta( self::ELEMENTS_META_KEY, $elements_usage );
 
-			$this->add_to_global( $document->get_name(), $elements_usage );
+			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
 		}
 
 		DocumentSettingsUsage::create()

@@ -110,7 +110,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 2, $this->get_global_elements_usage_by_document( $document )['button']['count'] );
 	}
 
-	public function test_add_document_settings_to_global() {
+	public function test_add_document_usage__ensure_settings_added_to_global() {
 		// Act.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
@@ -125,9 +125,9 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	/**
-	 * TODO: This test will analyze only `$global_usage` of `wp-post' since in multisite kit is somehow shared,  And will be added to global usage.
+	 * TODO: This test will analyze only `$global_usage` of `wp-post' since in multisite kit is somehow shared, And will be added to global usage.
 	 */
-	public function test_add_document_settings_to_global__ensure_settings() {
+	public function test_add_document_usage__ensure_settings_increased_global() {
 		// Arrange.
 		$count = 2;
 		for ( $i = 0 ; $i != $count; $i++ ) {
@@ -148,7 +148,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_add_document_settings_to_global__ensure_kit_settings() {
+	public function test_add_document_usage__ensure_settings_includes_kit() {
 		// Arrange.
 		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
 
@@ -178,7 +178,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 2, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ Kit::NAME ]['custom_colors'] );
 	}
 
-	public function test_add_document_elements_to_global () {
+	public function test_add_document_usage__ensure_elements_added_to_global() {
 		// Act.
 		$document = $this->factory()->documents->publish_and_get();
 
@@ -186,7 +186,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( !! $this->get_global_elements_usage_by_document( $document ) );
 	}
 
-	public function test_add_document_elements_to_global__ensure_elements() {
+	public function test_add_document_usage__ensure_elements_increased_global() {
 		// Arrange.
 		$count = 2;
 		for ( $i = 0 ; $i != $count; $i++ ) {
@@ -199,7 +199,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_add_document_elements_to_global__ensure_elements__from_same_document() {
+	public function test_add_document_usage__ensure_elements_from_same_document_increased_global() {
 		// Act.
 		$document = $this->factory()->documents->publish_with_duplicated_widget();
 
@@ -208,7 +208,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 2, $global_document_usage['button']['count'] );
 	}
 
-	public function test_add_document_elements_to_global__ensure_controls() {
+	public function test_add_document_usage__ensure_elements_controls_increased_global() {
 		// Arrange.
 		$count = 2;
 		for ( $i = 0 ; $i != $count; $i++ ) {
@@ -221,7 +221,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_remove_document_settings_from_global() {
+	public function test_remove_document_usage__ensure_settings_removed_from_global() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
@@ -242,7 +242,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( !! $this->get_global_settings_usage_by_document( $document ) );
 	}
 
-	public function test_remove_document_settings_from_global__ensure_settings() {
+	public function test_remove_document_usage__ensure_settings_decreased_global() {
 		// Arrange.
 		$count = 2;
 		$documents = [];
@@ -271,7 +271,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_remove_document_elements_from_global() {
+	public function test_remove_document_usage__ensure_elements_removed_from_global() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get();
 
@@ -285,7 +285,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( !! $this->get_global_elements_usage_by_document( $document ) );
 	}
 
-	public function test_remove_document_elements_from_global__ensure_elements() {
+	public function test_remove_document_usage__ensure_elements_decreased_global() {
 		// Arrange.
 		$count = 2;
 		$documents = [];
@@ -308,7 +308,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_remove_document_elements_from_global__ensure_elements_from_same_document() {
+	public function test_remove_document_usage__ensure_elements_from_same_document_decreased_global() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_with_duplicated_widget();
 		$elementor_data = $document->get_json_meta( '_elementor_data' );
@@ -331,7 +331,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 1, $global_document_usage['button']['count'] );
 	}
 
-	public function test_remove_document_elements_from_global__ensure_controls() {
+	public function test_remove_document_usage__ensure_elements_controls_decreased_global() {
 		// Arrange.
 		$count = 2;
 		$documents = [];
@@ -352,7 +352,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_remove_document_elements_from_global__ensure_dynamic_controls() {
+	public function test_remove_document_usage__ensure_elements_dynamic_controls_decreased_global() {
 		// Arrange.
 		$this->ensure_dynamic_tags();
 
@@ -389,7 +389,7 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_remove_document_elements_from_global__ensure_elements_removed_by_empty_document() {
+	public function test_remove_document_usage__ensure_elements_empty_document_remove_from_global() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get();
 
@@ -400,7 +400,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( !! $this->get_global_elements_usage_by_document( $document ) );
 	}
 
-	public function test_remove_document_elements_from_global__ensure__draft_removed_and_can_be_republished() {
+	public function test_remove_document_usage__ensure_elements_draft_remove_from_global_and_publish_increase_them() {
 		// Arrange.
 		$document = self::factory()->documents->publish_and_get();
 
@@ -421,7 +421,7 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( !! $this->get_global_elements_usage_by_document( $document ) );
 	}
 
-	public function test_remove_document_elements_from_global__ensure_draft_removed_and_private_can_be_republished() {
+	public function test_remove_document_usage__ensure_elements_draft_remove_from_global_and_private_increase_them() {
 		// Arrange.
 		$document = self::factory()->documents->publish_and_get();
 
@@ -443,7 +443,7 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	// Cover issue: 'Widgets count shows negative values in some cases'.
-	public function test_remove_document_elements_from_global__ensure_autosave_not_affecting() {
+	public function test_remove_document_usage__ensure_elements_autosave_not_affecting() {
 		// Arrange - Create additional document in order that after remove from global the usage will not be empty.
 		$this->factory()->documents->publish_and_get(); // Adds one button.
 		$document = $this->factory()->documents->publish_and_get(); // Adds another one button
