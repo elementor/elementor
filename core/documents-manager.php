@@ -653,21 +653,6 @@ class Documents_Manager {
 		return $this->current_doc;
 	}
 
-	/**
-	 * Get groups.
-	 *
-	 * @since 2.0.0
-	 * @deprecated 2.4.0
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function get_groups() {
-		_deprecated_function( __METHOD__, '2.4.0' );
-
-		return [];
-	}
-
 	public function localize_settings( $settings ) {
 		$translations = [];
 
