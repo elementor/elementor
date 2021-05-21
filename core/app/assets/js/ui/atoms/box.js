@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { arrayToClassName, pxToRem } from 'elementor-app/utils/utils.js';
 
 import './box.scss';
 
@@ -10,14 +10,14 @@ export default function Box( props ) {
 
 	if ( props.padding ) {
 		style = {
-			'--eps-box-padding': Utils.stringToRemValues( props.padding ),
+			'--eps-box-padding': pxToRem( props.padding ),
 		};
 
 		classes.push( baseClassName + '--padding' );
 	}
 
 	return (
-		<div style={ style } className={ Utils.arrayToClassName( classes ) }>
+		<div style={ style } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);

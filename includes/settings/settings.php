@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -262,7 +261,7 @@ class Settings extends Settings_Page {
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
 							<?php if ( ! empty( $create_new_cpt ) ) : ?>
-							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
 							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
@@ -500,6 +499,21 @@ class Settings extends Settings_Page {
 										1 => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+								],
+							],
+							'font_display' => [
+								'label' => __( 'Google Fonts Load', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => 'auto',
+									'options' => [
+										'auto' => __( 'Default', 'elementor' ),
+										'block' => __( 'Blocking', 'elementor' ),
+										'swap' => __( 'Swap', 'elementor' ),
+										'fallback' => __( 'Fallback', 'elementor' ),
+										'optional' => __( 'Optional', 'elementor' ),
+									],
+									'desc' => __( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . __( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
 								],
 							],
 						],

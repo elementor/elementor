@@ -44,6 +44,56 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * @param $shape String Shape name.
+	 *
+	 * @return string The shape path in the assets folder.
+	 */
+	private function get_shape_url( $shape ) {
+		return ELEMENTOR_ASSETS_URL . 'mask-shapes/' . $shape . '.svg';
+	}
+
+	/**
+	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 *
+	 * @return array Array of shapes with their URL as key.
+	 */
+	private function get_shapes( $add_custom = true ) {
+		$shapes = [
+			'circle' => __( 'Circle', 'elementor' ),
+			'flower' => __( 'Flower', 'elementor' ),
+			'sketch' => __( 'Sketch', 'elementor' ),
+			'triangle' => __( 'Triangle', 'elementor' ),
+			'blob' => __( 'Blob', 'elementor' ),
+			'hexagon' => __( 'Hexagon', 'elementor' ),
+		];
+
+		if ( $add_custom ) {
+			$shapes['custom'] = __( 'Custom', 'elementor' );
+		}
+
+		return $shapes;
+	}
+
+	/**
+	 * Get array of selectors and rules to deal with image masking and mask the image instead of the wrapper.
+	 *
+	 * @param $rules string The CSS rules to apply.
+	 *
+	 * @return array Selectors with the rules applied.
+	 */
+	private function get_mask_selectors( $rules ) {
+		$mask_selectors = [
+			'default' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container',
+			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img',
+		];
+
+		return [
+			$mask_selectors['default'] => $rules,
+			$mask_selectors['image'] => $rules,
+		];
+	}
+
+	/**
 	 * Register common widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -361,6 +411,242 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'_section_masking',
+			[
+				'label' => __( 'Mask', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_mask_switch',
+			[
+				'label' => __( 'Mask', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => __( 'Off', 'elementor' ),
+				'default' => '',
+			]
+		);
+
+		$this->add_control( '_mask_shape', [
+			'label' => __( 'Shape', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => $this->get_shapes(),
+			'default' => 'circle',
+			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+			'condition' => [
+				'_mask_switch!' => '',
+			],
+		] );
+
+		$this->add_control(
+			'_mask_image',
+			[
+				'label' => __( 'Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'media_type' => 'image',
+				'should_include_svg_inline_option' => true,
+				'library_type' => 'image/svg+xml',
+				'dynamic' => [
+					'active' => true,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{URL}} );' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_shape' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_notice',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'raw' => __( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( __( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/mask-control' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_size',
+			[
+				'label' => __( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'contain' => __( 'Fit', 'elementor' ),
+					'cover' => __( 'Fill', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => 'contain',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_size_scale',
+			[
+				'label' => __( 'Scale', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 100,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_size' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position',
+			[
+				'label' => __( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => __( 'Center Center', 'elementor' ),
+					'center left' => __( 'Center Left', 'elementor' ),
+					'center right' => __( 'Center Right', 'elementor' ),
+					'top center' => __( 'Top Center', 'elementor' ),
+					'top left' => __( 'Top Left', 'elementor' ),
+					'top right' => __( 'Top Right', 'elementor' ),
+					'bottom center' => __( 'Bottom Center', 'elementor' ),
+					'bottom left' => __( 'Bottom Left', 'elementor' ),
+					'bottom right' => __( 'Bottom Right', 'elementor' ),
+					'custom' => __( 'Custom', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position_x',
+			[
+				'label' => __( 'X Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-x: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position_y',
+			[
+				'label' => __( 'Y Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-y: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_repeat',
+			[
+				'label' => __( 'Repeat', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'no-repeat' => __( 'No-Repeat', 'elementor' ),
+					'repeat' => __( 'Repeat', 'elementor' ),
+					'repeat-x' => __( 'Repeat-X', 'elementor' ),
+					'repeat-Y' => __( 'Repeat-Y', 'elementor' ),
+					'round' => __( 'Round', 'elementor' ),
+					'space' => __( 'Space', 'elementor' ),
+				],
+				'default' => 'no-repeat',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-repeat: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_size!' => 'cover',
+				],
+			]
+		);
 
 		$this->end_controls_section();
 

@@ -1,5 +1,4 @@
 import AddSectionView from './add-section/independent';
-import RightClickIntroductionBehavior from '../elements/views/behaviors/right-click-introduction';
 import DocumentHelper from 'elementor-document/helper';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
@@ -23,13 +22,6 @@ const Preview = BaseSectionsContainerView.extend( {
 					groups: this.getContextMenuGroups(),
 				},
 			};
-
-		// TODO: the `2` check is for BC reasons
-		if ( ! elementor.config.user.introduction.rightClick && ! elementor.config.user.introduction[ 2 ] ) {
-			behaviors.introduction = {
-				behaviorClass: RightClickIntroductionBehavior,
-			};
-		}
 
 		return jQuery.extend( parentBehaviors, behaviors );
 	},
@@ -82,7 +74,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	onRender: function() {
 		let $contentContainer;
 
-		if ( elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
 			$contentContainer = this.$el;
 		} else {
 			const $inner = jQuery( '<div>', { class: 'elementor-inner' } );

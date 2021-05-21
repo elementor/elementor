@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -113,43 +114,33 @@ class Admin_Notices extends Module {
 		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
-					<p>
-						<?php
-						printf(
-							/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
-							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
-							esc_url( $details_url ),
-							esc_attr( sprintf(
-								/* translators: %s: Elementor version */
-								__( 'View Elementor version %s details', 'elementor' ),
-								$new_version
-							) ),
-							$new_version,
-							esc_url( $upgrade_url ),
-							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
-						);
-						?>
-					</p>
-				</div>
-				<div class="elementor-message-action">
-					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>">
-						<i class="dashicons dashicons-update" aria-hidden="true"></i>
-						<?php echo __( 'Update Now', 'elementor' ); ?>
-					</a>
-				</div>
-			</div>
-		</div>
-		<?php
+
+		$message = sprintf(
+			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
+			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
+			esc_url( $details_url ),
+			esc_attr( sprintf(
+				/* translators: %s: Elementor version */
+				__( 'View Elementor version %s details', 'elementor' ),
+				$new_version
+			) ),
+			$new_version,
+			esc_url( $upgrade_url ),
+			esc_attr( __( 'Update Elementor Now', 'elementor' ) )
+		);
+
+		$options = [
+			'title' => __( 'Update Notification', 'elementor' ),
+			'description' => $message,
+			'button' => [
+				'icon_classes' => 'dashicons dashicons-update',
+				'text' => __( 'Update Now', 'elementor' ),
+				'url' => $upgrade_url,
+			],
+			'id' => $notice_id,
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -172,11 +163,14 @@ class Admin_Notices extends Module {
 		if ( User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
-		?>
-		<div class="notice is-dismissible updated elementor-message-dismissed elementor-message-announcement" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<p><?php echo $admin_notice['notice_text']; ?></p>
-		</div>
-		<?php
+
+		$options = [
+			'title' => __( 'Update Notification', 'elementor' ),
+			'description' => $admin_notice['notice_text'],
+			'id' => $notice_id,
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -207,7 +201,7 @@ class Admin_Notices extends Module {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = __( 'Love using Elementor? Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
+		$tracker_description_text = __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
@@ -219,23 +213,26 @@ class Admin_Notices extends Module {
 		 * @param string $tracker_description_text Description text displayed in admin notice.
 		 */
 		$tracker_description_text = apply_filters( 'elementor/tracker/admin_description_text', $tracker_description_text );
-		?>
-		<div class="notice updated elementor-message">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php echo esc_html( $tracker_description_text ); ?> <a href="https://go.elementor.com/usage-data-tracking/" target="_blank"><?php echo __( 'Learn more.', 'elementor' ); ?></a></p>
-					<p class="elementor-message-actions">
-						<a href="<?php echo $optin_url; ?>" class="button button-primary"><?php echo __( 'Sure! I\'d love to help', 'elementor' ); ?></a>&nbsp;<a href="<?php echo $optout_url; ?>" class="button-secondary"><?php echo __( 'No thanks', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+
+		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . __( 'Learn more.', 'elementor' ) . '</a>';
+
+		$options = [
+			'title' => __( 'Love using Elementor?', 'elementor' ),
+			'description' => $message,
+			'button' => [
+				'text' => __( 'Sure! I\'d love to help', 'elementor' ),
+				'url' => $optin_url,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => __( 'No thanks', 'elementor' ),
+				'url' => $optout_url,
+				'variant' => 'outline',
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -260,24 +257,27 @@ class Admin_Notices extends Module {
 			'notice_id' => esc_attr( $notice_id ),
 		], admin_url( 'admin-post.php' ) );
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><strong><?php echo __( 'Congrats!', 'elementor' ); ?></strong> <?php _e( 'You created over 10 pages with Elementor. Great job! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/admin-review/" target="_blank" class="button button-primary"><?php _e( 'Happy To Help', 'elementor' ); ?></a>
-						<a href="<?php echo esc_url_raw( $dismiss_url ); ?>" class="button elementor-button-notice-dismiss"><?php _e( 'Hide Notification', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Congrats!', 'elementor' ),
+			'description' => __( 'You created over 10 pages with Elementor. Great job! If you can spare a minute,
+				please help us by leaving a five star review on WordPress.org.', 'elementor' ),
+			'id' => $notice_id,
+			'button' => [
+				'text' => __( 'Happy To Help', 'elementor' ),
+				'url' => 'https://go.elementor.com/admin-review/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => __( 'Hide Notification', 'elementor' ),
+				'classes' => [ 'e-notice-dismiss' ],
+				'url' => esc_url_raw( $dismiss_url ),
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -305,23 +305,20 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Using WooCommerce? With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-woocommerce/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Using WooCommerce?', 'elementor' ),
+			'description' => __( 'With Elementor Pro’s WooCommerce Builder, you’ll be able to design your store without coding!', 'elementor' ),
+			'id' => $notice_id,
+
+			'button' => [
+				'text' => __( 'Learn More', 'elementor' ),
+				'url' => 'https://go.elementor.com/plugin-promotion-woocommerce/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -349,23 +346,20 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Using Elementor & Contact Form 7? Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-contactform7/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Using Elementor & Contact Form 7?', 'elementor' ),
+			'description' => __( 'Try out Elementor Pro and design your forms visually with one powerful tool.', 'elementor' ),
+
+			'id' => $notice_id,
+			'button' => [
+				'text' => __( 'Learn More', 'elementor' ),
+				'url' => 'https://go.elementor.com/plugin-promotion-contactform7/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -393,23 +387,21 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Want to design better MailChimp forms? Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-mc4wp/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Want to design better MailChimp forms?', 'elementor' ),
+			'description' => __( 'Use Elementor Pro and enjoy unlimited integrations, visual design, templates and more.', 'elementor' ),
+			'dismissible' => true,
+			'id' => $notice_id,
+
+			'button' => [
+				'text' => __( 'Learn More', 'elementor' ),
+				'url' => 'https://go.elementor.com/plugin-promotion-mc4wp/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -437,23 +429,21 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Using popups on your site? Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/plugin-promotion-popupmaker/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Using popups on your site?', 'elementor' ),
+			'description' => __( 'Build outstanding popups using Elementor Pro and get more leads, sales and subscribers.', 'elementor' ),
+			'dismissible' => true,
+			'id' => $notice_id,
+
+			'button' => [
+				'text' => __( 'Learn More', 'elementor' ),
+				'url' => 'https://go.elementor.com/plugin-promotion-popupmaker/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
@@ -482,83 +472,100 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<p><?php _e( 'Managing a multi-user site? With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ); ?></p>
-					<p class="elementor-message-actions">
-						<a href="https://go.elementor.com/promotion-role-manager/" target="_blank" class="button button-secondary"><?php _e( 'Learn More', 'elementor' ); ?></a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<?php
+		$options = [
+			'title' => __( 'Managing a multi-user site?', 'elementor' ),
+			'description' => __( 'With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
+			'id' => $notice_id,
+
+			'button' => [
+				'text' => __( 'Learn More', 'elementor' ),
+				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
 
 		return true;
 	}
 
-	/*
-	 * @TODO: Rewrite this method markup and use it for every admin notice
-	 */
 	public function print_admin_notice( array $options ) {
 		$default_options = [
 			'id' => null,
 			'title' => '',
 			'description' => '',
-			'dismissible' => false,
-			'button' => [
-				'text' => '',
-				'url' => '',
-				'class' => 'elementor-button',
-			],
+			'classes' => [ 'notice', 'e-notice' ], // We include WP's default notice class so it will be properly handled by WP's js handler
+			'type' => '',
+			'dismissible' => true,
+			'icon' => 'eicon-elementor',
+			'button' => [],
+			'button_secondary' => [],
 		];
 
 		$options = array_replace_recursive( $default_options, $options );
 
-		$id_attr = '';
-		$dismissible_classes = '';
+		$notice_classes = $options['classes'];
+		$dismiss_button = '';
+		$icon = '';
 
-		if ( $options['id'] ) {
-			$id_attr = sprintf( 'data-notice_id="%s"', $options['id'] );
+		if ( $options['type'] ) {
+			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
 		if ( $options['dismissible'] ) {
-			$dismissible_classes = 'is-dismissible elementor-message-dismissed';
+			$label = __( 'Dismiss', 'elementor' );
+			$notice_classes[] = 'e-notice--dismissible';
+			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="' . $label . '" tabindex="0"></i>';
+		}
+
+		if ( $options['icon'] ) {
+			$notice_classes[] = 'e-notice--extended';
+			$icon = '<div class="e-notice__icon-wrapper"><i class="' . $options['icon'] . '" aria-hidden="true"></i></div>';
+		}
+
+		$wrapper_attributes = [
+			'class' => $notice_classes,
+		];
+
+		if ( $options['id'] ) {
+			$wrapper_attributes['data-notice_id'] = $options['id'];
 		}
 		?>
-		<div
-			class="notice elementor-message <?php echo $dismissible_classes; ?>"
-			<?php echo $id_attr; ?>
-		>
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
+		<div <?php echo Utils::render_html_attributes( $wrapper_attributes ); ?>>
+			<?php echo $dismiss_button; ?>
+			<div class="e-notice__aside">
+				<?php echo $icon; ?>
+			</div>
+			<div class="e-notice__content">
+			<?php if ( $options['title'] ) { ?>
+				<h3><?php echo $options['title']; ?></h3>
+			<?php } ?>
+
+			<?php if ( $options['description'] ) { ?>
+				<p><?php echo $options['description']; ?></p>
+			<?php } ?>
+
+			<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
+				<div class="e-notice__actions">
+					<?php
+					foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
+						if ( empty( $button_settings['variant'] ) && $index ) {
+							$button_settings['variant'] = 'outline';
+						}
+
+						if ( empty( $button_settings['text'] ) ) {
+							continue;
+						}
+
+						$button = new Button( $button_settings );
+						$button->print_button();
+					} ?>
 				</div>
-				<div class="elementor-message-content">
-					<?php if ( $options['title'] ) { ?>
-						<strong><?php echo $options['title']; ?></strong>
-					<?php } ?>
-					<?php if ( $options['description'] ) { ?>
-						<p><?php echo $options['description']; ?></p>
-					<?php } ?>
-				</div>
-				<?php if ( $options['button']['text'] ) { ?>
-					<div class="elementor-message-action">
-						<a class="<?php echo $options['button']['class']; ?>" href="<?php echo esc_url( $options['button']['url'] ); ?>"><?php echo $options['button']['text']; ?></a>
-					</div>
-				<?php } ?>
+			<?php } ?>
 			</div>
 		</div>
-		<?php
-	}
+		<?php }
 
 	public function admin_notices() {
 		$this->install_time = Plugin::$instance->get_install_time();
