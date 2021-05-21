@@ -36,8 +36,8 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );
-		$this->assertRegExp( '/<tr><td> A <\/td><td> compatible <\/td><\/tr>/', $result['value'] );
-		$this->assertRegExp( '/<tr><td> B <\/td><td> incompatible <\/td><\/tr>/', $result['value'] );
+		$this->assertRegExp( '/<tr><td> A <\/td><td> Compatible <\/td><\/tr>/', $result['value'] );
+		$this->assertRegExp( '/<tr><td> B <\/td><td> Incompatible <\/td><\/tr>/', $result['value'] );
 	}
 
 	public function test_get_report_data__with_raw_format() {
@@ -49,8 +49,8 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );
-		$this->assertRegExp( '/A: compatible/', $result['value'] );
-		$this->assertRegExp( '/B: incompatible/', $result['value'] );
+		$this->assertRegExp( '/A: Compatible/', $result['value'] );
+		$this->assertRegExp( '/B: Incompatible/', $result['value'] );
 	}
 
 	/**
