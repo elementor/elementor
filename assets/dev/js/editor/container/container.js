@@ -286,28 +286,43 @@ export default class Container extends ArgsObject {
 		}
 	}
 
-	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
-		let rowId = rowSettingsModel.get( '_id' );
+	/**
+	 * Function addRepeaterItem().
+	 *
+	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
+	 *
+	 * @param {string} repeaterName
+	 * @param {Backbone.Model} itemSettingsModel
+	 * @param {number} index
+	 *
+	 * @returns {Container}
+	 */
+	addRepeaterItem( repeaterName, itemSettingsModel, index ) {
+		let rowId = itemSettingsModel.get( '_id' );
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
 			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
-			rowSettingsModel.set( '_id', rowId );
+			itemSettingsModel.set( '_id', rowId );
 		}
 
-		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
-			type: Container.TYPE_REPEATER_ITEM,
-			id: rowSettingsModel.get( '_id' ),
+		const container = new Container( {
+			type: 'repeater',
+			id: itemSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
 				name: repeaterName,
 			} ),
-			settings: rowSettingsModel,
+			settings: itemSettingsModel,
 			view: this.view,
 			parent: this.repeaters[ repeaterName ],
 			label: this.label + ' ' + __( 'Item', 'elementor' ),
-			controls: rowSettingsModel.options.controls,
+			controls: itemSettingsModel.options.controls,
 			renderer: this.renderer,
-		} ) );
+		} );
+
+		this.repeaters[ repeaterName ].children.splice( index, 0, container );
+
+		return container;
 	}
 
 	/**
