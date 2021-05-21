@@ -1,12 +1,14 @@
 <?php
 namespace Elementor\Tests\Phpunit\Schemas;
 
+use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\Testing\Base_Schema;
 use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
+use Elementor\Utils;
 use JsonSchema\Exception\ValidationException;
 
 class Test_Usage extends Base_Schema {
@@ -62,12 +64,32 @@ class Test_Usage extends Base_Schema {
 		$this->factory()->documents->publish_and_get( [
 			'meta_input' => [
 				'_elementor_data' => Documents::DOCUMENT_DATA_MOCK_WITH_DYNAMIC_WIDGET,
-			]
+			],
 		] );
+
+		// Documents.
+		$this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				Document::PAGE_META_KEY => [
+					'background_background' => 'red',
+				],
+			],
+		] );
+
+		// Documents with kit.
+		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
+
+		$kit->add_repeater_row( 'custom_colors', [
+			'_id' => Utils::generate_random_string(),
+			'title' => 'color 1',
+			'color' => 'green',
+		] );
+
+		$kit->save( [] );
 
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();
-		$usage = $tracking_data[ 'usages' ];
+		$usage = $tracking_data['usages'];
 
 		// Assert - Ensure tracking data have arranged data.
 		$this->assertArrayHaveKeys( ['publish'], $usage['posts']['post'] );

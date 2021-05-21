@@ -563,7 +563,8 @@
 			"required": [
 				"posts",
 				"library",
-				"elements"
+				"elements",
+				"documents"
 			],
 			"properties": {
 				"posts": {
@@ -709,6 +710,27 @@
 							},
 							"additionalProperties": false
 						}
+					},
+					"additionalProperties": false
+				},
+				"documents": {
+					"$id": "#/usages/documents",
+					"description": "Usage of documents per document-type.",
+					"patternProperties": {
+						"([^\\s]+)": {
+							"$id": "#/usages/documents/$document-type",
+							"type": "object",
+							"description": "Each document-type holding the settings that are used within the document-type.",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/documents/$document-type/$setting",
+									"type": "number",
+									"description": "Count of usage for each setting per document-type."
+								}
+							},
+							"additionalProperties": false
+						},
+						"additionalProperties": false
 					},
 					"additionalProperties": false
 				}
