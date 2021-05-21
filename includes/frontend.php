@@ -161,6 +161,15 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
+		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
+		add_action( 'wp_enqueue_scripts', function() {
+			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
+				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
+
+				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
+			}
+		}, 30 );
+
 		$this->add_content_filter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
@@ -620,39 +629,47 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function enqueue_styles() {
-		/**
-		 * Before frontend styles enqueued.
-		 *
-		 * Fires before Elementor frontend styles are enqueued.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'elementor/frontend/before_enqueue_styles' );
+		static $is_enqueue_styles_already_triggered;
 
-		// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
-		if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
-			wp_enqueue_style( 'elementor-icons' );
-		}
-		wp_enqueue_style( 'elementor-animations' );
-		wp_enqueue_style( 'elementor-frontend' );
+		if ( ! $is_enqueue_styles_already_triggered ) {
+			$is_enqueue_styles_already_triggered = true;
 
-		/**
-		 * After frontend styles enqueued.
-		 *
-		 * Fires after Elementor frontend styles are enqueued.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'elementor/frontend/after_enqueue_styles' );
+			/**
+			 * Before frontend styles enqueued.
+			 *
+			 * Fires before Elementor frontend styles are enqueued.
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'elementor/frontend/before_enqueue_styles' );
 
-		if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-			$this->parse_global_css_code();
+			$this->add_elementor_icons_inline_css();
 
-			$post_id = get_the_ID();
-			// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
-			if ( $post_id && is_singular() ) {
-				$css_file = Post_CSS::create( get_the_ID() );
-				$css_file->enqueue();
+			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
+			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+				wp_enqueue_style( 'elementor-icons' );
+			}
+			wp_enqueue_style( 'elementor-animations' );
+			wp_enqueue_style( 'elementor-frontend' );
+
+			/**
+			 * After frontend styles enqueued.
+			 *
+			 * Fires after Elementor frontend styles are enqueued.
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'elementor/frontend/after_enqueue_styles' );
+
+			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
+				$this->parse_global_css_code();
+
+				$post_id = get_the_ID();
+				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
+				if ( $post_id && is_singular() ) {
+					$css_file = Post_CSS::create( get_the_ID() );
+					$css_file->enqueue();
+				}
 			}
 		}
 	}
@@ -1278,6 +1295,7 @@ class Frontend extends App {
 				'value' => $breakpoint->get_value(),
 				'direction' => $breakpoint->get_direction(),
 				'is_enabled' => $breakpoint->is_enabled(),
+				'default_value' => $breakpoint->get_default_value(),
 			];
 		}
 
@@ -1371,5 +1389,19 @@ class Frontend extends App {
 		}
 
 		return $dependencies;
+	}
+
+	private function add_elementor_icons_inline_css() {
+		$elementor_icons_library_version = '5.10.0';
+
+		/**
+		 * The e-icons font-face must be printed inline due to custom breakpoints.
+		 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
+		 * The custom frontend file is located in a different path ('uploads' folder).
+		 * Therefore, it cannot be called from a CSS file that its relative path can vary.
+		 */
+		$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$slib/eicons/fonts/eicons.eot?%2$s);src:url(%1$slib/eicons/fonts/eicons.eot?%2$s#iefix) format("embedded-opentype"),url(%1$slib/eicons/fonts/eicons.woff2?%2$s) format("woff2"),url(%1$slib/eicons/fonts/eicons.woff?%2$s) format("woff"),url(%1$slib/eicons/fonts/eicons.ttf?%2$s) format("truetype"),url(%1$slib/eicons/fonts/eicons.svg?%2$s#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL, $elementor_icons_library_version );
+
+		wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
 	}
 }
