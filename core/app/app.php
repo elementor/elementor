@@ -235,7 +235,7 @@ class App extends BaseApp {
 		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
 		$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 
-		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) ) {
+		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
 		}
 
