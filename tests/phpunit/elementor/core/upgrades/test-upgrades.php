@@ -530,12 +530,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( $expected_value, $actual_value );
 	}
 
-	public function test_v_3_2_0_remove_old_elements_usage() {
+	public function test_v_3_3_0_remove_old_elements_usage() {
 		$this->ensure_removed_old_usage_data(
 			'elementor_controls_usage',
 			'_elementor_controls_usage',
 			function () {
-				Upgrades::_v_3_2_0_remove_old_elements_usage();
+				Upgrades::_v_3_3_0_remove_old_elements_usage();
 			}
 		);
 	}
