@@ -13,6 +13,13 @@ export default function AdminTopBar() {
 	const [ pageTitle, setPageTitle ] = useState( null );
 	const [ isMobile, setIsMobile ] = useState( getIsMobile() );
 
+	// Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility
+	useEffect( () => {
+		const adminTopBarElement = document.querySelector( '#e-admin-top-bar' );
+		adminTopBarElement.classList.add( 'top-bar-active' );
+	}, [] );
+
+	// Handle the mobile mode
 	useEffect( () => {
 		function handleResize() {
 			setIsMobile( getIsMobile() );
@@ -22,6 +29,7 @@ export default function AdminTopBar() {
 		return () => window.removeEventListener( 'resize', handleResize );
 	}, [] );
 
+	// Handle the page title visibility in admin top bar
 	useEffect( () => {
 		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
 		if ( pageTitleElement ) {
@@ -31,6 +39,7 @@ export default function AdminTopBar() {
 		}
 	}, [] );
 
+	// Handle the action buttons visibility in admin top bar
 	useEffect( () => {
 		const actionButtonElements = document.querySelectorAll( '.page-title-action' );
 		if ( actionButtonElements ) {

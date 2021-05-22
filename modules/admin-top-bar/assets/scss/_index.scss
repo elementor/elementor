@@ -83,7 +83,7 @@ $top-bar-height: 50px;
 		text-transform: uppercase;
 	}
 
-	~ #wpbody {
+	&.top-bar-active ~ #wpbody {
 		#wpbody-content {
 			margin-top: $top-bar-height;
 		}
