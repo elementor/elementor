@@ -2,6 +2,11 @@ name: Testim
 
 on:
   workflow_dispatch:
+    inputs:
+      label:
+        description: 'Label to run'
+        required: true
+        default: 'Nightly'  
   schedule:
     - cron: '0 10 * * *' # run at 10 AM UTC
 
@@ -65,7 +70,7 @@ jobs:
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
-      - name: Install wp-env and lhci
+      - name: Install wp-env
         run: npm install --no-package-lock --no-save @wordpress/env@4.0.0
       - name: Install WordPress environment
         run: |
@@ -80,4 +85,4 @@ jobs:
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli 
       - name: Run Testim tests
-        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label "Nightly" -r testimci-report.xml --tunnel --tunnel-port 8889 
+        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label }} -r testimci-report.xml --tunnel --tunnel-port 8888
