@@ -9,7 +9,7 @@ export default function KitData( props ) {
 		getSummaryTitle = ( type, key, amount ) => {
 			const data = elementorAppConfig[ 'import-export' ].summaryTitles[ type ][ key ];
 
-			if ( data.single ) {
+			if ( data?.single ) {
 				if ( ! amount ) {
 					return '';
 				}
