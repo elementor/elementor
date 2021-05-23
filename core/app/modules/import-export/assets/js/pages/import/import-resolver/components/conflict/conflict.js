@@ -45,16 +45,16 @@ export default function Conflict( props ) {
 			<ConflictCheckbox id={ props.importedId } type="main-type" className="e-app-import-resolver-conflicts__checkbox" />
 
 			<Grid item>
-				<Heading variant="h3" tag="h3" className="e-app-import-resolver-conflicts__title">
+				<Heading variant="h5" tag="h4" className="e-app-import-resolver-conflicts__title">
 					{ getConflictTitle( props.importedId ) }
 				</Heading>
 
 				<Grid item>
-					<Text variant="md" tag="span" className={ getImportedAssetClasses( props.importedId ) }>
+					<Text variant="sm" tag="span" className={ getImportedAssetClasses( props.importedId ) }>
 						{ __( 'Imported' ) }: { manifest.templates[ props.importedId ].title }
 					</Text>
 
-					<Text style variant="md" tag="span" className={ getExistingAssetClasses( props.importedId ) }>
+					<Text style variant="sm" tag="span" className={ getExistingAssetClasses( props.importedId ) }>
 						{ __( 'Existing' ) }: { props.conflictData.template_title } { getEditTemplateButton( props.conflictData.edit_url ) }
 					</Text>
 				</Grid>
