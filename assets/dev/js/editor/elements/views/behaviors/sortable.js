@@ -41,6 +41,37 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	/**
+	 * Create an item placeholder in order to avoid UI jumps due to flex.
+	 *
+	 * @param {Object} $element - jQuery element instance to create placeholder for.
+	 * @param {string} className - Placeholder class.
+	 * @param {boolean} hide - Whether to hide the original element.
+	 *
+	 * @returns {void}
+	 */
+	createPlaceholder: function( $element, className = '', hide = true ) {
+		// Get the actual item size.
+		$element.css( 'display', '' );
+		const { clientWidth: width, clientHeight: height } = $element[ 0 ];
+
+		if ( hide ) {
+			$element.css( 'display', 'none' );
+		}
+
+		jQuery( '<div></div>' ).css( {
+			...$element.css( [
+				'flex-basis',
+				'flex-grow',
+				'flex-shrink',
+				'order',
+				'position',
+			] ),
+			width,
+			height,
+		} ).addClass( className ).insertAfter( $element );
+	},
+
+	/**
 	 * Return a settings object for jQuery UI sortable to make it swappable.
 	 *
 	 * @returns {{stop: stop, start: start}}
@@ -49,20 +80,22 @@ SortableBehavior = Marionette.Behavior.extend( {
 		const $childViewContainer = this.getChildViewContainer(),
 			activeClass = 'e-swappable--active',
 			dragOverClass = 'e-swappable--dragging-over',
+			placeholderClass = 'e-swappable--item-placholder',
 			elementsSelector = '> .elementor-widget';
 
 		return {
 			start: ( event, ui ) => {
 				$childViewContainer.addClass( activeClass );
 
-				// Keep the original item visible.
-				ui.item.css( 'display', '' );
+				// TODO: Find a better solution than this hack.
+				// Used in order to prevent dragging a container into itself.
+				this.createPlaceholder( ui.item, placeholderClass );
 
 				// Remove the pointer events for the helper in order to allow `mouseenter` event
 				// on other widgets while dragging.
 				ui.helper.css( 'pointer-events', 'none' );
 
-				// Initialize the swap listeners.
+				// Swappable listeners.
 				$childViewContainer.on( 'mouseenter.swappable', elementsSelector, ( e ) => {
 					e.stopPropagation();
 
@@ -88,6 +121,13 @@ SortableBehavior = Marionette.Behavior.extend( {
 					jQuery( e.currentTarget ).removeClass( dragOverClass );
 					ui.item.removeAttr( 'data-swappable' );
 				} );
+
+				// Draggable listeners (to drag an element out of a container).
+				elementor.$previewContents.on( 'mouseenter.sortable', '.elementor-element', ( e ) => {
+					const $target = jQuery( e.currentTarget );
+
+					ui.placeholder.css( 'order', $target.css( 'order' ) );
+				} );
 			},
 			stop: ( event, ui ) => {
 				// Get the swappable data.
@@ -96,11 +136,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 				// Remove the swappable data attribute.
 				ui.item.removeAttr( 'data-swappable' );
 
-				// Remove the swap listeners & class.
+				// Cleanup.
 				$childViewContainer.off( 'mouseenter.swappable' );
 				$childViewContainer.off( 'mouseleave.swappable' );
+				$childViewContainer.off( 'mouseenter.swappable' );
+				elementor.$previewContents.off( 'mouseenter.sortable' );
 				$childViewContainer.removeClass( activeClass );
 				$childViewContainer.find( `.${ dragOverClass }` ).removeClass( dragOverClass );
+				$childViewContainer.find( `.${ placeholderClass }` ).remove();
 
 				// Exit when there are no containers.
 				if ( ! origin || ! target ) {
@@ -253,6 +296,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
+
+		// On a swappable element, the movement should be handled using flex order.
+		if ( this.isSwappable() ) {
+			newIndex = parseInt( ui.placeholder.css( 'order' ) );
+		}
+
 		this.moveChild( child, newIndex );
 	},
 
