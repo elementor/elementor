@@ -21,6 +21,10 @@
 			margin-inline-end: spacing(12);
 		}
 
+		&__title {
+			line-height: 1;
+		}
+
 		&__asset {
 			&:not(:first-child) {
 				border-inline-start: 2px solid tints(400);

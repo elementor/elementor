@@ -40,7 +40,18 @@ export default function ImportResolver() {
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
-		);
+		),
+		isHomePageOverride = () => {
+			if ( context.data.includes.includes( 'content' ) ) {
+				const pages = context.data?.fileResponse.stage1.manifest.content?.page || {};
+
+				return Object.entries( pages ).find( ( [ pageId, pageData ] ) => pageData.show_on_front );
+			}
+
+			return false;
+		};
+
+	console.log( '--- RENDER - IMPORT RESOLVER' );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -56,7 +67,7 @@ export default function ImportResolver() {
 				/>
 
 				{
-					context.data.includes.includes( 'content' ) &&
+					isHomePageOverride() &&
 					<Notice className="e-app-import-resolver__notice" label={ __( 'Note', 'elementor' ) } color="warning">
 						{ __( "Your site's homepage will be determined by the kit. You can change this later.", 'elementor' ) }
 					</Notice>
