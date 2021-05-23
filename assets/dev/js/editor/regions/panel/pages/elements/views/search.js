@@ -20,7 +20,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 	},
 
 	onInputChanged: function( event ) {
-		var ESC_KEY = 27;
+		const ESC_KEY = 27;
 
 		if ( ESC_KEY === event.keyCode ) {
 			this.clearInput();
@@ -28,6 +28,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 		// Don't catch keyboard shortcut.
 		if ( event.shiftKey || event.ctrlKey || event.altKey ) {
+			this.triggerMethod( 'search:change:input' );
 			return;
 		}
 
