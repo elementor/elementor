@@ -63,7 +63,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
-		grunt.task.run( 'styles:true' );
 		grunt.task.run( 'watch:styles' );
 	} );
 
