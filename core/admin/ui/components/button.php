@@ -54,7 +54,7 @@ class Button extends Base_Object {
 
 		if ( ! empty( $options['url'] ) ) {
 			$attributes['href'] = $options['url'];
-			if ( isset( $options['new_tab'] ) ) {
+			if ( $options['new_tab'] ) {
 				$attributes['target'] = '_blank';
 			}
 		}

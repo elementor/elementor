@@ -42,12 +42,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - phpVersion: '7.3'
-            wpCoreVersion: '5.6'
           - phpVersion: '8.0'
             wpCoreVersion: 'latest'
           - phpVersion: '7.4'
-            wpCoreVersion: 'latest'
+            wpCoreVersion: 'master'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -67,7 +65,7 @@ jobs:
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
-        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.0
+        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.1
       - name: Install WordPress environment
         run: |
           npx wp-env start

@@ -28,6 +28,7 @@
 	z-index: $first-layer;
 	font-family: $admin-font-family;
 	font-size: 13px;
+	@include start(0);
 
 	.elementor-editor-preview & {
 		--e-is-preview-mode: 1;
@@ -124,6 +125,43 @@
 		content: '';
 		display: table;
 		clear: both;
+	}
+
+	// Hack to remove unwanted elements from the modal
+	.e-wp-media-elements-removed {
+		.embed-link-settings,
+		.embed-media-settings > :not( .wp-clearfix ){
+			display: none;
+		}
+
+		#embed-url-field {
+			width: 70%;
+		}
+
+		.media-embed {
+			.thumbnail {
+				margin-top: 20px;
+				
+				&,
+				img {
+					max-height: initial;
+				}
+
+				&::after {
+					box-shadow: none;
+				}
+			}
+		}
+
+		/* Hack to change the media button selection text, because for some reason the text gets changed when switching tabs. */
+		.media-button-select {
+			font-size: 0;
+
+			&::before {
+				content: var( --button-text );
+				font-size: 13px;
+			}
+		}
 	}
 }
 
