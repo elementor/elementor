@@ -152,8 +152,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			'.embed-link-settings',
 		];
 
-		const $elements = $frame.find( elementsToRemove.join( ',' ) );
-		$elements.remove();
+		$frame.find( elementsToRemove.join( ',' ) ).remove();
 
 		// Change the default button text using CSS by passing the text as a variable.
 		$frame.css( '--button-text', `'${ __( 'Insert Media', 'elementor' ) }'` );
