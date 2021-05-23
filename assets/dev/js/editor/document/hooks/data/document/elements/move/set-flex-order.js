@@ -7,7 +7,7 @@ export class SetFlexOrder extends Dependency {
 	}
 
 	getId() {
-		return 'set-flex-order';
+		return 'set-flex-order--document/elements/move';
 	}
 
 	getConditions( args ) {
