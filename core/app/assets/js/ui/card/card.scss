@@ -3,19 +3,16 @@
 // this should emulate external packages consumption
 @import "./card-api";
 
-.#{$eps-prefix}card {
-	background-color: var(--card-background-color);
+$root: $eps-prefix + card;
+
+.#{$root} {
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
 	font-size: $card-font-size;
-	overflow: hidden;
-
-	&:hover {
-		background-color: var(--card-background-color-hover);
-	}
 
 	&__header {
+		background-color: var(--card-background-color);
 		padding: $card-header-padding;
 		border-bottom: var(--card-header-footer-border);
 		min-height: $card-header-height;
@@ -24,17 +21,6 @@
 
 		&--padding {
 			padding: var(--eps-card-header-padding);
-		}
-
-		&--passive,
-		&--passive:hover {
-			background-color: var(--card-header-passive-background-color);
-		}
-
-		&--active,
-		&--active:hover {
-			background-color: var(--card-header-active-background-color);
-			border-bottom: var(--card-header-footer-active-border);
 		}
 	}
 
@@ -51,20 +37,11 @@
 	}
 
 	&__body {
+		background-color: var(--card-background-color);
 		padding: $card-body-padding-y $card-body-padding-x;
 
 		&--padding {
 			padding: var(--eps-card-body-padding);
-		}
-
-		&--passive,
-		&--passive:hover {
-			background-color: var(--card-body-passive-background-color);
-		}
-
-		&--active,
-		&--active:hover {
-			background-color: var(--card-body-active-background-color);
 		}
 	}
 
@@ -102,6 +79,7 @@
 	}
 
 	&__footer {
+		background-color: var(--card-background-color);
 		padding: $card-padding;
 		border-top: var(--card-header-footer-border);
 		font-size: $card-footer-font-size;
@@ -109,26 +87,16 @@
 		&--padding {
 			padding: var(--eps-card-footer-padding);
 		}
-
-		&--passive,
-		&--passive:hover {
-			background-color: var(--card-footer-passive-background-color);
-		}
-
-		&--active,
-		&--active:hover {
-			background-color: var(--card-footer-active-background-color);
-			border-top: var(--card-header-footer-active-border);
-		}
 	}
 
-	&__title {
-		font-size: $card-font-size;
-	}
-
-	&__divider {
-		border-top: 1px solid red;
-		margin: 0;
+	&:hover {
+		.#{$root} {
+			&__header,
+			&__body,
+			&__footer {
+				background-color: var(--card-background-color-hover);
+			}
+		}
 	}
 }
 
