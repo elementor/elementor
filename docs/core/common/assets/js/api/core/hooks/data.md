@@ -71,7 +71,7 @@ to  `$e.commands`, and each **hook** is being fired before/after/catch a command
         ```
 
     * Register hook **dependency** that applies before the command runs
-    * **Note**: Dependency is breakable hook.
+    * **Note**: Dependency is a command-breaking hook - you must return a boolean value. (return `false` to break or `true` to continue the execution).
 		```javascript
 		// Example of hook that block column creation, if it reach maximum columns count.
 		class SectionColumnsLimit extends $e.modules.hookData.Dependency {
