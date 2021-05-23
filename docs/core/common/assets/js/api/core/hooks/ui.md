@@ -1,7 +1,7 @@
 ## API -  `$e.hooks.ui`
-*  **Description**: `$e.hooks.ui` api is manager of _UI_ hooks, allow you to create custom **logic** 
-that runs *after/before/catch* the command without effect the data *elementor* data model and history,
-the hooks attached to `$e.commands` and each  _event_ being fired when command is running.
+*  **Description**: `$e.hooks.ui` API is a manager of _UI_ hooks that allows you to create custom **logic** 
+that runs *before/after/catch* the command without affecting the *elementor* data model and history.
+The hooks are attached to `$e.commands`, and each _event_ is being fired when a command is running.
 Mainly used for UI/View manipulation.
 *  **Location**: *core/common/assets/js/api/core/hooks/ui.js*
 *  **Parent**: [`{HooksBase}`](#HooksBase)
