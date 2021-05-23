@@ -10,6 +10,7 @@ $root: $eps-prefix + card;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
 	font-size: $card-font-size;
+	overflow: hidden;
 
 	&__header {
 		background-color: var(--card-background-color);
