@@ -1,4 +1,4 @@
-## API -  `$e.hooks.ui`
+## API - `$e.hooks.ui`
 *  **Description**: `$e.hooks.ui` API is a manager of _UI_ hooks that allows you to create custom **logic** 
 that runs *before/after/catch* the command without affecting the *elementor* data model and history.
 The hooks are attached to `$e.commands`, and each _event_ is being fired when a command is running.
