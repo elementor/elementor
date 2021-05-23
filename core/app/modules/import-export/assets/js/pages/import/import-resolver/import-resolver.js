@@ -57,9 +57,9 @@ export default function ImportResolver() {
 				<PageHeader
 					heading={ __( 'Import a Template Kit', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - pages, site settings, headers, etc. - to include in your kit file.', 'elementor' ),
+						__( "We noticed that items in your kit overlap with what's already live on your site.", 'elementor' ),
 						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be exported.', 'elementor' ) } { getLearnMoreLink() }
+							{ __( 'Items that you leave checked here will override your current design and settings.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,
 					] }
 				/>
