@@ -48,7 +48,6 @@ export default function AdminTopBar() {
 
 		const connectUrl = isUserConnected ? 'https://go.elementor.com/wp-dash-admin-bar-account/' : elementorCommonConfig.connect.connect_url,
 			buttonText = isUserConnected ? __( 'My Elementor', 'elementor' ) : __( 'Connect Account', 'elementor' );
-		// const connectButtonText = ! isMobile ? buttonText : '';
 		return <BarButton icon="eicon-user-circle-o" onClick={connectAction}>{ buttonText }</BarButton>;
 	};
 
