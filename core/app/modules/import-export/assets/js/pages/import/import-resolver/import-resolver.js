@@ -63,11 +63,11 @@ export default function ImportResolver() {
 				}
 
 				<Card>
-					<Card.Header padding="20" active>
+					<Card.Header padding="20" className="e-app-import-resolver__panel-header">
 						<Card.Headline>Select the items you want to keep and apply:</Card.Headline>
 					</Card.Header>
 
-					<Card.Body padding="20" passive>
+					<Card.Body padding="20" className="e-app-import-resolver__panel-body">
 						<Box>
 							<List separated className="e-app-import-resolver-conflicts">
 								{ Object.entries( conflicts ).map( ( [ id, conflict ], index ) => (
