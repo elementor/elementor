@@ -230,6 +230,7 @@ class Repository {
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
 				// TODO: Remove all the isset when the API stable.
 				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
+				'featured_index' => isset( $kit->featured_index ) ? $kit->featured_index : 0,
 				'popularity_index' => isset( $kit->popularity_index ) ? $kit->popularity_index : 0,
 				'created_at' => isset( $kit->created_at ) ? $kit->created_at : null,
 				'updated_at' => isset( $kit->updated_at ) ? $kit->updated_at : null,

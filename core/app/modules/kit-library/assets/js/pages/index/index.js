@@ -138,6 +138,7 @@ export default function Index( props ) {
 					>
 						<SortSelect
 							options={ [
+								{ label: __( 'Featured', 'elementor' ), value: 'featuredIndex' },
 								{ label: __( 'New', 'elementor' ), value: 'createdAt' },
 								{ label: __( 'Popular', 'elementor' ), value: 'popularityIndex' },
 								{ label: __( 'Trending', 'elementor' ), value: 'trendIndex' },
