@@ -1,6 +1,8 @@
 @import "../../../../assets/dev/scss/helpers/direction";
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
+@import "../../../../assets/dev/scss/editor/breakpoints";
+
 $top-bar-height: 50px;
 
 #e-admin-top-bar {
@@ -133,7 +135,7 @@ $top-bar-height: 50px;
 }
 
 // Mobile mode
-@media (max-width: 768px) {
+@media (max-width: $editor-screen-md-min) {
 	#wpwrap {
 		.page-title-action {
 			display: inline-block;
@@ -160,7 +162,7 @@ $top-bar-height: 50px;
 }
 
 // Desktop mode
-@media (min-width: 768px) {
+@media (min-width: $editor-screen-md-min) {
 	#wpwrap {
 		.page-title-action {
 			display: none;

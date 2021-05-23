@@ -2,7 +2,13 @@ import AdminTopBar from './app';
 
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 
-const menuItemSelector = elementorAdminTopBarConfig.elementor_menu_item_ids
+const elementorMenuItemIds = [
+	'toplevel_page_elementor',
+	'menu-posts-elementor_library',
+
+];
+
+const menuItemSelector = elementorMenuItemIds
 	.map( ( itemId ) => `#${ itemId } .wp-menu-open` )
 	.join( ', ' );
 

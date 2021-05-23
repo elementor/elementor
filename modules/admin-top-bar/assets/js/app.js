@@ -1,5 +1,5 @@
-import BarHeading from './components/bar-heading/bar-heading';
 import BarButton from './components/bar-button/bar-button';
+import BarHeading from './components/bar-heading/bar-heading';
 import { useEffect, useState, useRef } from 'react';
 
 export default function AdminTopBar() {
@@ -37,7 +37,6 @@ export default function AdminTopBar() {
 	}, [] );
 
 	const isUserConnected = elementorCommonConfig.connect.is_user_connected;
-	let connectUrl = '';
 	const finderAction = () => {
 		$e.route( 'finder' );
 	};
@@ -47,8 +46,8 @@ export default function AdminTopBar() {
 			window.open( connectUrl );
 		};
 
-		connectUrl = isUserConnected ? 'https://go.elementor.com/wp-dash-admin-bar-account/' : elementorCommonConfig.connect.connect_url;
-		const buttonText = isUserConnected ? __( 'My Elementor', 'elementor' ) : __( 'Connect Account', 'elementor' );
+		const connectUrl = isUserConnected ? 'https://go.elementor.com/wp-dash-admin-bar-account/' : elementorCommonConfig.connect.connect_url,
+			buttonText = isUserConnected ? __( 'My Elementor', 'elementor' ) : __( 'Connect Account', 'elementor' );
 		// const connectButtonText = ! isMobile ? buttonText : '';
 		return <BarButton icon="eicon-user-circle-o" onClick={connectAction}>{ buttonText }</BarButton>;
 	};

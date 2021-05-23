@@ -10,11 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseApp {
-	const ELEMENTOR_MENU_ITEM_IDS = [
-		'toplevel_page_elementor',
-		'menu-posts-elementor_library'
-
-	];
 	/**
 	 * @return bool
 	 */
@@ -32,10 +27,6 @@ class Module extends BaseApp {
 		];
 	}
 
-	private static function is_elementor_page() {
-		return true;
-	}
-
 	/**
 	 * @return string
 	 */
@@ -48,12 +39,6 @@ class Module extends BaseApp {
 			<div id="e-admin-top-bar">
 			</div>
 		<?php
-	}
-
-	protected function get_init_settings() {
-		return [
-			'elementor_menu_item_ids' => self::ELEMENTOR_MENU_ITEM_IDS,
-		];
 	}
 
 	/**
@@ -69,9 +54,9 @@ class Module extends BaseApp {
 
 		wp_enqueue_script(
 			'elementor-admin-top-bar',
-			$this->get_js_assets_url( 'admin-top-bar' ),   // create path in directory tree
+			$this->get_js_assets_url( 'admin-top-bar' ),
 			[
-				'react',     //dependencies
+				'react',
 				'react-dom',
 			],
 			ELEMENTOR_VERSION,
