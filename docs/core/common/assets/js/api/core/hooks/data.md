@@ -1,7 +1,7 @@
 ## API - `$e.hooks.data`
 *  **Description**: `$e.hooks.data` API is a manager of _DATA_ hooks that allows you to create custom **data manipulation** 
 of *elementor* data model, and create dependencies. The _hooks_ are attached
-to  `$e.commands`, and each **hook** is being fired before/after/catch a command, that's being executed by `$e.run()`
+to  `$e.commands`, and each **hook** is being fired _before/after/catch_ a command, that's being executed by `$e.run()`
 *  **Location**: *core/common/assets/js/api/core/hooks/data.js*
 *  **Parent**: [`{HooksBase}`](#HooksBase)
 *  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
@@ -31,13 +31,12 @@ to  `$e.commands`, and each **hook** is being fired before/after/catch a command
                 return 'custom-component-example-data-hook';
             }
 
-            // Recommended function, used for optimization, if the container type is known in advance,
+            // An optional yet recommended function, used for optimization. If the container type is known in advance -
             // you can pass it here.
             //
-            // getContainerType() {
-            // If `args.container.type` is always the same for the hook return it:
-            // return 'container_type';
-            // }
+            //getContainerType() {
+            //    return 'container_type'; // e.g. section
+            //}
         
             /* Optional function, the conditions for hook to be run. */
             getConditions( args ) {
@@ -47,8 +46,8 @@ to  `$e.commands`, and each **hook** is being fired before/after/catch a command
             /*
              * The actual hook logic.
              */
-            apply( args, containers ) {
-                console.log( 'My hook custom logic', 'args: ', args, 'containers: ', containers );
+            apply( args, result ) {
+                console.log( 'My hook custom logic', 'args: ', args, 'containers: ', result );
             }
         }
         
