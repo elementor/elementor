@@ -131,3 +131,45 @@ $top-bar-height: 50px;
 		top: 46px;
 	}
 }
+
+// Mobile mode
+@media (max-width: 768px) {
+	#wpwrap {
+		.page-title-action {
+			display: inline-block;
+		}
+	}
+
+	#e-admin-top-bar {
+		.page-title-action {
+			display: none;
+		}
+
+		.secondary-main-area {
+			.bar-buttons-wrapper {
+				display: none;
+			}
+
+			> .top-bar-button-wrapper {
+				h1 {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+// Desktop mode
+@media (min-width: 768px) {
+	#wpwrap {
+		.page-title-action {
+			display: none;
+		}
+	}
+
+	#e-admin-top-bar {
+		.page-title-action {
+			display: inline-block;
+		}
+	}
+}
