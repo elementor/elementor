@@ -1,0 +1,28 @@
+.e-app-import-resolver {
+	&__notice {
+		margin-bottom: spacing(20);
+	}
+
+	&-conflicts {
+		&__checkbox {
+			flex-shrink: 0;
+			margin-inline-end: spacing(12);
+		}
+
+		&__asset {
+			&:not(:first-child) {
+				border-inline-start: 2px solid tints(400);
+				padding-inline-start: spacing(16);
+				margin-inline-start: spacing(16);
+			}
+
+			&:not(.active) {
+				color: tints(500);
+			}
+		}
+
+		&__edit-template {
+			margin-inline-start: spacing(5);
+		}
+	}
+}

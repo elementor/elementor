@@ -5,29 +5,34 @@ import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ResolverCheckbox from './components/resolver-checkbox/resolver-checkbox';
+import Conflict from './components/conflict/conflict';
+import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
 import Card from 'elementor-app/ui/card/card';
 import List from 'elementor-app/ui/molecules/list';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
-import Grid from 'elementor-app/ui/grid/grid';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-export default function ImportResolver( props ) {
+import './import-resolver.scss';
+
+export default function ImportResolver() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
+		conflicts = context.data?.fileResponse?.stage1.conflicts || {},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
-					onClick={ () => {
-						context.dispatch( { type: 'SET_FILE', payload: null } );
-						navigate( 'import' );
-					} }
+					onClick={ () => navigate( 'import/content' ) }
+				/>
+
+				<Button
+					text={ __( 'Next', 'elementor' ) }
+					variant="contained"
+					color="primary"
+					onClick={ () => navigate( 'import/process' ) }
 				/>
 			</WizardFooter>
 		),
@@ -39,7 +44,7 @@ export default function ImportResolver( props ) {
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
-			<section className="e-app-export-kit">
+			<section className="e-app-import-resolver">
 				<PageHeader
 					heading={ __( 'Import a Template Kit', 'elementor' ) }
 					description={ [
@@ -50,53 +55,26 @@ export default function ImportResolver( props ) {
 					] }
 				/>
 
-				<Card className="e-site-part">
+				{
+					context.data.includes.includes( 'content' ) &&
+					<Notice className="e-app-import-resolver__notice" label={ __( 'Note', 'elementor' ) } color="warning">
+						{ __( "Your site's homepage will be determined by the kit. You can change this later.", 'elementor' ) }
+					</Notice>
+				}
+
+				<Card>
 					<Card.Header padding="20" active>
 						<Card.Headline>Select the items you want to keep and apply:</Card.Headline>
 					</Card.Header>
 
 					<Card.Body padding="20" passive>
 						<Box>
-							<List separated className="e-app-export-kit-content">
-								<List.Item padding="20" key={ 1 } className="e-app-export-kit-content__item">
-									<div>
-										<Grid container noWrap>
-											<ResolverCheckbox type="main-type" className="e-app-export-kit-content__checkbox" />
-
-											<Grid item>
-												<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-													title
-												</Heading>
-
-												<Grid item>
-													<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
-														description
-													</Text>
-												</Grid>
-											</Grid>
-										</Grid>
-									</div>
-								</List.Item>
-
-								<List.Item padding="20" key={ 1 } className="e-app-export-kit-content__item">
-									<div>
-										<Grid container noWrap>
-											<ResolverCheckbox type="main-type" className="e-app-export-kit-content__checkbox" />
-
-											<Grid item>
-												<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-													title
-												</Heading>
-
-												<Grid item>
-													<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
-														description
-													</Text>
-												</Grid>
-											</Grid>
-										</Grid>
-									</div>
-								</List.Item>
+							<List separated className="e-app-import-resolver-conflicts">
+								{ Object.entries( conflicts ).map( ( [ id, conflict ], index ) => (
+									<List.Item padding="20" key={ index } className="e-app-import-resolver-conflicts__item">
+										<Conflict importedId={ parseInt( id ) } conflictData={ conflict[ 0 ] } />
+									</List.Item>
+								) ) }
 							</List>
 						</Box>
 					</Card.Body>

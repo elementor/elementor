@@ -10,6 +10,7 @@ export default function ContextProvider( props ) {
 		downloadUrl: '',
 		fileResponse: null,
 		file: null,
+		overrideConditions: [],
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

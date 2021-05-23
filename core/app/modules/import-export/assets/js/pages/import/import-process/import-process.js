@@ -22,6 +22,7 @@ export default function ImportProcess() {
 							stage: 2,
 							session: context.data.fileResponse.stage1.session,
 							include: context.data.includes,
+							overrideConditions: context.data.overrideConditions,
 						} ),
 					},
 				} );

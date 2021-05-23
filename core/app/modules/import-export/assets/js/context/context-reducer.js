@@ -1,14 +1,14 @@
 class ReducerActions {
-	static updateIncludes( state, value, action ) {
+	static updateArray( state, key, value, action ) {
 		if ( 'add' === action ) {
 			// If the value already exists, then do nothing.
-			if ( state.includes.includes( value ) ) {
+			if ( state[ key ].includes( value ) ) {
 				return state;
 			}
 
-			return { ...state, includes: [ ...state.includes, value ] };
+			return { ...state, [ key ]: [ ...state[ key ], value ] };
 		} else if ( 'remove' === action ) {
-			return { ...state, includes: state.includes.filter( ( item ) => item !== value ) };
+			return { ...state, [ key ]: state[ key ].filter( ( item ) => item !== value ) };
 		}
 
 		return state;
@@ -20,13 +20,17 @@ export const reducer = ( state, action ) => {
 		case 'SET_DOWNLOAD_URL':
 			return { ...state, downloadUrl: action.payload };
 		case 'ADD_INCLUDE':
-			return ReducerActions.updateIncludes( state, action.payload, 'add' );
+			return ReducerActions.updateArray( state, 'includes', action.payload, 'add' );
 		case 'REMOVE_INCLUDE':
-			return ReducerActions.updateIncludes( state, action.payload, 'remove' );
+			return ReducerActions.updateArray( state, 'includes', action.payload, 'remove' );
 		case 'SET_FILE_RESPONSE':
 			return { ...state, fileResponse: action.payload };
 		case 'SET_FILE':
 			return { ...state, file: action.payload };
+		case 'ADD_OVERRIDE_CONDITION':
+			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'add' );
+		case 'REMOVE_OVERRIDE_CONDITION':
+			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'remove' );
 		default:
 			return state;
 	}
