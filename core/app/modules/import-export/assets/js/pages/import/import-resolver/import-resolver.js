@@ -51,8 +51,6 @@ export default function ImportResolver() {
 			return false;
 		};
 
-	console.log( '--- RENDER - IMPORT RESOLVER' );
-
 	return (
 		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-import-resolver">

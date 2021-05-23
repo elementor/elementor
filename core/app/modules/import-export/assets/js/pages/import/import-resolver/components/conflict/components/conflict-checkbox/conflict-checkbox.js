@@ -1,4 +1,4 @@
-import { useContext, useMemo, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { Context } from '../../../../../../../context/context-provider';
 
@@ -18,9 +18,13 @@ export default function ConflictCheckbox( props ) {
 		context.dispatch( { type: 'ADD_OVERRIDE_CONDITION', payload: props.id } );
 	}, [] );
 
-	return useMemo( () => (
-		<Checkbox checked={ isSelected() } onChange={ updateOverrideCondition } className={ props.className } />
-	), [ context.data.overrideConditions ] );
+	return (
+		<Checkbox
+			checked={ isSelected() }
+			onChange={ updateOverrideCondition }
+			className={ props.className }
+		/>
+	);
 }
 
 ConflictCheckbox.propTypes = {
