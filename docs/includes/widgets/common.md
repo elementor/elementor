@@ -32,7 +32,9 @@ We've added a mask option to any type of widget in Elementor, using the CSS `mas
 
 - `get_shapes( $add_custom )` - Returns a translated user-friendly list of the available masking shapes.
 
-  Passing `true` as a parameter will also append a 'Custom' option to the list in order to use with a `SELECT` control type.
+  Passing `true` (which is the default) as a parameter will also append a 'Custom' option to the list in order to use with a `SELECT` control type.
+
+  Example use-case: Letting the user select a `custom` option, and show an image upload control.
 
 
 - `get_mask_selectors( $rules )` - Gets a string of CSS rules to apply, and returns an array of selectors with those rules.
