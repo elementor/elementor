@@ -17,10 +17,13 @@ export default function AdminTopBar() {
 	// Handle the page title visibility in admin top bar.
 	useEffect( () => {
 		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
+
 		if ( pageTitleElement ) {
 			const pageTitleText = pageTitleElement;
 			pageTitleElement.remove();
 			setPageTitle( pageTitleText.innerText );
+		} else {
+			setPageTitle( 'Elementor' );
 		}
 	}, [] );
 
