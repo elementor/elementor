@@ -10,10 +10,6 @@ class Beta_Controller extends \Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mo
 		return 'alpha';
 	}
 
-	public function get_route() {
-		return '/(?P<sub_id>[\w]+)/';
-	}
-
 	public function get_items( $request ) {
 		return 'beta-items';
 	}

@@ -143,7 +143,7 @@ class Test_Standards extends Data_Test_Base {
 	}
 
 	public function test_sub_endpoints_include_sub_controllers() {
-		// Arrange - '/alpha/{id}/beta/1/gamma'.
+		// Arrange.
 		$alpha_controller = new Standards\OnlyController\Alpha_Controller();
 		$this->manager->register_controller_instance( $alpha_controller );
 		$this->manager->run_server();
@@ -153,7 +153,14 @@ class Test_Standards extends Data_Test_Base {
 		$beta_controller->do_register();
 
 		$beta_index_endpoint = $beta_controller->get_endpoint_index();
+		$beta_index_endpoint->register_item_route( WP_REST_Server::READABLE, [
+			'id_arg_name' => 'sub_id',
+		] );
+
 		$gamma_sub_endpoint = $beta_index_endpoint->register_sub_endpoint( new Standards\OnlySubEndpoint\Gamma_Sub_Endpoint( $beta_index_endpoint, '(?P<sub_sub_id>[\w]+)' ) );
+		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
+			'id_arg_name' => 'sub_sub_id',
+		] );
 
 		// Act - Reach '/alpha/1/beta/1/gamma'
 		$result = $this->manager->run( 'alpha/beta/index/gamma', [
@@ -163,11 +170,6 @@ class Test_Standards extends Data_Test_Base {
 
 		// Assert - '/alpha/1/beta/1/gamma'.
 		$this->assertEquals( 'gamma-items', $result );
-
-		// Arrange - '/alpha/1/beta/1/gamma/1'.
-		$gamma_sub_endpoint->register_item_route( WP_REST_Server::READABLE, [
-			'id_arg_name' => 'sub_sub_id',
-		] );
 
 		// Act - Reach '/alpha/1/beta/1/gamma/1'
 		$result = $this->manager->run( 'alpha/beta/index/gamma', [

@@ -6,7 +6,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Byp
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Name_Type;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Test_Data;
 
-class Sub_Controller extends \Elementor\Data\V2\Base\Sub_Controller {
+class Sub_Controller extends \Elementor\Data\V2\Base\Controller {
 	use Mock_Name_Type, Mock_Bypass_Permission, Mock_Test_Data, Mock_Bypass_Register;
 
 	/**
@@ -14,19 +14,19 @@ class Sub_Controller extends \Elementor\Data\V2\Base\Sub_Controller {
 	 */
 	private $test_route;
 
-	public function __construct( $parent_controller = null, $test_route = '/' ) {
-		$this->test_route = $test_route;
-		$this->parent_controller = $parent_controller;
+	/**
+	 * @var \Elementor\Data\V2\Base\Controller
+	 */
+	private $test_parent_controller = null;
+
+	public function __construct( $parent_controller = null ) {
+		$this->test_parent_controller = $parent_controller;
 		parent::__construct( $parent_controller );
 		$this->bypass_original_permission();
 	}
 
 	function get_type() {
 		return 'sub-controller';
-	}
-
-	public function get_route() {
-		return $this->test_route;
 	}
 
 	public function register_endpoints() {
@@ -76,6 +76,6 @@ class Sub_Controller extends \Elementor\Data\V2\Base\Sub_Controller {
 	}
 
 	public function get_parent_name() {
-		return $this->parent_controller->get_name();
+		return $this->test_parent_controller->get_name();
 	}
 }

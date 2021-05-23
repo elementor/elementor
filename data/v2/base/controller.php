@@ -31,6 +31,11 @@ abstract class Controller extends WP_REST_Controller {
 	public $processors = [];
 
 	/**
+	 * @var \Elementor\Data\V2\Base\Controller|null
+	 */
+	private $parent = null;
+
+	/**
 	 * Controller constructor.
 	 *
 	 * Register endpoints on 'rest_api_init'.
@@ -53,6 +58,11 @@ abstract class Controller extends WP_REST_Controller {
 				$this->register();
 			} );
 		} );
+
+		$parent_name = $this->get_parent_name();
+		if ( $parent_name ) {
+			$this->act_as_children( $parent_name );
+		}
 	}
 
 	/**
@@ -68,6 +78,17 @@ abstract class Controller extends WP_REST_Controller {
 	abstract public function register_endpoints();
 
 	/**
+	 * Get parent controller name.
+	 *
+	 * @note: If `get_parent_name()` provided, controller will work as children controller.
+	 *
+	 * @returns null|string
+	 */
+	public function get_parent_name() {
+		return null;
+	}
+
+	/**
 	 * Get full controller name.
 	 *
 	 * The 'main' job of this method, is to be extend, for example sub-controller will return it's parent name,
@@ -76,7 +97,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return string
 	 */
 	public function get_full_name() {
-		return $this->get_name();
+		if ( ! $this->parent ) {
+			return $this->get_name();
+		}
+
+		return $this->parent->get_name() . '/' . $this->get_name();
 	}
 
 	/**
@@ -94,7 +119,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return string
 	 */
 	public function get_base_route() {
-		return $this->rest_base;
+		if ( ! $this->parent ) {
+			return $this->rest_base;
+		}
+
+		return $this->parent->get_base_route() . '/' . $this->get_name();
 	}
 
 	/**
@@ -203,6 +232,15 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get the parent controller.
+	 *
+	 * @return \Elementor\Data\V2\Base\Controller|null
+	 */
+	public function get_parent() {
+		return $this->parent;
+	}
+
+	/**
 	 * Get processors.
 	 *
 	 * @param string $command
@@ -250,7 +288,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register index endpoint.
 	 */
 	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index( $this ) );
+		if ( ! $this->parent ) {
+			return $this->register_endpoint( new Endpoint\Index( $this ) );
+		}
+
+		$this->register_endpoint( new Endpoint\Index\Sub_Index_Endpoint( $this ) );
 	}
 
 	/**
@@ -313,5 +355,15 @@ abstract class Controller extends WP_REST_Controller {
 
 		// Aka hooks.
 		$this->register_processors();
+	}
+
+	private function act_as_children( $parent_name ) {
+		$parent_controller_name = $parent_name;
+
+		$this->parent = Manager::instance()->get_controller( $parent_controller_name );
+
+		if ( ! $this->parent ) {
+			trigger_error( "Cannot find parent controller: '$parent_controller_name'", E_USER_ERROR ); // phpcs:ignore
+		}
 	}
 }

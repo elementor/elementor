@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Sub_Index_Endpoint extends Index {
 	/***
-	 * @var \Elementor\Data\V2\Base\Sub_Controller
+	 * @var \Elementor\Data\V2\Base\Controller
 	 */
 	public $controller;
 

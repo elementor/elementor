@@ -34,6 +34,20 @@ abstract class Base_Route {
 	protected $route;
 
 	/**
+	 * All register routes.
+	 *
+	 * @var array
+	 */
+	protected $routes = [];
+
+	/**
+	 * Registered item route.
+	 *
+	 * @var array|null
+	 */
+	protected $item_route = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * run `$this->>register()`.
@@ -82,7 +96,7 @@ abstract class Base_Route {
 		$route = '/';
 
 		if ( ! ( $parent instanceof Controller ) ) {
-			$route = $this->controller instanceof Sub_Controller ? $this->controller->get_route() : $this->route;
+			$route = $parent->item_route ? $parent->item_route['route'] . '/' : $this->route;
 		}
 
 		return untrailingslashit( '/' . trim( $parent_base . $route . $name, '/' ) );
@@ -204,10 +218,15 @@ abstract class Base_Route {
 
 	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
-			trigger_error( 'Invalid method.', E_USER_ERROR );
+			trigger_error( "Invalid method: '$methods'.", E_USER_ERROR ); // phpcs:ignore
 		}
 
 		$route = $this->get_base_route() . $route;
+
+		$this->routes [] = [
+			'args' => $args,
+			'route' => $route,
+		];
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[
@@ -264,6 +283,11 @@ abstract class Base_Route {
 		], $args );
 
 		$route .= '(?P<' . $id_arg_name . '>' . $id_arg_type_regex . ')';
+
+		$this->item_route = [
+			'args' => $args,
+			'route' => $route,
+		];
 
 		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
 			return $this->base_callback( $methods, $request );
