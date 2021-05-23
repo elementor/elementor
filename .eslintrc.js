@@ -2,7 +2,7 @@ module.exports = {
 	extends: [
 		'wordpress',
 		'plugin:wordpress/esnext',
-		'plugin:@elementor/elementor/recommended',
+		'plugin:@elementor/editor/recommended',
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',
 	],
@@ -10,7 +10,7 @@ module.exports = {
 		'wordpress',
 		'babel',
 		'react',
-		'@elementor/elementor',
+		'@elementor/editor',
 		'no-jquery',
 	],
 	parser: 'babel-eslint',
