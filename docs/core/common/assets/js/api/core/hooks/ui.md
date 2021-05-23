@@ -18,10 +18,9 @@ Mainly used for UI/View manipulation.
  * **Examples**:
    * Built in hooks:  *`assets/dev/js/editor/document/hooks/ui`*
    * Register UI hook that runs **_after_** command runs:
-
+   * Important: Available to run in the console but depends on [$e.components example#1](../components.md#examples).
         ```javascript
         // Example of UI hook, fired after the command runs and change ( CSS Class ) of all div elements.
-        // Important: Available to run in the console but depends on $e.components example#1.
         
         class CustomUIHook extends $e.modules.hookUI.After {
            getCommand() {
@@ -50,11 +49,9 @@ Mainly used for UI/View manipulation.
                console.log( 'My hook custom logic', 'args: ', args, 'result: ', result );
         
                // Add 'custom-component' class for all div elements.
-               jQuery.find( 'div' ).forEach( ( $div ) => {
-                   $div = jQuery( $div );
-        
-                   $div.addClass( 'custom-component' );
-               } );
+               document.querySelectorAll( 'div' ).forEach( 
+                 ( element ) => element.classList.add( 'custom-component' ) 
+               );
            }
         }
         
