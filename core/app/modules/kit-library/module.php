@@ -50,6 +50,7 @@ class Module extends BaseModule {
 		$kit_library = $connect->get_app( 'kit-library' );
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
+			'has_access_to_module' => current_user_can( 'administrator' ),
 			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
