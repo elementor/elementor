@@ -26,3 +26,7 @@ The user can set a text ( static or dynamic ) and path ( built-in or custom ), a
 ## Attention Needed / Known Issues:
 
 - The widget and the SVG markups are rendered in PHP, but the text itself is being rendered using JS.
+
+
+---
+See also: [Text-Path.js](../assets/js/frontend/handlers/text-path.md)

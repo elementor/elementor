@@ -63,3 +63,7 @@ The widget handler for the Text Path widget which handles the Text Path initiali
 - As stated above, there are RTL issues with this widget, so note that when changing the code. In the future, other browsers might
 
 	add better support for RTL like Firefox does, so make sure to check that. 
+
+
+---
+See also: [Text-Path.php](../../../../widgets/text-path.md)
