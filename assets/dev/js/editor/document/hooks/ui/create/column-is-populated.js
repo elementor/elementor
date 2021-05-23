@@ -24,7 +24,6 @@ export class ColumnIsPopulated extends After {
 		containers.forEach( ( /* Container */ container ) => {
 			if ( 'column' === container.model.get( 'elType' ) ) {
 				container.view.changeChildContainerClasses();
-				container.view.moveResizeHandle();
 			}
 		} );
 	}

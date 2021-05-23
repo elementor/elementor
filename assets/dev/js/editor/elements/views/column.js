@@ -256,19 +256,6 @@ ColumnView = BaseElementView.extend( {
 		} );
 	},
 
-	// Move the resize handle to prevent UI breaking when DOM optimization is active.
-	moveResizeHandle: function() {
-		const isDomOptimizationActive = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ];
-
-		// TODO: Find a better solution.
-		if ( isDomOptimizationActive ) {
-			const resizeHandle = this.$el.find( '> .ui-resizable-handle' );
-			if ( resizeHandle.length > 0 ) {
-				this.$el.prepend( resizeHandle );
-			}
-		}
-	},
-
 	onAddButtonClick: function( event ) {
 		event.stopPropagation();
 
