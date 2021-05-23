@@ -9,6 +9,7 @@ module.exports = {
 		'wordpress',
 		'babel',
 		'react',
+		'@elementor/elementor',
 		'no-jquery',
 	],
 	parser: 'babel-eslint',
@@ -36,6 +37,7 @@ module.exports = {
 		},
 	},
 	rules: {
+		'@elementor/elementor/react-translate': 'error',
 		// custom canceled rules
 		'no-var': 'off',
 		'vars-on-top': 'off',
