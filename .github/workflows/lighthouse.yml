@@ -45,7 +45,7 @@ jobs:
           - phpVersion: '8.0'
             wpCoreVersion: 'latest'
           - phpVersion: '7.4'
-            wpCoreVersion: 'master'
+            wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
