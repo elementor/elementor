@@ -48,20 +48,39 @@ export default class Helper {
 	}
 
 	/**
+	 * Retrieve the flex order key, based on the device mode.
+	 *
+	 * @returns {string}
+	 */
+	static getFlexOrderKey() {
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+
+		return ( 'desktop' === currentDeviceMode ) ? '_flex_order' : `_flex_order_${ currentDeviceMode }`;
+	}
+
+	/**
+	 * Retrieve a flex order setting value for a container.
+	 *
+	 * @param {Container} container - Container to get the value from.
+	 * @returns {string|int} - Flex order value.
+	 */
+	static getFlexOrderValue( container ) {
+		return container.settings.get( Helper.getFlexOrderKey() );
+	}
+
+	/**
 	 * Get an array of Container objects, and sort them by their `_flex_order` setting.
 	 *
 	 * @param {Container[]} items - List of Containers to sort.
 	 * @returns {Container[]} - Sorted array of Containers.
 	 */
 	static sortFlexItemsArray( items ) {
-		const clone = [ ...items ],
-			currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			settingKey = ( 'desktop' === currentDeviceMode ) ? '_flex_order' : `_flex_order_${ currentDeviceMode }`;
+		const clone = [ ...items ];
 
 		// Sort the flex items by their flex order setting.
 		clone.sort( ( a, b ) => {
-			const aOrder = a.settings.get( settingKey ),
-				bOrder = b.settings.get( settingKey );
+			const aOrder = Helper.getFlexOrderValue( a ),
+				bOrder = Helper.getFlexOrderValue( b );
 
 			if ( aOrder > bOrder ) {
 				return 1;
@@ -108,8 +127,7 @@ export default class Helper {
 	 * @param {string|int} position - The new position.
 	 */
 	static setFlexOrder( container, position ) {
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			settingKey = ( 'desktop' === currentDeviceMode ) ? '_flex_order' : `_flex_order_${ currentDeviceMode }`;
+		const settingKey = Helper.getFlexOrderKey();
 
 		$e.run( 'document/elements/settings', {
 			container: container,
