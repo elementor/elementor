@@ -12,7 +12,7 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 	},
 
 	filter: function( childModel ) {
-		var filterValue = elementor.channels.panelElements.request( 'filter:value' );
+		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
 			return true;
@@ -23,13 +23,13 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 		}
 
 		// Get the filter input localized value.
-		const localized = elementor.channels.panelElements.request( 'filter:localized' );
+		const localized = elementor.channels.panelElements.request( 'filter:localized' ) || '';
 
 		return _.any( childModel.get( 'keywords' ), function( keyword ) {
 			keyword = keyword.toLowerCase();
 
 			const regularFilter = ( -1 !== keyword.indexOf( filterValue.toLowerCase() ) ),
-				localizedFilter = ( -1 !== keyword.indexOf( localized.toLowerCase() ) );
+				localizedFilter = ( localized && -1 !== keyword.indexOf( localized.toLowerCase() ) );
 
 			return regularFilter || localizedFilter;
 		} );
