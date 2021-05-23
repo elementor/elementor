@@ -2,6 +2,7 @@ module.exports = {
 	extends: [
 		'wordpress',
 		'plugin:wordpress/esnext',
+		'plugin:@elementor/elementor/recommended',
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',
 	],
@@ -37,7 +38,6 @@ module.exports = {
 		},
 	},
 	rules: {
-		'@elementor/elementor/react-translate': 'error',
 		// custom canceled rules
 		'no-var': 'off',
 		'vars-on-top': 'off',
