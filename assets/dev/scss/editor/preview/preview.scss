@@ -34,6 +34,16 @@ html.elementor-html {
 
 .elementor-edit-area-active {
 
+	--primary-color: #{ $editor-info };
+	--secondary-color: #{ darken($editor-info, 20%) };
+	--outline-color: var( --primary-color );
+
+	.e-container > .e-container {
+		--primary-color: #{ $editor-accent };
+		--secondary-color: #{ darken($editor-accent, 10%) };
+		--outline-color: var( --primary-color );
+	}
+
 	.elementor-inner-section {
 
 		&:first-child {
@@ -231,7 +241,7 @@ html.elementor-html {
 			right: 2px;
 			top: 2px;
 			bottom: 2px;
-			outline: 2px solid $editor-info;
+			outline: 2px solid var( --outline-color );
 			animation: section-outline .75s;
 		}
 	}
@@ -359,9 +369,13 @@ html.elementor-html {
 	top: 1px;
 	@include start(50%);
 	transform: translateX(getValueByDirection(-50%, 50%)) translateY(-100%);
-	background-color: $editor-info;
+	background-color: var( --primary-color );
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
+
+	.e-container .e-container & {
+		transform: translateX(getValueByDirection(-50%, 50%)) scaleY( -1 );
+	}
 
 	i.eicon-handle {
 		font-size: 16px;
@@ -370,7 +384,7 @@ html.elementor-html {
 	.elementor-editor-element-setting {
 
 		&:hover {
-			background-color: darken($editor-info, 20%);
+			background-color: var( --secondary-color );
 		}
 
 		&:first-child {
@@ -381,7 +395,7 @@ html.elementor-html {
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-end-property(color, $editor-info);
+				@include border-end-property(color, var( --primary-color ));
 				border-width: getValueByDirection(22px 12px 0 0, 22px 0 0 12px);
 				@include end(calc(100% - 1px));
 			}
@@ -389,7 +403,7 @@ html.elementor-html {
 			&:hover {
 
 				&:before {
-					@include border-end-property(color, darken($editor-info, 20%));
+					@include border-end-property(color, var( --secondary-color ));
 				}
 			}
 		}
@@ -402,7 +416,7 @@ html.elementor-html {
 				position: absolute;
 				border: solid transparent;
 				top: 2px;
-				@include border-start-property(color, $editor-info);
+				@include border-start-property(color, var( --primary-color ));
 				border-width: getValueByDirection(22px 0 0 12px, 22px 12px 0 0);
 				@include start(calc(100% - 1px));
 			}
@@ -410,7 +424,7 @@ html.elementor-html {
 			&:hover {
 
 				&:after {
-					@include border-start-property(color, darken($editor-info, 20%));
+					@include border-start-property(color, var( --secondary-color ));
 				}
 			}
 		}
