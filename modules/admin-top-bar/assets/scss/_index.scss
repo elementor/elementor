@@ -141,15 +141,10 @@ $top-bar-height: 50px;
 
 // Mobile mode
 @media (max-width: $editor-screen-md-min) {
-	#wpwrap {
-		.page-title-action {
-			display: inline-block;
-		}
-	}
-
 	#e-admin-top-bar {
-		.page-title-action {
-			display: none;
+		.top-bar-action-buttons-wrapper {
+			position: absolute;
+			top: calc(100% + 10px);
 		}
 
 		.secondary-main-area {
@@ -168,17 +163,7 @@ $top-bar-height: 50px;
 
 // Desktop mode
 @media (min-width: $editor-screen-md-min) {
-	#wpwrap {
-		.page-title-action {
-			display: none;
-		}
-	}
-
 	#e-admin-top-bar {
-		.page-title-action {
-			display: inline-block;
-		}
-
 		.secondary-main-area {
 			.bar-buttons-wrapper {
 				display: flex;

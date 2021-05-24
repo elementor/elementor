@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 
 export default function AdminTopBar() {
 	let actionButtonElements;
-	let clonedActionButtonElements;
 	const actionButtonsRef = useRef();
 	const [ pageTitle, setPageTitle ] = useState( null );
 
@@ -31,10 +30,8 @@ export default function AdminTopBar() {
 		actionButtonElements = document.querySelectorAll( '.page-title-action' );
 		if ( actionButtonElements ) {
 			actionButtonElements.forEach( ( actionButtonElement ) => {
-				actionButtonsRef.current.appendChild( actionButtonElement.cloneNode( true ) );
+				actionButtonsRef.current.appendChild( actionButtonElement );
 			} );
-
-			clonedActionButtonElements = document.querySelectorAll( '.top-bar-action-buttons-wrapper' );
 		}
 	}, [] );
 
@@ -65,7 +62,7 @@ export default function AdminTopBar() {
 		<div id="elementor-admin-top-bar">
 			<div className="bar-main-area bar-flex">
 				<BarHeading>{ pageTitle }</BarHeading>
-				<div className="top-bar-action-buttons-wrapper" ref={ actionButtonsRef } ></div>
+				<div className="top-bar-action-buttons-wrapper" ref={ actionButtonsRef } />
 			</div>
 
 			<div className="secondary-main-area bar-flex">
