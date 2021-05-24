@@ -1,6 +1,6 @@
 $e-app-import-resolver-panel-header-background-color: theme-colors(light);
 $e-app-import-resolver-panel-header-dark-background-color: dark-tints(700);
-$e-app-import-resolver-panel-body-background-color: tints(200);
+$e-app-import-resolver-panel-body-background-color: rgba(theme-colors(light), $opacity-05);
 $e-app-import-resolver-panel-body-dark-background-color: dark-tints(700);
 $e-app-import-resolver-conflicts-asset-border-color: tints(400);
 $e-app-import-resolver-conflicts-asset-dark-border-color: dark-tints(400);
