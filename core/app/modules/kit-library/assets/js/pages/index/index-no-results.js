@@ -18,8 +18,8 @@ function useNoResultContent( isFilterActive, clearFilter ) {
 				condition: () => location.pathname.includes( '/kit-library/favorites' ) && ! isFilterActive,
 			},
 			{
-				title: __( 'No Results Found', 'elementor' ),
-				description: __( 'Try retyping another keyword', 'elementor' ),
+				title: __( 'No results matched your search.', 'elementor' ),
+				description: __( 'Try different keywords or continue browsing.', 'elementor' ),
 				ctaText: __( 'Continue Browsing', 'elementor' ),
 				ctaAction: clearFilter,
 				condition: () => true,

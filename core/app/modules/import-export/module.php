@@ -91,8 +91,8 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function render_temp_import_export_content() {
-		$intro_text_link = sprintf( '<a href="#">%s</a>', __( 'Learn more', 'elementor' ) );
+	private function render_import_export_tab_content() {
+		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general" target="_blank">%s</a>', __( 'Learn more', 'elementor' ) );
 
 		$intro_text = sprintf(
 		/* translators: %1$s: New line break, %2$s: Learn More link. */
@@ -110,7 +110,7 @@ class Module extends BaseModule {
 				],
 				'description' => __( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
-					'url' => '#',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow',
 					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
@@ -122,82 +122,19 @@ class Module extends BaseModule {
 				],
 				'description' => __( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
-					'url' => '#',
+					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow',
 					'text' => __( 'Learn More', 'elementor' ),
 				],
 			],
 		];
 
-		$info_text_link = sprintf( '<a href="#">%s</a>', __( 'Click here.', 'elementor' ) );
-
-		$info_text = sprintf(
-		/* translators: %s: Click here. */
-			__( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site. %s', 'elementor' ),
-			$info_text_link
-		);
+		$info_text = __( 'Even after you import and apply a Template Kit, you can undo it by restoring a previous version of your site.', 'elementor' ) . '<br>' . __( 'Open Site Settings > History > Revisions.', 'elementor' );
 		?>
-		<style>
-			#tab-import-export-kit.elementor-active ~ p.submit {
-				display: none;
-			}
 
-			.tab-import-export-kit__wrapper {
-				margin: 40px 0;
-				max-width: 700px;
-			}
+		<div class="tab-import-export-kit__content">
+			<p class="tab-import-export-kit__info"><?php echo $intro_text; ?></p>
 
-			.tab-import-export-kit__container {
-				background-color: white;
-				font-size: 16px;
-				margin-top: 40px;
-				padding: 30px;
-			}
-
-			.tab-import-export-kit__container:not(:first-child) {
-				margin-top: 5px;
-			}
-
-			.tab-import-export-kit__box {
-				display: flex;
-				justify-content: space-between;
-				align-items: flex-start;
-			}
-
-			.tab-import-export-kit__box h2 {
-				color: #6D7882;
-				font-size: 28px;
-				font-weight: normal;
-				line-height: 1;
-				margin: 0;
-			}
-
-			.tab-import-export-kit__box .elementor-button.elementor-button-success {
-				font-weight: bold;
-				padding: 8px 16px;
-				text-transform: initial;
-				text-decoration: none;
-			}
-
-			.tab-import-export-kit__container p {
-				color: #A4AFB7;
-				font-size: 16px;
-				margin: 20px 0 25px;
-			}
-
-			.tab-import-export-kit__info {
-				font-size: 14px;
-			}
-
-			.tab-import-export-kit__container a,
-			.tab-import-export-kit__info a {
-				color: #58d0f5;
-				text-decoration: underline;
-			}
-		</style>
-
-		<p class="tab-import-export-kit__info"><?php echo $intro_text; ?></p>
-
-		<div class="tab-import-export-kit__wrapper">
+			<div class="tab-import-export-kit__wrapper">
 			<?php foreach ( $content_data as $data ) { ?>
 				<div class="tab-import-export-kit__container">
 					<div class="tab-import-export-kit__box">
@@ -207,12 +144,13 @@ class Module extends BaseModule {
 						</a>
 					</div>
 					<p><?php echo $data['description']; ?></p>
-					<a href="<?php echo $data['button']['url']; ?>"><?php echo $data['link']['text']; ?></a>
+					<a href="<?php echo $data['link']['url']; ?>" target="_blank"><?php echo $data['link']['text']; ?></a>
 				</div>
 			<?php } ?>
-		</div>
+			</div>
 
-		<p class="tab-import-export-kit__info"><?php echo $info_text; ?></p>
+			<p class="tab-import-export-kit__info"><?php echo $info_text; ?></p>
+		</div>
 		<?php
 	}
 
@@ -223,7 +161,7 @@ class Module extends BaseModule {
 				'intro' => [
 					'label' => __( 'Template Kits', 'elementor' ),
 					'callback' => function() {
-						$this->render_temp_import_export_content();
+						$this->render_import_export_tab_content();
 					},
 					'fields' => [],
 				],

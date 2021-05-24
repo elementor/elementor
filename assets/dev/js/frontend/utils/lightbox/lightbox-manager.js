@@ -1,4 +1,4 @@
-export default class extends elementorModules.ViewModule {
+export default class LightboxManager extends elementorModules.ViewModule {
 	static getLightbox() {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
@@ -28,7 +28,7 @@ export default class extends elementorModules.ViewModule {
 
 	isLightboxLink( element ) {
 		// Check for lowercase `a` to make sure it works also for links inside SVGs.
-		if ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
+		if ( ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) && ! element.dataset.elementorLightboxVideo ) {
 			return false;
 		}
 
@@ -42,6 +42,7 @@ export default class extends elementorModules.ViewModule {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
+			isColorPickingMode = elementor.$previewContents.find( 'body' ).hasClass( 'elementor-editor__ui-state__color-picker' ),
 			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {
@@ -58,7 +59,12 @@ export default class extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = this.isOptimizedAssetsLoading() ? await this.constructor.getLightbox() : elementorFrontend.utils.lightbox;
+		// Disable lightbox on color picking mode.
+		if ( isColorPickingMode ) {
+			return;
+		}
+
+		const lightbox = this.isOptimizedAssetsLoading() ? await LightboxManager.getLightbox() : elementorFrontend.utils.lightbox;
 
 		lightbox.createLightbox( element );
 	}
@@ -85,7 +91,7 @@ export default class extends elementorModules.ViewModule {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {
-				this.constructor.getLightbox();
+				LightboxManager.getLightbox();
 
 				// Breaking the iteration when the library loading has already been triggered.
 				return false;

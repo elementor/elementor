@@ -22,7 +22,7 @@ export const defaultQueryParams = {
 	}, {} ),
 	order: {
 		direction: 'desc',
-		by: 'createdAt',
+		by: 'featuredIndex',
 	},
 };
 

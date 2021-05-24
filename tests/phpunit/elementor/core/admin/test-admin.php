@@ -63,7 +63,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$admin = new Admin();
-		$document = $this->factory()->documents->create_elementor_document();
+		$document = $this->factory()->documents->create_and_get();
 
 		// Act
 		$result = $admin->add_elementor_post_state( [], $document->get_post() );
@@ -91,7 +91,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->act_as_subscriber();
 
 		$admin = new Admin();
-		$document = $this->factory()->documents->create_elementor_document();
+		$document = $this->factory()->documents->create_and_get();
 
 		// Act
 		$result = $admin->add_elementor_post_state( [], $document->get_post() );
@@ -123,7 +123,7 @@ class Test_Admin extends Elementor_Test_Base {
 		$pagenow = 'post.php';
 
 		new Admin();
-		$document = $this->factory()->documents->create_elementor_document();
+		$document = $this->factory()->documents->create_and_get();
 
 		Plugin::$instance->db->switch_to_post( $document->get_id() );
 

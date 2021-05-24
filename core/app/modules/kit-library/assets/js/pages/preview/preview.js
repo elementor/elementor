@@ -3,7 +3,7 @@ import Layout from '../../components/layout';
 import PreviewResponsiveControls from './preview-responsive-controls';
 import useKit from '../../hooks/use-kit';
 import { PreviewIframe } from './preview-iframe';
-import { useNavigate } from '@reach/router';
+import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
 
 export const breakpoints = [
@@ -54,9 +54,34 @@ function useHeaderButtons( id ) {
 	], [ id ] );
 }
 
+/**
+ * Get preview url.
+ *
+ * @param data
+ * @returns {null|string}
+ */
+function usePreviewUrl( data ) {
+	const location = useLocation();
+
+	return useMemo( () => {
+		if ( ! data ) {
+			return null;
+		}
+
+		const documentId = new URLSearchParams( location.pathname.split( '?' )?.[1] ).get( 'document_id' );
+
+		if ( ! documentId ) {
+			return data.previewUrl;
+		}
+
+		return data.documents.find( ( item ) => item.id === parseInt( documentId ) )?.previewUrl || data.previewUrl;
+	}, [ location, data ] );
+}
+
 export default function Preview( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
 	const headersButtons = useHeaderButtons( props.id );
+	const previewUrl = usePreviewUrl( data );
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
 	const iframeStyle = useMemo(
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
@@ -79,7 +104,7 @@ export default function Preview( props ) {
 				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
 			/>
 		}>
-			{ data.previewUrl && <PreviewIframe previewUrl={ data.previewUrl } style={ iframeStyle }/> }
+			{ previewUrl && <PreviewIframe previewUrl={ previewUrl } style={ iframeStyle }/> }
 		</Layout>
 	);
 }
