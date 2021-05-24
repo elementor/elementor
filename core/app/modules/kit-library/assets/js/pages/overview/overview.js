@@ -27,7 +27,7 @@ function useHeaderButtons( id ) {
 	], [ id ] );
 }
 
-export default function Item( props ) {
+export default function Overview( props ) {
 	const { data: kit, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( kit );
 	const headerButtons = useHeaderButtons( props.id );
@@ -48,21 +48,23 @@ export default function Item( props ) {
 			{
 				documentsByType.length > 0 &&
 				<Content>
-					{
-						documentsByType.map( ( contentType ) => (
-							<OverviewContentGroup
-								key={ contentType.id }
-								contentType={ contentType }
-								kitId={ props.id }
-							/>
-						) )
-					}
+					<>
+						{
+							documentsByType.map( ( contentType ) => (
+								<OverviewContentGroup
+									key={ contentType.id }
+									contentType={ contentType }
+									kitId={ props.id }
+								/>
+							) )
+						}
+					</>
 				</Content>
 			}
 		</Layout>
 	);
 }
 
-Item.propTypes = {
+Overview.propTypes = {
 	id: PropTypes.string,
 };
