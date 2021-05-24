@@ -9,18 +9,13 @@ export class MoveColumnResizeHandle extends After {
 		return 'move-column-resize-handle--document/elements/create';
 	}
 
-	getConditions( args ) {
-		const { containers = [ args.container ] } = args,
-			isDomOptimizationActive = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ];
+	getContainerType() {
+		return 'column';
+	}
 
-		if ( ! isDomOptimizationActive ) {
-			return false;
-		}
-
-		// If the created element, was created at column.
-		return containers.some( ( /**Container*/ container ) => (
-			'column' === container.model.get( 'elType' )
-		) );
+	getConditions() {
+		// Trigger the hook only if DOM optimization experiment is active.
+		return elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ];
 	}
 
 	apply( args ) {
