@@ -6,6 +6,7 @@
 $root: $eps-prefix + card;
 
 .#{$root} {
+	background-color: var(--card-background-color);
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
 	transition: $card-transition;
@@ -13,7 +14,6 @@ $root: $eps-prefix + card;
 	overflow: hidden;
 
 	&__header {
-		background-color: var(--card-background-color);
 		padding: $card-header-padding;
 		border-bottom: var(--card-header-footer-border);
 		min-height: $card-header-height;
@@ -38,7 +38,6 @@ $root: $eps-prefix + card;
 	}
 
 	&__body {
-		background-color: var(--card-background-color);
 		padding: $card-body-padding-y $card-body-padding-x;
 
 		&--padding {
@@ -80,7 +79,6 @@ $root: $eps-prefix + card;
 	}
 
 	&__footer {
-		background-color: var(--card-background-color);
 		padding: $card-padding;
 		border-top: var(--card-header-footer-border);
 		font-size: $card-footer-font-size;
@@ -91,13 +89,7 @@ $root: $eps-prefix + card;
 	}
 
 	&:hover {
-		.#{$root} {
-			&__header,
-			&__body,
-			&__footer {
-				background-color: var(--card-background-color-hover);
-			}
-		}
+		background-color: var(--card-background-color-hover);
 	}
 }
 
