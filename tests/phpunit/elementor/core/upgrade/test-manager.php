@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrade;
 
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;

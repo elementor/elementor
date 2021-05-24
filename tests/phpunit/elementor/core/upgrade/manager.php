@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrade;
 
 use Elementor\Core\Upgrade\Manager as UpgradeManager;
 use Elementor\Core\Upgrade\Updater;
