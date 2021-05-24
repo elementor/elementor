@@ -1,5 +1,6 @@
 import BarButton from './components/bar-button/bar-button';
 import BarHeading from './components/bar-heading/bar-heading';
+import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useState, useRef } from 'react';
 
 export default function AdminTopBar() {
@@ -35,27 +36,8 @@ export default function AdminTopBar() {
 		}
 	}, [] );
 
-	const isUserConnected = elementorCommonConfig.connect.is_user_connected;
 	const finderAction = () => {
 		$e.route( 'finder' );
-	};
-
-	const connectButton = () => {
-		const connectAction = () => {
-			window.open( connectUrl );
-		};
-
-		let tooltipText = __( 'Connect your account to get access to Elementor\'s Template Library & more.', 'elementor' ),
-			connectUrl = elementorCommonConfig.connect.connect_url,
-			buttonText = __( 'Connect Account', 'elementor' );
-
-		if ( isUserConnected ) {
-			tooltipText = '',
-				connectUrl = 'https://go.elementor.com/wp-dash-admin-bar-account/',
-				buttonText = __( 'My Elementor', 'elementor' );
-		}
-
-		return <BarButton icon="eicon-user-circle-o" onClick={connectAction} dataInfo={tooltipText}>{ buttonText }</BarButton>;
 	};
 
 	return (
@@ -70,7 +52,8 @@ export default function AdminTopBar() {
 					<BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton>
 					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
 				</div>
-				{ connectButton() }
+
+				<ConnectionButton />
 			</div>
 		</div>
 	);
