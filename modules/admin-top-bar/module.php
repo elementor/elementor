@@ -4,6 +4,7 @@ namespace Elementor\Modules\AdminTopBar;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -60,6 +61,18 @@ class Module extends BaseApp {
 				'react-dom',
 			],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'tipsy',
+			ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js',
+			[
+				'jquery',
+			],
+			'1.0.0',
 			true
 		);
 

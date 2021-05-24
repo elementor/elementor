@@ -17,7 +17,6 @@ export default function AdminTopBar() {
 	// Handle the page title visibility in admin top bar.
 	useEffect( () => {
 		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
-
 		if ( pageTitleElement ) {
 			const pageTitleText = pageTitleElement;
 			pageTitleElement.remove();
@@ -49,9 +48,17 @@ export default function AdminTopBar() {
 			window.open( connectUrl );
 		};
 
-		const connectUrl = isUserConnected ? 'https://go.elementor.com/wp-dash-admin-bar-account/' : elementorCommonConfig.connect.connect_url,
-			buttonText = isUserConnected ? __( 'My Elementor', 'elementor' ) : __( 'Connect Account', 'elementor' );
-		return <BarButton icon="eicon-user-circle-o" onClick={connectAction}>{ buttonText }</BarButton>;
+		let tooltipText = __( 'Connect your account to get access to Elementor\'s Template Library & more.', 'elementor' ),
+			connectUrl = elementorCommonConfig.connect.connect_url,
+			buttonText = __( 'Connect Account', 'elementor' );
+
+		if ( isUserConnected ) {
+			tooltipText = '',
+				connectUrl = 'https://go.elementor.com/wp-dash-admin-bar-account/',
+				buttonText = __( 'My Elementor', 'elementor' );
+		}
+
+		return <BarButton icon="eicon-user-circle-o" onClick={connectAction} dataInfo={tooltipText}>{ buttonText }</BarButton>;
 	};
 
 	return (
