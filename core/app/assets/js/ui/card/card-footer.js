@@ -13,14 +13,6 @@ export default function CardFooter( props ) {
 		classes.push( classNameBase + '--padding' );
 	}
 
-	if ( props.passive ) {
-		classes.push( classNameBase + '--passive' );
-	}
-
-	if ( props.active ) {
-		classes.push( classNameBase + '--active' );
-	}
-
 	return (
 		<footer className={ arrayToClassName( classes ) } style={ style }>
 			{ props.children }

@@ -13,14 +13,6 @@ export default function CardHeader( props ) {
 		classes.push( classNameBase + '--padding' );
 	}
 
-	if ( props.passive ) {
-		classes.push( classNameBase + '--passive' );
-	}
-
-	if ( props.active ) {
-		classes.push( classNameBase + '--active' );
-	}
-
 	return (
 		<header className={ arrayToClassName( classes ) } style={ style }>
 			{ props.children }

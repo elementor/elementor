@@ -13,14 +13,6 @@ export default function CardBody( props ) {
 		classes.push( classNameBase + '--padding' );
 	}
 
-	if ( props.passive ) {
-		classes.push( classNameBase + '--passive' );
-	}
-
-	if ( props.active ) {
-		classes.push( classNameBase + '--active' );
-	}
-
 	return (
 		<main className={ arrayToClassName( classes ) } style={ style }>
 			{ props.children }
