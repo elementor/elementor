@@ -153,7 +153,7 @@ export default function useKits( initialQueryParams = {} ) {
 	const selectedTaxonomies = useSelectedTaxonomies( queryParams.taxonomies );
 
 	const isFilterActive = useMemo(
-		() => queryParams.search || !! selectedTaxonomies.length,
+		() => !! queryParams.search || !! selectedTaxonomies.length,
 		[ queryParams ]
 	);
 
