@@ -71,7 +71,7 @@ export default function ImportResolver() {
 					</Notice>
 				}
 
-				<Card>
+				<Card className="e-app-import-resolver__panel">
 					<Card.Header padding="20" className="e-app-import-resolver__panel-header">
 						<Card.Headline>Select the items you want to keep and apply:</Card.Headline>
 					</Card.Header>

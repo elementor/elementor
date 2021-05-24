@@ -1,7 +1,7 @@
 $e-app-import-resolver-panel-header-background-color: theme-colors(light);
-$e-app-import-resolver-panel-header-dark-background-color: dark-tints(700);
+$e-app-import-resolver-panel-header-dark-background-color: dark-tints(500);
 $e-app-import-resolver-panel-body-background-color: rgba(theme-colors(light), $opacity-05);
-$e-app-import-resolver-panel-body-dark-background-color: dark-tints(700);
+$e-app-import-resolver-panel-body-dark-background-color: rgba(dark-theme-colors(dark), $opacity-005);
 $e-app-import-resolver-conflicts-asset-border-color: tints(400);
 $e-app-import-resolver-conflicts-asset-dark-border-color: dark-tints(400);
 $e-app-import-resolver-conflicts-asset-inactive-color: tints(500);
@@ -22,6 +22,11 @@ $root: e-app-import-resolver;
 	}
 
 	&__panel {
+		&,
+		&:hover {
+			background-color: initial;
+		}
+
 		&-header {
 			background-color: var(--e-app-import-resolver-panel-header-background-color);
 		}
