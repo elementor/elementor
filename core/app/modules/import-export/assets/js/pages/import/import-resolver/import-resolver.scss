@@ -1,4 +1,20 @@
-.e-app-import-resolver {
+$e-app-import-resolver-panel-header-background-color: theme-colors(light);
+$e-app-import-resolver-panel-header-dark-background-color: dark-tints(700);
+$e-app-import-resolver-panel-body-background-color: tints(200);
+$e-app-import-resolver-panel-body-dark-background-color: dark-tints(700);
+$e-app-import-resolver-conflicts-asset-border-color: tints(400);
+$e-app-import-resolver-conflicts-asset-dark-border-color: dark-tints(400);
+$e-app-import-resolver-conflicts-asset-inactive-color: tints(500);
+$e-app-import-resolver-conflicts-asset-inactive-dark-color: dark-tints(300);
+
+$root: e-app-import-resolver;
+
+.#{$root} {
+	--e-app-import-resolver-panel-header-background-color: #{$e-app-import-resolver-panel-header-background-color};
+	--e-app-import-resolver-panel-body-background-color: #{$e-app-import-resolver-panel-body-background-color};
+	--e-app-import-resolver-conflicts-asset-border-color: #{$e-app-import-resolver-conflicts-asset-border-color};
+	--e-app-import-resolver-conflicts-asset-inactive-color: #{$e-app-import-resolver-conflicts-asset-inactive-color};
+
 	padding-bottom: spacing(20);
 
 	&__notice {
@@ -7,11 +23,11 @@
 
 	&__panel {
 		&-header {
-			background-color: theme-colors(light);
+			background-color: var(--e-app-import-resolver-panel-header-background-color);
 		}
 
 		&-body {
-			background-color: rgba(theme-colors(light), $opacity-07);
+			background-color: var(--e-app-import-resolver-panel-body-background-color);
 		}
 	}
 
@@ -27,18 +43,27 @@
 
 		&__asset {
 			&:not(:first-child) {
-				border-inline-start: 2px solid tints(400);
+				border-inline-start: 2px solid var(--e-app-import-resolver-conflicts-asset-border-color);
 				padding-inline-start: spacing(16);
 				margin-inline-start: spacing(16);
 			}
 
 			&:not(.active) {
-				color: tints(500);
+				color: var(--e-app-import-resolver-conflicts-asset-inactive-color);
 			}
 		}
 
 		&__edit-template {
 			margin-inline-start: spacing(5);
 		}
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-resolver-panel-header-background-color: #{$e-app-import-resolver-panel-header-dark-background-color};
+		--e-app-import-resolver-panel-body-background-color: #{$e-app-import-resolver-panel-body-dark-background-color};
+		--e-app-import-resolver-conflicts-asset-border-color: #{$e-app-import-resolver-conflicts-asset-dark-border-color};
+		--e-app-import-resolver-conflicts-asset-inactive-color: #{$e-app-import-resolver-conflicts-asset-inactive-dark-color};
 	}
 }
