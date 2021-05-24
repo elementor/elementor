@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
 use Elementor\Plugin;
@@ -371,14 +372,38 @@ abstract class Base_App {
 	 * @return array
 	 */
 	protected function get_connect_info() {
-		return [
-			'app' => $this->get_slug(),
-			'access_token' => $this->get( 'access_token' ),
-			'client_id' => $this->get( 'client_id' ),
-			'local_id' => get_current_user_id(),
-			'site_key' => $this->get_site_key(),
-			'home_url' => trailingslashit( home_url() ),
-		];
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [] );
+
+		return array_merge(
+			[
+				'app' => $this->get_slug(),
+				'access_token' => $this->get( 'access_token' ),
+				'client_id' => $this->get( 'client_id' ),
+				'local_id' => get_current_user_id(),
+				'site_key' => $this->get_site_key(),
+				'home_url' => trailingslashit( home_url() ),
+			],
+			$additional_info
+		);
+	}
+
+	/**
+	 * @param $endpoint
+	 *
+	 * @return array
+	 */
+	protected function generate_authentication_headers( $endpoint ) {
+		$connect_info = ( new Collection( $this->get_connect_info() ) )
+			->map_with_keys( function ( $value, $key ) {
+				// For bc `get_connect_info` returns the connect info with underscore,
+				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
+				return [ str_replace( '_', '-', $key ) => $value ];
+			} )
+			->replace_recursive( [ 'endpoint' => $endpoint ] );
+
+		return $connect_info
+			->merge( [ 'X-Elementor-Signature' => $this->generate_signature( $connect_info->all() ) ] )
+			->all();
 	}
 
 	/**
@@ -396,15 +421,8 @@ abstract class Base_App {
 			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
 		] );
 
-		$connect_info = array_replace_recursive( $this->get_connect_info(), [
-			'endpoint' => $endpoint,
-		] );
-
 		$args = array_replace_recursive( [
-			'headers' => [
-				'X-Elementor-Connect-Info' => wp_json_encode( $connect_info, JSON_NUMERIC_CHECK ),
-				'X-Elementor-Signature' => $this->is_connected() ? $this->generate_signature( $connect_info ) : null,
-			],
+			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : [],
 			'method' => $method,
 			'timeout' => 25,
 		], $args );

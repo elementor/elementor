@@ -128,11 +128,21 @@ class Test_Collection extends Elementor_Test_Base {
 
 		// Act
 		$result = $collection->merge_recursive( $collection2->all() );
-		$result2 = $collection2->merge_recursive( $collection2 );
 
 		// Assert
 		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
-		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
+	}
+
+	public function test_replace_recursive() {
+		// Arrange
+		$collection = new Collection( [ 'a' => [ '1', '2' ], 'b' => [ '3' ] ] );
+		$collection2 = new Collection( [ 'b' => [ '4', '5' ], 'c' => [ '6' ] ] );
+
+		// Act
+		$result = $collection->replace_recursive( $collection2->all() );
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '4', '5' ], 'c' => [ '6' ] ], $result->all() );
 	}
 
 	public function test_implode() {
