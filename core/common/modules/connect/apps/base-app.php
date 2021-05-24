@@ -388,6 +388,25 @@ abstract class Base_App {
 	}
 
 	/**
+	 * @param $endpoint
+	 *
+	 * @return array
+	 */
+	protected function generate_authentication_headers( $endpoint ) {
+		$connect_info = ( new Collection( $this->get_connect_info() ) )
+			->map_with_keys( function ( $value, $key ) {
+				// For bc `get_connect_info` returns the connect info with underscore,
+				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
+				return [ str_replace( '_', '-', $key ) => $value ];
+			} )
+			->replace_recursive( [ 'endpoint' => $endpoint ] );
+
+		return $connect_info
+			->merge( [ 'X-Elementor-Signature' => $this->generate_signature( $connect_info->all() ) ] )
+			->all();
+	}
+
+	/**
 	 * Send an http request
 	 *
 	 * @param       $method
@@ -402,20 +421,8 @@ abstract class Base_App {
 			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
 		] );
 
-		$connect_info = ( new Collection( $this->get_connect_info() ) )
-			->map_with_keys( function ( $value, $key ) {
-				return [ str_replace( '_', '-', $key ) => $value ];
-			} )
-			->replace_recursive( [ 'endpoint' => $endpoint ] );
-
 		$args = array_replace_recursive( [
-			'headers' => $connect_info->merge(
-				[
-					'X-Elementor-Signature' => $this->is_connected() ?
-						$this->generate_signature( $connect_info->all() ) :
-						null,
-				]
-			)->all(),
+			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : [],
 			'method' => $method,
 			'timeout' => 25,
 		], $args );
