@@ -12,13 +12,6 @@ const sass = {
 				dest: 'assets/css',
 				ext: '.css'
 			},
-			{
-				expand: true,
-				cwd: 'modules/admin-top-bar/assets/scss',
-				src: '*.scss',
-				dest: 'assets/css/modules/admin-top-bar',
-				ext: '.css',
-			},
 		]
 	}
 };

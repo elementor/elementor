@@ -46,12 +46,16 @@ class Module extends BaseApp {
 	 * Enqueue admin scripts
 	 */
 	private function enqueue_scripts() {
-		wp_enqueue_style(
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+
+		wp_register_style(
 			'elementor-admin-top-bar',
-			$this->get_css_assets_url( 'modules/admin-top-bar/admin', null, 'default', true ),
+			$this->get_css_assets_url( 'admin-top-bar' . $direction_suffix ),
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		wp_enqueue_style( 'elementor-admin-top-bar' );
 
 		wp_enqueue_script(
 			'elementor-admin-top-bar',
