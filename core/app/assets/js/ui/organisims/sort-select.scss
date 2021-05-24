@@ -1,0 +1,47 @@
+.eps-sort-select {
+	width: 100%;
+	font-size: type(size, "15");
+	display: flex;
+
+	&__select-wrapper {
+		flex: 1;
+		position: relative;
+
+		&::after {
+			content: "\e8ad";
+			font-family: eicons;
+			position: absolute;
+			@include end( spacing( 10 ) );
+			top: 0;
+			bottom: 0;
+			color: tints(500);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: none;
+		}
+	}
+
+	&__select {
+		width: 100%;
+		padding: spacing(10) spacing(10);
+		border: none;
+		background: tints(100);
+		outline: none;
+		color: tints(700);
+		line-height: type( line-height, 'flat' );
+		cursor: pointer;
+		height: spacing(44);
+		appearance: none;
+		-webkit-appearance:none;
+		border-radius: 0;
+	}
+
+	&__button {
+		padding: spacing(12) spacing(12);
+		background: tints(100);
+		@include border-start( $eps-border );
+		line-height: type( line-height, 'flat' );
+		color: tints(500);
+	}
+}
