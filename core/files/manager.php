@@ -7,6 +7,7 @@ use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
@@ -170,7 +171,7 @@ class Manager {
 	 * @access private
 	 */
 	private function reset_assets_data_css() {
-		$assets_data_key = '_elementor_assets_data';
+		$assets_data_key = Page_Assets_Data_Manager::ASSETS_DATA_KEY;
 
 		$assets_inline_content = get_option( $assets_data_key, [] );
 
