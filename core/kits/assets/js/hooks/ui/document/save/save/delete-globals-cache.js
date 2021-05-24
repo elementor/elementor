@@ -16,7 +16,7 @@ export class KitDeleteGlobalsCache extends After {
 
 	apply() {
 		// After kit updates - remove globals from cache and force re-request from server.
-		$e.data.deleteCache( $e.components.get( 'globals' ), 'globals/index' );
+		$e.components.get( 'globals' ).refreshGlobalData();
 	}
 }
 

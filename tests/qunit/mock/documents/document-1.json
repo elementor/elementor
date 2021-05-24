@@ -43,7 +43,8 @@
 	"elements_categories": {},
 	"messages": {
 	  "publish_notification": "Hurray! Your Post is live."
-	}
+	},
+	"support_kit": true
   },
   "container": "body",
   "urls": {

@@ -1,7 +1,12 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
+use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -658,10 +663,12 @@ class Upgrades {
 				return;
 			}
 
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
-			$current_settings['viewport_md'] = get_option( 'elementor_viewport_md', '' );
-			$current_settings['viewport_lg'] = get_option( 'elementor_viewport_lg', '' );
+			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
+			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'lg' ] = get_option( 'elementor_viewport_lg', '' );
 
 			$kit_settings = $kit->get_meta( $meta_key );
 
@@ -687,7 +694,7 @@ class Upgrades {
 			];
 
 			foreach ( $settings_to_slider as $setting ) {
-				if ( ! empty( $current_settings[ $setting ] ) ) {
+				if ( isset( $current_settings[ $setting ] ) ) {
 					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
@@ -711,7 +718,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_colors_enabled() ) {
 				self::notice( 'System colors are disabled. nothing to do.' );
@@ -721,7 +728,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_colors'] ) ) {
 				self::notice( 'System colors already exist. nothing to do.' );
@@ -748,7 +755,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -758,12 +765,12 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_saved_colors_to_kit( $updater ) {
+	public static function _v_3_0_0_move_saved_colors_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
 				self::notice( 'Custom colors already exist. nothing to do.' );
@@ -808,7 +815,7 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
@@ -818,7 +825,7 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function _v_3_0_0_move_default_typography_to_kit( $updater ) {
+	public static function _v_3_0_0_move_default_typography_to_kit( $updater, $include_revisions = true ) {
 		$callback = function( $kit_id ) {
 			if ( ! Plugin::$instance->kits_manager->is_custom_typography_enabled() ) {
 				self::notice( 'System typography is disabled. nothing to do.' );
@@ -828,7 +835,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_typography'] ) ) {
 				self::notice( 'System typography already exist. nothing to do.' );
@@ -857,16 +864,69 @@ class Upgrades {
 			}
 		};
 
-		return self::move_settings_to_kit( $callback, $updater );
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function v_3_1_0_move_optimized_dom_output_to_experiments() {
+		$saved_option = get_option( 'elementor_optimized_dom_output' );
+
+		if ( $saved_option ) {
+			$new_option = 'enabled' === $saved_option ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
+
+			add_option( 'elementor_experiment-e_dom_optimization', $new_option );
+		}
+	}
+
+	public static function _v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
+		$callback = function( $kit_id ) {
+			$kit = Plugin::$instance->documents->get( $kit_id );
+
+			$kit_settings = $kit->get_meta( SettingsPageManager::META_KEY );
+
+			if ( ! $kit_settings ) {
+				// Nothing to upgrade.
+				return;
+			}
+
+			$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+			$old_mobile_option_key = $prefix . 'md';
+			$old_tablet_option_key = $prefix . 'lg';
+
+			$breakpoint_values = [
+				$old_mobile_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_mobile_option_key ),
+				$old_tablet_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_tablet_option_key ),
+			];
+
+			// Breakpoint values are either a number, or an empty string (empty setting).
+			array_walk( $breakpoint_values, function( &$breakpoint_value, $breakpoint_key ) {
+				if ( $breakpoint_value ) {
+					// If the saved breakpoint value is a number, 1px is reduced because the new breakpoints system is
+					// based on max-width, as opposed to the old breakpoints system that worked based on min-width.
+					$breakpoint_value--;
+				}
+
+				return $breakpoint_value;
+			} );
+
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] = $breakpoint_values[ $old_mobile_option_key ];
+			$kit_settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] = $breakpoint_values[ $old_tablet_option_key ];
+
+			$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
+			$page_settings_manager->save_settings( $kit_settings, $kit_id );
+		};
+
+		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
 	/**
 	 * @param callback $callback
-	 * @param Updater $updater
+	 * @param Updater  $updater
+	 *
+	 * @param bool     $include_revisions
 	 *
 	 * @return mixed
 	 */
-	private static function move_settings_to_kit( $callback, $updater ) {
+	private static function move_settings_to_kit( $callback, $updater, $include_revisions = true ) {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 		if ( ! $active_kit_id ) {
 			self::notice( 'Active kit not found. nothing to do.' );
@@ -879,6 +939,10 @@ class Upgrades {
 		// (don't include it with revisions in order to avoid offset/iteration count wrong numbers)
 		if ( 0 === $offset ) {
 			$callback( $active_kit_id );
+		}
+
+		if ( ! $include_revisions ) {
+			return false;
 		}
 
 		$revisions_ids = wp_get_post_revisions( $active_kit_id, [

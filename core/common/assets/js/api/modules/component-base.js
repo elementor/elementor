@@ -131,7 +131,7 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	registerTabRoute( tab ) {
-		this.registerRoute( tab, () => this.activateTab( tab ) );
+		this.registerRoute( tab, ( args ) => this.activateTab( tab, args ) );
 	}
 
 	dependency() {
@@ -234,14 +234,14 @@ export default class ComponentBase extends elementorModules.Module {
 
 	renderTab( tab ) {} // eslint-disable-line
 
-	activateTab( tab ) {
+	activateTab( tab, args ) {
 		this.currentTab = tab;
-		this.renderTab( tab );
+		this.renderTab( tab, args );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
 			.on( 'click', ( event ) => {
-				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ) );
+				$e.route( this.getTabRoute( event.currentTarget.dataset.tab ), args );
 			} )
 			.removeClass( 'elementor-active' )
 			.filter( '[data-tab="' + tab + '"]' )

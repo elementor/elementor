@@ -1,5 +1,6 @@
 //Variables
 @import "../helpers/variables";
+@import "../helpers/mixins";
 
 $theme-dark-gray-darkest: #34383C;
 $theme-dark-gray-darker: #475158;
@@ -275,6 +276,10 @@ select {
 		}
 	}
 
+	#elementor-panel-elements-search-area {
+		background-color: $theme-dark-gray-darkest;
+	}
+
 	#elementor-panel-elements-search-input {
 		background-color: $theme-dark-gray;
 		color: $theme-dark-light;
@@ -508,7 +513,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
-	background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
+	@include checkers-background(12px, $theme-dark-gray-darkest);
 	background-color: $theme-dark-gray-light;
 }
 
@@ -868,6 +873,11 @@ body.rtl .elementor-control-type-gallery {
 		}
 	}
 
+	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
+		background-color: $theme-dark-gray;
+		color: $theme-dark-gray-lightest;
+	}
+
 	&.select2-container--open,
 	&.select2-container--focus {
 
@@ -901,6 +911,10 @@ body.rtl .elementor-control-type-gallery {
 		.select2-selection__choice {
 			background-color: $theme-dark-gray;
 			border-color: $theme-dark-gray;
+
+			&__remove {
+				color: $theme-dark-gray-lightest;
+			}
 		}
 	}
 

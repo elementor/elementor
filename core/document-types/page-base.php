@@ -54,11 +54,11 @@ abstract class PageBase extends Document {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
-		parent::_register_controls();
+	protected function register_controls() {
+		parent::register_controls();
 
 		self::register_hide_title_control( $this );
 
@@ -86,7 +86,7 @@ abstract class PageBase extends Document {
 			[
 				'label' => __( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'description' => __( 'Not working? You can set a different selector for the title in Global Settings > Layout', 'elementor' ),
+				'description' => __( 'Not working? You can set a different selector for the title in Site Settings > Layout', 'elementor' ),
 				'selectors' => [
 					':root' => '--page-title-display: none',
 				],

@@ -224,15 +224,17 @@ export default class Container extends ArgsObject {
 
 		// Backwards Compatibility: if there is only one repeater (type=repeater), set it's children as current children.
 		// Since 3.0.0.
-		const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
+		if ( [ 'widget', 'document' ].includes( this.type ) ) {
+			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
-		if ( 1 === repeaters.length ) {
-			Object.defineProperty( this, 'children', {
-				get() {
-					elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
-					return this.repeaters[ repeaters[ 0 ].name ].children;
-				},
-			} );
+			if ( 1 === repeaters.length ) {
+				Object.defineProperty( this, 'children', {
+					get() {
+						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						return this.repeaters[ repeaters[ 0 ].name ].children;
+					},
+				} );
+			}
 		}
 	}
 
@@ -245,7 +247,7 @@ export default class Container extends ArgsObject {
 			rowSettingsModel.set( '_id', rowId );
 		}
 
-		this.repeaters[ repeaterName ].children[ index ] = new elementorModules.editor.Container( {
+		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
 			type: 'repeater',
 			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
@@ -254,10 +256,10 @@ export default class Container extends ArgsObject {
 			settings: rowSettingsModel,
 			view: this.view,
 			parent: this.repeaters[ repeaterName ],
-			label: this.label + ' ' + elementor.translate( 'Item' ),
+			label: this.label + ' ' + __( 'Item', 'elementor' ),
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
-		} );
+		} ) );
 	}
 
 	/**

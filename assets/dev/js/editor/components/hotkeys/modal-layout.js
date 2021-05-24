@@ -9,7 +9,7 @@ export default class extends elementorModules.common.views.modal.Layout {
 
 	getLogoOptions() {
 		return {
-			title: elementor.translate( 'keyboard_shortcuts' ),
+			title: __( 'Keyboard Shortcuts', 'elementor' ),
 		};
 	}
 

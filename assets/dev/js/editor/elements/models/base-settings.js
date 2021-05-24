@@ -52,7 +52,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			var isMultipleControl = jQuery.isPlainObject( control.default );
 
 			if ( undefined !== attrs[ controlName ] && isMultipleControl && ! _.isObject( attrs[ controlName ] ) && ! hasDynamicSettings ) {
-				elementor.debug.addCustomError(
+				elementorCommon.debug.addCustomError(
 					new TypeError( 'An invalid argument supplied as multiple control value' ),
 					'InvalidElementData',
 					'Element `' + ( self.get( 'widgetType' ) || self.get( 'elType' ) ) + '` got <' + attrs[ controlName ] + '> as `' + controlName + '` value. Expected array or object.'
@@ -358,6 +358,33 @@ BaseSettingsModel = Backbone.Model.extend( {
 		return settings;
 	},
 
+	removeDataDefaults( data, controls ) {
+		jQuery.each( data, ( key ) => {
+			const control = controls[ key ];
+
+			if ( ! control ) {
+				return;
+			}
+
+			// TODO: use `save_default` in text|textarea controls.
+			if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
+				return;
+			}
+
+			if ( control.is_repeater ) {
+				data[ key ].forEach( ( repeaterRow ) => {
+					this.removeDataDefaults( repeaterRow, control.fields );
+				} );
+
+				return;
+			}
+
+			if ( _.isEqual( data[ key ], control.default ) ) {
+				delete data[ key ];
+			}
+		} );
+	},
+
 	toJSON: function( options ) {
 		var data = Backbone.Model.prototype.toJSON.call( this );
 
@@ -373,26 +400,8 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		// TODO: `options.removeDefault` is a bc since 2.5.14
-		if ( ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) || options.removeDefault ) {
-			var controls = this.controls;
-
-			_.each( data, function( value, key ) {
-				const control = controls[ key ];
-
-				if ( ! control ) {
-					return;
-				}
-
-				// TODO: use `save_default` in text|textarea controls.
-				if ( control.save_default || ( ( 'text' === control.type || 'textarea' === control.type ) && data[ key ] ) ) {
-					return;
-				}
-
-				if ( _.isEqual( data[ key ], control.default ) ) {
-					delete data[ key ];
-				}
-			} );
+		if ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) {
+			this.removeDataDefaults( data, this.controls );
 		}
 
 		return elementorCommon.helpers.cloneObject( data );

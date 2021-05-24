@@ -1,0 +1,151 @@
+$select-box-selected-item-default-color: #5897fb;
+
+// Selection Box
+$select2-selection-background-color: theme-colors(light);
+$select2-selection-dark-background-color: dark-tints(700);
+
+$select2-selection-color: tints(600);
+$select2-selection-dark-color: dark-tints(100);
+
+$select2-selection-border-color: tints(300);
+$select2-selection-dark-border-color: dark-tints(400);
+
+$select2-selection-opened-focused-border-color: tints(200);
+$select2-selection-opened-focused-dark-border-color: dark-tints(300);
+
+$select2-single-selection-rendered-color: tints(600);
+$select2-single-selection-rendered-dark-color: dark-tints(100);
+
+$select2-default-single-selection-background-color: theme-colors(light);
+$select2-default-single-selection-dark-background-color: dark-tints(700);
+
+$select2-default-single-selection-border-color: tints(300);
+$select2-default-single-selection-dark-border-color: dark-tints(500);
+
+$select2-default-multiple-selection-background-color: theme-colors(light);
+$select2-default-multiple-selection-dark-background-color: dark-tints(700);
+
+$select2-default-multiple-selection-choice-background-color: tints(200);
+$select2-default-multiple-selection-choice-dark-background-color: dark-tints(500);
+
+$select2-default-multiple-selection-choice-color: tints(600);
+$select2-default-multiple-selection-choice-dark-color: dark-tints(100);
+
+$select2-default-multiple-selection-choice-border-color: tints(200);
+$select2-default-multiple-selection-choice-dark-border-color: dark-tints(500);
+
+$select2-default-multiple-selection-choice-remove-color: tints(500);
+$select2-default-multiple-selection-choice-remove-dark-color: dark-tints(200);
+
+$select2-default-multiple-selection-choice-remove-hover-color: tints(600);
+$select2-default-multiple-selection-choice-remove-hover-dark-color: dark-tints(100);
+
+// Option
+
+$select2-default-results-selected-option-background-color: theme-colors(light);
+$select2-default-results-selected-option-dark-background-color: dark-tints(700);
+
+$select2-default-results-selected-option-color: tints(600);
+$select2-default-results-selected-option-dark-color: dark-tints(100);
+
+// Highlighted Option
+
+$select2-default-results-highlighted-option-background-color: $select-box-selected-item-default-color;
+$select2-default-results-highlighted-option-dark-background-color: dark-tints(500);
+
+$select2-default-results-highlighted-option-color: theme-colors(light);
+$select2-default-results-highlighted-option-dark-color: dark-tints(100);
+
+// Results - Selected
+
+$select2-results-selected-option-background-color: $select-box-selected-item-default-color;
+$select2-results-selected-option-dark-background-color: dark-tints(500);
+
+$select2-results-selected-option-color: theme-colors(light);
+$select2-results-selected-option-dark-color: dark-tints(100);
+
+// Dropdown
+
+$select2-dropdown-background-color: theme-colors(light);
+$select2-dropdown-dark-background-color: dark-tints(700);
+
+$select2-dropdown-border-color: tints(300);
+$select2-dropdown-dark-border-color: dark-tints(400);
+
+:root {
+	// Selection Box
+	--select2-selection-background-color: #{$select2-selection-background-color};
+	--select2-selection-color: #{$select2-selection-color};
+	--select2-selection-border-color: #{$select2-selection-border-color};
+	--select2-selection-opened-focused-border-color: #{$select2-selection-opened-focused-border-color};
+
+	--select2-single-selection-rendered-color: #{$select2-single-selection-rendered-color};
+
+	--select2-default-single-selection-background-color: #{$select2-default-single-selection-background-color};
+
+	--select2-default-single-selection-border-color: #{$select2-default-single-selection-border-color};
+
+	--select2-default-multiple-selection-background-color: #{$select2-default-multiple-selection-background-color};
+
+	// Multiple - selected items
+	--select2-default-multiple-selection-choice-background-color: #{$select2-default-multiple-selection-choice-background-color};
+	--select2-default-multiple-selection-choice-color: #{$select2-default-multiple-selection-choice-color};
+	--select2-default-multiple-selection-choice-border-color: #{$select2-default-multiple-selection-choice-border-color};
+	--select2-default-multiple-selection-choice-remove-color: #{$select2-default-multiple-selection-choice-remove-color};
+	--select2-default-multiple-selection-choice-remove-hover-color: #{$select2-default-multiple-selection-choice-remove-hover-color};
+
+	// Option
+	--select2-default-results-selected-option-background-color: #{$select2-default-results-selected-option-background-color};
+	--select2-default-results-selected-option-color: #{$select2-default-results-selected-option-color};
+
+	// Highlighted Option
+	--select2-default-results-highlighted-option-background-color: #{$select2-default-results-highlighted-option-background-color};
+	--select2-default-results-highlighted-option-color: #{$select2-default-results-highlighted-option-color};
+
+	// Results - Selected
+	--select2-results-selected-option-background-color: #{$select2-results-selected-option-background-color};
+	--select2-results-selected-option-color: #{$select2-results-selected-option-color};
+
+	// Dropdown
+	--select2-dropdown-background-color: #{$select2-dropdown-background-color};
+	--select2-dropdown-border-color: #{$select2-dropdown-border-color};
+}
+
+.eps-theme-dark {
+	// Selection Box
+	--select2-selection-background-color: #{$select2-selection-dark-background-color};
+	--select2-selection-color: #{$select2-selection-dark-color};
+	--select2-selection-border-color: #{$select2-selection-dark-border-color};
+	--select2-selection-opened-focused-border-color: #{$select2-selection-opened-focused-dark-border-color};
+
+	--select2-single-selection-rendered-color: #{$select2-single-selection-rendered-dark-color};
+
+	--select2-default-single-selection-background-color: #{$select2-default-single-selection-dark-background-color};
+
+	--select2-default-single-selection-border-color: #{$select2-default-single-selection-dark-border-color};
+
+	--select2-default-multiple-selection-background-color: #{$select2-default-multiple-selection-dark-background-color};
+
+	// Multiple - Selected Items
+	--select2-default-multiple-selection-choice-background-color: #{$select2-default-multiple-selection-choice-dark-background-color};
+	--select2-default-multiple-selection-choice-color: #{$select2-default-multiple-selection-choice-dark-color};
+	--select2-default-multiple-selection-choice-border-color: #{$select2-default-multiple-selection-choice-dark-border-color};
+	--select2-default-multiple-selection-choice-remove-color: #{$select2-default-multiple-selection-choice-remove-dark-color};
+	--select2-default-multiple-selection-choice-remove-hover-color: #{$select2-default-multiple-selection-choice-remove-hover-dark-color};
+
+	// Option
+	--select2-default-results-selected-option-background-color: #{$select2-default-results-selected-option-dark-background-color};
+	--select2-default-results-selected-option-color: #{$select2-default-results-selected-option-dark-color};
+
+	// Highlighted Option
+	--select2-default-results-highlighted-option-background-color: #{$select2-default-results-highlighted-option-dark-background-color};
+	--select2-default-results-highlighted-option-color: #{$select2-default-results-highlighted-option-dark-color};
+
+	// Results - Selected
+	--select2-results-selected-option-background-color: #{$select2-results-selected-option-dark-background-color};
+	--select2-results-selected-option-color: #{$select2-results-selected-option-dark-color};
+
+	// Dropdown
+	--select2-dropdown-background-color: #{$select2-dropdown-dark-background-color};
+	--select2-dropdown-border-color: #{$select2-dropdown-dark-border-color};
+}

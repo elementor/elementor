@@ -2,16 +2,17 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Upgrade\Manager;
-use Elementor\Core\Upgrade\Updater;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Tests\Phpunit\Elementor\Modules\Usage\Test_Module;
-use Elementor\Utils;
+use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 
 class Test_Upgrades extends Elementor_Test_Base {
+
+	use Test_Upgrades_Trait;
 
 	public function test_v_2_7_0_rename_document_types_to_wp() {
 		$this->markTestSkipped();
@@ -71,8 +72,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 	public function test_v_2_7_1_recalc_usage_data() {
 		$posts_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $posts_count / $query_limit );
+		$expected_iterations = (int) ceil( $posts_count / $this->query_limit );
 		$upgrade_iterations = 1;
 
 		// Create posts.
@@ -81,7 +81,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 
 		$updater = $this->create_updater();
-		$updater->set_limit( $query_limit );
+		$updater->set_limit( $this->query_limit );
 
 		// Run upgrade.
 		while ( Upgrades::_v_2_7_1_recalc_usage_data( $updater ) ) {
@@ -114,7 +114,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$generic_font = 'some-generic-font';
 		$lightbox_color = '#e1e3ef';
 		$container_width = '1000';
-		$space_between_widgets = '25';
+		$space_between_widgets = '0'; // Ensure that value 0 is also upgraded (#12298).
 		$viewport_lg = '900';
 		$viewport_md = '800';
 
@@ -122,10 +122,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 			'default_generic_fonts' => $generic_font,
 			'lightbox_color' => $lightbox_color,
 			'container_width' => $container_width,
-			'space_between_widgets' => $space_between_widgets,
 		];
 
 		update_option( '_elementor_general_settings', $general_settings );
+
+		// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
+		update_option( 'elementor_space_between_widgets', $space_between_widgets );
 		update_option( 'elementor_viewport_lg', $viewport_lg );
 		update_option( 'elementor_viewport_md', $viewport_md );
 
@@ -136,12 +138,10 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
 		// Create revisions.
-		$revisions_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
 		$upgrade_iterations = 1;
 
-		for ( $i = 0; $i < $revisions_count; $i++ ) {
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
 			$kit->save( [
 				'elements' => [],
 			] );
@@ -160,7 +160,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertNotEquals( $space_between_widgets, $kit_space_between_widgets_before );
 		$this->assertNotEquals( $viewport_md, $kit_viewport_md_before );
 
-		$updater->set_limit( $query_limit );
+		$updater->set_limit( $this->query_limit );
 
 		// Run upgrade.
 		while ( Upgrades::_v_3_0_0_move_general_settings_to_kit( $updater ) ) {
@@ -171,7 +171,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			] );
 
 			// Avoid infinity loop.
-			if ( $upgrade_iterations > $revisions_count ) {
+			if ( $upgrade_iterations > $this->revisions_count ) {
 				break;
 			}
 		}
@@ -225,18 +225,16 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
 		// Create revisions.
-		$revisions_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
 		$upgrade_iterations = 1;
 
-		for ( $i = 0; $i < $revisions_count; $i++ ) {
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
 			$kit->save( [
 				'elements' => [],
 			] );
 		}
 
-		$updater->set_limit( $query_limit );
+		$updater->set_limit( $this->query_limit );
 
 		// Run upgrade.
 		while ( Upgrades::_v_3_0_0_move_saved_colors_to_kit( $updater ) ) {
@@ -247,7 +245,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			] );
 
 			// Avoid infinity loop.
-			if ( $upgrade_iterations > $revisions_count ) {
+			if ( $upgrade_iterations > $this->revisions_count ) {
 				break;
 			}
 		}
@@ -298,18 +296,16 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
 		// Create revisions.
-		$revisions_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
 		$upgrade_iterations = 1;
 
-		for ( $i = 0; $i < $revisions_count; $i++ ) {
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
 			$kit->save( [
 				'elements' => [],
 			] );
 		}
 
-		$updater->set_limit( $query_limit );
+		$updater->set_limit( $this->query_limit );
 
 		// Run upgrade.
 		while ( Upgrades::_v_3_0_0_move_default_colors_to_kit( $updater ) ) {
@@ -320,7 +316,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			] );
 
 			// Avoid infinity loop.
-			if ( $upgrade_iterations > $revisions_count ) {
+			if ( $upgrade_iterations > $this->revisions_count ) {
 				break;
 			}
 		}
@@ -370,18 +366,16 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$kit = Plugin::$instance->documents->get( $kit_id );
 
 		// Create revisions.
-		$revisions_count = 10;
-		$query_limit = 3;
-		$expected_iterations = (int) ceil( $revisions_count / $query_limit );
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
 		$upgrade_iterations = 1;
 
-		for ( $i = 0; $i < $revisions_count; $i++ ) {
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
 			$kit->save( [
 				'elements' => [],
 			] );
 		}
 
-		$updater->set_limit( $query_limit );
+		$updater->set_limit( $this->query_limit );
 
 		// Run upgrade.
 		while ( Upgrades::_v_3_0_0_move_default_typography_to_kit( $updater ) ) {
@@ -392,7 +386,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 			] );
 
 			// Avoid infinity loop.
-			if ( $upgrade_iterations > $revisions_count ) {
+			if ( $upgrade_iterations > $this->revisions_count ) {
 				break;
 			}
 		}
@@ -429,48 +423,97 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_v_3_1_0_move_optimized_dom_output_to_experiments() {
+		add_option( 'elementor_optimized_dom_output', 'enabled' );
 
-	/**
-	 * @param string $post_type
-	 *
-	 * @return Document|false
-	 */
-	private function create_post( $post_type = 'post' ) {
-		$admin = $this->factory()->create_and_get_administrator_user();
+		$is_old_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 
-		wp_set_current_user( $admin->ID );
+		Upgrades::v_3_1_0_move_optimized_dom_output_to_experiments();
 
-		$post = $this->factory()->create_and_get_custom_post( [
-			'post_author' => $admin->ID,
-			'post_type' => $post_type,
-		] );
+		$experiments = new Experiments_Manager();
 
-		$document = self::elementor()->documents->get( $post->ID );
-		$document->save_template_type();
+		$this->assertFalse( $is_old_feature_active );
 
-		return $document;
+		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
 	}
 
-	/**
-	 * @return Updater
-	 */
-	private function create_updater() {
-		$upgrades_manager = new Manager();
+	public function test_v_3_2_0_migrate_breakpoints_to_new_system() {
+		$updater = $this->create_updater();
 
-		/** @var Updater $updater */
-		$updater = $upgrades_manager->get_task_runner();
+		// Set admin user so the kit will be able to be edited.
+		$user_id = $this->factory()->create_and_get_administrator_user()->ID;
+		wp_set_current_user( $user_id );
 
-		$updater->set_current_item( [
-			'iterate_num' => 1,
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->documents->get( $kit_id );
+
+		// Set a custom value for 'viewport_md' before running the upgrade, to test the migration in case the user has
+		// a saved custom breakpoint value.
+		$kit_settings = $kit->get_settings();
+		$kit_settings['viewport_md'] = 600;
+
+		$page_settings_manager = Settings_Manager::get_settings_managers( 'page' );
+		$page_settings_manager->save_settings( $kit_settings, $kit_id );
+
+		// Refresh kit after update.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+
+		// Create revisions.
+		$expected_iterations = (int) ceil( $this->revisions_count / $this->query_limit );
+		$upgrade_iterations = 1;
+
+		for ( $i = 0; $i < $this->revisions_count; $i++ ) {
+			$kit->save( [
+				'elements' => [],
+			] );
+		}
+
+		$updater->set_limit( $this->query_limit );
+
+		// Run upgrade.
+		while ( Upgrades::_v_3_2_0_migrate_breakpoints_to_new_system( $updater ) ) {
+			$upgrade_iterations++;
+
+			$updater->set_current_item( [
+				'iterate_num' => $upgrade_iterations,
+			] );
+
+			// Avoid infinity loop.
+			if ( $upgrade_iterations > $this->revisions_count ) {
+				break;
+			}
+		}
+
+		// Assert iterations.
+		$this->assertEquals( $expected_iterations, $upgrade_iterations );
+
+		// Refresh kit.
+		$kit = Plugin::$instance->documents->get( $kit_id, false );
+		$kit_settings = $kit->get_settings();
+
+		$this->run_breakpoint_assertions( $kit_settings );
+
+		// Assert revisions upgraded.
+		$revisions_ids = wp_get_post_revisions( $kit_id, [
+			'fields' => 'ids',
 		] );
 
-		return $updater;
+		foreach ( $revisions_ids as $revision_id ) {
+			$revision = Plugin::$instance->documents->get( $revision_id, false );
+			$revision_settings = $revision->get_settings();
+
+			$this->run_breakpoint_assertions( $revision_settings );
+		}
 	}
 
-	private function create_document_with_data() {
-		$document = $this->create_post();
+	private function run_breakpoint_assertions( $settings ) {
+		// Mobile.
+		$this->assertEquals( $settings['viewport_md'] - 1, $settings['viewport_mobile'] );
 
-		// Save document.
-		$document->save( Test_Module::$document_mock_default );
+		// Tablet - Check the case where there is no custom breakpoint saved, so the value is empty.
+		$expected_value = '' !== $settings['viewport_lg'] ? $settings['viewport_lg'] - 1 : $settings['viewport_lg'];
+		$actual_value = $settings['viewport_tablet'];
+
+		$this->assertEquals( $expected_value, $actual_value );
 	}
 }

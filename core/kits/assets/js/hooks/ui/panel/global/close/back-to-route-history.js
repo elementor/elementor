@@ -31,7 +31,10 @@ export class KitBackToRouteHistory extends BaseOpenClose {
 				historyBeforeOpen.container = historyBeforeOpen.container.lookup();
 				historyBeforeOpen.container.model.trigger( 'request:edit', { scrollIntoView: true } );
 
-				$e.route( historyBeforeOpen.route );
+				$e.route( historyBeforeOpen.route, {
+					model: historyBeforeOpen.container.model,
+					view: historyBeforeOpen.container.view,
+				} );
 			} );
 		}
 	}

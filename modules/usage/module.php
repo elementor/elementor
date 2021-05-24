@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
-use Elementor\DB;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -136,14 +135,15 @@ class Module extends BaseModule {
 				'count' => $doc_count,
 			];
 
+			// ' ? 1 : 0;' In sorters is compatibility for PHP8.0.
 			// Sort usage by title.
 			uasort( $usage, function( $a, $b ) {
-				return ( $a['title'] > $b['title'] );
+				return ( $a['title'] > $b['title'] ) ? 1 : 0;
 			} );
 
 			// If title includes '-' will have lower priority.
 			uasort( $usage, function( $a ) {
-				return strpos( $a['title'], '-' );
+				return strpos( $a['title'], '-' ) ? 1 : 0;
 			} );
 		}
 
@@ -177,7 +177,7 @@ class Module extends BaseModule {
 	 * @param Document $document
 	 */
 	public function after_document_save( $document ) {
-		if ( DB::STATUS_PUBLISH === $document->get_post()->post_status || DB::STATUS_PRIVATE === $document->get_post()->post_status ) {
+		if ( Document::STATUS_PUBLISH === $document->get_post()->post_status || Document::STATUS_PRIVATE === $document->get_post()->post_status ) {
 			$this->save_document_usage( $document );
 		}
 

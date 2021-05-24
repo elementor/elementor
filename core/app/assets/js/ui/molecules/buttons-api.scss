@@ -1,5 +1,4 @@
 // BTN API
-$button-font-size: type(text,sm);
 $button-font-weight: $eps-font-weight-medium;
 $button-line-height: 16px;
 $button-padding-y: 0.5em;
@@ -67,7 +66,6 @@ $button-dark-disabled-color: dark-theme-colors(light);
 
 // using mixing to transfer custom properties
 @mixin button-custom-properties() {
-	--button-font-size: #{$button-font-size};
 	--button-line-height: #{$button-line-height};
 	--button-padding-y: #{$button-padding-y};
 	--button-padding-x: #{$button-padding-x};

@@ -1,25 +1,22 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
-use Elementor\Core\Base\Document;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 
 class Test_Module extends Elementor_Test_Base {
 	/**
-	 * @var Document
-	 */
-	static $document;
-
-	/**
+	 * TODO: Remove - Backwards compatibility.
+	 *
 	 * @var array
 	 */
 	static $document_mock_default = [
 		'settings' => [
-			'post_status' => 'publish'
+			'post_status' => 'publish',
 		],
 		'elements' => [
 			[
@@ -27,440 +24,380 @@ class Test_Module extends Elementor_Test_Base {
 				'elType' => 'section',
 				'isInner' => false,
 				'settings' => [],
-				'elements' =>
+				'elements' => [
 					[
-						[
-							'id' => 'a2e9b68',
-							'elType' => 'column',
-							'isInner' => false,
-							'settings' => ['_column_size' => 100, ],
-							'elements' =>
-								[
-									[
-										'id' => '5a1e8e5',
-										'elType' => 'widget',
-										'isInner' => false,
-										'settings' => ['text' => 'I\'m not a default', ],
-										'elements' => [],
-										'widgetType' => 'button',
-									],
-								],
+						'id' => 'a2e9b68',
+						'elType' => 'column',
+						'isInner' => false,
+						'settings' => [ '_column_size' => 100, ],
+						'elements' => [
+							[
+								'id' => '5a1e8e5',
+								'elType' => 'widget',
+								'isInner' => false,
+								'settings' => [ 'text' => 'I\'m not a default', ],
+								'elements' => [],
+								'widgetType' => 'button',
+							],
 						],
 					],
-			],
-		]
-	];
-
-	/**
-	 * @var array
-	 */
-	static $document_mock_without_elements = [
-		'settings' => [
-			'post_status' => 'publish'
-		],
-		'elements' => []
-	];
-
-	/**
-	 * @var array
-	 */
-	static $section_mock = [
-		'id' => 'd50d8c5',
-		'elType' => 'section',
-		'isInner' => false,
-		'settings' => [],
-		'elements' => [],
-	];
-
-	/**
-	 * @var array
-	 */
-	static $column_mock = [
-		'id' => 'a2e9b68',
-		'elType' => 'column',
-		'isInner' => false,
-		'settings' => ['_column_size' => 100, ],
-		'elements' => [],
-	];
-
-	/**
-	 * @var array
-	 */
-	static $element_mock = [
-		'id' => '5a1e8e5',
-		'elType' => 'widget',
-		'isInner' => false,
-		'settings' => ['text' => 'I\'m not a default', ],
-		'elements' => [],
-		'widgetType' => 'button',
-	];
-
-	/**
-	 * @var array
-	 */
-	static $element_with_dynamic_settings_mock = [
-		'id' => '5a1e8e7',
-		'elType' => 'widget',
-		'settings' => [
-			'title' => 'Add Your Heading Text Here',
-			'header_size' => 'h3',
-			'align' => 'right',
-			'__dynamic__' => [
-				'title' => '[elementor-tag id="2e7ade9" name="post-title" settings="%7B%7D"]',
-				'link' => '[elementor-tag id="68a0003" name="post-url" settings="%7B%7D"]',
+				],
 			],
 		],
-		'elements' => [],
-		'widgetType' => 'heading',
 	];
 
 	/**
-	 * @var string
+	 * @var Module
 	 */
-	static $meta_data_mock_default = '[{"id":"3d605a1","elType":"section","settings":[],"elements":[{"id":"d7bc6ea","elType":"column","settings":{"_column_size":100},"elements":[{"id":"bf7ca8a","elType":"widget","settings":{"text":"Click here"},"elements":[],"widgetType":"button"}],"isInner":false}],"isInner":false}]';
+	private $module;
+
+	/**
+	 * @var bool
+	 */
+	private $isDynamicTags = false;
 
 	public function setUp() {
 		parent::setUp();
 
-		// Create post.
-		self::$document = $this->create_post();
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 
-		// Save document.
-		self::$document->save( self::$document_mock_default );
+		$this->module = $module = Module::instance();
 	}
 
-	public function test_save_document_usage() {
-		// Get meta.
-		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
-
-		// Check meta.
-		$this->assertEquals( 1, $usage_meta_after['button']['count'] );
-	}
-
-	public function test_add_to_global() {
-		$doc_name = self::$document->get_name();
-
-		// Get global usage.
+	private function get_global_usage_by_document( $document ) {
 		$global_usage = get_option( Module::OPTION_NAME, [] );
 
-		// Check `$doc_name` exist in global usage.
-		$this->assertArrayHaveKeys( [ $doc_name ], $global_usage );
+		$document_name = $document->get_name();
+		if ( ! empty( $global_usage[ $document_name] ) ) {
+			$global_usage = $global_usage[ $document_name ];
+		}
 
-		// Check `button` exist in global usage.
-		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['count'] );
+		return $global_usage;
 	}
 
-	public function test_remove_from_global() {
-		$doc_name = self::$document->get_name();
+	private function generate_document_with_duplicated_widget() {
+		$document = $this->factory()->documents->create_and_get();
+		$elementor_data = $document->get_json_meta( '_elementor_data' );
 
-		// Save Document.
-		self::$document->save( self::$document_mock_without_elements );
+		$section = &$elementor_data[ 0 ];
+		$column = &$section['elements'][ 0 ];
+		$widget = &$column['elements'][ 0 ];
 
-		// Get meta.
-		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
+		// Duplicate widget.
+		$column['elements'][] = $widget;
 
-		// Check meta.
-		$this->assertEquals( '', $usage_meta_after );
-
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertArrayNotHasKey( $doc_name, $global_usage );
-	}
-
-	public function test_remove_data_after_delete_post() {
-		$doc_name = self::$document->get_name();
-
-		// Ensure global.
-		$this->test_add_to_global();
-
-		// Delete the post.
-		wp_delete_post( self::$document->get_main_id(), true );
-
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertArrayNotHasKey( $doc_name, $global_usage );
-	}
-
-	public function test_recalc() {
-		$doc_name = self::$document->get_name();
-
-		/** @var Module $module */
-		$module = Module::instance();
-
-		// Get document of new post.
-		$document = $this->create_post();
-
-		// Inject meta.
-		$document->update_meta( '_elementor_data', self::$meta_data_mock_default );
-
-		// Do recalc.
-		$module->recalc_usage();
-
-		// Get meta.
-		$usage = $document->get_meta( Module::META_KEY );
-
-		// Check meta.
-		$this->assertEquals( 1, $usage['button']['count'] );
-
-		// Get Global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check if inject meta exist in `$global_usage`.
-		$this->assertEquals( 2, $global_usage[ $doc_name ]['button']['count'] );
-	}
-
-	public function test_draft_and_republish() {
-		$doc_name = self::$document->get_name();
-
-		// Ensure global.
-		$this->test_add_to_global();
-
-		// Put to draft.
-		wp_update_post( [
-			'ID' => self::$document->get_main_id(),
-			'post_status' => 'draft'
+		// Find better way.
+		$document->save( [
+			'settings' => [
+				'post_status' => 'publish'
+			],
+			'elements' => $elementor_data,
 		] );
 
-		// Get meta.
-		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
-
-		// Check meta.
-		$this->assertEquals( 'string', gettype( $usage_meta_after ) );
-
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertArrayNotHasKey( $doc_name, $global_usage );
-
-		// Put to published.
-		wp_update_post( [
-			'ID' => self::$document->get_main_id(),
-			'post_status' => 'publish'
-		] );
-
-		// Check if `wp_update_post to published`, added it to global.
-		$this->test_add_to_global();
+		return $document;
 	}
 
-	public function test_draft_and_private() {
-		$doc_name = self::$document->get_name();
+	private function ensure_dynamic_tags() {
+		if ( ! $this->isDynamicTags ) {
+			Plugin::$instance->dynamic_tags->register_tag( new Title() );
+			Plugin::$instance->dynamic_tags->register_tag( new Link() );
 
-		// Put to private.
-		wp_update_post( [
-			'ID' => self::$document->get_main_id(),
-			'post_status' => 'private'
-		] );
-
-		// Check if, its still in global.
-		$this->test_add_to_global();
-
-		// Put to draft.
-		wp_update_post( [
-			'ID' => self::$document->get_main_id(),
-			'post_status' => 'draft'
-		] );
-
-		// Get meta.
-		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
-
-		// Check meta.
-		$this->assertEquals( 'string', gettype( $usage_meta_after ) );
-
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertArrayNotHasKey( $doc_name, $global_usage );
+			$this->isDynamicTags = true;
+		}
 	}
 
-	public function test_autosave_and_publish() {
-		// Cover issue: 'Widgets count shows negative values in some cases'.
-		/** @var Module $module */
-		$module = Module::instance();
-
-		// Create additional document in order that after remove from global the usage will not be empty.
-		$this->create_post()->save( self::$document_mock_default );
-
-		// Add another button.
-		$elements_with_two_buttons = self::$document_mock_default;
-		$elements_with_two_buttons['elements'][0]['elements'][0]['elements'][] = self::$element_mock;
-
-		// Publish.
-		self::$document->save( $elements_with_two_buttons );
-
-		// Get global usage.
-		$usage = get_option( Module::OPTION_NAME );
-
-		// 2 from current, 1 one from first document.
-		$this->assertEquals( 3, $usage['wp-post']['button']['count'] );
-
-		// Create empty autosave ( Draft ).
-		self::$document->get_autosave( 0, true )->save( self::$document_mock_default );
-
-		// Publish.
-		self::$document->save( self::$document_mock_default );
-
-		// Get global usage.
-		$usage = get_option( Module::OPTION_NAME );
-
-		// Validate.
-		$this->assertEquals( 2, $usage['wp-post']['button']['count'] );
-	}
-
-	public function test_doc_type_count() {
-		/** @var Module $module */
-		$module = Module::instance();
-
-		// Get doc type.
-		$doc_type = self::$document->get_name();
-
-		// Get doc class.
+	// Old name 'test_doc_type_count'.
+	public function test_get_doc_type_count() {
+		// Arrange.
+		$doc_type = self::factory()->documents->publish_and_get()->get_name();
 		$doc_class = Plugin::$instance->documents->get_document_type( $doc_type );
 
-		// Get doc count.
-		$doc_count = $module->get_doc_type_count( $doc_class, $doc_type );
+		// Act.
+		$doc_count = $this->module->get_doc_type_count( $doc_class, $doc_type );
 
-		// Check doc count.
+		// Assert.
 		$this->assertEquals( 1, $doc_count );
 	}
 
-	public function test_formatted_usage() {
-		$doc_name = self::$document->get_name();
-		/** @var Module $module */
-		$module = Module::instance();
+	// Old name 'test_formatted_usage'.
+	public function test_get_formatted_usage() {
+		// Arrange.
+		$document = self::factory()->documents->publish_and_get();
 
-		// Get formatted usage.
-		$formatted_usage = $module->get_formatted_usage();
+		// Act.
+		$formatted_usage = $this->module->get_formatted_usage();
 
 		// Check if button exist and it value is `1`.
-		$this->assertEquals( 1, $formatted_usage[ $doc_name ]['elements']['Button'] );
+		$this->assertEquals( 1, $formatted_usage[ $document->get_name() ]['elements']['Button'] );
 	}
 
-	public function test_controls() {
-		$doc_name = self::$document->get_name();
+	// Old name 'test_recalc'.
+	public function test_recalc_usage() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
+		$this->factory()->documents->publish_and_get();
 
-		// Ensure add to global.
-		$this->test_add_to_global();
+		// Clear global usage.
+		update_option( Module::OPTION_NAME, [] );
 
-		// Get meta.
-		$usage_meta_after = self::$document->get_meta( Module::META_KEY );
+		// Act.
+		$this->module->recalc_usage();
 
-		// Check control exist.
-		$this->assertEquals( 1, $usage_meta_after['button']['controls']['content']['section_button']['text'] );
 
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['controls']['content']['section_button']['text'] );
-
-		// Create post.
-		$document2 = $this->create_post();
-
-		// Save document.
-		$document2->save( self::$document_mock_default );
-
-		// Get global.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check global.
-		$this->assertEquals( 2, $global_usage[ $doc_name ]['button']['controls']['content']['section_button']['text'] );
+		// Assert.
+		$this->assertEquals( 2, $this->get_global_usage_by_document( $document )['button']['count'] );
 	}
 
-	public function test_elements() {
-		$doc_name = self::$document->get_name();
+	// Old part of ' test_add_to_global'
+	public function test_add_to_global() {
+		// Act.
+		$document = $this->factory()->documents->publish_and_get();
 
-		// Document with two elements.
-		$document = self::$document_mock_without_elements;
-		$column = self::$column_mock;
-		$section = self::$section_mock;
-
-		$column['elements'][] = self::$element_mock;
-		$column['elements'][] = self::$element_mock;
-
-		$section['elements'][] = $column;
-		$document['elements'][] = $section;
-
-		// Save document
-		self::$document->save( $document );
-
-		// Get global usage.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check if both new two elements exist in global usage.
-		$this->assertEquals( 2, $global_usage[ $doc_name ]['button']['count'] );
-
-		unset( $document['elements'][0]['elements'][0]['elements'][1] );
-
-		// Save document
-		self::$document->save( $document );
-
-		// Get global usage.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
-
-		// Check if both new two elements exist in global usage.
-		$this->assertEquals( 1, $global_usage[ $doc_name ]['button']['count'] );
+		// Assert.
+		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 	}
 
-	public function test_dynamic_control() {
-		$doc_name = self::$document->get_name();
+	// Old part of 'test_add_to_global'.
+	public function test_add_to_global__ensure_elements() {
+		// Arrange.
+		$count = 2;
+		for ( $i = 0 ; $i != $count; $i++ ) {
+			// Act.
+			$document = $this->factory()->documents->publish_and_get();
 
-		Plugin::$instance->dynamic_tags->register_tag( new Title() );
-		Plugin::$instance->dynamic_tags->register_tag( new Link() );
+			// Assert.
+			$global_document_usage = $this->get_global_usage_by_document( $document );
+			$this->assertEquals( $i + 1, $global_document_usage['button']['count'] );
+		}
+	}
 
-		// Document with element that includes control with dynamic settings.
-		$document = self::$document_mock_without_elements;
-		$section = self::$section_mock;
-		$column = self::$column_mock;
-		$element = self::$element_with_dynamic_settings_mock;
+	// Part of old 'test_elements'
+	public function test_add_to_global__ensure_elements__from_same_document() {
+		// Act.
+		$document = $this->generate_document_with_duplicated_widget();
 
-		$column['elements'][] = &$element;
-		$section['elements'][] = &$column;
-		$document['elements'][] = &$section;
+		// Assert.
+		$global_document_usage = $this->get_global_usage_by_document( $document );
+		$this->assertEquals( 2, $global_document_usage['button']['count'] );
+	}
 
-		// Add element with dynamic control.
-		self::$document->save( $document );
+	// Old part of 'test_controls'.
+	public function test_add_to_global__ensure_controls() {
+		// Arrange.
+		$count = 2;
+		for ( $i = 0 ; $i != $count; $i++ ) {
+			// Act.
+			$document = $this->factory()->documents->publish_and_get();
 
-		// Check element with dynamic control.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
+			// Assert.
+			$global_document_usage = $this->get_global_usage_by_document( $document );
+			$this->assertEquals( $i + 1, $global_document_usage['button']['controls']['content']['section_button']['text'] );
+		}
+	}
 
-		$this->assertArrayHasKey( Module::GENERAL_TAB, $global_usage[ $doc_name ]['heading']['controls'] );
-		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['link']);
-		$this->assertEquals(1, $global_usage[ $doc_name ]['heading']['controls']['content']['section_title']['title']);
+	// Old name: 'test_remove_data_after_delete_post'.
+	public function test_remove_from_global() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
 
-		// Remove settings.
-		$element['settings'] = [];
+		// Assert.
+		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 
-		self::$document->save( $document );
+		// Act.
+		wp_delete_post( $document->get_id(), true );
 
-		// Check element without dynamic control.
-		$global_usage = get_option( Module::OPTION_NAME, [] );
+		// Assert.
+		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
+	}
 
-		$this->assertEquals( 0, count( $global_usage[ $doc_name ]['heading']['controls'] ) );
+	// New test.
+	public function test_remove_from_global__ensure_elements() {
+		// Arrange.
+		$count = 2;
+		$documents = [];
+
+		for ( $i = 0 ; $i < $count; $i++ ) {
+			$documents [] = $this->factory()->documents->publish_and_get();
+		}
+
+		$i = count( $documents );
+		foreach ( $documents as $document ) {
+			// Assert.
+			$global_document_usage = $this->get_global_usage_by_document( $document );
+			$this->assertEquals( $i, $global_document_usage['button']['count'] );
+
+			// Act.
+			wp_delete_post( $document->get_id(), true );
+
+
+			$i--;
+		}
+	}
+
+	// Part of old 'test_elements'
+	public function test_remove_from_global__ensure_elements_from_same_document() {
+		// Arrange.
+		$document = $this->generate_document_with_duplicated_widget();
+		$elementor_data = $document->get_json_meta( '_elementor_data' );
+
+		$section = &$elementor_data[ 0 ];
+		$column = &$section['elements'][ 0 ];
+
+		unset( $column['elements'][ 1 ] );
+
+		// Act.
+		$document->save( [
+			'settings' => [
+				'post_status' => 'publish'
+			],
+			'elements' => $elementor_data,
+		] );
+
+		// Assert.
+		$global_document_usage = $this->get_global_usage_by_document( $document );
+		$this->assertEquals( 1, $global_document_usage['button']['count'] );
+	}
+
+	// Old part of 'test_controls'.
+	public function test_remove_from_global__ensure_controls() {
+		// Arrange.
+		$count = 2;
+		$documents = [];
+
+		for ( $i = 0 ; $i < $count; $i++) {
+			$documents [] = $this->factory()->documents->publish_and_get();
+		}
+
+		foreach ( $documents as $document ) {
+			// Assert.
+			$global_document_usage = $this->get_global_usage_by_document( $document );
+			$this->assertEquals( $count, $global_document_usage['button']['controls']['content']['section_button']['text'] );
+
+			// Act.
+			wp_delete_post( $document->get_id(), true );
+
+			$count--;
+		}
+	}
+
+	// Old name 'test_dynamic_control'.
+	public function test_remove_from_global__ensure_dynamic_controls() {
+		// Arrange.
+		$this->ensure_dynamic_tags();
+
+		$count = 2;
+		$documents = [];
+
+		for ( $i = 0 ; $i < $count; $i++) {
+			$document = $this->factory()->documents->publish_and_get( [
+				'meta_input' => [
+					'_elementor_data' => Documents::DOCUMENT_DATA_MOCK_WITH_DYNAMIC_WIDGET,
+				]
+			] );
+
+			$documents [] = $document;
+		}
+
+		foreach ( $documents as $document ) {
+			$global_document_usage = $this->get_global_usage_by_document( $document );
+
+			$link_controls_count = $global_document_usage['heading']['controls']['content']['section_title']['link'];
+			$title_controls_count = $global_document_usage['heading']['controls']['content']['section_title']['link'];
+
+			// Assert.
+			$this->assertEquals( $count, $link_controls_count );
+			$this->assertEquals( $count, $title_controls_count );
+			$this->assertEquals( $link_controls_count + $title_controls_count,
+				$global_document_usage['heading']['controls']['general']['__dynamic__']['count']
+			);
+
+			// Act.
+			wp_delete_post( $document->get_id(), true );
+
+			$count--;
+		}
+	}
+
+	// Old name 'test_remove_from_global'.
+	public function test_remove_from_global__ensure_elements_removed_by_empty_document() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
+
+		// Act.
+		$document->save( Documents::DOCUMENT_DATA_MOCK_WITHOUT_ELEMENTS );
+
+		// Assert.
+		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
+	}
+
+	// Old name: 'test_draft_and_republish'.
+	public function test_remove_from_global__ensure__draft_removed_and_can_be_republished() {
+		// Arrange.
+		$document = self::factory()->documents->publish_and_get();
+
+		// Act - Put to draft.
+		self::factory()->documents->update_object( $document->get_id(), [
+			'post_status' => 'draft'
+		] );
+
+		// Assert.
+		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
+
+		// Act - Put to published.
+		self::factory()->documents->update_object( $document->get_id(), [
+			'post_status' => 'publish'
+		] );
+
+		// Assert.
+		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
+	}
+
+	// Old name: 'test_draft_and_private'.
+	public function test_remove_from_global__ensure_draft_removed_and_private_can_be_republished() {
+		// Arrange.
+		$document = self::factory()->documents->publish_and_get();
+
+		// Act - Put to draft.
+		self::factory()->documents->update_object( $document->get_id(), [
+			'post_status' => 'draft'
+		] );
+
+		// Assert.
+		$this->assertFalse( !! $this->get_global_usage_by_document( $document ) );
+
+		// Act - Put to published.
+		self::factory()->documents->update_object( $document->get_id(), [
+			'post_status' => 'private'
+		] );
+
+		// Assert.
+		$this->assertTrue( !! $this->get_global_usage_by_document( $document ) );
 	}
 
 	/**
-	 * @return Document|false
+	 * Old name: 'test_autosave_and_publish'.
+	 * Cover issue: 'Widgets count shows negative values in some cases'.
 	 */
-	private function create_post() {
-		$admin = $this->factory()->create_and_get_administrator_user();
+	public function test_remove_from_global__ensure_autosave_not_affecting() {
+		// Arrange - Create additional document in order that after remove from global the usage will not be empty.
+		$this->factory()->documents->publish_and_get(); // Adds one button.
+		$document = $this->factory()->documents->publish_and_get(); // Adds another one button
 
-		wp_set_current_user( $admin->ID );
+		// Act - Create document using autosave.
+		$document->get_autosave( 0, true )->save( Documents::DEFAULT_DOCUMENT_DATA_MOCK );
 
-		$post = $this->factory()->create_and_get_custom_post( [
-			'post_author' => $admin->ID,
-			'post_type' => 'post',
-		] );
+		// Assert - Still only two buttons.
+		$this->assertEquals( 2, $this->get_global_usage_by_document( $document )['button']['count'] );
+	}
 
-		add_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
+	public function test_save_document_usage() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
 
-		$document = self::elementor()->documents->get( $post->ID );
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
 
-		return $document;
+		// Assert.
+		$this->assertEquals( 1, $usage['button']['count'] );
 	}
 }

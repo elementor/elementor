@@ -1,4 +1,4 @@
-class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase {
+export default class ImageCarousel extends elementorModules.frontend.handlers.SwiperBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -25,7 +25,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 			slidesToShow = +elementSettings.slides_to_show || 3,
 			isSingleSlide = 1 === slidesToShow,
 			defaultLGDevicesSlidesCount = isSingleSlide ? 1 : 2,
-			elementorBreakpoints = elementorFrontend.config.breakpoints;
+			elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		const swiperOptions = {
 			slidesPerView: slidesToShow,
@@ -36,17 +36,17 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 
 		swiperOptions.breakpoints = {};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.md ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.mobile.value ] = {
 			slidesPerView: +elementSettings.slides_to_show_mobile || 1,
 			slidesPerGroup: +elementSettings.slides_to_scroll_mobile || 1,
 		};
 
-		swiperOptions.breakpoints[ elementorBreakpoints.lg ] = {
+		swiperOptions.breakpoints[ elementorBreakpoints.tablet.value ] = {
 			slidesPerView: +elementSettings.slides_to_show_tablet || defaultLGDevicesSlidesCount,
 			slidesPerGroup: +elementSettings.slides_to_scroll_tablet || 1,
 		};
 
-		if ( ! this.isEdit && 'yes' === elementSettings.autoplay ) {
+		if ( 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
 				delay: elementSettings.autoplay_speed,
 				disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
@@ -88,7 +88,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 		return swiperOptions;
 	}
 
-	onInit( ...args ) {
+	async onInit( ...args ) {
 		super.onInit( ...args );
 
 		const elementSettings = this.getElementSettings();
@@ -97,7 +97,9 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 			return;
 		}
 
-		this.swiper = new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$swiperContainer.data( 'swiper', this.swiper );
@@ -110,45 +112,22 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 	updateSwiperOption( propertyName ) {
 		const elementSettings = this.getElementSettings(),
 			newSettingValue = elementSettings[ propertyName ],
-			changeableProperties = this.getChangeableProperties();
+			params = this.swiper.params;
 
-		let propertyToUpdate = changeableProperties[ propertyName ],
-			valueToUpdate = newSettingValue;
-
-		// Handle special cases where the value to update is not the value that the Swiper library accepts
+		// Handle special cases where the value to update is not the value that the Swiper library accepts.
 		switch ( propertyName ) {
 			case 'image_spacing_custom':
-				valueToUpdate = newSettingValue.size || 0;
-				break;
-			case 'autoplay':
-				if ( newSettingValue ) {
-					valueToUpdate = {
-						delay: elementSettings.autoplay_speed,
-						disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
-					};
-				} else {
-					valueToUpdate = false;
-				}
+				params.spaceBetween = newSettingValue.size || 0;
+
 				break;
 			case 'autoplay_speed':
-				propertyToUpdate = 'autoplay';
+				params.autoplay.delay = newSettingValue;
 
-				valueToUpdate = {
-					delay: newSettingValue,
-					disableOnInteraction: 'yes' === elementSettings.pause_on_interaction,
-				};
 				break;
-			case 'pause_on_hover':
-				this.togglePauseOnHover( 'yes' === newSettingValue );
-				break;
-			case 'pause_on_interaction':
-				valueToUpdate = 'yes' === newSettingValue;
-				break;
-		}
+			case 'speed':
+				params.speed = newSettingValue;
 
-		// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library
-		if ( 'pause_on_hover' !== propertyName ) {
-			this.swiper.params[ propertyToUpdate ] = valueToUpdate;
+				break;
 		}
 
 		this.swiper.update();
@@ -156,9 +135,7 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 
 	getChangeableProperties() {
 		return {
-			autoplay: 'autoplay',
 			pause_on_hover: 'pauseOnHover',
-			pause_on_interaction: 'disableOnInteraction',
 			autoplay_speed: 'delay',
 			speed: 'speed',
 			image_spacing_custom: 'spaceBetween',
@@ -168,8 +145,15 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 	onElementChange( propertyName ) {
 		const changeableProperties = this.getChangeableProperties();
 
-		if ( changeableProperties.propertyName ) {
-			this.updateSwiperOption( propertyName );
+		if ( changeableProperties[ propertyName ] ) {
+			// 'pause_on_hover' is implemented by the handler with event listeners, not the Swiper library.
+			if ( 'pause_on_hover' === propertyName ) {
+				const newSettingValue = this.getElementSettings( 'pause_on_hover' );
+
+				this.togglePauseOnHover( 'yes' === newSettingValue );
+			} else {
+				this.updateSwiperOption( propertyName );
+			}
 		}
 	}
 
@@ -179,7 +163,3 @@ class ImageCarouselHandler extends elementorModules.frontend.handlers.SwiperBase
 		}
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( ImageCarouselHandler, { $element: $scope } );
-};

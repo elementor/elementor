@@ -23,3 +23,78 @@
 #wpadminbar * {
 	font-style: normal;
 }
+
+
+// Temporary Compatibility for Elementor-Pro Share Buttons
+// TODO: Remove after Elementor Pro update.
+
+.elementor-portfolio.elementor-grid {
+	display: grid;
+}
+
+@mixin share-buttons-align($device) {
+	.elementor-share-buttons {
+		&#{$device} {
+			&--align {
+				&-right {
+					text-align: right;
+				}
+
+				&-left {
+					text-align: left;
+				}
+
+				&-center {
+					text-align: center;
+				}
+
+				&-justify {
+					text-align: justify;
+					text-align-last: justify;
+				}
+			}
+		}
+	}
+}
+
+@include share-buttons-align('');
+
+@media (max-width: $screen-md-max) {
+	@include share-buttons-align(-tablet);
+}
+
+@media (max-width: $screen-sm-max) {
+	@include share-buttons-align(-mobile);
+}
+
+.e--ua-appleWebkit {
+
+	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
+	&.rtl { --flex-right: flex-start; }
+
+	.elementor-widget-social-icons.e-grid-align-right, .elementor-share-buttons--align-right {
+		--justify-content: var(--flex-right, flex-end);
+	}
+
+	.elementor-grid-0 {
+		&.elementor-widget-social-icons.e-grid-align-right,
+		&.elementor-share-buttons--align-right,
+		&.elementor-share-buttons--align-justify {
+			.elementor-widget-container {
+				margin-left: calc(-0.5 * var(--grid-column-gap));
+				margin-right: calc(-0.5 * var(--grid-column-gap));
+
+				.elementor-grid {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: var(--justify-content, space-between);
+
+					&-item {
+						margin-left: calc(0.5 * var(--grid-column-gap));
+						margin-right: calc(0.5 * var(--grid-column-gap));
+					}
+				}
+			}
+		}
+	}
+}

@@ -371,7 +371,7 @@ class Manager extends BaseModule {
 	 * @param array  $args
 	 * @param string $method
 	 *
-	 * @return array processed result
+	 * @return array|false processed result
 	 */
 	public function run( $command, $args = [], $method = 'GET' ) {
 		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );

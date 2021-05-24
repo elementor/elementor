@@ -11,7 +11,6 @@ module.exports = Marionette.ItemView.extend( {
 		menuButtons: '.elementor-panel-footer-tool',
 		settings: '#elementor-panel-footer-settings',
 		deviceModeIcon: '#elementor-panel-footer-responsive > i',
-		deviceModeButtons: '#elementor-panel-footer-responsive .elementor-panel-footer-sub-menu-item',
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
@@ -20,7 +19,7 @@ module.exports = Marionette.ItemView.extend( {
 	events: {
 		'click @ui.menuButtons': 'onMenuButtonsClick',
 		'click @ui.settings': 'onSettingsClick',
-		'click @ui.deviceModeButtons': 'onResponsiveButtonsClick',
+		'click @ui.deviceModeIcon': 'onDeviceModeIconClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
 		'click @ui.navigator': 'onNavigatorClick',
@@ -38,10 +37,6 @@ module.exports = Marionette.ItemView.extend( {
 
 	initialize: function() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
-	},
-
-	getDeviceModeButton: function( deviceMode ) {
-		return this.ui.deviceModeButtons.filter( '[data-device-mode="' + deviceMode + '"]' );
 	},
 
 	addSubMenuItem: function( subMenuName, itemData ) {
@@ -117,23 +112,12 @@ module.exports = Marionette.ItemView.extend( {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onDeviceModeChange: function() {
-		var previousDeviceMode = elementor.channels.deviceMode.request( 'previousMode' ),
-			currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
-
-		this.getDeviceModeButton( previousDeviceMode ).removeClass( 'active' );
-
-		this.getDeviceModeButton( currentDeviceMode ).addClass( 'active' );
-
-		// Change the footer icon
-		this.ui.deviceModeIcon.removeClass( 'eicon-device-' + previousDeviceMode ).addClass( 'eicon-device-' + currentDeviceMode );
-	},
-
-	onResponsiveButtonsClick: function( event ) {
-		var $clickedButton = this.$( event.currentTarget ),
-			newDeviceMode = $clickedButton.data( 'device-mode' );
-
-		elementor.changeDeviceMode( newDeviceMode );
+	onDeviceModeIconClick: function() {
+		if ( elementor.isDeviceModeActive() ) {
+			elementor.changeDeviceMode( 'desktop' );
+		} else {
+			elementor.changeDeviceMode( 'mobile' );
+		}
 	},
 
 	onSaveTemplateClick: function() {

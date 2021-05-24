@@ -28,14 +28,13 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 	},
 
 	initStylesheet: function() {
-		var breakpoints = elementorFrontend.config.breakpoints;
+		const breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
 
 		this.stylesheet = new Stylesheet();
 
-		this.stylesheet
-			.addDevice( 'mobile', 0 )
-			.addDevice( 'tablet', breakpoints.md )
-			.addDevice( 'desktop', breakpoints.lg );
+		Object.entries( breakpoints ).forEach( ( [ breakpointName, breakpointConfig ] ) => {
+			this.stylesheet.addDevice( breakpointName, breakpointConfig.value );
+		} );
 	},
 
 	addStyleRules: function( styleControls, values, controls, placeholders, replacements ) {
@@ -99,7 +98,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				if ( selectorGlobalValue ) {
 					if ( 'font' === control.type ) {
 						$e.data.get( globalKey ).then( ( response ) => {
-								elementor.helpers.enqueueFont( response.data.value.typography_font_family );
+							elementor.helpers.enqueueFont( response.data.value.typography_font_family );
 						} );
 					}
 
@@ -243,7 +242,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 		const globalArgs = $e.data.commandExtractArgs( globalKey ),
 			data = $e.data.getCache( $e.components.get( 'globals' ), globalArgs.command, globalArgs.args.query );
 
-		if ( ! data?.id ) {
+		if ( ! data?.value ) {
 			return;
 		}
 
@@ -253,9 +252,19 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			const propertyName = control.name.replace( control.groupPrefix, '' ).replace( '_', '-' ).replace( /(_tablet|_mobile)$/, '' );
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+
+			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
+				return;
+			}
+
+			propertyName = propertyName.replace( '_', '-' );
 
 			value = `var( --e-global-${ control.groupType }-${ id }-${ propertyName } )`;
+
+			if ( elementor.config.ui.defaultGenericFonts && control.groupPrefix + 'font_family' === control.name ) {
+				value += `, ${ elementor.config.ui.defaultGenericFonts }`;
+			}
 		} else {
 			value = `var( --e-global-${ control.type }-${ id } )`;
 		}

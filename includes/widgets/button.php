@@ -102,10 +102,10 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_button',
 			[
@@ -203,6 +203,8 @@ class Widget_Button extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
+				'skin' => 'inline',
+				'label_block' => false,
 			]
 		);
 
@@ -314,16 +316,23 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'background_color',
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
 			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'global' => [
-					'default' => Global_Colors::COLOR_ACCENT,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+				'name' => 'background',
+				'label' => __( 'Background', 'elementor' ),
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
+					'color' => [
+						'global' => [
+							'default' => Global_Colors::COLOR_ACCENT,
+						],
+					],
 				],
 			]
 		);
@@ -349,13 +358,18 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'button_background_hover_color',
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
 			[
-				'label' => __( 'Background Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
+				'name' => 'button_background_hover',
+				'label' => __( 'Background', 'elementor' ),
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
+				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
+				'fields_options' => [
+					'background' => [
+						'default' => 'classic',
+					],
 				],
 			]
 		);
@@ -400,7 +414,7 @@ class Widget_Button extends Widget_Base {
 			[
 				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

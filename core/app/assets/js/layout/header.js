@@ -2,8 +2,16 @@ import HeaderButtons from './header-buttons';
 import Grid from '../ui/grid/grid';
 
 export default function Header( props ) {
-	const TitleTag = props.titleRedirectRoute ? 'a' : 'span',
-		titleAttrs = { href: props.titleRedirectRoute ? `#${ props.titleRedirectRoute }` : null };
+	let TitleTag = 'span',
+		titleAttrs = {};
+
+	if ( props.titleRedirectRoute ) {
+		TitleTag = 'a';
+		titleAttrs = {
+			href: `#${ props.titleRedirectRoute }`,
+			target: '_self',
+		};
+	}
 
 	React.useEffect( () => {
 		document.title = __( 'Elementor', 'elementor' ) + ' | ' + props.title;

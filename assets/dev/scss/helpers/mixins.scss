@@ -2,6 +2,11 @@
 // Mixins
 //
 
+// Simple PX to REM units converter
+@function pxToRem($size) {
+	@return $size / 16px * 1rem;
+}
+
 // Forms > Input Style
 @mixin input-style() {
 	border: 1px solid $gray;
@@ -83,5 +88,24 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+@mixin checkers-background($checker-size, $color: #ddd) {
+	background-image: linear-gradient(45deg,$color 25%,transparent 0,transparent 75%,$color 0,$color),linear-gradient(45deg,$color 25%,transparent 0,transparent 75%,$color 0,$color);
+	background-size: $checker-size $checker-size;
+	background-position: 0 0,( $checker-size / 2 ) ( $checker-size / 2 );
+}
+
+
+@mixin webkit-scrollbar($width, $color, $border-radius) {
+
+	&::-webkit-scrollbar {
+		width: $width;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: $color;
+		border-radius: $border-radius;
+	}
 }
 //End

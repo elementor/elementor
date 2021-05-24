@@ -7,7 +7,8 @@
   },
   "user": {
 	"introduction": {},
-	"restrictions": []
+	"restrictions": [],
+	"can_edit_kit": true
   },
   "elements": {},
   "dynamicTags": {},
@@ -18,8 +19,20 @@
 	"libraries": []
   },
   "autosave_interval": 1000,
+  "kit_id": "5",
   "kit_config": {
 	  "typography_prefix": "typography_"
   },
-  "legacyMode": {}
+  "globals": {
+	"defaults_enabled": {
+	  "colors": true,
+	  "typography": true
+	}
+  },
+  "dev_tools": {
+  	"deprecation": {
+		"soft_notices": []
+	}
+  },
+  "experimentalFeatures": {}
 }

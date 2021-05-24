@@ -1,5 +1,7 @@
 import Select from '../atoms/select';
 
+import './select2.scss';
+
 /**
  * Default settings of the select 2
  *
@@ -19,6 +21,7 @@ const getDefaultSettings = () => ( {
  */
 export default function Select2( props ) {
 	const ref = React.useRef( null );
+
 	// Initiate the select 2 library, call to onReady after initiate, and
 	// listen to select event on the select instance.
 	React.useEffect( () => {
@@ -27,13 +30,15 @@ export default function Select2( props ) {
 				...getDefaultSettings(),
 				...props.settings,
 			} )
-			.on( 'select2:select', props.onChange );
+			.on( 'select2:select select2:unselect', props.onChange );
 
 		if ( props.onReady ) {
 			props.onReady( $select2 );
 		}
 
-		return () => $select2.select2( 'destroy' );
+		return () => {
+			$select2.select2( 'destroy' ).off( 'select2:select select2:unselect' );
+		};
 	}, [ props.settings, props.options ] );
 
 	// Listen to changes in the prop `value`, if changed update the select 2.

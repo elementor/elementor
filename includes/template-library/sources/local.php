@@ -8,7 +8,6 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -279,7 +278,9 @@ class Source_Local extends Source_Base {
 		 */
 		$args = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_args', $args );
 
-		register_taxonomy( self::TAXONOMY_TYPE_SLUG, self::CPT, $args );
+		$cpts_to_associate = apply_filters( 'elementor/template_library/sources/local/register_taxonomy_cpts', [ self::CPT ] );
+
+		register_taxonomy( self::TAXONOMY_TYPE_SLUG, $cpts_to_associate, $args );
 
 		/**
 		 * Categories
@@ -622,20 +623,22 @@ class Source_Local extends Source_Base {
 	 * @return array Local template data.
 	 */
 	public function get_data( array $args ) {
-		$db = Plugin::$instance->db;
-
 		$template_id = $args['template_id'];
 
-		// TODO: Validate the data (in JS too!).
-		if ( ! empty( $args['display'] ) ) {
-			$content = $db->get_builder( $template_id );
-		} else {
-			$document = Plugin::$instance->documents->get( $template_id );
-			$content = $document ? $document->get_elements_data() : [];
-		}
+		$document = Plugin::$instance->documents->get( $template_id );
+		$content = [];
 
-		if ( ! empty( $content ) ) {
-			$content = $this->replace_elements_ids( $content );
+		if ( $document ) {
+			// TODO: Validate the data (in JS too!).
+			if ( ! empty( $args['display'] ) ) {
+				$content = $document->get_elements_raw_data( null, true );
+			} else {
+				$content = $document->get_elements_data();
+			}
+
+			if ( ! empty( $content ) ) {
+				$content = $this->replace_elements_ids( $content );
+			}
 		}
 
 		$data = [
@@ -1250,11 +1253,17 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 * @param array $args
 	 */
-	public function maybe_render_blank_state( $which ) {
+	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
 
-		if ( self::CPT !== $post_type || 'bottom' !== $which ) {
+		$args = wp_parse_args( $args, [
+			'cpt' => self::CPT,
+			'post_type' => get_query_var( 'elementor_library_type' ),
+		] );
+
+		if ( $args['cpt'] !== $post_type || 'bottom' !== $which ) {
 			return;
 		}
 
@@ -1266,9 +1275,7 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
-		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
-
-		$current_type = get_query_var( 'elementor_library_type' );
+		$current_type = $args['post_type'];
 
 		$document_types = Plugin::instance()->documents->get_document_types();
 
@@ -1281,6 +1288,7 @@ class Source_Local extends Source_Base {
 			return;
 		}
 
+		// TODO: This code maybe unreachable see if above `if ( empty( $document_types[ $current_type ] ) )`.
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
@@ -1292,13 +1300,47 @@ class Source_Local extends Source_Base {
 
 			$current_type = 'template';
 
-			$inline_style .= '#elementor-template-library-tabs-wrapper {display: none;}';
+			$args['additional_inline_style'] = '#elementor-template-library-tabs-wrapper {display: none;}';
 		}
 
+		$this->render_blank_state( $current_type, $args );
+	}
+
+	private function render_blank_state( $current_type, array $args = [] ) {
 		$current_type_label = $this->get_template_label_by_type( $current_type );
+		$inline_style = '#posts-filter .wp-list-table, #posts-filter .tablenav.top, .tablenav.bottom .actions, .wrap .subsubsub { display:none;}';
+
+		$args = wp_parse_args( $args, [
+			'additional_inline_style' => '',
+			'href' => '',
+			'description' => __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
+		] );
+		$inline_style .= $args['additional_inline_style'];
 		?>
 		<style type="text/css"><?php echo $inline_style; ?></style>
 		<div class="elementor-template_library-blank_state">
+			<?php $this->print_blank_state_template( $current_type_label, $args['href'], $args['description'] ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Print Blank State Template
+	 *
+	 * When the an entity (CPT, Taxonomy...etc) has no saved items, print a blank admin page offering
+	 * to create the very first item.
+	 *
+	 * This method is public because it needs to be accessed from outside the Source_Local
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param string $current_type_label The Entity title
+	 * @param string $href The URL for the 'Add New' button
+	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.)
+	 */
+	public function print_blank_state_template( $current_type_label, $href, $description ) {
+		?>
 			<div class="elementor-blank_state">
 				<i class="eicon-folder"></i>
 				<h2>
@@ -1307,15 +1349,14 @@ class Source_Local extends Source_Base {
 					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ); ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php esc_url( Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ) ); ?>">
+				<p><?php echo $description; ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
 			</div>
-		</div>
 		<?php
 	}
 
@@ -1413,33 +1454,21 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|array Exported template data.
 	 */
 	private function prepare_template_export( $template_id ) {
-		$template_data = $this->get_data( [
-			'template_id' => $template_id,
-		] );
+		$document = Plugin::$instance->documents->get( $template_id );
+
+		$template_data = $document->get_export_data();
 
 		if ( empty( $template_data['content'] ) ) {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
-		$template_data['content'] = $this->process_export_import_content( $template_data['content'], 'on_export' );
-
-		if ( get_post_meta( $template_id, '_elementor_page_settings', true ) ) {
-			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $template_id );
-
-			$page_settings_data = $this->process_element_export_import_content( $page, 'on_export' );
-
-			if ( ! empty( $page_settings_data['settings'] ) ) {
-				$template_data['page_settings'] = $page_settings_data['settings'];
-			}
-		}
-
 		$export_data = [
+			'content' => $template_data['content'],
+			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
 			'title' => get_the_title( $template_id ),
 			'type' => self::get_template_type( $template_id ),
 		];
-
-		$export_data += $template_data;
 
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -1612,7 +1641,7 @@ class Source_Local extends Source_Base {
 		return $posts_columns;
 	}
 
-	private function get_current_tab_group( $default = '' ) {
+	public function get_current_tab_group( $default = '' ) {
 		$current_tabs_group = $default;
 
 		if ( ! empty( $_REQUEST[ self::TAXONOMY_TYPE_SLUG ] ) ) {

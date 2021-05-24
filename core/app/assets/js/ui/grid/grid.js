@@ -1,3 +1,5 @@
+import { arrayToClassName } from 'elementor-app/utils/utils.js';
+
 import './grid.scss';
 
 export default function Grid( props ) {
@@ -23,7 +25,7 @@ export default function Grid( props ) {
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
-		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ getStyle() } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);
@@ -65,10 +67,10 @@ function isValidPropValue( propValue ) {
 
 Grid.propTypes = {
 	className: PropTypes.string,
-	direction: PropTypes.string,
-	justify: PropTypes.string,
-	alignContent: PropTypes.string,
-	alignItems: PropTypes.string,
+	direction: PropTypes.oneOf( [ 'row', 'column', 'row-reverse', 'column-reverse' ] ),
+	justify: PropTypes.oneOf( [ 'start', 'center', 'end', 'space-between', 'space-evenly', 'space-around', 'stretch' ] ),
+	alignContent: PropTypes.oneOf( [ 'start', 'center', 'end', 'space-between', 'stretch' ] ),
+	alignItems: PropTypes.oneOf( [ 'start', 'center', 'end', 'baseline', 'stretch' ] ),
 	container: PropTypes.bool,
 	item: PropTypes.bool,
 	noWrap: PropTypes.bool,
@@ -81,11 +83,7 @@ Grid.propTypes = {
 	lg: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xxl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 Grid.defaultProps = {

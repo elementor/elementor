@@ -1,0 +1,27 @@
+name: Elementor Tests / Init
+
+on: [push, pull_request_target]
+
+jobs:
+  run:
+    if: github.repository_owner == 'elementor'
+    runs-on: ubuntu-16.04
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@master
+      - name: Block non-permitted users
+        uses: StyleShit/action-whitelist-users@b8abcef5472afd0c7bcfaadf08c70a082437e459
+        with:
+          whitelist-file: '.github/workflows/whitelist.txt'
+      - name: Elementor Tests / Init
+        env:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }} # GitHub access token to access the remote repo.
+          REMOTE_TESTS_REPO: ${{ secrets.REMOTE_TESTS_REPO }} # Remote tests repo, e.g. `owner/repo-name`.
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }} # The HEAD repo that initiated the push/PR.
+        uses: peter-evans/repository-dispatch@d57191493a947e8da4f7bf3fbc389e5b20f21cdf
+        with:
+          token: ${{ env.TOKEN }}
+          repository: ${{ env.REMOTE_TESTS_REPO }}
+          event-type: remote-tests
+          client-payload: '{ "repository": "${{ env.HEAD_REPO }}", "sha": "${{ github.head_ref || github.sha }}", "run_id": "${{ github.run_id }}" }'

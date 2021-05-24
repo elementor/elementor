@@ -28,11 +28,12 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/backbone.min.js',
 			'tests/qunit/vendor/wp-includes/react.min.js',
 			'tests/qunit/vendor/wp-includes/react-dom.min.js',
+			'tests/qunit/vendor/wp-includes/i18n.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
 			// Elementor Common.
-			'tests/qunit/setup-elementor-common.js',
+			'tests/qunit/setup/elementor-common.js',
 			'assets/lib/dialog/dialog.js',
 			'assets/js/common-modules.js',
 			'assets/js/common.js',
@@ -41,11 +42,11 @@ module.exports = function( config ) {
 			'tests/qunit/index.html',
 
 			// Editor Tinymce.
-			'tests/qunit/setup-tinymce.js',
+			'tests/qunit/setup/tinymce.js',
 			'tests/qunit/vendor/wp-includes/quicktags.min.js',
 
 			// Editor Config.
-			'tests/qunit/setup-editor.js',
+			'tests/qunit/setup/editor.js',
 
 			// Editor Dependencies.
 			'tests/qunit/vendor/wp-includes/jquery-ui.min.js',
@@ -93,6 +94,8 @@ module.exports = function( config ) {
 		colors: true,
 		logLevel: config.LOG_INFO,
 		browsers: [ 'ChromeHeadless' ],
+		browserDisconnectTimeout: 4000,
+		pingTimeout: 10000,
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: true,

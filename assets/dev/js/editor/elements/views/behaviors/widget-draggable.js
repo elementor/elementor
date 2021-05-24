@@ -34,7 +34,7 @@ export default class extends Marionette.Behavior {
 
 		this.deactivate();
 
-		if ( isAbsolute && this.view.container.isDesignable() ) {
+		if ( isAbsolute && this.view.getContainer().isDesignable() ) {
 			this.activate();
 		}
 	}

@@ -60,17 +60,38 @@ class Command extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Print system info powered by Elementor
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor system-info
+	 *      - This will print the System Info in JSON format
+	 *
+	 * @since 3.0.11
+	 * @access public
+	 * @alias system-info
+	 */
+	public function system_info() {
+		echo wp_json_encode( \Elementor\Tracker::get_tracking_data() );
+	}
+
+	/**
 	 * Replace old URLs with new URLs in all Elementor pages.
+	 *
+	 * [--force]
+	 *      Suppress error messages. instead, return "0 affected rows.".
 	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor replace-urls <old> <new>
 	 *      - This will replace all <old> URLs with the <new> URL.
 	 *
+	 *  2. wp elementor replace-urls <old> <new> --force
+	 *      - This will replace all <old> URLs with the <new> URL without throw errors.
+	 *
 	 * @access public
 	 * @alias replace-urls
 	 */
-
 	public function replace_urls( $args, $assoc_args ) {
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please set the `old` URL' );
@@ -84,7 +105,11 @@ class Command extends \WP_CLI_Command {
 			$results = Utils::replace_urls( $args[0], $args[1] );
 			\WP_CLI::success( $results );
 		} catch ( \Exception $e ) {
-			\WP_CLI::error( $e->getMessage() );
+			if ( isset( $assoc_args['force'] ) ) {
+				\WP_CLI::success( '0 rows affected.' );
+			} else {
+				\WP_CLI::error( $e->getMessage() );
+			}
 		}
 	}
 
