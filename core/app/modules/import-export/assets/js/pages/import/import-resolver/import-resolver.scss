@@ -32,6 +32,10 @@ $root: e-app-import-resolver;
 	}
 
 	&-conflicts {
+		&__container {
+			box-shadow: $eps-box-shadow-1;
+		}
+
 		&__checkbox {
 			flex-shrink: 0;
 			margin-inline-end: spacing(12);

@@ -77,7 +77,7 @@ export default function ImportResolver() {
 					</Card.Header>
 
 					<Card.Body padding="20" className="e-app-import-resolver__panel-body">
-						<Box>
+						<Box className="e-app-import-resolver-conflicts__container">
 							<List separated className="e-app-import-resolver-conflicts">
 								{ Object.entries( conflicts ).map( ( [ id, conflict ], index ) => (
 									<List.Item padding="20" key={ index } className="e-app-import-resolver-conflicts__item">
