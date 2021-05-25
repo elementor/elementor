@@ -4,7 +4,7 @@ import Card from 'elementor-app/ui/card/card';
 
 export default function PanelBody( props ) {
 	return (
-		<Card.Body className={ arrayToClassName( [ 'e-app-import-export-panel__body', props.className ] ) }>
+		<Card.Body padding={ props.padding } className={ arrayToClassName( [ 'e-app-import-export-panel__body', props.className ] ) }>
 			{ props.children }
 		</Card.Body>
 	);
@@ -18,4 +18,5 @@ PanelBody.propTypes = {
 
 PanelBody.defaultProps = {
 	className: '',
+	padding: '0',
 };

@@ -6,11 +6,11 @@ import { Context } from '../../../context/context-provider';
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import Conflict from './components/conflict/conflict';
+import Panel from '../../../ui/panel/panel';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
-import Panel from '../../../ui/panel/panel';
 import List from 'elementor-app/ui/molecules/list';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
