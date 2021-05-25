@@ -12,6 +12,7 @@ $breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 $breakpoints['desktop'] = [];
 
+/* translators: %1$s: Device Name */
 $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
 
