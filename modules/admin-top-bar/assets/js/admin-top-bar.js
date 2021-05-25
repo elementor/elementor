@@ -1,11 +1,11 @@
 import BarButton from './components/bar-button/bar-button';
 import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePageTitle } from './hooks/use-page-title/use-page-title';
 
 export default function AdminTopBar() {
 	const actionButtonsRef = useRef();
-	const [ pageTitle, setPageTitle ] = useState( 'Elementor' );
 
 	// Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 	useEffect( () => {
@@ -14,16 +14,7 @@ export default function AdminTopBar() {
 	}, [] );
 
 	// Handle the page title visibility in admin top bar.
-	useEffect( () => {
-		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
-		if ( ! pageTitleElement ) {
-			return;
-		}
-
-		const pageTitleText = pageTitleElement;
-		pageTitleElement.remove();
-		setPageTitle( pageTitleText.innerText );
-	}, [] );
+	const pageTitleText = usePageTitle();
 
 	// Handle the action buttons visibility in admin top bar on initiation.
 	useEffect( () => {
@@ -40,7 +31,7 @@ export default function AdminTopBar() {
 	return (
 		<div id="elementor-admin-top-bar">
 			<div className="bar-main-area bar-flex">
-				<BarHeading>{ pageTitle }</BarHeading>
+				<BarHeading>{ pageTitleText }</BarHeading>
 				<div className="top-bar-action-buttons-wrapper" ref={ actionButtonsRef } />
 			</div>
 
