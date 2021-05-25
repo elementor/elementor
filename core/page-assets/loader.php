@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.3.0
  */
 class Loader extends Module {
-	const ASSETS_DATA_KEY = '_elementor_assets_data';
-
 	private $assets;
 
 	public function get_name() {
@@ -89,16 +87,6 @@ class Loader extends Module {
 		}
 	}
 
-	private function reset_inline_content_css() {
-		$assets_inline_content = get_option( self::ASSETS_DATA_KEY, [] );
-
-		if ( array_key_exists( 'css', $assets_inline_content ) ) {
-			unset( $assets_inline_content['css'] );
-
-			update_option( self::ASSETS_DATA_KEY, $assets_inline_content );
-		}
-	}
-
 	private function register_assets() {
 		$assets = $this->get_assets();
 
@@ -115,13 +103,6 @@ class Loader extends Module {
 
 	public function __construct() {
 		parent::__construct();
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' ) ) {
-			// Reset the inline content CSS when regenerating CSS from the dashboard.
-			add_action( 'elementor/core/files/clear_cache', function() {
-				$this->reset_inline_content_css();
-			} );
-		}
 
 		$this->register_assets();
 	}
