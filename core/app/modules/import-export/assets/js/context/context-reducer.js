@@ -18,11 +18,15 @@ class ReducerActions {
 export const reducer = ( state, action ) => {
 	switch ( action.type ) {
 		case 'SET_DOWNLOAD_URL':
-			return { ...state, downloadURL: action.payload };
+			return { ...state, downloadUrl: action.payload };
 		case 'ADD_INCLUDE':
 			return ReducerActions.updateIncludes( state, action.payload, 'add' );
 		case 'REMOVE_INCLUDE':
 			return ReducerActions.updateIncludes( state, action.payload, 'remove' );
+		case 'SET_FILE_RESPONSE':
+			return { ...state, fileResponse: action.payload };
+		case 'SET_FILE':
+			return { ...state, file: action.payload };
 		default:
 			return state;
 	}

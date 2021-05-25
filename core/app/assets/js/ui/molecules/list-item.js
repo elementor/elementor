@@ -24,11 +24,7 @@ export default function ListItem( props ) {
 ListItem.propTypes = {
 	className: PropTypes.string,
 	padding: PropTypes.string,
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 ListItem.defaultProps = {
