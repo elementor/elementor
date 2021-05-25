@@ -3,6 +3,9 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Icon from 'elementor-app/ui/atoms/icon';
 import Text from 'elementor-app/ui/atoms/text';
 
+import ModalSection from './modal-section';
+import ModalTip from './modal-tip';
+
 import './modal.scss';
 
 export default class ModalProvider extends React.Component {
@@ -45,6 +48,9 @@ ModalProvider.propTypes = {
 	title: PropTypes.string,
 	icon: PropTypes.string,
 };
+
+ModalProvider.Section = ModalSection;
+ModalProvider.Tip = ModalTip;
 
 export class Modal extends React.Component {
 	modalRef = React.createRef();
