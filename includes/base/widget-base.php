@@ -483,7 +483,7 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( 'no' === $lightbox_setting_key ) {
 			if ( $is_global_image_lightbox_enabled ) {
-				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no', $overwrite );
 			}
 
 			return $this;
