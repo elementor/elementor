@@ -73,17 +73,8 @@ class Module extends BaseModule {
 
 		$document_types = Plugin::$instance->documents->get_document_types();
 
-		foreach ( $document_types as $document_type ) {
-			if ( ! $document_type::get_property( 'show_in_library' ) ) {
-				continue;
-			}
-
-			/**
-			 * @var Document $instance
-			 */
-			$instance = new $document_type();
-
-			$summary_titles['templates'][ $instance->get_name() ] = [
+		foreach ( $document_types as $name => $document_type ) {
+			$summary_titles['templates'][ $name ] = [
 				'single' => $document_type::get_title(),
 				'plural' => $document_type::get_plural_title(),
 			];
@@ -151,6 +142,8 @@ class Module extends BaseModule {
 	}
 
 	private function import_stage_2( array $import_settings ) {
+		set_time_limit( 0 );
+
 		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
 
 		$this->import = new Import( $import_settings );
@@ -182,7 +175,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function on_elementor_init() {
+	private function on_init() {
 		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
 			if ( ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
 				return;
@@ -302,8 +295,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/init', function() {
-			$this->on_elementor_init();
+		add_action( 'init', function() {
+			$this->on_init();
 		} );
 
 		add_action( 'admin_init', function() {
