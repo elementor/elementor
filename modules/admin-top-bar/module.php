@@ -55,15 +55,15 @@ class Module extends BaseApp {
 		wp_enqueue_style( 'elementor-admin-top-bar' );
 
 		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), [
-				'react',
-				'react-dom',
-			], ELEMENTOR_VERSION, true );
+			'react',
+			'react-dom',
+		], ELEMENTOR_VERSION, true );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script( 'tipsy', ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js', [
-				'jquery',
-			], '1.0.0', true );
+			'jquery',
+		], '1.0.0', true );
 
 		$this->print_config();
 	}
