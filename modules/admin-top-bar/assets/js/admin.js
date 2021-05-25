@@ -1,11 +1,10 @@
-import AdminTopBar from './app';
+import AdminTopBar from './admin-top-bar';
 
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 
 const elementorMenuItemIds = [
 	'toplevel_page_elementor',
 	'menu-posts-elementor_library',
-
 ];
 
 const menuItemSelector = elementorMenuItemIds

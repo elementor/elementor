@@ -4,9 +4,8 @@ import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useState, useRef } from 'react';
 
 export default function AdminTopBar() {
-	let actionButtonElements;
 	const actionButtonsRef = useRef();
-	const [ pageTitle, setPageTitle ] = useState( null );
+	const [ pageTitle, setPageTitle ] = useState( 'Elementor' );
 
 	// Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 	useEffect( () => {
@@ -17,23 +16,21 @@ export default function AdminTopBar() {
 	// Handle the page title visibility in admin top bar.
 	useEffect( () => {
 		const pageTitleElement = document.querySelector( '.wp-heading-inline' );
-		if ( pageTitleElement ) {
-			const pageTitleText = pageTitleElement;
-			pageTitleElement.remove();
-			setPageTitle( pageTitleText.innerText );
-		} else {
-			setPageTitle( 'Elementor' );
+		if ( ! pageTitleElement ) {
+			return;
 		}
+
+		const pageTitleText = pageTitleElement;
+		pageTitleElement.remove();
+		setPageTitle( pageTitleText.innerText );
 	}, [] );
 
 	// Handle the action buttons visibility in admin top bar on initiation.
 	useEffect( () => {
-		actionButtonElements = document.querySelectorAll( '.page-title-action' );
-		if ( actionButtonElements ) {
-			actionButtonElements.forEach( ( actionButtonElement ) => {
-				actionButtonsRef.current.appendChild( actionButtonElement );
-			} );
-		}
+		const actionButtonElements = document.querySelectorAll( '.page-title-action' );
+		actionButtonElements.forEach( ( actionButtonElement ) => {
+			actionButtonsRef.current.appendChild( actionButtonElement );
+		} );
 	}, [] );
 
 	const finderAction = () => {

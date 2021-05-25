@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
@@ -11,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseApp {
+
 	/**
 	 * @return bool
 	 */
@@ -37,8 +39,8 @@ class Module extends BaseApp {
 
 	private function render_admin_top_bar() {
 		?>
-			<div id="e-admin-top-bar">
-			</div>
+		<div id="e-admin-top-bar">
+		</div>
 		<?php
 	}
 
@@ -48,37 +50,20 @@ class Module extends BaseApp {
 	private function enqueue_scripts() {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 
-		wp_register_style(
-			'elementor-admin-top-bar',
-			$this->get_css_assets_url( 'admin-top-bar' . $direction_suffix ),
-			[],
-			ELEMENTOR_VERSION
-		);
+		wp_register_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar' . $direction_suffix ), [], ELEMENTOR_VERSION );
 
 		wp_enqueue_style( 'elementor-admin-top-bar' );
 
-		wp_enqueue_script(
-			'elementor-admin-top-bar',
-			$this->get_js_assets_url( 'admin-top-bar' ),
-			[
+		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), [
 				'react',
 				'react-dom',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
+			], ELEMENTOR_VERSION, true );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
-		wp_enqueue_script(
-			'tipsy',
-			ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js',
-			[
+		wp_enqueue_script( 'tipsy', ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js', [
 				'jquery',
-			],
-			'1.0.0',
-			true
-		);
+			], '1.0.0', true );
 
 		$this->print_config();
 	}
@@ -89,7 +74,7 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'in_admin_header', function() {
+		add_action( 'in_admin_header', function () {
 			$this->render_admin_top_bar();
 		} );
 

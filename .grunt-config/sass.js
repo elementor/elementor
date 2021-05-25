@@ -4,15 +4,13 @@ const sass = {
 			sourcemap: true,
 			sourceMap: true
 		},
-		files: [
-			{
-				expand: true,
-				cwd: 'assets/dev/scss/direction',
-				src: '*.scss',
-				dest: 'assets/css',
-				ext: '.css'
-			},
-		]
+		files: [ {
+			expand: true,
+			cwd: 'assets/dev/scss/direction',
+			src: '*.scss',
+			dest: 'assets/css',
+			ext: '.css'
+		} ]
 	}
 };
 
