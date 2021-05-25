@@ -245,7 +245,7 @@ export class ShowSwatches extends CommandBase {
 			className: this.classes.tooltip,
 			trigger: 'manual',
 			title: () => {
-				return __( `Select a color from any image, or from an element whose color you’ve manually defined.`, 'elementor' );
+				return __( 'Select a color from any image, or from an element whose color you\'ve manually defined.', 'elementor' );
 			},
 		} ).tipsy( 'show' );
 
