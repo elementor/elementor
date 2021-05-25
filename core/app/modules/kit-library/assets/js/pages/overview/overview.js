@@ -48,17 +48,15 @@ export default function Overview( props ) {
 			{
 				documentsByType.length > 0 &&
 				<Content>
-					<>
-						{
-							documentsByType.map( ( contentType ) => (
-								<OverviewContentGroup
-									key={ contentType.id }
-									contentType={ contentType }
-									kitId={ props.id }
-								/>
-							) )
-						}
-					</>
+					{
+						documentsByType.map( ( contentType ) => (
+							<OverviewContentGroup
+								key={ contentType.id }
+								contentType={ contentType }
+								kitId={ props.id }
+							/>
+						) )
+					}
 				</Content>
 			}
 		</Layout>

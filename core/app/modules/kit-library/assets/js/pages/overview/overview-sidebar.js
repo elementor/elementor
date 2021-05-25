@@ -1,9 +1,9 @@
 import ContentType from '../../models/content-type';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
+import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 import { Heading, CardImage, Text, Collapse, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
-import OverviewTaxonomyBadge from './overview-taxonomy-badge';
 
 import './overview-sidebar.scss';
 
