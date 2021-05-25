@@ -268,6 +268,10 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
+			'favorites' => [
+				'title' => __( 'Favorites', 'elementor' ),
+				'icon' => 'eicon-font',
+			],
 			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',

@@ -313,6 +313,14 @@ select {
 			color: $theme-dark-light;
 		}
 
+		.favorite {
+			background-color: $theme-dark-gray-darkest;
+
+			&.active {
+				background-color: $theme-dark-dark;
+			}
+		}
+
 		&:hover {
 
 			.title,
