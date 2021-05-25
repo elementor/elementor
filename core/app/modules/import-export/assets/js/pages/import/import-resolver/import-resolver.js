@@ -10,7 +10,7 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
-import Card from 'elementor-app/ui/card/card';
+import Panel from '../../../ui/panel/panel';
 import List from 'elementor-app/ui/molecules/list';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
@@ -43,7 +43,7 @@ export default function ImportResolver() {
 		),
 		isHomePageOverride = () => {
 			if ( context.data.includes.includes( 'content' ) ) {
-				const pages = context.data?.fileResponse.stage1.manifest.content?.page || {};
+				const pages = context.data?.fileResponse?.stage1.manifest.content?.page || {};
 
 				return Object.entries( pages ).find( ( [ pageId, pageData ] ) => pageData.show_on_front );
 			}
@@ -71,12 +71,12 @@ export default function ImportResolver() {
 					</Notice>
 				}
 
-				<Card className="e-app-import-resolver__panel">
-					<Card.Header padding="20" className="e-app-import-resolver__panel-header">
-						<Card.Headline>Select the items you want to keep and apply:</Card.Headline>
-					</Card.Header>
+				<Panel>
+					<Panel.Header>
+						<Panel.Headline>Select the items you want to keep and apply:</Panel.Headline>
+					</Panel.Header>
 
-					<Card.Body padding="20" className="e-app-import-resolver__panel-body">
+					<Panel.Body padding="20">
 						<Box className="e-app-import-resolver-conflicts__container">
 							<List separated className="e-app-import-resolver-conflicts">
 								{ Object.entries( conflicts ).map( ( [ id, conflict ], index ) => (
@@ -86,8 +86,8 @@ export default function ImportResolver() {
 								) ) }
 							</List>
 						</Box>
-					</Card.Body>
-				</Card>
+					</Panel.Body>
+				</Panel>
 			</section>
 		</Layout>
 	);
