@@ -52,7 +52,7 @@ export class ShowSwatches extends CommandBase {
 
 		// If there is a picker already, remove it.
 		if ( activePicker ) {
-			jQuery( activePicker ).tipsy( 'hide' );
+			this.removeTooltip( activePicker );
 			activePicker.remove();
 		}
 
@@ -259,6 +259,17 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	/**
+	 * Remove a tooltip from a picker container.
+	 *
+	 * @param {HTMLElement} picker - Picker HTML element to remove the tooltip from.
+	 *
+	 * @returns {void}
+	 */
+	removeTooltip( picker ) {
+		jQuery( picker ).tipsy( 'hide' );
+	}
+
+	/**
 	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
 	 *
 	 * @param x
@@ -308,7 +319,7 @@ export class ShowSwatches extends CommandBase {
 
 		// Remove the picker on mouse leave.
 		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', () => {
-			jQuery( picker ).tipsy( 'hide' );
+			this.removeTooltip( picker );
 
 			// Remove only after the animation has finished.
 			setTimeout( () => {
