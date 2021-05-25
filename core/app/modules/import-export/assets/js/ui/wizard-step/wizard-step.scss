@@ -35,6 +35,10 @@ $root: e-app-import-export-wizard-step;
 		color: var(--e-app-import-export-wizard-step-text-color);
 	}
 
+	&__content {
+		text-align: initial;
+	}
+
 	&__notice {
 		display: block;
 		position: sticky;

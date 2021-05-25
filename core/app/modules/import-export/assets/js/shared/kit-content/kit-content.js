@@ -13,7 +13,7 @@ import kitContentData from './kit-content-data/kit-content-data';
 
 import './kit-content.scss';
 
-export default function KitContent() {
+export default function KitContent( props ) {
 	const hasPro = elementorAppConfig.hasPro,
 		[ isTipsyLibReady, setIsTipsyLibReady ] = useState( false ),
 		[ containerHover, setContainerHover ] = useState( {} ),
@@ -57,6 +57,14 @@ export default function KitContent() {
 					kitContentData.map( ( item, index ) => {
 						const isLockedFeaturesNoPro = item.data.features?.locked && ! hasPro;
 
+						if ( props.manifest ) {
+							const contentType = 'settings' === item.type ? 'site-settings' : item.type;
+
+							if ( ! props.manifest[ contentType ] ) {
+								return;
+							}
+						}
+
 						return (
 							<List.Item separated padding="20" key={ item.type } className="e-app-export-kit-content__item">
 								<div
@@ -92,6 +100,7 @@ export default function KitContent() {
 
 KitContent.propTypes = {
 	className: PropTypes.string,
+	manifest: PropTypes.object,
 };
 
 KitContent.defaultProps = {

@@ -39,6 +39,12 @@ export default function WizardStep( props ) {
 				</Text>
 				}
 
+				{ props.children &&
+				<Grid item className="e-app-import-export-wizard-step__content">
+					{ props.children }
+				</Grid>
+				}
+
 				{ props.notice &&
 				<Text variant="xs" className="e-app-import-export-wizard-step__notice">
 					{ props.notice }
@@ -56,6 +62,7 @@ WizardStep.propTypes = {
 	heading: PropTypes.string,
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	notice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	children: PropTypes.any,
 };
 
 WizardStep.defaultProps = {
