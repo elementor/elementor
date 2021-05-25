@@ -142,6 +142,8 @@ class Module extends BaseModule {
 	}
 
 	private function import_stage_2( array $import_settings ) {
+		set_time_limit( 0 );
+
 		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
 
 		$this->import = new Import( $import_settings );
