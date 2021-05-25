@@ -48,6 +48,15 @@ class AllChildren extends Index {
 	public function get_items( $request ) {
 		$response = [];
 
+		foreach ( $this->controller->get_children() as $controller ) {
+			$controller_route = $this->get_controller()->get_base_route() . '/' . $controller->get_name();
+			$result = Manager::instance()->run_request( $controller_route );
+
+			if ( ! $result->is_error() ) {
+				$response[ $controller->get_name() ] = $result->get_data();
+			}
+		}
+
 		foreach ( $this->controller->endpoints as $endpoint ) {
 			// Skip self.
 			if ( $endpoint === $this ) {

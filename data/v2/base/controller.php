@@ -8,6 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * TODO: Utilize 'WP_REST_Controller' as much as possible.
+ */
 abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Loaded endpoint(s).
@@ -34,6 +37,11 @@ abstract class Controller extends WP_REST_Controller {
 	 * @var \Elementor\Data\V2\Base\Controller|null
 	 */
 	private $parent = null;
+
+	/**
+	 * @var \Elementor\Data\V2\Base\Controller[]
+	 */
+	private $children = [];
 
 	/**
 	 * Controller constructor.
@@ -91,8 +99,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get full controller name.
 	 *
-	 * The 'main' job of this method, is to be extend, for example sub-controller will return it's parent name,
-	 * including his self.
+	 * The method exist to handle situations when parent exist, to include the parent name.
 	 *
 	 * @return string
 	 */
@@ -241,6 +248,15 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get children controller(s).
+	 *
+	 * @return \Elementor\Data\V2\Base\Controller[]
+	 */
+	public function get_children() {
+		return $this->children;
+	}
+
+	/**
 	 * Get processors.
 	 *
 	 * @param string $command
@@ -365,5 +381,7 @@ abstract class Controller extends WP_REST_Controller {
 		if ( ! $this->parent ) {
 			trigger_error( "Cannot find parent controller: '$parent_controller_name'", E_USER_ERROR ); // phpcs:ignore
 		}
+
+		$this->parent->children [] = $this;
 	}
 }

@@ -25,12 +25,18 @@ final class Sub_Index_Endpoint extends Index {
 	public function get_base_route() {
 		$parent_controller = $this->controller->get_parent();
 		$parent_index_endpoint = $parent_controller->index_endpoint;
+		$parent_controller_route = '';
 
-		return untrailingslashit('/' . implode( '/', [
-			$parent_controller->get_name(),
-			"(?P<{$parent_index_endpoint->id_arg_name}>[\w]+)",
+		// In case `$parent_index_endpoint` is AllChildren, it cannot support id_arg_name.
+		if ( ! $parent_index_endpoint instanceof AllChildren ) {
+			$parent_controller_route = "(?P<{$parent_index_endpoint->id_arg_name}>[\w]+)";
+		}
+
+		return untrailingslashit('/' . implode( '/', array_filter( [
+			trim( $parent_index_endpoint->get_base_route(), '/' ),
+			$parent_controller_route,
 			$this->controller->get_name(),
 			$this->get_public_name(),
-		] ) );
+		] ) ) );
 	}
 }
