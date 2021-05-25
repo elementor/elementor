@@ -13,15 +13,11 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 	events: {
 		'keyup @ui.input': 'onInputChanged',
-		'input @ui.input': 'triggerInputChange',
+		'input @ui.input': 'onInputChanged',
 	},
 
 	clearInput: function() {
 		this.ui.input.val( '' );
-	},
-
-	triggerInputChange: function() {
-		this.triggerMethod( 'search:change:input' );
 	},
 
 	onInputChanged: function( event ) {
@@ -33,7 +29,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 		// Don't catch keyboard shortcut.
 		if ( event.shiftKey || event.ctrlKey || event.altKey ) {
-			this.triggerInputChange();
+			this.triggerMethod( 'search:change:input' );
 			return;
 		}
 
@@ -51,7 +47,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 		// Broadcast the localized value.
 		elementor.channels.panelElements.reply( 'filter:localized', this.localizedValue );
-		this.triggerInputChange();
+		this.triggerMethod( 'search:change:input' );
 	},
 } );
 
