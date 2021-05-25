@@ -73,17 +73,8 @@ class Module extends BaseModule {
 
 		$document_types = Plugin::$instance->documents->get_document_types();
 
-		foreach ( $document_types as $document_type ) {
-			if ( ! $document_type::get_property( 'show_in_library' ) ) {
-				continue;
-			}
-
-			/**
-			 * @var Document $instance
-			 */
-			$instance = new $document_type();
-
-			$summary_titles['templates'][ $instance->get_name() ] = [
+		foreach ( $document_types as $name => $document_type ) {
+			$summary_titles['templates'][ $name ] = [
 				'single' => $document_type::get_title(),
 				'plural' => $document_type::get_plural_title(),
 			];
