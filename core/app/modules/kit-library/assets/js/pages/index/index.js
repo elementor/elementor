@@ -153,8 +153,17 @@ export default function Index( props ) {
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
 						{
-							isSuccess && 0 === data.length &&
-								<IndexNoResults isFilterActive={ isFilterActive } clearFilter={ clearQueryParams }/>
+							isSuccess && 0 === data.length && props.renderNoResultsComponent( {
+								defaultComponent: <IndexNoResults
+									title={ __( 'No results matched your search.', 'elementor' ) }
+									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
+									button={ {
+										text: __( 'Continue Browsing', 'elementor' ),
+										action: clearQueryParams,
+									} }
+								/>,
+								isFilterActive,
+							} )
 						}
 					</>
 				</Content>
@@ -166,4 +175,10 @@ export default function Index( props ) {
 Index.propTypes = {
 	path: PropTypes.string,
 	initialQueryParams: PropTypes.object,
+	renderNoResultsComponent: PropTypes.func,
+};
+
+Index.defaultProps = {
+	initialQueryParams: {},
+	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };
