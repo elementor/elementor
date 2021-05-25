@@ -304,7 +304,7 @@ class Frontend extends App {
 			$show_hidden_elements = $editor_preferences->get_model()->get_settings( 'show_hidden_elements' );
 	
 			if( 'yes' === $show_hidden_elements ){
-				$classes[] = 'show-hidden-elements';
+				$classes[] = 'e-preview--show-hidden-elements';
 			}
 		}
 

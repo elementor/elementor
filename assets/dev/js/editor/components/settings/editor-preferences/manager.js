@@ -65,12 +65,7 @@ export default class extends BaseManager {
 		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
 	}
 
-	OnShowHiddenElementsChange( newValue ) {
-		if ( 'yes' === newValue ) {
-			elementor.$previewContents.find( 'body' ).addClass( 'show-hidden-elements' );
-			return;
-		}
-
-		elementor.$previewContents.find( 'body' ).removeClass( 'show-hidden-elements' );
+	OnShowHiddenElementsChange() {
+		elementor.$previewContents.find( 'body' ).toggleClass( 'e-preview--show-hidden-elements' );
 	}
 }
