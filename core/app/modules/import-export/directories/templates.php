@@ -76,7 +76,7 @@ class Templates extends Base {
 	}
 
 	private function import_template( $id, array $template_settings ) {
-		$template = $this->importer->read_json_file( $id );
+		$template_data = $this->importer->read_json_file( $id );
 
 		$doc_type = $template_settings['doc_type'];
 
@@ -93,10 +93,14 @@ class Templates extends Base {
 			return $new_document;
 		}
 
-		$template['import_settings'] = $template_settings;
-		$template['id'] = $id;
+		$template_data['import_settings'] = $template_settings;
+		$template_data['id'] = $id;
 
-		$new_document->import( $template );
+		foreach ( $this->importer->get_adapters() as $adapter ) {
+			$template_data = $adapter->get_template_data( $template_data, $template_settings );
+		}
+
+		$new_document->import( $template_data );
 
 		return $new_document->get_main_id();
 	}

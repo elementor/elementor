@@ -29,7 +29,7 @@ abstract class Iterator extends Base_Object {
 
 	public function set_current_archive_path( $path ) {
 		if ( $path ) {
-			$path .= DIRECTORY_SEPARATOR;
+			$path .= '/';
 		}
 
 		$this->current_archive_path = $path;
