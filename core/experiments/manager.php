@@ -265,7 +265,8 @@ class Manager extends Base_Object {
 			'description' => __( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. __( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_ACTIVE,
 		] );
 	}
 
