@@ -6,8 +6,14 @@ import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import Panel from '../../../ui/panel/panel';
 import Grid from 'elementor-app/ui/grid/grid';
+import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
+import TextField from 'elementor-app/ui/atoms/text-field';
+import Button from 'elementor-app/ui/molecules/button';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
+
+import './export-kit.scss';
 
 export default function ExportKit() {
 	const getFooter = () => (
@@ -36,7 +42,7 @@ export default function ExportKit() {
 
 				<KitContent />
 
-				<Panel>
+				<Panel className="e-app-export-kit-information">
 					<Panel.Header>
 						<Panel.Headline>{ __( 'Kit Information', 'elementor' ) }</Panel.Headline>
 					</Panel.Header>
@@ -44,15 +50,47 @@ export default function ExportKit() {
 					<Panel.Body>
 						<Grid container spacing={20}>
 							<Grid item md={4}>
-								Column1
+								<Grid container direction="column">
+									<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
+										<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
+											{ __( 'Kit Name', 'elementor' ) }
+										</Heading>
+
+										<Button
+											className="e-app-export-kit-information__info-icon"
+											onClick={ () => {} }
+											icon="eicon-info-circle"
+											text={ __( 'Kit Name', 'elementor' ) }
+											color="secondary"
+											hideText
+										/>
+									</Grid>
+
+									<Grid item>
+										<TextField />
+									</Grid>
+								</Grid>
 							</Grid>
 
 							<Grid item md={4}>
-								Column2
-							</Grid>
+								<Grid className="e-app-export-kit-information__field-header" container alignItems="center">
+									<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
+										{ __( 'Kit Description', 'elementor' ) }
+									</Heading>
 
-							<Grid item md={4}>
-								Column3
+									<Button
+										className="e-app-export-kit-information__info-icon"
+										onClick={ () => {} }
+										icon="eicon-info-circle"
+										text={ __( 'Kit Name', 'elementor' ) }
+										color="secondary"
+										hideText
+									/>
+								</Grid>
+
+								<Grid item>
+									<TextField placeholder={ __( 'Say something about the style and content of these files...', 'elementor' ) } multiline rows={6} />
+								</Grid>
 							</Grid>
 						</Grid>
 					</Panel.Body>
