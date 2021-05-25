@@ -226,6 +226,25 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Sort keys
+	 *
+	 * @param false $descending
+	 *
+	 * @return $this
+	 */
+	public function sort_keys( $descending = false ) {
+		$items = $this->items;
+
+		if ( $descending ) {
+			krsort( $items );
+		} else {
+			ksort( $items );
+		}
+
+		return new static( $items );
+	}
+
+	/**
 	 * Get specific item from the collection.
 	 *
 	 * @param      $key

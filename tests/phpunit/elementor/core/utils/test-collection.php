@@ -314,4 +314,17 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEquals( null, $result2 );
 		$this->assertEquals( 'a', $result3 );
 	}
+
+	public function test_sort_keys() {
+		// Arrange
+		$collection = new Collection( [ 'b' => 1, 'c' => 1, 'a' => 1 ] );
+
+		// Act
+		$result_asc = $collection->sort_keys()->all();
+		$result_desc = $collection->sort_keys( true )->all();
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => 1, 'b' => 1, 'c' => 1 ], $result_asc );
+		$this->assertEqualSets( [ 'c' => 1, 'b' => 1, 'a' => 1 ], $result_desc );
+	}
 }
