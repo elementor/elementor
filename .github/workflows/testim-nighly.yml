@@ -86,4 +86,4 @@ jobs:
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli 
       - name: Run Testim tests
-        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label || 'Nightly'}} -r testimci-report.xml --tunnel --tunnel-port 8888
+        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label || 'Nightly'}} -r testimci-report.xml --tunnel --tunnel-port 8888 --parallel 5
