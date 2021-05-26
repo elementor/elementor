@@ -172,12 +172,7 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	public function test_get_items_recursive_simulated() {
-		/**
-		 * TODO: Create Base Endpoint\Internal
-		 * TODO: Create Base Endpoint\Internal\Index
-		 */
-
-		$controller = $this->manager->register_controller_instance( new Mock\Recursive\Controller );
+		$controller = $this->manager->register_controller( new Mock\Recursive\Controller );
 		$this->manager->run_server(); // Ensure controller loaded.
 
 		// Run internal index endpoint. Run endpoint 'test-controller'.

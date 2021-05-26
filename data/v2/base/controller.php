@@ -176,6 +176,21 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get items args for specific endpoint.
+	 *
+	 * @param string $methods
+	 *
+	 * @return array
+	 */
+	public function get_items_args( $methods ) {
+		if ( \WP_REST_Server::READABLE === $methods ) {
+			return $this->get_collection_params();
+		}
+
+		return [];
+	}
+
+	/**
 	 * Get permission callback.
 	 *
 	 * Default controller permission callback.

@@ -115,7 +115,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return \Elementor\Data\V2\Base\Controller
 	 */
-	public function register_controller_instance( /* Controller - TODO Remove - Support V2 */ $controller_instance ) {
+	public function register_controller_instance( /* Controller - TODO Remove - Backwards compatibility for V1 */ $controller_instance ) {
 		$this->controllers[ $controller_instance->get_name() ] = $controller_instance;
 
 		return $controller_instance;

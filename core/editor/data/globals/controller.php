@@ -15,8 +15,9 @@ class Controller extends Controller_Base {
 		$this->register_endpoint( new Endpoints\Typography( $this ) );
 	}
 
-	protected function register_index_endpoint() {
-		$this->register_endpoint( new Endpoint\Index\AllChildren( $this ) );
+	public function get_collection_params() {
+		// Does not have 'get_items' args (OPTIONS).
+		return [];
 	}
 
 	public function get_permission_callback( $request ) {
@@ -26,5 +27,9 @@ class Controller extends Controller_Base {
 		}
 
 		return current_user_can( 'edit_posts' );
+	}
+
+	protected function register_index_endpoint() {
+		$this->register_endpoint( new Endpoint\Index\AllChildren( $this ) );
 	}
 }

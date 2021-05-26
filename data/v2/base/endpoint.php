@@ -41,30 +41,6 @@ abstract class Endpoint extends Base_Route {
 	}
 
 	/**
-	 * Get ancestors.
-	 *
-	 * @return \Elementor\Data\V2\Base\Endpoint[]
-	 */
-	private function get_ancestors() {
-		$ancestors = [];
-		$parent = $this;
-
-		do {
-			if ( $parent ) {
-				$ancestors [] = $parent;
-			}
-
-			if ( ! is_callable( [ $parent, 'get_parent' ] ) ) {
-				break;
-			}
-
-			$parent = $parent->get_parent();
-		} while ( $parent );
-
-		return array_reverse( $ancestors );
-	}
-
-	/**
 	 * Get endpoint name.
 	 *
 	 * @return string
@@ -154,5 +130,29 @@ abstract class Endpoint extends Base_Route {
 		Manager::instance()->register_endpoint_format( $command, $format );
 
 		return $endpoint;
+	}
+
+	/**
+	 * Get ancestors.
+	 *
+	 * @return \Elementor\Data\V2\Base\Endpoint[]
+	 */
+	private function get_ancestors() {
+		$ancestors = [];
+		$current = $this;
+
+		do {
+			if ( $current ) {
+				$ancestors [] = $current;
+			}
+
+			if ( ! is_callable( [ $current, 'get_parent' ] ) ) {
+				break;
+			}
+
+			$current = $current->get_parent();
+		} while ( $current );
+
+		return array_reverse( $ancestors );
 	}
 }

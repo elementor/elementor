@@ -47,6 +47,9 @@ abstract class Base_Route {
 	 */
 	protected $item_route = null;
 
+	protected $id_arg_name = 'id';
+	protected $id_arg_type_regex = '[\d]+';
+
 	/**
 	 * Constructor.
 	 *
@@ -260,29 +263,26 @@ abstract class Base_Route {
 	 * @param string $methods
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
-		$id_arg_name = 'id';
-		$id_arg_type_regex = '[\d]+';
-
 		if ( ! empty( $args['id_arg_name'] ) ) {
-			$id_arg_name = $args['id_arg_name'];
+			$this->id_arg_name = $args['id_arg_name'];
 
 			unset( $args['id_arg_name'] );
 		}
 
 		if ( ! empty( $args['id_arg_type_regex'] ) ) {
-			$id_arg_type_regex = $args['id_arg_type_regex'];
+			$this->id_arg_type_regex = $args['id_arg_type_regex'];
 
 			unset( $args['id_arg_type_regex'] );
 		}
 
 		$args = array_merge( [
-			$id_arg_name => [
+			$this->id_arg_name => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 			],
 		], $args );
 
-		$route .= '(?P<' . $id_arg_name . '>' . $id_arg_type_regex . ')';
+		$route .= '(?P<' . $this->id_arg_name . '>' . $this->id_arg_type_regex . ')';
 
 		$this->item_route = [
 			'args' => $args,
