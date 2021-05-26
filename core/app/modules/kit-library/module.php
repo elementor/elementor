@@ -50,7 +50,7 @@ class Module extends BaseModule {
 		$kit_library = $connect->get_app( 'kit-library' );
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
-			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
+			'subscription_plans' => $connect->get_subscription_plans( 'wp-kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
 			'library_connect_url'  => $kit_library->get_admin_url( 'authorize' ),
