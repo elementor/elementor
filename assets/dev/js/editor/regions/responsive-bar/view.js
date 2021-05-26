@@ -47,6 +47,7 @@ export default class View extends Marionette.ItemView {
 	addTipsyToIconButtons() {
 		this.ui.switcherLabel.add( this.ui.closeButton ).add( this.ui.breakpointSettingsButton ).tipsy(
 			{
+				html: true,
 				gravity: 'n',
 				title() {
 					return jQuery( this ).data( 'tooltip' );
@@ -61,6 +62,7 @@ export default class View extends Marionette.ItemView {
 		this.ui.sizeInputWidth
 			.val( lastSize.width )
 			.tipsy( {
+				html: true,
 				trigger: 'manual',
 				gravity: 'n',
 				title: () => __( 'The value inserted isn\'t in the breakpoint boundaries', 'elementor' ),
@@ -160,8 +162,8 @@ export default class View extends Marionette.ItemView {
 
 		const size = elementor.channels.responsivePreview.request( 'size' );
 
-		this.ui.sizeInputWidth.val( size.width );
-		this.ui.sizeInputHeight.val( size.height );
+		this.ui.sizeInputWidth.val( Math.round( size.width ) );
+		this.ui.sizeInputHeight.val( Math.round( size.height ) );
 	}
 
 	onCloseButtonClick() {
