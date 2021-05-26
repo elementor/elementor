@@ -52,7 +52,7 @@ export default function KitData( props ) {
 			let mergedContent = { ...content };
 
 			for ( const key in mergedContent ) {
-				mergedContent[ key ] = Object.keys( mergedContent[ key ] ).concat( wpContent[ key ] );
+				mergedContent[ key ] = Object.keys( mergedContent[ key ] ).concat( wpContent[ key ] || [] );
 			}
 
 			// In case that wpContent has properties that doesn't exist in the content object.

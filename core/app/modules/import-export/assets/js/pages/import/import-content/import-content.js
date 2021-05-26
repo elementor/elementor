@@ -25,6 +25,7 @@ export default function ImportContent() {
 						navigate( 'import' );
 					} }
 				/>
+
 				<ImportButton />
 			</WizardFooter>
 		),

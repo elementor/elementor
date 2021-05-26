@@ -24,7 +24,7 @@ class WP_Content extends Base {
 		unset(
 			$post_types['attachment'],
 			$post_types[ Landing_Pages_Module::CPT ],
-			$post_types[ Source_Local::CPT ],
+			$post_types[ Source_Local::CPT ]
 		);
 
 		$sub_directories = [];
