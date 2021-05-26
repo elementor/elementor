@@ -218,6 +218,14 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.2.4 - 2021-05-26 =
+* Tweak: Changed Google Maps widget to use API v3 instead of deprecated v2 (#15090)
+* Tweak: Updated Google Fonts list to 05/2021 (#14732, #14536, #13595)
+* Tweak: Changed "Missing Header" text for Compatibility tags in System info screen
+* Fix: Google Maps widget is not loading due to API deprecation (#15090)
+* Fix: Disable Lightbox user preference does not affect the Basic Gallery widget (#12913)
+* Fix: Hardened Lightbox capabilities to enforce better security policies 
+
 = 3.2.3 - 2021-05-05 =
 * Fix: `eicons` file couldn't be found when using Custom Breakpoints ([#14718](https://github.com/elementor/elementor/issues/14718), [#14712](https://github.com/elementor/elementor/issues/14712))
 * Fix: Deregister `eicons` fonts action is not working ([#14712](https://github.com/elementor/elementor/issues/14712))
