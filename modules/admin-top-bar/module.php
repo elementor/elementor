@@ -43,6 +43,11 @@ class Module extends BaseApp {
 		</div>
 		<?php
 	}
+	protected function get_init_settings() {
+		return [
+			'is_administrator' => current_user_can( 'manage_options' ),
+		];
+	}
 
 	/**
 	 * Enqueue admin scripts

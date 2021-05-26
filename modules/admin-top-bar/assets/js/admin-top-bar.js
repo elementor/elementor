@@ -37,7 +37,7 @@ export default function AdminTopBar() {
 
 			<div className="secondary-main-area bar-flex">
 				<div className="bar-buttons-wrapper">
-					<BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton>
+					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
 					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
 				</div>
 
