@@ -1,7 +1,6 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 import Commands from './commands.js';
 import Cache from './data/cache';
-import CommandData from 'elementor-api/modules/command-data';
 
 /**
  * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
@@ -260,8 +259,6 @@ export default class Data extends Commands {
 	/**
 	 * Function prepareHeaders().
 	 *
-	 * Prepare the headers for each request.
-	 *
 	 * @param {RequestData} requestData
 	 *
 	 * @return {{}} params
@@ -305,15 +302,12 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * Function prepareEndpoint().
-	 *
 	 * This method response for building a final endpoint,
 	 * the main problem is with plain permalink mode + command with query params that creates a weird url,
 	 * the current method should fix it.
 	 *
-	 * @param {string} endpoint
-	 *
-	 * @returns {string} endpoint
+	 * @param endpoint
+	 * @returns {string}
 	 */
 	prepareEndpoint( endpoint ) {
 		const splitUrl = endpoint.split( '?' ),
@@ -336,7 +330,7 @@ export default class Data extends Commands {
 	 * @param {RequestData} requestData
 	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
 	 *
-	 * @return {Promise<Response>}
+	 * @return {{}} params
 	 */
 	fetch( requestData, fetchAPI = window.fetch ) {
 		requestData.cache = 'miss';
@@ -480,110 +474,44 @@ export default class Data extends Commands {
 		this.commandFormats[ command ] = format;
 	}
 
-	/**
-	 * Function create().
-	 *
-	 * Run a command, that will be translated as endpoint for creating new data.
-	 *
-	 * @param {string} command
-	 * @param {*} data
-	 * @param {{}} query
-	 * @param {{}} options
-	 *
-	 * @returns {*} result
-	 */
 	create( command, data, query = {}, options = {} ) {
 		return this.run( 'create', command, { query, options, data } );
 	}
 
-	/**
-	 * Function delete().
-	 *
-	 * Run a command, that will be translated as endpoint for deleting data.
-	 *
-	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
-	 *
-	 * @returns {*} result
-	 */
 	delete( command, query = {}, options = {} ) {
 		return this.run( 'delete', command, { query, options } );
 	}
 
-	/**
-	 * Function get().
-	 *
-	 * Run a command, that will be translated as endpoint for getting data.
-	 *
-	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
-	 *
-	 * @returns {*} result
-	 */
 	get( command, query = {}, options = {} ) {
 		return this.run( 'get', command, { query, options } );
 	}
 
-	/**
-	 * Function update().
-	 *
-	 * Run a command, that will be translated as endpoint for updating data.
-	 *
-	 * @param {string} command
-	 * @param {*} data
-	 * @param {{}} query
-	 * @param {{}} options
-	 *
-	 * @returns {*} result
-	 */
 	update( command, data, query = {}, options = {} ) {
 		return this.run( 'update', command, { query, options, data } );
 	}
 
-	/**
-	 * Function options().
-	 *
-	 * Run a command, that will be translated as endpoint for requesting options/information about specific endpoint.
-	 *
-	 * @param {string} command
-	 * @param {{}} query
-	 * @param {{}} options
-	 *
-	 * @returns {*} result
-	 */
 	options( command, query, options = {} ) {
 		return this.run( 'options', command, { query, options } );
 	}
 
-	register( component, command, context ) {
-		// Support inline-data commands.
-		if ( 'string' === typeof context ) {
-			const CommandDataInline = CommandData,
-				endpointFormat = context;
+	/**
+	 * @param {ComponentBase} component
+	 * @param {string} command
+	 * @param callback
+	 */
+	register( component, command, callback ) {
+		super.register( component, command, callback );
 
-			CommandDataInline.getEndpointFormat = () => endpointFormat;
-
-			// Since '$e.commands.run
-			context = ( args ) => ( new CommandDataInline( args ).run() );
-		}
-
-		const result = super.register( component, command, context ),
-			fullCommandName = component.getNamespace() + '/' + command,
+		const fullCommandName = component.getNamespace() + '/' + command,
 			commandInstance = $e.commands.getCommandClass( fullCommandName ),
 			format = commandInstance?.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
 
 		if ( format ) {
 			$e.data.registerFormat( fullCommandName, format );
 		}
-
-		return result;
 	}
 
 	/**
-	 * @override
-	 *
 	 * TODO: Add JSDOC typedef for args ( query and options ).
 	 *
 	 * @param {DataTypes} type
