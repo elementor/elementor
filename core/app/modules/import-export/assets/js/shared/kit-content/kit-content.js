@@ -66,7 +66,7 @@ export default function KitContent( props ) {
 						}
 
 						return (
-							<List.Item separated padding="20" key={ item.type } className="e-app-export-kit-content__item">
+							<List.Item padding="20" key={ item.type } className="e-app-export-kit-content__item">
 								<div
 									onMouseEnter={ () => isLockedFeaturesNoPro && setContainerHoverState( index, true ) }
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }

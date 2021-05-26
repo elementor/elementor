@@ -21,7 +21,11 @@ export default function ImportButton() {
 			color={ isImportAllowed ? 'primary' : 'disabled' }
 			onClick={ () => {
 				if ( isImportAllowed ) {
-					navigate( 'import/process' );
+					if ( context.data.includes.includes( 'templates' ) && context.data.fileResponse.stage1.conflicts ) {
+						navigate( 'import/resolver' );
+					} else {
+						navigate( 'import/process' );
+					}
 				}
 			} }
 		/>
