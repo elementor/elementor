@@ -176,43 +176,41 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) ) {
-			if ( ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
-				return;
-			}
+		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
+			return;
+		}
 
-			$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
+		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
 
-			if ( ! empty( $export_settings['kitInfo'] ) ) {
-				$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		if ( ! empty( $export_settings['kitInfo'] ) ) {
+			$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-				wp_update_post( [
-					'ID' => $active_kit_id,
-					'post_title' => $export_settings['kitInfo']['title'],
-					'post_excerpt' => $export_settings['kitInfo']['description'],
-				] );
+			wp_update_post( [
+				'ID' => $active_kit_id,
+				'post_title' => $export_settings['kitInfo']['title'],
+				'post_excerpt' => $export_settings['kitInfo']['description'],
+			] );
 
-				set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
-			}
+			set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
+		}
 
-			try {
-				$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
+		try {
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
 
-				$export_result = $this->export->run();
+			$export_result = $this->export->run();
 
-				$file_name = $export_result['file_name'];
+			$file_name = $export_result['file_name'];
 
-				$file = file_get_contents( $file_name, true );
+			$file = file_get_contents( $file_name, true );
 
-				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
-				wp_send_json_success( [
-					'manifest' => $export_result['manifest'],
-					'file' => base64_encode( $file ),
-				] );
-			} catch ( \Error $error ) {
-				wp_die( $error->getMessage() );
-			}
+			wp_send_json_success( [
+				'manifest' => $export_result['manifest'],
+				'file' => base64_encode( $file ),
+			] );
+		} catch ( \Error $error ) {
+			wp_die( $error->getMessage() );
 		}
 	}
 
