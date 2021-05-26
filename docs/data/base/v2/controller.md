@@ -226,7 +226,7 @@
 Elementor\Data\Manager::instance()->register_controller( Controller::class );
 ```
     
-# Created two levels deep resource.
+# Create two levels deep resource.
 * Simple:
     ```text
     'documents'                           - Return all documents and elements.
