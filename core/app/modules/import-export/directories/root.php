@@ -51,31 +51,35 @@ class Root extends Base {
 	}
 
 	protected function import( array $import_settings ) {
-		if ( isset( $import_settings['site-settings'] ) ) {
-			$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$include = $this->importer->get_settings( 'include' );
 
-			$old_settings = $kit->get_meta( PageManager::META_KEY );
-
-			if ( ! $old_settings ) {
-				$old_settings = [];
-			}
-
-			$new_settings = $this->importer->read_json_file( 'site-settings' );
-
-			$new_settings = $new_settings['settings'];
-
-			if ( ! empty( $old_settings['custom_colors'] ) ) {
-				$new_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_settings['custom_colors'] );
-			}
-
-			if ( ! empty( $old_settings['custom_typography'] ) ) {
-				$new_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_settings['custom_typography'] );
-			}
-
-			$new_settings = array_replace_recursive( $old_settings, $new_settings );
-
-			$kit->save( [ 'settings' => $new_settings ] );
+		if ( ! in_array( 'settings', $include, true ) ) {
+			return;
 		}
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$old_settings = $kit->get_meta( PageManager::META_KEY );
+
+		if ( ! $old_settings ) {
+			$old_settings = [];
+		}
+
+		$new_settings = $this->importer->read_json_file( 'site-settings' );
+
+		$new_settings = $new_settings['settings'];
+
+		if ( ! empty( $old_settings['custom_colors'] ) ) {
+			$new_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_settings['custom_colors'] );
+		}
+
+		if ( ! empty( $old_settings['custom_typography'] ) ) {
+			$new_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_settings['custom_typography'] );
+		}
+
+		$new_settings = array_replace_recursive( $old_settings, $new_settings );
+
+		$kit->save( [ 'settings' => $new_settings ] );
 	}
 
 	protected function get_default_sub_directories() {

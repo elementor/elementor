@@ -128,11 +128,21 @@ class Test_Collection extends Elementor_Test_Base {
 
 		// Act
 		$result = $collection->merge_recursive( $collection2->all() );
-		$result2 = $collection2->merge_recursive( $collection2 );
 
 		// Assert
 		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
-		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '3', '4', '5' ], 'c' => [ '6' ] ], $result->all() );
+	}
+
+	public function test_replace_recursive() {
+		// Arrange
+		$collection = new Collection( [ 'a' => [ '1', '2' ], 'b' => [ '3' ] ] );
+		$collection2 = new Collection( [ 'b' => [ '4', '5' ], 'c' => [ '6' ] ] );
+
+		// Act
+		$result = $collection->replace_recursive( $collection2->all() );
+
+		// Assert
+		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '4', '5' ], 'c' => [ '6' ] ], $result->all() );
 	}
 
 	public function test_implode() {
@@ -245,6 +255,48 @@ class Test_Collection extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEqualSets( [ 'a', 'b', 'c' ], $result->all() );
+	}
+
+	public function test_unique__with_key_array() {
+		// Arrange
+		$collection = new Collection( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'b', 'id' => 3 ],
+			[ 'id' => 4 ],
+			[ 'text' => 'c', 'id' => 5 ],
+		] );
+
+		// Act
+		$result = $collection->unique( 'text' );
+
+		// Assert
+		$this->assertEqualSets( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'c', 'id' => 5 ],
+		], $result->all() );
+	}
+
+	public function test_unique__with_key_object() {
+		// Arrange
+		$collection = new Collection( [
+			(object) [ 'text' => 'a', 'id' => 1 ],
+			(object) [ 'text' => 'b', 'id' => 2 ],
+			(object) [ 'text' => 'b', 'id' => 3 ],
+			(object) [ 'id' => 4 ],
+			(object) [ 'text' => 'c', 'id' => 5 ],
+		] );
+
+		// Act
+		$result = $collection->unique( 'text' );
+
+		// Assert
+		$this->assertEqualSets( [
+			(object) [ 'text' => 'a', 'id' => 1 ],
+			(object) [ 'text' => 'b', 'id' => 2 ],
+			(object) [ 'text' => 'c', 'id' => 5 ],
+		], $result->all() );
 	}
 
 	public function test_first() {
