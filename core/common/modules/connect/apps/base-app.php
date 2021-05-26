@@ -399,7 +399,8 @@ abstract class Base_App {
 				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
 				return [ str_replace( '_', '-', $key ) => $value ];
 			} )
-			->replace_recursive( [ 'endpoint' => $endpoint ] );
+			->replace_recursive( [ 'endpoint' => $endpoint ] )
+			->sort_keys();
 
 		return $connect_info
 			->merge( [ 'X-Elementor-Signature' => $this->generate_signature( $connect_info->all() ) ] )
