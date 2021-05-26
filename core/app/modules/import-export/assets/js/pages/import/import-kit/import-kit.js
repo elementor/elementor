@@ -47,9 +47,14 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
-			navigate( '/import/content' );
 		}
 	}, [ ajaxState.status ] );
+
+	useEffect( () => {
+		if ( context.data.fileResponse ) {
+			navigate( '/import/content' );
+		}
+	}, [ context.data.fileResponse ] );
 
 	return (
 		<Layout type="import">
