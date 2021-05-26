@@ -65,7 +65,7 @@ export default function ExportKit() {
 		};
 
 	return (
-		<Layout type="export" footer={ getFooter() }>
+		<Layout type="export" footer={ getFooter() } headerButtons={ [ getInfoButton() ] }>
 			<section className="e-app-export-kit">
 				<PageHeader
 					heading={ __( 'Export a Template Kit', 'elementor' ) }
