@@ -64,10 +64,19 @@
 *  In which situations you may use Sub-Endpoints?
     * When you have simple routes like `house/garage/items`. 
     * When you need deeper endpoint that are parent of another endpoint.
-    
+     
+* Why Controller exists?
+    * To border the best practice: 
+        * `resource/{id}`
+        * `resource/{id}/resource/{id}`.
+        * `resource/endpoint/{id}`.
+    * To know how to serve you ( as resource ).
+    * To inherit `WP_REST_Controller` and utilize it.
+
 * Why [Endpoint]() exists?
-   *   Make it possible to simulate it as command, and attach a processor on it.
-   *   To serve the `Controller` itself.
+   *  To avoid extending of `WP_REST_Controller`.
+   *  Make it possible to simulate it as command, and attach a processor on it.
+   *  To serve the `Controller` itself.
 
 * Why Sub-Endpoints exists?
    *  Make it possible to simulate it as command, and attach a processor on it.
