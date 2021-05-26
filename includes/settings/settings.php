@@ -460,7 +460,21 @@ class Settings extends Settings_Page {
 			],
 			self::TAB_INTEGRATIONS => [
 				'label' => __( 'Integrations', 'elementor' ),
-				'sections' => [],
+				'sections' => [
+					'google_maps' => [
+						'label' => __( 'Google Maps Embed API', 'elementor' ),
+						'fields' => [
+							'google_maps_api_key' => [
+								'label' => __( 'API Key', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_google_maps_api_key',
+									'type' => 'text',
+									'desc' => __( 'Enter a valid Google Maps Embed API key. For more details, visit Google Maps Embed API\'s <a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">Using API Keys</a> page.', 'elementor' ),
+								],
+							],
+						],
+					],
+				],
 			],
 			self::TAB_ADVANCED => [
 				'label' => __( 'Advanced', 'elementor' ),

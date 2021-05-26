@@ -104,6 +104,21 @@ class Widget_Google_Maps extends Widget_Base {
 			]
 		);
 
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$api_key = esc_html( get_option( 'elementor_google_maps_api_key' ) );
+
+			if ( ! $api_key ) {
+				$this->add_control(
+					'api_key_notification',
+					[
+						'type' => Controls_Manager::RAW_HTML,
+						'raw' => sprintf( __( 'To use the new Google Maps Embed API, add an API Key in the <a href="%1$s" target="_blank">Admin Dashboard > Elementor > Settings > Integrations</a> page.', 'elementor' ), Settings::get_url() . '#tab-integrations' ),
+						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+					]
+				);
+			}
+		}
+
 		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
 			'address',
@@ -256,12 +271,24 @@ class Widget_Google_Maps extends Widget_Base {
 			$settings['zoom']['size'] = 10;
 		}
 
-		printf(
-			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near" title="%3$s" aria-label="%3$s"></iframe></div>',
-			rawurlencode( $settings['address'] ),
-			absint( $settings['zoom']['size'] ),
-			esc_attr( $settings['address'] )
-		);
+		$api_key = esc_html( get_option( 'elementor_google_maps_api_key' ) );
+
+		if ( $api_key ) {
+			printf(
+				'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed/v1/place?key=%4$s&q=%1$s&amp;zoom=%2$d" title="%3$s" aria-label="%3$s"></iframe></div>',
+				rawurlencode( $settings['address'] ),
+				absint( $settings['zoom']['size'] ),
+				esc_attr( $settings['address'] ),
+				$api_key
+			);
+		} else {
+			printf(
+				'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near" title="%3$s" aria-label="%3$s"></iframe></div>',
+				rawurlencode( $settings['address'] ),
+				absint( $settings['zoom']['size'] ),
+				esc_attr( $settings['address'] )
+			);
+		}
 	}
 
 	/**
