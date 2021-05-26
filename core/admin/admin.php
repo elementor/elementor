@@ -377,17 +377,7 @@ class Admin extends App {
 	 */
 	public function elementor_dashboard_overview_widget() {
 		$elementor_feed = Api::get_feed_data();
-
-		$recently_edited_query_args = [
-			'post_type' => 'any',
-			'post_status' => [ 'publish', 'draft' ],
-			'posts_per_page' => '3',
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
-			'orderby' => 'modified',
-		];
-
-		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+		$recently_edited_query = Utils::get_recently_edited_posts_query();
 
 		if ( User::is_current_user_can_edit_post_type( 'page' ) ) {
 			$create_new_label = __( 'Create New Page', 'elementor' );
@@ -415,7 +405,7 @@ class Admin extends App {
 				</div>
 				<?php if ( ! empty( $create_new_post_type ) ) : ?>
 					<div class="e-overview__create">
-						<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
+						<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ); ?>" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> <?php echo esc_html( $create_new_label ); ?></a>
 					</div>
 				<?php endif; ?>
 			</div>

@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
 use Elementor\Autoloader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
@@ -40,9 +42,11 @@ require __DIR__ . '/phpunit/traits/base-elementor.php';
 require __DIR__ . '/phpunit/traits/extra-assertions.php';
 require __DIR__ . '/phpunit/traits/auth-helpers.php';
 require __DIR__ . '/phpunit/traits/elementor-library-trait.php';
+require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
 require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/ajax-class.php';
+require __DIR__ . '/phpunit/base-schema.php';
 require __DIR__ . '/phpunit/factories/factory.php';
 require __DIR__ . '/phpunit/factories/documents.php';
 

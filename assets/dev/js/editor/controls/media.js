@@ -25,14 +25,29 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	getMediaType: function() {
-		return this.model.get( 'media_type' );
+		// `get( 'media_type' )` is for BC.
+		return this.mediaType || this.model.get( 'media_type' ) || this.model.get( 'media_types' )[ 0 ];
+	},
+
+	/**
+	 * Get library type for `wp.media` using a given media type.
+	 *
+	 * @param {String} mediaType - The media type to get the library for.
+	 * @returns {String}
+	 */
+	getLibraryType: function( mediaType ) {
+		if ( ! mediaType ) {
+			mediaType = this.getMediaType();
+		}
+
+		return ( 'svg' === mediaType ) ? 'image/svg+xml' : mediaType;
 	},
 
 	applySavedValue: function() {
-		var url = this.getControlValue( 'url' ),
+		const url = this.getControlValue( 'url' ),
 			mediaType = this.getMediaType();
 
-		if ( 'image' === mediaType ) {
+		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
@@ -46,6 +61,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	openFrame: function( e ) {
 		const mediaType = e?.target?.dataset?.mediaType || this.getMediaType();
+		this.mediaType = mediaType;
+
+		if ( ! mediaType ) {
+			return;
+		}
 
 		if ( ! FilesUploadHandler.isUploadEnabled( mediaType ) ) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => this.openFrame( e ) ).show();
@@ -53,7 +73,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			return false;
 		}
 
-		if ( ! this.frame ) {
+		// If there is no frame, or the current initialized frame contains a different library than
+		// the `data-media-type` of the clicked button, (re)initialize the frame.
+		if ( ! this.frame || this.getLibraryType( mediaType ) !== this.currentLibraryType ) {
 			this.initFrame();
 		}
 
@@ -86,27 +108,72 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		const mediaType = this.getMediaType();
+		this.currentLibraryType = this.getLibraryType( mediaType );
+
 		// Set current doc id to attach uploaded images.
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
-			button: {
-				text: __( 'Insert Media', 'elementor' ),
-			},
+			frame: 'post',
+			type: 'image',
+			multiple: false,
 			states: [
 				new wp.media.controller.Library( {
 					title: __( 'Insert Media', 'elementor' ),
-					library: wp.media.query( { type: this.getMediaType() } ),
+					library: wp.media.query( { type: this.currentLibraryType } ),
 					multiple: false,
 					date: false,
 				} ),
 			],
 		} );
 
+		// Remove unwanted elements when frame is opened.
+		this.frame.on( 'ready open', this.onFrameReady.bind( this ) );
+
 		// When a file is selected, run a callback.
 		this.frame.on( 'insert select', this.select.bind( this ) );
 
 		if ( elementor.config.filesUpload.unfilteredFiles ) {
-			this.setUploadMimeType( this.frame, this.getMediaType() );
+			this.setUploadMimeType( this.frame, mediaType );
+		}
+	},
+
+	/**
+	 * Hack to remove unwanted elements from modal & Open the `Insert from URL` tab.
+	 */
+	onFrameReady() {
+		const $frame = this.frame.$el;
+
+		const elementsToRemove = [
+			'#menu-item-insert',
+			'#menu-item-gallery',
+			'#menu-item-playlist',
+			'#menu-item-video-playlist',
+			'.embed-link-settings',
+		];
+
+		$frame.find( elementsToRemove.join( ',' ) ).remove();
+
+		// Change the default button text using CSS by passing the text as a variable.
+		$frame.css( '--button-text', `'${ __( 'Insert Media', 'elementor' ) }'` );
+
+		// Remove elements from the URL upload tab.
+		$frame.addClass( 'e-wp-media-elements-removed' );
+
+		if ( 'url' === this.getControlValue( 'source' ) ) {
+			// Go to the url tab.
+			$frame.find( '#menu-item-embed' ).trigger( 'click' );
+
+			// Hide the top media tabs ( WordPress does that automatically if a real user clicks the url tab ).
+			$frame.addClass( 'hide-router' );
+
+			// Load the image URL.
+			this.frame.views.get( '.media-frame-content' )[ 0 ].url.model.set( {
+				url: this.getControlValue( 'url' ),
+			} );
+		} else {
+			// Go to the upload tab.
+			$frame.find( '#menu-item-library' ).trigger( 'click' );
 		}
 	},
 
@@ -131,13 +198,29 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	select: function() {
 		this.trigger( 'before:select' );
 
-		// Get the attachment from the modal frame.
-		var attachment = this.frame.state().get( 'selection' ).first().toJSON();
+		const state = this.frame.state();
+		let attachment;
+
+		if ( 'embed' === state.get( 'id' ) ) {
+			// Insert from URL.
+			attachment = {
+				url: state.props.get( 'url' ),
+				id: '',
+				alt: state.props.get( 'alt' ),
+				source: 'url',
+			};
+		} else {
+			// Get the attachment from the modal frame.
+			attachment = this.frame.state().get( 'selection' ).first().toJSON();
+			attachment.source = 'library';
+		}
 
 		if ( attachment.url ) {
 			this.setValue( {
 				url: attachment.url,
 				id: attachment.id,
+				alt: attachment.alt,
+				source: attachment.source,
 			} );
 
 			this.applySavedValue();

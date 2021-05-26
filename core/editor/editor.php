@@ -2,11 +2,12 @@
 namespace Elementor\Core\Editor;
 
 use Elementor\Api;
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -559,7 +560,6 @@ class Editor {
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
 			'docs_elementor_site' => 'https://go.elementor.com/docs/',
 			'help_the_content_url' => 'https://go.elementor.com/the-content-missing/',
-			'help_right_click_url' => 'https://go.elementor.com/meet-right-click/',
 			'help_flexbox_bc_url' => 'https://go.elementor.com/flexbox-layout-bc/',
 			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
@@ -719,10 +719,14 @@ class Editor {
 			);
 		}
 
-		if ( Responsive::has_custom_breakpoints() ) {
-			$breakpoints = Responsive::get_breakpoints();
+		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
 
-			wp_add_inline_style( 'elementor-editor', '.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . $breakpoints['md'] . 'px; }' );
+		// The two breakpoints under 'tablet' need to be checked for values.
+		if ( $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]->is_custom() || $breakpoints[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA ]->is_enabled() ) {
+			wp_add_inline_style(
+				'elementor-editor',
+				'.elementor-device-tablet #elementor-preview-responsive-wrapper { width: ' . Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_TABLET ) . 'px; }'
+			);
 		}
 
 		/**
@@ -800,30 +804,6 @@ class Editor {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/editor/wp_head' );
-	}
-
-	/**
-	 * Add editor template.
-	 *
-	 * Registers new editor templates.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->add_template()`
-	 * @access public
-	 *
-	 * @param string $template Can be either a link to template file or template
-	 *                         HTML content.
-	 * @param string $type     Optional. Whether to handle the template as path
-	 *                         or text. Default is `path`.
-	 */
-	public function add_editor_template( $template, $type = 'path' ) {
-		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->add_template()' );
-
-		$common = Plugin::$instance->common;
-
-		if ( $common ) {
-			Plugin::$instance->common->add_template( $template, $type );
-		}
 	}
 
 	/**
@@ -931,96 +911,6 @@ class Editor {
 	}
 
 	/**
-	 * Create nonce.
-	 *
-	 * If the user has edit capabilities, it creates a cryptographic token to
-	 * give him access to Elementor editor.
-	 *
-	 * @since 1.8.1
-	 * @since 1.8.7 The `$post_type` parameter was introduces.
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->create_nonce()` instead
-	 * @access public
-	 *
-	 * @param string $post_type The post type to check capabilities.
-	 *
-	 * @return null|string The nonce token, or `null` if the user has no edit
-	 *                     capabilities.
-	 */
-	public function create_nonce( $post_type ) {
-		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->create_nonce()' );
-
-		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
-		return $ajax->create_nonce();
-	}
-
-	/**
-	 * Verify nonce.
-	 *
-	 * The user is given an amount of time to use the token, so therefore, since
-	 * the user ID and `$action` remain the same, the independent variable is
-	 * the time.
-	 *
-	 * @since 1.8.1
-	 * @deprecated 2.3.0
-	 * @access public
-	 *
-	 * @param string $nonce Nonce to verify.
-	 *
-	 * @return false|int If the nonce is invalid it returns `false`. If the
-	 *                   nonce is valid and generated between 0-12 hours ago it
-	 *                   returns `1`. If the nonce is valid and generated
-	 *                   between 12-24 hours ago it returns `2`.
-	 */
-	public function verify_nonce( $nonce ) {
-		_deprecated_function( __METHOD__, '2.3.0', 'wp_verify_nonce()' );
-
-		return wp_verify_nonce( $nonce );
-	}
-
-	/**
-	 * Verify request nonce.
-	 *
-	 * Whether the request nonce verified or not.
-	 *
-	 * @since 1.8.1
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )->verify_request_nonce()` instead
-	 * @access public
-	 *
-	 * @return bool True if request nonce verified, False otherwise.
-	 */
-	public function verify_request_nonce() {
-		_deprecated_function( __METHOD__, '2.3.0', 'Plugin::$instance->common->get_component( \'ajax\' )->verify_request_nonce()' );
-
-		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
-		return $ajax->verify_request_nonce();
-	}
-
-	/**
-	 * Verify ajax nonce.
-	 *
-	 * Verify request nonce and send a JSON request, if not verified returns an
-	 * error.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.3.0
-	 * @access public
-	 */
-	public function verify_ajax_nonce() {
-		_deprecated_function( __METHOD__, '2.3.0' );
-
-		/** @var Ajax $ajax */
-		$ajax = Plugin::$instance->common->get_component( 'ajax' );
-
-		if ( ! $ajax->verify_request_nonce() ) {
-			wp_send_json_error( new \WP_Error( 'token_expired', 'Nonce token expired.' ) );
-		}
-	}
-
-	/**
 	 * Init editor templates.
 	 *
 	 * Initialize default elementor templates used in the editor panel.
@@ -1037,6 +927,7 @@ class Editor {
 			'templates',
 			'navigator',
 			'hotkeys',
+			'responsive-bar',
 		];
 
 		foreach ( $template_names as $template_name ) {

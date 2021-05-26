@@ -338,18 +338,27 @@ TemplateLibraryManager = function() {
 			var message = '';
 
 			_.each( errorMessage, function( error ) {
+				if ( ! error?.message ) {
+					return;
+				}
+
 				message += '<div>' + error.message + '.</div>';
 			} );
 
 			errorMessage = message;
 		} else if ( errorMessage ) {
 			errorMessage += '.';
+		}
+
+		if ( errorMessage ) {
+			errorMessage = __( 'The following error(s) occurred while processing the request:', 'elementor' ) +
+				'<div id="elementor-template-library-error-info">' + errorMessage + '</div>';
 		} else {
-			errorMessage = '<i>&#60;The error message is empty&#62;</i>';
+			errorMessage = __( 'Please try again.', 'elementor' );
 		}
 
 		self.getErrorDialog()
-			.setMessage( __( 'The following error(s) occurred while processing the request:', 'elementor' ) + '<div id="elementor-template-library-error-info">' + errorMessage + '</div>' )
+			.setMessage( errorMessage )
 			.show();
 	};
 };

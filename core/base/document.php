@@ -2,10 +2,12 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Settings\Page\Model as Page_Model;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Utils;
@@ -186,12 +188,22 @@ abstract class Document extends Controls_Stack {
 		return get_called_class();
 	}
 
+	public static function get_create_url() {
+		$base_create_url = Plugin::$instance->documents->get_create_new_post_url( Source_Local::CPT );
+
+		return add_query_arg( [ 'template_type' => static::get_type() ], $base_create_url );
+	}
+
+	public function get_name() {
+		return static::get_type();
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_unique_name() {
-		return $this->get_name() . '-' . $this->post->ID;
+		return static::get_type() . '-' . $this->post->ID;
 	}
 
 	/**
@@ -202,15 +214,6 @@ abstract class Document extends Controls_Stack {
 		$post_type_object = get_post_type_object( $this->post->post_type );
 
 		return $post_type_object->labels->singular_name;
-	}
-
-	/**
-	 * @since 2.0.12
-	 * @deprecated 2.4.0 Use `Document::get_remote_library_config()` instead
-	 * @access public
-	 */
-	public function get_remote_library_type() {
-		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_remote_library_config()' );
 	}
 
 	/**
@@ -267,17 +270,6 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function get_main_post() {
 		return get_post( $this->get_main_id() );
-	}
-
-	/**
-	 * @since 2.0.6
-	 * @deprecated 2.4.0 Use `Document::get_container_attributes()` instead
-	 * @access public
-	 */
-	public function get_container_classes() {
-		_deprecated_function( __METHOD__, '2.4.0', __CLASS__ . '::get_container_attributes()' );
-
-		return '';
 	}
 
 	public function get_container_attributes() {
@@ -572,6 +564,16 @@ abstract class Document extends Controls_Stack {
 	 * @return bool
 	 */
 	public function save( $data ) {
+		/**
+		 * Fires when document save starts on Elementor.
+		 *
+		 * @param array $data.
+		 * @param \Elementor\Core\Base\Document $this The current document.
+		 *
+		 * @since 3.3.0
+		 */
+		$data = apply_filters( 'elementor/document/save/data', $data, $this );
+
 		$this->add_handle_revisions_changed_filter();
 
 		if ( ! $this->is_editable_by_current_user() ) {
@@ -1265,6 +1267,120 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	/*
+	 * Get Export Data
+	 *
+	 * Filters a document's data on export
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to export
+	 */
+	public function get_export_data() {
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
+			$element_data['id'] = Utils::generate_random_string();
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_export' );
+		} );
+
+		return [
+			'content' => $content,
+			'settings' => $this->get_data( 'settings' ),
+		];
+	}
+
+	/*
+	 * Get Import Data
+	 *
+	 * Filters a document's data on import
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @return array The data to import
+	 */
+	public function get_import_data( array $data ) {
+		$data['content'] = Plugin::$instance->db->iterate_data( $data['content'], function( $element_data ) {
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_import' );
+		} );
+
+		if ( ! empty( $data['settings'] ) ) {
+			$template_model = new Page_Model( [
+				'id' => 0,
+				'settings' => $data['settings'],
+			] );
+
+			$page_data = $this->process_element_import_export( $template_model, 'on_import' );
+
+			$data['settings'] = $page_data['settings'];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Import
+	 *
+	 * Allows to import an external data to a document
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
+	 * @param array $data
+	 */
+	public function import( array $data ) {
+		$data = $this->get_import_data( $data );
+
+		$this->save( [
+			'elements' => $data['content'],
+			'settings' => $data['settings'],
+		] );
+	}
+
+	private function process_element_import_export( Controls_Stack $element, $method ) {
+		$element_data = $element->get_data();
+
+		if ( method_exists( $element, $method ) ) {
+			// TODO: Use the internal element data without parameters.
+			$element_data = $element->{$method}( $element_data );
+		}
+
+		foreach ( $element->get_controls() as $control ) {
+			$control_class = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			// If the control isn't exist, like a plugin that creates the control but deactivated.
+			if ( ! $control_class ) {
+				return $element_data;
+			}
+
+			if ( method_exists( $control_class, $method ) ) {
+				$element_data['settings'][ $control['name'] ] = $control_class->{$method}( $element->get_settings( $control['name'] ), $control );
+			}
+
+			// On Export, check if the control has an argument 'export' => false.
+			if ( 'on_export' === $method && isset( $control['export'] ) && false === $control['export'] ) {
+				unset( $element_data['settings'][ $control['name'] ] );
+			}
+		}
+
+		return $element_data;
 	}
 
 	protected function get_remote_library_config() {
