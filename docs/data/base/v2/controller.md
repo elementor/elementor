@@ -13,7 +13,8 @@
 	| `Controller::get_full_name()`           |                                | `string` Full controller name                  | Get full controller name, if parent exist it will be included.
 	| `Controller::get_controller_route()`    |                                | `string` Controller route                      | Get full controller route including the namespace.
 	| `Controller::get_controller_index()`    |                                | `WP_REST_Response` or `WP_Error`               | Retrieves rest route(s) index for current controller.
-	| `Controller::get_permission_callback()` |                                | `{bool}`                                       | Get permission callback for each request in the controller.
+	| `Controller::get_items_args()`          | `string` $methods              | `WP_REST_Response` or `WP_Error`               | Retrieves rest route(s) index for current controller.
+	| `Controller::get_permission_callback()` |  `WP_REST_Request` $request    | `{array}`                                      | Return args of of items route for each method, (Default args for `Base\Endpoint\Index`). 
 	| `Controller::get_items()`               |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to get all the items. By defaults returns `Controller::get_controller_index` (Extendable).
 	| `Controller::get_item()`                |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to get one item (Must be extended).
 	| `Controller::create_items()`            |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to create items (Must be extended).
@@ -50,27 +51,27 @@
        
 * What are Sub-Controllers & Sub-Endpoints?
     * Terms used to describe the flow.
-    * Sub-Controller are *controller* which is children of another controller.
-    * Sub-Endpoint are *endpoint* which is children of another endpoint.
+    * Sub-Controller are *Controller* which is children of another controller.
+    * Sub-Endpoint are *Endpoint* which is children of another endpoint.
     
 *  In which situations you may use Controllers?
     * When you have routes which represent a resource, like: `house/keys`, `house/rooms`, `house/rooms/{id}/doors`.
     
 *  In which situations you may use Endpoints?
-    * When you have simple routes like `house/garage`. 
+    * When the endpoint does not require knowing about his ancestry.
+    * When you have simple routes like `house/garage`, `resource/endpoint`. 
 
 *  In which situations you may use Sub-Endpoints?
     * When you have simple routes like `house/garage/items`. 
+    * When you need deeper endpoint that are parent of another endpoint.
     
-* Why endpoint exists?
+* Why [Endpoint]() exists?
+   *   Make it possible to simulate it as command, and attach a processor on it.
    *   To serve the `Controller` itself.
-   *   to run processors that are registered via `Processor` class.
-   *   Make it possible to simulate it as command, and attach a processor on it.
-   *   To handle endpoints which are not resource.
 
-* Why sub-endpoints exists?
-   *   Make it possible to simulate it as command, and attach a processor on it.
-   *   To get extra depth when no resource is neeeded.
+* Why Sub-Endpoints exists?
+   *  Make it possible to simulate it as command, and attach a processor on it.
+   *  To get extra depth, from something which not a resource, example: `resource/endpoint/sub-endpoint`.
 
 * Representations:
     * Controller represented as _resource_.
