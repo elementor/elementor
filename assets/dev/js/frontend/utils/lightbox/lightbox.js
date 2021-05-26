@@ -103,7 +103,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
-		if ( ! options.url.startsWith( 'http' ) ) {
+		if ( options.url && ! options.url.startsWith( 'http' ) ) {
 			return;
 		}
 
