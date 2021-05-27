@@ -5,19 +5,17 @@ import PageHeader from '../../../ui/page-header/page-header';
 import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import Panel from '../../../ui/panel/panel';
+import ExportInfoModal from '../../../shared/info-modal/export-info-modal';
 import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
 import TextField from 'elementor-app/ui/atoms/text-field';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import ModalProvider from 'elementor-app/ui/modal/modal';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-kit.scss';
 
 export default function ExportKit() {
-	const [ isShowInfoPopup, setIsShowInfoPopup ] = useState( false ),
-		getFooter = () => (
+	const getFooter = () => (
 			<WizardFooter separator justify="end">
 				<ExportButton />
 			</WizardFooter>
@@ -26,46 +24,10 @@ export default function ExportKit() {
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
-		),
-		getInfoButton = () => {
-			const toggleButtonProps = {
-				className: 'e-app-export-kit-information__info-icon',
-				icon: 'eicon-info-circle',
-				text: __( 'Kit Info', 'elementor' ),
-				color: 'secondary',
-				hideText: true,
-			};
-
-			return (
-				<ModalProvider toggleButtonProps={ toggleButtonProps } title={ __( 'Export a Template Kit', 'elementor' ) }>
-					<ModalProvider.Section>
-						<Heading variant="h3" tag="h2">{ __( 'What’s a Template Kit?', 'elementor' ) }</Heading>
-						<Text variant="sm">{ __( 'A kit is a zip file containing anything from an entire site to individual components.', 'elementor' ) }</Text>
-					</ModalProvider.Section>
-
-					<ModalProvider.Section>
-						<Heading variant="h3" tag="h2">{ __( 'How does exporting work?', 'elementor' ) }</Heading>
-						<Text variant="xs">
-							<>
-								{ __( 'Select what to include from your site. We’ll use that to create a zip file.', 'elementor' ) }
-								<br />
-								{ __( 'That’s it!', 'elementor' ) } <InlineLink>{ __( 'Learn More', 'elementor' ) }</InlineLink>
-							</>
-						</Text>
-					</ModalProvider.Section>
-
-					<ModalProvider.Section>
-						<ModalProvider.Tip
-							title={ __( 'Tip!', 'elementor' ) }
-							description={ __( 'Once your download is complete, import your kit to another site and get it up and running quickly.', 'elementor' ) }
-						/>
-					</ModalProvider.Section>
-				</ModalProvider>
-			);
-		};
+		);
 
 	return (
-		<Layout type="export" footer={ getFooter() } headerButtons={ [ getInfoButton() ] }>
+		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
 					heading={ __( 'Export a Template Kit', 'elementor' ) }
@@ -93,7 +55,7 @@ export default function ExportKit() {
 											{ __( 'Kit Name', 'elementor' ) }
 										</Heading>
 
-										{ getInfoButton() }
+										<ExportInfoModal />
 									</Grid>
 
 									<Grid item>
@@ -108,7 +70,7 @@ export default function ExportKit() {
 										{ __( 'Kit Description', 'elementor' ) }
 									</Heading>
 
-									{ getInfoButton() }
+									<ExportInfoModal />
 								</Grid>
 
 								<Grid item>

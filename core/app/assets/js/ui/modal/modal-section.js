@@ -2,9 +2,9 @@ import { arrayToClassName } from '../../utils/utils';
 
 export default function ModalSection( props ) {
 	return (
-		<div className={ arrayToClassName( [ 'eps-modal__section', props.className ] ) }>
+		<section className={ arrayToClassName( [ 'eps-modal__section', props.className ] ) }>
 			{ props.children }
-		</div>
+		</section>
 	);
 }
 
