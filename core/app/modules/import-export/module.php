@@ -183,7 +183,9 @@ class Module extends BaseModule {
 		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
 
 		if ( ! empty( $export_settings['kitInfo'] ) ) {
-			$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+			$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+			$active_kit_id = $active_kit->get_main_id();
 
 			wp_update_post( [
 				'ID' => $active_kit_id,
@@ -191,7 +193,12 @@ class Module extends BaseModule {
 				'post_excerpt' => $export_settings['kitInfo']['description'],
 			] );
 
-			set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
+			// Refresh kit post after update
+			$active_kit->refresh_post();
+
+			if ( ! empty( $export_settings['kitInfo']['thumbnail_id'] ) ) {
+				set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
+			}
 		}
 
 		try {
