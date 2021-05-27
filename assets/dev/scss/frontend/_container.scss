@@ -6,4 +6,23 @@
 	.elementor-empty-view {
 		min-width: 100px;
 	}
+
+	&.e-container--placeholder-row > .elementor-widget-placeholder {
+		width: 10px;
+		height: 100%;
+		min-height: 100px;
+		flex-shrink: 0;
+		animation-name: placeholder-widget-vertical;
+	}
+}
+
+@keyframes placeholder-widget-vertical {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 10px;
+		opacity: .9;
+	}
 }

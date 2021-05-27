@@ -242,6 +242,33 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return ! ! this.view.getSortableOptions().swappable;
 	},
 
+	/**
+	 * Retrieve the sortable placeholder location.
+	 * Used for flex containers which uses `order` to manage their items.
+	 * That's a hacky function since jQuery sortable doesn't return the hovered element.
+	 *
+	 * @param {object} ui - jQuery sortable UI object.
+	 *
+	 * @return {string} - The placeholder location (before/after) relative to the hovered item.
+	 */
+	getPlaceholderSide: function( ui ) {
+		let $sameOrderSibling = null;
+
+		// Iterate over all siblings and find the one which has the same flex order.
+		ui.item.siblings( '.elementor-element' ).each( function() {
+			const $sibling = jQuery( this );
+
+			if ( $sibling.css( 'order' ) === ui.placeholder.css( 'order' ) ) {
+				$sameOrderSibling = $sibling;
+			}
+		} );
+
+		// Determine the location (in the GUI) using the elements indexes.
+		// (Since two elements with the same flex order will appear on the screen in their DOM order).
+		// Note: If there is not element with the same order, it defaults to `after`.
+		return ( ui.item.index() > ( $sameOrderSibling?.index() || -1 ) ) ? 'after' : 'before';
+	},
+
 	startSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -300,6 +327,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 		// On a swappable element, the movement should be handled using flex order.
 		if ( this.isSwappable() ) {
 			newIndex = parseInt( ui.placeholder.css( 'order' ) );
+
+			if ( 'after' === this.getPlaceholderSide( ui ) ) {
+				newIndex++;
+			}
 		}
 
 		this.moveChild( child, newIndex );

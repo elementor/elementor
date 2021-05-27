@@ -33,6 +33,29 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
+		$fields['_flex_is_row'] = [
+			'type' => Controls_Manager::HIDDEN,
+			'default' => 'row',
+			'prefix_class' => 'e-container--placeholder-',
+			'conditions' => [
+				'relation' => 'or',
+				'terms' => [
+					[
+						'name' => 'flex_direction',
+						'value' => '',
+					],
+					[
+						'name' => 'flex_direction',
+						'value' => 'row',
+					],
+					[
+						'name' => 'flex_direction',
+						'value' => 'row-reverse',
+					],
+				],
+			],
+		];
+
 		$fields['flex_wrap'] = [
 			'label' => _x( 'Flex Wrap', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,

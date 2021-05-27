@@ -188,9 +188,14 @@
 				return;
 			}
 
-			var insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-
-			elementsCache.$placeholder[ insertMethod ]( currentElement );
+			if ( ! $( currentElement ).hasClass( 'elementor-first-add' ) && $( currentElement ).parents( '.e-container--placeholder-row' ).length ) {
+				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+				$( currentElement )[ insertMethod ]( elementsCache.$placeholder );
+				elementsCache.$placeholder.css( 'order', $( currentElement ).css( 'order' ) );
+			} else {
+				const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+				elementsCache.$placeholder[ insertMethod ]( currentElement );
+			}
 		};
 
 		var isDroppingAllowed = function( event ) {
