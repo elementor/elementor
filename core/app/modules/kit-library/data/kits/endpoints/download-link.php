@@ -47,6 +47,9 @@ class Download_Link extends Endpoint {
 
 		return [
 			'data' => $data,
+			'meta' => [
+				'nonce' => wp_create_nonce( 'kit-library-import' ),
+			],
 		];
 	}
 }

@@ -1,5 +1,5 @@
 import Taxonomy from '../models/taxonomy';
-import { Collapse, Checkbox, SearchInput } from '@elementor/app-ui';
+import { Collapse, Checkbox, SearchInput, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 
@@ -39,6 +39,7 @@ export default function TaxonomiesFilterList( props ) {
 					/>
 			}
 			<div className="e-kit-library__tags-filter-list-container">
+				{ 0 === taxonomies.length && <Text>{ __( 'No Results Found', 'elementor' ) }</Text> }
 				{
 					taxonomies.map( ( taxonomy ) => (
 						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">

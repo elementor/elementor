@@ -27,7 +27,7 @@ function useHeaderButtons( id ) {
 	], [ id ] );
 }
 
-export default function Item( props ) {
+export default function Overview( props ) {
 	const { data: kit, isError, isLoading } = useKit( props.id );
 	const { data: documentsByType } = useKitDocumentByType( kit );
 	const headerButtons = useHeaderButtons( props.id );
@@ -63,6 +63,6 @@ export default function Item( props ) {
 	);
 }
 
-Item.propTypes = {
+Overview.propTypes = {
 	id: PropTypes.string,
 };

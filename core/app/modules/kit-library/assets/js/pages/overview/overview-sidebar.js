@@ -1,7 +1,8 @@
 import ContentType from '../../models/content-type';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
-import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
+import OverviewTaxonomyBadge from './overview-taxonomy-badge';
+import { Heading, CardImage, Text, Collapse, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
 
 import './overview-sidebar.scss';
@@ -40,9 +41,7 @@ export default function OverviewSidebar( props ) {
 				>
 					<Grid container className="e-kit-library__item-sidebar-tags-container">
 						{ props.model.taxonomies.map( ( taxonomy ) => (
-							<Badge key={ taxonomy }>
-								{ taxonomy }
-							</Badge>
+							<OverviewTaxonomyBadge key={ taxonomy }>{ taxonomy }</OverviewTaxonomyBadge>
 						) ) }
 					</Grid>
 				</Collapse>
