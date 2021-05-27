@@ -1,5 +1,7 @@
 import Taxonomy from '../models/taxonomy';
-import { Collapse, Checkbox, SearchInput, Text } from '@elementor/app-ui';
+import Collapse from './collapse';
+import SearchInput from './search-input';
+import { Checkbox, Text } from '@elementor/app-ui';
 import { sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 

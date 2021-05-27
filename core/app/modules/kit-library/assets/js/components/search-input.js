@@ -1,5 +1,4 @@
-import Icon from '../atoms/icon';
-import Button from './button';
+import { Icon, Button } from '@elementor/app-ui';
 
 import './search-input.scss';
 

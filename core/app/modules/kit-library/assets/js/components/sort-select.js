@@ -1,5 +1,4 @@
-import Select from 'elementor-app/ui/atoms/select';
-import Button from 'elementor-app/ui/molecules/button';
+import { Select, Button } from '@elementor/app-ui';
 
 import './sort-select.scss';
 

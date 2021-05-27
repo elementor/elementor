@@ -5,11 +5,13 @@ import IndexNoResults from './index-no-results';
 import IndexSidebar from './index-sidebar';
 import KitList from '../../components/kit-list';
 import Layout from '../../components/layout';
+import SearchInput from '../../components/search-input';
+import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
+import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo } from 'react';
-import { SearchInput, Grid, SortSelect } from '@elementor/app-ui';
 
 import './index.scss';
 

@@ -1,5 +1,6 @@
+import Badge from './badge';
 import { sprintf } from '@wordpress/i18n';
-import { Text, Button, Grid, Badge } from '@elementor/app-ui';
+import { Text, Button, Grid } from '@elementor/app-ui';
 import { useMemo } from 'react';
 
 import './filter-indication-text.scss';

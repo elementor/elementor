@@ -1,7 +1,9 @@
+import Badge from '../../components/badge';
+import Collapse from '../../components/collapse';
 import ContentType from '../../models/content-type';
 import FavoritesActions from '../../components/favorites-actions';
 import Kit from '../../models/kit';
-import { Heading, CardImage, Text, Collapse, Badge, Grid } from '@elementor/app-ui';
+import { Heading, CardImage, Text, Grid } from '@elementor/app-ui';
 import { useState } from 'react';
 
 import './overview-sidebar.scss';
