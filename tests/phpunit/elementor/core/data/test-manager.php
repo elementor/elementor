@@ -274,10 +274,6 @@ class Test_Manager extends Elementor_Test_Base {
 			'globals/index' => 'globals/index',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
-			'kits/index' => 'kits/index',
-			'kits/download-link' => 'kits/download-link',
-			'kits/favorites' => 'kits/favorites',
-			'kit-taxonomies/index' => 'kit-taxonomies/index',
 		], $this->manager->command_formats );
 	}
 }
