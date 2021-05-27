@@ -14,7 +14,7 @@ export default class extends BaseManager {
 			ui_theme: this.onUIThemeChanged,
 			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
-			show_hidden_elements: this.OnShowHiddenElementsChange,
+			show_hidden_elements: this.onShowHiddenElementsChange,
 		};
 	}
 
@@ -65,7 +65,7 @@ export default class extends BaseManager {
 		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
 	}
 
-	OnShowHiddenElementsChange() {
-		elementor.$previewContents.find( 'body' ).toggleClass( 'e-preview--show-hidden-elements' );
+	onShowHiddenElementsChange() {
+		elementorFrontend.elements.$body.toggleClass( 'e-preview--show-hidden-elements' );
 	}
 }
