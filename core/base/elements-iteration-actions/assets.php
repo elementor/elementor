@@ -154,7 +154,7 @@ class Assets extends Base {
 			$document_current_settings = [];
 		}
 
-		$document_settings = array_replace_recursive( $document_db_settings, $document_current_settings );
+		$document_settings = array_intersect_key( $document_db_settings, $document_current_settings );
 
 		$document_controls = $this->document->get_controls();
 
