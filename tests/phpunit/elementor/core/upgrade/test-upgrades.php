@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrades;
+namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrade;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -7,12 +7,60 @@ use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
+use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
 
 class Test_Upgrades extends Elementor_Test_Base {
 
 	use Test_Upgrades_Trait;
+
+	public function test_on_each_on_each_version_ensure_usage_recalculation() {
+		// Arrange.
+		require_once __DIR__ . '/../base/mock/mock-upgrades-manager.php';
+
+		/**
+		 * @var Module $usage_module
+		 */
+		$usage_module = Module::instance();
+
+		// Set current version for mock upgrades manager.
+		update_option( Mock_Upgrades_Manager::OPTION_CURRENT_VERSION_NAME, '0.0.0' );
+
+		// Set the new version.
+		update_option( Mock_Upgrades_Manager::OPTION_NEW_VERSION_NAME, '0.0.1' );
+
+		// Create document with button element.
+		$this->factory()->documents->publish_and_get();
+
+		// Delete current elements usage.
+		update_option( Module::OPTION_NAME, [] );
+
+		// Act.
+		$upgrades_manager = new Mock_Upgrades_Manager();
+		$upgrades_manager->mock_continue_run();
+		$usage = $usage_module->get_formatted_usage();
+
+		// Assert.
+		$this->assertEquals( 1, $usage['wp-post']['elements']['Button'] );
+
+		// Arrange
+		$this->factory()->documents->publish_and_get();
+
+		// Delete current elements usage.
+		update_option( Module::OPTION_NAME, [] );
+
+		// Set the new version.
+		update_option( Mock_Upgrades_Manager::OPTION_NEW_VERSION_NAME, '0.0.2' );
+
+		// Act.
+		$upgrades_manager = new Mock_Upgrades_Manager();
+		$upgrades_manager->mock_continue_run();
+		$usage = $usage_module->get_formatted_usage();
+
+		// Assert - Ensure next upgrade also do recalculation.
+		$this->assertEquals( 2, $usage['wp-post']['elements']['Button'] );
+	}
 
 	public function test_v_2_7_0_rename_document_types_to_wp() {
 		$this->markTestSkipped();
