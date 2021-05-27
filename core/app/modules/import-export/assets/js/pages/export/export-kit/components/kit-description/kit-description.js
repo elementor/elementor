@@ -9,6 +9,7 @@ export default function KitDescription() {
 
 	return (
 		<TextField
+			variant="outlined"
 			placeholder={ __( 'Say something about the style and content of these files...', 'elementor' ) }
 			multiline
 			rows={5}

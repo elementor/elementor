@@ -3,7 +3,8 @@ import { arrayToClassName } from '../../utils/utils';
 import './text-field.scss';
 
 export default function TextField( props ) {
-	const classes = [ 'eps-text-field', props.className ],
+	const classNameBase = 'eps-text-field',
+		classes = [ classNameBase, props.className, { [ classNameBase + '--outlined' ]: 'outlined' === props.variant } ],
 		validProps = { ...props, className: arrayToClassName( classes ) };
 
 	if ( validProps.multiline ) {
@@ -22,9 +23,11 @@ export default function TextField( props ) {
 TextField.propTypes = {
 	className: PropTypes.string,
 	multiline: PropTypes.bool,
+	variant: PropTypes.oneOf( [ 'standard', 'outlined' ] ),
 	children: PropTypes.string,
 };
 
 TextField.defaultProps = {
 	className: '',
+	variant: 'standard',
 };
