@@ -79,6 +79,21 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Replace array recursively
+	 *
+	 * @param $items
+	 *
+	 * @return $this
+	 */
+	public function replace_recursive( $items ) {
+		if ( $items instanceof Collection ) {
+			$items = $items->all();
+		}
+
+		return new static( array_replace_recursive( $this->items, $items ) );
+	}
+
+	/**
 	 * Implode the items
 	 *
 	 * @param $glue
@@ -208,6 +223,25 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return new static( $result );
+	}
+
+	/**
+	 * Sort keys
+	 *
+	 * @param false $descending
+	 *
+	 * @return $this
+	 */
+	public function sort_keys( $descending = false ) {
+		$items = $this->items;
+
+		if ( $descending ) {
+			krsort( $items );
+		} else {
+			ksort( $items );
+		}
+
+		return new static( $items );
 	}
 
 	/**

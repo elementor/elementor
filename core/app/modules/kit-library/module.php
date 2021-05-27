@@ -51,7 +51,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->app->set_settings( 'kit-library', [
 			'has_access_to_module' => current_user_can( 'administrator' ),
-			'subscription_plans' => $connect->get_subscription_plans( 'kit-library' ),
+			'subscription_plans' => $connect->get_subscription_plans( 'wp-kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
 			'library_connect_url'  => $kit_library->get_admin_url( 'authorize' ),
