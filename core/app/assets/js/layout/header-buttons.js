@@ -6,11 +6,6 @@ export default function HeaderButtons( props ) {
 
 	if ( props.buttons.length ) {
 		const buttons = props.buttons.map( ( button ) => {
-			// The button can be either a valid element or props of the Button component.
-			if ( React.isValidElement( button ) ) {
-				return button;
-			}
-
 			return <Button key={ button.id } {...button } />;
 		} );
 
