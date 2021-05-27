@@ -156,6 +156,10 @@ abstract class Document extends Controls_Stack {
 		return __( 'Document', 'elementor' );
 	}
 
+	public static function get_plural_title() {
+		return static::get_title();
+	}
+
 	/**
 	 * Get property.
 	 *
@@ -607,8 +611,7 @@ abstract class Document extends Controls_Stack {
 
 			$this->save_settings( $data['settings'] );
 
-			// Refresh post after save settings.
-			$this->post = get_post( $this->post->ID );
+			$this->refresh_post();
 		}
 
 		// Don't check is_empty, because an empty array should be saved.
@@ -642,6 +645,10 @@ abstract class Document extends Controls_Stack {
 		$this->remove_handle_revisions_changed_filter();
 
 		return true;
+	}
+
+	public function refresh_post() {
+		$this->post = get_post( $this->post->ID );
 	}
 
 	/**
@@ -1299,6 +1306,14 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
+	public function get_export_summary() {
+		return [
+			'title' => $this->post->post_title,
+			'doc_type' => $this->get_name(),
+			'thumbnail' => get_the_post_thumbnail_url( $this->post ),
+		];
+	}
+
 	/*
 	 * Get Import Data
 	 *
@@ -1352,6 +1367,12 @@ abstract class Document extends Controls_Stack {
 			'elements' => $data['content'],
 			'settings' => $data['settings'],
 		] );
+
+		if ( $data['import_settings']['thumbnail'] ) {
+			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( [ 'url' => $data['import_settings']['thumbnail'] ] );
+
+			set_post_thumbnail( $this->get_main_post(), $attachment['id'] );
+		}
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {
