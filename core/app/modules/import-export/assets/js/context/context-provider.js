@@ -11,6 +11,10 @@ export default function ContextProvider( props ) {
 		fileResponse: null,
 		file: null,
 		overrideConditions: [],
+		kitInfo: {
+			title: elementorAppConfig[ 'import-export' ].kitInfo.title,
+			description: elementorAppConfig[ 'import-export' ].kitInfo.description,
+		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

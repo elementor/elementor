@@ -14,17 +14,20 @@ export default function WizardStep( props ) {
 	return (
 		<Grid className={ arrayToClassName( classes ) } justify="center" container>
 			<Grid item>
-				{ props.image &&
-				<Grid className="e-app-import-export-wizard-step__image-container" justify="center" alignItems="end" container>
-					<img
-						className="e-app-import-export-wizard-step__image"
-						src={ props.image }
-					/>
+				{ ( props.image || props.icon ) &&
+				<Grid className="e-app-import-export-wizard-step__media-container" justify="center" alignItems="end" container>
+					{
+						props.image &&
+						<img
+							className="e-app-import-export-wizard-step__image"
+							src={ props.image }
+						/>
+					}
+					{
+						props.icon &&
+						<Icon className={ `e-app-import-export-wizard-step__icon ${ props.icon }` } />
+					}
 				</Grid>
-				}
-
-				{ props.icon &&
-				<Icon className={ `e-app-import-export-wizard-step__icon ${ props.icon }` } />
 				}
 
 				{ props.heading &&
