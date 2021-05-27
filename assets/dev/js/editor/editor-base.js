@@ -810,8 +810,6 @@ export default class EditorBase extends Marionette.Application {
 		this.destroyPreviewResizable();
 
 		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
-
-		this.channels.deviceMode.trigger( 'close' );
 	}
 
 	isDeviceModeActive() {

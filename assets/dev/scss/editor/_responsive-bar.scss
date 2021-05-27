@@ -9,6 +9,7 @@
 #elementor-responsive-bar {
 	position: sticky;
 	height: calc(40px * var(--e-is-device-mode));
+	overflow: hidden;
 	align-self: stretch;
 	flex-shrink: 0;
 	transition: height .2s ease-in-out, opacity .1s ;
@@ -19,35 +20,33 @@
 }
 
 .e-responsive-bar {
+	width: 100%;
+	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+	z-index: 1;
+	transition: margin-top .2s ease-in-out;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 10px;
+	height: 40px;
+	color: $editor-light;
+	background-color: $editor-darkest;
 
-	&-switcher__option {
-		cursor: pointer;
-		text-align: center;
-		width: 22px;
-		height: 22px;
-		margin: 0 3.5px;
-		line-height: 22px;
-		border-radius: 3px;
-		font-size: 17px;
-		transition: background-color .3s ease-out;
+	&__col {
+		display: flex;
+		width: 25%;
+		justify-content: center;
+		align-items: center;
 
-		&:hover, &[aria-selected="true"] {
-		  color: $editor-lighter;
-		  background-color: rgba(255, 255, 255, 0.1);
+		&:last-child {
+			justify-content: flex-start;
+			flex-direction: row-reverse;
 		}
+	}
 
-		input {
-		  display: none;
-
-		  &:checked + i {
-			color: $editor-info;
-		  }
-		}
-
-		&:not(:last-child) {
-		  margin-inline-end: 6px;
-		}
-
+	&__close-button,
+	&__settings-button {
+		padding: 10px 8px;
 	}
 
 	&__button {
@@ -66,7 +65,7 @@
 		}
 	}
 
-	&--pipe {
+	&__close-button + &__button {
 		position: relative;
 
 		&::before {
@@ -79,6 +78,13 @@
 			@include end(0);
 			top: calc(50% - 10px);
 		}
+	}
+
+  	&__size-inputs-wrapper {
+		display: flex;
+		align-items: center;
+	  	margin-inline-end: 8px;
+	  	color: $editor-dark;
 	}
 
 	&__input-size {
@@ -97,85 +103,33 @@
 		}
 	}
 
-}
-
-#e-responsive-bar {
-	width: 100%;
-	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
-	z-index: 1;
-	transition: margin-top .2s ease-in-out;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	color: $editor-light;
-	background-color: $editor-darkest;
-
-	&__center, &__end, &-scale, &-switcher {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	  	font-size: 13px;
-	  	background-color: #495157;
-	 	padding: 2px 0;
-	}
-
-	@media ( min-width:1400px ) {
-		&__center {
-			margin-#{ $start }: 50%;
-			transform: translate( -50%, 0 );
-		}
-	}
-
-	&__close-button,
-	&__settings-button {
-		padding: 10px 8px;
-	}
-
-  	&__size-inputs-wrapper {
-		display: flex;
-		align-items: center;
-	  	margin-inline-end: 8px;
-	  	color: $editor-dark;
-	}
-
 	&-switcher {
-		padding: 0 20px;
-	}
+		display: flex;
 
-	&-scale {
-		padding: 0 20px;
-
-		&__value-wrapper {
-			margin: 0 14px;
-			min-width: 32px;
-			text-align: center;
-		}
-
-	  	&__plus, &__minus, &__reset {
+		&__option {
 			cursor: pointer;
-			width: 20px;
-			height: 20px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		&__minus {
-			&:before {
-			content: "";
-			display: block;
-			width: 13px;
-			height: 2px;
-			background: #a4afb7;
+			text-align: center;
+			width: 22px;
+			height: 22px;
+			margin: 0 3.5px;
+			line-height: 22px;
 			border-radius: 3px;
+			font-size: 17px;
+			transition: background-color .3s ease-out;
+
+			&:hover, &[aria-selected="true"] {
+				color: $editor-lighter;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+
+			input {
+				display: none;
+
+				&:checked + i {
+					color: $editor-info;
+				}
 			}
 		}
-
-		&__reset {
-			margin: 0px 8px;
-		}
-
 	}
-
-
 }
+
