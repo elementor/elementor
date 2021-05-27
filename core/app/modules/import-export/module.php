@@ -195,6 +195,10 @@ class Module extends BaseModule {
 
 			// Refresh kit post after update
 			$active_kit->refresh_post();
+
+			if ( ! empty( $export_settings['kitInfo']['thumbnail_id'] ) ) {
+				set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
+			}
 		}
 
 		try {
