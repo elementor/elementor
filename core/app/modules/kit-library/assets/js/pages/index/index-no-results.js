@@ -11,17 +11,22 @@ export default function IndexNoResults( props ) {
 				variant="h1"
 				className="e-kit-library__not-results-title"
 			>
-				{ __( 'No results matched your search.', 'elementor' ) }
+				{ props.title }
 			</Heading>
 			<Text variant="xl" className="e-kit-library__not-results-description">
-				{ __( 'Try different keywords or continue browsing.', 'elementor' ) }
+				{ props.description }
 				<br/>
-				<Button text={ __( 'Continue Browsing', 'elementor' ) } color="link" onClick={ props.clearFilter }/>
+				<Button text={ props.button.text } color="link" onClick={ props.button.action }/>
 			</Text>
 		</Grid>
 	);
 }
 
 IndexNoResults.propTypes = {
-	clearFilter: PropTypes.func.isRequired,
+	title: PropTypes.string,
+	description: PropTypes.string,
+	button: PropTypes.shape( {
+		text: PropTypes.string,
+		action: PropTypes.func,
+	} ),
 };

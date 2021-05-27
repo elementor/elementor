@@ -1,24 +1,12 @@
+import useSelectedTaxonomies from '../hooks/use-selected-taxonomies';
 import Badge from './badge';
 import { sprintf } from '@wordpress/i18n';
 import { Text, Button, Grid } from '@elementor/app-ui';
-import { useMemo } from 'react';
 
 import './filter-indication-text.scss';
 
 export default function FilterIndicationText( props ) {
-	const selectedTaxonomies = useMemo( () =>
-			Object.values( props.queryParams.taxonomies ).reduce( ( current, groupedTaxonomies ) => [ ...current, ...groupedTaxonomies ] ),
-		[ props.queryParams.taxonomies ]
-	);
-
-	const isFilterActive = useMemo(
-		() => props.queryParams.search || !! selectedTaxonomies.length,
-		[ props.queryParams ]
-	);
-
-	if ( ! isFilterActive ) {
-		return '';
-	}
+	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
 
 	return (
 		<Grid container className="e-kit-library__filter-indication">
