@@ -9,8 +9,7 @@
 
 	&.e-container--placeholder-row > .elementor-widget-placeholder {
 		width: 10px;
-		height: 100%;
-		min-height: 100px;
+		min-height: 100%;
 		flex-shrink: 0;
 		animation-name: placeholder-widget-vertical;
 	}
