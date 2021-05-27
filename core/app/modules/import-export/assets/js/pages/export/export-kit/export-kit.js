@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -6,9 +6,10 @@ import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import Panel from '../../../ui/panel/panel';
 import ExportInfoModal from '../../../shared/info-modal/export-info-modal';
+import KitName from './components/kit-name/kit-name';
+import KitDescription from './components/kit-description/kit-description';
 import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
-import TextField from 'elementor-app/ui/atoms/text-field';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
@@ -59,7 +60,7 @@ export default function ExportKit() {
 									</Grid>
 
 									<Grid item>
-										<TextField placeholder={ __( 'Elementor Kit', 'elementor' ) } />
+										<KitName />
 									</Grid>
 								</Grid>
 							</Grid>
@@ -74,7 +75,7 @@ export default function ExportKit() {
 								</Grid>
 
 								<Grid item>
-									<TextField placeholder={ __( 'Say something about the style and content of these files...', 'elementor' ) } multiline rows={5} />
+									<KitDescription />
 								</Grid>
 							</Grid>
 						</Grid>

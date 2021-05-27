@@ -11,6 +11,10 @@ export default function ContextProvider( props ) {
 		fileResponse: null,
 		file: null,
 		overrideConditions: [],
+		kitInfo: {
+			title: '',
+			description: '',
+		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 
