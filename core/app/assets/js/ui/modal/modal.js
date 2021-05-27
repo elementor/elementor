@@ -33,7 +33,7 @@ export default function ModalProvider( props ) {
 			...props,
 			show,
 			hideModal,
-			showModal
+			showModal,
 		};
 
 	useEffect( () => {
@@ -119,7 +119,7 @@ export const Modal = ( props ) => {
 			</div>
 		</div>
 	);
-}
+};
 
 Modal.propTypes = {
 	className: PropTypes.string,
@@ -130,6 +130,7 @@ Modal.propTypes = {
 	setShow: PropTypes.func,
 	hideModal: PropTypes.func,
 	showModal: PropTypes.func,
+	closeModal: PropTypes.func,
 };
 
 Modal.defaultProps = {
