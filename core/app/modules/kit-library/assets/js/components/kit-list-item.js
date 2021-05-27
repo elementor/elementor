@@ -1,7 +1,8 @@
-import Kit from '../models/kit';
+import Badge from './badge';
 import FavoritesActions from '../components/favorites-actions';
+import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
-import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Badge } from '@elementor/app-ui';
+import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
 
 import './kit-list-item.scss';
 
