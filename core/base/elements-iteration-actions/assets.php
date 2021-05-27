@@ -19,7 +19,10 @@ class Assets extends Base {
 	private $saved_page_assets;
 
 	public function element_action( Element_Base $element_data ) {
-		$element_assets = $this->get_element_assets( $element_data );
+		$settings = $element_data->get_active_settings();
+		$controls = $element_data->get_controls();
+
+		$element_assets = $this->get_assets( $settings, $controls );
 
 		if ( $element_assets ) {
 			$this->update_page_assets( $element_assets );
@@ -47,6 +50,8 @@ class Assets extends Base {
 		if ( ! is_array( $this->page_assets ) ) {
 			$this->page_assets = [];
 		}
+
+		$this->get_document_assets();
 
 		// Saving the page assets data.
 		$this->document->update_meta( self::ASSETS_META_KEY, $this->page_assets );
@@ -82,10 +87,8 @@ class Assets extends Base {
 		}
 	}
 
-	private function get_element_assets( Element_Base $element ) {
-		$controls = $element->get_controls();
-		$settings = $element->get_active_settings();
-		$element_assets = [];
+	private function get_assets( $settings, $controls ) {
+		$assets = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
 			$control = $controls[ $setting_key ];
@@ -102,11 +105,11 @@ class Assets extends Base {
 							}
 						}
 
-						if ( ! isset( $element_assets[ $assets_type ] ) ) {
-							$element_assets[ $assets_type ] = [];
+						if ( ! isset( $assets[ $assets_type ] ) ) {
+							$assets[ $assets_type ] = [];
 						}
 
-						$element_assets[ $assets_type ][] = $dependency['name'];
+						$assets[ $assets_type ][] = $dependency['name'];
 					}
 				}
 			}
@@ -119,23 +122,37 @@ class Assets extends Base {
 			if ( $control_conditional_assets ) {
 				foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
 					foreach ( $dependencies as $dependency ) {
-						if ( ! isset( $element_assets[ $assets_type ] ) ) {
-							$element_assets[ $assets_type ] = [];
+						if ( ! isset( $assets[ $assets_type ] ) ) {
+							$assets[ $assets_type ] = [];
 						}
 
-						$element_assets[ $assets_type ][] = $dependency;
+						$assets[ $assets_type ][] = $dependency;
 					}
 				}
 			}
 		}
 
-		return $element_assets;
+		return $assets;
 	}
 
 	private function is_active_page_assets_mode() {
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
 
 		return ! Plugin::$instance->preview->is_preview_mode() && $is_optimized_mode;
+	}
+
+	private function get_document_assets() {
+		$document_db_settings = $this->document->get_db_document_settings();
+		$document_current_settings = $this->document->get_settings();
+
+		$document_settings = array_replace_recursive( $document_db_settings, $document_current_settings );
+		$document_controls = $this->document->get_controls();
+
+		$document_assets = $this->get_assets( $document_settings, $document_controls );
+
+		if ( $document_assets ) {
+			$this->update_page_assets( $document_assets );
+		}
 	}
 
 	public function __construct( $document ) {
