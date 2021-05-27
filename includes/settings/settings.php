@@ -516,7 +516,23 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			],
 			self::TAB_INTEGRATIONS => [
 				'label' => __( 'Integrations', 'elementor' ),
-				'sections' => [],
+				'sections' => [
+					'google_maps' => [
+						'label' => __( 'Google Maps Embed API', 'elementor' ),
+						'callback' => function() {
+							printf( __( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
+						},
+						'fields' => [
+							'google_maps_api_key' => [
+								'label' => __( 'API Key', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_google_maps_api_key',
+									'type' => 'text',
+								],
+							],
+						],
+					],
+				],
 			],
 			self::TAB_ADVANCED => [
 				'label' => __( 'Advanced', 'elementor' ),
