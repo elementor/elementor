@@ -60,10 +60,14 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 	&__header {
 		font-size: $eps-modal-header-type;
 		background: var(--eps-modal-header-background-color);
-		color: $eps-modal-header-color;
 		height: $eps-modal-header-height;
 		padding: $eps-modal-header-padding;
 		border-radius: $eps-modal-header-border-radius;
+
+		&,
+		& .title {
+			color: $eps-modal-header-color;
+		}
 	}
 
 	&__icon {
@@ -84,6 +88,10 @@ $eps-dark-modal-header-background-color: dark-theme-colors(info);
 		&:not(:first-child) {
 			margin-top: $eps-tip-margin-top;
 		}
+	}
+
+	&__section:not(:first-child) {
+		margin-top: spacing(30);
 	}
 
 	&__close-wrapper {
