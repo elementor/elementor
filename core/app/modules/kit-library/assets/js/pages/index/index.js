@@ -123,6 +123,7 @@ export default function Index( props ) {
 		setQueryParams,
 		clearQueryParams,
 		forceRefetch,
+		isFilterActive,
 	} = useKits( props.initialQueryParams );
 
 	useRouterQueryParams( queryParams, setQueryParams, Object.keys( props.initialQueryParams ) );
@@ -134,8 +135,6 @@ export default function Index( props ) {
 	} = useTaxonomies();
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
-
-	const NoResultComponent = props.noResultComponent;
 
 	return (
 		<Layout
@@ -167,12 +166,12 @@ export default function Index( props ) {
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
-						<FilterIndicationText
+						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
 							resultCount={ data.length || 0 }
 							onClear={ clearQueryParams }
 							onRemoveTag={ unselectTaxonomy }
-						/>
+						/> }
 					</Grid>
 					<Grid
 						item
@@ -195,7 +194,19 @@ export default function Index( props ) {
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
-						{ isSuccess && 0 === data.length && <NoResultComponent clearFilter={ clearQueryParams }/> }
+						{
+							isSuccess && 0 === data.length && props.renderNoResultsComponent( {
+								defaultComponent: <IndexNoResults
+									title={ __( 'No results matched your search.', 'elementor' ) }
+									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
+									button={ {
+										text: __( 'Continue Browsing', 'elementor' ),
+										action: clearQueryParams,
+									} }
+								/>,
+								isFilterActive,
+							} )
+						}
 					</>
 				</Content>
 			</div>
@@ -206,9 +217,10 @@ export default function Index( props ) {
 Index.propTypes = {
 	path: PropTypes.string,
 	initialQueryParams: PropTypes.object,
-	noResultComponent: PropTypes.any,
+	renderNoResultsComponent: PropTypes.func,
 };
 
 Index.defaultProps = {
-	noResultComponent: IndexNoResults,
+	initialQueryParams: {},
+	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };
