@@ -652,8 +652,9 @@ class Frontend extends App {
 			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
 			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
 				wp_enqueue_style( 'elementor-icons' );
+				wp_enqueue_style( 'elementor-animations' );
 			}
-			wp_enqueue_style( 'elementor-animations' );
+
 			wp_enqueue_style( 'elementor-frontend' );
 
 			/**
