@@ -36,7 +36,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		revisions_disabled_1 = '<?php echo esc_html__( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ); ?>',
 		revisions_disabled_2 = '<?php printf( esc_html__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://go.elementor.com/wordpress-revisions/' ); /* translators: %s: Codex URL */ ?>';
 	#>
-	<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php
+	// PHPCS - Safe Elementor SVG
+	echo ELEMENTOR_ASSETS_URL . 'images/information.svg' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 	<div class="elementor-nerd-box-title"><?php echo esc_html__( 'No Revisions Saved Yet', 'elementor' ); ?></div>
 	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_1 : revisions_disabled_1 }}}</div>
 	<div class="elementor-nerd-box-message">{{{ elementor.config.document.revisions.enabled ? no_revisions_2 : revisions_disabled_2 }}}</div>
