@@ -502,6 +502,10 @@ html.elementor-html {
 	left: 0;
 	right: 0;
 	z-index: $first-layer;
+
+	.e-container & {
+		margin: 10px;
+	}
 }
 
 .elementor-first-add {
