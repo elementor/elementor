@@ -84,12 +84,20 @@ export default class extends ControlBaseDataView {
 		}
 
 		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
-			currentElement = elementor.getPanelView().getCurrentPageView().getOption( 'editedElementView' ),
-			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer;
+			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer,
+			container = this.getOption( 'container' );
+
+		let kit = {};
+
+		// When it's a kit (i.e "Site Settings").
+		if ( 'kit' === container.document.config.type ) {
+			kit = container.document;
+		}
 
 		$colorPicker.on( 'click', () => {
 			$e.run( 'elements-color-picker/start', {
-				container: currentElement.container,
+				container,
+				kit,
 				control: this.model.get( 'name' ),
 				trigger: $colorPicker[ 0 ],
 			} );
