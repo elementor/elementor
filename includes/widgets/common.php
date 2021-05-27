@@ -201,7 +201,7 @@ class Widget_Common extends Widget_Base {
 			Group_Control_Flex_Item::get_type(),
 			[
 				'name' => '_flex',
-				'selector' => '{{WRAPPER}}',
+				'selector' => '{{WRAPPER}}.elementor-element', // Hack to increase specificity.
 			]
 		);
 

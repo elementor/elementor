@@ -1,7 +1,7 @@
 .e-container {
 	position: relative;
 	min-height: 100px;
-	flex: 1 1 100%;
+	flex: 1 1 var( --flex-basis, 100% );
 
 	.elementor-empty-view {
 		min-width: 100px;

@@ -196,7 +196,7 @@ class Container extends Element_Base {
 			Group_Control_Flex_Item::get_type(),
 			[
 				'name' => '_flex',
-				'selector' => '{{WRAPPER}}',
+				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 			]
 		);
 
