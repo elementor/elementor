@@ -12,8 +12,8 @@ export default function ContextProvider( props ) {
 		file: null,
 		overrideConditions: [],
 		kitInfo: {
-			title: 'Elementor Kit',
-			description: '',
+			title: elementorAppConfig[ 'import-export' ].kitInfo.title,
+			description: elementorAppConfig[ 'import-export' ].kitInfo.description,
 		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
