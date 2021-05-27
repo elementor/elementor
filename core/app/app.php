@@ -200,6 +200,7 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-url',
 				'wp-i18n',
 				'react',
 				'react-dom',

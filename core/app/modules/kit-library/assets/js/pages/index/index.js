@@ -10,8 +10,9 @@ import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
+import { useCallback, useMemo, useEffect } from 'react';
 import { Grid } from '@elementor/app-ui';
-import { useCallback, useMemo } from 'react';
+import { useLocation } from '@reach/router';
 
 import './index.scss';
 
@@ -72,6 +73,45 @@ function useMenuItems( path ) {
 	}, [ path ] );
 }
 
+/**
+ * Update and read the query param from the url
+ *
+ * @param queryParams
+ * @param setQueryParams
+ * @param exclude
+ */
+function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
+	const location = useLocation();
+
+	useEffect( () => {
+		const filteredQueryParams = Object.fromEntries(
+			Object.entries( queryParams )
+				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item )
+		);
+
+		history.replaceState(
+			null,
+			'',
+			decodeURI(
+				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`
+			)
+		);
+	}, [ queryParams ] );
+
+	useEffect( () => {
+		const routerQueryParams = wp.url.getQueryArgs( location.pathname );
+
+		setQueryParams( ( prev ) => ( {
+			...prev,
+			...routerQueryParams,
+			taxonomies: {
+				...prev.taxonomies,
+				...routerQueryParams.taxonomies,
+			},
+		} ) );
+	}, [] );
+}
+
 export default function Index( props ) {
 	const menuItems = useMenuItems( props.path );
 
@@ -86,6 +126,8 @@ export default function Index( props ) {
 		clearQueryParams,
 		forceRefetch,
 	} = useKits( props.initialQueryParams );
+
+	useRouterQueryParams( queryParams, setQueryParams, Object.keys( props.initialQueryParams ) );
 
 	const {
 		data: taxonomiesData,
