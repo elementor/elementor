@@ -12,7 +12,7 @@ export default function ContextProvider( props ) {
 		file: null,
 		overrideConditions: [],
 		kitInfo: {
-			title: '',
+			title: 'Elementor Kit',
 			description: '',
 		},
 	},

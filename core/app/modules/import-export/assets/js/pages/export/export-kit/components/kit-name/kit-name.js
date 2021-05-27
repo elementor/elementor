@@ -10,7 +10,7 @@ export default function KitName() {
 	return (
 		<TextField
 			variant="outlined"
-			placeholder={ __( 'Elementor Kit', 'elementor' ) }
+			placeholder={ __( 'Kit Name', 'elementor' ) }
 			value={ context.data.kitInfo.title }
 			onChange={ ( event ) => {
 				context.dispatch( { type: 'SET_KIT_TITLE', payload: event.target.value } );
