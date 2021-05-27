@@ -1,13 +1,8 @@
 import { useEffect } from 'react';
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
-import Message from '../../ui/message/message';
 import ImportFailedDialog from '../import-failed-dialog/import-failed-dialog';
-import Icon from 'elementor-app/ui/atoms/icon';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
-
-import './file-process.scss';
+import WizardStep from '../../ui/wizard-step/wizard-step';
 
 export default function FileProcess( props ) {
 	useEffect( () => {
@@ -21,26 +16,25 @@ export default function FileProcess( props ) {
 	}, [ props.status ] );
 
 	return (
-		<Message className={ arrayToClassName( [ 'e-app-import-export-file-process', props.className ] ) }>
-			<Icon className="e-app-import-export-file-process__icon eicon-loading eicon-animation-spin" />
-
-			<Heading variant="display-3" className="e-app-import-export-file-process__title">
-				{ __( 'Processing your file...', 'elementor' ) }
-			</Heading>
-
-			<Text variant="xl" className="e-app-import-export-file-process__text">
-				{ __( 'This usually takes a few moments.', 'elementor' ) }
-				<br />
-				{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
-			</Text>
-
-			{ 'error' === props.status &&
-				<ImportFailedDialog
-					onApprove={ props.onDialogApprove }
-					onDismiss={ props.onDialogDismiss }
-				/>
+		<WizardStep
+			className={ arrayToClassName( [ 'e-app-import-export-file-process', props.className ] ) }
+			icon="eicon-loading eicon-animation-spin"
+			heading={ __( 'Processing your file...', 'elementor' ) }
+			description={
+				<>
+					{ __( 'This usually takes a few moments.', 'elementor' ) }
+					<br />
+					{ __( "Don't close this window until the process is finished.", 'elementor' ) }
+				</>
 			}
-		</Message>
+		>
+			{ 'error' === props.status &&
+			<ImportFailedDialog
+				onApprove={ props.onDialogApprove }
+				onDismiss={ props.onDialogDismiss }
+			/>
+			}
+		</WizardStep>
 	);
 }
 

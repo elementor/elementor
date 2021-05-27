@@ -31,6 +31,10 @@ export const reducer = ( state, action ) => {
 			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'add' );
 		case 'REMOVE_OVERRIDE_CONDITION':
 			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'remove' );
+		case 'SET_KIT_TITLE':
+			return { ...state, kitInfo: { ...state.kitInfo, title: action.payload } };
+		case 'SET_KIT_DESCRIPTION':
+			return { ...state, kitInfo: { ...state.kitInfo, description: action.payload } };
 		default:
 			return state;
 	}

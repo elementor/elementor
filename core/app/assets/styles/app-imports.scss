@@ -7,7 +7,6 @@
 @import "../../modules/site-editor/assets/js/organisms/menu.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-kit/import-kit.scss";
 @import "../../modules/site-editor/assets/js/pages/promotion.scss";
-@import "../../modules/import-export/assets/js/ui/message/message.scss";
 @import "../../modules/import-export/assets/js/ui/wizard-step/wizard-step.scss";
 @import "../../modules/import-export/assets/js/ui/page-header/page-header.scss";
 @import "../../modules/import-export/assets/js/shared/kit-content/kit-content";
@@ -34,12 +33,14 @@
 // Should be after buttons.scss to prevent dialog button style overwrite.
 @import "../js/ui/dialog/dialog.scss";
 @import "../js/ui/molecules/inline-link.scss";
+@import "../js/ui/atoms/text-field.scss";
 @import "../../modules/import-export/assets/js/shared/content-layout/content-layout.scss";
-@import "../../modules/import-export/assets/js/shared/file-process/file-process.scss";
 @import "../../modules/import-export/assets/js/pages/export/export-complete/export-complete.scss";
 @import "../../modules/import-export/assets/js/shared/kit-content/kit-content.scss";
 @import "../../modules/import-export/assets/js/shared/kit-data/kit-data.scss";
 @import "../../modules/import-export/assets/js/pages/import/import-resolver/import-resolver.scss";
+@import "../../modules/import-export/assets/js/ui/panel/panel.scss";
+@import "../../modules/import-export/assets/js/pages/export/export-kit/export-kit.scss";
 
 // Kit library
 @import "../../modules/kit-library/assets/js/components/favorites-actions.scss";
@@ -55,3 +56,4 @@
 @import "../../modules/kit-library/assets/js/pages/overview/overview.scss";
 @import "../../modules/kit-library/assets/js/pages/preview/preview-iframe.scss";
 @import "../../modules/kit-library/assets/js/pages/preview/preview-responsive-controls.scss";
+@import "../../modules/import-export/assets/js/shared/info-modal/info-modal.scss";
