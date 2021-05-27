@@ -8,8 +8,9 @@ import Layout from '../../components/layout';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { SearchInput, Grid, SortSelect } from '@elementor/app-ui';
+import { useLocation } from '@reach/router';
 
 import './index.scss';
 
@@ -70,6 +71,45 @@ function useMenuItems( path ) {
 	}, [ path ] );
 }
 
+/**
+ * Update and read the query param from the url
+ *
+ * @param queryParams
+ * @param setQueryParams
+ * @param exclude
+ */
+function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
+	const location = useLocation();
+
+	useEffect( () => {
+		const filteredQueryParams = Object.fromEntries(
+			Object.entries( queryParams )
+				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item )
+		);
+
+		history.replaceState(
+			null,
+			'',
+			decodeURI(
+				`#${ wp.url.addQueryArgs( location.pathname.split( '?' )[ 0 ] || '/', filteredQueryParams ) }`
+			)
+		);
+	}, [ queryParams ] );
+
+	useEffect( () => {
+		const routerQueryParams = wp.url.getQueryArgs( location.pathname );
+
+		setQueryParams( ( prev ) => ( {
+			...prev,
+			...routerQueryParams,
+			taxonomies: {
+				...prev.taxonomies,
+				...routerQueryParams.taxonomies,
+			},
+		} ) );
+	}, [] );
+}
+
 export default function Index( props ) {
 	const menuItems = useMenuItems( props.path );
 
@@ -83,7 +123,10 @@ export default function Index( props ) {
 		setQueryParams,
 		clearQueryParams,
 		forceRefetch,
+		isFilterActive,
 	} = useKits( props.initialQueryParams );
+
+	useRouterQueryParams( queryParams, setQueryParams, Object.keys( props.initialQueryParams ) );
 
 	const {
 		data: taxonomiesData,
@@ -92,8 +135,6 @@ export default function Index( props ) {
 	} = useTaxonomies();
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
-
-	const NoResultComponent = props.noResultComponent;
 
 	return (
 		<Layout
@@ -125,12 +166,12 @@ export default function Index( props ) {
 							value={ queryParams.search }
 							onChange={ ( value ) => setQueryParams( ( prev ) => ( { ...prev, search: value } ) ) }
 						/>
-						<FilterIndicationText
+						{ isFilterActive && <FilterIndicationText
 							queryParams={ queryParams }
 							resultCount={ data.length || 0 }
 							onClear={ clearQueryParams }
 							onRemoveTag={ unselectTaxonomy }
-						/>
+						/> }
 					</Grid>
 					<Grid
 						item
@@ -153,7 +194,19 @@ export default function Index( props ) {
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
 						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
-						{ isSuccess && 0 === data.length && <NoResultComponent clearFilter={ clearQueryParams }/> }
+						{
+							isSuccess && 0 === data.length && props.renderNoResultsComponent( {
+								defaultComponent: <IndexNoResults
+									title={ __( 'No results matched your search.', 'elementor' ) }
+									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
+									button={ {
+										text: __( 'Continue Browsing', 'elementor' ),
+										action: clearQueryParams,
+									} }
+								/>,
+								isFilterActive,
+							} )
+						}
 					</>
 				</Content>
 			</div>
@@ -164,9 +217,10 @@ export default function Index( props ) {
 Index.propTypes = {
 	path: PropTypes.string,
 	initialQueryParams: PropTypes.object,
-	noResultComponent: PropTypes.any,
+	renderNoResultsComponent: PropTypes.func,
 };
 
 Index.defaultProps = {
-	noResultComponent: IndexNoResults,
+	initialQueryParams: {},
+	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };
