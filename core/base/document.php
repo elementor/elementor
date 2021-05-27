@@ -611,8 +611,7 @@ abstract class Document extends Controls_Stack {
 
 			$this->save_settings( $data['settings'] );
 
-			// Refresh post after save settings.
-			$this->post = get_post( $this->post->ID );
+			$this->refresh_post();
 		}
 
 		// Don't check is_empty, because an empty array should be saved.
@@ -646,6 +645,10 @@ abstract class Document extends Controls_Stack {
 		$this->remove_handle_revisions_changed_filter();
 
 		return true;
+	}
+
+	public function refresh_post() {
+		$this->post = get_post( $this->post->ID );
 	}
 
 	/**
