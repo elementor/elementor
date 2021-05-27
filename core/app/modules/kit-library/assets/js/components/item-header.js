@@ -70,7 +70,7 @@ export default function ItemHeader( props ) {
 
 	const apply = useCallback( () => {
 		$e.data.get( 'kits/download-link', { id: props.model.id }, { refresh: true } )
-			.then( ( { data } ) => navigate( `/import/process?file_url=${ data.data.download_link }` ) )
+			.then( ( { data } ) => navigate( `/import/process?file_url=${ data.data.download_link }&nonce=${ data.meta.nonce }&referrer=kit-library` ) )
 			.catch( () => setError( __( 'Something went wrong.', 'elementor' ) ) );
 	}, [ props.model ] );
 
