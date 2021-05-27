@@ -10,7 +10,6 @@ import ModalSection from './modal-section';
 import ModalTip from './modal-tip';
 
 import './modal.scss';
-import KitContent from "../../../../modules/import-export/assets/js/shared/kit-content/kit-content";
 
 export default function ModalProvider( props ) {
 	const [ show, setShow ] = useState( props.show ),
