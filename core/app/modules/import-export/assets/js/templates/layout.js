@@ -20,7 +20,7 @@ export default function Layout( props ) {
 
 					{ 'import' === props.type ? <ImportInfoModal { ...infoModalProps } /> : <ExportInfoModal { ...infoModalProps } /> }
 				</ContentLayout>
-			)
+			);
 		},
 		getInfoButtonProps = () => {
 			return {

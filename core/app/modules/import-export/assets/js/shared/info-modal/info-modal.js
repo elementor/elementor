@@ -37,6 +37,7 @@ export default function InfoModal( props ) {
 InfoModal.propTypes = {
 	show: PropTypes.bool,
 	setShow: PropTypes.func,
+	title: PropTypes.string,
 	children: PropTypes.any.isRequired,
 };
 

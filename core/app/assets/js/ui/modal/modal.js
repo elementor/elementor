@@ -126,6 +126,10 @@ Modal.propTypes = {
 	children: PropTypes.any.isRequired,
 	title: PropTypes.string.isRequired,
 	icon: PropTypes.string,
+	show: PropTypes.bool,
+	setShow: PropTypes.func,
+	hideModal: PropTypes.func,
+	showModal: PropTypes.func,
 };
 
 Modal.defaultProps = {

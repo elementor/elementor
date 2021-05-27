@@ -45,7 +45,7 @@ export default function ImportResolver() {
 			if ( context.data.includes.includes( 'content' ) ) {
 				const pages = context.data?.fileResponse?.stage1.manifest.content?.page || {};
 
-				return Object.entries( pages ).find( ( [ pageId, pageData ] ) => pageData.show_on_front );
+				return Object.entries( pages ).find( ( pageData ) => pageData[ 1 ].show_on_front );
 			}
 
 			return false;
@@ -73,7 +73,7 @@ export default function ImportResolver() {
 
 				<Panel>
 					<Panel.Header>
-						<Panel.Headline>Select the items you want to keep and apply:</Panel.Headline>
+						<Panel.Headline>{ __( 'Select the items you want to keep and apply:', 'elementor' ) }</Panel.Headline>
 					</Panel.Header>
 
 					<Panel.Body padding="20">

@@ -1,5 +1,5 @@
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import InfoModal from "./info-modal";
+import InfoModal from './info-modal';
 
 export default function ImportInfoModal( props ) {
 	return (

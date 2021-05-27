@@ -12,6 +12,7 @@ export default function InfoModalSection( props ) {
 
 InfoModalSection.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.any,
 };
 
 InfoModalSection.defaultProps = {

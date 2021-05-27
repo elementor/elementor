@@ -12,6 +12,11 @@ export default function InfoModalHeading( props ) {
 
 InfoModalHeading.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.oneOfType( [
+		PropTypes.string,
+		PropTypes.object,
+		PropTypes.arrayOf( PropTypes.object ),
+	] ).isRequired,
 };
 
 InfoModalHeading.defaultProps = {
