@@ -16,10 +16,6 @@ $eps-text-field-placeholder-dark-color: dark-tints(500);
 	-moz-osx-font-smoothing: grayscale;
 }
 
-@mixin placeholder {
-	color: var(--eps-text-field-placeholder-color);
-}
-
 $root: eps-text-field;
 
 .#{$root} {
@@ -44,29 +40,9 @@ $root: eps-text-field;
 		}
 	}
 
-	&::-webkit-input-placeholder {
-		@include font-style;
-		@include placeholder;
-	}
-
-	&:-moz-placeholder {
-		@include font-style;
-		@include placeholder;
-	}
-
-	&::-moz-placeholder {
-		@include font-style;
-		@include placeholder;
-	}
-
-	&:-ms-input-placeholder {
-		@include font-style;
-		@include placeholder;
-	}
-
 	&::placeholder {
+		color: var(--eps-text-field-placeholder-color);
 		@include font-style;
-		@include placeholder;
 	}
 }
 
