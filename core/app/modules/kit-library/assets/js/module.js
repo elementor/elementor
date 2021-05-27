@@ -9,7 +9,7 @@ export default class KitLibrary {
 
 		router.addRoute( {
 			path: '/kit-library/*',
-			component: React.lazy( () => import( /** webpackChunkName: kit-library */ './app' ) ),
+			component: React.lazy( () => import( /* webpackChunkName: 'kit-library' */ './app' ) ),
 		} );
 	}
 }
