@@ -565,8 +565,7 @@ export default class Data extends Commands {
 
 			CommandDataInline.getEndpointFormat = () => endpointFormat;
 
-			// Since '$e.commands.run
-			context = ( args ) => ( new CommandDataInline( args ).run() );
+			context = Object.values( component.importCommands( { [ command ]: CommandDataInline } ) )[0];
 		}
 
 		const result = super.register( component, command, context ),
