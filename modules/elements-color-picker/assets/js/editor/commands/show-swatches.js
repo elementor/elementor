@@ -6,8 +6,19 @@ export class ShowSwatches extends CommandBase {
 		super( args );
 
 		this.colors = {};
-		this.pickerClass = 'e-element-color-picker';
-		this.pickerSelector = '.' + this.pickerClass;
+
+		this.classes = {
+			picker: 'e-element-color-picker',
+			tooltip: 'e-element-color-picker__tooltip',
+			swatch: 'e-element-color-picker__swatch',
+			hidden: 'e-picker-hidden',
+		};
+
+		this.selectors = {
+			picker: `.${ this.classes.picker }`,
+			tooltip: `.${ this.classes.tooltip }`,
+		};
+
 		this.container = null;
 		this.backgroundImages = [];
 	}
@@ -41,10 +52,11 @@ export class ShowSwatches extends CommandBase {
 
 		this.container = elementor.getContainer( id );
 
-		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.pickerSelector );
+		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.selectors.picker );
 
 		// If there is a picker already, remove it.
 		if ( activePicker ) {
+			this.removeTooltip( activePicker );
 			activePicker.remove();
 		}
 
@@ -226,56 +238,16 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	/**
-	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
+	 * Add the color swatches to a picker container.
 	 *
-	 * @param {int} x
-	 * @param {int} y
+	 * @param {HTMLElement} picker - Picker HTML element to append the swatches to.
 	 *
 	 * @returns {void}
 	 */
-	initSwatch( x = 0, y = 0 ) {
-		const count = Object.entries( this.colors ).length;
-
-		// Don't render the picker when there are no extracted colors.
-		if ( 0 === count ) {
-			return;
-		}
-
-		const picker = document.createElement( 'div' );
-		picker.dataset.count = count;
-		picker.classList.add( this.pickerClass, 'e-picker-hidden' );
-		picker.style = `
-			--count: ${ count };
-			--left: ${ x };
-			--top: ${ y };
-		`;
-
-		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
-		// which will fire the `apply` command and will close everything.
-		this.container.view.$el[ 0 ].append( picker );
-
-		// Check if the picker is overflowing out of the parent.
-		const observer = elementorModules.utils.Scroll.scrollObserver( {
-			callback: ( event ) => {
-				observer.unobserve( picker );
-
-				if ( ! event.isInViewport ) {
-					picker.style.setProperty( '--left', 'unset' );
-					picker.style.setProperty( '--right', '0' );
-				}
-
-				picker.classList.remove( 'e-picker-hidden' );
-			},
-			root: this.container.view.$el[ 0 ],
-			offset: `0px -${ parseInt( picker.getBoundingClientRect().width ) }px 0px`,
-		} );
-
-		observer.observe( picker );
-
-		// Add the colors swatches.
+	addColorSwatches( picker ) {
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			const swatch = document.createElement( 'div' );
-			swatch.classList.add( `${ this.pickerClass }__swatch` );
+			swatch.classList.add( this.classes.swatch );
 			swatch.style = `--color: ${ value }`;
 			swatch.dataset.text = value.replace( '#', '' );
 
@@ -301,16 +273,104 @@ export class ShowSwatches extends CommandBase {
 
 			picker.append( swatch );
 		} );
+	}
+
+	/**
+	 * Add a tooltip to a picker container.
+	 *
+	 * @param {HTMLElement} picker - Picker HTML element to add the tooltip to.
+	 *
+	 * @returns {void}
+	 */
+	addTooltip( picker ) {
+		jQuery( picker ).tipsy( {
+			gravity: 's',
+			className: this.classes.tooltip,
+			trigger: 'manual',
+			title: () => {
+				return __( 'Select a color from any image, or from an element whose color you\'ve manually defined.', 'elementor' );
+			},
+		} ).tipsy( 'show' );
+
+		// Hack to move Tipsy to the preview wrapper because it defaults to the editor's `document.body`.
+		// TODO: Use something other than Tipsy.
+		const tooltip = document.querySelector( this.selectors.tooltip );
+		elementor.$previewWrapper[ 0 ].appendChild( tooltip );
+
+		// Hack to prevent hover on tooltip triggering a `mouseleave` event on the preview wrapper.
+		tooltip.style.pointerEvents = 'none';
+	}
+
+	/**
+	 * Remove a tooltip from a picker container.
+	 *
+	 * @param {HTMLElement} picker - Picker HTML element to remove the tooltip from.
+	 *
+	 * @returns {void}
+	 */
+	removeTooltip( picker ) {
+		jQuery( picker ).tipsy( 'hide' );
+	}
+
+	/**
+	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
+	 *
+	 * @param {int} x
+	 * @param {int} y
+	 *
+	 * @returns {void}
+	 */
+	initSwatch( x = 0, y = 0 ) {
+		const count = Object.entries( this.colors ).length;
+
+		const picker = document.createElement( 'div' );
+		picker.dataset.count = count;
+		picker.classList.add( this.classes.picker, this.classes.hidden );
+		picker.style = `
+			--count: ${ count };
+			--left: ${ x };
+			--top: ${ y };
+		`;
+
+		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
+		// which will fire the `apply` command and will close everything.
+		this.container.view.$el[ 0 ].append( picker );
+
+		// Check if the picker is overflowing out of the parent.
+		const observer = elementorModules.utils.Scroll.scrollObserver( {
+			callback: ( event ) => {
+				observer.unobserve( picker );
+
+				if ( ! event.isInViewport ) {
+					picker.style.setProperty( '--left', 'unset' );
+					picker.style.setProperty( '--right', '0' );
+				}
+
+				picker.classList.remove( this.classes.hidden );
+			},
+			root: this.container.view.$el[ 0 ],
+			offset: `0px -${ parseInt( picker.getBoundingClientRect().width ) }px 0px`,
+		} );
+
+		observer.observe( picker );
+
+		if ( 0 === count ) {
+			// Show a Tipsy tooltip.
+			this.addTooltip( picker );
+		} else {
+			// Add the colors swatches.
+			this.addColorSwatches( picker );
+		}
 
 		// Remove the picker on mouse leave.
-		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', function handler( e ) {
-			e.currentTarget.removeEventListener( 'mouseleave', handler );
+		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', () => {
+			this.removeTooltip( picker );
 
 			// Remove only after the animation has finished.
 			setTimeout( () => {
 				picker.remove();
 			}, 300 );
-		} );
+		}, { once: true } );
 	}
 
 	/**
