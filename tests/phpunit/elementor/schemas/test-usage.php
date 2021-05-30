@@ -13,13 +13,7 @@ class Test_Usage extends Base_Schema {
 	/**
 	 * @var string
 	 */
-	private $schema_file;
-
-	public function __construct( $name = null, array $data = [], $dataName = '' ) {
-		parent::__construct( $name, $data, $dataName );
-
-		$this->schema_file = ELEMENTOR_PATH . 'schemas/usage.json';
-	}
+	private $schema_file = __DIR__  . '/../../schemas/usage.json';
 
 	public function test__ensure_clean_is_valid() {
 		// Arrange.
