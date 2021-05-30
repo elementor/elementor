@@ -24,9 +24,9 @@ class Module extends BaseModule {
 	 *
 	 * @access private
 	 *
-	 * @var Cache_Manager
+	 * @var Page_Loader
 	 */
-	private $cache_manager;
+	private $page_loader;
 
 	/**
 	 * Page Analyzer.
@@ -44,6 +44,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		parent::__construct();
 		$this->init_optimizer();
 	}
 
@@ -51,26 +52,27 @@ class Module extends BaseModule {
 		return 'optimizer';
 	}
 
-	public function init_optimizer() {
+	private function init_optimizer() {
 		if ( $this->is_analyzer_active() ) {
+			add_action( 'elementor/frontend/before_enqueue_scripts', function() {
+				$nonce = wp_create_nonce( 'save_analyzer_data_report' );
+				echo '<script>const nonce ="' . $nonce . '"; const post_id ="' . get_the_ID() . '";</script>';
+			} );
+
 			$this->analyzer = new Analyzer();
-		} else {
-			$this->optimizer = new Page_Optimizer();
+			return;
 		}
+
+		$this->page_loader = new Page_Loader( get_the_ID() );
 	}
 
 	public static function is_active() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'elementor_optimizer' ) ) {
-			return false;
-		}
-		return true;
+		return Plugin::$instance->experiments->is_feature_active( 'elementor_optimizer' );
 	}
 
-	public function is_analyzer_active() {
-		$is_user_admin = ( current_user_can('editor') || current_user_can('administrator') );
+	private function is_analyzer_active() {
+		$is_user_admin = ( current_user_can( 'editor' ) || current_user_can( 'administrator' ) );
 
-		return $is_user_admin &&
-		       isset( $_GET['analyzer'] ) &&
-		       ! is_admin();
+		return $is_user_admin && isset( $_REQUEST['analyzer'] );
 	}
 }

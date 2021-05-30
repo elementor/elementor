@@ -21,7 +21,7 @@ if ( ! Plugin::$instance->role_manager->user_can( 'design' ) ) {
 }
 
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
-$optimizer = Plugin::$instance->experiments->is_feature_active( 'elementor_optimizer' );
+$optimizer_active = Plugin::$instance->experiments->is_feature_active( 'elementor_optimizer' );
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -68,7 +68,7 @@ $optimizer = Plugin::$instance->experiments->is_feature_active( 'elementor_optim
 	</div>
 	<div id="elementor-navigator"></div>
 </div>
-<?php if ( $optimizer ) { ?>
+<?php if ( $optimizer_active ) { ?>
 <div id="elementor-optimizer"></div>
 <?php } ?>
 <?php

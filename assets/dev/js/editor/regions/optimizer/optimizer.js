@@ -29,28 +29,34 @@ class View extends Marionette.ItemView {
 
 	events() {
 		return {
-			'load @ui.iframe': 'onIframeLoad',
+			'load @ui.iframe': 'this.onIframeLoad',
 		};
 	}
 
 	initialize() {
-		const previewUrl = elementor.config.initial_document.urls.wp_preview;
+		const previewUrl = elementor.config.initial_document.urls.permalink + '?analyzer=1';
 
 		setTimeout( () => {
 			this.ui.iframe.attr( 'src', previewUrl )
 				.css( {
 					position: 'absolute',
-					bottom: '50px',
-					right: '50px',
-					width: '1200px',
-					height: '1000px',
+					top: '-50px',
+					left: '-50px',
+					width: '1400px',
+					height: '1200px',
 					transform: 'scale(0.25)',
-					'transform-origin': 'bottom right',
+					'transform-origin': 'top left',
+					'z-index': -1,
 				} );
 			this.ui.iframe.trigger( 'load' );
 
-			console.log( this.ui.iframe );
-		}, 2000 );
+			window.addEventListener( 'message', ( e ) => {
+				const key = e.message ? 'message' : 'data';
+				const data = e[ key ];
+
+				console.log( data );
+			}, false );
+		}, 1000 );
 	}
 
 	onIframeLoad() {
