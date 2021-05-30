@@ -750,13 +750,7 @@ BaseElementView = BaseContainer.extend( {
 			const aOrder = a.getFlexOrderValue(),
 				bOrder = b.getFlexOrderValue();
 
-			if ( aOrder > bOrder ) {
-				return 1;
-			} else if ( bOrder > aOrder ) {
-				return -1;
-			}
-
-			return 0;
+			return Math.sign( aOrder - bOrder );
 		} );
 
 		return clone;

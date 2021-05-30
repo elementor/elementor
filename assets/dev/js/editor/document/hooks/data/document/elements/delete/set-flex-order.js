@@ -13,9 +13,9 @@ export class SetFlexOrder extends After {
 		const { containers = [ args.container ] } = args;
 
 		// Fire the hook only when the parent is a swappable element.
-		return containers.some( ( /* Container */ container ) => {
-			return ! ! container.parent.view.getSortableOptions()?.swappable;
-		} );
+		return containers.some( ( /* Container */ container ) =>
+			container.parent.view.getSortableOptions()?.swappable
+		);
 	}
 
 	apply( args, containers ) {

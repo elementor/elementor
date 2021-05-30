@@ -180,10 +180,10 @@ class AddSectionBase extends Marionette.ItemView {
 				},
 			} );
 
-		const parent = isContainer ? containingElement : containingElement.view.children.findByIndex( 0 );
-
-		// Create the element in column.
-		parent.addElementFromPanel();
+		if ( ! isContainer ) {
+			// Create the element in column.
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	}

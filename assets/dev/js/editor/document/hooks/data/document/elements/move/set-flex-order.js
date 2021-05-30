@@ -10,10 +10,8 @@ export class SetFlexOrder extends Dependency {
 	}
 
 	getConditions( args ) {
-		const { target } = args;
-
 		// Fire the hook only when the target is a swappable element.
-		return ! ! target.view.getSortableOptions()?.swappable;
+		return ! ! args.target.view.getSortableOptions()?.swappable;
 	}
 
 	apply( args ) {
