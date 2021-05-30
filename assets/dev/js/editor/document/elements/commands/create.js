@@ -55,7 +55,9 @@ export class Create extends CommandHistory {
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
+
 			const createdContainer = container.view.addElement( model, options ).getContainer();
+
 			result.push( createdContainer );
 
 			/**
