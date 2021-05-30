@@ -42,8 +42,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - phpVersion: '7.3'
-            wpCoreVersion: '5.6'
           - phpVersion: '8.0'
             wpCoreVersion: 'latest'
           - phpVersion: '7.4'
