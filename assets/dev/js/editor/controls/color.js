@@ -87,7 +87,7 @@ export default class extends ControlBaseDataView {
 			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer,
 			container = this.getOption( 'container' );
 
-		let kit = {};
+		let kit = null;
 
 		// When it's a kit (i.e "Site Settings").
 		if ( 'kit' === container.document.config.type ) {
