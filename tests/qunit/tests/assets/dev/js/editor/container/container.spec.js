@@ -1,7 +1,7 @@
 import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
 
 jQuery( () => {
-	QUnit.module( 'File: editor/container/container.js', () => {
+	QUnit.module( 'File: assets/dev/js/editor/container/container.js', () => {
 		QUnit.test( 'constructor()', ( assert ) => {
 			const fakeArgs = {
 					type: 'fake',
