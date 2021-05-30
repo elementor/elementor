@@ -10,7 +10,8 @@
 export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} ) => {
 	const [ event ] = nsEvent.split( '.' );
 
-	if ( ! ( elements instanceof NodeList ) ) {
+	// Add support for multi elements.
+	if ( ! ( Symbol.iterator in Object( elements ) ) ) {
 		elements = [ elements ];
 	}
 
@@ -33,7 +34,8 @@ export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} )
 export const removeNamespaceHandler = ( elements, nsEvent ) => {
 	const [ event ] = nsEvent.split( '.' );
 
-	if ( ! ( elements instanceof NodeList ) ) {
+	// Add support for multi elements.
+	if ( ! ( Symbol.iterator in Object( elements ) ) ) {
 		elements = [ elements ];
 	}
 

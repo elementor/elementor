@@ -210,7 +210,7 @@ export default class Container extends ArgsObject {
 	}
 
 	handleChildrenRecursive() {
-		if ( this.view.children.length ) {
+		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
 				if ( ! view.container ) {
 					return;
