@@ -27,20 +27,3 @@ We've added a mask option to any type of widget in Elementor, using the CSS `mas
   
 
 - [CSS & SVG Masks](https://lab.iamvdo.me/css-svg-masks/)
-
-#### Functions Reference:
-
-- `get_shapes( $add_custom )` - Returns a translated user-friendly list of the available masking shapes.
-
-  Passing `true` (which is the default) as a parameter will also append a 'Custom' option to the list in order to use with a `SELECT` control type.
-
-  Example use-case: Letting the user select a `custom` option, and show an image upload control.
-
-
-- `get_mask_selectors( $rules )` - Gets a string of CSS rules to apply, and returns an array of selectors with those rules.
-
-	This function has been created in order to deal with masking for image widget. For most of the widgets we mask the wrapper itself, 
-  
-	but in the case of an image widget, we wanted to mask the `img` tag directly. So instead of writing a lot of selectors every time, 
-  
-	we created a function that builds both of those selectors for us.
