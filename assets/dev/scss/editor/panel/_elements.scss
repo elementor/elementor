@@ -30,7 +30,7 @@
 		align-items: center;
 		justify-content: center;
 		background-color: rgba(255, 255, 255, 0.5);
-		z-index: 1;
+		z-index: $fourth-layer;
 	}
 
 	.eicon-loading {
@@ -39,20 +39,23 @@
 	}
 }
 
-#elementor-panel-elements-search-area {
+.e-panel-search-area {
 	position: sticky;
 	top: 0;
 	padding: 10px;
 	background-color: $editor-background;
-	z-index: $first-layer;
+	z-index: $third-layer;
+
+	&.e-panel-controls-search-area {
+		margin-bottom: -10px; // Pull the first controls section up to fix the UI.
+	}
 }
 
-#elementor-panel-elements-search-wrapper {
+.e-panel-search-wrapper {
 	position: relative;
-}
 
 	input[type="search"] {
-		background-color: rgba(255,255,255,.7);
+		background-color: rgba(255, 255, 255, .7);
 		font-size: 11px;
 		@include padding(10px, 10px, 10px, 29px);
 		font-style: italic;
@@ -73,7 +76,7 @@
 		}
 
 		&:focus {
-			background-color: rgba(255,255,255,1);
+			background-color: rgba(255, 255, 255, 1);
 			@include padding-end(15px);
 		}
 	}

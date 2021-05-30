@@ -5,7 +5,7 @@ PanelElementsSearchView = Marionette.ItemView.extend( {
 
 	localizedValue: '',
 
-	className: 'elementor-panel-search-wrapper',
+	className: 'e-panel-search-wrapper',
 
 	id: 'elementor-panel-elements-search-wrapper',
 

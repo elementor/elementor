@@ -105,14 +105,16 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return str.replace( /[-_]/ig, ' ' ).toLowerCase().trim();
 		};
 
-		const searchTerm = normalizeString( this.ui.searchControls.val() );
+		if ( this.ui.searchControls ) {
+			const searchTerm = normalizeString( this.ui.searchControls.val() || '' );
 
-		// Filter the controls by the user input if present.
-		if ( searchTerm ) {
-			const show = normalizeString( controlModel.get( 'label' ) ).includes( searchTerm );
-			this.isFiltered = show || this.isFiltered;
+			// Filter the controls by the user input if present.
+			if ( searchTerm ) {
+				const show = normalizeString( controlModel.get( 'label' ) ).includes( searchTerm );
+				this.isFiltered = show || this.isFiltered;
 
-			return show;
+				return show;
+			}
 		}
 
 		if ( controlModel.get( 'tab' ) !== this.activeTab ) {
