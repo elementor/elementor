@@ -9,8 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit_Library extends Library {
-	// TODO: NEED TO BE CHANGED!
-	const DEFAULT_BASE_ENDPOINT = 'https://kits.dev.elementor.red';
+	const DEFAULT_BASE_ENDPOINT = 'https://kits.elementor.com';
 
 	public function get_title() {
 		return __( 'Kit Library', 'elementor' );
