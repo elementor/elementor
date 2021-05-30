@@ -1,21 +1,22 @@
 export default class ElementsHelper {
-	static createSection( columns = 1, returnFirstColumn = false ) {
+	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
 				elType: 'section',
 			},
 			container: elementor.getPreviewContainer(),
 			columns,
+			options,
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;
 	}
 
-	static createSectionStructure( columns = 1, structure, returnFirstColumn = false ) {
+	static createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
 				elType: 'section',
@@ -23,10 +24,11 @@ export default class ElementsHelper {
 			container: elementor.getPreviewContainer(),
 			columns,
 			structure,
+			options,
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;

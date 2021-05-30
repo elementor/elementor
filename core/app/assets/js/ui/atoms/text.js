@@ -1,21 +1,24 @@
+import { arrayToClassName } from '../../utils/utils';
+
 export default function Text( props ) {
 	const baseClassName = 'eps',
 		classes = [
 			props.className,
 		],
-		tagName = props.tag,
 		variant = props.variant && 'md' !== props.variant ? '-' + props.variant : '';
 
 	classes.push( baseClassName + '-text' + variant );
 
-	return React.createElement( tagName, {
-		className: classes.filter( ( classItem ) => classItem ).join( ' ' ),
+	const Element = () => React.createElement( props.tag, {
+		className: arrayToClassName( classes ),
 	}, props.children );
+
+	return <Element />;
 }
 
 Text.propTypes = {
 	className: PropTypes.string,
-	variant: PropTypes.string,
+	variant: PropTypes.oneOf( [ 'xl', 'lg', 'md', 'sm', 'xs', 'xxs' ] ),
 	tag: PropTypes.string,
 	children: PropTypes.any.isRequired,
 };

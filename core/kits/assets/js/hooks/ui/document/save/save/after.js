@@ -17,11 +17,11 @@ export class KitAfterSave extends After {
 	apply( args ) {
 		if ( 'publish' === args.status ) {
 			elementor.notifications.showToast( {
-				message: elementor.translate( 'kit_changes_updated' ),
+				message: __( 'Your changes have been updated.', 'elementor' ),
 				buttons: [
 					{
 						name: 'back_to_editor',
-						text: elementor.translate( 'back_to_editor' ),
+						text: __( 'Back to Editor', 'elementor' ),
 						callback() {
 							$e.run( 'panel/global/close' );
 						},

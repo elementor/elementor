@@ -3,6 +3,7 @@
 //
 
 .elementor-control {
+	--control-title-size: 12px;
 	background-color: #fff;
 	position: relative;
 	padding: 0 20px 15px;
@@ -25,7 +26,7 @@
 	}
 
 	.elementor-control-title {
-		font-size: 12px;
+		font-size: var(--control-title-size);
 		line-height: 1;
 		@include margin-end(5px);
 	}
@@ -387,13 +388,14 @@
 $item-size: 2em;
 
 .elementor-control-responsive-switchers {
-	@include margin-end(5px);
 	--selected-option: 0;
 	--pointer-position: var(--selected-option);
 
 	position: relative;
 	width: $item-size;
 	height: $item-size;
+	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	@include margin-end(5px);
 
 	&__holder {
 		position: absolute;
@@ -544,7 +546,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 @import "controls/tabs";
 
-@import "controls/textarea";
+@import "controls/textarea_and_code";
 
 @import "controls/url";
 

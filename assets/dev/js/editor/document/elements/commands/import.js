@@ -12,7 +12,7 @@ export class Import extends CommandHistory {
 
 		return {
 			type: 'add',
-			title: elementor.translate( 'template' ),
+			title: __( 'Template', 'elementor' ),
 			subTitle: model.get( 'title' ),
 		};
 	}

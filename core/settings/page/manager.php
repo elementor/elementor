@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Core\Settings\Page;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -122,7 +122,7 @@ class Manager extends CSS_Manager {
 		wp_update_post( $post );
 
 		// Check updated status
-		if ( DB::STATUS_PUBLISH === get_post_status( $id ) ) {
+		if ( Document::STATUS_PUBLISH === get_post_status( $id ) ) {
 			$autosave = wp_get_post_autosave( $post->ID );
 			if ( $autosave ) {
 				wp_delete_post_revision( $autosave->ID );

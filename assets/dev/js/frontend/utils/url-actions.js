@@ -13,11 +13,13 @@ export default class extends elementorModules.ViewModule {
 
 	initActions() {
 		this.actions = {
-			lightbox: ( settings ) => {
+			lightbox: async ( settings ) => {
+				const lightbox = await elementorFrontend.utils.lightbox;
+
 				if ( settings.id ) {
-					elementorFrontend.utils.lightbox.openSlideshow( settings.id, settings.url );
+					lightbox.openSlideshow( settings.id, settings.url );
 				} else {
-					elementorFrontend.utils.lightbox.showModal( settings );
+					lightbox.showModal( settings );
 				}
 			},
 		};

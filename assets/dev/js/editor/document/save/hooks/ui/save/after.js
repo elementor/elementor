@@ -32,7 +32,7 @@ export class FooterSaverAfterSave extends HookUIAfter {
 
 		buttons.push( {
 			name: 'view_page',
-			text: elementor.translate( 'have_a_look' ),
+			text: __( 'Have a look', 'elementor' ),
 			callback() {
 				open( elementor.config.document.urls.have_a_look );
 			},

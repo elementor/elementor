@@ -45,12 +45,12 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 		<span class="elementor-control-title">{{{ data.label }}}</span>
 		<#
 		}
-		let notice = elementor.translate( 'deprecated_notice', [ data.widget, data.plugin, data.since ] );
+		let notice = wp.i18n.sprintf( wp.i18n.__( 'The <strong>%1$s</strong> widget has been deprecated since %2$s %3$s.', 'elementor' ), data.widget, data.plugin, data.since );
 		if ( data.replacement ) {
-			notice += '<br>' + elementor.translate( 'deprecated_notice_replacement', [ data.replacement ] );
+			notice += '<br>' + wp.i18n.sprintf( <?php __( 'It has been replaced by <strong>%1$s</strong>.', 'elementor' ); ?>, data.replacement );
 		}
 		if ( data.last ) {
-			notice += '<br>' + elementor.translate( 'deprecated_notice_last', [ data.widget, data.plugin, data.last ] );
+			notice += '<br>' + wp.i18n.sprintf( <?php __( 'Note that %1$s will be completely removed once %2$s %3$s is released.', 'elementor' ); ?>, data.widget, data.plugin, data.last );
 		}
 		#>
 		<div class="elementor-control-deprecated-notice elementor-panel-alert elementor-panel-alert-warning">{{{ notice }}}</div>

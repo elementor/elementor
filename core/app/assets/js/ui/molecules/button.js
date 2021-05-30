@@ -2,8 +2,6 @@ import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 import Icon from 'elementor-app/ui/atoms/icon';
 
-import './buttons.scss';
-
 export default class Button extends React.Component {
 	static propTypes = {
 		text: PropTypes.string.isRequired,
@@ -14,10 +12,11 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		variant: PropTypes.string,
-		color: PropTypes.string,
-		size: PropTypes.string,
+		variant: PropTypes.oneOf( [ 'contained', 'underlined', '' ] ),
+		color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
+		size: PropTypes.oneOf( [ 'sm', 'md', 'lg' ] ),
 		target: PropTypes.string,
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -96,6 +95,10 @@ export default class Button extends React.Component {
 
 		if ( this.props.onClick ) {
 			attributes.onClick = this.props.onClick;
+		}
+
+		if ( this.props.rel ) {
+			attributes.rel = this.props.rel;
 		}
 
 		const buttonContent = (

@@ -94,17 +94,21 @@ class Import_Images {
 	 * attachment metadata.
 	 *
 	 * @since 1.0.0
+	 * @since 3.2.0 New `$parent_post_id` option added
 	 * @access public
 	 *
 	 * @param array $attachment The attachment.
+	 * @param int $parent_post_id Optional
 	 *
 	 * @return false|array Imported image data, or false.
 	 */
-	public function import( $attachment ) {
-		$saved_image = $this->get_saved_image( $attachment );
+	public function import( $attachment, $parent_post_id = null ) {
+		if ( ! empty( $attachment['id'] ) ) {
+			$saved_image = $this->get_saved_image( $attachment );
 
-		if ( $saved_image ) {
-			return $saved_image;
+			if ( $saved_image ) {
+				return $saved_image;
+			}
 		}
 
 		// Extract the file name and extension from the url.
@@ -136,11 +140,15 @@ class Import_Images {
 			// return new \WP_Error( 'attachment_processing_error', __( 'Invalid file type.', 'elementor' ) );
 		}
 
-		$post_id = wp_insert_attachment( $post, $upload['file'] );
+		$post_id = wp_insert_attachment( $post, $upload['file'], $parent_post_id );
 
 		// On REST requests.
 		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
 			require_once ABSPATH . '/wp-admin/includes/image.php';
+		}
+
+		if ( ! function_exists( 'wp_read_video_metadata' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/media.php';
 		}
 
 		wp_update_attachment_metadata(
@@ -153,7 +161,11 @@ class Import_Images {
 			'id' => $post_id,
 			'url' => $upload['url'],
 		];
-		$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;
+
+		if ( ! empty( $attachment['id'] ) ) {
+			$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;
+		}
+
 		return $new_attachment;
 	}
 

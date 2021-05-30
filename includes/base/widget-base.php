@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
-
 	/**
 	 * Whether the widget has content.
 	 *
@@ -31,6 +32,21 @@ abstract class Widget_Base extends Element_Base {
 	 * @var bool
 	 */
 	protected $_has_template_content = true;
+
+	/**
+	 * Registered Runtime Widgets.
+	 *
+	 * Registering in runtime all widgets that are being used on the page.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 * @static
+	 *
+	 * @var array
+	 */
+	public static $registered_runtime_widgets = [];
+
+	private static $widgets_css_data_manager;
 
 	/**
 	 * Get element type.
@@ -113,7 +129,13 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		if ( $is_type_instance ) {
-			$this->_register_skins();
+			if ( $this->has_own_method( '_register_skins', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_skins', '3.1.0', __CLASS__ . '::register_skins()' );
+
+				$this->_register_skins();
+			} else {
+				$this->register_skins();
+			}
 
 			$widget_name = $this->get_name();
 
@@ -273,6 +295,19 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Register widget skins - deprecated prefixed method
+	 *
+	 * @since 1.7.12
+	 * @access protected
+	 * @deprecated 3.1.0
+	 */
+	protected function _register_skins() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::register_skins()' );
+
+		$this->register_skins();
+	}
+
+	/**
 	 * Register widget skins.
 	 *
 	 * This method is activated while initializing the widget base class. It is
@@ -280,14 +315,14 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * Usage:
 	 *
-	 *    protected function _register_skins() {
+	 *    protected function register_skins() {
 	 *        $this->add_skin( new Skin_Classic( $this ) );
 	 *    }
 	 *
-	 * @since 1.7.12
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_skins() {}
+	protected function register_skins() {}
 
 	/**
 	 * Get initial config.
@@ -400,8 +435,8 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _add_render_attributes() {
-		parent::_add_render_attributes();
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
 
 		$this->add_render_attribute(
 			'_wrapper', 'class', [
@@ -464,7 +499,7 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( 'no' === $lightbox_setting_key ) {
 			if ( $is_global_image_lightbox_enabled ) {
-				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no', $overwrite );
 			}
 
 			return $this;
@@ -538,6 +573,14 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
+			if ( $this->is_widget_first_render() ) {
+
+				$this->register_runtime_widget( $this->get_group_name() );
+
+				$this->print_widget_css();
+			}
+
+			// get_name
 
 			/**
 			 * Render widget content.
@@ -555,6 +598,10 @@ abstract class Widget_Base extends Element_Base {
 			?>
 		</div>
 		<?php
+	}
+
+	protected function is_widget_first_render() {
+		return ! in_array( $this->get_group_name(), self::$registered_runtime_widgets, true );
 	}
 
 	/**
@@ -656,7 +703,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function _print_content() {
+	protected function print_content() {
 		$this->render_content();
 	}
 
@@ -765,7 +812,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Add new skin.
 	 *
 	 * Register new widget skin to allow the user to set custom designs. Must be
-	 * called inside the `_register_skins()` method.
+	 * called inside the `register_skins()` method.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -858,6 +905,21 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get group name.
+	 *
+	 * Some widgets need to use group names, this method allows you to create them.
+	 * By default it retrieves the regular name.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return string Unique name.
+	 */
+	public function get_group_name() {
+		return $this->get_name();
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -884,5 +946,55 @@ abstract class Widget_Base extends Element_Base {
 
 		$this->end_controls_section();
 
+	}
+
+	public function register_runtime_widget( $widget_name ) {
+		self::$registered_runtime_widgets[] = $widget_name;
+	}
+
+	public function get_css_config() {
+		$widget_name = $this->get_group_name();
+
+		$direction = is_rtl() ? '-rtl' : '';
+
+		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
+
+		return [
+			'key' => $widget_name,
+			'version' => ELEMENTOR_VERSION,
+			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'data' => [
+				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			],
+		];
+	}
+
+	private function get_widget_css() {
+		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
+
+		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
+
+		return $widget_css;
+
+	}
+
+	private function print_widget_css() {
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+		if ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) {
+			return;
+		}
+
+		echo $this->get_widget_css();
+	}
+
+	private function get_widgets_css_data_manager() {
+		if ( ! self::$widgets_css_data_manager ) {
+			self::$widgets_css_data_manager = new Widgets_Css_Data_Manager();
+		}
+
+		return self::$widgets_css_data_manager;
 	}
 }

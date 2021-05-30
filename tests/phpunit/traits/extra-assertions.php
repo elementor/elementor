@@ -26,6 +26,24 @@ trait Extra_Assertions {
 	}
 
 	/**
+	 * @param $keys
+	 * @param $array
+	 * @param string $message
+	 */
+	public function assertArrayNotHaveKeys( $keys, $array, $message = '' ) {
+		if ( ! is_array( $keys ) ) {
+			throw \PHPUnit_Util_InvalidArgumentHelper::factory(
+				1,
+				'only array'
+			);
+		}
+
+		foreach ( $keys as $key ) {
+			$this->assertArrayNotHasKey( $key, $array, $message );
+		}
+	}
+
+	/**
 	 * assert that an action has been registered for this hook.
 	 *
 	 * @param string $tag

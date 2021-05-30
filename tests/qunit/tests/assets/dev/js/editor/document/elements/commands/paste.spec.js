@@ -33,7 +33,7 @@ export const Paste = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );
@@ -63,7 +63,7 @@ export const Paste = () => {
 				// Check pasted button exist.
 				let count = 1;
 				eColumns.forEach( ( eColumn ) => {
-					assert.equal( eColumn.view.children.length, 2,
+					assert.equal( eColumn.children.length, 2,
 						`Button #${ count } were pasted.` );
 					++count;
 				} );
@@ -79,7 +79,7 @@ export const Paste = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'paste', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

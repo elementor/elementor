@@ -1,0 +1,33 @@
+$eps-box-notice-color: tints(500);
+$eps-box-notice-dark-color: dark-tints(200);
+$eps-box-notice-background-color: tints(100);
+$eps-box-notice-dark-background-color: dark-tints(600);
+
+$root: eps-notice;
+
+.#{$root} {
+	--eps-box-notice-color: #{$eps-box-notice-color};
+	--eps-box-notice-background-color: #{$eps-box-notice-background-color};
+
+	padding: spacing(10) spacing(16);
+	box-shadow: $eps-box-shadow-1;
+	background-color: var(--eps-box-notice-background-color);
+
+	&--warning {
+		border-inline-start: $eps-border-width-lg $border-style-solid theme-colors(warning);
+	}
+
+	&__text {
+		margin: 0;
+		padding: 0;
+		color: var(--eps-box-notice-color);
+		font-style: italic;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--eps-box-notice-color: #{$eps-box-notice-dark-color};
+		--eps-box-notice-background-color: #{$eps-box-notice-dark-background-color};
+	}
+}

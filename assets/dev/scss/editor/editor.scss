@@ -17,18 +17,17 @@
 @import "panel/panel";
 @import "panel/controls";
 @import "mode-switcher";
+@import "responsive-bar";
 @import "../../../../modules/history/assets/scss/revisions";
 @import "../../../../modules/history/assets/scss/history";
 @import "../../../../core/kits/assets/css/panel";
 
 @import "animations";
 @import "devices";
-@import "tipsy";
 @import "templates-modal";
 @import "dynamic-tags";
 @import "notifications";
 @import "context-menu";
-@import "introduction";
 @import "hotkeys";
 
 @import "resizable";
@@ -37,3 +36,4 @@
 @import "preview-loading-error";
 @import "icons-manager";
 @import "color-picker";
+@import "select2";

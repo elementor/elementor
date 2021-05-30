@@ -1,9 +1,5 @@
-#wpadminbar #wp-admin-bar-elementor_app_site_editor a.ab-item {
-	&:before {
-		content: "\e91d";
-		font-family: eicons;
-		top: 4px;
-		font-size: 13px;
-		color: inherit;
-	}
+/* Will select next element after last '.elementor-general-section' */
+#wpadminbar #wp-admin-bar-elementor_edit_page .elementor-general-section + .elementor-second-section {
+	border-top: 1px solid #464b50;
+	margin-top: 6px;
 }
