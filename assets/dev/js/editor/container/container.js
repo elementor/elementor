@@ -493,45 +493,4 @@ export default class Container extends ArgsObject {
 		// No global default.
 		return '';
 	}
-
-	/**
-	 * Retrieve the flex order key, based on the device mode.
-	 *
-	 * @returns {string}
-	 */
-	getFlexOrderKey() {
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
-
-		return ( 'desktop' === currentDeviceMode ) ? '_flex_order' : `_flex_order_${ currentDeviceMode }`;
-	}
-
-	/**
-	 * Retrieve a flex order setting value for a container.
-	 *
-	 * @returns {string|int} - Flex order value.
-	 */
-	getFlexOrderValue() {
-		return this.settings.get( this.getFlexOrderKey() );
-	}
-
-	/**
-	 * Set a new flex order settings to a container.
-	 *
-	 * @param {string|int} position - The new position.
-	 *
-	 * @returns {void}
-	 */
-	setFlexOrder( position ) {
-		const settingKey = this.getFlexOrderKey();
-
-		$e.run( 'document/elements/settings', {
-			container: this,
-			settings: {
-				[ settingKey ]: position,
-			},
-			options: {
-				external: true,
-			},
-		} );
-	}
 }

@@ -27,7 +27,7 @@ export class SetFlexOrder extends After {
 			const flexItems = container.view.sortFlexItemsArray( container.parent.children );
 
 			flexItems.forEach( ( item, i ) => {
-				item.setFlexOrder( i );
+				item.view.setFlexOrder( i );
 			} );
 		} );
 	}

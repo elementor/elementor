@@ -18,7 +18,7 @@ export class SetFlexOrder extends Dependency {
 		const { containers = [ args.container ], target } = args;
 
 		containers.forEach( ( container ) => {
-			container.setFlexOrder( args.options?.at );
+			container.view.setFlexOrder( args.options?.at );
 		} );
 
 		// Don't proceed with the move if it's the same container.

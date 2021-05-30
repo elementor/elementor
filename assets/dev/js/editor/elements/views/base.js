@@ -747,8 +747,8 @@ BaseElementView = BaseContainer.extend( {
 
 		// Sort the flex items by their flex order setting.
 		clone.sort( ( a, b ) => {
-			const aOrder = a.getFlexOrderValue(),
-				bOrder = b.getFlexOrderValue();
+			const aOrder = a.view.getFlexOrderValue(),
+				bOrder = b.view.getFlexOrderValue();
 
 			return Math.sign( aOrder - bOrder );
 		} );
@@ -780,7 +780,48 @@ BaseElementView = BaseContainer.extend( {
 
 		// Re order the items.
 		flexItems.forEach( ( item, i ) => {
-			item.setFlexOrder( i );
+			item.view.setFlexOrder( i );
+		} );
+	},
+
+	/**
+	 * Retrieve the flex order key, based on the device mode.
+	 *
+	 * @returns {string}
+	 */
+	getFlexOrderKey() {
+		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode();
+
+		return ( 'desktop' === currentDeviceMode ) ? '_flex_order' : `_flex_order_${ currentDeviceMode }`;
+	},
+
+	/**
+	 * Retrieve a flex order setting value for a container.
+	 *
+	 * @returns {string|int} - Flex order value.
+	 */
+	getFlexOrderValue() {
+		return this.getContainer().settings.get( this.getFlexOrderKey() );
+	},
+
+	/**
+	 * Set a new flex order settings to a container.
+	 *
+	 * @param {string|int} position - The new position.
+	 *
+	 * @returns {void}
+	 */
+	setFlexOrder( position ) {
+		const settingKey = this.getFlexOrderKey();
+
+		$e.run( 'document/elements/settings', {
+			container: this.getContainer(),
+			settings: {
+				[ settingKey ]: position,
+			},
+			options: {
+				external: true,
+			},
 		} );
 	},
 } );
