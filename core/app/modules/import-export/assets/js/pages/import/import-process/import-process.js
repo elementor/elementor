@@ -1,57 +1,77 @@
-import { useState, useContext, useEffect } from 'react';
+import { useEffect, useContext, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
-import Message from '../../../ui/message/message';
-import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
-import Icon from 'elementor-app/ui/atoms/icon';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
+import FileProcess from '../../../shared/file-process/file-process';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
-import useUploadFile from 'elementor-app/hooks/use-upload-file';
-
-import './import-process-style.scss';
+import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ImportProcess() {
-	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
-			include: [ 'templates', 'content', 'site-settings' ],
-		} ),
-		importContext = useContext( Context ),
+	const { ajaxState, setAjax } = useAjax(),
+		context = useContext( Context ),
 		navigate = useNavigate(),
-		resetImportProcess = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+		fileURL = useRef( location.hash.match( 'file_url=(.+)' ) ),
+		onLoad = () => {
+			const ajaxConfig = {
+				data: {
+					action: 'elementor_import_kit',
+				},
+			};
+
+			if ( fileURL.current || context.data.fileResponse ) {
+				if ( fileURL.current ) {
+					ajaxConfig.data.e_import_file = fileURL.current[ 1 ];
+					ajaxConfig.data.data = JSON.stringify( {
+						stage: 1,
+					} );
+				} else {
+					ajaxConfig.data.data = JSON.stringify( {
+						stage: 2,
+						session: context.data.fileResponse.stage1.session,
+						include: context.data.includes,
+						overrideConditions: context.data.overrideConditions,
+					} );
+				}
+
+				setAjax( ajaxConfig );
+			}
+		},
+		onSuccess = () => {
+			if ( context.data.fileResponse?.stage1 ) {
+				const previousFileResponse = context.data.fileResponse,
+					fileResponse = { ...previousFileResponse, stage2: ajaxState.response };
+
+				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
+			} else {
+				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
+			}
+		},
+		onDialogDismiss = () => {
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );
 		};
 
 	useEffect( () => {
-		setUploadFile( importContext.data.file );
-	}, [] );
-
-	useEffect( () => {
-		if ( 'success' === uploadFileStatus.status ) {
-			navigate( '/import/success' );
+		if ( 'success' === ajaxState.status ) {
+			if ( context.data.fileResponse.stage2 ) {
+				navigate( '/import/complete' );
+			} else {
+				navigate( '/import/content' );
+			}
 		}
-	}, [ uploadFileStatus ] );
+	}, [ context.data.fileResponse ] );
 
 	return (
 		<Layout type="import">
-			<Message className="e-app-import-process">
-				<Icon className="e-app-import-process__icon eicon-loading eicon-animation-spin" />
-
-				<Heading variant="display-3" className="e-app-import-process__title">
-					{ __( 'Processing your file...', 'elementor' ) }
-				</Heading>
-
-				<Text variant="xl" className="e-app-import-process__text">
-					{ __( 'This usually takes a few moments.', 'elementor' ) }
-					<br />
-					{ __( 'Don\'t close this window until your import is finished.', 'elementor' ) }
-				</Text>
-
-				{ 'error' === uploadFileStatus.status && <ImportFailedDialog onRetry={ resetImportProcess } /> }
-			</Message>
+			<FileProcess
+				status={ ajaxState.status }
+				onLoad={ onLoad }
+				onSuccess={ onSuccess }
+				onDialogApprove={ () => {} }
+				onDialogDismiss={ onDialogDismiss }
+			/>
 		</Layout>
 	);
 }
