@@ -100,6 +100,22 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'responsive_separator',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
+			]
+		);
+
+		$this->add_control(
+			'responsive_heading',
+			[
+				'label' => __( 'Responsive Preview', 'elementor-pro' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_control(
 			'show_hidden_elements',
 			[
 				'label' => __( 'Show Hidden Elements', 'elementor' ),
