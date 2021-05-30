@@ -29,7 +29,7 @@ export default class Component extends ComponentBase {
 	}
 
 	/**
-	 * Reset the current picket to its default.
+	 * Reset the current picker to its default.
 	 *
 	 * @returns {void}
 	 */
