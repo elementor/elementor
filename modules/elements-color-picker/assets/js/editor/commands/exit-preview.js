@@ -8,7 +8,6 @@ export class ExitPreview extends CommandBase {
 			return;
 		}
 
-		// Silent.
 		this.component.renderUI( initialColor );
 	}
 }
