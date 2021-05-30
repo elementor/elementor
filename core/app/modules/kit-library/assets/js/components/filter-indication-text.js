@@ -1,6 +1,7 @@
 import useSelectedTaxonomies from '../hooks/use-selected-taxonomies';
+import Badge from './badge';
 import { sprintf } from '@wordpress/i18n';
-import { Text, Button, Grid, Badge } from '@elementor/app-ui';
+import { Text, Button, Grid } from '@elementor/app-ui';
 
 import './filter-indication-text.scss';
 

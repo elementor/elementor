@@ -1,7 +1,7 @@
+import Badge from '../../components/badge';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { useMemo } from 'react';
-import { Badge } from '@elementor/app-ui';
 import { Link } from '@reach/router';
+import { useMemo } from 'react';
 
 export default function OverviewTaxonomyBadge( props ) {
 	const { data } = useTaxonomies();
