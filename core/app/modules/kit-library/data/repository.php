@@ -256,7 +256,9 @@ class Repository {
 				return [
 					'id' => isset( $manifest_item->id ) ? $manifest_item->id : $key,
 					'title' => $manifest_item->title,
-					'doc_type' => $manifest_item->doc_type,
+					// Remove the 'wp' prefix from the doc type
+					// the idea is to normalize all the pages and the posts to have the same doc type
+					'doc_type' => str_replace( 'wp-', '', $manifest_item->doc_type ),
 					'thumbnail_url' => $manifest_item->thumbnail,
 					'preview_url' => isset( $manifest_item->url ) ? $manifest_item->url : null,
 				];
