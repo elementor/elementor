@@ -734,6 +734,61 @@ BaseElementView = BaseContainer.extend( {
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
 	},
+
+	/**
+	 * Get an array of Container objects, and sort them by their `_flex_order` setting.
+	 *
+	 * @param {Container[]} items - List of Containers to sort.
+	 *
+	 * @returns {Container[]} - Sorted array of Containers.
+	 */
+	sortFlexItemsArray: function( items ) {
+		const clone = [ ...items ];
+
+		// Sort the flex items by their flex order setting.
+		clone.sort( ( a, b ) => {
+			const aOrder = a.getFlexOrderValue(),
+				bOrder = b.getFlexOrderValue();
+
+			if ( aOrder > bOrder ) {
+				return 1;
+			} else if ( bOrder > aOrder ) {
+				return -1;
+			}
+
+			return 0;
+		} );
+
+		return clone;
+	},
+
+	/**
+	 * Set the flex order to the newly created element & push its siblings accordingly.
+	 *
+	 * @param {Container} container - A newly created / moved container which caused the re-order action.
+	 * @param {string|int} position - New position to insert the newly created element into.
+	 *
+	 * @returns {void}.
+	 */
+	reOrderFlexItems: function( container, position ) {
+		const flexItems = this.sortFlexItemsArray( container.parent.children );
+
+		// Move the triggering container to the new position.
+		const index = flexItems.findIndex( ( item ) => item.id === container.id );
+
+		// Delete the element if it already exists.
+		if ( -1 !== index ) {
+			flexItems.splice( index, 1 );
+		}
+
+		// Insert the element in the new position.
+		flexItems.splice( position, 0, container );
+
+		// Re order the items.
+		flexItems.forEach( ( item, i ) => {
+			item.setFlexOrder( i );
+		} );
+	},
 } );
 
 module.exports = BaseElementView;

@@ -22,6 +22,14 @@ module.exports = Marionette.CompositeView.extend( {
 			return;
 		}
 
+		const isContainerElement = ( 'container' === this.model.get( 'elType' ) ),
+			position = options.at;
+
+		// Ignore the insert position if the parent is a container element.
+		if ( isContainerElement ) {
+			delete options.at;
+		}
+
 		options = jQuery.extend( {
 			trigger: false,
 			edit: true,
@@ -83,6 +91,11 @@ module.exports = Marionette.CompositeView.extend( {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
 			newModel.trigger( 'request:edit' );
+		}
+
+		// Set the element's position if it's inside a container element.
+		if ( isContainerElement ) {
+			this.reOrderFlexItems( newView.getContainer(), position );
 		}
 
 		return newView;

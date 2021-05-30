@@ -1,5 +1,4 @@
 import { After } from 'elementor-api/modules/hooks/data';
-import Helper from 'elementor-document/hooks/data/document/elements/helper';
 
 export class SetFlexOrder extends After {
 	getCommand() {
@@ -25,10 +24,10 @@ export class SetFlexOrder extends After {
 		}
 
 		containers.forEach( ( /* Container */ container ) => {
-			const flexItems = Helper.sortFlexItemsArray( container.parent.children );
+			const flexItems = container.view.sortFlexItemsArray( container.parent.children );
 
 			flexItems.forEach( ( item, i ) => {
-				Helper.setFlexOrder( item, i );
+				item.setFlexOrder( i );
 			} );
 		} );
 	}

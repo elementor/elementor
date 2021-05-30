@@ -1,5 +1,4 @@
 import Dependency from 'elementor-api/modules/hooks/data/dependency';
-import Helper from 'elementor-document/hooks/data/document/elements/helper';
 
 export class SetFlexOrder extends Dependency {
 	getCommand() {
@@ -21,7 +20,7 @@ export class SetFlexOrder extends Dependency {
 		const { containers = [ args.container ], target } = args;
 
 		containers.forEach( ( container ) => {
-			Helper.setFlexOrder( container, args.options?.at );
+			container.setFlexOrder( args.options?.at );
 		} );
 
 		// Don't proceed with the move if it's the same container.
