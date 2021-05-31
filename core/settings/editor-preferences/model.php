@@ -110,7 +110,7 @@ class Model extends BaseModel {
 		$this->add_control(
 			'responsive_heading',
 			[
-				'label' => __( 'Responsive Preview', 'elementor-pro' ),
+				'label' => __( 'Responsive Preview', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 			]
 		);
