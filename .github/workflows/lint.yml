@@ -8,7 +8,13 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
+      - name: Check JS files diff
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.(js|ts|json)
       - name: Cache node modules
+        if: ${{ env.GIT_DIFF }}
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -20,9 +26,11 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install Dependencies
+        if: ${{ env.GIT_DIFF }}
         run: npm i
       - name: Run Lint
-        run: ./node_modules/eslint/bin/eslint.js .
+        if: ${{ env.GIT_DIFF }}
+        run: ./node_modules/eslint/bin/eslint.js ${{ env.GIT_DIFF }}
 
   PHP-Lint:
     runs-on: ubuntu-16.04
@@ -50,13 +58,13 @@ jobs:
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+          phpcs -p -s -n ${{ env.GIT_DIFF }} --standard=./ruleset.xml --extensions=php
       - name: Run PHP Syntax Lint
         if: ${{ env.GIT_DIFF }}
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
-          php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
+          php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
+          php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
+          php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
+          php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
