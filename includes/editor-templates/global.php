@@ -18,9 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-add-new-section">
-			<div class="elementor-add-section-area-button elementor-add-container-button" title="<?php echo __( 'Add New Container', 'elementor' ); ?>">
-				<i class="eicon-gallery-justified"></i>
-			</div>
 			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo __( 'Add New Section', 'elementor' ); ?>">
 				<i class="eicon-plus"></i>
 			</div>
@@ -33,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
-					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60, 34 ];
+					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60 ];
 
 					_.each( structures, function( structure ) {
 					var preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
@@ -42,6 +39,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						{{{ elementor.presetsFactory.getPresetSVG( preset.preset ).outerHTML }}}
 					</li>
 					<# } ); #>
+
+				<li class="elementor-preset elementor-column elementor-col-16" data-structure="flex-container">
+					{{{ elementor.presetsFactory.getContainerPreset( 'FLEX' ) }}}
+				</li>
 			</ul>
 		</div>
 	</div>

@@ -866,15 +866,34 @@ html.elementor-html {
 
 		&:hover {
 
-			path {
+			path,
+			rect {
 				fill: $editor-dark;
 			}
 		}
 
 		&:not(:hover) {
 
-			path {
+			path,
+			rect {
 				fill: $editor-lightest;
+			}
+		}
+
+		.e-preset-container {
+			position: relative;
+			display: flex;
+
+			&::before {
+				content: var( --text );
+				font-family: Roboto;
+				font-size: 13px;
+				font-weight: 500;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				color: #FFF;
+				transform: translate( -50%, -50% );
 			}
 		}
 

@@ -26,7 +26,6 @@ class AddSectionBase extends Marionette.ItemView {
 	events() {
 		return {
 			'click @ui.addSectionButton': 'onAddSectionButtonClick',
-			'click @ui.addContainerButton': 'onAddContainerButtonClick',
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
@@ -108,7 +107,7 @@ class AddSectionBase extends Marionette.ItemView {
 		];
 	}
 
-	onAddContainerButtonClick() {
+	createContainer() {
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
@@ -139,8 +138,15 @@ class AddSectionBase extends Marionette.ItemView {
 	onPresetSelected( event ) {
 		this.closeSelectPresets();
 
-		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure );
+		const selectedStructure = event.currentTarget.dataset.structure;
+
+		// If the selected preset is a Flex Container, create one.
+		if ( 'flex-container' === selectedStructure ) {
+			this.createContainer();
+			return;
+		}
+
+		const parsedStructure = elementor.presetsFactory.getParsedStructure( selectedStructure );
 
 		$e.run( 'document/elements/create', {
 			model: {

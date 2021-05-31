@@ -112,6 +112,24 @@ presetsFactory = {
 
 		return dOutput;
 	},
+
+	/**
+	 * Return an SVG markup with text of a Container element (e.g. flex, grid, etc.).
+	 *
+	 * @param text - The text to show on the preset.
+	 *
+	 * @returns {string}
+	 */
+	getContainerPreset( text = '' ) {
+		return `
+			<div style="--text:'${ text }'" class="e-preset-container">
+				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="89" height="44" transform="translate(0.5)" fill="#D5DADF"/>
+					<rect x="3" y="2.5" width="84" height="39" rx="2.5" stroke="#FCFCFC" stroke-linejoin="round" stroke-dasharray="3 2"/>
+				</svg>
+			</div>
+		`;
+	},
 };
 
 module.exports = presetsFactory;
