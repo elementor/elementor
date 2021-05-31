@@ -63,6 +63,12 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/remove-readme-beta-tag.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+      - name: Check if readme.txt update
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          npm install --no-package-lock --no-save marked@2.0.6
+          node ./.github/scripts/get-changelog-from-readme-txt.js
       - name: Push new version to develop
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
@@ -129,12 +135,18 @@ jobs:
         run: |
           npm install --no-package-lock --no-save @octokit/core@3.4.0
           node ./.github/scripts/generate-changelog.js
+      - name: Read changelog from readme.txt
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          npm install --no-package-lock --no-save marked@2.0.6
+          node ./.github/scripts/get-changelog-from-readme-txt.js
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          body_path: temp-changelog.txt
+          body_path: temp-changelog-from-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Read changelog and set current date
