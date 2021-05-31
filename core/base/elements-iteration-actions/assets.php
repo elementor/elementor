@@ -142,19 +142,7 @@ class Assets extends Base {
 	}
 
 	private function get_document_assets() {
-		$document_db_settings = $this->document->get_db_document_settings();
-
-		if ( ! $document_db_settings ) {
-			$document_db_settings = [];
-		}
-
-		$document_current_settings = $this->document->get_settings();
-
-		if ( ! $document_current_settings ) {
-			$document_current_settings = [];
-		}
-
-		$document_settings = array_intersect_key( $document_db_settings, $document_current_settings );
+		$document_settings = $this->document->get_settings();
 
 		$document_controls = $this->document->get_controls();
 
