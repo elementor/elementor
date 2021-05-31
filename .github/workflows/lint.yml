@@ -31,7 +31,7 @@ jobs:
         uses: technote-space/get-diff-action@v4
         with:
           PATTERNS: |
-            **/*.php
+            *.php
       - name: Cancel if there is no PHP files diff
         uses: andymckay/cancel-action@0.2
         if: ${{ !env.GIT_DIFF }}

@@ -100,3 +100,4 @@ function elementor_fail_wp_version() {
 }
 
 $a = 1;
+$b = 1;
