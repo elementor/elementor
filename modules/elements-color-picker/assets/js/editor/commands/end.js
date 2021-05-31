@@ -7,6 +7,7 @@ export class End extends CommandBase {
 		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.remove( 'elementor-editor__ui-state__color-picker' );
 
 		elementor.$previewContents[ 0 ].querySelectorAll( '.e-element-color-picker' ).forEach( ( picker ) => {
+			jQuery( picker ).tipsy( 'hide' );
 			picker.remove();
 		} );
 
