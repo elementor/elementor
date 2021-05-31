@@ -286,6 +286,17 @@ export default class Container extends ArgsObject {
 		}
 	}
 
+	/**
+	 * Function addRepeaterItem().
+	 *
+	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
+	 *
+	 * @param {string} repeaterName
+	 * @param {Backbone.Model} rowSettingsModel
+	 * @param {number} index
+	 *
+	 * @returns {Container}
+	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
 
@@ -308,6 +319,8 @@ export default class Container extends ArgsObject {
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
 		} ) );
+
+		return this.repeaters[ repeaterName ];
 	}
 
 	/**
