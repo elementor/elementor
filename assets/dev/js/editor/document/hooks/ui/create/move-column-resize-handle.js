@@ -22,9 +22,7 @@ export class MoveColumnResizeHandle extends After {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( /* Container */ container ) => {
-			if ( 'column' === container.model.get( 'elType' ) ) {
-				this.moveResizeHandle( container );
-			}
+			this.moveResizeHandle( container );
 		} );
 	}
 

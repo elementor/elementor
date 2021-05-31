@@ -33,7 +33,7 @@ ColumnView = BaseElementView.extend( {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		// Add an `elementor-widget-wrap`class to the column in order to attach its styles & events to the column,
+		// Add an `elementor-widget-wrap` class to the column in order to attach its styles & events to the column,
 		// since this element doesn't exist when the DOM experiment is active.
 		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
 			classes += ' elementor-widget-wrap';
