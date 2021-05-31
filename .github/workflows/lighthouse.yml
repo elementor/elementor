@@ -42,7 +42,6 @@ jobs:
 
   lighthouse:
     name: Lighthouse test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
-    if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     needs: [build-plugin]
     strategy:
@@ -54,35 +53,43 @@ jobs:
             wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/checkout@v2
       - name: Install Node.js 14.x
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
       - name: Restore build from cache
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/cache@v2
         id: restore-build
         with:
           path: ./build/*
           key: ${{ github.sha }}
       - name: Update wp-env.json file
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         env:
           PHP_VERSION: ${{ matrix.phpVersion }}
           WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
         run: node ./.github/scripts/build-wp-env.js
       - name: Install wp-env and lhci
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.7.1
       - name: Install WordPress environment
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
           npx wp-env run tests-cli "bash -c 'bash elementor-config/import-temapltes.sh'"
       - name: WordPress debug information
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
       - name: Run Lighthouse tests
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
       - name: Save HTML dumps on failure
