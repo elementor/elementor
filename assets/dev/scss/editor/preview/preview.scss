@@ -657,7 +657,7 @@ html.elementor-html {
 		align-self: stretch;
 
 		// Make the placeholder centered in container element, like in other places.
-		.e-container & {
+		.e-container.e-element-empty & {
 			align-self: center;
 		}
 
