@@ -22,12 +22,7 @@ export class End extends CommandBase {
 		this.component.currentPicker.trigger?.classList.remove( 'e-control-tool-disabled' );
 
 		// Reset the current picker.
-		this.component.currentPicker = {
-			container: null,
-			control: null,
-			initialColor: null,
-			trigger: null,
-		};
+		this.component.resetPicker();
 
 		// Return to edit mode.
 		elementor.changeEditMode( 'edit' );
