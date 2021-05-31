@@ -74,6 +74,20 @@ class Module extends BaseApp {
 	}
 
 	/**
+	 * Register dashboard widgets.
+	 *
+	 * Adds a new Elementor widgets to WordPress dashboard.
+	 *
+	 * Fired by `wp_dashboard_setup` action.
+	 *
+	 * @since 1.9.0
+	 * @access public
+	 */
+	public function register_dashboard_widgets() {
+		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
+	}
+
+	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
@@ -85,6 +99,10 @@ class Module extends BaseApp {
 
 		add_action( 'admin_enqueue_scripts', function () {
 			$this->enqueue_scripts();
+		} );
+
+		add_action( 'wp_dashboard_setup', function () {
+			$this->register_dashboard_widgets();
 		} );
 	}
 }

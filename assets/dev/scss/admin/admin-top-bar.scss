@@ -5,10 +5,19 @@
 
 $top-bar-height: 50px;
 
+// Hide the widget in admin dashboard that was created by checking the screen option checkbox.
+// "display: none" won't work here since it will influence the mechanism for saving the state for the checkbox in screen options
+#e-dashboard-widget-admin-top-bar {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
 #e-admin-top-bar {
 	@include end( 0 );
 	background: $white;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
+	display: none;
 	position: absolute;
 	top: 0;
 	width: calc(100% - 160px);
@@ -85,9 +94,23 @@ $top-bar-height: 50px;
 		text-transform: uppercase;
 	}
 
-	&.top-bar-active ~ #wpbody {
-		#wpbody-content {
-			margin-top: $top-bar-height;
+	&.top-bar-active {
+		display: block;
+
+		&~ #wpbody {
+			#wpbody-content {
+				margin-top: $top-bar-height;
+			}
+
+			.wrap h1 {
+				display: none;
+			}
+		}
+	}
+
+	&:not(.top-bar-active )  ~ #wpbody {
+		.wrap h1 {
+			display: block;
 		}
 	}
 

@@ -4,17 +4,31 @@ import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
 
-export default function AdminTopBar() {
+export default function AdminTopBar( props ) {
 	const actionButtonsRef = useRef();
 
-	// Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
+	// Handle Top Bar visibility on initiation and when toggle the admin top bar checkbox in screen options
 	useEffect( () => {
+		const adminTopBarCheckboxElement = document.querySelector( '#e-dashboard-widget-admin-top-bar-hide' );
 		const adminTopBarElement = document.querySelector( '#e-admin-top-bar' );
-		adminTopBarElement.classList.add( 'top-bar-active' );
+
+		if ( ! adminTopBarCheckboxElement || adminTopBarCheckboxElement.checked ) {
+			adminTopBarElement.classList.add( 'top-bar-active' );
+		}
+
+		if ( adminTopBarCheckboxElement ) {
+			adminTopBarCheckboxElement.addEventListener( 'change', function() {
+				if ( this.checked ) {
+					adminTopBarElement.classList.add( 'top-bar-active' );
+				} else {
+					adminTopBarElement.classList.remove( 'top-bar-active' );
+				}
+			} );
+		}
 	}, [] );
 
 	// Handle the page title visibility in admin top bar.
-	const pageTitleText = usePageTitle();
+	const pageTitleText = usePageTitle( props.isDashboard );
 
 	// Handle the action buttons visibility in admin top bar on initiation.
 	useEffect( () => {
@@ -46,3 +60,7 @@ export default function AdminTopBar() {
 		</div>
 	);
 }
+
+AdminTopBar.propTypes = {
+	isDashboard: PropTypes.boolean,
+};
