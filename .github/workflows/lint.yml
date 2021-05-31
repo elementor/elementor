@@ -36,6 +36,8 @@ jobs:
             **/*.php
       - name: Cancel if there is no PHP files diff
         uses: andymckay/cancel-action@0.2
+        env:
+          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ !env.GIT_DIFF }}
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
