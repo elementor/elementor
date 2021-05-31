@@ -34,7 +34,7 @@ jobs:
             **/*.php
       - name: Cancel if there is no PHP files diff
         uses: andymckay/cancel-action@0.2
-        if: env.GIT_DIFF
+        if: ${{ !env.GIT_DIFF }}
       - name: Checkout source code
         uses: actions/checkout@v2
       - name: Setup PHP 7.4
