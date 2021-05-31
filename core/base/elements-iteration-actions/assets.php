@@ -91,6 +91,10 @@ class Assets extends Base {
 		$assets = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
+			if ( ! isset( $controls[ $setting_key ] ) ) {
+				continue;
+			}
+
 			$control = $controls[ $setting_key ];
 
 			// Enabling assets loading from the registered control fields.
