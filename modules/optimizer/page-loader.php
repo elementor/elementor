@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Page_Loader extends BaseModule {
 	private $post_id;
 	private $page_data;
+	private $images;
+	private $background_images;
 
 	public function get_name() {
 		return 'page-loader';
@@ -24,20 +26,21 @@ class Page_Loader extends BaseModule {
 	public function __construct( $post_id ) {
 		parent::__construct();
 		$this->post_id = $post_id;
-		$this->page_data = $this->get_page_data();
 
 		add_action( 'elementor/frontend/before_enqueue_styles', function() {
+			$this->page_data = $this->get_page_data();
+			$this->images = $this->get_images();
+			$this->background_images = $this->get_images( true );
+
 			add_filter( 'style_loader_tag', [ $this, 'delay_loading' ], 10, 4 );
 		} );
 
-		add_action( 'wp_footer', function() {
+		add_action( 'wp_body_open', function() {
 			echo $this->render_optimized_styles();
 		} );
 
- 		//add_filter( 'elementor/image_size/get_attachment_image_html', [ $this, 'parse_image_render_output' ], 50, 4 );
-
 		add_action( 'elementor/widget/render_content', function( $content, $widget ) {
-			$this->parse_widget_output( $content, $widget );
+			echo $this->parse_widget_output( $content, $widget );
 		}, 10, 2 );
 	}
 
@@ -56,8 +59,7 @@ class Page_Loader extends BaseModule {
 	}
 
 	private function render_optimized_styles() {
-		$page_data = $this->get_page_data();
-		return '<style type="text/css" class="e-optimizer-critical-style">' . $page_data['criticalCSS'] . '</style>
+		return '<style type="text/css" class="e-optimizer-critical-style">' . $this->get_critical_css() . '</style>
 		<style type="text/css" class="e-optimizer-image-placeholders">' . $this->get_images_placeholders_css() . '</style>
 		<style type="text/css" class="e-optimizer-bg_image-placeholders">' . $this->get_background_images_placeholders_css() . '</style>';
 	}
@@ -66,7 +68,7 @@ class Page_Loader extends BaseModule {
 		$images = $this->get_images();
 
 		if ( ! $images ) {
-			return;
+			return $html;
 		}
 
 		$widget_id = $widget->get_raw_data()['id'];
@@ -82,24 +84,23 @@ class Page_Loader extends BaseModule {
 			}
 		}
 
-		echo $html;
+		return $html;
 	}
 
 	private function get_images_placeholders_css() {
-		$images = $this->get_images();
-
-		if ( ! $images ) {
-			return;
+		if ( ! $this->images ) {
+			return false;
 		}
 
 		$css = '';
 
-		foreach ( $images as $image ) {
-			$base64 = $image['placeholder']['data'][0];
-			$widget_id = $image['parentWidget'];
+		foreach ( $this->images as $image ) {
 			$img_src = $image['src'];
+			$has_placeholder = isset( $image['placeholder']['data'][0] );
+			$url = $has_placeholder ? $image['placeholder']['data'][0] : $img_src;
+			$widget_id = $image['parentWidget'];
 			$css_selector = '[data-id="' . $widget_id . '"] [data-src="' . $img_src . '"]';
-			$image_content_rule = 'content: url("' . $base64 . '");';
+			$image_content_rule = 'content: url("' . $url . '");';
 			$image_width_rule = 'min-width:' . $image['clientWidth'] . 'px;';
 			$css .= $css_selector . '{' . $image_content_rule . $image_width_rule . '}';
 		}
@@ -108,25 +109,24 @@ class Page_Loader extends BaseModule {
 	}
 
 	private function get_background_images_placeholders_css() {
-		$images = $this->get_background_images();
-
-		if ( ! $images ) {
-			return;
+		if ( ! $this->background_images ) {
+			return false;
 		}
 
 		$css = '';
 
-		foreach ( $images as $image ) {
-			$css .= $image['cssSelector'] . '{background-image: url("' . $image['placeholder']['data'] . '") !important;}';
+		foreach ( $this->background_images as $image ) {
+			$css .= $image['cssSelector'] . '{background-image: url("' . $image['placeholder']['data'][0] . '") !important;}';
 		}
 
 		return $css;
 	}
 
-	private function get_background_images() {
-		$page_data = $this->get_page_data();
-		$images = $page_data && isset( $page_data['backgroundImages'] ) && is_array( $page_data['backgroundImages'] ) && 0 < count( $page_data['backgroundImages'] ) ?
-			$page_data['backgroundImages'] :
+	private function get_images( $background_images = false ) {
+		$images_data_key = $background_images ? 'backgroundImages' : 'images';
+		$page_data = $this->page_data;
+		$images = $page_data && isset( $page_data[ $images_data_key ] ) && is_array( $page_data[ $images_data_key ] ) && 0 < count( $page_data[ $images_data_key ] ) ?
+			$page_data[ $images_data_key ] :
 			false;
 
 		if ( ! $images ) {
@@ -134,38 +134,28 @@ class Page_Loader extends BaseModule {
 		}
 
 		foreach ( $images as $key => $image ) {
-			$images[ $key ]['id'] = attachment_url_to_postid( $image['url'] );
-			$images[ $key ]['placeholder'][0] = get_post_meta(
-				$images[ $key ]['id'],
-				'_e_optimizer_placeholder_' . $image['placeholder']['size']
-			);
-		}
-
-		return $images;
-	}
-
-	private function get_images() {
-		$page_data = $this->get_page_data();
-		$images = $page_data && isset( $page_data['images'] ) && is_array( $page_data['images'] ) && 0 < count( $page_data['images'] ) ?
-			$page_data['images'] :
-			false;
-
-		if ( ! $images ) {
-			return false;
-		}
-
-		foreach ( $images as $key => $image ) {
-			if ( ! $image['critical'] ) {
+			if ( ! $background_images && ! $image['critical'] ) {
 				continue;
 			}
-			$images[ $key ]['id'] = attachment_url_to_postid( $image['src'] );
+			$url_key = $background_images ? $image['url'] : $image['src'];
+			$images[ $key ]['id'] = attachment_url_to_postid( $url_key );
 			$images[ $key ]['placeholder']['data'] = get_post_meta(
 				$images[ $key ]['id'],
 				'_e_optimizer_placeholder_' . $image['placeholder']['size']
 			);
 		}
 
-		return $images;
+		$this->page_data[ $images_data_key ] = $images;
+
+		return $this->page_data[ $images_data_key ];
+	}
+
+	private function get_critical_css() {
+		return get_post_meta(
+			get_the_ID(),
+			'_elementor_optimizer_critical_css',
+			true
+		);
 	}
 
 	private function get_page_data() {

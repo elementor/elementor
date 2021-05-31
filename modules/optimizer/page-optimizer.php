@@ -37,47 +37,41 @@ class Page_Optimizer {
 	}
 
 	public function optimize_page() {
-		$images = $this->get_analyzer_data( 'images' );
-		$operations_results = [
-			'save_placeholders' => false,
-		];
+		$images = $this->analyzer_data['images'];
+		$bg_images = $this->analyzer_data['backgroundImages'];
+		$operations_results = [];
 
 		if ( count( $images ) ) {
 			// $this->optimize_images( $images );
-			$operations_results['save_placeholders'] = $this->save_placeholders();
+			$operations_results['save_images_placeholders'] = $this->save_placeholders();
+		}
+
+		if ( count( $bg_images ) ) {
+			// $this->optimize_images( $images );
+			$operations_results['save_bg_images_placeholders'] = $this->save_placeholders( true );
 		}
 
 		return $operations_results;
 	}
 
-	public function save_placeholders() {
-		$bg_images = $this->get_analyzer_data( 'backgroundImages' );
-		$images = $this->get_analyzer_data( 'images' );
+	public function save_placeholders( $background_images = false ) {
+		$images_data_key = $background_images ? 'backgroundImages' : 'images';
+		$images = $this->analyzer_data[ $images_data_key ];
 		$saved_placeholders = [];
 
 		foreach ( $images as $index => $image ) {
 			$saved_placeholders[ $index ] = false;
-			$image_id = attachment_url_to_postid( $image['src'] );
+			$url_key = $background_images ? $image['url'] : $image['src'];
+			$image_id = attachment_url_to_postid( $url_key );
 
 			if ( $image_id && $image['placeholder'] ) {
-				$placeholder_data = $image['placeholder']['data'];
 				$meta_key = '_e_optimizer_placeholder_' . $image['placeholder']['size'];
-				$saved_placeholders[ $index ] = add_post_meta( $image_id, $meta_key, $placeholder_data, true );
+				$saved_placeholders[ $index ] =
+					update_post_meta( $image_id, $meta_key, $image['placeholder']['data'] );
 			}
 		}
 
-		foreach ( $bg_images as $index => $image ) {
-			$saved_bg_placeholders[ $index ] = false;
-			$image_id = attachment_url_to_postid( $image['url'] );
-
-			if ( $image_id && $image['placeholder'] ) {
-				$placeholder_data = $image['placeholder']['data'];
-				$meta_key = '_e_optimizer_placeholder_' . $image['placeholder']['size'];
-				$saved_bg_placeholders[ $index ] = add_post_meta( $image_id, $meta_key, $placeholder_data, true );
-			}
-		}
-
-		return $saved_placeholders;
+		return [ $saved_placeholders ];
 	}
 
 	public function optimize_images( $images ) {

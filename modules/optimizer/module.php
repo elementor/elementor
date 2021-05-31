@@ -3,6 +3,7 @@ namespace Elementor\Modules\Optimizer;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,7 +64,19 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->page_loader = new Page_Loader( get_the_ID() );
+		add_action( 'elementor/init', function() {
+			$is_edit_mode          = Plugin::$instance->editor->is_edit_mode();
+			$is_preview_mode       = isset( $_GET['elementor-preview'] );
+			$is_optimized_mode     = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+			$is_editor             = is_admin() && isset( $_GET['action'] ) && 'elementor' === $_GET['action'];
+			$is_unoptimized        = isset( $_GET['unoptimized'] );
+
+			if ( ! $is_static_render_mode && ! $is_optimized_mode && ! $is_edit_mode
+			     && ! $is_preview_mode && ! $is_editor && ! $is_unoptimized ) {
+				$this->page_loader = new Page_Loader( get_the_ID() );
+			}
+		} );
 	}
 
 	public static function is_active() {
