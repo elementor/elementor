@@ -131,7 +131,7 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test', [], [ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ] );
 
-		$this->assertIsArray( $result );
+		$this->assertTrue( is_array( $result ) );
 		$this->assertEqualSets( [ 'message' => 'as array' ], $result );
 	}
 
