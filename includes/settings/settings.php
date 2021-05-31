@@ -132,6 +132,17 @@ class Settings extends Settings_Page {
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
+			__( 'Submissions', 'elementor' ),
+			__( 'Submissions', 'elementor' ),
+			'manage_options',
+			'e-form-submissions',
+			function() {
+				$this->elementor_form_submissions();
+			}
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
 			__( 'Custom Fonts', 'elementor' ),
 			__( 'Custom Fonts', 'elementor' ),
 			'manage_options',
@@ -336,6 +347,25 @@ class Settings extends Settings_Page {
 		<?php
 	}
 
+	public function elementor_form_submissions() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<h2><?php echo __( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
+				<p>
+					<?php echo __( 'Save and manage all of your form submissions in one single place.
+All within a simple, intuitive place.', 'elementor' ); ?>
+					<a href="http://go.elementor.com/wp-dash-submissions" target="_blank" rel="nofollow">
+						<?php echo __( 'Learn More', 'elementor' ); ?>
+					</a>
+				</p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
 	/**
 	 * On admin init.
 	 *
@@ -459,7 +489,23 @@ class Settings extends Settings_Page {
 			],
 			self::TAB_INTEGRATIONS => [
 				'label' => __( 'Integrations', 'elementor' ),
-				'sections' => [],
+				'sections' => [
+					'google_maps' => [
+						'label' => __( 'Google Maps Embed API', 'elementor' ),
+						'callback' => function() {
+							printf( __( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
+						},
+						'fields' => [
+							'google_maps_api_key' => [
+								'label' => __( 'API Key', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_google_maps_api_key',
+									'type' => 'text',
+								],
+							],
+						],
+					],
+				],
 			],
 			self::TAB_ADVANCED => [
 				'label' => __( 'Advanced', 'elementor' ),

@@ -292,37 +292,35 @@ export default class Container extends ArgsObject {
 	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
 	 *
 	 * @param {string} repeaterName
-	 * @param {Backbone.Model} itemSettingsModel
+	 * @param {Backbone.Model} rowSettingsModel
 	 * @param {number} index
 	 *
 	 * @returns {Container}
 	 */
-	addRepeaterItem( repeaterName, itemSettingsModel, index ) {
-		let rowId = itemSettingsModel.get( '_id' );
+	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
+		let rowId = rowSettingsModel.get( '_id' );
 
 		// TODO: Temp backwards compatibility. since 2.8.0.
 		if ( ! rowId ) {
 			rowId = 'bc-' + elementorCommon.helpers.getUniqueId();
-			itemSettingsModel.set( '_id', rowId );
+			rowSettingsModel.set( '_id', rowId );
 		}
 
-		const container = new Container( {
-			type: 'repeater',
-			id: itemSettingsModel.get( '_id' ),
+		this.repeaters[ repeaterName ].children.splice( index, 0, new elementorModules.editor.Container( {
+			type: Container.TYPE_REPEATER_ITEM,
+			id: rowSettingsModel.get( '_id' ),
 			model: new Backbone.Model( {
 				name: repeaterName,
 			} ),
-			settings: itemSettingsModel,
+			settings: rowSettingsModel,
 			view: this.view,
 			parent: this.repeaters[ repeaterName ],
 			label: this.label + ' ' + __( 'Item', 'elementor' ),
-			controls: itemSettingsModel.options.controls,
+			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
-		} );
+		} ) );
 
-		this.repeaters[ repeaterName ].children.splice( index, 0, container );
-
-		return container;
+		return this.repeaters[ repeaterName ];
 	}
 
 	/**
