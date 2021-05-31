@@ -27,16 +27,16 @@ jobs:
   PHP-Lint:
     runs-on: ubuntu-16.04
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
       - name: Check PHP files diff
         uses: technote-space/get-diff-action@v4
         with:
           PATTERNS: |
-            *.php
+            **/*.php
       - name: Cancel if there is no PHP files diff
         uses: andymckay/cancel-action@0.2
         if: ${{ !env.GIT_DIFF }}
-      - name: Checkout source code
-        uses: actions/checkout@v2
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
