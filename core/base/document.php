@@ -1438,6 +1438,9 @@ abstract class Document extends Controls_Stack {
 		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
 		$page_settings_manager->ajax_before_save_settings( $settings, $this->post->ID );
 		$page_settings_manager->save_settings( $settings, $this->post->ID );
+
+		$new_instance = Plugin::$instance->documents->get( $this->post->ID, false );
+		$this->set_settings( $new_instance->get_settings() );
 	}
 
 	/**
