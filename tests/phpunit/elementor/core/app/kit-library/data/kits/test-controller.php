@@ -93,8 +93,6 @@ class Test_Controller extends Elementor_Test_Base {
 		// Act
 		$result = $this->http_get( "kits/id_1", [ 'force' => true ] );
 
-//		var_dump($result);die;
-
 		// Assert
 		$this->assertArrayHasKey( 'data', $result );
 		$this->assertEqualSets( [

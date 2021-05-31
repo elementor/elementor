@@ -31,6 +31,7 @@ class Test_Common_App extends Elementor_Test_Base {
 	}
 
 	public function test_http_request() {
+		// Arrange
 		$endpoint = 'test/1';
 
 		$this->http_stub->method( 'request' )
@@ -52,16 +53,19 @@ class Test_Common_App extends Elementor_Test_Base {
 				'body' => '{"status": "success"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', $endpoint, [
 			'body' => [
 				'a' => 1,
 			]
 		] );
 
+		// Assert
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
-	public function test_http_request__return_error_when_not_response_code(  ) {
+	public function test_http_request__return_error_when_not_response_code() {
+		// Arrange
 		$this->http_stub->method( 'request' )
 			->willReturn( [
 			    'response' => [
@@ -70,12 +74,15 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => '{"status": "success"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
 
+		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $result );
 	}
 
 	public function test_http_request__server_sent_success_without_body() {
+		// Arrange
 		$this->http_stub->method( 'request' )
 			->willReturn( [
 			    'response' => [
@@ -84,12 +91,15 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => 'null',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
 
+		// Assert
 		$this->assertEquals( 1, $result );
 	}
 
 	public function test_http_request__wrong_server_response() {
+		// Arrange
 		$this->http_stub->method( 'request' )
 			->willReturn( [
 			    'response' => [
@@ -98,12 +108,15 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => 'false',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
 
+		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $result );
 	}
 
 	public function test_http_request__error_from_server() {
+		// Arrange
 		$this->http_stub->method( 'request' )
 			->willReturn( [
 			    'response' => [
@@ -112,8 +125,10 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => '{"message": "my test error"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
 
+		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertEqualSets( [
 			'422' => ['my test error']
@@ -121,6 +136,7 @@ class Test_Common_App extends Elementor_Test_Base {
 	}
 
 	public function test_http_request__as_array() {
+		// Arrange
 		$this->http_stub->method( 'request' )
 			->willReturn( [
 			    'response' => [
@@ -129,13 +145,16 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => '{"message": "as array"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test', [], [ 'return_type' => Base_App::HTTP_RETURN_TYPE_ARRAY ] );
 
+		// Assert
 		$this->assertTrue( is_array( $result ) );
 		$this->assertEqualSets( [ 'message' => 'as array' ], $result );
 	}
 
 	public function test_http_request__with_connect() {
+		// Arrange
 		$endpoint = 'test/1';
 		$user = $this->get_connected_user();
 
@@ -168,6 +187,7 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => '{"status": "success"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_http_request( 'PUT', $endpoint, [
 			'timeout' => 30,
 			'headers' => [
@@ -178,10 +198,12 @@ class Test_Common_App extends Elementor_Test_Base {
 			]
 		] );
 
+		// Assert
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
 	public function test_request() {
+		// Arrange
 		$endpoint = 'test';
 		$user = $this->get_connected_user();
 
@@ -220,11 +242,13 @@ class Test_Common_App extends Elementor_Test_Base {
 			    'body' => '{"status": "success"}',
 			] );
 
+		// Act
 		$result = $this->app_stub->proxy_request( $endpoint, [
 			'a' => '1',
 			'b' => '2',
 		] );
 
+		// Assert
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
