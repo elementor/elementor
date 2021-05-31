@@ -27,8 +27,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$a = 1;
-
 define( 'ELEMENTOR_VERSION', '3.2.4' );
 define( 'ELEMENTOR_PREVIOUS_STABLE_VERSION', '3.1.4' );
 
