@@ -90,7 +90,7 @@ class Control_Exit_Animation extends Control_Animation {
 	}
 
 	public static function get_assets( $setting ) {
-		if ( ! $setting ) {
+		if ( ! $setting || 'none' === $setting ) {
 			return [];
 		}
 

@@ -162,7 +162,7 @@ class Control_Animation extends Base_Data_Control {
 	}
 
 	public static function get_assets( $setting ) {
-		if ( ! $setting ) {
+		if ( ! $setting || 'none' === $setting ) {
 			return [];
 		}
 
