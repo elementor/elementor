@@ -33,7 +33,7 @@ $breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$
 					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
 					<i class="eicon-device-%1$s" aria-hidden="true"></i>
 					<span class="screen-reader-text">%2$s</span>
-				</label>', esc_html( $name ), esc_html( $tooltip_label ) );
+				</label>', esc_attr( $name ), esc_attr( $tooltip_label ) );
 			} ?>
 			</div>
 		</div>

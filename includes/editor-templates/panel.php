@@ -164,10 +164,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php
-	// PHPCS - const is safe.
-	echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	?>" />
+	<img class="elementor-nerd-box-icon" src="<?php	echo  Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php printf( esc_html__( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), esc_url( Settings::get_url() ) ); ?></div>
 </script>
