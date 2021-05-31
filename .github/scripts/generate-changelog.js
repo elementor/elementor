@@ -45,7 +45,7 @@ const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 			.map(({ commit }) => commit.message)
 			.map(message => message.split('\n')[0])
 			.filter((message) => /\(#\d{1,72}\)/.test(message))
-			.filter((message) => !message.startsWith('Internal:'))
+			.filter((message) => !message.startsWith('Internal:'));
 		const markdown = prAndVerifiedCommits.map((message) => `* ${message}`).join('\n');
 		fs.writeFileSync('temp-changelog.txt', markdown);
 	} catch (err) {
