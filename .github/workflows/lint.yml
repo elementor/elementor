@@ -12,7 +12,7 @@ jobs:
         uses: technote-space/get-diff-action@v4
         with:
           PATTERNS: |
-            **/*.(js|ts|json)
+            **/*.(js|ts|json|jsx|tsx)
       - name: Cache node modules
         if: ${{ env.GIT_DIFF }}
         uses: actions/cache@v2
