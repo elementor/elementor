@@ -31,7 +31,7 @@
 					"type": "string"
 				}
 			},
-			"email":{
+			"email": {
 				"$id": "#/definitions/global/email",
 				"type": "string",
 				"pattern": "^\\S+@\\S+$",
@@ -448,7 +448,10 @@
 						},
 						"version": {
 							"$id": "#/system/theme/version",
-							"type": [ "string", "boolean" ],
+							"type": [
+								"string",
+								"boolean"
+							],
 							"title": "The version of theme",
 							"default": false,
 							"examples": [
@@ -457,7 +460,10 @@
 						},
 						"author": {
 							"$id": "#/system/theme/author",
-							"type": [ "string", "boolean" ],
+							"type": [
+								"string",
+								"boolean"
+							],
 							"title": "The author of theme",
 							"default": false,
 							"examples": [
@@ -601,7 +607,25 @@
 				"non-elementor-posts": {
 					"$id": "#/usages/non-elementor-posts",
 					"$ref": "#/definitions/posts_per_type_per_post_status",
-					"title": "The non-elementor-posts schema"
+					"title": "The non-elementor-posts schema",
+					"examples": [
+						{
+							"attachment": {
+								"inherit": "15"
+							},
+							"elementor_snippet": {
+								"auto-draft": "1",
+								"publish": "1"
+							},
+							"page": {
+								"draft": "1",
+								"publish": "1"
+							},
+							"post": {
+								"auto-draft": "2"
+							}
+						}
+					]
 				},
 				"library": {
 					"$id": "#/usages/library",
