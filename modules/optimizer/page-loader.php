@@ -41,7 +41,7 @@ class Page_Loader extends BaseModule {
 			echo $this->parse_widget_output( $content, $widget );
 		}, 10, 2 );
 
-		add_action( 'shutdown', function() {
+		add_action( 'wp_footer', function() {
 			echo $this->get_used_styles();
 		} );
 

@@ -68,11 +68,12 @@ class Module extends BaseModule {
 			$is_edit_mode          = Plugin::$instance->editor->is_edit_mode();
 			$is_preview_mode       = isset( $_GET['elementor-preview'] );
 			$is_optimized_mode     = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+			$is_admin              = is_admin();
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
-			$is_editor             = is_admin() && isset( $_GET['action'] ) && 'elementor' === $_GET['action'];
+			$is_editor             = isset( $_GET['action'] ) && 'elementor' === $_GET['action'];
 			$is_unoptimized        = isset( $_GET['unoptimized'] );
 
-			if ( ! $is_static_render_mode && ! $is_optimized_mode && ! $is_edit_mode
+			if ( ! $is_admin && ! $is_static_render_mode && ! $is_optimized_mode && ! $is_edit_mode
 			     && ! $is_preview_mode && ! $is_editor && ! $is_unoptimized ) {
 				$this->page_loader = new Page_Loader( get_the_ID() );
 			}
