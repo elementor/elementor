@@ -80,6 +80,19 @@ class Base_Object {
 		}
 	}
 
+	/**
+	 * Reset settings.
+	 *
+	 * Deletes the settings value.
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return void.
+	 */
+	public function reset_settings() {
+		$this->settings = null;
+	}
+
 	final public function merge_properties( array $default_props, array $custom_props, array $allowed_props_keys = [] ) {
 		$props = array_replace_recursive( $default_props, $custom_props );
 
