@@ -474,18 +474,13 @@ class Widget_Testimonial extends Widget_Base {
 							$this->add_render_attribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
 
-							$testimonial_name_html = $settings['testimonial_name'];
-
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php
-									// PHPCS - the main text of a widget should not be escaped.
-									echo $testimonial_name_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( 'testimonial_name' ); ?></a>
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php $this->print_unescaped_setting( $testimonial_name_html ); ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php $this->print_unescaped_setting( 'testimonial_name' ); ?></div>
 								<?php
 							endif;
 						endif; ?>
@@ -495,15 +490,13 @@ class Widget_Testimonial extends Widget_Base {
 
 							$this->add_inline_editing_attributes( 'testimonial_job', 'none' );
 
-							$testimonial_job_html = $settings['testimonial_job'];
-
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_job' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( $testimonial_job_html ); ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_job' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( 'testimonial_job' ); ?></a>
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php $this->print_unescaped_setting( $testimonial_job_html ); ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php $this->print_unescaped_setting( 'testimonial_job' ); ?></div>
 								<?php
 							endif;
 						endif; ?>
