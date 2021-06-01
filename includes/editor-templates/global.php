@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
-					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 60 ];
+					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34 ];
 
 					_.each( structures, function( structure ) {
 					var preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
