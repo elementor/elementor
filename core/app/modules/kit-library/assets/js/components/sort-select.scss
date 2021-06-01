@@ -1,3 +1,17 @@
+:root {
+	--eps-sort-select-select-background-color: #{tints(100)};
+	--eps-sort-select-select-color: #{tints(700)};
+	--eps-sort-select-button-background-color: #{tints(100)};
+	--eps-sort-select-button-border: #{1px solid $eps-border-color};
+}
+
+.eps-theme-dark {
+	--eps-sort-select-select-background-color: #{$eps-dark-gray-600};
+	--eps-sort-select-select-color: #{$eps-dark-gray-200};
+	--eps-sort-select-button-background-color: #{$eps-dark-gray-600};
+	--eps-sort-select-button-border: #{1px solid $eps-dark-gray-800};
+}
+
 .eps-sort-select {
 	width: 100%;
 	font-size: type(size, "15");
@@ -26,9 +40,9 @@
 		width: 100%;
 		padding: spacing(10) spacing(10);
 		border: none;
-		background: tints(100);
+		background: var(--eps-sort-select-select-background-color);
 		outline: none;
-		color: tints(700);
+		color: var(--eps-sort-select-select-color);
 		line-height: type( line-height, 'flat' );
 		cursor: pointer;
 		height: spacing(44);
@@ -39,8 +53,8 @@
 
 	&__button {
 		padding: spacing(12) spacing(12);
-		background: tints(100);
-		@include border-start( $eps-border );
+		background: var(--eps-sort-select-button-background-color);
+		@include border-start( var(--eps-sort-select-button-border) );
 		line-height: type( line-height, 'flat' );
 		color: tints(500);
 	}
