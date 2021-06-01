@@ -52,11 +52,38 @@ class Analyzer extends BaseModule {
 		}
 	}
 
+	private function save_images( $images ) {
+		$wp_upload_dir = wp_get_upload_dir();
+		foreach ( $images as $image ) {
+			$url_key = isset( $image['url'] ) ? $image['url'] : $image['src'];
+			$src_path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $url_key );
+			$destination_path = $src_path . '.webp';
+			$image_id = attachment_url_to_postid( $url_key );
+			update_post_meta( $image_id, '_elementor_optimizer_optimized_' . $image['optimized']['size'], true );
+			file_put_contents( $destination_path, file_get_contents( $image['optimized']['data'] ) );
+		}
+	}
+
+	private function save_optimized_images( $optimized_images ) {
+		foreach ( [ 'images', 'backgroundImages' ] as $images_data_key ) {
+			if ( isset( $optimized_images[ $images_data_key ] ) && is_array( $optimized_images[ $images_data_key ] ) && count( $optimized_images[ $images_data_key ] ) ) {
+				$this->save_images( $optimized_images[ $images_data_key ] );
+			}
+		}
+
+		wp_send_json_success( [ $optimized_images ], 200 );
+	}
+
 	private function save_analyzer_data_report() {
 		$post_id = $this->post_id;
 
 		try {
 			$page_data = json_decode( stripslashes( $_POST['page_data'] ), true );
+
+			if ( isset( $page_data['optimizedImages'] ) ) {
+				$this->save_optimized_images( $page_data['optimizedImages'] );
+			}
+
 			$original_data = $page_data;
 			$optimizer = new Page_Optimizer( $page_data, $post_id );
 			$optimization_results = $optimizer->optimize_page();
@@ -82,9 +109,6 @@ class Analyzer extends BaseModule {
 				'optimization_results' => $optimization_results,
 				'did_save_data' => $did_save_data,
 				'saved_report' => $page_data,
-				'original_data' => $original_data,
-				'css' => $css,
-				'critical_css' => $critical_css,
 			];
 
 			wp_send_json_success( $result, 200 );

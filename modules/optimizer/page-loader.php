@@ -32,21 +32,91 @@ class Page_Loader extends BaseModule {
 			$this->images = $this->get_images();
 			$this->background_images = $this->get_images( true );
 
-			add_filter( 'style_loader_tag', [ $this, 'delay_loading' ], 10, 4 );
-		} );
+			echo $this->get_critical_styles();
 
-		add_action( 'wp_body_open', function() {
-			echo $this->render_optimized_styles();
+			add_filter( 'style_loader_tag', [ $this, 'delay_loading' ], 10, 4 );
 		} );
 
 		add_action( 'elementor/widget/render_content', function( $content, $widget ) {
 			echo $this->parse_widget_output( $content, $widget );
 		}, 10, 2 );
+
+		add_action( 'shutdown', function() {
+			echo $this->get_used_styles();
+		} );
+
+		add_action( 'elementor/frontend/before_enqueue_styles', function() {
+			echo $this->get_used_styles();
+			echo "
+			<script>
+				document.addEventListener( 'DOMContentLoaded', () => {
+					const imagesPromises = [];
+					const bgImagesPromises = [];
+
+				    [ ...document.querySelectorAll( '" . $this->get_images_selectors() . "' ) ].forEach( ( img, i ) => {
+
+				        imagesPromises[ i ] = new Promise( ( resolve, reject ) => {
+							const tempImg = document.createElement( 'img' );
+							tempImg.setAttribute( 'src', img.getAttribute( 'data-src') );
+							tempImg.classList.add( 'optimizer-temp-img' );
+
+							tempImg.addEventListener( 'load', ( e ) => {
+					            img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
+					            img.removeAttribute( 'data-src' );
+								resolve( tempImg );
+								e.target.remove();
+							} );
+							document.body.appendChild( tempImg );
+						} )
+				    } );
+
+					Promise.all( imagesPromises ).then( () => {
+					    // Switch off the css that shows images placeholders
+					    document.querySelector( '.e-optimizer-image-placeholders' ).setAttribute( 'media', 'none' );
+
+					    // Restore src attribute of all images
+					    [ ...document.querySelectorAll( '.elementor-element img[data-src]' ) ].forEach( ( img ) => {
+					        img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
+					        img.removeAttribute( 'data-src' );
+					        if ( img.getAttribute( 'data-srcset' ) ) {
+					            img.setAttribute( 'srcset', img.getAttribute( 'data-srcset' ) );
+					        }
+					        img.removeAttribute( 'data-srcset' );
+					    } );
+					} );
+
+					const background_images = JSON.parse( '" . wp_json_encode( $this->get_background_images_urls() ) . "' );
+				    [ ...document.querySelectorAll( '" . $this->get_background_images_selectors() . "' ) ].forEach( ( el, index ) => {
+				        bgImagesPromises[ index ] = new Promise( ( resolve, reject ) => {
+							const tempImg = document.createElement( 'img' );
+							tempImg.setAttribute( 'src', background_images[ index ] + '.webp' );
+							tempImg.classList.add( 'optimizer-temp-img' );
+							tempImg.addEventListener( 'load', ( e ) => {
+							    resolve( tempImg );
+							    e.target.remove();
+							} );
+							document.body.appendChild( tempImg );
+						} ).then( () => {
+						    console.log(el.style.backgroundImage, background_images[ index ]);
+						    const webpImgUrl = background_images[ index ] + '.webp';
+						    el.style.backgroundImage = 'url(' + webpImgUrl + ')';
+						} );
+				    } );
+
+					Promise.all( bgImagesPromises ).then( () => {
+					    // Switch off the css that shows background images placeholders
+					    document.querySelector( '.e-optimizer-bg_image-placeholders' ).setAttribute( 'media', 'none' );
+					} );
+
+				    document.querySelector( '.e-optimizer-used-style' ).setAttribute( 'media', 'all' );
+				} );
+			</script>";
+		} );
 	}
 
 	public function delay_loading( $html, $handle, $href, $media ) {
 		$style_dir = wp_parse_url( $href, PHP_URL_PATH );
-		preg_match( '/wp-content/', $style_dir, $matches, PREG_OFFSET_CAPTURE );
+		preg_match( '/wp-content/', $style_dir, $matches );
 		if ( ! count( $matches ) ) {
 			return $html;
 		}
@@ -58,10 +128,14 @@ class Page_Loader extends BaseModule {
 		);
 	}
 
-	private function render_optimized_styles() {
-		return '<style type="text/css" class="e-optimizer-critical-style">' . $this->get_critical_css() . '</style>
-		<style type="text/css" class="e-optimizer-image-placeholders">' . $this->get_images_placeholders_css() . '</style>
-		<style type="text/css" class="e-optimizer-bg_image-placeholders">' . $this->get_background_images_placeholders_css() . '</style>';
+	private function get_used_styles() {
+		return '<style class="e-optimizer-used-style" media="none">' . $this->get_used_css() . '</style>';
+	}
+
+	private function get_critical_styles() {
+		return '<style class="e-optimizer-critical-style">#wpadminbar{display:none;}' . $this->get_critical_css() . '</style>
+		<style class="e-optimizer-image-placeholders">' . $this->get_images_placeholders_css() . '</style>
+		<style class="e-optimizer-bg_image-placeholders">' . $this->get_background_images_placeholders_css() . '</style>';
 	}
 
 	public function parse_widget_output( $html, $widget ) {
@@ -77,7 +151,7 @@ class Page_Loader extends BaseModule {
 			if ( $widget_id === $image['parentWidget'] && $image['critical'] ) {
 				$html = str_replace(
 					' src="' . $image['src'] . '"',
-					' data-src="' . $image['src'] . '" loading="eager"',
+					' data-src="' . $image['src'] . '.webp" loading="eager"',
 					$html
 				);
 				$html = str_replace( ' srcset="', ' data-srcset="', $html );
@@ -85,6 +159,41 @@ class Page_Loader extends BaseModule {
 		}
 
 		return $html;
+	}
+
+	private function get_background_images_selectors() {
+		$background_images_selectors = [];
+
+		foreach ( $this->background_images as $image ) {
+			$background_images_selectors[] = $image['cssSelector'];
+		}
+
+		return implode( ', ', $background_images_selectors );
+	}
+
+	private function get_background_images_urls() {
+		$background_images_urls = [];
+
+		foreach ( $this->background_images as $image ) {
+			$background_images_urls[] = $image['url'];
+		}
+
+		return $background_images_urls;
+	}
+
+	private function get_images_selectors() {
+		$images_selectors = [];
+
+		foreach ( $this->images as $image ) {
+			if ( ! $image['critical'] ) {
+				continue;
+			}
+			$img_src = $image['src'];
+			$widget_id = $image['parentWidget'];
+			$images_selectors[] = '[data-id="' . $widget_id . '"] [data-src="' . $img_src . '"]';
+		}
+
+		return implode( ', ', $images_selectors );
 	}
 
 	private function get_images_placeholders_css() {
@@ -116,7 +225,8 @@ class Page_Loader extends BaseModule {
 		$css = '';
 
 		foreach ( $this->background_images as $image ) {
-			$css .= $image['cssSelector'] . '{background-image: url("' . $image['placeholder']['data'][0] . '") !important;}';
+			$css .= $image['cssSelector'] . ':not(.bg-loaded)';
+			$css .= '{background-image: url("' . $image['placeholder']['data'][0] . '") !important;}';
 		}
 
 		return $css;
@@ -125,7 +235,8 @@ class Page_Loader extends BaseModule {
 	private function get_images( $background_images = false ) {
 		$images_data_key = $background_images ? 'backgroundImages' : 'images';
 		$page_data = $this->page_data;
-		$images = $page_data && isset( $page_data[ $images_data_key ] ) && is_array( $page_data[ $images_data_key ] ) && 0 < count( $page_data[ $images_data_key ] ) ?
+		$images = $page_data && isset( $page_data[ $images_data_key ] ) &&
+			is_array( $page_data[ $images_data_key ] ) && 0 < count( $page_data[ $images_data_key ] ) ?
 			$page_data[ $images_data_key ] :
 			false;
 
@@ -150,19 +261,15 @@ class Page_Loader extends BaseModule {
 		return $this->page_data[ $images_data_key ];
 	}
 
+	private function get_used_css() {
+		return get_post_meta( get_the_ID(), '_elementor_optimizer_used_css', true );
+	}
+
 	private function get_critical_css() {
-		return get_post_meta(
-			get_the_ID(),
-			'_elementor_optimizer_critical_css',
-			true
-		);
+		return get_post_meta( get_the_ID(), '_elementor_optimizer_critical_css', true );
 	}
 
 	private function get_page_data() {
-		return get_post_meta(
-			get_the_ID(),
-			'_elementor_analyzer_report',
-			true
-		);
+		return get_post_meta( get_the_ID(), '_elementor_analyzer_report', true );
 	}
 }

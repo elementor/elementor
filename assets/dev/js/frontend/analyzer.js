@@ -209,15 +209,18 @@ class Analyzer {
 							new Compressor( blob, {
 								quality: 0.66,
 								maxWidth: maxWidth,
-								maxHeight: maxWidth * 2,
+								maxHeight: maxWidth * 3,
 								mimeType: 'image/webp',
 								success( result ) {
-									if ( isBackgroundImg ) {
-										self.optimizedBackgroundImages[ i ] = result;
-									} else {
-										self.optimizedImages[ i ] = result;
-									}
-									resolve();
+									const reader = new FileReader();
+									reader.onload = ( e ) => {
+										const optimized = {};
+										optimized.data = e.target.result;
+										optimized.size = Math.min( maxWidth, image.naturalWidth );
+										image.optimized = optimized;
+										resolve();
+									};
+									reader.readAsDataURL( result );
 								},
 							} );
 						}
@@ -277,6 +280,14 @@ class Analyzer {
 	}
 }
 
+const optimizeImages = function( analyzer ) {
+	const data = analyzer.getData();
+	return Promise.all( [
+		analyzer.optimizeImages( analyzer.images ),
+		analyzer.optimizeImages( analyzer.backgroundImages ),
+	] );
+};
+
 const sendData = function( data ) {
 	jQuery.ajax( {
 		type: 'post',
@@ -322,7 +333,21 @@ window.addEventListener( 'DOMContentLoaded', () =>
 			console.log( 'Sending Report to the server...' );
 
 			sendData( data );
-		} ).then( () => console.log( 'Report Sent.' ) );
+		} ).then( () => console.log( 'Report Sent.' ) ).then( () => {
+				optimizeImages( analyzer ).then( () => {
+					const optimizedImages = {
+						images: analyzer.images,
+						backgroundImages: analyzer.backgroundImages,
+					};
+
+					console.log(optimizedImages);
+
+					sendData( {
+						optimizedImages: optimizedImages,
+					} );
+				} );
+			}
+		);
 		//window.parent.postMessage( 'Page Analyzed', '*' );
 	}, 600 )
 );
