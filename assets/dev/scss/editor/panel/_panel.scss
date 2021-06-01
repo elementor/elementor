@@ -135,7 +135,7 @@
 	// Hack to remove unwanted elements from the modal
 	.e-wp-media-elements-removed {
 		.embed-link-settings,
-		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ){
+		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ):not( #alt-text-description ){
 			display: none;
 		}
 
