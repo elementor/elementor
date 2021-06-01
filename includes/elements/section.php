@@ -270,7 +270,6 @@ class Element_Section extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'show_label' => false,
 				'separator' => 'none',
 			]
 		);
