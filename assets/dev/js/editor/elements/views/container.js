@@ -1,3 +1,5 @@
+import AddSectionView from 'elementor-views/add-section/inline';
+
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
 
@@ -56,6 +58,42 @@ const ContainerView = BaseElementView.extend( {
 		}
 	},
 
+	/**
+	 * Save container as a template.
+	 *
+	 * @returns {void}
+	 */
+	saveAsTemplate() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+		} );
+	},
+
+	/**
+	 * Add a `Save as Template` button to the context menu.
+	 *
+	 * @return {object}
+	 *
+	 * TODO: Try to create a function in `base.js` to handle both section & container using a generic solution.
+	 */
+	getContextMenuGroups: function() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+
+		groups.splice( transferGroupIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: __( 'Save as Template', 'elementor' ),
+					callback: this.saveAsTemplate.bind( this ),
+				},
+			],
+		} );
+
+		return groups;
+	},
+
 	isDroppingAllowed: function() {
 		// Don't allow dragging items to document which is not editable.
 		if ( ! this.getContainer().isEditable() ) {
@@ -69,6 +107,15 @@ const ContainerView = BaseElementView.extend( {
 		}
 
 		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
+	},
+
+	/**
+	 * Determine if the current container is a nested container.
+	 *
+	 * @returns {boolean}
+	 */
+	isNested: function() {
+		return 'container' === this.getContainer().parent.model.get( 'elType' );
 	},
 
 	getEditButtons: function() {
@@ -104,10 +151,53 @@ const ContainerView = BaseElementView.extend( {
 		return editTools;
 	},
 
+	/**
+	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
+	 *
+	 * @returns {void}
+	 *
+	 * TODO: Move it up to `base.js` (since that's a duplicate from `section.js`).
+	 */
+	onAddButtonClick: function() {
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.fadeToDeath();
+
+			return;
+		}
+
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
+
+		addSectionView.render();
+
+		this.$el.before( addSectionView.$el );
+
+		addSectionView.$el.hide();
+
+		// Delaying the slide down for slow-render browsers (such as FF)
+		setTimeout( function() {
+			addSectionView.$el.slideDown( null, function() {
+				// Remove inline style, for preview mode.
+				jQuery( this ).css( 'display', '' );
+			} );
+		} );
+
+		this.addSectionView = addSectionView;
+	},
+
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this.changeContainerClasses();
+
+		// Defer in order to wait until the element is fully initialized.
+		// TODO: Find a better solution.
+		_.defer( () => {
+			if ( this.isNested() ) {
+				this.$el.find( '.elementor-editor-element-add' ).remove();
+			}
+		} );
 
 		this.$el.html5Droppable( {
 			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',

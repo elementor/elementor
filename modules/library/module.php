@@ -43,6 +43,7 @@ class Module extends BaseModule {
 	 */
 	public function __construct() {
 		Plugin::$instance->documents
+			->register_document_type( 'container', Documents\Container::get_class_full_name() )
 			->register_document_type( 'not-supported', Documents\Not_Supported::get_class_full_name() )
 			->register_document_type( 'page', Documents\Page::get_class_full_name() )
 			->register_document_type( 'section', Documents\Section::get_class_full_name() );

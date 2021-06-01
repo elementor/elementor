@@ -38,7 +38,7 @@ html.elementor-html {
 	--secondary-color: #{ darken($editor-info, 20%) };
 	--outline-color: var( --primary-color );
 
-	.e-container > .e-container {
+	.e-container {
 		--primary-color: #{ $editor-accent };
 		--secondary-color: #{ darken($editor-accent, 10%) };
 		--outline-color: var( --primary-color );
@@ -373,10 +373,6 @@ html.elementor-html {
 	border-radius: 5px 5px 0 0;
 	box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.05);
 
-	.e-container .e-container & {
-		transform: translateX(getValueByDirection(-50%, 50%)) scaleY( -1 );
-	}
-
 	i.eicon-handle {
 		font-size: 16px;
 	}
@@ -431,31 +427,31 @@ html.elementor-html {
 	}
 }
 
-// Top Section (Handles inside)
+// Top Section / Container (Handles inside)
+.e-handles-inside,
 .elementor-section--handles-inside {
 
-	.elementor-editor-section-settings {
+	.elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);
 		border-radius: 0 0 5px 5px;
+	}
 
-		.elementor-editor-element-setting {
+	.elementor-editor-element-setting {
+		&:first-child {
+			border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
 
-			&:first-child {
-				border-radius: getValueByDirection(0 0 0 5px, 0 0 5px 0);
-
-				&:before {
-					top: 0;
-					border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
-				}
+			&:before {
+				top: 0;
+				border-width: getValueByDirection(0 12px 22px 0, 0 0 22px 12px);
 			}
+		}
 
-			&:last-child {
-				border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
+		&:last-child {
+			border-radius: getValueByDirection(0 0 5px 0, 0 0 0 5px);
 
-				&:after {
-					top: 0;
-					border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
-				}
+			&:after {
+				top: 0;
+				border-width: getValueByDirection(0 0 22px 12px, 0 12px 22px 0);
 			}
 		}
 	}
