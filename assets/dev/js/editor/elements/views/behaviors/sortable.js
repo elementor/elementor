@@ -60,7 +60,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title',
 				// Fix: Sortable - Unable to drag and drop sections with huge height.
 				start: () => {
-					$childViewContainer.sortable( "refreshPositions" );
+					$childViewContainer.sortable( 'refreshPositions' );
 				}
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
