@@ -100,18 +100,11 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
-			'responsive_separator',
-			[
-				'type' => Controls_Manager::DIVIDER,
-				'style' => 'thick',
-			]
-		);
-
-		$this->add_control(
 			'responsive_heading',
 			[
 				'label' => __( 'Responsive Preview', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
 			]
 		);
 
