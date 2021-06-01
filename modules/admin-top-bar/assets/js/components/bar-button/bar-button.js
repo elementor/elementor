@@ -15,10 +15,10 @@ export default function BarButton( props ) {
 	}, [] );
 
 	return (
-		<button className="top-bar-button-wrapper" onClick={props.onClick} data-info={props.dataInfo}>
-			<i className={props.icon}></i>
+		<a className="top-bar-button-wrapper" ref={props.buttonRef} onClick={props.onClick} data-info={props.dataInfo} href={props.href}>
+			<i className={props.icon} />
 			<h1 className="top-bar-button-title">{ props.children }</h1>
-		</button>
+		</a>
 	);
 }
 
@@ -27,4 +27,6 @@ BarButton.propTypes = {
 	dataInfo: PropTypes.string,
 	icon: PropTypes.any,
 	onClick: PropTypes.func,
+	buttonRef: PropTypes.object,
+	href: PropTypes.string,
 };
