@@ -575,7 +575,7 @@ abstract class Base_App {
 		switch ( $this->auth_mode ) {
 			case 'cli':
 				foreach ( $notices as $notice ) {
-					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( wpautop( $notice['content'] ) ) );
+					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( $notice['content'] ) );
 				}
 				break;
 			default:
