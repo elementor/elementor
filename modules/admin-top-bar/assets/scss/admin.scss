@@ -32,12 +32,6 @@ $top-bar-height: 50px;
 		padding: 0 16px;
 	}
 
-	.bar-flex {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-
 	.page-title-action {
 		background: $gray-lightest;
 		border: 1px solid $blue;
@@ -59,21 +53,35 @@ $top-bar-height: 50px;
 		}
 	}
 
-	.top-bar-heading-wrapper {
+	.elementor-admin-top-bar__heading {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		margin-inline-end: 40px;
 	}
 
-	.bar-main-area {
+	.elementor-admin-top-bar__main-area {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
 		button {
 			margin: 0 4px
 		}
 	}
 
-	.top-bar-heading-logo {
+	.elementor-admin-top-bar__secondary-area {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+	}
+
+	.elementor-admin-top-bar__heading-logo {
 		width: 30px;
 	}
 
-	.top-bar-heading-logo {
+	.elementor-admin-top-bar__heading-logo {
 		background: $editor-accent;
 		border-radius: 15px;
 		color: $white;
@@ -85,7 +93,7 @@ $top-bar-height: 50px;
 		width: pxToRem(30px);
 	}
 
-	.top-bar-heading-title {
+	.elementor-admin-top-bar__heading-title {
 		color: $editor-darkest;
 		font-size: 15px;
 		font-weight: 700;
@@ -115,7 +123,7 @@ $top-bar-height: 50px;
 		}
 	}
 
-	.top-bar-button-wrapper {
+	.elementor-admin-top-bar__bar-button {
 		align-items: center;
 		cursor: pointer;
 		display: inline-flex;
@@ -124,22 +132,23 @@ $top-bar-height: 50px;
 		text-decoration: none;
 		color: $editor-dark;
 
-		h1 {
+		.elementor-admin-top-bar__bar-button-title {
 			color: $editor-dark;
 		}
 
-		i {
+		.elementor-admin-top-bar__bar-button-icon {
 			margin: 0 4px;
 		}
 
 		&:hover {
-			h1, i {
+			.elementor-admin-top-bar__bar-button-title,
+			.elementor-admin-top-bar__bar-button-icon{
 				color: $editor-accent;
 			}
 		}
 	}
 
-	.top-bar-button-title {
+	.elementor-admin-top-bar__bar-button-title {
 		font-size: 13px;
 		font-weight: 500;
 		font-family: 'Roboto';
@@ -169,18 +178,20 @@ $top-bar-height: 50px;
 // Mobile mode
 @media (max-width: $editor-screen-md-min) {
 	#e-admin-top-bar {
-		.top-bar-action-buttons-wrapper {
+		.elementor-admin-top-bar__main-area-buttons {
 			position: absolute;
 			top: calc(100% + 10px);
-		}
+		}			display: inline-flex;
+		align-items: center;
+		justify-content: center;
 
-		.secondary-main-area {
-			.bar-buttons-wrapper {
+		.elementor-admin-top-bar__secondary-area {
+			.elementor-admin-top-bar__secondary-area-buttons {
 				display: none;
 			}
 
-			> .top-bar-button-wrapper {
-				h1 {
+			> .elementor-admin-top-bar__bar-button {
+				.elementor-admin-top-bar__bar-button-title {
 					display: none;
 				}
 			}
@@ -191,8 +202,8 @@ $top-bar-height: 50px;
 // Desktop mode
 @media (min-width: $editor-screen-md-min) {
 	#e-admin-top-bar {
-		.secondary-main-area {
-			.bar-buttons-wrapper {
+		.elementor-admin-top-bar__secondary-area {
+			.elementor-admin-top-bar__secondary-area-buttons {
 				display: flex;
 			}
 		}

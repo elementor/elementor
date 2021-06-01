@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export default function BarButton( props ) {
 	useEffect( () => {
 		if ( props.dataInfo ) {
-			jQuery( '.top-bar-button-wrapper[data-info]' ).tipsy( {
+			jQuery( '.elementor-admin-top-bar__bar-button[data-info]' ).tipsy( {
 				title: function() {
 					return this.getAttribute( 'data-info' );
 				},
@@ -15,9 +15,9 @@ export default function BarButton( props ) {
 	}, [] );
 
 	return (
-		<a className="top-bar-button-wrapper" ref={props.buttonRef} onClick={props.onClick} data-info={props.dataInfo} href={props.href}>
-			<i className={props.icon} />
-			<h1 className="top-bar-button-title">{ props.children }</h1>
+		<a className="elementor-admin-top-bar__bar-button" ref={props.buttonRef} onClick={props.onClick} data-info={props.dataInfo} href={props.href}>
+			<i className= {`elementor-admin-top-bar__bar-button-icon ${ props.icon }`} />
+			<h1 className="elementor-admin-top-bar__bar-button-title">{ props.children }</h1>
 		</a>
 	);
 }
