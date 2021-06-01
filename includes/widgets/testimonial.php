@@ -485,10 +485,7 @@ class Widget_Testimonial extends Widget_Base {
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php
-									// PHPCS - the main text of a widget should not be escaped.
-									echo $testimonial_name_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php $this->print_unescaped_setting( $testimonial_name_html ); ?></div>
 								<?php
 							endif;
 						endif; ?>
@@ -502,17 +499,11 @@ class Widget_Testimonial extends Widget_Base {
 
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_job' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php
-									// PHPCS - the main text of a widget should not be escaped.
-									echo $testimonial_job_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_job' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( $testimonial_job_html ); ?></a>
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php
-									// PHPCS - the main text of a widget should not be escaped.
-									echo $testimonial_job_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php $this->print_unescaped_setting( $testimonial_job_html ); ?></div>
 								<?php
 							endif;
 						endif; ?>
