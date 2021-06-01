@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Envato extends Base_Adapter {
-	public static function is_compatibility_needed( array $manifest_data ) {
+	public static function is_compatibility_needed( array $manifest_data, array $import_settings ) {
 		return ! empty( $manifest_data['manifest_version'] );
 	}
 
