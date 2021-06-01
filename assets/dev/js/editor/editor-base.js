@@ -18,6 +18,7 @@ import ResponsiveBar from './regions/responsive-bar/responsive-bar';
 import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
+import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -306,6 +307,9 @@ export default class EditorBase extends Marionette.Application {
 		return this.previewView;
 	}
 
+	/**
+	 * @returns {Container}
+	 */
 	getPreviewContainer() {
 		return this.getPreviewView().getContainer();
 	}
@@ -353,6 +357,10 @@ export default class EditorBase extends Marionette.Application {
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
+		}
+
+		if ( elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
+			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
@@ -555,10 +563,17 @@ export default class EditorBase extends Marionette.Application {
 			},
 			resize: ( event, ui ) => {
 				$responsiveWrapper.css( {
-					right: '0', left: '0', top: '0', bottom: '0',
-					'--e-editor-preview-width': ui.size.width + 'px',
-					'--e-editor-preview-height': ui.size.height + 'px',
+					right: '0',
+					left: '0',
+					top: '0',
+					bottom: '0',
 				} );
+
+				// Old versions of jQuery don't support custom properties
+				const style = $responsiveWrapper[ 0 ].style;
+
+				style.setProperty( '--e-editor-preview-width', ui.size.width + 'px' );
+				style.setProperty( '--e-editor-preview-height', ui.size.height + 'px' );
 			},
 		} );
 	}
@@ -591,18 +606,19 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const specialBreakpointsHeights = {
-			mobile: {
-				minHeight: 480,
-				height: 667,
-				maxHeight: 896,
-			},
-			tablet: {
-				minHeight: 768,
-				height: 1024,
-				maxHeight: 1024,
-			},
-		};
+		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+			specialBreakpointsHeights = {
+				mobile: {
+					minHeight: 480,
+					height: 736,
+					maxHeight: 896,
+				},
+				tablet: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+			};
 
 		let deviceConstrains = this.getCurrentDeviceConstrains();
 
@@ -620,10 +636,11 @@ export default class EditorBase extends Marionette.Application {
 		if ( 'desktop' === currentBreakpoint ) {
 			this.destroyPreviewResizable();
 
-			$responsiveWrapper.css( {
-				'--e-editor-preview-width': '',
-				'--e-editor-preview-height': '',
-			} );
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
+
+			style.setProperty( '--e-editor-preview-width', '' );
+			style.setProperty( '--e-editor-preview-height', '' );
 		} else {
 			this.activatePreviewResizable();
 
@@ -641,12 +658,13 @@ export default class EditorBase extends Marionette.Application {
 				}
 			}
 
-			$responsiveWrapper
-				.resizable( 'option', { ...breakpointResizeOptions } )
-				.css( {
-					'--e-editor-preview-width': widthToShow + 'px',
-					'--e-editor-preview-height': breakpointResizeOptions.height + 'px',
-				} );
+			$responsiveWrapper.resizable( 'option', { ...breakpointResizeOptions } );
+
+			// Old versions of jQuery don't support custom properties
+			const style = $responsiveWrapper[ 0 ].style;
+
+			style.setProperty( '--e-editor-preview-width', widthToShow + 'px' );
+			style.setProperty( '--e-editor-preview-height', breakpointResizeOptions.height + 'px' );
 		}
 	}
 
@@ -800,10 +818,11 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	updatePreviewSize( size ) {
-		this.$previewResponsiveWrapper.css( {
-			'--e-editor-preview-width': size.width + 'px',
-			'--e-editor-preview-height': size.height + 'px',
-		} );
+		// Old versions of jQuery don't support custom properties
+		const style = this.$previewResponsiveWrapper[ 0 ].style;
+
+		style.setProperty( '--e-editor-preview-width', size.width + 'px' );
+		style.setProperty( '--e-editor-preview-height', size.height + 'px' );
 	}
 
 	enterPreviewMode( hidePanel ) {

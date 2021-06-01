@@ -15,10 +15,8 @@ class Assets extends Base {
 	// Default value must be empty.
 	private $page_assets;
 
-	/**
-	 * @var boolean
-	 */
-	private $is_meta_fetched = false;
+	// Default value must be empty.
+	private $saved_page_assets;
 
 	public function element_action( Element_Base $element_data ) {
 		$element_assets = $this->get_element_assets( $element_data );
@@ -30,11 +28,11 @@ class Assets extends Base {
 
 	public function is_action_needed() {
 		// No need to evaluate in preview mode, will be made in the saving process.
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+		if ( ! $this->is_active_page_assets_mode() ) {
 			return false;
 		}
 
-		$page_assets = $this->get_page_assets();
+		$page_assets = $this->get_saved_page_assets();
 
 		// When $page_assets is array it means that the assets registration has already been made at least once.
 		if ( is_array( $page_assets ) ) {
@@ -58,14 +56,12 @@ class Assets extends Base {
 		}
 	}
 
-	private function get_page_assets( $force_meta_fetch = false ) {
-		if ( ! $this->is_meta_fetched || $force_meta_fetch  ) {
-			$this->is_meta_fetched = true;
-
-			$this->page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
+	private function get_saved_page_assets( $force_meta_fetch = false ) {
+		if ( ! is_array( $this->saved_page_assets ) || $force_meta_fetch ) {
+			$this->saved_page_assets = $this->document->get_meta( self::ASSETS_META_KEY );
 		}
 
-		return $this->page_assets;
+		return $this->saved_page_assets;
 	}
 
 	private function update_page_assets( $new_assets ) {
@@ -136,17 +132,23 @@ class Assets extends Base {
 		return $element_assets;
 	}
 
+	private function is_active_page_assets_mode() {
+		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_assets_loading' );
+
+		return ! Plugin::$instance->preview->is_preview_mode() && $is_optimized_mode;
+	}
+
 	public function __construct( $document ) {
 		parent::__construct( $document );
 
 		// No need to enable assets in preview mode, all assets will be loaded by default by the assets loader.
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+		if ( ! $this->is_active_page_assets_mode() ) {
 			return;
 		}
 
-		$page_assets = $this->get_page_assets();
+		$page_assets = $this->get_saved_page_assets();
 
-		 // If $page_assets is not empty then enabling the assets for loading.
+		// If $page_assets is not empty then enabling the assets for loading.
 		if ( $page_assets ) {
 			Plugin::$instance->assets_loader->enable_assets( $page_assets );
 		}

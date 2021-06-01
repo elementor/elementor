@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -499,7 +499,7 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( 'no' === $lightbox_setting_key ) {
 			if ( $is_global_image_lightbox_enabled ) {
-				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no', $overwrite );
 			}
 
 			return $this;
@@ -949,10 +949,6 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function register_runtime_widget( $widget_name ) {
-		if ( ! $widget_name ) {
-			return;
-		}
-
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
