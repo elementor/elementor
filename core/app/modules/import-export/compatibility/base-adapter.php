@@ -13,7 +13,7 @@ abstract class Base_Adapter extends Base_Object {
 
 	protected $importer;
 
-	public static function is_compatibility_needed( array $manifest_data ) {
+	public static function is_compatibility_needed( array $manifest_data, array $import_settings ) {
 		return false;
 	}
 
