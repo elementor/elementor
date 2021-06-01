@@ -51,7 +51,13 @@ class Create extends Base_Category {
 				continue;
 			}
 
-			if ( Source_Local::CPT === $post_type ) {
+			if ( ! empty( $post_type_object->class ) ) {
+				/**
+				 * @var $class \Elementor\Core\Base\Document
+				 */
+				$class = $post_type_object->class;
+				$url = $class::get_new_create_url();
+			} elseif ( Source_Local::CPT === $post_type ) {
 				$url = admin_url( Source_Local::ADMIN_MENU_SLUG . '#add_new' );
 			} else {
 				$url = Plugin::$instance->documents->get_create_new_post_url( $post_type );

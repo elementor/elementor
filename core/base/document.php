@@ -199,10 +199,21 @@ abstract class Document extends Controls_Stack {
 		return get_called_class();
 	}
 
+	// TODO: Backward compatibility - Replace with `get_new_create_url`.
 	public static function get_create_url() {
-		$base_create_url = Plugin::$instance->documents->get_create_new_post_url( Source_Local::CPT );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.3.0', 'get_new_create_url' );
 
-		return add_query_arg( [ 'template_type' => static::get_type() ], $base_create_url );
+		return self::get_new_create_url( Source_Local::CPT, static::get_type() );
+	}
+
+	public static function get_new_create_url( $post_type = Source_Local::CPT, $template_type = null ) {
+		$url = Plugin::$instance->documents->get_create_new_post_url( $post_type, $template_type );
+
+		if ( ! $template_type ) {
+			$url = add_query_arg( [ 'template_type' => static::get_type() ], $url );
+		}
+
+		return $url;
 	}
 
 	public function get_name() {

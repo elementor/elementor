@@ -2,11 +2,10 @@
 namespace Elementor\Modules\LandingPages\Documents;
 
 use Elementor\Core\DocumentTypes\PageBase;
+use Elementor\Modules\LandingPages\Module;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Modules\Library\Traits\Library;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
-use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,7 +29,7 @@ class Landing_Page extends PageBase {
 	/**
 	 * @access public
 	 */
-	public function get_name() {
+	public static function get_type() {
 		return Landing_Pages_Module::DOCUMENT_TYPE;
 	}
 
@@ -48,6 +47,10 @@ class Landing_Page extends PageBase {
 	 */
 	public static function get_plural_title() {
 		return __( 'Landing Pages', 'elementor' );
+	}
+
+	public static function get_new_create_url( $post_type = Module::CPT, $template_type = Landing_Pages_Module::DOCUMENT_TYPE ) {
+		return parent::get_new_create_url( $post_type, $template_type ) . '#library';
 	}
 
 	/**

@@ -168,7 +168,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Landing_Page::get_new_create_url();
 		}
 		return $this->new_lp_url;
 	}
@@ -270,6 +270,7 @@ class Module extends BaseModule {
 			'capability_type' => 'page',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
+			'class' => Landing_Page::class,
 		];
 
 		register_post_type( self::CPT, $args );

@@ -531,10 +531,10 @@ class Admin extends App {
 			return;
 		}
 
-		if ( empty( $_GET['template_type'] ) ) {
-			$type = 'post';
-		} else {
+		if ( ! empty( $_GET['template_type'] ) ) {
 			$type = sanitize_text_field( $_GET['template_type'] );
+		} else {
+			$type = $post_type;
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
