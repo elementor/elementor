@@ -3,6 +3,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\Core\App\Modules\ImportExport\Compatibility\Envato;
+use Elementor\Core\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\Core\App\Modules\ImportExport\Directories\Root;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,10 +45,10 @@ class Import extends Iterator {
 
 	private function init_adapters( array $manifest_data ) {
 		/** @var Base_Adapter[] $adapter_types */
-		$adapter_types = [ Envato::class ];
+		$adapter_types = [ Envato::class, Kit_Library::class ];
 
 		foreach ( $adapter_types as $adapter_type ) {
-			if ( $adapter_type::is_compatibility_needed( $manifest_data ) ) {
+			if ( $adapter_type::is_compatibility_needed( $manifest_data, $this->get_settings() ) ) {
 				$this->adapters[] = new $adapter_type( $this );
 			}
 		}

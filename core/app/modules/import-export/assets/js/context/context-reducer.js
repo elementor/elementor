@@ -35,6 +35,8 @@ export const reducer = ( state, action ) => {
 			return { ...state, kitInfo: { ...state.kitInfo, title: action.payload } };
 		case 'SET_KIT_DESCRIPTION':
 			return { ...state, kitInfo: { ...state.kitInfo, description: action.payload } };
+		case 'SET_REFERRER':
+			return { ...state, referrer: action.payload };
 		default:
 			return state;
 	}
