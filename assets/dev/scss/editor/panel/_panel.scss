@@ -51,6 +51,11 @@
 		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
 		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
 		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
+
+		// Stretch a grid item to full width.
+		& > .e-responsive-panel-stretch {
+			grid-column: 1 / -1;
+		}
 	}
 
 	@import "reset";
