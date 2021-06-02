@@ -146,7 +146,12 @@ class Assets extends Base {
 	}
 
 	private function get_document_assets() {
-		$document_settings = $this->document->get_settings();
+		$document_id = $this->document->get_post()->ID;
+
+		// Getting the document instance in order to get the most updated settings.
+		$updated_document = Plugin::$instance->documents->get( $document_id, false );
+
+		$document_settings = $updated_document->get_settings();
 
 		$document_controls = $this->document->get_controls();
 
