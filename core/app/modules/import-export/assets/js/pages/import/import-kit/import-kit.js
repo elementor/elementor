@@ -51,7 +51,7 @@ export default function ImportKit() {
 	}, [ ajaxState.status ] );
 
 	useEffect( () => {
-		if ( context.data.fileResponse ) {
+		if ( context.data.fileResponse && context.data.file ) {
 			navigate( '/import/content' );
 		}
 	}, [ context.data.fileResponse ] );
