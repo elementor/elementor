@@ -220,11 +220,11 @@ class Page_Loader extends BaseModule {
 
 		$css = '';
 
-		foreach ( $this->background_images as $image ) {
+		foreach ( $this->background_images as $key => $image ) {
 			$css .= $image['cssSelector'] . ':not(.bg-loaded)';
-			$css .= '{--bg-image: url("' . $image['placeholder']['data'][0] . '");}';
+			$css .= '{--bg-image-' . $key . ': url("' . $image['placeholder']['data'][0] . '");}';
 			$css .= $image['cssSelector'];
-			$css .= '{background-image: var(--bg-image, url("' . $image['url'] . '.webp")) !important;}';
+			$css .= '{background-image: var(--bg-image-' . $key . ', url("' . $image['url'] . '.webp")) !important;}';
 		}
 
 		return $css;
