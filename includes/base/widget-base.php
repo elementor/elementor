@@ -399,6 +399,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Safe print parsed text editor.
+	 *
+	 * @uses static::parse_text_editor.
+	 *
+	 * @access protected
+	 *
+	 * @param string $content Text editor content.
+	 */
+	final protected function print_text_editor( $content ) {
+		// PHPCS - the method `parse_text_editor` is safe.
+		echo static::parse_text_editor( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
 	 * Get HTML wrapper class.
 	 *
 	 * Retrieve the widget container class. Can be used to override the

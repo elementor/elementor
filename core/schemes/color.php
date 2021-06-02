@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Schemes;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -129,14 +131,14 @@ class Color extends Base_UI {
 		?>
 		<div class="elementor-panel-scheme-content elementor-panel-box">
 			<div class="elementor-panel-heading">
-				<div class="elementor-panel-heading-title"><?php echo $this->_get_current_scheme_title(); ?></div>
+				<div class="elementor-panel-heading-title"><?php echo esc_html__( 'Color Palette', 'elementor' ); ?></div>
 			</div>
 			<?php
 			$description = static::get_description();
 
 			if ( $description ) :
 				?>
-				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo $description; ?></div>
+				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo esc_html( $description ); ?></div>
 			<?php endif; ?>
 			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
 		</div>
@@ -152,7 +154,7 @@ class Color extends Base_UI {
 								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
 							<?php endforeach; ?>
 						</div>
-						<div class="elementor-title"><?php echo $scheme['title']; ?></div>
+						<div class="elementor-title"><?php echo esc_html( $scheme['title'] ); ?></div>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -277,10 +279,13 @@ class Color extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access protected
+	 * @deprecated 3.3.0
 	 *
 	 * @return string The current color scheme title.
 	 */
 	protected function _get_current_scheme_title() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_funtion( __METHOD__, '3.3.0' );
+
 		return esc_html__( 'Color Palette', 'elementor' );
 	}
 }

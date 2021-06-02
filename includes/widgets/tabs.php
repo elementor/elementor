@@ -464,7 +464,10 @@ class Widget_Tabs extends Widget_Base {
 						'aria-expanded' => 'false',
 					] );
 					?>
-					<div <?php $this->print_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $tab_title; ?></div>
+					<div <?php $this->print_render_attribute_string( $tab_title_setting_key ); ?>><?php
+						// PHPCS - the main text of a widget should not be escaped.
+						echo $tab_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					?></div>
 				<?php endforeach; ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
@@ -498,8 +501,12 @@ class Widget_Tabs extends Widget_Base {
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 					?>
-					<div <?php $this->print_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php echo $item['tab_title']; ?></div>
-					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div <?php $this->print_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php
+						$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
+					?></div>
+					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
+						$this->print_text_editor( $item['tab_content'] );
+					?></div>
 				<?php endforeach; ?>
 			</div>
 		</div>

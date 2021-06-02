@@ -728,7 +728,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( ! empty( $image_caption ) ) {
-				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . $image_caption . '</figcaption>';
+				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . esc_html( $image_caption ) . '</figcaption>';
 			}
 
 			$slide_html .= '</figure>';
@@ -769,7 +769,8 @@ class Widget_Image_Carousel extends Widget_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php echo implode( '', $slides ); ?>
+				<?php // PHPCS - $slides contains the slides content, all the relevent content is escaped above. ?>
+				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
 				<?php if ( $show_dots ) : ?>

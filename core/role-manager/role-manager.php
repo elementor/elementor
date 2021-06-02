@@ -28,7 +28,7 @@ class Role_Manager extends Settings_Page {
 	 * @access protected
 	 */
 	protected function get_page_title() {
-		return esc_html__( 'Role Manager', 'elementor' );
+		return __( 'Role Manager', 'elementor' );
 	}
 
 	/**
@@ -36,10 +36,12 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
+		$sanitized_page_title = esc_html( $this->get_page_title() );
+
 		add_submenu_page(
 			Settings::PAGE_ID,
-			$this->get_page_title(),
-			$this->get_page_title(),
+			$sanitized_page_title,
+			$sanitized_page_title,
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ]

@@ -11,7 +11,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 		<table class="widefat">
 			<thead>
 			<tr>
-				<th><?php echo $report['label']; ?></th>
+				<th><?php echo esc_html( $report['label'] ); ?></th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -34,7 +34,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 								$plugin_name .= ' - ' . $plugin_info['Version'];
 							endif;
 
-							echo $plugin_name;
+							echo esc_html( $plugin_name );
 							?></td>
 							<td><?php
 							if ( $plugin_info['Author'] ) :
@@ -44,7 +44,7 @@ foreach ( $reports as $report_name => $report ) : ?>
 									$author = $plugin_info['Author'];
 								endif;
 
-								echo "By $author";
+								echo esc_html( "By $author" );
 							endif;
 							?></td>
 							<td></td>
@@ -55,12 +55,12 @@ foreach ( $reports as $report_name => $report ) : ?>
 					$warning_class = ! empty( $field['warning'] ) ? ' class="elementor-warning"' : '';
 					$log_label = ! empty( $field['label'] ) ? $field['label'] . ':' : '';
 					?>
-					<tr<?php echo $warning_class; ?>>
-						<td><?php echo $log_label; ?></td>
-						<td><?php echo $field['value']; ?></td>
+					<tr<?php echo $warning_class; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+						<td><?php echo $log_label; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+						<td><?php echo $field['value']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 						<td><?php
 						if ( ! empty( $field['recommendation'] ) ) :
-							echo $field['recommendation'];
+							echo $field['recommendation']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						endif;
 						?></td>
 					</tr>

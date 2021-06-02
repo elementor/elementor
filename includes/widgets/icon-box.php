@@ -641,9 +641,6 @@ class Widget_Icon_Box extends Widget_Base {
 			$this->add_render_attribute( 'i', 'aria-hidden', 'true' );
 		}
 
-		$icon_attributes = $this->get_render_attribute_string( 'icon' );
-		$link_attributes = $this->get_render_attribute_string( 'link' );
-
 		$this->add_render_attribute( 'description_text', 'class', 'elementor-icon-box-description' );
 
 		$this->add_inline_editing_attributes( 'title_text', 'none' );
@@ -653,11 +650,12 @@ class Widget_Icon_Box extends Widget_Base {
 		}
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = ! isset( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
+
 		?>
 		<div class="elementor-icon-box-wrapper">
 			<?php if ( $has_icon ) : ?>
 			<div class="elementor-icon-box-icon">
-				<<?php echo implode( ' ', [ $icon_tag, $icon_attributes, $link_attributes ] ); ?>>
+				<<?php Utils::print_validated_html_tag( $icon_tag ); ?> <?php $this->print_render_attribute_string( 'icon' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>>
 				<?php
 				if ( $is_new || $migrated ) {
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
@@ -665,15 +663,19 @@ class Widget_Icon_Box extends Widget_Base {
 					?><i <?php $this->print_render_attribute_string( 'i' ); ?>></i><?php
 				}
 				?>
-				</<?php echo $icon_tag; ?>>
+				</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 			</div>
 			<?php endif; ?>
 			<div class="elementor-icon-box-content">
 				<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
-					<<?php echo implode( ' ', [ $icon_tag, $link_attributes ] ); ?><?php $this->print_render_attribute_string( 'title_text' ); ?>><?php echo $settings['title_text']; ?></<?php echo $icon_tag; ?>>
+					<<?php Utils::print_validated_html_tag( $icon_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
+						<?php $this->print_unescaped_setting( 'title_text' ); ?>
+					</<?php Utils::print_validated_html_tag( $icon_tag ); ?>>
 				</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
-				<p <?php $this->print_render_attribute_string( 'description_text' ); ?>><?php echo $settings['description_text']; ?></p>
+					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
+						<?php $this->print_unescaped_setting( 'description_text' ); ?>
+					</p>
 				<?php endif; ?>
 			</div>
 		</div>

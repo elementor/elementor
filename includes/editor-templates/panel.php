@@ -64,7 +64,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ); ?></span>
+		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html ( $document::get_title() ) ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
@@ -164,9 +164,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php	echo  Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); ?>'.replace( '%s', disabledTitle ) }}}</div>
-	<div class="elementor-nerd-box-message"><?php printf( esc_html__( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), Settings::get_url() ); ?></div>
+	<div class="elementor-nerd-box-message"><?php printf( esc_html__( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), esc_url( Settings::get_url() ) ); ?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">
@@ -193,12 +193,12 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		foreach ( $scheme_fields as $option_name => $option ) :
 			?>
 			<div class="elementor-panel-scheme-typography-item elementor-control elementor-control-type-select">
-				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo $option['label']; ?></div>
+				<div class="elementor-panel-scheme-item-title elementor-control-title"><?php echo esc_html( $option['label'] ); ?></div>
 				<div class="elementor-panel-scheme-typography-item-value elementor-control-input-wrapper">
 					<?php if ( 'select' === $option['type'] ) : ?>
 						<select name="<?php echo esc_attr( $option_name ); ?>" class="elementor-panel-scheme-typography-item-field">
 							<?php foreach ( $option['options'] as $field_key => $field_value ) : ?>
-								<option value="<?php echo esc_attr( $field_key ); ?>"><?php echo $field_value; ?></option>
+								<option value="<?php echo esc_attr( $field_key ); ?>"><?php echo esc_html( $field_value ); ?></option>
 							<?php endforeach; ?>
 						</select>
 					<?php elseif ( 'font' === $option['type'] ) : ?>
@@ -207,7 +207,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 							<?php foreach ( Fonts::get_font_groups() as $group_type => $group_label ) : ?>
 								<optgroup label="<?php echo esc_attr( $group_label ); ?>">
 									<?php foreach ( Fonts::get_fonts_by_groups( [ $group_type ] ) as $font_title => $font_type ) : ?>
-										<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo $font_title; ?></option>
+										<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo esc_html( $font_title ); ?></option>
 									<?php endforeach; ?>
 								</optgroup>
 							<?php endforeach; ?>
