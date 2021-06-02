@@ -170,6 +170,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			// Load the image URL.
 			this.frame.views.get( '.media-frame-content' )[ 0 ].url.model.set( {
 				url: this.getControlValue( 'url' ),
+				alt: this.getControlValue( 'alt' ),
 			} );
 		} else {
 			// Go to the upload tab.

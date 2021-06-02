@@ -100,6 +100,15 @@ class Model extends BaseModel {
 		);
 
 		$this->add_control(
+			'responsive_heading',
+			[
+				'label' => __( 'Responsive Preview', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
 			'show_hidden_elements',
 			[
 				'label' => __( 'Show Hidden Elements', 'elementor' ),
