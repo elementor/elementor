@@ -23,7 +23,9 @@ class Manager {
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
-		$kit_document = $this->get_active_kit_document();
+		$id = get_option( self::OPTION_ACTIVE );
+
+		$kit_document = Plugin::$instance->documents->get( $id );
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
 			$id = $this->create_default();
@@ -31,12 +33,6 @@ class Manager {
 		}
 
 		return $id;
-	}
-
-	public function get_active_kit_document() {
-		$id = get_option( self::OPTION_ACTIVE );
-
-		return Plugin::$instance->documents->get( $id );
 	}
 
 	public function get_active_kit() {

@@ -75,14 +75,15 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
 
-		$kit_document = $this->get_active_kit_document();
+		$id = get_option( Manager::OPTION_ACTIVE );
 
-		if ( ! $kit_document ) {
-			$id = Plugin::$instance->kits_manager->create_default();
-			update_option( Manager::OPTION_ACTIVE, $id );
+		if ( ! $id ) {
+			update_option( Manager::OPTION_ACTIVE, Plugin::$instance->kits_manager->create_default() );
 
 			wp_send_json_success();
 		}
+
+		wp_send_json_error();
 	}
 
 	/**
