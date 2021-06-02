@@ -102,7 +102,10 @@ class Page_Loader extends BaseModule {
 							} ).then( () => document.querySelector( el.cssSelector ).classList.add( 'bg-loaded' ) );
 					    } );
 
-					    document.querySelector( '#wpadminbar' ).style.display = 'block';
+					    const wpadminbar = document.getElementById( 'wpadminbar' );
+					    if ( wpadminbar ) {
+					    	wpadminbar.style.display = 'block';
+					    }
 					    document.querySelector( '.e-optimizer-used-style' ).setAttribute( 'media', 'all' );
 					} );
 				</script>";
