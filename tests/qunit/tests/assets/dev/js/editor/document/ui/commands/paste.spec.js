@@ -7,7 +7,7 @@ import ElementsHelper from '../../elements/helper';
  * Example usage:
  *
  * copySource: {
- *     pasteTarget: true|false, ( true -> Copy allowed, false - Copy not allowed )
+ *     pasteTarget: true|false, ( true -> Copy allowed, false -> Copy not allowed )
  * }
  */
 export const DEFAULT_PASTE_RULES = {
