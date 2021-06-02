@@ -249,7 +249,12 @@ class Page_Loader extends BaseModule {
 			if ( ! $background_images && ! $image['critical'] ) {
 				continue;
 			}
+
 			$url_key = $background_images ? $image['url'] : $image['src'];
+
+			if ( ! attachment_url_to_postid( $url_key ) ) {
+				continue;
+			}
 			$images[ $key ]['id'] = attachment_url_to_postid( $url_key );
 			$images[ $key ]['placeholder']['data'] = get_post_meta(
 				$images[ $key ]['id'],
@@ -259,7 +264,7 @@ class Page_Loader extends BaseModule {
 
 		$this->page_data[ $images_data_key ] = $images;
 
-		return $this->page_data[ $images_data_key ];
+		return $images;
 	}
 
 	private function get_used_css() {
