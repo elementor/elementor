@@ -36,6 +36,7 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		$this->http_stub->method( 'request' )
 			->with(
+				// Assert that those params sent to the api (similar to `expect`)
 				$this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
 				$this->equalTo( [
 					'headers' => [],
@@ -160,24 +161,25 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		$this->http_stub->method( 'request' )
 			->with(
+				// Assert that those params sent to the api (similar to `expect`)
 			    $this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
 			    $this->equalTo( [
-			        'headers' => [
-			        	'access-token' => 'access_token_test',
-				        'app' => 'mock-app',
-				        'client-id' => 'client_id_test',
-				        'endpoint' => $endpoint,
-				        'home-url' => 'http://example.org/',
-				        'local-id' => $user->ID,
+					'headers' => [
+						'access-token' => 'access_token_test',
+						'app' => 'mock-app',
+						'client-id' => 'client_id_test',
+						'endpoint' => $endpoint,
+						'home-url' => 'http://example.org/',
+						'local-id' => $user->ID,
 						'site-key' => 'site_key_test',
-				        'X-Elementor-Signature' => '2f5dccc6fd53fa38f80d18fbdd9e02a5c0e1dde77fe012e5e11679a9ff0a6faa',
-				        'a' => '1',
-			        ],
-			        'method' => 'PUT',
-			        'timeout' => 30,
-			        'body' => [
-			            'b' => '2',
-			        ],
+						'X-Elementor-Signature' => '2f5dccc6fd53fa38f80d18fbdd9e02a5c0e1dde77fe012e5e11679a9ff0a6faa',
+						'a' => '1',
+					],
+					'method' => 'PUT',
+					'timeout' => 30,
+					'body' => [
+					    'b' => '2',
+					],
 			    ] )
 			)
 			->willReturn( [
@@ -209,30 +211,31 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		$this->http_stub->method( 'request' )
 			->with(
+				// Assert that those params sent to the api (similar to `expect`)
 			    $this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
 			    $this->equalTo( [
-			        'headers' => [
-			            'access-token' => 'access_token_test',
-			            'app' => 'mock-app',
-			            'client-id' => 'client_id_test',
-			            'endpoint' => $endpoint,
-			            'home-url' => 'http://example.org/',
-			            'local-id' => $user->ID,
-			            'site-key' => 'site_key_test',
-			            'X-Elementor-Signature' => '6af1f7228a62f4efbbc6f4382dff33bcad4367328c86036dc69f40b175189220',
-			        ],
-			        'method' => 'POST',
-			        'timeout' => 25,
-			        'body' => [
-				        'app' => 'mock-app',
-				        'access_token' => 'access_token_test',
-				        'client_id' => 'client_id_test',
-				        'local_id' => $user->ID,
-				        'site_key' => 'site_key_test',
-				        'home_url' => 'http://example.org/',
-			            'a' => '1',
-			            'b' => '2',
-			        ],
+					'headers' => [
+						'access-token' => 'access_token_test',
+						'app' => 'mock-app',
+						'client-id' => 'client_id_test',
+						'endpoint' => $endpoint,
+						'home-url' => 'http://example.org/',
+						'local-id' => $user->ID,
+						'site-key' => 'site_key_test',
+						'X-Elementor-Signature' => '6af1f7228a62f4efbbc6f4382dff33bcad4367328c86036dc69f40b175189220',
+					],
+					'method' => 'POST',
+					'timeout' => 25,
+					'body' => [
+						'app' => 'mock-app',
+						'access_token' => 'access_token_test',
+						'client_id' => 'client_id_test',
+						'local_id' => $user->ID,
+						'site_key' => 'site_key_test',
+						'home_url' => 'http://example.org/',
+						'a' => '1',
+						'b' => '2',
+					],
 			    ] )
 			)
 			->willReturn( [
