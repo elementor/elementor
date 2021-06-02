@@ -11,6 +11,7 @@ export default function ContextProvider( props ) {
 		fileResponse: null,
 		file: null,
 		overrideConditions: [],
+		referrer: null,
 		kitInfo: {
 			title: elementorAppConfig[ 'import-export' ].kitInfo.title,
 			description: elementorAppConfig[ 'import-export' ].kitInfo.description,

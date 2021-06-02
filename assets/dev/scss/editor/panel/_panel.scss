@@ -135,7 +135,7 @@
 	// Hack to remove unwanted elements from the modal
 	.e-wp-media-elements-removed {
 		.embed-link-settings,
-		.embed-media-settings > :not( .wp-clearfix ){
+		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ):not( #alt-text-description ){
 			display: none;
 		}
 
@@ -146,7 +146,7 @@
 		.media-embed {
 			.thumbnail {
 				margin-top: 20px;
-				
+
 				&,
 				img {
 					max-height: initial;
