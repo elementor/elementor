@@ -65,14 +65,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var elementsCollection = new PanelElementsElementsCollection(),
 			sectionConfig = elementor.config.elements.section;
 
-		elementsCollection.add( {
-			title: __( 'Inner Section', 'elementor' ),
-			elType: 'section',
-			categories: [ 'basic' ],
-			keywords: [ 'row', 'columns', 'nested' ],
-			icon: sectionConfig.icon,
-		} );
-
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
 			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
@@ -93,6 +85,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				custom: widget.custom,
 				editable: widget.editable,
 			} );
+
+			// Register the `Inner Section` after `Container`.
+			if ( 'container' === widget.name ) {
+				elementsCollection.add( {
+					title: __( 'Inner Section', 'elementor' ),
+					elType: 'section',
+					categories: [ 'basic' ],
+					keywords: [ 'row', 'columns', 'nested' ],
+					icon: sectionConfig.icon,
+				} );
+			}
 		} );
 
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {
