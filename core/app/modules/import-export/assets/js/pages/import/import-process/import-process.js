@@ -67,7 +67,7 @@ export default function ImportProcess() {
 
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
-			if ( context.data.fileResponse.stage2 ) {
+			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) {
 				navigate( '/import/complete' );
 			} else {
 				navigate( '/import/content' );
