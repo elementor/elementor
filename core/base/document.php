@@ -314,8 +314,10 @@ abstract class Document extends Controls_Stack {
 		$document = $this;
 
 		// Ajax request from editor.
-		if ( ! empty( $_POST['initial_document_id'] ) ) {
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		// PHPCS - only reading the value from $_POST['initial_document_id'].
+		if ( ! empty( $_POST['initial_document_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// PHPCS - only reading the value from $_POST['initial_document_id'].
+			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$url = get_preview_post_link(
@@ -935,7 +937,7 @@ abstract class Document extends Controls_Stack {
 
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
-		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
+		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 			<div class="elementor-inner">
 			<?php } ?>
