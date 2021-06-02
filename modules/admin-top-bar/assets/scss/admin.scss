@@ -25,7 +25,7 @@ $top-bar-height: 50px;
 	z-index: $first-layer;
 
 
-	#elementor-admin-top-bar {
+	.e-admin-top-bar {
 		display: flex;
 		height: $top-bar-height;
 		justify-content: space-between;
@@ -53,14 +53,14 @@ $top-bar-height: 50px;
 		}
 	}
 
-	.elementor-admin-top-bar__heading {
+	.e-admin-top-bar__heading {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		margin-inline-end: 40px;
 	}
 
-	.elementor-admin-top-bar__main-area {
+	.e-admin-top-bar__main-area {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -70,18 +70,18 @@ $top-bar-height: 50px;
 		}
 	}
 
-	.elementor-admin-top-bar__secondary-area {
+	.e-admin-top-bar__secondary-area {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 
 	}
 
-	.elementor-admin-top-bar__heading-logo {
+	.e-admin-top-bar__heading-logo {
 		width: 30px;
 	}
 
-	.elementor-admin-top-bar__heading-logo {
+	.e-admin-top-bar__heading-logo {
 		background: $editor-accent;
 		border-radius: 15px;
 		color: $white;
@@ -93,7 +93,7 @@ $top-bar-height: 50px;
 		width: pxToRem(30px);
 	}
 
-	.elementor-admin-top-bar__heading-title {
+	.e-admin-top-bar__heading-title {
 		color: $editor-darkest;
 		font-size: 15px;
 		font-weight: 700;
@@ -117,13 +117,13 @@ $top-bar-height: 50px;
 		}
 	}
 
-	&:not(.top-bar-active )  ~ #wpbody {
+	&:not(.top-bar-active ) ~ #wpbody {
 		.wrap h1 {
 			display: block;
 		}
 	}
 
-	.elementor-admin-top-bar__bar-button {
+	.e-admin-top-bar__bar-button {
 		align-items: center;
 		cursor: pointer;
 		display: inline-flex;
@@ -132,23 +132,23 @@ $top-bar-height: 50px;
 		text-decoration: none;
 		color: $editor-dark;
 
-		.elementor-admin-top-bar__bar-button-title {
+		.e-admin-top-bar__bar-button-title {
 			color: $editor-dark;
 		}
 
-		.elementor-admin-top-bar__bar-button-icon {
+		.e-admin-top-bar__bar-button-icon {
 			margin: 0 4px;
 		}
 
 		&:hover {
-			.elementor-admin-top-bar__bar-button-title,
-			.elementor-admin-top-bar__bar-button-icon{
+			.e-admin-top-bar__bar-button-title,
+			.e-admin-top-bar__bar-button-icon{
 				color: $editor-accent;
 			}
 		}
 	}
 
-	.elementor-admin-top-bar__bar-button-title {
+	.e-admin-top-bar__bar-button-title {
 		font-size: 13px;
 		font-weight: 500;
 		font-family: 'Roboto';
@@ -178,20 +178,20 @@ $top-bar-height: 50px;
 // Mobile mode
 @media (max-width: $editor-screen-md-min) {
 	#e-admin-top-bar {
-		.elementor-admin-top-bar__main-area-buttons {
+		.e-admin-top-bar__main-area-buttons {
 			position: absolute;
 			top: calc(100% + 10px);
 		}			display: inline-flex;
 		align-items: center;
 		justify-content: center;
 
-		.elementor-admin-top-bar__secondary-area {
-			.elementor-admin-top-bar__secondary-area-buttons {
+		.e-admin-top-bar__secondary-area {
+			.e-admin-top-bar__secondary-area-buttons {
 				display: none;
 			}
 
-			> .elementor-admin-top-bar__bar-button {
-				.elementor-admin-top-bar__bar-button-title {
+			> .e-admin-top-bar__bar-button {
+				.e-admin-top-bar__bar-button-title {
 					display: none;
 				}
 			}
@@ -202,8 +202,8 @@ $top-bar-height: 50px;
 // Desktop mode
 @media (min-width: $editor-screen-md-min) {
 	#e-admin-top-bar {
-		.elementor-admin-top-bar__secondary-area {
-			.elementor-admin-top-bar__secondary-area-buttons {
+		.e-admin-top-bar__secondary-area {
+			.e-admin-top-bar__secondary-area-buttons {
 				display: flex;
 			}
 		}

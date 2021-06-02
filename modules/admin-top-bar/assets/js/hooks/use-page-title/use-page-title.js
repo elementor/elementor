@@ -10,7 +10,7 @@ export const usePageTitle = ( isDashboard ) => {
 		}
 
 		if ( isDashboard ) {
-			setPageTitle( 'Dashboard' );
+			setPageTitle( __( 'Dashboard', 'elementor' ) );
 		} else {
 			setPageTitle( pageTitleElement.innerText );
 			pageTitleElement.remove();

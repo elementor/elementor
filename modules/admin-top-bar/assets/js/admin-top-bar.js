@@ -43,14 +43,14 @@ export default function AdminTopBar( props ) {
 	};
 
 	return (
-		<div id="elementor-admin-top-bar">
-			<div className="elementor-admin-top-bar__main-area">
+		<div className="e-admin-top-bar">
+			<div className="e-admin-top-bar__main-area">
 				<BarHeading>{ pageTitleText }</BarHeading>
-				<div className="elementor-admin-top-bar__main-area-buttons" ref={ actionButtonsRef } />
+				<div className="e-admin-top-bar__main-area-buttons" ref={ actionButtonsRef } />
 			</div>
 
-			<div className="elementor-admin-top-bar__secondary-area">
-				<div className="elementor-admin-top-bar__secondary-area-buttons">
+			<div className="e-admin-top-bar__secondary-area">
+				<div className="e-admin-top-bar__secondary-area-buttons">
 					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
 					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
 				</div>
