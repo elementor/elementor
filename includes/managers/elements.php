@@ -250,7 +250,11 @@ class Elements_Manager {
 			$this->register_element_type( new $class_name() );
 		}
 
-		$this->register_element_type( new Container() );
+		$experiments_manager = Plugin::$instance->experiments;
+
+		if ( $experiments_manager->is_feature_active( 'container' ) ) {
+			$this->register_element_type( new Container() );
+		}
 
 		/**
 		 * After elements registered.

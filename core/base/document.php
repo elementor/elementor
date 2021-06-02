@@ -534,9 +534,14 @@ abstract class Document extends Controls_Stack {
 		];
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container = [
-				'container' => ( new Container() )->get_config(),
-			];
+			$container = [ ];
+			$experiments_manager = Plugin::$instance->experiments;
+
+			if ( $experiments_manager->is_feature_active( 'container' ) ) {
+				$container = [
+					'container' => ( new Container() )->get_config(),
+				];
+			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
 			$config['widgets'] = $container + Plugin::$instance->widgets_manager->get_widget_types_config();

@@ -61,9 +61,28 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
 	},
 
+	getInnerSectionData: function() {
+		const sectionConfig = elementor.config.elements.section;
+
+		return {
+			title: __( 'Inner Section', 'elementor' ),
+			elType: 'section',
+			categories: [ 'basic' ],
+			keywords: [ 'row', 'columns', 'nested' ],
+			icon: sectionConfig.icon,
+		};
+	},
+
 	initElementsCollection: function() {
-		var elementsCollection = new PanelElementsElementsCollection(),
-			sectionConfig = elementor.config.elements.section;
+		var elementsCollection = new PanelElementsElementsCollection();
+
+		const self = this,
+			isContainerActive = elementorCommon.config.experimentalFeatures.container;
+
+		// Register the `Inner Section` first if the container experiment is disabled.
+		if ( ! isContainerActive ) {
+			elementsCollection.add( self.getInnerSectionData() );
+		}
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
@@ -88,13 +107,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 			// Register the `Inner Section` after `Container`.
 			if ( 'container' === widget.name ) {
-				elementsCollection.add( {
-					title: __( 'Inner Section', 'elementor' ),
-					elType: 'section',
-					categories: [ 'basic' ],
-					keywords: [ 'row', 'columns', 'nested' ],
-					icon: sectionConfig.icon,
-				} );
+				elementsCollection.add( self.getInnerSectionData() );
 			}
 		} );
 

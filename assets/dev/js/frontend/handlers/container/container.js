@@ -1,9 +1,5 @@
-import BackgroundSlideshow from '../background-slideshow';
-import BackgroundVideo from '../background-video';
-import HandlesPosition from './handles-position';
-
 export default [
-	BackgroundSlideshow,
-	BackgroundVideo,
-	HandlesPosition,
+	() => import( /* webpackChunkName: 'container' */ '../background-slideshow' ),
+	() => import( /* webpackChunkName: 'container' */ '../background-video' ),
+	() => import( /* webpackChunkName: 'container' */ './handles-position' ),
 ];
