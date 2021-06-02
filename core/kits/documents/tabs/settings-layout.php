@@ -94,7 +94,7 @@ class Settings_Layout extends Tab_Base {
 				'placeholder' => '20',
 				'description' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					':root' => '--widgets-gap: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
