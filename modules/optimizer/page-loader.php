@@ -29,88 +29,84 @@ class Page_Loader extends BaseModule {
 
 		add_action( 'elementor/frontend/before_enqueue_styles', function() {
 			$this->page_data = $this->get_page_data();
+			if ( ! $this->page_data ) {
+				return;
+			}
+
 			$this->images = $this->get_images();
 			$this->background_images = $this->get_images( true );
 
 			echo $this->get_critical_styles();
 
 			add_filter( 'style_loader_tag', [ $this, 'delay_loading' ], 10, 4 );
-		} );
 
-		add_action( 'elementor/widget/render_content', function( $content, $widget ) {
-			echo $this->parse_widget_output( $content, $widget );
-		}, 10, 2 );
+			add_action( 'elementor/widget/render_content', function( $content, $widget ) {
+				echo $this->parse_widget_output( $content, $widget );
+			}, 10, 2 );
 
-		add_action( 'wp_footer', function() {
-			echo $this->get_used_styles();
-		} );
+			add_action( 'wp_footer', function() {
+				echo $this->get_used_styles();
+			} );
 
-		add_action( 'elementor/frontend/before_enqueue_styles', function() {
-			echo $this->get_used_styles();
-			echo "
-			<script>
-				document.addEventListener( 'DOMContentLoaded', () => {
-					const imagesPromises = [];
-					const bgImagesPromises = [];
+			add_action( 'wp_footer', function() {
+				echo "
+				<script>
+					document.addEventListener( 'DOMContentLoaded', () => {
+						const imagesPromises = [];
+						const bgImagesPromises = [];
 
-				    [ ...document.querySelectorAll( '" . $this->get_images_selectors() . "' ) ].forEach( ( img, i ) => {
+					    [ ...document.querySelectorAll( '" . $this->get_images_selectors() . "' ) ].forEach( ( img, i ) => {
+					        imagesPromises[ i ] = new Promise( ( resolve, reject ) => {
+								const tempImg = document.createElement( 'img' );
+								tempImg.setAttribute( 'src', img.getAttribute( 'data-src') );
+								tempImg.classList.add( 'optimizer-temp-img' );
 
-				        imagesPromises[ i ] = new Promise( ( resolve, reject ) => {
-							const tempImg = document.createElement( 'img' );
-							tempImg.setAttribute( 'src', img.getAttribute( 'data-src') );
-							tempImg.classList.add( 'optimizer-temp-img' );
+								tempImg.addEventListener( 'load', ( e ) => {
+						            img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
+						            img.removeAttribute( 'data-src' );
+									resolve( tempImg );
+									e.target.remove();
+								} );
 
-							tempImg.addEventListener( 'load', ( e ) => {
-					            img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
-					            img.removeAttribute( 'data-src' );
-								resolve( tempImg );
-								e.target.remove();
-							} );
-							document.body.appendChild( tempImg );
-						} )
-				    } );
-
-					Promise.all( imagesPromises ).then( () => {
-					    // Switch off the css that shows images placeholders
-					    document.querySelector( '.e-optimizer-image-placeholders' ).setAttribute( 'media', 'none' );
-
-					    // Restore src attribute of all images
-					    [ ...document.querySelectorAll( '.elementor-element img[data-src]' ) ].forEach( ( img ) => {
-					        img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
-					        img.removeAttribute( 'data-src' );
-					        if ( img.getAttribute( 'data-srcset' ) ) {
-					            img.setAttribute( 'srcset', img.getAttribute( 'data-srcset' ) );
-					        }
-					        img.removeAttribute( 'data-srcset' );
+								document.body.appendChild( tempImg );
+							} )
 					    } );
-					} );
 
-					const background_images = JSON.parse( '" . wp_json_encode( $this->get_background_images_urls() ) . "' );
-				    [ ...document.querySelectorAll( '" . $this->get_background_images_selectors() . "' ) ].forEach( ( el, index ) => {
-				        bgImagesPromises[ index ] = new Promise( ( resolve, reject ) => {
-							const tempImg = document.createElement( 'img' );
-							tempImg.setAttribute( 'src', background_images[ index ] + '.webp' );
-							tempImg.classList.add( 'optimizer-temp-img' );
-							tempImg.addEventListener( 'load', ( e ) => {
-							    resolve( tempImg );
-							    e.target.remove();
-							} );
-							document.body.appendChild( tempImg );
-						} ).then( () => {
-						    console.log(el.style.backgroundImage, background_images[ index ]);
-						    const webpImgUrl = background_images[ index ] + '.webp';
-						    el.style.backgroundImage = 'url(' + webpImgUrl + ')';
+						Promise.all( imagesPromises ).then( () => {
+						    // Switch off the css that shows images placeholders
+						    // document.querySelector( '.e-optimizer-image-placeholders' ).setAttribute( 'media', 'none' );
+
+						    // Restore src attribute of all images
+						    [ ...document.querySelectorAll( '.elementor-element img[data-src]' ) ].forEach( ( img ) => {
+						        img.setAttribute( 'src', img.getAttribute( 'data-src' ) );
+						        img.removeAttribute( 'data-src' );
+						        if ( img.getAttribute( 'data-srcset' ) ) {
+						            img.setAttribute( 'srcset', img.getAttribute( 'data-srcset' ) );
+						        }
+						        img.removeAttribute( 'data-srcset' );
+						    } );
 						} );
-				    } );
 
-					Promise.all( bgImagesPromises ).then( () => {
-					    // Switch off the css that shows background images placeholders
-					    document.querySelector( '.e-optimizer-bg_image-placeholders' ).setAttribute( 'media', 'none' );
+						const background_images = JSON.parse( '" . wp_json_encode( $this->get_images( true ) ) . "' );
+
+					    background_images.forEach( ( el, index ) => {
+					        bgImagesPromises[ index ] = new Promise( ( resolve, reject ) => {
+								const tempImg = document.createElement( 'img' );
+								tempImg.setAttribute( 'src', el.url + '.webp' );
+								tempImg.classList.add( 'optimizer-temp-img' );
+								tempImg.addEventListener( 'load', ( e ) => {
+								    resolve( tempImg );
+								    e.target.remove();
+								} );
+								document.body.appendChild( tempImg );
+							} ).then( () => document.querySelector( el.cssSelector ).classList.add( 'bg-loaded' ) );
+					    } );
+
+					    document.querySelector( '#wpadminbar' ).style.display = 'block';
+					    document.querySelector( '.e-optimizer-used-style' ).setAttribute( 'media', 'all' );
 					} );
-
-				    document.querySelector( '.e-optimizer-used-style' ).setAttribute( 'media', 'all' );
-				} );
-			</script>";
+				</script>";
+			} );
 		} );
 	}
 
@@ -188,7 +184,7 @@ class Page_Loader extends BaseModule {
 			if ( ! $image['critical'] ) {
 				continue;
 			}
-			$img_src = $image['src'];
+			$img_src = $image['src'] . '.webp';
 			$widget_id = $image['parentWidget'];
 			$images_selectors[] = '[data-id="' . $widget_id . '"] [data-src="' . $img_src . '"]';
 		}
@@ -204,7 +200,7 @@ class Page_Loader extends BaseModule {
 		$css = '';
 
 		foreach ( $this->images as $image ) {
-			$img_src = $image['src'];
+			$img_src = $image['src'] . '.webp';
 			$has_placeholder = isset( $image['placeholder']['data'][0] );
 			$url = $has_placeholder ? $image['placeholder']['data'][0] : $img_src;
 			$widget_id = $image['parentWidget'];
@@ -226,7 +222,9 @@ class Page_Loader extends BaseModule {
 
 		foreach ( $this->background_images as $image ) {
 			$css .= $image['cssSelector'] . ':not(.bg-loaded)';
-			$css .= '{background-image: url("' . $image['placeholder']['data'][0] . '") !important;}';
+			$css .= '{--bg-image: url("' . $image['placeholder']['data'][0] . '");}';
+			$css .= $image['cssSelector'];
+			$css .= '{background-image: var(--bg-image, url("' . $image['url'] . '.webp")) !important;}';
 		}
 
 		return $css;

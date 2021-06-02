@@ -88,7 +88,7 @@ export default class Critical {
 
 	getCriticalBackgroundImages() {
 		return this.analyzer.backgroundImages.map( ( image ) => {
-			return 0 < [ ...document.querySelectorAll( image.cssSelector ) ].length;
+			return ! ! [ ...document.querySelectorAll( image.cssSelector ) ].length;
 		} );
 	}
 

@@ -2,14 +2,38 @@ export default class extends Marionette.Region {
 	initialize() {
 		this.show( new View() );
 	}
+}
 
-/*	onPanelResizeStart() {
-		this.$el.addClass( 'ui-resizable-resizing' );
+export class initOptimizer extends $e.modules.hookUI.After {
+	getCommand() {
+		return 'document/save/save';
 	}
 
-	onPanelResizeStop() {
-		this.$el.removeClass( 'ui-resizable-resizing' );
-	}*/
+	getId() {
+		return 'init-optimizer-after-save';
+	}
+
+	apply() {
+		const previewUrl = elementor.config.initial_document.urls.permalink + '?analyzer=1';
+
+		document.getElementById( 'optimizer-iframe' ).setAttribute( 'src', previewUrl );
+		window.addEventListener( 'message', ( e ) => {
+			const key = e.message ? 'message' : 'data';
+			const data = e[ key ];
+
+			console.log( data );
+		}, false );
+	}
+}
+
+export class OptimizerComponent extends $e.modules.ComponentBase {
+	getNamespace() {
+		return 'optimizer';
+	}
+
+	defaultHooks() {
+		return this.importHooks( { initOptimizer } );
+	}
 }
 
 class View extends Marionette.ItemView {
@@ -34,28 +58,17 @@ class View extends Marionette.ItemView {
 	}
 
 	initialize() {
-		const previewUrl = elementor.config.initial_document.urls.permalink + '?analyzer=1';
-
 		setTimeout( () => {
-			this.ui.iframe.attr( 'src', previewUrl )
-				.css( {
-					position: 'absolute',
-					top: '-50px',
-					left: '-50px',
-					width: '1400px',
-					height: '1200px',
-					transform: 'scale(0.25)',
-					'transform-origin': 'top left',
-					'z-index': -1,
-				} );
-			this.ui.iframe.trigger( 'load' );
-
-			window.addEventListener( 'message', ( e ) => {
-				const key = e.message ? 'message' : 'data';
-				const data = e[ key ];
-
-				console.log( data );
-			}, false );
+			this.ui.iframe.css( {
+				position: 'absolute',
+				top: '-50px',
+				left: '-50px',
+				width: '1400px',
+				height: '1200px',
+				transform: 'scale(0.25)',
+				'transform-origin': 'top left',
+				'z-index': -1,
+			} );
 		}, 1000 );
 	}
 
@@ -63,33 +76,3 @@ class View extends Marionette.ItemView {
 		console.log( 'iframeloaded', this.ui.iframe );
 	}
 }
-
-/*
-export default class extends elementorModules.ViewModule {
-	getDefaultSettings() {
-		return {
-			selectors: {
-				iframe: '#elementor-optimizer',
-			},
-		};
-	}
-
-	getDefaultElements() {
-		const settings = this.getSettings();
-
-		return {
-			$iframe: jQuery( settings.selectors.iframe ),
-		};
-	}
-
-	bindEvents() {
-		this.elements.$iframe.on( 'load', this.onOptimizerLoaded.bind( this ) );
-	}
-
-	onOptimizerLoaded() {
-		console.log( 'Optimizer loaded' );
-
-		// elementorCommon.ajax.addRequest( 'notice_bar_dismiss' );
-	}
-}
-*/

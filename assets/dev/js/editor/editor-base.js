@@ -7,7 +7,7 @@ import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
-import Optimizer from './regions/optimizer/optimizer';
+import { default as Optimizer, OptimizerComponent } from './regions/optimizer/optimizer';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -20,6 +20,7 @@ import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
+import Component from "../../../../../elementor-pro/modules/screenshots/assets/js/editor/component";
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -519,6 +520,8 @@ export default class EditorBase extends Marionette.Application {
 		} );
 
 		this.trigger( 'optimizer:init' );
+
+		$e.components.register( new OptimizerComponent() );
 	}
 
 	initNavigator() {

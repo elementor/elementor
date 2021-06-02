@@ -1,4 +1,4 @@
-import getCssSelector from 'css-selector-generator';
+import { finder } from '@medv/finder';
 import Critical from './analyzer-utils/critical';
 import Compressor from 'compressorjs';
 import csso from 'csso';
@@ -97,63 +97,70 @@ class Analyzer {
 	}
 
 	getBackgroundImages() {
-		const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
-		const elementsToInspect = [ ...document.querySelectorAll(
+		const elementsToInspect = document.querySelectorAll(
 			this.selectors.sections + ', ' + this.selectors.sections + ' *:not(:is(script, img, figure, style))'
-		) ];
+		);
+		const srcChecker = /url\(\s*?['"]?\s*?(\S+?)\s*?["']?\s*?\)/i;
+		const fileExtension = /\S+?\.(?:jpg|jpeg|png)/i;
+		const elements = [];
+		const promises = [];
 
-		return Array.from( elementsToInspect.reduce( ( collection, el ) => {
+		[ ...elementsToInspect ].forEach( ( el ) => {
 			const prop = window.getComputedStyle( el, null )
 				.getPropertyValue( 'background-image' );
-			// match `url(...)`
-			const match = srcChecker.exec( prop );
-			if ( match ) {
-				const promises = [];
-				const rootNode = el.classList.contains( '.elementor-element' ) ? el : el.closest( '.elementor-element' );
-				const rootNodeID = rootNode.getAttribute( 'data-id' );
-				const rootSelector = '[data-id="' + rootNodeID + '"]';
-				const cssSelector = rootNode === el ? rootSelector : rootSelector + ' ' +
-					getCssSelector( el, {
-						root: el.closest( '.elementor-element' ),
-						selectors: [ 'tag', 'attribute', 'nthchild', 'nthoftype', 'class' ],
-						blacklist: [ 'style', '.swiper-slide-next', '.swiper-slide-prev', '.swiper-slide-duplicate', '.swiper-slide-active' ],
-					} );
+			const urlMatch = srcChecker.exec( prop );
+			const match = urlMatch ? fileExtension.exec( urlMatch[ 1 ] ) : false;
 
-				const item = {
-					backgroundSize: window.getComputedStyle( el, null )
-						.getPropertyValue( 'background-size' ),
-					cssSelector: cssSelector,
-					clientWidth: el.clientWidth,
-					clientHeight: el.clientHeight,
-					rootNodeID: rootNodeID,
-					url: match[ 1 ],
-				};
-
-				promises.push( new Promise( ( resolve, reject ) => {
-					const img = document.createElement( 'img' );
-					img.setAttribute( 'src', item.url );
-
-					img.addEventListener( 'load', () => {
-						item.naturalWidth = img.naturalWidth;
-						item.naturalHeight = img.naturalHeight;
-						resolve( item );
-					} );
-					img.addEventListener( 'error', ( err ) => reject( err ) );
-					img.classList.add( 'analyzer-temp-img' );
-
-					document.body.appendChild( img );
-				} ) );
-
-				collection.add( item );
-
-				Promise.all( [ ...promises ] ).then( () => {
-					[ ...document.querySelectorAll( '.analyzer-temp-img' ) ].forEach( ( img ) => img.remove() );
-				} ).catch( ( err ) => {
-					console.error( err );
-				} );
+			if ( ! match ) {
+				return;
 			}
-			return collection;
-		}, new Set() ) );
+
+			const isSelfRoot = el.classList.contains( 'elementor-element' ) &&
+				el.getAttribute( 'data-id' );
+			const rootNode = isSelfRoot ? el : el.closest( '.elementor-section' );
+			const rootNodeID = rootNode.getAttribute( 'data-id' );
+			const rootSelector = '.elementor-element-' + rootNodeID;
+			const cssSelector = isSelfRoot ? rootSelector : rootSelector + ' ' + finder( el, {
+				root: rootNode,
+			} );
+
+			elements.push( {
+				backgroundSize: window.getComputedStyle( el, null )
+					.getPropertyValue( 'background-size' ),
+				cssSelector: isSelfRoot ? rootSelector : cssSelector,
+				clientWidth: el.clientWidth,
+				clientHeight: el.clientHeight,
+				rootNodeID: rootNodeID,
+				url: match[ 0 ],
+			} );
+		} );
+
+		elements.forEach( ( element, ) => {
+			const el = document.querySelector( element.cssSelector );
+
+			promises.push( new Promise( ( resolve, reject ) => {
+				const img = document.createElement( 'img' );
+				img.setAttribute( 'src', element.url );
+
+				img.addEventListener( 'load', () => {
+					element.naturalWidth = img.naturalWidth;
+					element.naturalHeight = img.naturalHeight;
+					resolve( element );
+				} );
+				img.addEventListener( 'error', ( err ) => reject( err ) );
+				img.classList.add( 'analyzer-temp-img' );
+
+				document.body.appendChild( img );
+			} ) );
+		} );
+
+		Promise.all( [ ...promises ] ).then( () => {
+			[ ...document.querySelectorAll( '.analyzer-temp-img' ) ].forEach( ( img ) => img.remove() );
+		} ).catch( ( err ) => {
+			console.error( err );
+		} );
+
+		return elements;
 	}
 
 	async imgToBlob( img ) {
@@ -301,7 +308,6 @@ const sendData = function( data ) {
 			analyzer: 1,
 		},
 		success: function( response ) {
-			console.log( response );
 			window.parent.postMessage( 'Analyzer data sent successfully.', '*' );
 		},
 		error: function( response ) {
@@ -314,40 +320,45 @@ const sendData = function( data ) {
 
 window.addEventListener( 'DOMContentLoaded', () =>
 	setTimeout( () => {
-		console.log( 'Starting Page Analyzer.' );
+		window.parent.postMessage( 'Starting Page Analyzer.', '*' );
 
 		const analyzer = new Analyzer();
 
 		analyzer.init();
 
-		console.log( 'Analyzing the page...' );
+		window.parent.postMessage( 'Analyzing the page...', '*' );
 
 		analyzer.run().then( () => {
-			console.log( 'Page Analyzed.' );
-			console.log( 'Creating Report...' );
+			window.parent.postMessage( 'Page Analyzed.', '*' );
+			window.parent.postMessage( 'Creating Report...', '*' );
 
 			const data = analyzer.getData();
 
-			console.log( data );
-
-			console.log( 'Sending Report to the server...' );
+			window.parent.postMessage( data, '*' );
+			window.parent.postMessage( 'Sending Report to the server...', '*' );
 
 			sendData( data );
-		} ).then( () => console.log( 'Report Sent.' ) ).then( () => {
-				optimizeImages( analyzer ).then( () => {
-					const optimizedImages = {
-						images: analyzer.images,
-						backgroundImages: analyzer.backgroundImages,
-					};
-
-					console.log(optimizedImages);
-
-					sendData( {
-						optimizedImages: optimizedImages,
-					} );
+		} ).then( () => window.parent.postMessage( 'Report Sent.', '*' ) ).then( () => {
+			window.parent.postMessage( 'Optimizing Images...', '*' );
+			optimizeImages( analyzer ).then( () => {
+				const optimizedImages = {};
+				optimizedImages.images = analyzer.images.map( ( image ) => {
+					delete image.placeholder.data;
+					return image;
 				} );
-			}
-		);
-		//window.parent.postMessage( 'Page Analyzed', '*' );
-	}, 600 )
+				optimizedImages.backgroundImages = analyzer.backgroundImages.map( ( image ) => {
+					delete image.placeholder.data;
+					return image;
+				} );
+
+				window.parent.postMessage( 'Images Optimized.', '*' );
+				window.parent.postMessage( optimizedImages, '*' );
+
+				window.parent.postMessage( 'Sending Optimized Images to the server...', '*' );
+				sendData( {
+					optimizedImages: optimizedImages,
+				} );
+			} );
+		} );
+	}, 800 )
 );
