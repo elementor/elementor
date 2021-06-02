@@ -286,6 +286,17 @@ export default class Container extends ArgsObject {
 		}
 	}
 
+	/**
+	 * Function addRepeaterItem().
+	 *
+	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
+	 *
+	 * @param {string} repeaterName
+	 * @param {Backbone.Model} rowSettingsModel
+	 * @param {number} index
+	 *
+	 * @returns {Container}
+	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
 
@@ -308,6 +319,8 @@ export default class Container extends ArgsObject {
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
 		} ) );
+
+		return this.repeaters[ repeaterName ];
 	}
 
 	/**
@@ -356,6 +369,54 @@ export default class Container extends ArgsObject {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Function findChildrenRecursive().
+	 *
+	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	findChildrenRecursive( callback ) {
+		if ( callback( this ) ) {
+			return this;
+		}
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				const foundChildren = container.findChildrenRecursive( callback );
+
+				if ( foundChildren ) {
+					return foundChildren;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Function forEachChildrenRecursive().
+	 *
+	 * Will run over children recursively.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	forEachChildrenRecursive( callback ) {
+		callback( this );
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				container.forEachChildrenRecursive( callback );
+			}
+		}
+
+		return false;
 	}
 
 	/**

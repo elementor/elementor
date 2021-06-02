@@ -6,8 +6,19 @@ export class ShowSwatches extends CommandBase {
 		super( args );
 
 		this.colors = {};
-		this.pickerClass = 'e-element-color-picker';
-		this.pickerSelector = '.' + this.pickerClass;
+
+		this.classes = {
+			picker: 'e-element-color-picker',
+			tooltip: 'e-element-color-picker__tooltip',
+			swatch: 'e-element-color-picker__swatch',
+			hidden: 'e-picker-hidden',
+		};
+
+		this.selectors = {
+			picker: `.${ this.classes.picker }`,
+			tooltip: `.${ this.classes.tooltip }`,
+		};
+
 		this.container = null;
 		this.backgroundImages = [];
 	}
@@ -15,7 +26,9 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Validate the command arguments.
 	 *
-	 * @param args
+	 * @param {Object} args
+	 *
+	 * @returns {void}
 	 */
 	validateArgs( args ) {
 		this.requireArgument( 'event', args );
@@ -24,7 +37,9 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Execute the command.
 	 *
-	 * @param args
+	 * @param {Object} args
+	 *
+	 * @returns {void}
 	 */
 	apply( args ) {
 		const { event: e } = args;
@@ -37,10 +52,11 @@ export class ShowSwatches extends CommandBase {
 
 		this.container = elementor.getContainer( id );
 
-		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.pickerSelector );
+		const activePicker = elementor.$previewContents[ 0 ].querySelector( this.selectors.picker );
 
 		// If there is a picker already, remove it.
 		if ( activePicker ) {
+			this.removeTooltip( activePicker );
 			activePicker.remove();
 		}
 
@@ -55,7 +71,12 @@ export class ShowSwatches extends CommandBase {
 			if ( isImage ) {
 				this.extractColorsFromImage( e.target );
 			} else {
+				// Colors from the parent container.
 				this.extractColorsFromSettings();
+
+				// Colors from repeaters.
+				this.extractColorsFromRepeaters();
+
 				this.extractColorsFromImages();
 			}
 
@@ -65,25 +86,29 @@ export class ShowSwatches extends CommandBase {
 
 	/**
 	 * Extract colors from color controls of the current selected element.
+	 *
+	 * @param {Container} container - A container to extract colors from its settings.
+	 *
+	 * @returns {void}
 	 */
-	extractColorsFromSettings() {
+	extractColorsFromSettings( container = this.container ) {
 		// Iterate over the widget controls.
-		Object.keys( this.container.settings.attributes ).map( ( control ) => {
+		Object.keys( container.settings.attributes ).map( ( control ) => {
 			// Limit colors count.
 			if ( this.reachedColorsLimit() ) {
 				return;
 			}
 
-			if ( ! ( control in this.container.controls ) ) {
+			if ( ! ( control in container.controls ) ) {
 				return;
 			}
 
-			const isColor = ( 'color' === this.container.controls[ control ]?.type );
+			const isColor = ( 'color' === container.controls[ control ]?.type );
 			const isBgImage = control.includes( 'background_image' );
 
 			// Determine if the current control is active.
 			const isActive = () => {
-				return ( elementor.helpers.isActiveControl( this.container.controls[ control ], this.container.settings.attributes ) );
+				return ( elementor.helpers.isActiveControl( container.controls[ control ], container.settings.attributes ) );
 			};
 
 			// Throw non-color and non-background-image controls.
@@ -98,23 +123,46 @@ export class ShowSwatches extends CommandBase {
 
 			// Handle background images.
 			if ( isBgImage ) {
-				this.addTempBackgroundImage( this.container.getSetting( control ) );
+				this.addTempBackgroundImage( container.getSetting( control ) );
 				return;
 			}
 
-			let value = this.container.getSetting( control );
+			let value = container.getSetting( control );
+			const globalValue = container.globals.get( control );
+
+			// Extract global value if present.
+			if ( globalValue ) {
+				const matches = globalValue.match( /id=(.+)/i );
+
+				// Build the global color CSS variable & resolve it to a HEX value.
+				// It's used instead of `$e.data.get( globalValue )` in order to avoid async/await hell.
+				if ( matches ) {
+					const cssVar = `--e-global-color-${ matches[ 1 ] }`;
+
+					value = getComputedStyle( container.view.$el[ 0 ] ).getPropertyValue( cssVar );
+				}
+			}
 
 			if ( value && ! Object.values( this.colors ).includes( value ) ) {
-				// If it's a global color, it will return a css variable which needs to be resolved to a HEX value.
-				const pattern = /var\(([^)]+)\)/i;
-				const matches = value.match( pattern );
-
-				if ( matches ) {
-					value = getComputedStyle( this.container.view.$el[ 0 ] ).getPropertyValue( matches[ 1 ].trim() );
-				}
-
-				this.colors[ control ] = value;
+				// Create a unique index based on the container ID and the control name.
+				// Used in order to avoid key overriding when used with repeaters (which share the same controls names).
+				this.colors[ `${ container.id } - ${ control }` ] = value;
 			}
+		} );
+	}
+
+	/**
+	 * Extract colors from repeater controls.
+	 *
+	 * @returns {void}
+	 */
+	extractColorsFromRepeaters() {
+		// Iterate over repeaters.
+		Object.values( this.container.repeaters ).forEach( ( repeater ) => {
+			// Iterate over each repeater items.
+			repeater.children.forEach( ( child ) => {
+				this.extractColorsFromSettings( child );
+			} );
 		} );
 	}
 
@@ -122,7 +170,10 @@ export class ShowSwatches extends CommandBase {
 	 * Create a temporary image element in order to extract colors from it using ColorThief.
 	 * Used with background images from background controls.
 	 *
-	 * @param url
+	 * @param {Object} setting - A settings object from URL control.
+	 * @param {string} setting.url
+	 *
+	 * @returns {void}
 	 */
 	addTempBackgroundImage( { url } ) {
 		if ( ! url ) {
@@ -140,8 +191,10 @@ export class ShowSwatches extends CommandBase {
 	/**
 	 * Extract colors from image and push it ot the colors array.
 	 *
-	 * @param {Object} image    The image element to extract colors from
-	 * @param {String} suffix   An optional suffix for the key in the colors array.
+	 * @param {Object} image - The image element to extract colors from
+	 * @param {String} suffix - An optional suffix for the key in the colors array.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromImage( image, suffix = '' ) {
 		const colorThief = new ColorThief();
@@ -170,6 +223,8 @@ export class ShowSwatches extends CommandBase {
 
 	/**
 	 * Iterate over all images in the current selected element and extract colors from them.
+	 *
+	 * @returns {void}
 	 */
 	extractColorsFromImages() {
 		// Iterate over all images in the widget.
@@ -183,54 +238,16 @@ export class ShowSwatches extends CommandBase {
 	}
 
 	/**
-	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
+	 * Add the color swatches to a picker container.
 	 *
-	 * @param x
-	 * @param y
+	 * @param {HTMLElement} picker - Picker HTML element to append the swatches to.
+	 *
+	 * @returns {void}
 	 */
-	initSwatch( x = 0, y = 0 ) {
-		const count = Object.entries( this.colors ).length;
-
-		// Don't render the picker when there are no extracted colors.
-		if ( 0 === count ) {
-			return;
-		}
-
-		const picker = document.createElement( 'div' );
-		picker.dataset.count = count;
-		picker.classList.add( this.pickerClass, 'e-picker-hidden' );
-		picker.style = `
-			--count: ${ count };
-			--left: ${ x };
-			--top: ${ y };
-		`;
-
-		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
-		// which will fire the `apply` command and will close everything.
-		this.container.view.$el[ 0 ].append( picker );
-
-		// Check if the picker is overflowing out of the parent.
-		const observer = elementorModules.utils.Scroll.scrollObserver( {
-			callback: ( event ) => {
-				observer.unobserve( picker );
-
-				if ( ! event.isInViewport ) {
-					picker.style.setProperty( '--left', 'unset' );
-					picker.style.setProperty( '--right', '0' );
-				}
-
-				picker.classList.remove( 'e-picker-hidden' );
-			},
-			root: this.container.view.$el[ 0 ],
-			offset: `0px -${ parseInt( picker.getBoundingClientRect().width ) }px 0px`,
-		} );
-
-		observer.observe( picker );
-
-		// Add the colors swatches.
+	addColorSwatches( picker ) {
 		Object.entries( this.colors ).map( ( [ control, value ] ) => {
 			const swatch = document.createElement( 'div' );
-			swatch.classList.add( `${ this.pickerClass }__swatch` );
+			swatch.classList.add( this.classes.swatch );
 			swatch.style = `--color: ${ value }`;
 			swatch.dataset.text = value.replace( '#', '' );
 
@@ -256,16 +273,104 @@ export class ShowSwatches extends CommandBase {
 
 			picker.append( swatch );
 		} );
+	}
+
+	/**
+	 * Add a tooltip to a picker container.
+	 *
+	 * @param {HTMLElement} picker - Picker HTML element to add the tooltip to.
+	 *
+	 * @returns {void}
+	 */
+	addTooltip( picker ) {
+		jQuery( picker ).tipsy( {
+			gravity: 's',
+			className: this.classes.tooltip,
+			trigger: 'manual',
+			title: () => {
+				return __( 'Select a color from any image, or from an element whose color you\'ve manually defined.', 'elementor' );
+			},
+		} ).tipsy( 'show' );
+
+		// Hack to move Tipsy to the preview wrapper because it defaults to the editor's `document.body`.
+		// TODO: Use something other than Tipsy.
+		const tooltip = document.querySelector( this.selectors.tooltip );
+		elementor.$previewWrapper[ 0 ].appendChild( tooltip );
+
+		// Hack to prevent hover on tooltip triggering a `mouseleave` event on the preview wrapper.
+		tooltip.style.pointerEvents = 'none';
+	}
+
+	/**
+	 * Remove a tooltip from a picker container.
+	 *
+	 * @param {HTMLElement} picker - Picker HTML element to remove the tooltip from.
+	 *
+	 * @returns {void}
+	 */
+	removeTooltip( picker ) {
+		jQuery( picker ).tipsy( 'hide' );
+	}
+
+	/**
+	 * Initialize the swatch with the color palette, using x & y positions, relative to the parent.
+	 *
+	 * @param {int} x
+	 * @param {int} y
+	 *
+	 * @returns {void}
+	 */
+	initSwatch( x = 0, y = 0 ) {
+		const count = Object.entries( this.colors ).length;
+
+		const picker = document.createElement( 'div' );
+		picker.dataset.count = count;
+		picker.classList.add( this.classes.picker, this.classes.hidden );
+		picker.style = `
+			--count: ${ count };
+			--left: ${ x };
+			--top: ${ y };
+		`;
+
+		// Append the swatch before adding colors to it in order to avoid the click event of the swatches,
+		// which will fire the `apply` command and will close everything.
+		this.container.view.$el[ 0 ].append( picker );
+
+		// Check if the picker is overflowing out of the parent.
+		const observer = elementorModules.utils.Scroll.scrollObserver( {
+			callback: ( event ) => {
+				observer.unobserve( picker );
+
+				if ( ! event.isInViewport ) {
+					picker.style.setProperty( '--left', 'unset' );
+					picker.style.setProperty( '--right', '0' );
+				}
+
+				picker.classList.remove( this.classes.hidden );
+			},
+			root: this.container.view.$el[ 0 ],
+			offset: `0px -${ parseInt( picker.getBoundingClientRect().width ) }px 0px`,
+		} );
+
+		observer.observe( picker );
+
+		if ( 0 === count ) {
+			// Show a Tipsy tooltip.
+			this.addTooltip( picker );
+		} else {
+			// Add the colors swatches.
+			this.addColorSwatches( picker );
+		}
 
 		// Remove the picker on mouse leave.
-		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', function handler( e ) {
-			e.currentTarget.removeEventListener( 'mouseleave', handler );
+		this.container.view.$el[ 0 ].addEventListener( 'mouseleave', () => {
+			this.removeTooltip( picker );
 
 			// Remove only after the animation has finished.
 			setTimeout( () => {
 				picker.remove();
 			}, 300 );
-		} );
+		}, { once: true } );
 	}
 
 	/**
