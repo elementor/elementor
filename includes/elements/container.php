@@ -143,7 +143,7 @@ class Container extends Element_Base {
 		<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
 			<?php if ( $video_properties ) : ?>
 				<div class="elementor-background-video-embed"></div>
-			<?php
+				<?php
 			else :
 				$video_tag_attributes = 'autoplay muted playsinline';
 
@@ -154,7 +154,7 @@ class Container extends Element_Base {
 				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div>
-	<?php
+		<?php
 	}
 
 	/**
@@ -723,9 +723,8 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
-
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
