@@ -1438,9 +1438,6 @@ abstract class Document extends Controls_Stack {
 		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
 		$page_settings_manager->ajax_before_save_settings( $settings, $this->post->ID );
 		$page_settings_manager->save_settings( $settings, $this->post->ID );
-
-		// Reset the setting's value to ensure they are re-evaluated when trying to read them after saving.
-		$this->reset_settings();
 	}
 
 	/**
