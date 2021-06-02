@@ -17,7 +17,7 @@ const queryClient = new QueryClient( {
 	},
 } );
 
-const isDebug = elementorCommon.config.isDebug || false;
+const isElementorDebug = elementorCommon.config.isElementorDebug || false;
 
 export default function App() {
 	return (
@@ -31,7 +31,7 @@ export default function App() {
 						<Overview path="/overview/:id"/>
 					</Router>
 				</SettingsProvider>
-				{ isDebug && <ReactQueryDevtools initialIsOpen={ false }/> }
+				{ isElementorDebug && <ReactQueryDevtools initialIsOpen={ false }/> }
 			</QueryClientProvider>
 		</div>
 	);
