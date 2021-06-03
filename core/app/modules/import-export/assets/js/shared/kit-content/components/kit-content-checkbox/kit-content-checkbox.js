@@ -15,7 +15,9 @@ export default function KitContentCheckbox( props ) {
 		};
 
 	useEffect( () => {
-		context.dispatch( { type: 'ADD_INCLUDE', payload: props.type } );
+		if ( ! context.data.includes.length ) {
+			context.dispatch( { type: 'ADD_INCLUDE', payload: props.type } );
+		}
 	}, [] );
 
 	return useMemo( () => (

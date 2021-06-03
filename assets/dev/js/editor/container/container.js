@@ -460,8 +460,8 @@ export default class Container extends ArgsObject {
 		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 
-	getSetting( controlName, localOnly = false ) {
-		const localValue = this.settings.get( controlName );
+	getSetting( name, localOnly = false ) {
+		const localValue = this.settings.get( name );
 
 		if ( localOnly ) {
 			return localValue;

@@ -6,7 +6,13 @@
 	"minimum-stability": "stable",
 	"require": {},
 	"require-dev": {
-		"justinrainbow/json-schema": "^5.2"
+		"justinrainbow/json-schema": "^5.2",
+		"squizlabs/php_codesniffer": "^3.6",
+		"wp-coding-standards/wpcs": "^2.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1"
+	},
+	"scripts": {
+		"lint": "phpcs --standard=phpcs.xml"
 	},
 	"authors": [
 		{
