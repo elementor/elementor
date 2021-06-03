@@ -56,6 +56,10 @@ export default function ImportKit() {
 		}
 	}, [ context.data.fileResponse ] );
 
+	useEffect( () => {
+		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+	}, [] );
+
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
