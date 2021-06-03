@@ -15,7 +15,9 @@ export default function ConflictCheckbox( props ) {
 		};
 
 	useEffect( () => {
-		context.dispatch( { type: 'ADD_OVERRIDE_CONDITION', payload: props.id } );
+		if ( ! context.data.overrideConditions.length ) {
+			context.dispatch( { type: 'ADD_OVERRIDE_CONDITION', payload: props.id } );
+		}
 	}, [] );
 
 	return (

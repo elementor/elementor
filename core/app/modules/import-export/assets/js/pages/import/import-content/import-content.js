@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -20,10 +20,7 @@ export default function ImportContent() {
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
-					onClick={ () => {
-						context.dispatch( { type: 'SET_FILE', payload: null } );
-						navigate( 'import' );
-					} }
+					onClick={ () => context.dispatch( { type: 'SET_FILE', payload: null } ) }
 				/>
 
 				<ImportButton />
@@ -34,6 +31,12 @@ export default function ImportContent() {
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);
+
+	useEffect( () => {
+		if ( ! context.data.file ) {
+			navigate( 'import' );
+		}
+	}, [ context.data.file ] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>

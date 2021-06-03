@@ -22,6 +22,8 @@ export default function ImportProcess() {
 
 			if ( fileURL || context.data.fileResponse ) {
 				if ( fileURL ) {
+					context.dispatch( { type: 'SET_FILE', payload: fileURL } );
+
 					ajaxConfig.data.e_import_file = fileURL[ 1 ];
 					ajaxConfig.data.data = JSON.stringify( {
 						stage: 1,
@@ -67,7 +69,7 @@ export default function ImportProcess() {
 
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
-			if ( context.data.fileResponse.stage2 ) {
+			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) {
 				navigate( '/import/complete' );
 			} else {
 				navigate( '/import/content' );
