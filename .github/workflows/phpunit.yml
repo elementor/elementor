@@ -26,7 +26,7 @@ jobs:
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wordpress_versions }}
-          composer install
+          composer update --no-interaction
       - name: Run Test
         run: composer run test
       - name: Run Test - Multisite
