@@ -125,7 +125,8 @@ export default class Frontend extends elementorModules.ViewModule {
 				fullSettingKey = settingKey + '_' + currentDevice,
 				deviceValue = settings[ fullSettingKey ];
 
-			if ( deviceValue ) {
+			// Accept 0 as value.
+			if ( deviceValue || 0 === deviceValue ) {
 				return deviceValue;
 			}
 
@@ -331,7 +332,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	 * Initialize the modules' widgets handlers.
 	 */
 	initModules() {
-		let handlers = {
+		const handlers = {
 			shapes: Shapes,
 		};
 
