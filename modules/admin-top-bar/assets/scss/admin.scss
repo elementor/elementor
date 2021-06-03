@@ -7,14 +7,15 @@
 $top-bar-height: 50px;
 
 // Hide the widget in admin dashboard that was created by checking the screen option checkbox.
-// "display: none" won't work here since it will influence the mechanism for saving the state for the checkbox in screen options
+// "display: none" won't work here since it will influence the mechanism for saving the state for the checkbox in screen options.
 #e-dashboard-widget-admin-top-bar {
 	position: absolute;
 	opacity: 0;
 	pointer-events: none;
 }
 
-#e-admin-top-bar {
+// The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
+#e-admin-top-bar-root {
 	@include end( 0 );
 	background: $white;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.0394871);
@@ -157,31 +158,34 @@ $top-bar-height: 50px;
 	}
 }
 
+// The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 @media screen and (max-width: 960px) {
-	#e-admin-top-bar {
+	#e-admin-top-bar-root {
 		width: calc(100% - 36px);
 	}
 }
 
 @media screen and (max-width: 782px) {
-	#e-admin-top-bar {
+	#e-admin-top-bar-root {
 		width: 100%;
 	}
 }
 
 @media screen and (max-width: 600px) {
-	#e-admin-top-bar {
+	#e-admin-top-bar-root {
 		top: 46px;
 	}
 }
 
 // Mobile mode
 @media (max-width: $editor-screen-md-min) {
-	#e-admin-top-bar {
+	#e-admin-top-bar-root {
 		.e-admin-top-bar__main-area-buttons {
 			position: absolute;
 			top: calc(100% + 10px);
-		}			display: inline-flex;
+		}
+
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 
@@ -201,7 +205,7 @@ $top-bar-height: 50px;
 
 // Desktop mode
 @media (min-width: $editor-screen-md-min) {
-	#e-admin-top-bar {
+	#e-admin-top-bar-root {
 		.e-admin-top-bar__secondary-area {
 			.e-admin-top-bar__secondary-area-buttons {
 				display: flex;

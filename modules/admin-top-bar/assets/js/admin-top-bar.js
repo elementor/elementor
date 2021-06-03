@@ -10,7 +10,7 @@ export default function AdminTopBar( props ) {
 	// Handle Top Bar visibility on initiation and when toggle the admin top bar checkbox in screen options
 	useEffect( () => {
 		const adminTopBarCheckboxElement = document.querySelector( '#e-dashboard-widget-admin-top-bar-hide' );
-		const adminTopBarElement = document.querySelector( '#e-admin-top-bar' );
+		const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
 
 		if ( ! adminTopBarCheckboxElement || adminTopBarCheckboxElement.checked ) {
 			adminTopBarElement.classList.add( 'top-bar-active' );

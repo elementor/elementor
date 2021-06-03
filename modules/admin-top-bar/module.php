@@ -39,7 +39,7 @@ class Module extends BaseApp {
 
 	private function render_admin_top_bar() {
 		?>
-		<div id="e-admin-top-bar">
+		<div id="e-admin-top-bar-root">
 		</div>
 		<?php
 	}

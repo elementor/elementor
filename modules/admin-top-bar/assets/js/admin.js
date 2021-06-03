@@ -19,7 +19,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			<AppWrapper>
 				<AdminTopBar isDashboard={isTopBarOptionWidgetChecked} />
 			</AppWrapper>,
-			document.getElementById( 'e-admin-top-bar' )
+			document.getElementById( 'e-admin-top-bar-root' )
 		);
 	}
 } );
