@@ -511,13 +511,6 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
-			'elementor-animations',
-			$this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		wp_register_style(
 			'flatpickr',
 			$this->get_css_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[],
@@ -663,7 +656,7 @@ class Frontend extends App {
 			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
 				wp_enqueue_style( 'elementor-icons' );
 			}
-			wp_enqueue_style( 'elementor-animations' );
+
 			wp_enqueue_style( 'elementor-frontend' );
 
 			/**
