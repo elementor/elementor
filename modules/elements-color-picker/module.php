@@ -10,10 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	/**
+	 * Retrieve the module name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'elements-color-picker';
 	}
 
+	/**
+	 * Set the Eye-Dropper as an experimental feature.
+	 *
+	 * @return array
+	 */
 	public static function get_experimental_data() {
 		return [
 			'name' => 'elements-color-picker',
@@ -24,7 +34,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Scripts for module.
+	 * Enqueue the `Color-Thief` library to pick colors from images.
+	 *
+	 * @return void
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script(
@@ -36,6 +48,11 @@ class Module extends BaseModule {
 		);
 	}
 
+	/**
+	 * Module constructor - Initialize the Eye-Dropper module.
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
