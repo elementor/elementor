@@ -205,15 +205,13 @@ class Icons_Manager {
 	public static function render_svg_symbols() {
 		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
 
-		if ( ! count( $symbols ) ) {
+		if ( ! $symbols ) {
 			return;
 		}
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
 
-		foreach ( $symbols as $symbol_id => $icon ) {
-			$symbol = self::get_icon_svg_data( $icon );
-
+		foreach ( $symbols as $symbol_id => $symbol ) {
 			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $symbol['width'] . ' ' . $symbol['height'] . '">';
 			$svg .= '<path d="' . $symbol['path'] . '"></path>';
 			$svg .= '</symbol>';
@@ -243,9 +241,9 @@ class Icons_Manager {
 		$icon_data = self::get_icon_svg_data( $icon );
 
 		// Add the icon data to the symbols array for later use in page rendering process.
-		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data, $icon ) {
+		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data ) {
 			if ( ! in_array( $icon_data['key'], $symbols, true ) ) {
-				$symbols[ $icon_data['key'] ] = $icon;
+				$symbols[ $icon_data['key'] ] = $icon_data;
 			}
 
 			return $symbols;
