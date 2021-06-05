@@ -555,9 +555,12 @@ class Icons_Manager {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
-			add_action( 'wp_footer', function() {
-				echo  '<style> .elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }</style>';
+			add_action( 'elementor/frontend/after_enqueue_styles', function() {
+				$css = '.elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }';
+
+				wp_add_inline_style( 'elementor-frontend', $css );
 			} );
+
 		}
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
