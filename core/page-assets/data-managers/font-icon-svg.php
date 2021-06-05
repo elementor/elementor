@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Assets\Data_Managers;
+namespace Elementor\Core\Page_Assets\Data_Managers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Font_Icon_Svg extends Base {
 	protected $content_type = 'svg';
 
-	protected $assets_category = 'font-awesome';
+	protected $assets_category = 'font-icon';
 
 	protected function get_asset_content() {
 		$icon_data = $this->get_config_data( 'icon_data' );
