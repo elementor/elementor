@@ -224,12 +224,8 @@ class Icons_Manager {
 		echo $svg;
 	}
 
-	public static function get_icon_svg_data( $icon, $font_icon_svg_family = '' ) {
-		if ( ! $font_icon_svg_family ) {
-			$font_icon_svg_family = Font_Icon_Svg_Manager::get_font_family( $icon['value'] );
-		}
-
-		$font_family_manager = Font_Icon_Svg_Manager::get_font_family_manager( $font_icon_svg_family );
+	public static function get_icon_svg_data( $icon ) {
+		$font_family_manager = Font_Icon_Svg_Manager::get_font_family_manager( $icon['font_family'] );
 
 		$config = $font_family_manager::get_config( $icon );
 
@@ -242,9 +238,9 @@ class Icons_Manager {
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_icon_svg( $icon, $font_icon_svg_family ) {
+	public static function get_font_icon_svg( $icon ) {
 		// Load the SVG from the database.
-		$icon_data = self::get_icon_svg_data( $icon, $font_icon_svg_family );
+		$icon_data = self::get_icon_svg_data( $icon );
 
 		// Add the icon data to the symbols array for later use in page rendering process.
 		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data, $icon ) {
@@ -289,7 +285,9 @@ class Icons_Manager {
 		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Manager::get_font_family( $icon['value'] ) : '';
 
 		if ( $font_icon_svg_family ) {
-			$content = self::get_font_icon_svg( $icon, $font_icon_svg_family );
+			$icon['font_family'] = $font_icon_svg_family;
+
+			$content = self::get_font_icon_svg( $icon );
 		} else {
 			if ( empty( $attributes['class'] ) ) {
 				$attributes['class'] = $icon['value'];
