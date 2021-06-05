@@ -1,7 +1,8 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Assets\Data_Managers\Font_Icon_Svg as Font_Icon_Svg_Data_Manager;
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg as Font_Icon_Svg_Data_Manager;
+use Elementor\Core\Page_Assets\Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Manager;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -195,8 +196,8 @@ class Icons_Manager {
 	 *
 	 * @return bool
 	 */
-	private static function is_font_awesome_inline() {
-		return Plugin::$instance->experiments->is_feature_active( 'e_font_awesome_inline' );
+	private static function is_font_icon_inline_svg() {
+		return Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' );
 	}
 
 	/**
@@ -244,27 +245,16 @@ class Icons_Manager {
 		echo $svg;
 	}
 
-	public static function get_icon_svg_config( $icon ) {
-		$icon_key = str_replace( ' fa-', '-', $icon['value'] );  // i.e. 'fab-apple' | 'far-cart'.
-		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
-		$icon_name = str_replace( $matches[0], '', $icon['value'] );
-		$icon_file_name = str_replace( 'fa-', '', $icon['library'] );
-		$icon_file_path = self::get_fa_asset_url( $icon_file_name, 'json', false );
+	public static function get_icon_svg_data( $icon, $font_icon_svg_family = '' ) {
+		if ( ! $font_icon_svg_family ) {
+			$font_icon_svg_family = Font_Icon_Svg_Manager::get_font_family( $icon['value'] );
+		}
 
-		$icon['name'] = $icon_name;
+		$font_family_manager = Font_Icon_Svg_Manager::get_font_family_manager( $font_icon_svg_family );
 
-		return [
-			'key' => $icon_key,
-			'version' => 5,
-			'file_path' => $icon_file_path,
-			'data' => [
-				'icon_data' => $icon,
-			],
-		];
-	}
+		$config = $font_family_manager::get_config( $icon );
 
-	public static function get_icon_svg_data( $icon ) {
-		return self::$data_manager->get_asset_data( self::get_icon_svg_config( $icon ) );
+		return self::$data_manager->get_asset_data( $config );
 	}
 
 	/**
@@ -273,13 +263,13 @@ class Icons_Manager {
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_icon_svg( $icon ) {
+	public static function get_font_icon_svg( $icon, $font_icon_svg_family ) {
 		// Load the SVG from the database.
-		$icon_data = self::get_icon_svg_data( $icon );
+		$icon_data = self::get_icon_svg_data( $icon, $font_icon_svg_family );
 
 		// Add the icon data to the symbols array for later use in page rendering process.
 		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data, $icon ) {
-			if ( ! in_array( $icon_data[ 'key' ], $symbols, TRUE ) ) {
+			if ( ! in_array( $icon_data['key'], $symbols, true ) ) {
 				$symbols[ $icon_data['key'] ] = $icon;
 			}
 
@@ -288,7 +278,7 @@ class Icons_Manager {
 
 		/**
 		 * If in edit mode inline the full svg, otherwise use the symbol.
-		 * Will be displayed only after the widget "blur" or page update.
+		 * Will be displayed only after page update or widget "blur".
 		 */
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return '<svg xmlns="http://www.w3.org/2000/svg"
@@ -308,16 +298,6 @@ class Icons_Manager {
 		return Svg_Handler::get_inline_svg( $value['id'] );
 	}
 
-	private static function is_supported_inline_font_icon( $icon ) {
-		// TODO: Add an array of all supported inline font icons families.
-		// TODO: Replace the $icon['value'] to $icon['library'].
-		// TODO: Check if need to support font awesome 4.
-		// TODO: Check regarding user uploaded font.
-		preg_match( '/fa(.*) fa-/', $icon['value'], $matches );
-
-		return ! empty( $matches );
-	}
-
 	public static function render_font_icon( $icon, $attributes = [], $tag = 'i' ) {
 		$icon_types = self::get_icon_manager_tabs();
 
@@ -327,12 +307,11 @@ class Icons_Manager {
 
 		$content = '';
 
-		// TODO: consider changing to a filter / function.
-		if ( self::is_font_awesome_inline() && self::is_supported_inline_font_icon( $icon ) ) {
-			$content = self::get_font_icon_svg( $icon );
-		}
+		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Manager::get_font_family( $icon['value'] ) : '';
 
-		if ( ! self::is_font_awesome_inline() || ! self::is_supported_inline_font_icon( $icon ) ) {
+		if ( $font_icon_svg_family ) {
+			$content = self::get_font_icon_svg( $icon, $font_icon_svg_family );
+		} else {
 			if ( empty( $attributes['class'] ) ) {
 				$attributes['class'] = $icon['value'];
 			} else {
@@ -366,7 +345,7 @@ class Icons_Manager {
 
 		/**
 		 * When the library value is svg it means that it's a SVG media attachment uploaded by the user.
-		 * Otherwise, it's assumed to be the name of the font family that the icon belongs to.
+		 * Otherwise, it's the name of the font family that the icon belongs to.
 		 */
 		if ( 'svg' === $icon['library'] ) {
 			$output = self::render_uploaded_svg_icon( $icon['value'] );
@@ -593,7 +572,7 @@ class Icons_Manager {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
 		}
 
-		if ( self::is_font_awesome_inline() ) {
+		if ( self::is_font_icon_inline_svg() ) {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 
 			add_action( 'wp_footer', [ $this, 'store_svg_symbols' ], 10 );
