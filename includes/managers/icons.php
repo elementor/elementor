@@ -20,8 +20,6 @@ class Icons_Manager {
 
 	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
 
-	const SVG_SYMBOLS_META_KEY = '_elementor_svg_symbols';
-
 	/**
 	 * Tabs.
 	 *
@@ -201,30 +199,11 @@ class Icons_Manager {
 	}
 
 	/**
-	 * store_svg_symbols
-	 *
-	 *
-	 */
-	public static function store_svg_symbols() {
-		global $post;
-
-		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
-
-		if ( ! count( $symbols ) ) {
-			return;
-		}
-
-		update_post_meta( $post->ID, self::SVG_SYMBOLS_META_KEY, $symbols );
-	}
-
-	/**
 	 * render_svg_symbols
 	 *
 	 */
 	public static function render_svg_symbols() {
-		global $post;
-		$saved_symbols = get_post_meta( $post->ID, self::SVG_SYMBOLS_META_KEY )[0];
-		$symbols = ! empty( $saved_symbols ) ? $saved_symbols : [];
+		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
 
 		if ( ! count( $symbols ) ) {
 			return;
@@ -575,15 +554,9 @@ class Icons_Manager {
 		if ( self::is_font_icon_inline_svg() ) {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 
-			add_action( 'wp_footer', [ $this, 'store_svg_symbols' ], 10 );
-			// TODO: check if the 10 is needed.
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
 			add_action( 'wp_footer', function() {
 				echo  '<style> .elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }</style>';
-			} );
-			// TODO: Check what $post_id represent (document? entire blog post?).
-			add_action( 'elementor/editor/after_save', function( $post_id ) {
-				update_post_meta( $post_id, self::SVG_SYMBOLS_META_KEY, [] );
 			} );
 		}
 
