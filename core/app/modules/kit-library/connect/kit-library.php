@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit_Library extends Library {
-	const DEFAULT_BASE_ENDPOINT = 'https://kits.elementor.com';
+	const DEFAULT_BASE_ENDPOINT = 'https://ms-8874.elementor.com/api/v1/kits-library';
 
 	public function get_title() {
 		return __( 'Kit Library', 'elementor' );
@@ -24,7 +24,7 @@ class Kit_Library extends Library {
 	}
 
 	public function get_manifest( $id ) {
-		return $this->http_request( 'GET', "manifests/{$id}" );
+		return $this->http_request( 'GET', "kits/{$id}/manifest" );
 	}
 
 	public function download_link( $id ) {
