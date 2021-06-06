@@ -212,10 +212,11 @@ const ContainerView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				let newIndex = jQuery( event.currentTarget ).css( 'order' ) || 0;
+				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
+				let newIndex = widgets.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
-				if ( 'bottom' === side ) {
+				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
 				}
 

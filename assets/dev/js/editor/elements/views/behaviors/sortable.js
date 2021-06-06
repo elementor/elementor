@@ -63,7 +63,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 				'flex-basis',
 				'flex-grow',
 				'flex-shrink',
-				'order',
 				'position',
 			] ),
 			width,
@@ -78,90 +77,17 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 */
 	getSwappableOptions() {
 		const $childViewContainer = this.getChildViewContainer(),
-			activeClass = 'e-swappable--active',
-			dragOverClass = 'e-swappable--dragging-over',
-			placeholderClass = 'e-swappable--item-placholder',
-			elementsSelector = '> .elementor-widget';
+			placeholderClass = 'e-swappable--item-placeholder';
 
 		return {
 			start: ( event, ui ) => {
-				$childViewContainer.addClass( activeClass );
-
 				// TODO: Find a better solution than this hack.
 				// Used in order to prevent dragging a container into itself.
 				this.createPlaceholder( ui.item, placeholderClass );
-
-				// Remove the pointer events for the helper in order to allow `mouseenter` event
-				// on other widgets while dragging.
-				ui.helper.css( 'pointer-events', 'none' );
-
-				// Swappable listeners.
-				$childViewContainer.on( 'mouseenter.swappable', elementsSelector, ( e ) => {
-					e.stopPropagation();
-
-					const $target = jQuery( e.currentTarget );
-
-					$target.addClass( dragOverClass );
-
-					// Pass the swappable data over the a `data` attribute.
-					ui.item.attr( 'data-swappable', JSON.stringify( {
-						origin: {
-							position: ui.item.css( 'order' ),
-							id: ui.item.attr( 'data-id' ),
-						},
-						target: {
-							position: $target.css( 'order' ),
-							id: $target.attr( 'data-id' ),
-						},
-					} ) );
-				} );
-
-				// Remove the `data-swappable` attribute on mouse leave to prevent moving the element accidentally.
-				$childViewContainer.on( 'mouseleave.swappable', elementsSelector, ( e ) => {
-					jQuery( e.currentTarget ).removeClass( dragOverClass );
-					ui.item.removeAttr( 'data-swappable' );
-				} );
-
-				// Draggable listeners (to drag an element out of a container).
-				elementor.$previewContents.on( 'mouseenter.sortable', '.elementor-element', ( e ) => {
-					const $target = jQuery( e.currentTarget );
-
-					ui.placeholder.css( 'order', $target.css( 'order' ) );
-				} );
 			},
-			stop: ( event, ui ) => {
-				// Get the swappable data.
-				const { origin, target } = JSON.parse( ui.item.attr( 'data-swappable' ) || '{}' );
-
-				// Remove the swappable data attribute.
-				ui.item.removeAttr( 'data-swappable' );
-
+			stop: () => {
 				// Cleanup.
-				$childViewContainer.off( 'mouseenter.swappable' );
-				$childViewContainer.off( 'mouseleave.swappable' );
-				$childViewContainer.off( 'mouseenter.swappable' );
-				elementor.$previewContents.off( 'mouseenter.sortable' );
-				$childViewContainer.removeClass( activeClass );
-				$childViewContainer.find( `.${ dragOverClass }` ).removeClass( dragOverClass );
 				$childViewContainer.find( `.${ placeholderClass }` ).remove();
-
-				// Exit when there are no containers.
-				if ( ! origin || ! target ) {
-					return;
-				}
-
-				// Don't act when it's the same container.
-				if ( origin.id === target.id ) {
-					return;
-				}
-
-				// Get the associated containers.
-				const itemContainer = elementor.getContainer( origin.id ),
-					targetContainer = elementor.getContainer( target.id );
-
-				// Change the order setting.
-				this.moveChild( targetContainer, origin.position );
-				this.moveChild( itemContainer, target.position );
 			},
 		};
 	},
@@ -209,20 +135,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return this.view.getChildViewContainer( this.view );
 	},
 
-	// This method is used to fix widgets index detection when dragging or sorting using the preview interface,
-	// The natural widget index in the column is wrong, since there is a `.elementor-background-overlay` element
-	// at the beginning of the column
+	// The natural widget index in the column is wrong, since there are other elements
+	// at the beginning of the column (background-overlay, element-overlay, resizeable-handle)
 	getSortedElementNewIndex( $element ) {
-		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
-			draggedElType = draggedModel.get( 'elType' );
+		const widgets = Object.values( $element.parent().find( '> .elementor-element' ) );
 
-		let newIndex = $element.index();
-
-		if ( 'widget' === draggedElType && elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
-			newIndex--;
-		}
-
-		return newIndex;
+		return widgets.indexOf( $element[ 0 ] );
 	},
 
 	deactivate: function() {
@@ -242,33 +160,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return ! ! this.view.getSortableOptions().swappable;
 	},
 
-	/**
-	 * Retrieve the sortable placeholder location.
-	 * Used for flex containers which uses `order` to manage their items.
-	 * That's a hacky function since jQuery sortable doesn't return the hovered element.
-	 *
-	 * @param {object} ui - jQuery sortable UI object.
-	 *
-	 * @return {string} - The placeholder location (before/after) relative to the hovered item.
-	 */
-	getPlaceholderSide: function( ui ) {
-		let $sameOrderSibling = null;
-
-		// Iterate over all siblings and find the one which has the same flex order.
-		ui.item.siblings( '.elementor-element' ).each( function() {
-			const $sibling = jQuery( this );
-
-			if ( $sibling.css( 'order' ) === ui.placeholder.css( 'order' ) ) {
-				$sameOrderSibling = $sibling;
-			}
-		} );
-
-		// Determine the location (in the GUI) using the elements indexes.
-		// (Since two elements with the same flex order will appear on the screen in their DOM order).
-		// Note: If there is not element with the same order, it defaults to `after`.
-		return ( ui.item.index() > ( $sameOrderSibling?.index() || -1 ) ) ? 'after' : 'before';
-	},
-
 	startSort: function( event, ui ) {
 		event.stopPropagation();
 
@@ -284,11 +175,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	// On sorting element
 	updateSort: function( ui, newIndex ) {
-		// Don't move when it's a swappable container ( the move command is being handled in the swappable callback ).
-		if ( this.isSwappable() ) {
-			return;
-		}
-
 		if ( undefined === newIndex ) {
 			newIndex = ui.item.index();
 		}
@@ -323,15 +209,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
-
-		// On a swappable element, the movement should be handled using flex order.
-		if ( this.isSwappable() ) {
-			newIndex = parseInt( ui.placeholder.css( 'order' ) );
-
-			if ( 'after' === this.getPlaceholderSide( ui ) ) {
-				newIndex++;
-			}
-		}
 
 		this.moveChild( child, newIndex );
 	},
