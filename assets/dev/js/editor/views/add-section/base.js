@@ -107,12 +107,13 @@ class AddSectionBase extends Marionette.ItemView {
 		];
 	}
 
-	createContainer() {
+	createContainer( options = {} ) {
 		$e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
 			},
 			container: elementor.getPreviewContainer(),
+			options,
 		} );
 	}
 
@@ -142,7 +143,7 @@ class AddSectionBase extends Marionette.ItemView {
 
 		// If the selected preset is a Flex Container, create one.
 		if ( 'flex-container' === selectedStructure ) {
-			this.createContainer();
+			this.createContainer( this.options );
 			return;
 		}
 
