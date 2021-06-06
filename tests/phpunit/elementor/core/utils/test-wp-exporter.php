@@ -15,6 +15,12 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 	 */
 	private $expected_errors_found;
 
+	public function setUp() {
+		parent::setUp();
+
+		$this->remove_default_kit();
+	}
+
 	protected function expected_error( $error_messages ) {
 		$this->expected_error_list = (array) $error_messages;
 

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
@@ -11,6 +12,7 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use Elementor\Core\Kits\Exceptions\Kit_Not_Exists_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -28,8 +30,7 @@ class Manager {
 		$kit_document = Plugin::$instance->documents->get( $id );
 
 		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
-			$id = $this->create_default();
-			update_option( self::OPTION_ACTIVE, $id );
+			throw new Kit_Not_Exists_Exception();
 		}
 
 		return $id;
@@ -97,8 +98,34 @@ class Manager {
 		return $kit->get_id();
 	}
 
-	private function create_default() {
-		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
+	/**
+	 * Create a default kit if needed.
+	 */
+	public static function create_default_kit() {
+		$active_kit_id = get_option( self::OPTION_ACTIVE );
+		$active_kit = get_post( $active_kit_id );
+		$document_type = get_post_meta( $active_kit_id, Document::TYPE_META_KEY, true );
+
+		if (
+			$active_kit &&
+			'trash' !== $active_kit->post_status &&
+			Source_Local::CPT === $active_kit->post_type &&
+			'kit' === $document_type
+		) {
+			return;
+		}
+
+		$id = wp_insert_post( [
+			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_type' => Source_Local::CPT,
+			'post_status' => 'publish',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				Document::TYPE_META_KEY => 'kit',
+			],
+		] );
+
+		update_option( self::OPTION_ACTIVE, $id );
 	}
 
 	/**
