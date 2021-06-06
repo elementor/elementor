@@ -332,7 +332,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	 * Initialize the modules' widgets handlers.
 	 */
 	initModules() {
-		const handlers = {
+		let handlers = {
 			shapes: Shapes,
 		};
 
