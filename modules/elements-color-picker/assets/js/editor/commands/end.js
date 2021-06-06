@@ -1,6 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import { removeNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
+/**
+ * End the color picking process and return to the normal editor state.
+ */
 export class End extends CommandBase {
 	/**
 	 * Initialize the command.
