@@ -135,7 +135,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => _x( 'Start', 'Flex Item Control', 'elementor' ),
-						'icon' => 'eicon-h-align-left',
+					'icon' => 'eicon-h-align-left',
 				],
 				'end' => [
 					'title' => _x( 'End', 'Flex Item Control', 'elementor' ),
