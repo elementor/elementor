@@ -250,10 +250,10 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'content_width',
 			[
-				'label' => __( 'Content Width', 'elementor' ),
+				'label' => __( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -267,12 +267,37 @@ class Container extends Element_Base {
 				'condition' => [
 					'layout' => [ 'boxed' ],
 				],
-				'show_label' => false,
 				'separator' => 'none',
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
+			'gap',
+			[
+				'label' => _x( 'Gap', 'Flex Item Control', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'size_units' => [ '%', 'px', 'vw' ],
+				'selectors' => [
+					'{{WRAPPER}}' => '--gap: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'height',
 			[
 				'label' => __( 'Height', 'elementor' ),
@@ -319,6 +344,20 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Flex_Container::get_type(),
+			[
+				'name' => 'container',
+				'selector' => '{{WRAPPER}}',
+				'exclude' => [
+					'gap',
+				],
+				'condition' => [
+					'container_type' => 'flex',
+				],
+			]
+		);
+
 		$possible_tags = [
 			'div' => 'div',
 			'header' => 'header',
@@ -334,23 +373,13 @@ class Container extends Element_Base {
 			'' => __( 'Default', 'elementor' ),
 		] + $possible_tags;
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'html_tag',
 			[
 				'label' => __( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Flex_Container::get_type(),
-			[
-				'name' => 'container',
-				'selector' => '{{WRAPPER}}',
-				'condition' => [
-					'container_type' => 'flex',
-				],
+				'separator' => 'before',
 			]
 		);
 
@@ -362,11 +391,11 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	protected function register_items_layout_controls() {
+	protected function register_children_layout_controls() {
 		$this->start_controls_section(
-			'section_layout_items',
+			'section_layout_children',
 			[
-				'label' => __( 'Items', 'elementor' ),
+				'label' => __( 'Flex Children', 'elementor' ),
 				'tab' => Controls_Manager::TAB_LAYOUT,
 			]
 		);
@@ -374,7 +403,7 @@ class Container extends Element_Base {
 		$this->add_group_control(
 			Group_Control_Flex_Item::get_type(),
 			[
-				'name' => 'items',
+				'name' => 'flex_children',
 				'exclude' => [
 					'align_self',
 					'order',
@@ -394,7 +423,7 @@ class Container extends Element_Base {
 	protected function register_layout_tab() {
 		$this->register_container_layout_controls();
 
-		$this->register_items_layout_controls();
+		$this->register_children_layout_controls();
 	}
 
 	/**

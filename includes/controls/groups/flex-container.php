@@ -17,14 +17,14 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		$fields = [];
 
 		$fields['flex_direction'] = [
-			'label' => _x( 'Flex Direction', 'Flex Container Control', 'elementor' ),
+			'label' => _x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
 				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
 				'row' => _x( 'Row', 'Flex Container Control', 'elementor' ),
-				'row-reverse' => _x( 'Row Reverse', 'Flex Container Control', 'elementor' ),
 				'column' => _x( 'Column', 'Flex Container Control', 'elementor' ),
-				'column-reverse' => _x( 'Column Reverse', 'Flex Container Control', 'elementor' ),
+				'row-reverse' => _x( 'Reversed Row', 'Flex Container Control', 'elementor' ),
+				'column-reverse' => _x( 'Reversed Column', 'Flex Container Control', 'elementor' ),
 			],
 			'default' => '',
 			'selectors' => [
@@ -56,34 +56,63 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 		];
 
-		$fields['flex_wrap'] = [
-			'label' => _x( 'Flex Wrap', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => [
-				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
-				'nowrap' => _x( 'No Wrap', 'Flex Container Control', 'elementor' ),
-				'wrap' => _x( 'Wrap', 'Flex Container Control', 'elementor' ),
-				'wrap-reverse' => _x( 'Wrap Reverse', 'Flex Container Control', 'elementor' ),
-			],
+		$fields['align_items'] = [
+			'label' => _x( 'Align Items', 'Flex Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
 			'default' => '',
+			'options' => [
+				'flex-start' => [
+					'title' => _x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-start',
+				],
+				'center' => [
+					'title' => _x( 'Center', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-center',
+				],
+				'flex-end' => [
+					'title' => _x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-end',
+				],
+				'stretch' => [
+					'title' => _x( 'Stretch', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-stretch',
+				],
+			],
 			'selectors' => [
-				'{{SELECTOR}}' => '--flex-wrap: {{VALUE}};',
+				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
 
 		$fields['justify_content'] = [
 			'label' => _x( 'Justify Content', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
+			'type' => Controls_Manager::CHOOSE,
 			'default' => '',
 			'options' => [
-				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
-				'center' => _x( 'Center', 'Flex Container Control', 'elementor' ),
-				'flex-start' => _x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-				'flex-end' => _x( 'Flex End', 'Flex Container Control', 'elementor' ),
-				'space-between' => _x( 'Space Between', 'Flex Container Control', 'elementor' ),
-				'space-around' => _x( 'Space Around', 'Flex Container Control', 'elementor' ),
-				'space-evenly' => _x( 'Space Evenly', 'Flex Container Control', 'elementor' ),
+				'flex-start' => [
+					'title' => _x( 'Flex Start', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-start',
+				],
+				'center' => [
+					'title' => _x( 'Center', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-center',
+				],
+				'flex-end' => [
+					'title' => _x( 'Flex End', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-end',
+				],
+				'space-between' => [
+					'title' => _x( 'Space Between', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-space-between',
+				],
+				'space-around' => [
+					'title' => _x( 'Space Around', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-space-around',
+				],
+				'space-evenly' => [
+					'title' => _x( 'Space Evenly', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-justify-space-evenly',
+				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--justify-content: {{VALUE}};',
@@ -91,19 +120,22 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['align_items'] = [
-			'label' => _x( 'Align Items', 'Flex Container Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'default' => '',
+		$fields['flex_wrap'] = [
+			'label' => _x( 'Wrap', 'Flex Container Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
-				'center' => _x( 'Center', 'Flex Container Control', 'elementor' ),
-				'stretch' => _x( 'Stretch', 'Flex Container Control', 'elementor' ),
-				'flex-start' => _x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-				'flex-end' => _x( 'Flex End', 'Flex Container Control', 'elementor' ),
+				'nowrap' => [
+					'title' => _x( 'No Wrap', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-no-wrap',
+				],
+				'wrap' => [
+					'title' => _x( 'Wrap', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-flex-wrap',
+				],
 			],
+			'default' => '',
 			'selectors' => [
-				'{{SELECTOR}}' => '--align-items: {{VALUE}};',
+				'{{SELECTOR}}' => '--flex-wrap: {{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -123,6 +155,9 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-content: {{VALUE}};',
+			],
+			'condition' => [
+				'flex_wrap' => 'wrap',
 			],
 			'responsive' => true,
 		];

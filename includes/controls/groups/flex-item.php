@@ -28,10 +28,48 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 					'min' => 0,
 					'max' => 100,
 				],
+				'vw' => [
+					'min' => 0,
+					'max' => 100,
+				],
 			],
-			'size_units' => [ 'px', '%' ],
+			'size_units' => [ 'px', '%', 'vw' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-basis: {{SIZE}}{{UNIT}};',
+			],
+			'responsive' => true,
+		];
+
+		$fields['flex_size'] = [
+			'label' => _x( 'Size', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'none' => [
+					'title' => _x( 'None', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ban',
+				],
+				'grow' => [
+					'title' => _x( 'Grow', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-h-align-stretch',
+				],
+				'shrink' => [
+					'title' => _x( 'Shrink', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-h-align-center',
+				],
+				'custom' => [
+					'title' => _x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-apps',
+				],
+			],
+			'selectors_dictionary' => [
+				'grow' => '--flex-grow: 1;',
+				'shrink' => '--flex-shrink: 1;',
+				'custom' => '--flex-grow: 1; --flex-shrink: 1;',
+				'none' => '',
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '{{VALUE}};',
 			],
 			'responsive' => true,
 		];
@@ -42,7 +80,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
 			],
+			'placeholder' => 1,
 			'responsive' => true,
+			'condition' => [
+				'flex_size' => 'custom',
+			],
 		];
 
 		$fields['flex_shrink'] = [
@@ -51,35 +93,81 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
 			],
+			'placeholder' => 1,
 			'responsive' => true,
-		];
-
-		$fields['order'] = [
-			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'selectors' => [
-				'{{SELECTOR}}' => '--order: {{VALUE}};',
+			'condition' => [
+				'flex_size' => 'custom',
 			],
-			'responsive' => true,
 		];
 
 		$fields['align_self'] = [
 			'label' => _x( 'Align Self', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
+			'type' => Controls_Manager::CHOOSE,
 			'options' => [
-				'' => _x( 'Default', 'Flex Item Control', 'elementor' ),
-				'auto' => _x( 'Auto', 'Flex Item Control', 'elementor' ),
-				'flex-start' => _x( 'Flex Start', 'Flex Item Control', 'elementor' ),
-				'flex-end' => _x( 'Flex End', 'Flex Item Control', 'elementor' ),
-				'center' => _x( 'Center', 'Flex Item Control', 'elementor' ),
-				'baseline' => _x( 'Baseline', 'Flex Item Control', 'elementor' ),
-				'stretch' => _x( 'Stretch', 'Flex Item Control', 'elementor' ),
+				'flex-start' => [
+					'title' => _x( 'Flex Start', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-start',
+				],
+				'center' => [
+					'title' => _x( 'Center', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-center',
+				],
+				'flex-end' => [
+					'title' => _x( 'Flex End', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-end',
+				],
+				'stretch' => [
+					'title' => _x( 'Stretch', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex-align-stretch',
+				],
 			],
 			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-self: {{VALUE}};',
 			],
 			'responsive' => true,
+		];
+
+		$fields['order'] = [
+			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'start' => [
+					'title' => _x( 'Start', 'Flex Item Control', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+				],
+				'end' => [
+					'title' => _x( 'End', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-h-align-right',
+				],
+				'custom' => [
+					'title' => _x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-apps',
+				],
+			],
+			'selectors_dictionary' => [
+				// Hacks to set the order to start / end.
+				'start' => '-99999',
+				'end' => '99999',
+				'custom' => '',
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '--order: {{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
+		$fields['order_custom'] = [
+			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'selectors' => [
+				'{{SELECTOR}}' => '--order: {{VALUE}};',
+			],
+			'responsive' => true,
+			'condition' => [
+				'order' => 'custom',
+			],
 		];
 
 		return $fields;

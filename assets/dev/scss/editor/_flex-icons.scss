@@ -1,0 +1,60 @@
+// Temp flex icons
+[class ^= "eicon-flex"] {
+	background-size: 13px;
+	background-position: center center;
+	height: 100%;
+	width: 100%;
+	background-repeat: no-repeat
+}
+
+.eicon-flex {
+
+	&-align {
+		&-start {
+			background-image: url( '../images/flex-icons/flex-align-start.svg' );
+		}
+
+		&-end {
+			background-image: url( '../images/flex-icons/flex-align-end.svg' );
+		}
+
+		&-center {
+			background-image: url( '../images/flex-icons/flex-align-center.svg' );
+		}
+
+		&-stretch {
+			background-image: url( '../images/flex-icons/flex-align-stretch.svg' );
+		}
+	}
+
+	&-justify {
+		&-start {
+			background-image: url( '../images/flex-icons/flex-justify-start.svg' );
+		}
+
+		&-end {
+			background-image: url( '../images/flex-icons/flex-justify-end.svg' );
+		}
+
+		&-center {
+			background-image: url( '../images/flex-icons/flex-justify-center.svg' );
+		}
+
+		&-space-around,
+		&-space-evenly {
+			background-image: url( '../images/flex-icons/flex-justify-space-around.svg' );
+		}
+
+		&-space-between{
+			background-image: url( '../images/flex-icons/flex-justify-space-between.svg' );
+		}
+	}
+
+	&-wrap {
+		background-image: url( '../images/flex-icons/flex-wrap.svg' );
+	}
+
+	&-no-wrap {
+		background-image: url( '../images/flex-icons/flex-no-wrap.svg' );
+	}
+}
