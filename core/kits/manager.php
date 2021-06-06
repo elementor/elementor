@@ -12,7 +12,6 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
-use Elementor\Core\Kits\Exceptions\Kit_Not_Exists_Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,27 +24,36 @@ class Manager {
 	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
 
 	public function get_active_id() {
-		$id = get_option( self::OPTION_ACTIVE );
-
-		$kit_document = Plugin::$instance->documents->get( $id );
-
-		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
-			throw new Kit_Not_Exists_Exception();
-		}
-
-		return $id;
+		return get_option( self::OPTION_ACTIVE );
 	}
 
 	public function get_active_kit() {
-		$id = $this->get_active_id();
+		$kit = Plugin::$instance->documents->get( $this->get_active_id() );
 
-		return Plugin::$instance->documents->get( $id );
+		if ( ! $this->is_valid_kit( $kit ) ) {
+			return new Kit();
+		}
+
+		return $kit;
 	}
 
 	public function get_active_kit_for_frontend() {
-		$id = $this->get_active_id();
+		$kit = Plugin::$instance->documents->get_doc_for_frontend( $this->get_active_id() );
 
-		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+		if ( ! $this->is_valid_kit( $kit ) ) {
+			return new Kit();
+		}
+
+		return $kit;
+	}
+
+	/**
+	 * @param $kit
+	 *
+	 * @return bool
+	 */
+	private function is_valid_kit( $kit ) {
+		return $kit && $kit instanceof Kit && 'trash' !== $kit->get_main_post()->post_status;
 	}
 
 	/**
@@ -100,18 +108,12 @@ class Manager {
 
 	/**
 	 * Create a default kit if needed.
+	 *
+	 * This action runs on activation hook, all the Plugin components do not exists and
+	 * the Document manager and Kits manager instances cannot be used.
 	 */
 	public static function create_default_kit() {
-		$active_kit_id = get_option( self::OPTION_ACTIVE );
-		$active_kit = get_post( $active_kit_id );
-		$document_type = get_post_meta( $active_kit_id, Document::TYPE_META_KEY, true );
-
-		if (
-			$active_kit &&
-			'trash' !== $active_kit->post_status &&
-			Source_Local::CPT === $active_kit->post_type &&
-			'kit' === $document_type
-		) {
+		if ( get_option( self::OPTION_ACTIVE ) ) {
 			return;
 		}
 

@@ -28,6 +28,10 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 		Plugin::$instance->wp = new Wp_Api();
 	}
 
+	protected function create_default_kit() {
+		Manager::create_default_kit();
+	}
+
 	protected function remove_default_kit() {
 		// Make sure the the 'wp_delete_post' function will actually delete the kit.
 		$_GET['force_delete_kit'] = '1';
@@ -38,9 +42,5 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 		delete_option( Manager::OPTION_ACTIVE );
 
 		unset( $_GET['force_delete_kit'] );
-	}
-
-	protected function create_default_kit() {
-		Manager::create_default_kit();
 	}
 }
