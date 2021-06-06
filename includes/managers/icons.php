@@ -552,7 +552,7 @@ class Icons_Manager {
 
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
 			add_action( 'elementor/frontend/after_enqueue_styles', function() {
-				$css = '.elementor-icon { display: inline-block; } .elementor-icon svg { width: 1em; height: 1em; display: block; }';
+				$css = '.elementor-icon { display: inline-block; } .elementor-icon svg, .elementor-button-icon svg, .elementor-icon-list-icon svg { width: 1em; height: 1em; display: block; }';
 
 				wp_add_inline_style( 'elementor-frontend', $css );
 			} );
