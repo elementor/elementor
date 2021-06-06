@@ -156,8 +156,8 @@ class Element_Column extends Element_Base {
 		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
 		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap' . $widget_wrap_child;
 		$widget_wrap_relation = $is_dome_optimization_active ? '' : ' > ';
-		$wrapper_populated = '{{WRAPPER}}' . $widget_wrap_relation . '.elementor-element-populated';
-		$wrapper_populated_hover = $is_dome_optimization_active ? '{{WRAPPER}}.elementor-element-populated:hover' : '{{WRAPPER}}:hover > .elementor-element-populated';
+		$wrapper_populated = '{{WRAPPER}}' . $column_wrap_child . '.elementor-element-populated';
+		$wrapper_populated_hover = $is_dome_optimization_active ? $wrapper_populated.':hover' : '{{WRAPPER}}:hover' . $column_wrap_child . '.elementor-element-populated';
 
 		$this->add_responsive_control(
 			'content_position',

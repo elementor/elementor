@@ -238,13 +238,11 @@ ColumnView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const widgets = Object.values( this.$el.find( '> .elementor-element' ) );
+				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
 				let newIndex = widgets.indexOf( event.currentTarget );
 
 				if ( 'bottom' === side ) {
 					newIndex++;
-				} else if ( 'top' === side ) {
-					newIndex--;
 				}
 
 				if ( 0 > newIndex ) {
