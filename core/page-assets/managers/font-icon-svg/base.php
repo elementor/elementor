@@ -28,16 +28,11 @@ abstract class Base {
 	public static function get_config( $icon ) {
 		self::$icon = $icon;
 
-
 		return [
 			'key' => static::get_config_key(),
 			'version' => static::get_config_version(),
 			'file_path' => static::get_config_file_path(),
 			'data' => static::get_config_data(),
 		];
-	}
-
-	public static function get_icon_svg_data( $icon ) {
-		return Plugin::$instance->assets_loader->get_asset_inline_content( self::get_icon_svg_config( $icon ) );
 	}
 }
