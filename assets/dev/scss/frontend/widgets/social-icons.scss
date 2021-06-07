@@ -6,7 +6,6 @@ $icon-size: var(--icon-size, 25px);
 $icon-padding: var(--icon-padding, 0.5em);
 $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
-
 .elementor-widget-social-icons {
 /*TODO: This Grid-0 needs to be removed after PRO is Updated */
 	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
@@ -49,6 +48,17 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
 	i {
 		color: white;
+
+		svg {
+			$total-icon-half-size: calc(#{$icon-total-size} / 2);
+			$icon-half-size: calc(#{$icon-size} / 2 );
+			$svg-icon-center-offset: calc(#{$total-icon-half-size} - #{$icon-half-size});
+
+			fill: white;
+			position: absolute;
+			top: $svg-icon-center-offset;
+			left: $svg-icon-center-offset;
+		}
 	}
 
 	&:last-child {
