@@ -505,6 +505,8 @@ html.elementor-html {
 	border: 1px dashed $editor-lightest;
 	display: flex;
 	height: 100%;
+	width: 100%;
+	position: absolute;
 	align-items: center;
 	justify-content: center;
 
