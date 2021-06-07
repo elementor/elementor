@@ -101,7 +101,7 @@ export default function ItemHeader( props ) {
 					onSuccess={ ( data ) => {
 						updateSettings( {
 							is_library_connected: true,
-							access_level: data.access_level || 0,
+							access_level: data.kits_access_level || data.access_level || 0, // BC: Check for 'access_level' prop
 						} );
 
 						if ( data.access_level < props.model.accessLevel ) {

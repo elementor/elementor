@@ -8,7 +8,7 @@ import Layout from '../../components/layout';
 import SearchInput from '../../components/search-input';
 import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
-import useKits from '../../hooks/use-kits';
+import useKits, { defaultQueryParams } from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { useCallback, useMemo, useEffect } from 'react';
 import { Grid } from '@elementor/app-ui';
@@ -99,7 +99,19 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	}, [ queryParams ] );
 
 	useEffect( () => {
-		const routerQueryParams = wp.url.getQueryArgs( location.pathname );
+		const routerQueryParams = Object.keys( defaultQueryParams ).reduce( ( current, key ) => {
+			// TODO: Replace with `wp.url.getQueryArgs` when WordPress 5.7 is the min version
+			const queryArg = wp.url.getQueryArg( location.pathname, key );
+
+			if ( ! queryArg ) {
+				return current;
+			}
+
+			return {
+				...current,
+				[ key ]: queryArg,
+			};
+		}, {} );
 
 		setQueryParams( ( prev ) => ( {
 			...prev,
