@@ -4,6 +4,10 @@ export class Base extends HookBase {
 	getType() {
 		return 'data';
 	}
+
+	getInternalConditions() {
+		return elementor.documents.getCurrent().history.getActive();
+	}
 }
 
 export default Base;

@@ -40,10 +40,6 @@ export default class Data extends HooksBase {
 		return false;
 	}
 
-	shouldRun( callbacks ) {
-		return super.shouldRun( callbacks ) && elementor.documents.getCurrent().history.getActive();
-	}
-
 	onRun( command, args, event ) {
 		if ( ! $e.devTools ) {
 			return;

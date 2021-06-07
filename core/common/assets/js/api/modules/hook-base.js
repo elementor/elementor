@@ -105,6 +105,19 @@ export default class HookBase {
 	getContainerType() {}
 
 	/**
+	 * Function getInternalConditions().
+	 *
+	 * Top level, Condition for running the callback.
+	 * Method propose is to separate base conditions from end hook `getConditions()`.
+	 * Used to be extendable for each hook base.
+	 *
+	 * @returns {boolean}
+	 */
+	getInternalConditions() {
+		return true;
+	}
+
+	/**
 	 * Function getConditions().
 	 *
 	 * Condition for running the callback, if true, call to apply().
@@ -141,6 +154,10 @@ export default class HookBase {
 	 * @returns {*}
 	 */
 	run( ... args ) {
+		if ( ! this.getInternalConditions() ) {
+			return true;
+		}
+
 		const { options = {} } = args[ 0 ];
 
 		// Disable callback if requested by args.options.
