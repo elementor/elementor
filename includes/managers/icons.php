@@ -132,10 +132,14 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_icon_manager_tabs() {
-		if ( ! self::$tabs ) {
+		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() ) {
+			self::$tabs = [];
+		} elseif ( ! self::$tabs ) {
 			self::init_tabs();
 		}
+
 		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
+
 		return array_merge( self::$tabs, $additional_tabs );
 	}
 
