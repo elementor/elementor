@@ -247,7 +247,7 @@ class Repository {
 	 */
 	private function transform_manifest_api_response( $manifest ) {
 		$manifest_content = ( new Collection( (array) $manifest->content ) )
-			->reduce(function ( $carry, $content, $type ) {
+			->reduce( function ( $carry, $content, $type ) {
 				$mapped_documents = array_map( function ( $document ) use ( $type ) {
 					$document->doc_type = $type;
 
@@ -255,7 +255,7 @@ class Repository {
 				}, (array) $content );
 
 				return $carry + $mapped_documents;
-			}, []);
+			}, [] );
 
 		$content = ( new Collection( (array) $manifest->templates ) )
 			->union( $manifest_content )
