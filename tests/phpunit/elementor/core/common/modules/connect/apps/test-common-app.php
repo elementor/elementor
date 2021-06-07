@@ -96,6 +96,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
 
 		// Assert
+		// When body of the response is string with 'null' it convert it to `true` and after json_encode it became `1`
 		$this->assertEquals( 1, $result );
 	}
 
