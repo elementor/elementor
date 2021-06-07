@@ -477,7 +477,6 @@ class Widget_Button extends Widget_Base {
 		if ( $settings['hover_animation'] ) {
 			$this->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
-
 		?>
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
 			<a <?php $this->print_render_attribute_string( 'button' ); ?>>

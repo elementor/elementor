@@ -12,7 +12,8 @@ $breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 $breakpoints['desktop'] = [];
 
-$breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
+/* translators: %1$s: Device Name */
+$breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
@@ -21,7 +22,7 @@ $breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$
 			<div class="e-responsive-bar-switcher">
 			<?php foreach ( $breakpoints as $name => $breakpoint ) {
 				if ( 'desktop' === $name ) {
-					$tooltip_label = esc_html__( 'Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
+					$tooltip_label = __( 'Desktop <br> Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
 				} else {
 					$tooltip_label = sprintf( $breakpoint_label, $breakpoint->get_label(), $breakpoint->get_value() );
 				}
@@ -39,8 +40,8 @@ $breakpoint_label = esc_html__( 'Settings added to %1$s device will apply to %2$
 		</div>
 		<div class="e-responsive-bar__col">
 			<button class="e-responsive-bar__close-button e-responsive-bar__button"
-					data-tooltip="<?php echo esc_html__( 'Exit', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
+					data-tooltip="<?php echo __( 'Close', 'elementor' ); ?>">
+				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
 			<button class="e-responsive-bar__settings-button e-responsive-bar__button"

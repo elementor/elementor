@@ -58,7 +58,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 				},
 				helper: this._getSortableHelper.bind( this ),
 				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title',
-
+				// Fix: Sortable - Unable to drag and drop sections with huge height.
+				start: () => {
+					$childViewContainer.sortable( 'refreshPositions' );
+				},
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
@@ -78,19 +81,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	// This method is used to fix widgets index detection when dragging or sorting using the preview interface,
-	// The natural widget index in the column is wrong, since there is a `.elementor-background-overlay` element
-	// at the beginning of the column
+	// The natural widget index in the column is wrong, since there are other elements
+	// at the beginning of the column (background-overlay, element-overlay, resizeable-handle)
 	getSortedElementNewIndex( $element ) {
-		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
-			draggedElType = draggedModel.get( 'elType' );
+		const widgets = Object.values( $element.parent().find( '> .elementor-element' ) );
 
-		let newIndex = $element.index();
-
-		if ( 'widget' === draggedElType && elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
-			newIndex--;
-		}
-
-		return newIndex;
+		return widgets.indexOf( $element[ 0 ] );
 	},
 
 	deactivate: function() {
