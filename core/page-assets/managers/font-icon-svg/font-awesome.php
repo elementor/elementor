@@ -18,7 +18,7 @@ class Font_Awesome extends Base {
 	protected static function get_config_file_path() {
 		$icon_file_name = str_replace( 'fa-', '', self::$icon['library'] );
 
-		return ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/' . $icon_file_name;
+		return ELEMENTOR_ASSETS_URL . 'lib/font-awesome/json/' . $icon_file_name . '.json';
 	}
 
 	protected static function get_config_key() {
