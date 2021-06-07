@@ -1,11 +1,23 @@
+:root {
+	--eps-search-input-background-color: #{tints(100)};
+	--eps-search-input-background-color-focus: #{theme-colors(light)};
+	--eps-search-input-color: #{tints(700)};
+}
+
+.eps-theme-dark {
+	--eps-search-input-background-color: #{$eps-dark-gray-600};
+	--eps-search-input-background-color-focus: #{$eps-dark-gray-500};
+	--eps-search-input-color: #{$eps-dark-gray-200};
+}
+
 .eps-search-input {
 	width: 100%;
 	font-size: type(size, "15");
 	padding: spacing(10) spacing(44);
 	border: none;
-	background: tints(100);
+	background: var(--eps-search-input-background-color);
 	outline: none;
-	color: tints(700);
+	color: var(--eps-search-input-color);
 	line-height: type( line-height, 'flat' );
 	height: spacing(44);
 
@@ -15,7 +27,7 @@
 	}
 
 	&:focus {
-		background: theme-colors(light);
+		background: var(--eps-search-input-background-color-focus);
 	}
 
 	&::placeholder {

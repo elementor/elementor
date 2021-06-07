@@ -1,6 +1,14 @@
+:root {
+	--eps-badge-background-color: #{$eps-theme-light};
+}
+
+.eps-theme-dark {
+	--eps-badge-background-color: #{$eps-dark-gray-600};
+}
+
 .eps-badge {
 	display: inline-block;
-	background: $eps-theme-light;
+	background: var(--eps-badge-background-color);
 	padding: 0 spacing(8);
 	line-height: type(line-height, lg);
 	box-shadow: shadow("1");
