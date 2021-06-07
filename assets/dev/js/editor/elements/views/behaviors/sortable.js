@@ -81,6 +81,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 		return {
 			start: ( event, ui ) => {
+				$childViewContainer.sortable( 'refreshPositions' );
+
 				// TODO: Find a better solution than this hack.
 				// Used in order to prevent dragging a container into itself.
 				this.createPlaceholder( ui.item, placeholderClass );
@@ -120,7 +122,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		// Add a swappable behavior (used for flex containers).
 		if ( this.isSwappable() ) {
 			$childViewContainer.addClass( 'e-swappable' );
-			sortableOptions = _.extend( this.getSwappableOptions(), sortableOptions );
+			sortableOptions = _.extend( sortableOptions, this.getSwappableOptions() );
 		}
 
 		$childViewContainer.sortable( sortableOptions );
