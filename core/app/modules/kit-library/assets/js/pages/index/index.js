@@ -100,6 +100,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 
 	useEffect( () => {
 		const routerQueryParams = Object.keys( defaultQueryParams ).reduce( ( current, key ) => {
+			// TODO: Replace with `wp.url.getQueryArgs` when WordPress 5.7 is the min version
 			const queryArg = wp.url.getQueryArg( location.pathname, key );
 
 			if ( ! queryArg ) {
