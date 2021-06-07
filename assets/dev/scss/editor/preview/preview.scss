@@ -607,37 +607,6 @@ html.elementor-html {
 	}
 }
 
-// Swappable
-.e-swappable--active {
-	.e-swappable--dragging-over {
-		&::before,
-		&::after {
-			content: '';
-			display: block;
-			position: absolute;
-			inset: 0;
-		}
-
-		&::before {
-			background-color: #FFF;
-			opacity: 0.2;
-			background-image: repeating-linear-gradient( 45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000 ),
-								repeating-linear-gradient( 45deg, #000 25%, #fff 25%, #fff 75%, #000 75%, #000 );
-			background-position: 0 0, 10px 10px;
-			background-size: 20px 20px;
-		}
-
-		&::after {
-			border: 1px solid $editor-info;
-		}
-
-		.elementor-element-overlay {
-			// Hide the default element overlay since there is a custom one using before & after.
-			display: none;
-		}
-	}
-}
-
 // Drag/sort placeholder
 .elementor-sortable-placeholder {
 
