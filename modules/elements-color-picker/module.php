@@ -3,6 +3,7 @@ namespace Elementor\Modules\ElementsColorPicker;
 
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,6 +20,7 @@ class Module extends BaseModule {
 			'name' => 'elements-color-picker',
 			'title' => __( 'Elements Color Picker', 'elementor' ),
 			'default' => Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'description' => __( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
 		];
 	}

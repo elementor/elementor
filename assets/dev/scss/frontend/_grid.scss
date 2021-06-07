@@ -142,10 +142,13 @@
 .elementor-widget {
 	position: relative;
 
-	&:not(:last-child) {
-		margin-bottom: 20px;
+	&:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(.elementor-absolute) {
+		& + & {
+			margin-top: var( --widgets-gap, 20px );
+		}
+	}
 
-		.e-container > &,
+	&:not(:last-child) {
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
 		&.elementor-absolute {
@@ -192,25 +195,26 @@
 // Columns Gap
 .elementor-column {
 
-	> .elementor-element-populated {
+	&.elementor-element-populated,
+	.elementor-element-populated {
 
-		.elementor-column-gap-narrow  > & {
+		.elementor-column-gap-narrow & {
 			padding: 5px;
 		}
 
-		.elementor-column-gap-default > & {
+		.elementor-column-gap-default & {
 			padding: 10px;
 		}
 
-		.elementor-column-gap-extended > & {
+		.elementor-column-gap-extended & {
 			padding: 15px;
 		}
 
-		.elementor-column-gap-wide > & {
+		.elementor-column-gap-wide & {
 			padding: 20px;
 		}
 
-		.elementor-column-gap-wider > & {
+		.elementor-column-gap-wider & {
 			padding: 30px;
 		}
 	}

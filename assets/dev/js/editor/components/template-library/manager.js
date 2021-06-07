@@ -339,7 +339,7 @@ TemplateLibraryManager = function() {
 			var message = '';
 
 			_.each( errorMessage, function( error ) {
-				if ( ! error.message ) {
+				if ( ! error?.message ) {
 					return;
 				}
 

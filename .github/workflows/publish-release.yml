@@ -63,6 +63,12 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/remove-readme-beta-tag.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/update-readme-stable-version.sh"
+      - name: Check if readme.txt update
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          npm install --no-package-lock --no-save marked@2.0.6
+          node ./.github/scripts/get-changelog-from-readme-txt.js
       - name: Push new version to develop
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
@@ -129,14 +135,51 @@ jobs:
         run: |
           npm install --no-package-lock --no-save @octokit/core@3.4.0
           node ./.github/scripts/generate-changelog.js
+      - name: Read changelog from readme.txt
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          npm install --no-package-lock --no-save marked@2.0.6
+          node ./.github/scripts/get-changelog-from-readme-txt.js
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          body_path: temp-changelog.txt
+          body_path: temp-changelog-from-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Read changelog and set current date
+        run: |
+          CHANGELOG=$(cat temp-changelog.txt | tr -d '\n')
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "CHANGELOG=${CHANGELOG}" >> $GITHUB_ENV
+          echo "NOW=${NOW}" >> $GITHUB_ENV
+      - name: Parse Jira Keys from changelog
+        id: jira_keys
+        uses: HighwayThree/jira-extract-issue-keys@8050830121f3eab19553d2f0c0150873a8d1b51b
+        with:
+          commit-message: '${{ env.CHANGELOG }}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Deployment Info to Jira
+        if: steps.jira_keys.outputs.jira-keys != ''
+        uses: HighwayThree/jira-upload-deployment-info@7cd4db1e5cc96692fd0b4c688407efd95ae3e610
+        with:
+          client-id: '${{ secrets.JIRA_CLIENT_ID }}'
+          client-secret: '${{ secrets.JIRA_CLIENT_SECRET }}'
+          cloud-instance-base-url: '${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}'
+          issue-keys: "${{ steps.jira_keys.outputs.jira-keys }}"
+          display-name: "${{ env.PACKAGE_VERSION }}"
+          url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          description: "This PR was merged to the following release(s)"
+          last-updated: '${{ env.NOW }}'
+          state: 'successful'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          pipeline-url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          environment-id: "${{ env.PACKAGE_VERSION }}"
+          environment-display-name: "${{ env.PACKAGE_VERSION }}"
+          environment-type: 'production'
       - name: Trigger developer-edition release
         uses: peter-evans/repository-dispatch@v1
         with:

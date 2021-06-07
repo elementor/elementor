@@ -15,5 +15,6 @@
   "legacy-javascript": [ "error", { "maxLength": 1 } ],
   "render-blocking-resources": [ "error", { "maxLength": 8 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 30 } ],
-  "uses-webp-images": [ "warn", { "maxLength": 4 }]
+  "modern-image-formats": [ "warn", { "maxLength": 4 }],
+  "csp-xss": [ "warn", { "minScore": 0 }]
 }
