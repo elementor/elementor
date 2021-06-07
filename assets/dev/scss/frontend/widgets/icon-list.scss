@@ -69,13 +69,18 @@
 	.elementor-icon-list-icon {
 		flex-shrink: 0;
 
-		i {
-			width: 1.25em;
-		}
-
 		svg {
 			width: 1em;
 			height: auto;
+		}
+
+		i {
+			width: 1.25em;
+			display: inline-block;
+
+			svg {
+				height: 1em;
+			}
 		}
 	}
 
