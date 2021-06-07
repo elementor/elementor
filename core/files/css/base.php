@@ -604,6 +604,10 @@ abstract class Base extends Base_File {
 		return false;
 	}
 
+	protected function is_responsive_render_supported() {
+		return true;
+	}
+
 	/**
 	 * Parse CSS.
 	 *
@@ -613,7 +617,13 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		if ( $this->is_responsive_render_supported() ) {
+			Plugin::$instance->responsive_render_mode = true;
+		}
+
 		$this->render_css();
+
+		Plugin::$instance->responsive_render_mode = false;
 
 		$name = $this->get_name();
 

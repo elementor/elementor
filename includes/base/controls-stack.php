@@ -789,6 +789,22 @@ abstract class Controls_Stack extends Base_Object {
 			unset( $args['devices'] );
 		}
 
+		// If the new responsive controls experiment is active, create only one control - duplicates per device will
+		// be created in JS in the Editor.
+		if ( ! Plugin::$instance->responsive_render_mode && Plugin::$instance->experiments->is_feature_active( 'e_responsive_controls' ) ) {
+			$args['is_responsive'] = true;
+
+			if ( ! empty( $options['overwrite'] ) ) {
+				$this->update_control( $id, $args, [
+					'recursive' => ! empty( $options['recursive'] ),
+				] );
+			} else {
+				$this->add_control( $id, $args, $options );
+			}
+
+			return;
+		}
+
 		if ( isset( $args['default'] ) ) {
 			$args['desktop_default'] = $args['default'];
 
@@ -943,6 +959,18 @@ abstract class Controls_Stack extends Base_Object {
 		foreach ( $this->get_controls() as $control ) {
 			if ( ! empty( $control['frontend_available'] ) ) {
 				$controls[] = $control['name'];
+
+				if ( ! empty( $control['is_responsive'] ) ) {
+					$devices = array_reverse( array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() ) );
+
+					if ( ! empty( $control['responsive']['devices'] ) ) {
+						$devices = array_intersect( $devices, $control['responsive']['devices'] );
+					}
+
+					foreach ( $devices as $device ) {
+						$controls[] = $control['name'] . '_' . $device;
+					}
+				}
 			}
 		}
 

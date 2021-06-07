@@ -183,6 +183,23 @@ class Manager extends Module {
 		];
 	}
 
+	public function get_breakpoints_config() {
+		$breakpoints = $this->get_breakpoints();
+
+		$config = [];
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
+			$config[ $breakpoint_name ] = [
+				'label' => $breakpoint->get_label(),
+				'value' => $breakpoint->get_value(),
+				'direction' => $breakpoint->get_direction(),
+				'is_enabled' => $breakpoint->is_enabled(),
+			];
+		}
+
+		return $config;
+	}
+
 	/**
 	 * Get Stylesheet Templates Path
 	 *

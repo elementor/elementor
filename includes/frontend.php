@@ -1217,7 +1217,7 @@ class Frontend extends App {
 			'breakpoints' => Responsive::get_breakpoints(),
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
-				'breakpoints' => $this->get_breakpoints_config(),
+				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
@@ -1282,23 +1282,6 @@ class Frontend extends App {
 		}
 
 		return $settings;
-	}
-
-	private function get_breakpoints_config() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-
-		$config = [];
-
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$config[ $breakpoint_name ] = [
-				'label' => $breakpoint->get_label(),
-				'value' => $breakpoint->get_value(),
-				'direction' => $breakpoint->get_direction(),
-				'is_enabled' => $breakpoint->is_enabled(),
-			];
-		}
-
-		return $config;
 	}
 
 	/**

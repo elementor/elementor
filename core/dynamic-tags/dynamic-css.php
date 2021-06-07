@@ -25,6 +25,10 @@ class Dynamic_CSS extends Post_Local_Cache {
 		return false;
 	}
 
+	protected function is_responsive_render_supported() {
+		return false;
+	}
+
 	protected function render_styles( Element_Base $element ) {
 		$id = $element->get_id();
 

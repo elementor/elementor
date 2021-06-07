@@ -258,6 +258,17 @@ class Manager extends Base_Object {
 				. __( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_responsive_controls',
+			'title' => __( 'Responsive Controls Optimization', 'elementor' ),
+			'description' => __( 'Optimize your site\'s performance when using responsive controls.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
 	}
 
 	/**

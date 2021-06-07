@@ -978,6 +978,13 @@ export default class EditorBase extends Marionette.Application {
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
 
+		this.populateActiveBreakpointsConfig();
+
+		if ( elementorCommon.config.experimentalFeatures.e_responsive_controls ) {
+			// Duplicate responsive controls for section and column default configs.
+			this.generateResponsiveControlsForElements();
+		}
+
 		this.initComponents();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -1169,7 +1176,117 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
+			if ( elementorCommon.config.experimentalFeatures.e_responsive_controls ) {
+				// When the Responsive Optimization experiment is active, the responsive controls are generated on the
+				// JS side instead of the PHP.
+				widgetConfig.controls = this.generateResponsiveControls( widgetConfig.controls );
+			}
+
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
+		} );
+	}
+
+	generateResponsiveControls( controls ) {
+		const devices = Object.keys( this.config.responsive.activeBreakpoints ),
+			// If there is an active 'widescreen' breakpoint, insert the artificial 'desktop' device below it.
+			widescreenIndex = devices.indexOf( 'widescreen' ),
+			indexToInsertDesktopDevice = -1 === widescreenIndex ? devices.length : devices.length - 1,
+			newControlsStack = {};
+
+		devices.splice( indexToInsertDesktopDevice, 0, 'desktop' );
+
+		// Controls should be created from largest to smallest breakpoint. Breakpoints are registered from small to large.
+		devices.reverse();
+
+		jQuery.each( controls, ( controlName, controlConfig ) => {
+			// Handle repeater controls.
+			if ( 'object' === typeof controlConfig.fields ) {
+				controlConfig.fields = this.generateResponsiveControls( controlConfig.fields );
+			}
+
+			// Only handle responsive controls in this loop.
+			if ( ! controlConfig.is_responsive ) {
+				newControlsStack[ controlName ] = controlConfig;
+
+				return;
+			}
+
+			devices.forEach( ( device ) => {
+				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
+
+				if ( controlArgs.device_args ) {
+					if ( controlArgs.device_args[ device ] ) {
+						controlArgs = { ...controlArgs, ...controlArgs.device_args[ device ] };
+					}
+
+					delete controlArgs.device_args;
+				}
+
+				// If there is a prefix class with a device modifier in it, add in the device modifier.
+				if ( controlArgs.prefix_class && -1 === controlArgs.prefix_class.indexOf( '%s' ) ) {
+					const deviceModifier = 'desktop' === device ? '' : '-' + device;
+
+					controlArgs.prefix_class = controlArgs.prefix_class.replace( '%s', deviceModifier );
+				}
+
+				// If the 'responsive' property is empty, it is transferred from the PHP to JS as an array and not an
+				// object.
+				if ( Array.isArray( controlArgs.responsive ) ) {
+					controlArgs.responsive = {};
+				}
+
+				controlArgs.responsive.max = device;
+
+				if ( controlArgs.min_affected_device ) {
+					if ( controlArgs.min_affected_device[ device ] ) {
+						controlArgs.responsive.min = controlArgs.min_affected_device[ device ];
+					}
+
+					delete controlArgs.min_affected_device;
+				}
+
+				if ( controlArgs[ device + '_default' ] ) {
+					if ( 'object' === typeof controlArgs[ device + '_default' ] ) {
+						controlArgs.default = { ...controlArgs.default, ...controlArgs[ device + '_default' ] };
+					} else {
+						controlArgs.default = controlArgs[ device + '_default' ];
+					}
+				}
+
+				// For each new responsive control, delete
+				devices.forEach( ( breakpoint ) => {
+					delete controlArgs[ breakpoint + '_default' ];
+				} );
+
+				delete controlArgs.is_responsive;
+
+				const responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+
+				controlArgs.name = responsiveControlName;
+
+				newControlsStack[ responsiveControlName ] = controlArgs;
+			} );
+		} );
+
+		return newControlsStack;
+	}
+
+	generateResponsiveControlsForElements() {
+		// Handle the default config for section and column.
+		const elementNames = Object.keys( this.config.elements );
+
+		elementNames.forEach( ( elementName ) => {
+			this.config.elements[ elementName ].controls = this.generateResponsiveControls( this.config.elements[ elementName ].controls );
+		} );
+	}
+
+	populateActiveBreakpointsConfig() {
+		this.config.responsive.activeBreakpoints = {};
+
+		Object.entries( this.config.responsive.breakpoints ).forEach( ( [ breakpointKey, breakpointData ] ) => {
+			if ( breakpointData.is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = breakpointData;
+			}
 		} );
 	}
 
