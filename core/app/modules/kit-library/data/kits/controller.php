@@ -25,7 +25,7 @@ class Controller extends Base_Controller {
 		}
 
 		return [
-			'data' => $data->all(),
+			'data' => $data->values(),
 		];
 	}
 
