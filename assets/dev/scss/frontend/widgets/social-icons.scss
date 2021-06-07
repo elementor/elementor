@@ -50,14 +50,7 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		color: white;
 
 		svg {
-			$total-icon-half-size: calc(#{$icon-total-size} / 2);
-			$icon-half-size: calc(#{$icon-size} / 2 );
-			$svg-icon-center-offset: calc(#{$total-icon-half-size} - #{$icon-half-size});
-
 			fill: white;
-			position: absolute;
-			top: $svg-icon-center-offset;
-			left: $svg-icon-center-offset;
 		}
 	}
 
