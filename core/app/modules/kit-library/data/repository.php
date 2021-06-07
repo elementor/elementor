@@ -83,7 +83,7 @@ class Repository {
 	/**
 	 * @param false $force_api_request
 	 *
-	 * @return mixed|null
+	 * @return Collection
 	 * @throws Wp_Error_Exception
 	 */
 	public function get_taxonomies( $force_api_request = false ) {
