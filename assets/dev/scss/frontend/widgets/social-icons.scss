@@ -39,6 +39,8 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 }
 
 .elementor-social-icon {
+	--e-social-icon-icon-color: #fff;
+
 	display: inline-flex;
 	background-color: $gray;
 	align-items: center;
@@ -47,10 +49,10 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	cursor: pointer;
 
 	i {
-		color: white;
+		color: var(--e-social-icon-icon-color);
 
 		svg {
-			fill: white;
+			fill: var(--e-social-icon-icon-color);
 		}
 	}
 
