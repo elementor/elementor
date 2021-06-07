@@ -264,7 +264,7 @@ class Icons_Manager {
 			</svg>';
 		}
 
-		return '<svg><use xlink:href="#'. $icon_data['key'] .'" /></svg>';
+		return '<svg><use xlink:href="#' . $icon_data['key'] . '" /></svg>';
 	}
 
 	public static function render_uploaded_svg_icon( $value ) {
