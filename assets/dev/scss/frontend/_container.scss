@@ -53,6 +53,11 @@
 		animation-name: placeholder-widget-vertical;
 	}
 
+	.elementor-widget {
+		// Override the margin-top of widgets inside columns.
+		margin-top: 0 !important;
+	}
+
 	// Background overlay.
 	&::before {
 		content: '';
