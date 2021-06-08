@@ -92,20 +92,26 @@ class Page_Loader extends BaseModule {
 						    } );
 						} );
 
-						const background_images = JSON.parse( '" . wp_json_encode( $this->get_images( true ) ) . "' );
-
-					    background_images.forEach( ( el, index ) => {
+					    [ ...background_images ].forEach( ( image, index ) => {
 					        bgImagesPromises[ index ] = new Promise( ( resolve, reject ) => {
 								const tempImg = document.createElement( 'img' );
-								tempImg.setAttribute( 'src', el.url + '.webp' );
+								tempImg.setAttribute( 'src', image.url + '-' + image.optimized.size + '.webp' );
 								tempImg.classList.add( 'optimizer-temp-img' );
 								tempImg.addEventListener( 'load', ( e ) => {
 								    resolve( tempImg );
 								    e.target.remove();
+								    document.querySelector( image.cssSelector ).classList.add( 'bg-loaded' );
 								} );
 								document.body.appendChild( tempImg );
-							} ).then( () => document.querySelector( el.cssSelector ).classList.add( 'bg-loaded' ) );
+							} ).catch( ( err ) => {
+								console.error( err );
+							} );
 					    } );
+
+						Promise.all( bgImagesPromises ).then( () => {
+						    [ ...document.querySelectorAll( '.elementor-widget' ) ]
+						    .forEach( ( section ) => section.classList.add( 'bg-loaded' ) );
+						} );
 
 					    const wpadminbar = document.getElementById( 'wpadminbar' );
 					    if ( wpadminbar ) {
