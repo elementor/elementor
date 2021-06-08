@@ -98,18 +98,28 @@ class Analyzer extends BaseModule {
 
 			if ( isset( $page_data['optimizedImages'] ) ) {
 				$this->save_optimized_images( $page_data['optimizedImages'] );
+				return;
 			}
 
 			$optimizer = new Page_Optimizer( $page_data, $post_id );
 			$optimization_results = $optimizer->optimize();
 
 			$css = $page_data['css'];
-			$critical_css = $page_data['criticalCSS'];
-			$did_save_data['css'] = update_post_meta( $post_id, '_elementor_optimizer_used_css', $css );
-			$did_save_data['critical_CSS'] = update_post_meta( $post_id, '_elementor_optimizer_critical_css', $critical_css );
-
+			if ( get_post_meta( $post_id, '_e_optimizer_used_css', true ) ) {
+				$did_save_data['css'] = update_post_meta( $post_id, '_e_optimizer_used_css', $css );
+			} else {
+				$did_save_data['css'] = add_post_meta( $post_id, '_e_optimizer_used_css', $css, true );
+			}
 			unset( $page_data['css'] );
+
+			$critical_css = $page_data['criticalCSS'];
+			if ( get_post_meta( $post_id, '_e_optimizer_critical_css', true ) ) {
+				$did_save_data['critical_CSS'] = update_post_meta( $post_id, '_e_optimizer_critical_css', $critical_css );
+			} else {
+				$did_save_data['critical_CSS'] = add_post_meta( $post_id, '_e_optimizer_critical_css', $critical_css, true );
+			}
 			unset( $page_data['criticalCSS'] );
+
 			foreach ( $page_data['images'] as $key => $image ) {
 				unset( $page_data['images'][ $key ]['placeholder']['data'] );
 			}
@@ -117,7 +127,11 @@ class Analyzer extends BaseModule {
 				unset( $page_data['backgroundImages'][ $key ]['placeholder']['data'] );
 			}
 
-			$did_save_data['report'] = update_post_meta( $post_id, '_elementor_analyzer_report', $page_data );
+			if ( get_post_meta( $post_id, '_elementor_analyzer_report', true ) ) {
+				$did_save_data['report'] = update_post_meta( $post_id, '_elementor_analyzer_report', $page_data );
+			} else {
+				$did_save_data['report'] = add_post_meta( $post_id, '_elementor_analyzer_report', $page_data, true );
+			}
 
 			$result = [
 				'type' => 'success',

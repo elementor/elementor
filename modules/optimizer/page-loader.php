@@ -149,7 +149,7 @@ class Page_Loader extends BaseModule {
 	}
 
 	public function parse_widget_output( $html, $widget ) {
-		$images = $this->get_images();
+		$images = $this->images;
 
 		if ( ! $images ) {
 			return $html;
@@ -161,7 +161,7 @@ class Page_Loader extends BaseModule {
 			if ( $widget_id === $image['parentWidget'] && $image['critical'] ) {
 				$html = str_replace(
 					' src="' . $image['src'] . '"',
-					' data-src="' . $image['src'] . '.webp" loading="eager"',
+					' data-src="' . $image['src'] . '-' . $image['optimized']['size'] . '.webp" loading="eager"',
 					$html
 				);
 				$html = str_replace( ' srcset="', ' data-srcset="', $html );
@@ -198,7 +198,7 @@ class Page_Loader extends BaseModule {
 			if ( ! $image['critical'] ) {
 				continue;
 			}
-			$img_src = $image['src'] . '.webp';
+			$img_src = $image['src'] . '-' . $image['optimized']['size'] . '.webp';
 			$widget_id = $image['parentWidget'];
 			$images_selectors[] = '[data-id="' . $widget_id . '"] [data-src="' . $img_src . '"]';
 		}
@@ -214,7 +214,7 @@ class Page_Loader extends BaseModule {
 		$css = '';
 
 		foreach ( $this->images as $image ) {
-			$img_src = $image['src'] . '.webp';
+			$img_src = $image['src'] . $image['optimized']['size'] . '.webp';
 			$has_placeholder = isset( $image['placeholder']['data'][0] );
 			$url = $has_placeholder ? $image['placeholder']['data'][0] : $img_src;
 			$widget_id = $image['parentWidget'];
@@ -233,12 +233,34 @@ class Page_Loader extends BaseModule {
 		}
 
 		$css = '';
-
+		$selectors = [];
 		foreach ( $this->background_images as $key => $image ) {
-			$css .= $image['cssSelector'] . ':not(.bg-loaded)';
-			$css .= '{--bg-image-' . $key . ': url("' . $image['placeholder']['data'][0] . '");}';
-			$css .= $image['cssSelector'];
-			$css .= '{background-image: var(--bg-image-' . $key . ', url("' . $image['url'] . '.webp")) !important;}';
+			if ( in_array( $image['cssSelector'], $selectors, true ) ) {
+				continue;
+			}
+
+			$selectors[] = $image['cssSelector'];
+			$suffix = '-' . $image['optimized']['size'] . '.webp';
+			$var_name = '--bg-image-' . $key;
+
+			$css .= $image['cssSelector'] . '{
+					background-image: url("' . $image['url'] . $suffix . '") !important;
+				}';
+
+			if ( ! isset( $image['id'] ) || ! $image['id'] ) {
+				continue;
+			}
+
+			$placeholder_data = get_post_meta(
+				$image['id'],
+				'_e_optimizer_placeholder_' . $image['placeholder']['size']
+			);
+
+			if ( $placeholder_data && isset( $placeholder_data[0] ) ) {
+				$css .= ':not(.bg-loaded)' . $image['cssSelector'] . ':not(.bg-loaded) {
+					background-image: url("' . $placeholder_data[0] . '") !important;
+				}';
+			}
 		}
 
 		return $css;
@@ -266,11 +288,8 @@ class Page_Loader extends BaseModule {
 			if ( ! attachment_url_to_postid( $url_key ) ) {
 				continue;
 			}
+
 			$images[ $key ]['id'] = attachment_url_to_postid( $url_key );
-			$images[ $key ]['placeholder']['data'] = get_post_meta(
-				$images[ $key ]['id'],
-				'_e_optimizer_placeholder_' . $image['placeholder']['size']
-			);
 		}
 
 		$this->page_data[ $images_data_key ] = $images;
@@ -279,11 +298,11 @@ class Page_Loader extends BaseModule {
 	}
 
 	private function get_used_css() {
-		return get_post_meta( get_the_ID(), '_elementor_optimizer_used_css', true );
+		return get_post_meta( get_the_ID(), '_e_optimizer_used_css', true );
 	}
 
 	private function get_critical_css() {
-		return get_post_meta( get_the_ID(), '_elementor_optimizer_critical_css', true );
+		return get_post_meta( get_the_ID(), '_e_optimizer_critical_css', true );
 	}
 
 	private function get_page_data() {
