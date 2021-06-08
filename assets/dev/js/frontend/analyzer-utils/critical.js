@@ -93,11 +93,7 @@ export default class Critical {
 	}
 
 	processCriticalDOM() {
-		this.getCriticalElements().forEach( ( e ) => {
-			e.classList.add( 'critical' );
-		} );
-
-		this.getCriticalSections().forEach( ( e ) => {
+		[ ...this.criticalThings.elements, ...this.criticalThings.sections ].forEach( ( e ) => {
 			e.classList.add( 'critical' );
 		} );
 
@@ -106,6 +102,12 @@ export default class Critical {
 		this.criticalThings.html = document.documentElement.outerHTML;
 
 		this.onCriticalDOM();
+
+		document.documentElement.innerHTML = criticalMarkedHTML;
+
+		[ ...document.querySelectorAll( '.critical' ) ].forEach( ( e ) => e.remove() );
+
+		this.nonCriticalHtml = document.documentElement.outerHTML;
 
 		document.documentElement.innerHTML = criticalMarkedHTML;
 	}

@@ -1,6 +1,6 @@
 import { finder } from '@medv/finder';
 import Critical from './analyzer-utils/critical';
-import Compressor from 'compressorjs';
+import ImageOptimizer from './optimizer/image-optimizer';
 import csso from 'csso';
 
 class Analyzer {
@@ -57,6 +57,20 @@ class Analyzer {
 		} );
 
 		return fontFamilies.flat();
+	}
+
+	getWidgets() {
+		return this.getElements( 'widgets' ).map( ( widget ) => {
+			const widgetID = widget.getAttribute( 'data-id' );
+
+			return {
+				id: widgetID,
+				type: widget.getAttribute( 'data-type' ),
+				images: this.images.filter( ( image ) => {
+					return widgetID === image.rootNodeID;
+				} ).map( ( image ) => image.rootNodeID ),
+			};
+		} );
 	}
 
 	getImages() {
@@ -120,9 +134,17 @@ class Analyzer {
 			const rootNode = isSelfRoot ? el : el.closest( '.elementor-section' );
 			const rootNodeID = rootNode.getAttribute( 'data-id' );
 			const rootSelector = '.elementor-element-' + rootNodeID;
-			const cssSelector = isSelfRoot ? rootSelector : rootSelector + ' ' + finder( el, {
+			let cssSelector = isSelfRoot ? rootSelector : rootSelector + ' ' + finder( el, {
 				root: rootNode,
 			} );
+
+			if ( el.classList.contains( 'elementor-carousel-image' ) &&
+				! ! el.closest( '.elementor-swiper' ) ) {
+				const widgetID = el.closest( '.elementor-widget' ).getAttribute( 'data-id' );
+				const slideIndex = el.closest( '.swiper-slide' ).getAttribute( 'data-swiper-slide-index' );
+				cssSelector = '.elementor-element-' + widgetID +
+					' .elementor-swiper [data-swiper-slide-index=\"' + slideIndex + '\"] .elementor-carousel-image';
+			}
 
 			elements.push( {
 				backgroundSize: window.getComputedStyle( el, null )
@@ -135,9 +157,7 @@ class Analyzer {
 			} );
 		} );
 
-		elements.forEach( ( element, ) => {
-			const el = document.querySelector( element.cssSelector );
-
+		elements.forEach( ( element ) => {
 			promises.push( new Promise( ( resolve, reject ) => {
 				const img = document.createElement( 'img' );
 				img.setAttribute( 'src', element.url );
@@ -163,81 +183,6 @@ class Analyzer {
 		return elements;
 	}
 
-	async imgToBlob( img ) {
-		return fetch( img ).then( function( response ) {
-			return response.blob();
-		} );
-		/*
-			.then( function( blob ) {
-
-				this.blobs[ i ] = {
-					optimized: Compressor,
-					placeholder: ,
-				};
-			} );
-		 */
-	}
-
-	optimizeImages( images, placeholders ) {
-		const isBackgroundImg = ! ! images[ 0 ].url;
-		const possibleSizes = placeholders ? [ 256, 128, 64, 32 ] : [ 1600, 1024, 768, 512, 256, 128, 64, 32 ];
-
-		const self = this;
-		const promises = images.map( ( image, i ) => {
-			const src = image.src ? image.src : image.url;
-			const sizeDeltaThreshold = placeholders ? 0.333 : 1.5;
-			const maxWidth = possibleSizes.reduce( ( prev, curr ) => {
-				const goal = sizeDeltaThreshold * image.clientWidth;
-				return ( Math.abs( curr - goal ) < Math.abs( prev - goal ) ? curr : prev );
-			} );
-
-			return this.imgToBlob( src )
-				.then( ( blob ) => {
-					return new Promise( ( resolve, reject ) => {
-						if ( placeholders ) {
-							new Compressor( blob, {
-								quality: 0.4,
-								maxWidth: maxWidth,
-								maxHeight: maxWidth * 3,
-								mimeType: 'image/webp',
-								success( result ) {
-									const reader = new FileReader();
-									reader.onload = ( e ) => {
-										const placeholder = {};
-										placeholder.data = e.target.result;
-										placeholder.size = Math.min( maxWidth, image.naturalWidth );
-										image.placeholder = placeholder;
-										resolve();
-									};
-									reader.readAsDataURL( result );
-								},
-							} );
-						} else {
-							new Compressor( blob, {
-								quality: 0.66,
-								maxWidth: maxWidth,
-								maxHeight: maxWidth * 3,
-								mimeType: 'image/webp',
-								success( result ) {
-									const reader = new FileReader();
-									reader.onload = ( e ) => {
-										const optimized = {};
-										optimized.data = e.target.result;
-										optimized.size = Math.min( maxWidth, image.naturalWidth );
-										image.optimized = optimized;
-										resolve();
-									};
-									reader.readAsDataURL( result );
-								},
-							} );
-						}
-					} );
-				} );
-		} );
-
-		return Promise.all( promises );
-	}
-
 	getElements( selector ) {
 		return [ ...document.querySelectorAll( this.selectors[ selector ] ) ];
 	}
@@ -247,6 +192,7 @@ class Analyzer {
 			documents: '[data-elementor-id]',
 			sections: '.elementor-section',
 			elements: '.elementor-element',
+			widgets: '.elementor-widget',
 			images: '.elementor-element img',
 		};
 		this.styleSheets = document.styleSheets;
@@ -257,8 +203,9 @@ class Analyzer {
 
 	run( task ) {
 		this.fonts = { google: this.getGoogleFonts() };
-		this.images = [ ...this.getImages() ];
-		this.backgroundImages = [ ...this.getBackgroundImages() ];
+		this.images = ( this.getImages() );
+		this.backgroundImages = ( this.getBackgroundImages() );
+		this.widgets = ( this.getWidgets() );
 
 		this.critical = new Critical( this );
 		this.critical.init();
@@ -266,20 +213,20 @@ class Analyzer {
 		this.critical.images.forEach( ( isCritical, i ) => this.images[ i ].critical = isCritical );
 		this.critical.backgroundImages.forEach( ( isCritical, i ) => this.backgroundImages[ i ].critical = isCritical );
 
-		this.optimizedImages = [];
-		this.optimizedBackgroundImages = [];
+		this.imageOptimizer = new ImageOptimizer();
 
 		return Promise.all( [
-			this.optimizeImages( this.images, true ),
-			this.optimizeImages( this.backgroundImages, true ),
+			this.imageOptimizer.optimizeImages( this.images, true ),
+			this.imageOptimizer.optimizeImages( this.backgroundImages, true ),
 		] );
 	}
 
 	getData() {
 		return {
+			widgets: this.widgets,
 			images: this.images,
 			backgroundImages: this.backgroundImages,
-			css: csso.minify( this.critical.getUsedCss( this.HTML ) ).css,
+			css: csso.minify( this.critical.getUsedCss( this.critical.nonCriticalHtml ) ).css,
 			fonts: this.fonts,
 			criticalCSS: this.critical.css,
 			criticalFonts: this.critical.fonts,
@@ -288,10 +235,9 @@ class Analyzer {
 }
 
 const optimizeImages = function( analyzer ) {
-	const data = analyzer.getData();
 	return Promise.all( [
-		analyzer.optimizeImages( analyzer.images ),
-		analyzer.optimizeImages( analyzer.backgroundImages ),
+		analyzer.imageOptimizer.optimizeImages( analyzer.images ),
+		analyzer.imageOptimizer.optimizeImages( analyzer.backgroundImages ),
 	] );
 };
 
@@ -357,14 +303,14 @@ window.addEventListener( 'DOMContentLoaded', () =>
 					return image;
 				} );
 
-				window.parent.postMessage( 'Images Optimized.', '*' );
-				window.parent.postMessage( optimizedImages, '*' );
+				sendMessage( 'Images Optimized.' );
+				sendMessage( optimizedImages, );
 
-				window.parent.postMessage( 'Sending Optimized Images to the server...', '*' );
+				sendMessage( 'Sending Optimized Images to the server...' );
 				sendData( {
 					optimizedImages: optimizedImages,
 				} );
 			} );
 		} );
-	}, 800 )
+	}, 500 )
 );
