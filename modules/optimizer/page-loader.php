@@ -48,7 +48,7 @@ class Page_Loader extends BaseModule {
 				echo $this->get_used_styles();
 			} );
 
-			add_action( 'wp_footer', function() {
+			add_action( 'wp_head', function() {
 				echo "
 				<script id='e-optimizer-loader'>
 					const background_images = JSON.parse( '" . str_replace('\u0027', "\\'", str_replace(
