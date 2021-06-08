@@ -120,7 +120,7 @@ $top-bar-height: 50px;
 
 	&:not(.top-bar-active ) ~ #wpbody {
 		.wrap h1 {
-			display: block;
+			display: inline-block;
 		}
 	}
 
