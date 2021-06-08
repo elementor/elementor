@@ -63,7 +63,7 @@ class Analyzer {
 		const images = [];
 		const promises = [];
 
-		[ ...document.querySelectorAll( '.elementor-element img' ) ].forEach( ( el, i ) => {
+		this.getElements( 'images' ).forEach( ( el, i ) => {
 			images[ i ] = {
 				clientWidth: el.clientWidth,
 				clientHeight: el.clientHeight,
