@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
+use Elementor\Core\Files\File_Types\Zip;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
@@ -196,7 +197,7 @@ class Source_Local extends Source_Base {
 	 * @return string The local template title.
 	 */
 	public function get_title() {
-		return __( 'Local', 'elementor' );
+		return esc_html__( 'Local', 'elementor' );
 	}
 
 	/**
@@ -361,7 +362,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( self::ADMIN_MENU_SLUG, '', __( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
+		add_submenu_page( self::ADMIN_MENU_SLUG, '', esc_html__( 'Saved Templates', 'elementor' ), Editor::EDITING_CAPABILITY, self::get_admin_url( true ) );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -448,11 +449,11 @@ class Source_Local extends Source_Base {
 	 */
 	public function save_item( $template_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_posts ) ) {
-			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', esc_html__( 'Access denied.', 'elementor' ) );
 		}
 
 		$defaults = [
-			'title' => __( '(no title)', 'elementor' ),
+			'title' => esc_html__( '(no title)', 'elementor' ),
 			'page_settings' => [],
 			'status' => current_user_can( 'publish_posts' ) ? 'publish' : 'pending',
 		];
@@ -527,13 +528,13 @@ class Source_Local extends Source_Base {
 	 */
 	public function update_item( $new_data ) {
 		if ( ! current_user_can( $this->post_type_object->cap->edit_post, $new_data['id'] ) ) {
-			return new \WP_Error( 'save_error', __( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'save_error', esc_html__( 'Access denied.', 'elementor' ) );
 		}
 
 		$document = Plugin::$instance->documents->get( $new_data['id'] );
 
 		if ( ! $document ) {
-			return new \WP_Error( 'save_error', __( 'Template not exist.', 'elementor' ) );
+			return new \WP_Error( 'save_error', esc_html__( 'Template not exist.', 'elementor' ) );
 		}
 
 		$document->save( [
@@ -669,7 +670,7 @@ class Source_Local extends Source_Base {
 	 */
 	public function delete_template( $template_id ) {
 		if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
-			return new \WP_Error( 'template_error', __( 'Access denied.', 'elementor' ) );
+			return new \WP_Error( 'template_error', esc_html__( 'Access denied.', 'elementor' ) );
 		}
 
 		return wp_delete_post( $template_id, true );
@@ -786,44 +787,6 @@ class Source_Local extends Source_Base {
 	}
 
 	/**
-	 * Find temporary files.
-	 *
-	 * Recursively finds a list of temporary files from the extracted zip file.
-	 *
-	 * Example return data:
-	 *
-	 * [
-	 *  0 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-marble-title.json',
-	 *  1 => '/www/wp-content/uploads/elementor/tmp/5eb3a7a411d44/templates/block-2-col-text-and-photo.json',
-	 * ]
-	 *
-	 * @since 2.9.8
-	 * @access private
-	 *
-	 * @param string $temp_path - The temporary file path to scan for template files
-	 *
-	 * @return array An array of temporary files on the filesystem
-	 */
-	private function find_temp_files( $temp_path ) {
-
-		$file_names = [];
-
-		$possible_file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
-
-		// Find nested files in the unzipped path. This happens for example when the user imports a Template Kit.
-		foreach ( $possible_file_names as $possible_file_name ) {
-			$full_possible_file_name = $temp_path . '/' . $possible_file_name;
-			if ( is_dir( $full_possible_file_name ) ) {
-				$file_names = $file_names + $this->find_temp_files( $full_possible_file_name );
-			} else {
-				$file_names[] = $full_possible_file_name;
-			}
-		}
-
-		return $file_names;
-	}
-
-	/**
 	 * Import local template.
 	 *
 	 * Import template from a file.
@@ -833,7 +796,6 @@ class Source_Local extends Source_Base {
 	 *
 	 * @param string $name - The file name
 	 * @param string $path - The file path
-	 *
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
 	public function import_template( $name, $path ) {
@@ -843,58 +805,40 @@ class Source_Local extends Source_Base {
 
 		$items = [];
 
-		$file_extension = pathinfo( $name, PATHINFO_EXTENSION );
+		// If the import file is a Zip file with potentially multiple JSON files
+		if ( 'zip' === pathinfo( $name, PATHINFO_EXTENSION ) ) {
+			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
 
-		if ( 'zip' === $file_extension ) {
-			if ( ! class_exists( '\ZipArchive' ) ) {
-				return new \WP_Error( 'zip_error', 'PHP Zip extension not loaded' );
+			if ( is_wp_error( $extracted_files ) ) {
+				// Remove the temporary zip file, since it's now not necessary.
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
+				// Delete the temporary extraction directory, since it's now not necessary.
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+
+				return $extracted_files;
 			}
 
-			$zip = new \ZipArchive();
-
-			$wp_upload_dir = wp_upload_dir();
-
-			$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR . '/' . uniqid();
-
-			$zip->open( $path );
-
-			$valid_entries = [];
-
-			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
-				$zipped_file_name = $zip->getNameIndex( $i );
-				$zipped_extension = pathinfo( $zipped_file_name, PATHINFO_EXTENSION );
-				// Template Kit zip files contain a `manifest.json` file, this is not a valid Elementor template so ensure we skip it.
-				if ( 'json' === $zipped_extension && 'manifest.json' !== $zipped_file_name ) {
-					$valid_entries[] = $zipped_file_name;
-				}
-			}
-
-			if ( ! empty( $valid_entries ) ) {
-				$zip->extractTo( $temp_path, $valid_entries );
-			}
-
-			$zip->close();
-
-			$file_names = $this->find_temp_files( $temp_path );
-
-			foreach ( $file_names as $full_file_name ) {
-				$import_result = $this->import_single_template( $full_file_name );
-
-				unlink( $full_file_name );
+			foreach ( $extracted_files['files'] as $file_path ) {
+				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
+					Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
+
 					return $import_result;
 				}
 
 				$items[] = $import_result;
 			}
 
-			rmdir( $temp_path );
+			// Delete the temporary extraction directory, since it's now not necessary.
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
+			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
+
 				return $import_result;
 			}
 
@@ -922,7 +866,7 @@ class Source_Local extends Source_Base {
 	public function post_row_actions( $actions, \WP_Post $post ) {
 		if ( self::is_base_templates_screen() ) {
 			if ( $this->is_template_supports_export( $post->ID ) ) {
-				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), __( 'Export Template', 'elementor' ) );
+				$actions['export-template'] = sprintf( '<a href="%1$s">%2$s</a>', $this->get_export_link( $post->ID ), esc_html__( 'Export Template', 'elementor' ) );
 			}
 		}
 
@@ -950,9 +894,9 @@ class Source_Local extends Source_Base {
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo __( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo esc_html__( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
-				<div id="elementor-import-template-title"><?php echo __( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
+				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
 					<input type="hidden" name="library_action" value="direct_import_template">
@@ -1137,7 +1081,7 @@ class Source_Local extends Source_Base {
 	 * @return array An array of the available bulk actions.
 	 */
 	public function admin_add_bulk_export_action( $actions ) {
-		$actions[ self::BULK_EXPORT_ACTION ] = __( 'Export', 'elementor' );
+		$actions[ self::BULK_EXPORT_ACTION ] = esc_html__( 'Export', 'elementor' );
 
 		return $actions;
 	}
@@ -1218,7 +1162,7 @@ class Source_Local extends Source_Base {
 				<?php
 				$all_title = $this->get_library_title();
 				if ( ! $all_title ) {
-					$all_title = __( 'All', 'elementor' );
+					$all_title = esc_html__( 'All', 'elementor' );
 				}
 				echo $all_title; ?>
 			</a>
@@ -1313,7 +1257,7 @@ class Source_Local extends Source_Base {
 		$args = wp_parse_args( $args, [
 			'additional_inline_style' => '',
 			'href' => '',
-			'description' => __( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
+			'description' => esc_html__( 'Add templates and reuse them across your website. Easily export and import them to any other project, for an optimized workflow.', 'elementor' ),
 		] );
 		$inline_style .= $args['additional_inline_style'];
 		?>
@@ -1346,14 +1290,14 @@ class Source_Local extends Source_Base {
 				<h2>
 					<?php
 					/* translators: %s: Template type label. */
-					printf( __( 'Create Your First %s', 'elementor' ), $current_type_label );
+					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
 				<p><?php echo $description; ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
 					<?php
 					/* translators: %s: Template type label. */
-					printf( __( 'Add New %s', 'elementor' ), $current_type_label );
+					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
 			</div>
@@ -1392,13 +1336,13 @@ class Source_Local extends Source_Base {
 	 * @since 1.6.0
 	 * @access private
 	 *
-	 * @param string $file_name File name.
+	 * @param string $file_path File name.
 	 *
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
 	 */
-	private function import_single_template( $file_name ) {
-		$data = json_decode( file_get_contents( $file_name ), true );
+	private function import_single_template( $file_path ) {
+		$data = json_decode( file_get_contents( $file_path ), true );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
@@ -1433,6 +1377,9 @@ class Source_Local extends Source_Base {
 			'type' => $data['type'],
 			'page_settings' => $page_settings,
 		] );
+
+		// Remove the temporary file, now that we're done with it.
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $file_path );
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;
@@ -1635,7 +1582,7 @@ class Source_Local extends Source_Base {
 		$offset = 2;
 
 		$posts_columns = array_slice( $posts_columns, 0, $offset, true ) + [
-			'elementor_library_type' => __( 'Type', 'elementor' ),
+			'elementor_library_type' => esc_html__( 'Type', 'elementor' ),
 		] + array_slice( $posts_columns, $offset, null, true );
 
 		return $posts_columns;
@@ -1664,9 +1611,9 @@ class Source_Local extends Source_Base {
 
 			if ( $current_tab_group ) {
 				$titles = [
-					'library' => __( 'Saved Templates', 'elementor' ),
-					'theme' => __( 'Theme Builder', 'elementor' ),
-					'popup' => __( 'Popups', 'elementor' ),
+					'library' => esc_html__( 'Saved Templates', 'elementor' ),
+					'theme' => esc_html__( 'Theme Builder', 'elementor' ),
+					'popup' => esc_html__( 'Popups', 'elementor' ),
 				];
 
 				if ( ! empty( $titles[ $current_tab_group ] ) ) {

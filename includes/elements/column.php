@@ -55,7 +55,7 @@ class Element_Column extends Element_Base {
 	 * @return string Column title.
 	 */
 	public function get_title() {
-		return __( 'Column', 'elementor' );
+		return esc_html__( 'Column', 'elementor' );
 	}
 
 	/**
@@ -108,7 +108,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'layout',
 			[
-				'label' => __( 'Layout', 'elementor' ),
+				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab' => Controls_Manager::TAB_LAYOUT,
 			]
 		);
@@ -117,7 +117,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'_title',
 			[
-				'label' => __( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'render_type' => 'none',
 			]
@@ -126,7 +126,7 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'_inline_size',
 			[
-				'label' => __( 'Column Width', 'elementor' ) . ' (%)',
+				'label' => esc_html__( 'Column Width', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::NUMBER,
 				'min' => 2,
 				'max' => 98,
@@ -154,22 +154,25 @@ class Element_Column extends Element_Base {
 		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$main_selector_element = $is_dome_optimization_active ? 'widget' : 'column';
 		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
-		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap';
+		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap' . $widget_wrap_child;
+		$widget_wrap_relation = $is_dome_optimization_active ? '' : ' > ';
+		$wrapper_populated = '{{WRAPPER}}' . $column_wrap_child . '.elementor-element-populated';
+		$wrapper_populated_hover = $is_dome_optimization_active ? $wrapper_populated . ':hover' : '{{WRAPPER}}:hover' . $column_wrap_child . '.elementor-element-populated';
 
 		$this->add_responsive_control(
 			'content_position',
 			[
-				'label' => __( 'Vertical Align', 'elementor' ),
+				'label' => esc_html__( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'top' => __( 'Top', 'elementor' ),
-					'center' => __( 'Middle', 'elementor' ),
-					'bottom' => __( 'Bottom', 'elementor' ),
-					'space-between' => __( 'Space Between', 'elementor' ),
-					'space-around' => __( 'Space Around', 'elementor' ),
-					'space-evenly' => __( 'Space Evenly', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'top' => esc_html__( 'Top', 'elementor' ),
+					'center' => esc_html__( 'Middle', 'elementor' ),
+					'bottom' => esc_html__( 'Bottom', 'elementor' ),
+					'space-between' => esc_html__( 'Space Between', 'elementor' ),
+					'space-around' => esc_html__( 'Space Around', 'elementor' ),
+					'space-evenly' => esc_html__( 'Space Evenly', 'elementor' ),
 				],
 				'selectors_dictionary' => [
 					'top' => 'flex-start',
@@ -179,7 +182,7 @@ class Element_Column extends Element_Base {
 					// TODO: The following line is for BC since 2.7.0
 					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-' . $main_selector_element . '-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"]' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -187,34 +190,32 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => __( 'Horizontal Align', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Align', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'flex-start' => __( 'Start', 'elementor' ),
-					'center' => __( 'Center', 'elementor' ),
-					'flex-end' => __( 'End', 'elementor' ),
-					'space-between' => __( 'Space Between', 'elementor' ),
-					'space-around' => __( 'Space Around', 'elementor' ),
-					'space-evenly' => __( 'Space Evenly', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'flex-start' => esc_html__( 'Start', 'elementor' ),
+					'center' => esc_html__( 'Center', 'elementor' ),
+					'flex-end' => esc_html__( 'End', 'elementor' ),
+					'space-between' => esc_html__( 'Space Between', 'elementor' ),
+					'space-around' => esc_html__( 'Space Around', 'elementor' ),
+					'space-evenly' => esc_html__( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column' . $column_wrap_child . ' > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column' . $column_wrap_child => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
 
-		$space_between_widgets_selector = $is_dome_optimization_active ? '' : '> .elementor-column-wrap ';
-
 		$this->add_responsive_control(
 			'space_between_widgets',
 			[
-				'label' => __( 'Widgets Space', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Widgets Space', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} ' . $space_between_widgets_selector . '> .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}}' => '--widgets-gap: {{VALUE}}px',
 				],
 			]
 		);
@@ -231,13 +232,13 @@ class Element_Column extends Element_Base {
 		];
 
 		$options = [
-			'' => __( 'Default', 'elementor' ),
+			'' => esc_html__( 'Default', 'elementor' ),
 		] + array_combine( $possible_tags, $possible_tags );
 
 		$this->add_control(
 			'html_tag',
 			[
-				'label' => __( 'HTML Tag', 'elementor' ),
+				'label' => esc_html__( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'render_type' => 'none',
@@ -249,7 +250,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_style',
 			[
-				'label' => __( 'Background', 'elementor' ),
+				'label' => esc_html__( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -259,7 +260,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -268,7 +269,7 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-' . $main_selector_element . '-wrap, {{WRAPPER}} > .elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background)' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap, {{WRAPPER}}' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -282,7 +283,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -290,14 +291,14 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+				'selector' => $wrapper_populated_hover,
 			]
 		);
 
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
@@ -323,7 +324,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_background_overlay',
 			[
-				'label' => __( 'Background Overlay', 'elementor' ),
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'background_background' => [ 'classic', 'gradient' ],
@@ -336,7 +337,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_overlay_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -344,14 +345,14 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'selector' => $wrapper_populated . ' >  .elementor-background-overlay',
 			]
 		);
 
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -363,7 +364,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+					$wrapper_populated . ' > .elementor-background-overlay' => 'opacity: {{SIZE}};',
 				],
 				'condition' => [
 					'background_overlay_background' => [ 'classic', 'gradient' ],
@@ -375,17 +376,17 @@ class Element_Column extends Element_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
+				'selector' => $wrapper_populated . ' >  .elementor-background-overlay',
 			]
 		);
 
 		$this->add_control(
 			'overlay_blend_mode',
 			[
-				'label' => __( 'Blend Mode', 'elementor' ),
+				'label' => esc_html__( 'Blend Mode', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => __( 'Normal', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
 					'multiply' => 'Multiply',
 					'screen' => 'Screen',
 					'overlay' => 'Overlay',
@@ -397,7 +398,7 @@ class Element_Column extends Element_Base {
 					'luminosity' => 'Luminosity',
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
+					$wrapper_populated . ' > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
 				],
 			]
 		);
@@ -407,7 +408,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_overlay_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -415,14 +416,14 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
+				'selector' => $wrapper_populated_hover . ' >  .elementor-background-overlay',
 			]
 		);
 
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -434,7 +435,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+					$wrapper_populated_hover . ' >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
 				],
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
@@ -446,14 +447,14 @@ class Element_Column extends Element_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
+				'selector' => $wrapper_populated_hover . ' >  .elementor-background-overlay',
 			]
 		);
 
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
@@ -478,7 +479,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_border',
 			[
-				'label' => __( 'Border', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -488,7 +489,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_border_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -496,18 +497,18 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+				'selector' => $wrapper_populated,
 			]
 		);
 
 		$this->add_responsive_control(
 			'border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$wrapper_populated . ', ' . $wrapper_populated . ' > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -516,7 +517,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'selector' => '{{WRAPPER}} > .elementor-element-populated',
+				'selector' => $wrapper_populated,
 			]
 		);
 
@@ -525,7 +526,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_tab(
 			'tab_border_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -533,18 +534,18 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+				'selector' => $wrapper_populated_hover,
 			]
 		);
 
 		$this->add_responsive_control(
 			'border_radius_hover',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover > .elementor-element-populated, {{WRAPPER}}:hover > .elementor-element-populated > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$wrapper_populated_hover . ', ' . $wrapper_populated_hover . ' > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -553,14 +554,14 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
+				'selector' => $wrapper_populated_hover,
 			]
 		);
 
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -588,8 +589,8 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+					$wrapper_populated => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					$wrapper_populated . ' > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
 				],
 			]
 		);
@@ -604,7 +605,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_typo',
 			[
-				'label' => __( 'Typography', 'elementor' ),
+				'label' => esc_html__( 'Typography', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
@@ -613,11 +614,11 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'heading_color',
 			[
-				'label' => __( 'Heading Color', 'elementor' ),
+				'label' => esc_html__( 'Heading Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
+					$wrapper_populated . ' .elementor-heading-title, {{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'separator' => 'none',
 			]
@@ -626,11 +627,11 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'color_text',
 			[
-				'label' => __( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
+					$wrapper_populated => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -638,11 +639,11 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'color_link',
 			[
-				'label' => __( 'Link Color', 'elementor' ),
+				'label' => esc_html__( 'Link Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
+					$wrapper_populated . ' a, {{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -650,11 +651,11 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'color_link_hover',
 			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
+				'label' => esc_html__( 'Link Hover Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
+					$wrapper_populated . ' a:hover, {{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -662,24 +663,24 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'text_align',
 			[
-				'label' => __( 'Text Align', 'elementor' ),
+				'label' => esc_html__( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
+					$wrapper_populated => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -690,7 +691,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Advanced', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
@@ -699,11 +700,11 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'margin',
 			[
-				'label' => __( 'Margin', 'elementor' ),
+				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$wrapper_populated => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -711,11 +712,11 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'padding',
 			[
-				'label' => __( 'Padding', 'elementor' ),
+				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$wrapper_populated => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -723,7 +724,7 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'z_index',
 			[
-				'label' => __( 'Z-Index', 'elementor' ),
+				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'selectors' => [
@@ -735,13 +736,13 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'_element_id',
 			[
-				'label' => __( 'CSS ID', 'elementor' ),
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'dynamic' => [
 					'active' => true,
 				],
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 				'classes' => 'elementor-control-direction-ltr',
 			]
@@ -750,14 +751,14 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'css_classes',
 			[
-				'label' => __( 'CSS Classes', 'elementor' ),
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'dynamic' => [
 					'active' => true,
 				],
 				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
@@ -787,7 +788,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Motion Effects', 'elementor' ),
+				'label' => esc_html__( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -795,7 +796,7 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'animation',
 			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
 			]
@@ -804,13 +805,13 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'animation_duration',
 			[
-				'label' => __( 'Animation Duration', 'elementor' ),
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
 				'condition' => [
@@ -822,7 +823,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'animation_delay',
 			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
 				'default' => '',
 				'min' => 0,
@@ -840,7 +841,7 @@ class Element_Column extends Element_Base {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
-				'label' => __( 'Responsive', 'elementor' ),
+				'label' => esc_html__( 'Responsive', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -848,7 +849,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => __( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -857,7 +858,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'hide_desktop',
 			[
-				'label' => __( 'Hide On Desktop', 'elementor' ),
+				'label' => esc_html__( 'Hide On Desktop', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -870,7 +871,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'hide_tablet',
 			[
-				'label' => __( 'Hide On Tablet', 'elementor' ),
+				'label' => esc_html__( 'Hide On Tablet', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -883,7 +884,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'hide_mobile',
 			[
-				'label' => __( 'Hide On Mobile', 'elementor' ),
+				'label' => esc_html__( 'Hide On Mobile', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => '',
 				'prefix_class' => 'elementor-',
@@ -910,16 +911,15 @@ class Element_Column extends Element_Base {
 	 */
 	protected function content_template() {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
 
-		?>
-		<div class="elementor-<?php echo $wrapper_element; ?>-wrap">
+		if ( $is_dom_optimization_active ) { ?>
 			<div class="elementor-background-overlay"></div>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
+		<?php } else { ?>
+			<div class="elementor-column-wrap">
+				<div class="elementor-background-overlay"></div>
 				<div class="elementor-widget-wrap"></div>
-			<?php } ?>
-		</div>
-		<?php
+			</div>
+		<?php }
 	}
 
 	/**
@@ -939,7 +939,7 @@ class Element_Column extends Element_Base {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
 
-		$column_wrap_classes = $is_dom_optimization_active ? [ 'elementor-widget-wrap' ] : [ 'elementor-column-wrap' ];
+		$column_wrap_classes = $is_dom_optimization_active ? [] : [ 'elementor-column-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
@@ -958,12 +958,14 @@ class Element_Column extends Element_Base {
 		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
+		<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div <?php echo $this->get_render_attribute_string( $wrapper_attribute_string ); ?>>
+		<?php endif; ?>
 		<?php if ( $has_background_overlay ) : ?>
-			<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
+			<div <?php $this->print_render_attribute_string( '_background_overlay' ); ?>></div>
 		<?php endif; ?>
 		<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div <?php echo $this->get_render_attribute_string( '_widget_wrapper' ); ?>>
+			<div <?php $this->print_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php endif; ?>
 		<?php
 	}
@@ -977,10 +979,12 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+
+		if ( ! $is_dom_optimization_active ) { ?>
 				</div>
-		<?php } ?>
 			</div>
+		<?php } ?>
 		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
@@ -1008,6 +1012,16 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
+
+		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+
+		if ( $is_dom_optimization_active ) {
+			$this->add_render_attribute( '_wrapper', 'class', 'elementor-widget-wrap' );
+
+			if ( $this->get_children() ) {
+				$this->add_render_attribute( '_wrapper', 'class', 'elementor-element-populated' );
+			}
+		}
 
 		parent::add_render_attributes();
 	}

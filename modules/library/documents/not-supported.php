@@ -41,16 +41,7 @@ class Not_Supported extends Library_Document {
 		return $properties;
 	}
 
-	/**
-	 * Get document name.
-	 *
-	 * Retrieve the document name.
-	 *
-	 * @access public
-	 *
-	 * @return string Document name.
-	 */
-	public function get_name() {
+	public static function get_type() {
 		return 'not-supported';
 	}
 
@@ -65,7 +56,7 @@ class Not_Supported extends Library_Document {
 	 * @return string Document title.
 	 */
 	public static function get_title() {
-		return __( 'Not Supported', 'elementor' );
+		return esc_html__( 'Not Supported', 'elementor' );
 	}
 
 	public function save_template_type() {
