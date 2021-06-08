@@ -49,8 +49,13 @@ const config = {
 		'image',
 		'image-box',
 		'social-icons',
+		'tabs',
 		'testimonials',
 		'text-editor',
+		'text-path',
+		'toggle',
+		'video',
+		'wp-widget-text',
 	],
 	/**
 	 * Declare the url origin of local server for testing
