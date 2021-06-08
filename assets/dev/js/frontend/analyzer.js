@@ -308,38 +308,44 @@ const sendData = function( data ) {
 			analyzer: 1,
 		},
 		success: function( response ) {
-			window.parent.postMessage( 'Analyzer data sent successfully.', '*' );
+			sendMessage( 'Analyzer data sent successfully.' );
+			sendMessage( response );
 		},
 		error: function( response ) {
 			if ( 400 === response.status || response.error.length ) {
-				window.parent.postMessage( 'Failed to send Analyzer data.', '*' );
+				sendMessage( 'Failed to send Analyzer data.' );
 			}
 		},
 	} );
 };
 
+const sendMessage = ( message, target = false ) => {
+	window.parent.postMessage( message, target || '*' );
+	// console.log( message );
+};
+
 window.addEventListener( 'DOMContentLoaded', () =>
 	setTimeout( () => {
-		window.parent.postMessage( 'Starting Page Analyzer.', '*' );
+		sendMessage( 'Starting Page Analyzer.' );
 
 		const analyzer = new Analyzer();
 
 		analyzer.init();
 
-		window.parent.postMessage( 'Analyzing the page...', '*' );
+		sendMessage( 'Analyzing the page...' );
 
 		analyzer.run().then( () => {
-			window.parent.postMessage( 'Page Analyzed.', '*' );
-			window.parent.postMessage( 'Creating Report...', '*' );
+			sendMessage( 'Page Analyzed.' );
+			sendMessage( 'Creating Report...' );
 
 			const data = analyzer.getData();
 
-			window.parent.postMessage( data, '*' );
-			window.parent.postMessage( 'Sending Report to the server...', '*' );
+			sendMessage( data, );
+			sendMessage( 'Sending Report to the server...' );
 
 			sendData( data );
-		} ).then( () => window.parent.postMessage( 'Report Sent.', '*' ) ).then( () => {
-			window.parent.postMessage( 'Optimizing Images...', '*' );
+		} ).then( () => sendMessage( 'Report Sent.', '*' ) ).then( () => {
+			sendMessage( 'Optimizing Images...' );
 			optimizeImages( analyzer ).then( () => {
 				const optimizedImages = {};
 				optimizedImages.images = analyzer.images.map( ( image ) => {
