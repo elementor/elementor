@@ -29,7 +29,7 @@ class Elementor_Test_Base extends \WP_UnitTestCase {
 	}
 
 	protected function create_default_kit() {
-		Manager::create_default_kit();
+		return Manager::create_default_kit();
 	}
 
 	protected function remove_default_kit() {

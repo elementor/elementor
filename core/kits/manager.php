@@ -31,7 +31,7 @@ class Manager {
 		$kit = Plugin::$instance->documents->get( $this->get_active_id() );
 
 		if ( ! $this->is_valid_kit( $kit ) ) {
-			return new Kit();
+			return $this->get_empty_kit_instance();
 		}
 
 		return $kit;
@@ -41,7 +41,7 @@ class Manager {
 		$kit = Plugin::$instance->documents->get_doc_for_frontend( $this->get_active_id() );
 
 		if ( ! $this->is_valid_kit( $kit ) ) {
-			return new Kit();
+			return $this->get_empty_kit_instance();
 		}
 
 		return $kit;
@@ -54,6 +54,19 @@ class Manager {
 	 */
 	private function is_valid_kit( $kit ) {
 		return $kit && $kit instanceof Kit && 'trash' !== $kit->get_main_post()->post_status;
+	}
+
+	/**
+	 * Returns an empty kit for situation when there is no kit in the site.
+	 *
+	 * @return Kit
+	 * @throws \Exception
+	 */
+	private function get_empty_kit_instance() {
+		return new Kit( [
+			'settings' => [],
+			'post_id' => 0,
+		] );
 	}
 
 	/**
@@ -128,6 +141,8 @@ class Manager {
 		] );
 
 		update_option( self::OPTION_ACTIVE, $id );
+
+		return $id;
 	}
 
 	/**
