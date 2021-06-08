@@ -86,7 +86,7 @@ class Analyzer extends BaseModule {
 
 			$original_data = $page_data;
 			$optimizer = new Page_Optimizer( $page_data, $post_id );
-			$optimization_results = $optimizer->optimize_page();
+			$optimization_results = $optimizer->optimize();
 
 			$css = $page_data['css'];
 			$critical_css = $page_data['criticalCSS'];

@@ -36,7 +36,7 @@ class Page_Optimizer {
 				$this->analyzer_data;
 	}
 
-	public function optimize_page() {
+	public function optimize() {
 		$images = $this->analyzer_data['images'];
 		$bg_images = $this->analyzer_data['backgroundImages'];
 		$operations_results = [];
