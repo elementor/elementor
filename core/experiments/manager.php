@@ -248,7 +248,7 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => __( 'Font-Awesome Inline', 'elementor' ),
-			'description' => __( 'Loading Font-Awesome inline will reduce total asset loading and increase page rendering speed.', 'elementor' )
+			'description' => __( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
