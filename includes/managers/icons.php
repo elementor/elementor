@@ -216,13 +216,14 @@ class Icons_Manager {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
 
 		foreach ( $symbols as $symbol_id => $symbol ) {
-			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . $symbol['width'] . ' ' . $symbol['height'] . '">';
-			$svg .= '<path d="' . $symbol['path'] . '"></path>';
+			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . esc_attr( $symbol['width'] ) . ' ' . esc_attr( $symbol['height'] ) . '">';
+			$svg .= '<path d="' . esc_attr( $symbol['path'] ) . '"></path>';
 			$svg .= '</symbol>';
 		}
 
 		$svg .= '</svg>';
 
+		// TODO: Replace with print_unescaped_string.
 		echo $svg;
 	}
 
@@ -259,12 +260,12 @@ class Icons_Manager {
 		 */
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			return '<svg xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'] . '">
-				<path d="' . $icon_data['path'] . '"></path>
+				viewBox="0 0 ' . esc_attr( $icon_data['width'] ) . ' ' . esc_attr( $icon_data['height'] ) . '">
+				<path d="' . esc_attr( $icon_data['path'] ) . '"></path>
 			</svg>';
 		}
 
-		return '<svg><use xlink:href="#' . $icon_data['key'] . '" /></svg>';
+		return '<svg><use xlink:href="#' . esc_attr( $icon_data['key'] ) . '" /></svg>';
 	}
 
 	public static function render_uploaded_svg_icon( $value ) {
