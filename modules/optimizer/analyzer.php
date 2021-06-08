@@ -54,22 +54,38 @@ class Analyzer extends BaseModule {
 
 	private function save_images( $images ) {
 		$wp_upload_dir = wp_get_upload_dir();
-		foreach ( $images as $image ) {
+		foreach ( $images as $key => $image ) {
 			$url_key = isset( $image['url'] ) ? $image['url'] : $image['src'];
 			$src_path = str_replace( $wp_upload_dir['baseurl'], $wp_upload_dir['basedir'], $url_key );
-			$destination_path = $src_path . '.webp';
-			$image_id = attachment_url_to_postid( $url_key );
-			update_post_meta( $image_id, '_elementor_optimizer_optimized_' . $image['optimized']['size'], true );
+			$destination_path = $src_path . '-' . $image['optimized']['size'] . '.webp';
+			/*
+						$image_id = attachment_url_to_postid( $url_key );
+
+						if ( $image_id ) {
+							$post_meta_key = '_e_optimizer_image_size_' . $image['optimized']['size'];
+							if ( ! get_post_meta( $image_id, $post_meta_key, true ) ) {
+								update_post_meta( $image_id, $post_meta_key, true );
+							}
+						}
+			*/
 			file_put_contents( $destination_path, file_get_contents( $image['optimized']['data'] ) );
+			unset( $images[ $key ]['optimized']['data'] );
 		}
+
+		return $images;
 	}
 
 	private function save_optimized_images( $optimized_images ) {
-		foreach ( [ 'images', 'backgroundImages' ] as $images_data_key ) {
-			if ( isset( $optimized_images[ $images_data_key ] ) && is_array( $optimized_images[ $images_data_key ] ) && count( $optimized_images[ $images_data_key ] ) ) {
-				$this->save_images( $optimized_images[ $images_data_key ] );
+		$page_data = get_post_meta( $this->post_id, '_elementor_analyzer_report', true );
+		foreach ( [ 'images', 'backgroundImages' ] as $group ) {
+			if ( isset( $optimized_images[ $group ] ) &&
+				is_array( $optimized_images[ $group ] ) &&
+				count( $optimized_images[ $group ] ) ) {
+					$page_data[ $group ] = $this->save_images( $optimized_images[ $group ] );
 			}
 		}
+
+		update_post_meta( $this->post_id, '_elementor_analyzer_report', $page_data );
 
 		wp_send_json_success( [ $optimized_images ], 200 );
 	}
@@ -84,7 +100,6 @@ class Analyzer extends BaseModule {
 				$this->save_optimized_images( $page_data['optimizedImages'] );
 			}
 
-			$original_data = $page_data;
 			$optimizer = new Page_Optimizer( $page_data, $post_id );
 			$optimization_results = $optimizer->optimize();
 
