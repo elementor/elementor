@@ -67,7 +67,7 @@ class Page_Optimizer {
 			if ( $image_id && $image['placeholder'] ) {
 				$meta_key = '_e_optimizer_placeholder_' . $image['placeholder']['size'];
 				$saved_placeholders[ $index ] =
-					update_post_meta( $image_id, $meta_key, $image['placeholder']['data'] );
+					add_post_meta( $image_id, $meta_key, $image['placeholder']['data'], true );
 			}
 		}
 
