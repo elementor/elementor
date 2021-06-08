@@ -50,7 +50,12 @@ class Page_Loader extends BaseModule {
 
 			add_action( 'wp_footer', function() {
 				echo "
-				<script>
+				<script id='e-optimizer-loader'>
+					const background_images = JSON.parse( '" . str_replace('\u0027', "\\'", str_replace(
+					'\u0022',
+					'\\\"',
+					json_encode( $this->background_images, JSON_HEX_QUOT|JSON_HEX_APOS ) ) ) . "' );
+
 					document.addEventListener( 'DOMContentLoaded', () => {
 						const imagesPromises = [];
 						const bgImagesPromises = [];
