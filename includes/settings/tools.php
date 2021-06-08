@@ -75,15 +75,21 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
 
-		$id = get_option( Manager::OPTION_ACTIVE );
+		$id = Plugin::$instance->kits_manager->get_active_id();
 
-		if ( ! $id ) {
-			update_option( Manager::OPTION_ACTIVE, Plugin::$instance->kits_manager->create_default() );
-
-			wp_send_json_success();
+		if ( $id ) {
+			wp_send_json_error( __( 'There\'s already an active kit.', 'elementor' ) );
 		}
 
-		wp_send_json_error();
+		$created_default_kit = Plugin::$instance->kits_manager->create_default();
+
+		if ( ! $created_default_kit ) {
+			wp_send_json_error( __( 'An error occurred while trying to create a kit.', 'elementor' ) );
+		}
+
+		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
+
+		wp_send_json_success( __( 'New kit have been created successfully', 'elementor' ) );
 	}
 
 	/**
