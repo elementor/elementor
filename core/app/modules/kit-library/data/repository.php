@@ -249,7 +249,11 @@ class Repository {
 		$manifest_content = ( new Collection( (array) $manifest->content ) )
 			->reduce( function ( $carry, $content, $type ) {
 				$mapped_documents = array_map( function ( $document ) use ( $type ) {
-					$document->doc_type = $type;
+					// TODO: Fix it!
+					// Hack to override a bug when a document with type of 'wp-page' is declared as 'wp-post'.
+					if ( 'page' === $type ) {
+						$document->doc_type = 'wp-page';
+					}
 
 					return $document;
 				}, (array) $content );

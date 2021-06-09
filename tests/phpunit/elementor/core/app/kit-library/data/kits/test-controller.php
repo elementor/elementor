@@ -128,21 +128,21 @@ class Test_Controller extends Elementor_Test_Base {
 				[
 					'id' => 2,
 					'title' => 'page_1',
-					'doc_type' => 'page',
+					'doc_type' => 'wp-page',
 					'thumbnail_url' => 'https://localhost/thumbnail_3.png',
 					'preview_url' => 'https://localhost/page_1',
 				],
 				[
 					'id' => 3,
 					'title' => 'page_2',
-					'doc_type' => 'page',
+					'doc_type' => 'wp-page',
 					'thumbnail_url' => 'https://localhost/thumbnail_4.png',
 					'preview_url' => 'https://localhost/page_2',
 				],
 				[
 					'id' => 5,
 					'title' => 'post_1',
-					'doc_type' => 'post',
+					'doc_type' => 'wp-post',
 					'thumbnail_url' => 'https://localhost/thumbnail_5.png',
 					'preview_url' => 'https://localhost/post_1',
 				],
@@ -227,7 +227,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'page' => (object) [
 					2 => (object) [
 						'title' => 'page_1',
-						'doc_type' => 'wp-page',
+						'doc_type' => 'wp-post', // This represent a bug in the manifest.json should be replace to 'wp-page' when the bug fixed.
 						'thumbnail' => 'https://localhost/thumbnail_3.png',
 						'url' => 'https://localhost/page_1',
 					],

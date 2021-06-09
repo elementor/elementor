@@ -21,7 +21,7 @@ function fetchContentTypes() {
 		{
 			id: 'page',
 			label: __( 'Pages', 'elementor' ),
-			doc_types: [ 'page' ],
+			doc_types: [ 'wp-page' ],
 			order: 0,
 		},
 		{
