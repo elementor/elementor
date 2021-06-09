@@ -42,6 +42,45 @@ class Utils {
 		'span',
 	];
 
+	const EXTENDED_ALLOWED_HTML_TAGS = [
+		'iframe' => [
+			'iframe' => [
+				'allow' => true,
+				'allowfullscreen' => true,
+				'frameborder' => true,
+				'height' => true,
+				'loading' => true,
+				'name' => true,
+				'referrerpolicy' => true,
+				'sandbox' => true,
+				'src' => true,
+				'width' => true,
+			]
+		],
+		'svg' => [
+			'svg' => [
+				'aria-hidden' => true,
+				'aria-labelledby' => true,
+				'class' => true,
+				'height' => true,
+				'role' => true,
+				'viewbox' => true,
+				'width' => true,
+				'xmlns' => true,
+			],
+			'g' => [
+				'fill' => true
+			],
+			'title' => [
+				'title' => true
+			],
+			'path' => [
+				'd' => true,
+				'fill' => true,
+			],
+		],
+	];
+
 	/**
 	 * Is ajax.
 	 *
@@ -712,5 +751,18 @@ class Utils {
 		] );
 
 		return new \WP_Query( $args );
+	}
+
+	public static function print_wp_kses_extended( string $string, array $tags ) {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+
+		foreach ( $tags as $tag ) {
+			if ( isset( self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
+				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
+				$allowed_html = array_merge( $allowed_html, $extended_tags );
+			}
+		}
+
+		echo wp_kses( $string, $allowed_html );
 	}
 }
