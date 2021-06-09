@@ -324,7 +324,7 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea;
 
-			self.elements.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( '.wp-header-end' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 
