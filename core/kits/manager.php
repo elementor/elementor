@@ -97,7 +97,7 @@ class Manager {
 		return $kit->get_id();
 	}
 
-	private function create_default() {
+	public function create_default() {
 		return $this->create( [ 'post_title' => __( 'Default Kit', 'elementor' ) ] );
 	}
 
