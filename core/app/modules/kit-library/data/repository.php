@@ -246,12 +246,23 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_manifest_api_response( $manifest ) {
+		$manifest_content = ( new Collection( (array) $manifest->content ) )
+			->reduce( function ( $carry, $content, $type ) {
+				$mapped_documents = array_map( function ( $document ) use ( $type ) {
+					// TODO: Fix it!
+					// Hack to override a bug when a document with type of 'wp-page' is declared as 'wp-post'.
+					if ( 'page' === $type ) {
+						$document->doc_type = 'wp-page';
+					}
+
+					return $document;
+				}, (array) $content );
+
+				return $carry + $mapped_documents;
+			}, [] );
+
 		$content = ( new Collection( (array) $manifest->templates ) )
-			->union(
-				array_reduce( (array) $manifest->content, function ( $carry, $content ) {
-					return $carry + ( (array) $content );
-				}, [] )
-			)
+			->union( $manifest_content )
 			->map( function ( $manifest_item, $key ) {
 				return [
 					'id' => isset( $manifest_item->id ) ? $manifest_item->id : $key,
