@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Testing;
 
-use Elementor\Plugin;
-use Elementor\Core\Wp_Api;
 use Elementor\Core\Kits\Manager;
+use Elementor\Core\Wp_Api;
+use Elementor\Plugin;
 use Elementor\Testing\Traits\Auth_Helpers;
 use Elementor\Testing\Traits\Base_Elementor;
 use Elementor\Testing\Traits\Extra_Assertions;

@@ -124,6 +124,8 @@ class Manager {
 	 *
 	 * This action runs on activation hook, all the Plugin components do not exists and
 	 * the Document manager and Kits manager instances cannot be used.
+	 *
+	 * @return int|void|\WP_Error
 	 */
 	public static function create_default_kit() {
 		if ( get_option( self::OPTION_ACTIVE ) ) {
