@@ -25,7 +25,7 @@ class Module extends BaseApp {
 			'name' => 'admin-top-bar',
 			'title' => __( 'Admin Top Bar', 'elementor' ),
 			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'default' => Manager::STATE_INACTIVE,
 		];
 	}
