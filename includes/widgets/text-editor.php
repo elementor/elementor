@@ -408,24 +408,22 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
 
 		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
 
-		if ( $should_render_inline_editing ) {
+		if ( $is_edit_mode ) {
 			$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
 		}
 
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
-		<?php if ( $should_render_inline_editing ) { ?>
+		<?php if ( $is_edit_mode ) { ?>
 			<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
 			<?php echo $editor_content; ?>
-		<?php if ( $should_render_inline_editing ) { ?>
+		<?php if ( $is_edit_mode ) { ?>
 			</div>
 		<?php } ?>
 		<?php
@@ -455,23 +453,21 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
-			isEditMode = elementorFrontend.isEditMode(),
-			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
+		const isEditMode = elementorFrontend.isEditMode();
 
-		if ( shouldRenderInlineEditing ) {
+		if ( isEditMode ) {
 			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
 		}
 
 		view.addInlineEditingAttributes( 'editor', 'advanced' );
 
-		if ( shouldRenderInlineEditing ) { #>
+		if ( isEditMode ) { #>
 			<div {{{ view.getRenderAttributeString( 'editor' ) }}}>
 		<# } #>
 
 			{{{ settings.editor }}}
 
-		<# if ( shouldRenderInlineEditing ) { #>
+		<# if ( isEditMode ) { #>
 			</div>
 		<# } #>
 		<?php
