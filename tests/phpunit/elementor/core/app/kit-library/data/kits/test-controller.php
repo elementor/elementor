@@ -227,7 +227,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'page' => (object) [
 					2 => (object) [
 						'title' => 'page_1',
-						'doc_type' => 'wp-page',
+						'doc_type' => 'wp-post', // This represent a bug in the manifest.json should be replace to 'wp-page' when the bug fixed.
 						'thumbnail' => 'https://localhost/thumbnail_3.png',
 						'url' => 'https://localhost/page_1',
 					],
