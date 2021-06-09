@@ -21,5 +21,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			</AppWrapper>,
 			document.getElementById( 'e-admin-top-bar-root' )
 		);
+	} else {
+		const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
+		adminTopBarElement.classList.add( 'top-bar-not-active' );
 	}
 } );

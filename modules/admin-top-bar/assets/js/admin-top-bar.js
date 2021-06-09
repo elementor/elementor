@@ -14,14 +14,18 @@ export default function AdminTopBar( props ) {
 
 		if ( ! adminTopBarCheckboxElement || adminTopBarCheckboxElement.checked ) {
 			adminTopBarElement.classList.add( 'top-bar-active' );
+		} else {
+			adminTopBarElement.classList.add( 'top-bar-not-active' );
 		}
 
 		if ( adminTopBarCheckboxElement ) {
 			adminTopBarCheckboxElement.addEventListener( 'change', function() {
 				if ( this.checked ) {
 					adminTopBarElement.classList.add( 'top-bar-active' );
+					adminTopBarElement.classList.remove( 'top-bar-not-active' );
 				} else {
 					adminTopBarElement.classList.remove( 'top-bar-active' );
+					adminTopBarElement.classList.add( 'top-bar-not-active' );
 				}
 			} );
 		}
