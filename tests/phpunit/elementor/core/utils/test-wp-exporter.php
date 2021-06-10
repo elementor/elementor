@@ -15,6 +15,14 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 	 */
 	private $expected_errors_found;
 
+	public function setUp() {
+		parent::setUp();
+
+		// Should remove the default kit because it is actually a post and it affect
+		// the number of posts that exists.
+		$this->remove_default_kit();
+	}
+
 	protected function expected_error( $error_messages ) {
 		$this->expected_error_list = (array) $error_messages;
 
