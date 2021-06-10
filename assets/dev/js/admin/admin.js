@@ -143,7 +143,8 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				event.preventDefault();
 				var $thisButton = $( this );
 
-				$thisButton.removeClass( 'success' ).addClass( 'loading' );
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
 
 				$.post( ajaxurl, {
 					action: 'elementor_recreate_kit',
@@ -151,6 +152,10 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( reason ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+						$thisButton.after( `<div class="e-recreate-kit-error-message">${ reason }</div>` );
 					} );
 			} );
 
