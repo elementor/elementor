@@ -1110,8 +1110,8 @@ export default class EditorBase extends Marionette.Application {
 	kitNotExistsError() {
 		this.showFatalErrorDialog( {
 			className: 'elementor-preview-loading-error',
-			headerMessage: __( 'Your site doesn’t have a default kit', 'elementor' ),
-			message: __( 'Seems like your kit was deleted, please create new one.', 'elementor' ),
+			headerMessage: __( 'Your site doesn\'t have a default kit', 'elementor' ),
+			message: __( 'Seems like your kit was deleted, please create new one or try restore it from trash.', 'elementor' ),
 			strings: {
 				confirm: __( 'Recreate Kit', 'elementor' ),
 				cancel: __( 'Go Back', 'elementor' ),

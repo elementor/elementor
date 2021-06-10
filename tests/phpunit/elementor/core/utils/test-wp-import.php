@@ -8,6 +8,8 @@ class Test_WP_Import extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
+		// Should remove the default kit because it is actually a post and it affect
+		// the number of posts that exists.
 		$this->remove_default_kit();
 	}
 
