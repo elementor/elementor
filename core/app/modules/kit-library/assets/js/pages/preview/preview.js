@@ -111,7 +111,7 @@ export default function Preview( props ) {
 			{
 				isIframeLoading &&
 					<div className="e-kit-library__preview-loader">
-						<Icon className={ `eicon-loading eicon-animation-spin` } />
+						<Icon className="eicon-loading eicon-animation-spin" />
 					</div>
 			}
 			{

@@ -1,3 +1,6 @@
+$e-kit-library-preview-loader-z-index: 0;
+$e-kit-library-preview-z-index: 1;
+
 .e-kit-library__preview {
 	&-loader {
 		position: absolute;
@@ -10,18 +13,18 @@
 		justify-content: center;
 		font-size: type( size, '30' );
 		color: tints( 500 );
-		z-index: 0;
+		z-index: $e-kit-library-preview-loader-z-index;
 	}
 
 	&-iframe {
 		border: none;
 		transition: $transition-hover;
-		box-shadow: shadow("2");
+		box-shadow: shadow( "2" );
 	}
 
 	&-iframe-container {
 		overflow-y: auto;
 		position: relative;
-		z-index: 1;
+		z-index: $e-kit-library-preview-z-index;
 	}
 }
