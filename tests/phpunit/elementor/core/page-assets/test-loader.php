@@ -54,12 +54,39 @@ class Test_Loader extends Elementor_Test_Base {
 	public function test_add_assets() {
 		$assets_loader = $this->elementor()->assets_loader;
 
-		$this->add_testing_assets( 'e-style-add-assets', 'e-script-add-assets' );
+		$assets = [
+			'styles' => [
+				'e-style-add-asset' => [
+					'src' => 'e-style-add-asset-src',
+					'version' => 'e-style-add-asset-version',
+					'dependencies' => [],
+				],
+			],
+			'scripts' => [
+				'e-script-add-asset' => [
+					'src' => 'e-script-add-asset-src',
+					'version' => 'e-script-add-asset-version',
+					'dependencies' => [],
+				],
+			],
+		];
 
-		$assets = $assets_loader->get_assets();
+		$assets_loader->add_assets( $assets );
 
-		$this->assertArrayHasKey( 'e-style-add-assets', $assets['styles'], 'e-style-add-asset was not properly added to assets.' );
-		$this->assertArrayHasKey( 'e-script-add-assets', $assets['scripts'], 'e-script-add-asset was not properly added to assets.' );
+		$added_assets = $assets_loader->get_assets();
+
+		foreach ( $assets as $assets_type => $assets_type_data ) {
+			$this->assertArrayHasKey( $assets_type, $added_assets, $assets_type . ' was not properly added to assets.' );
+
+			foreach ( $assets_type_data as $asset_name => $asset_data ) {
+				$this->assertArrayHasKey( $asset_name, $added_assets[ $assets_type ], $asset_name . ' was not properly added to ' . $assets_type . ' of assets.' );
+
+				foreach( $asset_data as $key => $value ) {
+					$this->assertArrayHasKey( $key, $added_assets[ $assets_type ][ $asset_name ], $key . ' was not properly added to ' . $asset_name );
+					$this->assertEquals( $value, $added_assets[ $assets_type ][ $asset_name ][ $key ] );
+				}
+			}
+		}
 	}
 
 	public function test_enqueue_assets() {
@@ -106,7 +133,7 @@ class Test_Loader extends Elementor_Test_Base {
 		global $wp_styles;
 		global $wp_scripts;
 
-		// Creating a new instance to get only the initial assets that exist in the assets loader (without the testing assets that were created by the other testing methods).
+		// Creating a new instance to get only the initial assets that exist in the assets loader (without the testing assets that were added by the other testing methods).
 		$new_assets_loader_instance = new Assets_Loader();
 
 		$current_assets = $new_assets_loader_instance->get_assets();
@@ -116,13 +143,15 @@ class Test_Loader extends Elementor_Test_Base {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
 				if ( 'scripts' === $assets_type ) {
 					wp_deregister_script( $asset_name );
+					$this->assertArrayNotHasKey( $asset_name, $wp_scripts->registered, 'script asset should not be registered.' );
 				} else {
 					wp_deregister_style( $asset_name );
+					$this->assertArrayNotHasKey( $asset_name, $wp_styles->registered, 'style asset should not be registered.' );
 				}
 			}
 		}
 
-		// Creating additional instance in order to trigger the private registered method that initiated by the Assets Loader class constructor.
+		// Creating additional instance in order to trigger the private 'register_assets' method that initiated by the Assets Loader constructor.
 		new Assets_Loader();
 
 		// Making sure that the additional assets loader instance has registered all the assets that were de-registered above.
