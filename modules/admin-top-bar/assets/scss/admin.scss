@@ -113,6 +113,10 @@ $top-bar-height: 50px;
 			}
 
 			.wrap {
+				// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
+				clear: both;
+				padding-top: 10px;
+
 				h1 {
 					display: none;
 				}
