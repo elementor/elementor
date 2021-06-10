@@ -165,6 +165,7 @@ $top-bar-height: 50px;
 		line-height: normal;
 	}
 
+	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin tp bar.
 	&~ #wpbody {
 		.wrap  {
 			h1, .page-title-action {
