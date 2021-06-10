@@ -46,7 +46,6 @@ const config = {
 		'counter',
 		'dividers',
 		'global-settings',
-		'google-maps',
 		'headings',
 		'html',
 		'icons',
