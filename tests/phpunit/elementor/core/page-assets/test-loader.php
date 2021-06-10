@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Page_Assets;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Page_Assets\Loader as Assets_Loader;
 use Elementor\Testing\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -86,6 +87,7 @@ class Test_Loader extends Elementor_Test_Base {
 
 		$assets_loader->enqueue_assets();
 
+		// Making sure that the assets are not enqueued before they are enabled.
 		$this->assertNotContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue should not be enqueued before it\'s enabled.' );
 		$this->assertNotContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue should not be enqueued before it\'s enabled.' );
 
@@ -98,6 +100,41 @@ class Test_Loader extends Elementor_Test_Base {
 
 		$this->assertContains( 'e-style-dynamic-enqueue', $wp_styles->queue, 'e-style-dynamic-enqueue was not properly enqueued.' );
 		$this->assertContains( 'e-script-dynamic-enqueue', $wp_scripts->queue, 'e-script-dynamic-enqueue was not properly enqueued.' );
+	}
+
+	public function test_register_assets() {
+		global $wp_styles;
+		global $wp_scripts;
+
+		// Creating a new instance to get only the initial assets that exist in the assets loader (without the testing assets that were created by the other testing methods).
+		$new_assets_loader_instance = new Assets_Loader();
+
+		$current_assets = $new_assets_loader_instance->get_assets();
+
+		// Deregister the current assets.
+		foreach ( $current_assets as $assets_type => $assets_type_data ) {
+			foreach ( $assets_type_data as $asset_name => $asset_data ) {
+				if ( 'scripts' === $assets_type ) {
+					wp_deregister_script( $asset_name );
+				} else {
+					wp_deregister_style( $asset_name );
+				}
+			}
+		}
+
+		// Creating additional instance in order to trigger the private registered method that initiated by the Assets Loader class constructor.
+		new Assets_Loader();
+
+		// Making sure that the additional assets loader instance has registered all the assets that were de-registered above.
+		foreach ( $current_assets as $assets_type => $assets_type_data ) {
+			foreach ( $assets_type_data as $asset_name => $asset_data ) {
+				if ( 'scripts' === $assets_type ) {
+					$this->assertArrayHasKey( $asset_name, $wp_scripts->registered, 'script asset was not properly registered.' );
+				} else {
+					$this->assertArrayHasKey( $asset_name, $wp_styles->registered, 'style asset was not properly registered.' );
+				}
+			}
+		}
 	}
 
 	private function add_testing_assets( $style_asset_key, $script_asset_key ) {
