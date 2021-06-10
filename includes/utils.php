@@ -755,9 +755,11 @@ class Utils {
 
 	public static function print_wp_kses_extended( string $string, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
+		// Since PHP 5.6 cannot use isset() on the result of an expression.
+		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
 
 		foreach ( $tags as $tag ) {
-			if ( isset( self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] ) ) {
+			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
 				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
 				$allowed_html = array_merge( $allowed_html, $extended_tags );
 			}
