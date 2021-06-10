@@ -2,9 +2,10 @@ import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
 import Kit from '../models/kit';
+import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog } from '@elementor/app-ui';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from '@reach/router';
 import { useSettingsContext } from '../context/settings-context';
 
@@ -18,8 +19,17 @@ import './item-header.scss';
  * @param onApply
  * @returns {object}
  */
-function useKitCallToActionButton( model, { onConnect, onApply } ) {
+function useKitCallToActionButton( model, { onConnect, setError } ) {
+	const navigate = useNavigate();
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
+
+	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
+		model,
+		{
+			onSuccess: ( { data } ) => navigate( `/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library` ),
+			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
+		}
+	);
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -34,6 +44,7 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 				includeHeaderBtnClass: false,
 			};
 		}
+
 		if ( type === TYPE_PROMOTION && subscriptionPlan ) {
 			return {
 				id: 'promotion',
@@ -51,32 +62,27 @@ function useKitCallToActionButton( model, { onConnect, onApply } ) {
 		return {
 			id: 'apply',
 			text: __( 'Apply Kit', 'elementor' ),
+			className: 'e-kit-library__apply-button',
+			icon: isApplyLoading ? 'eicon-loading eicon-animation-spin' : '',
 			hideText: false,
 			variant: 'contained',
-			color: 'primary',
+			color: isApplyLoading ? 'disabled' : 'primary',
 			size: 'sm',
-			onClick: onApply,
+			onClick: isApplyLoading ? null : apply,
 			includeHeaderBtnClass: false,
 		};
-	}, [ type, subscriptionPlan ] );
+	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
 
 export default function ItemHeader( props ) {
-	const navigate = useNavigate();
 	const { updateSettings } = useSettingsContext();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
 
-	const apply = useCallback( () => {
-		$e.data.get( 'kits/download-link', { id: props.model.id }, { refresh: true } )
-			.then( ( { data } ) => navigate( `/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library` ) )
-			.catch( () => setError( __( 'Something went wrong.', 'elementor' ) ) );
-	}, [ props.model ] );
-
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
-		onApply: apply,
+		setError,
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
