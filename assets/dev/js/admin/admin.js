@@ -151,6 +151,9 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
 					} );
 			} );
 
