@@ -104,7 +104,7 @@ $top-bar-height: 50px;
 		text-transform: uppercase;
 	}
 
-	&.top-bar-active {
+	&.e-admin-top-bar--active {
 		display: block;
 
 		&~ #wpbody {
@@ -124,9 +124,11 @@ $top-bar-height: 50px;
 		}
 	}
 
-	&:not(.top-bar-active ) ~ #wpbody {
-		.wrap h1 {
-			display: block;
+	&.e-admin-top-bar--inactive ~ #wpbody {
+		.wrap {
+			h1, .page-title-action {
+				display: inline-block;
+			}
 		}
 	}
 
@@ -161,6 +163,15 @@ $top-bar-height: 50px;
 		font-family: 'Roboto';
 		margin: 0 4px;
 		line-height: normal;
+	}
+
+	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin tp bar.
+	&~ #wpbody {
+		.wrap {
+			h1, .page-title-action {
+				display: none;
+			}
+		}
 	}
 }
 
