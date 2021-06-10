@@ -55,15 +55,8 @@ class Module extends BaseModule {
 
 		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
-		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
-
 		return [
 			'exportURL' => $export_url,
-			'kitInfo' => [
-				'title' => $kit_post->post_title,
-				'description' => $kit_post->post_excerpt,
-				'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
-			],
 			'summaryTitles' => $this->get_summary_titles(),
 		];
 	}
@@ -182,27 +175,8 @@ class Module extends BaseModule {
 
 		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
 
-		if ( ! empty( $export_settings['kitInfo'] ) ) {
-			$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-			$active_kit_id = $active_kit->get_main_id();
-
-			wp_update_post( [
-				'ID' => $active_kit_id,
-				'post_title' => $export_settings['kitInfo']['title'],
-				'post_excerpt' => $export_settings['kitInfo']['description'],
-			] );
-
-			// Refresh kit post after update
-			$active_kit->refresh_post();
-
-			if ( ! empty( $export_settings['kitInfo']['thumbnail_id'] ) ) {
-				set_post_thumbnail( $active_kit_id, $export_settings['kitInfo']['thumbnail_id'] );
-			}
-		}
-
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo' ] ) );
 
 			$export_result = $this->export->run();
 
