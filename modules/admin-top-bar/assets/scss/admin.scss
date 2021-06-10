@@ -124,7 +124,7 @@ $top-bar-height: 50px;
 		}
 	}
 
-	&.e-admin-top-bar--not-active ~ #wpbody {
+	&.e-admin-top-bar--inactive ~ #wpbody {
 		.wrap {
 			h1, .page-title-action {
 				display: inline-block;
@@ -167,7 +167,7 @@ $top-bar-height: 50px;
 
 	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin tp bar.
 	&~ #wpbody {
-		.wrap  {
+		.wrap {
 			h1, .page-title-action {
 				display: none;
 			}

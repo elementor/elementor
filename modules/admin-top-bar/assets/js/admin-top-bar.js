@@ -15,13 +15,13 @@ export default function AdminTopBar( props ) {
 		if ( ! adminTopBarCheckboxElement || adminTopBarCheckboxElement.checked ) {
 			adminTopBarElement.classList.add( 'e-admin-top-bar--active' );
 		} else {
-			adminTopBarElement.classList.add( 'e-admin-top-bar--not-active' );
+			adminTopBarElement.classList.add( 'e-admin-top-bar--inactive' );
 		}
 
 		if ( adminTopBarCheckboxElement ) {
 			adminTopBarCheckboxElement.addEventListener( 'change', function() {
 				adminTopBarElement.classList.toggle( 'e-admin-top-bar--active' );
-				adminTopBarElement.classList.toggle( 'e-admin-top-bar--not-active' );
+				adminTopBarElement.classList.toggle( 'e-admin-top-bar--inactive' );
 			} );
 		}
 	}, [] );
