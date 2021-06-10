@@ -981,6 +981,455 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( '_tabs_positioning' );
+
+		foreach ( [ 'normal', 'hover' ] as $tab ) {
+			$this->start_controls_tab(
+				"_tab_positioning_{$tab}",
+				[
+					'label' => __( ucfirst( $tab ), 'elementor' ),
+				]
+			);
+
+			$this->add_control(
+				"_{$tab}_transform_rotate_popover",
+				[
+					'label' => __( 'Rotate', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => 'elementor-',
+					'return_value' => 'transform',
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_rotate",
+				[
+					'label' => __( 'Rotate', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-z: {{SIZE}}deg",
+					],
+					'condition' => [
+						"_{$tab}_transform_rotate_popover!" => '',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_control(
+				"_{$tab}_transform_rotate_3d",
+				[
+					'label' => __( '3D Rotate', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => __( 'On', 'elementor' ),
+					'label_off' => __( 'Off', 'elementor' ),
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_rotate_x",
+				[
+					'label' => __( 'Rotate X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'condition' => [
+						"_{$tab}_transform_rotate_3d!" => '',
+						"_{$tab}_transform_rotate_popover!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-x: {{SIZE}}deg;",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_rotate_y",
+				[
+					'label' => __( 'Rotate Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'condition' => [
+						"_{$tab}_transform_rotate_3d!" => '',
+						"_{$tab}_transform_rotate_popover!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-y: {{SIZE}}deg;",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_{$tab}_transform_offset_popover",
+				[
+					'label' => __( 'Offset', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => 'elementor-',
+					'return_value' => 'transform',
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_offset_x",
+				[
+					'label' => __( 'Offset X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%', 'px' ],
+					'range' => [
+						'%' => [
+							'min' => -200,
+							'max' => 200,
+						],
+						'px' => [
+							'min' => -3000,
+							'max' => 3000,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'condition' => [
+						"_{$tab}_transform_offset_popover!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-translate-x: {{SIZE}}{{UNIT}};",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_offset_y",
+				[
+					'label' => __( 'Offset Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%', 'px' ],
+					'range' => [
+						'%' => [
+							'min' => -200,
+							'max' => 200,
+						],
+						'px' => [
+							'min' => -3000,
+							'max' => 3000,
+						],
+					],
+					'condition' => [
+						"_{$tab}_transform_offset_popover!" => '',
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-translate-y: {{SIZE}}{{UNIT}};",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_{$tab}_transform_scale_popover",
+				[
+					'label' => __( 'Scale', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => 'elementor-',
+					'return_value' => 'transform',
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_control(
+				"_{$tab}_transform_keep_proportions",
+				[
+					'label' => __( 'Keep Proportions', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => __( 'On', 'elementor' ),
+					'label_off' => __( 'Off', 'elementor' ),
+					'default' => 'yes',
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_scale",
+				[
+					'label' => __( 'Scale', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_{$tab}_transform_scale_popover!" => '',
+						"_{$tab}_transform_keep_proportions!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale: {{SIZE}};",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_scale_x",
+				[
+					'label' => __( 'Scale X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_{$tab}_transform_scale_popover!" => '',
+						"_{$tab}_transform_keep_proportions" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale-x: {{SIZE}};",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_scale_y",
+				[
+					'label' => __( 'Scale Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_{$tab}_transform_scale_popover!" => '',
+						"_{$tab}_transform_keep_proportions" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale-y: {{SIZE}};",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_{$tab}_transform_skew_popover",
+				[
+					'label' => __( 'Skew', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => 'elementor-',
+					'return_value' => 'transform',
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_skew_x",
+				[
+					'label' => __( 'Skew X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'condition' => [
+						"_{$tab}_transform_skew_popover!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-skew-x: {{SIZE}}deg;",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_{$tab}_transform_skew_y",
+				[
+					'label' => __( 'Skew Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'condition' => [
+						"_{$tab}_transform_skew_popover!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-skew-y: {{SIZE}}deg;",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_{$tab}_transform_flip_horizontal",
+				[
+					'label' => __( 'Flip Horizontal', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'transform' => [
+							'title' => __( 'Flip Horizontal', 'elementor' ),
+							'icon' => 'fa fa-align-left',
+						],
+					],
+					'prefix_class' => 'elementor-',
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-x: -1",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_control(
+				"_{$tab}_transform_flip_vertical",
+				[
+					'label' => __( 'Flip Vertical', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'transform' => [
+							'title' => __( 'Flip Vertical', 'elementor' ),
+							'icon' => 'fa fa-align-center',
+						],
+					],
+					'prefix_class' => 'elementor-',
+					'selectors' => [
+						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-y: -1",
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			if ( 'hover' === $tab ) {
+				$this->add_control(
+					"_hover_transform_transition",
+					[
+						'label' => __( 'Transition Duration (ms)', 'elementor' ),
+						'type' => Controls_Manager::SLIDER,
+						'range' => [
+							'px' => [
+								'min' => 100,
+								'max' => 20000,
+							],
+						],
+						'selectors' => [
+							'{{WRAPPER}} > .elementor-widget-container' => "--transition-duration: {{SIZE}}ms",
+						],
+					]
+				);
+			}
+
+			$this->end_controls_tab();
+		}
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'_transform_x_anchor_point',
+			[
+				'label' => __( 'X Anchor Point', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => __( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-x: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_transform_y_anchor_point',
+			[
+				'label' => __( 'Y Anchor Point', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'top' => [
+						'title' => __( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => __( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => __( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-y: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
