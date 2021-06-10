@@ -23,7 +23,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			adminTopBarElement
 		);
 	} else {
-
 		adminTopBarElement.classList.add( 'e-admin-top-bar--not-active' );
 	}
 } );
