@@ -2,7 +2,7 @@ import AdminTopBar from './admin-top-bar';
 
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 document.addEventListener( 'DOMContentLoaded', () => {
-	const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
+	const adminTopBarElement = document.getElementById( 'e-admin-top-bar-root' );
 	const isTopBarOptionWidgetChecked = !! document.querySelector( '#e-dashboard-widget-admin-top-bar-hide' );
 	const elementorMenuItemIds = [
 		'toplevel_page_elementor',
