@@ -121,7 +121,7 @@ class Manager {
 
 	public function create_default() {
 		return $this->create( [
-			'post_title' => __( 'Default Kit', 'elementor' )
+			'post_title' => __( 'Default Kit', 'elementor' ),
 		] );
 	}
 
