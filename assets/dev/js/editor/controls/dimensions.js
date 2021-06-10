@@ -156,6 +156,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		}
 
 		this.updateDimensions();
+		this.propagatePlaceholder();
 	},
 
 	isLinkedDimensions: function() {

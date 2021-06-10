@@ -66,6 +66,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 
 		this.registerValidators();
 
+		if ( this.model.get( 'responsive' ) ) {
+			this.setPlaceholderFromParent();
+		}
+
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
@@ -159,6 +163,55 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const settings = this.getOption( 'elementEditSettings' ) || this.getOption( 'container' ).settings;
 
 		settings.set( settingKey, settingValue );
+	},
+
+	getResponsiveParentView: function() {
+		const parent = this.model.get( 'parent' );
+
+		return parent && this.container.panel.getControlView( parent );
+	},
+
+	getResponsiveChildView: function() {
+		const child = this.model.get( 'child' );
+
+		return child && this.container.panel.getControlView( child );
+	},
+
+	setPlaceholderFromParent: function() {
+		const parent = this.getResponsiveParentView();
+
+		if ( parent ) {
+			this.model.set( 'placeholder', parent.preparePlaceholderForChildren() );
+		}
+	},
+
+	preparePlaceholderForChildren: function() {
+		const parent = this.getResponsiveParentView()?.preparePlaceholderForChildren();
+
+		if ( 'function' === typeof this.getCleanControlValue ) {
+			return Object.assign( {}, parent, this.getCleanControlValue() );
+		}
+
+		return this.getControlValue() || parent;
+	},
+
+	propagatePlaceholder: function() {
+		const child = this.getResponsiveChildView();
+
+		if ( child ) {
+			child.renderWithChildren();
+		}
+	},
+
+	renderWithChildren: function() {
+		const child = this.getResponsiveChildView();
+
+		this.setPlaceholderFromParent();
+		this.render();
+
+		if ( child ) {
+			child.renderWithChildren();
+		}
 	},
 
 	getInputValue: function( input ) {
@@ -269,6 +322,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 		this.updateElementModel( value, input );
 
 		this.triggerMethod( 'input:change', event );
+
+		if ( this.model.get( 'responsive' ) ) {
+			this.propagatePlaceholder();
+		}
 	},
 
 	onResponsiveSwitchersClick: function( event ) {

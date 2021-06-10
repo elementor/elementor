@@ -44,11 +44,16 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	applySavedValue: function() {
-		const url = this.getControlValue( 'url' ),
+		const value = this.getControlValue( 'url' ),
+			url = value || this.model.get( 'placeholder' )?.url,
 			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
+
+			if ( ! value ) {
+				this.ui.mediaImage.css( 'opacity', 0.5 );
+			}
 		} else if ( 'video' === mediaType ) {
 			this.ui.mediaVideo.attr( 'src', url );
 		} else {

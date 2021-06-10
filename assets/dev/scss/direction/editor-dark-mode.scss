@@ -431,6 +431,18 @@ select {
 			border-color: $theme-dark-gray-darkest;
 		}
 	}
+
+	&.elementor-control-type-select {
+
+		.elementor-control-input-wrapper {
+
+			select {
+				&.e-select-placeholder {
+					color: $theme-dark-gray-lighter;
+				}
+			}
+		}
+	}
 }
 
 .elementor-control-responsive-switchers {
@@ -676,9 +688,13 @@ body.rtl .elementor-control-type-gallery {
 		}
 	}
 
-	& input:checked {
+	& input {
 
-		+ .elementor-choices-label {
+		&.e-choose-placeholder + .elementor-choices-label {
+			background-color: $theme-dark-dark;
+		}
+
+		&:checked + .elementor-choices-label {
 			background-color: $theme-dark-gray-lighter;
 			border-color: $theme-dark-gray-lighter;
 		}
@@ -862,6 +878,10 @@ body.rtl .elementor-control-type-gallery {
 
 //Select2 Control
 .select2-container {
+
+	.e-select2-placeholder {
+		color: $theme-dark-gray-lighter;
+	}
 
 	&:not(.select2-container--open):not(.select2-container--focus) {
 
