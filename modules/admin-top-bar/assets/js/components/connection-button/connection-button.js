@@ -17,16 +17,18 @@ export default function ConnectionButton( props ) {
 
 	let tooltipText = __( 'Connect your account to get access to Elementor\'s Template Library & more.', 'elementor' ),
 		connectUrl = elementorCommonConfig.connect.connect_url,
-		buttonText = __( 'Connect Account', 'elementor' );
+		buttonText = __( 'Connect Account', 'elementor' ),
+		targetUrl = '_self';
 
 	if ( isUserConnected ) {
 		tooltipText = '';
 		connectUrl = 'https://go.elementor.com/wp-dash-admin-bar-account/';
 		buttonText = __( 'My Elementor', 'elementor' );
+		targetUrl = '_blank';
 	}
 
 	return (
-		<BarButton icon="eicon-user-circle-o" buttonRef={buttonRef} dataInfo={tooltipText} href={connectUrl}>{ buttonText }</BarButton>
+		<BarButton icon="eicon-user-circle-o" buttonRef={buttonRef} dataInfo={tooltipText} href={connectUrl} target={targetUrl}>{ buttonText }</BarButton>
 	);
 }
 
