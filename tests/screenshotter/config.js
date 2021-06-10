@@ -60,6 +60,7 @@ const config = {
 		'shortcode',
 		'social-icons',
 		'spacer',
+		'star-rating',
 		'tabs',
 		'testimonials',
 		'text-editor',
