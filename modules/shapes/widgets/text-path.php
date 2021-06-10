@@ -672,7 +672,7 @@ class TextPath extends Widget_Base {
 		// Render.
 		?>
 		<div <?php $this->print_render_attribute_string( 'text_path' ); ?> data-text="<?php echo esc_attr( $settings['text'] ); ?>">
-			<?php echo esc_js( $path_svg ); ?>
+			<?php Utils::print_wp_kses_extended( $path_svg, [ 'svg' ] ); ?>
 		</div>
 		<?php
 	}
