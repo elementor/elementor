@@ -293,8 +293,6 @@ class Plugin {
 	 */
 	public $heartbeat;
 
-	public $responsive_render_mode;
-
 	/**
 	 * System info.
 	 *

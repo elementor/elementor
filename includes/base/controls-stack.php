@@ -762,7 +762,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * Add new responsive control to stack.
 	 *
 	 * Register a set of controls to allow editing based on user screen size.
-	 * This method registers three screen sizes: Desktop, Tablet and Mobile.
+	 * This method registers one or more controls per screen size/device, depending on the current Responsive Control
+	 * Duplication Mode. There are 3 control duplication modes:
+	 * * 'off' - Only a single control is generated. In the Editor, this control is duplicated in JS.
+	 * * 'on' - Multiple controls are generated, one control per enabled device/breakpoint + a default/desktop control.
+	 * * 'dynamic' - If the control includes the `'dynamic' => 'active' => true` property - the control is duplicated,
+	 *               once for each device/breakpoint + default/desktop.
+	 *               If the control doesn't include the `'dynamic' => 'active' => true` property - the control is not duplicated.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -789,9 +795,14 @@ abstract class Controls_Stack extends Base_Object {
 			unset( $args['devices'] );
 		}
 
+		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
-		if ( ! Plugin::$instance->responsive_render_mode && Plugin::$instance->experiments->is_feature_active( 'e_responsive_controls' ) ) {
+		if (
+			Plugin::$instance->experiments->is_feature_active( 'e_responsive_controls' )
+			&& 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && empty( $args['dynamic']['active'] ) )
+		) {
 			$args['is_responsive'] = true;
 
 			if ( ! empty( $options['overwrite'] ) ) {

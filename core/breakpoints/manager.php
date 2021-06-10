@@ -20,8 +20,45 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
+	/**
+	 * Breakpoints
+	 *
+	 * An array containing instances of the all of the system's available breakpoints.
+	 *
+	 * @since 3.2.0
+	 * @access private
+	 *
+	 * @var Breakpoint[]
+	 */
 	private $breakpoints;
+
+	/**
+	 * Active Breakpoints
+	 *
+	 * An array containing instances of the enabled breakpoints.
+	 *
+	 * @since 3.2.0
+	 * @access private
+	 *
+	 * @var Breakpoint[]
+	 */
 	private $active_breakpoints;
+
+	/**
+	 * Responsive Control Duplication Mode.
+	 *
+	 * Determines the current responsive control generation mode.
+	 * Options are:
+	 * -- 'on': Responsive controls are duplicated in `add_responsive_control()`.
+	 * -- 'off': Responsive controls are NOT duplicated in `add_responsive_control()`.
+	 * -- 'dynamic': Responsive controls are only duplicated if their config contains `'dynamic' => 'active' => true`.
+	 *
+	 * @since 3.4.0
+	 * @access public
+	 *
+	 * @var string
+	 */
+	private $responsive_control_duplication_mode;
 
 	public function get_name() {
 		return 'breakpoints';
@@ -198,6 +235,34 @@ class Manager extends Module {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * Get Responsive Control Duplication Mode
+	 *
+	 * Retrieve the value of the $responsive_control_duplication_mode private class variable.
+	 * See the variable's PHPDoc for details.
+	 *
+	 * @since 3.4.0
+	 * @access public
+	 */
+	public function get_responsive_control_duplication_mode() {
+		return $this->responsive_control_duplication_mode;
+	}
+
+	/**
+	 * Set Responsive Control Duplication Mode
+	 *
+	 * Sets  the value of the $responsive_control_duplication_mode private class variable.
+	 * See the variable's PHPDoc for details.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @access public
+	 * @param string $mode
+	 */
+	public function set_responsive_control_duplication_mode( $mode ) {
+		$this->responsive_control_duplication_mode = $mode;
 	}
 
 	/**
