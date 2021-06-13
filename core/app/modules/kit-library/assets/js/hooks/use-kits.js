@@ -137,7 +137,11 @@ function fetchKits( force ) {
  */
 export default function useKits( initialQueryParams = {} ) {
 	const [ force, setForce ] = useState( false );
-	const [ queryParams, setQueryParams ] = useState( () => ( { ...defaultQueryParams, ...initialQueryParams } ) );
+	const [ queryParams, setQueryParams ] = useState( () => ( {
+		ready: false, // When the query param is ready to use (after parsing and assign the query param from the url)
+		...defaultQueryParams,
+		...initialQueryParams,
+	} ) );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
 	const clearQueryParams = useCallback( () => setQueryParams( { ...defaultQueryParams, ...initialQueryParams } ), [ setQueryParams ] );
