@@ -37,7 +37,9 @@ class Analyzer extends BaseModule {
 		$post_id = $this->post_id;
 
 		if ( ! $is_analyzer_data_report ) {
-			$nonce_verified = isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'save_analyzer_data_report' );
+			$nonce_verified = isset(
+			$_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'],
+			'save_analyzer_data_report' );
 
 			if ( ! $post_id || ! $nonce_verified ) {
 				return;
@@ -127,17 +129,11 @@ class Analyzer extends BaseModule {
 				unset( $page_data['backgroundImages'][ $key ]['placeholder']['data'] );
 			}
 
-			if ( get_post_meta( $post_id, '_elementor_analyzer_report', true ) ) {
-				$did_save_data['report'] = update_post_meta( $post_id, '_elementor_analyzer_report', $page_data );
-			} else {
-				$did_save_data['report'] = add_post_meta( $post_id, '_elementor_analyzer_report', $page_data, true );
-			}
-
 			$result = [
 				'type' => 'success',
 				'optimization_results' => $optimization_results,
 				'did_save_data' => $did_save_data,
-				'saved_report' => $page_data,
+				'report' => $page_data,
 			];
 
 			wp_send_json_success( $result, 200 );

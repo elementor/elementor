@@ -265,9 +265,20 @@ const sendData = function( data ) {
 	} );
 };
 
+const inIframe = () => {
+	try {
+		return window.self !== window.top;
+	} catch ( e ) {
+		return true;
+	}
+};
+
 const sendMessage = ( message, target = false ) => {
-	window.parent.postMessage( message, target || '*' );
-	// console.log( message );
+	if ( inIframe ) {
+		window.parent.postMessage( message, target || '*' );
+	} else {
+		console.log( message );
+	}
 };
 
 window.addEventListener( 'DOMContentLoaded', () =>

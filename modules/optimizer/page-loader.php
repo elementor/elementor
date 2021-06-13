@@ -144,28 +144,31 @@ class Page_Loader extends BaseModule {
 
 	private function get_critical_styles() {
 		return '<style class="e-optimizer-critical-style">#wpadminbar{display:none;}' . $this->get_critical_css() . '</style>
-		<style class="e-optimizer-image-placeholders">' . $this->get_images_placeholders_css() . '</style>
 		<style class="e-optimizer-bg_image-placeholders">' . $this->get_background_images_placeholders_css() . '</style>';
 	}
 
 	public function parse_widget_output( $html, $widget ) {
-		$images = $this->images;
-
-		if ( ! $images ) {
+		if ( ! count( $this->images ) ) {
 			return $html;
 		}
 
 		$widget_id = $widget->get_raw_data()['id'];
 
+		$images = array_filter( $this->images, function( $image ) use ( $widget_id ) {
+			return $widget_id === $image['parentWidget'];
+		} );
+
 		foreach ( $images as $image ) {
-			if ( $widget_id === $image['parentWidget'] && $image['critical'] ) {
-				$html = str_replace(
-					' src="' . $image['src'] . '"',
-					' data-src="' . $image['src'] . '-' . $image['optimized']['size'] . '.webp" loading="eager"',
-					$html
-				);
-				$html = str_replace( ' srcset="', ' data-srcset="', $html );
-			}
+			$loading = $image['critical'] ? 'eager' : 'lazy';
+			$img_src = $image['src'] . '-' . $image['optimized']['size'] . '.webp';
+			$meta_key = '_e_optimizer_placeholder_' . $image['placeholder']['size'];
+			$placeholder = get_post_meta( $image['id'], $meta_key, true );
+			$html = str_replace(
+				' src="' . $image['src'] . '"',
+				' src="' . $placeholder . '" data-src="' . $img_src . '" loading="' . $loading . '"',
+				$html
+			);
+			$html = str_replace( ' srcset="', ' data-srcset="', $html );
 		}
 
 		return $html;
@@ -215,8 +218,10 @@ class Page_Loader extends BaseModule {
 
 		foreach ( $this->images as $image ) {
 			$img_src = $image['src'] . $image['optimized']['size'] . '.webp';
-			$has_placeholder = isset( $image['placeholder']['data'][0] );
-			$url = $has_placeholder ? $image['placeholder']['data'][0] : $img_src;
+			//$has_placeholder = isset( $image['id'] );
+			$meta_key = '_e_optimizer_placeholder_' . $image['placeholder']['size'];
+			var_dump( get_post_meta( $image['id'], $meta_key, true ) );
+			$url = get_post_meta( $image['id'], $meta_key, true );
 			$widget_id = $image['parentWidget'];
 			$css_selector = '[data-id="' . $widget_id . '"] [data-src="' . $img_src . '"]';
 			$image_content_rule = 'content: url("' . $url . '");';
@@ -241,7 +246,6 @@ class Page_Loader extends BaseModule {
 
 			$selectors[] = $image['cssSelector'];
 			$suffix = '-' . $image['optimized']['size'] . '.webp';
-			$var_name = '--bg-image-' . $key;
 
 			$css .= $image['cssSelector'] . '{
 					background-image: url("' . $image['url'] . $suffix . '") !important;
