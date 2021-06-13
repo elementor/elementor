@@ -1,4 +1,5 @@
 import AddSectionView from 'elementor-views/add-section/inline';
+import WidgetResizable from './behaviors/widget-resizeable';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
@@ -26,6 +27,9 @@ const ContainerView = BaseElementView.extend( {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget',
+			},
+			Resizable: {
+				behaviorClass: WidgetResizable,
 			},
 		} );
 
