@@ -245,6 +245,10 @@ class Icons_Manager {
 		// Load the SVG from the database.
 		$icon_data = self::get_icon_svg_data( $icon );
 
+		if ( ! $icon_data['path'] ) {
+			return '';
+		}
+
 		// Add the icon data to the symbols array for later use in page rendering process.
 		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data ) {
 			if ( ! in_array( $icon_data['key'], $symbols, true ) ) {
@@ -291,7 +295,9 @@ class Icons_Manager {
 			$icon['font_family'] = $font_icon_svg_family;
 
 			$content = self::get_font_icon_svg( $icon );
-		} else {
+		}
+
+		if ( ! $content ) {
 			if ( empty( $attributes['class'] ) ) {
 				$attributes['class'] = $icon['value'];
 			} else {
