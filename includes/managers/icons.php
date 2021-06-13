@@ -20,6 +20,8 @@ class Icons_Manager {
 
 	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
 
+	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
+
 	/**
 	 * Tabs.
 	 *
@@ -241,7 +243,7 @@ class Icons_Manager {
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_icon_svg( $icon ) {
+	public static function get_font_icon_svg( $icon, $attributes = [] ) {
 		// Load the SVG from the database.
 		$icon_data = self::get_icon_svg_data( $icon );
 
@@ -258,18 +260,20 @@ class Icons_Manager {
 			return $symbols;
 		} );
 
+		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
+
 		/**
 		 * If in edit mode inline the full svg, otherwise use the symbol.
 		 * Will be displayed only after page update or widget "blur".
 		 */
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
-			return '<svg xmlns="http://www.w3.org/2000/svg"
+			return '<svg xmlns="http://www.w3.org/2000/svg" ' . Utils::render_html_attributes( $attributes ) . '
 				viewBox="0 0 ' . esc_attr( $icon_data['width'] ) . ' ' . esc_attr( $icon_data['height'] ) . '">
 				<path d="' . esc_attr( $icon_data['path'] ) . '"></path>
 			</svg>';
 		}
 
-		return '<svg><use xlink:href="#' . esc_attr( $icon_data['key'] ) . '" /></svg>';
+		return '<svg ' . Utils::render_html_attributes( $attributes ) . '><use xlink:href="#' . esc_attr( $icon_data['key'] ) . '" /></svg>';
 	}
 
 	public static function render_uploaded_svg_icon( $value ) {
@@ -294,7 +298,11 @@ class Icons_Manager {
 		if ( $font_icon_svg_family ) {
 			$icon['font_family'] = $font_icon_svg_family;
 
-			$content = self::get_font_icon_svg( $icon );
+			$content = self::get_font_icon_svg( $icon, $attributes );
+
+			if ( $content ) {
+				return $content;
+			}
 		}
 
 		if ( ! $content ) {
@@ -563,7 +571,8 @@ class Icons_Manager {
 
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
 			add_action( 'elementor/frontend/after_enqueue_styles', function() {
-				$css = '.elementor-widget-container i svg { width: 1em; height: 1em; display: block; }';
+				//$css = '.elementor-widget-container .e-font-icon-svg { width: 1em; height: 1em; display: block; }';
+				$css = '';
 
 				wp_add_inline_style( 'elementor-frontend', $css );
 			} );

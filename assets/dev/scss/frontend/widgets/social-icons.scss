@@ -50,10 +50,10 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
 	i {
 		color: var(--e-social-icon-icon-color);
+	}
 
-		svg {
-			fill: var(--e-social-icon-icon-color);
-		}
+	svg {
+		fill: var(--e-social-icon-icon-color);
 	}
 
 	&:last-child {
