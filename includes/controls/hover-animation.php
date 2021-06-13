@@ -116,7 +116,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}">
-					<option value=""><?php echo __( 'None', 'elementor' ); ?></option>
+					<option value=""><?php echo esc_html__( 'None', 'elementor' ); ?></option>
 					<?php foreach ( self::get_animations() as $animation_name => $animation_title ) : ?>
 						<option value="<?php echo $animation_name; ?>"><?php echo $animation_title; ?></option>
 					<?php endforeach; ?>

@@ -101,15 +101,18 @@ class Manager extends BaseModule {
 		/** @var Module $ajax */
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-		if ( ! $ajax->verify_request_nonce() || empty( $_POST['data'] ) ) {
+		// PHPCS ignore is added throughout this method because nonce verification happens in the $ajax->verify_request_nonce() method.
+		if ( ! $ajax->verify_request_nonce() || empty( $_POST['data'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			wp_send_json_error();
 		}
 
-		array_walk_recursive( $_POST['data'], function( &$value ) {
+		// PHPCS - See comment above.
+		array_walk_recursive( $_POST['data'], function( &$value ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$value = sanitize_text_field( $value );
 		} );
 
-		foreach ( $_POST['data'] as $error ) {
+		// PHPCS - See comment above.
+		foreach ( $_POST['data'] as $error ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$error['type'] = Logger_Interface::LEVEL_ERROR;
 
 			if ( ! empty( $error['customFields'] ) ) {

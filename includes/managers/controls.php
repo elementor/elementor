@@ -296,12 +296,12 @@ class Controls_Manager {
 	 */
 	private static function init_tabs() {
 		self::$tabs = [
-			self::TAB_CONTENT => __( 'Content', 'elementor' ),
-			self::TAB_STYLE => __( 'Style', 'elementor' ),
-			self::TAB_ADVANCED => __( 'Advanced', 'elementor' ),
-			self::TAB_RESPONSIVE => __( 'Responsive', 'elementor' ),
-			self::TAB_LAYOUT => __( 'Layout', 'elementor' ),
-			self::TAB_SETTINGS => __( 'Settings', 'elementor' ),
+			self::TAB_CONTENT => esc_html__( 'Content', 'elementor' ),
+			self::TAB_STYLE => esc_html__( 'Style', 'elementor' ),
+			self::TAB_ADVANCED => esc_html__( 'Advanced', 'elementor' ),
+			self::TAB_RESPONSIVE => esc_html__( 'Responsive', 'elementor' ),
+			self::TAB_LAYOUT => esc_html__( 'Layout', 'elementor' ),
+			self::TAB_SETTINGS => esc_html__( 'Settings', 'elementor' ),
 		];
 	}
 
@@ -887,7 +887,7 @@ class Controls_Manager {
 		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
 			[
-				'label' => __( 'Custom CSS', 'elementor' ),
+				'label' => esc_html__( 'Custom CSS', 'elementor' ),
 				'tab' => $tab,
 			]
 		);
@@ -905,7 +905,7 @@ class Controls_Manager {
 			[
 				'type' => self::RAW_HTML,
 				'raw' => $this->get_teaser_template( [
-					'title' => __( 'Meet Our Custom CSS', 'elementor' ),
+					'title' => esc_html__( 'Meet Our Custom CSS', 'elementor' ),
 					'messages' => $messages,
 					'link' => 'https://elementor.com/pro/?utm_source=panel-custom-css&utm_campaign=gopro&utm_medium=wp-dash',
 				] ),
@@ -927,7 +927,7 @@ class Controls_Manager {
 
 			if ( $texts['link'] ) { ?>
 				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
-					<?php echo __( 'Go Pro', 'elementor' ); ?>
+					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
 				</a>
 			<?php } ?>
 		</div>
@@ -952,7 +952,7 @@ class Controls_Manager {
 		$controls_stack->start_controls_section(
 			'section_custom_attributes_pro',
 			[
-				'label' => __( 'Attributes', 'elementor' ),
+				'label' => esc_html__( 'Attributes', 'elementor' ),
 				'tab' => self::TAB_ADVANCED,
 			]
 		);
@@ -962,7 +962,7 @@ class Controls_Manager {
 			[
 				'type' => self::RAW_HTML,
 				'raw' => $this->get_teaser_template( [
-					'title' => __( 'Meet Our Attributes', 'elementor' ),
+					'title' => esc_html__( 'Meet Our Attributes', 'elementor' ),
 					'messages' => [
 						__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
 					],
