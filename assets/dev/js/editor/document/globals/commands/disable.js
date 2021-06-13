@@ -34,7 +34,15 @@ export class Disable extends DisableEnable {
 				container.globals.set( setting, '' )
 			);
 
-			container.settings.set( '__globals__', container.globals.toJSON() );
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					__globals__: container.globals.toJSON(),
+				},
+				options: {
+					render: false,
+				},
+			} );
 
 			container.renderUI();
 		} );
