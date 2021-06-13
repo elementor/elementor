@@ -10,7 +10,7 @@ import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { Grid } from '@elementor/app-ui';
+import { Grid, Text, Button } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
@@ -226,6 +226,16 @@ export default function Index( props ) {
 								isFilterActive,
 							} )
 						}
+						<Text className="e-kit-library__envato-promotion" variant="lg">
+							{ __( 'Check out Elementor Template Kits by', 'elementor' ) } { ' ' }
+							<Button
+								variant="link"
+								url="https://go.elementor.com/app-envato-kits/"
+								target="_blank"
+								rel="noreferrer"
+								text={ __( 'Envato', 'elementor' ) }
+							/>
+						</Text>
 					</>
 				</Content>
 			</div>
