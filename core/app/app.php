@@ -200,6 +200,7 @@ class App extends BaseApp {
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
 			[
+				'wp-url',
 				'wp-i18n',
 				'react',
 				'react-dom',
@@ -236,6 +237,9 @@ class App extends BaseApp {
 
 		if ( current_user_can( 'manage_options' ) && Plugin::$instance->experiments->is_feature_active( 'e_import_export' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
+
+			// Kit library is depended on import-export
+			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
 		}
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 21 /* after Elementor page */ );
