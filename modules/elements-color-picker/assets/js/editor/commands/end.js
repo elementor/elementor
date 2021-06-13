@@ -7,6 +7,7 @@ export class End extends CommandBase {
 		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.remove( 'elementor-editor__ui-state__color-picker' );
 
 		elementor.$previewContents[ 0 ].querySelectorAll( '.e-element-color-picker' ).forEach( ( picker ) => {
+			jQuery( picker ).tipsy( 'hide' );
 			picker.remove();
 		} );
 
@@ -21,12 +22,7 @@ export class End extends CommandBase {
 		this.component.currentPicker.trigger?.classList.remove( 'e-control-tool-disabled' );
 
 		// Reset the current picker.
-		this.component.currentPicker = {
-			container: null,
-			control: null,
-			initialColor: null,
-			trigger: null,
-		};
+		this.component.resetPicker();
 
 		// Return to edit mode.
 		elementor.changeEditMode( 'edit' );
