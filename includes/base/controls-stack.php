@@ -800,7 +800,7 @@ abstract class Controls_Stack extends Base_Object {
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
 		if (
-			Plugin::$instance->experiments->is_feature_active( 'e_responsive_controls' )
+			Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' )
 			&& 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && empty( $args['dynamic']['active'] ) )
 		) {
 			$args['is_responsive'] = true;

@@ -270,8 +270,8 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_responsive_controls',
-			'title' => __( 'Responsive Controls Optimization', 'elementor' ),
+			'name' => 'additional_custom_breakpoints',
+			'title' => __( 'Additional Custom Breakpoints', 'elementor' ),
 			'description' => __( 'Optimize your site\'s performance when using responsive controls.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'new_site' => [

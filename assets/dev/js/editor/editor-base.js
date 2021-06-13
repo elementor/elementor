@@ -989,7 +989,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.populateActiveBreakpointsConfig();
 
-		if ( elementorCommon.config.experimentalFeatures.e_responsive_controls ) {
+		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 			// Duplicate responsive controls for section and column default configs.
 			this.generateResponsiveControlsForElements();
 		}
@@ -1205,7 +1205,7 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
-			if ( elementorCommon.config.experimentalFeatures.e_responsive_controls ) {
+			if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 				// When the Responsive Optimization experiment is active, the responsive controls are generated on the
 				// JS side instead of the PHP.
 				widgetConfig.controls = this.generateResponsiveControls( widgetConfig.controls );
