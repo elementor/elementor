@@ -72,8 +72,6 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 				self.$( element ).val( value );
 			} );
 		}
-
-		self.fillEmptyDimensions();
 	},
 
 	updateDimensionsValue: function() {
@@ -92,27 +90,10 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	fillEmptyDimensions: function() {
-		var dimensions = this.getPossibleDimensions(),
-			allowedDimensions = this.model.get( 'allowed_dimensions' ),
-			$controls = this.ui.controls,
-			defaultDimensionValue = this.defaultDimensionValue;
-
-		if ( this.isLinkedDimensions() ) {
-			return;
-		}
-
-		dimensions.forEach( function( dimension ) {
-			var $element = $controls.filter( '[data-setting="' + dimension + '"]' ),
-				isAllowedDimension = -1 !== _.indexOf( allowedDimensions, dimension );
-
-			if ( isAllowedDimension && $element.length && _.isEmpty( $element.val() ) ) {
-				$element.val( defaultDimensionValue );
-			}
-		} );
+		elementorCommon.helpers.softDeprecated( 'fillEmptyDimensions', '3.4.0' );
 	},
 
 	updateDimensions: function() {
-		this.fillEmptyDimensions();
 		this.updateDimensionsValue();
 	},
 
