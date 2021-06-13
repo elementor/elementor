@@ -10,11 +10,14 @@ jobs:
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
-      - name: Checkout develop branch
+      - name: Checkout master branch
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.MAINTAIN_TOKEN }}
-          ref: develop
+          ref: master
+      - name: Get release branch
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
       - name: Bump version
         id: bump_version_step
         run: |
@@ -51,13 +54,6 @@ jobs:
           INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/get-release-branch-name.sh"
-      - name: Merge develop -> release
-        uses: devmasx/merge-branch@a1752b9ba42bb417ec19be7dc974e2faf77d3ef2 # v1.3.1
-        with:
-          type: now
-          from_branch: develop
-          target_branch: ${{ env.RELEASE_BRANCH }}
-          github_token: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Checkout next release branch
         uses: actions/checkout@v2
         with:
