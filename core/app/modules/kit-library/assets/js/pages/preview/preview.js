@@ -1,3 +1,4 @@
+import { Icon } from '@elementor/app-ui';
 import ItemHeader from '../../components/item-header';
 import Layout from '../../components/layout';
 import PreviewResponsiveControls from './preview-responsive-controls';
@@ -5,6 +6,8 @@ import useKit from '../../hooks/use-kit';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
+
+import './preview.scss';
 
 export const breakpoints = [
 	{
@@ -80,6 +83,7 @@ function usePreviewUrl( data ) {
 
 export default function Preview( props ) {
 	const { data, isError, isLoading } = useKit( props.id );
+	const [ isIframeLoading, setIsIframeLoading ] = useState( true );
 	const headersButtons = useHeaderButtons( props.id );
 	const previewUrl = usePreviewUrl( data );
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
@@ -104,7 +108,20 @@ export default function Preview( props ) {
 				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
 			/>
 		}>
-			{ previewUrl && <PreviewIframe previewUrl={ previewUrl } style={ iframeStyle }/> }
+			{
+				isIframeLoading &&
+					<div className="e-kit-library__preview-loader">
+						<Icon className="eicon-loading eicon-animation-spin" />
+					</div>
+			}
+			{
+				previewUrl &&
+					<PreviewIframe
+						previewUrl={ previewUrl }
+						style={ iframeStyle }
+						onLoaded={() => setIsIframeLoading( false )}
+					/>
+			}
 		</Layout>
 	);
 }
