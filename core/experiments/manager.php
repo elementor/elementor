@@ -272,7 +272,8 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'additional_custom_breakpoints',
 			'title' => __( 'Additional Custom Breakpoints', 'elementor' ),
-			'description' => __( 'Optimize your site\'s performance when using responsive controls.', 'elementor' ),
+			'description' => __( 'Add Additional Custom Breakpoints (beyond just \'mobile\' and \'tablet\') Optimize your site\'s performance when using responsive controls.', 'elementor' )
+							. '<br /><strong>' . __( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>',
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'new_site' => [
 				'default_active' => true,
