@@ -4,6 +4,8 @@ $e-kit-library-sticky-search-z-index: 2;
 	&__index-layout-container {
 		flex-grow: 1;
 		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
 	}
 
 	&__index-layout-top-area {
@@ -26,7 +28,19 @@ $e-kit-library-sticky-search-z-index: 2;
 
 	&__index-layout-main {
 		padding-top: spacing(0);
+		padding-bottom: spacing(24);
 		overflow-y: hidden;
 		height: auto;
+		flex: 1 0 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	&__envato-promotion {
+		width: 100%;
+		text-align: center;
+		margin-top: spacing(30);
+		color: tints(500);
 	}
 }
