@@ -22,6 +22,8 @@ export default function ImportProcess() {
 
 			if ( fileURL || context.data.fileResponse ) {
 				if ( fileURL ) {
+					fileURL[ 1 ] = decodeURIComponent( fileURL[ 1 ] );
+
 					context.dispatch( { type: 'SET_FILE', payload: fileURL } );
 
 					ajaxConfig.data.e_import_file = fileURL[ 1 ];

@@ -55,7 +55,7 @@ class Utils {
 				'sandbox' => true,
 				'src' => true,
 				'width' => true,
-			]
+			],
 		],
 		'svg' => [
 			'svg' => [
@@ -69,10 +69,10 @@ class Utils {
 				'xmlns' => true,
 			],
 			'g' => [
-				'fill' => true
+				'fill' => true,
 			],
 			'title' => [
-				'title' => true
+				'title' => true,
 			],
 			'path' => [
 				'd' => true,
