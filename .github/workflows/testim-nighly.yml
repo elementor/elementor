@@ -84,6 +84,14 @@ jobs:
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
       - name: Install Testim
-        run: npm install --no-package-lock --no-save @testim/testim-cli 
+        run: npm install --no-package-lock --no-save @testim/testim-cli
+      - name: Public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Print Public IP
+        run: |
+          echo ${{ steps.ip.outputs.ipv4 }}
+          echo ${{ steps.ip.outputs.ipv6 }} 
       - name: Run Testim tests
-        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label || 'Nightly'}} -r testimci-report.xml --tunnel --tunnel-port 8888 --parallel 5
+        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label || 'test'}} -r testimci-report.xml --base-url "${{ steps.ip.outputs.ipv4 }}:8888/wp-admin"
