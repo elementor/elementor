@@ -138,7 +138,7 @@ function fetchKits( force ) {
 export default function useKits( initialQueryParams = {} ) {
 	const [ force, setForce ] = useState( false );
 	const [ queryParams, setQueryParams ] = useState( () => ( {
-		initiated: false,
+		ready: false, // When the query param is ready to use (after parsing and assign the query param from the url)
 		...defaultQueryParams,
 		...initialQueryParams,
 	} ) );

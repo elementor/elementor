@@ -124,7 +124,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 				...prev.taxonomies,
 				...routerQueryParams.taxonomies,
 			},
-			initiated: true,
+			ready: true,
 		} ) );
 	}, [] );
 }
@@ -145,7 +145,7 @@ export default function Index( props ) {
 		isFilterActive,
 	} = useKits( props.initialQueryParams );
 
-	useRouterQueryParams( queryParams, setQueryParams, [ 'initiated', ...Object.keys( props.initialQueryParams ) ] );
+	useRouterQueryParams( queryParams, setQueryParams, [ 'ready', ...Object.keys( props.initialQueryParams ) ] );
 
 	const {
 		data: taxonomiesData,
@@ -212,9 +212,9 @@ export default function Index( props ) {
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
-						{ isSuccess && 0 < data.length && queryParams.initiated && <KitList data={ data }/> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data }/> }
 						{
-							isSuccess && 0 === data.length && queryParams.initiated && props.renderNoResultsComponent( {
+							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <IndexNoResults
 									title={ __( 'No results matched your search.', 'elementor' ) }
 									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
