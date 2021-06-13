@@ -10,8 +10,9 @@ import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { useCallback, useMemo, useEffect } from 'react';
 import { Grid } from '@elementor/app-ui';
+import { useCallback, useMemo, useEffect } from 'react';
+import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
 
 import './index.scss';
@@ -82,12 +83,15 @@ function useMenuItems( path ) {
  */
 function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	const location = useLocation();
+	const { setLastFilter } = useLastFilterContext();
 
 	useEffect( () => {
 		const filteredQueryParams = Object.fromEntries(
 			Object.entries( queryParams )
 				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item )
 		);
+
+		setLastFilter( filteredQueryParams );
 
 		history.replaceState(
 			null,
@@ -120,6 +124,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 				...prev.taxonomies,
 				...routerQueryParams.taxonomies,
 			},
+			initiated: true,
 		} ) );
 	}, [] );
 }
@@ -140,7 +145,7 @@ export default function Index( props ) {
 		isFilterActive,
 	} = useKits( props.initialQueryParams );
 
-	useRouterQueryParams( queryParams, setQueryParams, Object.keys( props.initialQueryParams ) );
+	useRouterQueryParams( queryParams, setQueryParams, [ 'initiated', ...Object.keys( props.initialQueryParams ) ] );
 
 	const {
 		data: taxonomiesData,
@@ -207,9 +212,9 @@ export default function Index( props ) {
 					<>
 						{ isLoading && __( 'Loading...', 'elementor' ) }
 						{ isError && __( 'An error occurred', 'elementor' ) }
-						{ isSuccess && 0 < data.length && <KitList data={ data }/> }
+						{ isSuccess && 0 < data.length && queryParams.initiated && <KitList data={ data }/> }
 						{
-							isSuccess && 0 === data.length && props.renderNoResultsComponent( {
+							isSuccess && 0 === data.length && queryParams.initiated && props.renderNoResultsComponent( {
 								defaultComponent: <IndexNoResults
 									title={ __( 'No results matched your search.', 'elementor' ) }
 									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
