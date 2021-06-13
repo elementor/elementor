@@ -40,11 +40,9 @@ export class Disable extends DisableEnable {
 					__globals__: container.globals.toJSON(),
 				},
 				options: {
-					render: false,
+					renderUI: true,
 				},
 			} );
-
-			container.renderUI();
 		} );
 
 		await Promise.all( all );
