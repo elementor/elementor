@@ -82,8 +82,8 @@ function useMenuItems( path ) {
  * @param exclude
  */
 function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
-	const location = useLocation();
-	const { setLastFilter } = useLastFilterContext();
+	const location = useLocation(),
+		{ setLastFilter } = useLastFilterContext();
 
 	useEffect( () => {
 		const filteredQueryParams = Object.fromEntries(

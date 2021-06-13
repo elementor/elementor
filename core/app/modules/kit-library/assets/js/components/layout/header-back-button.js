@@ -5,8 +5,8 @@ import { useNavigate } from '@reach/router';
 import './header-back-button.scss';
 
 export default function HeaderBackButton() {
-	const navigate = useNavigate();
-	const { lastFilter } = useLastFilterContext();
+	const navigate = useNavigate(),
+		{ lastFilter } = useLastFilterContext();
 
 	return (
 		<div className="e-kit-library__header-back-container">
