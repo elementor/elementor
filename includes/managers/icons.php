@@ -85,7 +85,7 @@ class Icons_Manager {
 		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
 			'fa-regular' => [
 				'name' => 'fa-regular',
-				'label' => __( 'Font Awesome - Regular', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -97,7 +97,7 @@ class Icons_Manager {
 			],
 			'fa-solid' => [
 				'name' => 'fa-solid',
-				'label' => __( 'Font Awesome - Solid', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -109,7 +109,7 @@ class Icons_Manager {
 			],
 			'fa-brands' => [
 				'name' => 'fa-brands',
-				'label' => __( 'Font Awesome - Brands', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -174,7 +174,7 @@ class Icons_Manager {
 		$tabs = [
 			'all' => [
 				'name' => 'all',
-				'label' => __( 'All Icons', 'elementor' ),
+				'label' => esc_html__( 'All Icons', 'elementor' ),
 				'labelIcon' => 'eicon-filter',
 				'native' => true,
 			],
@@ -332,22 +332,22 @@ class Icons_Manager {
 			Settings::TAB_ADVANCED,
 			'load_fa4_shim',
 			[
-				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
+				'label' => esc_html__( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
 					'std' => 1,
 					'options' => [
-						'' => __( 'No', 'elementor' ),
-						'yes' => __( 'Yes', 'elementor' ),
+						'' => esc_html__( 'No', 'elementor' ),
+						'yes' => esc_html__( 'Yes', 'elementor' ),
 					],
-					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
+					'desc' => esc_html__( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
 				],
 			]
 		);
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Upgrade', 'elementor' ) ] );
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ] );
 
 		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
 			'callback' => function() {
@@ -366,7 +366,7 @@ class Icons_Manager {
 			},
 			'fields' => [
 				[
-					'label'      => __( 'Font Awesome Upgrade', 'elementor' ),
+					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
 						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
@@ -388,7 +388,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . __( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
 	}
 
 	/**
