@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Core\Utils\Http;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App;
+use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App_Multiple_Urls;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,24 +19,35 @@ class Test_Common_App extends Elementor_Test_Base {
 	 */
 	private $app_stub;
 
+	/**
+	 * @var Mock_App_Multiple_Urls
+	 */
+	private $app_stub_multiple_urls;
+
 	public function setUp() {
 		parent::setUp();
 
 		require_once __DIR__ . '/mock/mock-app.php';
+		require_once __DIR__ . '/mock/mock-app-multiple-urls.php';
 
-		$this->http_stub = $this->getMockBuilder( \WP_Http::class )
+		$this->http_stub = $this->getMockBuilder( Http::class )
 			->setMethods( [ 'request' ] )
 			->getMock();
 
 		$this->app_stub = new Mock_App();
 		$this->app_stub->set_http( $this->http_stub );
+
+		$this->app_stub_multiple_urls = new Mock_App_Multiple_Urls();
+		$this->app_stub_multiple_urls->set_http( $this->http_stub );
 	}
 
 	public function test_http_request() {
 		// Arrange
 		$endpoint = 'test/1';
 
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->with(
 				// Assert that those params sent to the api (similar to `expect`)
 				$this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
@@ -67,7 +80,9 @@ class Test_Common_App extends Elementor_Test_Base {
 
 	public function test_http_request__return_error_when_not_response_code() {
 		// Arrange
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->willReturn( [
 			    'response' => [
 			        'code' => 0,
@@ -84,7 +99,9 @@ class Test_Common_App extends Elementor_Test_Base {
 
 	public function test_http_request__server_sent_success_without_body() {
 		// Arrange
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->willReturn( [
 			    'response' => [
 			        'code' => 200,
@@ -102,7 +119,9 @@ class Test_Common_App extends Elementor_Test_Base {
 
 	public function test_http_request__wrong_server_response() {
 		// Arrange
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->willReturn( [
 			    'response' => [
 			        'code' => 200,
@@ -119,7 +138,9 @@ class Test_Common_App extends Elementor_Test_Base {
 
 	public function test_http_request__error_from_server() {
 		// Arrange
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->willReturn( [
 			    'response' => [
 			        'code' => 422,
@@ -139,7 +160,9 @@ class Test_Common_App extends Elementor_Test_Base {
 
 	public function test_http_request__as_array() {
 		// Arrange
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->willReturn( [
 			    'response' => [
 			        'code' => 200,
@@ -160,7 +183,9 @@ class Test_Common_App extends Elementor_Test_Base {
 		$endpoint = 'test/1';
 		$user = $this->get_connected_user();
 
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->with(
 				// Assert that those params sent to the api (similar to `expect`)
 			    $this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
@@ -205,12 +230,40 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
+	public function test_http_request__multi_urls_2_failed_last_success() {
+		// Arrange
+		$endpoint = 'test/1';
+
+		$this->http_stub
+			->expects( $this->exactly( 3 ) )
+			->method( 'request' )
+			->will(
+				$this->returnValueMap( [
+					[ 'response' => [ 'code' => 500 ] ],
+					new \WP_Error( 'Some error' ),
+					[ 'response' => [ 'code' => 200 ] ],
+				]
+			) );
+
+		// Act
+		$result = $this->app_stub->proxy_http_request( 'POST', $endpoint, [
+			'body' => [
+				'a' => 1,
+			]
+		] );
+
+		// Assert
+//		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+	}
+
 	public function test_request() {
 		// Arrange
 		$endpoint = 'test';
 		$user = $this->get_connected_user();
 
-		$this->http_stub->method( 'request' )
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
 			->with(
 				// Assert that those params sent to the api (similar to `expect`)
 			    $this->equalTo( Mock_App::BASE_URL . '/' . $endpoint ),
