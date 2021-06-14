@@ -181,17 +181,6 @@ class Post extends Base {
 	}
 
 	/**
-	 * Get Responsive Control Duplication Mode
-	 *
-	 * @since 3.4.0
-	 *
-	 * @return string
-	 */
-	protected function get_responsive_control_duplication_mode() {
-		return 'on';
-	}
-
-	/**
 	 * Enqueue CSS.
 	 *
 	 * Enqueue the post CSS file in Elementor.

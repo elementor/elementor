@@ -796,14 +796,19 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
+		$control_is_dynamic = ! empty( $args['dynamic']['active'] );
+		$is_frontend_available = ! empty( $args['frontend_available'] );
+		$has_prefix_class = ! empty( $args['prefix_class'] );
 
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
 		if (
-			Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' )
-			&& 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && empty( $args['dynamic']['active'] ) )
+			$additional_breakpoints_active
+			&& ( 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && ! $control_is_dynamic ) )
 			// Some responsive controls need responsive settings to be available to the widget handler, even when empty.
-			&& empty( $args['frontend_available'] )
+			&& ! $is_frontend_available
+			&& ! $has_prefix_class
 		) {
 			$args['is_responsive'] = true;
 

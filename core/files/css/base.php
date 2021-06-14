@@ -184,7 +184,7 @@ abstract class Base extends Base_File {
 	 * @return string
 	 */
 	protected function get_responsive_control_duplication_mode() {
-		return 'off';
+		return 'on';
 	}
 
 	/**
@@ -630,8 +630,6 @@ abstract class Base extends Base_File {
 
 		$this->render_css();
 
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
-
 		$name = $this->get_name();
 
 		/**
@@ -646,6 +644,8 @@ abstract class Base extends Base_File {
 		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/parse", $this );
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 
 		return $this->get_stylesheet()->__toString();
 	}
