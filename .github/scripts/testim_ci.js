@@ -18,15 +18,16 @@ const runProgram = (program, options) => {
 
     wpCli.on("close", (code) => {
       console.log(`child process exited with code ${code}`);
-      if (code !== 0) reject();
-      resolve();
+      if (code !== 0) reject(code);
+      resolve(code);
     });
   })
 };
 
-(async function () {
+const runTestim = async () => {
   // Start tunnel
-  const tunnelUrl = await ngrok.connect(8889);
+  const ngrokToken = '1svmVrKdhbvOy3UoGqVBBGWKeA6_6dpFfnpZgxt6kWQYz5Ddp'
+  const tunnelUrl = await ngrok.connect({authtoken: ngrokToken, addr:8889});
   // Use CLI to set local WP tunnel url
   await Promise.all([
     runProgram('npx', [
@@ -41,16 +42,20 @@ const runProgram = (program, options) => {
       "tests-cli",
       `"wp config set WP_SITEURL ${tunnelUrl}"`,
     ]),
-  ]).catch(e => console.error(e));;
+  ]).catch(e => console.error(e));
   // Run Testim
-  await runProgram('npx',[
+  const exitCode = await runProgram('npx',[
     'testim',
     '--project',project,
     '--token',token,
     '--label','test',
     '--grid','Testim-Grid',
-    '--base-url',tunnelUrl
+    '--base-url',tunnelUrl,
+    '--params', '{"username":"admin","password":"password"}'
   ]).catch(e => console.error(e));
   // Close tunnel
   await ngrok.kill();
-})();
+  return exitCode
+}
+
+runTestim().then(code => process.exit(code))
