@@ -566,7 +566,9 @@ class Widget_Accordion extends Widget_Base {
 							$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
 						?></a>
 					</<?php Utils::print_validated_html_tag( $settings['title_html_tag'] ); ?>>
-					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php echo $this->parse_text_editor( $item['tab_content'] ); ?></div>
+					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
+						$this->print_text_editor( $item['tab_content'] );
+					?></div>
 				</div>
 			<?php endforeach; ?>
 			<?php

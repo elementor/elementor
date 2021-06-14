@@ -144,4 +144,14 @@ class Control_Hover_Animation extends Base_Data_Control {
 			'label_block' => true,
 		];
 	}
+
+	public static function get_assets( $setting ) {
+		if ( ! $setting || 'none' === $setting ) {
+			return [];
+		}
+
+		return [
+			'styles' => [ 'e-animations' ],
+		];
+	}
 }

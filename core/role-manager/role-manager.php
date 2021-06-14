@@ -36,10 +36,12 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
+		$sanitized_page_title = esc_html( $this->get_page_title() );
+
 		add_submenu_page(
 			Settings::PAGE_ID,
-			$this->get_page_title(),
-			$this->get_page_title(),
+			$sanitized_page_title,
+			$sanitized_page_title,
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ]
@@ -83,7 +85,7 @@ class Role_Manager extends Settings_Page {
 		$this->get_tabs();
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html( $this->get_page_title() ); ?></h1>
+			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
 
 			<div id="elementor-role-manager">
 				<h3><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h3>

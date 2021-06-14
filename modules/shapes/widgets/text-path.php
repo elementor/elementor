@@ -656,7 +656,7 @@ class TextPath extends Widget_Base {
 		if ( 'custom' !== $settings['path'] ) {
 			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
 		} else {
-			$url = $settings['custom_path']['url'];
+			$url = esc_url( $settings['custom_path']['url'] );
 			// Get the file contents only if it's svg.
 			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
 		}
@@ -671,8 +671,8 @@ class TextPath extends Widget_Base {
 
 		// Render.
 		?>
-		<div <?php $this->print_render_attribute_string( 'text_path' ); ?> data-text="<?php echo $settings['text']; ?>">
-			<?php echo $path_svg; ?>
+		<div <?php $this->print_render_attribute_string( 'text_path' ); ?> data-text="<?php echo esc_attr( $settings['text'] ); ?>">
+			<?php Utils::print_wp_kses_extended( $path_svg, [ 'svg' ] ); ?>
 		</div>
 		<?php
 	}

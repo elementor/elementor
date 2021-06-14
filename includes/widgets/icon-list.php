@@ -580,8 +580,10 @@ class Widget_Icon_List extends Widget_Base {
 						$link_key = 'link_' . $index;
 
 						$this->add_link_attributes( $link_key, $item['link'] );
+						?>
+						<a <?php $this->print_render_attribute_string( $link_key ); ?>>
 
-						echo '<a ' . $this->get_render_attribute_string( $link_key ) . '>';
+						<?php
 					}
 
 					// add old default
@@ -602,7 +604,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php echo $item['text']; ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>

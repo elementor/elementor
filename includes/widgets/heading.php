@@ -315,7 +315,8 @@ class Widget_Heading extends Widget_Base {
 
 		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['header_size'] ), $this->get_render_attribute_string( 'title' ), $title );
 
-		echo $title_html;
+		// PHPCS - the variable $title_html holds safe data.
+		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

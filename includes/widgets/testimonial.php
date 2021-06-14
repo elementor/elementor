@@ -449,7 +449,7 @@ class Widget_Testimonial extends Widget_Base {
 				$this->add_render_attribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 				$this->add_inline_editing_attributes( 'testimonial_content' );
 				?>
-				<div <?php $this->print_render_attribute_string( 'testimonial_content' ); ?>><?php echo $settings['testimonial_content']; ?></div>
+				<div <?php $this->print_render_attribute_string( 'testimonial_content' ); ?>><?php $this->print_unescaped_setting( 'testimonial_content' ); ?></div>
 			<?php endif; ?>
 
 			<?php if ( $has_image || $has_name || $has_job ) : ?>
@@ -462,7 +462,7 @@ class Widget_Testimonial extends Widget_Base {
 							if ( ! empty( $settings['link']['url'] ) ) :
 								$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
 							endif;
-							echo $image_html;
+							echo wp_kses_post( $image_html );
 							?>
 						</div>
 					<?php endif; ?>
@@ -474,15 +474,13 @@ class Widget_Testimonial extends Widget_Base {
 							$this->add_render_attribute( 'testimonial_name', 'class', 'elementor-testimonial-name' );
 							$this->add_inline_editing_attributes( 'testimonial_name', 'none' );
 
-							$testimonial_name_html = $settings['testimonial_name'];
-
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php echo $testimonial_name_html; ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_name' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( 'testimonial_name' ); ?></a>
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php echo $testimonial_name_html; ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_name' ); ?>><?php $this->print_unescaped_setting( 'testimonial_name' ); ?></div>
 								<?php
 							endif;
 						endif; ?>
@@ -492,15 +490,13 @@ class Widget_Testimonial extends Widget_Base {
 
 							$this->add_inline_editing_attributes( 'testimonial_job', 'none' );
 
-							$testimonial_job_html = $settings['testimonial_job'];
-
 							if ( ! empty( $settings['link']['url'] ) ) :
 								?>
-								<a <?php $this->print_render_attribute_string( 'testimonial_job' ) . ' ' . $this->get_render_attribute_string( 'link' ); ?>><?php echo $testimonial_job_html; ?></a>
+								<a <?php $this->print_render_attribute_string( 'testimonial_job' ); ?> <?php $this->print_render_attribute_string( 'link' ); ?>><?php $this->print_unescaped_setting( 'testimonial_job' ); ?></a>
 								<?php
 							else :
 								?>
-								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php echo $testimonial_job_html; ?></div>
+								<div <?php $this->print_render_attribute_string( 'testimonial_job' ); ?>><?php $this->print_unescaped_setting( 'testimonial_job' ); ?></div>
 								<?php
 							endif;
 						endif; ?>

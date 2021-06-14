@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -133,6 +132,17 @@ class Settings extends Settings_Page {
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
+			__( 'Submissions', 'elementor' ),
+			__( 'Submissions', 'elementor' ),
+			'manage_options',
+			'e-form-submissions',
+			function() {
+				$this->elementor_form_submissions();
+			}
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
 			__( 'Custom Fonts', 'elementor' ),
 			__( 'Custom Fonts', 'elementor' ),
 			'manage_options',
@@ -262,7 +272,7 @@ class Settings extends Settings_Page {
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
 							<?php if ( ! empty( $create_new_cpt ) ) : ?>
-							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
+							<a href="<?php echo esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
 							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo esc_html__( 'Watch the Full Guide', 'elementor' ); ?></a>
@@ -286,10 +296,12 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<?php // PHPCS - No need to escape an SVG image from the Elementor assets/images folder. ?>
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 				<h2><?php echo esc_html__( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -307,10 +319,11 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
 				<h2><?php echo esc_html__( 'Add Your Custom Icons', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-icons&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-icons&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -328,10 +341,30 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>" />
 				<h2><?php echo esc_html__( 'Get Popup Builder', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Popup Builder lets you take advantage of all the amazing features in Elementor, so you can build beautiful & highly converting popups. Go pro and start designing your popups today.', 'elementor' ); ?></p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/popup-builder/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<?php // PHPCS - No need to escape a URL. The query arg is sanitized. ?>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/popup-builder/?utm_source=popup-templates&utm_campaign=gopro&utm_medium=wp-dash' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	public function elementor_form_submissions() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<h2><?php echo esc_html__( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
+				<p>
+					<?php echo esc_html__( 'Save and manage all of your form submissions in one single place.
+All within a simple, intuitive place.', 'elementor' ); ?>
+					<a href="http://go.elementor.com/wp-dash-submissions" target="_blank" rel="nofollow">
+						<?php echo esc_html__( 'Learn More', 'elementor' ); ?>
+					</a>
+				</p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -460,7 +493,23 @@ class Settings extends Settings_Page {
 			],
 			self::TAB_INTEGRATIONS => [
 				'label' => esc_html__( 'Integrations', 'elementor' ),
-				'sections' => [],
+				'sections' => [
+					'google_maps' => [
+						'label' => esc_html__( 'Google Maps Embed API', 'elementor' ),
+						'callback' => function() {
+							printf( esc_html__( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
+						},
+						'fields' => [
+							'google_maps_api_key' => [
+								'label' => esc_html__( 'API Key', 'elementor' ),
+								'field_args' => [
+									'class' => 'elementor_google_maps_api_key',
+									'type' => 'text',
+								],
+							],
+						],
+					],
+				],
 			],
 			self::TAB_ADVANCED => [
 				'label' => esc_html__( 'Advanced', 'elementor' ),

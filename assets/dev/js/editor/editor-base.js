@@ -606,18 +606,19 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const specialBreakpointsHeights = {
-			mobile: {
-				minHeight: 480,
-				height: 667,
-				maxHeight: 896,
-			},
-			tablet: {
-				minHeight: 768,
-				height: 1024,
-				maxHeight: 1024,
-			},
-		};
+		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+			specialBreakpointsHeights = {
+				mobile: {
+					minHeight: 480,
+					height: 736,
+					maxHeight: 896,
+				},
+				tablet: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+			};
 
 		let deviceConstrains = this.getCurrentDeviceConstrains();
 
@@ -1028,6 +1029,13 @@ export default class EditorBase extends Marionette.Application {
 			return;
 		}
 
+		// Cannot load editor without kit.
+		if ( ! elementor.config.kit_id ) {
+			this.kitNotExistsError();
+
+			return;
+		}
+
 		this.$previewContents = this.$preview.contents();
 
 		this.initFrontend();
@@ -1096,6 +1104,19 @@ export default class EditorBase extends Marionette.Application {
 				onButtonClick: true,
 			},
 			onConfirm: () => this.hide(),
+		} );
+	}
+
+	kitNotExistsError() {
+		this.showFatalErrorDialog( {
+			className: 'elementor-preview-loading-error',
+			headerMessage: __( 'Your site doesn\'t have a default kit', 'elementor' ),
+			message: __( 'Seems like your kit was deleted, please create new one or try restore it from trash.', 'elementor' ),
+			strings: {
+				confirm: __( 'Recreate Kit', 'elementor' ),
+				cancel: __( 'Go Back', 'elementor' ),
+			},
+			onConfirm: () => open( elementor.config.admin_tools_url, '_blank' ),
 		} );
 	}
 

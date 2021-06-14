@@ -815,7 +815,7 @@ class Source_Local extends Source_Base {
 				// Remove the temporary zip file, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -833,7 +833,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
@@ -1292,16 +1292,14 @@ class Source_Local extends Source_Base {
 				<h2>
 					<?php
 					/* translators: %s: Template type label. */
-					// PHPCS - Already escaped.
-					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
 				<p><?php echo esc_html( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
-					// PHPCS - Already escaped.
-					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label );
 					?>
 				</a>
 			</div>

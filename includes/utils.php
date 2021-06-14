@@ -42,6 +42,45 @@ class Utils {
 		'span',
 	];
 
+	const EXTENDED_ALLOWED_HTML_TAGS = [
+		'iframe' => [
+			'iframe' => [
+				'allow' => true,
+				'allowfullscreen' => true,
+				'frameborder' => true,
+				'height' => true,
+				'loading' => true,
+				'name' => true,
+				'referrerpolicy' => true,
+				'sandbox' => true,
+				'src' => true,
+				'width' => true,
+			],
+		],
+		'svg' => [
+			'svg' => [
+				'aria-hidden' => true,
+				'aria-labelledby' => true,
+				'class' => true,
+				'height' => true,
+				'role' => true,
+				'viewbox' => true,
+				'width' => true,
+				'xmlns' => true,
+			],
+			'g' => [
+				'fill' => true,
+			],
+			'title' => [
+				'title' => true,
+			],
+			'path' => [
+				'd' => true,
+				'fill' => true,
+			],
+		],
+	];
+
 	/**
 	 * Is ajax.
 	 *
@@ -372,20 +411,9 @@ class Utils {
 	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
-		$query_args = [
-			'action' => 'elementor_new_post',
-			'post_type' => $post_type,
-		];
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.3.0', 'Plugin::$instance->documents->get_create_new_post_url()' );
 
-		if ( $template_type ) {
-			$query_args['template_type'] = $template_type;
-		}
-
-		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
-
-		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
-
-		return $new_post_url;
+		return Plugin::$instance->documents->get_create_new_post_url( $post_type, $template_type );
 	}
 
 	/**
@@ -723,5 +751,20 @@ class Utils {
 		] );
 
 		return new \WP_Query( $args );
+	}
+
+	public static function print_wp_kses_extended( string $string, array $tags ) {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+		// Since PHP 5.6 cannot use isset() on the result of an expression.
+		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
+
+		foreach ( $tags as $tag ) {
+			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
+				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
+				$allowed_html = array_merge( $allowed_html, $extended_tags );
+			}
+		}
+
+		echo wp_kses( $string, $allowed_html );
 	}
 }
