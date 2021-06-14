@@ -80,5 +80,7 @@ jobs:
           npx wp-env run tests-cli "wp --info"
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli
+      - name: Install Ngrok
+        run: npm install --no-package-lock --no-save ngrok
       - name: Run Testim tests
         run: node ./.github/scripts/testim_ci.js ${{ secrets.TESTIM_PROJECT }} ${{ secrets.TESTIM_TOKEN }}
