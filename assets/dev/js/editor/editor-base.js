@@ -1252,7 +1252,7 @@ export default class EditorBase extends Marionette.Application {
 				}
 
 				// If there is a prefix class with a device modifier in it, add in the device modifier.
-				if ( controlArgs.prefix_class && -1 === controlArgs.prefix_class.indexOf( '%s' ) ) {
+				if ( controlArgs.prefix_class && -1 !== controlArgs.prefix_class.indexOf( '%s' ) ) {
 					const deviceModifier = 'desktop' === device ? '' : '-' + device;
 
 					controlArgs.prefix_class = controlArgs.prefix_class.replace( '%s', deviceModifier );
