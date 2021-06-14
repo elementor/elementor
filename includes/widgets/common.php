@@ -1004,7 +1004,7 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotate",
+				"_{$tab}_transform_rotateZ_effect",
 				[
 					'label' => __( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1038,7 +1038,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotate_x",
+				"_{$tab}_transform_rotateX_effect",
 				[
 					'label' => __( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1063,7 +1063,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotate_y",
+				"_{$tab}_transform_rotateY_effect",
 				[
 					'label' => __( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1102,7 +1102,7 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_offset_x",
+				"_{$tab}_transform_offsetX_effect",
 				[
 					'label' => __( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1131,7 +1131,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_offset_y",
+				"_{$tab}_transform_offsetY_effect",
 				[
 					'label' => __( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1185,7 +1185,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scale",
+				"_{$tab}_transform_scale_effect",
 				[
 					'label' => __( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1208,7 +1208,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scale_x",
+				"_{$tab}_transform_scaleX_effect",
 				[
 					'label' => __( 'Scale X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1231,7 +1231,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scale_y",
+				"_{$tab}_transform_scaleY_effect",
 				[
 					'label' => __( 'Scale Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1268,7 +1268,7 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_skew_x",
+				"_{$tab}_transform_skewX_effect",
 				[
 					'label' => __( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1292,7 +1292,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_skew_y",
+				"_{$tab}_transform_skewY_effect",
 				[
 					'label' => __( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1318,7 +1318,7 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_flip_horizontal",
+				"_{$tab}_transform_flip_horizontal_effect",
 				[
 					'label' => __( 'Flip Horizontal', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
@@ -1337,7 +1337,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_control(
-				"_{$tab}_transform_flip_vertical",
+				"_{$tab}_transform_flip_vertical_effect",
 				[
 					'label' => __( 'Flip Vertical', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
