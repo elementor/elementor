@@ -58,7 +58,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			$element.css( 'display', 'none' );
 		}
 
-		jQuery( '<div></div>' ).css( {
+		jQuery( '<div />' ).css( {
 			...$element.css( [
 				'flex-basis',
 				'flex-grow',

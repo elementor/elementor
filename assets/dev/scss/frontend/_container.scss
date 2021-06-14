@@ -50,7 +50,7 @@
 		height: auto;
 		min-height: 100%;
 		flex-shrink: 0;
-		animation-name: placeholder-widget-vertical;
+		animation-name: dnd-placeholder-widget-vertical;
 	}
 
 	.elementor-widget {
@@ -75,7 +75,7 @@
 	}
 }
 
-@keyframes placeholder-widget-vertical {
+@keyframes dnd-placeholder-widget-vertical {
 	0% {
 		width: 0;
 		opacity: 0;
