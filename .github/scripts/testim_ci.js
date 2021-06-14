@@ -29,12 +29,14 @@ const runProgram = (program, options) => {
   const tunnelUrl = await ngrok.connect(8889);
   // Use CLI to set local WP tunnel url
   await Promise.all([
-    runProgram("wp-env", [
+    runProgram('npx', [
+      "wp-env",
       "run",
       "tests-cli",
       `"wp config set WP_HOME ${tunnelUrl}"`,
     ]),
-    runProgram("wp-env", [
+    runProgram('npx', [
+      "wp-env",
       "run",
       "tests-cli",
       `"wp config set WP_SITEURL ${tunnelUrl}"`,
