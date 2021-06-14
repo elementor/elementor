@@ -70,17 +70,16 @@
 		flex-shrink: 0;
 
 		svg {
-			width: 1em;
-			height: auto;
+			$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
+
+			width: $e-icon-list-svg-icon-size;
+			height: $e-icon-list-svg-icon-size;
+			margin-inline-end: calc(#{$e-icon-list-svg-icon-size} * 0.25);
 		}
 
 		i {
 			width: 1.25em;
-		}
-
-		.e-font-icon-svg {
-			display: inline-block;
-			height: 1em;
+			font-size: var(--e-icon-list-icon-size);
 		}
 	}
 
