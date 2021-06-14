@@ -3,11 +3,6 @@ name: Testim
 on:
   push:
   workflow_dispatch:
-    inputs:
-      label:
-        description: 'Label to run'
-        required: true
-        default: 'Nightly'  
   schedule:
     - cron: '0 10 * * *' # run at 10 AM UTC
 
@@ -85,13 +80,5 @@ jobs:
           npx wp-env run tests-cli "wp --info"
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli
-      - name: Public IP
-        id: ip
-        uses: haythem/public-ip@v1.2
-
-      - name: Print Public IP
-        run: |
-          echo ${{ steps.ip.outputs.ipv4 }}
-          echo ${{ steps.ip.outputs.ipv6 }} 
       - name: Run Testim tests
-        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "Testim-Grid" --label ${{ github.event.inputs.label || 'test'}} -r testimci-report.xml --base-url "${{ steps.ip.outputs.ipv4 }}:8888/wp-admin"
+        run: node ./.github/scripts/testim_ci.js ${{ secrets.TESTIM_PROJECT }} ${{ secrets.TESTIM_TOKEN }}
