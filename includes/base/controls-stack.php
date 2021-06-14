@@ -802,6 +802,8 @@ abstract class Controls_Stack extends Base_Object {
 		if (
 			Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' )
 			&& 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && empty( $args['dynamic']['active'] ) )
+			// Some responsive controls need responsive settings to be available to the widget handler, even when empty.
+			&& empty( $args['frontend_available'] )
 		) {
 			$args['is_responsive'] = true;
 
@@ -970,18 +972,6 @@ abstract class Controls_Stack extends Base_Object {
 		foreach ( $this->get_controls() as $control ) {
 			if ( ! empty( $control['frontend_available'] ) ) {
 				$controls[] = $control['name'];
-
-				if ( ! empty( $control['is_responsive'] ) ) {
-					$devices = array_reverse( array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() ) );
-
-					if ( ! empty( $control['responsive']['devices'] ) ) {
-						$devices = array_intersect( $devices, $control['responsive']['devices'] );
-					}
-
-					foreach ( $devices as $device ) {
-						$controls[] = $control['name'] . '_' . $device;
-					}
-				}
 			}
 		}
 
