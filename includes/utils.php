@@ -155,6 +155,9 @@ class Utils {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
 		}
 
+		// Allow externals to replace-urls, when they have to.
+		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
+
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
