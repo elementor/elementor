@@ -41,7 +41,8 @@ const runProgram = (program, options) => {
     ]),
   ]).catch(e => console.error(e));;
   // Run Testim
-  await runProgram('testim',[
+  await runProgram('npx',[
+    'testim',
     '--project',project,
     '--token',token,
     '--label','test',
