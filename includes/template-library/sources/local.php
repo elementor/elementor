@@ -902,8 +902,7 @@ class Source_Local extends Source_Base {
 				<form id="elementor-import-template-form" method="post" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
 					<input type="hidden" name="library_action" value="direct_import_template">
-					<?php // PHPCS - Not user input. ?>
-					<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>"> <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<input type="hidden" name="_nonce" value="<?php Utils::print_unescaped_internal_string( $ajax->create_nonce() ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
 						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
@@ -1168,8 +1167,7 @@ class Source_Local extends Source_Base {
 				if ( ! $all_title ) {
 					$all_title = esc_html__( 'All', 'elementor' );
 				}
-				// PHPCS - $all_title already escaped.
-				echo $all_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				Utils::print_unescaped_internal_string( $all_title ); ?>
 			</a>
 			<?php
 			foreach ( $doc_types as $type => $class_name ) :
@@ -1181,8 +1179,7 @@ class Source_Local extends Source_Base {
 
 				$type_url = esc_url( add_query_arg( self::TAXONOMY_TYPE_SLUG, $type, $baseurl ) );
 				$type_label = $this->get_template_label_by_type( $type );
-				// PHPCS - Not user input.
-				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				Utils::print_unescaped_internal_string( "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>" );
 			endforeach;
 			?>
 		</div>

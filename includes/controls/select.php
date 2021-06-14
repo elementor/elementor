@@ -61,10 +61,10 @@ class Control_Select extends Base_Data_Control {
 		?>
 		<div class="elementor-control-field">
 			<# if ( data.label ) {#>
-				<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label> <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<# } #>
 			<div class="elementor-control-input-wrapper elementor-control-unit-5">
-				<select id="<?php $this->print_control_uid(); ?>" data-setting="{{ data.name }}"> <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<select id="<?php $this->print_control_uid(); ?>" data-setting="{{ data.name }}">
 				<#
 					var printOptions = function( options ) {
 						_.each( options, function( option_title, option_value ) { #>

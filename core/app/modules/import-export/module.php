@@ -87,7 +87,7 @@ class Module extends BaseModule {
 
 				$this->export->run();
 			} catch ( \Error $error ) {
-				// PHPCS - Not user input.
+				// PHPCS - Not a user input.
 				wp_die( $error->getMessage() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
@@ -141,12 +141,12 @@ class Module extends BaseModule {
 				<div class="tab-import-export-kit__container">
 					<div class="tab-import-export-kit__box">
 						<h2><?php Utils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-						<a href="<?php echo esc_url( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
+						<a href="<?php Utils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button elementor-button-success">
 							<?php Utils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 						</a>
 					</div>
 					<p><?php Utils::print_unescaped_internal_string( $data['description'] ); ?></p>
-					<a href="<?php echo esc_url( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+					<a href="<?php Utils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php Utils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
 				</div>
 			<?php } ?>
 			</div>
