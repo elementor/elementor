@@ -41,7 +41,7 @@ class Http extends \WP_Http {
 
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
-		if ( ! $response_code || 500 === $response_code ) {
+		if ( ! $response_code || 500 === $response_code || 404 === $response_code ) {
 			return false;
 		}
 

@@ -54,7 +54,7 @@ class Test_Common_App extends Elementor_Test_Base {
 				$this->equalTo( [
 					'headers' => [],
 					'method' => 'POST',
-					'timeout' => 25,
+					'timeout' => 10,
 					'body' => [
 						'a' => 1,
 					],
@@ -237,23 +237,153 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->http_stub
 			->expects( $this->exactly( 3 ) )
 			->method( 'request' )
-			->will(
-				$this->returnValueMap( [
-					[ 'response' => [ 'code' => 500 ] ],
-					new \WP_Error( 'Some error' ),
-					[ 'response' => [ 'code' => 200 ] ],
+			->withConsecutive(
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::BASE_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				],
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::FAllBACK_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				],
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::FAllBACK2_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
 				]
-			) );
+			)
+			->willReturnOnConsecutiveCalls(
+				[ 'response' => [ 'code' => 500 ] ],
+				new \WP_Error( 'Some error' ),
+				[ 'response' => [ 'code' => 200 ],  'body' => '{"status": "success"}' ]
+			);
 
 		// Act
-		$result = $this->app_stub->proxy_http_request( 'POST', $endpoint, [
+		$result = $this->app_stub_multiple_urls->proxy_http_request( 'POST', $endpoint, [
 			'body' => [
 				'a' => 1,
 			]
 		] );
 
 		// Assert
-//		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+	}
+
+	public function test_http_request__multi_urls_first_succeed() {
+		// Arrange
+		$endpoint = 'test/1';
+
+		$this->http_stub
+			->expects( $this->exactly( 1 ) )
+			->method( 'request' )
+			->withConsecutive(
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::BASE_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				[ 'response' => [ 'code' => 200 ],  'body' => '{"status": "success"}' ]
+			);
+
+		// Act
+		$result = $this->app_stub_multiple_urls->proxy_http_request( 'POST', $endpoint, [
+			'body' => [
+				'a' => 1,
+			]
+		] );
+
+		// Assert
+		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+	}
+
+	public function test_http_request__all_failed() {
+		// Arrange
+		$endpoint = 'test/1';
+
+		$this->http_stub
+			->expects( $this->exactly( 3 ) )
+			->method( 'request' )
+			->withConsecutive(
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::BASE_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				],
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::FAllBACK_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				],
+				[
+					$this->equalTo( Mock_App_Multiple_Urls::FAllBACK2_URL . '/' . $endpoint ),
+					$this->equalTo( [
+						'headers' => [],
+						'method' => 'POST',
+						'timeout' => 10,
+						'body' => [
+							'a' => 1,
+						],
+					] )
+				]
+			)
+			->willReturnOnConsecutiveCalls(
+				[ 'response' => [ 'code' => 500 ] ],
+				new \WP_Error( 'Some error' ),
+				[ 'response' => [ 'code' => 500 ],  'body' => '{"status": "failed", "message":"error message"}' ]
+			);
+
+		// Act
+		$result = $this->app_stub_multiple_urls->proxy_http_request( 'POST', $endpoint, [
+			'body' => [
+				'a' => 1,
+			]
+		] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertEqualSets( [
+			'500' => ['error message']
+		], $result->errors );
 	}
 
 	public function test_request() {

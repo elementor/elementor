@@ -356,6 +356,7 @@ abstract class Base_App {
 			'POST',
 			$action,
 			[
+				'timeout' => 25,
 				'body' => $request_body,
 				'headers' => $this->is_connected() ?
 					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
@@ -426,7 +427,7 @@ abstract class Base_App {
 		$args = array_replace_recursive( [
 			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : [],
 			'method' => $method,
-			'timeout' => 25,
+			'timeout' => 10,
 		], $args );
 
 		$response = $this->http->request_with_fallback(
