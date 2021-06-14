@@ -177,6 +177,17 @@ abstract class Base extends Base_File {
 	}
 
 	/**
+	 * Get Responsive Control Duplication Mode
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string
+	 */
+	protected function get_responsive_control_duplication_mode() {
+		return 'off';
+	}
+
+	/**
 	 * Enqueue CSS.
 	 *
 	 * Either enqueue the CSS file in Elementor or add inline style.
@@ -604,10 +615,6 @@ abstract class Base extends Base_File {
 		return false;
 	}
 
-	protected function is_responsive_render_supported() {
-		return true;
-	}
-
 	/**
 	 * Parse CSS.
 	 *
@@ -617,8 +624,13 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
 
 		$this->render_css();
+
+		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 
 		$name = $this->get_name();
 

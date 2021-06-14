@@ -53,12 +53,16 @@ class Manager extends Module {
 	 * -- 'off': Responsive controls are NOT duplicated in `add_responsive_control()`.
 	 * -- 'dynamic': Responsive controls are only duplicated if their config contains `'dynamic' => 'active' => true`.
 	 *
+	 * When generating Post CSS, the mode is set to 'on'. When generating Dynamic CSS, the mode is set to 'dynamic'.
+	 *
+	 * default value is 'off'.
+	 *
 	 * @since 3.4.0
 	 * @access public
 	 *
 	 * @var string
 	 */
-	private $responsive_control_duplication_mode;
+	private $responsive_control_duplication_mode = 'off';
 
 	public function get_name() {
 		return 'breakpoints';

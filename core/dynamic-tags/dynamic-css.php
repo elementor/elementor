@@ -25,10 +25,6 @@ class Dynamic_CSS extends Post_Local_Cache {
 		return false;
 	}
 
-	protected function is_responsive_render_supported() {
-		return false;
-	}
-
 	protected function render_styles( Element_Base $element ) {
 		$id = $element->get_id();
 
@@ -67,6 +63,17 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @access public
 	 */
 	public function get_name() {
+		return 'dynamic';
+	}
+
+	/**
+	 * Get Responsive Control Duplication Mode
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return string
+	 */
+	protected function get_responsive_control_duplication_mode() {
 		return 'dynamic';
 	}
 
