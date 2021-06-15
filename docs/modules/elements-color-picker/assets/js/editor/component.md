@@ -44,7 +44,6 @@ This is the JS component which is responsible for registering the following comm
 
 
 - Our initial thought was creating a per-pixel eyedropper, but we dropped this idea (pun intended) since the only way to do that is by
-
 	taking a screenshot of the page and converting to Canvas, which brings a huge performance penalty with it.
 
 	In addition, taking a screenshot of a website is prohibited by the privacy rules of WordPress, so even if the performance would've been OK, we would still have this privacy issue.
