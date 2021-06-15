@@ -5,6 +5,9 @@
 - [Text Path on Elementor.com](https://elementor.com/help/text-path-widget/)
 
 
+- [How to Use the Text Path Widget](https://www.youtube.com/watch?v=aeqpeYkE_yE)
+
+
 - [\<textPath\> element reference on MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath)
 
 

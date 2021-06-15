@@ -14,6 +14,9 @@ We've added a mask option to any type of widget in Elementor, using the CSS `mas
 - [Mask Option on Elementor.com](https://elementor.com/help/mask-option/)
   
 
+- [How to Use Elementor's Mask Option](https://www.youtube.com/watch?v=tujmkmuqM0M)
+  
+
 - [Mask property reference on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/mask)
 
 
