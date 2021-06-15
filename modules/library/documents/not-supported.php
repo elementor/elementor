@@ -59,6 +59,10 @@ class Not_Supported extends Library_Document {
 		return __( 'Not Supported', 'elementor' );
 	}
 
+	public static function get_create_url() {
+		return admin_url( Source_Local::ADMIN_MENU_SLUG . '#add_new' );
+	}
+
 	public function save_template_type() {
 		// Do nothing.
 	}
