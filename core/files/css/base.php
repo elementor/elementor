@@ -789,15 +789,15 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
+			$strings_to_replace = [ $control['groupPrefix'] ];
+
 			$active_breakpoint_keys = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-			foreach ( $active_breakpoint_keys as $index => $breakpoint ) {
-				$active_breakpoint_keys[ $index ] = '_' . $breakpoint;
+			foreach ( $active_breakpoint_keys as $breakpoint ) {
+				$strings_to_replace[] = '_' . $breakpoint;
 			}
 
-			$prefixes_and_suffixes_to_replace = array_merge( [ $control['groupType'] ], $active_breakpoint_keys );
-
-			$property_name = str_replace( $prefixes_and_suffixes_to_replace, '', $control['name'] );
+			$property_name = str_replace( $strings_to_replace, '', $control['name'] );
 
 			// TODO: This check won't retrieve the proper answer for array values (multiple controls).
 			if ( empty( $data['value'][ Global_Typography::TYPOGRAPHY_GROUP_PREFIX . $property_name ] ) ) {
