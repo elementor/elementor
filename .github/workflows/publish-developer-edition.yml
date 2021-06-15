@@ -16,7 +16,7 @@ jobs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Check developer-edition GitHub checks
-        uses: maael/confirm-checks-action@34a392d22e36c0cc7aace0ed98958169f36e16a7 # master
+        uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
         with:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
           commit: developer-edition
