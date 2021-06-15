@@ -421,11 +421,7 @@ class Manager {
 	public function after_enqueue_post_css( $css_file ) {
 		$css_file = Dynamic_CSS::create( $css_file->get_post_id(), $css_file );
 
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'dynamic' );
-
 		$css_file->enqueue();
-
-		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'off' );
 	}
 
 	/**
