@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 
 	// Keep the following line after `wp_head()` call, to ensure it's not overridden by another templates.
-	echo esc_html( Utils::get_meta_viewport( 'canvas' ) );
+	Utils::print_unescaped_internal_string( Utils::get_meta_viewport( 'canvas' ) );
 	?>
 </head>
 <body <?php body_class(); ?>>
