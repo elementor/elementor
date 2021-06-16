@@ -23,7 +23,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 
 		self.editor = ace.edit( this.ui.editor[ 0 ] );
 
-		// The class elementor-control-tag-area handles the dynamic tag functionality.
+		// Since the code control is wrapped with a dynamic div, the class elementor-control-tag-area need to be had dynamically to handle the dynamic tag functionality.
 		jQuery( self.editor.container ).addClass( 'elementor-input-style elementor-code-editor elementor-control-tag-area' );
 
 		self.editor.setOptions( {
