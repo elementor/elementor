@@ -81,10 +81,7 @@ class Test_Loader extends Elementor_Test_Base {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
 				$this->assertArrayHasKey( $asset_name, $added_assets[ $assets_type ], $asset_name . ' was not properly added to ' . $assets_type . ' of assets.' );
 
-				foreach( $asset_data as $key => $value ) {
-					$this->assertArrayHasKey( $key, $added_assets[ $assets_type ][ $asset_name ], $key . ' was not properly added to ' . $asset_name );
-					$this->assertEquals( $value, $added_assets[ $assets_type ][ $asset_name ][ $key ] );
-				}
+				$this->assertEquals( $assets[ $assets_type ][ $asset_name ], $added_assets[ $assets_type ][ $asset_name ] );
 			}
 		}
 	}
@@ -106,11 +103,20 @@ class Test_Loader extends Elementor_Test_Base {
 
 		$this->assertContains( 'e-style-default-enqueue', $wp_styles->queue, 'e-style-default-enqueue was not properly enqueued.' );
 		$this->assertContains( 'e-script-default-enqueue', $wp_scripts->queue, 'e-script-default-enqueue was not properly enqueued.' );
+	}
+
+	public function test_enqueue_assets__optimized_mode_activated() {
+		global $wp_styles;
+		global $wp_scripts;
+
+		$this->add_optimized_assets_loading_experiment();
 
 		// When "optimized assets loading" mode is active, assets should be loaded only when enabled.
 		$this->elementor()->experiments->set_feature_default_state( 'e_optimized_assets_loading', Experiments_Manager::STATE_ACTIVE );
 
 		$this->add_testing_assets( 'e-style-dynamic-enqueue', 'e-script-dynamic-enqueue' );
+
+		$assets_loader = $this->elementor()->assets_loader;
 
 		$assets_loader->enqueue_assets();
 
@@ -171,8 +177,12 @@ class Test_Loader extends Elementor_Test_Base {
 
 		$assets = $assets_loader->get_assets();
 
-		$this->assertArrayNotHasKey( $style_asset_key, $assets['styles'], 'Style asset key already exist, set a unique key for each style asset to prevent data collision.' );
-		$this->assertArrayNotHasKey( $script_asset_key, $assets['scripts'], 'Script asset key already exist, set a unique key for script each asset to prevent data collision.' );
+		// Validating that the test's dummy data is unique for each test.
+		if ( array_key_exists( $style_asset_key, $assets['styles'] ) ) {
+			throw new \Exception( 'Style asset key already exist, set a unique key for each style asset to prevent data collision.' );
+		} else if ( array_key_exists( $script_asset_key, $assets['scripts'] ) ) {
+			throw new \Exception( 'Script asset key already exist, set a unique key for script each asset to prevent data collision.' );
+		}
 
 		$asset_data = [
 			'src' => 'path',
@@ -192,6 +202,7 @@ class Test_Loader extends Elementor_Test_Base {
 	private function add_optimized_assets_loading_experiment() {
 		$experiments = $this->elementor()->experiments;
 
+		// The experiment should be added because it might be removed by other tests.
 		$experiments->add_feature( [
 			'name' => 'e_optimized_assets_loading',
 			'title' => __( 'Optimized Assets Loading', 'elementor' ),
