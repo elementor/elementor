@@ -264,7 +264,7 @@ class Preview extends App {
 			wp_enqueue_style( 'editor-preview-legacy' );
 		}
 
-		// Handle the 'wp audio' in editor preview
+		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_style( 'wp-mediaelement' );
 
 		/**
@@ -302,7 +302,7 @@ class Preview extends App {
 			true
 		);
 
-		// Handle the 'wp audio' in editor preview
+		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_script( 'wp-mediaelement' );
 
 		/**
