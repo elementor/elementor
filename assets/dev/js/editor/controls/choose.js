@@ -25,7 +25,6 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 			this.ui.inputs.filter( `[value="${ this.model.get( 'placeholder' ) }"]` )
 				.addClass( 'e-choose-placeholder' );
 		} else {
-			console.log( 'hello' );
 			this.ui.inputs.removeClass( 'e-choose-placeholder' );
 		}
 	},

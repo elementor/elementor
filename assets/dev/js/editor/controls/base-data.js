@@ -356,13 +356,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 			}
 		}
 
+		this.propagatePlaceholder();
+
 		this.updateElementModel( value, input );
 
 		this.triggerMethod( 'input:change', event );
-
-		if ( this.model.get( 'responsive' ) ) {
-			this.propagatePlaceholder();
-		}
 	},
 
 	onResponsiveSwitchersClick: function( event ) {

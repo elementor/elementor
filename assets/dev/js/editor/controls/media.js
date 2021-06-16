@@ -51,7 +51,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {
 			this.ui.mediaImage.css( 'background-image', url ? 'url(' + url + ')' : '' );
 
-			if ( ! value ) {
+			if ( ! value && url ) {
 				this.ui.mediaImage.css( 'opacity', 0.5 );
 			}
 		} else if ( 'video' === mediaType ) {
@@ -61,7 +61,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			this.ui.fileName.text( fileName );
 		}
 
-		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! url );
+		this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! value );
 	},
 
 	openFrame: function( e ) {
@@ -107,6 +107,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
+		this.propagatePlaceholder();
 	},
 
 	/**
@@ -170,7 +171,11 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 				id: attachment.id,
 			} );
 
-			this.applySavedValue();
+			if ( this.model.get( 'responsive' ) ) {
+				this.renderWithChildren();
+			} else {
+				this.applySavedValue();
+			}
 		}
 
 		this.trigger( 'after:select' );

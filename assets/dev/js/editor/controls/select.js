@@ -3,10 +3,16 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 
 ControlSelectItemView = ControlBaseDataView.extend( {
 	updatePlaceholder() {
-		const select = this.ui.select,
-			placeholderOption = select.find( '.e-option-placeholder:selected' );
+		const select = this.ui.select;
+		let selected = select.find( 'option:selected' );
 
-		if ( placeholderOption.length ) {
+		if ( '' === selected.val() && ! selected.hasClass( 'e-option-placeholder' ) ) {
+			selected = select.find( '.e-option-placeholder' );
+
+			select.val( selected.val() );
+		}
+
+		if ( selected.hasClass( 'e-option-placeholder' ) ) {
 			select.addClass( 'e-select-placeholder' );
 		} else {
 			select.removeClass( 'e-select-placeholder' );
@@ -14,6 +20,15 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady() {
+		const placeholder = this.model.get( 'placeholder' );
+
+		if ( placeholder ) {
+			jQuery( '<option>' ).val( '' )
+				.text( this.model.get( 'options' )[ placeholder ] )
+				.addClass( 'e-option-placeholder' )
+				.prependTo( this.ui.select );
+		}
+
 		this.updatePlaceholder();
 	},
 

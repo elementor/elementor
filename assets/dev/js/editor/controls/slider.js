@@ -84,7 +84,8 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	getSize: function() {
-		return this.getControlValue( this.isMultiple() ? 'sizes' : 'size' );
+		return this.model.get( 'placeholder' )?.size ||
+			this.getControlValue( this.isMultiple() ? 'sizes' : 'size' );
 	},
 
 	resetSize: function() {
@@ -124,6 +125,8 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			this.setValue( 'size', values[ 0 ] );
 
 			this.ui.input.val( values[ 0 ] );
+
+			this.propagatePlaceholder();
 		}
 	},
 

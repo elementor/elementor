@@ -5,6 +5,7 @@ import Select2 from 'elementor-editor-utils/select2.js';
 
 ControlSelect2ItemView = ControlBaseDataView.extend( {
 	getSelect2Placeholder: function() {
+		console.log( this.model.get( 'placeholder' ) );
 		return this.ui.select.find( `[value="${ this.model.get( 'placeholder' ) }"]` ).text() ||
 			this.ui.select.children( 'option:first[value=""]' ).text();
 	},
@@ -80,6 +81,8 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	},
 
 	onBaseInputChange: function() {
+		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
+
 		this.updatePlaceholder();
 	},
 

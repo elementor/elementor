@@ -179,7 +179,7 @@
 				cursor: pointer;
 
 				&.e-select-placeholder {
-					color: $editor-lightest;
+					color: $editor-light;
 				}
 			}
 
@@ -371,7 +371,7 @@
 		}
 
 		&.e-units-placeholder + label {
-			color: $editor-lightest;
+			color: $editor-lighter;
 			text-decoration: underline;
 		}
 

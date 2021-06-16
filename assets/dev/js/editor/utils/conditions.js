@@ -1,7 +1,7 @@
 var Conditions;
 
 Conditions = function() {
-	var self = this;
+	const self = this;
 
 	this.compare = function( leftValue, rightValue, operator ) {
 		switch ( operator ) {
@@ -35,24 +35,34 @@ Conditions = function() {
 	};
 
 	this.check = function( conditions, comparisonObject ) {
-		var isOrCondition = 'or' === conditions.relation,
-			conditionSucceed = ! isOrCondition;
+		const isOrCondition = 'or' === conditions.relation;
+		let conditionSucceed = ! isOrCondition;
 
 		jQuery.each( conditions.terms, function() {
-			var term = this,
-				comparisonResult;
+			const term = this;
+			let comparisonResult;
 
 			if ( term.terms ) {
 				comparisonResult = self.check( term, comparisonObject );
 			} else {
-				var parsedName = term.name.match( /(\w+)(?:\[(\w+)])?/ ),
-					value = comparisonObject[ parsedName[ 1 ] ];
+				const parsedName = term.name.match( /(\w+)(?:\[(\w+)])?/ ),
+					conditionRealName = parsedName[ 1 ],
+					conditionSubKey = parsedName[ 2 ],
+					placeholder = elementor.getPanelView().getCurrentPageView()
+						?.getControlModel?.( conditionRealName )?.get( 'placeholder' );
+				let value = placeholder || comparisonObject[ conditionRealName ];
 
-				if ( parsedName[ 2 ] ) {
-					value = value[ parsedName[ 2 ] ];
+				if ( comparisonObject.__dynamic__ && comparisonObject.__dynamic__[ conditionRealName ] ) {
+					value = comparisonObject.__dynamic__[ conditionRealName ];
 				}
 
-				comparisonResult = self.compare( value, term.value, term.operator );
+				if ( value && conditionSubKey ) {
+					value = value[ conditionSubKey ];
+				}
+
+				comparisonResult = undefined !== value ?
+					self.compare( value, term.value, term.operator ) :
+					true;
 			}
 
 			if ( isOrCondition ) {

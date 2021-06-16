@@ -165,6 +165,13 @@ body {
 		color: $theme-dark-light;
 	}
 }
+.elementor-units-choices {
+	input {
+		&.e-units-placeholder + label {
+			color: $theme-dark-gray-lightest;
+		}
+	}
+}
 
 input, select, textarea, .elementor-input-style {
 	color: $theme-dark-light;
@@ -180,6 +187,10 @@ input, select, textarea, .elementor-input-style {
 
 	&[disabled] {
 		background-color: $theme-dark-gray;
+	}
+
+	&::placeholder {
+		color: $theme-dark-gray-light;
 	}
 }
 
@@ -438,7 +449,7 @@ select {
 
 			select {
 				&.e-select-placeholder {
-					color: $theme-dark-gray-lighter;
+					color: $theme-dark-gray-light;
 				}
 			}
 		}
@@ -533,6 +544,13 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	.elementor-control-media__preview i {
 		color: $theme-dark-gray-lightest;
+	}
+}
+
+.elementor-control-type-media {
+
+	.elementor-control-media__preview {
+		background-color: $theme-dark-gray-darkest;
 	}
 }
 
@@ -691,7 +709,8 @@ body.rtl .elementor-control-type-gallery {
 	& input {
 
 		&.e-choose-placeholder + .elementor-choices-label {
-			background-color: $theme-dark-dark;
+			background-color: $theme-dark-gray-light;
+			border-color: $theme-dark-gray-light;
 		}
 
 		&:checked + .elementor-choices-label {
@@ -880,7 +899,7 @@ body.rtl .elementor-control-type-gallery {
 .select2-container {
 
 	.e-select2-placeholder {
-		color: $theme-dark-gray-lighter;
+		color: $theme-dark-gray-light;
 	}
 
 	&:not(.select2-container--open):not(.select2-container--focus) {

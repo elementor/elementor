@@ -44,8 +44,8 @@
 
 		&.e-choose-placeholder + .elementor-choices-label {
 			color: $white;
-			background-color: $editor-lightest;
-			//border-color: $editor-lightest;
+			background-color: $editor-lighter;
+			border-color: $editor-lighter;
 		}
 
 		&:checked + .elementor-choices-label {
