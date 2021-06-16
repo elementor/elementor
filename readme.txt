@@ -218,6 +218,9 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.2.5 - 2021-06-16 =
+* Fix: Reverted Replace URL fix that caused the Default Kit to get regenerated in certain cases ([#14892](https://github.com/elementor/elementor/issues/14892))
+
 = 3.2.4 - 2021-05-26 =
 * Tweak: Changed Google Maps widget to use API v3 instead of deprecated v2 ([#15090](https://github.com/elementor/elementor/issues/15090))
 * Tweak: Updated Google Fonts list to 05/2021 ([#14732](https://github.com/elementor/elementor/issues/14732), [#14536](https://github.com/elementor/elementor/issues/14536), [#13595](https://github.com/elementor/elementor/issues/13595))
