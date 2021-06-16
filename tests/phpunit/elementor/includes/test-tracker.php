@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Icons_Manager;
+use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tracker;
 use Elementor\Utils;
@@ -13,21 +15,22 @@ class Test_Tracker extends Elementor_Test_Base {
 		update_option( 'elementor_cpt_support', [ 'page' ] );
 
 		// Set true.
-		update_option( 'elementor_disable_color_schemes', true );
+		update_option( 'elementor_disable_color_schemes', 'yes' );
 
 		// Set False.
-		update_option( 'elementor_disable_typography_schemes', false );
+		update_option( 'elementor_disable_typography_schemes', 'no' );
 
 		// Act.
 		$actual = Tracker::get_settings_general_usage();
 
 		// Assert.
 		$this->assertEqualSets( [
-			'post_types' => [
+			'cpt_support' => [
 				'page',
 			],
-			'disable_default_colors' => false,
-			'disable_default_fonts' => true,
+			'disable_default_colors' => 'no',
+			'disable_default_fonts' => 'yes',
+			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existance.
 		], $actual );
 	}
 
@@ -35,25 +38,57 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Arrange.
 		update_option( 'elementor_css_print_method', 'internal' );
 
-		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, true );
+		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, 'no' );
 
-		update_option( Files_Upload_Handler::OPTION_KEY, true );
+		update_option( Files_Upload_Handler::OPTION_KEY, 'yes' );
 
-		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, true );
+		update_option( 'elementor_font_display', 'block' );
+
+		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
 
 		// Act.
 		$actual = Tracker::get_settings_advanced_usage();
 
+		// Assert.
 		$this->assertEqualSets( [
 			'css_print_method' => 'internal',
-			'switch_editor_loader_method' => true,
-			'enable_unfiltered_file_uploads' => true,
-			'font_awesome_support' => true,
+			'switch_editor_loader_method' => 'no',
+			'enable_unfiltered_file_uploads' => 'yes',
+			'font_display' => 'block',
+			'font_awesome_support' => 'yes',
 		], $actual );
 	}
 
 	public function test_get_settings_experiments_usage() {
-		$this->assertEquals( [], Tracker::get_settings_experiments_usage() );
+		// Arrange.
+		$original_experiments_manager = Plugin::$instance->experiments;
+
+		// Mock experiments manager.
+		Plugin::$instance->experiments = $this->getMockBuilder( Experiments_Manager::class )
+		     ->setMethods( [ 'get_features' ] )
+		     ->getMock();
+
+		// Set mock data.
+		Plugin::$instance->experiments
+			->method( 'get_features' )
+			->willReturn( [
+				'e_dom_optimization' => [
+					'default' => 'active',
+					'name' => 'e_dom_optimization',
+					'state' => 'default',
+				],
+			] );
+
+		// Assert.
+		$this->assertEquals( [
+			'e_dom_optimization' => [
+				'default' => 'active',
+				'state' => 'default',
+			]
+		], Tracker::get_settings_experiments_usage() );
+
+		// Cleanup.
+		Plugin::$instance->experiments = $original_experiments_manager;
 	}
 
 	public function test_get_tools_general_usage() {
@@ -61,9 +96,10 @@ class Test_Tracker extends Elementor_Test_Base {
 		update_option( 'elementor_safe_mode', 'enabled' );
 		update_option( 'elementor_enable_inspector', 'enabled' );
 
-		// Act
+		// Act.
 		$actual = Tracker::get_tools_general_usage();
 
+		// Assert.
 		$this->assertEqualSets( [
 			'safe_mode' => true,
 			'debug_bar' => true,
@@ -77,6 +113,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Act.
 		$actual = Tracker::get_tools_version_control_usage();
 
+		// Assert.
 		$this->assertEqualSets( [
 			'beta_tester' => 'yes',
 		], $actual );
@@ -91,6 +128,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Act
 		$actual = Tracker::get_tools_maintenance_usage();
 
+		// Assert.
 		$this->assertEqualSets( [
 			'mode' => 'coming_soon',
 			'exclude' => 'logged_in',

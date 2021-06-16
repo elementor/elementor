@@ -2,8 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Kits\Manager as Kits_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -377,21 +375,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_general_usage() {
-		$result = [];
-
-		// Posts types.
-		$result['post_types'] = get_option( 'elementor_cpt_support', Plugin::ELEMENTOR_DEFAULT_POST_TYPES );
-
-		/** @var Kits_Manager $module */
-		$kits_manager = Plugin::$instance->kits_manager;
-
-		// Disable Default Colors.
-		$result['disable_default_colors'] = $kits_manager->is_custom_colors_enabled();
-
-		// Disable Default Fonts.
-		$result['disable_default_fonts'] = $kits_manager->is_custom_typography_enabled();
-
-		return $result;
+		return self::get_from_settings_tabs( 'general' );
 	}
 
 	/**
@@ -401,12 +385,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_advanced_usage() {
-		return [
-			'css_print_method' => get_option( 'elementor_css_print_method', 'internal' ),
-			'switch_editor_loader_method' => boolval( get_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY ) ),
-			'enable_unfiltered_file_uploads' => boolval( get_option( Files_Upload_Handler::OPTION_KEY ) ),
-			'font_awesome_support' => get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'No' ),
-		];
+		return self::get_from_settings_tabs( 'advanced' );
 	}
 
 	/**
@@ -419,7 +398,6 @@ class Tracker {
 	public static function get_settings_experiments_usage() {
 		$result = [];
 
-		/** @var Experiments_Manager $module */
 		$experiments_manager = Plugin::$instance->experiments;
 
 		// TODO: Those keys should be at `$experiments_manager`.
@@ -530,5 +508,44 @@ class Tracker {
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
 		return $params;
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @returns array
+	 */
+	private static function get_from_settings_tabs( $tab_name ) {
+		$result = [];
+		$tabs = Plugin::$instance->settings->get_tabs();
+
+		$tab = $tabs[ $tab_name ];
+
+		foreach ( $tab['sections'] as $section_name => $section ) {
+			foreach ( $section['fields'] as $field_name => $field ) {
+				// Skips fields with '_' prefix.
+				if ( '_' === $field_name[0] ) {
+					continue;
+				}
+
+				$default_value = null;
+				$args = $field['field_args'];
+				switch ( $args['type'] ) {
+					case 'checkbox':
+						$default_value = $args['value'];
+						break;
+					case 'select':
+					case 'checkbox_list_cpt':
+						$default_value = $args['std'];
+						break;
+
+					default:
+						trigger_error( 'Invalid type: \'' . $args['type'] . '\'' ); // phpcs:ignore
+				}
+
+				$result[ $field_name ] = get_option( 'elementor_' . $field_name, $default_value );
+			}
+		}
+
+		return $result;
 	}
 }

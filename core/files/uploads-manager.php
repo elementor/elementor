@@ -229,7 +229,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	private function are_unfiltered_uploads_enabled() {
 		if ( ! $this->are_unfiltered_files_enabled ) {
-			$this->are_unfiltered_files_enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY );
+			$this->are_unfiltered_files_enabled = 'yes' === get_option( self::UNFILTERED_FILE_UPLOADS_KEY );
 		}
 
 		return $this->are_unfiltered_files_enabled;

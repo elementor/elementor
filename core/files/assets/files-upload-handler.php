@@ -31,7 +31,7 @@ abstract class Files_Upload_Handler {
 	 * @return bool
 	 */
 	final public static function is_enabled() {
-		$enabled = ! ! get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
+		$enabled = 'yes' === get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
 
 		/**
 		 * @deprecated 3.0.0 Use `elementor/document/urls/edit` filter instead.

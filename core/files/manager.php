@@ -142,7 +142,7 @@ class Manager {
 			return;
 		}
 
-		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
+		update_option( Files_Upload_Handler::OPTION_KEY, 'yes' );
 	}
 
 	/**

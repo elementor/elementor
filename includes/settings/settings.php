@@ -517,6 +517,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
+									'std' => 'internal',
 									'options' => [
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
@@ -528,9 +529,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => 'no',
 									'options' => [
-										'' => __( 'Disable', 'elementor' ),
-										1 => __( 'Enable', 'elementor' ),
+										'no' => __( 'Disable', 'elementor' ),
+										'yes' => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
@@ -539,10 +541,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => '',
+									'std' => 'no',
 									'options' => [
-										'' => __( 'Disable', 'elementor' ),
-										1 => __( 'Enable', 'elementor' ),
+										'no' => __( 'Disable', 'elementor' ),
+										'yes' => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],

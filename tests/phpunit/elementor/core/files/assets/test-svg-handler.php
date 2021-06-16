@@ -22,7 +22,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 	 */
 	public function test_support_unfiltered_files_upload__accepts_svg() {
 		// Arrange.
-		update_option( Files_Upload_Handler::OPTION_KEY, '1' );
+		update_option( Files_Upload_Handler::OPTION_KEY, 'yes' );
 
 		$key = 'svg';
 		$value = 'image/svg+xml';
@@ -40,7 +40,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 	 */
 	public function test_support_unfiltered_files_upload__doesnt_accept_svg() {
 		// Arrange.
-		update_option( Files_Upload_Handler::OPTION_KEY, '0' );
+		update_option( Files_Upload_Handler::OPTION_KEY, 'no' );
 
 		// Act.
 		$mimes = apply_filters( 'upload_mimes', [] );
