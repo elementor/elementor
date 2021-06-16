@@ -2,14 +2,14 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Kit_Library extends Library {
-	const DEFAULT_BASE_ENDPOINT = 'https://ms-8874.elementor.com/api/v1/kits-library';
+	const DEFAULT_BASE_ENDPOINT = 'https://my.elementor.com/api/v1/kits-library';
+	const FALLBACK_BASE_ENDPOINT = 'https://ms-8874.elementor.com/api/v1/kits-library';
 
 	public function get_title() {
 		return __( 'Kit Library', 'elementor' );
@@ -32,7 +32,10 @@ class Kit_Library extends Library {
 	}
 
 	protected function get_api_url() {
-		return static::DEFAULT_BASE_ENDPOINT;
+		return [
+			static::DEFAULT_BASE_ENDPOINT,
+			static::FALLBACK_BASE_ENDPOINT,
+		];
 	}
 
 	protected function init() {

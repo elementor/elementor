@@ -121,8 +121,12 @@ class Post_Type extends Base {
 
 		$new_id = $new_document->get_main_id();
 
-		if ( $this->show_page_on_front && ! empty( $post_settings['show_on_front'] ) ) {
+		if ( ! empty( $post_settings['show_on_front'] ) ) {
 			update_option( 'page_on_front', $new_id );
+
+			if ( ! $this->show_page_on_front ) {
+				update_option( 'show_on_front', 'page' );
+			}
 		}
 
 		return $new_id;
