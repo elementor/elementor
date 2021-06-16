@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Page\Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -23,6 +21,7 @@ class Utils {
 	 * A list of safe tage for `validate_html_tag` method.
 	 */
 	const ALLOWED_HTML_WRAPPER_TAGS = [
+		'a',
 		'article',
 		'aside',
 		'div',
@@ -151,16 +150,6 @@ class Utils {
 			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
-
-		$second_rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
-			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
-		);
-
-		if ( $second_rows_affected ) {
-			$rows_affected += $second_rows_affected;
-		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
@@ -476,6 +465,18 @@ class Utils {
 		return implode( ' ', $rendered_attributes );
 	}
 
+	/**
+	 * Safe print html attributes
+	 *
+	 * @access public
+	 * @static
+	 * @param array $attributes
+	 */
+	public static function print_html_attributes( array $attributes ) {
+		// PHPCS - the method render_html_attributes is safe.
+		echo self::render_html_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
 	public static function get_meta_viewport( $context = '' ) {
 		$meta_tag = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />';
 		/**
@@ -670,6 +671,23 @@ class Utils {
 	 */
 	public static function validate_html_tag( $tag ) {
 		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+	}
+
+	/**
+	 * Safe print a validated HTML tag.
+	 *
+	 * @param string $tag
+	 */
+	public static function print_validated_html_tag( $tag ) {
+		// PHPCS - the method validate_html_tag is safe.
+		echo self::validate_html_tag( $tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Print internal content (not user input) without escaping.
+	 */
+	public static function print_unescaped_internal_string( $string ) {
+		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
