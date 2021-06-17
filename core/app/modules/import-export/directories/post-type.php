@@ -34,7 +34,7 @@ class Post_Type extends Base {
 		$query_args = [
 			'post_type' => $this->post_type,
 			'post_status' => 'publish',
-			'posts_per_page' => 20,
+			'posts_per_page' => -1,
 			'meta_query' => [
 				[
 					'key' => '_elementor_data',
