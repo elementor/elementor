@@ -882,7 +882,7 @@ class Widget_Video extends Widget_Base {
 		<div <?php $this->print_render_attribute_string( 'video-wrapper' ); ?>>
 			<?php
 			if ( ! $settings['lightbox'] ) {
-				echo $video_html; // XSS ok.
+				Utils::print_unescaped_internal_string( $video_html ); // XSS ok.
 			}
 
 			if ( $this->has_image_overlay() ) {
@@ -1174,7 +1174,7 @@ class Widget_Video extends Widget_Base {
 
 		$video_params = $this->get_hosted_params();
 		?>
-		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php echo Utils::render_html_attributes( $video_params ); ?>></video>
+		<video class="elementor-video" src="<?php echo esc_url( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
 	}
 }

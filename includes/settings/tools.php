@@ -388,6 +388,6 @@ class Tools extends Settings_Page {
 	 * @return string Tools page title.
 	 */
 	protected function get_page_title() {
-		return __( 'Tools', 'elementor' );
+		return esc_html__( 'Tools', 'elementor' );
 	}
 }

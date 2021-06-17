@@ -40,8 +40,8 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 		</div>
 		<div class="e-responsive-bar__col">
 			<button class="e-responsive-bar__close-button e-responsive-bar__button"
-					data-tooltip="<?php echo __( 'Close', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
+					data-tooltip="<?php echo esc_html__( 'Close', 'elementor' ); ?>">
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
 			<button class="e-responsive-bar__settings-button e-responsive-bar__button"
