@@ -958,9 +958,7 @@ class Element_Column extends Element_Base {
 		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-		<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div <?php $this->print_render_attribute_string( $wrapper_attribute_string ); ?>>
-		<?php endif; ?>
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php $this->print_render_attribute_string( '_background_overlay' ); ?>></div>
 		<?php endif; ?>
