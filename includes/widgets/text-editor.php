@@ -408,24 +408,21 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
-
 		$editor_content = $this->get_settings_for_display( 'editor' );
+
 		$editor_content = $this->parse_text_editor( $editor_content );
 
-		if ( $should_render_inline_editing ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
 		}
 
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
-		<?php if ( $should_render_inline_editing ) { ?>
-			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
+			<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
 			<?php echo $editor_content; ?>
-		<?php if ( $should_render_inline_editing ) { ?>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 			</div>
 		<?php } ?>
 		<?php
@@ -455,25 +452,19 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
-			isEditMode = elementorFrontend.isEditMode(),
-			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
-
-		if ( shouldRenderInlineEditing ) {
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
-		}
+		<?php } ?>
 
 		view.addInlineEditingAttributes( 'editor', 'advanced' );
-
-		if ( shouldRenderInlineEditing ) { #>
+		#>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 			<div {{{ view.getRenderAttributeString( 'editor' ) }}}>
-		<# } #>
-
+		<?php } ?>
 			{{{ settings.editor }}}
-
-		<# if ( shouldRenderInlineEditing ) { #>
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 			</div>
-		<# } #>
+		<?php } ?>
 		<?php
 	}
 }
