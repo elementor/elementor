@@ -736,13 +736,15 @@ abstract class Element_Base extends Controls_Stack {
 			$elements[] = $child->get_raw_data( $with_html_content );
 		}
 
-		return [
+		$additional_raw_data = apply_filters( 'elementor/element/additional_raw_data', [], $data );
+
+		return array_merge( $additional_raw_data, [
 			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
 			'isInner' => $data['isInner'],
-		];
+		] );
 	}
 
 	/**

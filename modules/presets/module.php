@@ -41,5 +41,11 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$this->enqueue_scripts();
 		} );
+
+		add_filter( 'elementor/element/additional_raw_data', function ( $result, $data ) {
+			return array_merge( [
+				'presetId' => isset( $data['presetId'] ) ? $data['presetId'] : null,
+			], $result );
+		} );
 	}
 }
