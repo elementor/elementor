@@ -9,7 +9,7 @@ ColumnView = BaseElementView.extend( {
 
 	emptyView: ColumnEmptyView,
 
-	childViewContainer: elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ? '' : '> .elementor-column-wrap > .elementor-widget-wrap',
+	childViewContainer: elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap > .elementor-widget-wrap',
 
 	toggleEditTools: true,
 
@@ -33,12 +33,6 @@ ColumnView = BaseElementView.extend( {
 		var classes = BaseElementView.prototype.className.apply( this, arguments ),
 			type = this.isInner() ? 'inner' : 'top';
 
-		// Add an `elementor-widget-wrap` class to the column in order to attach its styles & events to the column,
-		// since this element doesn't exist when the DOM experiment is active.
-		if ( elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
-			classes += ' elementor-widget-wrap';
-		}
-
 		return classes + ' elementor-column elementor-' + type + '-column';
 	},
 
@@ -49,7 +43,7 @@ ColumnView = BaseElementView.extend( {
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
-		ui.columnInner = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ? '' : '> .elementor-column-wrap > .elementor-widget-wrap';
+		ui.columnInner = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ? '> .elementor-widget-wrap' : '> .elementor-column-wrap';
 
 		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
 
@@ -173,24 +167,21 @@ ColumnView = BaseElementView.extend( {
 	},
 
 	getSortableOptions: function() {
-		const connectWith = elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ? this.$el : '.elementor-widget-wrap';
-
 		return {
-			connectWith,
+			connectWith: '.elementor-widget-wrap',
 			items: '> .elementor-element',
 		};
 	},
 
 	changeChildContainerClasses: function() {
 		const emptyClass = 'elementor-element-empty',
-			populatedClass = 'elementor-element-populated',
-			columnInner = ( this.ui.columnInner.length ) ? this.ui.columnInner : this.$el;
+			populatedClass = 'elementor-element-populated';
 
-		if ( columnInner ) {
+		if ( this.ui.columnInner ) {
 			if ( this.collection.isEmpty() ) {
-				columnInner.removeClass( populatedClass ).addClass( emptyClass );
+				this.ui.columnInner.removeClass( populatedClass ).addClass( emptyClass );
 			} else {
-				columnInner.removeClass( emptyClass ).addClass( populatedClass );
+				this.ui.columnInner.removeClass( emptyClass ).addClass( populatedClass );
 			}
 		}
 	},
@@ -213,7 +204,7 @@ ColumnView = BaseElementView.extend( {
 		let itemsClasses = '';
 
 		if ( isDomOptimizationActive ) {
-			itemsClasses = ' > .elementor-element, > .elementor-empty-view > .elementor-first-add';
+			itemsClasses = ' > .elementor-widget-wrap > .elementor-element, >.elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
 		} else {
 			itemsClasses = ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add';
 		}
@@ -238,15 +229,13 @@ ColumnView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
-				let newIndex = widgets.indexOf( event.currentTarget );
+				let newIndex = jQuery( event.currentTarget ).index();
 
-				if ( 'bottom' === side ) {
+				// Since 3.0.0, the `.elementor-background-overlay` element sit at the same level as widgets
+				if ( 'bottom' === side && ! isDomOptimizationActive ) {
 					newIndex++;
-				}
-
-				if ( 0 > newIndex ) {
-					newIndex = 0;
+				} else if ( 'top' === side && isDomOptimizationActive ) {
+					newIndex--;
 				}
 
 				this.addElementFromPanel( { at: newIndex } );
