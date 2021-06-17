@@ -9,6 +9,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Model;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -703,7 +704,8 @@ class Source_Local extends Source_Base {
 		flush();
 
 		// Output file contents.
-		echo $file_data['content'];
+		// PHPCS - Export widget json
+		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		die;
 	}
@@ -897,10 +899,10 @@ class Source_Local extends Source_Base {
 			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo esc_html__( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
 				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
-				<form id="elementor-import-template-form" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<form id="elementor-import-template-form" method="post" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
 					<input type="hidden" name="library_action" value="direct_import_template">
-					<input type="hidden" name="_nonce" value="<?php echo $ajax->create_nonce(); ?>">
+					<input type="hidden" name="_nonce" value="<?php Utils::print_unescaped_internal_string( $ajax->create_nonce() ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
 						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
@@ -1105,7 +1107,8 @@ class Source_Local extends Source_Base {
 			$result = $this->export_multiple_templates( $post_ids );
 
 			// If you reach this line, the export failed
-			wp_die( $result->get_error_message() );
+			// PHPCS - Not user input.
+			wp_die( $result->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -1158,13 +1161,13 @@ class Source_Local extends Source_Base {
 
 		?>
 		<div id="elementor-template-library-tabs-wrapper" class="nav-tab-wrapper">
-			<a class="nav-tab<?php echo $active_class; ?>" href="<?php echo $baseurl; ?>">
+			<a class="nav-tab<?php echo esc_attr( $active_class ); ?>" href="<?php echo esc_url( $baseurl ); ?>">
 				<?php
 				$all_title = $this->get_library_title();
 				if ( ! $all_title ) {
 					$all_title = esc_html__( 'All', 'elementor' );
 				}
-				echo $all_title; ?>
+				Utils::print_unescaped_internal_string( $all_title ); ?>
 			</a>
 			<?php
 			foreach ( $doc_types as $type => $class_name ) :
@@ -1174,10 +1177,9 @@ class Source_Local extends Source_Base {
 					$active_class = ' nav-tab-active';
 				}
 
-				$type_url = add_query_arg( self::TAXONOMY_TYPE_SLUG, $type, $baseurl );
+				$type_url = esc_url( add_query_arg( self::TAXONOMY_TYPE_SLUG, $type, $baseurl ) );
 				$type_label = $this->get_template_label_by_type( $type );
-
-				echo "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>";
+				Utils::print_unescaped_internal_string( "<a class='nav-tab{$active_class}' href='{$type_url}'>{$type_label}</a>" );
 			endforeach;
 			?>
 		</div>
@@ -1261,7 +1263,7 @@ class Source_Local extends Source_Base {
 		] );
 		$inline_style .= $args['additional_inline_style'];
 		?>
-		<style type="text/css"><?php echo $inline_style; ?></style>
+		<style type="text/css"><?php Utils::print_unescaped_internal_string( $inline_style ); ?></style>
 		<div class="elementor-template_library-blank_state">
 			<?php $this->print_blank_state_template( $current_type_label, $args['href'], $args['description'] ); ?>
 		</div>
@@ -1293,8 +1295,8 @@ class Source_Local extends Source_Base {
 					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label );
 					?>
 				</h2>
-				<p><?php echo $description; ?></p>
-				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo $href; ?>">
+				<p><?php echo esc_html( $description ); ?></p>
+				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
 					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label );
@@ -1323,8 +1325,7 @@ class Source_Local extends Source_Base {
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
 			'selected' => empty( $_GET[ self::TAXONOMY_CATEGORY_SLUG ] ) ? '' : $_GET[ self::TAXONOMY_CATEGORY_SLUG ],
 		);
-
-		echo '<label class="screen-reader-text" for="cat">' . _x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cat">' . esc_html_x( 'Filter by category', 'Template Library', 'elementor' ) . '</label>';
 		wp_dropdown_categories( $dropdown_options );
 	}
 

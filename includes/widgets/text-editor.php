@@ -438,7 +438,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $this->get_settings( 'editor' );
+		$this->print_unescaped_setting( 'editor' );
 	}
 
 	/**

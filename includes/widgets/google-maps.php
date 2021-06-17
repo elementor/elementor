@@ -113,7 +113,7 @@ class Widget_Google_Maps extends Widget_Base {
 					[
 						'type' => Controls_Manager::RAW_HTML,
 						'raw' => sprintf(
-							__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
+							esc_html__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
 							Settings::get_url() . '#tab-integrations',
 							'https://developers.google.com/maps/documentation/embed/get-api-key'
 						),
@@ -123,7 +123,7 @@ class Widget_Google_Maps extends Widget_Base {
 			}
 		}
 
-		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
+		$default_address = esc_html__( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
 			'address',
 			[

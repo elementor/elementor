@@ -315,14 +315,14 @@ class Widget_Alert extends Widget_Base {
 		$this->add_inline_editing_attributes( 'alert_title', 'none' );
 		?>
 		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php echo $settings['alert_title']; ?></span>
+			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php $this->print_unescaped_setting( 'alert_title' ); ?></span>
 			<?php
 			if ( ! Utils::is_empty( $settings['alert_description'] ) ) :
 				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
 				$this->add_inline_editing_attributes( 'alert_description' );
 				?>
-				<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php echo $settings['alert_description']; ?></span>
+				<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php $this->print_unescaped_setting( 'alert_description' ); ?></span>
 			<?php endif; ?>
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
 				<button type="button" class="elementor-alert-dismiss">

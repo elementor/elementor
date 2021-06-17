@@ -356,15 +356,15 @@ class Settings extends Settings_Page {
 		<div class="wrap">
 			<div class="elementor-blank_state">
 				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
-				<h2><?php echo __( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
+				<h2><?php echo esc_html__( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
 				<p>
-					<?php echo __( 'Save and manage all of your form submissions in one single place.
+					<?php echo esc_html__( 'Save and manage all of your form submissions in one single place.
 All within a simple, intuitive place.', 'elementor' ); ?>
 					<a href="http://go.elementor.com/wp-dash-submissions" target="_blank" rel="nofollow">
-						<?php echo __( 'Learn More', 'elementor' ); ?>
+						<?php echo esc_html__( 'Learn More', 'elementor' ); ?>
 					</a>
 				</p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -492,16 +492,16 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 				],
 			],
 			self::TAB_INTEGRATIONS => [
-				'label' => __( 'Integrations', 'elementor' ),
+				'label' => esc_html__( 'Integrations', 'elementor' ),
 				'sections' => [
 					'google_maps' => [
-						'label' => __( 'Google Maps Embed API', 'elementor' ),
+						'label' => esc_html__( 'Google Maps Embed API', 'elementor' ),
 						'callback' => function() {
-							printf( __( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
+							printf( esc_html__( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
 						},
 						'fields' => [
 							'google_maps_api_key' => [
-								'label' => __( 'API Key', 'elementor' ),
+								'label' => esc_html__( 'API Key', 'elementor' ),
 								'field_args' => [
 									'class' => 'elementor_google_maps_api_key',
 									'type' => 'text',
@@ -584,7 +584,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	/**

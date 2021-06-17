@@ -683,7 +683,7 @@ class Controls_Manager {
 		$control_type_instance = $this->get_control( $control_data['type'] );
 
 		if ( ! $control_type_instance ) {
-			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Control type "%s" not found.', $control_data['type'] ), '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Control type "%s" not found.', esc_html( $control_data['type'] ) ), '1.0.0' );
 			return false;
 		}
 
@@ -700,7 +700,7 @@ class Controls_Manager {
 		$stack_id = $element->get_unique_name();
 
 		if ( ! $options['overwrite'] && isset( $this->stacks[ $stack_id ]['controls'][ $control_id ] ) ) {
-			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Cannot redeclare control with same name "%s".', $control_id ), '1.0.0' );
+			_doing_it_wrong( sprintf( '%1$s::%2$s', __CLASS__, __FUNCTION__ ), sprintf( 'Cannot redeclare control with same name "%s".', esc_html( $control_id ) ), '1.0.0' );
 
 			return false;
 		}
@@ -919,14 +919,14 @@ class Controls_Manager {
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; ?>" />
-			<div class="elementor-nerd-box-title"><?php echo $texts['title']; ?></div>
+			<img class="elementor-nerd-box-icon" src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ); ?>" />
+			<div class="elementor-nerd-box-title"><?php Utils::print_unescaped_internal_string( $texts['title'] ); ?></div>
 			<?php foreach ( $texts['messages'] as $message ) { ?>
-				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
+				<div class="elementor-nerd-box-message"><?php Utils::print_unescaped_internal_string( $message ); ?></div>
 			<?php }
 
 			if ( $texts['link'] ) { ?>
-				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
+				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank">
 					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
 				</a>
 			<?php } ?>
