@@ -570,7 +570,7 @@ class Widget_Image_Box extends Widget_Base {
 				$this->add_render_attribute( 'image', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 			}
 
-			$image_html = Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' );
+			$image_html = wp_kses_post( Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' ) );
 
 			if ( ! empty( $settings['link']['url'] ) ) {
 				$image_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $image_html . '</a>';
@@ -609,7 +609,7 @@ class Widget_Image_Box extends Widget_Base {
 
 		$html .= '</div>';
 
-		echo $html;
+		Utils::print_unescaped_internal_string( $html );
 	}
 
 	/**

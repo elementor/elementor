@@ -256,7 +256,7 @@ class Element_Section extends Element_Base {
 		$this->add_responsive_control(
 			'content_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

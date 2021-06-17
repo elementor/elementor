@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
@@ -27,7 +28,7 @@ abstract class Base_App {
 	protected $auth_mode = '';
 
 	/**
-	 * @var \WP_Http
+	 * @var Http
 	 */
 	protected $http;
 
@@ -365,6 +366,7 @@ abstract class Base_App {
 			'POST',
 			$action,
 			[
+				'timeout' => 25,
 				'body' => $request_body,
 				'headers' => $this->is_connected() ?
 					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
@@ -435,10 +437,13 @@ abstract class Base_App {
 		$args = array_replace_recursive( [
 			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : [],
 			'method' => $method,
-			'timeout' => 25,
+			'timeout' => 10,
 		], $args );
 
-		$response = $this->http->request( $this->get_api_url() . '/' . $endpoint, $args );
+		$response = $this->http->request_with_fallback(
+			$this->get_generated_urls( $endpoint ),
+			$args
+		);
 
 		if ( is_wp_error( $response ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
@@ -716,6 +721,18 @@ abstract class Base_App {
 
 	}
 
+	private function get_generated_urls( $endpoint ) {
+		$base_urls = $this->get_api_url();
+
+		if ( ! is_array( $base_urls ) ) {
+			$base_urls = [ $base_urls ];
+		}
+
+		return array_map( function ( $base_url ) use ( $endpoint ) {
+			return trailingslashit( $base_url ) . $endpoint;
+		}, $base_urls );
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
@@ -739,7 +756,7 @@ abstract class Base_App {
 			}
 		}
 
-		$this->http = new \WP_Http();
+		$this->http = new Http();
 
 		/**
 		 * Allow extended apps to customize the __construct without call parent::__construct.

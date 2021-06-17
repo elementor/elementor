@@ -226,14 +226,15 @@ export default function Index( props ) {
 								isFilterActive,
 							} )
 						}
-						<Text className="e-kit-library__envato-promotion" variant="lg">
-							{ __( 'Check out Elementor Template Kits by', 'elementor' ) } { ' ' }
+						<Text className="e-kit-library__envato-promotion" variant="xl">
+							{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }
 							<Button
-								variant="link"
+								variant="underlined"
+								color="link"
 								url="https://go.elementor.com/app-envato-kits/"
 								target="_blank"
 								rel="noreferrer"
-								text={ __( 'Envato', 'elementor' ) }
+								text={ __( 'Check Elementor Template Kits on ThemeForest', 'elementor' ) }
 							/>
 						</Text>
 					</>

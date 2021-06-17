@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Page\Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -191,16 +189,6 @@ class Utils {
 			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
-
-		$second_rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
-			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
-		);
-
-		if ( $second_rows_affected ) {
-			$rows_affected += $second_rows_affected;
-		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
@@ -562,7 +550,7 @@ class Utils {
 		$alias_version_as_float = (float) $alias_version[0];
 
 		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::DEPRECATION_RANGE ) {
-			_deprecated_file( $item, $version, $replacement );
+			_deprecated_file( $item, $version, $replacement ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

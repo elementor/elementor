@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\App;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -22,7 +24,7 @@ $theme_class = 'dark' === $this->get_elementor_ui_theme_preference() ? 'eps-them
 		<base target="_parent">
 		<?php wp_print_styles(); ?>
 	</head>
-	<body class="<?php echo $theme_class; ?>">
+	<body class="<?php Utils::print_unescaped_internal_string( $theme_class ); ?>">
 		<div id="e-app"></div>
 		<?php wp_print_footer_scripts(); ?>
 	</body>

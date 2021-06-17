@@ -144,7 +144,12 @@ export default function useKits( initialQueryParams = {} ) {
 	} ) );
 
 	const forceRefetch = useCallback( () => setForce( true ), [ setForce ] );
-	const clearQueryParams = useCallback( () => setQueryParams( { ...defaultQueryParams, ...initialQueryParams } ), [ setQueryParams ] );
+
+	const clearQueryParams = useCallback(
+		() => setQueryParams( { ready: true, ...defaultQueryParams, ...initialQueryParams } ),
+		[ setQueryParams ]
+	);
+
 	const query = useQuery( [ KEY ], () => fetchKits( force ) );
 
 	const data = useMemo(
