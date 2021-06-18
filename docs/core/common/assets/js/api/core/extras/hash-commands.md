@@ -62,4 +62,4 @@ HashCommands API, provides a simple and convenient way to run command, routes fr
     ```
 * ##### How to chain hash commands (run multiple commands)?  
     * Simple using and (&) character, example:
-    `http://localhost/wp-admin/post.php?post=1&action=elementor#e:run:panel/global/open&panel/history/revisions`
+    `http://localhost/wp-admin/post.php?post=1&action=elementor#e:run:panel/global/open&e:route:panel/history/revisions`
