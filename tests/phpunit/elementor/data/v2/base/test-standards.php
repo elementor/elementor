@@ -20,7 +20,7 @@ class Test_Standards extends Data_Test_Base {
 		// Arrange - '/alpha'.
 		$controller = new Standards\OnlyController\Alpha_Controller();
 
-		$this->manager->register_controller_instance( $controller );
+		$this->manager->register_controller( $controller );
 
 		// Act - Reach '/alpha'
 		$result = $this->manager->run( 'alpha' );
@@ -44,11 +44,11 @@ class Test_Standards extends Data_Test_Base {
 	public function test_sub_controllers() {
 		// Arrange - '/alpha/{id}/beta'.
 		$alpha_controller = new Standards\OnlyController\Alpha_Controller();
-		$this->manager->register_controller_instance( $alpha_controller );
+		$this->manager->register_controller( $alpha_controller );
 		$this->manager->run_server();
 
 		$beta_controller = new Standards\OnlySubController\Beta_Controller();
-		$this->manager->register_controller_instance( $beta_controller );
+		$this->manager->register_controller( $beta_controller );
 		$beta_controller->do_register();
 
 		// Act - Reach '/alpha/1/beta'
@@ -85,7 +85,7 @@ class Test_Standards extends Data_Test_Base {
 	public function test_sub_endpoints() {
 		// Arrange - '/alpha/{id}/beta'.
 		$alpha_controller = new Standards\OnlyController\Alpha_Controller();
-		$this->manager->register_controller_instance( $alpha_controller );
+		$this->manager->register_controller( $alpha_controller );
 		$this->manager->run_server();
 
 		// Using only endpoints and controllers it can reach only '/alpha/1/', force to try sub-endpoints.
@@ -145,11 +145,11 @@ class Test_Standards extends Data_Test_Base {
 	public function test_sub_endpoints_include_sub_controllers() {
 		// Arrange.
 		$alpha_controller = new Standards\OnlyController\Alpha_Controller();
-		$this->manager->register_controller_instance( $alpha_controller );
+		$this->manager->register_controller( $alpha_controller );
 		$this->manager->run_server();
 
 		$beta_controller = new Standards\OnlySubController\Beta_Controller();
-		$this->manager->register_controller_instance( $beta_controller );
+		$this->manager->register_controller( $beta_controller );
 		$beta_controller->do_register();
 
 		$beta_index_endpoint = $beta_controller->get_endpoint_index();

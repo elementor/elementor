@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base;
 
-use Elementor\Data\Manager;
+use Elementor\Data\V2\Manager;
 use Elementor\Testing\Elementor_Test_Base;
 
 abstract class Data_Test_Base extends Elementor_Test_Base {
 	/**
-	 * @var \Elementor\Data\Manager
+	 * @var \Elementor\Data\V2\Manager
 	 */
 	protected $manager;
 

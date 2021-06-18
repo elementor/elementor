@@ -9,7 +9,7 @@
 	|-----------------------------------------|--------------------------------|------------------------------------------------|------------------------------|
 	| `Controller::get_name()`                |                                | `string` Controller name                       | **Abstract**, Get controller name.
 	| `Controller::register_endpoints()`      |                                |                                                | **Abstract**, Register controller endpoints.
-	| `Controller::get_parent_name()`         |                                | `null` or `string` Parent controller name.     | Get parent controller name, if provided, controller will work as children controller.
+	| `Controller::get_parent_name()`         |                                | `null` or `string` Parent controller name.     | Get parent controller name, if provided, controller will work as sub controller.
 	| `Controller::get_full_name()`           |                                | `string` Full controller name                  | Get full controller name, if parent exist it will be included.
 	| `Controller::get_controller_route()`    |                                | `string` Controller route                      | Get full controller route including the namespace.
 	| `Controller::get_controller_index()`    |                                | `WP_REST_Response` or `WP_Error`               | Retrieves rest route(s) index for current controller.
@@ -45,14 +45,14 @@
     ```
     * _Legend_
        * *Controllers*: `House`, `Rooms`, `Doors`, `Keys`.
-       * *Sub-Controllers*: `Rooms`, `Doors`, `Keys`.
+       * *Controllers with a parent*: `Rooms`, `Doors`, `Keys`.
        * *Endpoints*: `Garage`.
        * *Sub-Endpoints*: `Items`.
        
 * What are Sub-Controllers & Sub-Endpoints?
     * Terms used to describe the flow.
-    * Sub-Controller are *Controller* which is children of another controller.
-    * Sub-Endpoint are *Endpoint* which is children of another endpoint.
+    * Sub-Controller are *Controller* which is a child of another controller.
+    * Sub-Endpoint are *Endpoint* which is a child of another endpoint.
     
 *  In which situations you may use Controllers?
     * When you have routes which represent a resource, like: `house/keys`, `house/rooms`, `house/rooms/{id}/doors`.
@@ -66,11 +66,10 @@
     * When you need deeper endpoint that are parent of another endpoint.
      
 * Why Controller exists?
-    * To border the best practice: 
+    * To use the _best practice_ as a resource or sub-resource: 
         * `resource/{id}`
         * `resource/{id}/resource/{id}`.
         * `resource/endpoint/{id}`.
-    * To know how to serve you ( as resource ).
     * To inherit `WP_REST_Controller` and utilize it.
 
 * Why [Endpoint]() exists?
@@ -79,6 +78,7 @@
    *  To serve the `Controller` itself.
 
 * Why Sub-Endpoints exists?
+   > Note: Sub-Endpoints are marked not as the best practices and should be avoided.
    *  Make it possible to simulate it as command, and attach a processor on it.
    *  To get extra depth, from something which not a resource, example: `resource/endpoint/sub-endpoint`.
 
@@ -87,10 +87,10 @@
     * Endpoint represented as _route_
    
 * Controller Simple advantages
-    * No requirement for `get_format` existence to support `class Processor` mechanism.
-    * Know all of it children controllers and endpoints, gives you ability to get data from a whole hierarchy.
+    * No requirement for `get_format`.
+    * Know all children controllers and endpoints, gives you ability to get data from a whole hierarchy.
 
-*  How to create children controller?
+*  How to create a child controller?
     * extend `get_parent_name()`
 
 * Demo example of `House`, available here:
@@ -127,9 +127,8 @@
         } 
     
         public function get_permission_callback( $request ) {
-            // Just for the example to work without extra permissions.
             // In real word, it would check the user permission to the current resource.
-            return true;
+            return false;
         }
     }
     ```
@@ -155,9 +154,8 @@
         }
    
         public function get_permission_callback( $request ) {
-           // Just for the example to work without extra permissions.
            // In real word, it would check the user permission to the current endpoint.
-           return true;
+           return false;
         }
    
         protected function get_items( $request ) {
@@ -212,9 +210,8 @@
         } 
     
         public function get_permission_callback( $request ) {
-                // Just for the example to work without extra permissions.
-                // In real word, it would check the user permission to the current resource.
-                return true;
+            // In real word, it would check the user permission to the current resource.
+            return false;
         }
     }
     ```
@@ -279,9 +276,8 @@ Elementor\Data\Manager::instance()->register_controller( Controller::class );
         } 
     
         public function get_permission_callback( $request ) {
-            // Just for the example to work without extra permissions.
             // In real word, it would check the user permission to the current resource.
-            return true;
+            return false;
         }
    }
    ```
@@ -316,9 +312,8 @@ Elementor\Data\Manager::instance()->register_controller( Controller::class );
         } 
     
         public function get_permission_callback( $request ) {
-            // Just for the example to work without extra permissions.
             // In real word, it would check the user permission to the current resource.
-            return true;
+            return false;
         }
    }
    ```

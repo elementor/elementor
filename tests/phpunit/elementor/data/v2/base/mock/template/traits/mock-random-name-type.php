@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits;
 
-trait Mock_Name_Type {
+trait Mock_Random_Name_Type {
 	public $random = null;
 
 	public function get_name() {

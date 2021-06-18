@@ -11,7 +11,9 @@ abstract class Base extends Data_Test_Base {
 
 		$this->manager->kill_server();
 
-		$this->manager->register_controller( $this->get_controller_class() );
+		$controller_class = $this->get_controller_class();
+
+		$this->manager->register_controller( new $controller_class );
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID);
 	}
@@ -21,7 +23,6 @@ abstract class Base extends Data_Test_Base {
 
 		$this->manager->kill_server();
 	}
-
 
 	public function get_endpoint( $id = null ) {
 		$endpoint = $this->get_command();

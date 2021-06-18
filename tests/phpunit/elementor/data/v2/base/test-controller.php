@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base;
 
 use Elementor\Data\V2\Base\Endpoint\Index;
-use Elementor\Data\Manager;
+use Elementor\Data\V2\Manager;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as ControllerWithProcessor;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;

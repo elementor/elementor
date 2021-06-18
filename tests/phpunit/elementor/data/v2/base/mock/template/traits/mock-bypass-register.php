@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits;
 
+/**
+ * Its created to avoid default registration process and gain the ability to manually register the owners of this trait.
+ */
 trait Mock_Bypass_Register {
 	public $bypass_register_status = false;
 

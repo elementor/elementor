@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template;
 
-use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Bypass_Permission;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Force_Permission;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Bypass_Register;
-use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Name_Type;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Random_Name_Type;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits\Mock_Test_Data;
 
 class Sub_Controller extends \Elementor\Data\V2\Base\Controller {
-	use Mock_Name_Type, Mock_Bypass_Permission, Mock_Test_Data, Mock_Bypass_Register;
+	use Mock_Random_Name_Type, Mock_Force_Permission, Mock_Test_Data, Mock_Bypass_Register;
 
 	/**
 	 * @var string

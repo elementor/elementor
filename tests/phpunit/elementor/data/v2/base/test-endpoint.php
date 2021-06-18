@@ -154,7 +154,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 	public function test_register_sub_endpoint__run_as_command_from_sub_endpoint() {
 		// Arrange.
-		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
+		$controller = $this->manager->register_controller( new Mock\Template\Controller );
 
 		$this->manager->run_server();
 
@@ -165,8 +165,12 @@ class Test_Endpoint extends Data_Test_Base {
 
 		$endpoint->register_sub_endpoint( $sub_endpoint );
 
+		$command = $controller->get_name() . '/' .
+		            $endpoint->get_name() . '/' .
+		            'test-route/' .
+		            $sub_endpoint->get_name();
 		// Act.
-		$data = $this->manager->run( $sub_endpoint->get_full_command() );
+		$data = $this->manager->run( $command );
 
 		// Assert.
 		$this->assertEquals( 'valid', $data );
@@ -179,7 +183,7 @@ class Test_Endpoint extends Data_Test_Base {
 		$controller = new ControllerTemplate();
 		$endpoint = new EndpointTemplate( $controller );
 
-		$this->manager->register_controller_instance( $controller );
+		$this->manager->register_controller( $controller );
 
 		$sub_endpoint = $endpoint->register_sub_endpoint(
 			new Endpoint( $endpoint, '/first-sub-route' )
@@ -209,7 +213,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 	public function test_register_sub_endpoint___run_as_command_from_grandchild_endpoint() {
 		// Arrange.
-		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
+		$controller = $this->manager->register_controller( new Mock\Template\Controller );
 
 		$this->manager->run_server();
 
@@ -224,8 +228,15 @@ class Test_Endpoint extends Data_Test_Base {
 		);
 		$descendant_endpoint->set_test_data( 'get_items', 'valid' );
 
+		$endpoint = $controller->get_name() . '/' .
+		            $endpoint->get_name() . '/' .
+		            $sub_endpoint->get_name() . '/' .
+		            'first-sub-route/' .
+		            'second-sub-route/' .
+		            $descendant_endpoint->get_name();
+
 		// Act.
-		$data = $this->manager->run( $descendant_endpoint->get_full_command() );
+		$data = $this->manager->run_endpoint( $endpoint );
 
 		// Assert.
 		$this->assertEquals( 'valid', $data );
@@ -233,7 +244,7 @@ class Test_Endpoint extends Data_Test_Base {
 
 	public function test_register_sub_endpoint___run_as_command_from_sub_endpoint_of_index_endpoint() {
 		// Arrange.
-		$controller = $this->manager->register_controller( Mock\Template\Controller::class );
+		$controller = $this->manager->register_controller( new Mock\Template\Controller );
 
 		$this->manager->run_server();
 
@@ -245,8 +256,11 @@ class Test_Endpoint extends Data_Test_Base {
 		$sub_endpoint = $index_endpoint->register_sub_endpoint( new Mock\Template\Endpoint( $index_endpoint ) );
 		$sub_endpoint->set_test_data( 'get_items', 'valid' );
 
+		$endpoint = $controller->get_name() . '/' .
+		            $sub_endpoint->get_name();
+
 		// Act.
-		$data = $this->manager->run( $sub_endpoint->get_full_command() );
+		$data = $this->manager->run_endpoint( $endpoint );
 
 		// Assert.
 		$this->assertEquals( 'valid', $data );

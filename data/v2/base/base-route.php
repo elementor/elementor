@@ -53,7 +53,7 @@ abstract class Base_Route {
 	/**
 	 * Constructor.
 	 *
-	 * run `$this->>register()`.
+	 * run `$this->register()`.
 	 *
 	 * @param \Elementor\Data\V2\Base\Controller $controller
 	 * @param string $route

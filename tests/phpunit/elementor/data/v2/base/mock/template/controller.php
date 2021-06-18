@@ -5,7 +5,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits;
 
 class Controller extends \Elementor\Data\V2\Base\Controller {
 
-	use Traits\Mock_Name_Type, Traits\Mock_Bypass_Permission, Traits\Mock_Bypass_Register;
+	use Traits\Mock_Random_Name_Type, Traits\Mock_Force_Permission, Traits\Mock_Bypass_Register;
 
 	public function __construct() {
 		parent::__construct();
@@ -36,11 +36,11 @@ class Controller extends \Elementor\Data\V2\Base\Controller {
 	 * @return \Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Endpoint
 	 */
 	public function do_register_endpoint( $endpoint ) {
-		return $this->register_endpoint( $endpoint );
+		return $this->register_endpoint( $endpoint ); // Protected.
 	}
 
-	public function do_register_processor( $processor_class ) {
-		return $this->register_processor( $processor_class );
+	public function do_register_processor( $processor ) {
+		return $this->register_processor( $processor ); // Protected.
 	}
 
 	public function get_endpoint_index() {

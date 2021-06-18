@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Traits;
 
-trait Mock_Bypass_Permission {
+trait Mock_Force_Permission {
 	public $bypass_permission_value = true;
-	public $is_permission_bypassed = false;
+	public $is_permission_forced = false;
 
 	public function bypass_original_permission( $status = true ) {
-		$this->is_permission_bypassed = $status;
+		$this->is_permission_forced = $status;
 	}
 
 	public function bypass_set_value( $value ) {
@@ -14,7 +14,7 @@ trait Mock_Bypass_Permission {
 	}
 
 	public function get_permission_callback( $request ) {
-		if ( $this->is_permission_bypassed ) {
+		if ( $this->is_permission_forced ) {
 			return $this->bypass_permission_value;
 		}
 

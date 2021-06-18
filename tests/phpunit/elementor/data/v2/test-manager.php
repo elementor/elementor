@@ -1,81 +1,68 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Data;
+namespace Elementor\Tests\Phpunit\Elementor\Data\V2;
 
-use Elementor\Data\Base\Processor;
-use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
-use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
+use Elementor\Data\V2\Base\Processor;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Data_Test_Base;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
-
-class Test_Manager extends Elementor_Test_Base {
-
-	/**
-	 * @var \Elementor\Data\Manager
-	 */
-	protected $manager;
+class Test_Manager extends Data_Test_Base {
 
 	public function setUp() {
 		parent::setUp();
-
-		$this->manager = Manager::instance();
-		$this->manager->kill_server();
-	}
-
-	public function tearDown() {
-		parent::tearDown();
 
 		$this->manager->kill_server();
 	}
 
 	public function test_get_controllers() {
-		$controller = $this->manager->register_controller( ControllerTemplate::class );
+		$controller = ControllerTemplate::class;
+		$controller = $this->manager->register_controller( new $controller );
 		$controllers = $this->manager->get_controllers();
 
 		$this->assertCount( 1, $controllers );
 		$this->assertArrayHasKey( $controller->get_name(), $controllers );
 	}
 
-	public function test_register_controller() {
-		$controller = $this->manager->register_controller( ControllerTemplate::class );
+	public function test_get_controller() {
+		$controller = ControllerTemplate::class;
+		$controller = $this->manager->register_controller( new $controller );
 
-		$this->assertArrayHasKey( $controller->get_name(), $this->manager->controllers );
+		$this->assertEquals(
+			$controller,
+			$this->manager->get_controller( $controller->get_name() )
+		);
 	}
 
-	public function test_register_controller_instance() {
-		$controller = new ControllerTemplate();
-		$controller = $this->manager->register_controller_instance( $controller );
+	public function test_register_controller() {
+		$controller = ControllerTemplate::class;
+		$controller = $this->manager->register_controller( new $controller );
 
 		$this->assertArrayHasKey( $controller->get_name(), $this->manager->controllers );
 	}
 
 	public function test_register_endpoint_format() {
-		$controller = new ControllerTemplate();
-
 		$this->manager->register_endpoint_format( 'test-command', 'test-command/{test-format}' );
 
 		$this->assertEquals( 'test-command/{test-format}', $this->manager->command_formats['test-command'] );
 	}
 
 	public function test_find_controller_instance() {
-		$controller = new ControllerTemplate();
-		$controller = $this->manager->register_controller_instance( $controller );
+		$controller = $this->manager->register_controller( new ControllerTemplate );
 
 		// Case controller name.
 		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() ));
 	}
 
 	public function test_find_controller_instance_advance() {
-		$controller = new ControllerSimple(); // controller with endpoint.
-		$controller = $this->manager->register_controller_instance( $controller );
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
 
 		$this->manager->run_server();
 
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
 		// Case controller + endpoint name.
-		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() . '/' . $endpoint_instance->get_name() ));
+		$this->assertEquals( $controller, $this->manager->find_controller_instance( $controller->get_name() . '/' . $endpoint->get_name() ));
 	}
 
 	public function test_command_extract_args() {
@@ -209,7 +196,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_run_processor() {
-		$controller = $this->manager->register_controller( ControllerWithProcessor::class );
+		$controller = $this->manager->register_controller( new ControllerWithProcessor );
 		$this->manager->run_server();
 
 		$processor = array_values( $controller->processors )[ 0 ][ 0 ];
@@ -222,7 +209,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_run_processors() {
-		$controller = $this->manager->register_controller( ControllerWithProcessor::class );
+		$controller = $this->manager->register_controller( new ControllerWithProcessor );
 		$this->manager->run_server();
 
 		$processor = array_values( $controller->processors )[ 0 ][ 0 ];
@@ -240,13 +227,14 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = new ControllerSimple(); // controller with endpoint.
-		$controller = $this->manager->register_controller_instance( $controller );
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
 
 		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
-		$endpoint = $this->manager->command_to_endpoint( $controller->get_name() . '/' . $endpoint_instance->get_name(), false, [] );
+		$command = $controller->get_name() . '/' . $endpoint->get_name();
+
+		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
 
 		$data = $this->manager->run_endpoint( $endpoint );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
@@ -255,13 +243,12 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_run() {
-		$controller = new ControllerSimple(); // controller with endpoint.
-		$controller = $this->manager->register_controller_instance( $controller );
+		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
 
 		$this->manager->run_server();
-		$endpoint_instance = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
-		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint_instance->get_name() );
+		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint->get_name() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
@@ -270,7 +257,10 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_commands_formats() {
 		$this->manager->run_server();
 
-		// Deprecated.
-		$this->assertEquals( [], $this->manager->command_formats );
+		$this->assertEquals( [
+			'globals/index' => 'globals/index',
+			'globals/colors' => 'globals/colors/{id}',
+			'globals/typography' => 'globals/typography/{id}',
+		], $this->manager->command_formats );
 	}
 }

@@ -5,6 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+/**
+ * Processor is just typically HOOK, who called before or after a command runs.
+ * It exist to simulate frontend ($e.data) like mechanism with commands and hooks, since each
+ * controller or endpoint is reachable via command (get_format).
+ * The `Elementor\Data\V2\Manager::run` is able to run them with the ability to reach the endpoint.
+ */
 abstract class Processor {
 
 	/**

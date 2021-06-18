@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /**
  * Class SubIndexEndpoint is default `Base\Endpoint\Index` of `SubController`,
- * it was created to handle base_route and format for children controller, index endpoint.
+ * it was created to handle base_route and format for child controller, index endpoint.
  * In case `SubController` were used and the default method of `Controller::register_index_endpoint` ain't overridden.
  * this class will give support to have such routes, eg: 'alpha/{id}/beta/{sub_id}' without using additional endpoints.
  */

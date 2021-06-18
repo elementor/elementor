@@ -2,7 +2,7 @@
 namespace Elementor\Data\V2\Base\Endpoint\Index;
 
 use Elementor\Data\V2\Base\Endpoint\Index;
-use Elementor\Data\Manager;
+use Elementor\Data\V2\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -48,7 +48,7 @@ class AllChildren extends Index {
 	public function get_items( $request ) {
 		$response = [];
 
-		foreach ( $this->controller->get_children() as $controller ) {
+		foreach ( $this->controller->get_sub_controllers() as $controller ) {
 			$controller_route = $this->get_controller()->get_base_route() . '/' . $controller->get_name();
 			$result = Manager::instance()->run_request( $controller_route );
 

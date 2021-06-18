@@ -170,7 +170,7 @@
 ]
 ```
 
-## The example available to download:
- [Click here to download plugin example](https://drive.google.com/file/d/1pYijAc7SJdBPeFJoy0wwJHEmtO-t_Ja9/view?usp=sharing)
+## The full example:
+ [https://github.com/iNewLegend/elementor-rest-api-example](https://github.com/iNewLegend/elementor-rest-api-example)
 
 ## [Back](controller.md)

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Data\V2\Base;
 
-use Elementor\Data\Manager;
+use Elementor\Data\V2\Manager;
 use WP_REST_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Loaded processor(s).
 	 *
-	 * @var \Elementor\Data\Base\Processor[][]
+	 * @var \Elementor\Data\V2\Base\Processor[][]
 	 */
 	public $processors = [];
 
@@ -41,7 +41,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * @var \Elementor\Data\V2\Base\Controller[]
 	 */
-	private $children = [];
+	private $sub_controllers = [];
 
 	/**
 	 * Controller constructor.
@@ -69,7 +69,7 @@ abstract class Controller extends WP_REST_Controller {
 
 		$parent_name = $this->get_parent_name();
 		if ( $parent_name ) {
-			$this->act_as_children( $parent_name );
+			$this->act_as_sub_controller( $parent_name );
 		}
 	}
 
@@ -88,7 +88,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Get parent controller name.
 	 *
-	 * @note: If `get_parent_name()` provided, controller will work as children controller.
+	 * @note: If `get_parent_name()` provided, controller will work as sub-controller.
 	 *
 	 * @returns null|string
 	 */
@@ -263,12 +263,12 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get children controller(s).
+	 * Get sub controller(s).
 	 *
 	 * @return \Elementor\Data\V2\Base\Controller[]
 	 */
-	public function get_children() {
-		return $this->children;
+	public function get_sub_controllers() {
+		return $this->sub_controllers;
 	}
 
 	/**
@@ -276,7 +276,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @param string $command
 	 *
-	 * @return \Elementor\Data\Base\Processor[]
+	 * @return \Elementor\Data\V2\Base\Processor[]
 	 */
 	public function get_processors( $command ) {
 		$result = [];
@@ -292,27 +292,6 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register processors.
 	 */
 	public function register_processors() {
-	}
-
-	/**
-	 * Get collection params by 'additionalProperties' context.
-	 *
-	 * @param string $context
-	 *
-	 * @return array
-	 */
-	protected function get_collection_params_by_additional_props_context( $context ) {
-		$result = [];
-
-		$collection_params = $this->get_collection_params();
-
-		foreach ( $collection_params as $collection_param_key => $collection_param ) {
-			if ( isset( $collection_param['additionalProperties']['context'] ) && $context === $collection_param['additionalProperties']['context'] ) {
-				$result[ $collection_param_key ] = $collection_param;
-			}
-		}
-
-		return $result;
 	}
 
 	/**
@@ -355,24 +334,20 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * That will be later attached to the endpoint class.
 	 *
-	 * @param string $processor_class
+	 * @param Processor $processor
 	 *
-	 * @return \Elementor\Data\Base\Processor $processor_instance
+	 * @return \Elementor\Data\V2\Base\Processor $processor_instance
 	 */
-	protected function register_processor( $processor_class ) {
-		$processor_instance = new $processor_class( $this );
-
-		// TODO: Validate processor instance.
-
-		$command = $processor_instance->get_command();
+	protected function register_processor( Processor $processor ) {
+		$command = $processor->get_command();
 
 		if ( ! isset( $this->processors[ $command ] ) ) {
 			$this->processors[ $command ] = [];
 		}
 
-		$this->processors[ $command ] [] = $processor_instance;
+		$this->processors[ $command ] [] = $processor;
 
-		return $processor_instance;
+		return $processor;
 	}
 
 	/**
@@ -388,15 +363,39 @@ abstract class Controller extends WP_REST_Controller {
 		$this->register_processors();
 	}
 
-	private function act_as_children( $parent_name ) {
-		$parent_controller_name = $parent_name;
+	/**
+	 * Get collection params by 'additionalProperties' context.
+	 *
+	 * @param string $context
+	 *
+	 * @return array
+	 */
+	protected function get_collection_params_by_additional_props_context( $context ) {
+		$result = [];
 
-		$this->parent = Manager::instance()->get_controller( $parent_controller_name );
+		$collection_params = $this->get_collection_params();
 
-		if ( ! $this->parent ) {
-			trigger_error( "Cannot find parent controller: '$parent_controller_name'", E_USER_ERROR ); // phpcs:ignore
+		foreach ( $collection_params as $collection_param_key => $collection_param ) {
+			if ( isset( $collection_param['additionalProperties']['context'] ) && $context === $collection_param['additionalProperties']['context'] ) {
+				$result[ $collection_param_key ] = $collection_param;
+			}
 		}
 
-		$this->parent->children [] = $this;
+		return $result;
+	}
+
+	/**
+	 * When `$this->get_parent_name` is extended, the controller will have a parent, and will know to behave like a sub-controller.
+	 *
+	 * @param string $parent_name
+	 */
+	private function act_as_sub_controller( $parent_name ) {
+		$this->parent = Manager::instance()->get_controller( $parent_name );
+
+		if ( ! $this->parent ) {
+			trigger_error( "Cannot find parent controller: '$parent_name'", E_USER_ERROR ); // phpcs:ignore
+		}
+
+		$this->parent->sub_controllers [] = $this;
 	}
 }

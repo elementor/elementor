@@ -32,7 +32,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->assertEquals( $controller->get_name() . '/' . $sub_controller->get_name(), $actual );
 	}
 
-	public function test_execute_simple() {
+	public function test_run_endpoint__simple() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerTemplate() );
 
@@ -49,7 +49,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->assertArrayHaveKeys( [ $route ], $rest_index['routes'] );
 	}
 
-	public function test_execute_sub_controller_from_index_endpoint() {
+	public function test_run_endpoint__with_parent_sub_controller_from_index_endpoint() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
@@ -68,7 +68,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->assertEquals( 'valid', $data );
 	}
 
-	public function test_execute_sub_controller_from_index_endpoint_as_command() {
+	public function test_run_command__with_parent_sub_controller_from_index_endpoint() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
@@ -76,7 +76,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		// By default index endpoint will use the controller.
 		$sub_controller->set_test_data( 'get_items', 'valid' );
 
-		$this->manager->register_controller_instance( $controller );
+		$this->manager->register_controller( $controller );
 		$this->manager->run_server();
 
 		// Act.
@@ -88,7 +88,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->assertEquals( 'valid', $data );
 	}
 
-	public function test_execute_sub_controller_from_endpoint() {
+	public function test_run_endpoint__with_parent_sub_controller_from_endpoint() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
@@ -105,12 +105,12 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$this->assertEquals( 'valid', $data );
 	}
 
-	public function test_execute_sub_controller_from_endpoint_as_command() {
+	public function test_run_command__with_sub_controller_from_endpoint() {
 		// Arrange.
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint() );
 		$sub_controller = new SubControllerTemplate( $controller );
 
-		$this->manager->register_controller_instance( $controller );
+		$this->manager->register_controller( $controller );
 		$this->manager->run_server();
 
 		$endpoint = $sub_controller->do_register_endpoint( new Endpoint( $sub_controller ) );

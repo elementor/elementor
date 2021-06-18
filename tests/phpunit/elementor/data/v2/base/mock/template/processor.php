@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template;
 
-use Elementor\Data\Base\Processor\After;
+use Elementor\Data\V2\Base\Processor\After;
 
 class Processor extends After {
 

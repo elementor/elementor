@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Data\V2\Base;
 
-use Elementor\Data\Manager;
+use Elementor\Data\V2\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -144,10 +144,6 @@ abstract class Endpoint extends Base_Route {
 		do {
 			if ( $current ) {
 				$ancestors [] = $current;
-			}
-
-			if ( ! is_callable( [ $current, 'get_parent' ] ) ) {
-				break;
 			}
 
 			$current = $current->get_parent();

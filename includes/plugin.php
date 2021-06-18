@@ -24,6 +24,7 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
@@ -441,9 +442,14 @@ class Plugin {
 	public $kits_manager;
 
 	/**
-	 * @var \Core\Data\Manager
+	 * @var \Elementor\Data\Manager
 	 */
 	public $data_manager;
+
+	/**
+	 * @var \Elementor\Data\V2\Manager
+	 */
+	public $data_manager_v2;
 
 	public $legacy_mode;
 
@@ -764,6 +770,7 @@ class Plugin {
 
 		$this->logger = Log_Manager::instance();
 		$this->data_manager = Data_Manager::instance();
+		$this->data_manager_v2 = Data_Manager_V2::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();
