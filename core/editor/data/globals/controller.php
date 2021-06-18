@@ -17,12 +17,13 @@ class Controller extends Controller_Base {
 
 	public function get_collection_params() {
 		// Does not have 'get_items' args (OPTIONS).
+		// Maybe TODO: try `$this->get_index_endpoint()->get_collection_params()`.
 		return [];
 	}
 
 	public function get_permission_callback( $request ) {
 		// Allow internal get global values. (e.g render global.css for a visitor)
-		if ( 'GET' === $request->get_method() && Plugin::$instance->data_manager->is_internal() ) {
+		if ( 'GET' === $request->get_method() && Plugin::$instance->data_manager_v2->is_internal() ) {
 			return true;
 		}
 
