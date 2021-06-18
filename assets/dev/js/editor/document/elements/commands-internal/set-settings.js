@@ -6,7 +6,7 @@ export class SetSettings extends CommandInternal {
 		this.requireArgumentType( 'settings', 'object', args );
 
 		if ( 'undefined' !== typeof args.render && 'undefined' !== typeof args.renderUI ) {
-			throw new Error( "Args: 'render' and 'renderUI' cannot be applied together." );
+			throw new Error( 'Args: `render` and `renderUI` cannot be applied together.' );
 		}
 	}
 
