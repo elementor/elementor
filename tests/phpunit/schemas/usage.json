@@ -31,7 +31,7 @@
 					"type": "string"
 				}
 			},
-			"email":{
+			"email": {
 				"$id": "#/definitions/global/email",
 				"type": "string",
 				"pattern": "^\\S+@\\S+$",
@@ -162,6 +162,32 @@
 							"examples": [
 								"Elementor.com"
 							]
+						}
+					},
+					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"posts_per_type_per_post_status": {
+			"$id": "#/definitions/posts",
+			"$comment": "Array ( [] ) means the value is empty",
+			"description": "Describes usage of documents per post-type for each post-type, post-status the value is the count",
+			"type": [
+				"object",
+				"array"
+			],
+			"patternProperties": {
+				"([^\\s]+)": {
+					"$id": "#/definitions/posts/$post-type",
+					"type": "object",
+					"title": "Posts per post-type",
+					"patternProperties": {
+						"(draft|pending|private|publish|inherit|trash)$": {
+							"$id": "#/usages/posts/$post-type/$post-status",
+							"$comment": "TODO: Should be number",
+							"type": "string",
+							"title": "Count of post(s) per post-type"
 						}
 					},
 					"additionalProperties": false
@@ -422,7 +448,10 @@
 						},
 						"version": {
 							"$id": "#/system/theme/version",
-							"type": [ "string", "boolean" ],
+							"type": [
+								"string",
+								"boolean"
+							],
 							"title": "The version of theme",
 							"default": false,
 							"examples": [
@@ -431,7 +460,10 @@
 						},
 						"author": {
 							"$id": "#/system/theme/author",
-							"type": [ "string", "boolean" ],
+							"type": [
+								"string",
+								"boolean"
+							],
 							"title": "The author of theme",
 							"default": false,
 							"examples": [
@@ -562,37 +594,38 @@
 			"description": "The usages of various components in Elementor.",
 			"required": [
 				"posts",
+				"non-elementor-posts",
 				"library",
 				"elements"
 			],
 			"properties": {
 				"posts": {
 					"$id": "#/usages/posts",
-					"$comment": "Array ( [] ) means the value is empty",
-					"type": [
-						"object",
-						"array"
-					],
-					"title": "The posts schema",
-					"description": "Describes usage of documents per post-type for each post-type, post-status the value is the count",
-					"patternProperties": {
-						"([^\\s]+)": {
-							"$id": "#/usages/posts/$post-type",
-							"$comment": "Not including 'elementor-library'",
-							"type": "object",
-							"title": "Posts per post-type",
-							"patternProperties": {
-								"(draft|pending|private|publish|inherit|trash)$": {
-									"$id": "#/usages/posts/$post-type/$post-status",
-									"$comment": "TODO: Should be number",
-									"type": "string",
-									"title": "Count of post(s) per post-type"
-								}
+					"$ref": "#/definitions/posts_per_type_per_post_status",
+					"title": "The posts schema"
+				},
+				"non-elementor-posts": {
+					"$id": "#/usages/non-elementor-posts",
+					"$ref": "#/definitions/posts_per_type_per_post_status",
+					"title": "The non-elementor-posts schema",
+					"examples": [
+						{
+							"attachment": {
+								"inherit": "15"
 							},
-							"additionalProperties": false
+							"elementor_snippet": {
+								"auto-draft": "1",
+								"publish": "1"
+							},
+							"page": {
+								"draft": "1",
+								"publish": "1"
+							},
+							"post": {
+								"auto-draft": "2"
+							}
 						}
-					},
-					"additionalProperties": false
+					]
 				},
 				"library": {
 					"$id": "#/usages/library",

@@ -26,6 +26,14 @@ class Upgrades {
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
+
+		$uploads_manager = Plugin::$instance->uploads_manager;
+
+		$temp_dir = $uploads_manager->get_temp_dir();
+
+		if ( file_exists( $temp_dir ) ) {
+			$uploads_manager->remove_file_or_dir( $temp_dir );
+		}
 	}
 
 	/**
