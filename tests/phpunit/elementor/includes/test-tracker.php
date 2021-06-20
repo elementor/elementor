@@ -97,8 +97,13 @@ class Test_Tracker extends Elementor_Test_Base {
 
 	public function test_get_tools_general_usage() {
 		// Arrange.
-		update_option( 'elementor_safe_mode', 'enabled' );
-		update_option( 'elementor_enable_inspector', 'enabled' );
+		// Load elementor_safe_mode settings.
+		Plugin::$instance->modules_manager->get_modules( 'safe-mode' )->add_admin_button(
+			Plugin::$instance->tools
+		);
+
+		update_option( 'elementor_safe_mode', 'disabled' );
+		update_option( 'elementor_enable_inspector', '' );
 
 		// Act.
 		$actual = Tracker::get_tools_general_usage();
@@ -106,7 +111,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets( [
 			'safe_mode' => true,
-			'debug_bar' => true,
+			'debug_bar' => false,
 		], $actual );
 	}
 
@@ -125,8 +130,11 @@ class Test_Tracker extends Elementor_Test_Base {
 
 	public function test_get_tools_maintenance_usage() {
 		// Arrange.
+		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
+
 		update_option( 'elementor_maintenance_mode_mode', 'coming_soon' );
 		update_option( 'elementor_maintenance_mode_exclude_mode', 'logged_in' );
+		update_option( 'elementor_maintenance_mode_exclude_roles', 'admin' );
 		update_option( 'elementor_maintenance_mode_template_id', '1' );
 
 		// Act
@@ -134,9 +142,10 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEqualSets( [
-			'mode' => 'coming_soon',
-			'exclude' => 'logged_in',
-			'template_id' => '1',
+			'maintenance_mode_mode' => 'coming_soon',
+			'maintenance_mode_exclude_mode' => 'logged_in',
+			'maintenance_mode_exclude_roles' => 'admin',
+			'maintenance_mode_template_id' => '1',
 		], $actual );
 	}
 }

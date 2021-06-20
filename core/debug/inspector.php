@@ -49,6 +49,7 @@ class Inspector {
 				'label' => __( 'Debug Bar', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
+					'data_type' => 'boolean',
 					'std' => $this->is_enabled ? 'enable' : '',
 					'options' => [
 						'' => __( 'Disable', 'elementor' ),

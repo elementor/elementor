@@ -337,7 +337,7 @@ class Icons_Manager {
 				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 1,
+					'std' => 'yes',
 					'options' => [
 						'' => __( 'No', 'elementor' ),
 						'yes' => __( 'Yes', 'elementor' ),

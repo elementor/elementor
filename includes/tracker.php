@@ -373,7 +373,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_general_usage() {
-		return self::get_from_settings_tabs( 'general' );
+		return self::get_tracking_data_from_settings( 'general' );
 	}
 
 	/**
@@ -383,7 +383,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_advanced_usage() {
-		return self::get_from_settings_tabs( 'advanced' );
+		return self::get_tracking_data_from_settings( 'advanced' );
 	}
 
 	/**
@@ -425,10 +425,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_tools_general_usage() {
-		return [
-			'safe_mode' => boolval( get_option( 'elementor_safe_mode' ) ),
-			'debug_bar' => boolval( get_option( 'elementor_enable_inspector' ) ),
-		];
+		return self::get_tracking_data_from_tools( 'general' );
 	}
 
 	/**
@@ -438,9 +435,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_tools_version_control_usage() {
-		return [
-			'beta_tester' => get_option( 'elementor_beta', 'no' ),
-		];
+		return self::get_tracking_data_from_tools( 'versions' );
 	}
 
 	/**
@@ -450,11 +445,7 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_tools_maintenance_usage() {
-		return [
-			'mode' => get_option( 'elementor_maintenance_mode_mode', '' ),
-			'exclude' => get_option( 'elementor_maintenance_mode_exclude_mode', 'logged_in' ),
-			'template_id' => get_option( 'elementor_maintenance_mode_template_id', '' ),
-		];
+		return self::get_tracking_data_from_tools( 'maintenance_mode' );
 	}
 
 	/**
@@ -510,11 +501,32 @@ class Tracker {
 
 	/**
 	 * @param string $tab_name
-	 * @returns array
+	 * @return array
 	 */
-	private static function get_from_settings_tabs( $tab_name ) {
+	private static function get_tracking_data_from_settings( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->settings->get_tabs(),
+			$tab_name
+		);
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @return array
+	 */
+	private static function get_tracking_data_from_tools( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->tools->get_tabs(),
+			$tab_name
+		);
+	}
+
+	private static function get_tracking_data_from_settings_page( $tabs, $tab_name ) {
 		$result = [];
-		$tabs = Plugin::$instance->settings->get_tabs();
+
+		if ( empty( $tabs[ $tab_name ] ) ) {
+			return $result;
+		}
 
 		$tab = $tabs[ $tab_name ];
 
@@ -531,13 +543,19 @@ class Tracker {
 					case 'checkbox':
 						$default_value = $args['value'];
 						break;
+
+					case 'select':
 					case 'checkbox_list_cpt':
 						$default_value = $args['std'];
 						break;
 
-					case 'select':
-						$default_value = array_keys( $args['options'] )[ $args['std'] ];
+					case 'checkbox_list_roles':
+						$default_value = null;
 						break;
+
+					// 'raw_html' is used as action and not as data.
+					case 'raw_html':
+						continue 2; // Skip fields loop.
 
 					default:
 						trigger_error( 'Invalid type: \'' . $args['type'] . '\'' ); // phpcs:ignore

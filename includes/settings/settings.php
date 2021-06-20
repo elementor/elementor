@@ -519,7 +519,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => '1',
+									'std' => 'internal',
 									'options' => [
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
@@ -557,7 +557,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => '0',
+									'std' => 'auto',
 									'options' => [
 										'auto' => __( 'Default', 'elementor' ),
 										'block' => __( 'Blocking', 'elementor' ),
