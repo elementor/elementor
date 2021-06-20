@@ -781,11 +781,11 @@ abstract class Controls_Stack extends Base_Object {
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
 
-		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
-		];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$devices = array_keys( $active_breakpoints );
+
+		$devices[] = self::RESPONSIVE_DESKTOP;
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
