@@ -846,7 +846,13 @@ abstract class Controls_Stack extends Base_Object {
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
 
-			$control_args['responsive']['max'] = $device_name;
+			$direction = 'max';
+
+			if ( self::RESPONSIVE_DESKTOP !== $device_name ) {
+				$direction = $active_breakpoints[ $device_name ]->get_direction();
+			}
+
+			$control_args['responsive'][ $direction ] = $device_name;
 
 			if ( isset( $control_args['min_affected_device'] ) ) {
 				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
