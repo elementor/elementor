@@ -97,7 +97,7 @@ export default class extends Marionette.CompositeView {
 		this.childViewContainer = '.elementor-navigator__elements';
 
 		this.listenTo( this.model, 'request:edit', this.onEditRequest )
-            .listenTo( this.model, 'change', this.onModelChange )
+			.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
@@ -311,7 +311,69 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
+	onKeyUp( event ) {
+		const keys = { UP_KEY: 38, DOWN_KEY: 40, RIGHT_KEY: 39, LEFT_KEY: 37 };
+
+		if ( Object.values( keys ).includes( event.keyCode ) ) {
+			const keyName = Object.keys( keys )
+				.filter( ( k ) => keys[ k ] === event.keyCode )[ 0 ];
+
+			elementor.navigator.getLayout().elements.currentView.recursiveChildAgreement(
+				'applyKeyboardAction',
+				keyName
+			);
+		}
+	}
+
+	applyKeyboardAction( keyName ) {
+		if ( ! this.ui.item.hasClass( 'elementor-editing' ) ) {
+			return true;
+		}
+
+		switch ( keyName ) {
+			case 'UP_KEY':
+				if ( 0 !== this._index ) {
+					let current = this._parent.children.findByIndex( this._index - 1 );
+
+					while ( current.hasChildren() && current.ui.item.hasClass( 'elementor-active' ) ) {
+						current = current.children.last();
+					}
+
+					current.onItemClick();
+				} else if ( ! this._parent.isRoot() ) {
+					this._parent.onItemClick();
+				}
+				break;
+			case 'DOWN_KEY':
+				if ( this.hasChildren() && this.ui.item.hasClass( 'elementor-active' ) ) {
+					this.children.first().onItemClick();
+				} else {
+					let current = this;
+
+					while ( ! current._parent.isRoot() && ( current._parent.children.length - 1 ) === current._index ) {
+						current = current._parent;
+					}
+
+					current = current._parent.children.findByIndex( current._index + 1 );
+
+					if ( current ) {
+						current.onItemClick();
+					}
+				}
+				break;
+			case 'RIGHT_KEY':
+				this.toggleList( true );
+				break;
+			case 'LEFT_KEY':
+				this.toggleList( false );
+				break;
+		}
+
+		return false;
+	}
+
 	onItemClick() {
+		this.ui.item.focus();
 		this.model.trigger( 'request:edit', { scrollIntoView: true } );
 	}
 

@@ -99,6 +99,7 @@ body {
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
+		outline: none;
 
 		&:not(.elementor-active) {
 

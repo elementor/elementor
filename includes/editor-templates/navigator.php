@@ -20,24 +20,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-navigator__elements">
 	<# if ( obj.elType ) { #>
-		<div class="elementor-navigator__item">
-			<div class="elementor-navigator__element__list-toggle">
-				<i class="eicon-sort-down"></i>
-			</div>
-			<#
-			if ( icon ) { #>
-				<div class="elementor-navigator__element__element-type">
-					<i class="{{{ icon }}}"></i>
-				</div>
-			<# } #>
-			<div class="elementor-navigator__element__title">
-				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
-			</div>
-			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-preview-medium"></i>
-			</div>
-			<div class="elementor-navigator__element__indicators"></div>
+	<div class="elementor-navigator__item" tabindex="-1">
+		<div class="elementor-navigator__element__list-toggle">
+			<i class="eicon-sort-down"></i>
 		</div>
+		<#
+		if ( icon ) { #>
+		<div class="elementor-navigator__element__element-type">
+			<i class="{{{ icon }}}"></i>
+		</div>
+		<# } #>
+		<div class="elementor-navigator__element__title">
+			<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
+		</div>
+		<div class="elementor-navigator__element__toggle">
+			<i class="eicon-preview-medium"></i>
+		</div>
+		<div class="elementor-navigator__element__indicators"></div>
+	</div>
 	<# } #>
 	<div class="elementor-navigator__elements"></div>
 </script>

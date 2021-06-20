@@ -9,6 +9,12 @@ export default class extends Marionette.LayoutView {
 		return 'elementor-navigator__inner';
 	}
 
+	attributes() {
+		return {
+			tabindex: '-1',
+		};
+	}
+
 	ui() {
 		return {
 			toggleAll: '#elementor-navigator__toggle-all',
@@ -20,6 +26,7 @@ export default class extends Marionette.LayoutView {
 		return {
 			'click @ui.toggleAll': 'toggleAll',
 			'click @ui.close': 'onCloseClick',
+			keyup: 'onKeyUp',
 		};
 	}
 
@@ -57,5 +64,9 @@ export default class extends Marionette.LayoutView {
 
 	onCloseClick() {
 		$e.components.get( 'navigator' ).close();
+	}
+
+	onKeyUp( event ) {
+		this.elements.currentView.onKeyUp( event );
 	}
 }
