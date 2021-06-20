@@ -23,7 +23,7 @@ Container uses Flex (in the future also Grid) and gives you the option to drag &
 
 Creating a new core element in a legacy code-base is never easy. Therefore, we had to deal with many weird problems.
 
-The main one is the DnD aspect. DnD-ing into a `flex container` is a real challenge by itself, and when you add the fact that you need to support the old existing DnD mechanism, it becomes a huge pain in the a**.
+The main one is the DnD (Drag & Drop) aspect. DnD-ing into a `flex container` is a real challenge by itself, and when you add the fact that you need to support the old existing DnD mechanism, it becomes a huge headache.
 
 Some things that we needed to take into consideration were:
 
@@ -32,7 +32,7 @@ Some things that we needed to take into consideration were:
 - How it will affect the existing placeholder mechanism that knows only about things like `top` / `bottom` / `vertical`?
 - How does it affect the UX/UI?
 - Will it cause issues due to `flex-basis` / `flex-shrink` / `flex-grow`?
-- How do you even resize a `flex item`?
+- How do you even resize a `flex item` if there are some calculations like grow/shrink?
 - How are you gonna drag a Container next to another Container without triggering a `dragover` event on the existing Container?
 
 The answer to all those question is one - Yes. It caused any problem you can imagine. And even more.
