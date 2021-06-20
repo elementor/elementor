@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -533,9 +531,12 @@ class Tracker {
 					case 'checkbox':
 						$default_value = $args['value'];
 						break;
-					case 'select':
 					case 'checkbox_list_cpt':
 						$default_value = $args['std'];
+						break;
+
+					case 'select':
+						$default_value = array_keys( $args['options'] )[ $args['std'] ];
 						break;
 
 					default:
@@ -543,6 +544,11 @@ class Tracker {
 				}
 
 				$result[ $field_name ] = get_option( 'elementor_' . $field_name, $default_value );
+
+				// TODO: Delete `$args['data_type']` - Behave like backwards compatibility.
+				if ( ! empty( $args['data_type'] ) && 'boolean' === $args['data_type'] ) {
+					$result[ $field_name ] = boolval( $result[ $field_name ] );
+				}
 			}
 		}
 

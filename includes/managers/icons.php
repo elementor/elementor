@@ -337,9 +337,9 @@ class Icons_Manager {
 				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 'yes',
+					'std' => 1,
 					'options' => [
-						'no' => __( 'No', 'elementor' ),
+						'' => __( 'No', 'elementor' ),
 						'yes' => __( 'Yes', 'elementor' ),
 					],
 					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
@@ -412,7 +412,7 @@ class Icons_Manager {
 			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
-			} elseif ( 'yes' === $load_shim ) {
+			} else if ( 'yes' === $load_shim ) {
 				self::enqueue_shim();
 			}
 		}
@@ -447,10 +447,10 @@ class Icons_Manager {
 	 * Icons Manager constructor
 	 */
 	public function __construct() {
-		// @todo: remove once we deprecate fa4
-		// Previously this action were called only when `is_admin() equals true`, but the tracker not always run as admin.
-		// and this data is needed.
-		add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
+		if ( is_admin() ) {
+			// @todo: remove once we deprecate fa4
+			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
+		}
 
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );

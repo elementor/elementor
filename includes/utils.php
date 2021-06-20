@@ -493,7 +493,7 @@ class Utils {
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
 
-		if ( 'yes' === get_option( self::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
+		if ( get_option( self::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
 			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config = str_replace( '}},"', '}},' . PHP_EOL . '"', $config );
 		}

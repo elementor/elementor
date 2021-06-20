@@ -357,6 +357,13 @@ class Plugin {
 	public $assets_manager;
 
 	/**
+	 * Icons Manager.
+	 *
+	 * @var Icons_Manager
+	 */
+	public $icons_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.

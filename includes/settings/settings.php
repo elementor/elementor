@@ -451,6 +451,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Disable Default Colors', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
+									'data_type' => 'boolean',
 									'value' => 'yes',
 									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 								],
@@ -459,6 +460,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Disable Default Fonts', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
+									'data_type' => 'boolean',
 									'value' => 'yes',
 									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 								],
@@ -517,7 +519,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => 'internal',
+									'std' => '1',
 									'options' => [
 										'external' => __( 'External File', 'elementor' ),
 										'internal' => __( 'Internal Embedding', 'elementor' ),
@@ -529,10 +531,11 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => 'no',
+									'data_type' => 'boolean',
+									'std' => '0',
 									'options' => [
-										'no' => __( 'Disable', 'elementor' ),
-										'yes' => __( 'Enable', 'elementor' ),
+										'' => __( 'Disable', 'elementor' ),
+										'1' => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
@@ -541,10 +544,11 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => 'no',
+									'data_type' => 'boolean',
+									'std' => '0',
 									'options' => [
-										'no' => __( 'Disable', 'elementor' ),
-										'yes' => __( 'Enable', 'elementor' ),
+										'' => __( 'Disable', 'elementor' ),
+										'1' => __( 'Enable', 'elementor' ),
 									],
 									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
@@ -553,7 +557,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Google Fonts Load', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'std' => 'auto',
+									'std' => '0',
 									'options' => [
 										'auto' => __( 'Default', 'elementor' ),
 										'block' => __( 'Blocking', 'elementor' ),

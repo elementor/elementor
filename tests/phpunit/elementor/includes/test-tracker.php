@@ -15,10 +15,10 @@ class Test_Tracker extends Elementor_Test_Base {
 		update_option( 'elementor_cpt_support', [ 'page' ] );
 
 		// Set true.
-		update_option( 'elementor_disable_color_schemes', 'yes' );
+		update_option( 'elementor_disable_color_schemes', true );
 
-		// Set False.
-		update_option( 'elementor_disable_typography_schemes', 'no' );
+		// Set false.
+		update_option( 'elementor_disable_typography_schemes', '' );
 
 		// Act.
 		$actual = Tracker::get_settings_general_usage();
@@ -28,23 +28,27 @@ class Test_Tracker extends Elementor_Test_Base {
 			'cpt_support' => [
 				'page',
 			],
-			'disable_default_colors' => 'no',
-			'disable_default_fonts' => 'yes',
+			'disable_color_schemes' => true,
+			'disable_typography_schemes' => false,
 			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existance.
 		], $actual );
 	}
 
 	public function test_get_settings_advanced_usage() {
 		// Arrange.
+
+		// Load font_awesome_support settings.
+		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
+
 		update_option( 'elementor_css_print_method', 'internal' );
 
-		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, 'no' );
+		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, false );
 
-		update_option( Files_Upload_Handler::OPTION_KEY, 'yes' );
+		update_option( Files_Upload_Handler::OPTION_KEY, true );
 
 		update_option( 'elementor_font_display', 'block' );
 
-		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
+		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, true );
 
 		// Act.
 		$actual = Tracker::get_settings_advanced_usage();
@@ -52,10 +56,10 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets( [
 			'css_print_method' => 'internal',
-			'switch_editor_loader_method' => 'no',
-			'enable_unfiltered_file_uploads' => 'yes',
+			'switch_editor_loader_method' => false,
+			'enable_unfiltered_file_uploads' => true,
 			'font_display' => 'block',
-			'font_awesome_support' => 'yes',
+			'font_awesome_support' => true,
 		], $actual );
 	}
 

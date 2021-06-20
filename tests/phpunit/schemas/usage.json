@@ -779,15 +779,15 @@
 								},
 								"disable_color_schemes": {
 									"$id": "#/usages/settings/general/disable_color_schemes",
-									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"type": "boolean",
 									"title": "Is default colors disabled?",
-									"default": "yes"
+									"default": false
 								},
 								"disable_typography_schemes": {
 									"$id": "#/usages/settings/general/disable_typography_schemes",
-									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"type": "boolean",
 									"title": "Is default fonts disabled?",
-									"default": "yes"
+									"default": false
 								},
 								"allow_tracking": {
 									"$id": "#/usages/settings/general/allow_tracking",
@@ -816,13 +816,13 @@
 									"$id": "#/usages/settings/advanced/switch_editor_loader_method",
 									"title": "Editor loader editor method switch",
 									"type": "boolean",
-									"default": false
+									"default": true
 								},
 								"enable_unfiltered_file_uploads": {
 									"$id": "#/usages/settings/advanced/enable_unfiltered_file_uploads",
+									"default": false,
 									"title": "Is enable unfilterd file uploads?",
-									"type": "boolean",
-									"default": false
+									"type": "boolean"
 								},
 								"load_fa4_shim": {
 									"$id": "#/usages/settings/advanced/font_awesome_support",
@@ -832,15 +832,15 @@
 								},
 								"editor_break_lines": {
 									"$id": "#/usages/settings/advanced/editor_break_lines",
-									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"type": "boolean",
 									"title": "Does editor break lines enabled?",
-									"default": "yes"
+									"default": false
 								},
 								"unfiltered_files_upload": {
 									"$id": "#/usages/settings/advanced/unfiltered_files_upload",
-									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"type": "boolean",
 									"title": "Does unfilterd files uploaded allowed?",
-									"default": "yes"
+									"default": false
 								},
 								"font_display": {
 									"$id": "#/usages/settings/advanced/css_print_method",
