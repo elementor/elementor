@@ -280,20 +280,23 @@ class Widget_Google_Maps extends Widget_Base {
 		$params = [
 			rawurlencode( $settings['address'] ),
 			absint( $settings['zoom']['size'] ),
-			esc_attr( $settings['address'] ),
 		];
 
 		if ( $api_key ) {
 			$params[] = $api_key;
 
-			$url = 'https://www.google.com/maps/embed/v1/place?key=%4$s&q=%1$s&amp;zoom=%2$d';
+			$url = 'https://www.google.com/maps/embed/v1/place?key=%3$s&q=%1$s&amp;zoom=%2$d';
 		} else {
 			$url = 'https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
 		}
 
 		?>
 		<div class="elementor-custom-embed">
-			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="<?php echo vsprintf( $url, $params ); ?>" title="%3$s" aria-label="%3$s"></iframe>
+			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+					src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
+					title="<?php echo esc_attr( $settings['address'] ); ?>"
+					aria-label="<?php echo esc_attr( $settings['address'] ); ?>"
+			></iframe>
 		</div>
 		<?php
 	}

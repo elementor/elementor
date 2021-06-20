@@ -98,8 +98,14 @@ class Module extends BaseModule {
 	}
 
 	private function import_stage_1() {
-		if ( ! empty( $_POST['e_import_file'] ) ) {
-			$remote_zip_request = wp_remote_get( $_POST['e_import_file'] );
+		// PHPCS - Already validated in caller function.
+		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED ) || 0 !== strpos( $file_url, 'http' ) ) {
+				throw new \Error( __( 'Invalid URL', 'elementor' ) );
+			}
+
+			$remote_zip_request = wp_remote_get( $file_url );
 
 			if ( is_wp_error( $remote_zip_request ) ) {
 				throw new \Error( $remote_zip_request->get_error_message() );
@@ -111,12 +117,13 @@ class Module extends BaseModule {
 
 			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 		} else {
-			$file_name = $_FILES['e_import_file']['tmp_name'];
+			// PHPCS - Already validated in caller function.
+			$file_name = $_FILES['e_import_file']['tmp_name']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $file_name, [ 'json', 'xml' ] );
 
-		if ( ! empty( $_POST['e_import_file'] ) ) {
+		if ( ! empty( $file_url ) ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 		}
 
@@ -191,7 +198,7 @@ class Module extends BaseModule {
 				'file' => base64_encode( $file ),
 			] );
 		} catch ( \Error $error ) {
-			wp_die( $error->getMessage() );
+			wp_die( esc_html( $error->getMessage() ) );
 		}
 	}
 

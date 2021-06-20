@@ -355,7 +355,7 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
 				<h2><?php echo esc_html__( 'Collect Your Form Submissions', 'elementor' ); ?></h2>
 				<p>
 					<?php echo esc_html__( 'Save and manage all of your form submissions in one single place.
@@ -364,7 +364,9 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 						<?php echo esc_html__( 'Learn More', 'elementor' ); ?>
 					</a>
 				</p>
-				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php
+				Utils::print_unescaped_internal_string( Utils::get_pro_link( 'https://go.elementor.com/go-pro-submissions' ) );
+				?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -584,7 +586,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
-		return esc_html__( 'Elementor', 'elementor' );
+		return __( 'Elementor', 'elementor' );
 	}
 
 	/**
