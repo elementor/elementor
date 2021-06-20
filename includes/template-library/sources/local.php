@@ -1292,14 +1292,14 @@ class Source_Local extends Source_Base {
 				<h2>
 					<?php
 					/* translators: %s: Template type label. */
-					printf( esc_html__( 'Create Your First %s', 'elementor' ), $current_type_label );
+					printf( esc_html__( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
 				</h2>
 				<p><?php echo esc_html( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
-					printf( esc_html__( 'Add New %s', 'elementor' ), $current_type_label );
+					printf( esc_html__( 'Add New %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
 				</a>
 			</div>
