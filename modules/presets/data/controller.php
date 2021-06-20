@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\Presets\Data;
 
+use Elementor\Plugin;
+use Elementor\Modules\Presets\Documents\Preset;
 use \Elementor\Data\Base\Controller as Base_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +23,47 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
-
+		//
 	}
 
+	/**
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return array[]|\WP_Error|\WP_REST_Response
+	 */
+	public function create_items( $request ) {
+		// TODO: Check if user can create preset
+
+		$preset = Plugin::$instance->documents->create(
+			Preset::TYPE,
+			[
+				'post_title' => $request->get_param( 'name' ),
+			],
+			[
+				Preset::ELEMENT_TYPE_META_KEY => $request->get_param( 'element_type' ),
+				Preset::WIDGET_TYPE_META_KEY => $request->get_param( 'widget_type' ),
+				Preset::SETTINGS_META_KEY => $request->get_param( 'settings' ),
+				Preset::DEFAULT_META_KEY => true,
+			]
+		);
+
+		return [
+			'data' => [
+				'id' => $preset->get_id(),
+			],
+		];
+	}
+
+	public function get_item( $request ) {
+		return [
+			'data' => [
+				'id' => $request->get_param( 'id' ),
+				'settings' => [],
+			],
+		];
+	}
+
+	public function get_items( $request ) {
+		return [];
+	}
 }

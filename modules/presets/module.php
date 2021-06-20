@@ -1,8 +1,11 @@
 <?php
 namespace Elementor\Modules\Presets;
 
+use Elementor\Plugin;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Base\Module as Base_Module;
+use Elementor\Modules\Presets\Data\Controller;
+use Elementor\Modules\Presets\Documents\Preset;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -35,6 +38,22 @@ class Module extends Base_Module {
 		);
 	}
 
+	private function set_active_presets_property( $config ) {
+		$config['presets']['active_ids'] = [];
+
+		if ( ! isset( $config['initial_document']['id'] ) ) {
+			return $config;
+		}
+
+		$document = Plugin::$instance->documents->get( $config['initial_document']['id'] );
+
+		if ( ! $document ) {
+			return $config;
+		}
+
+		return $config;
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -46,6 +65,14 @@ class Module extends Base_Module {
 			return array_merge( [
 				'presetId' => isset( $data['presetId'] ) ? $data['presetId'] : null,
 			], $result );
+		}, 10, 2 );
+
+		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
+			return $this->set_active_presets_property( $config );
 		} );
+
+		Plugin::$instance->documents->register_document_type( Preset::TYPE, Preset::class );
+
+		Plugin::$instance->data_manager->register_controller( Controller::class );
 	}
 }

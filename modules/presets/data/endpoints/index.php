@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\Presets\Data\Endpoints;
 
+use Elementor\Plugin;
 use ElementorPro\Data\Base\Endpoint;
+use Elementor\Modules\Presets\Documents\Preset;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,39 +28,60 @@ class Index extends Endpoint {
 			'',
 			\WP_REST_Server::CREATABLE,
 			function ( $request ) {
-				return $this->base_callback( \WP_REST_Server::READABLE, $request, true );
-			},
-			[]
-		);
-
-		$this->register_route(
-			'(?P<id>[\d]+)/',
-			\WP_REST_Server::EDITABLE,
-			function ( $request ) {
-				return $this->base_callback( \WP_REST_Server::DELETABLE, $request );
+				return $this->base_callback( \WP_REST_Server::CREATABLE, $request, true );
 			},
 			[
-				'id' => [
-					'description' => 'Unique identifier for the object.',
+				'element_type' => [
 					'type' => 'string',
+					'description' => 'The type of the element (section, column, widget, etc...)',
+					'enum' => [
+						'section',
+						'column',
+						'widget',
+					],
+					'required' => true,
+				],
+				'widget_type' => [
+					'type' => 'string',
+					'description' => 'When the element_type is widget',
+					'required' => false,
+				],
+				'settings' => [
+					'type' => 'object',
+					'description' => 'The settings object',
 					'required' => true,
 				],
 			]
 		);
 
-		$this->register_route(
-			'(?P<id>[\d]+)/',
-			\WP_REST_Server::DELETABLE,
-			function ( $request ) {
-				return $this->base_callback( \WP_REST_Server::DELETABLE, $request );
-			},
-			[
-				'id' => [
-					'description' => 'Unique identifier for the object.',
-					'type' => 'string',
-					'required' => true,
-				],
-			]
-		);
+//		$this->register_route(
+//			'(?P<id>[\d]+)/',
+//			\WP_REST_Server::EDITABLE,
+//			function ( $request ) {
+//				return $this->base_callback( \WP_REST_Server::DELETABLE, $request );
+//			},
+//			[
+//				'id' => [
+//					'description' => 'Unique identifier for the object.',
+//					'type' => 'string',
+//					'required' => true,
+//				],
+//			]
+//		);
+
+//		$this->register_route(
+//			'(?P<id>[\d]+)/',
+//			\WP_REST_Server::DELETABLE,
+//			function ( $request ) {
+//				return $this->base_callback( \WP_REST_Server::DELETABLE, $request );
+//			},
+//			[
+//				'id' => [
+//					'description' => 'Unique identifier for the object.',
+//					'type' => 'string',
+//					'required' => true,
+//				],
+//			]
+//		);
 	}
 }

@@ -3,7 +3,7 @@ export class Create extends $e.modules.CommandBase {
 		this.requireArgument( 'elementId', args );
 	}
 
-	async apply( { elementId } ) {
+	async apply( { elementId, name = 'default' } ) {
 		const container = elementor.getContainer( elementId );
 
 		// Get all the "styled" settings that differently from the hardcoded defaults.
@@ -11,9 +11,9 @@ export class Create extends $e.modules.CommandBase {
 
 		// Save those settings into preset
 		const { data } = await $e.data.create( 'presets/index', {
+			name,
 			element_type: container.settings.attributes.elType,
 			widget_type: container.settings.attributes.widgetType,
-			default: this.shouldBeDefault(),
 			settings,
 		} );
 
