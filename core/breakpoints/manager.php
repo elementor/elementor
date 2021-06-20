@@ -58,7 +58,7 @@ class Manager extends Module {
 	 * default value is 'off'.
 	 *
 	 * @since 3.4.0
-	 * @access public
+	 * @access private
 	 *
 	 * @var string
 	 */
@@ -242,6 +242,15 @@ class Manager extends Module {
 		];
 	}
 
+	/**
+	 * Get Breakpoints Config
+	 *
+	 * Iterates over an array of all of the system's breakpoints (both active and inactive), queries each breakpoint's
+	 * class instance, and generates an array containing data on each breakpoint: its label, current value, direction
+	 * ('min'/'max') and whether it is enabled or not.
+	 *
+	 * @return array
+	 */
 	public function get_breakpoints_config() {
 		$breakpoints = $this->get_breakpoints();
 
