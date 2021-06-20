@@ -19,6 +19,10 @@ $devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_e
 		&:hover {
 			border-bottom-color: inherit;
 		}
+
+		&.elementor-responsive-switcher {
+			border-bottom: 0;
+		}
 	}
 
 	//Avoid collapsing margin in the repeater control
@@ -413,14 +417,6 @@ $item-size: 2em;
 		.elementor-control-responsive-switchers__holder {
 			top: calc(-1 * var(--selected-option) * #{$item-size});
 			box-shadow: 0 0 3px rgba(0,0,0,0.2);
-		}
-	}
-
-	&:not(.elementor-responsive-switchers-open) {
-
-		a.elementor-responsive-switcher {
-			position: absolute;
-			left: 10px;
 		}
 	}
 }
