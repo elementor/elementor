@@ -26,9 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<#
 			if ( icon ) { #>
-			<div class="elementor-navigator__element__element-type">
-				<i class="{{{ icon }}}"></i>
-			</div>
+				<div class="elementor-navigator__element__element-type">
+					<i class="{{{ icon }}}"></i>
+				</div>
 			<# } #>
 			<div class="elementor-navigator__element__title">
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
