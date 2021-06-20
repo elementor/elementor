@@ -1243,7 +1243,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	generateResponsiveControls( controls ) {
-		const devices = Object.keys( this.config.responsive.activeBreakpoints ),
+		const { activeBreakpoints } = this.config.responsive,
+			devices = Object.keys( activeBreakpoints ),
 			// If there is an active 'widescreen' breakpoint, insert the artificial 'desktop' device below it.
 			widescreenIndex = devices.indexOf( 'widescreen' ),
 			indexToInsertDesktopDevice = -1 === widescreenIndex ? devices.length : devices.length - 1,
@@ -1291,7 +1292,13 @@ export default class EditorBase extends Marionette.Application {
 					controlArgs.responsive = {};
 				}
 
-				controlArgs.responsive.max = device;
+				let direction = 'max';
+
+				if ( 'desktop' !== device ) {
+					direction = activeBreakpoints[ device ].direction;
+				}
+
+				controlArgs.responsive[ direction ] = device;
 
 				if ( controlArgs.min_affected_device ) {
 					if ( controlArgs.min_affected_device[ device ] ) {
