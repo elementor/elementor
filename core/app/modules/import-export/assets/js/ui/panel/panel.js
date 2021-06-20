@@ -10,7 +10,7 @@ import './panel.scss';
 
 export default function Panel( props ) {
 	return (
-		<Collapse>
+		<Collapse isOpened={ props.isOpened }>
 			<Card className={ arrayToClassName( [ 'e-app-import-export-panel', props.className ] ) }>
 				{ props.children }
 			</Card>
@@ -20,11 +20,13 @@ export default function Panel( props ) {
 
 Panel.propTypes = {
 	className: PropTypes.string,
+	isOpened: PropTypes.bool,
 	children: PropTypes.any.isRequired,
 };
 
 Panel.defaultProps = {
 	className: '',
+	isOpened: false,
 };
 
 Panel.Header = PanelHeader;

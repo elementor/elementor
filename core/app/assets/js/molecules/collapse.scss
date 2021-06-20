@@ -7,8 +7,11 @@ $root: e-app-collapse;
 	--e-app-collapse-icon-color: #{$e-app-collapse-icon-color};
 
 	&-toggle {
-		cursor: pointer;
 		position: relative;
+
+		&--active {
+			cursor: pointer;
+		}
 
 		&__icon {
 			color: var(--e-app-collapse-icon-color);
