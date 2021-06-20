@@ -12,7 +12,7 @@
 		scaleY( calc( var( --normal-flip-y, 1 ) * var( --normal-scale-y, var(--normal-scale, 1) ) ) )
 		skewX( var( --normal-skew-x, 0 ) )
 		skewY( var( --normal-skew-y, 0 ) );
-	transform-origin: var( --transform-origin-y )  var( --transform-origin-x );
+	// transform-origin: var( --transform-origin-y )  var( --transform-origin-x );
 	transition: transform var( --transition-duration, 0ms );
 }
 

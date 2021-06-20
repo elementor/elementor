@@ -1090,7 +1090,7 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_offset_popover",
+				"_{$tab}_transform_translate_popover",
 				[
 					'label' => __( 'Offset', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
@@ -1102,7 +1102,7 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_offsetX_effect",
+				"_{$tab}_transform_translateX_effect",
 				[
 					'label' => __( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1121,7 +1121,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_offset_popover!" => '',
+						"_{$tab}_transform_translate_popover!" => '',
 					],
 					'selectors' => [
 						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-translate-x: {{SIZE}}{{UNIT}};",
@@ -1131,7 +1131,7 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_offsetY_effect",
+				"_{$tab}_transform_translateY_effect",
 				[
 					'label' => __( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
@@ -1147,7 +1147,7 @@ class Widget_Common extends Widget_Base {
 						],
 					],
 					'condition' => [
-						"_{$tab}_transform_offset_popover!" => '',
+						"_{$tab}_transform_translate_popover!" => '',
 					],
 					'default' => [
 						'size' => 0,
@@ -1379,6 +1379,7 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_tabs();
 
+		// will override motion effect transform-origin
 		$this->add_responsive_control(
 			'_transform_x_anchor_point',
 			[
@@ -1399,9 +1400,11 @@ class Widget_Common extends Widget_Base {
 					],
 				],
 				'separator' => 'before',
-				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-x: {{VALUE}}',
-				],
+				// 'default' => 'center',
+				// 'toggle' => false,
+				// 'selectors' => [
+				// 	'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-x: {{VALUE}}',
+				// ],
 			]
 		);
 
@@ -1424,8 +1427,11 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
+				// 'toggle' => false,
+				// 'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-y: {{VALUE}}',
+					// '{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-y: {{VALUE}}',
+					'{{WRAPPER}} > .elementor-widget-container' => 'transform-origin: {{_transform_x_anchor_point.VALUE}} {{VALUE}}',
 				],
 			]
 		);
