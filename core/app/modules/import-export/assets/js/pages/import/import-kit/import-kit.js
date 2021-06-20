@@ -15,7 +15,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax, resetAjax } = useAjax(),
+	const { ajaxState, setAjax, ajaxActions } = useAjax(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
@@ -24,7 +24,7 @@ export default function ImportKit() {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
 			setIsLoading( false );
-			resetAjax();
+			ajaxActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>

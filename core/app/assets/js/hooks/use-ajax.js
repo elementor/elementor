@@ -9,7 +9,9 @@ export default function useAjax() {
 			response: null,
 		},
 		[ ajaxState, setAjaxState ] = useState( uploadInitialState ),
-		resetAjax = () => setAjaxState( initialStatusKey );
+		ajaxActions = {
+			reset: () => setAjaxState( initialStatusKey ),
+		};
 
 	useEffect( () => {
 		if ( ajax ) {
@@ -55,6 +57,6 @@ export default function useAjax() {
 		ajax,
 		setAjax,
 		ajaxState,
-		resetAjax,
+		ajaxActions,
 	};
 }
