@@ -75,16 +75,16 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
 
-		$id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( $id ) {
-			wp_send_json_error( __( 'There\'s already an active kit.', 'elementor' ) );
+		if ( $kit->get_id() ) {
+			wp_send_json_error( [ 'message' => __( 'There\'s already an active kit.', 'elementor' ) ], 400 );
 		}
 
 		$created_default_kit = Plugin::$instance->kits_manager->create_default();
 
 		if ( ! $created_default_kit ) {
-			wp_send_json_error( __( 'An error occurred while trying to create a kit.', 'elementor' ) );
+			wp_send_json_error( [ 'message' => __( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
 		}
 
 		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
@@ -362,7 +362,7 @@ class Tools extends Settings_Page {
 			],
 		];
 
-		if ( ! Plugin::$instance->kits_manager->get_active_kit() ) {
+		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
 				'label' => __( 'Recreate Kit', 'elementor' ),
 				'field_args' => [
