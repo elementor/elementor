@@ -455,7 +455,7 @@ a.elementor-responsive-switcher {
 	}
 }
 
-$devices: 'desktop', 'tablet', 'mobile';
+$devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';
 
 @each $device in $devices {
 	.elementor-device-#{ $device } {

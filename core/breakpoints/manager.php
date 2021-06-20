@@ -64,6 +64,8 @@ class Manager extends Module {
 	 */
 	private $responsive_control_duplication_mode = 'off';
 
+	private $icons_map;
+
 	public function get_name() {
 		return 'breakpoints';
 	}
@@ -179,6 +181,22 @@ class Manager extends Module {
 	public function refresh() {
 		$this->init_breakpoints();
 		$this->init_active_breakpoints();
+	}
+
+	public function get_responsive_icons_classes_map( $device = null ) {
+		if ( ! $this->icons_map ) {
+			$this->icons_map = [
+				'mobile' => 'eicon-device-mobile',
+				'mobile_extra' => 'eicon-device-mobile eicon-tilted',
+				'tablet' => 'eicon-device-tablet',
+				'tablet_extra' => 'eicon-device-tablet eicon-tilted',
+				'laptop' => 'eicon-device-laptop',
+				'desktop' => 'eicon-device-desktop',
+				'widescreen' => 'eicon-device-wide',
+			];
+		}
+
+		return self::get_items( $this->icons_map, $device );
 	}
 
 	/**

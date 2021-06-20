@@ -2,6 +2,8 @@
 // Panel Controls
 //
 
+$devices: 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile';
+
 .elementor-control {
 	--control-title-size: 12px;
 	background-color: #fff;
@@ -134,24 +136,12 @@
 
 	&.elementor-control-responsive- {
 
-		&desktop {
+		@each $device in $devices {
 
-			body:not(.elementor-device-desktop) & {
-				display: none;
-			}
-		}
-
-		&tablet {
-
-			body:not(.elementor-device-tablet) & {
-				display: none;
-			}
-		}
-
-		&mobile {
-
-			body:not(.elementor-device-mobile) & {
-				display: none;
+			&#{ $device } {
+				body:not(.elementor-device-#{ $device }) & {
+					display: none;
+				}
 			}
 		}
 	}
@@ -425,6 +415,14 @@ $item-size: 2em;
 			box-shadow: 0 0 3px rgba(0,0,0,0.2);
 		}
 	}
+
+	&:not(.elementor-responsive-switchers-open) {
+
+		a.elementor-responsive-switcher {
+			position: absolute;
+			left: 10px;
+		}
+	}
 }
 
 .elementor-responsive-switcher {
@@ -448,8 +446,6 @@ a.elementor-responsive-switcher {
 		color: $editor-info;
 	}
 }
-
-$devices: 'desktop', 'tablet', 'mobile';
 
 @each $device in $devices {
 	.elementor-device-#{ $device } {

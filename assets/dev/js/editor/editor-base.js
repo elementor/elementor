@@ -596,8 +596,15 @@ export default class EditorBase extends Marionette.Application {
 	getCurrentDeviceConstrains() {
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
 			{ activeBreakpoints } = elementorFrontend.config.responsive,
-			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
-			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
+			currentBreakpointData = activeBreakpoints[ currentBreakpoint ];
+
+		let currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
+
+		// If the device under the current device mode's breakpoint has a larger max value - use the current device's
+		// value as the min width point.
+		if ( currentBreakpointMinPoint > currentBreakpointData.value ) {
+			currentBreakpointMinPoint = currentBreakpointData.value;
+		}
 
 		return {
 			maxWidth: currentBreakpointData.value,
@@ -613,10 +620,30 @@ export default class EditorBase extends Marionette.Application {
 					height: 736,
 					maxHeight: 896,
 				},
+				mobile_extra: {
+					minHeight: 320,
+					height: 736,
+					maxHeight: 896,
+				},
 				tablet: {
 					minHeight: 768,
 					height: previewHeight,
 					maxHeight: 1024,
+				},
+				tablet_extra: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+				laptop: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+				widescreen: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1200,
 				},
 			};
 

@@ -591,6 +591,8 @@ class Editor {
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
+				'icons_map' => Plugin::$instance->breakpoints->get_responsive_icons_classes_map(),
+				'desktop_label' => __( 'Desktop', 'elementor' ),
 			],
 		];
 
