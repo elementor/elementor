@@ -38,7 +38,7 @@ $types = apply_filters( 'elementor/template-library/create_new_dialog_types', $t
 ?>
 <script type="text/template" id="tmpl-elementor-new-template">
 	<div id="elementor-new-template__description">
-		<div id="elementor-new-template__description__title"><?php echo esc_html__( 'Templates Help You <span>Work Efficiently</span>', 'elementor' ); ?></div>
+		<div id="elementor-new-template__description__title"><?php Utils::print_unescaped_internal_string ( __( 'Templates Help You <span>Work Efficiently</span>', 'elementor' ) ); ?></div>
 		<div id="elementor-new-template__description__content"><?php echo esc_html__( 'Use templates to create the different pieces of your site, and reuse them with one click whenever needed.', 'elementor' ); ?></div>
 		<?php
 		/*
