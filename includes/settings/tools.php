@@ -168,7 +168,8 @@ class Tools extends Settings_Page {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 
-		if ( ! empty( $_POST ) ) {
+		// PHPCS - The user data is not used.
+		if ( ! empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 			add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
@@ -288,7 +289,7 @@ class Tools extends Settings_Page {
 							$intro_text = '<div>' . $intro_text . '</div>';
 
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'replace_url' => [
@@ -316,7 +317,7 @@ class Tools extends Settings_Page {
 							);
 							$intro_text = '<p>' . $intro_text . '</p>';
 
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'rollback' => [
@@ -388,6 +389,6 @@ class Tools extends Settings_Page {
 	 * @return string Tools page title.
 	 */
 	protected function get_page_title() {
-		return esc_html__( 'Tools', 'elementor' );
+		return __( 'Tools', 'elementor' );
 	}
 }

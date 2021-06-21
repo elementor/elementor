@@ -28,7 +28,7 @@ class Role_Manager extends Settings_Page {
 	 * @access protected
 	 */
 	protected function get_page_title() {
-		return esc_html__( 'Role Manager', 'elementor' );
+		return __( 'Role Manager', 'elementor' );
 	}
 
 	/**

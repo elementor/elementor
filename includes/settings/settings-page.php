@@ -78,7 +78,8 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function __construct() {
-		if ( ! empty( $_POST['option_page'] ) && static::PAGE_ID === $_POST['option_page'] ) {
+		// PHPCS - The user data is not used.
+		if ( ! empty( $_POST['option_page'] ) && static::PAGE_ID === $_POST['option_page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
 		}
 	}
@@ -292,7 +293,7 @@ abstract class Settings_Page {
 		$tabs = $this->get_tabs();
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php echo $this->get_page_title(); ?></h1>
+			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
 			<div id="elementor-settings-tabs-wrapper" class="nav-tab-wrapper">
 				<?php
 				foreach ( $tabs as $tab_id => $tab ) {
