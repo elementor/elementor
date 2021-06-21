@@ -987,7 +987,7 @@ class Widget_Common extends Widget_Base {
 			$this->start_controls_tab(
 				"_tab_positioning_{$tab}",
 				[
-					'label' => __( ucfirst( $tab ), 'elementor' ),
+					'label' => 'normal' === $tab ? __( 'Normal', 'elementor' ) : __( 'Hover', 'elementor' ),
 				]
 			);
 
@@ -1357,7 +1357,7 @@ class Widget_Common extends Widget_Base {
 
 			if ( 'hover' === $tab ) {
 				$this->add_control(
-					"_hover_transform_transition",
+					'_hover_transform_transition',
 					[
 						'label' => __( 'Transition Duration (ms)', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
@@ -1368,7 +1368,7 @@ class Widget_Common extends Widget_Base {
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => "--transition-duration: {{SIZE}}ms",
+							'{{WRAPPER}} > .elementor-widget-container' => '--transition-duration: {{SIZE}}ms',
 						],
 					]
 				);
