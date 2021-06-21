@@ -2,22 +2,22 @@ const ngrok = require("ngrok");
 const { spawn } = require("child_process");
 
 const myArgs = process.argv.slice(2);
-const [project, token] = myArgs
+const [project, token, ngrokToken] = myArgs
 
 const runProgram = (program, options) => {
   return new Promise((resolve, reject) => {
     const wpCli = spawn(program, options);
 
     wpCli.stdout.on("data", (data) => {
-      console.log(`stdout: ${data}`);
+      console.log(data);
     });
 
     wpCli.stderr.on("data", (data) => {
-      console.error(`stderr: ${data}`);
+      console.error(`Error: ${data}`);
     });
 
     wpCli.on("close", (code) => {
-      console.log(`child process exited with code ${code}`);
+      console.log(`${options[0]} exited with code ${code}`);
       if (code !== 0) reject(code);
       resolve(code);
     });
@@ -26,7 +26,7 @@ const runProgram = (program, options) => {
 
 const runTestim = async () => {
   // Start tunnel
-  const ngrokToken = '1svmVrKdhbvOy3UoGqVBBGWKeA6_6dpFfnpZgxt6kWQYz5Ddp'
+  const ngrokToken = ngrokToken;
   const tunnelUrl = await ngrok.connect({authtoken: ngrokToken, addr:8889});
   // Use CLI to set local WP tunnel url
   await Promise.all([
@@ -48,7 +48,7 @@ const runTestim = async () => {
     'testim',
     '--project',project,
     '--token',token,
-    '--label','test',
+    '--label','CI',
     '--grid','Testim-Grid',
     '--base-url',tunnelUrl,
     '--params', '{"username":"admin","password":"password"}'

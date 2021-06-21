@@ -83,4 +83,4 @@ jobs:
       - name: Install Ngrok
         run: npm install --no-package-lock --no-save ngrok
       - name: Run Testim tests
-        run: node ./.github/scripts/testim_ci.js ${{ secrets.TESTIM_PROJECT }} ${{ secrets.TESTIM_TOKEN }}
+        run: node ./.github/scripts/testim_ci.js ${{ secrets.TESTIM_PROJECT }} ${{ secrets.TESTIM_TOKEN }} ${{ secrets.NGROK_TOKEN }} 
