@@ -134,9 +134,10 @@ class Manager extends Module {
 	 * For a given device, return the minimum possible breakpoint. Except for the cases of mobile and widescreen
 	 * devices, A device's min breakpoint is determined by the previous device's max breakpoint + 1px.
 	 *
+	 * @since 3.2.0
+	 *
 	 * @param string $device_name
 	 * @return int the min breakpoint of the passed device
-	 *@since 3.2.0
 	 */
 	public function get_device_min_breakpoint( $device_name ) {
 		if ( 'desktop' === $device_name ) {
@@ -171,6 +172,15 @@ class Manager extends Module {
 		return $min_breakpoint;
 	}
 
+	/**
+	 * Get Desktop Min Breakpoint
+	 *
+	 * Returns the minimum possible breakpoint for the default (desktop) device.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return int the min breakpoint of the passed device
+	 */
 	public function get_desktop_min_point() {
 		$active_breakpoints = $this->get_active_breakpoints();
 		$desktop_previous_device = $this->get_desktop_previous_device_key();
@@ -183,6 +193,19 @@ class Manager extends Module {
 		$this->init_active_breakpoints();
 	}
 
+	/**
+	 * Get Responsive Icons Classes Map
+	 *
+	 * If a $device parameter is passed, this method retrieves the device's icon class list (the ones attached to the `<i>`
+	 * element). If no parameter is passed, it returns an array of devices containing each device's icon class list.
+	 *
+	 * This method was created because 'mobile_extra' and 'tablet_extra' breakpoint icons need to be tilted by 90
+	 * degrees, and this tilt is achieved in CSS via the class `eicon-tilted`.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @return array|string
+	 */
 	public function get_responsive_icons_classes_map( $device = null ) {
 		if ( ! $this->icons_map ) {
 			$this->icons_map = [
@@ -332,8 +355,17 @@ class Manager extends Module {
 	 */
 	private function init_breakpoints() {
 		$breakpoints = [];
-		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
-		$active_breakpoint_keys = $kit->get_settings( Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID );
+		$kit_active_id = Plugin::$instance->kits_manager->get_active_id();
+		// Get the breakpoint settings saved in the kit directly from the DB to avoid initializing the kit too early.
+		$raw_kit_settings = get_post_meta( $kit_active_id, '_elementor_page_settings', true );
+
+		// If there is an existing kit, use it. If there isn't, initialize an array with the default breakpoint keys.
+		if ( $raw_kit_settings ) {
+			$active_breakpoint_keys = $raw_kit_settings[ Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID ];
+		} else {
+			$active_breakpoint_keys = [ 'viewport_mobile', 'viewport_tablet' ];
+		}
+
 		$default_config = self::get_default_config();
 		$prefix = self::BREAKPOINT_SETTING_PREFIX;
 
