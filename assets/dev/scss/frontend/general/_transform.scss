@@ -1,6 +1,6 @@
 
 
-.elementor-transform .elementor-widget-container{
+.e-transform .elementor-widget-container{
 	transform:
 		rotateZ( var( --normal-rotate-z, 0 ) )
 		rotateX( var( --normal-rotate-x, 0 ) )
@@ -16,8 +16,7 @@
 	transition: transform var( --transition-duration, 0ms );
 }
 
-// .elementor-transform:hover .elementor-widget-container,
-.elementor-transform .elementor-widget-container:hover{
+.e-transform .elementor-widget-container:hover{
 	transform:
 		rotateZ( var( --hover-rotate-z, var( --normal-rotate-z, 0 ) ) )
 		rotateX( var( --hover-rotate-x, var( --normal-rotate-x, 0 ) ) )

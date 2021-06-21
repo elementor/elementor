@@ -996,7 +996,7 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'return_value' => 'transform',
 				]
 			);
@@ -1094,7 +1094,7 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Offset', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'return_value' => 'transform',
 				]
 			);
@@ -1166,7 +1166,7 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'return_value' => 'transform',
 				]
 			);
@@ -1260,7 +1260,7 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Skew', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'return_value' => 'transform',
 				]
 			);
@@ -1328,7 +1328,7 @@ class Widget_Common extends Widget_Base {
 							'icon' => 'fa fa-align-left',
 						],
 					],
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'selectors' => [
 						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-x: -1",
 					],
@@ -1347,7 +1347,7 @@ class Widget_Common extends Widget_Base {
 							'icon' => 'fa fa-align-center',
 						],
 					],
-					'prefix_class' => 'elementor-',
+					'prefix_class' => 'e-',
 					'selectors' => [
 						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-y: -1",
 					],
@@ -1379,7 +1379,7 @@ class Widget_Common extends Widget_Base {
 
 		$this->end_controls_tabs();
 
-		// will override motion effect transform-origin
+		// Will override motion effect transform-origin
 		$this->add_responsive_control(
 			'_transform_x_anchor_point',
 			[
@@ -1427,8 +1427,8 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
-				// 'toggle' => false,
 				// 'default' => 'center',
+				// 'toggle' => false,
 				'selectors' => [
 					// '{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-y: {{VALUE}}',
 					'{{WRAPPER}} > .elementor-widget-container' => 'transform-origin: {{_transform_x_anchor_point.VALUE}} {{VALUE}}',
