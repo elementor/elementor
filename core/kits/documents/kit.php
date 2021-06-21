@@ -54,12 +54,12 @@ class Kit extends PageBase {
 	/**
 	 * Retrieve a tab by ID.
 	 *
+	 * @param $id
+	 *
 	 * @return Tabs\Tab_Base
 	 */
 	public function get_tab( $id ) {
-		$tabs = $this->get_tabs();
-
-		return isset( $tabs[ $id ] ) ? $tabs[ $id ] : null;
+		return self::get_items( $this->get_tabs(), $id );
 	}
 
 	protected function get_have_a_look_url() {
