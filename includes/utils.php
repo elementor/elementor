@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Page\Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -152,16 +150,6 @@ class Utils {
 			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
-
-		$second_rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
-			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
-		);
-
-		if ( $second_rows_affected ) {
-			$rows_affected += $second_rows_affected;
-		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
