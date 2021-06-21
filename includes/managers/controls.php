@@ -918,7 +918,7 @@ class Controls_Manager {
 	/**
 	 * Add Page Transitions controls.
 	 *
-	 * This method adds a new control for the "Page Transitions" feature. The free
+	 * This method adds a new control for the "Page Transitions" feature. The Core
 	 * version of elementor uses this method to display an upgrade message to
 	 * Elementor Pro.
 	 *
