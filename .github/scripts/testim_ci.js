@@ -26,7 +26,6 @@ const runProgram = (program, options) => {
 
 const runTestim = async () => {
   // Start tunnel
-  const ngrokToken = ngrokToken;
   const tunnelUrl = await ngrok.connect({authtoken: ngrokToken, addr:8889});
   // Use CLI to set local WP tunnel url
   await Promise.all([
