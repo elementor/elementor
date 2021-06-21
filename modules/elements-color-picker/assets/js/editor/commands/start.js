@@ -1,6 +1,9 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import { addNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
+/**
+ * Start the color picking process.
+ */
 export class Start extends CommandBase {
 	apply( args ) {
 		// Prevent elements from triggering edit mode on click.
