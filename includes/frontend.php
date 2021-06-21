@@ -1329,7 +1329,7 @@ class Frontend extends App {
 	 * @since 1.5.0
 	 * @access private
 	 */
-	private function restore_content_filters() {
+	public function restore_content_filters() {
 		foreach ( $this->content_removed_filters as $filter ) {
 			add_filter( 'the_content', $filter );
 		}
