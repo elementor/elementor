@@ -1327,7 +1327,7 @@ class Frontend extends App {
 	 * Restore removed WordPress filters that conflicted with Elementor.
 	 *
 	 * @since 1.5.0
-	 * @access private
+	 * @access public
 	 */
 	public function restore_content_filters() {
 		foreach ( $this->content_removed_filters as $filter ) {
