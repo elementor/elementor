@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Breakpoints;
 
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Testing\Traits\Breakpoints_Trait;
@@ -129,6 +130,22 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	public function test_get_desktop_min_point_when_laptop_enabled() {
 		$this->set_admin_user();
+
+		// The experiment should be added because it might be removed by other tests.
+		$this->elementor()->experiments->add_feature( [
+			'name' => 'additional_custom_breakpoints',
+			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
+			'description' => esc_html__( 'Add Additional Custom Breakpoints (beyond just \'mobile\' and \'tablet\') Optimize your site\'s performance when using responsive controls.', 'elementor' )
+				. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>',
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
+
+		// When "optimized assets loading" mode is active, assets should be loaded only when enabled.
+		$this->elementor()->experiments->set_feature_default_state( 'additional_custom_breakpoints', Experiments_Manager::STATE_ACTIVE );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_settings = $kit->get_settings();
