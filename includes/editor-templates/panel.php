@@ -239,7 +239,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 			_.each( devices, function( device ) {
 				// The 'Desktop' label is made accessible via the global config because it needs to be translated.
-				var deviceLabel = 'desktop' === device ? elementor.config.responsive.desktop_label : activeBreakpoints[ device ].label,
+				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
 				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
