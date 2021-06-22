@@ -5,6 +5,13 @@ use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_AJAX;
 
 class Test_Tools extends Elementor_Test_AJAX {
+	public function setUp() {
+		parent::setUp();
+
+		// TODO: HACK - Avoid register reports to make sure the 'tests/phpunit/elementor/schemas/test-usage.php' not fail.
+		remove_all_actions( 'admin_init' );
+	}
+
 	public function test_ajax_elementor_recreate_kit() {
 		// Arrange
 		$action = 'elementor_recreate_kit';
