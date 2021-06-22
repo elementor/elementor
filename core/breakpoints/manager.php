@@ -359,8 +359,9 @@ class Manager extends Module {
 		// Get the breakpoint settings saved in the kit directly from the DB to avoid initializing the kit too early.
 		$raw_kit_settings = get_post_meta( $kit_active_id, '_elementor_page_settings', true );
 
-		// If there is an existing kit, use it. If there isn't, initialize an array with the default breakpoint keys.
-		if ( $raw_kit_settings ) {
+		// If there is an existing kit with an active breakpoints value saved, use it. If there isn't, initialize an
+		// array with the default breakpoint keys.
+		if ( isset( $raw_kit_settings[ Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID ] ) ) {
 			$active_breakpoint_keys = $raw_kit_settings[ Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID ];
 		} else {
 			$active_breakpoint_keys = [ 'viewport_mobile', 'viewport_tablet' ];
