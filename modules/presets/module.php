@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Presets;
 
 use Elementor\Plugin;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Presets\Data\Controller;
@@ -51,7 +52,26 @@ class Module extends Base_Module {
 			return $config;
 		}
 
+		$config['presets']['active_ids'] = $this->get_all_preset_ids_from_elements_data( $document->get_elements_data() );
+
 		return $config;
+	}
+
+	private function get_all_preset_ids_from_elements_data( array $elements_data ) {
+		return ( new Collection( $elements_data ) )
+			->reduce( function ( Collection $carry, $element ) {
+				if ( isset( $element['presetId'] ) ) {
+					$carry[] = $element['presetId'];
+				}
+
+				if ( isset( $element['elements'] ) ) {
+					$carry->merge( $this->get_all_preset_ids_from_elements_data( $element['elements'] ) );
+				}
+
+				return $carry;
+			}, new Collection( [] ) )
+			->unique()
+			->values();
 	}
 
 	public function __construct() {

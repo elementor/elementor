@@ -32,12 +32,6 @@ ElementModel = Backbone.Model.extend( {
 			this.setHtmlCache( options.htmlCache || '' );
 		}
 
-		const a = async () => {
-			const { data } = await $e.data.get( 'globals/index' );
-
-			return data;
-		};
-
 		// No need this variable anymore
 		delete options.htmlCache;
 
