@@ -212,7 +212,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	preparePlaceholderForChildren: function() {
-		const parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
+		const parent = this.getResponsiveParentView()?.preparePlaceholderForChildren();
 
 		if ( 'function' === typeof this.getCleanControlValue ) {
 			return Object.assign( {}, parent, this.getCleanControlValue() );
