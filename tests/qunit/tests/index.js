@@ -7,8 +7,11 @@ export const tests = () => {
 	require( './core/common/assets/js/api/modules/command-internal.spec.js' );
 
 	// JS API core.
+	require( './core/common/assets/js/api/core/commands.spec.js' );
 	require( './core/common/assets/js/api/core/components.spec.js' );
 	require( './core/common/assets/js/api/core/data.spec.js' );
+	require( './core/common/assets/js/api/core/routes.spec.js' );
+
 	require( './core/common/assets/js/api/core/hooks/base.spec.js' );
 
 	// JS API extras.
@@ -29,8 +32,6 @@ export const tests = () => {
 
 	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );
-
-	require( './assets/dev/js/editor/document/manager.spec' );
 
 	// JS API editor document components & commands.
 	require( './assets/dev/js/editor/document/component.spec' );

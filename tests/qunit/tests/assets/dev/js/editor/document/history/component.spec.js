@@ -125,3 +125,4 @@ QUnit.module( 'Component: document/history', ( hooks ) => {
 		assert.equal( historyItem, undefined, 'History was rolled back.' );
 	} );
 } );
+
