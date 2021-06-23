@@ -941,6 +941,12 @@ class Controls_Manager {
 			__( 'Page Transitions let you style entrance and exit animations between pages as well as display loader until your page assets load.', 'elementor' ),
 		];
 
+		// If the user has a Pro but the experiment is off.
+		// (Don't need to check if the experiment is off because if it's on, the Pro will override this section anyway).
+		if ( Utils::has_pro() ) {
+			$messages[] = __( 'This feature is currently an experiment, you can turn it on in Elementor --> Settings --> Experiments.', 'elementor' );
+		}
+
 		if ( $additional_messages ) {
 			$messages = array_merge( $messages, $additional_messages );
 		}
@@ -970,7 +976,8 @@ class Controls_Manager {
 				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
 			<?php }
 
-			if ( $texts['link'] ) { ?>
+			// Show a `Go Pro` button only if the user doesn't have Pro.
+			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
 				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
 					<?php echo __( 'Go Pro', 'elementor' ); ?>
 				</a>
