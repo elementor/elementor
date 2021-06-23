@@ -283,6 +283,7 @@ class Manager extends Module {
 			$config[ $breakpoint_name ] = [
 				'label' => $breakpoint->get_label(),
 				'value' => $breakpoint->get_value(),
+				'default_value' => $breakpoint->get_default_value(),
 				'direction' => $breakpoint->get_direction(),
 				'is_enabled' => $breakpoint->is_enabled(),
 			];
