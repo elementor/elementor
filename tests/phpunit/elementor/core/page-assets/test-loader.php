@@ -90,8 +90,6 @@ class Test_Loader extends Elementor_Test_Base {
 		global $wp_styles;
 		global $wp_scripts;
 
-		$this->add_optimized_assets_loading_experiment();
-
 		// When "optimized assets loading" mode is inactive, all assets should be loaded by default.
 		$this->elementor()->experiments->set_feature_default_state( 'e_optimized_assets_loading', Experiments_Manager::STATE_INACTIVE );
 
@@ -108,8 +106,6 @@ class Test_Loader extends Elementor_Test_Base {
 	public function test_enqueue_assets__optimized_mode_activated() {
 		global $wp_styles;
 		global $wp_scripts;
-
-		$this->add_optimized_assets_loading_experiment();
 
 		// When "optimized assets loading" mode is active, assets should be loaded only when enabled.
 		$this->elementor()->experiments->set_feature_default_state( 'e_optimized_assets_loading', Experiments_Manager::STATE_ACTIVE );
@@ -197,17 +193,5 @@ class Test_Loader extends Elementor_Test_Base {
 		$test_assets['scripts'][ $script_asset_key ] = $asset_data;
 
 		$assets_loader->add_assets( $test_assets );
-	}
-
-	private function add_optimized_assets_loading_experiment() {
-		$experiments = $this->elementor()->experiments;
-
-		// The experiment should be added because it might be removed by other tests.
-		$experiments->add_feature( [
-			'name' => 'e_optimized_assets_loading',
-			'title' => __( 'Optimized Assets Loading', 'elementor' ),
-			'description' => sprintf( __( 'Please Note! The optimized assets loading mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. <a href="%s">Learn More</a>', 'elementor' ), '#' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		] );
 	}
 }

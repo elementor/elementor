@@ -422,9 +422,9 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
 		<?php if ( $should_render_inline_editing ) { ?>
-			<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
-        <?php // PHPCS - the main text of a widget should not be escaped.
+		<?php // PHPCS - the main text of a widget should not be escaped.
 				echo $editor_content; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		<?php if ( $should_render_inline_editing ) { ?>
 			</div>
