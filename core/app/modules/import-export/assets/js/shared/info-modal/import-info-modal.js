@@ -15,7 +15,7 @@ export default function ImportInfoModal( props ) {
 					<>
 						{ __( 'After you select what\'s included from your imported kit, you’ll be able to choose which current site settings should stay and which the import should override. ', 'elementor' ) }
 						<br />
-						<InlineLink>{ __( 'Learn More', 'elementor' ) }</InlineLink>
+						<InlineLink url="http://go.elementor.com/app-import-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>

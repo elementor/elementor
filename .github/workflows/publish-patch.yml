@@ -127,7 +127,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          body_path: temp-changelog-from-changelog.txt
+          body_path: temp-changelog-from-readme.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Read changelog and set current date
