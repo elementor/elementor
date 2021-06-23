@@ -5,7 +5,7 @@
     "last_beta_version": "3.3.0-beta2",
     "prev_stable_version": "3.1.4",
     "author": "Elementor Team",
-    "last_dev_version": "3.4.0-dev4",
+    "last_dev_version": "3.4.0-dev5",
     "homepage": "https://elementor.com/",
     "scripts": {
         "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
