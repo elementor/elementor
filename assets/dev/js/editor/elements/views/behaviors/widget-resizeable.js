@@ -100,7 +100,7 @@ export default class extends Marionette.Behavior {
 			settingToChange = {};
 
 		settingToChange[ '_element_width' + deviceSuffix ] = this.isContainerItem() ? '' : 'initial';
-		settingToChange[ widthKey + deviceSuffix ] = { unit: unit, size: width };
+		settingToChange[ widthKey + deviceSuffix ] = { unit, size: width };
 
 		if ( this.isContainerItem() ) {
 			settingToChange[ '_flex_flex_size' + deviceSuffix ] = 'custom';

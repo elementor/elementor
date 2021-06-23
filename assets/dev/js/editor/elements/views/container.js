@@ -1,3 +1,4 @@
+// Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 
@@ -53,13 +54,11 @@ const ContainerView = BaseElementView.extend( {
 
 	changeContainerClasses: function() {
 		const emptyClass = 'e-element-empty',
-			populatedClass = 'e-element-populated';
+			populatedClass = 'e-element-populated',
+			state = this.collection.isEmpty();
 
-		if ( this.collection.isEmpty() ) {
-			this.$el.removeClass( populatedClass ).addClass( emptyClass );
-		} else {
-			this.$el.removeClass( emptyClass ).addClass( populatedClass );
-		}
+		this.$el.toggleClass( populatedClass, ! state )
+			.toggleClass( emptyClass, state );
 	},
 
 	/**

@@ -65,7 +65,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors_dictionary' => [
 				'grow' => '--flex-grow: 1;',
 				'shrink' => '--flex-shrink: 1;',
-				'custom' => '--flex-grow: 1; --flex-shrink: 1;',
+				'custom' => '',
 				'none' => '',
 			],
 			'selectors' => [
@@ -80,6 +80,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
 			],
+			'default' => 1,
 			'placeholder' => 1,
 			'responsive' => true,
 			'condition' => [
@@ -93,6 +94,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
 			],
+			'default' => 1,
 			'placeholder' => 1,
 			'responsive' => true,
 			'condition' => [
@@ -148,8 +150,10 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			],
 			'selectors_dictionary' => [
 				// Hacks to set the order to start / end.
-				'start' => '-99999',
-				'end' => '99999',
+				// For example, if the user has 10 widgets, but wants to set the 5th one to be first,
+				// this hack should do the trick.
+				'start' => '-99999 /* order start hack */',
+				'end' => '99999 /* order end hack */',
 				'custom' => '',
 			],
 			'selectors' => [

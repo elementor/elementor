@@ -765,10 +765,6 @@ html.elementor-html {
 		}
 	}
 
-	.elementor-add-container-button {
-		background-color: $editor-info;
-	}
-
 	.elementor-add-section-button {
 		background-color: $editor-accent;
 		@include margin-start(5px);
@@ -855,7 +851,7 @@ html.elementor-html {
 				position: absolute;
 				left: 50%;
 				top: 50%;
-				color: #FFF;
+				color: $white;
 				transform: translate( -50%, -50% );
 			}
 		}

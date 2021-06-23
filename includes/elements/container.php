@@ -158,18 +158,18 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * Return a safe HTML tag for the element based on the element settings.
+	 * Print safe HTML tag for the element based on the element settings.
 	 *
-	 * @return string
+	 * @return void
 	 */
-	private function get_html_tag() {
+	private function print_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
 			$html_tag = 'div';
 		}
 
-		return Utils::validate_html_tag( $html_tag );
+		Utils::print_validated_html_tag( $html_tag );
 	}
 
 	/**
@@ -178,9 +178,8 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function before_render() {
-		// TODO: Use `print_html_tag`.
 		?>
-		<<?php echo $this->get_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php $this->print_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 		$this->render_video_background();
 	}
@@ -191,9 +190,8 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		// TODO: Use `print_html_tag`.
 		?>
-		</<?php echo $this->get_html_tag(); ?> >
+		</<?php $this->print_html_tag(); ?> >
 		<?php
 	}
 
@@ -598,15 +596,15 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => __( 'Normal', 'elementor' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'luminosity' => 'Luminosity',
+					'multiply' => __( 'Multiply', 'elementor' ),
+					'screen' => __( 'Screen', 'elementor' ),
+					'overlay' => __( 'Overlay', 'elementor' ),
+					'darken' => __( 'Darken', 'elementor' ),
+					'lighten' => __( 'Lighten', 'elementor' ),
+					'color-dodge' => __( 'Color Dodge', 'elementor' ),
+					'saturation' => __( 'Saturation', 'elementor' ),
+					'color' => __( 'Color', 'elementor' ),
+					'luminosity' => __( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--overlay-mix-blend-mode: {{VALUE}}',

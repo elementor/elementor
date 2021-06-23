@@ -188,6 +188,7 @@
 				return;
 			}
 
+			// Fix placeholder placement for Container with `flex-direction: row`.
 			if ( ! $( currentElement ).hasClass( 'elementor-first-add' ) && $( currentElement ).parents( '.e-container--placeholder-row' ).length ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 				$( currentElement )[ insertMethod ]( elementsCache.$placeholder );

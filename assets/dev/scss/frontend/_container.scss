@@ -54,8 +54,8 @@
 	}
 
 	.elementor-widget {
-		// Override the margin-top of widgets inside columns.
-		margin-top: 0 !important;
+		// Override the default margin-bottom of widgets.
+		margin-bottom: 0;
 	}
 
 	// Background overlay.
