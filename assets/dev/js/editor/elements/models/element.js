@@ -6,6 +6,7 @@ ElementModel = Backbone.Model.extend( {
 		id: '',
 		elType: '',
 		isInner: false,
+		presetId: null,
 		settings: {},
 		defaultEditSettings: {
 			defaultEditRoute: 'content',

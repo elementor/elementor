@@ -1,9 +1,7 @@
 <?php
 namespace Elementor\Modules\Presets\Data\Endpoints;
 
-use Elementor\Plugin;
-use ElementorPro\Data\Base\Endpoint;
-use Elementor\Modules\Presets\Documents\Preset;
+use Elementor\Data\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -44,12 +42,19 @@ class Index extends Endpoint {
 				'widget_type' => [
 					'type' => 'string',
 					'description' => 'When the element_type is widget',
+					'default' => null,
 					'required' => false,
 				],
 				'settings' => [
 					'type' => 'object',
 					'description' => 'The settings object',
 					'required' => true,
+				],
+				'is_default' => [
+					'type' => 'boolean',
+					'description' => 'is the preset default',
+					'default' => null,
+					'required' => false,
 				],
 			]
 		);

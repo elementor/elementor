@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Presets\Data\Controller;
+use Elementor\Modules\Presets\Data\Repository;
 use Elementor\Modules\Presets\Documents\Preset;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,6 +58,13 @@ class Module extends Base_Module {
 		return $config;
 	}
 
+	private function set_default_presets_property( $config ) {
+		$config['presets']['default_ids'] = [];
+
+		// TODO!
+		return $config;
+	}
+
 	private function get_all_preset_ids_from_elements_data( array $elements_data ) {
 		return ( new Collection( $elements_data ) )
 			->reduce( function ( Collection $carry, $element ) {
@@ -88,7 +96,10 @@ class Module extends Base_Module {
 		}, 10, 2 );
 
 		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
-			return $this->set_active_presets_property( $config );
+			$config = $this->set_active_presets_property( $config );
+			$config = $this->set_default_presets_property( $config );
+
+			return $config;
 		} );
 
 		Plugin::$instance->documents->register_document_type( Preset::TYPE, Preset::class );

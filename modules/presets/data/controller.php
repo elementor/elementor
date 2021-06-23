@@ -32,8 +32,6 @@ class Controller extends Base_Controller {
 	 * @return array[]|\WP_Error|\WP_REST_Response
 	 */
 	public function create_items( $request ) {
-		// TODO: Check if user can create preset
-
 		$preset = Plugin::$instance->documents->create(
 			Preset::TYPE,
 			[
@@ -43,7 +41,7 @@ class Controller extends Base_Controller {
 				Preset::ELEMENT_TYPE_META_KEY => $request->get_param( 'element_type' ),
 				Preset::WIDGET_TYPE_META_KEY => $request->get_param( 'widget_type' ),
 				Preset::SETTINGS_META_KEY => $request->get_param( 'settings' ),
-				Preset::DEFAULT_META_KEY => true,
+				Preset::DEFAULT_META_KEY => $request->get_param( 'is_default' ),
 			]
 		);
 

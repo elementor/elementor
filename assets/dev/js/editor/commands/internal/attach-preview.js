@@ -4,12 +4,12 @@ export class AttachPreview extends CommandInternalBaseBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
-		return $e.data.get( 'globals/index' )
-			.then( () => {
-				elementor.trigger( 'globals:loaded' );
+		const beforeAttachPreviewCallbacks = elementor.hooks.applyFilters( 'editor/attach-preview/before', [
+			() => $e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) ),
+		] );
 
-				return this.attachDocumentToPreview( document );
-			} )
+		return Promise.all( beforeAttachPreviewCallbacks.map( ( callback ) => callback() ) )
+			.then( () => this.attachDocumentToPreview( document ) )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
 
