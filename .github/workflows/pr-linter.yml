@@ -6,6 +6,7 @@ on:
 jobs:
   pr_name_lint:
     runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies

@@ -68,9 +68,12 @@ export class Settings extends CommandHistoryDebounce {
 				container.dynamic.set( settings );
 			}
 
-			container.settings.set( '__dynamic__', container.dynamic.toJSON() );
-
-			container.render();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					__dynamic__: container.dynamic.toJSON(),
+				},
+			} );
 		} );
 	}
 }

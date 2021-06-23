@@ -20,6 +20,7 @@ export class Start extends Command {
 		const elementorElements = elementor.$previewContents[ 0 ].querySelectorAll( '.elementor-element' );
 
 		addNamespaceHandler( elementorElements, 'click.color-picker', ( e ) => {
+			e.preventDefault();
 			$e.run( 'elements-color-picker/show-swatches', { event: e } );
 		} );
 

@@ -813,7 +813,7 @@ class Source_Local extends Source_Base {
 				// Remove the temporary zip file, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 
 				return $extracted_files;
 			}
@@ -831,7 +831,7 @@ class Source_Local extends Source_Base {
 			}
 
 			// Delete the temporary extraction directory, since it's now not necessary.
-			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['temp_extraction_directory'] );
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
 			$import_result = $this->import_single_template( $path );
@@ -1554,6 +1554,14 @@ class Source_Local extends Source_Base {
 		}
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
+
+		// Remove elementor library templates from WP Sitemap
+		add_filter(
+			'wp_sitemaps_post_types',
+			function( $post_types ) {
+				return $this->remove_elementor_cpt_from_sitemap( $post_types );
+			}
+		);
 	}
 
 	/**
@@ -1629,6 +1637,17 @@ class Source_Local extends Source_Base {
 		global $pagenow, $typenow;
 
 		return 'edit.php' === $pagenow && self::CPT === $typenow;
+	}
+
+	/**
+	 * @param array $post_types
+	 *
+	 * @return array
+	 */
+	private function remove_elementor_cpt_from_sitemap( array $post_types ) {
+		unset( $post_types[ self::CPT ] );
+
+		return $post_types;
 	}
 
 	/**
