@@ -562,11 +562,6 @@ class Tracker {
 				}
 
 				$result[ $field_name ] = get_option( 'elementor_' . $field_name, $default_value );
-
-				// TODO: Delete `$args['data_type']` - Behave like backwards compatibility.
-				if ( ! empty( $args['data_type'] ) && 'boolean' === $args['data_type'] ) {
-					$result[ $field_name ] = boolval( $result[ $field_name ] );
-				}
 			}
 		}
 

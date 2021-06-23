@@ -41,7 +41,6 @@ class Module extends \Elementor\Core\Base\Module {
 				'label' => __( 'Safe Mode', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'data_type' => 'boolean',
 					'std' => $this->is_enabled() ? 'global' : '',
 					'options' => [
 						'' => __( 'Disable', 'elementor' ),

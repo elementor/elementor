@@ -779,15 +779,21 @@
 								},
 								"disable_color_schemes": {
 									"$id": "#/usages/settings/general/disable_color_schemes",
-									"type": "boolean",
+									"enum": [
+										"",
+										"yes"
+									],
 									"title": "Is default colors disabled?",
-									"default": false
+									"default": ""
 								},
 								"disable_typography_schemes": {
 									"$id": "#/usages/settings/general/disable_typography_schemes",
-									"type": "boolean",
+									"enum": [
+										"",
+										"yes"
+									],
 									"title": "Is default fonts disabled?",
-									"default": false
+									"default": ""
 								},
 								"allow_tracking": {
 									"$id": "#/usages/settings/general/allow_tracking",
@@ -812,39 +818,27 @@
 										"external"
 									]
 								},
-								"switch_editor_loader_method": {
-									"$id": "#/usages/settings/advanced/switch_editor_loader_method",
-									"title": "Editor loader editor method switch",
-									"type": "boolean",
-									"default": true
-								},
-								"enable_unfiltered_file_uploads": {
-									"$id": "#/usages/settings/advanced/enable_unfiltered_file_uploads",
-									"default": false,
-									"title": "Is enable unfilterd file uploads?",
-									"type": "boolean"
-								},
-								"load_fa4_shim": {
-									"$id": "#/usages/settings/advanced/load_fa4_shim",
-									"$ref": "#/definitions/global/enums/yes_no_lowercase",
-									"title": "Does Font awesome 4 enabled?",
-									"default": "yes"
-								},
 								"editor_break_lines": {
 									"$id": "#/usages/settings/advanced/editor_break_lines",
-									"type": "boolean",
-									"title": "Does editor break lines enabled?",
-									"default": false
+									"title": "Editor loader editor method switch",
+									"enum": [
+										"",
+										"1"
+									],
+									"default": "1"
 								},
 								"unfiltered_files_upload": {
-									"$id": "#/usages/settings/advanced/unfiltered_files_upload",
-									"type": "boolean",
-									"title": "Does unfilterd files uploaded allowed?",
-									"default": false
+									"$id": "#/usages/settings/advanced/enable_unfiltered_file_uploads",
+									"enum": [
+										"",
+										"1"
+									],
+									"title": "Is enable unfilterd file uploads?",
+									"default": ""
 								},
 								"font_display": {
 									"$id": "#/usages/settings/advanced/font_display",
-									"title": "CSS print method.",
+									"title": "Google Fonts Load",
 									"default": "auto",
 									"enum": [
 										"auto",
@@ -853,6 +847,15 @@
 										"fallback",
 										"optional"
 									]
+								},
+								"load_fa4_shim": {
+									"$id": "#/usages/settings/advanced/load_fa4_shim",
+									"enum": [
+										"",
+										"yes"
+									],
+									"title": "Does Font awesome 4 enabled?",
+									"default": "yes"
 								}
 							},
 							"additionalProperties": false
@@ -896,19 +899,18 @@
 						{
 							"general": {
 								"cpt_support": [
-									"page",
-									"post"
+									"post",
+									"page"
 								],
-								"disable_color_schemes": "yes",
-								"disable_typography_schemes": "yes",
+								"disable_color_schemes": "",
+								"disable_typography_schemes": "",
 								"allow_tracking": "yes"
 							},
 							"advanced": {
 								"css_print_method": "internal",
-								"editor_break_lines": "no",
-								"unfiltered_files_upload": "no",
-								"font_display": "auto",
-								"load_fa4_shim": "yes"
+								"editor_break_lines": "1",
+								"unfiltered_files_upload": "",
+								"font_display": "auto"
 							},
 							"experiments": {
 								"e_dom_optimization": {
@@ -962,14 +964,20 @@
 							"properties": {
 								"safe_mode": {
 									"$id": "#/usages/tools/general/safe_mode",
+									"enum": [
+										"",
+										"global"
+									],
 									"title": "Is safe mode enabled?",
-									"type": "boolean",
-									"default": false
+									"default": "false"
 								},
 								"enable_inspector": {
 									"$id": "#/usages/tools/general/enable_inspector",
+									"enum": [
+										"",
+										"enable"
+									],
 									"title": "Is debug bar enabled?",
-									"type": "boolean",
 									"default": true
 								}
 							},
@@ -1014,7 +1022,10 @@
 								"maintenance_mode_exclude_roles": {
 									"$id": "#/usages/tools/maintenance/maintenance_mode_exclude_roles",
 									"title": "Restrict roles",
-									"type": [ "array", "null" ]
+									"type": [
+										"array",
+										"null"
+									]
 								},
 								"maintenance_mode_template_id": {
 									"$id": "#/usages/tools/maintenance/maintenance_mode_template_id",

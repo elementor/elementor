@@ -451,7 +451,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Disable Default Colors', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
-									'data_type' => 'boolean',
 									'value' => 'yes',
 									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Colors, and make Elementor inherit the colors from your theme.', 'elementor' ),
 								],
@@ -460,7 +459,6 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Disable Default Fonts', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
-									'data_type' => 'boolean',
 									'value' => 'yes',
 									'sub_desc' => __( 'Checking this box will disable Elementor\'s Default Fonts, and make Elementor inherit the fonts from your theme.', 'elementor' ),
 								],
@@ -531,8 +529,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'data_type' => 'boolean',
-									'std' => '0',
+									'std' => '',
 									'options' => [
 										'' => __( 'Disable', 'elementor' ),
 										'1' => __( 'Enable', 'elementor' ),
@@ -544,8 +541,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => __( 'Enable Unfiltered File Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'data_type' => 'boolean',
-									'std' => '0',
+									'std' => '',
 									'options' => [
 										'' => __( 'Disable', 'elementor' ),
 										'1' => __( 'Enable', 'elementor' ),

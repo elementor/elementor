@@ -42,13 +42,13 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( 'elementor_css_print_method', 'internal' );
 
-		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, false );
+		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
 
-		update_option( Files_Upload_Handler::OPTION_KEY, true );
+		update_option( Files_Upload_Handler::OPTION_KEY, '1' );
 
 		update_option( 'elementor_font_display', 'block' );
 
-		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, true );
+		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
 
 		// Act.
 		$actual = Tracker::get_settings_advanced_usage();
@@ -56,10 +56,10 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEqualSets( [
 			'css_print_method' => 'internal',
-			'switch_editor_loader_method' => false,
-			'enable_unfiltered_file_uploads' => true,
+			'switch_editor_loader_method' => '',
+			'enable_unfiltered_file_uploads' => '1',
 			'font_display' => 'block',
-			'font_awesome_support' => true,
+			'font_awesome_support' => 'yes',
 		], $actual );
 	}
 
@@ -102,16 +102,16 @@ class Test_Tracker extends Elementor_Test_Base {
 			Plugin::$instance->tools
 		);
 
-		update_option( 'elementor_safe_mode', 'disabled' );
-		update_option( 'elementor_enable_inspector', '' );
+		update_option( 'elementor_safe_mode', 'global' );
+		update_option( 'elementor_enable_inspector', 'enable' );
 
 		// Act.
 		$actual = Tracker::get_tools_general_usage();
 
 		// Assert.
 		$this->assertEqualSets( [
-			'safe_mode' => true,
-			'debug_bar' => false,
+			'safe_mode' => 'global',
+			'debug_bar' => 'enable',
 		], $actual );
 	}
 
