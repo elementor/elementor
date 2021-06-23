@@ -249,12 +249,12 @@ class Manager extends Module {
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
 				'label' => __( 'Tablet Extra', 'elementor' ),
-				'default_value' => 1365,
+				'default_value' => 1200,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
 				'label' => __( 'Laptop', 'elementor' ),
-				'default_value' => 1620,
+				'default_value' => 1366,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
