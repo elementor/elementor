@@ -172,6 +172,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			} );
 
 			if ( this.model.get( 'responsive' ) ) {
+				// Render is already calls `applySavedValue`, therefore there's no need for it in this case.
 				this.renderWithChildren();
 			} else {
 				this.applySavedValue();

@@ -212,13 +212,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	preparePlaceholderForChildren: function() {
-		const parent = this.getResponsiveParentView()?.preparePlaceholderForChildren();
+		const parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
 
 		if ( 'function' === typeof this.getCleanControlValue ) {
-			return Object.assign( {}, parent, this.getCleanControlValue() );
+			return Object.assign( {}, parentValue, this.getCleanControlValue() );
 		}
 
-		return this.getControlValue() || parent;
+		return this.getControlValue() || parentValue;
 	},
 
 	/**
@@ -243,7 +243,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 	renderWithChildren: function() {
 		const child = this.getResponsiveChildView();
 
-		this.setPlaceholderFromParent();
 		this.render();
 
 		if ( child ) {
@@ -308,6 +307,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 				validationTerms: validationTerms,
 			} ) );
 		}
+	},
+
+	onBeforeRender: function() {
+		this.setPlaceholderFromParent();
 	},
 
 	onRender: function() {
