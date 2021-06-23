@@ -1029,6 +1029,13 @@ export default class EditorBase extends Marionette.Application {
 			return;
 		}
 
+		// Cannot load editor without kit.
+		if ( ! elementor.config.kit_id ) {
+			this.kitNotExistsError();
+
+			return;
+		}
+
 		this.$previewContents = this.$preview.contents();
 
 		this.initFrontend();
@@ -1097,6 +1104,19 @@ export default class EditorBase extends Marionette.Application {
 				onButtonClick: true,
 			},
 			onConfirm: () => this.hide(),
+		} );
+	}
+
+	kitNotExistsError() {
+		this.showFatalErrorDialog( {
+			className: 'elementor-preview-loading-error',
+			headerMessage: __( 'Your site doesn\'t have a default kit', 'elementor' ),
+			message: __( 'Seems like your kit was deleted, please create new one or try restore it from trash.', 'elementor' ),
+			strings: {
+				confirm: __( 'Recreate Kit', 'elementor' ),
+				cancel: __( 'Go Back', 'elementor' ),
+			},
+			onConfirm: () => open( elementor.config.admin_tools_url, '_blank' ),
 		} );
 	}
 

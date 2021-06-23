@@ -32,13 +32,13 @@ class Root extends Base {
 		$kit_post = $kit->get_post();
 
 		$manifest_data = [
-			'name' => sanitize_title( $kit_post->post_title ),
-			'title' => $kit_post->post_title,
+			'name' => sanitize_title( $exporter_settings['kitInfo']['title'] ),
+			'title' => $exporter_settings['kitInfo']['title'],
+			'description' => $exporter_settings['kitInfo']['description'],
 			'author' => get_the_author_meta( 'display_name', $kit_post->post_author ),
 			'version' => Module::FORMAT_VERSION,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'created' => gmdate( 'Y-m-d H:i:s' ),
-			'description' => $kit_post->post_excerpt,
 			'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
 			'site' => get_site_url(),
 		];

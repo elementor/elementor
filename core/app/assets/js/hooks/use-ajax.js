@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react';
 
 export default function useAjax() {
 	const [ ajax, setAjax ] = useState( null ),
+		initialStatusKey = 'initial',
 		uploadInitialState = {
-			status: 'initial',
+			status: initialStatusKey,
 			isComplete: false,
 			response: null,
 		},
-		[ ajaxState, setAjaxState ] = useState( uploadInitialState );
+		[ ajaxState, setAjaxState ] = useState( uploadInitialState ),
+		ajaxActions = {
+			reset: () => setAjaxState( initialStatusKey ),
+		};
 
 	useEffect( () => {
 		if ( ajax ) {
@@ -53,5 +57,6 @@ export default function useAjax() {
 		ajax,
 		setAjax,
 		ajaxState,
+		ajaxActions,
 	};
 }

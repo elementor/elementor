@@ -13,8 +13,8 @@ export default function ContextProvider( props ) {
 		overrideConditions: [],
 		referrer: null,
 		kitInfo: {
-			title: elementorAppConfig[ 'import-export' ].kitInfo.title,
-			description: elementorAppConfig[ 'import-export' ].kitInfo.description,
+			title: null,
+			description: null,
 		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
