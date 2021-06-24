@@ -36,14 +36,18 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 
 		swiperOptions.breakpoints = {};
 
-		Object.keys( elementorBreakpoints ).forEach( ( breakpointName ) => {
+		let lastBreakpointSlidesToShowValue = 1;
+
+		Object.keys( elementorBreakpoints ).reverse().forEach( ( breakpointName ) => {
 			// Tablet has a specific default `slides_to_show`.
-			const defaultSlidesToShow = 'tablet' === breakpointName ? defaultLGDevicesSlidesCount : 1;
+			const defaultSlidesToShow = 'tablet' === breakpointName ? defaultLGDevicesSlidesCount : lastBreakpointSlidesToShowValue;
 
 			swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ] = {
 				slidesPerView: +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow,
 				slidesPerGroup: +elementSettings[ 'slides_to_scroll_' + breakpointName ] || 1,
 			};
+
+			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
 		} );
 
 		if ( 'yes' === elementSettings.autoplay ) {
