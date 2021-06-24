@@ -22,9 +22,9 @@
 
 			hash.forEach( function( singleQuery ) {
 				// split {max}/{min}_{device name} to separate strings
-				var queryParts = singleQuery.match( /([^_]*)_(.*)/ ),
-					endPoint = queryParts[ 1 ],
-					deviceName = queryParts[ 2 ];
+				var queryParts = singleQuery.split( /_(.+)/ ),
+					endPoint = queryParts[ 0 ],
+					deviceName = queryParts[ 1 ];
 
 				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : Stylesheet.getDeviceMinBreakpoint( deviceName );
 			} );
