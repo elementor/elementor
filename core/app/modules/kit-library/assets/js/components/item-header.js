@@ -92,11 +92,12 @@ export default function ItemHeader( props ) {
 			{
 				error && <Dialog
 					title={ error }
+					text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
 					approveButtonText={ __( 'Learn More', 'elementor-pro' ) }
 					approveButtonColor="link"
-					approveButtonUrl="#"
+					approveButtonUrl="http://go.elementor.com/app-kit-library-error"
 					approveButtonOnClick={ () => setError( false ) }
-					dismissButtonText={ __( 'Close', 'elementor-pro' ) }
+					dismissButtonText={ __( 'Got it', 'elementor-pro' ) }
 					dismissButtonOnClick={ () => setError( false ) }
 					onClose={ () => setError( false ) }
 				/>
