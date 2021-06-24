@@ -94,7 +94,7 @@ export default function Preview( props ) {
 	);
 
 	if ( isError ) {
-		// Will be catch by the App error boundary.
+		// Will be caught by the App error boundary.
 		throw new Error();
 	}
 
