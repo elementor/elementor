@@ -944,7 +944,8 @@ class Controls_Manager {
 		// If the user has a Pro but the experiment is off.
 		// (Don't need to check if the experiment is off because if it's on, the Pro will override this section anyway).
 		if ( Utils::has_pro() ) {
-			$messages[] = __( 'This feature is currently an experiment, you can turn it on in Elementor --> Settings --> Experiments.', 'elementor' );
+			$link = sprintf( '<a href="%s" target="_blank">%s</a>', admin_url( 'admin.php?page=elementor#tab-experiments' ), __( 'Experiments', 'elementor' ) );
+			$messages[] = sprintf( __( 'This feature is currently an experiment, you can turn it on in Elementor --> Settings --> %s.', 'elementor' ), $link );
 		}
 
 		if ( $additional_messages ) {
