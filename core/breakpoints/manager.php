@@ -249,12 +249,12 @@ class Manager extends Module {
 			],
 			self::BREAKPOINT_KEY_TABLET_EXTRA => [
 				'label' => esc_html__( 'Tablet Extra', 'elementor' ),
-				'default_value' => 1365,
+				'default_value' => 1200,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_LAPTOP => [
 				'label' => esc_html__( 'Laptop', 'elementor' ),
-				'default_value' => 1620,
+				'default_value' => 1366,
 				'direction' => 'max',
 			],
 			self::BREAKPOINT_KEY_WIDESCREEN => [
@@ -283,6 +283,7 @@ class Manager extends Module {
 			$config[ $breakpoint_name ] = [
 				'label' => $breakpoint->get_label(),
 				'value' => $breakpoint->get_value(),
+				'default_value' => $breakpoint->get_default_value(),
 				'direction' => $breakpoint->get_direction(),
 				'is_enabled' => $breakpoint->is_enabled(),
 			];
