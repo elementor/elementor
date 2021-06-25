@@ -3,7 +3,7 @@ import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistoryDebounce from 'elementor-document/command-bases/command-history-debounce';
+import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
 import CommandEditorInternal from 'elementor-editor/command-bases/command-editor-internal';
 
@@ -62,7 +62,7 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof CommandEditorInternal, false );
 					// Editor-Document.
 					assert.equal( historyCommand instanceof CommandHistoryBase, true );
-					assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
+					assert.equal( historyCommand instanceof CommandHistoryDebounceBase, false );
 
 					// Base.
 					assert.equal( historyCommand instanceof $e.modules.CommandBase, true );
@@ -73,7 +73,7 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof $e.modules.editor.CommandEditorInternal, false );
 					// Editor-Document.
 					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryBase, true );
-					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounce, false );
+					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounceBase, false );
 				};
 
 				validateHistoryCommand( new CommandHistoryBase( {} ) );

@@ -1,7 +1,7 @@
-import CommandHistoryDebounce from 'elementor-document/command-bases/command-history-debounce';
+import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
-export class Settings extends CommandHistoryDebounce {
+export class Settings extends CommandHistoryDebounceBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' );
 

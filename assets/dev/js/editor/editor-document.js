@@ -25,8 +25,8 @@ $e.modules.document = {
 	get CommandHistory() {
 		elementorCommon.helpers.softDeprecated(
 			'$e.modules.document.CommandHistory',
-			'3.0.3',
-			'$e.modules.editor.document.CommandHistory'
+			'3.0.4',
+			'$e.modules.editor.document.CommandHistoryBase'
 		);
 
 		return $e.modules.editor.document.CommandHistoryBase;
@@ -35,11 +35,11 @@ $e.modules.document = {
 	get CommandHistoryDebounce() {
 		elementorCommon.helpers.softDeprecated(
 			'$e.modules.CommandHistoryDebounce',
-			'3.0.3',
-			'$e.modules.editor.document.CommandHistoryDebounce'
+			'3.0.4',
+			'$e.modules.editor.document.CommandHistoryDebounceBase'
 		);
 
-		return $e.modules.editor.document.CommandHistoryDebounce;
+		return $e.modules.editor.document.CommandHistoryDebounceBase;
 	},
 };
 

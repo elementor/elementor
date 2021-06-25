@@ -20,7 +20,7 @@ export const getDefaultDebounceDelay = () => {
 	return result;
 };
 
-export default class CommandHistoryDebounce extends CommandHistoryBase {
+export default class CommandHistoryDebounceBase extends CommandHistoryBase {
 	/**
 	 * Function debounce().
 	 *
@@ -31,7 +31,7 @@ export default class CommandHistoryDebounce extends CommandHistoryBase {
 	static debounce = undefined;
 
 	static getInstanceType() {
-		return 'CommandHistoryDebounce';
+		return 'CommandHistoryDebounceBase';
 	}
 
 	initialize( args ) {

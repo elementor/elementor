@@ -1,29 +1,17 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
 import CommandHistoryBase from '../document/command-bases/command-history-base';
-import CommandHistoryDebounce from '../document/command-bases/command-history-debounce';
+import CommandHistoryDebounceBase from '../document/command-bases/command-history-debounce-base';
 
 import * as components from './';
 import * as hooks from './hooks/';
 
 export default class Component extends ComponentBase {
 	static getModules() {
-		const modules = {
-			get CommandHistoryDebounceBase() {
-				elementorCommon.helpers.softDeprecated(
-					'$e.modules.document.CommandHistoryDebounceBase',
-					'3.0.3',
-					'$e.modules.editor.document.CommandHistoryDebounce'
-				);
-
-				return this.CommandHistoryDebounce;
-			},
-
+		return {
 			CommandHistoryBase,
-			CommandHistoryDebounce,
+			CommandHistoryDebounceBase,
 		};
-
-		return modules;
 	}
 
 	getNamespace() {
