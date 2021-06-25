@@ -8,14 +8,4 @@ export default class CommandEditorInternal extends CommandEditorBase {
 	constructor( args, commandsAPI = $e.commandsInternal ) {
 		super( args, commandsAPI );
 	}
-
-	isDataChanged() {
-		/**
-		 * The problem comes when CommandEditorInternal should have part of 'CommandEditorBase' logic and part of 'CommandInteralBase' logic.
-		 * Since 'CommandEditorInternal' does not implement CommandInternalBase.
-		 * But uses 'commandsAPI` variable for it.
-		 * And this class is 'CommandEditorInternal' which internal it does not have isDataChanged logic.
-		 */
-		return false;
-	}
 }

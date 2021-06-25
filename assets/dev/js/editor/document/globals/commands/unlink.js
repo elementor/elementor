@@ -44,10 +44,6 @@ export class Unlink extends CommandEditorBase {
 			} );
 		}
 	}
-
-	isDataChanged() {
-		return true;
-	}
 }
 
 export default Unlink;

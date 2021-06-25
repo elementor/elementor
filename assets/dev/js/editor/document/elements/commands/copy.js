@@ -13,10 +13,6 @@ export class Copy extends CommandEditorBase {
 			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
 		);
 	}
-
-	isDataChanged() {
-		return false;
-	}
 }
 
 export default Copy;

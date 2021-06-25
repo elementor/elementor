@@ -33,21 +33,4 @@ export default class CommandEditorBase extends CommandBase {
 			this.requireArgumentInstance( 'container', elementorModules.editor.Container, { container } );
 		} );
 	}
-
-	onAfterApply( args = {}, result ) {
-		super.onAfterApply( args, result );
-
-		if ( this.isDataChanged() ) {
-			$e.internal( 'document/save/set-is-modified', { status: true } );
-		}
-	}
-
-	/**
-	 * Whether the editor needs to set change flag on/off.
-	 *
-	 * @returns {boolean}
-	 */
-	isDataChanged() {
-		elementorModules.ForceMethodImplementation();
-	}
 }

@@ -6,9 +6,4 @@ export default class CreateBase extends CommandEditorBase {
 		this.requireArgumentType( 'setting', 'string', args );
 		this.requireArgumentType( 'title', 'string', args );
 	}
-
-	// The inheritance does change the data, but does not required editor save, but change it directly via $e.data.
-	isDataChanged() {
-		return false;
-	}
 }
