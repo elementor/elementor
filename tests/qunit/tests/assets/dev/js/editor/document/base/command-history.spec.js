@@ -1,6 +1,6 @@
 import CommandHistory from 'elementor-document/base/command-history';
 import CommandInfra from 'elementor-api/modules/command-infra';
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
 import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
@@ -54,7 +54,7 @@ jQuery( () => {
 				const validateHistoryCommand = ( historyCommand ) => {
 					// Base.
 					assert.equal( historyCommand instanceof CommandInfra, true );
-					assert.equal( historyCommand instanceof Command, true );
+					assert.equal( historyCommand instanceof CommandBase, true );
 					assert.equal( historyCommand instanceof CommandInternal, false, );
 					assert.equal( historyCommand instanceof CommandData, false, );
 					// Editor.
@@ -65,7 +65,7 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
 
 					// Base.
-					assert.equal( historyCommand instanceof $e.modules.Command, true );
+					assert.equal( historyCommand instanceof $e.modules.CommandBase, true );
 					assert.equal( historyCommand instanceof $e.modules.CommandInternal, false );
 					assert.equal( historyCommand instanceof $e.modules.CommandData, false );
 					// Editor.

@@ -1,5 +1,5 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
 import ComponentBase from 'elementor-api/modules/component-base';
@@ -50,10 +50,10 @@ jQuery( () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandData = ( command ) => {
 					assert.equal( command instanceof CommandInfra, true, );
-					assert.equal( command instanceof Command, true, );
+					assert.equal( command instanceof CommandBase, true, );
 					assert.equal( command instanceof CommandInternal, false );
 					assert.equal( command instanceof CommandData, true, );
-					assert.equal( command instanceof $e.modules.Command, true );
+					assert.equal( command instanceof $e.modules.CommandBase, true );
 					assert.equal( command instanceof $e.modules.CommandInternal, false );
 					assert.equal( command instanceof $e.modules.CommandData, true );
 				};

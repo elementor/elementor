@@ -1,6 +1,6 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
-import Command from './modules/command';
+import CommandBase from './modules/command-base';
 import CommandInternal from './modules/command-internal';
 import CommandData from './modules/command-data';
 import Commands from './core/commands';
@@ -48,7 +48,7 @@ export default class API {
 				return this.CommandInternal;
 			},
 
-			Command,
+			CommandBase,
 			CommandInternal,
 			CommandData,
 

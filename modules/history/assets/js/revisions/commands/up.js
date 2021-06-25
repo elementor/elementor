@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Up extends Command {
+export class Up extends CommandBase {
 	apply() {
 		this.component.navigate( true );
 	}

@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Apply extends Command {
+export class Apply extends CommandBase {
 	validateArgs( args ) {
 		this.requireArgumentType( 'value', 'string' );
 	}

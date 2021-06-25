@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class ExitPreview extends Command {
+export class ExitPreview extends CommandBase {
 	apply( args ) {
 		const { initialColor } = this.component.currentPicker;
 

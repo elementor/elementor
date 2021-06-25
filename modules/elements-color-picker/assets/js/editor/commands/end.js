@@ -1,7 +1,7 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import { removeNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
-export class End extends Command {
+export class End extends CommandBase {
 	apply() {
 		// Remove all elements & event listeners.
 		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.remove( 'elementor-editor__ui-state__color-picker' );

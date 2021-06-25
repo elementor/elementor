@@ -1,8 +1,8 @@
 import CommandInfra from './command-infra';
 
-export default class Command extends CommandInfra {
+export default class CommandBase extends CommandInfra {
 	static getInstanceType() {
-		return 'Command';
+		return 'CommandBase';
 	}
 
 	onBeforeRun( args = {} ) {

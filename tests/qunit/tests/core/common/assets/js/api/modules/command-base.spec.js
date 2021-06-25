@@ -1,11 +1,11 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
-	QUnit.module( 'File: core/common/assets/js/api/modules/command.js', () => {
-		QUnit.module( 'Command', ( hooks ) => {
+	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
+		QUnit.module( 'CommandBase', ( hooks ) => {
 			hooks.beforeEach( () => $e.components.isRegistering = true );
 			hooks.afterEach( () => $e.components.isRegistering = false );
 
@@ -14,7 +14,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new Command( {} );
+						const instance = new CommandBase( {} );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -35,7 +35,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new Command( {} );
+						const instance = new CommandBase( {} );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -48,18 +48,18 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const validateCommand = ( command ) => {
-					assert.equal( command instanceof CommandInfra, true );
-					assert.equal( command instanceof Command, true );
-					assert.equal( command instanceof CommandInternal, false, );
-					assert.equal( command instanceof CommandData, false, );
-					assert.equal( command instanceof $e.modules.Command, true );
-					assert.equal( command instanceof $e.modules.CommandInternal, false );
-					assert.equal( command instanceof $e.modules.CommandData, false );
+				const validateCommand = ( commandBase ) => {
+					assert.equal( commandBase instanceof CommandInfra, true );
+					assert.equal( commandBase instanceof CommandBase, true );
+					assert.equal( commandBase instanceof CommandInternal, false, );
+					assert.equal( commandBase instanceof CommandData, false, );
+					assert.equal( commandBase instanceof $e.modules.CommandBase, true );
+					assert.equal( commandBase instanceof $e.modules.CommandInternal, false );
+					assert.equal( commandBase instanceof $e.modules.CommandData, false );
 				};
 
-				validateCommand( new Command( {} ) );
-				validateCommand( new $e.modules.Command( {} ) );
+				validateCommand( new CommandBase( {} ) );
+				validateCommand( new $e.modules.CommandBase( {} ) );
 			} );
 		} );
 	} );

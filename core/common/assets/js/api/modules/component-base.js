@@ -1,4 +1,4 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import CommandCallback from 'elementor-api/modules/command-callback';
 
 export default class ComponentBase extends elementorModules.Module {
@@ -134,8 +134,8 @@ export default class ComponentBase extends elementorModules.Module {
 
 		const instance = new context( registerArgs );
 
-		if ( ! ( instance instanceof Command ) ) {
-			throw Error( `Command: '${ fullCommand }' should inherent "Command" class.` );
+		if ( ! ( instance instanceof CommandBase ) ) {
+			throw Error( `Command: '${ fullCommand }' should inherent "CommandBase" class.` );
 		}
 
 		commandsAPI.register( this, command, context );
@@ -299,7 +299,7 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	/**
-	 * @param {Object.<string, Command>} commandsFromImport
+	 * @param {Object.<string, CommandBase>} commandsFromImport
 	 * @returns {{}} imported commands
 	 */
 	importCommands( commandsFromImport ) {

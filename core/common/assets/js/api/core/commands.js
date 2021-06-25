@@ -1,5 +1,5 @@
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
-import Command from '../modules/command';
+import CommandBase from '../modules/command-base';
 
 export default class Commands extends CommandsBackwardsCompatibility {
 	static trace = [];
@@ -22,7 +22,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * @returns {Command}
+	 * @returns {CommandBase}
 	 */
 	getCommandClass( id ) {
 		return this.commands[ id ];
@@ -299,7 +299,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		const currentComponent = this.getComponent( command );
 
 		// Route?.
-		if ( ! ( instance instanceof Command ) ) {
+		if ( ! ( instance instanceof CommandBase ) ) {
 			const results = instance.apply( currentComponent, [ args ] );
 
 			this.afterRun( command, args, results );
@@ -408,7 +408,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 	/**
 	 * @param {Error} e
-	 * @param {Command} instance
+	 * @param {CommandBase} instance
 	 */
 	catchApply( e, instance ) {
 		instance.onCatchApply( e );
@@ -460,7 +460,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	validateInstanceScope( instance, command, currentComponent ) {
-		if ( ! ( instance instanceof Command ) ) {
+		if ( ! ( instance instanceof CommandBase ) ) {
 			this.error( `invalid instance, command: '${ command }' ` );
 		}
 

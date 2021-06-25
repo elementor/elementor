@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class NavigateDown extends Command {
+export class NavigateDown extends CommandBase {
 	apply() {
 		this.component.getItemsView().activateNextItem();
 	}

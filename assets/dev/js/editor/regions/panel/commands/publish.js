@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Publish extends Command {
+export class Publish extends CommandBase {
 	apply() {
 		$e.run( 'document/save/publish' );
 	}

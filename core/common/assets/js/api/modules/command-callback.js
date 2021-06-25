@@ -1,6 +1,6 @@
-import Command from './command';
+import CommandBase from './command-base';
 
-export default class CommandCallback extends Command {
+export default class CommandCallback extends CommandBase {
 	static getInstanceType() {
 		return 'CommandCallback';
 	}

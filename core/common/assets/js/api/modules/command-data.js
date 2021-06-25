@@ -1,7 +1,7 @@
-import Command from './command';
+import CommandBase from './command-base';
 import * as errors from './errors';
 
-export default class CommandData extends Command {
+export default class CommandData extends CommandBase {
 	/**
 	 * Data returned from remote.
 	 *

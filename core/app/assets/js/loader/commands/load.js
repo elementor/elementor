@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export class Load extends Command {
+export class Load extends CommandBase {
 	apply( args ) {
 		const component = this.component;
 

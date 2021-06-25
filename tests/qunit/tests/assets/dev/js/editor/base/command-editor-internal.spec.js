@@ -1,5 +1,5 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
 import CommandEditor from 'elementor-editor/base/command-editor';
@@ -16,7 +16,7 @@ jQuery( () => {
 				const validateCommandEditorInternal = ( commandEditorInternal ) => {
 					// Base.
 					assert.equal( commandEditorInternal instanceof CommandInfra, true );
-					assert.equal( commandEditorInternal instanceof Command, true );
+					assert.equal( commandEditorInternal instanceof CommandBase, true );
 					assert.equal( commandEditorInternal instanceof CommandInternal, false, );
 					assert.equal( commandEditorInternal instanceof CommandData, false, );
 					// Editor.
@@ -24,7 +24,7 @@ jQuery( () => {
 					assert.equal( commandEditorInternal instanceof CommandEditorInternal, true );
 
 					// Base.
-					assert.equal( commandEditorInternal instanceof $e.modules.Command, true );
+					assert.equal( commandEditorInternal instanceof $e.modules.CommandBase, true );
 					assert.equal( commandEditorInternal instanceof $e.modules.CommandInternal, false );
 					assert.equal( commandEditorInternal instanceof $e.modules.CommandData, false );
 					// Editor.

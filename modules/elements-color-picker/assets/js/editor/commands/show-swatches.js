@@ -1,7 +1,7 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import { rgbToHex } from 'elementor/core/app/assets/js/utils/utils';
 
-export class ShowSwatches extends Command {
+export class ShowSwatches extends CommandBase {
 	constructor( args ) {
 		super( args );
 

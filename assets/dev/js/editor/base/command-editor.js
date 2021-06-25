@@ -1,6 +1,6 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 
-export default class CommandEditor extends Command {
+export default class CommandEditor extends CommandBase {
 	static getInstanceType() {
 		return 'CommandEditor';
 	}

@@ -1,7 +1,7 @@
-import Command from 'elementor-api/modules/command';
+import CommandBase from 'elementor-api/modules/command-base';
 import { addNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
-export class Start extends Command {
+export class Start extends CommandBase {
 	apply( args ) {
 		// Prevent elements from triggering edit mode on click.
 		elementor.changeEditMode( 'picker' );
