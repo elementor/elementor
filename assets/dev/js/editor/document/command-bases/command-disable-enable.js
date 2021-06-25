@@ -1,7 +1,7 @@
-import CommandHistory from '../command-bases/command-history';
+import CommandHistoryBase from './command-history-base';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
-export default class CommandDisableEnable extends CommandHistory {
+export default class CommandDisableEnable extends CommandHistoryBase {
 	static getName() {
 		elementorModules.ForceMethodImplementation();
 	}

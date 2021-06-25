@@ -25,7 +25,7 @@ export const tests = () => {
 	require( './assets/dev/js/editor/command-bases/command-editor-internal.spec' );
 
 	// JS API editor document.
-	require( './assets/dev/js/editor/document/command-bases/command-history.spec' );
+	require( './assets/dev/js/editor/document/command-bases/command-history-base.spec' );
 	require( './assets/dev/js/editor/document/command-bases/command-history-debounce.spec' );
 	require( './assets/dev/js/editor/document/command-bases/command-disable-enable.spec' );
 

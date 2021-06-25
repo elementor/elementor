@@ -29,7 +29,7 @@ $e.modules.document = {
 			'$e.modules.editor.document.CommandHistory'
 		);
 
-		return $e.modules.editor.document.CommandHistory;
+		return $e.modules.editor.document.CommandHistoryBase;
 	},
 
 	get CommandHistoryDebounce() {

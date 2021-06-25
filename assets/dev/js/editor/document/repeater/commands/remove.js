@@ -1,6 +1,6 @@
-import CommandHistory from 'elementor-document/command-bases/command-history';
+import CommandHistoryBase from '../../command-bases/command-history-base';
 
-export class Remove extends CommandHistory {
+export class Remove extends CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		const data = historyItem.get( 'data' ),
 			container = historyItem.get( 'container' );

@@ -1,4 +1,4 @@
-import CommandHistory from 'elementor-document/command-bases/command-history';
+import CommandHistoryBase from '../../../../../../../../../assets/dev/js/editor/document/command-bases/command-history-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
@@ -9,7 +9,7 @@ import CommandEditorInternal from 'elementor-editor/command-bases/command-editor
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/base/command-history.js', () => {
-		QUnit.module( 'CommandHistory', ( hooks ) => {
+		QUnit.module( 'CommandHistoryBase', ( hooks ) => {
 			hooks.beforeEach( () => $e.components.isRegistering = true );
 
 			hooks.afterEach( () => $e.components.isRegistering = false );
@@ -17,16 +17,16 @@ jQuery( () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandHistory( {} );
+						const instance = new CommandHistoryBase( {} );
 
 						instance.getHistory( {} );
 					},
-					new Error( 'CommandHistory.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
+					new Error( 'CommandHistoryBase.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
 				);
 			} );
 
 			QUnit.test( 'onCatchApply()`', ( assert ) => {
-				const fakeHistory = class extends CommandHistory {
+				const fakeHistory = class extends CommandHistoryBase {
 					// eslint-disable-next-line no-unused-vars
 					getHistory( args ) {
 						return true;
@@ -61,7 +61,7 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof CommandEditorBase, true, );
 					assert.equal( historyCommand instanceof CommandEditorInternal, false );
 					// Editor-Document.
-					assert.equal( historyCommand instanceof CommandHistory, true );
+					assert.equal( historyCommand instanceof CommandHistoryBase, true );
 					assert.equal( historyCommand instanceof CommandHistoryDebounce, false );
 
 					// Base.
@@ -72,12 +72,12 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof $e.modules.editor.CommandEditorBase, true );
 					assert.equal( historyCommand instanceof $e.modules.editor.CommandEditorInternal, false );
 					// Editor-Document.
-					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistory, true );
+					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryBase, true );
 					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounce, false );
 				};
 
-				validateHistoryCommand( new CommandHistory( {} ) );
-				validateHistoryCommand( new $e.modules.editor.document.CommandHistory( {} ) );
+				validateHistoryCommand( new CommandHistoryBase( {} ) );
+				validateHistoryCommand( new $e.modules.editor.document.CommandHistoryBase( {} ) );
 			} );
 		} );
 	} );

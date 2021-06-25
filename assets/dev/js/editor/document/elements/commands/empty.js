@@ -1,6 +1,6 @@
-import CommandHistory from 'elementor-document/command-bases/command-history';
+import CommandHistoryBase from '../../command-bases/command-history-base';
 
-export class Empty extends CommandHistory {
+export class Empty extends CommandHistoryBase {
 	static restore( historyItem, isRedo ) {
 		if ( isRedo ) {
 			$e.run( 'document/elements/empty', { force: true } );

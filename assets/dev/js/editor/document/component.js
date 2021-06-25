@@ -1,6 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
-import CommandHistory from '../document/command-bases/command-history';
+import CommandHistoryBase from '../document/command-bases/command-history-base';
 import CommandHistoryDebounce from '../document/command-bases/command-history-debounce';
 
 import * as components from './';
@@ -9,15 +9,6 @@ import * as hooks from './hooks/';
 export default class Component extends ComponentBase {
 	static getModules() {
 		const modules = {
-			get CommandHistoryBase() {
-				elementorCommon.helpers.softDeprecated(
-					'$e.modules.document.CommandHistoryBase',
-					'3.0.3',
-					'$e.modules.editor.document.CommandHistory'
-				);
-
-				return this.CommandHistory;
-			},
 			get CommandHistoryDebounceBase() {
 				elementorCommon.helpers.softDeprecated(
 					'$e.modules.document.CommandHistoryDebounceBase',
@@ -28,7 +19,7 @@ export default class Component extends ComponentBase {
 				return this.CommandHistoryDebounce;
 			},
 
-			CommandHistory,
+			CommandHistoryBase,
 			CommandHistoryDebounce,
 		};
 

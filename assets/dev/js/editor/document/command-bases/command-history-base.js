@@ -1,8 +1,8 @@
 import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
 
-export default class CommandHistory extends CommandEditorBase {
+export default class CommandHistoryBase extends CommandEditorBase {
 	static getInstanceType() {
-		return 'CommandHistory';
+		return 'CommandHistoryBase';
 	}
 
 	initialize( args = {} ) {
