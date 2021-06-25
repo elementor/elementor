@@ -1,7 +1,7 @@
-import CommandEditor from 'elementor-editor/base/command-editor';
+import CommandEditorBase from 'elementor-editor/base/command-editor-base';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
-export class Unlink extends CommandEditor {
+export class Unlink extends CommandEditorBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 		this.requireArgumentType( 'setting', 'string', args );

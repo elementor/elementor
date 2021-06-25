@@ -89,8 +89,4 @@ export default class CommandDisableEnable extends CommandHistory {
 			restore: this.constructor.restore,
 		};
 	}
-
-	isDataChanged() {
-		return true;
-	}
 }

@@ -21,7 +21,7 @@ export const tests = () => {
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// JS API editor
-	require( './assets/dev/js/editor/base/command-editor.spec' );
+	require( './assets/dev/js/editor/base/command-editor-base.spec' );
 	require( './assets/dev/js/editor/base/command-editor-internal.spec' );
 
 	// JS API editor document.

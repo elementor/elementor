@@ -122,10 +122,6 @@ export class Settings extends CommandHistoryDebounce {
 			} );
 		} );
 	}
-
-	isDataChanged() {
-		return true;
-	}
 }
 
 export default Settings;

@@ -84,10 +84,6 @@ export class Create extends CommandHistory {
 
 		return result;
 	}
-
-	isDataChanged() {
-		return true;
-	}
 }
 
 export default Create;

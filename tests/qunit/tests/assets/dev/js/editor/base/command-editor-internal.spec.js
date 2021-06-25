@@ -2,7 +2,7 @@ import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandEditor from 'elementor-editor/base/command-editor';
+import CommandEditorBase from 'elementor-editor/base/command-editor-base';
 import CommandEditorInternal from 'elementor-editor/base/command-editor-internal';
 
 jQuery( () => {
@@ -20,7 +20,7 @@ jQuery( () => {
 					assert.equal( commandEditorInternal instanceof CommandInternalBase, false, );
 					assert.equal( commandEditorInternal instanceof CommandData, false, );
 					// Editor.
-					assert.equal( commandEditorInternal instanceof CommandEditor, true, );
+					assert.equal( commandEditorInternal instanceof CommandEditorBase, true, );
 					assert.equal( commandEditorInternal instanceof CommandEditorInternal, true );
 
 					// Base.
@@ -28,7 +28,7 @@ jQuery( () => {
 					assert.equal( commandEditorInternal instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( commandEditorInternal instanceof $e.modules.CommandData, false );
 					// Editor.
-					assert.equal( commandEditorInternal instanceof $e.modules.editor.CommandEditor, true );
+					assert.equal( commandEditorInternal instanceof $e.modules.editor.CommandEditorBase, true );
 					assert.equal( commandEditorInternal instanceof $e.modules.editor.CommandEditorInternal, true );
 				};
 

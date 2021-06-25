@@ -1,6 +1,6 @@
 import CommandEditorInternal from 'elementor-editor/base/command-editor-internal';
 
-export default class Base extends CommandEditorInternal {
+export default class CommandHistoryInternalBase extends CommandEditorInternal {
 	initialize( args ) {
 		super.initialize( args );
 

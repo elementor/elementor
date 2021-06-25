@@ -39,9 +39,7 @@ export class Empty extends CommandHistory {
 	}
 
 	isDataChanged() {
-		if ( this.args.force ) {
-			return true;
-		}
+		return this.args.force;
 	}
 }
 

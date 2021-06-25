@@ -53,10 +53,6 @@ export class Insert extends CommandHistory {
 		};
 	}
 
-	isDataChanged() {
-		return true;
-	}
-
 	apply( args ) {
 		const { model, name, options = { at: null }, containers = [ args.container ] } = args,
 			result = [];

@@ -1,8 +1,12 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
-export default class CommandEditor extends CommandBase {
+/**
+ * This class should be used only when its 'really' required.
+ * Not evey command in the editor should use this only when you required to have the logic in it.
+ */
+export default class CommandEditorBase extends CommandBase {
 	static getInstanceType() {
-		return 'CommandEditor';
+		return 'CommandEditorBase';
 	}
 
 	/**
@@ -44,6 +48,6 @@ export default class CommandEditor extends CommandBase {
 	 * @returns {boolean}
 	 */
 	isDataChanged() {
-		return false;
+		elementorModules.ForceMethodImplementation();
 	}
 }

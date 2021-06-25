@@ -1,6 +1,6 @@
-import CommandEditor from 'elementor-editor/base/command-editor';
+import CommandEditorBase from 'elementor-editor/base/command-editor-base';
 
-export class Copy extends CommandEditor {
+export class Copy extends CommandEditorBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
 	}
@@ -12,6 +12,10 @@ export class Copy extends CommandEditor {
 			storageKey,
 			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
 		);
+	}
+
+	isDataChanged() {
+		return false;
 	}
 }
 

@@ -1,4 +1,4 @@
-import CommandEditor from './base/command-editor';
+import CommandEditorBase from './base/command-editor-base';
 import CommandEditorInternal from './base/command-editor-internal';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
@@ -14,7 +14,7 @@ elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 } );
 
 $e.modules.editor = {
-	CommandEditor,
+	CommandEditorBase,
 	CommandEditorInternal,
 
 	document: DocumentComponent.getModules(),

@@ -1,6 +1,6 @@
-import CommandEditor from 'elementor-editor/base/command-editor';
+import CommandEditorBase from 'elementor-editor/base/command-editor-base';
 
-export default class CommandHistory extends CommandEditor {
+export default class CommandHistory extends CommandEditorBase {
 	static getInstanceType() {
 		return 'CommandHistory';
 	}
@@ -66,5 +66,10 @@ export default class CommandHistory extends CommandEditor {
 		}
 
 		super.onCatchApply( e );
+	}
+
+	isDataChanged() {
+		// All the commands who use history are commands that changing the data.
+		return true;
 	}
 }

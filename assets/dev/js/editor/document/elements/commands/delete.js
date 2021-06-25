@@ -67,10 +67,6 @@ export class Delete extends CommandHistory {
 
 		return containers;
 	}
-
-	isDataChanged() {
-		return true;
-	}
 }
 
 export default Delete;

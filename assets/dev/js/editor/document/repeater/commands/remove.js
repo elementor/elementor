@@ -38,10 +38,6 @@ export class Remove extends CommandHistory {
 		};
 	}
 
-	isDataChanged() {
-		return true;
-	}
-
 	apply( args ) {
 		const { name, containers = [ args.container ] } = args,
 			index = null === args.index ? -1 : args.index,
