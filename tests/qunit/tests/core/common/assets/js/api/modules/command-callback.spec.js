@@ -1,6 +1,6 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 import CommandCallback from 'elementor-api/modules/command-callback';
 
@@ -8,7 +8,6 @@ jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-callback.js', () => {
 		QUnit.module( 'CommandCallback', ( hooks ) => {
 			hooks.beforeEach( () => $e.components.isRegistering = true );
-
 			hooks.afterEach( () => $e.components.isRegistering = false );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
@@ -16,11 +15,11 @@ jQuery( () => {
 
 				assert.equal( commandCallback instanceof CommandInfra, true );
 				assert.equal( commandCallback instanceof CommandBase, true );
-				assert.equal( commandCallback instanceof CommandInternal, false, );
+				assert.equal( commandCallback instanceof CommandInternalBase, false, );
 				assert.equal( commandCallback instanceof CommandData, false, );
 				assert.equal( commandCallback instanceof CommandCallback, true, );
 				assert.equal( commandCallback instanceof $e.modules.CommandBase, true );
-				assert.equal( commandCallback instanceof $e.modules.CommandInternal, false );
+				assert.equal( commandCallback instanceof $e.modules.CommandInternalBase, false );
 				assert.equal( commandCallback instanceof $e.modules.CommandData, false );
 			} );
 

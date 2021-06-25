@@ -1,8 +1,8 @@
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import Document from 'elementor-editor/document';
 import Heartbeat from 'elementor-editor-utils/heartbeat';
 
-export class Load extends CommandInternal {
+export class Load extends CommandInternalBase {
 	validateArgs( args = {} ) {
 		this.requireArgument( 'config', args );
 	}

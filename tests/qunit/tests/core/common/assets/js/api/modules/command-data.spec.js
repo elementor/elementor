@@ -1,6 +1,6 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 import ComponentBase from 'elementor-api/modules/component-base';
 
@@ -8,7 +8,6 @@ jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-data.js', () => {
 		QUnit.module( 'CommandData', ( hooks ) => {
 			hooks.beforeEach( () => $e.components.isRegistering = true );
-
 			hooks.afterEach( () => $e.components.isRegistering = false );
 
 			QUnit.test( 'getRequestData(): simple', ( assert ) => {
@@ -51,10 +50,10 @@ jQuery( () => {
 				const validateCommandData = ( command ) => {
 					assert.equal( command instanceof CommandInfra, true, );
 					assert.equal( command instanceof CommandBase, true, );
-					assert.equal( command instanceof CommandInternal, false );
+					assert.equal( command instanceof CommandInternalBase, false );
 					assert.equal( command instanceof CommandData, true, );
 					assert.equal( command instanceof $e.modules.CommandBase, true );
-					assert.equal( command instanceof $e.modules.CommandInternal, false );
+					assert.equal( command instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( command instanceof $e.modules.CommandData, true );
 				};
 

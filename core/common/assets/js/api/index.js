@@ -1,7 +1,7 @@
 /* Alphabetical order */
 import BackwardsCompatibility from './core/backwards-compatibility';
 import CommandBase from './modules/command-base';
-import CommandInternal from './modules/command-internal';
+import CommandInternalBase from './modules/command-internal-base';
 import CommandData from './modules/command-data';
 import Commands from './core/commands';
 import CommandsInternal from './core/commands-internal';
@@ -38,18 +38,18 @@ export default class API {
 		this.data = new Data();
 
 		this.modules = {
-			get CommandInternalBase() {
-				elementorCommon.helpers.softDeprecated(
-					'$e.modules.CommandInternalBase',
-					'3.0.3',
-					'$e.modules.CommandInternal'
-				);
-
-				return this.CommandInternal;
-			},
+			// get CommandInternalBase() {
+			// 	elementorCommon.helpers.softDeprecated(
+			// 		'$e.modules.CommandInternalBase',
+			// 		'3.0.3',
+			// 		'$e.modules.CommandInternal'
+			// 	);
+			//
+			// 	return this.CommandInternal;
+			// },
 
 			CommandBase,
-			CommandInternal,
+			CommandInternalBase,
 			CommandData,
 
 			ComponentBase,

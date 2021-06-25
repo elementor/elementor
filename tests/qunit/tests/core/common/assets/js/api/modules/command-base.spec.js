@@ -1,6 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
@@ -51,10 +51,10 @@ jQuery( () => {
 				const validateCommand = ( commandBase ) => {
 					assert.equal( commandBase instanceof CommandInfra, true );
 					assert.equal( commandBase instanceof CommandBase, true );
-					assert.equal( commandBase instanceof CommandInternal, false, );
+					assert.equal( commandBase instanceof CommandInternalBase, false, );
 					assert.equal( commandBase instanceof CommandData, false, );
 					assert.equal( commandBase instanceof $e.modules.CommandBase, true );
-					assert.equal( commandBase instanceof $e.modules.CommandInternal, false );
+					assert.equal( commandBase instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( commandBase instanceof $e.modules.CommandData, false );
 				};
 

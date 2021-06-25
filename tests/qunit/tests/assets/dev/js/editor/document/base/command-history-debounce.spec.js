@@ -1,7 +1,7 @@
 import CommandHistory from 'elementor-document/base/command-history';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
 import CommandEditor from 'elementor-editor/base/command-editor';
@@ -19,7 +19,7 @@ jQuery( () => {
 					// Base.
 					assert.equal( historyDebounceCommand instanceof CommandInfra, true );
 					assert.equal( historyDebounceCommand instanceof CommandBase, true );
-					assert.equal( historyDebounceCommand instanceof CommandInternal, false, );
+					assert.equal( historyDebounceCommand instanceof CommandInternalBase, false, );
 					assert.equal( historyDebounceCommand instanceof CommandData, false, );
 					// Editor.
 					assert.equal( historyDebounceCommand instanceof CommandEditor, true, );
@@ -30,7 +30,7 @@ jQuery( () => {
 
 					// Base.
 					assert.equal( historyDebounceCommand instanceof $e.modules.CommandBase, true );
-					assert.equal( historyDebounceCommand instanceof $e.modules.CommandInternal, false );
+					assert.equal( historyDebounceCommand instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( historyDebounceCommand instanceof $e.modules.CommandData, false );
 					// Editor.
 					assert.equal( historyDebounceCommand instanceof $e.modules.editor.CommandEditor, true );

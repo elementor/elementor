@@ -1,6 +1,6 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
@@ -35,10 +35,10 @@ jQuery( () => {
 
 				assert.equal( commandInfra instanceof CommandInfra, true );
 				assert.equal( commandInfra instanceof CommandBase, false );
-				assert.equal( commandInfra instanceof CommandInternal, false, );
+				assert.equal( commandInfra instanceof CommandInternalBase, false, );
 				assert.equal( commandInfra instanceof CommandData, false, );
 				assert.equal( commandInfra instanceof $e.modules.CommandBase, false );
-				assert.equal( commandInfra instanceof $e.modules.CommandInternal, false );
+				assert.equal( commandInfra instanceof $e.modules.CommandInternalBase, false );
 				assert.equal( commandInfra instanceof $e.modules.CommandData, false );
 			} );
 		} );

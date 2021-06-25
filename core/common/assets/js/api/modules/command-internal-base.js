@@ -1,8 +1,8 @@
 import CommandBase from './command-base';
 
-export default class CommandInternal extends CommandBase {
+export default class CommandInternalBase extends CommandBase {
 	static getInstanceType() {
-		return 'CommandInternal';
+		return 'CommandInternalBase';
 	}
 
 	constructor( args, commandsAPI = $e.commandsInternal ) {

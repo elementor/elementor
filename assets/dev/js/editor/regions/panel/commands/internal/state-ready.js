@@ -1,6 +1,6 @@
-import CommandInternal from 'elementor-api/modules/command-internal';
+import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 
-export class StateReady extends CommandInternal {
+export class StateReady extends CommandInternalBase {
 	apply() {
 		elementorCommon.elements.$body.removeClass( 'elementor-panel-loading' );
 
