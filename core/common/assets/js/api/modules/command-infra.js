@@ -1,10 +1,10 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
-export default class CommandBase extends ArgsObject {
+export default class CommandInfra extends ArgsObject {
 	static registerArgs = {};
 
 	static getInstanceType() {
-		return 'CommandBase';
+		return 'CommandInfra';
 	}
 
 	/**

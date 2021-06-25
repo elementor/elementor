@@ -38,16 +38,6 @@ export default class API {
 		this.data = new Data();
 
 		this.modules = {
-			get CommandBase() {
-				elementorCommon.helpers.softDeprecated(
-					'$e.modules.CommandBase',
-					'3.0.3',
-					'$e.modules.Command'
-				);
-
-				return this.Command;
-			},
-
 			get CommandInternalBase() {
 				elementorCommon.helpers.softDeprecated(
 					'$e.modules.CommandInternalBase',

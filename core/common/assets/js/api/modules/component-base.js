@@ -113,7 +113,7 @@ export default class ComponentBase extends elementorModules.Module {
 
 	/**
 	 * @param {string} command
-	 * @param {(function()|CommandBase)} context
+	 * @param {(function()|CommandInfra)} context
 	 */
 	registerCommand( command, context, commandsAPI = $e.commands ) {
 		const fullCommand = this.getNamespace() + '/' + command,

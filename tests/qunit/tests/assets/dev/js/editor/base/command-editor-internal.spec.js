@@ -1,4 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandInfra from 'elementor-api/modules/command-infra';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
@@ -15,7 +15,7 @@ jQuery( () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandEditorInternal = ( commandEditorInternal ) => {
 					// Base.
-					assert.equal( commandEditorInternal instanceof CommandBase, true );
+					assert.equal( commandEditorInternal instanceof CommandInfra, true );
 					assert.equal( commandEditorInternal instanceof Command, true );
 					assert.equal( commandEditorInternal instanceof CommandInternal, false, );
 					assert.equal( commandEditorInternal instanceof CommandData, false, );

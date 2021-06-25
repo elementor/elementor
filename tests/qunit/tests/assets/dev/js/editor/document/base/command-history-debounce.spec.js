@@ -1,5 +1,5 @@
 import CommandHistory from 'elementor-document/base/command-history';
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandInfra from 'elementor-api/modules/command-infra';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
@@ -17,7 +17,7 @@ jQuery( () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateHistoryDebounceCommand = ( historyDebounceCommand ) => {
 					// Base.
-					assert.equal( historyDebounceCommand instanceof CommandBase, true );
+					assert.equal( historyDebounceCommand instanceof CommandInfra, true );
 					assert.equal( historyDebounceCommand instanceof Command, true );
 					assert.equal( historyDebounceCommand instanceof CommandInternal, false, );
 					assert.equal( historyDebounceCommand instanceof CommandData, false, );

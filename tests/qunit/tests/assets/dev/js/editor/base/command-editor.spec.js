@@ -1,4 +1,4 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandInfra from 'elementor-api/modules/command-infra';
 import Command from 'elementor-api/modules/command';
 import CommandInternal from 'elementor-api/modules/command-internal';
 import CommandData from 'elementor-api/modules/command-data';
@@ -40,18 +40,18 @@ jQuery( () => {
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandInfra( {} );
 
 						instance.apply( {} );
 					},
-					new Error( 'CommandBase.apply() should be implemented, please provide \'apply\' functionality.' )
+					new Error( 'CommandInfra.apply() should be implemented, please provide \'apply\' functionality.' )
 				);
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandEditor = ( commandEditor ) => {
 					// Base.
-					assert.equal( commandEditor instanceof CommandBase, true );
+					assert.equal( commandEditor instanceof CommandInfra, true );
 					assert.equal( commandEditor instanceof Command, true );
 					assert.equal( commandEditor instanceof CommandInternal, false, );
 					assert.equal( commandEditor instanceof CommandData, false, );
