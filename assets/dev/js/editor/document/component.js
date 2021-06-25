@@ -1,7 +1,7 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import BackwardsCompatibility from './backwards-compatibility.js';
-import CommandHistory from './base/command-history';
-import CommandHistoryDebounce from './base/command-history-debounce';
+import CommandHistory from '../document/command-bases/command-history';
+import CommandHistoryDebounce from '../document/command-bases/command-history-debounce';
 
 import * as components from './';
 import * as hooks from './hooks/';

@@ -21,14 +21,13 @@ export const tests = () => {
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// JS API editor
-	require( './assets/dev/js/editor/base/command-editor-base.spec' );
-	require( './assets/dev/js/editor/base/command-editor-internal.spec' );
+	require( './assets/dev/js/editor/command-bases/command-editor-base.spec' );
+	require( './assets/dev/js/editor/command-bases/command-editor-internal.spec' );
 
 	// JS API editor document.
-	require( './assets/dev/js/editor/document/base/command-history.spec' );
-	require( './assets/dev/js/editor/document/base/command-disable-enable.spec' );
-	require( './assets/dev/js/editor/document/base/command-history.spec' );
-	require( './assets/dev/js/editor/document/base/command-history-debounce.spec' );
+	require( './assets/dev/js/editor/document/command-bases/command-history.spec' );
+	require( './assets/dev/js/editor/document/command-bases/command-history-debounce.spec' );
+	require( './assets/dev/js/editor/document/command-bases/command-disable-enable.spec' );
 
 	require( './assets/dev/js/editor/document/dynamic/commands/base/disable-enable.spec' );
 	require( './assets/dev/js/editor/document/globals/commands/base/disable-enable.spec' );

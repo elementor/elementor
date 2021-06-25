@@ -1,5 +1,5 @@
-import CommandEditorBase from './base/command-editor-base';
-import CommandEditorInternal from './base/command-editor-internal';
+import CommandEditorBase from './command-bases/command-editor-base';
+import CommandEditorInternal from './command-bases/command-editor-internal';
 import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 

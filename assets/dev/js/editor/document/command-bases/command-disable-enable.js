@@ -1,4 +1,4 @@
-import CommandHistory from './command-history';
+import CommandHistory from '../command-bases/command-history';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 export default class CommandDisableEnable extends CommandHistory {

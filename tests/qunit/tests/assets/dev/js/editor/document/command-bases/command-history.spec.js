@@ -1,11 +1,11 @@
-import CommandHistory from 'elementor-document/base/command-history';
+import CommandHistory from 'elementor-document/command-bases/command-history';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
-import CommandEditorBase from 'elementor-editor/base/command-editor-base';
-import CommandEditorInternal from 'elementor-editor/base/command-editor-internal';
+import CommandHistoryDebounce from 'elementor-document/command-bases/command-history-debounce';
+import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
+import CommandEditorInternal from 'elementor-editor/command-bases/command-editor-internal';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/base/command-history.js', () => {

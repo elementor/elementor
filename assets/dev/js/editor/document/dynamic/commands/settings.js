@@ -1,4 +1,4 @@
-import CommandHistoryDebounce from 'elementor-document/base/command-history-debounce';
+import CommandHistoryDebounce from 'elementor-document/command-bases/command-history-debounce';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 /**

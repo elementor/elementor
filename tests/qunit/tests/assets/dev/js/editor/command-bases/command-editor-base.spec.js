@@ -2,8 +2,8 @@ import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandEditorBase from 'elementor-editor/base/command-editor-base';
-import CommandEditorInternal from 'elementor-editor/base/command-editor-internal';
+import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
+import CommandEditorInternal from 'elementor-editor/command-bases/command-editor-internal';
 
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/base/command-editor-base.js', () => {

@@ -1,4 +1,4 @@
-import CommandHistory from 'elementor-document/base/command-history';
+import CommandHistory from 'elementor-document/command-bases/command-history';
 
 export class Import extends CommandHistory {
 	validateArgs( args ) {

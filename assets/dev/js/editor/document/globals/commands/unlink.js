@@ -1,4 +1,4 @@
-import CommandEditorBase from 'elementor-editor/base/command-editor-base';
+import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
 
 // TODO: Add dev-tools CSS to see if widget have globals.
 export class Unlink extends CommandEditorBase {
