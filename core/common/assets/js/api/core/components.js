@@ -1,6 +1,4 @@
 export default class extends elementorModules.Module {
-	isRegistering = false;
-
 	constructor( ...args ) {
 		super( ...args );
 
@@ -17,15 +15,7 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		const atRegister = this.isRegistering;
-
-		this.isRegistering = true;
-
 		component.registerAPI();
-
-		if ( ! atRegister ) {
-			this.isRegistering = false;
-		}
 
 		this.components[ component.getNamespace() ] = component;
 

@@ -5,10 +5,7 @@ import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
-		QUnit.module( 'CommandBase', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandBase', () => {
 			QUnit.test( 'run(): on catch apply', ( assert ) => {
 				const random = Math.random().toString();
 

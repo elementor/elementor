@@ -6,11 +6,7 @@ import CommandEditorBase from 'elementor-editor/command-bases/command-editor-bas
 import CommandEditorInternal from 'elementor-editor/command-bases/command-editor-internal';
 
 jQuery( () => {
-	QUnit.module( 'File: assets/dev/js/editor/base/command-editor-internal.js', ( hooks ) => {
-		hooks.beforeEach( () => $e.components.isRegistering = true );
-
-		hooks.afterEach( () => $e.components.isRegistering = false );
-
+	QUnit.module( 'File: assets/dev/js/editor/base/command-editor-internal.js', () => {
 		QUnit.module( 'CommandEditorInternal', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateCommandEditorInternal = ( commandEditorInternal ) => {

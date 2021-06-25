@@ -1,7 +1,7 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandInfra extends ArgsObject {
-	static registerArgs = {};
+	static registerConfig = {};
 
 	static getInstanceType() {
 		return 'CommandInfra';
@@ -24,7 +24,7 @@ export default class CommandInfra extends ArgsObject {
 	 * @returns {string}
 	 */
 	static getCommand() {
-		return this.registerArgs.__command;
+		return this.registerConfig.__command;
 	}
 
 	/**
@@ -33,7 +33,7 @@ export default class CommandInfra extends ArgsObject {
 	 * @returns {ComponentBase}
 	 */
 	static getComponent() {
-		return this.registerArgs.__component;
+		return this.registerConfig.__component;
 	}
 
 	/**
@@ -47,22 +47,20 @@ export default class CommandInfra extends ArgsObject {
 	constructor( args = {}, commandsAPI = $e.commands ) {
 		super( args );
 
-		if ( $e.components.isRegistering ) {
-			this.constructor.registerArgs = args;
-
-			return;
+		if ( 0 === Object.keys( this.constructor.registerConfig ).length ) {
+			throw RangeError( 'Doing it wrong: command should be have registerConfig.' );
 		}
 
-		if ( 0 === $e.commands.constructor.trace.length && ! $e.components.isRegistering ) {
+		if ( 0 === $e.commands.constructor.trace.length ) {
 			// Should be something like doingItWrong().
-			throw RangeError( 'Doing it wrong: $e.components.isRegistering is false while $e.commands.constructor.trace.length is empty' );
+			throw RangeError( 'Doing it wrong: cannot register commands while running them.' );
 		}
 
 		// Acknowledge self about which command it run.
-		this.command = this.constructor.getCommand() || commandsAPI.getCurrentLast();
+		this.command = this.constructor.getCommand();
 
 		// Assign instance of current component.
-		this.component = this.constructor.getComponent() || commandsAPI.getComponent( this.command );
+		this.component = this.constructor.getComponent();
 
 		// Who ever need do something before without `super` the constructor can use `initialize` method.
 		this.initialize( args );

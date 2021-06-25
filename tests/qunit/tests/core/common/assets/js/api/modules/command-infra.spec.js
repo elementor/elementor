@@ -5,17 +5,11 @@ import CommandData from 'elementor-api/modules/command-data';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-infra.js', () => {
-		QUnit.module( 'CommandInfra', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandInfra', () => {
 			QUnit.test( 'constructor(): Doing it wrong', ( assert ) => {
-				// Trying to create-command while $e.components.isRegistering = false;
-				$e.components.isRegistering = false;
-
 				assert.throws(
 					() => new CommandInfra( {} ),
-					new RangeError( 'Doing it wrong: $e.components.isRegistering is false while $e.commands.constructor.trace.length is empty' )
+					new RangeError( 'Doing it wrong: command should be have registerConfig.' )
 				);
 			} );
 

@@ -13,7 +13,7 @@ export default class CommandCallback extends CommandBase {
 	 * @returns {(function())}
 	 */
 	static getCallback() {
-		return this.registerArgs.__callback;
+		return this.registerConfig.__callback;
 	}
 
 	apply( args = {} ) {

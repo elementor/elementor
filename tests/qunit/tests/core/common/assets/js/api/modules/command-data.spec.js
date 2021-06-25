@@ -6,10 +6,7 @@ import ComponentBase from 'elementor-api/modules/component-base';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-data.js', () => {
-		QUnit.module( 'CommandData', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandData', () => {
 			QUnit.test( 'getRequestData(): simple', ( assert ) => {
 				// Register test data command.
 				const component = $e.components.register( new class TestComponent extends ComponentBase {

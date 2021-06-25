@@ -9,11 +9,7 @@ import CommandEditorInternal from 'elementor-editor/command-bases/command-editor
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/base/command-history.js', () => {
-		QUnit.module( 'CommandHistoryBase', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandHistoryBase', () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {

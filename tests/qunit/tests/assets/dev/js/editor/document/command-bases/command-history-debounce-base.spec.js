@@ -1,4 +1,4 @@
-import CommandHistoryBase from '../../../../../../../../../assets/dev/js/editor/document/command-bases/command-history-base';
+import CommandHistoryBase from 'elementor-document/command-bases/command-history-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
@@ -9,11 +9,7 @@ import CommandEditorInternal from 'elementor-editor/command-bases/command-editor
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/commands/command-history-debounce-base.js', () => {
-		QUnit.module( 'CommandHistoryDebounceBase', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandHistoryDebounceBase', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const validateHistoryDebounceCommand = ( historyDebounceCommand ) => {
 					// Base.

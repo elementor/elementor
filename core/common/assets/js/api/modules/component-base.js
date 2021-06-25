@@ -21,11 +21,6 @@ export default class ComponentBase extends elementorModules.Module {
 	}
 
 	registerAPI() {
-		if ( ! $e.components.isRegistering ) {
-			// Should be something like doingItWrong().
-			throw RangeError( 'Doing it wrong: $e.components.isRegistering is false' );
-		}
-
 		Object.entries( this.getTabs() ).forEach( ( tab ) => this.registerTabRoute( tab[ 0 ] ) );
 
 		Object.entries( this.getRoutes() ).forEach( ( [ route, callback ] ) => this.registerRoute( route, callback ) );
@@ -130,13 +125,11 @@ export default class ComponentBase extends elementorModules.Module {
 			}
 			registerArgs.__callback = context;
 			context = CommandCallback;
+		} else if ( ! context.registerConfig ) {
+			throw Error( `Command: '${ fullCommand }' should inherent "CommandInfra" class.` );
 		}
 
-		const instance = new context( registerArgs );
-
-		if ( ! ( instance instanceof CommandBase ) ) {
-			throw Error( `Command: '${ fullCommand }' should inherent "CommandBase" class.` );
-		}
+		context.registerConfig = registerArgs;
 
 		commandsAPI.register( this, command, context );
 	}
@@ -308,6 +301,10 @@ export default class ComponentBase extends elementorModules.Module {
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
+
+			Class.registerConfig = {
+
+			};
 
 			commands[ command ] = Class;
 		} );

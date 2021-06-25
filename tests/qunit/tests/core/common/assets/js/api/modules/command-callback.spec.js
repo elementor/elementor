@@ -6,10 +6,7 @@ import CommandCallback from 'elementor-api/modules/command-callback';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-callback.js', () => {
-		QUnit.module( 'CommandCallback', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandCallback', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
 				const commandCallback = new CommandCallback( {} );
 

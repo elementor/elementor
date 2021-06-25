@@ -7,11 +7,7 @@ import CommandEditorInternal from 'elementor-editor/command-bases/command-editor
 
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/base/command-editor-base.js', () => {
-		QUnit.module( 'CommandEditorBase', ( hooks ) => {
-			hooks.beforeEach( () => $e.components.isRegistering = true );
-
-			hooks.afterEach( () => $e.components.isRegistering = false );
-
+		QUnit.module( 'CommandEditorBase', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
