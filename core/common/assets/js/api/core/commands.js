@@ -413,7 +413,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	catchApply( e, instance ) {
 		instance.onCatchApply( e );
 
-		// TODO: Should be part of of $e. API.
+		// TODO: Should be part of $e.API.
 		elementorCommon.helpers.consoleError( e );
 	}
 
