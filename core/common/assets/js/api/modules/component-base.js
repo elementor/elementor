@@ -124,10 +124,10 @@ export default class ComponentBase extends elementorModules.Module {
 			if ( $e.devTools ) {
 				$e.devTools.log.warn( `Attach command-callback, on command: '${ fullCommand }', context is unknown type.` );
 			}
+
 			registerConfig.callback = context;
+
 			context = CommandCallback;
-		} else if ( ! context.registerConfig ) {
-			throw Error( `Command: '${ fullCommand }' should inherent "CommandInfra" class.` );
 		}
 
 		context.setRegisterConfig( registerConfig );
@@ -302,11 +302,6 @@ export default class ComponentBase extends elementorModules.Module {
 		// Convert `Commands` to `ComponentBase` workable format.
 		Object.entries( commandsFromImport ).forEach( ( [ className, Class ] ) => {
 			const command = this.normalizeCommandName( className );
-
-			Class.registerConfig = {
-
-			};
-
 			commands[ command ] = Class;
 		} );
 
