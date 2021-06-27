@@ -30,7 +30,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		} ] );
 	} );
 
-	QUnit.test( 'run(): Ensure run performed', ( assert ) => {
+	QUnit.test( 'run(): Ensure run performed', async ( assert ) => {
 		// Arrange.
 		const dispatcherOrig = $e.extras.hashCommands.dispatchersList[ 'e:run' ],
 			dispatcherRunnerOrig = dispatcherOrig.runner;
@@ -42,7 +42,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		};
 
 		// Act.
-		$e.extras.hashCommands.run( [ {
+		await $e.extras.hashCommands.run( [ {
 			command: 'test-hash-commands/safe-command',
 			method: 'e:run',
 		} ] );
@@ -55,26 +55,57 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 	} );
 
 	QUnit.test( 'run(): Ensure insecure command fails', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.extras.hashCommands.run( [ {
-					command: 'test-hash-commands/insecure-command',
-					method: 'e:run',
-				} ] );
-			},
+		assert.rejects(
+			$e.extras.hashCommands.run( [ {
+				command: 'test-hash-commands/insecure-command',
+				method: 'e:run',
+			} ] ),
 			new Error( 'Attempting to run unsafe or non exist command: `test-hash-commands/insecure-command`.' )
 		);
 	} );
 
 	QUnit.test( 'run(): Ensure exception when no dispatcher found', ( assert ) => {
-		assert.throws(
-			() => {
-				$e.extras.hashCommands.run( [ {
-					command: 'test-hash-commands/insecure-command',
-					method: 'e:non-exist-method',
-				} ] );
-			},
+		assert.rejects(
+			$e.extras.hashCommands.run( [ {
+				command: 'test-hash-commands/insecure-command',
+				method: 'e:non-exist-method',
+			} ] ),
 			new Error( 'No dispatcher found for the command: `test-hash-commands/insecure-command`.' )
 		);
+	} );
+
+	QUnit.test( 'run(): Ensure commands runs sequentially', async ( assert ) => {
+		// Arrange.
+		let sharedReference = 0;
+
+		const callback = $e.commands.on( 'run:after', ( component, command ) => {
+			sharedReference++;
+		} );
+
+		// Act.
+		$e.extras.hashCommands.run( [ {
+			command: 'test-hash-commands/safe-command',
+			method: 'e:run',
+		}, {
+			command: 'test-hash-commands/async-command',
+			method: 'e:run',
+		}, {
+			command: 'test-hash-commands/safe-command',
+			method: 'e:run',
+		} ] );
+
+		// Give him tick to reach 2.
+		await new Promise( ( h ) => setTimeout( h, 0 ) );
+
+		// Assert. ( Without sequentially mechanism it would be 3. ).
+		assert.equal( sharedReference, 2 );
+
+		// Give him tick to reach 3.
+		await new Promise( ( h ) => setTimeout( h, 0 ) );
+
+		assert.equal( sharedReference, 3 );
+
+		// Cleanup.
+		$e.commands.off( 'run:after', callback );
 	} );
 } );
