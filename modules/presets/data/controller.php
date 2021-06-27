@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Presets\Data;
 
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Presets\Documents\Preset;
 use \Elementor\Data\Base\Controller as Base_Controller;
 
@@ -36,6 +37,9 @@ class Controller extends Base_Controller {
 			Preset::TYPE,
 			[
 				'post_title' => $request->get_param( 'name' ),
+				'post_name' => $request->get_param( 'name' ),
+				'post_type' => Source_Local::CPT,
+				'post_status' => 'publish',
 			],
 			[
 				Preset::ELEMENT_TYPE_META_KEY => $request->get_param( 'element_type' ),
@@ -62,6 +66,8 @@ class Controller extends Base_Controller {
 	}
 
 	public function get_items( $request ) {
+		$presets = Repository::instance()->get_all();
+
 		return [];
 	}
 }

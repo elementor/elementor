@@ -105,5 +105,7 @@ class Module extends Base_Module {
 		Plugin::$instance->documents->register_document_type( Preset::TYPE, Preset::class );
 
 		Plugin::$instance->data_manager->register_controller( Controller::class );
+
+		Repository::instance()->get_all();
 	}
 }
