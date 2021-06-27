@@ -1,3 +1,4 @@
+import BottomPromotion from '../../components/bottom-promotion';
 import Content from '../../../../../../assets/js/layout/content';
 import FilterIndicationText from '../../components/filter-indication-text';
 import IndexHeader from './index-header';
@@ -10,7 +11,7 @@ import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
 import useTaxonomies from '../../hooks/use-taxonomies';
-import { Grid, Text, Button } from '@elementor/app-ui';
+import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
@@ -226,17 +227,7 @@ export default function Index( props ) {
 								isFilterActive,
 							} )
 						}
-						<Text className="e-kit-library__envato-promotion" variant="xl">
-							{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }
-							<Button
-								variant="underlined"
-								color="link"
-								url="https://go.elementor.com/app-envato-kits/"
-								target="_blank"
-								rel="noreferrer"
-								text={ __( 'Check Elementor Template Kits on ThemeForest', 'elementor' ) }
-							/>
-						</Text>
+						<BottomPromotion />
 					</>
 				</Content>
 			</div>
