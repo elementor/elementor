@@ -118,7 +118,7 @@ const ContainerView = BaseElementView.extend( {
 	 * @returns {boolean}
 	 */
 	isNested: function() {
-		return 'container' === this.getContainer().parent.model.get( 'elType' );
+		return 'document' !== this.getContainer().parent.model.get( 'elType' );
 	},
 
 	getEditButtons: function() {
