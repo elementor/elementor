@@ -36,8 +36,8 @@ jQuery( () => {
 					assert.equal( historyDebounceCommand instanceof $e.modules.editor.document.CommandHistoryDebounceBase, true );
 				};
 
-				validateHistoryDebounceCommand( new CommandHistoryDebounceBase( {} ) );
-				validateHistoryDebounceCommand( new $e.modules.editor.document.CommandHistoryDebounceBase( {} ) );
+				validateHistoryDebounceCommand( new CommandHistoryDebounceBase( { __manualConstructorHandling: true } ) );
+				validateHistoryDebounceCommand( new $e.modules.editor.document.CommandHistoryDebounceBase( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

@@ -17,8 +17,8 @@ jQuery( () => {
 						assert.equal( internalCommand instanceof $e.modules.CommandData, false );
 					};
 
-				validateInternalCommand( new CommandInternalBase( {} ) );
-				validateInternalCommand( new $e.modules.CommandInternalBase( {} ) );
+				validateInternalCommand( new CommandInternalBase( { __manualConstructorHandling: true } ) );
+				validateInternalCommand( new $e.modules.CommandInternalBase( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

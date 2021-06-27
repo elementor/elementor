@@ -1,7 +1,10 @@
 import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class CommandInfra extends ArgsObject {
-	static registerConfig = {};
+	/**
+	 * @type {Object}
+	 */
+	static registerConfig = null;
 
 	static getInstanceType() {
 		return 'CommandInfra';
@@ -24,7 +27,7 @@ export default class CommandInfra extends ArgsObject {
 	 * @returns {string}
 	 */
 	static getCommand() {
-		return this.registerConfig.__command;
+		return this.registerConfig.command;
 	}
 
 	/**
@@ -33,7 +36,11 @@ export default class CommandInfra extends ArgsObject {
 	 * @returns {ComponentBase}
 	 */
 	static getComponent() {
-		return this.registerConfig.__component;
+		return this.registerConfig.component;
+	}
+
+	static setRegisterConfig( config ) {
+		this.registerConfig = Object.freeze( config );
 	}
 
 	/**
@@ -42,18 +49,16 @@ export default class CommandInfra extends ArgsObject {
 	 * Create Commands Base.
 	 *
 	 * @param [args={}]
-	 * @param [commandsAPI={}]
 	 */
-	constructor( args = {}, commandsAPI = $e.commands ) {
+	constructor( args = {} ) {
 		super( args );
 
-		if ( 0 === Object.keys( this.constructor.registerConfig ).length ) {
-			throw RangeError( 'Doing it wrong: command should be have registerConfig.' );
+		if ( args.__manualConstructorHandling ) {
+			return;
 		}
 
-		if ( 0 === $e.commands.constructor.trace.length ) {
-			// Should be something like doingItWrong().
-			throw RangeError( 'Doing it wrong: cannot register commands while running them.' );
+		if ( ! this.constructor.registerConfig ) {
+			throw RangeError( 'Doing it wrong: Each command type should have `registerConfig`.' );
 		}
 
 		// Acknowledge self about which command it run.

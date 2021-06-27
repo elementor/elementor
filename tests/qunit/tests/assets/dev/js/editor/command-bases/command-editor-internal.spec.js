@@ -28,8 +28,8 @@ jQuery( () => {
 					assert.equal( commandEditorInternal instanceof $e.modules.editor.CommandEditorInternal, true );
 				};
 
-				validateCommandEditorInternal( new CommandEditorInternal( {} ) );
-				validateCommandEditorInternal( new $e.modules.editor.CommandEditorInternal( {} ) );
+				validateCommandEditorInternal( new CommandEditorInternal( { __manualConstructorHandling: true } ) );
+				validateCommandEditorInternal( new $e.modules.editor.CommandEditorInternal( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

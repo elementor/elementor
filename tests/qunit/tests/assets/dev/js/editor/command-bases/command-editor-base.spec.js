@@ -11,7 +11,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandEditorBase( { } );
+						const instance = new CommandEditorBase( { __manualConstructorHandling: true } );
 
 						instance.requireContainer();
 					},
@@ -23,6 +23,7 @@ jQuery( () => {
 				assert.throws(
 					() => {
 						const instance = new CommandEditorBase( {
+							__manualConstructorHandling: true,
 							container: {},
 							containers: [],
 						} );
@@ -30,17 +31,6 @@ jQuery( () => {
 						instance.requireContainer();
 					},
 					new Error( 'container and containers cannot go together please select one of them.' )
-				);
-			} );
-
-			QUnit.test( 'apply(): force method implementation', ( assert ) => {
-				assert.throws(
-					() => {
-						const instance = new CommandInfra( {} );
-
-						instance.apply( {} );
-					},
-					new Error( 'CommandInfra.apply() should be implemented, please provide \'apply\' functionality.' )
 				);
 			} );
 
@@ -64,8 +54,8 @@ jQuery( () => {
 					assert.equal( commandEditor instanceof $e.modules.editor.CommandEditorInternal, false );
 				};
 
-				validateCommandEditor( new CommandEditorBase( {} ) );
-				validateCommandEditor( new $e.modules.editor.CommandEditorBase( {} ) );
+				validateCommandEditor( new CommandEditorBase( { __manualConstructorHandling: true } ) );
+				validateCommandEditor( new $e.modules.editor.CommandEditorBase( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

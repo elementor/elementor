@@ -13,7 +13,7 @@ jQuery( () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandHistoryBase( {} );
+						const instance = new CommandHistoryBase( { __manualConstructorHandling: true } );
 
 						instance.getHistory( {} );
 					},
@@ -28,7 +28,7 @@ jQuery( () => {
 						return true;
 					}
 				},
-					instance = new fakeHistory( {} );
+					instance = new fakeHistory( { __manualConstructorHandling: true } );
 
 				instance.historyId = Math.random();
 
@@ -72,8 +72,8 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounceBase, false );
 				};
 
-				validateHistoryCommand( new CommandHistoryBase( {} ) );
-				validateHistoryCommand( new $e.modules.editor.document.CommandHistoryBase( {} ) );
+				validateHistoryCommand( new CommandHistoryBase( { __manualConstructorHandling: true } ) );
+				validateHistoryCommand( new $e.modules.editor.document.CommandHistoryBase( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

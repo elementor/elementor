@@ -401,7 +401,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		} else if ( result instanceof Promise ) {
 			return handleResultPromise( result );
 		}
-			handleResultNormal( result );
+
+		handleResultNormal( result );
 
 		return result;
 	}

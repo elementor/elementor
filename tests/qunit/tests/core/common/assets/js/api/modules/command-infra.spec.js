@@ -9,14 +9,14 @@ jQuery( () => {
 			QUnit.test( 'constructor(): Doing it wrong', ( assert ) => {
 				assert.throws(
 					() => new CommandInfra( {} ),
-					new RangeError( 'Doing it wrong: command should be have registerConfig.' )
+					new RangeError( 'Doing it wrong: Each command type should have `registerConfig`.' )
 				);
 			} );
 
 			QUnit.test( 'apply(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandInfra( {} );
+						const instance = new CommandInfra( { __manualConstructorHandling: true } );
 
 						instance.apply( {} );
 					},
@@ -25,7 +25,7 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const commandInfra = new CommandInfra( {} );
+				const commandInfra = new CommandInfra( { __manualConstructorHandling: true } );
 
 				assert.equal( commandInfra instanceof CommandInfra, true );
 				assert.equal( commandInfra instanceof CommandBase, false );

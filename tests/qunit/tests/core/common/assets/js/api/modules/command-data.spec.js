@@ -22,6 +22,7 @@ jQuery( () => {
 						}
 					} ),
 					args = {
+						__manualConstructorHandling: true,
 						options: {
 							type: 'get',
 						},
@@ -54,8 +55,8 @@ jQuery( () => {
 					assert.equal( command instanceof $e.modules.CommandData, true );
 				};
 
-				validateCommandData( new CommandData( {} ) );
-				validateCommandData( new $e.modules.CommandData( {} ) );
+				validateCommandData( new CommandData( { __manualConstructorHandling: true } ) );
+				validateCommandData( new $e.modules.CommandData( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

@@ -108,14 +108,15 @@ export default class ComponentBase extends elementorModules.Module {
 
 	/**
 	 * @param {string} command
-	 * @param {(function()|CommandInfra)} context
+	 * @param {(function()|typeof CommandInfra)} context
+	 * @param commandsAPI
 	 */
 	registerCommand( command, context, commandsAPI = $e.commands ) {
 		const fullCommand = this.getNamespace() + '/' + command,
 			instanceType = context.getInstanceType ? context.getInstanceType() : false,
-			registerArgs = {
-				__command: fullCommand,
-				__component: this,
+			registerConfig = {
+				command: fullCommand,
+				component: this,
 			};
 
 		// Support pure callback.
@@ -123,13 +124,13 @@ export default class ComponentBase extends elementorModules.Module {
 			if ( $e.devTools ) {
 				$e.devTools.log.warn( `Attach command-callback, on command: '${ fullCommand }', context is unknown type.` );
 			}
-			registerArgs.__callback = context;
+			registerConfig.callback = context;
 			context = CommandCallback;
 		} else if ( ! context.registerConfig ) {
 			throw Error( `Command: '${ fullCommand }' should inherent "CommandInfra" class.` );
 		}
 
-		context.registerConfig = registerArgs;
+		context.setRegisterConfig( registerConfig );
 
 		commandsAPI.register( this, command, context );
 	}

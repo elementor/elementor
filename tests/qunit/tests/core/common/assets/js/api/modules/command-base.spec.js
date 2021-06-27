@@ -11,7 +11,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandBase( { __manualConstructorHandling: true } );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -32,7 +32,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( {} );
+						const instance = new CommandBase( { __manualConstructorHandling: true } );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -55,8 +55,8 @@ jQuery( () => {
 					assert.equal( commandBase instanceof $e.modules.CommandData, false );
 				};
 
-				validateCommand( new CommandBase( {} ) );
-				validateCommand( new $e.modules.CommandBase( {} ) );
+				validateCommand( new CommandBase( { __manualConstructorHandling: true } ) );
+				validateCommand( new $e.modules.CommandBase( { __manualConstructorHandling: true } ) );
 			} );
 		} );
 	} );

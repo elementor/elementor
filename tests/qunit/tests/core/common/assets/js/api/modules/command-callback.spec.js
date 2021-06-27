@@ -8,7 +8,7 @@ jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-callback.js', () => {
 		QUnit.module( 'CommandCallback', () => {
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const commandCallback = new CommandCallback( {} );
+				const commandCallback = new CommandCallback( { __manualConstructorHandling: true } );
 
 				assert.equal( commandCallback instanceof CommandInfra, true );
 				assert.equal( commandCallback instanceof CommandBase, true );
@@ -20,7 +20,7 @@ jQuery( () => {
 				assert.equal( commandCallback instanceof $e.modules.CommandData, false );
 			} );
 
-			// TODO: Add more tests.
+			// TODO: Add more tests. register a component with callback and validate it instance.
 		} );
 	} );
 } );
