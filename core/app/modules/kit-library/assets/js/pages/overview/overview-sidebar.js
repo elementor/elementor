@@ -50,7 +50,7 @@ export default function OverviewSidebar( props ) {
 			{
 				props.groupedKitContent?.length > 0 && props.model.documents.length > 0 &&
 				<Collapse
-				 	isOpen={ isInformationCollapseOpen }
+					isOpen={ isInformationCollapseOpen }
 					onChange={ setIsInformationCollapseOpen }
 					title={ __( 'WHAT\'S INSIDE', 'elementor' ) }
 					className="e-kit-library__item-sidebar-collapse-info"
