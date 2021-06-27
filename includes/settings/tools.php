@@ -258,7 +258,7 @@ class Tools extends Settings_Page {
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files & Data', 'elementor' ) ),
-									'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
+									'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
