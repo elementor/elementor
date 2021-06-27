@@ -18,6 +18,7 @@ class Manager extends Module {
 	const BREAKPOINT_KEY_TABLET = 'tablet';
 	const BREAKPOINT_KEY_TABLET_EXTRA = 'tablet_extra';
 	const BREAKPOINT_KEY_LAPTOP = 'laptop';
+	const BREAKPOINT_KEY_DESKTOP = 'desktop';
 	const BREAKPOINT_KEY_WIDESCREEN = 'widescreen';
 
 	/**
