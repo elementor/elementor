@@ -1,8 +1,8 @@
 import { Text, Button } from '@elementor/app-ui';
 
-import './bottom-promotion.scss';
+import './envato-promotion.scss';
 
-export default function BottomPromotion() {
+export default function EnvatoPromotion() {
 	return (
 		<Text className="e-kit-library-bottom-promotion" variant="xl">
 			{ __( 'Looking for more Kits?', 'elementor' ) } { ' ' }

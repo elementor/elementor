@@ -1,5 +1,5 @@
-import BottomPromotion from '../../components/bottom-promotion';
 import Content from '../../../../../../assets/js/layout/content';
+import EnvatoPromotion from '../../components/envato-promotion';
 import ErrorScreen from '../../components/error-screen';
 import FilterIndicationText from '../../components/filter-indication-text';
 import IndexHeader from './index-header';
@@ -238,7 +238,7 @@ export default function Index( props ) {
 								isFilterActive,
 							} )
 						}
-						<BottomPromotion />
+						<EnvatoPromotion />
 					</>
 				</Content>
 			</div>
