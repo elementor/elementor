@@ -1,4 +1,4 @@
-.e-kit-library__not-results {
+.e-kit-library__error-screen {
 	margin-top: spacing(44);
 
 	&-title {
@@ -8,5 +8,6 @@
 	&-description {
 		color: tints( 500 );
 		text-align: center;
+		max-width: 520px;
 	}
 }

@@ -53,6 +53,8 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * Return a translated user-friendly list of the available masking shapes.
+	 *
 	 * @param bool $add_custom Determine if the output should contain `Custom` options.
 	 *
 	 * @return array Array of shapes with their URL as key.
@@ -75,7 +77,11 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Get array of selectors and rules to deal with image masking and mask the image instead of the wrapper.
+	 * Gets a string of CSS rules to apply, and returns an array of selectors with those rules.
+	 * This function has been created in order to deal with masking for image widget.
+	 * For most of the widgets the mask is being applied to the wrapper itself, but in the case of an image widget,
+	 * the `img` tag should be masked directly. So instead of writing a lot of selectors every time,
+	 * this function builds both of those selectors easily.
 	 *
 	 * @param $rules string The CSS rules to apply.
 	 *
