@@ -131,8 +131,6 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			this.setValue( 'size', values[ 0 ] );
 
 			this.ui.input.val( values[ 0 ] );
-
-			this.propagatePlaceholder();
 		}
 	},
 

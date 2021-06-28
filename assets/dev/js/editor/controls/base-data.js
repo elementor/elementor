@@ -359,8 +359,6 @@ ControlBaseDataView = ControlBaseView.extend( {
 			}
 		}
 
-		this.propagatePlaceholder();
-
 		this.updateElementModel( value, input );
 
 		this.triggerMethod( 'input:change', event );

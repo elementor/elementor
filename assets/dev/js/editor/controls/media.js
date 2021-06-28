@@ -107,7 +107,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		} );
 
 		this.applySavedValue();
-		this.propagatePlaceholder();
 	},
 
 	/**
