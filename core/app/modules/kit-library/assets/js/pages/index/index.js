@@ -229,9 +229,9 @@ export default function Index( props ) {
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
 									title={ __( 'No results matched your search.', 'elementor' ) }
-									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
+									description={ __( 'Try different keywords or ', 'elementor' ) }
 									button={ {
-										text: __( 'Continue Browsing', 'elementor' ),
+										text: __( 'Continue browsing.', 'elementor' ),
 										action: clearQueryParams,
 									} }
 								/>,

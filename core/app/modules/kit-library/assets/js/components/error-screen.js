@@ -8,14 +8,13 @@ export default function ErrorScreen( props ) {
 			<img src={ `${ elementorAppConfig.assets_url }images/no-search-results.svg` }/>
 			<Heading
 				tag="h3"
-				variant="h1"
+				variant="display-1"
 				className="e-kit-library__error-screen-title"
 			>
 				{ props.title }
 			</Heading>
 			<Text variant="xl" className="e-kit-library__error-screen-description">
-				{ props.description }
-				<br/>
+				{ props.description } { ' ' }
 				<Button
 					text={ props.button.text }
 					color="link"
