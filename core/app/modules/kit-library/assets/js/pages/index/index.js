@@ -1,11 +1,12 @@
 import BottomPromotion from '../../components/bottom-promotion';
 import Content from '../../../../../../assets/js/layout/content';
+import ErrorScreen from '../../components/error-screen';
 import FilterIndicationText from '../../components/filter-indication-text';
 import IndexHeader from './index-header';
-import IndexNoResults from './index-no-results';
 import IndexSidebar from './index-sidebar';
 import KitList from '../../components/kit-list';
 import Layout from '../../components/layout';
+import PageLoader from '../../components/page-loader';
 import SearchInput from '../../components/search-input';
 import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
@@ -211,12 +212,22 @@ export default function Index( props ) {
 				</Grid>
 				<Content className="e-kit-library__index-layout-main">
 					<>
-						{ isLoading && __( 'Loading...', 'elementor' ) }
-						{ isError && __( 'An error occurred', 'elementor' ) }
+						{ isLoading && <PageLoader /> }
+						{
+							isError && <ErrorScreen
+								title={ __( 'Something went wrong.', 'elementor' ) }
+								description={ __( 'Nothing to worry about, use 🔄 on the top right to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+								button={ {
+									text: __( 'Learn More', 'elementor' ),
+									url: 'http://go.elementor.com/app-kit-library-error',
+									target: '_blank',
+								} }
+							/>
+						}
 						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data }/> }
 						{
 							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
-								defaultComponent: <IndexNoResults
+								defaultComponent: <ErrorScreen
 									title={ __( 'No results matched your search.', 'elementor' ) }
 									description={ __( 'Try different keywords or continue browsing.', 'elementor' ) }
 									button={ {
