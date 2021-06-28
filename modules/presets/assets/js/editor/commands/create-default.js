@@ -1,4 +1,4 @@
-export class Create extends $e.modules.CommandBase {
+export class CreateDefault extends $e.modules.CommandBase {
 	validateArgs( args ) {
 		this.requireArgument( 'elementId', args );
 	}
@@ -14,11 +14,9 @@ export class Create extends $e.modules.CommandBase {
 			name,
 			element_type: container.settings.attributes.elType,
 			widget_type: container.settings.attributes.widgetType,
+			is_default: true,
 			settings,
 		} );
-
-		// Link the preset to the container
-		$e.run( 'presets/link', { presetId: data.data.id, elementId } );
 	}
 
 	/**
@@ -34,17 +32,6 @@ export class Create extends $e.modules.CommandBase {
 			.filter( ( [ controlName ] ) => container.view.isStyleTransferControl( controls[ controlName ] ) );
 
 		return Object.fromEntries( settings );
-	}
-
-	/**
-	 * Is the new preset should be default preset.
-	 *
-	 * @returns {boolean}
-	 */
-	shouldBeDefault() {
-		// Get all the preset for the specific widget or element if there is no presets, make the current one the default.
-
-		return false;
 	}
 }
 

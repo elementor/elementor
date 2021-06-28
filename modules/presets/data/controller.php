@@ -44,24 +44,19 @@ class Controller extends Base_Controller {
 			[
 				Preset::ELEMENT_TYPE_META_KEY => $request->get_param( 'element_type' ),
 				Preset::WIDGET_TYPE_META_KEY => $request->get_param( 'widget_type' ),
-				Preset::SETTINGS_META_KEY => $request->get_param( 'settings' ),
+				Preset::SETTINGS_META_KEY => wp_json_encode( $request->get_param( 'settings' ) ),
 				Preset::DEFAULT_META_KEY => $request->get_param( 'is_default' ),
 			]
 		);
 
 		return [
-			'data' => [
-				'id' => $preset->get_id(),
-			],
+			'data' => Repository::instance()->find( $preset->get_id() ),
 		];
 	}
 
 	public function get_item( $request ) {
 		return [
-			'data' => [
-				'id' => $request->get_param( 'id' ),
-				'settings' => [],
-			],
+			'data' => Repository::instance()->find( $request->get_param( 'id' ) ),
 		];
 	}
 

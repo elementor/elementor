@@ -106,6 +106,6 @@ class Module extends Base_Module {
 
 		Plugin::$instance->data_manager->register_controller( Controller::class );
 
-		Repository::instance()->get_all();
+//		var_dump( Repository::instance()->find(3565) );die;
 	}
 }
