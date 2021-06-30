@@ -111,6 +111,8 @@ class Manager extends Module {
 	 *
 	 * Checks whether there are currently custom breakpoints saved in the database.
 	 * Returns true if there are breakpoint values saved in the active kit.
+	 * If the user has activated any additional custom breakpoints (mobile extra, tablet extra, laptop, widescreen) -
+	 * that is considered as having custom breakpoints.
 	 *
 	 * @since 3.2.0
 	 *
@@ -119,7 +121,13 @@ class Manager extends Module {
 	public function has_custom_breakpoints() {
 		$breakpoints = $this->get_breakpoints();
 
-		foreach ( $breakpoints as $breakpoint ) {
+		$additional_breakpoints = [ 'mobile_extra', 'tablet_extra', 'laptop', 'widescreen' ];
+
+		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
+			if ( in_array( $breakpoint_name, $additional_breakpoints, true ) ) {
+				return true;
+			}
+
 			/** @var Breakpoint $breakpoint */
 			if ( $breakpoint->is_custom() ) {
 				return true;
