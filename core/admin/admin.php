@@ -641,7 +641,16 @@ class Admin extends App {
 				<div class="e-major-update-warning__title">
 					<?php echo esc_html__( 'Heads up, Please backup before upgrade!', 'elementor' ); ?>
 				</div>
-				<div class="e-major-update-warning__message"><?php echo sprintf( esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you <a href="%s">backup your site before upgrading</a>, and make sure you first update in a staging environment', 'elementor' ), 'https://go.elementor.com/wp-dash-update-backup' ); ?></div>
+				<div class="e-major-update-warning__message">
+					<?php
+						printf(
+							/* translators: %1$s Link open tag, %2$s: Link close tag. */
+							esc_html__( 'The latest update includes some substantial changes across different areas of the plugin. We highly recommend you %1$sbackup your site before upgrading%2$s, and make sure you first update in a staging environment', 'elementor' ),
+							'<a href="https://go.elementor.com/wp-dash-update-backup/">',
+							'</a>'
+						);
+					?>
+				</div>
 			</div>
 		</div>
 		<?php
