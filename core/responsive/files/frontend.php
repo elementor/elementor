@@ -38,7 +38,8 @@ class Frontend extends Base {
 
 		$file_content = file_get_contents( $this->template_file );
 
-		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+[_]?[A-Z]+)_([MIN|AX]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
+		// The regex pattern parses placeholders located in the frontend _templates.scss file.
+		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z_]+)(?:_(MIN|MAX|NEXT))/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
 			// Handle BC for legacy template files and Elementor Pro builds.
 			$placeholder_data = $this->maybe_convert_placeholder_data( $placeholder_data );
 
@@ -49,7 +50,8 @@ class Frontend extends Base {
 
 				$is_max_point = 'MAX' === $placeholder_data[2];
 
-				if ( ! $is_max_point ) {
+				// If the placeholder capture is `MOBILE_NEXT` or `TABLET_NEXT`, the original breakpoint value is used.
+				if ( ! $is_max_point && 'NEXT' !== $placeholder_data[2] ) {
 					$breakpoint_index--;
 				}
 

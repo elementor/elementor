@@ -2,7 +2,7 @@
 
 	&:after {
 
-		@media (min-width: $screen-widescreen) {
+		@media (min-width: $screen-widescreen-min) {
 			content: 'widescreen';
 		}
 
@@ -10,20 +10,20 @@
 			content: 'desktop';
 		}
 
-		@media (max-width: $screen-laptop) {
+		@media (max-width: $screen-laptop-max) {
 			content: 'laptop';
 		}
 
-		@media (max-width: $screen-tablet-extra) {
-			content: 'tablet_extra';
+		@media (max-width: $screen-tablet-extra-max) {
+			content: 'tablet-extra';
 		}
 
 		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
 			content: 'tablet';
 		}
 
-		@media (max-width: $screen-mobile-extra) {
-			content: 'mobile_extra';
+		@media (max-width: $screen-mobile-extra-max) {
+			content: 'mobile-extra';
 		}
 
 		@media (max-width: $screen-sm-max) {

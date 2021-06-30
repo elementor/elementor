@@ -1,8 +1,15 @@
 $screen-sm-max: map_get($breakpoints, md) - 1;
 $screen-md-min: map_get($breakpoints, md);
+$screen-mobile-next: $screen-md-min;
 $screen-md-max: map_get($breakpoints, lg) - 1;
 $screen-lg-min: map_get($breakpoints, lg);
-$screen-mobile-extra: 880px;
-$screen-tablet-extra: 1200px;
-$screen-laptop: 1366px;
-$screen-widescreen: 2400px;
+$screen-tablet-next: $screen-lg-min;
+
+// Additional Custom Breakpoints - SCSS placeholders
+$screen-mobile-extra-min: 0;
+$screen-mobile-extra-max: 0;
+$screen-tablet-extra-min: 0;
+$screen-tablet-extra-max: 0;
+$screen-laptop-min: 0;
+$screen-laptop-max: 0;
+$screen-widescreen-min: 0;
