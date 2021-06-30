@@ -43,8 +43,14 @@ class Frontend extends Base {
 			// Handle BC for legacy template files and Elementor Pro builds.
 			$placeholder_data = $this->maybe_convert_placeholder_data( $placeholder_data );
 
+			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
+
 			if ( 'DESKTOP' === $placeholder_data[1] ) {
 				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+			} elseif ( false === $breakpoint_index ) {
+				// If the breakpoint in the placeholder is not active - use a -1 value for the media query, to make
+				// sure the setting is printed (to avoid a PHP error) but doesn't apply.
+				$value = -1;
 			} elseif ( 'WIDESCREEN' === $placeholder_data[1] ) {
 				$value = $breakpoints['widescreen']->get_value();
 			} else {
