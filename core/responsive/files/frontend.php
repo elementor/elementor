@@ -45,6 +45,8 @@ class Frontend extends Base {
 
 			if ( 'DESKTOP' === $placeholder_data[1] ) {
 				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+			} elseif ( 'WIDESCREEN' === $placeholder_data[1] ) {
+				$value = $breakpoints['widescreen']->get_value();
 			} else {
 				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
