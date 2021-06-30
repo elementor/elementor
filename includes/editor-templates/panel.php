@@ -174,8 +174,15 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
 	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
-	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); ?>'.replace( '%s', disabledTitle ) }}}</div>
-	<div class="elementor-nerd-box-message"><?php printf( esc_html__( 'You can enable it from the <a href="%s" target="_blank">Elementor settings page</a>.', 'elementor' ), esc_url( Settings::get_url() ) ); ?></div>
+	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
+	<div class="elementor-nerd-box-message"><?php
+		printf(
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+			esc_html__( 'You can enable it from the %1$sElementor settings page%2$s.', 'elementor' ),
+			'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank">',
+			'</a>'
+		);
+		?></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-scheme-color-item">

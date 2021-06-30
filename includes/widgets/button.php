@@ -260,7 +260,12 @@ class Widget_Button extends Widget_Base {
 				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
+				'description' => sprintf(
+					/* translators: %1$s Code open tag, %2$s: Code close tag. */
+					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
+					'<code>',
+					'</code>'
+				),
 				'separator' => 'before',
 
 			]
