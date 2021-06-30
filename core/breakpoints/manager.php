@@ -119,7 +119,7 @@ class Manager extends Module {
 	 * @return boolean
 	 */
 	public function has_custom_breakpoints() {
-		$breakpoints = $this->get_breakpoints();
+		$breakpoints = $this->get_active_breakpoints();
 
 		$additional_breakpoints = [ 'mobile_extra', 'tablet_extra', 'laptop', 'widescreen' ];
 
