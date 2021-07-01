@@ -74,7 +74,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		);
 	} );
 
-	QUnit.only( 'run(): Ensure commands runs sequentially', async ( assert ) => {
+	QUnit.test( 'run(): Ensure commands runs sequentially', async ( assert ) => {
 		// Arrange.
 		let sharedReference = 0;
 
