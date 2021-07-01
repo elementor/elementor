@@ -88,7 +88,7 @@ export default class HashCommands {
 			}
 
 			if ( ! dispatcher.isSafe( hashCommand.command ) ) {
-				return Promise.reject( Error( `Attempting to run unsafe or non exist command: \`${ hashCommand.command }\`.` ) );
+				return Promise.reject( new Error( `Attempting to run unsafe or non exist command: \`${ hashCommand.command }\`.` ) );
 			}
 		}
 

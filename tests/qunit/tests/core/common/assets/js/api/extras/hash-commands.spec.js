@@ -74,11 +74,11 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		);
 	} );
 
-	QUnit.test( 'run(): Ensure commands runs sequentially', async ( assert ) => {
+	QUnit.only( 'run(): Ensure commands runs sequentially', async ( assert ) => {
 		// Arrange.
 		let sharedReference = 0;
 
-		const callback = $e.commands.on( 'run:after', ( component, command ) => {
+		const callback = $e.commands.on( 'run:after', () => {
 			sharedReference++;
 		} );
 
@@ -94,13 +94,23 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 			method: 'e:run',
 		} ] );
 
+		// Ensure initial 'safe-command' run.
+		assert.equal( sharedReference, 1 );
+		// Why it works?
+		// Since the 'async-command' is still in callstack.
+		// Only the promise of 'async-command' is in the callstack.
+
 		// Give him tick to reach 2.
+		// When a waiting for promise, it will release the event loop, to run other callbacks in the stack.
 		await new Promise( ( h ) => setTimeout( h, 0 ) );
 
+		// At this point its about to leave. it is still waits for 'async-command' finish it's timeout.
 		// Assert. ( Without sequentially mechanism it would be 3. ).
 		assert.equal( sharedReference, 2 );
 
 		// Give him tick to reach 3.
+		// After another tick in the event loop occurs, the async-command finally leave, and
+		// safe-command which is last command, runs, that why sharedReference will become 3.
 		await new Promise( ( h ) => setTimeout( h, 0 ) );
 
 		assert.equal( sharedReference, 3 );
