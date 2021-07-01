@@ -57,6 +57,7 @@ class Post_Type extends Base {
 
 			$post_manifest_data = [
 				'title' => $post->post_title,
+				'excerpt' => $post->post_excerpt,
 				'doc_type' => $document->get_name(),
 				'thumbnail' => get_the_post_thumbnail_url( $post ),
 				'url' => get_permalink( $post ),
@@ -106,6 +107,7 @@ class Post_Type extends Base {
 			$post_settings['doc_type'],
 			[
 				'post_title' => $post_settings['title'],
+				'post_excerpt' => $post_settings['excerpt'],
 				'post_type' => $this->post_type,
 				'post_status' => 'publish',
 			]
