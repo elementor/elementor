@@ -19,7 +19,22 @@ class Index extends Endpoint {
 			function ( $request ) {
 				return $this->base_callback( \WP_REST_Server::READABLE, $request, true );
 			},
-			$this->controller->get_collection_params()
+			[]
+		);
+
+		$this->register_route(
+			'(?P<type>[\w]+)/',
+			\WP_REST_Server::CREATABLE,
+			function ( $request ) {
+				return $this->base_callback( \WP_REST_Server::CREATABLE, $request, false );
+			},
+			[
+				'type' => [
+					'description' => 'Unique identifier for the object.',
+					'required' => true,
+					'type' => 'string',
+				],
+			]
 		);
 	}
 }
