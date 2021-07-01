@@ -1020,7 +1020,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateZ: {{SIZE}}deg",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
 					'condition' => [
 						"_{$tab}_transform_rotate_popover!" => '',
@@ -1058,7 +1058,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateX: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1083,7 +1083,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateY: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1126,7 +1126,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_translate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-translateX: {{SIZE}}{{UNIT}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1155,7 +1155,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-translateY: {{SIZE}}{{UNIT}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1206,7 +1206,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scale: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scale: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1232,7 +1232,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scaleX: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scaleX: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1258,7 +1258,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scaleY: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scaleY: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1296,7 +1296,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-skewX: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-skewX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1320,7 +1320,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-skewY: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-skewY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1341,7 +1341,7 @@ class Widget_Common extends Widget_Base {
 					],
 					'prefix_class' => 'e-',
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-flipX: -1",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-flipX: -1',
 					],
 					'frontend_available' => true,
 				]
@@ -1360,7 +1360,7 @@ class Widget_Common extends Widget_Base {
 					],
 					'prefix_class' => 'e-',
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-flipY: -1",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-flipY: -1',
 					],
 					'frontend_available' => true,
 				]
@@ -1415,7 +1415,7 @@ class Widget_Common extends Widget_Base {
 
 		$transform_origin_conditions = [
 			'relation' => 'or',
-			'terms' => array_merge( $normal_transform_origin_conditions, $hover_transform_origin_conditions )
+			'terms' => array_merge( $normal_transform_origin_conditions, $hover_transform_origin_conditions ),
 		];
 
 		// Will override motion effect transform-origin
