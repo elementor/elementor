@@ -1,31 +1,17 @@
 
 
-.e-transform .elementor-widget-container{
+.e-transform .elementor-widget-container {
 	transform:
-		rotateZ( var( --normal-rotate-z, 0 ) )
-		rotateX( var( --normal-rotate-x, 0 ) )
-		rotateY( var( --normal-rotate-y, 0 ) )
-		translate( var( --normal-translate, 0 ) )
-		translateX( var( --normal-translate-x, 0 ) )
-		translateY( var( --normal-translate-y, 0 ) )
-		scaleX( calc( var( --normal-flip-x, 1 ) * var( --normal-scale-x, var( --normal-scale, 1 ) ) ) )
-		scaleY( calc( var( --normal-flip-y, 1 ) * var( --normal-scale-y, var(--normal-scale, 1) ) ) )
-		skewX( var( --normal-skew-x, 0 ) )
-		skewY( var( --normal-skew-y, 0 ) );
-	// transform-origin: var( --transform-origin-y )  var( --transform-origin-x );
-	transition: transform var( --transition-duration, 0ms );
-}
-
-.e-transform .elementor-widget-container:hover{
-	transform:
-		rotateZ( var( --hover-rotate-z, var( --normal-rotate-z, 0 ) ) )
-		rotateX( var( --hover-rotate-x, var( --normal-rotate-x, 0 ) ) )
-		rotateY( var( --hover-rotate-y, var( --normal-rotate-y, 0 ) ) )
-		translate( var( --hover-translate, var( --normal-translate, 0 ) ) )
-		translateX( var( --hover-translate-x, var( --normal-translate-x, 0 ) ) )
-		translateY( var( --hover-translate-y, var( --normal-translate-y, 0 ) ) )
-		scaleX( calc( var( --hover-flip-x, 1 ) * var( --hover-scale-x, var( --hover-scale, var( --normal-scale-x, var( --normal-scale, 1 ) ) ) ) ) )
-		scaleY( calc( var( --hover-flip-y, 1 ) * var( --hover-scale-y, var( --hover-scale, var( --normal-scale-y, var( --normal-scale, 1 ) ) ) ) ) )
-		skewX( var( --hover-skew-x, var( --normal-skew-x, 0 ) ) )
-		skewY( var( --hover-skew-y, var(--normal-skew-y, 0 ) ) );
+		rotateZ( var( --e-transform-rotateZ, 0 ) )
+		rotateX( var( --e-transform-rotateX, 0 ) )
+		rotateY( var( --e-transform-rotateY, 0 ) )
+		translate( var( --e-transform-translate, 0 ) )
+		translateX( var( --e-transform-translateX, 0 ) )
+		translateY( var( --e-transform-translateY, 0 ) )
+		scaleX( calc( var( --e-transform-flipX, 1 ) * var( --e-transform-scaleX, var( --e-transform-scale, 1 ) ) ) )
+		scaleY( calc( var( --e-transform-flipY, 1 ) * var( --e-transform-scaleY, var(--e-transform-scale, 1) ) ) )
+		skewX( var( --e-transform-skewX, 0 ) )
+		skewY( var( --e-transform-skewY, 0 ) );
+	transform-origin: var( --e-transform-origin-y )  var( --e-transform-origin-x );
+	transition: transform var( --e-transform-transition-duration, 0ms );
 }

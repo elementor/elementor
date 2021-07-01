@@ -984,6 +984,8 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_tabs( '_tabs_positioning' );
 
 		foreach ( [ 'normal', 'hover' ] as $tab ) {
+			$hover_state = 'hover' === $tab ? ':hover' : '';
+
 			$this->start_controls_tab(
 				"_tab_positioning_{$tab}",
 				[
@@ -1009,7 +1011,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
@@ -1018,7 +1020,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-z: {{SIZE}}deg",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateZ: {{SIZE}}deg",
 					],
 					'condition' => [
 						"_{$tab}_transform_rotate_popover!" => '',
@@ -1043,7 +1045,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
@@ -1056,7 +1058,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-x: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateX: {{SIZE}}deg;",
 					],
 					'frontend_available' => true,
 				]
@@ -1068,7 +1070,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'px' => [
+						'deg' => [
 							'min' => -360,
 							'max' => 360,
 						],
@@ -1081,7 +1083,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-rotate-y: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-rotateY: {{SIZE}}deg;",
 					],
 					'frontend_available' => true,
 				]
@@ -1124,7 +1126,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_translate_popover!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-translate-x: {{SIZE}}{{UNIT}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-translateX: {{SIZE}}{{UNIT}};",
 					],
 					'frontend_available' => true,
 				]
@@ -1153,7 +1155,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-translate-y: {{SIZE}}{{UNIT}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-translateY: {{SIZE}}{{UNIT}};",
 					],
 					'frontend_available' => true,
 				]
@@ -1196,12 +1198,15 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
+					'default' => [
+						'size' => 1,
+					],
 					'condition' => [
 						"_{$tab}_transform_scale_popover!" => '',
 						"_{$tab}_transform_keep_proportions!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scale: {{SIZE}};",
 					],
 					'frontend_available' => true,
 				]
@@ -1219,12 +1224,15 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
+					'default' => [
+						'size' => 1,
+					],
 					'condition' => [
 						"_{$tab}_transform_scale_popover!" => '',
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale-x: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scaleX: {{SIZE}};",
 					],
 					'frontend_available' => true,
 				]
@@ -1242,12 +1250,15 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
+					'default' => [
+						'size' => 1,
+					],
 					'condition' => [
 						"_{$tab}_transform_scale_popover!" => '',
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-scale-y: {{SIZE}};",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-scaleY: {{SIZE}};",
 					],
 					'frontend_available' => true,
 				]
@@ -1285,7 +1296,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-skew-x: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-skewX: {{SIZE}}deg;",
 					],
 					'frontend_available' => true,
 				]
@@ -1309,7 +1320,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-skew-y: {{SIZE}}deg;",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-skewY: {{SIZE}}deg;",
 					],
 					'frontend_available' => true,
 				]
@@ -1318,7 +1329,7 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_flip_horizontal_effect",
+				"_{$tab}_transform_flipX_effect",
 				[
 					'label' => __( 'Flip Horizontal', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
@@ -1330,14 +1341,14 @@ class Widget_Common extends Widget_Base {
 					],
 					'prefix_class' => 'e-',
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-x: -1",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-flipX: -1",
 					],
 					'frontend_available' => true,
 				]
 			);
 
 			$this->add_control(
-				"_{$tab}_transform_flip_vertical_effect",
+				"_{$tab}_transform_flipY_effect",
 				[
 					'label' => __( 'Flip Vertical', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
@@ -1349,7 +1360,7 @@ class Widget_Common extends Widget_Base {
 					],
 					'prefix_class' => 'e-',
 					'selectors' => [
-						'{{WRAPPER}} > .elementor-widget-container' => "--{$tab}-flip-y: -1",
+						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => "--e-transform-flipY: -1",
 					],
 					'frontend_available' => true,
 				]
@@ -1368,20 +1379,48 @@ class Widget_Common extends Widget_Base {
 							],
 						],
 						'selectors' => [
-							'{{WRAPPER}} > .elementor-widget-container' => '--transition-duration: {{SIZE}}ms',
+							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
 						],
 					]
 				);
 			}
+
+			${"{$tab}_transform_origin_conditions"} = [
+				[
+					'name' => "_{$tab}_transform_scale_popover",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_{$tab}_transform_rotate_popover",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_{$tab}_transform_flipX_effect",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_{$tab}_transform_flipY_effect",
+					'operator' => '!=',
+					'value' => '',
+				],
+			];
 
 			$this->end_controls_tab();
 		}
 
 		$this->end_controls_tabs();
 
+		$transform_origin_conditions = [
+			'relation' => 'or',
+			'terms' => array_merge( $normal_transform_origin_conditions, $hover_transform_origin_conditions )
+		];
+
 		// Will override motion effect transform-origin
 		$this->add_responsive_control(
-			'_transform_x_anchor_point',
+			'motion_fx_transform_x_anchor_point',
 			[
 				'label' => __( 'X Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -1399,17 +1438,17 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'conditions' => $transform_origin_conditions,
 				'separator' => 'before',
-				// 'default' => 'center',
-				// 'toggle' => false,
-				// 'selectors' => [
-				// 	'{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-x: {{VALUE}}',
-				// ],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-origin-x: {{VALUE}}',
+				],
 			]
 		);
 
+		// Will override motion effect transform-origin
 		$this->add_responsive_control(
-			'_transform_y_anchor_point',
+			'motion_fx_transform_y_anchor_point',
 			[
 				'label' => __( 'Y Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
@@ -1427,11 +1466,9 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
-				// 'default' => 'center',
-				// 'toggle' => false,
+				'conditions' => $transform_origin_conditions,
 				'selectors' => [
-					// '{{WRAPPER}} > .elementor-widget-container' => '--transform-origin-y: {{VALUE}}',
-					'{{WRAPPER}} > .elementor-widget-container' => 'transform-origin: {{_transform_x_anchor_point.VALUE}} {{VALUE}}',
+					'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-origin-y: {{VALUE}}',
 				],
 			]
 		);
