@@ -39,7 +39,7 @@ html.elementor-html {
 	--outline-color: var( --primary-color );
 
 	.e-container {
-		// TODO: Use variable.
+		// TODO: Use variable when available - waiting for final color from the Design.
 		--primary-color: #0098C7;
 		--secondary-color: #{ darken(#0098C7, 10%) };
 		--outline-color: var( --primary-color );
