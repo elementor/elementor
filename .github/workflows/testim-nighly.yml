@@ -1,12 +1,11 @@
 name: Testim
 
 on:
-  push:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 10 * * *' # run at 10 AM UTC
+  pull_request_review:
+    types: [submitted]
 
 jobs:
+  if: github.event.review.state == 'approved'
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-latest
