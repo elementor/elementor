@@ -34,7 +34,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	var no_revisions_1 = '<?php echo esc_html__( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ); ?>',
 		no_revisions_2 = '<?php echo esc_html__( 'Start designing your page and you will be able to see the entire revision history here.', 'elementor' ); ?>',
 		revisions_disabled_1 = '<?php echo esc_html__( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ); ?>',
-		revisions_disabled_2 = '<?php printf( esc_html__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ), 'https://go.elementor.com/wordpress-revisions/' ); /* translators: %s: Codex URL */ ?>';
+		revisions_disabled_2 = '<?php printf(
+			/* translators: %1$s Link open tag, %2$s: Link close tag. */
+			esc_html__( 'Learn more about %1$sWordPress revisions%2$s', 'elementor' ),
+			'<a target="_blank" href="https://go.elementor.com/wordpress-revisions/">',
+			'</a>'
+		); ?>';
 	#>
 	<img class="elementor-nerd-box-icon" src="<?php
 	// PHPCS - Safe Elementor SVG
