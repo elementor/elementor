@@ -5,10 +5,10 @@ on:
     types: [submitted]
 
 jobs:
-  if: github.event.review.state == 'approved'
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
