@@ -33,6 +33,9 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 					'max' => 100,
 				],
 			],
+			'default' => [
+				'unit' => '%',
+			],
 			'size_units' => [ 'px', '%', 'vw' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-basis: {{SIZE}}{{UNIT}};',
