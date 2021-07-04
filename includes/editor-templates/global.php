@@ -30,7 +30,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
+					const isContainerActive = elementorCommon.config.experimentalFeatures.container;
 					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34 ];
+
+					// Add the removed section structure if the container experiment isn't active.
+					if ( ! isContainerActive ) {
+						structures.push( 60 );
+					}
 
 					_.each( structures, function( structure ) {
 					var preset = elementor.presetsFactory.getPresetByStructure( structure ); #>
@@ -40,9 +46,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</li>
 					<# } ); #>
 
-				<li class="elementor-preset elementor-column elementor-col-16" data-structure="flex-container">
-					{{{ elementor.presetsFactory.getContainerPreset( 'FLEX' ) }}}
-				</li>
+				<# if ( isContainerActive ) { #>
+					<li class="elementor-preset elementor-column elementor-col-16" data-structure="flex-container">
+						{{{ elementor.presetsFactory.getContainerPreset( 'FLEX' ) }}}
+					</li>
+				<# } #>
 			</ul>
 		</div>
 	</div>
