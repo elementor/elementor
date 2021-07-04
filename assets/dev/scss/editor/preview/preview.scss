@@ -39,8 +39,9 @@ html.elementor-html {
 	--outline-color: var( --primary-color );
 
 	.e-container {
-		--primary-color: #{ $editor-accent };
-		--secondary-color: #{ darken($editor-accent, 10%) };
+		// TODO: Use variable.
+		--primary-color: #0098C7;
+		--secondary-color: #{ darken(#0098C7, 10%) };
 		--outline-color: var( --primary-color );
 	}
 
