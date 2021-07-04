@@ -53,7 +53,8 @@
 		animation-name: dnd-placeholder-widget-vertical;
 	}
 
-	.elementor-widget {
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor-widget.elementor-widget {
 		// Override the default margin-bottom of widgets.
 		margin-bottom: 0;
 	}
