@@ -17,6 +17,10 @@ export default class Component extends $e.modules.ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
+		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
+			$e.data.deleteCache( this, 'default-values/index' );
+		} );
+
 		elementor.hooks.addFilter( 'editor/attach-preview/before', ( callbacks ) => [
 			...callbacks,
 			() => $e.data.get( 'default-values/index', {}, {} ),

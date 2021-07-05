@@ -12,10 +12,13 @@ export class Create extends $e.modules.CommandBase {
 
 		const type = widgetType || elType;
 
-		// Save those settings into preset
-		const { data } = await $e.data.create( 'default-values/index', { settings }, { type } );
+		const elementsToRecreate = this.getAllElementsForRecreate( type, container );
 
-		this.replaceAllRelatedElements( type, data );
+		// Save those settings into preset
+		await $e.data.create( 'default-values/index', { settings }, { type } );
+
+		// Will recreate all the elements with the same type to apply the default values.
+		$e.commandsInternal.run( 'document/elements/recreate', { settings: elementsToRecreate } );
 	}
 
 	/**
@@ -26,42 +29,39 @@ export class Create extends $e.modules.CommandBase {
 	 */
 	getSettingsForSave( container ) {
 		const controls = container.settings.controls;
+		const settingsWithoutDefaults = container.settings.toJSON( { remove: [ 'hard-coded-default' ] } );
 
-		const settings = Object.entries( container.settings.toJSON( { remove: [ 'hard-coded-default' ] } ) )
+		const settings = Object.entries( settingsWithoutDefaults )
 			.filter( ( [ controlName ] ) => {
-				// TODO: Make sure to copy globals
-				return controls[ controlName ] && container.view.isStyleTransferControl( controls[ controlName ] );
+				return '__globals__' === controlName ||
+					( controls[ controlName ] && container.view.isStyleTransferControl( controls[ controlName ] ) );
 			} );
 
 		return Object.fromEntries( settings );
 	}
 
-	replaceAllRelatedElements( type, values ) {
-		// const emptyValues = Object.keys( values ).reduce( ( carry, key ) => {
-		// 	return {
-		// 		...carry,
-		// 		// TODO: Make sure that globals included and object controls.
-		// 		[ key ]: '',
-		// 	};
-		// }, {} );
-		//
-		// elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
-		// 	const currentElementType = element.model.attributes.widgetType || element.model.attributes.elType;
-		//
-		// 	if ( type !== currentElementType ) {
-		// 		return;
-		// 	}
-		//
-		// 	console.log( element );
-		// 	// element.settings.set();
-		// } );
-	}
+	/**
+	 * Get all the elements that should recreate after the creating the new default.
+	 *
+	 * @param type
+	 * @param targetElement
+	 * @returns {{}}
+	 */
+	getAllElementsForRecreate( type, targetElement ) {
+		const elements = {};
 
-	// clearDefaultElementValues( container, values ) {
-	// 	Object.keys( values ).forEach(
-	// 		( key ) => container.settings.set( key, undefined )
-	// 	);
-	// }
+		elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
+			const currentElementType = element.model.attributes.widgetType || element.model.attributes.elType;
+
+			if ( type !== currentElementType || targetElement.id === element.id ) {
+				return;
+			}
+
+			elements[ element.id ] = element.model.toJSON( { remove: [ 'default' ] } );
+		} );
+
+		return elements;
+	}
 }
 
 export default Create;

@@ -27,7 +27,7 @@ class Controller extends Base_Controller {
 	 *
 	 * @param \WP_REST_Request $request
 	 *
-	 * @return array|\WP_Error
+	 * @return object|\WP_Error
 	 */
 	public function get_items( $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -36,7 +36,7 @@ class Controller extends Base_Controller {
 			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		return $kit->get_json_meta( Module::DEFAULT_VALUES_META_KEY );
+		return (object) $kit->get_json_meta( Module::DEFAULT_VALUES_META_KEY );
 	}
 
 	/**
@@ -44,7 +44,7 @@ class Controller extends Base_Controller {
 	 *
 	 * @param \WP_REST_Request $request
 	 *
-	 * @return array|\WP_Error
+	 * @return object|\WP_Error
 	 */
 	public function create_item( $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -61,9 +61,14 @@ class Controller extends Base_Controller {
 
 		$kit->update_meta( Module::DEFAULT_VALUES_META_KEY, wp_json_encode( $default_values ) );
 
-		return $default_values[ $type ];
+		return (object) $default_values[ $type ];
 	}
 
+	/**
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return object|\WP_Error
+	 */
 	public function delete_item( $request ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -79,6 +84,6 @@ class Controller extends Base_Controller {
 
 		$kit->update_meta( Module::DEFAULT_VALUES_META_KEY, wp_json_encode( $default_values ) );
 
-		return [];
+		return (object) [];
 	}
 }
