@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Font Icon Svg.
  *
- * @since 3.3.0
+ * @since 3.4.0
  */
 class Font_Icon_Svg extends Base {
 	protected $content_type = 'svg';

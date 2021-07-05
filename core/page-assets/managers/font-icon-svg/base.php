@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Page_Assets\Managers\Font_Icon_Svg;
 
+use Elementor\Core\Base\Base_Object;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -8,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Font Icon Svg.
  *
- * @since 3.3.0
+ * @since 3.4.0
  */
-abstract class Base {
+abstract class Base extends Base_Object {
 	protected static $icon;
 
 	abstract protected static function get_font_name();

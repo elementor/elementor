@@ -8,9 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Font Icon Svg.
  *
- * @since 3.3.0
+ * @since 3.4.0
  */
 class Font_Awesome extends Base {
+	const FONT_AWESOME_CURRENT_VERSION = 5;
+
 	protected static function get_font_name() {
 		return 'font-awesome';
 	}
@@ -27,7 +29,7 @@ class Font_Awesome extends Base {
 	}
 
 	protected static function get_config_version() {
-		return 5;
+		return self::FONT_AWESOME_CURRENT_VERSION;
 	}
 
 	protected static function get_config_data() {
