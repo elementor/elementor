@@ -19,7 +19,23 @@ export default class Component extends $e.modules.ComponentBase {
 
 		elementor.hooks.addFilter( 'editor/attach-preview/before', ( callbacks ) => [
 			...callbacks,
-			() => $e.data.get( 'default-values/index', { refresh: true } ),
+			() => $e.data.get( 'default-values/index', {}, {} ),
 		] );
+
+		elementor.hooks.addFilter( 'editor/controls/base/default-value', ( defaultValue, control, settings ) => {
+			const type = settings.attributes.widgetType || settings.attributes.elType;
+
+			if ( ! type ) {
+				return defaultValue;
+			}
+
+			const dynamicDefaults = $e.data.getCache( this, `default-values/${ type }` );
+
+			if ( ! dynamicDefaults || ! dynamicDefaults[ control.name ] ) {
+				return defaultValue;
+			}
+
+			return dynamicDefaults[ control.name ];
+		} );
 	}
 }

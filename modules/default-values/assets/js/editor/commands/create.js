@@ -10,10 +10,13 @@ export class Create extends $e.modules.CommandBase {
 		// Get all the "styled" settings that differently from the hardcoded defaults.
 		const settings = this.getSettingsForSave( container );
 
-		// Save those settings into preset
-		const { data } = await $e.data.create( 'default-values/index', { settings }, { type: widgetType || elType } );
+		const type = widgetType || elType;
 
-		console.log( data );
+		// Save those settings into preset
+		const { data } = await $e.data.create( 'default-values/index', { settings }, { type } );
+
+		// Fill the cache
+		// this.clearDefaultElementValues( container, data );
 	}
 
 	/**
@@ -25,11 +28,17 @@ export class Create extends $e.modules.CommandBase {
 	getSettingsForSave( container ) {
 		const controls = container.settings.controls;
 
-		const settings = Object.entries( container.settings.toJSON( { remove: 'default' } ) )
+		const settings = Object.entries( container.settings.toJSON( { remove: [ 'hard-coded-default' ] } ) )
 			.filter( ( [ controlName ] ) => container.view.isStyleTransferControl( controls[ controlName ] ) );
 
 		return Object.fromEntries( settings );
 	}
+
+	// clearDefaultElementValues( container, values ) {
+	// 	Object.keys( values ).forEach(
+	// 		( key ) => container.settings.set( key, undefined )
+	// 	);
+	// }
 }
 
 export default Create;
