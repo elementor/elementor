@@ -209,6 +209,59 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getUtilizedControls().
+	 *
+	 * Should return all controls that effecting the container.
+	 */
+	getUtilizedControls() {
+		const result = {},
+			activeControls = this.settings.getActiveControls();
+
+		Object.entries( activeControls ).forEach( ( [ controlName, control ] ) => {
+			const controlValue = this.settings.get( control.name );
+
+			if ( control.global ) {
+				if ( this.globals.get( control.name ) || this.getGlobalDefault( controlName ).length ) {
+					control.global.utilized = true;
+
+					result[ controlName ] = control;
+				}
+
+				return;
+			}
+
+			if ( control.dynamic ) {
+				if ( this.dynamic.get( controlName ) ) {
+					control.dynamic.utilized = true;
+
+					result[ controlName ] = control;
+
+					return;
+				}
+
+				return;
+			}
+
+			if ( controlValue === control.default ) {
+				return;
+			}
+
+			if ( ! controlValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof controlValue &&
+				Object.values( controlValue ).join() === Object.values( control.default ).join() ) {
+				return;
+			}
+
+			result[ controlName ] = control;
+		} );
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
@@ -417,6 +470,28 @@ export default class Container extends ArgsObject {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Function forSomeChildrenRecursive().
+	 *
+	 * Will run over children recursively, breaks if the callback return true.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 */
+	forSomeChildrenRecursive( callback ) {
+		if ( callback( this ) ) {
+			return;
+		}
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				if ( container.forSomeChildrenRecursive( callback ) ) {
+					return;
+				}
+			}
+		}
 	}
 
 	/**
