@@ -15,8 +15,7 @@ export class Create extends $e.modules.CommandBase {
 		// Save those settings into preset
 		const { data } = await $e.data.create( 'default-values/index', { settings }, { type } );
 
-		// Fill the cache
-		// this.clearDefaultElementValues( container, data );
+		this.replaceAllRelatedElements( type, data );
 	}
 
 	/**
@@ -29,9 +28,33 @@ export class Create extends $e.modules.CommandBase {
 		const controls = container.settings.controls;
 
 		const settings = Object.entries( container.settings.toJSON( { remove: [ 'hard-coded-default' ] } ) )
-			.filter( ( [ controlName ] ) => container.view.isStyleTransferControl( controls[ controlName ] ) );
+			.filter( ( [ controlName ] ) => {
+				// TODO: Make sure to copy globals
+				return controls[ controlName ] && container.view.isStyleTransferControl( controls[ controlName ] );
+			} );
 
 		return Object.fromEntries( settings );
+	}
+
+	replaceAllRelatedElements( type, values ) {
+		// const emptyValues = Object.keys( values ).reduce( ( carry, key ) => {
+		// 	return {
+		// 		...carry,
+		// 		// TODO: Make sure that globals included and object controls.
+		// 		[ key ]: '',
+		// 	};
+		// }, {} );
+		//
+		// elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
+		// 	const currentElementType = element.model.attributes.widgetType || element.model.attributes.elType;
+		//
+		// 	if ( type !== currentElementType ) {
+		// 		return;
+		// 	}
+		//
+		// 	console.log( element );
+		// 	// element.settings.set();
+		// } );
 	}
 
 	// clearDefaultElementValues( container, values ) {
