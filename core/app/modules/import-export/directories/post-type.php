@@ -16,10 +16,6 @@ class Post_Type extends Base {
 
 	private $page_on_front_id;
 
-	protected function get_name() {
-		return $this->post_type;
-	}
-
 	public function __construct( Iterator $iterator, Base $parent, $post_type ) {
 		parent::__construct( $iterator, $parent );
 
@@ -75,31 +71,6 @@ class Post_Type extends Base {
 		return $manifest_data;
 	}
 
-	protected function import( array $import_settings ) {
-		$result = [
-			'succeed' => [],
-			'failed' => [],
-		];
-
-		foreach ( $import_settings as $id => $post_settings ) {
-			try {
-				$import = $this->import_post( $id, $post_settings );
-
-				if ( is_wp_error( $import ) ) {
-					$result['failed'][ $id ] = $import->get_error_message();
-
-					continue;
-				}
-
-				$result['succeed'][ $id ] = $import;
-			} catch ( \Error $error ) {
-				$result['failed'][ $id ] = $error->getMessage();
-			}
-		}
-
-		return $result;
-	}
-
 	public function import_post( $id, array $post_settings ) {
 		$post_data = $this->importer->read_json_file( $id );
 
@@ -132,6 +103,35 @@ class Post_Type extends Base {
 		}
 
 		return $new_id;
+	}
+
+	protected function get_name() {
+		return $this->post_type;
+	}
+
+	protected function import( array $import_settings ) {
+		$result = [
+			'succeed' => [],
+			'failed' => [],
+		];
+
+		foreach ( $import_settings as $id => $post_settings ) {
+			try {
+				$import = $this->import_post( $id, $post_settings );
+
+				if ( is_wp_error( $import ) ) {
+					$result['failed'][ $id ] = $import->get_error_message();
+
+					continue;
+				}
+
+				$result['succeed'][ $id ] = $import;
+			} catch ( \Error $error ) {
+				$result['failed'][ $id ] = $error->getMessage();
+			}
+		}
+
+		return $result;
 	}
 
 	private function init_page_on_front_data() {
