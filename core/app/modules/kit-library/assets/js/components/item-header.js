@@ -19,17 +19,8 @@ import './item-header.scss';
  * @param onApply
  * @returns {object}
  */
-function useKitCallToActionButton( model, { onConnect, setError } ) {
-	const navigate = useNavigate();
+function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
-
-	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
-		model,
-		{
-			onSuccess: ( { data } ) => navigate( `/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library` ),
-			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
-		}
-	);
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -76,13 +67,25 @@ function useKitCallToActionButton( model, { onConnect, setError } ) {
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
+	const navigate = useNavigate();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
 
+	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
+		props.model,
+		{
+			onSuccess: ( { data } ) => navigate(
+				`/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library`
+			),
+			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
+		}
+	);
+
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
-		setError,
+		apply,
+		isApplyLoading,
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
