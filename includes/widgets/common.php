@@ -473,7 +473,14 @@ class Widget_Common extends Widget_Base {
 			'_mask_notice',
 			[
 				'type' => Controls_Manager::HIDDEN,
-				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) . '<br>' . sprintf( esc_html__( 'Explore additional Premium Shape packs and use them in your site. <a target="_blank" href="%s">Learn More</a>', 'elementor' ), 'https://go.elementor.com/mask-control' ),
+				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
+						'<br>' .
+						sprintf(
+							/* translators: %1$s Link open tag, %2$s: Link close tag. */
+							esc_html__( 'Explore additional Premium Shape packs and use them in your site. %1$sLearn More%2$s', 'elementor' ),
+							'<a target="_blank" href="https://go.elementor.com/mask-control">',
+							'</a>'
+						),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition' => [
 					'_mask_switch!' => '',

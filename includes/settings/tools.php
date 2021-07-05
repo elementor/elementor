@@ -254,11 +254,11 @@ class Tools extends Settings_Page {
 					'tools' => [
 						'fields' => [
 							'clear_cache' => [
-								'label' => esc_html__( 'Regenerate CSS', 'elementor' ),
+								'label' => esc_html__( 'Regenerate CSS & Data', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files', 'elementor' ) ),
-									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
+									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
@@ -334,14 +334,15 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
-							$intro_text = '<p>' . $intro_text . '</p>';
-							$newsletter_opt_in_text = sprintf( esc_html__( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
-
-							// PHPCS - Ignore statements added because this variable is escaped above.
-							echo $intro_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							// PHPCS - Ignore statements added because this variable is escaped above.
-							echo $newsletter_opt_in_text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo '<p>' .
+								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
+								'</p>';
+							echo sprintf(
+								/* translators: %1$s Link open tag, %2$s: Link close tag. */
+								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
+								'<a id="beta-tester-first-to-know" href="#">',
+								'</a>'
+							);
 						},
 						'fields' => [
 							'beta' => [

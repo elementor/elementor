@@ -205,14 +205,14 @@ class Maintenance_Mode {
 										self::MODE_MAINTENANCE => esc_html__( 'Maintenance', 'elementor' ),
 									],
 									'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
-											  esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
-											  esc_html__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
-											  '</div>' .
-											  '<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
-											  esc_html__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
-											  '</div>',
+												esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
+												'</div>' .
+												'<div class="elementor-maintenance-mode-description" data-value="maintenance" style="display: none">' .
+												esc_html__( 'Maintenance Mode returns HTTP 503 code, so search engines know to come back a short time later. It is not recommended to use this mode for more than a couple of days.', 'elementor' ) .
+												'</div>' .
+												'<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
+												esc_html__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
+												'</div>',
 								],
 							],
 							'maintenance_mode_exclude_mode' => [
@@ -355,7 +355,16 @@ class Maintenance_Mode {
 		?>
 		<a target="_blank" class="elementor-edit-template" style="display: none" href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html__( 'Edit Template', 'elementor' ); ?></a>
 		<div class="elementor-maintenance-mode-error"><?php echo esc_html__( 'To enable maintenance mode you have to set a template for the maintenance mode page.', 'elementor' ); ?></div>
-		<div class="elementor-maintenance-mode-error"><?php echo sprintf( esc_html__( 'Select one or go ahead and <a target="_blank" href="%s">create one</a> now.', 'elementor' ), esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) ); ?></div>
+		<div class="elementor-maintenance-mode-error">
+			<?php
+				printf(
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					esc_html__( 'Select one or go ahead and %1$screate one%2$s now.', 'elementor' ),
+					'<a target="_blank" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Source_Local::CPT ) ) . '">',
+					'</a>'
+				);
+			?>
+		</div>
 		<?php
 	}
 }
