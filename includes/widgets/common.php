@@ -983,8 +983,11 @@ class Widget_Common extends Widget_Base {
 
 		$this->start_controls_tabs( '_tabs_positioning' );
 
+		$transform_prefix_class = 'e-';
+		$transform_return_value = 'transform';
+
 		foreach ( [ 'normal', 'hover' ] as $tab ) {
-			$hover_state = 'hover' === $tab ? ':hover' : '';
+			$state = 'hover' === $tab ? ':hover' : '';
 
 			$this->start_controls_tab(
 				"_tab_positioning_{$tab}",
@@ -998,8 +1001,8 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'e-',
-					'return_value' => 'transform',
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
 				]
 			);
 
@@ -1020,7 +1023,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateZ: {{SIZE}}deg',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
 					'condition' => [
 						"_{$tab}_transform_rotate_popover!" => '',
@@ -1058,7 +1061,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1083,7 +1086,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_rotate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-rotateY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1096,8 +1099,8 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Offset', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'e-',
-					'return_value' => 'transform',
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
 				]
 			);
 
@@ -1126,7 +1129,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_translate_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1155,7 +1158,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1168,8 +1171,8 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'e-',
-					'return_value' => 'transform',
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
 				]
 			);
 
@@ -1206,7 +1209,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scale: {{SIZE}};',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scale: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1232,7 +1235,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scaleX: {{SIZE}};',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleX: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1258,7 +1261,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_keep_proportions" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-scaleY: {{SIZE}};',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleY: {{SIZE}};',
 					],
 					'frontend_available' => true,
 				]
@@ -1271,8 +1274,8 @@ class Widget_Common extends Widget_Base {
 				[
 					'label' => __( 'Skew', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
-					'prefix_class' => 'e-',
-					'return_value' => 'transform',
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
 				]
 			);
 
@@ -1296,7 +1299,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-skewX: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1320,7 +1323,7 @@ class Widget_Common extends Widget_Base {
 						"_{$tab}_transform_skew_popover!" => '',
 					],
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-skewY: {{SIZE}}deg;',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
 					],
 					'frontend_available' => true,
 				]
@@ -1339,9 +1342,9 @@ class Widget_Common extends Widget_Base {
 							'icon' => 'fa fa-align-left',
 						],
 					],
-					'prefix_class' => 'e-',
+					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-flipX: -1',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipX: -1',
 					],
 					'frontend_available' => true,
 				]
@@ -1358,9 +1361,9 @@ class Widget_Common extends Widget_Base {
 							'icon' => 'fa fa-align-center',
 						],
 					],
-					'prefix_class' => 'e-',
+					'prefix_class' => $transform_prefix_class,
 					'selectors' => [
-						"{{WRAPPER}} > .elementor-widget-container{$hover_state}" => '--e-transform-flipY: -1',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-flipY: -1',
 					],
 					'frontend_available' => true,
 				]
@@ -1375,7 +1378,7 @@ class Widget_Common extends Widget_Base {
 						'range' => [
 							'px' => [
 								'min' => 100,
-								'max' => 20000,
+								'max' => 10000,
 							],
 						],
 						'selectors' => [
