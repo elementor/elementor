@@ -19,7 +19,7 @@ class Manager extends Base_Object {
 		if ( ! self::$font_icon_svg_data ) {
 			self::$font_icon_svg_data = [
 				'font-awesome' => [
-					'regex' => '/fa(.*) fa-/',
+					'regex' => '/^fa-/',
 					'manager' => Font_Awesome::class,
 				],
 			];
@@ -34,9 +34,9 @@ class Manager extends Base_Object {
 		return $font_icon_svg_data[ $font_family ]['manager'];
 	}
 
-	public static function get_font_family( $icon_name ) {
+	public static function get_font_family( $icon_library ) {
 		foreach ( self::get_font_icon_svg_data() as $family => $data ) {
-			if ( preg_match( $data['regex'], $icon_name ) ) {
+			if ( preg_match( $data['regex'], $icon_library ) ) {
 				return $family;
 			}
 		}

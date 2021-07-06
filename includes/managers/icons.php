@@ -36,6 +36,8 @@ class Icons_Manager {
 
 	private static $data_manager;
 
+	private static $font_icon_svg_symbols = [];
+
 	private static function get_needs_upgrade_option() {
 		return get_option( 'elementor_' . self::NEEDS_UPDATE_OPTION, null );
 	}
@@ -209,15 +211,13 @@ class Icons_Manager {
 	 *
 	 */
 	public static function render_svg_symbols() {
-		$symbols = apply_filters( 'elementor/icons_manager/svg_symbols', [] );
-
-		if ( ! $symbols ) {
+		if ( ! self::$font_icon_svg_symbols ) {
 			return;
 		}
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
 
-		foreach ( $symbols as $symbol_id => $symbol ) {
+		foreach ( self::$font_icon_svg_symbols as $symbol_id => $symbol ) {
 			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . esc_attr( $symbol['width'] ) . ' ' . esc_attr( $symbol['height'] ) . '">';
 			$svg .= '<path d="' . esc_attr( $symbol['path'] ) . '"></path>';
 			$svg .= '</symbol>';
@@ -252,13 +252,9 @@ class Icons_Manager {
 		}
 
 		// Add the icon data to the symbols array for later use in page rendering process.
-		add_filter( 'elementor/icons_manager/svg_symbols', function( $symbols ) use ( $icon_data ) {
-			if ( ! in_array( $icon_data['key'], $symbols, true ) ) {
-				$symbols[ $icon_data['key'] ] = $icon_data;
-			}
-
-			return $symbols;
-		} );
+		if ( ! in_array( $icon_data['key'], self::$font_icon_svg_symbols, true ) ) {
+			self::$font_icon_svg_symbols[ $icon_data['key'] ] = $icon_data;
+		}
 
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
 
@@ -293,7 +289,7 @@ class Icons_Manager {
 
 		$content = '';
 
-		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Manager::get_font_family( $icon['value'] ) : '';
+		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Manager::get_font_family( $icon['library'] ) : '';
 
 		if ( $font_icon_svg_family ) {
 			$icon['font_family'] = $font_icon_svg_family;
@@ -570,13 +566,6 @@ class Icons_Manager {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 
 			add_action( 'wp_footer', [ $this, 'render_svg_symbols' ], 10 );
-			add_action( 'elementor/frontend/after_enqueue_styles', function() {
-				//$css = '.elementor-widget-container .e-font-icon-svg { width: 1em; height: 1em; display: block; }';
-				$css = '';
-
-				wp_add_inline_style( 'elementor-frontend', $css );
-			} );
-
 		}
 
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
