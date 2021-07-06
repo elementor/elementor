@@ -1384,6 +1384,7 @@ class Widget_Common extends Widget_Base {
 						'selectors' => [
 							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
 						],
+						'frontend_available' => true,
 					]
 				);
 			}
