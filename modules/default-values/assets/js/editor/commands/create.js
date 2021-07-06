@@ -12,10 +12,17 @@ export class Create extends $e.modules.CommandBase {
 
 		const type = widgetType || elType;
 
-		const elementsToRecreate = this.getAllElementsForRecreate( type, container );
+		const elementsToRecreate = this.getAllElementsForRecreate( type, settings );
 
-		// Save those settings into preset
+		// Save those settings into preset.
 		await $e.data.create( 'default-values/index', { settings }, { type } );
+
+		// Update globals.
+		if ( settings.__globals__ ) {
+			this.assignGlobalsDefaultsToWidgetCache( type, settings.__globals__ );
+
+			elementor.kitManager.renderGlobalsDefaultCSS();
+		}
 
 		// Will recreate all the elements with the same type to apply the default values.
 		$e.commandsInternal.run( 'document/elements/recreate', { settings: elementsToRecreate } );
@@ -44,23 +51,57 @@ export class Create extends $e.modules.CommandBase {
 	 * Get all the elements that should recreate after the creating the new default.
 	 *
 	 * @param type
-	 * @param targetElement
+	 * @param newDefaultSettings
 	 * @returns {{}}
 	 */
-	getAllElementsForRecreate( type, targetElement ) {
+	getAllElementsForRecreate( type, newDefaultSettings ) {
 		const elements = {};
 
 		elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
 			const currentElementType = element.model.attributes.widgetType || element.model.attributes.elType;
 
-			if ( type !== currentElementType || targetElement.id === element.id ) {
+			if ( type !== currentElementType ) {
 				return;
 			}
 
-			elements[ element.id ] = element.model.toJSON( { remove: [ 'default' ] } );
+			const plainObjectElement = element.model.toJSON( { remove: [ 'default' ] } );
+
+			// Globals has special case
+			// The globals do not removed by default when using '{remove: [ 'default' ]}' in 'toJSON' method.
+			if ( newDefaultSettings.__globals__ && plainObjectElement.settings.__globals__ ) {
+				const newDefaultSettingsKeys = Object.keys( newDefaultSettings.__globals__ );
+
+				plainObjectElement.settings.__globals__ = Object.fromEntries(
+					Object.entries( plainObjectElement.settings.__globals__ ).filter( ( [ key ] ) => {
+						return ! newDefaultSettingsKeys.includes( key );
+					} )
+				);
+			}
+
+			elements[ element.id ] = plainObjectElement;
 		} );
 
 		return elements;
+	}
+
+	/**
+	 * Update widget cache to the new global defaults.
+	 *
+	 * @param type
+	 * @param settings
+	 */
+	assignGlobalsDefaultsToWidgetCache( type, settings ) {
+		if ( ! elementor.widgetsCache[ type ] ) {
+			return;
+		}
+
+		Object.entries( settings ).forEach( ( [ key, value ] ) => {
+			if ( ! elementor.widgetsCache[ type ].controls[ key ] ) {
+				return;
+			}
+
+			elementor.widgetsCache[ type ].controls[ key ].global.default = value;
+		} );
 	}
 }
 

@@ -17,13 +17,13 @@ export default class Component extends $e.modules.ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		elementorCommon.elements.$window.on( 'elementor:loaded', () => {
-			$e.data.deleteCache( this, 'default-values/index' );
-		} );
-
-		elementor.hooks.addFilter( 'editor/attach-preview/before', ( callbacks ) => [
+		elementor.hooks.addFilter( 'editor/before-on-start', ( callbacks ) => [
 			...callbacks,
-			() => $e.data.get( 'default-values/index', {}, {} ),
+			() => {
+				$e.data.deleteCache( this, 'default-values/index' );
+
+				return $e.data.get( 'default-values/index', {}, {} );
+			},
 		] );
 
 		elementor.hooks.addFilter( 'editor/controls/base/default-value', ( defaultValue, control, settings ) => {
@@ -40,6 +40,26 @@ export default class Component extends $e.modules.ComponentBase {
 			}
 
 			return dynamicDefaults[ control.name ];
+		} );
+
+		elementor.hooks.addFilter( 'editor/widgets-cache', ( widgets ) => {
+			const dynamicDefaultValues = $e.data.getCache( this, `default-values` );
+
+			Object.entries( dynamicDefaultValues ).forEach( ( [ widgetKey, controlsValues ] ) => {
+				if ( ! controlsValues.__globals__ || ! widgets[ widgetKey ] ) {
+					return;
+				}
+
+				Object.entries( controlsValues.__globals__ ).forEach( ( [ controlKey, value ] ) => {
+					if ( ! widgets[ widgetKey ].controls[ controlKey ] ) {
+						return;
+					}
+
+					widgets[ widgetKey ].controls[ controlKey ].global.default = value;
+				} );
+			} );
+
+			return widgets;
 		} );
 	}
 }
