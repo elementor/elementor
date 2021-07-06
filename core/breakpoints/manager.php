@@ -227,17 +227,6 @@ class Manager extends Module {
 			$setting_prefix . self::BREAKPOINT_KEY_TABLET,
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
-			$kit_active_id = Plugin::$instance->kits_manager->get_active_id();
-			// Get the breakpoint settings saved in the kit directly from the DB to avoid initializing the kit too early.
-			$raw_kit_settings = get_post_meta( $kit_active_id, '_elementor_page_settings', true );
-
-			// If there is an existing kit with an active breakpoints value saved, use it.
-			if ( isset( $raw_kit_settings[ Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID ] ) ) {
-				$active_breakpoint_keys = $raw_kit_settings[ Settings_Layout::ACTIVE_BREAKPOINTS_CONTROL_ID ];
-			}
-		}
-
 		$default_config = self::get_default_config();
 
 		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
