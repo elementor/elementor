@@ -43,7 +43,7 @@ jQuery( () => {
 				eButtonStyled = ElementsHelper.createAutoButtonStyled();
 
 			assert.deepEqual( eButtonSimple.getUtilizedControls(), {} );
-			assert.deepEqual( Object.keys( eButtonStyled.getUtilizedControls() ), [ 'background_color' ] );
+			assert.deepEqual( Object.keys( eButtonStyled.getUtilizedControls() ), [ 'text', 'background_color' ] );
 		} );
 
 		QUnit.test( 'getUtilizedControls(): Ensure global control', ( assert ) => {

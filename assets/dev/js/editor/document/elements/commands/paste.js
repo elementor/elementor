@@ -20,12 +20,13 @@ export class Paste extends CommandHistory {
 
 	apply( args ) {
 		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
-			storageData = elementorCommon.storage.get( storageKey ),
-			result = [];
+			storageData = elementorCommon.storage.get( storageKey );
+
+		let result = [];
 
 		// Paste on "Add Section" area.
 		if ( rebuild ) {
-			result.push( this.rebuild( containers, storageData, at ) );
+			result = this.rebuild( containers, storageData, at );
 		} else {
 			if ( undefined !== at ) {
 				options.at = at;
@@ -42,9 +43,9 @@ export class Paste extends CommandHistory {
 	}
 
 	rebuild( containers, data, at ) {
+		// Paste at each target.
 		const result = [];
 
-		// Paste at each target.
 		containers.forEach( ( targetContainer ) => {
 			let index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
 
@@ -80,7 +81,7 @@ export class Paste extends CommandHistory {
 						);
 						index++;
 					}
-					break;
+						break;
 
 					case 'column': {
 						// Next code changed from original since `_checkIsEmpty()` was removed.
@@ -98,7 +99,7 @@ export class Paste extends CommandHistory {
 
 						result.push( this.pasteTo( [ section ], [ model ] ) );
 					}
-					break;
+						break;
 
 					default:
 						// In case it widget:

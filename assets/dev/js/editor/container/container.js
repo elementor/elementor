@@ -221,14 +221,14 @@ export default class Container extends ArgsObject {
 		Object.entries( activeControls ).forEach( ( [ controlName, control ] ) => {
 			const controlValue = this.settings.get( control.name );
 
-			if ( control.global ) {
-				if ( this.globals.get( control.name ) || this.getGlobalDefault( controlName ).length ) {
+			if ( control.global && ! controlValue?.length ) {
+				if ( this.globals.get( control.name )?.length || this.getGlobalDefault( controlName ).length ) {
 					control.global.utilized = true;
 
 					result[ controlName ] = control;
-				}
 
-				return;
+					return;
+				}
 			}
 
 			if ( control.dynamic ) {
@@ -239,8 +239,6 @@ export default class Container extends ArgsObject {
 
 					return;
 				}
-
-				return;
 			}
 
 			if ( controlValue === control.default ) {
