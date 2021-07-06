@@ -76,6 +76,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( 900 );
 
 		$this->assertTrue( Plugin::$instance->breakpoints->has_custom_breakpoints() );
+
+		// Revert breakpoint change to not affect other tests.
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( '' );
 	}
 
 	/**
