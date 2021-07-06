@@ -4,7 +4,12 @@
 	background-position: center center;
 	height: 100%;
 	width: 100%;
-	background-repeat: no-repeat
+	background-repeat: no-repeat;
+	transition: .3s all;
+
+	.e-ui-state--document-direction-mode__column &:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ) {
+		transform: rotate( 90deg );
+	}
 }
 
 .eicon-flex {

@@ -1,6 +1,7 @@
 // Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
+import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
@@ -19,6 +20,12 @@ const ContainerView = BaseElementView.extend( {
 
 	tagName: function() {
 		return this.model.getSetting( 'html_tag' ) || 'div';
+	},
+
+	getCurrentUiStates() {
+		return {
+			directionMode: this.container.settings.get( 'container_flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
+		};
 	},
 
 	behaviors: function() {
