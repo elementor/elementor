@@ -77,6 +77,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( 900 );
 
 		$this->assertTrue( Plugin::$instance->breakpoints->has_custom_breakpoints() );
+
+		// Revert breakpoint change to not affect other tests.
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( '' );
 	}
 
 	/**
@@ -147,6 +150,8 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$laptop_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'laptop' );
 
-		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+		$this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+
+		$this->reset_breakpoints_to_default();
 	}
 }
