@@ -1014,7 +1014,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'deg' => [
+						'px' => [
 							'min' => -360,
 							'max' => 360,
 						],
@@ -1048,7 +1048,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'deg' => [
+						'px' => [
 							'min' => -360,
 							'max' => 360,
 						],
@@ -1073,7 +1073,7 @@ class Widget_Common extends Widget_Base {
 					'label' => __( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
-						'deg' => [
+						'px' => [
 							'min' => -360,
 							'max' => 360,
 						],
