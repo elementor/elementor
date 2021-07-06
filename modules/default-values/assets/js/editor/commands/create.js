@@ -38,6 +38,22 @@ export class Create extends $e.modules.CommandBase {
 		const controls = container.settings.controls;
 		const settingsWithoutDefaults = container.settings.toJSON( { remove: [ 'hard-coded-default' ] } );
 
+		let widgetGlobalDefaults = {};
+		const currentDefaultGlobalControls = elementor.widgetsCache[ container.model.attributes.widgetType ].controls;
+
+		if ( currentDefaultGlobalControls ) {
+			widgetGlobalDefaults = Object.fromEntries(
+				Object.entries( currentDefaultGlobalControls )
+					.filter( ( [ , control ] ) => control?.global?.default )
+					.map( ( [ key, control ] ) => [ key, control.global.default ] )
+			);
+		}
+
+		settingsWithoutDefaults.__globals__ = {
+			...widgetGlobalDefaults,
+			...settingsWithoutDefaults.__globals__,
+		};
+
 		const settings = Object.entries( settingsWithoutDefaults )
 			.filter( ( [ controlName ] ) => {
 				return '__globals__' === controlName ||
