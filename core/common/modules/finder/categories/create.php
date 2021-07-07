@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Provides items related to creation of new posts/pages/templates etc.
  */
 class Create extends Base_Category {
-	
+
 	/**
 	 * Get title.
 	 *
@@ -38,6 +38,8 @@ class Create extends Base_Category {
 	 * @return array
 	 */
 	public function get_category_items( array $options = [] ) {
+		$result = [];
+
 		$registered_document_types = Plugin::$instance->documents->get_document_types();
 		$elementor_supported_post_types = get_post_types_by_support( 'elementor' );
 
@@ -48,54 +50,41 @@ class Create extends Base_Category {
 
 		// This loop should filter which types to proceed with.
 		foreach ( $registered_document_types as $document_name => $document_class ) {
-			/**
-			 * @var $class \Elementor\Core\Base\Document
-			 */
 			$document_properties = $document_class::get_properties();
 
 			if ( empty( $document_properties['show_in_finder'] ) ) {
 				continue;
 			}
 
-			// Reduce from $elementor_supported_post_types by avoid them to be proceed with old mechanism.
-			$filter_supported_post_types = function ( $post_type ) use ( $document_name, $document_properties ) {
-				if ( empty( $document_properties['cpt'] ) ) {
-					return false;
-				}
-
-				$document_cpt = $document_properties['cpt'];
-
-				// To Support backward compatibility remove 'post', and 'page'.
-				if ( $post_type === $document_name ) {
-					return false;
-				} elseif ( ! empty( $document_cpt ) && $post_type === $document_cpt[0] ) { // To remove 'e-landing-page'.
-					return false;
-				}
-
-				return true;
-			};
-
-			// To Support backward compatibility avoid those.
-			if ( 'post' === $document_name || 'page' === $document_name ) {
+			// To Support backward compatibility, avoid those.
+			if ( 'post' === $document_name || 'page' === $document_name || 'stack' === $document_class::get_type() ) {
 				continue;
 			}
-
-			$elementor_supported_post_types = array_filter( $elementor_supported_post_types, $filter_supported_post_types );
 
 			$document_types[ $document_name ] = $document_class;
 		}
 
-		$items = [];
+		// Will be handled by new mechanism.
+		$ignore_list = [
+			'post',
+			'page',
+			'e-landing-page',
+			'elementor_library',
+		];
 
-		// Old mechanism. ( Currently handles 'elementor-library' ).
+		// Old mechanism.
 		foreach ( $elementor_supported_post_types as $post_type ) {
+			if ( in_array( $post_type, $ignore_list, true ) ) {
+				continue;
+			}
+
 			$url = $this->create_item_url_by_post_type( $post_type );
 
 			if ( ! $url ) {
 				continue;
 			}
 
-			$items[ $post_type ] = $url;
+			$result[ $post_type ] = $url;
 		}
 
 		// New Mechanism. ( Currently handles 'wp-post', 'wp-page', 'landing-page'. )
@@ -106,10 +95,10 @@ class Create extends Base_Category {
 				continue;
 			}
 
-			$items[ $document_name ] = $url;
+			$result[ $document_name ] = $url;
 		}
 
-		return $items;
+		return $result;
 	}
 
 	private function create_item_url_by_post_type( $post_type ) {
@@ -120,15 +109,13 @@ class Create extends Base_Category {
 			return false;
 		}
 
-		return Plugin::$instance->documents->get_create_new_post_url( $post_type_object->labels->singular_name );
+		return $this->get_create_new_template(
+			$post_type_object->labels->singular_name,
+			Plugin::$instance->documents->get_create_new_post_url( $post_type )
+		);
 	}
 
 	private function create_item_url_by_document_class( $document_class ) {
-		// TODO: Remove - BC, Avoid conflict with ThemeBuilder.
-		if ( 'post' === $document_class::get_type() ) {
-			return false;
-		}
-
 		return $this->get_create_new_template(
 			$document_class::get_title(),
 			$document_class::get_create_url()

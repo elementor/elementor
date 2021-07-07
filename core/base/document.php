@@ -100,10 +100,6 @@ abstract class Document extends Controls_Stack {
 		return Plugin::$instance->elements_manager->get_categories();
 	}
 
-	public static function get_type() {
-		return 'post';
-	}
-
 	/**
 	 * Get properties.
 	 *
@@ -206,9 +202,7 @@ abstract class Document extends Controls_Stack {
 	public static function get_create_url() {
 		$properties = static::get_properties();
 
-		$cpt = 'wp-post' === static::get_type() ? 'post' : $properties['cpt'][0];
-
-		return Plugin::$instance->documents->get_create_new_post_url( $cpt, static::get_type() );
+		return Plugin::$instance->documents->get_create_new_post_url( $properties['cpt'][0], static::get_type() );
 	}
 
 	public function get_name() {
