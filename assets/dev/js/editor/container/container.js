@@ -480,16 +480,18 @@ export default class Container extends ArgsObject {
 	 */
 	forSomeChildrenRecursive( callback ) {
 		if ( callback( this ) ) {
-			return;
+			return true;
 		}
 
 		if ( this.children.length ) {
 			for ( const container of this.children ) {
 				if ( container.forSomeChildrenRecursive( callback ) ) {
-					return;
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
 	/**
