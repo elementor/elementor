@@ -74,14 +74,19 @@ class Post_Type extends Base {
 	public function import_post( $id, array $post_settings ) {
 		$post_data = $this->importer->read_json_file( $id );
 
+		$post_attributes = [
+			'post_title' => $post_settings['title'],
+			'post_type' => $this->post_type,
+			'post_status' => 'publish',
+		];
+
+		if ( ! empty( $post_settings['excerpt'] ) ) {
+			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
+		}
+
 		$new_document = Plugin::$instance->documents->create(
 			$post_settings['doc_type'],
-			[
-				'post_title' => $post_settings['title'],
-				'post_excerpt' => $post_settings['excerpt'],
-				'post_type' => $this->post_type,
-				'post_status' => 'publish',
-			]
+			$post_attributes
 		);
 
 		if ( is_wp_error( $new_document ) ) {
