@@ -179,7 +179,7 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'testimonial_alignment',
 			[
 				'label' => __( 'Alignment', 'elementor' ),

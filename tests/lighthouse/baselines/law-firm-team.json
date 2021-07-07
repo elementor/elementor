@@ -10,5 +10,6 @@
   "largest-contentful-paint": [ "error", { "minScore": 0.80 } ],
   "legacy-javascript": [ "error", { "maxLength": 1 } ],
   "render-blocking-resources": [ "error", { "maxLength": 8 } ],
-  "uses-long-cache-ttl": [ "warn", { "maxLength": 25 } ]
+  "uses-long-cache-ttl": [ "warn", { "maxLength": 25 } ],
+  "csp-xss": [ "warn", { "minScore": 0 }]
 }

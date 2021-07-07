@@ -24,7 +24,13 @@ class Loader extends Module {
 
 	private function init_assets() {
 		$this->assets = [
-			'styles' => [],
+			'styles' => [
+				'e-animations' => [
+					'src' => $this->get_css_assets_url( 'animations', 'assets/lib/animations/', true ),
+					'version' => ELEMENTOR_VERSION,
+					'dependencies' => [],
+				],
+			],
 			'scripts' => [],
 		];
 	}

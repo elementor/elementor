@@ -22,6 +22,7 @@ class Icons_Manager {
 
 	const FONT_ICON_SVG_CLASS_NAME = 'e-font-icon-svg';
 
+	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 	/**
 	 * Tabs.
 	 *
@@ -447,7 +448,7 @@ class Icons_Manager {
 				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 1,
+					'std' => 'yes',
 					'options' => [
 						'' => __( 'No', 'elementor' ),
 						'yes' => __( 'Yes', 'elementor' ),
@@ -519,7 +520,7 @@ class Icons_Manager {
 			wp_enqueue_style( 'font-awesome' );
 		} else {
 			$current_filter = current_filter();
-			$load_shim = get_option( 'elementor_load_fa4_shim', false );
+			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
 			} else if ( 'yes' === $load_shim ) {
