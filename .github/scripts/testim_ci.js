@@ -49,6 +49,7 @@ const runTestim = async () => {
       '--project',project,
       '--token',token,
       '--label','CI',
+      '--label','Sanity',
       '--grid','Testim-Grid',
       '--base-url',tunnelUrl,
       '--params', '{"username":"admin","password":"password"}'
