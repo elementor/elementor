@@ -16,7 +16,7 @@ export default class GlobalValues extends BaseHandler {
 		const widgetGlobalDefaults = Object.fromEntries(
 			Object.entries( widgetControls )
 				.filter( ( [ , control ] ) => control.global?.default )
-				.filter( ( [ key ] ) => settingsKeys.includes( key ) ) // Removes all the values that override by local values
+				.filter( ( [ key ] ) => ! settingsKeys.includes( key ) ) // Removes all the values that override by local values
 				.map( ( [ key, control ] ) => [ key, control.global.default ] )
 		);
 
