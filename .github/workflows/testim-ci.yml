@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npx grunt build
       - name: Save build to cache
