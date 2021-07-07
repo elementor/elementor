@@ -970,7 +970,8 @@ class Controls_Manager {
 				<div class="elementor-nerd-box-message"><?php echo $message; ?></div>
 			<?php }
 
-			if ( $texts['link'] ) { ?>
+			// Show a `Go Pro` button only if the user doesn't have Pro.
+			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
 				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo Utils::get_pro_link( $texts['link'] ); ?>" target="_blank">
 					<?php echo __( 'Go Pro', 'elementor' ); ?>
 				</a>
