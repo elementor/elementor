@@ -8,13 +8,13 @@ export class Recreate extends CommandInternal {
 	}
 
 	validateArgs( args = {} ) {
-		this.requireArgumentType( 'settings', 'object', args );
+		this.requireArgumentType( 'models', 'object', args );
 	}
 
-	apply( { settings } ) {
+	apply( { models } ) {
 		this.disableHistory();
 
-		Object.entries( settings ).forEach( ( [ id, model ] ) => {
+		Object.entries( models ).forEach( ( [ id, model ] ) => {
 			const container = elementor.getContainer( id );
 
 			const parent = container.parent;

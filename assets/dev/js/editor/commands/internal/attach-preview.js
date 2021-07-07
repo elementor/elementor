@@ -4,12 +4,12 @@ export class AttachPreview extends CommandInternalBaseBase {
 	apply() {
 		const document = elementor.documents.getCurrent();
 
-		const beforeAttachPreviewCallbacks = elementor.hooks.applyFilters( 'editor/attach-preview/before', [
-			() => $e.data.get( 'globals/index' ).then( () => elementor.trigger( 'globals:loaded' ) ),
-		] );
+		return $e.data.get( 'globals/index' )
+			.then( () => {
+				elementor.trigger( 'globals:loaded' );
 
-		return Promise.all( beforeAttachPreviewCallbacks.map( ( callback ) => callback() ) )
-			.then( () => this.attachDocumentToPreview( document ) )
+				return this.attachDocumentToPreview( document );
+			} )
 			.then( () => {
 				elementor.toggleDocumentCssFiles( document, false );
 
@@ -22,7 +22,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );
-		} );
+			} );
 	}
 
 	attachDocumentToPreview( document ) {

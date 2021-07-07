@@ -1,5 +1,7 @@
 import * as commands from './commands/index';
 import * as dataCommands from './commands-data/index';
+import GlobalValues from './handlers/global-values';
+import LocalValues from './handlers/local-values';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
@@ -15,6 +17,17 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	__construct( args = {} ) {
+		/**
+		 * Handlers responsible for the different strategies to manipulate and getting the settings
+		 * from local values or globals
+		 *
+		 * @type {BaseHandler[]} BaseHandler path: './handlers/base-handler'
+		 */
+		this.handlers = [
+			new LocalValues(), // Must be first to allow the globals change the settings data.
+			new GlobalValues(),
+		];
+
 		super.__construct( args );
 
 		elementor.hooks.addFilter( 'editor/before-on-start', ( callbacks ) => [
@@ -26,40 +39,6 @@ export default class Component extends $e.modules.ComponentBase {
 			},
 		] );
 
-		elementor.hooks.addFilter( 'editor/controls/base/default-value', ( defaultValue, control, settings ) => {
-			const type = settings.attributes.widgetType || settings.attributes.elType;
-
-			if ( ! type ) {
-				return defaultValue;
-			}
-
-			const dynamicDefaults = $e.data.getCache( this, `default-values/${ type }` );
-
-			if ( ! dynamicDefaults || ! dynamicDefaults[ control.name ] ) {
-				return defaultValue;
-			}
-
-			return dynamicDefaults[ control.name ];
-		} );
-
-		elementor.hooks.addFilter( 'editor/widgets-cache', ( widgets ) => {
-			const dynamicDefaultValues = $e.data.getCache( this, `default-values` );
-
-			Object.entries( dynamicDefaultValues ).forEach( ( [ widgetKey, controlsValues ] ) => {
-				if ( ! controlsValues.__globals__ || ! widgets[ widgetKey ] ) {
-					return;
-				}
-
-				Object.entries( controlsValues.__globals__ ).forEach( ( [ controlKey, value ] ) => {
-					if ( ! widgets[ widgetKey ].controls[ controlKey ] ) {
-						return;
-					}
-
-					widgets[ widgetKey ].controls[ controlKey ].global.default = value;
-				} );
-			} );
-
-			return widgets;
-		} );
+		this.handlers.forEach( ( handler ) => handler.registerHooks() );
 	}
 }
