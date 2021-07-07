@@ -8,7 +8,7 @@ jobs:
   build-plugin:
     name: Build plugin
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved' && startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
