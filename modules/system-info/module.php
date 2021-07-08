@@ -65,7 +65,7 @@ class Module extends BaseModule {
 		'experiments' => [],
 	];
 
-	private static $tracked_reports = [
+	private static $usage_reports = [
 		'server' => [],
 		'wordpress' => [],
 		'theme' => [],
@@ -360,8 +360,8 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public static function get_allowed_tracked_reports() {
-		return self::$tracked_reports;
+	public static function get_allowed_usage_reports() {
+		return self::$usage_reports;
 	}
 
 	/**

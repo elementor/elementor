@@ -448,7 +448,7 @@ class Manager extends Base_Object {
 	/**
 	 * Get Feature State Label
 	 *
-	 * @since 3.3.0
+	 * @since 3.4.0
 	 * @access public
 	 *
 	 * @param array $feature
