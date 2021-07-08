@@ -121,7 +121,12 @@ class Manager extends Module {
 	public function has_custom_breakpoints() {
 		$breakpoints = $this->get_active_breakpoints();
 
-		$additional_breakpoints = [ 'mobile_extra', 'tablet_extra', 'laptop', 'widescreen' ];
+		$additional_breakpoints = [
+			self::BREAKPOINT_KEY_MOBILE_EXTRA,
+			self::BREAKPOINT_KEY_TABLET_EXTRA,
+			self::BREAKPOINT_KEY_LAPTOP,
+			self::BREAKPOINT_KEY_WIDESCREEN,
+		];
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
 			if ( in_array( $breakpoint_name, $additional_breakpoints, true ) ) {
