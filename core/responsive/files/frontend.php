@@ -56,17 +56,22 @@ class Frontend extends Base {
 			} else {
 				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
-				$is_max_point = 'MAX' === $placeholder_data[2];
+				// Handle cases where a placeholder is found for an additional breakpoint that isn't active.
+				if ( false === $breakpoint_index ) {
+					$value = -1;
+				} else {
+					$is_max_point = 'MAX' === $placeholder_data[2];
 
-				// If the placeholder capture is `MOBILE_NEXT` or `TABLET_NEXT`, the original breakpoint value is used.
+					// If the placeholder capture is `MOBILE_NEXT` or `TABLET_NEXT`, the original breakpoint value is used.
 				if ( ! $is_max_point && 'NEXT' !== $placeholder_data[2] ) {
 					$breakpoint_index--;
 				}
 
-				$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
+					$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
 
-				if ( ! $is_max_point ) {
-					$value++;
+					if ( ! $is_max_point ) {
+						$value++;
+					}
 				}
 			}
 
