@@ -353,6 +353,7 @@ class Manager extends BaseModule {
 	 * @return array
 	 */
 	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
+		return [];
 		$response = $this->run_request( $endpoint, $args, $method );
 
 		return $response->get_data();
