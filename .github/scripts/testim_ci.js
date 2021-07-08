@@ -52,6 +52,7 @@ const runTestim = async () => {
       '--label','Sanity',
       '--grid','Testim-Grid',
       '--base-url',tunnelUrl,
+      '--parallel','8',
       '--params', '{"username":"admin","password":"password"}'
     ])
     // Close tunnel
