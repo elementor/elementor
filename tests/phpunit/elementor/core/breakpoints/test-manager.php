@@ -3,7 +3,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Breakpoints;
 
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Testing\Traits\Breakpoints_Trait;
@@ -105,8 +104,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_device_min_breakpoint_mobile() {
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
 		// Test for mobile specifically, which always has a min point of 320.
 		$this->assertEquals( 320, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
 	}
@@ -134,22 +131,6 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_get_desktop_min_point_when_laptop_enabled() {
 		$this->set_admin_user();
 
-		// The experiment should be added because it might be removed by other tests.
-		$this->elementor()->experiments->add_feature( [
-			'name' => 'additional_custom_breakpoints',
-			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
-			'description' => esc_html__( 'Add Additional Custom Breakpoints (beyond just \'mobile\' and \'tablet\') Optimize your site\'s performance when using responsive controls.', 'elementor' )
-				. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>',
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.4.0-beta',
-			],
-		] );
-
-		// When "optimized assets loading" mode is active, assets should be loaded only when enabled.
-		$this->elementor()->experiments->set_feature_default_state( 'additional_custom_breakpoints', Experiments_Manager::STATE_ACTIVE );
-
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_settings = $kit->get_settings();
 
@@ -160,12 +141,12 @@ class Test_Manager extends Elementor_Test_Base {
 		$kit->save( [ 'settings' => $kit_settings ] );
 
 		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+		Plugin::$instance->documents->get( $kit->get_id(), false );
 
 		Plugin::$instance->breakpoints->refresh();
 
 		$laptop_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'laptop' );
 
-		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+		$this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
 	}
 }
