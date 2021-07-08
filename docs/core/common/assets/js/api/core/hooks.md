@@ -100,7 +100,7 @@ the hooks attached to $e.commands and each hook fired _after/before_ running a c
         }
         ```
   * Hook conventions 
-    - The hook file name should describe what it does and which group he takes part. For example if the hook is part of navigator mechanism and the hook toggle the navigator it could be called:
+    - The hook file name should describe what it does and where it takes place. For example, if the hook is a part of the navigator mechanism and it toggles the navigator, it could be called:
     `navigator-toggle-state`.  
     ```javascript class:"lineNo"
     1 // {FILE_PATH}/{FILE_NAME} - This is line should be deleted - just for the exmaple.
