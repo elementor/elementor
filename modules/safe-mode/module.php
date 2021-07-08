@@ -42,7 +42,7 @@ class Module extends \Elementor\Core\Base\Module {
 				'label' => esc_html__( 'Safe Mode', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => $this->is_enabled(),
+					'std' => $this->is_enabled() ? 'global' : '',
 					'options' => [
 						'' => esc_html__( 'Disable', 'elementor' ),
 						'global' => esc_html__( 'Enable', 'elementor' ),

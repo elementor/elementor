@@ -22,11 +22,27 @@
 					],
 					"type": "string"
 				},
+				"yes_no_lowercase": {
+					"$id": "#/definitions/global/enums/yes_no_lowercase",
+					"enum": [
+						"yes",
+						"no"
+					],
+					"type": "string"
+				},
 				"active_inactive": {
 					"$id": "#/definitions/global/enums/active_inactive",
 					"enum": [
 						"Active",
 						"Inactive"
+					],
+					"type": "string"
+				},
+				"active_inactive_lowercase": {
+					"$id": "#/definitions/global/enums/active_inactive_lowercase",
+					"enum": [
+						"active",
+						"inactive"
 					],
 					"type": "string"
 				}
@@ -744,6 +760,300 @@
 						}
 					},
 					"additionalProperties": false
+				},
+				"settings": {
+					"$id": "#/usages/settings",
+					"title": "The settings schema",
+					"properties": {
+						"general": {
+							"$id": "#/usages/settings/general",
+							"title": "The general settings schema",
+							"properties": {
+								"cpt_support": {
+									"$id": "#/usages/settings/general/cpt_support",
+									"type": "array",
+									"title": "Supported post types",
+									"items": {
+										"type": "string"
+									}
+								},
+								"disable_color_schemes": {
+									"$id": "#/usages/settings/general/disable_color_schemes",
+									"enum": [
+										"",
+										"yes"
+									],
+									"title": "Is default colors disabled?",
+									"default": ""
+								},
+								"disable_typography_schemes": {
+									"$id": "#/usages/settings/general/disable_typography_schemes",
+									"enum": [
+										"",
+										"yes"
+									],
+									"title": "Is default fonts disabled?",
+									"default": ""
+								},
+								"allow_tracking": {
+									"$id": "#/usages/settings/general/allow_tracking",
+									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"$comment": "TODO: Remove",
+									"title": "Is tracking allowed?",
+									"default": "yes"
+								}
+							},
+							"additionalProperties": false
+						},
+						"advanced": {
+							"$id": "#/usages/settings/advanced",
+							"title": "The advanced settings schema",
+							"properties": {
+								"css_print_method": {
+									"$id": "#/usages/settings/advanced/css_print_method",
+									"title": "CSS print method.",
+									"default": "internal",
+									"enum": [
+										"internal",
+										"external"
+									]
+								},
+								"editor_break_lines": {
+									"$id": "#/usages/settings/advanced/editor_break_lines",
+									"title": "Editor loader editor method switch",
+									"enum": [
+										"",
+										"1"
+									],
+									"default": "1"
+								},
+								"unfiltered_files_upload": {
+									"$id": "#/usages/settings/advanced/enable_unfiltered_file_uploads",
+									"enum": [
+										"",
+										"1"
+									],
+									"title": "Is enable unfilterd file uploads?",
+									"default": ""
+								},
+								"font_display": {
+									"$id": "#/usages/settings/advanced/font_display",
+									"title": "Google Fonts Load",
+									"default": "auto",
+									"enum": [
+										"auto",
+										"block",
+										"swap",
+										"fallback",
+										"optional"
+									]
+								},
+								"load_fa4_shim": {
+									"$id": "#/usages/settings/advanced/load_fa4_shim",
+									"enum": [
+										"",
+										"yes"
+									],
+									"title": "Does Font awesome 4 enabled?",
+									"default": "yes"
+								}
+							},
+							"additionalProperties": false
+						},
+						"experiments": {
+							"$id": "#/usages/settings/experiments",
+							"title": "The experiments settings schema",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/settings/experiments/$experiment",
+									"title": "Settings of current experiment",
+									"type": "object",
+									"properties": {
+										"default": {
+											"$id": "#/usages/settings/experiments/$experiment/default",
+											"$ref": "#/definitions/global/enums/active_inactive_lowercase",
+											"title": "Default state of the experiment"
+										},
+										"state": {
+											"$id": "#/usages/settings/experiments/$experiment/state",
+											"title": "The state of the experiment",
+											"oneOf": [
+												{
+													"$ref": "#/definitions/global/enums/active_inactive_lowercase"
+												},
+												{
+													"enum": [
+														"default"
+													]
+												}
+											]
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"examples": [
+						{
+							"general": {
+								"cpt_support": [
+									"post",
+									"page"
+								],
+								"disable_color_schemes": "",
+								"disable_typography_schemes": "",
+								"allow_tracking": "yes"
+							},
+							"advanced": {
+								"css_print_method": "internal",
+								"editor_break_lines": "1",
+								"unfiltered_files_upload": "",
+								"font_display": "auto"
+							},
+							"experiments": {
+								"e_dom_optimization": {
+									"default": "active",
+									"state": "default"
+								},
+								"e_optimized_assets_loading": {
+									"default": "inactive",
+									"state": "default"
+								},
+								"e_optimized_css_loading": {
+									"default": "inactive",
+									"state": "default"
+								},
+								"a11y_improvements": {
+									"default": "active",
+									"state": "default"
+								},
+								"e_import_export": {
+									"default": "active",
+									"state": "default"
+								},
+								"landing-pages": {
+									"default": "active",
+									"state": "default"
+								},
+								"elements-color-picker": {
+									"default": "active",
+									"state": "default"
+								},
+								"admin-top-bar": {
+									"default": "inactive",
+									"state": "default"
+								},
+								"form-submissions": {
+									"default": "active",
+									"state": "default"
+								}
+							}
+						}
+					],
+					"additionalProperties": false
+				},
+				"tools": {
+					"$id": "#/usages/tools",
+					"title": "The tools schema",
+					"description": "Settings of tools usage.",
+					"properties": {
+						"general": {
+							"$id": "#/usages/tools/general",
+							"properties": {
+								"safe_mode": {
+									"$id": "#/usages/tools/general/safe_mode",
+									"enum": [
+										"",
+										"global"
+									],
+									"title": "Is safe mode enabled?",
+									"default": "false"
+								},
+								"enable_inspector": {
+									"$id": "#/usages/tools/general/enable_inspector",
+									"enum": [
+										"",
+										"enable"
+									],
+									"title": "Is debug bar enabled?",
+									"default": true
+								}
+							},
+							"additionalProperties": false
+						},
+						"version": {
+							"$id": "#/usages/tools/version",
+							"properties": {
+								"beta": {
+									"$id": "#/usages/tools/version/beta",
+									"$ref": "#/definitions/global/enums/yes_no_lowercase",
+									"title": "Is beta tester?",
+									"default": "no"
+								}
+							},
+							"additionalProperties": false
+						},
+						"maintenance": {
+							"$id": "#/usages/tools/maintenance",
+							"properties": {
+								"maintenance_mode_mode": {
+									"$id": "#/usages/tools/maintenance/maintenance_mode_mode",
+									"type": "string",
+									"title": "Maintenance mode",
+									"enum": [
+										"",
+										"coming_soon",
+										"maintenance"
+									],
+									"default": ""
+								},
+								"maintenance_mode_exclude_mode": {
+									"$id": "#/usages/tools/maintenance/maintenance_mode_exclude_mode",
+									"title": "Exclude who can access?",
+									"type": "string",
+									"enum": [
+										"logged_in",
+										"custom"
+									],
+									"default": "logged_in"
+								},
+								"maintenance_mode_exclude_roles": {
+									"$id": "#/usages/tools/maintenance/maintenance_mode_exclude_roles",
+									"title": "Restrict roles",
+									"type": [
+										"array",
+										"null"
+									]
+								},
+								"maintenance_mode_template_id": {
+									"$id": "#/usages/tools/maintenance/maintenance_mode_template_id",
+									"title": "Maintenance template id",
+									"type": "string",
+									"default": ""
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"examples": [
+						{
+							"general": {
+								"safe_mode": false,
+								"debug_bar": false
+							},
+							"version": {
+								"beta_tester": "no"
+							},
+							"maintenance": {
+								"mode": "",
+								"exclude": "logged_in",
+								"template_id": ""
+							}
+						}
+					],
+					"additionalProperties": false
 				}
 			},
 			"additionalProperties": false
@@ -752,6 +1062,11 @@
 			"$id": "#/is_first_time",
 			"type": "boolean",
 			"title": "Is it the first time sending usage data?"
+		},
+		"install_time": {
+			"$id": "#/install_time",
+			"type": "number",
+			"title": "Install timestamp"
 		}
 	},
 	"additionalProperties": false
