@@ -151,6 +151,26 @@ jQuery( () => {
 			// Assert.
 			assert.equal( iterationCounter, 1 );
 		} );
+
+		QUnit.test( 'forSomeChildrenRecursive(): Ensure nested', ( assert ) => {
+			// Arrange.
+			ElementsHelper.createAutoButton();
+
+			const eButtonInSection2 = ElementsHelper.createAutoButton();
+
+			let iterationCounter = 0;
+
+			// Act.
+			elementor.getPreviewContainer().forSomeChildrenRecursive( ( container ) => {
+				if ( container.id === eButtonInSection2 ) {
+					return true;
+				}
+				++iterationCounter;
+			} );
+
+			// Assert.
+			assert.equal( iterationCounter, 7 );
+		} );
 	} );
 } );
 
