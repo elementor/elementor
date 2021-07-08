@@ -63,9 +63,9 @@ class Frontend extends Base {
 					$is_max_point = 'MAX' === $placeholder_data[2];
 
 					// If the placeholder capture is `MOBILE_NEXT` or `TABLET_NEXT`, the original breakpoint value is used.
-				if ( ! $is_max_point && 'NEXT' !== $placeholder_data[2] ) {
-					$breakpoint_index--;
-				}
+					if ( ! $is_max_point && 'NEXT' !== $placeholder_data[2] ) {
+						$breakpoint_index--;
+					}
 
 					$value = $breakpoints[ $breakpoints_keys[ $breakpoint_index ] ]->get_value();
 
