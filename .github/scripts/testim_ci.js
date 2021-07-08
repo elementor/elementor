@@ -9,7 +9,7 @@ const runProgram = (program, options) => {
     const subprocess = spawn(program, options);
 
     subprocess.stdout.on("data", (data) => {
-      console.log(data);
+      console.log(`Data: ${data}`);
     });
 
     subprocess.stderr.on("data", (data) => {
