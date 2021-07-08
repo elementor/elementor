@@ -154,6 +154,7 @@ jQuery( () => {
 
 		QUnit.test( 'forSomeChildrenRecursive(): Ensure nested', ( assert ) => {
 			// Arrange.
+			ElementsHelper.empty();
 			ElementsHelper.createAutoButton();
 
 			const eButtonInSection2 = ElementsHelper.createAutoButton();
