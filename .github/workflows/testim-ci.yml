@@ -1,6 +1,7 @@
 name: Testim
 
 on:
+  push:
   pull_request_review:
     types: [submitted]
 
