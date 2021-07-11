@@ -28,6 +28,9 @@ export default function Tooltip( props ) {
 			/* webpackIgnore: true */
 			`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
 		).then( () => setIsLibraryLoaded( true ) );
+
+		// Cleanup in case of re-render.
+		return () => jQuery( '.tipsy:last' ).remove();
 	}, [] );
 
 	useEffect( () => {
