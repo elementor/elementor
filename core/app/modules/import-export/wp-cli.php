@@ -83,11 +83,15 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @param array $assoc_args
 	 */
 	public function import( array $args, array $assoc_args ) {
-		if ( empty( $args[0] ) ) {
-			\WP_CLI::error( 'Please specify a file to import.' );
+		if ( ! current_user_can( 'administrator' ) ) {
+			\WP_CLI::error( 'You must run this command as an admin user' );
 		}
 
-		\WP_CLI::line( 'Kit export started.' );
+		if ( empty( $args[0] ) ) {
+			\WP_CLI::error( 'Please specify a file to import' );
+		}
+
+		\WP_CLI::line( 'Kit export started' );
 
 		\WP_CLI::line( 'Extracting zip archive...' );
 
@@ -119,7 +123,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
 
-			\WP_CLI::success( 'Kit imported successfully.' );
+			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
 

@@ -75,16 +75,16 @@ class Tools extends Settings_Page {
 	public function ajax_elementor_recreate_kit() {
 		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
 
-		$id = Plugin::$instance->kits_manager->get_active_id();
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( $id ) {
-			wp_send_json_error( __( 'There\'s already an active kit.', 'elementor' ) );
+		if ( $kit->get_id() ) {
+			wp_send_json_error( [ 'message' => __( 'There\'s already an active kit.', 'elementor' ) ], 400 );
 		}
 
 		$created_default_kit = Plugin::$instance->kits_manager->create_default();
 
 		if ( ! $created_default_kit ) {
-			wp_send_json_error( __( 'An error occurred while trying to create a kit.', 'elementor' ) );
+			wp_send_json_error( [ 'message' => __( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
 		}
 
 		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
@@ -168,11 +168,9 @@ class Tools extends Settings_Page {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 
-		if ( ! empty( $_POST ) ) {
-			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
-			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
-			add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
-		}
+		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
+		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
+		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
@@ -256,11 +254,11 @@ class Tools extends Settings_Page {
 					'tools' => [
 						'fields' => [
 							'clear_cache' => [
-								'label' => __( 'Regenerate CSS', 'elementor' ),
+								'label' => esc_html__( 'Regenerate CSS & Data', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
-									'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
+									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
@@ -362,7 +360,7 @@ class Tools extends Settings_Page {
 			],
 		];
 
-		if ( ! Plugin::$instance->kits_manager->get_active_kit() ) {
+		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
 				'label' => __( 'Recreate Kit', 'elementor' ),
 				'field_args' => [

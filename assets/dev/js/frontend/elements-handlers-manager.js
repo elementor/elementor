@@ -35,7 +35,7 @@ module.exports = function( $ ) {
 		} );
 	};
 
-	const isClassHandler = ( Handler ) => Handler.prototype.getUniqueHandlerID;
+	const isClassHandler = ( Handler ) => Handler.prototype?.getUniqueHandlerID;
 
 	const addHandlerWithHook = ( elementName, Handler, skin = 'default' ) => {
 		skin = skin ? '.' + skin : '';
