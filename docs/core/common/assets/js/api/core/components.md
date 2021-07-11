@@ -1,3 +1,4 @@
+
 # API - `$e.components`
 The new Components API (since 2.7.0), provides a simple and convenient way to bind all route and commands, and keyboard shortcuts that belong to a UI component – into one controller.
 The full list of components, including custom & 3rd routes, is available via: `$e.components.getAll();`
@@ -20,7 +21,7 @@ The components are extensible so a 3rd party plugin can add some routes, command
 	| `$e.components.activate()`   | `{String}` *namespace*         |                                               | Activate component.
 	| `$e.components.inactivate()` | `{String}` *namespace*         |                                               | Deactivate component.
 	| `$e.components.isActive()`   | `{String}` *namespace*         | `{Boolean}` *isActive*                        | Is component active.
-     > **Note:** to see all the components please. please visit [`{$e.commands.getAll()}`](commands-methods/getall.md)**method**
+     > **Note:** to see all the components please. please visit [`{$e.components.getAll()}`](components-methods/getall.md)**method**
 
 * **Examples**:
     ```javascript
@@ -60,8 +61,10 @@ The components are extensible so a 3rd party plugin can add some routes, command
     
     ```
 ## Guidelines, conventions & file's structure
+* Description
   * You can view your component as a namespace that holds your [commands](../core/commands.md#guidelines-conventions--files-structure), [hooks](../core/hooks.md#guidelines-conventions--files-structure), [routes](#UPDATE_WHEN_READY), [tabs](#UPDATE_WHEN_READY), [shortcuts](#UPDATE_WHEN_READY) & [utils](#UPDATE_WHEN_READY).
-  * Component class file should be named `component.js`
+* Conventions
+  * Component class file should be named: `component.js`
   * Component folder name should be named as a component namespace or a sub-component namespace.
   * Components and sub-components convention example, described in next scenario:
   Assuming you create a `Document` component which creates a sub-component `Elements`
@@ -111,5 +114,30 @@ The components are extensible so a 3rd party plugin can add some routes, command
     
     export default class Component;
     ```
+* Placement of component methods, and usage of `defaultUtils`
+	* Assuming you method which used from the commands across your component *namespace*, those methods can be placed as methods at the components level, see: `createAlert`.
+	* If the method is used outside the component you should use `defaultUtils`, see at code below.
+	    ```javascript
+	    export default class Component extends $e.modules.ComponentBase {
+	        getNamespace() {
+	            return 'helper';
+	        }
 
+	        defaultUtils() {
+	            return: {
+	               redirect: ( newLocation ) => {}, // Just an example.
+	            }
+	        }
+
+	        createAlert( message ) {
+	            return alert( message );
+	        }
+	    }
+	    
+	    export default class Component;
+	    ```
+    * Running component method:
+	    `$e.components.get( 'helper' ).createAlert( 'hello' );`
+    * Running component util:
+	    `$e.components.get( 'helper' ).utils.redirect( 'www.example.com' );`
 ### [Back](../readme.md) 
