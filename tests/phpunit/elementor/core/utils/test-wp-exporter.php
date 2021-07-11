@@ -15,6 +15,14 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 	 */
 	private $expected_errors_found;
 
+	public function setUp() {
+		parent::setUp();
+
+		// Should remove the default kit because it is actually a post and it affect
+		// the number of posts that exists.
+		$this->remove_default_kit();
+	}
+
 	protected function expected_error( $error_messages ) {
 		$this->expected_error_list = (array) $error_messages;
 
@@ -56,6 +64,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 
 		// Act.
 		$elementor_export_output = ( new WP_Exporter() )->run();
+		$elementor_export_output = $elementor_export_output['xml'];
 		$clean_elementor_export_output = $this->remove_space_eols_and_tabulation( $elementor_export_output );
 
 		$clean_wp_export_output = $replace_pub_date_timestamp( $clean_wp_export_output );
@@ -90,7 +99,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 				'offset' => $limit_expected * $i,
 			] );
 
-			$content_per_offset_actual[ $i ] = $exporter->run();
+			$content_per_offset_actual[ $i ] = $exporter->run()['xml'];
 		}
 
 		// Assert.
@@ -114,12 +123,17 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		$document->update_meta( $meta_key, true );
 
 		$exporter = new WP_Exporter( [
-			'meta_key' => $meta_key,
+			'meta_query' => [
+				[
+					'key' => $meta_key,
+					'value' => true,
+				],
+			],
 		] );
 
 		// Act.
 		$content = $exporter->run();
-		$actual_items = substr_count( $content, '<item>' );
+		$actual_items = substr_count( $content['xml'], '<item>' );
 
 		// Assert.
 		$this->assertEquals( 1, $actual_items );
@@ -132,14 +146,53 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 		self::factory()->create_post();
 
 		$exporter = new WP_Exporter( [
-			'meta_key' => $meta_key,
+			'meta_query' => [
+				[
+					'key' => $meta_key,
+					'value' => true,
+				],
+			],
 		] );
 
 		// Act.
 		$content = $exporter->run();
-		$actual_items = substr_count( $content, '<item>' );
+		$actual_items = substr_count( $content['xml'], '<item>' );
 
 		// Assert.
 		$this->assertEquals( 0, $actual_items );
+	}
+
+	public function test_run__ensure_include_post_featured_image_as_attachment() {
+		// Arrange.
+		$attachment = $this->factory()->post->create_and_get( [
+			'post_type' => 'attachment',
+		] );
+
+		$this->factory()->post->create_and_get( [
+			'meta_input' => [
+				'_thumbnail_id' => $attachment->ID,
+			],
+		] );
+
+		$exporter = new WP_Exporter( [
+			'content' => 'post',
+			'status' => 'publish',
+			'meta_query' => [
+				[
+					'key' => '_elementor_edit_mode',
+					'compare' => 'NOT EXISTS',
+				],
+			],
+			'include_post_featured_image_as_attachment' => true,
+		] );
+
+		// Act.
+		$content = $exporter->run();
+
+		// Assert.
+		$this->assertCount( 2, $content['ids'] );
+
+		$include_attachment = (boolean) strstr( $content['xml'], '<wp:attachment_url>' );
+		$this->assertTrue( $include_attachment );
 	}
 }
