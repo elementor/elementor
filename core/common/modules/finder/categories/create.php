@@ -41,14 +41,8 @@ class Create extends Base_Category {
 		$result = [];
 
 		$registered_document_types = Plugin::$instance->documents->get_document_types();
-		$elementor_supported_post_types = get_post_types_by_support( 'elementor' );
+		$elementor_supported_post_types = array_flip( get_post_types_by_support( 'elementor' ) );
 
-		/**
-		 * @var $class \Elementor\Core\Base\Document[]
-		 */
-		$document_types = [];
-
-		// This loop should filter which types to proceed with.
 		foreach ( $registered_document_types as $document_name => $document_class ) {
 			$document_properties = $document_class::get_properties();
 
@@ -56,24 +50,36 @@ class Create extends Base_Category {
 				continue;
 			}
 
-			// To Support backward compatibility, avoid those.
-			if ( 'post' === $document_name || 'page' === $document_name || 'stack' === $document_class::get_type() ) {
+			// To Support backward compatibility.
+			if ( empty( $document_properties['cpt'] ) ) {
 				continue;
 			}
 
-			$document_types[ $document_name ] = $document_class;
+			foreach ( $document_properties['cpt'] as $cpt ) {
+				unset( $elementor_supported_post_types[ $cpt ] );
+			}
+
+			if ( in_array( $document_name, [ 'post', 'page', 'code_snippet' ], true ) ) {
+				continue;
+			}
+			// End backward compatibility.
+
+			$url = $this->create_item_url_by_document_class( $document_class );
+
+			if ( ! $url ) {
+				continue;
+			}
+
+			$result[ $document_name ] = $url;
 		}
 
-		// Will be handled by new mechanism.
+		// Handled by new mechanism.
 		$ignore_list = [
-			'post',
-			'page',
-			'e-landing-page',
 			'elementor_library',
 		];
 
 		// Old mechanism.
-		foreach ( $elementor_supported_post_types as $post_type ) {
+		foreach ( $elementor_supported_post_types as $post_type => $val ) {
 			if ( in_array( $post_type, $ignore_list, true ) ) {
 				continue;
 			}
@@ -85,17 +91,6 @@ class Create extends Base_Category {
 			}
 
 			$result[ $post_type ] = $url;
-		}
-
-		// New Mechanism. ( Currently handles 'wp-post', 'wp-page', 'landing-page'. )
-		foreach ( $document_types as $document_name => $document_class ) {
-			$url = $this->create_item_url_by_document_class( $document_class );
-
-			if ( ! $url ) {
-				continue;
-			}
-
-			$result[ $document_name ] = $url;
 		}
 
 		return $result;
