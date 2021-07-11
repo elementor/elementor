@@ -15,6 +15,7 @@ export default function TemplatesFeatures( props ) {
 					offset={ 19 }
 					show={ props.showTooltip }
 					title={ props.features.tooltip }
+					disabled={ ! props.isLocked }
 					className={ props.isLocked ? 'e-app-export-templates-features__locked' : '' }
 				>
 					{ ', ' + props.features.locked.join( ', ' ) }
