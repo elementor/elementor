@@ -154,10 +154,7 @@ class Element_Column extends Element_Base {
 		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$main_selector_element = $is_dome_optimization_active ? 'widget' : 'column';
 		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
-		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap' . $widget_wrap_child;
-		$widget_wrap_relation = $is_dome_optimization_active ? '' : ' > ';
-		$wrapper_populated = '{{WRAPPER}}' . $column_wrap_child . '.elementor-element-populated';
-		$wrapper_populated_hover = $is_dome_optimization_active ? $wrapper_populated . ':hover' : '{{WRAPPER}}:hover' . $column_wrap_child . '.elementor-element-populated';
+		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap';
 
 		$this->add_responsive_control(
 			'content_position',
@@ -182,7 +179,7 @@ class Element_Column extends Element_Base {
 					// TODO: The following line is for BC since 2.7.0
 					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-' . $main_selector_element . '-wrap' => 'align-items: {{VALUE}}',
 					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"]' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -203,10 +200,12 @@ class Element_Column extends Element_Base {
 					'space-evenly' => __( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column' . $column_wrap_child => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column' . $column_wrap_child . ' > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
+
+		$space_between_widgets_selector = $is_dome_optimization_active ? '' : '> .elementor-column-wrap ';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
@@ -215,7 +214,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}}' => '--widgets-gap: {{VALUE}}px',
+					'{{WRAPPER}} ' . $space_between_widgets_selector . '> .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
 				],
 			]
 		);
@@ -269,7 +268,7 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background)' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap, {{WRAPPER}}' . $widget_wrap_relation . '.elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-' . $main_selector_element . '-wrap, {{WRAPPER}} > .elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
@@ -291,7 +290,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_hover',
-				'selector' => $wrapper_populated_hover,
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
 			]
 		);
 
@@ -345,7 +344,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay',
-				'selector' => $wrapper_populated . ' >  .elementor-background-overlay',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
@@ -364,7 +363,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					$wrapper_populated . ' > .elementor-background-overlay' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
 				],
 				'condition' => [
 					'background_overlay_background' => [ 'classic', 'gradient' ],
@@ -376,7 +375,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters',
-				'selector' => $wrapper_populated . ' >  .elementor-background-overlay',
+				'selector' => '{{WRAPPER}} > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
@@ -398,7 +397,7 @@ class Element_Column extends Element_Base {
 					'luminosity' => 'Luminosity',
 				],
 				'selectors' => [
-					$wrapper_populated . ' > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
+					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
 				],
 			]
 		);
@@ -416,7 +415,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background_overlay_hover',
-				'selector' => $wrapper_populated_hover . ' >  .elementor-background-overlay',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
@@ -435,7 +434,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					$wrapper_populated_hover . ' >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
+					'{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay' => 'opacity: {{SIZE}};',
 				],
 				'condition' => [
 					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
@@ -447,7 +446,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Css_Filter::get_type(),
 			[
 				'name' => 'css_filters_hover',
-				'selector' => $wrapper_populated_hover . ' >  .elementor-background-overlay',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
@@ -497,7 +496,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border',
-				'selector' => $wrapper_populated,
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
 
@@ -508,7 +507,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					$wrapper_populated . ', ' . $wrapper_populated . ' > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -517,7 +516,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow',
-				'selector' => $wrapper_populated,
+				'selector' => '{{WRAPPER}} > .elementor-element-populated',
 			]
 		);
 
@@ -534,7 +533,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'border_hover',
-				'selector' => $wrapper_populated_hover,
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
 			]
 		);
 
@@ -545,7 +544,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					$wrapper_populated_hover . ', ' . $wrapper_populated_hover . ' > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}:hover > .elementor-element-populated, {{WRAPPER}}:hover > .elementor-element-populated > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -554,7 +553,7 @@ class Element_Column extends Element_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'box_shadow_hover',
-				'selector' => $wrapper_populated_hover,
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated',
 			]
 		);
 
@@ -589,8 +588,8 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					$wrapper_populated => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
-					$wrapper_populated . ' > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
+					'{{WRAPPER}} > .elementor-element-populated' => 'transition: background {{background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					'{{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay' => 'transition: background {{background_overlay_hover_transition.SIZE}}s, border-radius {{SIZE}}s, opacity {{background_overlay_hover_transition.SIZE}}s',
 				],
 			]
 		);
@@ -618,7 +617,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					$wrapper_populated . ' .elementor-heading-title, {{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
 				'separator' => 'none',
 			]
@@ -631,7 +630,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					$wrapper_populated => 'color: {{VALUE}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -643,7 +642,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					$wrapper_populated . ' a, {{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-element-populated a' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -655,7 +654,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					$wrapper_populated . ' a:hover, {{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-element-populated a:hover' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -680,7 +679,7 @@ class Element_Column extends Element_Base {
 					],
 				],
 				'selectors' => [
-					$wrapper_populated => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -704,7 +703,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					$wrapper_populated => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -716,7 +715,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					$wrapper_populated => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -911,15 +910,16 @@ class Element_Column extends Element_Base {
 	 */
 	protected function content_template() {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
 
-		if ( $is_dom_optimization_active ) { ?>
+		?>
+		<div class="elementor-<?php echo $wrapper_element; ?>-wrap">
 			<div class="elementor-background-overlay"></div>
-		<?php } else { ?>
-			<div class="elementor-column-wrap">
-				<div class="elementor-background-overlay"></div>
+			<?php if ( ! $is_dom_optimization_active ) { ?>
 				<div class="elementor-widget-wrap"></div>
-			</div>
-		<?php }
+			<?php } ?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -939,7 +939,7 @@ class Element_Column extends Element_Base {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
 
-		$column_wrap_classes = $is_dom_optimization_active ? [] : [ 'elementor-column-wrap' ];
+		$column_wrap_classes = $is_dom_optimization_active ? [ 'elementor-widget-wrap' ] : [ 'elementor-column-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
@@ -958,9 +958,7 @@ class Element_Column extends Element_Base {
 		] );
 		?>
 		<<?php echo $this->get_html_tag() . ' ' . $this->get_render_attribute_string( '_wrapper' ); ?>>
-		<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div <?php echo $this->get_render_attribute_string( $wrapper_attribute_string ); ?>>
-		<?php endif; ?>
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php echo $this->get_render_attribute_string( '_background_overlay' ); ?>></div>
 		<?php endif; ?>
@@ -979,12 +977,10 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-
-		if ( ! $is_dom_optimization_active ) { ?>
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
 				</div>
-			</div>
 		<?php } ?>
+			</div>
 		</<?php echo $this->get_html_tag(); ?>>
 		<?php
 	}
@@ -1012,16 +1008,6 @@ class Element_Column extends Element_Base {
 				'elementor-' . $column_type . '-column',
 			]
 		);
-
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-
-		if ( $is_dom_optimization_active ) {
-			$this->add_render_attribute( '_wrapper', 'class', 'elementor-widget-wrap' );
-
-			if ( $this->get_children() ) {
-				$this->add_render_attribute( '_wrapper', 'class', 'elementor-element-populated' );
-			}
-		}
 
 		parent::add_render_attributes();
 	}
