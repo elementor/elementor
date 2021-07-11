@@ -123,7 +123,7 @@ class Create extends Base_Category {
 			'title' => sprintf( __( 'Add New %s', 'elementor' ), $title ),
 			'icon' => 'plus-circle-o',
 			'url' => $url,
-			'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],
+			'keywords' => [ $title, 'post', 'page', 'template', 'new', 'create' ],
 		];
 	}
 }
