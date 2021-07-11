@@ -3,7 +3,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Breakpoints;
 
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Testing\Traits\Breakpoints_Trait;
@@ -105,8 +104,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_device_min_breakpoint_mobile() {
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
 		// Test for mobile specifically, which always has a min point of 320.
 		$this->assertEquals( 320, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
 	}
@@ -144,7 +141,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$kit->save( [ 'settings' => $kit_settings ] );
 
 		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+		Plugin::$instance->documents->get( $kit->get_id(), false );
 
 		Plugin::$instance->breakpoints->refresh();
 
