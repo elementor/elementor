@@ -63,6 +63,10 @@ export default {
 			},
 		},
 	},
+	breakpoints: {
+		getDeviceMinBreakpoint: () => {
+		},
+	},
 	isEditMode: () => {
 	},
 	elementsHandler: {
