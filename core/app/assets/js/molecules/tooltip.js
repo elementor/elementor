@@ -24,14 +24,17 @@ export default function Tooltip( props ) {
 		};
 
 	useEffect( () => {
-		import(
-			/* webpackIgnore: true */
-			`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
-		).then( () => setIsLibraryLoaded( true ) );
+		// In case that the component is disabled the tipsy library will not be loaded by default.
+		if ( ! props.disabled ) {
+			import(
+				/* webpackIgnore: true */
+				`${ elementorCommon.config.urls.assets }lib/tipsy/tipsy.min.js?ver=1.0.0`
+			).then( () => setIsLibraryLoaded( true ) );
 
-		// Cleanup in case of re-render.
-		return () => jQuery( '.tipsy:last' ).remove();
-	}, [] );
+			// Cleanup in case of re-render.
+			return () => jQuery( '.tipsy:last' ).remove();
+		}
+	}, [ props.disabled ] );
 
 	useEffect( () => {
 		if ( isLibraryLoaded ) {
@@ -48,7 +51,8 @@ export default function Tooltip( props ) {
 	}, [ isLibraryLoaded, showTooltip ] );
 
 	useEffect( () => {
-		if ( props.show !== showTooltip ) {
+		// The "show" state should not be changed while the component is disabled.
+		if ( ! props.disabled && props.show !== showTooltip ) {
 			setShowTooltip( props.show );
 		}
 	}, [ props.show ] );
@@ -67,6 +71,7 @@ Tooltip.propTypes = {
 	direction: PropTypes.oneOf( [ 'top', 'right', 'left', 'down' ] ),
 	tag: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
+	disabled: PropTypes.bool,
 	children: PropTypes.any,
 };
 
@@ -74,4 +79,5 @@ Tooltip.defaultProps = {
 	className: '',
 	offset: 10,
 	direction: 'top',
+	disabled: false,
 };
