@@ -46,6 +46,8 @@ jobs:
           - phpVersion: '7.4'
             wpCoreVersion: 'latest'
     steps:
+      - name: Start Selenoid Server
+        uses: Xotabu4/selenoid-github-action@v2
       - name: Checkout source code
         uses: actions/checkout@v2
       - name: Install Node.js 14.x
@@ -76,7 +78,5 @@ jobs:
           npx wp-env run tests-cli "wp --info"
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli
-      - name: Install Ngrok
-        run: npm install --no-package-lock --no-save ngrok@4.0.1
       - name: Run Testim tests
-        run: node ./.github/scripts/testim_ci.js ${{ secrets.TESTIM_PROJECT }} ${{ secrets.TESTIM_TOKEN }} ${{ secrets.NGROK_TOKEN }} 
+        run: npx testim --token "${{ secrets.TESTIM_TOKEN }}" --project "${{ secrets.TESTIM_PROJECT }}" --grid "local" --parallel 5 --params '{"username":"admin","password":"password"}' --base-url "http://localhost:8889" --label "Sanity"
