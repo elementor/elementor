@@ -6,10 +6,12 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 		const select = this.ui.select;
 		let selected = select.find( 'option:selected' );
 
+		// When option with an empty value ('') selected, and it's not the placeholder option,
+		// set the selected option to the placeholder.
 		if ( '' === selected.val() && ! selected.hasClass( 'e-option-placeholder' ) ) {
 			selected = select.find( '.e-option-placeholder' );
 
-			select.val( selected.val() );
+			selected.prop( 'selected', true );
 		}
 
 		if ( selected.hasClass( 'e-option-placeholder' ) ) {

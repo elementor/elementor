@@ -421,11 +421,14 @@ module.exports = {
 		const condition = controlModel.condition || controlModel.get?.( 'condition' );
 		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
-		// If there is a simple condition, convert it to a complex condition.
+		// If there is a 'condition' format, convert it to a 'conditions' format.
 		if ( condition ) {
 			const terms = [];
 
 			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
+				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
+				// isolate the term from the negative operator if exists. For example, a condition format can look
+				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
 				const conditionNameParts = conditionName.match( /(\w+(?:\[\w+])?)?(!?)$/i ),
 					conditionRealName = conditionNameParts[ 1 ],
 					isNegativeCondition = !! conditionNameParts[ 2 ];

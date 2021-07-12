@@ -22,6 +22,8 @@ ControlChooseItemView = ControlBaseDataView.extend( {
 		const placeholder = this.model.get( 'placeholder' );
 
 		if ( ! this.getControlValue() && placeholder ) {
+			// Find the input which has value equals to the placeholder (which is the parent's value),
+			// and add it a placeholder class, to indicate which value is selected in the parent.
 			this.ui.inputs.filter( `[value="${ this.model.get( 'placeholder' ) }"]` )
 				.addClass( 'e-choose-placeholder' );
 		} else {
