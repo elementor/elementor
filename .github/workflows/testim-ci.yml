@@ -46,8 +46,6 @@ jobs:
           - phpVersion: '7.4'
             wpCoreVersion: 'latest'
     steps:
-      - name: Start Selenoid Server
-        uses: Xotabu4/selenoid-github-action@v2
       - name: Checkout source code
         uses: actions/checkout@v2
       - name: Install Node.js 14.x
@@ -72,6 +70,11 @@ jobs:
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
+      - name: Start selenoid
+        uses: Xotabu4/selenoid-github-action@v1
+        with:
+          selenoid-start-arguments: |
+            --args "-container-network {{docker network ls -f name=default --format '{{.Name}}'}}"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
