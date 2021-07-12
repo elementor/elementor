@@ -1,8 +1,5 @@
-
-
 .e-transform .elementor-widget-container {
-	transform:
-		rotateZ( var( --e-transform-rotateZ, 0 ) )
+	transform: rotateZ( var( --e-transform-rotateZ, 0 ) )
 		rotateX( var( --e-transform-rotateX, 0 ) )
 		rotateY( var( --e-transform-rotateY, 0 ) )
 		translate( var( --e-transform-translate, 0 ) )
