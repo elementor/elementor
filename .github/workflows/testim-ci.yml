@@ -75,7 +75,7 @@ jobs:
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
       - name: Get network name
-        run: echo '::set-output name=NETWORK_NAME::${{docker network ls -f name=default --format "{{.Name}}"}}'
+        run: echo '::set-output name=NETWORK_NAME::$(docker network ls -f name=default --format "{{.Name}}")'
         id: network-name
       - name: Start selenoid
         uses: Xotabu4/selenoid-github-action@v1
