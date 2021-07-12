@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Settings\Page\Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -18,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Utils {
 
 	const DEPRECATION_RANGE = 0.4;
+
+	const EDITOR_BREAK_LINES_OPTION_KEY = 'elementor_editor_break_lines';
 
 	/**
 	 * A list of safe tage for `validate_html_tag` method.
@@ -152,16 +152,6 @@ class Utils {
 			"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $from ) . "', '" . str_replace( '/', '\\\/', $to ) . "') " .
 			"WHERE `meta_key` = '_elementor_data' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
 		// @codingStandardsIgnoreEnd
-
-		$second_rows_affected = $wpdb->query(
-			"UPDATE {$wpdb->postmeta} " .
-			$wpdb->prepare( 'SET `meta_value` = REPLACE(`meta_value`, %s, %s) ', $from, $to ) .
-			'WHERE `meta_key` = \'' . Manager::META_KEY . '\''
-		);
-
-		if ( $second_rows_affected ) {
-			$rows_affected += $second_rows_affected;
-		}
 
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
@@ -503,7 +493,7 @@ class Utils {
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
 
-		if ( get_option( 'elementor_editor_break_lines' ) ) {
+		if ( get_option( self::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
 			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config = str_replace( '}},"', '}},' . PHP_EOL . '"', $config );
 		}

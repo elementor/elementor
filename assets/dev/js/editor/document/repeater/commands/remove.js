@@ -51,7 +51,8 @@ export class Remove extends CommandHistory {
 			container = container.lookup();
 
 			const collection = container.settings.get( name ),
-				model = collection.at( index );
+				model = collection.at( index ),
+				repeaterContainer = container.repeaters[ name ];
 
 			if ( this.isHistoryActive() ) {
 				$e.internal( 'document/history/log-sub-item', {
@@ -62,11 +63,12 @@ export class Remove extends CommandHistory {
 			}
 
 			// Remove from container and add to result.
-			result.push( container.repeaters[ name ].children.splice( index, 1 ) );
+			result.push( repeaterContainer.children.splice( index, 1 ) );
 
 			collection.remove( model );
 
-			container.render();
+			// Trigger render on widget but with the settings of the control.
+			repeaterContainer.render();
 		} );
 
 		if ( 1 === result.length ) {

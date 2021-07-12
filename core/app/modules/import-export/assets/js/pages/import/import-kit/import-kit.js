@@ -15,7 +15,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax } = useAjax(),
+	const { ajaxState, setAjax, ajaxActions } = useAjax(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
@@ -23,6 +23,8 @@ export default function ImportKit() {
 		resetImportProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
+			setIsLoading( false );
+			ajaxActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
@@ -47,6 +49,8 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
+		} else if ( 'error' === ajaxState.status ) {
+			setIsImportFailed( true );
 		}
 	}, [ ajaxState.status ] );
 
