@@ -9,9 +9,13 @@ export default class GlobalValues extends BaseHandler {
 			return settings;
 		}
 
-		const globalSettings = container.settings.attributes?.__globals__ || {};
 		const widgetControls = elementor.widgetsCache[ type ].controls;
 		const settingsKeys = Object.keys( settings );
+
+		const globalSettings = Object.fromEntries(
+				Object.entries( container.settings.attributes?.__globals__ || {} )
+					.filter( ( [ , value ] ) => value )
+		);
 
 		const widgetGlobalDefaults = Object.fromEntries(
 			Object.entries( widgetControls )
