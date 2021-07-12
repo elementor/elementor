@@ -70,15 +70,18 @@ jobs:
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
-      - name: Start selenoid
-        uses: Xotabu4/selenoid-github-action@v1
-        with:
-          selenoid-start-arguments: |
-            --args "-container-network {{docker network ls -f name=default --format '{{.Name}}'}}"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
+      - name: Get network name
+        run: echo '::set-output name=NETWORK_NAME::docker network ls -f name=default --format "{{.Name}}"'
+        id: network-name
+      - name: Start selenoid
+        uses: Xotabu4/selenoid-github-action@v1
+        with:
+          selenoid-start-arguments: |
+            --args "-container-network ${{ steps.network-name.outputs.NETWORK_NAME }}"
       - name: Install Testim
         run: npm install --no-package-lock --no-save @testim/testim-cli
       - name: Run Testim tests
