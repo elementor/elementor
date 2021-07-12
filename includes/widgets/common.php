@@ -986,20 +986,20 @@ class Widget_Common extends Widget_Base {
 		$transform_prefix_class = 'e-';
 		$transform_return_value = 'transform';
 
-		foreach ( [ 'normal', 'hover' ] as $tab ) {
-			$state = 'hover' === $tab ? ':hover' : '';
+		foreach ( [ '', '_hover' ] as $tab ) {
+			$state = '_hover' === $tab ? ':hover' : '';
 
 			$this->start_controls_tab(
-				"_tab_positioning_{$tab}",
+				"_tab_positioning{$tab}",
 				[
-					'label' => 'normal' === $tab ? __( 'Normal', 'elementor' ) : __( 'Hover', 'elementor' ),
+					'label' => '' === $tab ? esc_html__( 'Normal', 'elementor' ) : esc_html__( 'Hover', 'elementor' ),
 				]
 			);
 
 			$this->add_control(
-				"_{$tab}_transform_rotate_popover",
+				"_transform_rotate_popover{$tab}",
 				[
-					'label' => __( 'Rotate', 'elementor' ),
+					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
@@ -1009,9 +1009,9 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotateZ_effect",
+				"_transform_rotateZ_effect{$tab}",
 				[
-					'label' => __( 'Rotate', 'elementor' ),
+					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1026,26 +1026,26 @@ class Widget_Common extends Widget_Base {
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
 					'condition' => [
-						"_{$tab}_transform_rotate_popover!" => '',
+						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'frontend_available' => true,
 				]
 			);
 
 			$this->add_control(
-				"_{$tab}_transform_rotate_3d",
+				"_transform_rotate_3d{$tab}",
 				[
-					'label' => __( '3D Rotate', 'elementor' ),
+					'label' => esc_html__( '3D Rotate', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => __( 'On', 'elementor' ),
-					'label_off' => __( 'Off', 'elementor' ),
+					'label_on' => esc_html__( 'On', 'elementor' ),
+					'label_off' => esc_html__( 'Off', 'elementor' ),
 				]
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotateX_effect",
+				"_transform_rotateX_effect{$tab}",
 				[
-					'label' => __( 'Rotate X', 'elementor' ),
+					'label' => esc_html__( 'Rotate X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1057,8 +1057,8 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_rotate_3d!" => '',
-						"_{$tab}_transform_rotate_popover!" => '',
+						"_transform_rotate_3d{$tab}!" => '',
+						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: {{SIZE}}deg;',
@@ -1068,9 +1068,9 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_rotateY_effect",
+				"_transform_rotateY_effect{$tab}",
 				[
-					'label' => __( 'Rotate Y', 'elementor' ),
+					'label' => esc_html__( 'Rotate Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1082,8 +1082,8 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_rotate_3d!" => '',
-						"_{$tab}_transform_rotate_popover!" => '',
+						"_transform_rotate_3d{$tab}!" => '',
+						"_transform_rotate_popover{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateY: {{SIZE}}deg;',
@@ -1095,9 +1095,9 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_translate_popover",
+				"_transform_translate_popover{$tab}",
 				[
-					'label' => __( 'Offset', 'elementor' ),
+					'label' => esc_html__( 'Offset', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
@@ -1107,9 +1107,9 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_translateX_effect",
+				"_transform_translateX_effect{$tab}",
 				[
-					'label' => __( 'Offset X', 'elementor' ),
+					'label' => esc_html__( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ '%', 'px' ],
 					'range' => [
@@ -1126,7 +1126,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_translate_popover!" => '',
+						"_transform_translate_popover{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateX: {{SIZE}}{{UNIT}};',
@@ -1136,9 +1136,9 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_translateY_effect",
+				"_transform_translateY_effect{$tab}",
 				[
-					'label' => __( 'Offset Y', 'elementor' ),
+					'label' => esc_html__( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'size_units' => [ '%', 'px' ],
 					'range' => [
@@ -1152,7 +1152,7 @@ class Widget_Common extends Widget_Base {
 						],
 					],
 					'condition' => [
-						"_{$tab}_transform_translate_popover!" => '',
+						"_transform_translate_popover{$tab}!" => '',
 					],
 					'default' => [
 						'size' => 0,
@@ -1167,9 +1167,9 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_scale_popover",
+				"_transform_scale_popover{$tab}",
 				[
-					'label' => __( 'Scale', 'elementor' ),
+					'label' => esc_html__( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
@@ -1179,20 +1179,20 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_keep_proportions",
+				"_transform_keep_proportions{$tab}",
 				[
-					'label' => __( 'Keep Proportions', 'elementor' ),
+					'label' => esc_html__( 'Keep Proportions', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => __( 'On', 'elementor' ),
-					'label_off' => __( 'Off', 'elementor' ),
+					'label_on' => esc_html__( 'On', 'elementor' ),
+					'label_off' => esc_html__( 'Off', 'elementor' ),
 					'default' => 'yes',
 				]
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scale_effect",
+				"_transform_scale_effect{$tab}",
 				[
-					'label' => __( 'Scale', 'elementor' ),
+					'label' => esc_html__( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1205,8 +1205,8 @@ class Widget_Common extends Widget_Base {
 						'size' => 1,
 					],
 					'condition' => [
-						"_{$tab}_transform_scale_popover!" => '',
-						"_{$tab}_transform_keep_proportions!" => '',
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scale: {{SIZE}};',
@@ -1216,9 +1216,9 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scaleX_effect",
+				"_transform_scaleX_effect{$tab}",
 				[
-					'label' => __( 'Scale X', 'elementor' ),
+					'label' => esc_html__( 'Scale X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1231,8 +1231,8 @@ class Widget_Common extends Widget_Base {
 						'size' => 1,
 					],
 					'condition' => [
-						"_{$tab}_transform_scale_popover!" => '',
-						"_{$tab}_transform_keep_proportions" => '',
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleX: {{SIZE}};',
@@ -1242,9 +1242,9 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_scaleY_effect",
+				"_transform_scaleY_effect{$tab}",
 				[
-					'label' => __( 'Scale Y', 'elementor' ),
+					'label' => esc_html__( 'Scale Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1257,8 +1257,8 @@ class Widget_Common extends Widget_Base {
 						'size' => 1,
 					],
 					'condition' => [
-						"_{$tab}_transform_scale_popover!" => '',
-						"_{$tab}_transform_keep_proportions" => '',
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-scaleY: {{SIZE}};',
@@ -1270,9 +1270,9 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_skew_popover",
+				"_transform_skew_popover{$tab}",
 				[
-					'label' => __( 'Skew', 'elementor' ),
+					'label' => esc_html__( 'Skew', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
@@ -1282,9 +1282,9 @@ class Widget_Common extends Widget_Base {
 			$this->start_popover();
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_skewX_effect",
+				"_transform_skewX_effect{$tab}",
 				[
-					'label' => __( 'Skew X', 'elementor' ),
+					'label' => esc_html__( 'Skew X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1296,7 +1296,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_skew_popover!" => '',
+						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewX: {{SIZE}}deg;',
@@ -1306,9 +1306,9 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_responsive_control(
-				"_{$tab}_transform_skewY_effect",
+				"_transform_skewY_effect{$tab}",
 				[
-					'label' => __( 'Skew Y', 'elementor' ),
+					'label' => esc_html__( 'Skew Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
 					'range' => [
 						'px' => [
@@ -1320,7 +1320,7 @@ class Widget_Common extends Widget_Base {
 						'size' => 0,
 					],
 					'condition' => [
-						"_{$tab}_transform_skew_popover!" => '',
+						"_transform_skew_popover{$tab}!" => '',
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-skewY: {{SIZE}}deg;',
@@ -1332,13 +1332,13 @@ class Widget_Common extends Widget_Base {
 			$this->end_popover();
 
 			$this->add_control(
-				"_{$tab}_transform_flipX_effect",
+				"_transform_flipX_effect{$tab}",
 				[
-					'label' => __( 'Flip Horizontal', 'elementor' ),
+					'label' => esc_html__( 'Flip Horizontal', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
 					'options' => [
 						'transform' => [
-							'title' => __( 'Flip Horizontal', 'elementor' ),
+							'title' => esc_html__( 'Flip Horizontal', 'elementor' ),
 							'icon' => 'fa fa-align-left',
 						],
 					],
@@ -1351,13 +1351,13 @@ class Widget_Common extends Widget_Base {
 			);
 
 			$this->add_control(
-				"_{$tab}_transform_flipY_effect",
+				"_transform_flipY_effect{$tab}",
 				[
-					'label' => __( 'Flip Vertical', 'elementor' ),
+					'label' => esc_html__( 'Flip Vertical', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
 					'options' => [
 						'transform' => [
-							'title' => __( 'Flip Vertical', 'elementor' ),
+							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
 							'icon' => 'fa fa-align-center',
 						],
 					],
@@ -1369,11 +1369,11 @@ class Widget_Common extends Widget_Base {
 				]
 			);
 
-			if ( 'hover' === $tab ) {
+			if ( '_hover' === $tab ) {
 				$this->add_control(
-					'_hover_transform_transition',
+					'_transform_transition_hover',
 					[
-						'label' => __( 'Transition Duration (ms)', 'elementor' ),
+						'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
 						'type' => Controls_Manager::SLIDER,
 						'range' => [
 							'px' => [
@@ -1389,24 +1389,24 @@ class Widget_Common extends Widget_Base {
 				);
 			}
 
-			${"{$tab}_transform_origin_conditions"} = [
+			${"transform_origin_conditions{$tab}"} = [
 				[
-					'name' => "_{$tab}_transform_scale_popover",
+					'name' => "_transform_scale_popover{$tab}",
 					'operator' => '!=',
 					'value' => '',
 				],
 				[
-					'name' => "_{$tab}_transform_rotate_popover",
+					'name' => "_transform_rotate_popover{$tab}",
 					'operator' => '!=',
 					'value' => '',
 				],
 				[
-					'name' => "_{$tab}_transform_flipX_effect",
+					'name' => "_transform_flipX_effect{$tab}",
 					'operator' => '!=',
 					'value' => '',
 				],
 				[
-					'name' => "_{$tab}_transform_flipY_effect",
+					'name' => "_transform_flipY_effect{$tab}",
 					'operator' => '!=',
 					'value' => '',
 				],
@@ -1419,33 +1419,33 @@ class Widget_Common extends Widget_Base {
 
 		$transform_origin_conditions = [
 			'relation' => 'or',
-			'terms' => array_merge( $normal_transform_origin_conditions, $hover_transform_origin_conditions ),
+			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
 		];
 
 		// Will override motion effect transform-origin
 		$this->add_responsive_control(
 			'motion_fx_transform_x_anchor_point',
 			[
-				'label' => __( 'X Anchor Point', 'elementor' ),
+				'label' => esc_html__( 'X Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
-						'title' => __( 'Left', 'elementor' ),
+						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
-						'title' => __( 'Right', 'elementor' ),
+						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'conditions' => $transform_origin_conditions,
 				'separator' => 'before',
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-origin-x: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-transform-origin-x: {{VALUE}}',
 				],
 			]
 		);
@@ -1454,25 +1454,25 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'motion_fx_transform_y_anchor_point',
 			[
-				'label' => __( 'Y Anchor Point', 'elementor' ),
+				'label' => esc_html__( 'Y Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'top' => [
-						'title' => __( 'Top', 'elementor' ),
+						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
 					],
 					'bottom' => [
-						'title' => __( 'Bottom', 'elementor' ),
+						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
 				'conditions' => $transform_origin_conditions,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-origin-y: {{VALUE}}',
+					'{{WRAPPER}}' => '--e-transform-origin-y: {{VALUE}}',
 				],
 			]
 		);
