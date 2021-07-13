@@ -2,6 +2,8 @@ import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/doc
 import GlobalsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/globals/helper';
 import DynamicHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/dynamic/helper';
 
+require( './children.spec' );
+
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/container/container.js', () => {
 		QUnit.test( 'constructor()', ( assert ) => {
@@ -91,86 +93,6 @@ jQuery( () => {
 
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
-		} );
-
-		QUnit.test( 'findChildrenRecursive(): Ensure children found', ( assert ) => {
-			// Arrange.
-			const eColumn = ElementsHelper.createSection( 1, 1 ),
-				eWidgets = [
-					ElementsHelper.createButton( eColumn ),
-					ElementsHelper.createButton( eColumn ),
-				];
-
-			eWidgets.forEach( ( eWidget ) => {
-				// Act.
-				const foundChildren = elementor.getPreviewContainer().findChildrenRecursive(
-					( container ) => container.id === eWidget.id
-				);
-
-				// Assert.
-				assert.equal( foundChildren, eWidget );
-			} );
-		} );
-
-		QUnit.test( 'forEachChildrenRecursive(): Ensure works', ( assert ) => {
-			// Arrange.
-			const eSection = ElementsHelper.createSection( 1 ),
-				eColumn = eSection.children[ 0 ],
-				eWidgetsIds = [
-					ElementsHelper.createButton( eColumn ).id,
-					ElementsHelper.createButton( eColumn ).id,
-				],
-				expectedIds = [ eSection.id, eColumn.id, ... eWidgetsIds ],
-				actualIds = [];
-
-			// Act.
-			eSection.forEachChildrenRecursive( ( container ) => actualIds.push( container.id ) );
-
-			// Assert.
-			assert.deepEqual( actualIds, expectedIds );
-		} );
-
-		QUnit.test( 'forSomeChildrenRecursive(): Ensure .some() stops at positive value', ( assert ) => {
-			// Arrange.
-			const eSection = ElementsHelper.createSection( 1 ),
-				eColumn = eSection.children[ 0 ];
-
-			ElementsHelper.createButton( eColumn );
-			ElementsHelper.createButton( eColumn );
-
-			let iterationCounter = 0;
-
-			// Act.
-			eSection.forSomeChildrenRecursive( ( container ) => {
-				if ( container.id === eColumn.id ) {
-					return true;
-				}
-				++iterationCounter;
-			} );
-
-			// Assert.
-			assert.equal( iterationCounter, 1 );
-		} );
-
-		QUnit.test( 'forSomeChildrenRecursive(): Ensure nested', ( assert ) => {
-			// Arrange.
-			ElementsHelper.empty();
-			ElementsHelper.createAutoButton();
-
-			const eButtonInSection2 = ElementsHelper.createAutoButton();
-
-			let iterationCounter = 0;
-
-			// Act.
-			elementor.getPreviewContainer().forSomeChildrenRecursive( ( container ) => {
-				if ( container.id === eButtonInSection2 ) {
-					return true;
-				}
-				++iterationCounter;
-			} );
-
-			// Assert.
-			assert.equal( iterationCounter, 7 );
 		} );
 	} );
 } );

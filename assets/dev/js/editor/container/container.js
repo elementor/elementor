@@ -1,5 +1,6 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
+import Children from './children';
 
 /**
  * TODO: ViewsOptions
@@ -63,9 +64,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container children(s).
 	 *
-	 * @type {Array}
+	 * @type {Children}
 	 */
-	children = [];
+	children = new Children();
 
 	/**
 	 * Container dynamic.
@@ -159,6 +160,23 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
+		Object.defineProperty( this, 'children', {
+			get() {
+				if ( ! this.__children ) {
+					this.__children = new Children();
+				}
+
+				return this.__children;
+			},
+			set( children ) {
+				this.__children = new Children();
+
+				if ( children.length ) {
+					this.__children.push( children );
+				}
+			},
+		} );
+
 		if ( this.view ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
@@ -272,7 +290,7 @@ export default class Container extends ArgsObject {
 				container.handleChildrenRecursive();
 			} );
 		} else {
-			this.children = [];
+			this.children = new Children();
 		}
 	}
 
@@ -420,78 +438,6 @@ export default class Container extends ArgsObject {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Function findChildrenRecursive().
-	 *
-	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
-	 *
-	 * @param {function(container:Container)} callback
-	 *
-	 * @returns {false|Container}
-	 */
-	findChildrenRecursive( callback ) {
-		if ( callback( this ) ) {
-			return this;
-		}
-
-		if ( this.children.length ) {
-			for ( const container of this.children ) {
-				const foundChildren = container.findChildrenRecursive( callback );
-
-				if ( foundChildren ) {
-					return foundChildren;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Function forEachChildrenRecursive().
-	 *
-	 * Will run over children recursively.
-	 *
-	 * @param {function(container:Container)} callback
-	 *
-	 * @returns {false|Container}
-	 */
-	forEachChildrenRecursive( callback ) {
-		callback( this );
-
-		if ( this.children.length ) {
-			for ( const container of this.children ) {
-				container.forEachChildrenRecursive( callback );
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Function forSomeChildrenRecursive().
-	 *
-	 * Will run over children recursively, breaks if the callback return true.
-	 *
-	 * @param {function(container:Container)} callback
-	 *
-	 */
-	forSomeChildrenRecursive( callback ) {
-		if ( callback( this ) ) {
-			return true;
-		}
-
-		if ( this.children.length ) {
-			for ( const container of this.children ) {
-				if ( container.forSomeChildrenRecursive( callback ) ) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	/**
