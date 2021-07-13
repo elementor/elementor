@@ -1,6 +1,5 @@
 import environment from 'elementor-common/utils/environment';
 import DocumentHelper from 'elementor-document/helper';
-import ChildrenCollection from 'elementor-editor/container/model/children-collection';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -118,7 +117,6 @@ BaseElementView = BaseContainer.extend( {
 				settings: settingsModel,
 				view: this,
 				parent: this._parent ? this._parent.getContainer() : {},
-				children: new ChildrenCollection(),
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
