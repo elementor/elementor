@@ -82,6 +82,31 @@
 	}
 }
 
+.e-floating-bar {
+	position: absolute;
+	inset-inline-start: 0;
+	inset-block-start: calc( 100% - 3px );
+	z-index: $editor-layer;
+	background: $white;
+	padding: 8px;
+	box-shadow: 0 2px 10px 0 rgba( 0,0,0,.22 );
+	border-radius: 3px;
+	display: none;
+	gap: 5px;
+
+	.e-container:hover > & {
+		display: flex;
+	}
+
+	select {
+		font-size: 13px;
+		padding: .2em .5em;
+		width: 80px;
+		border-radius: 0;
+		border: none;
+	}
+}
+
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
 		width: 0;

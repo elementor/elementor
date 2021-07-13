@@ -28,6 +28,29 @@ const ContainerView = BaseElementView.extend( {
 		};
 	},
 
+	getFloatingBarConfig() {
+		return {
+			position: {
+				// TODO: For future use.
+				left: 0,
+				bottom: 0,
+			},
+			defaultGroup: 'container',
+			groups: {
+				container: {
+					title: __( 'Container', 'elementor' ),
+					icon: 'eicons-container', // TODO: For future use.
+					settings: {
+						container_flex_direction: '',
+						container_align_items: '',
+						container_justify_content: '',
+						container_flex_wrap: '',
+					},
+				},
+			},
+		};
+	},
+
 	behaviors: function() {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 

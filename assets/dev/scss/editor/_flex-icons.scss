@@ -1,11 +1,16 @@
 // Temp flex icons
 [class ^= "eicon-flex"] {
-	background-size: 13px;
+	background-size: auto;
 	background-position: center center;
-	height: 100%;
-	width: 100%;
+	height: 27px;
+	width: 27px;
 	background-repeat: no-repeat;
 	transition: .3s all;
+
+	&.eicon-inline {
+		max-height: 1em;
+		max-width: 1em;
+	}
 
 	.e-ui-state--document-direction-mode__column &:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ) {
 		transform: rotate( 90deg );
