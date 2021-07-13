@@ -1,8 +1,4 @@
 export default class ChildrenCollection extends Array {
-	static getInstanceType() {
-		return 'ChildrenCollection';
-	}
-
 	clear() {
 		this.length = 0;
 	}
