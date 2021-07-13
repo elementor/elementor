@@ -225,6 +225,7 @@ ColumnView = BaseElementView.extend( {
 		this.changeSizeUI();
 
 		this.$el.html5Droppable( {
+			view: this,
 			items: itemsClasses,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
@@ -232,26 +233,28 @@ ColumnView = BaseElementView.extend( {
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: ( side, event ) => {
-				event.stopPropagation();
-
-				// Triggering drag end manually, since it won't fired above iframe
-				elementor.getPreviewView().onPanelElementDragEnd();
-
-				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
-				let newIndex = widgets.indexOf( event.currentTarget );
-
-				if ( 'bottom' === side ) {
-					newIndex++;
-				}
-
-				if ( 0 > newIndex ) {
-					newIndex = 0;
-				}
-
-				this.addElementFromPanel( { at: newIndex } );
-			},
+			onDropping: this.onDropping.bind( this ),
 		} );
+	},
+
+	onDropping: function( side, event ) {
+		event.stopPropagation();
+
+		// Triggering drag end manually, since it won't fired above iframe
+		elementor.getPreviewView().onPanelElementDragEnd();
+
+		const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
+		let newIndex = widgets.indexOf( event.currentTarget );
+
+		if ( 'bottom' === side ) {
+			newIndex++;
+		}
+
+		if ( 0 > newIndex ) {
+			newIndex = 0;
+		}
+
+		return this.addElementFromPanel( { at: newIndex } );
 	},
 
 	onAddButtonClick: function( event ) {
