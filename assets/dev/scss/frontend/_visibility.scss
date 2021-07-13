@@ -1,11 +1,11 @@
 .elementor {
-	@media (max-width: $screen-sm-max) {
+	@media (max-width: $screen-mobile-max) {
 		.elementor-hidden-phone {
 			display: none;
 		}
 	}
 
-	@media (min-width: $screen-mobile-next) and (max-width: $screen-md-max) {
+	@media (min-width: $screen-mobile-next) and (max-width: $screen-tablet-max) {
 		.elementor-hidden-tablet {
 			display: none;
 		}
