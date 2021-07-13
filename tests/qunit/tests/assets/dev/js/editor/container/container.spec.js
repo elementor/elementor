@@ -2,7 +2,7 @@ import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/doc
 import GlobalsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/globals/helper';
 import DynamicHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/dynamic/helper';
 
-require( './children.spec' );
+require( './model/children-collection.spec' );
 
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/container/container.js', () => {

@@ -1,4 +1,12 @@
-export default class Children extends Array {
+export default class ChildrenCollection extends Array {
+	static getInstanceType() {
+		return 'ChildrenCollection';
+	}
+
+	clear() {
+		this.length = 0;
+	}
+
 	/**
 	 * Function findRecursive().
 	 *

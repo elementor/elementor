@@ -1,6 +1,6 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
-import Children from './children';
+import ChildrenCollection from './model/children-collection';
 
 /**
  * TODO: ViewsOptions
@@ -64,9 +64,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container children(s).
 	 *
-	 * @type {Children}
+	 * @type {ChildrenCollection}
 	 */
-	children = new Children();
+	children = new ChildrenCollection();
 
 	/**
 	 * Container dynamic.
@@ -160,23 +160,6 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		Object.defineProperty( this, 'children', {
-			get() {
-				if ( ! this.__children ) {
-					this.__children = new Children();
-				}
-
-				return this.__children;
-			},
-			set( children ) {
-				this.__children = new Children();
-
-				if ( children.length ) {
-					this.__children.push( children );
-				}
-			},
-		} );
-
 		if ( this.view ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
@@ -290,7 +273,7 @@ export default class Container extends ArgsObject {
 				container.handleChildrenRecursive();
 			} );
 		} else {
-			this.children = new Children();
+			this.children.clear();
 		}
 	}
 
