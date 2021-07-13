@@ -105,14 +105,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		this.listenTo( settings, 'change', this.onAfterChange );
 	},
 
-	onAfterChange: function( control ) {
-		if (
-			Object.keys( control.changed ).includes( this.model.get( 'name' ) ) &&
-			'function' === typeof this.propagatePlaceholder
-		) {
-			this.propagatePlaceholder();
-		}
-
+	onAfterChange: function() {
 		this.toggleControlVisibility();
 	},
 

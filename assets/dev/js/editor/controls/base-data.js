@@ -212,10 +212,11 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	preparePlaceholderForChildren: function() {
-		const parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
+		const parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren(),
+			cleanValue = this.getCleanControlValue();
 
-		if ( 'function' === typeof this.getCleanControlValue ) {
-			return Object.assign( {}, parentValue, this.getCleanControlValue() );
+		if ( cleanValue ) {
+			return Object.assign( {}, parentValue, cleanValue );
 		}
 
 		return this.getControlValue() || parentValue;
@@ -248,6 +249,20 @@ ControlBaseDataView = ControlBaseView.extend( {
 		if ( child ) {
 			child.renderWithChildren();
 		}
+	},
+
+	/**
+	 * This method's primary implementation is written under base-multiple view,
+	 * please refer there for explanation.
+	 */
+	getCleanControlValue: function() {},
+
+	onAfterChange: function( control ) {
+		if ( Object.keys( control.changed ).includes( this.model.get( 'name' ) ) ) {
+			this.propagatePlaceholder();
+		}
+
+		ControlBaseView.prototype.onAfterChange.apply( this, arguments );
 	},
 
 	getInputValue: function( input ) {

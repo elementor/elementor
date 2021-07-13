@@ -431,11 +431,14 @@ module.exports = {
 				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
 				const conditionNameParts = conditionName.match( /(\w+(?:\[\w+])?)?(!?)$/i ),
 					conditionRealName = conditionNameParts[ 1 ],
-					isNegativeCondition = !! conditionNameParts[ 2 ];
+					isNegativeCondition = !! conditionNameParts[ 2 ],
+					controlValue = values[ conditionRealName ];
 				let operator;
 
 				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
 					operator = isNegativeCondition ? '!contains' : 'contains';
+				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
+					operator = isNegativeCondition ? '!in' : 'in';
 				} else if ( isNegativeCondition ) {
 					operator = '!==';
 				}
