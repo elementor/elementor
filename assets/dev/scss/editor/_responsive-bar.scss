@@ -12,11 +12,23 @@
 	align-self: stretch;
 	flex-shrink: 0;
 	transition: height .2s ease-in-out, opacity .1s ;
-	left: 0;
+	#{ $start }: 0;
 	top: 0;
 	z-index: 100;
 	opacity: var(--e-is-device-mode);
 	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
+
+	&:before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: #495157;
+		z-index: -1;
+		transform: scaleX( var( --e-preview-scale, 1 ) );
+	}
 }
 
 .e-responsive-bar {
@@ -124,7 +136,7 @@
 	@media ( min-width:1400px ) {
 		&__center {
 			margin-#{ $start }: 50%;
-			transform: translate( -50%, 0 );
+			transform: translate( getValueByDirection( -50%, 50% ), 0 );
 		}
 	}
 
