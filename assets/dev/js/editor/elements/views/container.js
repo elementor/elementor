@@ -4,12 +4,12 @@ import WidgetResizable from './behaviors/widget-resizeable';
 import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
+	ContainerEmptyView = require( 'elementor-elements/views/container-empty' );
 
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	emptyView: ContainerEmptyView,
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
@@ -233,7 +233,7 @@ const ContainerView = BaseElementView.extend( {
 		} );
 
 		this.$el.html5Droppable( {
-			items: '> .elementor-element, > .elementor-empty-view > .elementor-first-add',
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add, > .elementor-empty-view .e-container-select-preset--inner',
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
