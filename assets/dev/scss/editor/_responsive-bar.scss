@@ -32,20 +32,20 @@
 		transition: background-color .3s ease-out;
 
 		&:hover, &[aria-selected="true"] {
-		  color: $editor-lighter;
-		  background-color: rgba(255, 255, 255, 0.1);
+			color: $editor-lighter;
+			background-color: rgba(255, 255, 255, 0.1);
 		}
 
 		input {
-		  display: none;
+			display: none;
 
-		  &:checked + i {
-			color: $editor-info;
-		  }
+			&:checked + i {
+				color: $editor-info;
+			}
 		}
 
 		&:not(:last-child) {
-		  margin-inline-end: 6px;
+			margin-inline-end: 6px;
 		}
 
 	}
@@ -115,9 +115,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	  	font-size: 13px;
-	  	background-color: #495157;
-	 	padding: 2px 0;
+		font-size: 13px;
+		background-color: #495157;
+		padding: 2px 0;
 	}
 
 	@media ( min-width:1400px ) {
@@ -136,11 +136,11 @@
 		font-size: 16px;
 	}
 
-  	&__size-inputs-wrapper {
+	&__size-inputs-wrapper {
 		display: flex;
 		align-items: center;
-	  	margin-inline-end: 8px;
-	  	color: $editor-dark;
+		margin-inline-end: 8px;
+		color: $editor-dark;
 	}
 
 	&-switcher {
@@ -156,7 +156,7 @@
 			text-align: center;
 		}
 
-	  	&__plus, &__minus, &__reset {
+		&__plus, &__minus, &__reset {
 			cursor: pointer;
 			width: 20px;
 			height: 20px;
@@ -167,12 +167,12 @@
 
 		&__minus {
 			&:before {
-			content: "";
-			display: block;
-			width: 13px;
-			height: 2px;
-			background: #a4afb7;
-			border-radius: 3px;
+				content: "";
+				display: block;
+				width: 13px;
+				height: 2px;
+				background: #a4afb7;
+				border-radius: 3px;
 			}
 		}
 
