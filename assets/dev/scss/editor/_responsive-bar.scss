@@ -12,6 +12,7 @@
 	align-self: stretch;
 	flex-shrink: 0;
 	transition: height .2s ease-in-out, opacity .1s ;
+	left: 0;
 	top: 0;
 	z-index: 100;
 	opacity: var(--e-is-device-mode);
