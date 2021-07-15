@@ -15,7 +15,7 @@
 		}
 
 		@media (max-width: $screen-tablet-extra-max) {
-			content: 'tablet-extra';
+			content: 'tablet_extra';
 		}
 
 		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
@@ -23,7 +23,7 @@
 		}
 
 		@media (max-width: $screen-mobile-extra-max) {
-			content: 'mobile-extra';
+			content: 'mobile_extra';
 		}
 
 		@media (max-width: $screen-sm-max) {
