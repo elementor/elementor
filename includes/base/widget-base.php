@@ -1067,7 +1067,16 @@ abstract class Widget_Base extends Element_Base {
 			return;
 		}
 
-		echo wp_kses_post( $this->get_widget_css() );
+		$widget_css = $this->get_widget_css();
+
+		echo wp_kses( $widget_css, [
+				'style' => [],
+				'link' => [
+					'rel' => true,
+					'href' => true,
+				],
+			]
+		);
 	}
 
 	private function get_widgets_css_data_manager() {
