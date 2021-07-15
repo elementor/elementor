@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Icons_Manager {
 
 	const NEEDS_UPDATE_OPTION = 'icon_manager_needs_update';
+
+	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 	/**
 	 * Tabs.
 	 *
@@ -91,7 +93,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
-				'ver' => '5.15.1',
+				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
 			],
@@ -103,7 +105,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
-				'ver' => '5.15.1',
+				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
 			],
@@ -115,7 +117,7 @@ class Icons_Manager {
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
-				'ver' => '5.15.1',
+				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
@@ -335,7 +337,7 @@ class Icons_Manager {
 				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 1,
+					'std' => 'yes',
 					'options' => [
 						'' => __( 'No', 'elementor' ),
 						'yes' => __( 'Yes', 'elementor' ),
@@ -407,7 +409,7 @@ class Icons_Manager {
 			wp_enqueue_style( 'font-awesome' );
 		} else {
 			$current_filter = current_filter();
-			$load_shim = get_option( 'elementor_load_fa4_shim', false );
+			$load_shim = get_option( self::LOAD_FA4_SHIM_OPTION_KEY, false );
 			if ( 'elementor/editor/after_enqueue_styles' === $current_filter ) {
 				self::enqueue_shim();
 			} else if ( 'yes' === $load_shim ) {

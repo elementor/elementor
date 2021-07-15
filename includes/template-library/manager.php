@@ -5,7 +5,7 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Data\Manager as Data_Manager;
-use Elementor\Data\TemplateLibrary\Controller;
+use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 use Elementor\User;
@@ -468,20 +468,17 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
-		/** @var Source_Local $source */
-		$file_content = base64_decode( $data['fileData'] );
+		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
+		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
-		$tmp_file = tmpfile();
+		if ( is_wp_error( $upload_result ) ) {
+			return $upload_result;
+		}
 
-		fwrite( $tmp_file, $file_content );
+		/** @var Source_Local $source_local */
+		$source_local = $this->get_source( 'local' );
 
-		$source = $this->get_source( 'local' );
-
-		$result = $source->import_template( $data['fileName'], stream_get_meta_data( $tmp_file )['uri'] );
-
-		fclose( $tmp_file );
-
-		return $result;
+		return $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
 	}
 
 	/**

@@ -21,9 +21,11 @@ use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Core\Page_Assets\Loader as Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
+use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,6 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
+	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
 
 	/**
 	 * Instance.
@@ -354,6 +357,13 @@ class Plugin {
 	public $assets_manager;
 
 	/**
+	 * Icons Manager.
+	 *
+	 * @var Icons_Manager
+	 */
+	public $icons_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.
@@ -461,9 +471,19 @@ class Plugin {
 	public $experiments;
 
 	/**
+	 * @var Uploads_Manager
+	 */
+	public $uploads_manager;
+
+	/**
 	 * @var Breakpoints_Manager
 	 */
 	public $breakpoints;
+
+	/**
+	 * @var Assets_Loader
+	 */
+	public $assets_loader;
 
 	/**
 	 * Clone.
@@ -624,6 +644,8 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
+		$this->assets_loader = new Assets_Loader();
+		$this->uploads_manager = new Uploads_Manager();
 
 		User::init();
 		Api::init();
@@ -698,7 +720,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function add_cpt_support() {
-		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+		$cpt_support = get_option( 'elementor_cpt_support', self::ELEMENTOR_DEFAULT_POST_TYPES );
 
 		foreach ( $cpt_support as $cpt_slug ) {
 			add_post_type_support( $cpt_slug, 'elementor' );

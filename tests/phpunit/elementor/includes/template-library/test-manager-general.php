@@ -266,7 +266,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		] );
 
 		$document = $this->factory()->documents->create_and_get([
-			'document_type' => 'page',
+			'type' => 'page',
 			'post_author' => $user->ID,
 			'post_status' => 'publish',
 			'post_type' => Source_Local::CPT,

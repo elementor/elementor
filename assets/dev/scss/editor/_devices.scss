@@ -23,6 +23,7 @@ body {
 }
 
 #elementor-preview {
+	overflow: auto;
 	background-color: #333;
 	height: 100%;
 	border: 0;
@@ -31,9 +32,11 @@ body {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
+	position: relative;
 }
 
 #elementor-preview-responsive-wrapper {
+	transform-origin: top center;
 	padding: 20px;
 
 	.elementor-device-desktop & {
@@ -41,6 +44,7 @@ body {
 		width: 100%;
 		height: 100%;
 		padding: 0;
+		position: relative;
 	}
 
 	body.e-is-device-mode:not(.elementor-device-desktop) & {
@@ -124,6 +128,7 @@ body {
 	.ui-resizable-e {
 		right: 0;
 	}
+	
 	.ui-resizable-w {
 		left: 0;
 	}

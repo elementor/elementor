@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends \Elementor\Core\Base\Module {
 
 	/**
+	 * Return a translated user-friendly list of the available SVG shapes.
+	 *
 	 * @param bool $add_custom Determine if the output should include the `Custom` option.
 	 *
 	 * @return array List of paths.
@@ -31,6 +33,9 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
+	 * Gets an SVG path name as a parameter and returns its SVG markup from the `svg-paths`
+	 * folder under the assets directory.
+	 *
 	 * @param $path string Path name.
 	 *
 	 * @return string The path SVG markup.
