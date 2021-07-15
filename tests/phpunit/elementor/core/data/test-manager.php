@@ -274,6 +274,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'globals/index' => 'globals/index',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
+			'template-library/templates' => 'template-library/templates',
 		], $this->manager->command_formats );
 	}
 }

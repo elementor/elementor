@@ -297,15 +297,28 @@ TemplateLibraryManager = function() {
 	};
 
 	this.loadTemplates = function( onUpdate ) {
-		self.requestLibraryData( {
-			onBeforeUpdate: self.layout.showLoadingView.bind( self.layout ),
-			onUpdate: function() {
-				self.layout.hideLoadingView();
+		self.layout.showLoadingView();
 
-				if ( onUpdate ) {
-					onUpdate();
-				}
-			},
+		const query = { source: this.getFilter( 'source' ) },
+			options = {};
+
+		// TODO: Remove - it when all the data commands is ready, manage the cache!.
+		if ( 'local' === query.source ) {
+			options.refresh = true;
+		}
+
+		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
+			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+
+			if ( result.data.config ) {
+				config = result.data.config;
+			}
+
+			self.layout.hideLoadingView();
+
+			if ( onUpdate ) {
+				onUpdate();
+			}
 		} );
 	};
 
