@@ -130,7 +130,7 @@ export default class UiStates {
 	}
 
 	/**
-	 * Get the current state value, or return all of them if no `state` is set.
+	 * Get the current state value.
 	 *
 	 * @param {string} state - State ID.
 	 *
