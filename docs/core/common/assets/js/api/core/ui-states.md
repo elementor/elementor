@@ -3,14 +3,14 @@
 *  **Location**: *core/common/assets/js/api/core/ui-states.js*
 *  **Methods**:
 
-   | Method                               	 | Params                                                     	|  Returns      | Description
-       |----------------------------------------|--------------------------------------------------------------|---------------|--------------------------
-   | `$e.uiStates.register()`                | `{UiStateBase}` *instance*, `{HTMLElement[]}` *context*		| `{void}`		| Register a new UI state.
-   | `$e.uiStates.getAll()`                  |                   											| `{Object}`    | Get all existing UI states with their options.
-   | `$e.uiStates.get()`                     | `{String}` *state*											| `{Object}`    | Get the state value, or return all of them if no `state` is set.
-   | `$e.uiStates.set()`                     | `{String}` *state*, `{String}` *value*						| `{void}`      | Set the current state value and trigger its callbacks & events.
-   | `$e.uiStates.remove()`                  | `{String}` *state*											| `{void}`      | Remove a state.
-   | `$e.uiStates.getCurrent()`              | `{String}` *state*											| `{string}`    | Get the current state value.
+| Method                     | Params                                                   | Returns   | Description
+|----------------------------|----------------------------------------------------------|-----------|---------------------------------------------------------------------
+| `$e.uiStates.register()`   |`{UiStateBase}` *instance*, `{HTMLElement[]}` *context*   | `{void}`  | Register a new UI state.
+| `$e.uiStates.getAll()`     |                                                          | `{Object}`| Get all existing UI states with their options.
+| `$e.uiStates.get()`        | `{String}` *state*                                       | `{Object}`| Get the state value, or return all of them if no `state` is set.
+| `$e.uiStates.set()`        | `{String}` *state*, `{String}` *value*                   | `{void}`  | Set the current state value and trigger its callbacks & events.
+| `$e.uiStates.remove()`     | `{String}` *state*                                       | `{void}`  | Remove a state.
+| `$e.uiStates.getCurrent()` | `{String}` *state*                                       | `{string}`| Get the current state value.
 * **Notes**:
 	- Each UI state has its own options & callback for each option.
 	- When a UI state is being changed, it:
