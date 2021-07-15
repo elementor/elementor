@@ -57,27 +57,27 @@
   ```javascript
   import UiStateBase from 'elementor-api/core/states/ui-state-base';
 
-	  export class {FILE_NAME_CAMEL_CASE} extends UiStateBase {
-		  getId() {
-			  return {FILE_NAME_WITHOUT_EXTENSION}; // Will be automatically prefixed with the component namespace by default.
-		  }
-
-		  getPrefix() {
-			  return {CUSTOM_PREFIX_KEBAB_CASE}; // Override the default prefix.
-		  }
-	  
-		  getOptions() {
-			  // Object of options that the state can be set to.
-			  return {
-				  {OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
-					  /* Callback that runs when the state is set to this option. */
-				  },
-				  {OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
-					  /* Callback that runs when the state is set to this option. */
-				  },
-			  };
-		  }
+  export class {FILE_NAME_CAMEL_CASE} extends UiStateBase {
+	  getId() {
+		  return {FILE_NAME_WITHOUT_EXTENSION}; // Will be automatically prefixed with the component namespace by default.
 	  }
+
+	  getPrefix() {
+		  return {CUSTOM_PREFIX_KEBAB_CASE}; // Override the default prefix.
+	  }
+  
+	  getOptions() {
+		  // Object of options that the state can be set to.
+		  return {
+			  {OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
+				  /* Callback that runs when the state is set to this option. */
+			  },
+			  {OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
+				  /* Callback that runs when the state is set to this option. */
+			  },
+		  };
+	  }
+  }
 
   ```
 
