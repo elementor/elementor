@@ -139,6 +139,29 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					} );
 			} );
 
+			$( '#elementor-recreate-kit-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
+
+				$.post( ajaxurl, {
+					action: 'elementor_recreate_kit',
+					_nonce: $thisButton.data( 'nonce' ),
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( { responseJSON } ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
+					} );
+			} );
+
 			$( '#elementor-replace-url-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $this = $( this ),

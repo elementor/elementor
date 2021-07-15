@@ -64,7 +64,7 @@
 
 		.elementor-grid-0 {
 			&.elementor-widget-social-icons.e-grid-align#{$device}-left,
-			&.elementor-share-buttons--align#{$device}-left {
+			&.elementor-share-buttons#{$device}--align-left {
 				.elementor-grid {
 					display: inline-block;
 

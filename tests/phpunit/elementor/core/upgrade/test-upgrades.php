@@ -472,7 +472,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 	}
 
 	public function test_v_3_1_0_move_optimized_dom_output_to_experiments() {
-		add_option( 'elementor_optimized_dom_output', 'enabled' );
+		add_option( 'elementor_optimized_dom_output', 'disabled' );
 
 		$is_old_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 
@@ -480,9 +480,9 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		$experiments = new Experiments_Manager();
 
-		$this->assertFalse( $is_old_feature_active );
+		$this->assertTrue( $is_old_feature_active );
 
-		$this->assertTrue( $experiments->is_feature_active( 'e_dom_optimization' ) );
+		$this->assertFalse( $experiments->is_feature_active( 'e_dom_optimization' ) );
 	}
 
 	public function test_v_3_2_0_migrate_breakpoints_to_new_system() {
