@@ -1,5 +1,6 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
+import * as commandsData from './commands-data/';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -9,6 +10,8 @@ export default class Component extends ComponentModalBase {
 
 		// When switching documents update defaultTabs.
 		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+
+		$e.data.deleteCache( this, 'library' );
 	}
 
 	getNamespace() {
@@ -71,6 +74,10 @@ export default class Component extends ComponentModalBase {
 			... modalCommands,
 			... this.importCommands( commands ),
 		};
+	}
+
+	defaultData() {
+		return this.importCommands( commandsData );
 	}
 
 	defaultShortcuts() {

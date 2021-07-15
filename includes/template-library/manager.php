@@ -2,9 +2,10 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
-use Elementor\Core\Utils\Collection;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Data\Manager as Data_Manager;
+use Elementor\Data\TemplateLibrary\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 use Elementor\User;
@@ -55,6 +56,8 @@ class Manager {
 	 * @access public
 	 */
 	public function __construct() {
+		Data_Manager::instance()->register_controller( Controller::class );
+
 		$this->register_default_sources();
 
 		$this->add_actions();
