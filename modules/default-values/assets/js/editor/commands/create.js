@@ -1,4 +1,4 @@
-import { parseType, pipe } from '../utils';
+import { pipe } from '../utils';
 
 export class Create extends $e.modules.CommandBase {
 	validateArgs( args ) {
@@ -8,8 +8,12 @@ export class Create extends $e.modules.CommandBase {
 	async apply( { elementId } ) {
 		const container = elementor.getContainer( elementId );
 
-		// e.g: heading, button, section.
-		const type = parseType( container.settings );
+		if ( container.settings.get( 'elType' ) !== 'widget' ) {
+			throw new Error( 'Default values currently support only widgets.' );
+		}
+
+		// e.g: heading, button, image.
+		const type = container.settings.get( 'widgetType' );
 
 		// Get all the "styled" settings that differently from the hardcoded defaults.
 		const settings = this.getSettingsForSave( container );
@@ -20,9 +24,8 @@ export class Create extends $e.modules.CommandBase {
 		// Save those settings into default entity.
 		await $e.data.create( 'default-values/index', { settings }, { type } );
 
-		this.component.handlers.forEach(
-			( handler ) => handler.afterSaved( type, settings )
-		);
+		// Fetch new widget config
+		await this.refreshWidgetsConfig( type );
 
 		// Will recreate all the elements with the same type to apply the default values.
 		$e.commandsInternal.run( 'document/elements/recreate', { models: elementsToRecreate } );
@@ -51,9 +54,7 @@ export class Create extends $e.modules.CommandBase {
 		const elements = {};
 
 		elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
-			const currentType = parseType( element.settings );
-
-			if ( type !== currentType ) {
+			if ( type !== element.settings.get( 'widgetType' ) ) {
 				return;
 			}
 
@@ -63,6 +64,21 @@ export class Create extends $e.modules.CommandBase {
 		} );
 
 		return elements;
+	}
+
+	/**
+	 * Get the new type from widget config and update the widget cache.
+	 *
+	 * @param type
+	 * @returns {Promise<void>}
+	 */
+	async refreshWidgetsConfig( type ) {
+		const { data: widgetData } = await $e.data.get( 'widgets-config/index', { id: type }, { refresh: true } );
+
+		elementor.addWidgetsCache( { [ type ]: widgetData } );
+
+		// TODO: Maybe in the command?
+		elementor.kitManager.renderGlobalsDefaultCSS();
 	}
 }
 

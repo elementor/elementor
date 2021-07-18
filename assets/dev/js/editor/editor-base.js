@@ -940,35 +940,26 @@ export default class EditorBase extends Marionette.Application {
 		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	}
 
-	requestWidgetsConfig() {
-		const excludeWidgets = {};
+	async requestWidgetsConfig() {
+		const exclude = Object.entries( this.widgetsCache )
+			.filter( ( [ , widgetConfig ] ) => widgetConfig.controls )
+			.map( ( [ widgetKey ] ) => widgetKey );
 
-		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
-			if ( widgetConfig.controls ) {
-				excludeWidgets[ widgetName ] = true;
-			}
-		} );
+		const { data } = await $e.data.get( 'widgets-config/index', { exclude }, { refresh: true } );
 
-		elementorCommon.ajax.addRequest( 'get_widgets_config', {
-			data: {
-				exclude: excludeWidgets,
-			},
-			success: ( data ) => {
-				this.addWidgetsCache(
-					elementor.hooks.applyFilters( 'editor/widgets-cache', data )
-				);
+		this.addWidgetsCache( data );
 
-				if ( this.loaded ) {
-					this.kitManager.renderGlobalsDefaultCSS();
+		if ( this.loaded ) {
+			this.kitManager.renderGlobalsDefaultCSS();
 
-					$e.internal( 'panel/state-ready' );
-				} else {
-					this.once( 'panel:init', () => {
-						$e.internal( 'panel/state-ready' );
-					} );
-				}
-			},
-		} );
+			$e.internal( 'panel/state-ready' );
+		} else {
+			this.once( 'panel:init', () => {
+				$e.internal( 'panel/state-ready' );
+			} );
+		}
+
+		return data;
 	}
 
 	getPreferences( key ) {
@@ -996,35 +987,32 @@ export default class EditorBase extends Marionette.Application {
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
 		}
-		Promise.all(
-			elementor.hooks.applyFilters( 'editor/before-on-start', [] ).map( ( callback ) => callback() )
-		).then( () => {
-			this.initPreview();
 
-			this.requestWidgetsConfig();
+		this.initPreview();
 
-			this.channels.dataEditMode.reply( 'activeMode', 'edit' );
+		this.requestWidgetsConfig();
 
-			this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
+		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
-			this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOptions );
+		this.listenTo( this.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
-			this.initClearPageDialog();
+		this.listenTo( elementor.channels.deviceMode, 'change', this.updatePreviewResizeOptions );
 
-			this.addBackgroundClickArea( document );
+		this.initClearPageDialog();
 
-			this.addDeprecatedConfigProperties();
+		this.addBackgroundClickArea( document );
 
-			elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		this.addDeprecatedConfigProperties();
 
-			return $e.run( 'editor/documents/open', { id: this.config.initial_document.id } );
-		} ).then( () => {
-			elementorCommon.elements.$window.trigger( 'elementor:init' );
+		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
 
-			this.initNavigator();
+		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
+			.then( () => {
+				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				this.initNavigator();
+			} );
 
-			this.logSite();
-		} );
+		this.logSite();
 	}
 
 	onPreviewLoaded() {

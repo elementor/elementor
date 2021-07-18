@@ -4,19 +4,25 @@ export default class GlobalValues extends BaseHandler {
 	appendSettingsForSave( settings, container ) {
 		const type = container.model.attributes.widgetType;
 
-		if ( ! type ) {
-			// No support for 'section' and 'column' (for globals)
-			return settings;
-		}
-
 		const widgetControls = elementor.widgetsCache[ type ].controls;
-		const settingsKeys = Object.keys( settings );
 
 		const globalSettings = Object.fromEntries(
-				Object.entries( container.settings.attributes?.__globals__ || {} )
-					.filter( ( [ , value ] ) => value )
+			Object.entries( container.settings.attributes?.__globals__ || {} )
+				.filter( ( [ , value ] ) => value )
 		);
 
+		// Remove all the settings that has a global values assigned.
+		for ( const key in globalSettings ) {
+			if ( settings.hasOwnProperty( key ) ) {
+				delete settings[ key ];
+			}
+		}
+
+		const settingsKeys = Object.keys( settings );
+
+		// When global is assign to control and it is the default value for the control
+		// the values inside the control is empty, so it should also get all the default globals
+		// and add them to the settings.
 		const widgetGlobalDefaults = Object.fromEntries(
 			Object.entries( widgetControls )
 				.filter( ( [ , control ] ) => control.global?.default )
@@ -47,6 +53,8 @@ export default class GlobalValues extends BaseHandler {
 
 		const newDefaultSettingsKeys = Object.keys( newDefaultSettings.__globals__ );
 
+		// Remove all the global default values from the settings.
+		// (default globals should be empty and not directly assign to the control setting)
 		element.settings.__globals__ = Object.fromEntries(
 			Object.entries( element.settings.__globals__ )
 				.filter( ( [ key ] ) => ! newDefaultSettingsKeys.includes( key )
@@ -54,57 +62,5 @@ export default class GlobalValues extends BaseHandler {
 		);
 
 		return element;
-	}
-
-	afterSaved( type, settings ) {
-		if ( ! settings.__globals__ ) {
-			return;
-		}
-
-		this.assignGlobalsDefaultsToWidgetCache( type, settings.__globals__ );
-
-		elementor.kitManager.renderGlobalsDefaultCSS();
-	}
-
-	registerHooks() {
-		elementor.hooks.addFilter( 'editor/widgets-cache', ( widgets ) => {
-			const dynamicDefaultValues = $e.data.getCache(
-				$e.components.get( 'default-values' ),
-				`default-values`
-			);
-
-			Object.entries( dynamicDefaultValues )
-				.filter( ( [ widgetKey, controlsValues ] ) => controlsValues.__globals__ && widgets[ widgetKey ] )
-				.forEach( ( [ widgetKey, controlsValues ] ) => {
-					Object.entries( controlsValues.__globals__ )
-						.filter( ( [ controlKey ] ) => widgets[ widgetKey ].controls[ controlKey ] )
-						.forEach( ( [ controlKey, value ] ) =>
-							// Assign the default global for specific widget and specific control
-							widgets[ widgetKey ].controls[ controlKey ].global.default = value
-						);
-				} );
-
-			return widgets;
-		} );
-	}
-
-	/**
-	 * Update widget cache to the new global defaults.
-	 *
-	 * @param type
-	 * @param settings
-	 */
-	assignGlobalsDefaultsToWidgetCache( type, settings ) {
-		if ( ! elementor.widgetsCache[ type ] ) {
-			return;
-		}
-
-		Object.entries( settings ).forEach( ( [ key, value ] ) => {
-			if ( ! elementor.widgetsCache[ type ].controls[ key ] ) {
-				return;
-			}
-
-			elementor.widgetsCache[ type ].controls[ key ].global.default = value;
-		} );
 	}
 }

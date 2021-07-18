@@ -14,9 +14,7 @@ export class Load extends CommandInternalBase {
 
 		elementor.setAjax();
 
-		elementor.addWidgetsCache(
-			elementor.hooks.applyFilters( 'editor/widgets-cache', config.widgets )
-		);
+		elementor.addWidgetsCache( config.widgets );
 
 		elementor.templates.init();
 

@@ -23,14 +23,14 @@ class Index extends Endpoint {
 			return in_array( $param, $types, true );
 		};
 
-		$this->register_route(
-			'',
-			\WP_REST_Server::READABLE,
-			function ( $request ) {
-				return $this->base_callback( \WP_REST_Server::READABLE, $request, true );
-			},
-			[]
-		);
+//		$this->register_route(
+//			'',
+//			\WP_REST_Server::READABLE,
+//			function ( $request ) {
+//				return $this->base_callback( \WP_REST_Server::READABLE, $request, true );
+//			},
+//			[]
+//		);
 
 		$this->register_route(
 			'(?P<type>[\w]+)/',
@@ -44,6 +44,11 @@ class Index extends Endpoint {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => $type_validate_callback,
+				],
+				'settings' => [
+					'description' => 'All the default values for the requested type',
+					'required' => true,
+					'type' => 'object',
 				],
 			]
 		);

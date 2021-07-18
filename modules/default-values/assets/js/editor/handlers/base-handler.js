@@ -6,12 +6,4 @@ export default class BaseHandler {
 	appendSettingsForRecreate( element, container, newDefaultValues ) {
 		return element;
 	}
-
-	afterSaved( type, settings ) {
-		//
-	}
-
-	registerHooks() {
-		//
-	}
 }

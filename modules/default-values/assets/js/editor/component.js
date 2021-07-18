@@ -29,16 +29,5 @@ export default class Component extends $e.modules.ComponentBase {
 		];
 
 		super.__construct( args );
-
-		elementor.hooks.addFilter( 'editor/before-on-start', ( callbacks ) => [
-			...callbacks,
-			() => {
-				$e.data.deleteCache( this, 'default-values/index' );
-
-				return $e.data.get( 'default-values/index', {}, {} );
-			},
-		] );
-
-		this.handlers.forEach( ( handler ) => handler.registerHooks() );
 	}
 }

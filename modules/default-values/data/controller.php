@@ -1,8 +1,7 @@
 <?php
 namespace Elementor\Modules\DefaultValues\Data;
 
-use Elementor\Plugin;
-use Elementor\Modules\DefaultValues\Module;
+use Elementor\Core\Kits\Exceptions\Kit_Not_Exists;
 use Elementor\Data\Base\Controller as Base_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,67 +22,37 @@ class Controller extends Base_Controller {
 	}
 
 	/**
-	 * Get all the default values.
-	 *
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return object|\WP_Error
-	 */
-	public function get_items( $request ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $kit->get_id() ) {
-			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 500 ] );
-		}
-
-		return (object) $kit->get_json_meta( Module::DEFAULT_VALUES_META_KEY );
-	}
-
-	/**
 	 * Create new default value.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return object|\WP_Error
+	 * @throws \Exception
 	 */
 	public function create_item( $request ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $kit->get_id() ) {
-			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 500 ] );
+		try {
+			return (object) Repository::instance()->store(
+				$request->get_param( 'type' ),
+				$request->get_param( 'settings' )
+			);
+		} catch ( Kit_Not_Exists $exception ) {
+			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
-
-		$type = $request->get_param( 'type' );
-
-		$default_values = $kit->get_json_meta( Module::DEFAULT_VALUES_META_KEY );
-
-		$default_values[ $type ] = $request->get_param( 'settings' );
-
-		$kit->update_meta( Module::DEFAULT_VALUES_META_KEY, wp_json_encode( $default_values ) );
-
-		return (object) $default_values[ $type ];
 	}
 
 	/**
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return object|\WP_Error
+	 * @throws \Exception
 	 */
 	public function delete_item( $request ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $kit->get_id() ) {
-			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 500 ] );
+		try {
+			return (object) Repository::instance()->delete(
+				$request->get_param( 'type' )
+			);
+		} catch ( Kit_Not_Exists $exception ) {
+			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
-
-		$type = $request->get_param( 'type' );
-
-		$default_values = $kit->get_json_meta( Module::DEFAULT_VALUES_META_KEY );
-
-		unset( $default_values[ $type ] );
-
-		$kit->update_meta( Module::DEFAULT_VALUES_META_KEY, wp_json_encode( $default_values ) );
-
-		return (object) [];
 	}
 }

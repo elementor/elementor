@@ -62,7 +62,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 
 			if ( undefined === attrs[ controlName ] ) {
-				attrs[ controlName ] = elementor.hooks.applyFilters( 'editor/controls/base/default-value', defaults[ controlName ], control, self );
+				attrs[ controlName ] = defaults[ controlName ];
 			}
 		} );
 
@@ -379,9 +379,9 @@ BaseSettingsModel = Backbone.Model.extend( {
 				return;
 			}
 
-			const defaultValue = onlyHardCodedDefaults ?
-				control.default :
-				elementor.hooks.applyFilters( 'editor/controls/base/default-value', control.default, control, this );
+			const defaultValue = onlyHardCodedDefaults && control.hasOwnProperty( 'hardcoded_default' ) ?
+				control.hardcoded_default :
+				control.default;
 
 			if ( _.isEqual( data[ key ], defaultValue ) ) {
 				delete data[ key ];
@@ -408,7 +408,7 @@ BaseSettingsModel = Backbone.Model.extend( {
 			this.removeDataDefaults( data, this.controls );
 		}
 
-		if ( options.remove && -1 !== options.remove.indexOf( 'hard-coded-default' ) ) {
+		if ( options.remove && -1 !== options.remove.indexOf( 'hardcoded-default' ) ) {
 			this.removeDataDefaults( data, this.controls, true );
 		}
 
