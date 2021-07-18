@@ -1,4 +1,4 @@
-import Utils from 'elementor-app/utils/utils.js';
+import { pxToRem, arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function ListItem( props ) {
 	const baseClassName = 'eps-list__item',
@@ -6,16 +6,16 @@ export default function ListItem( props ) {
 
 	let style;
 
-	if ( props.padding ) {
+	if ( props.hasOwnProperty( 'padding' ) ) {
 		style = {
-			'--eps-list-item-padding': Utils.stringToRemValues( props.padding ),
+			'--eps-list-item-padding': pxToRem( props.padding ),
 		};
 
 		classes.push( baseClassName + '--padding' );
 	}
 
 	return (
-		<li style={ style } className={ Utils.arrayToClassName( classes ) }>
+		<li style={ style } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</li>
 	);
@@ -24,11 +24,7 @@ export default function ListItem( props ) {
 ListItem.propTypes = {
 	className: PropTypes.string,
 	padding: PropTypes.string,
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 ListItem.defaultProps = {

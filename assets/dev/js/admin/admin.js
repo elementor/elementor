@@ -1,5 +1,6 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
+import environment from '../../../../core/common/assets/js/utils/environment';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -91,15 +92,16 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				self.animateLoader();
 			} );
 
-			$( 'div.notice.elementor-message-dismissed' ).on( 'click', 'button.notice-dismiss, .elementor-button-notice-dismiss', function( event ) {
+			$( '.e-notice--dismissible' ).on( 'click', '.e-notice__dismiss, .e-notice-dismiss', function( event ) {
 				event.preventDefault();
+
+				const $wrapperElm = $( this ).closest( '.e-notice--dismissible' );
 
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
-					notice_id: $( this ).closest( '.elementor-message-dismissed' ).data( 'notice_id' ),
+					notice_id: $wrapperElm.data( 'notice_id' ),
 				} );
 
-				var $wrapperElm = $( this ).closest( '.elementor-message-dismissed' );
 				$wrapperElm.fadeTo( 100, 0, function() {
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
@@ -134,6 +136,29 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
+
+			$( '#elementor-recreate-kit-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
+
+				$.post( ajaxurl, {
+					action: 'elementor_recreate_kit',
+					_nonce: $thisButton.data( 'nonce' ),
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( { responseJSON } ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
 					} );
 			} );
 
@@ -287,6 +312,8 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			this.openGetHelpInNewTab();
 
+			this.addUserAgentClasses();
+
 			this.roleManager.init();
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -294,6 +321,17 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			}
 
 			new ExperimentsModule();
+		},
+
+		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
+			Object.entries( environment ).forEach( ( [ key, value ] ) => {
+				if ( ! value ) {
+					return;
+				}
+
+				body.classList.add( 'e--ua-' + key );
+			} );
 		},
 
 		openGetHelpInNewTab: function() {
@@ -309,7 +347,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea;
 
-			self.elements.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( '.wp-header-end' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 

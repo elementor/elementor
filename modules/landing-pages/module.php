@@ -44,10 +44,7 @@ class Module extends BaseModule {
 			'title' => __( 'Landing Pages', 'elementor' ),
 			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.1.0-beta',
-			],
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
 
@@ -471,9 +468,11 @@ class Module extends BaseModule {
 			// Get the Landing Page menu node.
 			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
 
-			$new_landing_page_node->href = $this->get_add_new_landing_page_url();
+			if ( $new_landing_page_node ) {
+				$new_landing_page_node->href = $this->get_add_new_landing_page_url();
 
-			$admin_bar->add_node( $new_landing_page_node );
+				$admin_bar->add_node( $new_landing_page_node );
+			}
 		}, 100 );
 	}
 }

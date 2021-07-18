@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Kits;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Controls\Repeater;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
@@ -10,6 +11,7 @@ use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,29 +21,52 @@ class Manager {
 
 	const OPTION_ACTIVE = 'elementor_active_kit';
 
+	const E_HASH_COMMAND_OPEN_SITE_SETTINGS = 'e:run:panel/global/open';
+
 	public function get_active_id() {
-		$id = get_option( self::OPTION_ACTIVE );
-
-		$kit_document = Plugin::$instance->documents->get( $id );
-
-		if ( ! $kit_document || ! $kit_document instanceof Kit || 'trash' === $kit_document->get_main_post()->post_status ) {
-			$id = $this->create_default();
-			update_option( self::OPTION_ACTIVE, $id );
-		}
-
-		return $id;
+		return get_option( self::OPTION_ACTIVE );
 	}
 
 	public function get_active_kit() {
-		$id = $this->get_active_id();
+		$kit = Plugin::$instance->documents->get( $this->get_active_id() );
 
-		return Plugin::$instance->documents->get( $id );
+		if ( ! $this->is_valid_kit( $kit ) ) {
+			return $this->get_empty_kit_instance();
+		}
+
+		return $kit;
 	}
 
 	public function get_active_kit_for_frontend() {
-		$id = $this->get_active_id();
+		$kit = Plugin::$instance->documents->get_doc_for_frontend( $this->get_active_id() );
 
-		return Plugin::$instance->documents->get_doc_for_frontend( $id );
+		if ( ! $this->is_valid_kit( $kit ) ) {
+			return $this->get_empty_kit_instance();
+		}
+
+		return $kit;
+	}
+
+	/**
+	 * @param $kit
+	 *
+	 * @return bool
+	 */
+	private function is_valid_kit( $kit ) {
+		return $kit && $kit instanceof Kit && 'trash' !== $kit->get_main_post()->post_status;
+	}
+
+	/**
+	 * Returns an empty kit for situation when there is no kit in the site.
+	 *
+	 * @return Kit
+	 * @throws \Exception
+	 */
+	private function get_empty_kit_instance() {
+		return new Kit( [
+			'settings' => [],
+			'post_id' => 0,
+		] );
 	}
 
 	/**
@@ -80,14 +105,52 @@ class Manager {
 		return $kit->get_settings( $setting );
 	}
 
-	private function create_default() {
-		$kit = Plugin::$instance->documents->create( 'kit', [
-			'post_type' => Source_Local::CPT,
-			'post_title' => __( 'Default Kit', 'elementor' ),
+	public function create( array $kit_data = [], array $kit_meta_data = [] ) {
+		$default_kit_data = [
 			'post_status' => 'publish',
-		] );
+		];
+
+		$kit_data = array_merge( $default_kit_data, $kit_data );
+
+		$kit_data['post_type'] = Source_Local::CPT;
+
+		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
 		return $kit->get_id();
+	}
+
+	public function create_default() {
+		return $this->create( [
+			'post_title' => __( 'Default Kit', 'elementor' ),
+		] );
+	}
+
+	/**
+	 * Create a default kit if needed.
+	 *
+	 * This action runs on activation hook, all the Plugin components do not exists and
+	 * the Document manager and Kits manager instances cannot be used.
+	 *
+	 * @return int|void|\WP_Error
+	 */
+	public static function create_default_kit() {
+		if ( get_option( self::OPTION_ACTIVE ) ) {
+			return;
+		}
+
+		$id = wp_insert_post( [
+			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_type' => Source_Local::CPT,
+			'post_status' => 'publish',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				Document::TYPE_META_KEY => 'kit',
+			],
+		] );
+
+		update_option( self::OPTION_ACTIVE, $id );
+
+		return $id;
 	}
 
 	/**
@@ -277,6 +340,41 @@ class Manager {
 		);
 	}
 
+	/**
+	 * Add 'Edit with elementor -> Site Settings' in admin bar.
+	 *
+	 * @param [] $admin_bar_config
+	 *
+	 * @return array $admin_bar_config
+	 */
+	private function add_menu_in_admin_bar( $admin_bar_config ) {
+		$document = Plugin::$instance->documents->get( get_the_ID() );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			$recent_edited_post = Utils::get_recently_edited_posts_query( [
+				'posts_per_page' => 1,
+			] );
+
+			if ( $recent_edited_post->post_count ) {
+				$posts = $recent_edited_post->get_posts();
+				$document = Plugin::$instance->documents->get( reset( $posts )->ID );
+			}
+		}
+
+		if ( $document ) {
+			$admin_bar_config['elementor_edit_page']['children'][] = [
+				'id' => 'elementor_site_settings',
+				'title' => __( 'Site Settings', 'elementor' ),
+				'sub_title' => __( 'Site', 'elementor' ),
+				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
+				'class' => 'elementor-site-settings',
+				'parent_class' => 'elementor-second-section',
+			];
+		}
+
+		return $admin_bar_config;
+	}
+
 	public function __construct() {
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
@@ -304,5 +402,9 @@ class Manager {
 		add_action( 'wp_head', function() {
 			$this->add_body_class();
 		} );
+
+		add_filter( 'elementor/frontend/admin_bar/settings', function ( $admin_bar_config ) {
+			return $this->add_menu_in_admin_bar( $admin_bar_config );
+		}, 9 /* Before site-editor (theme-builder) */ );
 	}
 }

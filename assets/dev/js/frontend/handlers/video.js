@@ -19,18 +19,22 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		};
 	}
 
-	getLightBox() {
-		return elementorFrontend.utils.lightbox;
-	}
-
 	handleVideo() {
-		this.apiProvider.onApiReady( ( apiObject ) => {
-			if ( ! this.getElementSettings( 'lightbox' ) ) {
+		if ( this.getElementSettings( 'lightbox' ) ) {
+			return;
+		}
+
+		if ( 'youtube' === this.getElementSettings( 'video_type' ) ) {
+			this.apiProvider.onApiReady( ( apiObject ) => {
 				this.elements.$imageOverlay.remove();
 
 				this.prepareYTVideo( apiObject, true );
-			}
-		} );
+			} );
+		} else {
+			this.elements.$imageOverlay.remove();
+
+			this.playVideo();
+		}
 	}
 
 	playVideo() {
@@ -65,12 +69,22 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	animateVideo() {
-		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
+	async animateVideo() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
 	}
 
-	handleAspectRatio() {
-		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	async handleAspectRatio() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	}
+
+	async hideLightbox() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.getModal().hide();
 	}
 
 	prepareYTVideo( YT, onOverlayClick ) {
@@ -141,6 +155,22 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
+		if ( elementSettings.lazy_load ) {
+			this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver( {
+				callback: ( event ) => {
+					if ( event.isInViewport ) {
+						this.intersectionObserver.unobserve( this.elements.$video.parent()[ 0 ] );
+						this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
+					}
+				},
+			} );
+
+			// We observe the parent, since the video container has a height of 0.
+			this.intersectionObserver.observe( this.elements.$video.parent()[ 0 ] );
+
+			return;
+		}
+
 		// When Optimized asset loading is set to off, the video type is set to 'Youtube', and 'Privacy Mode' is set
 		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
 		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
@@ -164,7 +194,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		const isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
-			this.getLightBox().getModal().hide();
+			this.hideLightbox();
 
 			return;
 		}

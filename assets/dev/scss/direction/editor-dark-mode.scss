@@ -276,6 +276,10 @@ select {
 		}
 	}
 
+	#elementor-panel-elements-search-area {
+		background-color: $theme-dark-gray-darkest;
+	}
+
 	#elementor-panel-elements-search-input {
 		background-color: $theme-dark-gray;
 		color: $theme-dark-light;
@@ -892,41 +896,42 @@ body.rtl .elementor-control-type-gallery {
 			}
 		}
 	}
-}
 
-.select2-container--default {
+	&.select2-container--default {
 
-	.select2-selection--single {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray;
-	}
-
-	.select2-selection--multiple {
-		background-color: $theme-dark-gray-darkest;
-
-		.select2-selection__choice {
-			background-color: $theme-dark-gray;
+		.select2-selection--single {
+			background-color: $theme-dark-gray-darkest;
 			border-color: $theme-dark-gray;
+		}
 
-			&__remove {
-				color: $theme-dark-gray-lightest;
+		.select2-selection--multiple {
+			background-color: $theme-dark-gray-darkest;
+
+			.select2-selection__choice {
+				background-color: $theme-dark-gray;
+				border-color: $theme-dark-gray;
+
+				&__remove {
+					color: $theme-dark-gray-lightest;
+				}
 			}
+		}
+
+		.select2-results__option--highlighted[aria-selected] {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
 		}
 	}
 
-	.select2-results__option--highlighted[aria-selected] {
-		background-color: $theme-dark-gray;
+	.select2-results__option[aria-selected=true] {
 		color: $theme-dark-light;
 	}
-}
 
-.select2-results__option[aria-selected=true] {
-	color: $theme-dark-light;
-}
+	.select2-dropdown {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-lighter;
+	}
 
-.select2-dropdown {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-lighter;
 }
 
 // Widget Pro Promotion Tooltip

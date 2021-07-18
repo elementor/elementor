@@ -231,6 +231,11 @@ export default class extends Marionette.CompositeView {
 
 		settingsModel.set( '_title', newTitle );
 
+		// TODO: Remove - After merge pull request #13605.
+		$e.internal( 'document/save/set-is-modified', {
+			status: true,
+		} );
+
 		elementor.removeBackgroundClickListener( 'navigator' );
 	}
 

@@ -669,6 +669,14 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'caption_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-carousel-caption',
+			]
+		);
+
 		$this->end_controls_section();
 
 	}
@@ -692,6 +700,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		foreach ( $settings['carousel'] as $index => $attachment ) {
 			$image_url = Group_Control_Image_Size::get_attachment_image_src( $attachment['id'], 'thumbnail', $settings );
+
+			if ( ! $image_url && isset( $attachment['url'] ) ) {
+				$image_url = $attachment['url'];
+			}
 
 			$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 

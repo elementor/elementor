@@ -346,6 +346,14 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-title',
+			]
+		);
+
 		$this->add_control(
 			'title_align',
 			[
@@ -408,6 +416,14 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'content_shadow',
+				'selector' => '{{WRAPPER}} .elementor-tab-content',
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -445,6 +461,7 @@ class Widget_Tabs extends Widget_Base {
 						'role' => 'tab',
 						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+						'aria-expanded' => 'false',
 					] );
 					?>
 					<div <?php echo $this->get_render_attribute_string( $tab_title_setting_key ); ?>><?php echo $tab_title; ?></div>
@@ -476,6 +493,7 @@ class Widget_Tabs extends Widget_Base {
 						'role' => 'tab',
 						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+						'aria-expanded' => 'false',
 					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
@@ -514,6 +532,7 @@ class Widget_Tabs extends Widget_Base {
 						'role': 'tab',
 						'tabindex': 1 === tabCount ? '0' : '-1',
 						'aria-controls': 'elementor-tab-content-' + tabUid,
+						'aria-expanded': 'false',
 						} );
 					#>
 						<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>

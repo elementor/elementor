@@ -18,6 +18,29 @@ class Utils {
 	const DEPRECATION_RANGE = 0.4;
 
 	/**
+	 * A list of safe tage for `validate_html_tag` method.
+	 */
+	const ALLOWED_HTML_WRAPPER_TAGS = [
+		'a',
+		'article',
+		'aside',
+		'div',
+		'footer',
+		'h1',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6',
+		'header',
+		'main',
+		'nav',
+		'p',
+		'section',
+		'span',
+	];
+
+	/**
 	 * Is ajax.
 	 *
 	 * Whether the current request is a WordPress ajax request.
@@ -131,6 +154,9 @@ class Utils {
 		if ( false === $rows_affected ) {
 			throw new \Exception( __( 'An error occurred', 'elementor' ) );
 		}
+
+		// Allow externals to replace-urls, when they have to.
+		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
 
@@ -334,20 +360,9 @@ class Utils {
 	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
-		$query_args = [
-			'action' => 'elementor_new_post',
-			'post_type' => $post_type,
-		];
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.3.0', 'Plugin::$instance->documents->get_create_new_post_url()' );
 
-		if ( $template_type ) {
-			$query_args['template_type'] = $template_type;
-		}
-
-		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
-
-		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
-
-		return $new_post_url;
+		return Plugin::$instance->documents->get_create_new_post_url( $post_type, $template_type );
 	}
 
 	/**
@@ -437,6 +452,18 @@ class Utils {
 		}
 
 		return implode( ' ', $rendered_attributes );
+	}
+
+	/**
+	 * Safe print html attributes
+	 *
+	 * @access public
+	 * @static
+	 * @param array $attributes
+	 */
+	public static function print_html_attributes( array $attributes ) {
+		// PHPCS - the method render_html_attributes is safe.
+		echo self::render_html_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public static function get_meta_viewport( $context = '' ) {
@@ -622,5 +649,56 @@ class Utils {
 			$submenu[ $menu_slug ][0][0] = $new_label;
 			// @codingStandardsIgnoreEnd
 		}
+	}
+
+	/**
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param string $tag
+	 *
+	 * @return string
+	 */
+	public static function validate_html_tag( $tag ) {
+		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+	}
+
+	/**
+	 * Safe print a validated HTML tag.
+	 *
+	 * @param string $tag
+	 */
+	public static function print_validated_html_tag( $tag ) {
+		// PHPCS - the method validate_html_tag is safe.
+		echo self::validate_html_tag( $tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Print internal content (not user input) without escaping.
+	 */
+	public static function print_unescaped_internal_string( $string ) {
+		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Get recently edited posts query.
+	 *
+	 * Returns `WP_Query` of the recent edited posts.
+	 * By default max posts ( $args['posts_per_page'] ) is 3.
+	 *
+	 * @param array $args
+	 *
+	 * @return \WP_Query
+	 */
+	public static function get_recently_edited_posts_query( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		] );
+
+		return new \WP_Query( $args );
 	}
 }

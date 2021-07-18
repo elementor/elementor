@@ -138,7 +138,7 @@ class Widget_Text_Editor extends Widget_Base {
 				'separator' => 'before',
 				'options' => $text_columns,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
+					'{{WRAPPER}}' => 'columns: {{VALUE}};',
 				],
 			]
 		);
@@ -167,7 +167,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -206,7 +206,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
 			]
 		);
@@ -233,6 +233,14 @@ class Widget_Text_Editor extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 
@@ -291,6 +299,14 @@ class Widget_Text_Editor extends Widget_Base {
 				'condition' => [
 					'drop_cap_view!' => 'default',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'drop_cap_shadow',
+				'selector' => '{{WRAPPER}} .elementor-drop-cap',
 			]
 		);
 
@@ -392,15 +408,26 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$editor_content = $this->get_settings_for_display( 'editor' );
+		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
 
+		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
 
-		$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		if ( $should_render_inline_editing ) {
+			$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		}
 
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>><?php echo $editor_content; ?></div>
+		<?php if ( $should_render_inline_editing ) { ?>
+			<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>>
+		<?php } ?>
+			<?php echo $editor_content; ?>
+		<?php if ( $should_render_inline_editing ) { ?>
+			</div>
+		<?php } ?>
 		<?php
 	}
 
@@ -428,11 +455,25 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
+			isEditMode = elementorFrontend.isEditMode(),
+			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
+
+		if ( shouldRenderInlineEditing ) {
+			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		}
 
 		view.addInlineEditingAttributes( 'editor', 'advanced' );
-		#>
-		<div {{{ view.getRenderAttributeString( 'editor' ) }}}>{{{ settings.editor }}}</div>
+
+		if ( shouldRenderInlineEditing ) { #>
+			<div {{{ view.getRenderAttributeString( 'editor' ) }}}>
+		<# } #>
+
+			{{{ settings.editor }}}
+
+		<# if ( shouldRenderInlineEditing ) { #>
+			</div>
+		<# } #>
 		<?php
 	}
 }
