@@ -8,20 +8,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // TODO: Use API data instead of this static array, once it is available.
-$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+$active_devices = Plugin::$instance->breakpoints->get_active_devices_list();
 
-// Insert the 'desktop' device in the correct position.
-if ( array_key_exists( 'widescreen', $breakpoints ) ) {
-	$widescreen_index = array_search( 'widescreen', array_keys( $breakpoints ), true );
-
-	$breakpoints = array_slice( $breakpoints, 0, $widescreen_index, true ) +
-			[ 'desktop' => '' ] +
-			array_slice( $breakpoints, $widescreen_index, null, true );
-} else {
-	$breakpoints['desktop'] = [];
-}
-
-$breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), $breakpoints );
+$breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
 
 /* translators: %1$s: Device Name */
 $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
@@ -31,11 +21,11 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 		<div class="e-responsive-bar__col"></div>
 		<div class="e-responsive-bar__col">
 			<div class="e-responsive-bar-switcher">
-			<?php foreach ( $breakpoints as $name => $breakpoint ) {
-				if ( 'desktop' === $name ) {
+			<?php foreach ( $active_devices as $device_key ) {
+				if ( 'desktop' === $device_key ) {
 					$tooltip_label = __( 'Desktop <br> Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
 				} else {
-					$tooltip_label = sprintf( $breakpoint_label, $breakpoint->get_label(), $breakpoint->get_value() );
+					$tooltip_label = sprintf( $breakpoint_label, $active_breakpoints[ $device_key ]->get_label(), $active_breakpoints[ $device_key ]->get_value() );
 				}
 				printf( '<label
 					class="e-responsive-bar-switcher__option e-responsive-bar-switcher__option-%1$s"
@@ -45,7 +35,7 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
 					<i class="%3$s" aria-hidden="true"></i>
 					<span class="screen-reader-text">%2$s</span>
-				</label>', $name, $tooltip_label, $breakpoint_classes_map[ $name ] );
+				</label>', $device_key, $tooltip_label, $breakpoint_classes_map[ $device_key ] );
 			} ?>
 			</div>
 		</div>

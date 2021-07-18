@@ -107,6 +107,30 @@ class Manager extends Module {
 		return self::get_items( $this->active_breakpoints, $breakpoint_name );
 	}
 
+	/**
+	 * Get Active Devices List
+	 *
+	 * Retrieve an array containing the keys of all active devices, including 'desktop'.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @return array
+	 */
+	public function get_active_devices_list() {
+		$active_devices = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+
+		// Insert the 'desktop' device in the correct position.
+		if ( in_array( 'widescreen', $active_devices ) ) {
+			$widescreen_index = array_search( 'widescreen', $active_devices, true );
+
+			array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
+		} else {
+			$active_devices[] = 'desktop';
+		}
+
+		return $active_devices;
+	}
+
 	/** Has Custom Breakpoints
 	 *
 	 * Checks whether there are currently custom breakpoints saved in the database.
