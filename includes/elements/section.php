@@ -1350,44 +1350,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'hide_desktop',
-			[
-				'label' => __( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-desktop',
-			]
-		);
-
-		$this->add_control(
-			'hide_tablet',
-			[
-				'label' => __( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-tablet',
-			]
-		);
-
-		$this->add_control(
-			'hide_mobile',
-			[
-				'label' => __( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => __( 'Hide', 'elementor' ),
-				'label_off' => __( 'Show', 'elementor' ),
-				'return_value' => 'hidden-phone',
-			]
-		);
+		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
 
@@ -1417,7 +1380,7 @@ class Element_Section extends Element_Base {
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 			if ( ! settings.background_play_on_mobile ) {
-				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 			}
 		#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
@@ -1456,7 +1419,7 @@ class Element_Section extends Element_Base {
 					$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 					if ( ! $settings['background_play_on_mobile'] ) {
-						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+						$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 					}
 					?>
 					<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
