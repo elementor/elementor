@@ -120,7 +120,7 @@ class Manager extends Module {
 		$active_devices = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
 		// Insert the 'desktop' device in the correct position.
-		if ( in_array( 'widescreen', $active_devices ) ) {
+		if ( in_array( 'widescreen', $active_devices, true ) ) {
 			$widescreen_index = array_search( 'widescreen', $active_devices, true );
 
 			array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
