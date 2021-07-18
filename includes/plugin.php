@@ -26,6 +26,7 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
+use Elementor\Core\Router\Manager as Router_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -413,6 +414,11 @@ class Plugin {
 	public $beta_testers;
 
 	/**
+	 * @var Router_Manager
+	 */
+	public $router_manager;
+
+	/**
 	 * @var Inspector
 	 * @deprecated 2.1.2 Use $inspector.
 	 */
@@ -660,6 +666,7 @@ class Plugin {
 			$this->wordpress_widgets_manager = new WordPress_Widgets_Manager();
 			$this->admin = new Admin();
 			$this->beta_testers = new Beta_Testers();
+			$this->router_manager = new Router_Manager();
 			new Elementor_3_Re_Migrate_Globals();
 		}
 	}

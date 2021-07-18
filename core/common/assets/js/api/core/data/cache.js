@@ -1,3 +1,4 @@
+import { ensureComponentNamespace } from '../base/utils';
 import LocalStorage from './storages/local-storage';
 
 /**
@@ -57,7 +58,7 @@ export default class Cache {
 	set( requestData, data ) {
 		$e.data.validateRequestData( requestData );
 
-		const componentName = requestData.component.getNamespace(),
+		const componentName = ensureComponentNamespace( requestData.component ),
 			pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
 			pureEndpointParts = pureEndpoint.split( '/' );
 
@@ -101,7 +102,7 @@ export default class Cache {
 	get( requestData ) {
 		$e.data.validateRequestData( requestData );
 
-		const componentName = requestData.component.getNamespace(),
+		const componentName = ensureComponentNamespace( requestData.component ),
 			componentData = this.storage.getItem( componentName );
 
 		if ( componentData !== null ) {
@@ -111,7 +112,7 @@ export default class Cache {
 
 			// Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'get(): complex'.
 			// Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
-			const pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+			const pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
 				pureEndpointParts = pureEndpoint.split( '/' ),
 				result = pureEndpointParts.reduce( ( accumulator, endpointPart ) => {
 					if ( accumulator && accumulator[ endpointPart ] ) {
@@ -146,9 +147,10 @@ export default class Cache {
 			if ( endpointValue && endpoint.includes( endpointKey ) ) {
 				// Assuming it is a specific endpoint.
 				const oldData = endpointValue,
-					pureEndpoint = requestData.endpoint.replace( requestData.component.getNamespace() + '/', '' ),
+					componentName = ensureComponentNamespace( requestData.component ),
+					pureEndpoint = requestData.endpoint.replace( componentName + '/', '' ),
 					pureEndpointParts = pureEndpoint.split( '/' ),
-					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace();
+					isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === componentName;
 
 				// Component update or specific update?
 				if ( isComponentUpdate ) {
@@ -188,7 +190,7 @@ export default class Cache {
 
 		let result = false;
 
-		const componentName = requestData.component.getNamespace();
+		const componentName = ensureComponentNamespace( requestData.component );
 
 		if ( componentName !== requestData.endpoint ) {
 			const oldData = this.storage.getItem( componentName ),

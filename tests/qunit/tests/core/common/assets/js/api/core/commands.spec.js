@@ -5,7 +5,7 @@ jQuery( () => {
 		QUnit.test( 'Error on register command without component', ( assert ) => {
 			assert.throws(
 				() => $e.commands.register( '', 'save', () => {} ),
-				new Error( "Commands: '' component is not exist." )
+				new Error( "'' component is not exist." )
 			);
 		} );
 

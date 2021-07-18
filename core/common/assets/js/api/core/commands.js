@@ -1,3 +1,4 @@
+import { ensureComponent } from './base/utils';
 import CommandsBackwardsCompatibility from './backwards-compatibility/commands';
 
 export default class Commands extends CommandsBackwardsCompatibility {
@@ -51,19 +52,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @returns {Commands}
 	 */
 	register( component, command, callback ) {
-		let namespace;
-		if ( 'string' === typeof component ) {
-			namespace = component;
-			component = $e.components.get( namespace );
+		component = ensureComponent( component );
 
-			if ( ! component ) {
-				this.error( `'${ namespace }' component is not exist.` );
-			}
-		} else {
-			namespace = component.getNamespace();
-		}
-
-		const fullCommand = namespace + ( command ? '/' + command : '' );
+		const namespace = component.getNamespace(),
+			fullCommand = namespace + ( command ? '/' + command : '' );
 
 		if ( this.commands[ fullCommand ] ) {
 			this.error( `\`${ fullCommand }\` is already registered.` );
@@ -85,19 +77,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	unregister( component, command ) {
-		let namespace;
-		if ( 'string' === typeof component ) {
-			namespace = component;
-			component = $e.components.get( namespace );
+		component = ensureComponent( component );
 
-			if ( ! component ) {
-				this.error( `'${ namespace }' component is not exist.` );
-			}
-		} else {
-			namespace = component.getNamespace();
-		}
-
-		const fullCommand = namespace + ( command ? '/' + command : '' );
+		const namespace = component.getNamespace(),
+			fullCommand = namespace + ( command ? '/' + command : '' );
 
 		if ( ! this.commands[ fullCommand ] ) {
 			this.error( `\`${ fullCommand }\` not exist.` );

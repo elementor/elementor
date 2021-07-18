@@ -359,6 +359,29 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Check if given array exists in the collection.
+	 *
+	 * @param array $items
+	 *
+	 * @return bool
+	 */
+	public function contains( $items = [] ) {
+		$matched = [];
+
+		foreach ( $this->all() as $key => $value ) {
+			$assumed_value = ! empty( $items[ $key ] ) ? $items[ $key ] : null;
+
+			$result = $value === $assumed_value;
+
+			if ( $result ) {
+				$matched[ $key ] = $value;
+			}
+		}
+
+		return $matched === $items;
+	}
+
+	/**
 	 * @param mixed $key
 	 *
 	 * @return bool

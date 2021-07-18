@@ -31,6 +31,38 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a', 'b' ], $result );
 	}
 
+	public function test_contains() {
+		// Arrange.
+		$array = [
+			'a' => '1',
+			'b' => '2',
+			'c' => '3',
+		];
+
+		$collection = new Collection( $array );
+
+		unset( $array[ 'c' ] );
+
+		// Assert.
+		$this->assertTrue( $collection->contains( $array ) );
+	}
+
+	public function test_contains__ensure_false() {
+		// Arrange.
+		$array = [
+			'a' => '1',
+			'b' => '2',
+			'c' => '3',
+		];
+
+		$collection = new Collection( $array );
+
+		$array['d'] = 'foreign';
+
+		// Assert.
+		$this->assertFalse( $collection->contains( $array ) );
+	}
+
 	public function test_is_empty() {
 		// Arrange
 		$collection = new Collection( [] );

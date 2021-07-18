@@ -9,7 +9,7 @@ jQuery( () => {
 				() => {
 					$e.routes.register( '', 'panel', () => {} );
 				},
-				new Error( "Routes: '' component is not exist." )
+				new Error( "'' component is not exist." )
 			);
 		} );
 
