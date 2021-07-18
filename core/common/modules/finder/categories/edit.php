@@ -67,6 +67,7 @@ class Edit extends Base_Category {
 		] );
 
 		$recently_edited_query_args = [
+			'no_found_rows' => true,
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'draft', 'private', 'pending', 'future' ],
 			'posts_per_page' => '10',
@@ -91,7 +92,7 @@ class Edit extends Base_Category {
 			's' => $options['filter'],
 		];
 
-		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
+		$recently_edited_query = new \WP_Query( $recently_edited_query_args ); // 'no_found_rows' => true.
 
 		$items = [];
 

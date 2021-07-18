@@ -407,6 +407,7 @@ class Source_Local extends Source_Base {
 		}
 
 		$defaults = [
+			'not_founds_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
@@ -422,7 +423,7 @@ class Source_Local extends Source_Base {
 
 		$query_args = wp_parse_args( $args, $defaults );
 
-		$templates_query = new \WP_Query( $query_args );
+		$templates_query = new \WP_Query( $query_args ); // 'no_found_rows' => true.
 
 		$templates = [];
 
