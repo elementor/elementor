@@ -11,6 +11,7 @@ export default class Component extends ComponentModalBase {
 		// When switching documents update defaultTabs.
 		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
 
+		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
 	}
 
