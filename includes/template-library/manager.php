@@ -4,7 +4,6 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Data\Manager as Data_Manager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
@@ -56,7 +55,7 @@ class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		Data_Manager::instance()->register_controller( Controller::class );
+		Plugin::$instance->data_manager->register_controller( Controller::class );
 
 		$this->register_default_sources();
 
@@ -204,15 +203,15 @@ class Manager {
 	 *
 	 * Retrieve all the templates from all the registered sources.
 	 *
-	 * @param array $only_sources
+	 * @param array $filter_sources
 	 *
 	 * @return array
 	 */
-	public function get_templates( $only_sources = [] ) {
+	public function get_templates( $filter_sources = [] ) {
 		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
-			if ( ! empty( $only_sources ) && ! in_array( $source->get_id(), $only_sources, true ) ) {
+			if ( ! empty( $filter_sources ) && ! in_array( $source->get_id(), $filter_sources, true ) ) {
 				continue;
 			}
 
@@ -240,10 +239,10 @@ class Manager {
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
 
+		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
+
 		return [
-			'templates' => $this->get_templates(
-				isset( $args['only_sources'] ) ? $args['only_sources'] : []
-			),
+			'templates' => $this->get_templates( $filter_sources ),
 			'config' => $library_data['types_data'],
 		];
 	}

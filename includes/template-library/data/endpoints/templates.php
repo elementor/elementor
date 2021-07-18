@@ -14,7 +14,7 @@ class Templates extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return Plugin::$instance->templates_manager->get_library_data( [ 'only_sources', $request->get_param( 'source' ) ] );
+		return Plugin::$instance->templates_manager->get_library_data( [ 'filter_sources' => [ $request->get_param( 'source' ) ] ] );
 	}
 
 }
