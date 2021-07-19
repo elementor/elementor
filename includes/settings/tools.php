@@ -346,7 +346,7 @@ class Tools extends Settings_Page {
 								'label' => __( 'Beta Tester', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'default' => 'no',
+									'std' => 'no',
 									'options' => [
 										'no' => __( 'Disable', 'elementor' ),
 										'yes' => __( 'Enable', 'elementor' ),

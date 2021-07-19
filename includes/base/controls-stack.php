@@ -145,6 +145,18 @@ abstract class Controls_Stack extends Base_Object {
 	private $settings_sanitized = false;
 
 	/**
+	 * Element render attributes.
+	 *
+	 * Holds all the render attributes of the element. Used to store data like
+	 * the HTML class name and the class value, or HTML element ID name and value.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $render_attributes = [];
+
+	/**
 	 * Get element name.
 	 *
 	 * Retrieve the element name.
@@ -1657,6 +1669,194 @@ abstract class Controls_Stack extends Base_Object {
 		];
 
 		$this->update_control( $last_control_key, $args, $options );
+	}
+
+	/**
+	 * Add render attribute.
+	 *
+	 * Used to add attributes to a specific HTML element.
+	 *
+	 * The HTML tag is represented by the element parameter, then you need to
+	 * define the attribute key and the attribute key. The final result will be:
+	 * `<element attribute_key="attribute_value">`.
+	 *
+	 * Example usage:
+	 *
+	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
+	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
+	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array|string $element   The HTML element.
+	 * @param array|string $key       Optional. Attribute key. Default is null.
+	 * @param array|string $value     Optional. Attribute value. Default is null.
+	 * @param bool         $overwrite Optional. Whether to overwrite existing
+	 *                                attribute. Default is false, not to overwrite.
+	 *
+	 * @return self Current instance of the element.
+	 */
+	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
+		if ( is_array( $element ) ) {
+			foreach ( $element as $element_key => $attributes ) {
+				$this->add_render_attribute( $element_key, $attributes, null, $overwrite );
+			}
+
+			return $this;
+		}
+
+		if ( is_array( $key ) ) {
+			foreach ( $key as $attribute_key => $attributes ) {
+				$this->add_render_attribute( $element, $attribute_key, $attributes, $overwrite );
+			}
+
+			return $this;
+		}
+
+		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
+			$this->render_attributes[ $element ][ $key ] = [];
+		}
+
+		settype( $value, 'array' );
+
+		if ( $overwrite ) {
+			$this->render_attributes[ $element ][ $key ] = $value;
+		} else {
+			$this->render_attributes[ $element ][ $key ] = array_merge( $this->render_attributes[ $element ][ $key ], $value );
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Get Render Attributes
+	 *
+	 * Used to retrieve render attribute.
+	 *
+	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
+	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
+	 *
+	 * Returns null if one of the requested parameters isn't set.
+	 *
+	 * @since 2.2.6
+	 * @access public
+	 * @param string $element
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function get_render_attributes( $element = '', $key = '' ) {
+		$attributes = $this->render_attributes;
+
+		if ( $element ) {
+			if ( ! isset( $attributes[ $element ] ) ) {
+				return null;
+			}
+
+			$attributes = $attributes[ $element ];
+
+			if ( $key ) {
+				if ( ! isset( $attributes[ $key ] ) ) {
+					return null;
+				}
+
+				$attributes = $attributes[ $key ];
+			}
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Set render attribute.
+	 *
+	 * Used to set the value of the HTML element render attribute or to update
+	 * an existing render attribute.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array|string $element The HTML element.
+	 * @param array|string $key     Optional. Attribute key. Default is null.
+	 * @param array|string $value   Optional. Attribute value. Default is null.
+	 *
+	 * @return self Current instance of the element.
+	 */
+	public function set_render_attribute( $element, $key = null, $value = null ) {
+		return $this->add_render_attribute( $element, $key, $value, true );
+	}
+
+	/**
+	 * Remove render attribute.
+	 *
+	 * Used to remove an element (with its keys and their values), key (with its values),
+	 * or value/s from an HTML element's render attribute.
+	 *
+	 * @since 2.7.0
+	 * @access public
+	 *
+	 * @param string $element       The HTML element.
+	 * @param string $key           Optional. Attribute key. Default is null.
+	 * @param array|string $values   Optional. Attribute value/s. Default is null.
+	 */
+	public function remove_render_attribute( $element, $key = null, $values = null ) {
+		if ( $key && ! isset( $this->render_attributes[ $element ][ $key ] ) ) {
+			return;
+		}
+
+		if ( $values ) {
+			$values = (array) $values;
+
+			$this->render_attributes[ $element ][ $key ] = array_diff( $this->render_attributes[ $element ][ $key ], $values );
+
+			return;
+		}
+
+		if ( $key ) {
+			unset( $this->render_attributes[ $element ][ $key ] );
+
+			return;
+		}
+
+		if ( isset( $this->render_attributes[ $element ] ) ) {
+			unset( $this->render_attributes[ $element ] );
+		}
+	}
+
+	/**
+	 * Get render attribute string.
+	 *
+	 * Used to retrieve the value of the render attribute.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param string $element The element.
+	 *
+	 * @return string Render attribute string, or an empty string if the attribute
+	 *                is empty or not exist.
+	 */
+	public function get_render_attribute_string( $element ) {
+		if ( empty( $this->render_attributes[ $element ] ) ) {
+			return '';
+		}
+
+		return Utils::render_html_attributes( $this->render_attributes[ $element ] );
+	}
+
+	/**
+	 * Print render attribute string.
+	 *
+	 * Used to output the rendered attribute.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array|string $element The element.
+	 */
+	public function print_render_attribute_string( $element ) {
+		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}
 
 	/**
