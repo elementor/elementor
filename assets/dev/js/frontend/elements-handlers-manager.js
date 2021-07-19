@@ -134,10 +134,11 @@ module.exports = function( $ ) {
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_ready/${elementType}`, $scope, $ );
 
 		if ( 'widget' === elementType ) {
-			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
+			const widgetType = $scope.attr( 'data-widget_type' );
+			elementorFrontend.hooks.doAction( `frontend/element_ready/${widgetType}`, $scope, $ );
 		}
 	};
 
