@@ -18,6 +18,7 @@
 		.elementor-control-dynamic-switcher {
 			position: absolute;
 			top: 0;
+			z-index: $first-layer;
 			@include end(0);
 		}
 	}
@@ -31,6 +32,15 @@
 		font-family: inherit;
 
 		&:focus {
+
+			+ .elementor-control-dynamic-switcher {
+				display: none;
+			}
+		}
+	}
+
+	pre {
+		&:focus-within {
 
 			+ .elementor-control-dynamic-switcher {
 				display: none;
