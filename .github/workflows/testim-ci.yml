@@ -11,10 +11,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.DEVOPS_TOKEN }}
-      - name: Block non-permitted users
-        uses: StyleShit/action-whitelist-users@b8abcef5472afd0c7bcfaadf08c70a082437e459
-        with:
-          whitelist-file: '.github/workflows/whitelist.txt'
       - name: Checkout source branch
         uses: actions/checkout@v2
         with:
