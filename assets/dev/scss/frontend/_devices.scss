@@ -18,7 +18,7 @@
 			content: 'tablet_extra';
 		}
 
-		@media (min-width: $screen-tablet-min) and (max-width: $screen-tablet-max) {
+		@media (max-width: $screen-tablet-max) {
 			content: 'tablet';
 		}
 
