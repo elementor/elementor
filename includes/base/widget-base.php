@@ -573,11 +573,18 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			if ( $this->is_widget_first_render() ) {
-
-				$this->register_runtime_widget( $this->get_group_name() );
-
+			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
 				$this->print_widget_css();
+
+				$widgets_list = $this->get_inline_css_depends();
+
+				$widgets_list[] = $this->get_group_name();
+
+				foreach ( $widgets_list as $widget_data ) {
+					$widget_name = isset( $widget_data['name'] ) ? $widget_data['name'] : $widget_data;
+
+					$this->register_runtime_widget( $widget_name );
+				}
 			}
 
 			// get_name
@@ -600,8 +607,8 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	protected function is_widget_first_render() {
-		return ! in_array( $this->get_group_name(), self::$registered_runtime_widgets, true );
+	protected function is_widget_first_render( $widget_name ) {
+		return ! in_array( $widget_name, self::$registered_runtime_widgets, true );
 	}
 
 	/**
@@ -940,6 +947,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get Inline CSS dependencies.
+	 *
+	 * Retrieve a list of inline CSS dependencies that the element requires.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return array.
+	 */
+	public function get_inline_css_depends() {
+		return [];
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -972,9 +993,7 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	public function get_css_config() {
-		$widget_name = $this->get_group_name();
-
+	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
@@ -989,10 +1008,37 @@ abstract class Widget_Base extends Element_Base {
 		];
 	}
 
+	public function get_css_config() {
+		return $this->get_widget_css_config( $this->get_group_name() );
+	}
+
 	private function get_widget_css() {
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
-		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
+		$widgets_list = $this->get_inline_css_depends();
+
+		$widgets_list[] = $this->get_group_name();
+
+		$widget_css = '';
+
+		foreach ( $widgets_list as $widget_data ) {
+			$widget_name = isset( $widget_data['name'] ) ? $widget_data['name'] : $widget_data;
+			$is_core_dependency = isset( $widget_data['is_core_dependency'] ) ? true : false;
+
+			if ( $this->is_widget_first_render( $widget_name ) ) {
+				if ( $this->get_group_name() === $widget_name ) {
+					$config = $this->get_css_config();
+				} else {
+					/**
+					 * The core-dependency allowing to create a dependency specifically with the core widgets.
+					 * Otherwise, the config will be taken from the class that inherits from Widget_Base.
+					 */
+					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
+				}
+
+				$widget_css .= $widgets_css_data_manager->get_asset_data( $config );
+			}
+		}
 
 		return $widget_css;
 
