@@ -15,22 +15,10 @@ class Index extends Endpoint {
 
 	protected function register() {
 		$type_validate_callback = function ( $param ) {
-			$types = array_merge(
-				array_keys( Plugin::$instance->elements_manager->get_element_types() ),
-				array_keys( Plugin::$instance->widgets_manager->get_widget_types() )
-			);
+			$types = array_keys( Plugin::$instance->widgets_manager->get_widget_types() );
 
 			return in_array( $param, $types, true );
 		};
-
-//		$this->register_route(
-//			'',
-//			\WP_REST_Server::READABLE,
-//			function ( $request ) {
-//				return $this->base_callback( \WP_REST_Server::READABLE, $request, true );
-//			},
-//			[]
-//		);
 
 		$this->register_route(
 			'(?P<type>[\w]+)/',
