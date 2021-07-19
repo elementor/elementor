@@ -28,7 +28,6 @@ class Post_Type extends Base {
 
 	public function export() {
 		$query_args = [
-			'no_found_rows' => true,
 			'post_type' => $this->post_type,
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
@@ -45,7 +44,7 @@ class Post_Type extends Base {
 			],
 		];
 
-		$query = new \WP_Query( $query_args ); // 'no_found_rows' => true.
+		$query = new \WP_Query( $query_args );
 
 		$manifest_data = [];
 

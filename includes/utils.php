@@ -701,6 +701,6 @@ class Utils {
 			'orderby' => 'modified',
 		] );
 
-		return new \WP_Query( $args ); // 'no_found_rows' => false (post count is used).
+		return new \WP_Query( $args ); // SQL_CALC_FOUND_ROWS is used.
 	}
 }

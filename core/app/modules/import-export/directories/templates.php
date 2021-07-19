@@ -20,7 +20,6 @@ class Templates extends Base {
 		$template_types = array_values( Source_Local::get_template_types() );
 
 		$query_args = [
-			'no_found_rows' => true,
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
@@ -32,7 +31,7 @@ class Templates extends Base {
 			],
 		];
 
-		$templates_query = new \WP_Query( $query_args ); // 'no_found_rows' => true.
+		$templates_query = new \WP_Query( $query_args );
 
 		$manifest_data = [];
 
