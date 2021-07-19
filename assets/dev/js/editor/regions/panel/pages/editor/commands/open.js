@@ -16,10 +16,10 @@ export class Open extends CommandBase {
 			widgetType = args.model.get( 'widgetType' );
 
 		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( `panel/open_editor/${elementType}`, this.component.manager, args.model, args.view );
+		elementor.hooks.doAction( `panel/open_editor/${ elementType }`, this.component.manager, args.model, args.view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( `panel/open_editor/${elementType}/${widgetType}`,
+		elementor.hooks.doAction( `panel/open_editor/${ elementType }/${ widgetType }`,
 			this.component.manager,
 			args.model,
 			args.view

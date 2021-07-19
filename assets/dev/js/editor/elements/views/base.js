@@ -47,7 +47,7 @@ BaseElementView = BaseContainer.extend( {
 	behaviors() {
 		const elementType = this.options.model.get( 'elType' );
 
-		const groups = elementor.hooks.applyFilters( `elements/${elementType}/contextMenuGroups`, this.getContextMenuGroups(), this );
+		const groups = elementor.hooks.applyFilters( `elements/${ elementType }/contextMenuGroups`, this.getContextMenuGroups(), this );
 
 		const behaviors = {
 			contextMenu: {
