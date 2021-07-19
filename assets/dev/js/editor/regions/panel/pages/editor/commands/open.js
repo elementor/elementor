@@ -12,8 +12,8 @@ export class Open extends CommandBase {
 
 		// BC: Run hooks after the route render's the view
 
-		const elementType = args.model.get( 'elType' );
-		const widgetType = args.model.get( 'widgetType' );
+		const elementType = args.model.get( 'elType' ),
+			widgetType = args.model.get( 'widgetType' );
 
 		// Example: panel/open_editor/widget
 		elementor.hooks.doAction( `panel/open_editor/${elementType}`, this.component.manager, args.model, args.view );
