@@ -50,7 +50,9 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 					}
 				}
 
-				elementor.hooks.doAction( 'panel/widgets/' + self.model.get( 'widget' ) + '/controls/wp_widget/loaded', self );
+				var widgetType = self.model.get( 'widget' );
+
+				elementor.hooks.doAction( `panel/widgets/${widgetType}/controls/wp_widget/loaded`, self );
 			},
 		} );
 	},
