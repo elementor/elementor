@@ -4,7 +4,7 @@ on:
 jobs:
   build-plugin:
     name: Build plugin
-    if: github.repository_owner == 'elementor'
+    # if: github.repository_owner == 'elementor'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout target source code
