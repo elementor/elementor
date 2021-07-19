@@ -50,7 +50,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 					}
 				}
 
-				var widgetType = self.model.get( 'widget' );
+				const widgetType = self.model.get( 'widget' );
 
 				elementor.hooks.doAction( `panel/widgets/${widgetType}/controls/wp_widget/loaded`, self );
 			},
