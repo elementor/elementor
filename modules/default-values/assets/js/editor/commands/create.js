@@ -1,22 +1,22 @@
 import { pipe } from '../utils';
 
 export class Create extends $e.modules.CommandBase {
-	validateArgs( args ) {
+	initialize( args ) {
 		this.requireArgument( 'elementId', args );
-	}
 
-	async apply( { elementId } ) {
-		const container = elementor.getContainer( elementId );
+		this.container = elementor.getContainer( args.elementId );
 
 		if ( container.settings.get( 'elType' ) !== 'widget' ) {
 			throw new Error( 'Default values currently support only widgets.' );
 		}
+	}
 
+	async apply() {
 		// e.g: heading, button, image.
-		const type = container.settings.get( 'widgetType' );
+		const type = this.container.settings.get( 'widgetType' );
 
 		// Get all the "styled" settings that differently from the hardcoded defaults.
-		const settings = this.getSettingsForSave( container );
+		const settings = this.getSettingsForSave();
 
 		// Get all the elements that should recreate (e.g: type = 'heading' it will recreate all the heading)
 		const elementsToRecreate = this.getAllElementsForRecreate( type, settings );
@@ -34,13 +34,12 @@ export class Create extends $e.modules.CommandBase {
 	/**
 	 * Get all the settings that should be save.
 	 *
-	 * @param container
-	 * @returns {{}}
+	 * @returns {*}
 	 */
-	getSettingsForSave( container ) {
+	getSettingsForSave() {
 		return pipe(
 			...this.component.handlers.map( ( handler ) => handler.appendSettingsForSave )
-		)( {}, container );
+		)( {}, this.container );
 	}
 
 	/**
