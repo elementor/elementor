@@ -6,7 +6,7 @@ export class Create extends $e.modules.CommandBase {
 
 		this.container = elementor.getContainer( args.elementId );
 
-		if ( container.settings.get( 'elType' ) !== 'widget' ) {
+		if ( this.container.settings.get( 'elType' ) !== 'widget' ) {
 			throw new Error( 'Default values currently support only widgets.' );
 		}
 	}
