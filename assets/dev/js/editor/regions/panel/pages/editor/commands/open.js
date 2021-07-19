@@ -10,14 +10,16 @@ export class Open extends CommandBase {
 			$e.route( this.component.getDefaultRoute(), args );
 		}
 
-		// BC: Run hooks after the route render's the view.
-		const action = 'panel/open_editor/' + args.model.get( 'elType' );
+		// BC: Run hooks after the route render's the view
+
+		const elementType = args.model.get( 'elType' );
+		const widgetType = args.model.get( 'widgetType' );
 
 		// Example: panel/open_editor/widget
-		elementor.hooks.doAction( action, this.component.manager, args.model, args.view );
+		elementor.hooks.doAction( `panel/open_editor/${elementType}`, this.component.manager, args.model, args.view );
 
 		// Example: panel/open_editor/widget/heading
-		elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ),
+		elementor.hooks.doAction( `panel/open_editor/${elementType}/${widgetType}`,
 			this.component.manager,
 			args.model,
 			args.view
