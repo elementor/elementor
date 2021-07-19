@@ -217,7 +217,11 @@ export default class Container extends ArgsObject {
 				}
 				const container = view.container;
 
-				container.parent.children[ view._index ] = container;
+				// Since the way 'global-widget' rendered, it does not have parent sometimes.
+				if ( container.parent.children ) {
+					container.parent.children[ view._index ] = container;
+				}
+
 				container.handleChildrenRecursive();
 			} );
 		} else {

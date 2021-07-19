@@ -240,7 +240,7 @@ class Manager extends Base_Object {
 			'name' => 'e_optimized_css_loading',
 			'title' => __( 'Improved CSS Loading', 'elementor' ),
 			'description' => __( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
-				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
+				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. __( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );

@@ -369,6 +369,88 @@ class Tracker {
 	}
 
 	/**
+	 * Get usage of general settings.
+	 * 'Elementor->Settings->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_general_usage() {
+		return self::get_tracking_data_from_settings( 'general' );
+	}
+
+	/**
+	 * Get usage of advanced settings.
+	 * 'Elementor->Settings->Advanced'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_advanced_usage() {
+		return self::get_tracking_data_from_settings( 'advanced' );
+	}
+
+	/**
+	 * Get usage of experiments settings.
+	 *
+	 * 'Elementor->Settings->Experiments'.
+	 *
+	 * @return array
+	 */
+	public static function get_settings_experiments_usage() {
+		$result = [];
+
+		$experiments_manager = Plugin::$instance->experiments;
+
+		// TODO: Those keys should be at `$experiments_manager`.
+		$tracking_keys = [
+			'default',
+			'state',
+		];
+
+		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
+			$data_to_collect = [];
+
+			// Extract only tracking keys.
+			foreach ( $tracking_keys as $tracking_key ) {
+				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
+			}
+
+			$result[ $feature_name ] = $data_to_collect;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get usage of general tools.
+	 * 'Elementor->Tools->General'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_general_usage() {
+		return self::get_tracking_data_from_tools( 'general' );
+	}
+
+	/**
+	 * Get usage of 'version control' tools.
+	 * 'Elementor->Tools->Version Control'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_version_control_usage() {
+		return self::get_tracking_data_from_tools( 'versions' );
+	}
+
+	/**
+	 * Get usage of 'maintenance' tools.
+	 * 'Elementor->Tools->Maintenance'.
+	 *
+	 * @return array
+	 */
+	public static function get_tools_maintenance_usage() {
+		return self::get_tracking_data_from_tools( 'maintenance_mode' );
+	}
+
+	/**
 	 * Get the tracking data
 	 *
 	 * Retrieve tracking data and apply filter
@@ -389,8 +471,19 @@ class Tracker {
 				'posts' => self::get_posts_usage(),
 				'non-elementor-posts' => self::get_non_elementor_posts_usage(),
 				'library' => self::get_library_usage(),
+				'settings' => [
+					'general' => self::get_settings_general_usage(),
+					'advanced' => self::get_settings_advanced_usage(),
+					'experiments' => self::get_settings_experiments_usage(),
+				],
+				'tools' => [
+					'general' => self::get_tools_general_usage(),
+					'version' => self::get_tools_version_control_usage(),
+					'maintenance' => self::get_tools_maintenance_usage(),
+				],
 			],
 			'is_first_time' => $is_first_time,
+			'install_time' => Plugin::instance()->get_install_time(),
 		];
 
 		/**
@@ -406,5 +499,74 @@ class Tracker {
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
 		return $params;
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @return array
+	 */
+	private static function get_tracking_data_from_settings( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->settings->get_tabs(),
+			$tab_name
+		);
+	}
+
+	/**
+	 * @param string $tab_name
+	 * @return array
+	 */
+	private static function get_tracking_data_from_tools( $tab_name ) {
+		return self::get_tracking_data_from_settings_page(
+			Plugin::$instance->tools->get_tabs(),
+			$tab_name
+		);
+	}
+
+	private static function get_tracking_data_from_settings_page( $tabs, $tab_name ) {
+		$result = [];
+
+		if ( empty( $tabs[ $tab_name ] ) ) {
+			return $result;
+		}
+
+		$tab = $tabs[ $tab_name ];
+
+		foreach ( $tab['sections'] as $section_name => $section ) {
+			foreach ( $section['fields'] as $field_name => $field ) {
+				// Skips fields with '_' prefix.
+				if ( '_' === $field_name[0] ) {
+					continue;
+				}
+
+				$default_value = null;
+				$args = $field['field_args'];
+				switch ( $args['type'] ) {
+					case 'checkbox':
+						$default_value = $args['value'];
+						break;
+
+					case 'select':
+					case 'checkbox_list_cpt':
+						$default_value = $args['std'];
+						break;
+
+					case 'checkbox_list_roles':
+						$default_value = null;
+						break;
+
+					// 'raw_html' is used as action and not as data.
+					case 'raw_html':
+						continue 2; // Skip fields loop.
+
+					default:
+						trigger_error( 'Invalid type: \'' . $args['type'] . '\'' ); // phpcs:ignore
+				}
+
+				$result[ $field_name ] = get_option( 'elementor_' . $field_name, $default_value );
+			}
+		}
+
+		return $result;
 	}
 }
