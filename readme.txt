@@ -2,9 +2,9 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.2.5
+Stable tag: 3.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -229,7 +229,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 * Tweak: Added User Preference control to set the default responsive device when the responsive view is triggered ([#14662](https://github.com/elementor/elementor/issues/14662))
 * Tweak: Added an Elementor top bar to all Elementor screens in the WordPress admin pages for better discoverability ([#15276](https://github.com/elementor/elementor/issues/15276), [#15250](https://github.com/elementor/elementor/issues/15250))
 * Tweak: Added gradient button capabilities to Button instances in Theme Style ([#14731](https://github.com/elementor/elementor/issues/14731))
-* Tweak: Changed Landing Pages experiment to be active by default on all websites 
+* Tweak: Changed Landing Pages experiment to be active by default on all websites
 * Tweak: Improved Kit Import and Export tool to include Posts, Pages, Custom Post Types and WooCommerce Products
 * Tweak: Allow unlimited export of Elementor-created content in Import/Export tool
 * Tweak: Included Homepage setting in Import/Export tool
