@@ -199,6 +199,7 @@ class Maintenance_Mode {
 								'label' => esc_html__( 'Choose Mode', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => '',
 									'options' => [
 										'' => esc_html__( 'Disabled', 'elementor' ),
 										self::MODE_COMING_SOON => esc_html__( 'Coming Soon', 'elementor' ),
@@ -240,6 +241,7 @@ class Maintenance_Mode {
 								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
+									'std' => '',
 									'show_select' => true,
 									'options' => $templates_options,
 									'desc' => $template_description,

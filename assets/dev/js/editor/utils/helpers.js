@@ -1,5 +1,5 @@
 import ColorPicker from './color-picker';
-import DocumentHelper from 'elementor-editor/document/helper';
+import DocumentHelper from 'elementor-editor/document/helper-bc';
 
 const allowedHTMLWrapperTags = [
 	'article',

@@ -349,7 +349,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Beta Tester', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'default' => 'no',
+									'std' => 'no',
 									'options' => [
 										'no' => esc_html__( 'Disable', 'elementor' ),
 										'yes' => esc_html__( 'Enable', 'elementor' ),
