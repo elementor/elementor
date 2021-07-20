@@ -211,7 +211,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		return apply_filters('connect_and_activate_user', [
+		return apply_filters('elementor/connect/init_settings', [
 			'is_user_connected' => $connect->is_connected(),
 			'connect_url' => $connect->get_admin_url( 'authorize' ),
 		], $this );
