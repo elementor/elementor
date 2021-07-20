@@ -46,6 +46,8 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	public static $registered_runtime_widgets = [];
 
+	public static $registered_inline_css_widgets = [];
+
 	private static $widgets_css_data_manager;
 
 	/**
@@ -573,12 +575,11 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
-			if ( $this->is_widget_first_render() ) {
-
+			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
 				$this->register_runtime_widget( $this->get_group_name() );
-
-				$this->print_widget_css();
 			}
+
+			$this->print_widget_css();
 
 			// get_name
 
@@ -600,8 +601,8 @@ abstract class Widget_Base extends Element_Base {
 		<?php
 	}
 
-	protected function is_widget_first_render() {
-		return ! in_array( $this->get_group_name(), self::$registered_runtime_widgets, true );
+	protected function is_widget_first_render( $widget_name ) {
+		return ! in_array( $widget_name, self::$registered_runtime_widgets, true );
 	}
 
 	/**
@@ -940,6 +941,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get Inline CSS dependencies.
+	 *
+	 * Retrieve a list of inline CSS dependencies that the element requires.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return array.
+	 */
+	public function get_inline_css_depends() {
+		return [];
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -972,9 +987,7 @@ abstract class Widget_Base extends Element_Base {
 		self::$registered_runtime_widgets[] = $widget_name;
 	}
 
-	public function get_css_config() {
-		$widget_name = $this->get_group_name();
-
+	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
 		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
@@ -989,21 +1002,61 @@ abstract class Widget_Base extends Element_Base {
 		];
 	}
 
+	public function get_css_config() {
+		return $this->get_widget_css_config( $this->get_group_name() );
+	}
+
 	private function get_widget_css() {
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
-		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
+		$widgets_list = $this->get_inline_css_depends();
+
+		$widgets_list[] = $this->get_group_name();
+
+		$widget_css = '';
+
+		foreach ( $widgets_list as $widget_data ) {
+			$widget_name = isset( $widget_data['name'] ) ? $widget_data['name'] : $widget_data;
+
+			if ( ! in_array( $widget_name, self::$registered_inline_css_widgets, true ) ) {
+				if ( $this->get_group_name() === $widget_name ) {
+					$config = $this->get_css_config();
+				} else {
+					/**
+					 * The core-dependency allowing to create a dependency specifically with the core widgets.
+					 * Otherwise, the config will be taken from the class that inherits from Widget_Base.
+					 */
+					$is_core_dependency = isset( $widget_data['is_core_dependency'] ) ? true : false;
+
+					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
+				}
+
+				$widget_css .= $widgets_css_data_manager->get_asset_data( $config );
+
+				self::$registered_inline_css_widgets[] = $widget_name;
+			}
+		}
 
 		return $widget_css;
 
 	}
 
-	private function print_widget_css() {
-		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
-		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
-		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+	private function is_inline_css_mode() {
+		static $is_active;
 
-		if ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) {
+		if ( null === $is_active ) {
+			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+			$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+			$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+			$is_active = ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) ? false : true;
+		}
+
+		return $is_active;
+	}
+
+	private function print_widget_css() {
+		if ( ! $this->is_inline_css_mode() ) {
 			return;
 		}
 
