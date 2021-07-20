@@ -44,10 +44,6 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 				<div id="e-responsive-bar-scale__reset"><i class="eicon-undo" aria-hidden="true"></i></div>
 			</div>
 		</div>
-					data-tooltip="<?php echo esc_html__( 'Manage Breakpoints', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Settings', 'elementor' ); ?></span>
-					data-tooltip="<?php echo esc_html__( 'Close', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		<div id="e-responsive-bar__end">
 			<div id="e-responsive-bar__size-inputs-wrapper" class="e-flex e-align-items-center">
 				<label for="e-responsive-bar__input-width">W</label>
