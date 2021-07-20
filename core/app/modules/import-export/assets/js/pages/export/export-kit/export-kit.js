@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import Panel from '../../../ui/panel/panel';
-import ExportInfoModal from '../../../shared/info-modal/export-info-modal';
 import KitName from './components/kit-name/kit-name';
 import KitDescription from './components/kit-description/kit-description';
+import KitInfoModal from './components/kit-info-modal/kit-info-modal';
 import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import Button from 'elementor-app/ui/molecules/button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-kit.scss';
 
 export default function ExportKit() {
-	const getFooter = () => (
+	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
+		kitInfoTitle = __( 'Kit Information', 'elementor' ),
+		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<ExportButton />
 			</WizardFooter>
@@ -44,7 +47,20 @@ export default function ExportKit() {
 
 				<Panel className="e-app-export-kit-information">
 					<Panel.Header>
-						<Panel.Headline>{ __( 'Kit Information', 'elementor' ) }</Panel.Headline>
+						<Panel.Headline>
+							{ kitInfoTitle }
+							<Button
+								className="e-app-export-kit-info-modal__icon"
+								icon="eicon-info-circle"
+								color="secondary"
+								hideText={ true }
+								text={ kitInfoTitle }
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									setShowKitInfoModal( ( prevState ) => ! prevState );
+								} }
+							/>
+						</Panel.Headline>
 					</Panel.Header>
 
 					<Panel.Body>
@@ -55,8 +71,6 @@ export default function ExportKit() {
 										<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
 											{ __( 'Kit Name', 'elementor' ) }
 										</Heading>
-
-										<ExportInfoModal />
 									</Grid>
 
 									<Grid item>
@@ -70,8 +84,6 @@ export default function ExportKit() {
 									<Heading className="e-app-export-kit-information__label" variant="h6" tag="h4">
 										{ __( 'Kit Description', 'elementor' ) }
 									</Heading>
-
-									<ExportInfoModal />
 								</Grid>
 
 								<Grid item>
@@ -81,6 +93,8 @@ export default function ExportKit() {
 						</Grid>
 					</Panel.Body>
 				</Panel>
+
+				<KitInfoModal show={ showKitInfoModal } setShow={ setShowKitInfoModal } />
 			</section>
 		</Layout>
 	);
