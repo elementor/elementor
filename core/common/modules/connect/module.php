@@ -210,10 +210,11 @@ class Module extends BaseModule {
 		if ( ! $connect ) {
 			return [];
 		}
-		return [
+
+		return apply_filters('connect_and_activate_user', [
 			'is_user_connected' => $connect->is_connected(),
 			'connect_url' => $connect->get_admin_url( 'authorize' ),
-		];
+		], $this );
 	}
 
 }
