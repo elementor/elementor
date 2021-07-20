@@ -4,7 +4,7 @@ import CommandData from 'elementor-api/modules/command-data';
 import CommandHistory from 'elementor-document/commands/base/command-history';
 import CommandHistoryDebounce from 'elementor-document/commands/base/command-history-debounce';
 import ComponentBase from 'elementor-api/modules/component-base';
-import * as errors from 'elementor-api/modules/errors';
+import * as errors from 'elementor-api/core/data/errors/';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-data.js', () => {
@@ -71,7 +71,7 @@ jQuery( () => {
 				const commandData = new CommandData( {} );
 
 				// Mock the notify functions.
-				errors.NotFoundError.prototype.notify = () => {
+				errors.Error404.prototype.notify = () => {
 					assert.ok( true, 'NotFoundError notify has been called.' );
 					notFoundCalled();
 				};
