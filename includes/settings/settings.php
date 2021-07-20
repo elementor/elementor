@@ -486,7 +486,15 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => esc_html__( 'Looking for the Style settings?', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => esc_html__( 'The Style settings changed its location and can now be found within Elementor Editor\'s <b>Panel > Hamburger Menu > Site Settings</b>.<br>You can use the Site Settings to make changes and see them live!', 'elementor' ) . sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', esc_html__( 'Learn More', 'elementor' ) ),
+									'html' => sprintf(
+										/* translators: 1: Bold open tag, 2: Bold close tag */
+										esc_html__( 'The Style settings changed its location and can now be found within Elementor Editor\'s %1$sPanel > Hamburger Menu > Site Settings%2$s.', 'elementor' ),
+										'<strong>',
+										'</strong>'
+									) .
+									'<br>' .
+									esc_html__( 'You can use the Site Settings to make changes and see them live!', 'elementor' ) .
+									sprintf( ' <a target="_blank" href="http://go.elementor.com/panel-layout-settings">%s</a>', esc_html__( 'Learn More', 'elementor' ) ),
 								],
 							],
 						],
@@ -499,7 +507,12 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 					'google_maps' => [
 						'label' => esc_html__( 'Google Maps Embed API', 'elementor' ),
 						'callback' => function() {
-							printf( esc_html__( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' <a href="%s" target="_blank">Using API Keys</a> page.', 'elementor' ), esc_url( 'https://developers.google.com/maps/documentation/embed/get-api-key' ) );
+							printf(
+								/* translators: 1: Link open tag, 2: Link close tag */
+								esc_html__( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' %1$sUsing API Keys%2$s page.', 'elementor' ),
+								'<a target="_blank" href="https://developers.google.com/maps/documentation/embed/get-api-key">',
+								'</a>'
+							);
 						},
 						'fields' => [
 							'google_maps_api_key' => [
@@ -523,6 +536,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
+									'std' => 'internal',
 									'options' => [
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
@@ -534,9 +548,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'label' => esc_html__( 'Switch Editor Loader Method', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
+									'std' => '',
 									'options' => [
 										'' => esc_html__( 'Disable', 'elementor' ),
-										1 => esc_html__( 'Enable', 'elementor' ),
+										'1' => esc_html__( 'Enable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
@@ -548,7 +563,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 									'std' => '',
 									'options' => [
 										'' => esc_html__( 'Disable', 'elementor' ),
-										1 => esc_html__( 'Enable', 'elementor' ),
+										'1' => esc_html__( 'Enable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . esc_html__( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . esc_html__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],

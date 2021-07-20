@@ -915,6 +915,51 @@ class Controls_Manager {
 		$controls_stack->end_controls_section();
 	}
 
+	/**
+	 * Add Page Transitions controls.
+	 *
+	 * This method adds a new control for the "Page Transitions" feature. The Core
+	 * version of elementor uses this method to display an upgrade message to
+	 * Elementor Pro.
+	 *
+	 * @param Controls_Stack $controls_stack .
+	 * @param string $tab
+	 * @param array $additional_messages
+	 *
+	 * @return void
+	 */
+	public function add_page_transitions_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = [] ) {
+		$controls_stack->start_controls_section(
+			'section_page_transitions_teaser',
+			[
+				'label' => __( 'Page Transitions', 'elementor' ),
+				'tab' => $tab,
+			]
+		);
+
+		$messages = [
+			__( 'Page Transitions let you style entrance and exit animations between pages as well as display loader until your page assets load.', 'elementor' ),
+		];
+
+		if ( $additional_messages ) {
+			$messages = array_merge( $messages, $additional_messages );
+		}
+
+		$controls_stack->add_control(
+			'page_transitions_teaser',
+			[
+				'type' => self::RAW_HTML,
+				'raw' => $this->get_teaser_template( [
+					'title' => __( 'Meet Page Transitions', 'elementor' ),
+					'messages' => $messages,
+					'link' => 'https://elementor.com/pro/?utm_source=panel-page-transitions&utm_campaign=gopro&utm_medium=wp-dash',
+				] ),
+			]
+		);
+
+		$controls_stack->end_controls_section();
+	}
+
 	public function get_teaser_template( $texts ) {
 		ob_start();
 		?>
@@ -925,7 +970,8 @@ class Controls_Manager {
 				<div class="elementor-nerd-box-message"><?php Utils::print_unescaped_internal_string( $message ); ?></div>
 			<?php }
 
-			if ( $texts['link'] ) { ?>
+			// Show a `Go Pro` button only if the user doesn't have Pro.
+			if ( $texts['link'] && ! Utils::has_pro() ) { ?>
 				<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( Utils::get_pro_link( $texts['link'] ) ); ?>" target="_blank">
 					<?php echo esc_html__( 'Go Pro', 'elementor' ); ?>
 				</a>

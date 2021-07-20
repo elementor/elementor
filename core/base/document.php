@@ -1318,6 +1318,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'content' => $content,
 			'settings' => $this->get_data( 'settings' ),
+			'metadata' => $this->get_export_metadata(),
 		];
 	}
 
@@ -1388,6 +1389,12 @@ abstract class Document extends Controls_Stack {
 
 			set_post_thumbnail( $this->get_main_post(), $attachment['id'] );
 		}
+
+		if ( ! empty( $data['metadata'] ) ) {
+			foreach ( $data['metadata'] as $key => $value ) {
+				$this->update_meta( $key, $value );
+			}
+		}
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {
@@ -1417,6 +1424,22 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $element_data;
+	}
+
+	protected function get_export_metadata() {
+		$metadata = get_post_meta( $this->get_main_id() );
+
+		foreach ( $metadata as $meta_key => $meta_value ) {
+			if ( is_protected_meta( $meta_key, 'post' ) ) {
+				unset( $metadata[ $meta_key ] );
+
+				continue;
+			}
+
+			$metadata[ $meta_key ] = $meta_value[0];
+		}
+
+		return $metadata;
 	}
 
 	protected function get_remote_library_config() {

@@ -611,6 +611,7 @@ export default class EditorBase extends Marionette.Application {
 				mobile: {
 					minHeight: 480,
 					height: 736,
+					width: 360,
 					maxHeight: 896,
 				},
 				tablet: {
@@ -646,7 +647,7 @@ export default class EditorBase extends Marionette.Application {
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			let widthToShow = breakpointResizeOptions.minWidth;
+			let widthToShow = breakpointResizeOptions.width ?? breakpointResizeOptions.minWidth;
 
 			if ( preserveCurrentSize ) {
 				const currentSize = elementor.channels.responsivePreview.request( 'size' );
@@ -811,6 +812,8 @@ export default class EditorBase extends Marionette.Application {
 		this.destroyPreviewResizable();
 
 		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
+
+		this.channels.deviceMode.trigger( 'close' );
 	}
 
 	isDeviceModeActive() {
