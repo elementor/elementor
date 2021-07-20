@@ -218,6 +218,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 == Changelog ==
 
+= 3.3.1 - 2021-07-20 =
+* Tweak: Added a back to Kit Library button to the Import Kit screen
+* Tweak: Updated `eicons` library to 5.12.0
+* Tweak: Declared compatibility for WordPress 5.8
+* Fix: Some widget style breaks when Improved CSS Loading Experiment is active in certain cases ([#15632](https://github.com/elementor/elementor/issues/15632), [#15683](https://github.com/elementor/elementor/issues/15683), [#15660](https://github.com/elementor/elementor/issues/15660))
+* Fix: Improved CSS Loading experiment learn more link leads to the wrong doc ([#15622](https://github.com/elementor/elementor/issues/15622))
+* Fix: JS error is thrown when using Global widget since Elementor v3.3.0 ([#15648](https://github.com/elementor/elementor/issues/15648), [#15672](https://github.com/elementor/elementor/issues/15672))
+* Fix: Removed deprecated classes calls in System Info screen
+
 = 3.3.0 - 2021-07-13 =
 * New: Introducing Kits Library - Create Entire Websites Faster Than Ever ([#4417](https://github.com/elementor/elementor/issues/4417), [#11341](https://github.com/elementor/elementor/issues/11341))
 * New: Meet the Color Color Sampler - fetch colors from every image and populated color control ([#14868](https://github.com/elementor/elementor/issues/14868))
