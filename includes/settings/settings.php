@@ -562,8 +562,8 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 									'type' => 'select',
 									'std' => '',
 									'options' => [
-										'' => __( 'Disable', 'elementor' ),
-										'1' => __( 'Enable', 'elementor' ),
+										'' => esc_html__( 'Disable', 'elementor' ),
+										'1' => esc_html__( 'Enable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . esc_html__( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . esc_html__( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
