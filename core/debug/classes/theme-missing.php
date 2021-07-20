@@ -19,7 +19,7 @@ class Theme_Missing extends Inspection_Base {
 	}
 
 	public function get_message() {
-		return __( 'Some of your theme files are missing.', 'elementor' );
+		return esc_html__( 'Some of your theme files are missing.', 'elementor' );
 	}
 
 	public function get_help_doc_url() {
