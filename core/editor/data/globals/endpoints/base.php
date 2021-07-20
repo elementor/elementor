@@ -1,8 +1,9 @@
 <?php
 namespace Elementor\Core\Editor\Data\Globals\Endpoints;
 
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Data\V2\Base\Endpoint;
+use Elementor\Data\V2\Base\Exceptions\Data_Exception;
+use Elementor\Data\V2\Base\Exceptions\Error_404;
 use Elementor\Plugin;
 
 abstract class Base extends Endpoint {
@@ -22,14 +23,16 @@ abstract class Base extends Endpoint {
 		return $this->get_kit_items();
 	}
 
+	/**
+	 * @inheritDoc
+	 * @throws \Elementor\Data\V2\Base\Exceptions\Error_404
+	 */
 	public function get_item( $id, $request ) {
 		$items = $this->get_kit_items();
 
 		if ( ! isset( $items[ $id ] ) ) {
-			return new \WP_Error(
-				'global_not_found',
-				__( 'The Global value you are trying to use is not available.', 'elementor' ),
-				[ 'status' => Exceptions::NOT_FOUND ]
+			throw new Error_404( __( 'The Global value you are trying to use is not available.', 'elementor' ),
+				'global_not_found'
 			);
 		}
 
@@ -40,7 +43,7 @@ abstract class Base extends Endpoint {
 		$item = $request->get_body_params();
 
 		if ( ! isset( $item['title'] ) ) {
-			return new \WP_Error( 'invalid_title', 'Invalid title' );
+			return new Data_Exception( __( 'Invalid title', 'elementor' ), 'invalid_title' );
 		}
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();

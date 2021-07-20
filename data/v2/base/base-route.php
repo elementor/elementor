@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Data\V2\Base;
 
+use Elementor\Data\V2\Base\Exceptions\Data_Exception;
+use Elementor\Data\V2\Base\Exceptions\Error_500;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -301,10 +303,11 @@ abstract class Base_Route {
 	 * @param string $methods
 	 * @param \WP_REST_Request $request
 	 * @param bool $is_multi
+	 * @param array $args
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
-	public function base_callback( $methods, $request, $is_multi = false ) {
+	public function base_callback( $methods, $request, $is_multi = false, $args = [] ) {
 		if ( $request ) {
 			$json_params = $request->get_json_params();
 
@@ -313,25 +316,48 @@ abstract class Base_Route {
 			}
 		}
 
+		$args = wp_parse_args( $args, [
+			'is_debug' => defined( 'WP_DEBUG' ),
+		] );
+
 		$result = [];
 
 		if ( $this->get_permission_callback( $request ) ) {
-			switch ( $methods ) {
-				case WP_REST_Server::READABLE:
-					$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
-					break;
+			try {
+				switch ( $methods ) {
+					case WP_REST_Server::READABLE:
+						$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
+						break;
 
-				case WP_REST_Server::CREATABLE:
-					$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
-					break;
+					case WP_REST_Server::CREATABLE:
+						$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
+						break;
 
-				case WP_REST_Server::EDITABLE:
-					$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
-					break;
+					case WP_REST_Server::EDITABLE:
+						$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
+						break;
 
-				case WP_REST_Server::DELETABLE:
-					$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
-					break;
+					case WP_REST_Server::DELETABLE:
+						$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
+						break;
+				}
+			} catch ( Data_Exception $e ) {
+				$result = $e->to_wp_error();
+			} catch ( \Exception $e ) {
+				if ( empty( $args['is_debug'] ) ) {
+					$result = ( new Error_500() )->to_wp_error();
+				} else {
+					// For frontend.
+					$exception_mapping = [
+						'trace' => $e->getTrace(),
+						'file' => $e->getFile(),
+						'line' => $e->getLine(),
+					];
+
+					$e->debug = $exception_mapping;
+
+					$result = ( new Data_Exception( $e->getMessage(), $e->getCode(), $e ) )->to_wp_error();
+				}
 			}
 		}
 

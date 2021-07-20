@@ -28,7 +28,7 @@ export default class BaseError extends Error {
 	/**
 	 * Returns the status code of the error.
 	 */
-	static getStatus() {
+	static getHTTPErrorCode() {
 		elementorModules.ForceMethodImplementation();
 	}
 

@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base;
 
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\ControllerGetItemsException;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Endpoint as EndpointTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithSubEndpoint\Controller as ControllerWithSubEndpoint;
@@ -536,5 +537,22 @@ class Test_Base_Route extends Data_Test_Base {
 
 		// Assert - delete_item.
 		$this->assertEquals( $excepted_data, $result->get_data() );
+	}
+
+	public function test_base_callback__ensure_unknown_exception_converted_to_default_wp_error() {
+		// Arrange.
+		$controller = new ControllerGetItemsException();
+		$controller->bypass_original_register();
+
+		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
+
+		// Act
+		$result = $endpoint->base_callback( \WP_REST_Server::READABLE, new \WP_REST_Request(), true, [
+			'is_debug' => false,
+		] );
+
+		// Assert.
+		$this->assertTrue( $result instanceof \WP_Error );
+		$this->assertEquals( 500, reset($result->error_data )['status'] );
 	}
 }

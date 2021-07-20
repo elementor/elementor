@@ -1,7 +1,7 @@
 import BaseError from './base-error';
 
-export class NotFoundError extends BaseError {
-	static getStatus() {
+export class Error404 extends BaseError {
+	static getHTTPErrorCode() {
 		return 404;
 	}
 
@@ -10,4 +10,4 @@ export class NotFoundError extends BaseError {
 	}
 }
 
-export default NotFoundError;
+export default Error404;
