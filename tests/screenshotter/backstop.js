@@ -55,7 +55,7 @@ module.exports = {
 	engineOptions: {
 		args: [ '--no-sandbox' ],
 		slowMo: 500,
-		waitTimeout: 90000,
+		waitTimeout: 120000,
 	},
 	asyncCaptureLimit: 30,
 	asyncCompareLimit: 30,
