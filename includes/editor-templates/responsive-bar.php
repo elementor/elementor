@@ -34,7 +34,7 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 					<input type="radio" name="breakpoint" id="e-responsive-bar-switch-%1$s" value="%1$s">
 					<i class="eicon-device-%1$s" aria-hidden="true"></i>
 					<span class="screen-reader-text">%2$s</span>
-				</label>', $name, $tooltip_label );
+				</label>', esc_attr( $name ), esc_attr( $tooltip_label ) );
 			} ?>
 			</div>
 			<div id="e-responsive-bar-scale">
@@ -52,13 +52,13 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 				<input type="number" id="e-responsive-bar__input-height" class="e-responsive-bar__input-size" autocomplete="off">
 			</div>
 			<button id="e-responsive-bar__settings-button" class="e-responsive-bar__button e-responsive-bar--pipe"
-					data-tooltip="<?php echo __( 'Manage Breakpoints', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo __( 'Settings', 'elementor' ); ?></span>
+					data-tooltip="<?php echo esc_html__( 'Manage Breakpoints', 'elementor' ); ?>">
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Settings', 'elementor' ); ?></span>
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
 			<button id="e-responsive-bar__close-button" class="e-responsive-bar__button"
-					data-tooltip="<?php echo __( 'Close', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
+					data-tooltip="<?php echo esc_html__( 'Close', 'elementor' ); ?>">
+				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
 		</div>
