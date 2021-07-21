@@ -238,8 +238,8 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_optimized_css_loading',
-			'title' => __( 'Improved CSS Loading', 'elementor' ),
-			'description' => __( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
+			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
+			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
@@ -247,10 +247,10 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
-			'title' => __( 'Font-Awesome Inline', 'elementor' ),
-			'description' => __( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
+			'title' => esc_html__( 'Font-Awesome Inline', 'elementor' ),
+			'description' => esc_html__( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
-				. __( 'Learn More', 'elementor' ) . '</a>',
+				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 		] );
 

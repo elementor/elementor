@@ -57,8 +57,7 @@
 
 		&, a {
 			display: flex;
-			align-items: center;
-			font-size: inherit;
+			align-items: flex-start;
 		}
 	}
 
@@ -68,7 +67,7 @@
 	}
 
 	.elementor-icon-list-icon {
-		display: flex;
+		flex-shrink: 0;
 
 		svg {
 			$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
