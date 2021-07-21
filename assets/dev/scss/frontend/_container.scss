@@ -37,6 +37,14 @@
 		height: 100vh;
 	}
 
+	&--boxed {
+		max-width: 1140px; // Same as section.
+	}
+
+	& > & {
+		padding: 10px; // Same as columns.
+	}
+
 	.elementor-empty-view {
 		position: relative;
 		width: 100%;
@@ -46,7 +54,7 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			inset: 10px;
+			inset: 0;
 		}
 	}
 

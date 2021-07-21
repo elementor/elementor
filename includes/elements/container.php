@@ -240,11 +240,12 @@ class Container extends Element_Base {
 			[
 				'label' => __( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'full_width',
+				'default' => 'boxed',
 				'options' => [
-					'full_width' => __( 'Full Width', 'elementor' ),
+					'full-width' => __( 'Full Width', 'elementor' ),
 					'boxed' => __( 'Boxed', 'elementor' ),
 				],
+				'prefix_class' => 'e-container--',
 			]
 		);
 
