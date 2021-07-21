@@ -52,7 +52,7 @@ class Container extends Element_Base {
 	 * @return string
 	 */
 	public function get_icon() {
-		return 'eicon-gallery-justified';
+		return 'eicon-container';
 	}
 
 	/**
