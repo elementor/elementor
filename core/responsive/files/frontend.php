@@ -46,7 +46,15 @@ class Frontend extends Base {
 			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
 			if ( 'DESKTOP' === $placeholder_data[1] ) {
-				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+				if ( 'MIN' === $placeholder_data[2] ) {
+					$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+				} elseif ( isset( $breakpoints['widescreen'] ) ) {
+					// If the 'widescreen' breakpoint is active, the Desktop's max value is the Widescreen breakpoint - 1px.
+					$value = $breakpoints['widescreen']->get_value() - 1;
+				} else {
+					// If the 'widescreen' breakpoint is not active, the Desktop device should not have a max value.
+					$value = 99999;
+				}
 			} elseif ( false === $breakpoint_index ) {
 				// If the breakpoint in the placeholder is not active - use a -1 value for the media query, to make
 				// sure the setting is printed (to avoid a PHP error) but doesn't apply.
