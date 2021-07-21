@@ -262,7 +262,7 @@ abstract class Widget_Base extends Element_Base {
 			$skin_options = [];
 
 			if ( $this->_has_template_content ) {
-				$skin_options[''] = __( 'Default', 'elementor' );
+				$skin_options[''] = esc_html__( 'Default', 'elementor' );
 			}
 
 			foreach ( $skins as $skin_id => $skin ) {
@@ -277,7 +277,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::HIDDEN,
 						'default' => $default_value,
 					]
@@ -286,7 +286,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::SELECT,
 						'default' => $default_value,
 						'options' => $skin_options,
@@ -414,6 +414,20 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Safe print parsed text editor.
+	 *
+	 * @uses static::parse_text_editor.
+	 *
+	 * @access protected
+	 *
+	 * @param string $content Text editor content.
+	 */
+	final protected function print_text_editor( $content ) {
+		// PHPCS - the method `parse_text_editor` is safe.
+		echo static::parse_text_editor( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -963,7 +977,7 @@ abstract class Widget_Base extends Element_Base {
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
 		$this->start_controls_section( 'Deprecated',
 			[
-				'label' => __( 'Deprecated', 'elementor' ),
+				'label' => esc_html__( 'Deprecated', 'elementor' ),
 			]
 		);
 
@@ -1060,7 +1074,15 @@ abstract class Widget_Base extends Element_Base {
 			return;
 		}
 
-		echo $this->get_widget_css();
+		$widget_css = $this->get_widget_css();
+
+		echo wp_kses( $widget_css, [
+			'style' => [],
+			'link' => [
+				'rel' => true,
+				'href' => true,
+			],
+		] );
 	}
 
 	private function get_widgets_css_data_manager() {

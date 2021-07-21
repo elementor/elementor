@@ -78,7 +78,7 @@ class Preview extends App {
 				$e = error_get_last();
 				if ( $e ) {
 					echo '<div id="elementor-preview-debug-error"><pre>';
-					echo $e['message'];
+					Utils::print_unescaped_internal_string( $e['message'] );
 					echo '</pre></div>';
 				}
 			} );
