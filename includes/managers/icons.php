@@ -87,7 +87,7 @@ class Icons_Manager {
 		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
 			'fa-regular' => [
 				'name' => 'fa-regular',
-				'label' => __( 'Font Awesome - Regular', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -99,7 +99,7 @@ class Icons_Manager {
 			],
 			'fa-solid' => [
 				'name' => 'fa-solid',
-				'label' => __( 'Font Awesome - Solid', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -111,7 +111,7 @@ class Icons_Manager {
 			],
 			'fa-brands' => [
 				'name' => 'fa-brands',
-				'label' => __( 'Font Awesome - Brands', 'elementor' ),
+				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -176,7 +176,7 @@ class Icons_Manager {
 		$tabs = [
 			'all' => [
 				'name' => 'all',
-				'label' => __( 'All Icons', 'elementor' ),
+				'label' => esc_html__( 'All Icons', 'elementor' ),
 				'labelIcon' => 'eicon-filter',
 				'native' => true,
 			],
@@ -233,7 +233,7 @@ class Icons_Manager {
 			$output = self::render_icon_html( $icon, $attributes, $tag );
 		}
 
-		echo $output;
+		Utils::print_unescaped_internal_string( $output );
 
 		return true;
 	}
@@ -334,41 +334,41 @@ class Icons_Manager {
 			Settings::TAB_ADVANCED,
 			'load_fa4_shim',
 			[
-				'label' => __( 'Load Font Awesome 4 Support', 'elementor' ),
+				'label' => esc_html__( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
 					'std' => 'yes',
 					'options' => [
-						'' => __( 'No', 'elementor' ),
-						'yes' => __( 'Yes', 'elementor' ),
+						'' => esc_html__( 'No', 'elementor' ),
+						'yes' => esc_html__( 'Yes', 'elementor' ),
 					],
-					'desc' => __( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
+					'desc' => esc_html__( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
 				],
 			]
 		);
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome4_migration', [ 'label' => __( 'Font Awesome Upgrade', 'elementor' ) ] );
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ] );
 
 		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
 			'callback' => function() {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
-				echo '<p>' .
-				__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' .
-				__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) .
+				echo '<p>' . // PHPCS - Plain Text
+				__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				__( 'By upgrading, whenever you edit a page containing a Font Awesome 4 icon, Elementor will convert it to the new Font Awesome 5 icon.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</p><p><strong>' .
-				__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) .
+				__( 'Please note that the upgrade process may cause some of the previously used Font Awesome 4 icons to look a bit different due to minor design changes made by Font Awesome.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</strong></p><p>' .
-				__( 'The upgrade process includes a database update', 'elementor' ) . ' - ' .
-				__( 'We highly recommend backing up your database before performing this upgrade.', 'elementor' ) .
+				__( 'The upgrade process includes a database update', 'elementor' ) . ' - ' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				__( 'We highly recommend backing up your database before performing this upgrade.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</p>' .
-				__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) .
+				__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</p>';
 			},
 			'fields' => [
 				[
-					'label'      => __( 'Font Awesome Upgrade', 'elementor' ),
+					'label'      => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
 					'field_args' => [
 						'type' => 'raw_html',
 						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
@@ -390,7 +390,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( [ 'message' => '<p>' . __( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
+		wp_send_json_success( [ 'message' => '<p>' . esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) . '</p>' ] );
 	}
 
 	/**

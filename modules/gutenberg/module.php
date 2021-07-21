@@ -94,10 +94,10 @@ class Module extends BaseModule {
 		<script id="elementor-gutenberg-button-switch-mode" type="text/html">
 			<div id="elementor-switch-mode">
 				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-large">
-					<span class="elementor-switch-mode-on"><?php echo __( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
+					<span class="elementor-switch-mode-on"><?php echo esc_html__( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
 					<span class="elementor-switch-mode-off">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
-						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
+						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
 					</span>
 				</button>
 			</div>
@@ -107,7 +107,7 @@ class Module extends BaseModule {
 			<div id="elementor-editor"><a id="elementor-go-to-edit-page-link" href="#">
 					<div id="elementor-editor-button" class="button button-primary button-hero">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
-						<?php echo __( 'Edit with Elementor', 'elementor' ); ?>
+						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
 					</div>
 					<div class="elementor-loader-wrapper">
 						<div class="elementor-loader">
@@ -118,7 +118,7 @@ class Module extends BaseModule {
 								<div class="elementor-loader-box"></div>
 							</div>
 						</div>
-						<div class="elementor-loading-title"><?php echo __( 'Loading', 'elementor' ); ?></div>
+						<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
 					</div>
 				</a></div>
 		</script>
