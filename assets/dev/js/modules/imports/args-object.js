@@ -92,7 +92,7 @@ export default class ArgsObject extends InstanceType {
 
 		// Note: Converting the constructor to string in order to avoid equation issues
 		// due to different memory addresses between iframes (window.Object !== window.top.Object).
-		if ( args[ property ].constructor.toString() !== new type().constructor.toString() ) {
+		if ( args[ property ].constructor.toString() !== type.prototype.constructor.toString() ) {
 			throw Error( `${ property } invalid constructor type.` );
 		}
 	}
