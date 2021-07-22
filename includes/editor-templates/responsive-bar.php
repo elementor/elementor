@@ -13,6 +13,8 @@ $active_devices = Plugin::$instance->breakpoints->get_active_devices_list();
 
 $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
 
+$breakpoints = array_reverse( $breakpoints );
+
 /* translators: %1$s: Device Name */
 $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
