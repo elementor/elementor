@@ -6,7 +6,7 @@
 			content: 'widescreen';
 		}
 
-		@media (min-width: $screen-lg-min) {
+		@media (min-width: $screen-desktop-min) {
 			content: 'desktop';
 		}
 
@@ -18,7 +18,7 @@
 			content: 'tablet_extra';
 		}
 
-		@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+		@media (max-width: $screen-tablet-max) {
 			content: 'tablet';
 		}
 
@@ -26,7 +26,7 @@
 			content: 'mobile_extra';
 		}
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-mobile-max) {
 			content: 'mobile';
 		}
 	}
