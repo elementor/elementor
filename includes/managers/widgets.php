@@ -43,6 +43,7 @@ class Widgets_Manager {
 		$build_widgets_filename = [
 			'common',
 			'heading',
+			'e-heading',
 			'image',
 			'text-editor',
 			'video',

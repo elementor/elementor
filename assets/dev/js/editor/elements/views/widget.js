@@ -187,6 +187,45 @@ WidgetView = BaseElementView.extend( {
 		return [ repeaterKey, repeaterItemIndex, settingKey ].join( '.' );
 	},
 
+	isWebComponent: function() {
+		const editModel = this.getEditModel();
+		const widgetType = editModel.get( 'widgetType' );
+		const eComponents = [ 'e-heading', 'e-icon' ];
+
+		return eComponents.includes( widgetType );
+	},
+
+	handleSettingsChange: function( change ) {
+		if ( ! this.isWebComponent() ) {
+			return;
+		}
+
+		const changedProperty = Object.keys( change.changed )[ 0 ];
+		const newValue = change.changed[ changedProperty ];
+		const control = change.controls[ changedProperty ];
+		const component = this.$el.children()[ this.$el.children().length - 1 ];
+		const isProp = ! ! control.component_prop;
+
+		if ( isProp ) {
+			component.setAttribute( changedProperty, newValue );
+		}
+
+		const isSlot = ! isProp && ! ! control.component_slot;
+		const slotName = isSlot && control.component_slot;
+
+		if ( isSlot && 'default' === slotName ) {
+			component.innerHTML = newValue;
+		}
+
+		if ( isSlot && 'default' !== slotName ) {
+			component.find( '[slot="' + slotName + '"]' ).innerHTML = newValue;
+		}
+	},
+
+	onSettingsChanged: function( change ) {
+		this.handleSettingsChange( change );
+	},
+
 	onModelBeforeRemoteRender: function() {
 		this.$el.addClass( 'elementor-loading' );
 	},
@@ -228,7 +267,9 @@ WidgetView = BaseElementView.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				if ( ! self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
+				const isWidgetEmpty = 1 > self.$el.children()[ self.$el.children().length - 1 ].getBoundingClientRect().height;
+
+				if ( isWidgetEmpty ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );

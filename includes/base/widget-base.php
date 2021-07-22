@@ -992,13 +992,10 @@ abstract class Widget_Base extends Element_Base {
 	private function get_widget_css() {
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
-		$widget_css = $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
-
-		return $widget_css;
-
+		return $widgets_css_data_manager->get_asset_data( $this->get_css_config() );
 	}
 
-	private function print_widget_css() {
+	protected function print_widget_css() {
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 		$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );

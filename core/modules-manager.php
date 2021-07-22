@@ -86,6 +86,7 @@ class Modules_Manager {
 			'gutenberg',
 			'wp-cli',
 			'safe-mode',
+			'web-components',
 			'usage',
 			'dev-tools',
 			'landing-pages',

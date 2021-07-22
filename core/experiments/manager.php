@@ -268,6 +268,14 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_components',
+			'title' => __( 'Web Components', 'elementor' ),
+			'description' => __( 'Modern Elementor Components', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_ACTIVE,
+		] );
 	}
 
 	/**
