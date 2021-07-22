@@ -114,10 +114,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			return this.getWidescreenSetting( settings, settingKey );
 		}
 
-		const devices = elementorFrontend.breakpoints.getActiveBreakpointsList( true );
-
-		// Manually add 'desktop' to the devices array to support the 'desktop' value in the deviceMode parameter.
-		devices.unshift( 'desktop' );
+		const devices = elementorFrontend.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 
 		let deviceIndex = devices.indexOf( deviceMode );
 

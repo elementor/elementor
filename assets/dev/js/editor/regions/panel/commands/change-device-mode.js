@@ -2,7 +2,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class ChangeDeviceMode extends CommandBase {
 	apply( args = {} ) {
-		const devices = elementor.breakpoints.getActiveDevicesList( true );
+		const devices = elementor.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 		let { device } = args;
 
 		if ( ! device ) {

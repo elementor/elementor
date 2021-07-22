@@ -14,41 +14,34 @@ export default class Breakpoints extends elementorModules.Module {
 	}
 
 	/**
-	 * Get Devices List
-	 *
-	 * Returns a flat array of active devices (breakpoints), INCLUDING desktop. By default, it returns the list ordered
-	 * from smallest to largest breakpoint. If `true` is passed as a parameter, it reverses the order.
-	 *
-	 * @since 3.4.0
-	 */
-	getActiveDevicesList( largeToSmall = false ) {
-		const { activeBreakpoints } = this.responsiveConfig,
-			devices = Object.keys( activeBreakpoints ),
-			// If there is an active 'widescreen' breakpoint, insert the artificial 'desktop' device below it.
-			widescreenIndex = devices.indexOf( 'widescreen' ),
-			indexToInsertDesktopDevice = -1 === widescreenIndex ? devices.length : devices.length - 1;
-
-		devices.splice( indexToInsertDesktopDevice, 0, 'desktop' );
-
-		if ( largeToSmall ) {
-			devices.reverse();
-		}
-
-		return devices;
-	}
-
-	/**
 	 * Get Active Breakpoints List
 	 *
-	 * Returns a flat array containing the active breakpoints (not devices), WITHOUT desktop. By default, it returns
+	 * Returns a flat array containing the active breakpoints/devices. By default, it returns the li
 	 * the list ordered from smallest to largest breakpoint. If `true` is passed as a parameter, it reverses the order.
 	 *
 	 * @since 3.4.0
+	 *
+	 * @param {Object} args
 	 */
-	getActiveBreakpointsList( largeToSmall = false ) {
+	getActiveBreakpointsList( args = {} ) {
+		const defaultArgs = {
+			largeToSmall: false,
+			withDesktop: false,
+		};
+
+		args = { ...defaultArgs, ...args };
+
 		const breakpointKeys = Object.keys( this.responsiveConfig.activeBreakpoints );
 
-		if ( largeToSmall ) {
+		if ( args.withDesktop ) {
+			// If there is an active 'widescreen' breakpoint, insert the artificial 'desktop' device below it.
+			const widescreenIndex = breakpointKeys.indexOf( 'widescreen' ),
+				indexToInsertDesktopDevice = -1 === widescreenIndex ? breakpointKeys.length : breakpointKeys.length - 1;
+
+			breakpointKeys.splice( indexToInsertDesktopDevice, 0, 'desktop' );
+		}
+
+		if ( args.largeToSmall ) {
 			breakpointKeys.reverse();
 		}
 
@@ -62,7 +55,7 @@ export default class Breakpoints extends elementorModules.Module {
 	 *
 	 * @since 3.4.0
 	 */
-	getElementorBreakpointValues() {
+	getBreakpointValues() {
 		const { activeBreakpoints } = this.responsiveConfig,
 			breakpointValues = [];
 

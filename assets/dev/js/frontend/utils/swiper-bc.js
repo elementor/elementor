@@ -47,7 +47,7 @@ export default class SwiperBC {
 		}
 
 		const elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
-			elementorBreakpointValues = elementorFrontend.breakpoints.getElementorBreakpointValues();
+			elementorBreakpointValues = elementorFrontend.breakpoints.getBreakpointValues();
 
 		Object.keys( config.breakpoints ).forEach( ( configBPKey ) => {
 			const configBPKeyInt = parseInt( configBPKey );

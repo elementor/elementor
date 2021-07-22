@@ -1248,7 +1248,7 @@ export default class EditorBase extends Marionette.Application {
 
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
-			devices = this.breakpoints.getActiveDevicesList( true ),
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
 			newControlsStack = {};
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
