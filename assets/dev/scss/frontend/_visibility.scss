@@ -1,18 +1,42 @@
 .elementor {
 	@media (max-width: $screen-mobile-max) {
-		.elementor-hidden-phone {
+		.elementor-hidden-mobile {
 			display: none;
 		}
 	}
 
-	@media (min-width: $screen-mobile-next) and (max-width: $screen-tablet-max) {
+	@media (min-width: $screen-mobile-extra-min) and (max-width: $screen-mobile-extra-max) {
+		.elementor-hidden-mobile_extra {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-tablet-min) and (max-width: $screen-tablet-max) {
 		.elementor-hidden-tablet {
 			display: none;
 		}
 	}
 
-	@media (min-width: $screen-tablet-next) {
+	@media (min-width: $screen-tablet-extra-min) and (max-width: $screen-tablet-extra-max) {
+		.elementor-hidden-tablet_extra {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-laptop-min) and (max-width: $screen-laptop-max) {
+		.elementor-hidden-laptop {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-desktop-min) and (max-width: $screen-desktop-max) {
 		.elementor-hidden-desktop {
+			display: none;
+		}
+	}
+
+	@media (min-width: $screen-widescreen-min) {
+		.elementor-hidden-widescreen {
 			display: none;
 		}
 	}
