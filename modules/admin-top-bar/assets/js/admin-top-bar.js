@@ -65,5 +65,5 @@ export default function AdminTopBar( props ) {
 }
 
 AdminTopBar.propTypes = {
-	isDashboard: PropTypes.boolean || PropTypes.any,
+	isDashboard: PropTypes.bool,
 };
