@@ -598,7 +598,8 @@ export default class EditorBase extends Marionette.Application {
 	getCurrentDeviceConstrains() {
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
 			{ activeBreakpoints } = elementorFrontend.config.responsive,
-			currentBreakpointData = activeBreakpoints[ currentBreakpoint ];
+			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
+			currentBreakpointMaxPoint = ( 'widescreen' === currentBreakpoint ) ? 9999 : currentBreakpointData.value;
 
 		let currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
 
@@ -609,7 +610,7 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		return {
-			maxWidth: currentBreakpointData.value,
+			maxWidth: currentBreakpointMaxPoint,
 			minWidth: currentBreakpointMinPoint,
 		};
 	}
