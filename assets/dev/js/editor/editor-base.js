@@ -15,10 +15,10 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
-import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
+import Breakpoints from 'elementor-utils/breakpoints';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -601,7 +601,7 @@ export default class EditorBase extends Marionette.Application {
 			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
 			currentBreakpointMaxPoint = ( 'widescreen' === currentBreakpoint ) ? 9999 : currentBreakpointData.value;
 
-		let currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
+		let currentBreakpointMinPoint = this.breakpoints.getDeviceMinBreakpoint( currentBreakpoint );
 
 		// If the device under the current device mode's breakpoint has a larger max value - use the current device's
 		// value as the min width point.
@@ -1022,6 +1022,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.populateActiveBreakpointsConfig();
 
+		this.breakpoints = new Breakpoints( this.config.responsive );
+
 		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 			// Duplicate responsive controls for section and column default configs.
 			this.generateResponsiveControlsForElements();
@@ -1250,16 +1252,8 @@ export default class EditorBase extends Marionette.Application {
 
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
-			devices = Object.keys( activeBreakpoints ),
-			// If there is an active 'widescreen' breakpoint, insert the artificial 'desktop' device below it.
-			widescreenIndex = devices.indexOf( 'widescreen' ),
-			indexToInsertDesktopDevice = -1 === widescreenIndex ? devices.length : devices.length - 1,
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
 			newControlsStack = {};
-
-		devices.splice( indexToInsertDesktopDevice, 0, 'desktop' );
-
-		// Controls should be created from largest to smallest breakpoint. Breakpoints are registered from small to large.
-		devices.reverse();
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
 			// Handle repeater controls.
