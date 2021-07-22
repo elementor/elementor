@@ -443,7 +443,8 @@ abstract class Controls_Stack extends Base_Object {
 
 		$control = $this->get_controls( $control_id );
 
-		if ( Controls_Manager::SECTION === $control['type'] ) {
+		// Responsive controls don't have a type.
+		if ( isset( $control['type'] ) && Controls_Manager::SECTION === $control['type'] ) {
 			$section_args = $this->get_section_args( $control_id );
 
 			$section_controls = $this->get_section_controls( $control_id );
