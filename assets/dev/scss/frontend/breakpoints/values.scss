@@ -4,6 +4,7 @@ $screen-tablet-min: map_get($breakpoints, md);
 $screen-mobile-next: map_get($breakpoints, md);
 $screen-tablet-max: map_get($breakpoints, lg) - 1;
 $screen-desktop-min: map_get($breakpoints, lg);
+$screen-desktop-max: 99999px;
 $screen-tablet-next: map_get($breakpoints, lg);
 
 // Additional Custom Breakpoints - SCSS placeholders
