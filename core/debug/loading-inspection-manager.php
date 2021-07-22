@@ -33,8 +33,8 @@ class Loading_Inspection_Manager {
 
 	public function run_inspections() {
 		$debug_data = [
-			'message' => __( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
-			'header' => __( 'The preview could not be loaded', 'elementor' ),
+			'message' => esc_html__( 'We\'re sorry, but something went wrong. Click on \'Learn more\' and follow each of the steps to quickly solve it.', 'elementor' ),
+			'header' => esc_html__( 'The preview could not be loaded', 'elementor' ),
 			'doc_url' => 'https://go.elementor.com/preview-not-loaded/',
 		];
 		foreach ( $this->inspections as $inspection ) {

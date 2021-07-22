@@ -476,7 +476,8 @@ abstract class Element_Base extends Controls_Stack {
 			}
 
 			$this->before_render();
-			echo $content;
+			// PHPCS - The content has already been escaped by the `render` method.
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$this->after_render();
 
 			$this->enqueue_scripts();
