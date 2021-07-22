@@ -21,3 +21,8 @@ $screen-sm-max: $screen-mobile-max;
 $screen-md-min: $screen-tablet-min;
 $screen-md-max: $screen-tablet-max;
 $screen-lg-min: $screen-desktop-min;
+
+$screen-desktop-max: map_get($breakpoints, xl) - 1;
+$screen-xl-min: map_get($breakpoints, xl);
+$screen-xl-max: map_get($breakpoints, xxl) - 1;
+$screen-xxl-min: map_get($breakpoints, xxl);

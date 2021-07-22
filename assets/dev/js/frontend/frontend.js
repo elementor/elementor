@@ -50,9 +50,6 @@ export default class Frontend extends elementorModules.ViewModule {
 				elementor: '.elementor',
 				adminBar: '#wpadminbar',
 			},
-			classes: {
-				ie: 'elementor-msie',
-			},
 		};
 	}
 
@@ -218,21 +215,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 	}
 
-	addIeCompatibility() {
-		const el = document.createElement( 'div' ),
-			supportsGrid = 'string' === typeof el.style.grid;
-
-		if ( ! environment.ie && supportsGrid ) {
-			return;
-		}
-
-		this.elements.$body.addClass( this.getSettings( 'classes.ie' ) );
-
-		const msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + this.config.urls.assets + 'css/frontend-msie.min.css?' + this.config.version + '" type="text/css" />';
-
-		this.elements.$body.append( msieCss );
-	}
-
 	setDeviceModeData() {
 		this.elements.$body.attr( 'data-elementor-device-mode', this.getCurrentDeviceMode() );
 	}
@@ -363,8 +345,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.modulesHandlers = {};
 
 		this.addUserAgentClasses();
-
-		this.addIeCompatibility();
 
 		this.setDeviceModeData();
 

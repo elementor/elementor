@@ -236,7 +236,7 @@
 
 .elementor-column {
 
-	@media (max-width: $screen-xs-max) {
+	@media (max-width: 479px) {
 		@include elementor-responsive(xs);
 	}
 
