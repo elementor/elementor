@@ -1,5 +1,5 @@
 import Header from '../../components/layout/header';
-import { Modal, Heading, Text, Button } from '@elementor/app-ui';
+import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useNavigate } from '@reach/router';
 
@@ -29,14 +29,14 @@ export default function IndexHeader( props ) {
 			text: __( 'Import', 'elementor-pro' ),
 			hideText: true,
 			icon: 'eicon-upload-circle-o',
-			onClick: () => navigate( '/import' ),
+			onClick: () => navigate( '/import?referrer=kit-library' ),
 		},
 	], [ props.isFetching, props.refetch ] );
 
 	return (
 		<>
 			<Header buttons={ buttons }/>
-			<Modal title={ __( 'Welcome to the Library', 'elementor' ) } modalProps={ { show: isInfoModalOpen, hideModal: () => setIsInfoModalOpen( false ) } }>
+			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) } show={ isInfoModalOpen } setShow={ setIsInfoModalOpen }>
 				<div className="e-kit-library-header-info-modal-container">
 					<Heading tag="h3" variant="h3">{ __( 'What\'s a kit?', 'elementor' ) }</Heading>
 					<Text>{ __( 'A Template Kit is full, ready-made design that you can apply to your site. It includes all the pages, parts, settings and content that you\'d expect in a fully functional website.', 'elementor' ) }</Text>
@@ -53,7 +53,7 @@ export default function IndexHeader( props ) {
 					<Heading tag="h3" variant="h3">{ __( 'Happy browsing!', 'elementor' ) }</Heading>
 					<Text>
 						<Button
-							url="https://go.elementor.com/app-what-are-kits"
+							url="https://go.elementor.com/app-kit-library-how-to-use-kits"
 							target="_blank"
 							rel="noreferrer"
 							text={ __( 'Learn more', 'elementor' ) }
@@ -62,7 +62,7 @@ export default function IndexHeader( props ) {
 						{ __( 'about using templates', 'elementor' ) }
 					</Text>
 				</div>
-			</Modal>
+			</ModalProvider>
 		</>
 	);
 }
