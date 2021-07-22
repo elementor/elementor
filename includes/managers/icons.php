@@ -226,8 +226,7 @@ class Icons_Manager {
 
 		$svg .= '</svg>';
 
-		// TODO: Replace with print_unescaped_string.
-		echo $svg;
+		Utils::print_unescaped_internal_string( $svg );
 	}
 
 	public static function get_icon_svg_data( $icon ) {
