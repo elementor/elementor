@@ -6,4 +6,8 @@ export class SafeCommand extends CommandBase {
 			isSafe: true,
 		};
 	}
+
+	apply( args = {} ) {
+
+	}
 }

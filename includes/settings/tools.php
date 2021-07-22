@@ -132,7 +132,7 @@ class Tools extends Settings_Page {
 
 		$rollback_versions = $this->get_rollback_versions();
 		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
-			wp_die( __( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
+			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
@@ -149,7 +149,7 @@ class Tools extends Settings_Page {
 		$rollback->run();
 
 		wp_die(
-			'', __( 'Rollback to Previous Version', 'elementor' ), [
+			'', esc_html__( 'Rollback to Previous Version', 'elementor' ), [
 				'response' => 200,
 			]
 		);
@@ -249,7 +249,7 @@ class Tools extends Settings_Page {
 
 		$tabs = [
 			'general' => [
-				'label' => __( 'General', 'elementor' ),
+				'label' => esc_html__( 'General', 'elementor' ),
 				'sections' => [
 					'tools' => [
 						'fields' => [
@@ -262,11 +262,11 @@ class Tools extends Settings_Page {
 								],
 							],
 							'reset_api_data' => [
-								'label' => __( 'Sync Library', 'elementor' ),
+								'label' => esc_html__( 'Sync Library', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
-									'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), esc_html__( 'Sync Library', 'elementor' ) ),
+									'desc' => esc_html__( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 								],
 							],
 						],
@@ -274,7 +274,7 @@ class Tools extends Settings_Page {
 				],
 			],
 			'replace_url' => [
-				'label' => __( 'Replace URL', 'elementor' ),
+				'label' => esc_html__( 'Replace URL', 'elementor' ),
 				'sections' => [
 					'replace_url' => [
 						'callback' => function() {
@@ -286,15 +286,15 @@ class Tools extends Settings_Page {
 							$intro_text = '<div>' . $intro_text . '</div>';
 
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'replace_url' => [
-								'label' => __( 'Update Site Address (URL)', 'elementor' ),
+								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
-									'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],
 						],
@@ -302,10 +302,10 @@ class Tools extends Settings_Page {
 				],
 			],
 			'versions' => [
-				'label' => __( 'Version Control', 'elementor' ),
+				'label' => esc_html__( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
-						'label' => __( 'Rollback to Previous Version', 'elementor' ),
+						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
 								/* translators: %s: Elementor version */
@@ -314,44 +314,47 @@ class Tools extends Settings_Page {
 							);
 							$intro_text = '<p>' . $intro_text . '</p>';
 
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'rollback' => [
-								'label' => __( 'Rollback Version', 'elementor' ),
+								'label' => esc_html__( 'Rollback Version', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf(
-										$rollback_html . '<a data-placeholder-text="' . __( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
+										$rollback_html . '<a data-placeholder-text="' . esc_html__( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
 										__( 'Reinstall', 'elementor' )
 									),
-									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
+									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
 							],
 						],
 					],
 					'beta' => [
-						'label' => __( 'Become a Beta Tester', 'elementor' ),
+						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
-							$intro_text = '<p>' . $intro_text . '</p>';
-							$newsletter_opt_in_text = sprintf( __( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
-
-							echo $intro_text;
-							echo $newsletter_opt_in_text;
+							echo '<p>' .
+								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
+								'</p>';
+							echo sprintf(
+								/* translators: %1$s Link open tag, %2$s: Link close tag. */
+								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
+								'<a id="beta-tester-first-to-know" href="#">',
+								'</a>'
+							);
 						},
 						'fields' => [
 							'beta' => [
-								'label' => __( 'Beta Tester', 'elementor' ),
+								'label' => esc_html__( 'Beta Tester', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'default' => 'no',
+									'std' => 'no',
 									'options' => [
-										'no' => __( 'Disable', 'elementor' ),
-										'yes' => __( 'Enable', 'elementor' ),
+										'no' => esc_html__( 'Disable', 'elementor' ),
+										'yes' => esc_html__( 'Enable', 'elementor' ),
 									],
-									'desc' => '<span style="color: red;">' . __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
+									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
 							],
 						],

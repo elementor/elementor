@@ -64,9 +64,9 @@ class Fonts {
 	public static function get_font_groups() {
 		if ( null === self::$font_groups ) {
 			$font_groups = [
-				self::SYSTEM => __( 'System', 'elementor' ),
-				self::GOOGLE => __( 'Google', 'elementor' ),
-				self::EARLYACCESS => __( 'Google Early Access', 'elementor' ),
+				self::SYSTEM => esc_html__( 'System', 'elementor' ),
+				self::GOOGLE => esc_html__( 'Google', 'elementor' ),
+				self::EARLYACCESS => esc_html__( 'Google Early Access', 'elementor' ),
 			];
 
 			/**
