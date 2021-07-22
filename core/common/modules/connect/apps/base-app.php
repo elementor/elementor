@@ -533,6 +533,9 @@ abstract class Base_App {
 			'redirect_uri' => rawurlencode( $redirect_uri ),
 			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
 			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
+			'utm_source' => 'license-page',
+			'utm_campaign' => 'connect-and-activate',
+			'utm_medium' => 'wp-dash',
 		], $this->get_remote_site_url() );
 
 		return $url;
