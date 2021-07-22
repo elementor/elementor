@@ -1,5 +1,4 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentHelper from 'elementor-document/helper';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -121,16 +120,6 @@ BaseElementView = BaseContainer.extend( {
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
-
-			if ( Object.keys( this.container.parent ).length ) {
-				this.container.parent.children[ this._index ] = this.container;
-
-				this.on( 'destroy', () => {
-					delete this.container.parent.children[ this._index ];
-
-					this.container.parent.children = this.container.parent.children.filter( ( child ) => null !== child );
-				} );
-			}
 		}
 		return this.container;
 	},
@@ -172,7 +161,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),

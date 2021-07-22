@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @abstract
  */
 abstract class Widget_Base extends Element_Base {
-
 	/**
 	 * Whether the widget has content.
 	 *
@@ -31,6 +32,23 @@ abstract class Widget_Base extends Element_Base {
 	 * @var bool
 	 */
 	protected $_has_template_content = true;
+
+	/**
+	 * Registered Runtime Widgets.
+	 *
+	 * Registering in runtime all widgets that are being used on the page.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 * @static
+	 *
+	 * @var array
+	 */
+	public static $registered_runtime_widgets = [];
+
+	public static $registered_inline_css_widgets = [];
+
+	private static $widgets_css_data_manager;
 
 	/**
 	 * Get element type.
@@ -244,7 +262,7 @@ abstract class Widget_Base extends Element_Base {
 			$skin_options = [];
 
 			if ( $this->_has_template_content ) {
-				$skin_options[''] = __( 'Default', 'elementor' );
+				$skin_options[''] = esc_html__( 'Default', 'elementor' );
 			}
 
 			foreach ( $skins as $skin_id => $skin ) {
@@ -259,7 +277,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::HIDDEN,
 						'default' => $default_value,
 					]
@@ -268,7 +286,7 @@ abstract class Widget_Base extends Element_Base {
 				$this->add_control(
 					'_skin',
 					[
-						'label' => __( 'Skin', 'elementor' ),
+						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::SELECT,
 						'default' => $default_value,
 						'options' => $skin_options,
@@ -399,6 +417,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Safe print parsed text editor.
+	 *
+	 * @uses static::parse_text_editor.
+	 *
+	 * @access protected
+	 *
+	 * @param string $content Text editor content.
+	 */
+	final protected function print_text_editor( $content ) {
+		// PHPCS - the method `parse_text_editor` is safe.
+		echo static::parse_text_editor( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
 	 * Get HTML wrapper class.
 	 *
 	 * Retrieve the widget container class. Can be used to override the
@@ -483,7 +515,7 @@ abstract class Widget_Base extends Element_Base {
 
 		if ( 'no' === $lightbox_setting_key ) {
 			if ( $is_global_image_lightbox_enabled ) {
-				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no' );
+				$this->add_render_attribute( $element, 'data-elementor-open-lightbox', 'no', $overwrite );
 			}
 
 			return $this;
@@ -557,6 +589,13 @@ abstract class Widget_Base extends Element_Base {
 		?>
 		<div class="elementor-widget-container">
 			<?php
+			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
+				$this->register_runtime_widget( $this->get_group_name() );
+			}
+
+			$this->print_widget_css();
+
+			// get_name
 
 			/**
 			 * Render widget content.
@@ -574,6 +613,10 @@ abstract class Widget_Base extends Element_Base {
 			?>
 		</div>
 		<?php
+	}
+
+	protected function is_widget_first_render( $widget_name ) {
+		return ! in_array( $widget_name, self::$registered_runtime_widgets, true );
 	}
 
 	/**
@@ -677,6 +720,26 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	protected function print_content() {
 		$this->render_content();
+	}
+
+	/**
+	 * Print a setting content without escaping.
+	 *
+	 * Script tags are allowed on frontend according to the WP theme securing policy.
+	 *
+	 * @param string $setting
+	 * @param null $repeater_name
+	 * @param null $index
+	 */
+	final protected function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
+		if ( $repeater_name ) {
+			$repeater = $this->get_settings_for_display( $repeater_name );
+			$output = $repeater[ $index ][ $setting ];
+		} else {
+			$output = $this->get_settings_for_display( $setting );
+		}
+
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -877,6 +940,35 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get group name.
+	 *
+	 * Some widgets need to use group names, this method allows you to create them.
+	 * By default it retrieves the regular name.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return string Unique name.
+	 */
+	public function get_group_name() {
+		return $this->get_name();
+	}
+
+	/**
+	 * Get Inline CSS dependencies.
+	 *
+	 * Retrieve a list of inline CSS dependencies that the element requires.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @return array.
+	 */
+	public function get_inline_css_depends() {
+		return [];
+	}
+
+	/**
 	 * @param string $plugin_title  Plugin's title
 	 * @param string $since         Plugin version widget was deprecated
 	 * @param string $last          Plugin version in which the widget will be removed
@@ -885,7 +977,7 @@ abstract class Widget_Base extends Element_Base {
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
 		$this->start_controls_section( 'Deprecated',
 			[
-				'label' => __( 'Deprecated', 'elementor' ),
+				'label' => esc_html__( 'Deprecated', 'elementor' ),
 			]
 		);
 
@@ -903,5 +995,101 @@ abstract class Widget_Base extends Element_Base {
 
 		$this->end_controls_section();
 
+	}
+
+	public function register_runtime_widget( $widget_name ) {
+		self::$registered_runtime_widgets[] = $widget_name;
+	}
+
+	public function get_widget_css_config( $widget_name ) {
+		$direction = is_rtl() ? '-rtl' : '';
+
+		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
+
+		return [
+			'key' => $widget_name,
+			'version' => ELEMENTOR_VERSION,
+			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'data' => [
+				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+			],
+		];
+	}
+
+	public function get_css_config() {
+		return $this->get_widget_css_config( $this->get_group_name() );
+	}
+
+	private function get_widget_css() {
+		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
+
+		$widgets_list = $this->get_inline_css_depends();
+
+		$widgets_list[] = $this->get_group_name();
+
+		$widget_css = '';
+
+		foreach ( $widgets_list as $widget_data ) {
+			$widget_name = isset( $widget_data['name'] ) ? $widget_data['name'] : $widget_data;
+
+			if ( ! in_array( $widget_name, self::$registered_inline_css_widgets, true ) ) {
+				if ( $this->get_group_name() === $widget_name ) {
+					$config = $this->get_css_config();
+				} else {
+					/**
+					 * The core-dependency allowing to create a dependency specifically with the core widgets.
+					 * Otherwise, the config will be taken from the class that inherits from Widget_Base.
+					 */
+					$is_core_dependency = isset( $widget_data['is_core_dependency'] ) ? true : false;
+
+					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
+				}
+
+				$widget_css .= $widgets_css_data_manager->get_asset_data( $config );
+
+				self::$registered_inline_css_widgets[] = $widget_name;
+			}
+		}
+
+		return $widget_css;
+
+	}
+
+	private function is_inline_css_mode() {
+		static $is_active;
+
+		if ( null === $is_active ) {
+			$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+			$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+			$is_optimized_mode = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
+
+			$is_active = ( Utils::is_script_debug() || $is_edit_mode || $is_preview_mode || ! $is_optimized_mode ) ? false : true;
+		}
+
+		return $is_active;
+	}
+
+	private function print_widget_css() {
+		if ( ! $this->is_inline_css_mode() ) {
+			return;
+		}
+
+		$widget_css = $this->get_widget_css();
+
+		echo wp_kses( $widget_css, [
+			'style' => [],
+			'link' => [
+				'rel' => true,
+				'href' => true,
+			],
+		] );
+	}
+
+	private function get_widgets_css_data_manager() {
+		if ( ! self::$widgets_css_data_manager ) {
+			self::$widgets_css_data_manager = new Widgets_Css_Data_Manager();
+		}
+
+		return self::$widgets_css_data_manager;
 	}
 }

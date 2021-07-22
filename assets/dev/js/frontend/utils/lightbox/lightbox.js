@@ -103,6 +103,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
+		if ( options.url && ! options.url.startsWith( 'http' ) ) {
+			return;
+		}
+
 		this.elements.$closeButton = this.getModal().getElements( 'closeButton' );
 
 		this.$buttons = this.elements.$closeButton;

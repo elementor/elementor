@@ -9,7 +9,7 @@
 	if ( tabConfig.helpUrl ) { #>
 	<div id="elementor-panel__editor__help">
 		<a id="elementor-panel__editor__help__link" href="{{ tabConfig.helpUrl }}" target="_blank">
-			<?php echo __( 'Need Help', 'elementor' ); ?>
+			<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
 			<i class="eicon-help-o"></i>
 		</a>
 	</div>
@@ -35,7 +35,7 @@
 	<div class="elementor-repeater-row-tool elementor-repeater-tool-{{{ removeClass }}}">
 		<i class="{{{ removeIcon }}}" aria-hidden="true"></i>
 		<# if ( itemActions.remove ) { #>
-			<span class="elementor-screen-only"><?php echo __( 'Remove', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 		<# } #>
 	</div>
 	<div class="elementor-repeater-row-controls"></div>

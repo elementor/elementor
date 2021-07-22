@@ -15,10 +15,7 @@ class Post extends PageBase {
 		return $properties;
 	}
 
-	/**
-	 * @access public
-	 */
-	public function get_name() {
+	public static function get_type() {
 		return 'wp-post';
 	}
 
@@ -27,6 +24,10 @@ class Post extends PageBase {
 	 * @static
 	 */
 	public static function get_title() {
-		return __( 'Post', 'elementor' );
+		return esc_html__( 'Post', 'elementor' );
+	}
+
+	public static function get_plural_title() {
+		return __( 'Posts', 'elementor' );
 	}
 }

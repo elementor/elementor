@@ -53,7 +53,7 @@ class WXR_Parser_SimpleXML {
 		}
 
 		if ( ! $success || isset( $dom->doctype ) ) {
-			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this WXR file', 'elementor' ), libxml_get_errors() );
+			return new WP_Error( 'SimpleXML_parse_error', esc_html__( 'There was an error when reading this WXR file', 'elementor' ), libxml_get_errors() );
 		}
 
 		$xml = simplexml_import_dom( $dom );
@@ -61,18 +61,18 @@ class WXR_Parser_SimpleXML {
 
 		// Halt if loading produces an error.
 		if ( ! $xml ) {
-			return new WP_Error( 'SimpleXML_parse_error', __( 'There was an error when reading this WXR file', 'elementor' ), libxml_get_errors() );
+			return new WP_Error( 'SimpleXML_parse_error', esc_html__( 'There was an error when reading this WXR file', 'elementor' ), libxml_get_errors() );
 		}
 
 		$wxr_version = $xml->xpath( '/rss/channel/wp:wxr_version' );
 		if ( ! $wxr_version ) {
-			return new WP_Error( 'WXR_parse_error', __( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
+			return new WP_Error( 'WXR_parse_error', esc_html__( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
 		}
 
 		$wxr_version = (string) trim( $wxr_version[0] );
 		// Confirm that we are dealing with the correct file format.
 		if ( ! preg_match( '/^\d+\.\d+$/', $wxr_version ) ) {
-			return new WP_Error( 'WXR_parse_error', __( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
+			return new WP_Error( 'WXR_parse_error', esc_html__( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
 		}
 
 		$base_url = $xml->xpath( '/rss/channel/wp:base_site_url' );
@@ -83,6 +83,12 @@ class WXR_Parser_SimpleXML {
 			$base_blog_url = (string) trim( $base_blog_url[0] );
 		} else {
 			$base_blog_url = $base_url;
+		}
+
+		$page_on_front = $xml->xpath( '/rss/channel/wp:page_on_front' );
+
+		if ( $page_on_front ) {
+			$page_on_front = (int) $page_on_front[0];
 		}
 
 		$namespaces = $xml->getDocNamespaces();
@@ -258,6 +264,7 @@ class WXR_Parser_SimpleXML {
 			'terms' => $terms,
 			'base_url' => $base_url,
 			'base_blog_url' => $base_blog_url,
+			'page_on_front' => $page_on_front,
 			'version' => $wxr_version,
 		];
 	}
