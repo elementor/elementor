@@ -233,7 +233,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div class="elementor-control-responsive-switchers__holder">
 		<#
 			const activeBreakpoints = elementor.config.responsive.activeBreakpoints,
-				devicesForDisplay = elementor.breakpoints.getActiveDevicesList( true );
+				devicesForDisplay = elementor.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } );
 
 			var devices = responsive.devices || devicesForDisplay;
 
