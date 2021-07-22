@@ -3,6 +3,7 @@ import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
+import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar( props ) {
 	const actionButtonsRef = useRef();
@@ -41,7 +42,8 @@ export default function AdminTopBar( props ) {
 		$e.route( 'finder' );
 	};
 
-	const finderTooltipText = __( 'Search anything in Elementor Ctrl+E', 'elementor' );
+	const controlSign = environment.mac ? '⌘' : '^';
+	const finderTooltipText = __( 'Search anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
 	return (
 		<div className="e-admin-top-bar">
@@ -63,5 +65,5 @@ export default function AdminTopBar( props ) {
 }
 
 AdminTopBar.propTypes = {
-	isDashboard: PropTypes.boolean,
+	isDashboard: PropTypes.boolean || PropTypes.any,
 };
