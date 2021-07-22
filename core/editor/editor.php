@@ -202,7 +202,7 @@ class Editor {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document ) {
-			wp_die( __( 'Document not found.', 'elementor' ) );
+			wp_die( esc_html__( 'Document not found.', 'elementor' ) );
 		}
 
 		if ( ! $document->is_editable_by_current_user() || ! $document->is_built_with_elementor() ) {
@@ -897,7 +897,9 @@ class Editor {
 	 * @access public
 	 */
 	public function filter_wp_link_query( $results ) {
-		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {
+
+		// PHPCS - The user data is not used.
+		if ( isset( $_POST['editor'] ) && 'elementor' === $_POST['editor'] ) {  // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$post_type_object = get_post_type_object( 'post' );
 			$post_label = $post_type_object->labels->singular_name;
 

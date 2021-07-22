@@ -64,7 +64,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be different
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be different
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */
@@ -74,7 +74,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @expectedExceptionMessage The `from` and `to` URL's must be valid URL's
+	 * @expectedExceptionMessage The `from` and `to` URL&#039;s must be valid URL&#039;s
 	 * @expectedException        \Exception
 	 * @throws                   \Exception
 	 */

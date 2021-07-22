@@ -41,7 +41,7 @@ class Kit extends PageBase {
 	}
 
 	public static function get_title() {
-		return __( 'Kit', 'elementor' );
+		return esc_html__( 'Kit', 'elementor' );
 	}
 
 	/**
@@ -151,8 +151,8 @@ class Kit extends PageBase {
 
 	protected function get_post_statuses() {
 		return [
-			'draft' => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
-			'publish' => __( 'Published', 'elementor' ),
+			'draft' => sprintf( '%s (%s)', esc_html__( 'Disabled', 'elementor' ), esc_html__( 'Draft', 'elementor' ) ),
+			'publish' => esc_html__( 'Published', 'elementor' ),
 		];
 	}
 
