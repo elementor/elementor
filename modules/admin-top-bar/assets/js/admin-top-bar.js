@@ -41,6 +41,8 @@ export default function AdminTopBar( props ) {
 		$e.route( 'finder' );
 	};
 
+	const finderTooltipText = __( 'Search anything in Elementor Ctrl+E', 'elementor' );
+
 	return (
 		<div className="e-admin-top-bar">
 			<div className="e-admin-top-bar__main-area">
@@ -50,7 +52,7 @@ export default function AdminTopBar( props ) {
 
 			<div className="e-admin-top-bar__secondary-area">
 				<div className="e-admin-top-bar__secondary-area-buttons">
-					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
+					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} dataInfo={finderTooltipText} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
 					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
 				</div>
 
