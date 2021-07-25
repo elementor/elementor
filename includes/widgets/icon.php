@@ -435,6 +435,7 @@ class Widget_Icon extends Widget_Base {
 			</<?php echo $icon_tag; ?>>
 		</div>
 		<?php
+		$this->render_children();
 	}
 
 	/**
@@ -461,6 +462,11 @@ class Widget_Icon extends Widget_Base {
 				<# } #>
 			</{{{ iconTag }}}>
 		</div>
+		<div class="e-widget-children"></div>
 		<?php
+	}
+
+	protected function is_nested() {
+		return true;
 	}
 }

@@ -87,6 +87,10 @@ BaseElementView = BaseContainer.extend( {
 		return elementor.helpers.getElementChildType( this.getElementType() );
 	},
 
+	isNested( model ) {
+		return ! ! elementor.widgetsCache[ model?.get( 'widgetType' ) ]?.is_nested;
+	},
+
 	getChildView( model ) {
 		let ChildView;
 		const elType = model.get( 'elType' );
@@ -105,7 +109,13 @@ BaseElementView = BaseContainer.extend( {
 				break;
 
 			default:
-				ChildView = elementor.modules.elements.views.Widget;
+				console.log( 'asd', this.isNested( model ) );
+
+				if ( this.isNested() ) {
+					ChildView = require( 'elementor-elements/views/widget-nested' );
+				} else {
+					ChildView = elementor.modules.elements.views.Widget;
+				}
 				break;
 		}
 
