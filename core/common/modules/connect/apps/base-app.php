@@ -122,12 +122,9 @@ abstract class Base_App {
 
 
 	public function get_app_token_from_cli_token( $cli_token ) {
-		$response = $this->request(
-			'get_app_token_from_cli_token',
-			[ 'cli_token' => $cli_token ],
-			false,
-			[ 'base_url' => $this->get_auth_api_url() ]
-		);
+		$response = $this->auth_request( 'get_app_token_from_cli_token', [
+			'cli_token' => $cli_token,
+		] );
 
 		if ( is_wp_error( $response ) ) {
 			wp_die( $response, $response->get_error_message() );
@@ -179,17 +176,12 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		$response = $this->request(
-			'get_token',
-			[
-				'grant_type' => 'authorization_code',
-				'code' => $_REQUEST['code'],
-				'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
-				'client_id' => $this->get( 'client_id' ),
-			],
-			false,
-			[ 'base_url' => $this->get_auth_api_url() ]
-		);
+		$response = $this->auth_request( 'get_token', [
+			'grant_type' => 'authorization_code',
+			'code' => $_REQUEST['code'],
+			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
+			'client_id' => $this->get( 'client_id' ),
+		] );
 
 		if ( is_wp_error( $response ) ) {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
@@ -349,8 +341,22 @@ abstract class Base_App {
 	}
 
 	/**
-	 * @deprecated Please use `http_request` method instead of this method.
+	 * @param       $action
+	 * @param array $request_body
+	 * @param false $as_array
 	 *
+	 * @return mixed|\WP_Error
+	 */
+	protected function auth_request( $action, $request_body = [], $as_array = false ) {
+		return $this->request(
+			$action,
+			$request_body,
+			$as_array,
+			[ 'base_url' => $this->get_auth_api_url() ]
+		);
+	}
+
+	/**
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
@@ -359,7 +365,7 @@ abstract class Base_App {
 	 * @return mixed|\WP_Error
 	 */
 	protected function request( $action, $request_body = [], $as_array = false, $options = [] ) {
-		$request_body = $this->get_connect_info( $action ) + $request_body;
+		$request_body = $this->get_connect_info() + $request_body;
 
 		return $this->http_request(
 			'POST',
@@ -382,8 +388,8 @@ abstract class Base_App {
 	 *
 	 * @return array
 	 */
-	protected function get_connect_info( $endpoint ) {
-		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this, $endpoint );
+	protected function get_connect_info() {
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this );
 
 		return array_merge(
 			[
@@ -404,7 +410,7 @@ abstract class Base_App {
 	 * @return array
 	 */
 	protected function generate_authentication_headers( $endpoint ) {
-		$connect_info = ( new Collection( $this->get_connect_info( $endpoint ) ) )
+		$connect_info = ( new Collection( $this->get_connect_info() ) )
 			->map_with_keys( function ( $value, $key ) {
 				// For bc `get_connect_info` returns the connect info with underscore,
 				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
@@ -476,7 +482,10 @@ abstract class Base_App {
 
 			if ( 401 === $code ) {
 				$this->delete();
-				$this->action_authorize();
+
+				if ( 'xhr' !== $this->auth_mode ) {
+					$this->action_authorize();
+				}
 			}
 
 			return new \WP_Error( $code, $message );
@@ -577,12 +586,7 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->request(
-			'get_client_id',
-			[],
-			false,
-			[ 'base_url' => $this->get_auth_api_url() ]
-		);
+		$response = $this->auth_request( 'get_client_id' );
 
 		if ( is_wp_error( $response ) ) {
 			wp_die( $response, $response->get_error_message() );
@@ -636,12 +640,7 @@ abstract class Base_App {
 	protected function disconnect() {
 		if ( $this->is_connected() ) {
 			// Try update the server, but not needed to handle errors.
-			$this->request(
-				'disconnect',
-				[],
-				false,
-				[ 'base_url' => $this->get_auth_api_url() ]
-			);
+			$this->auth_request( 'disconnect' );
 		}
 
 		$this->delete();
@@ -745,12 +744,14 @@ abstract class Base_App {
 		}, $base_urls );
 	}
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+	private function init_auth_mode() {
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		$is_ajax = wp_doing_ajax();
+
+		if ( $is_rest || $is_ajax ) {
+			// Set default to 'xhr' if rest or ajax request.
+			$this->auth_mode = 'xhr';
+		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$allowed_auth_modes = [
@@ -767,6 +768,16 @@ abstract class Base_App {
 				$this->auth_mode = $mode;
 			}
 		}
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		$this->init_auth_mode();
 
 		$this->http = new Http();
 
