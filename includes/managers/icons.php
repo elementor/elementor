@@ -256,6 +256,12 @@ class Icons_Manager {
 			self::$font_icon_svg_symbols[ $icon_data['key'] ] = $icon_data;
 		}
 
+		if ( array_key_exists( 'class', $attributes ) && ! is_array( $attributes['class'] ) ) {
+			$class_name = $attributes['class'];
+
+			$attributes['class'] = [ $class_name ];
+		}
+
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
 
 		/**
