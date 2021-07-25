@@ -732,6 +732,7 @@ class Utils {
 	 */
 	public static function get_recently_edited_posts_query( $args = [] ) {
 		$args = wp_parse_args( $args, [
+			'no_found_rows' => true,
 			'post_type' => 'any',
 			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '3',
