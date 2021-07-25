@@ -15,7 +15,7 @@ export class SetDirectionMode extends After {
 
 	apply( args ) {
 		// Get the direction mode from the view & set the state accordingly.
-		const direction = args.container?.view.getCurrentUiStates?.().directionMode;
+		const direction = args.container?.view?.getCurrentUiStates?.().directionMode;
 
 		if ( direction ) {
 			$e.uiStates.set( 'document/direction-mode', direction );
