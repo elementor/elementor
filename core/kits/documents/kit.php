@@ -51,17 +51,6 @@ class Kit extends PageBase {
 		return $this->tabs;
 	}
 
-	/**
-	 * Retrieve a tab by ID.
-	 *
-	 * @param $id
-	 *
-	 * @return Tabs\Tab_Base
-	 */
-	public function get_tab( $id ) {
-		return self::get_items( $this->get_tabs(), $id );
-	}
-
 	protected function get_have_a_look_url() {
 		return '';
 	}
@@ -208,7 +197,6 @@ class Kit extends PageBase {
 			'settings-background' => Tabs\Settings_Background::class,
 			'settings-layout' => Tabs\Settings_Layout::class,
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
-			'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
 			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
 		];
 
