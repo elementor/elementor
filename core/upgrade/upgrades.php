@@ -3,6 +3,7 @@ namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Schemes\Base;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
@@ -926,6 +927,14 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function _v_3_4_0_remove_old_elementor_scheme_() {
+		global $wpdb;
+
+		$key = Base::SCHEME_OPTION_PREFIX;
+
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
 	}
 
 	/**

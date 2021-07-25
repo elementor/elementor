@@ -21,6 +21,8 @@ abstract class Base {
 	 */
 	const LAST_UPDATED_META = '_elementor_scheme_last_updated';
 
+	const SCHEME_OPTION_PREFIX = 'elementor_scheme_';
+
 	/**
 	 * Get scheme type.
 	 *
@@ -70,12 +72,12 @@ abstract class Base {
 	 * @return array Scheme value.
 	 */
 	public function get_scheme_value() {
-		$scheme_value = get_option( 'elementor_scheme_' . static::get_type() );
+		$scheme_value = get_option( self::SCHEME_OPTION_PREFIX . static::get_type() );
 
 		if ( ! $scheme_value ) {
 			$scheme_value = $this->get_default_scheme();
 
-			update_option( 'elementor_scheme_' . static::get_type(), $scheme_value );
+			$this->update_scheme_option( $scheme_value, false );
 		}
 
 		return $scheme_value;
@@ -93,9 +95,7 @@ abstract class Base {
 	 * @param array $posted
 	 */
 	public function save_scheme( array $posted ) {
-		update_option( 'elementor_scheme_' . static::get_type(), $posted );
-
-		update_option( self::LAST_UPDATED_META, time() );
+		$this->update_scheme_option( $posted );
 	}
 
 	/**
@@ -118,5 +118,13 @@ abstract class Base {
 		}
 
 		return $scheme;
+	}
+
+	private function update_scheme_option( $data, $should_update_timestamp = true ) {
+		update_option( self::SCHEME_OPTION_PREFIX . static::get_type(), $data, false );
+
+		if ( $should_update_timestamp ) {
+			update_option( self::LAST_UPDATED_META, time() );
+		}
 	}
 }
