@@ -122,9 +122,12 @@ abstract class Base_App {
 
 
 	public function get_app_token_from_cli_token( $cli_token ) {
-		$response = $this->request( 'get_app_token_from_cli_token', [
-			'cli_token' => $cli_token,
-		] );
+		$response = $this->request(
+			'get_app_token_from_cli_token',
+			[ 'cli_token' => $cli_token ],
+			false,
+			[ 'base_url' => $this->get_auth_api_url() ]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			wp_die( $response, $response->get_error_message() );
@@ -176,12 +179,17 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		$response = $this->request( 'get_token', [
-			'grant_type' => 'authorization_code',
-			'code' => $_REQUEST['code'],
-			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
-			'client_id' => $this->get( 'client_id' ),
-		] );
+		$response = $this->request(
+			'get_token',
+			[
+				'grant_type' => 'authorization_code',
+				'code' => $_REQUEST['code'],
+				'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
+				'client_id' => $this->get( 'client_id' ),
+			],
+			false,
+			[ 'base_url' => $this->get_auth_api_url() ]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
@@ -346,11 +354,12 @@ abstract class Base_App {
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
+	 * @param array $options
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	protected function request( $action, $request_body = [], $as_array = false ) {
-		$request_body = $this->get_connect_info() + $request_body;
+	protected function request( $action, $request_body = [], $as_array = false, $options = [] ) {
+		$request_body = $this->get_connect_info( $action ) + $request_body;
 
 		return $this->http_request(
 			'POST',
@@ -362,9 +371,9 @@ abstract class Base_App {
 					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
 					[],
 			],
-			[
+			array_replace( [
 				'return_type' => $as_array ? static::HTTP_RETURN_TYPE_ARRAY : static::HTTP_RETURN_TYPE_OBJECT,
-			]
+			], $options )
 		);
 	}
 
@@ -373,8 +382,8 @@ abstract class Base_App {
 	 *
 	 * @return array
 	 */
-	protected function get_connect_info() {
-		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this );
+	protected function get_connect_info( $endpoint ) {
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this, $endpoint );
 
 		return array_merge(
 			[
@@ -395,7 +404,7 @@ abstract class Base_App {
 	 * @return array
 	 */
 	protected function generate_authentication_headers( $endpoint ) {
-		$connect_info = ( new Collection( $this->get_connect_info() ) )
+		$connect_info = ( new Collection( $this->get_connect_info( $endpoint ) ) )
 			->map_with_keys( function ( $value, $key ) {
 				// For bc `get_connect_info` returns the connect info with underscore,
 				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
@@ -422,6 +431,7 @@ abstract class Base_App {
 	protected function http_request( $method, $endpoint, $args = [], $options = [] ) {
 		$options = wp_parse_args( $options, [
 			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
+			'base_url' => $this->get_api_url(),
 		] );
 
 		$args = array_replace_recursive( [
@@ -431,7 +441,7 @@ abstract class Base_App {
 		], $args );
 
 		$response = $this->http->request_with_fallback(
-			$this->get_generated_urls( $endpoint ),
+			$this->get_generated_urls( $options['base_url'], $endpoint ),
 			$args
 		);
 
@@ -499,6 +509,13 @@ abstract class Base_App {
 	}
 
 	/**
+	 * @return string
+	 */
+	protected function get_auth_api_url() {
+		return static::API_URL . '/' . $this->get_slug();
+	}
+
+	/**
 	 * @since 2.3.0
 	 * @access protected
 	 */
@@ -560,7 +577,12 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->request( 'get_client_id' );
+		$response = $this->request(
+			'get_client_id',
+			[],
+			false,
+			[ 'base_url' => $this->get_auth_api_url() ]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			wp_die( $response, $response->get_error_message() );
@@ -614,7 +636,12 @@ abstract class Base_App {
 	protected function disconnect() {
 		if ( $this->is_connected() ) {
 			// Try update the server, but not needed to handle errors.
-			$this->request( 'disconnect' );
+			$this->request(
+				'disconnect',
+				[],
+				false,
+				[ 'base_url' => $this->get_auth_api_url() ]
+			);
 		}
 
 		$this->delete();
@@ -708,9 +735,7 @@ abstract class Base_App {
 
 	}
 
-	private function get_generated_urls( $endpoint ) {
-		$base_urls = $this->get_api_url();
-
+	private function get_generated_urls( $base_urls, $endpoint ) {
 		if ( ! is_array( $base_urls ) ) {
 			$base_urls = [ $base_urls ];
 		}
