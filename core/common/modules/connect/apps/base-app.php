@@ -122,7 +122,7 @@ abstract class Base_App {
 
 
 	public function get_app_token_from_cli_token( $cli_token ) {
-		$response = $this->auth_request( 'get_app_token_from_cli_token', [
+		$response = $this->request( 'get_app_token_from_cli_token', [
 			'cli_token' => $cli_token,
 		] );
 
@@ -176,7 +176,7 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		$response = $this->auth_request( 'get_token', [
+		$response = $this->request( 'get_token', [
 			'grant_type' => 'authorization_code',
 			'code' => $_REQUEST['code'],
 			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
@@ -344,22 +344,6 @@ abstract class Base_App {
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
-	 *
-	 * @return mixed|\WP_Error
-	 */
-	protected function auth_request( $action, $request_body = [], $as_array = false ) {
-		return $this->request(
-			$action,
-			$request_body,
-			$as_array,
-			[ 'base_url' => $this->get_auth_api_url() ]
-		);
-	}
-
-	/**
-	 * @param       $action
-	 * @param array $request_body
-	 * @param false $as_array
 	 * @param array $options
 	 *
 	 * @return mixed|\WP_Error
@@ -516,14 +500,6 @@ abstract class Base_App {
 	protected function get_api_url() {
 		return static::API_URL . '/' . $this->get_slug();
 	}
-
-	/**
-	 * @return string
-	 */
-	protected function get_auth_api_url() {
-		return static::API_URL . '/' . $this->get_slug();
-	}
-
 	/**
 	 * @since 2.3.0
 	 * @access protected
@@ -586,7 +562,7 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->auth_request( 'get_client_id' );
+		$response = $this->request( 'get_client_id' );
 
 		if ( is_wp_error( $response ) ) {
 			wp_die( $response, $response->get_error_message() );
@@ -640,7 +616,7 @@ abstract class Base_App {
 	protected function disconnect() {
 		if ( $this->is_connected() ) {
 			// Try update the server, but not needed to handle errors.
-			$this->auth_request( 'disconnect' );
+			$this->request( 'disconnect' );
 		}
 
 		$this->delete();
