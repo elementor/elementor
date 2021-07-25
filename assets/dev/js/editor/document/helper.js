@@ -14,13 +14,8 @@ export default class Helper extends BackwardsCompatibility {
 			return false;
 		}
 
-		// Allow only specific nested elements.
-		const allowedNested = [
-			'container',
-			'widget',
-		];
-
-		if ( draggedElType === parentElType && ! allowedNested.includes( draggedElType ) ) {
+		// Allow only nested containers.
+		if ( draggedElType === parentElType && 'container' !== draggedElType ) {
 			return false;
 		}
 

@@ -118,24 +118,6 @@ html.elementor-html {
 	.elementor-edit-hidden {
 		display: none;
 	}
-
-	.e-widget-children {
-		position: relative;
-
-		.elementor-first-add::after {
-			display: none;
-		}
-
-		&-empty {
-			padding: 20px;
-			margin: 10px auto;
-			width: calc( 100% - 20px);
-
-			.elementor-empty-view .elementor-first-add .elementor-icon.eicon-plus {
-				color: $editor-light;
-			}
-		}
-	}
 }
 
 .elementor-section-wrap {

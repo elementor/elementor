@@ -347,7 +347,6 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
-			'is_nested' => $this->is_nested(),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
@@ -365,7 +364,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @access protected
 	 */
 	protected function should_print_empty() {
-		return $this->is_nested() && Plugin::instance()->editor->is_edit_mode();
+		return false;
 	}
 
 	/**
@@ -760,15 +759,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array|false Child type or false if it's not a valid widget.
 	 */
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'section' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'section' );
-		}
-
-		if ( 'container' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'container' );
-		}
-
-		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+		return Plugin::$instance->elements_manager->get_element_types( 'section' );
 	}
 
 	/**
@@ -1078,23 +1069,5 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return self::$widgets_css_data_manager;
-	}
-
-	protected function is_nested() {
-		return false;
-	}
-
-	protected function render_children() {
-		?>
-		<div class="e-widget-children">
-			<?php
-
-			if ( ! $this->should_print_empty() ) {
-				parent::print_content();
-			}
-
-			?>
-		</div>
-		<?php
 	}
 }

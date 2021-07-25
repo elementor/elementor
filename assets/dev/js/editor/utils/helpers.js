@@ -34,10 +34,7 @@ module.exports = {
 		document: {
 			section: {
 				column: {
-					widget: {
-						widget: null,
-						container: null,
-					},
+					widget: null,
 					section: null,
 					container: {
 						widget: null,

@@ -163,9 +163,6 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		var self = this,
 			$targetElement = jQuery( event.currentTarget );
 
-		// Prevent bubbling to the parent element. Used for nested widgets.
-		event.stopPropagation();
-
 		/**
 		 * When starting inline editing we need to set timeout, this allows other inline items to finish
 		 * their operations before focusing new editing area.
@@ -198,12 +195,9 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 20 );
 	},
 
-	onInlineEditingUpdate: function( e ) {
+	onInlineEditingUpdate: function() {
 		let key = this.getEditingSettingKey(),
 			container = this.view.getContainer();
-
-		// Prevent bubbling to the parent element. Used for nested widgets.
-		e.stopPropagation();
 
 		const parts = key.split( '.' );
 
