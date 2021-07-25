@@ -331,8 +331,8 @@
 
 			event.preventDefault();
 
-			if ( 'function' !== typeof settings.onDropping ) {
-				settings.onDropping( this, currentSide, event, self );
+			if ( 'function' === typeof settings.onDropping ) {
+				settings.onDropping.call( this, currentSide, event, self );
 			}
 		};
 

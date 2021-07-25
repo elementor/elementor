@@ -114,7 +114,6 @@ class AddSectionBase extends Marionette.ItemView {
 
 	onRender() {
 		this.$el.html5Droppable( {
-			view: this,
 			axis: [ 'vertical' ],
 			groups: [ 'elementor-element' ],
 			placeholder: false,
