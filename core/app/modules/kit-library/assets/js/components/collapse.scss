@@ -17,6 +17,7 @@
 
 	&__icon {
 		transition: all 150ms;
+		transform: rotate(getValueByDirection( 0deg, 180deg ));
 	}
 
 	&__content {
