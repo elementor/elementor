@@ -1,5 +1,5 @@
 import CommandBase from './command-base';
-import * as errors from 'elementor-api/core/data/errors/';
+import * as errors from '../core/data/errors/';
 
 export default class CommandData extends CommandBase {
 	/**
@@ -210,11 +210,11 @@ export default class CommandData extends CommandBase {
 
 	onCatchApply( e ) {
 		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
-		// eslint-disable-next-line camelcase
-		const httpErrorCode = e?.data?.status || 0;
+		const httpErrorCode = e?.data?.status || 501;
 
-		let dataError = Object.values( errors )
-			.find( ( error ) => error.getHTTPErrorCode() === httpErrorCode );
+		let dataError = Object.values( errors ).find(
+			( error ) => error.getHTTPErrorCode() === httpErrorCode
+		);
 
 		if ( ! dataError ) {
 			dataError = errors.DefaultError;
