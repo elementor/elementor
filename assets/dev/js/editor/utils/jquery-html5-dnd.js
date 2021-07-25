@@ -1,8 +1,6 @@
 /**
  * HTML5 - Drag and Drop
  */
-import BrowserImportManager from './browser-import/manager';
-
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
@@ -91,10 +89,7 @@ import BrowserImportManager from './browser-import/manager';
 			elementsCache = {},
 			currentElement,
 			currentSide,
-			browserImport,
-			isDroppingAllowedState = false,
 			defaultSettings = {
-				view: null,
 				element: '',
 				items: '>',
 				horizontalSensitivity: '10%',
@@ -104,6 +99,8 @@ import BrowserImportManager from './browser-import/manager';
 				placeholderClass: 'html5dnd-placeholder',
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
+				getDropContainer: () => elementor.getPreviewContainer(),
+				getDropIndex: () => 0,
 				isDroppingAllowed: null,
 				onDragEnter: null,
 				onDragging: null,
@@ -204,10 +201,6 @@ import BrowserImportManager from './browser-import/manager';
 				isGroupMatch,
 				droppingAllowed;
 
-			if ( browserImport.isAllowed() ) {
-				return true;
-			}
-
 			if ( settings.groups && hasFullDataTransferSupport( event ) ) {
 				dataTransferTypes = event.originalEvent.dataTransfer.types;
 
@@ -250,7 +243,7 @@ import BrowserImportManager from './browser-import/manager';
 			return true;
 		};
 
-		var onDragEnter = async function( event ) {
+		var onDragEnter = function( event ) {
 			event.stopPropagation();
 
 			if ( currentElement ) {
@@ -271,17 +264,7 @@ import BrowserImportManager from './browser-import/manager';
 
 			setSide( event );
 
-			browserImport = await ( new BrowserImportManager() )
-				.import(
-					Array.from( event.originalEvent.dataTransfer.items )
-						.map( ( item ) => {
-							return new File( [], null, { type: item.type } );
-						} )
-				);
-
-			isDroppingAllowedState = isDroppingAllowed( event );
-
-			if ( ! isDroppingAllowedState ) {
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
@@ -307,7 +290,7 @@ import BrowserImportManager from './browser-import/manager';
 
 			setSide( event );
 
-			if ( ! isDroppingAllowedState ) {
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
@@ -337,32 +320,19 @@ import BrowserImportManager from './browser-import/manager';
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
-
-			isDroppingAllowedState = false;
 		};
 
 		var onDrop = function( event ) {
 			setSide( event );
 
-			if ( ! isDroppingAllowedState ) {
+			if ( ! isDroppingAllowed( event ) ) {
 				return;
 			}
 
 			event.preventDefault();
 
-			if ( 'function' === typeof settings.onDropping ) {
-				if ( browserImport.isAllowed() ) {
-					$e.run( 'document/elements/browser-import', {
-						container: settings.view.getContainer?.() || elementor.getPreviewContainer(),
-						items: event.originalEvent.dataTransfer.files,
-						options: {
-							event,
-							side: currentSide,
-						},
-					} );
-				} else {
-					settings.onDropping.call( this, currentSide, event, self );
-				}
+			if ( 'function' !== typeof settings.onDropping ) {
+				settings.onDropping( this, currentSide, event, self );
 			}
 		};
 

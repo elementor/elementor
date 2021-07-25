@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import BrowserImportManager from '../../../utils/browser-import/manager';
+import SessionFactory from '../../../utils/iomanager/session-factory';
 
 export class BrowserImport extends CommandBase {
 	validateArgs( args ) {
@@ -7,13 +7,13 @@ export class BrowserImport extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], items, options = {} } = args;
+		const { containers = [ args.container ], input, options = {} } = args;
 
 		containers.map( ( container ) => {
-			new BrowserImportManager( container, options )
-				.import( items )
-				.then( ( manager ) => {
-					manager.render();
+			SessionFactory
+				.createSession( input, container, options )
+				.then( ( session ) => {
+					session.apply();
 				} );
 		} );
 	}

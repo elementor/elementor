@@ -168,11 +168,9 @@ class AddSectionBase extends Marionette.ItemView {
 			} );
 
 		// Create the element in column.
-		const result = eSection.view.children.findByIndex( 0 ).addElementFromPanel();
+		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
-
-		return result;
 	}
 
 	onAfterPaste() {}
