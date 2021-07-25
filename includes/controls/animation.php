@@ -145,7 +145,7 @@ class Control_Animation extends Base_Data_Control {
 					<option value=""><?php echo esc_html__( 'Default', 'elementor' ); ?></option>
 					<option value="none"><?php echo esc_html__( 'None', 'elementor' ); ?></option>
 					<?php foreach ( static::get_animations() as $animations_group_name => $animations_group ) : ?>
-						<optgroup label="<?php $this->print_control_uid(); ?>">
+						<optgroup label="<?php echo esc_attr( $animations_group_name ); ?>">
 							<?php foreach ( $animations_group as $animation_name => $animation_title ) : ?>
 								<option value="<?php echo esc_attr( $animation_name ); ?>"><?php echo esc_html( $animation_title ); ?></option>
 							<?php endforeach; ?>
