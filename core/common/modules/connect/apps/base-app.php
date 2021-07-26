@@ -344,7 +344,6 @@ abstract class Base_App {
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
-	 * @param array $options
 	 *
 	 * @return mixed|\WP_Error
 	 */
