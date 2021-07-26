@@ -71,6 +71,11 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+
+		// Hide the Floating Bar when exiting element edit mode.
+		this.model.on( 'editor:close', () => {
+			this.setFloatingBarVisible( false );
+		} );
 	},
 
 	getSortableOptions: function() {
@@ -221,6 +226,14 @@ const ContainerView = BaseElementView.extend( {
 
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
+
+		// Show the floating bar if the current element is in edit mode.
+		// TODO: Find out why the element is being rendered when setting a control value to its current value.
+		if ( this.model.get( 'id' ) === elementor.getCurrentElement()?.model.get( 'id' ) ) {
+			setTimeout( () => {
+				this.setFloatingBarVisible( true );
+			}, 10 );
+		}
 
 		this.changeContainerClasses();
 

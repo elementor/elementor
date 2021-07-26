@@ -14,4 +14,11 @@ export class DirectionMode extends UiStateBase {
 			[ DIRECTION_COLUMN ]: '',
 		};
 	}
+
+	getContexts() {
+		return [
+			window.document,
+			elementor.$previewContents[ 0 ],
+		];
+	}
 }

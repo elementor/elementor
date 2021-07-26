@@ -143,7 +143,15 @@ export default class ComponentBase extends elementorModules.Module {
 	 * @return {void}
 	 */
 	registerUiState( instance ) {
-		$e.uiStates.register( instance, instance.getContexts() );
+		// Make sure that the registration runs only when the UI states manager is available.
+		if ( $e.uiStates ) {
+			$e.uiStates.register( instance, instance.getContexts() );
+			return;
+		}
+
+		jQuery( window ).on( 'elementor:init-ui-states', () => {
+			$e.uiStates.register( instance, instance.getContexts() );
+		} );
 	}
 
 	registerCommandInternal( command, callback ) {

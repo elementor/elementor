@@ -12,7 +12,7 @@ export class ReRenderFloatingBar extends After {
 	getConditions( args ) {
 		const floatingBarConfig = args.container.view?.getFloatingBarConfig();
 
-		if ( ! floatingBarConfig ) {
+		if ( ! Object.keys( floatingBarConfig ).length ) {
 			return false;
 		}
 
@@ -28,7 +28,18 @@ export class ReRenderFloatingBar extends After {
 			return;
 		}
 
-		args.container.view.renderFloatingBar();
+		const newSettings = {};
+
+		Object.keys( args.settings ).forEach( ( setting ) => {
+			newSettings[ setting ] = args.container.settings.get( setting );
+		} );
+
+		args.container.view.setFloatingBarActiveSettings( ( prev ) => {
+			return {
+				...prev,
+				...newSettings,
+			};
+		} );
 	}
 
 	/**

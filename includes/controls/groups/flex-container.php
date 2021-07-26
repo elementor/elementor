@@ -14,17 +14,35 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 	}
 
 	protected function init_fields() {
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
 		$fields = [];
 
 		$fields['flex_direction'] = [
 			'label' => _x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'' => _x( 'Default', 'Flex Container Control', 'elementor' ),
-				'row' => _x( 'Row', 'Flex Container Control', 'elementor' ),
-				'column' => _x( 'Column', 'Flex Container Control', 'elementor' ),
-				'row-reverse' => _x( 'Reversed Row', 'Flex Container Control', 'elementor' ),
-				'column-reverse' => _x( 'Reversed Column', 'Flex Container Control', 'elementor' ),
+				'' => [
+					'title' => _x( 'Default', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-arrow-' . $end,
+				],
+				'row' => [
+					'title' => _x( 'Row', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-arrow-' . $end,
+				],
+				'column' => [
+					'title' => _x( 'Column', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-arrow-down',
+				],
+				'row-reverse' => [
+					'title' => _x( 'Reversed Row', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-arrow-' . $start,
+				],
+				'column-reverse' => [
+					'title' => _x( 'Reversed Column', 'Flex Container Control', 'elementor' ),
+					'icon' => 'eicon-arrow-up',
+				],
 			],
 			'default' => '',
 			'selectors' => [

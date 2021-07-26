@@ -299,6 +299,10 @@ class Preview extends App {
 			true
 		);
 
+		wp_enqueue_script( 'react' );
+		wp_enqueue_script( 'react-dom' );
+		wp_enqueue_script( 'wp-components' );
+
 		/**
 		 * Preview enqueue scripts.
 		 *
