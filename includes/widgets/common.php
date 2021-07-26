@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -712,12 +714,12 @@ class Widget_Common extends Widget_Base {
 					'_element_width' => 'initial',
 				],
 				'device_args' => [
-					Controls_Stack::RESPONSIVE_TABLET => [
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
 						'condition' => [
 							'_element_width_tablet' => [ 'initial' ],
 						],
 					],
-					Controls_Stack::RESPONSIVE_MOBILE => [
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
 						'condition' => [
 							'_element_width_mobile' => [ 'initial' ],
 						],
@@ -1013,44 +1015,7 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'hide_desktop',
-			[
-				'label' => esc_html__( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-desktop',
-			]
-		);
-
-		$this->add_control(
-			'hide_tablet',
-			[
-				'label' => esc_html__( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-tablet',
-			]
-		);
-
-		$this->add_control(
-			'hide_mobile',
-			[
-				'label' => esc_html__( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-phone',
-			]
-		);
+		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
 
