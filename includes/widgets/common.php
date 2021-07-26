@@ -1098,6 +1098,28 @@ class Widget_Common extends Widget_Base {
 				]
 			);
 
+			$this->add_responsive_control(
+				"_transform_perspective_effect{$tab}",
+				[
+					'label' => __( 'Perspective', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 1000,
+						],
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+						"_transform_rotate_3d{$tab}!" => '',
+					],
+					'selectors' => [
+						'{{WRAPPER}}' => '--e-transform-perspective: {{SIZE}}px',
+					],
+					'frontend_available' => true,
+				]
+			);
+
 			$this->end_popover();
 
 			$this->add_control(
@@ -1165,6 +1187,35 @@ class Widget_Common extends Widget_Base {
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_translateZ_effect{$tab}",
+				[
+					'label' => esc_html__( 'Offset Z', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ '%', 'px' ],
+					'range' => [
+						'%' => [
+							'min' => -200,
+							'max' => 200,
+						],
+						'px' => [
+							'min' => -3000,
+							'max' => 3000,
+						],
+					],
+					'condition' => [
+						"_transform_translate_popover{$tab}!" => '',
+					],
+					'default' => [
+						'size' => 0,
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateZ: {{SIZE}}{{UNIT}};',
 					],
 					'frontend_available' => true,
 				]

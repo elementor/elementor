@@ -1,10 +1,12 @@
 .e-transform .elementor-widget-container {
-	transform: rotateZ( var( --e-transform-rotateZ, 0 ) )
+	transform: perspective( var( --e-transform-perspective, 0 ) )
+		rotateZ( var( --e-transform-rotateZ, 0 ) )
 		rotateX( var( --e-transform-rotateX, 0 ) )
 		rotateY( var( --e-transform-rotateY, 0 ) )
 		translate( var( --e-transform-translate, 0 ) )
 		translateX( var( --e-transform-translateX, 0 ) )
 		translateY( var( --e-transform-translateY, 0 ) )
+		translateY( var( --e-transform-translateZ, 0 ) )
 		scaleX( calc( var( --e-transform-flipX, 1 ) * var( --e-transform-scaleX, var( --e-transform-scale, 1 ) ) ) )
 		scaleY( calc( var( --e-transform-flipY, 1 ) * var( --e-transform-scaleY, var(--e-transform-scale, 1) ) ) )
 		skewX( var( --e-transform-skewX, 0 ) )
