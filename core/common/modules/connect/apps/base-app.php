@@ -348,7 +348,7 @@ abstract class Base_App {
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	protected function request( $action, $request_body = [], $as_array = false, $options = [] ) {
+	protected function request( $action, $request_body = [], $as_array = false ) {
 		$request_body = $this->get_connect_info() + $request_body;
 
 		return $this->http_request(
@@ -361,9 +361,9 @@ abstract class Base_App {
 					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
 					[],
 			],
-			array_replace( [
+			[
 				'return_type' => $as_array ? static::HTTP_RETURN_TYPE_ARRAY : static::HTTP_RETURN_TYPE_OBJECT,
-			], $options )
+			]
 		);
 	}
 
@@ -421,7 +421,6 @@ abstract class Base_App {
 	protected function http_request( $method, $endpoint, $args = [], $options = [] ) {
 		$options = wp_parse_args( $options, [
 			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
-			'base_url' => $this->get_api_url(),
 		] );
 
 		$args = array_replace_recursive( [
@@ -431,7 +430,7 @@ abstract class Base_App {
 		], $args );
 
 		$response = $this->http->request_with_fallback(
-			$this->get_generated_urls( $options['base_url'], $endpoint ),
+			$this->get_generated_urls( $endpoint ),
 			$args
 		);
 
@@ -710,7 +709,9 @@ abstract class Base_App {
 
 	}
 
-	private function get_generated_urls( $base_urls, $endpoint ) {
+	private function get_generated_urls( $endpoint ) {
+		$base_urls = $this->get_api_url();
+
 		if ( ! is_array( $base_urls ) ) {
 			$base_urls = [ $base_urls ];
 		}
