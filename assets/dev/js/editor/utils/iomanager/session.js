@@ -6,10 +6,10 @@ export default class Session {
 	 * @param target
 	 * @param options
 	 */
-	constructor( files, target, options = {} ) {
-		this.files = files;
-		this.target = target;
-		this.options = options;
+	constructor( files = null, target = null, options = {} ) {
+		this.setFileList( files );
+		this.setTarget( target );
+		this.setOptions( options );
 	}
 
 	/**
@@ -49,6 +49,15 @@ export default class Session {
 	}
 
 	/**
+	 * Set the session FileList object.
+	 *
+	 * @param files
+	 */
+	setFileList( files ) {
+		this.files = files;
+	}
+
+	/**
 	 * Get the session FileList object.
 	 *
 	 * @returns {FileList}
@@ -58,12 +67,30 @@ export default class Session {
 	}
 
 	/**
+	 * Set the session Target object.
+	 *
+	 * @param target
+	 */
+	setTarget( target ) {
+		this.target = target;
+	}
+
+	/**
 	 * Get the session target.
 	 *
 	 * @returns {*}
 	 */
 	getTarget() {
 		return this.target;
+	}
+
+	/**
+	 * Set the session options.
+	 *
+	 * @param options
+	 */
+	setOptions( options ) {
+		this.options = options;
 	}
 
 	/**

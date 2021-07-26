@@ -1,6 +1,8 @@
 /**
  * HTML5 - Drag and Drop
  */
+import SessionBuilder from "./iomanager/session-builder";
+
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
@@ -89,6 +91,7 @@
 			elementsCache = {},
 			currentElement,
 			currentSide,
+			isDroppingAllowedState = false,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -264,7 +267,15 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			sessionHandler = SessionBuilder
+				.createSession()
+				.normalizeInput( event.originalEvent.dataTransfer.files )
+				.setContainer( settings.getDropContainer() )
+				.getSessionHandler();
+
+			isDroppingAllowedState = isDroppingAllowed( event );
+
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
@@ -290,7 +301,7 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
@@ -331,9 +342,13 @@
 
 			event.preventDefault();
 
-			if ( 'function' === typeof settings.onDropping ) {
-				settings.onDropping.call( this, currentSide, event, self );
-			}
+			$e.run( 'document/elements/browser-import', {
+				container: this.settings.getDropContainer(),
+				input: event.originalEvent.dataTransfer.files,
+				options: {
+					at: this.settings.getDropIndex( currentSide, event ),
+				},
+			} );
 		};
 
 		var attachEvents = function() {
