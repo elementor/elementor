@@ -216,6 +216,9 @@ class Control_Media extends Control_Base_Multiple {
 								}
 							#>
 						</div>
+						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
+							<i class="eicon-plus-circle" aria-hidden="true"></i>
+						</div>
 						<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 							<#
 								data.media_types.forEach( ( type ) => {
