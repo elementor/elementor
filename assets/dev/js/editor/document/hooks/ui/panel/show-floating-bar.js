@@ -1,5 +1,8 @@
 import After from 'elementor-api/modules/hooks/ui/after';
 
+/**
+ * Show the Floating Bar when the element is in edit mode.
+ */
 export class ShowFloatingBar extends After {
 	getCommand() {
 		return 'panel/editor/open';

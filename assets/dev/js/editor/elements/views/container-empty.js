@@ -3,6 +3,9 @@ import DocumentHelper from 'elementor-document/helper';
 const VIEW_CHOOSE_PRESET = 'choose-preset';
 const VIEW_DROP_AREA = 'drop-area';
 
+/**
+ * Empty Container view with predefined presets selection view.
+ */
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-e-container-presets',
 

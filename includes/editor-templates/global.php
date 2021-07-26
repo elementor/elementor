@@ -62,8 +62,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
-					const isContainerActive = elementorCommon.config.experimentalFeatures.container;
-					var structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34 ];
+					const isContainerActive = elementorCommon.config.experimentalFeatures.container;,
+						structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34 ];
 
 					// Add the removed section structure if the container experiment isn't active.
 					if ( ! isContainerActive ) {

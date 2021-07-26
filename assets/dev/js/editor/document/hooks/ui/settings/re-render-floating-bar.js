@@ -1,5 +1,8 @@
 import After from 'elementor-api/modules/hooks/ui/after';
 
+/**
+ * Re-Render the Floating Bar when settings get changed.
+ */
 export class ReRenderFloatingBar extends After {
 	getCommand() {
 		return 'document/elements/settings';

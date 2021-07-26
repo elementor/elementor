@@ -95,6 +95,7 @@ export default class UiStateBase {
 
 	/**
 	 * Retrieve an array of contexts that the state will be applied to.
+	 * TODO: Maybe change to `getScopes()`?
 	 *
 	 * @return {Document[]|HTMLElement[]}
 	 */
