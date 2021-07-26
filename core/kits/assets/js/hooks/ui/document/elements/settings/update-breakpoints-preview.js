@@ -18,6 +18,10 @@ export class KitUpdateBreakpointsPreview extends $e.modules.hookUI.After {
 	apply( args ) {
 		const { settings } = args;
 
+		if ( settings.active_breakpoints ) {
+			elementor.activeBreakpointsUpdated = true;
+		}
+
 		// If a breakpoint value was updated, update the value in the config.
 		Object.entries( settings ).forEach( ( [ key, value ] ) => {
 			if ( key.startsWith( 'viewport_' ) ) {
