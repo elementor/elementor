@@ -38,7 +38,7 @@
 	}
 
 	&--boxed {
-		max-width: 1140px; // Same as section.
+		max-width: var( --container-max-width, 1140px ); // Same as section.
 	}
 
 	& > & {

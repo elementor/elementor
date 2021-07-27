@@ -231,7 +231,7 @@ const ContainerView = BaseElementView.extend( {
 
 		// Show the floating bar if the current element is in edit mode.
 		// TODO: Find out why the element is being rendered when setting a control value to its current value.
-		if ( this.model.get( 'id' ) === elementor.getCurrentElement()?.model.get( 'id' ) ) {
+		if ( this.model.get( 'id' ) === elementor.getCurrentElement()?.model?.get( 'id' ) ) {
 			setTimeout( () => {
 				// TODO: Wait for the handler to initialize the Floating Bar when creating a new Container
 				//  so the `setFloatingBarVisible` will be available for the view.

@@ -12,6 +12,10 @@ export class ReRenderFloatingBar extends After {
 		return 're-render-floating-bar--document/elements/settings';
 	}
 
+	getContainerType() {
+		return 'container';
+	}
+
 	getConditions( args ) {
 		const floatingBarConfig = args.container.view?.getFloatingBarConfig();
 

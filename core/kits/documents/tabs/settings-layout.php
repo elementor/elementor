@@ -73,6 +73,7 @@ class Settings_Layout extends Tab_Base {
 				'description' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+					'.e-container' => '--container-max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
