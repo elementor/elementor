@@ -11,6 +11,8 @@ export class End extends CommandBase {
 	 * @returns {void}
 	 */
 	apply() {
+		this.component.inactivate();
+
 		// Remove all elements & event listeners.
 		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.remove( 'elementor-editor__ui-state__color-picker' );
 
