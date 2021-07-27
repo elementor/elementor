@@ -19,6 +19,10 @@ export class ReRenderFloatingBar extends After {
 			return false;
 		}
 
+		if ( ! args.container.setFloatingBarActiveSettings ) {
+			return false;
+		}
+
 		const settings = this.extractSettings( floatingBarConfig );
 
 		return Object.keys( args.settings ).some( ( setting ) => {

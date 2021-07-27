@@ -74,7 +74,9 @@ const ContainerView = BaseElementView.extend( {
 
 		// Hide the Floating Bar when exiting element edit mode.
 		this.model.on( 'editor:close', () => {
-			this.setFloatingBarVisible( false );
+			if ( this.setFloatingBarVisible ) {
+				this.setFloatingBarVisible( false );
+			}
 		} );
 	},
 
@@ -231,7 +233,11 @@ const ContainerView = BaseElementView.extend( {
 		// TODO: Find out why the element is being rendered when setting a control value to its current value.
 		if ( this.model.get( 'id' ) === elementor.getCurrentElement()?.model.get( 'id' ) ) {
 			setTimeout( () => {
-				this.setFloatingBarVisible( true );
+				// TODO: Wait for the handler to initialize the Floating Bar when creating a new Container
+				//  so the `setFloatingBarVisible` will be available for the view.
+				if ( this.setFloatingBarVisible ) {
+					this.setFloatingBarVisible( true );
+				}
 			}, 10 );
 		}
 
