@@ -96,8 +96,10 @@ export default class UiStates {
 		this.get( state ).instance.set( value );
 
 		context.forEach( ( c ) => {
-			// if it's a document instance, get the body element as a context.
-			const contextElement = ( c instanceof HTMLDocument ) ? c.body : c;
+			// If it's a document instance, get the body element as a context.
+			// Used `toString()` since Chrome & FF treat it differently.
+			const isDocumentElement = ( c.constructor.toString() === HTMLDocument.prototype.constructor.toString() ),
+				contextElement = isDocumentElement ? c.body : c;
 
 			contextElement.classList.remove( oldStateClass );
 
