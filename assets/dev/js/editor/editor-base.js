@@ -1256,6 +1256,8 @@ export default class EditorBase extends Marionette.Application {
 			newControlsStack = {};
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
+			let responsiveControlName = undefined;
+
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
 				controlConfig.fields = this.generateResponsiveControls( controlConfig.fields );
@@ -1270,6 +1272,8 @@ export default class EditorBase extends Marionette.Application {
 
 			devices.forEach( ( device ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
+
+				controlArgs.parent = responsiveControlName;
 
 				if ( controlArgs.device_args ) {
 					if ( controlArgs.device_args[ device ] ) {
@@ -1323,7 +1327,11 @@ export default class EditorBase extends Marionette.Application {
 
 				delete controlArgs.is_responsive;
 
-				const responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+
+				if ( controlArgs.parent ) {
+					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+				}
 
 				controlArgs.name = responsiveControlName;
 
