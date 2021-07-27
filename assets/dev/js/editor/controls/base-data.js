@@ -182,7 +182,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	getResponsiveParentView: function() {
 		const parent = this.model.get( 'parent' );
 
-		return parent && this.container.panel.getControlView( parent );
+		try {
+			return parent && this.container.panel.getControlView( parent );
+		} catch ( e ) {}
 	},
 
 	/**
@@ -193,7 +195,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	getResponsiveChildView: function() {
 		const child = this.model.get( 'child' );
 
-		return child && this.container.panel.getControlView( child );
+		try {
+			return child && this.container.panel.getControlView( child );
+		} catch ( e ) {}
 	},
 
 	/**

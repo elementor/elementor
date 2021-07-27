@@ -192,9 +192,6 @@ class Control_Media extends Control_Base_Multiple {
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
-							<i class="eicon-plus-circle" aria-hidden="true"></i>
-						</div>
 						<div class="elementor-control-media-area elementor-fit-aspect-ratio">
 							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o"></i>
