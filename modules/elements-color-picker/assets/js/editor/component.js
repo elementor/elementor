@@ -93,7 +93,7 @@ export default class Component extends ComponentBase {
 		return {
 			end: {
 				keys: 'esc',
-				scopes: [ 'panel', 'preview' ],
+				scopes: [ this.getNamespace() ],
 			},
 		};
 	}
