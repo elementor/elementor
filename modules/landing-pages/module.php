@@ -165,7 +165,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
 		}
 		return $this->new_lp_url;
 	}
