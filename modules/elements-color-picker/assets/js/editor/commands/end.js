@@ -11,6 +11,8 @@ export class End extends CommandBase {
 	 * @returns {void}
 	 */
 	apply() {
+		// In-Activate the component since the default behavior will in-activate it only on route change,
+		// but this component doesn't have any routes.
 		this.component.inactivate();
 
 		// Remove all elements & event listeners.
