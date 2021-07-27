@@ -124,42 +124,42 @@ presetsFactory = {
 	getContainerPreset( presetId, text = '' ) {
 		const presets = {
 			33: `
-				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="0.5" width="29" height="44" fill="#D5DADF"/>
-					<rect x="30.5" width="29" height="44" fill="#D5DADF"/>
-					<rect x="60.5" width="29" height="44" fill="#D5DADF"/>
+				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="0.5" width="29" height="44" />
+					<rect x="30.5" width="29" height="44" />
+					<rect x="60.5" width="29" height="44" />
 				</svg>
 			`,
 			50: `
-				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="0.5" width="44" height="44" fill="#D5DADF"/>
-					<rect x="45.5" width="44" height="44" fill="#D5DADF"/>
+				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="0.5" width="44" height="44" />
+					<rect x="45.5" width="44" height="44" />
 				</svg>
 			`,
 			'50-25': `
-				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="0.5" width="44" height="44" fill="#D5DADF"/>
-					<rect x="45.5" width="44" height="21.5" fill="#D5DADF"/>
-					<rect x="45.5" y="22.5" width="44" height="21.5" fill="#D5DADF"/>
+				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="0.5" width="44" height="44" />
+					<rect x="45.5" width="44" height="21.5" />
+					<rect x="45.5" y="22.5" width="44" height="21.5" />
 				</svg>
 			`,
 			'50-50': `
-				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="0.5" width="44" height="21.5" fill="#D5DADF"/>
-					<rect x="45.5" width="44" height="21.5" fill="#D5DADF"/>
-					<rect x="0.5" y="22.5" width="44" height="21.5" fill="#D5DADF"/>
-					<rect x="45.5" y="22.5" width="44" height="21.5" fill="#D5DADF"/>
+				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="0.5" width="44" height="21.5" />
+					<rect x="45.5" width="44" height="21.5" />
+					<rect x="0.5" y="22.5" width="44" height="21.5" />
+					<rect x="45.5" y="22.5" width="44" height="21.5" />
 				</svg>
 			`,
 			100: `
-				<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="0.5" width="89" height="44" fill="#D5DADF"/>
+				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect x="0.5" width="89" height="44" />
 				</svg>
 			`,
 			default: `
 				<div style="--text:'${ text }'" class="e-preset--container">
-					<svg width="90" height="44" viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<rect width="89" height="44" transform="translate(0.5)" fill="#D5DADF"/>
+					<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<rect width="89" height="44" transform="translate(0.5)" />
 						<rect x="3" y="2.5" width="84" height="39" rx="2.5" stroke="#FCFCFC" stroke-linejoin="round" stroke-dasharray="3 2"/>
 					</svg>
 				</div>

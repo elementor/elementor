@@ -1,3 +1,3 @@
 // Alphabetical order.
 
-export { ShowFloatingBar } from './show-floating-bar';
+export { ShowFloatingBar } from './editor/open/show-floating-bar';

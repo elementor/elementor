@@ -770,7 +770,7 @@ html.elementor-html {
 
 	.elementor-add-section-button {
 		background-color: $editor-accent;
-		@include margin-start(5px);
+		margin-inline-start: 5px;
 	}
 
 	.elementor-add-template-button {
@@ -848,7 +848,7 @@ html.elementor-html {
 
 			&::before {
 				content: var( --text );
-				font-family: Roboto;
+				font-family: Roboto, Arial, Helvetica, sans-serif;
 				font-size: 13px;
 				font-weight: 500;
 				position: absolute;
@@ -1054,6 +1054,7 @@ html.elementor-html {
 	}
 
 	&__title {
+		font-family: Roboto, Arial, Helvetica, sans-serif;
 		font-size: 13px;
 		font-weight: 500;
 		text-transform: uppercase;

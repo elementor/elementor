@@ -114,7 +114,6 @@ const ContainerView = BaseElementView.extend( {
 	 *
 	 * @return {object}
 	 *
-	 * TODO: Try to create a function in `base.js` to handle both section & container using a generic solution.
 	 */
 	getContextMenuGroups: function() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
@@ -196,7 +195,6 @@ const ContainerView = BaseElementView.extend( {
 	 *
 	 * @returns {void}
 	 *
-	 * TODO: Move it up to `base.js` (since that's a duplicate from `section.js`).
 	 */
 	onAddButtonClick: function() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
