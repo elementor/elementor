@@ -122,3 +122,12 @@ function getIcon( dropdown, active ) {
 		dropdown.controls[ 0 ]
 	).icon;
 }
+
+FloatingBar.propTypes = {
+	config: PropTypes.object.isRequired,
+	container: PropTypes.object.isRequired,
+};
+
+Eicon.propTypes = {
+	icon: PropTypes.string.isRequired,
+};
