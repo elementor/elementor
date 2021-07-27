@@ -302,6 +302,8 @@ class Container extends Element_Base {
 				'label' => __( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
+				'tablet_default' => 'default',
+				'mobile_default' => 'default',
 				'options' => [
 					'default' => __( 'Default', 'elementor' ),
 					'full' => __( 'Fit To Screen', 'elementor' ),
