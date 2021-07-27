@@ -20,7 +20,7 @@ module.exports = Marionette.ItemView.extend( {
 	ui() {
 		return {
 			presets: '.e-container-preset',
-			closeButton: '.e-container-select-preset--close',
+			closeButton: '.e-container-select-preset__close',
 		};
 	},
 

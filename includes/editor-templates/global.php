@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-e-container-presets">
-	<div class="e-container-select-preset--inner">
-		<div class="e-container-select-preset--close">
+	<div class="e-container-select-preset__inner">
+		<div class="e-container-select-preset__close">
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
 		</div>
-		<div class="e-container-select-preset--title"><?php echo __( 'Add Container Structure', 'elementor' ); ?></div>
-		<div class="e-container-select-preset--list">
+		<div class="e-container-select-preset__title"><?php echo __( 'Add Container Structure', 'elementor' ); ?></div>
+		<div class="e-container-select-preset__list">
 			<#
 				const presets = [
 					'100',
@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-select-preset-title"><?php echo __( 'Select your Structure', 'elementor' ); ?></div>
 			<ul class="elementor-select-preset-list">
 				<#
-					const isContainerActive = elementorCommon.config.experimentalFeatures.container;,
+					const isContainerActive = elementorCommon.config.experimentalFeatures.container,
 						structures = [ 10, 20, 30, 40, 21, 22, 31, 32, 33, 50, 34 ];
 
 					// Add the removed section structure if the container experiment isn't active.

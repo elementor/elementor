@@ -996,7 +996,7 @@ html.elementor-html {
 	padding: 35px;
 
 	// Views.
-	&[data-view="choose-preset"] > *:not( &--inner ) {
+	&[data-view="choose-preset"] > *:not( &__inner ) {
 		display: none;
 	}
 
@@ -1007,7 +1007,7 @@ html.elementor-html {
 	// TODO: Temp fix - Find a better solution.
 	// 	Used to hide the preset selection in nested Containers.
 	:not( .elementor-section-wrap ) > .e-container & {
-		&--inner {
+		&__inner {
 			display: none;
 		}
 
@@ -1016,7 +1016,7 @@ html.elementor-html {
 		}
 	}
 
-	&--close {
+	&__close {
 		position: absolute;
 		inset-inline-end: 25px;
 		inset-block-start: 20px;
@@ -1030,7 +1030,7 @@ html.elementor-html {
 		}
 	}
 
-	&--inner {
+	&__inner {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1053,7 +1053,7 @@ html.elementor-html {
 		}
 	}
 
-	&--title {
+	&__title {
 		font-family: Roboto;
 		font-size: 13px;
 		font-weight: 500;
@@ -1061,7 +1061,7 @@ html.elementor-html {
 		color: $editor-darker;
 	}
 
-	&--list {
+	&__list {
 		display: flex;
 		gap: 20px;
 		align-items: center;
