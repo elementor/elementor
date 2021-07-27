@@ -1256,7 +1256,7 @@ export default class EditorBase extends Marionette.Application {
 			newControlsStack = {};
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName = undefined;
+			let responsiveControlName;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
