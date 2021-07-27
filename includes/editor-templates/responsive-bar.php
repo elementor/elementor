@@ -9,11 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // TODO: Use API data instead of this static array, once it is available.
 $active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-$active_devices = Plugin::$instance->breakpoints->get_active_devices_list();
+$active_devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
 
 $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
-
-$active_devices = array_reverse( $active_devices );
 
 /* translators: %1$s: Device Name */
 $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
