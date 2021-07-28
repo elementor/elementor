@@ -1350,44 +1350,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'hide_desktop',
-			[
-				'label' => esc_html__( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => esc_html__( 'Hide', 'elementor' ),
-				'label_off' => esc_html__( 'Show', 'elementor' ),
-				'return_value' => 'hidden-desktop',
-			]
-		);
-
-		$this->add_control(
-			'hide_tablet',
-			[
-				'label' => esc_html__( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => esc_html__( 'Hide', 'elementor' ),
-				'label_off' => esc_html__( 'Show', 'elementor' ),
-				'return_value' => 'hidden-tablet',
-			]
-		);
-
-		$this->add_control(
-			'hide_mobile',
-			[
-				'label' => esc_html__( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => esc_html__( 'Hide', 'elementor' ),
-				'label_off' => esc_html__( 'Show', 'elementor' ),
-				'return_value' => 'hidden-phone',
-			]
-		);
+		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
 
@@ -1417,7 +1380,7 @@ class Element_Section extends Element_Base {
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 			if ( ! settings.background_play_on_mobile ) {
-				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 			}
 		#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>

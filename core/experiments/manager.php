@@ -246,6 +246,15 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'e_font_icon_svg',
+			'title' => __( 'Font-Awesome Inline', 'elementor' ),
+			'description' => __( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
+				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
+				. __( 'Learn More', 'elementor' ) . '</a>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+		] );
+
+		$this->add_feature( [
 			'name' => 'a11y_improvements',
 			'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
 			'description' => esc_html__( 'An array of accessibility enhancements in Elementor pages.', 'elementor' )
@@ -267,6 +276,18 @@ class Manager extends Base_Object {
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'additional_custom_breakpoints',
+			'title' => esc_html__( 'Additional Custom Breakpoints', 'elementor' ),
+			'description' => esc_html__( 'Add Additional Custom Breakpoints (beyond just \'mobile\' and \'tablet\') Optimize your site\'s performance when using responsive controls.', 'elementor' )
+							. '<br /><strong>' . esc_html__( 'Please note! Conditioning controls on values of responsive controls is not supported when this mode is active.', 'elementor' ) . '</strong>',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
 		] );
 	}
 
