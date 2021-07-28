@@ -436,9 +436,9 @@ module.exports = {
 				let operator;
 
 				if ( Array.isArray( conditionValue ) && conditionValue.length ) {
-					operator = isNegativeCondition ? '!contains' : 'contains';
-				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
 					operator = isNegativeCondition ? '!in' : 'in';
+				} else if ( Array.isArray( controlValue ) && controlValue.length ) {
+					operator = isNegativeCondition ? '!contains' : 'contains';
 				} else if ( isNegativeCondition ) {
 					operator = '!==';
 				}
