@@ -87,9 +87,11 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 		const property = this.isMultiple() ? 'sizes' : 'size',
 			value = this.getControlValue( property );
 
-		return value ||
-			this.model.get( 'placeholder' )?.[ property ] ||
-			this.model.get( 'default' )?.[ property ];
+		if ( value && '' !== value ) {
+			return value;
+		}
+
+		return this.model.get( 'placeholder' )?.[ property ];
 	},
 
 	resetSize: function() {
