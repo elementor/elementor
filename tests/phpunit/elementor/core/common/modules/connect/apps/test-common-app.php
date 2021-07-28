@@ -82,18 +82,14 @@ class Test_Common_App extends Elementor_Test_Base {
 		// Arrange
 		$user = $this->act_as_admin();
 
-		$filter = function () {
-			return true;
-		};
-
 		update_user_option( $user->ID, $this->app_stub->get_option_name(), [ 'a' => 1 ] );
 
-		add_filter( 'wp_doing_ajax', $filter );
+		add_filter( 'wp_doing_ajax', '__return_true' );
 
 		$this->app_stub = new Mock_App();
 		$this->app_stub->set_http( $this->http_stub );
 
-		remove_filter( 'wp_doing_ajax', $filter );
+		remove_filter( 'wp_doing_ajax', '__return_true' );
 
 		$this->http_stub
 			->expects( $this->once() )
@@ -120,7 +116,7 @@ class Test_Common_App extends Elementor_Test_Base {
 	public function test_http_request__return_error_when_not_response_code() {
 		// Arrange
 		$this->http_stub
-			->expects( $this->exactly( 2 ) )
+			->expects( $this->once() )
 			->method( 'request' )
 			->willReturn( [
 			    'response' => [
