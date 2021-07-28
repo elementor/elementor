@@ -314,6 +314,13 @@ class TextPath extends Widget_Base {
 						],
 						'size_units' => [ 'px' ],
 					],
+					// Text decoration isn't an inherited property, so it's required to explicitly
+					// target the specific `textPath` element.
+					'text_decoration' => [
+						'selectors' => [
+							'{{WRAPPER}} textPath' => 'text-decoration: {{VALUE}};',
+						],
+					],
 				],
 			]
 		);
