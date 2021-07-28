@@ -351,8 +351,6 @@ abstract class Base_App {
 	}
 
 	/**
-	 * @deprecated Please use `http_request` method instead of this method.
-	 *
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
@@ -477,7 +475,10 @@ abstract class Base_App {
 
 			if ( 401 === $code ) {
 				$this->delete();
-				$this->action_authorize();
+
+				if ( 'xhr' !== $this->auth_mode ) {
+					$this->action_authorize();
+				}
 			}
 
 			return new \WP_Error( $code, $message );
@@ -508,7 +509,6 @@ abstract class Base_App {
 	protected function get_api_url() {
 		return static::API_URL . '/' . $this->get_slug();
 	}
-
 	/**
 	 * @since 2.3.0
 	 * @access protected
@@ -733,12 +733,14 @@ abstract class Base_App {
 		}, $base_urls );
 	}
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+	private function init_auth_mode() {
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		$is_ajax = wp_doing_ajax();
+
+		if ( $is_rest || $is_ajax ) {
+			// Set default to 'xhr' if rest or ajax request.
+			$this->auth_mode = 'xhr';
+		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$allowed_auth_modes = [
@@ -755,6 +757,16 @@ abstract class Base_App {
 				$this->auth_mode = $mode;
 			}
 		}
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		$this->init_auth_mode();
 
 		$this->http = new Http();
 
