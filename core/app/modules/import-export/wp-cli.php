@@ -109,9 +109,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		if ( 'library' === $assoc_args['sourceType'] ) {
 			$url = $this->get_url_from_library( $args[0] );
-		}
-
-		if ( 'remote' === $assoc_args['sourceType'] ) {
+		} elseif ( 'remote' === $assoc_args['sourceType'] ) {
 			$url = $args[0];
 		}
 
