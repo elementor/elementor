@@ -21,6 +21,22 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 
 	abstract protected function register_tab_controls();
 
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return '';
+	}
+
+	public function get_help_url() {
+		return '';
+	}
+
+	public function get_additional_tab_content() {
+		return '';
+	}
+
 	public function register_controls() {
 		$this->register_tab();
 
@@ -28,6 +44,18 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 	}
 
 	public function on_save( $data ) {}
+
+	/**
+	 * Before Save
+	 *
+	 * Allows for modifying the kit data before it is saved to the database.
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function before_save( array $data ) {
+		return $data;
+	}
 
 	protected function register_tab() {
 		Controls_Manager::add_tab( $this->get_id(), $this->get_title() );

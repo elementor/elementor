@@ -1,0 +1,122 @@
+name: Lighthouse
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 10 * * 0' # run at 10 AM UTC on Sunday
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx grunt build
+      - name: Save build to cache
+        uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+
+  lighthouse:
+    name: Lighthouse test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    strategy:
+      matrix:
+        include:
+          - phpVersion: '8.0'
+            wpCoreVersion: 'master'
+          - phpVersion: '7.4'
+            wpCoreVersion: 'latest'
+    steps:
+      - name: Checkout source code
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        uses: actions/checkout@v2
+      - name: Install Node.js 14.x
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Restore build from cache
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        uses: actions/cache@v2
+        id: restore-build
+        with:
+          path: ./build/*
+          key: ${{ github.sha }}
+      - name: Update wp-env.json file
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        env:
+          PHP_VERSION: ${{ matrix.phpVersion }}
+          WP_CORE_VERSION: ${{ matrix.wpCoreVersion }}
+        run: node ./.github/scripts/build-wp-env.js
+      - name: Install wp-env and lhci
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        run: npm install --no-package-lock --no-save @wordpress/env@4.0.0 @lhci/cli@0.8.0
+      - name: Install WordPress environment
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        run: |
+          npx wp-env start
+          # change wp-env folder owner to www-data
+          sudo chown 33:33 -R ~/wp-env/
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/import-temapltes.sh'"
+      - name: WordPress debug information
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        run: |
+          npx wp-env run tests-cli "wp core version"
+          npx wp-env run tests-cli "wp --info"
+      - name: Run Lighthouse tests
+        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
+      - name: Save HTML dumps on failure
+        if: failure()
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
+      - name: Upload Lighthouse reports on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lighthouseci-reports
+          path: ${{ github.workspace }}/.lighthouseci/reports/**/*
+          retention-days: 7
+      - name: Upload Lighthouse HTML dumps on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lighthouseci-htmls
+          path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
+          retention-days: 7
+      - name: Notify slack on failure
+        if: failure() && github.event_name == 'schedule'
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_LIGHTHOUSE_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
+

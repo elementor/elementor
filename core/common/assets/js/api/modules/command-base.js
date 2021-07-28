@@ -6,6 +6,17 @@ export default class CommandBase extends ArgsObject {
 	}
 
 	/**
+	 * Get info of command.
+	 *
+	 * Use to provide 'extra' information about the command.
+	 *
+	 * @returns {Object}
+	 */
+	static getInfo() {
+		return {};
+	}
+
+	/**
 	 * Current component.
 	 *
 	 * @type {Component}

@@ -78,10 +78,10 @@ class Widget_Testimonial extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_testimonial',
 			[
@@ -249,6 +249,14 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'content_shadow',
+				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
+			]
+		);
+
 		$this->end_controls_section();
 
 		// Image.
@@ -339,6 +347,14 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'name_shadow',
+				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
+			]
+		);
+
 		$this->end_controls_section();
 
 		// Job.
@@ -372,6 +388,14 @@ class Widget_Testimonial extends Widget_Base {
 				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				],
+				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'job_shadow',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
 			]
 		);

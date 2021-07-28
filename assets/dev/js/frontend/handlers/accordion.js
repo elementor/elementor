@@ -1,9 +1,13 @@
 import TabsModule from './base-tabs';
 
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( TabsModule, {
-		$element: $scope,
-		showTabFn: 'slideDown',
-		hideTabFn: 'slideUp',
-	} );
-};
+export default class Accordion extends TabsModule {
+	getDefaultSettings() {
+		const defaultSettings = super.getDefaultSettings();
+
+		return {
+			...defaultSettings,
+			showTabFn: 'slideDown',
+			hideTabFn: 'slideUp',
+		};
+	}
+}

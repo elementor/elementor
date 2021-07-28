@@ -1,0 +1,15 @@
+name: PR Linter
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+  pr_name_lint:
+    runs-on: ubuntu-latest
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
+      - name: Run PR name linter
+        run: echo "${{ github.event.pull_request.title }}" | npx commitlint

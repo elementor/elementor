@@ -54,6 +54,8 @@ export default class extends ControlBaseDataView {
 
 		this.addTipsyToPickerButton();
 
+		this.addEyedropper();
+
 		this.$pickerButton.on( 'click', () => this.onPickerButtonClick() );
 
 		jQuery( this.colorPicker.picker.getRoot().root ).addClass( 'elementor-control-unit-1 elementor-control-tag-area' );
@@ -66,7 +68,7 @@ export default class extends ControlBaseDataView {
 
 				// If there is a global enabled for the control, but the global has no value.
 				if ( this.getGlobalKey() && ! currentValue ) {
-					currentValue = `${ elementor.translate( 'invalid' ) } ${ elementor.translate( 'global_color' ) }`;
+					currentValue = `${ __( 'Invalid Global Color', 'elementor' ) }`;
 				}
 
 				return currentValue || '';
@@ -74,6 +76,42 @@ export default class extends ControlBaseDataView {
 			offset: 4,
 			gravity: () => 's',
 		} );
+	}
+
+	addEyedropper() {
+		if ( ! elementorCommon.config.experimentalFeatures[ 'elements-color-picker' ] ) {
+			return;
+		}
+
+		const $colorPicker = jQuery( Marionette.Renderer.render( '#tmpl-elementor-control-element-color-picker' ) ),
+			$colorPickerToolsContainer = this.colorPicker.$pickerToolsContainer,
+			container = this.getOption( 'container' );
+
+		let kit = null;
+
+		// When it's a kit (i.e "Site Settings").
+		if ( 'kit' === container.document.config.type ) {
+			kit = container.document;
+		}
+
+		// Add a tooltip to the Eye Dropper.
+		$colorPicker.tipsy( {
+			title() {
+				return __( 'Color Sampler', 'elementor' );
+			},
+			gravity: 's',
+		} );
+
+		$colorPicker.on( 'click', () => {
+			$e.run( 'elements-color-picker/start', {
+				container,
+				kit,
+				control: this.model.get( 'name' ),
+				trigger: $colorPicker[ 0 ],
+			} );
+		} );
+
+		$colorPickerToolsContainer.append( $colorPicker );
 	}
 
 	getGlobalMeta() {
@@ -86,15 +124,15 @@ export default class extends ControlBaseDataView {
 	}
 
 	getNameAlreadyExistsMessage() {
-		return '<i class="eicon-info-circle"></i> ' + elementor.translate( 'global_color_already_exists' );
+		return '<i class="eicon-info-circle"></i> ' + __( 'Please note that the same exact color already exists in your Global Colors list. Are you sure you want to create it?', 'elementor' );
 	}
 
 	getConfirmTextMessage() {
-		return elementor.translate( 'global_color_confirm_text' );
+		return __( 'Are you sure you want to create a new Global Color?', 'elementor' );
 	}
 
 	getAddGlobalConfirmMessage( globalColors ) {
-		const colorTitle = elementor.translate( 'new_global_color' ),
+		const colorTitle = __( 'New Global Color', 'elementor' ),
 			currentValue = this.getCurrentValue(),
 			$message = jQuery( '<div>', { class: 'e-global__confirm-message' } ),
 			$messageText = jQuery( '<div>', { class: 'e-global__confirm-message-text' } ),
@@ -114,7 +152,7 @@ export default class extends ControlBaseDataView {
 				messageContent = this.getConfirmTextMessage();
 				break;
 			} else {
-				messageContent = elementor.translate( 'global_color_confirm_text' );
+				messageContent = __( 'Are you sure you want to create a new Global Color?', 'elementor' );
 			}
 		}
 

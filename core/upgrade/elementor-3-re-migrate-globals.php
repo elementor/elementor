@@ -23,13 +23,13 @@ class Elementor_3_Re_Migrate_Globals {
 		return true;
 	}
 
-	public function admin_localize_settings( $settings ) {
-		return array_replace_recursive( $settings, [
-			'i18n' => [
-				're_migrate_globals_confirm' => __( 'Please note that this process will revert all changes made to Global Colors and Fonts since upgrading to v3.x.', 'elementor' ),
-				're_migrate_globals' => __( 'Migrate to v3.0', 'elementor' ),
-			],
-		] );
+	/**
+	 * @deprecated 3.1.0
+	 */
+	public function admin_localize_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
+		return [];
 	}
 
 	public function register_admin_tools_fields( Tools $tools ) {
@@ -66,8 +66,7 @@ class Elementor_3_Re_Migrate_Globals {
 
 		$callbacks = [];
 
-		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$kit = Plugin::$instance->documents->get( $active_kit_id );
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		// Already exist. use raw settings that doesn't have default values.
 		$meta_key = SettingsPageManager::META_KEY;
 		$kit_raw_settings = $kit->get_meta( $meta_key );
@@ -151,7 +150,6 @@ class Elementor_3_Re_Migrate_Globals {
 
 	public function __construct() {
 		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_fields' ], 60 /* After plugins rollback */ );
-		add_action( 'elementor/admin/localize_settings', [ $this, 'admin_localize_settings' ] );
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 	}

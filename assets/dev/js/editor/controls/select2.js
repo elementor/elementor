@@ -1,17 +1,35 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlSelect2ItemView;
 
+import Select2 from 'elementor-editor-utils/select2.js';
+
 ControlSelect2ItemView = ControlBaseDataView.extend( {
 	getSelect2Placeholder: function() {
 		return this.ui.select.children( 'option:first[value=""]' ).text();
 	},
 
 	getSelect2DefaultOptions: function() {
-		return {
+		const defaultOptions = {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
 			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
-		};
+		},
+			lockedOptions = this.model.get( 'lockedOptions' );
+
+		// If any non-deletable options are passed, remove the 'x' element from the template for selected items.
+		if ( lockedOptions ) {
+			defaultOptions.templateSelection = ( data, container ) => {
+				if ( lockedOptions.includes( data.id ) ) {
+					jQuery( container )
+						.addClass( 'e-non-deletable' )
+						.find( '.select2-selection__choice__remove' ).remove();
+				}
+
+				return data.text;
+			};
+		}
+
+		return defaultOptions;
 	},
 
 	getSelect2Options: function() {
@@ -21,12 +39,30 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	applySavedValue: function() {
 		ControlBaseDataView.prototype.applySavedValue.apply( this, arguments );
 
-		const select2Instance = this.ui.select.data( 'select2' );
+		const elementSelect2Data = this.ui.select.data( 'select2' );
 
-		if ( ! select2Instance ) {
-			this.ui.select.select2( this.getSelect2Options() );
+		// Checking if the element itself was initiated with select2 functionality in case of multiple renders.
+		if ( ! elementSelect2Data ) {
+			this.select2Instance = new Select2( {
+				$element: this.ui.select,
+				options: this.getSelect2Options(),
+			} );
+
+			this.handleLockedOptions();
 		} else {
 			this.ui.select.trigger( 'change' );
+		}
+	},
+
+	handleLockedOptions() {
+		const lockedOptions = this.model.get( 'lockedOptions' );
+
+		if ( lockedOptions ) {
+			this.ui.select.on( 'select2:unselecting', ( event ) => {
+				if ( lockedOptions.includes( event.params.args.data.id ) ) {
+					event.preventDefault();
+				}
+			} );
 		}
 	},
 
@@ -37,7 +73,7 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 	onBeforeDestroy: function() {
 		// We always destroy the select2 instance because there are cases where the DOM element's data cache
 		// itself has been destroyed but the select2 instance on it still exists
-		this.ui.select.select2( 'destroy' );
+		this.select2Instance.destroy();
 
 		this.$el.remove();
 	},

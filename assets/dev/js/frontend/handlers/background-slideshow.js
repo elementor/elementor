@@ -98,14 +98,16 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		this.elements.$backgroundSlideShowContainer = $container;
 	}
 
-	initSlider() {
+	async initSlider() {
 		if ( 1 >= this.getSlidesCount() ) {
 			return;
 		}
 
 		const elementSettings = this.getElementSettings();
 
-		this.swiper = new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
+		const Swiper = elementorFrontend.utils.swiper;
+
+		this.swiper = await new Swiper( this.elements.$backgroundSlideShowContainer, this.getSwiperOptions() );
 
 		// Expose the swiper instance in the frontend
 		this.elements.$backgroundSlideShowContainer.data( 'swiper', this.swiper );

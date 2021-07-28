@@ -93,16 +93,35 @@ class Widget_Google_Maps extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_map',
 			[
 				'label' => __( 'Map', 'elementor' ),
 			]
 		);
+
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$api_key = get_option( 'elementor_google_maps_api_key' );
+
+			if ( ! $api_key ) {
+				$this->add_control(
+					'api_key_notification',
+					[
+						'type' => Controls_Manager::RAW_HTML,
+						'raw' => sprintf(
+							__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
+							Settings::get_url() . '#tab-integrations',
+							'https://developers.google.com/maps/documentation/embed/get-api-key'
+						),
+						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+					]
+				);
+			}
+		}
 
 		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
@@ -150,7 +169,12 @@ class Widget_Google_Maps extends Widget_Base {
 						'min' => 40,
 						'max' => 1440,
 					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
+				'size_units' => [ 'px', 'vh' ],
 				'selectors' => [
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
 				],
@@ -251,12 +275,27 @@ class Widget_Google_Maps extends Widget_Base {
 			$settings['zoom']['size'] = 10;
 		}
 
-		printf(
-			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near" title="%3$s" aria-label="%3$s"></iframe></div>',
+		$api_key = esc_html( get_option( 'elementor_google_maps_api_key' ) );
+
+		$params = [
 			rawurlencode( $settings['address'] ),
 			absint( $settings['zoom']['size'] ),
-			esc_attr( $settings['address'] )
-		);
+			esc_attr( $settings['address'] ),
+		];
+
+		if ( $api_key ) {
+			$params[] = $api_key;
+
+			$url = 'https://www.google.com/maps/embed/v1/place?key=%4$s&q=%1$s&amp;zoom=%2$d';
+		} else {
+			$url = 'https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
+		}
+
+		?>
+		<div class="elementor-custom-embed">
+			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="<?php echo vsprintf( $url, $params ); ?>" title="%3$s" aria-label="%3$s"></iframe>
+		</div>
+		<?php
 	}
 
 	/**

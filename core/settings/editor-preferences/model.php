@@ -40,10 +40,10 @@ class Model extends BaseModel {
 	}
 
 	/**
-	 * @since 2.8.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section( 'preferences', [
 			'tab' => Controls_Manager::TAB_SETTINGS,
 			'label' => __( 'Preferences', 'elementor' ),
@@ -96,6 +96,41 @@ class Model extends BaseModel {
 				'label' => __( 'Enable Lightbox In Editor', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
+			]
+		);
+
+		$this->add_control(
+			'responsive_heading',
+			[
+				'label' => __( 'Responsive Preview', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'show_hidden_elements',
+			[
+				'label' => __( 'Hidden Elements', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => 'Show',
+				'label_off' => 'Hide',
+				'default' => 'yes',
+			]
+		);
+
+		$this->add_control(
+			'default_device_view',
+			[
+				'label' => __( 'Default Device View ', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'default',
+				'options' => [
+					'default' => __( 'Default', 'elementor' ),
+					'mobile' => __( 'Mobile', 'elementor' ),
+					'tablet' => __( 'Tablet', 'elementor' ),
+					'desktop' => __( 'Desktop', 'elementor' ),
+				],
 			]
 		);
 

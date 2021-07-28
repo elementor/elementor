@@ -253,10 +253,14 @@ abstract class Settings_Page {
 
 					$field['field_args']['class'] = implode( ' ', $field_classes );
 
+					if ( ! isset( $field['render'] ) ) {
+						$field['render'] = [ $controls_class_name, 'render' ];
+					}
+
 					add_settings_field(
 						$full_field_id,
 						isset( $field['label'] ) ? $field['label'] : '',
-						[ $controls_class_name, 'render' ],
+						$field['render'],
 						static::PAGE_ID,
 						$full_section_id,
 						$field['field_args']
@@ -288,7 +292,7 @@ abstract class Settings_Page {
 		$tabs = $this->get_tabs();
 		?>
 		<div class="wrap">
-			<h1><?php echo $this->get_page_title(); ?></h1>
+			<h1 class="wp-heading-inline"><?php echo $this->get_page_title(); ?></h1>
 			<div id="elementor-settings-tabs-wrapper" class="nav-tab-wrapper">
 				<?php
 				foreach ( $tabs as $tab_id => $tab ) {
@@ -349,6 +353,21 @@ abstract class Settings_Page {
 			</form>
 		</div><!-- /.wrap -->
 		<?php
+	}
+
+	public function get_usage_fields() {
+		return [
+			'allow_tracking' => [
+				'label' => __( 'Usage Data Sharing', 'elementor' ),
+				'field_args' => [
+					'type' => 'checkbox',
+					'value' => 'yes',
+					'default' => '',
+					'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+				],
+				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
+			],
+		];
 	}
 
 	/**

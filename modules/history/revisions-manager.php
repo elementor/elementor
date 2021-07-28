@@ -71,7 +71,9 @@ class Revisions_Manager {
 	public static function avoid_delete_auto_save( $post_content, $post_id ) {
 		// Add a temporary string in order the $post will not be equal to the $autosave
 		// in edit-form-advanced.php:210
-		if ( $post_id && Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document && $document->is_built_with_elementor() ) {
 			$post_content .= '<!-- Created with Elementor -->';
 		}
 
@@ -86,9 +88,13 @@ class Revisions_Manager {
 	public static function remove_temp_post_content() {
 		global $post;
 
-		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return;
 		}
+
+		$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
 	}
 
 	/**
@@ -148,10 +154,13 @@ class Revisions_Manager {
 
 			if ( $revision->ID === $post->ID ) {
 				$type = 'current';
+				$type_label = __( 'Current Version', 'elementor' );
 			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
+				$type_label = __( 'Autosave', 'elementor' );
 			} else {
 				$type = 'revision';
+				$type_label = __( 'Revision', 'elementor' );
 			}
 
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
@@ -172,6 +181,7 @@ class Revisions_Manager {
 					$date
 				),
 				'type' => $type,
+				'typeLabel' => $type_label,
 				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
 			];
 		}
@@ -207,9 +217,16 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function restore_revision( $parent_id, $revision_id ) {
-		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $revision_id );
+		$parent = Plugin::$instance->documents->get( $parent_id );
+		$revision = Plugin::$instance->documents->get( $revision_id );
 
-		Plugin::$instance->db->set_is_elementor_page( $parent_id, $is_built_with_elementor );
+		if ( ! $parent || ! $revision ) {
+			return;
+		}
+
+		$is_built_with_elementor = $revision->is_built_with_elementor();
+
+		$parent->set_is_built_with_elementor( $is_built_with_elementor );
 
 		if ( ! $is_built_with_elementor ) {
 			return;
@@ -341,30 +358,12 @@ class Revisions_Manager {
 	 * @since 1.7.0
 	 * @access public
 	 * @static
+	 * @deprecated 3.1.0
 	 */
-	public static function editor_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'edit_draft' => __( 'Edit Draft', 'elementor' ),
-				'edit_published' => __( 'Edit Published', 'elementor' ),
-				'no_revisions_1' => __( 'Revision history lets you save your previous versions of your work, and restore them any time.', 'elementor' ),
-				'no_revisions_2' => __( 'Start designing your page and you\'ll be able to see the entire revision history here.', 'elementor' ),
-				'current' => __( 'Current Version', 'elementor' ),
-				'restore' => __( 'Restore', 'elementor' ),
-				'restore_auto_saved_data' => __( 'Restore Auto Saved Data', 'elementor' ),
-				'restore_auto_saved_data_message' => __( 'There is an autosave of this post that is more recent than the version below. You can restore the saved data fron the Revisions panel', 'elementor' ),
-				'revision' => __( 'Revision', 'elementor' ),
-				'revision_history' => __( 'Revision History', 'elementor' ),
-				'revisions_disabled_1' => __( 'It looks like the post revision feature is unavailable in your website.', 'elementor' ),
-				'revisions_disabled_2' => sprintf(
-					/* translators: %s: Codex URL */
-					__( 'Learn more about <a target="_blank" href="%s">WordPress revisions</a>', 'elementor' ),
-					'https://go.elementor.com/wordpress-revisions/'
-				),
-			],
-		] );
+	public static function editor_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return $settings;
+		return [];
 	}
 
 	public static function ajax_get_revisions() {
@@ -389,7 +388,6 @@ class Revisions_Manager {
 	private static function register_actions() {
 		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
 		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
-		add_filter( 'elementor/editor/localize_settings', [ __CLASS__, 'editor_settings' ] );
 		add_filter( 'elementor/document/config', [ __CLASS__, 'document_config' ], 10, 2 );
 		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
 		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
