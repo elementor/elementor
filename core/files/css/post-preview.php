@@ -50,17 +50,6 @@ class Post_Preview extends Post_Local_Cache {
 	}
 
 	/**
-	 * @since 2.1.0
-	 * @access public
-	 * @deprecated 3.0.0 Use `Post_Preview::get_post_id_for_data()` instead
-	 */
-	protected function get_preview_id() {
-		_deprecated_function( __METHOD__, '3.0.0', __CLASS__ . '::get_post_id_for_data()' );
-
-		return $this->get_post_id_for_data();
-	}
-
-	/**
 	 * Get file handle ID.
 	 *
 	 * Retrieve the handle ID for the previewed post CSS file.

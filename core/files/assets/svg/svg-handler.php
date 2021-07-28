@@ -661,43 +661,6 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0 Use Files_Upload_Handler::file_sanitizer_can_run() instead.
-	 */
-	public function svg_sanitizer_can_run() {
-		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::file_sanitizer_can_run()' );
-
-		return Files_Upload_Handler::file_sanitizer_can_run();
-	}
-
-	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0
-	 */
-	public function upload_mimes() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0
-	 */
-	public function wp_handle_upload_prefilter() {
-		_deprecated_function( __METHOD__, '3.0.0' );
-	}
-
-	/**
-	 * @since 3.0.0
-	 * @deprecated 3.0.0 Use Files_Upload_Handler::is_enabled() instead.
-	 * @see is_enabled()
-	 */
-	public function is_svg_uploads_enabled() {
-		_deprecated_function( __METHOD__, '3.0.0', 'Files_Upload_Handler::is_enabled()' );
-
-		return Files_Upload_Handler::is_enabled();
-	}
-
-	/**
 	 * Svg_Handler constructor.
 	 */
 	public function __construct() {
