@@ -70,7 +70,7 @@ Conditions = function() {
 
 				comparisonResult = undefined !== value ?
 					self.compare( value, term.value, term.operator ) :
-					true;
+					false;
 			}
 
 			if ( isOrCondition ) {
