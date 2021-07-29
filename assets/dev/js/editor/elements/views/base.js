@@ -45,7 +45,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	behaviors() {
-		const groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+		const elementType = this.options.model.get( 'elType' );
+
+		const groups = elementor.hooks.applyFilters( `elements/${ elementType }/contextMenuGroups`, this.getContextMenuGroups(), this );
 
 		const behaviors = {
 			contextMenu: {
@@ -121,16 +123,6 @@ BaseElementView = BaseContainer.extend( {
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
-
-			if ( Object.keys( this.container.parent ).length ) {
-				this.container.parent.children[ this._index ] = this.container;
-
-				this.on( 'destroy', () => {
-					delete this.container.parent.children[ this._index ];
-
-					this.container.parent.children = this.container.parent.children.filter( ( child ) => null !== child );
-				} );
-			}
 		}
 		return this.container;
 	},

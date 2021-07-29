@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   JS-Lint:
     runs-on: ubuntu-16.04
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -34,6 +35,7 @@ jobs:
 
   PHP-Lint:
     runs-on: ubuntu-16.04
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -50,15 +52,12 @@ jobs:
       - name: Install Dependencies
         if: ${{ env.GIT_DIFF }}
         run: |
-          composer global require "squizlabs/php_codesniffer=*"
-          composer global require wp-coding-standards/wpcs
+          composer install
           composer require php-parallel-lint/php-parallel-lint
       - name: Run Lint
         if: ${{ env.GIT_DIFF }}
         run: |
-          export PATH=$HOME/.composer/vendor/bin:$PATH
-          phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-          phpcs -p -s -n ${{ env.GIT_DIFF }} --standard=./ruleset.xml --extensions=php
+          vendor/bin/phpcs -p -s -n ${{ env.GIT_DIFF }} --standard=./phpcs.xml --extensions=php
       - name: Run PHP Syntax Lint
         if: ${{ env.GIT_DIFF }}
         run: |
