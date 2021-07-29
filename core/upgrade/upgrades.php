@@ -929,7 +929,7 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
-	public static function _v_3_4_0_remove_old_elementor_scheme_() {
+	public static function _v_3_4_0_remove_old_elementor_scheme() {
 		global $wpdb;
 
 		$key = Base::SCHEME_OPTION_PREFIX;
