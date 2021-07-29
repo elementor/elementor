@@ -1256,6 +1256,9 @@ export default class EditorBase extends Marionette.Application {
 			newControlsStack = {};
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
+			let responsiveControlName,
+				desktopAppeared = false;
+
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
 				controlConfig.fields = this.generateResponsiveControls( controlConfig.fields );
@@ -1294,8 +1297,14 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
-				if ( 'desktop' !== device ) {
+				if ( 'desktop' === device ) {
+					desktopAppeared = true;
+				} else {
 					direction = activeBreakpoints[ device ].direction;
+
+					if ( desktopAppeared ) {
+						controlArgs.parent = responsiveControlName;
+					}
 				}
 
 				controlArgs.responsive[ direction ] = device;
@@ -1323,7 +1332,11 @@ export default class EditorBase extends Marionette.Application {
 
 				delete controlArgs.is_responsive;
 
-				const responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+
+				if ( controlArgs.parent ) {
+					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+				}
 
 				controlArgs.name = responsiveControlName;
 
