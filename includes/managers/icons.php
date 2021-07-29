@@ -1,8 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg as Font_Icon_Svg_Data_Manager;
-use Elementor\Core\Page_Assets\Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Manager;
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -230,11 +229,7 @@ class Icons_Manager {
 	}
 
 	public static function get_icon_svg_data( $icon ) {
-		$font_family_manager = Font_Icon_Svg_Manager::get_font_family_manager( $icon['font_family'] );
-
-		$config = $font_family_manager::get_config( $icon );
-
-		return self::$data_manager->get_asset_data( $config );
+		return self::$data_manager->get_font_icon_svg_data( $icon );
 	}
 
 	/**
@@ -289,7 +284,7 @@ class Icons_Manager {
 
 		$content = '';
 
-		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Manager::get_font_family( $icon['library'] ) : '';
+		$font_icon_svg_family = self::is_font_icon_inline_svg() ? Font_Icon_Svg_Data_Manager::get_font_family( $icon['library'] ) : '';
 
 		if ( $font_icon_svg_family ) {
 			$icon['font_family'] = $font_icon_svg_family;
