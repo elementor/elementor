@@ -252,8 +252,6 @@ class Elements_Manager {
 		 * After elements registered.
 		 *
 		 * Fires after Elementor elements are registered.
-		 * 
-		 * Modified by Oxibug - NULL Commit
 		 *
 		 * @since 1.0.0
 		 */
