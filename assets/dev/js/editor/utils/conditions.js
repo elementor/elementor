@@ -68,9 +68,8 @@ Conditions = function() {
 					value = value[ conditionSubKey ];
 				}
 
-				comparisonResult = undefined !== value ?
-					self.compare( value, term.value, term.operator ) :
-					false;
+				comparisonResult = ( undefined !== value ) &&
+					self.compare( value, term.value, term.operator );
 			}
 
 			if ( isOrCondition ) {
