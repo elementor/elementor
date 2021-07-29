@@ -15,7 +15,7 @@ jobs:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
       - name: Cache node modules
-        if: ${{ env.GIT_DIFF }}
+        if: ${{ env.GIT_DIFF }} # exports from 'technote-space/get-diff-action' action
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -50,7 +50,7 @@ jobs:
         with:
           php-version: '7.4'
       - name: Install Dependencies
-        if: ${{ env.GIT_DIFF }}
+        if: ${{ env.GIT_DIFF }} # exports from 'technote-space/get-diff-action' action
         run: |
           composer install
           composer require php-parallel-lint/php-parallel-lint
