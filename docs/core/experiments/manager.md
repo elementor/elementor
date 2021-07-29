@@ -26,7 +26,7 @@ In addition, you can "talk" directly to the manager in order to register an expe
 Using both of the above methods, you can set the experiment name, description, release status (alpha, beta, dev, etc.),
 default state (active / inactive) and more! You can even pass a callback to run when the feature state has changed!
 
-Then, in order to check if the experiment is active or not, you can ask the manager:
+Then, in order to check whether the experiment is active or not, you can ask the manager:
 
 ### PHP:
 ```php
@@ -41,7 +41,7 @@ Plugin::elementor()->experiments->is_feature_active( 'your-feature-name' );
 ```js
 elementorCommon.config.experimentalFeatures[ 'your-feature-name' ];
 
-// OR
+// OR in frontend pages:
 
 elementorFrontend.config.experimentalFeatures[ 'your-feature-name' ];
 ```
