@@ -299,6 +299,7 @@ class Widget_Accordion extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-accordion-icon, {{WRAPPER}} .elementor-accordion-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
@@ -313,6 +314,7 @@ class Widget_Accordion extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-active .elementor-accordion-icon, {{WRAPPER}} .elementor-active .elementor-accordion-title' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-active .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_ACCENT,
