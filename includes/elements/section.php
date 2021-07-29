@@ -1560,8 +1560,6 @@ class Element_Section extends Element_Base {
 	 *
 	 * Retrieve the section element HTML tag.
 	 *
-	 * Modifed by Oxibug - NULL Commit
-	 *
 	 * @since 1.5.3
 	 * @access private
 	 *
@@ -1581,8 +1579,6 @@ class Element_Section extends Element_Base {
 	 * Print section shape divider.
 	 *
 	 * Used to generate the shape dividers HTML.
-	 *
-	 * Modifed by Oxibug - NULL Commit
 	 *
 	 * @since 1.3.0
 	 * @access private
