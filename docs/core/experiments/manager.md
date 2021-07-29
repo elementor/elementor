@@ -59,3 +59,16 @@ elementorFrontend.config.experimentalFeatures[ 'your-feature-name' ];
 
 
 - You can also register a default experiment (usually a core code which doesn't have a dedicated module) using the `add_default_features()` method.
+
+
+___
+
+See also:
+
+- [Webpack Dynamic Imports](https://webpack.js.org/guides/code-splitting/#dynamic-imports)
+  
+
+- [Webpack and Dynamic Imports: Doing it Right](https://medium.com/front-end-weekly/webpack-and-dynamic-imports-doing-it-right-72549ff49234)
+
+
+- [What are Dynamic Imports and how to use them?](https://www.initialyze.com/blog/2020/11/what-are-dynamic-imports-and-how-to-use-them/)
