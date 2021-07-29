@@ -509,6 +509,10 @@ button.swiper-pagination-bullet {
 	top: 50%;
 	transform: translateY(-50%);
 
+	svg {
+		fill: $slides_gui;
+	}
+
 	&-prev {
 		left: 10px;
 	}
