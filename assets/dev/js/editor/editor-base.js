@@ -1271,7 +1271,16 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			devices.forEach( ( device ) => {
+			const popoverEndProperty = controlConfig.popover?.end;
+
+			// Since the `popoverEndProperty` variable now holds the value, we want to prevent this property from
+			// being duplicated to all responsive control instances. It should only be applied in the LAST responsive
+			// control.
+			if ( popoverEndProperty ) {
+				delete controlConfig.popover?.end;
+			}
+
+			devices.forEach( ( device, index ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
 
 				if ( controlArgs.device_args ) {
@@ -1325,7 +1334,15 @@ export default class EditorBase extends Marionette.Application {
 					}
 				}
 
-				// For each new responsive control, delete
+				// If the control belongs to a group control with a popover, and this control is the last one, add the
+				// popover.end = true value to it to make sure it closes the popover.
+				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
+					controlArgs.popover = {
+						end: true,
+					};
+				}
+
+				// For each new responsive control, delete the responsive defaults
 				devices.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
