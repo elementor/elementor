@@ -89,7 +89,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		promotion: {
-			ignore: '.elementor-panel-category-items',
+			ignore: '.elementor-responsive-panel',
 			callback: () => {
 				const dialog = elementor.promotion.dialog;
 
