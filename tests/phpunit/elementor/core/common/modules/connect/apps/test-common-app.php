@@ -78,6 +78,41 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
+	public function test_http_request__unauthorized_request_when_auth_mode_xhr() {
+		// Arrange
+		$user = $this->act_as_admin();
+
+		update_user_option( $user->ID, $this->app_stub->get_option_name(), [ 'a' => 1 ] );
+
+		add_filter( 'wp_doing_ajax', '__return_true' );
+
+		$this->app_stub = new Mock_App();
+		$this->app_stub->set_http( $this->http_stub );
+
+		remove_filter( 'wp_doing_ajax', '__return_true' );
+
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
+			->willReturn( [
+				'response' => [
+					'code' => 401,
+				],
+				'body' => '{"status": "failed", "message": "UnAuthorize"}',
+			] );
+
+		// Assert Before
+		$this->assertNotFalse( get_user_option( $this->app_stub->get_option_name(), $user->ID ) );
+
+		// Act
+		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
+
+		// Assert After
+		$this->assertEmpty( get_user_option( $this->app_stub->get_option_name(), $user->ID ) );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertEquals( 401, $result->get_error_code() );
+	}
+
 	public function test_http_request__return_error_when_not_response_code() {
 		// Arrange
 		$this->http_stub

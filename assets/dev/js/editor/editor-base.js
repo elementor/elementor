@@ -15,10 +15,10 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
-import Stylesheet from './utils/stylesheet';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
+import Breakpoints from 'elementor-utils/breakpoints';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -28,6 +28,8 @@ export default class EditorBase extends Marionette.Application {
 	loaded = false;
 
 	previewLoadedOnce = false;
+
+	activeBreakpointsUpdated = false;
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
@@ -597,10 +599,18 @@ export default class EditorBase extends Marionette.Application {
 		const currentBreakpoint = elementor.channels.deviceMode.request( 'currentMode' ),
 			{ activeBreakpoints } = elementorFrontend.config.responsive,
 			currentBreakpointData = activeBreakpoints[ currentBreakpoint ],
-			currentBreakpointMinPoint = Stylesheet.getDeviceMinBreakpoint( currentBreakpoint );
+			currentBreakpointMaxPoint = ( 'widescreen' === currentBreakpoint ) ? 9999 : currentBreakpointData.value;
+
+		let currentBreakpointMinPoint = this.breakpoints.getDeviceMinBreakpoint( currentBreakpoint );
+
+		// If the device under the current device mode's breakpoint has a larger max value - use the current device's
+		// value as the min width point.
+		if ( currentBreakpointMinPoint > currentBreakpointData.value ) {
+			currentBreakpointMinPoint = currentBreakpointData.value;
+		}
 
 		return {
-			maxWidth: currentBreakpointData.value,
+			maxWidth: currentBreakpointMaxPoint,
 			minWidth: currentBreakpointMinPoint,
 		};
 	}
@@ -611,12 +621,33 @@ export default class EditorBase extends Marionette.Application {
 				mobile: {
 					minHeight: 480,
 					height: 736,
+					width: 360,
+					maxHeight: 896,
+				},
+				mobile_extra: {
+					minHeight: 320,
+					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
 					minHeight: 768,
 					height: previewHeight,
 					maxHeight: 1024,
+				},
+				tablet_extra: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+				laptop: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1024,
+				},
+				widescreen: {
+					minHeight: 768,
+					height: previewHeight,
+					maxHeight: 1200,
 				},
 			};
 
@@ -646,7 +677,7 @@ export default class EditorBase extends Marionette.Application {
 
 			const breakpointResizeOptions = this.getBreakpointResizeOptions( currentBreakpoint );
 
-			let widthToShow = breakpointResizeOptions.minWidth;
+			let widthToShow = breakpointResizeOptions.width ?? breakpointResizeOptions.minWidth;
 
 			if ( preserveCurrentSize ) {
 				const currentSize = elementor.channels.responsivePreview.request( 'size' );
@@ -811,6 +842,8 @@ export default class EditorBase extends Marionette.Application {
 		this.destroyPreviewResizable();
 
 		elementorCommon.elements.$window.off( 'resize.deviceModeDesktop' );
+
+		this.channels.deviceMode.trigger( 'close' );
 	}
 
 	isDeviceModeActive() {
@@ -986,6 +1019,15 @@ export default class EditorBase extends Marionette.Application {
 
 		Backbone.Radio.DEBUG = false;
 		Backbone.Radio.tuneIn( 'ELEMENTOR' );
+
+		this.populateActiveBreakpointsConfig();
+
+		this.breakpoints = new Breakpoints( this.config.responsive );
+
+		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
+			// Duplicate responsive controls for section and column default configs.
+			this.generateResponsiveControlsForElements();
+		}
 
 		this.initComponents();
 
@@ -1198,7 +1240,124 @@ export default class EditorBase extends Marionette.Application {
 
 	addWidgetsCache( widgets ) {
 		jQuery.each( widgets, ( widgetName, widgetConfig ) => {
+			if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
+				// When the Responsive Optimization experiment is active, the responsive controls are generated on the
+				// JS side instead of the PHP.
+				widgetConfig.controls = this.generateResponsiveControls( widgetConfig.controls );
+			}
+
 			this.widgetsCache[ widgetName ] = jQuery.extend( true, {}, this.widgetsCache[ widgetName ], widgetConfig );
+		} );
+	}
+
+	generateResponsiveControls( controls ) {
+		const { activeBreakpoints } = this.config.responsive,
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
+			newControlsStack = {};
+
+		jQuery.each( controls, ( controlName, controlConfig ) => {
+			let responsiveControlName;
+
+			// Handle repeater controls.
+			if ( 'object' === typeof controlConfig.fields ) {
+				controlConfig.fields = this.generateResponsiveControls( controlConfig.fields );
+			}
+
+			// Only handle responsive controls in this loop.
+			if ( ! controlConfig.is_responsive ) {
+				newControlsStack[ controlName ] = controlConfig;
+
+				return;
+			}
+
+			devices.forEach( ( device ) => {
+				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
+
+				controlArgs.parent = responsiveControlName;
+
+				if ( controlArgs.device_args ) {
+					if ( controlArgs.device_args[ device ] ) {
+						controlArgs = { ...controlArgs, ...controlArgs.device_args[ device ] };
+					}
+
+					delete controlArgs.device_args;
+				}
+
+				// If there is a prefix class with a device modifier in it, add in the device modifier.
+				if ( controlArgs.prefix_class && -1 !== controlArgs.prefix_class.indexOf( '%s' ) ) {
+					const deviceModifier = 'desktop' === device ? '' : '-' + device;
+
+					controlArgs.prefix_class = controlArgs.prefix_class.replace( '%s', deviceModifier );
+				}
+
+				// If the 'responsive' property is empty, it is transferred from the PHP to JS as an array and not an
+				// object.
+				if ( Array.isArray( controlArgs.responsive ) ) {
+					controlArgs.responsive = {};
+				}
+
+				let direction = 'max';
+
+				if ( 'desktop' !== device ) {
+					direction = activeBreakpoints[ device ].direction;
+				}
+
+				controlArgs.responsive[ direction ] = device;
+
+				if ( controlArgs.min_affected_device ) {
+					if ( controlArgs.min_affected_device[ device ] ) {
+						controlArgs.responsive.min = controlArgs.min_affected_device[ device ];
+					}
+
+					delete controlArgs.min_affected_device;
+				}
+
+				if ( controlArgs[ device + '_default' ] ) {
+					if ( 'object' === typeof controlArgs[ device + '_default' ] ) {
+						controlArgs.default = { ...controlArgs.default, ...controlArgs[ device + '_default' ] };
+					} else {
+						controlArgs.default = controlArgs[ device + '_default' ];
+					}
+				}
+
+				// For each new responsive control, delete
+				devices.forEach( ( breakpoint ) => {
+					delete controlArgs[ breakpoint + '_default' ];
+				} );
+
+				delete controlArgs.is_responsive;
+
+				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+
+				if ( controlArgs.parent ) {
+					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+				}
+
+				controlArgs.name = responsiveControlName;
+
+				newControlsStack[ responsiveControlName ] = controlArgs;
+			} );
+		} );
+
+		return newControlsStack;
+	}
+
+	generateResponsiveControlsForElements() {
+		// Handle the default config for section and column.
+		const elementNames = Object.keys( this.config.elements );
+
+		elementNames.forEach( ( elementName ) => {
+			this.config.elements[ elementName ].controls = this.generateResponsiveControls( this.config.elements[ elementName ].controls );
+		} );
+	}
+
+	populateActiveBreakpointsConfig() {
+		this.config.responsive.activeBreakpoints = {};
+
+		Object.entries( this.config.responsive.breakpoints ).forEach( ( [ breakpointKey, breakpointData ] ) => {
+			if ( breakpointData.is_enabled ) {
+				this.config.responsive.activeBreakpoints[ breakpointKey ] = breakpointData;
+			}
 		} );
 	}
 
