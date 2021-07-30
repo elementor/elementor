@@ -211,11 +211,11 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
-	 * Function getUtilizedControls().
+	 * Function getAffectingControls().
 	 *
 	 * Should return all controls that effecting the container.
 	 */
-	getUtilizedControls() {
+	getAffectingControls() {
 		const result = {},
 			activeControls = this.settings.getActiveControls();
 

@@ -40,15 +40,15 @@ jQuery( () => {
 			assert.deepEqual( Object.keys( controls ), excepted );
 		} );
 
-		QUnit.test( 'getUtilizedControls(): Simple', ( assert ) => {
+		QUnit.test( 'getAffectingControls(): Simple', ( assert ) => {
 			const eButtonSimple = ElementsHelper.createAutoButton(),
 				eButtonStyled = ElementsHelper.createAutoButtonStyled();
 
-			assert.deepEqual( eButtonSimple.getUtilizedControls(), {} );
-			assert.deepEqual( Object.keys( eButtonStyled.getUtilizedControls() ), [ 'text', 'background_color' ] );
+			assert.deepEqual( eButtonSimple.getAffectingControls(), {} );
+			assert.deepEqual( Object.keys( eButtonStyled.getAffectingControls() ), [ 'text', 'background_color' ] );
 		} );
 
-		QUnit.test( 'getUtilizedControls(): Ensure global control', ( assert ) => {
+		QUnit.test( 'getAffectingControls(): Ensure global control', ( assert ) => {
 			// Arrange.
 			const eButton = ElementsHelper.createAutoButton(),
 				id = elementorCommon.helpers.getUniqueId(),
@@ -66,13 +66,13 @@ jQuery( () => {
 			GlobalsHelper.enable( eButton, { background_color } );
 
 			// Act.
-			const controls = eButton.getUtilizedControls();
+			const controls = eButton.getAffectingControls();
 
 			// Assert.
 			assert.equal( controls.background_color.global.utilized, true );
 		} );
 
-		QUnit.test( 'getUtilizedControls(): Ensure dynamic control', ( assert ) => {
+		QUnit.test( 'getAffectingControls(): Ensure dynamic control', ( assert ) => {
 			// Arrange.
 			const eButton = ElementsHelper.createAutoButton(),
 				dynamicTag = '[elementor-tag id="33e3c57" name="post-custom-field" settings="%7B%7D"]',
@@ -89,7 +89,7 @@ jQuery( () => {
 			} );
 
 			// Act.
-			const controls = eButton.getUtilizedControls();
+			const controls = eButton.getAffectingControls();
 
 			// Assert.
 			assert.equal( controls.text.dynamic.utilized, true );
