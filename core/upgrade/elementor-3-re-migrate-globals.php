@@ -73,7 +73,7 @@ class Elementor_3_Re_Migrate_Globals {
 
 		// Apply a default value for $kit_raw_settings in case it's not defined.
 		if ( empty( $kit_raw_settings )) {
-			$kit_raw_settings = array();
+			$kit_raw_settings = [];
 		}
 
 		if ( $this->has_typography() ) {
