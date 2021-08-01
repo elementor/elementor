@@ -10,9 +10,30 @@ export default class BreakpointValidator extends NumberValidator {
 		};
 	}
 
+	/**
+	 * Get Panel Active Breakpoints
+	 *
+	 * Since the active kit used in the Site Settings panel could be a draft, we need to use the panel's active
+	 * breakpoints settings and not the elementorFrontend.config values (which come from the DB).
+	 *
+	 * @returns Object
+	 */
+	getPanelActiveBreakpoints() {
+		const panelBreakpoints = elementor.documents.currentDocument.config.settings.settings.active_breakpoints.map( ( breakpointName ) => {
+			return breakpointName.replace( 'viewport_', '' );
+		} ),
+			panelActiveBreakpoints = {};
+
+		panelBreakpoints.forEach( ( breakpointName ) => {
+			panelActiveBreakpoints[ breakpointName ] = elementorFrontend.config.responsive.breakpoints[ breakpointName ];
+		} );
+
+		return panelActiveBreakpoints;
+	}
+
 	initBreakpointProperties() {
 		const validationTerms = this.getSettings( 'validationTerms' ),
-			activeBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
+			activeBreakpoints = this.getPanelActiveBreakpoints(),
 			breakpointKeys = Object.keys( activeBreakpoints );
 
 		this.breakpointIndex = breakpointKeys.indexOf( validationTerms.breakpointName );
