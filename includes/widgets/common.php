@@ -436,6 +436,11 @@ class Widget_Common extends Widget_Base {
 				'label_on' => __( 'On', 'elementor' ),
 				'label_off' => __( 'Off', 'elementor' ),
 				'default' => '',
+				// Box shadow doesn't work when using clip / mask, so we use `drop-shadow` instead.
+				'selectors' => [
+					'{{WRAPPER}} .elementor-widget-container' => 'box-shadow: none;',
+					'{{WRAPPER}}' => 'filter: drop-shadow( {{_box_shadow_box_shadow.HORIZONTAL}}px {{_box_shadow_box_shadow.VERTICAL}}px {{_box_shadow_box_shadow.BLUR}}px {{_box_shadow_box_shadow.COLOR}} );',
+				],
 			]
 		);
 
