@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Kits\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -61,6 +63,36 @@ class Tools extends Settings_Page {
 	}
 
 	/**
+	 * Recreate kit.
+	 *
+	 * Recreate default kit (only when default kit does not exist).
+	 *
+	 * Fired by `wp_ajax_elementor_recreate_kit` action.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function ajax_elementor_recreate_kit() {
+		check_ajax_referer( 'elementor_recreate_kit', '_nonce' );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit->get_id() ) {
+			wp_send_json_error( [ 'message' => __( 'There\'s already an active kit.', 'elementor' ) ], 400 );
+		}
+
+		$created_default_kit = Plugin::$instance->kits_manager->create_default();
+
+		if ( ! $created_default_kit ) {
+			wp_send_json_error( [ 'message' => __( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
+		}
+
+		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
+
+		wp_send_json_success( __( 'New kit have been created successfully', 'elementor' ) );
+	}
+
+	/**
 	 * Replace URLs.
 	 *
 	 * Sends an ajax request to replace old URLs to new URLs. This method also
@@ -100,7 +132,7 @@ class Tools extends Settings_Page {
 
 		$rollback_versions = $this->get_rollback_versions();
 		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
-			wp_die( __( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
+			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
 		}
 
 		$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
@@ -117,7 +149,7 @@ class Tools extends Settings_Page {
 		$rollback->run();
 
 		wp_die(
-			'', __( 'Rollback to Previous Version', 'elementor' ), [
+			'', esc_html__( 'Rollback to Previous Version', 'elementor' ), [
 				'response' => 200,
 			]
 		);
@@ -136,10 +168,9 @@ class Tools extends Settings_Page {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
 
-		if ( ! empty( $_POST ) ) {
-			add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
-			add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
-		}
+		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
+		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
+		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
 	}
@@ -216,26 +247,26 @@ class Tools extends Settings_Page {
 		}
 		$rollback_html .= '</select>';
 
-		return [
+		$tabs = [
 			'general' => [
-				'label' => __( 'General', 'elementor' ),
+				'label' => esc_html__( 'General', 'elementor' ),
 				'sections' => [
 					'tools' => [
 						'fields' => [
 							'clear_cache' => [
-								'label' => __( 'Regenerate CSS', 'elementor' ),
+								'label' => esc_html__( 'Regenerate CSS & Data', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), __( 'Regenerate Files', 'elementor' ) ),
-									'desc' => __( 'Styles set in Elementor are saved in CSS files in the uploads folder. Recreate those files, according to the most recent settings.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
+									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
-								'label' => __( 'Sync Library', 'elementor' ),
+								'label' => esc_html__( 'Sync Library', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), __( 'Sync Library', 'elementor' ) ),
-									'desc' => __( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), esc_html__( 'Sync Library', 'elementor' ) ),
+									'desc' => esc_html__( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 								],
 							],
 						],
@@ -243,7 +274,7 @@ class Tools extends Settings_Page {
 				],
 			],
 			'replace_url' => [
-				'label' => __( 'Replace URL', 'elementor' ),
+				'label' => esc_html__( 'Replace URL', 'elementor' ),
 				'sections' => [
 					'replace_url' => [
 						'callback' => function() {
@@ -255,15 +286,15 @@ class Tools extends Settings_Page {
 							$intro_text = '<div>' . $intro_text . '</div>';
 
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'replace_url' => [
-								'label' => __( 'Update Site Address (URL)', 'elementor' ),
+								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), __( 'Replace URL', 'elementor' ) ),
-									'desc' => __( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="http://old-url.com" class="medium-text"><input type="text" name="to" placeholder="http://new-url.com" class="medium-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],
 						],
@@ -271,10 +302,10 @@ class Tools extends Settings_Page {
 				],
 			],
 			'versions' => [
-				'label' => __( 'Version Control', 'elementor' ),
+				'label' => esc_html__( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
-						'label' => __( 'Rollback to Previous Version', 'elementor' ),
+						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
 								/* translators: %s: Elementor version */
@@ -283,44 +314,47 @@ class Tools extends Settings_Page {
 							);
 							$intro_text = '<p>' . $intro_text . '</p>';
 
-							echo $intro_text;
+							Utils::print_unescaped_internal_string( $intro_text );
 						},
 						'fields' => [
 							'rollback' => [
-								'label' => __( 'Rollback Version', 'elementor' ),
+								'label' => esc_html__( 'Rollback Version', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf(
-										$rollback_html . '<a data-placeholder-text="' . __( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
+										$rollback_html . '<a data-placeholder-text="' . esc_html__( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
 										__( 'Reinstall', 'elementor' )
 									),
-									'desc' => '<span style="color: red;">' . __( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
+									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
 							],
 						],
 					],
 					'beta' => [
-						'label' => __( 'Become a Beta Tester', 'elementor' ),
+						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							$intro_text = __( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' );
-							$intro_text = '<p>' . $intro_text . '</p>';
-							$newsletter_opt_in_text = sprintf( __( '<a id="beta-tester-first-to-know" href="%s">Click here</a> to join our first-to-know email updates.', 'elementor' ), '#' );
-
-							echo $intro_text;
-							echo $newsletter_opt_in_text;
+							echo '<p>' .
+								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
+								'</p>';
+							echo sprintf(
+								/* translators: %1$s Link open tag, %2$s: Link close tag. */
+								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
+								'<a id="beta-tester-first-to-know" href="#">',
+								'</a>'
+							);
 						},
 						'fields' => [
 							'beta' => [
-								'label' => __( 'Beta Tester', 'elementor' ),
+								'label' => esc_html__( 'Beta Tester', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
-									'default' => 'no',
+									'std' => 'no',
 									'options' => [
-										'no' => __( 'Disable', 'elementor' ),
-										'yes' => __( 'Enable', 'elementor' ),
+										'no' => esc_html__( 'Disable', 'elementor' ),
+										'yes' => esc_html__( 'Enable', 'elementor' ),
 									],
-									'desc' => '<span style="color: red;">' . __( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
+									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
 								],
 							],
 						],
@@ -328,6 +362,18 @@ class Tools extends Settings_Page {
 				],
 			],
 		];
+
+		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
+			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
+				'label' => __( 'Recreate Kit', 'elementor' ),
+				'field_args' => [
+					'type' => 'raw_html',
+					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
+					'desc' => __( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
+				],
+			];
+		}
+		return $tabs;
 	}
 
 	/**

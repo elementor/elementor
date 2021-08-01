@@ -217,7 +217,11 @@ export default class Container extends ArgsObject {
 				}
 				const container = view.container;
 
-				container.parent.children[ view._index ] = container;
+				// Since the way 'global-widget' rendered, it does not have parent sometimes.
+				if ( container.parent.children ) {
+					container.parent.children[ view._index ] = container;
+				}
+
 				container.handleChildrenRecursive();
 			} );
 		} else {
@@ -286,6 +290,17 @@ export default class Container extends ArgsObject {
 		}
 	}
 
+	/**
+	 * Function addRepeaterItem().
+	 *
+	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
+	 *
+	 * @param {string} repeaterName
+	 * @param {Backbone.Model} rowSettingsModel
+	 * @param {number} index
+	 *
+	 * @returns {Container}
+	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
 
@@ -308,6 +323,8 @@ export default class Container extends ArgsObject {
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
 		} ) );
+
+		return this.repeaters[ repeaterName ];
 	}
 
 	/**
@@ -359,6 +376,54 @@ export default class Container extends ArgsObject {
 	}
 
 	/**
+	 * Function findChildrenRecursive().
+	 *
+	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	findChildrenRecursive( callback ) {
+		if ( callback( this ) ) {
+			return this;
+		}
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				const foundChildren = container.findChildrenRecursive( callback );
+
+				if ( foundChildren ) {
+					return foundChildren;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Function forEachChildrenRecursive().
+	 *
+	 * Will run over children recursively.
+	 *
+	 * @param {function(container:Container)} callback
+	 *
+	 * @returns {false|Container}
+	 */
+	forEachChildrenRecursive( callback ) {
+		callback( this );
+
+		if ( this.children.length ) {
+			for ( const container of this.children ) {
+				container.forEachChildrenRecursive( callback );
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Function render().
 	 *
 	 * Call view render.
@@ -399,8 +464,8 @@ export default class Container extends ArgsObject {
 		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 
-	getSetting( controlName, localOnly = false ) {
-		const localValue = this.settings.get( controlName );
+	getSetting( name, localOnly = false ) {
+		const localValue = this.settings.get( name );
 
 		if ( localOnly ) {
 			return localValue;
@@ -436,7 +501,10 @@ export default class Container extends ArgsObject {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
+			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
+
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( responsivePrefixRegex, '' );
 
 			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
 				return;

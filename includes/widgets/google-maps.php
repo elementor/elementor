@@ -41,7 +41,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Google Maps', 'elementor' );
+		return esc_html__( 'Google Maps', 'elementor' );
 	}
 
 	/**
@@ -100,15 +100,34 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map',
 			[
-				'label' => __( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Map', 'elementor' ),
 			]
 		);
 
-		$default_address = __( 'London Eye, London, United Kingdom', 'elementor' );
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			$api_key = get_option( 'elementor_google_maps_api_key' );
+
+			if ( ! $api_key ) {
+				$this->add_control(
+					'api_key_notification',
+					[
+						'type' => Controls_Manager::RAW_HTML,
+						'raw' => sprintf(
+							esc_html__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
+							Settings::get_url() . '#tab-integrations',
+							'https://developers.google.com/maps/documentation/embed/get-api-key'
+						),
+						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+					]
+				);
+			}
+		}
+
+		$default_address = esc_html__( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
 			'address',
 			[
-				'label' => __( 'Location', 'elementor' ),
+				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
@@ -125,7 +144,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'zoom',
 			[
-				'label' => __( 'Zoom', 'elementor' ),
+				'label' => esc_html__( 'Zoom', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 10,
@@ -143,7 +162,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_responsive_control(
 			'height',
 			[
-				'label' => __( 'Height', 'elementor' ),
+				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -165,7 +184,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'view',
 			[
-				'label' => __( 'View', 'elementor' ),
+				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 			]
@@ -176,7 +195,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => __( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Map', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -185,7 +204,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		$this->start_controls_tab( 'normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -201,7 +220,7 @@ class Widget_Google_Maps extends Widget_Base {
 
 		$this->start_controls_tab( 'hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -216,7 +235,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->add_control(
 			'hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -256,12 +275,30 @@ class Widget_Google_Maps extends Widget_Base {
 			$settings['zoom']['size'] = 10;
 		}
 
-		printf(
-			'<div class="elementor-custom-embed"><iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near" title="%3$s" aria-label="%3$s"></iframe></div>',
+		$api_key = esc_html( get_option( 'elementor_google_maps_api_key' ) );
+
+		$params = [
 			rawurlencode( $settings['address'] ),
 			absint( $settings['zoom']['size'] ),
-			esc_attr( $settings['address'] )
-		);
+		];
+
+		if ( $api_key ) {
+			$params[] = $api_key;
+
+			$url = 'https://www.google.com/maps/embed/v1/place?key=%3$s&q=%1$s&amp;zoom=%2$d';
+		} else {
+			$url = 'https://maps.google.com/maps?q=%1$s&amp;t=m&amp;z=%2$d&amp;output=embed&amp;iwloc=near';
+		}
+
+		?>
+		<div class="elementor-custom-embed">
+			<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+					src="<?php echo esc_url( vsprintf( $url, $params ) ); ?>"
+					title="<?php echo esc_attr( $settings['address'] ); ?>"
+					aria-label="<?php echo esc_attr( $settings['address'] ); ?>"
+			></iframe>
+		</div>
+		<?php
 	}
 
 	/**

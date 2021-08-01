@@ -22,49 +22,62 @@ const getChunkName = ( chunkData, environment ) => {
 	return `${ name }[contenthash].bundle${ minSuffix }.js`;
 };
 
-const moduleRules = {
-	rules: [
-		// {
-		// 	enforce: 'pre',
-		// 	test: /\.js$/,
-		// 	exclude: /node_modules/,
-		// 	loader: 'eslint-loader',
-		// 	options: {
-		// 		failOnError: true,
-		// 	}
-		// },
-		{
-			test: /core[/\\]app.*\.(s)?css$/i,
-			use: [
-				{
-					loader: './loaders/app-imports.js',
-				},
-			],
-		},
-		{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: [
-				{
-					loader: 'babel-loader',
-					options: {
-						presets: [ '@wordpress/default' ],
-						plugins: [
-							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
-							[ '@babel/plugin-transform-react-jsx', {
-								'pragmaFrag': 'React.Fragment',
-							} ],
-							[ '@babel/plugin-proposal-class-properties' ],
-							[ '@babel/plugin-transform-runtime' ],
-							[ '@babel/plugin-transform-modules-commonjs' ],
-							[ '@babel/plugin-proposal-optional-chaining' ],
-						],
+const getModuleRules = ( presets ) => {
+	return {
+		rules: [
+			{
+				test: /core[/\\]app.*\.(s)?css$/i,
+				use: [
+					{
+						loader: './loaders/app-imports.js',
 					},
-				},
+				],
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						options: {
+							presets,
+							plugins: [
+								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
+								[ '@babel/plugin-transform-react-jsx', {
+									'pragmaFrag': 'React.Fragment',
+								} ],
+								[ '@babel/plugin-transform-runtime' ],
+								[ '@babel/plugin-transform-modules-commonjs' ],
+							],
+						},
+					},
+				],
+			},
+		],
+	};
+};
+
+const moduleRules = getModuleRules( [ '@wordpress/default' ] );
+
+const frontendRulesPresets = [ [
+	'@babel/preset-env',
+	{
+		targets: {
+			browsers: [
+				'last 1 Android versions',
+				'last 1 ChromeAndroid versions',
+				'last 2 Chrome versions',
+				'last 2 Firefox versions',
+				'last 2 Safari versions',
+				'last 2 iOS versions',
+				'last 2 Edge versions',
+				'last 2 Opera versions',
 			],
 		},
-	],
-};
+	}
+] ];
+
+const frontendModuleRules = getModuleRules( frontendRulesPresets );
 
 const entry = {
 	'editor': [
@@ -86,6 +99,7 @@ const entry = {
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 };
 
 const frontendEntries = {
@@ -96,11 +110,11 @@ const frontendEntries = {
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'react-dom': 'ReactDOM',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
+	react: 'React',
+	'react-dom': 'ReactDOM',
+	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+	'@elementor/router': 'elementorAppPackages.router',
 };
 
 const plugins = [
@@ -117,7 +131,6 @@ const baseConfig = {
 	target: 'web',
 	context: __dirname,
 	externals,
-	module: moduleRules,
 	resolve: aliasList,
 };
 
@@ -139,6 +152,7 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		module: moduleRules,
 		plugins: [
 			...plugins,
 		],
@@ -147,6 +161,7 @@ const webpackConfig = [
 	},
 	{
 		...devSharedConfig,
+		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
 			...plugins,
@@ -192,6 +207,7 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		module: moduleRules,
 		plugins: [
 			...plugins,
 		],
@@ -206,6 +222,7 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),
 			...plugins,
