@@ -185,7 +185,7 @@ class Documents_Manager {
 		/**
 		 * Retrieve document post ID.
 		 *
-		 * Filters the documents post id.
+		 * Filters the document post ID.
 		 *
 		 * @since 2.0.7
 		 *
