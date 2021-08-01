@@ -21,7 +21,6 @@ jobs:
 
   test:
     runs-on: ubuntu-16.04
-    name: Test
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff }}
     strategy:
