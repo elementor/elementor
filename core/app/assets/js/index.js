@@ -9,8 +9,6 @@ new SiteEditor();
 
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 
-console.log( 'test' );
-
 ReactDOM.render(
 	<AppWrapper>
 		<App />
