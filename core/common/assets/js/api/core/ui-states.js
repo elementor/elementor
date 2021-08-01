@@ -12,21 +12,17 @@ export default class UiStates {
 	 * Register a new state.
 	 *
 	 * @param {UiStateBase} instance - State instance.
-	 * @param {Document[]|HTMLElement[]} context - List of contexts for the state. Defaults to current document.
 	 *
 	 * @return {void}
 	 */
-	register( instance, context = [ window.document ] ) {
+	register( instance ) {
 		const stateId = instance.getPrefixedId();
 
 		if ( this.states[ stateId ] ) {
 			throw `State '${ stateId }' already exists.`;
 		}
 
-		this.states[ stateId ] = {
-			instance,
-			context,
-		};
+		this.states[ stateId ] = instance;
 	}
 
 	/**
@@ -45,7 +41,7 @@ export default class UiStates {
 	getAll() {
 		const states = {};
 
-		Object.entries( this.states ).forEach( ( [ id, { instance } ] ) => {
+		Object.entries( this.states ).forEach( ( [ id, instance ] ) => {
 			const options = instance.getOptions();
 
 			states[ id ] = Object.keys( options );
@@ -59,7 +55,7 @@ export default class UiStates {
 	 *
 	 * @param {string} state - State ID.
 	 *
-	 * @return {object}
+	 * @return {UiStateBase}
 	 */
 	get( state ) {
 		if ( state ) {
@@ -90,22 +86,17 @@ export default class UiStates {
 			classPrefix = `e-ui-state--${ state.replaceAll( '/', '-' ) }`,
 			oldStateClass = `${ classPrefix }__${ oldValue }`,
 			newStateClass = `${ classPrefix }__${ value }`,
-			context = this.states[ state ].context;
+			scopes = this.get( state ).getScopes();
 
 		// Set the current state to the new value.
-		this.get( state ).instance.set( value );
+		this.get( state ).set( value );
 
-		context.forEach( ( c ) => {
-			// If it's a document instance, get the body element as a context.
-			// Used `toString()` since Chrome & FF treat it differently.
-			const isDocumentElement = ( c.constructor.toString() === HTMLDocument.prototype.constructor.toString() ),
-				contextElement = isDocumentElement ? c.body : c;
-
-			contextElement.classList.remove( oldStateClass );
+		scopes.forEach( ( scope ) => {
+			scope.classList.remove( oldStateClass );
 
 			// Set the new class only if there is a value (i.e. it's not a state removal action).
 			if ( value ) {
-				contextElement.classList.add( newStateClass );
+				scope.classList.add( newStateClass );
 			}
 
 			// Dispatch a custom state-change event to the context.
@@ -116,7 +107,7 @@ export default class UiStates {
 				},
 			} );
 
-			c.dispatchEvent( event );
+			scope.dispatchEvent( event );
 		} );
 	}
 
@@ -139,8 +130,6 @@ export default class UiStates {
 	 * @return {string}
 	 */
 	getCurrent( state ) {
-		const { instance } = this.get( state );
-
-		return instance?.getCurrent();
+		return this.get( state )?.getCurrent();
 	}
 }

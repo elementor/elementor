@@ -5,7 +5,7 @@
 
 | Method                     | Params                                                   | Returns   | Description
 |----------------------------|----------------------------------------------------------|-----------|---------------------------------------------------------------------
-| `$e.uiStates.register()`   |`{UiStateBase}` *instance*, `{HTMLElement[]}` *context*   | `{void}`  | Register a new UI state.
+| `$e.uiStates.register()`   |`{UiStateBase}` *instance*   								| `{void}`  | Register a new UI state.
 | `$e.uiStates.getAll()`     |                                                          | `{Object}`| Get all existing UI states with their options.
 | `$e.uiStates.get()`        | `{String}` *state*                                       | `{Object}`| Get the state value, or return all of them if no `state` is set.
 | `$e.uiStates.set()`        | `{String}` *state*, `{String}` *value*                   | `{void}`  | Set the current state value and trigger its callbacks & events.

@@ -15,10 +15,10 @@ export class DirectionMode extends UiStateBase {
 		};
 	}
 
-	getContexts() {
+	getScopes() {
 		return [
-			window.document,
-			elementor.$previewContents[ 0 ],
+			window.document.body,
+			elementor.$previewContents[ 0 ].body,
 		];
 	}
 }

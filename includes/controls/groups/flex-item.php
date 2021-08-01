@@ -154,7 +154,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'selectors_dictionary' => [
 				// Hacks to set the order to start / end.
 				// For example, if the user has 10 widgets, but wants to set the 5th one to be first,
-				// this hack should do the trick.
+				// this hack should do the trick while taking in account elements with `order: 0` or less.
 				'start' => '-99999 /* order start hack */',
 				'end' => '99999 /* order end hack */',
 				'custom' => '',

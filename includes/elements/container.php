@@ -847,101 +847,6 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * Register the Container's typography controls.
-	 *
-	 * @return void
-	 */
-	protected function register_typography_controls() {
-		$this->start_controls_section(
-			'section_typography',
-			[
-				'label' => __( 'Typography', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'heading_color',
-			[
-				'label' => __( 'Heading Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					// Not using CSS variables since it'll be `invalid at computed-value time` if the user didn't set a color.
-					// As a result, the text will become black (the initial value for `color`) and won't inherit the theme colors.
-					// (Also in other color controls)
-					// Ref: https://www.w3.org/TR/css-variables-1/#invalid-at-computed-value-time
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-				'separator' => 'none',
-			]
-		);
-
-		$this->add_control(
-			'color_text',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link',
-			[
-				'label' => __( 'Link Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'color_link_hover',
-			[
-				'label' => __( 'Link Hover Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_align',
-			[
-				'label' => __( 'Text Align', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
 	 * Register the Container's style tab.
 	 *
 	 * @return void
@@ -952,8 +857,6 @@ class Container extends Element_Base {
 		$this->register_background_overlay_controls();
 
 		$this->register_border_controls();
-
-		$this->register_typography_controls();
 	}
 
 	/**

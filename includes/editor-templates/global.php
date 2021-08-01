@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="e-container-select-preset__inner">
 		<div class="e-container-select-preset__close">
 			<i class="eicon-close" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo __( 'Close', 'elementor' ); ?></span>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
 		</div>
-		<div class="e-container-select-preset__title"><?php echo __( 'Add Container Structure', 'elementor' ); ?></div>
+		<div class="e-container-select-preset__title"><?php echo esc_html__( 'Add Container Structure', 'elementor' ); ?></div>
 		<div class="e-container-select-preset__list">
 			<#
 				const presets = [

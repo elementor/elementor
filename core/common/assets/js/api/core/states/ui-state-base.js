@@ -94,14 +94,13 @@ export default class UiStateBase {
 	}
 
 	/**
-	 * Retrieve an array of contexts that the state will be applied to.
-	 * TODO: Maybe change to `getScopes()`?
+	 * Retrieve an array of scopes that the state will be applied to.
 	 *
-	 * @return {Document[]|HTMLElement[]}
+	 * @return {HTMLElement[]}
 	 */
-	getContexts() {
+	getScopes() {
 		return [
-			window.document,
+			window.document.body,
 		];
 	}
 }
