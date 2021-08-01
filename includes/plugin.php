@@ -526,6 +526,7 @@ class Plugin {
 			 *
 			 * Fires when Elementor was fully loaded and instantiated.
 			 *
+			 *
 			 * @since 1.0.0
 			 */
 			do_action( 'elementor/loaded' );
