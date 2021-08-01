@@ -3,9 +3,27 @@ name: PHPUnit
 on: [push, pull_request]
 
 jobs:
-  run:
+  file-diff:
     runs-on: ubuntu-16.04
+    name: File Diff
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      php_diff: ${{ steps.php_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Check PHP files diff
+        id: php_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.php
+
+  test:
+    runs-on: ubuntu-16.04
+    name: Test
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.php_diff }}
     strategy:
       fail-fast: false
       matrix:
