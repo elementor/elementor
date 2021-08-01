@@ -34,11 +34,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Check JS files diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: |
-            **/*.+(js|ts|json|jsx|tsx)
       - name: Cache node modules
         uses: actions/cache@v2
         env:
