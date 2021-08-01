@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-16.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
-      js_diff: ${{ steps.js_diff_files.outputs }}
-      prev_version: ${{ steps.php_diff_files.outputs }}
+      js_diff: ${{ steps.js_diff_files.outputs.diff }}
+      prev_version: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
