@@ -137,10 +137,16 @@ export default class Breakpoints extends elementorModules.Module {
 		if ( breakpointNames[ 0 ] === device ) {
 			// For the lowest breakpoint, the min point is always 320.
 			minBreakpoint = 320;
-		} else if ( 'min' === activeBreakpoints[ device ].direction ) {
+		} else if ( 'widescreen' === device ) {
 			// Widescreen only has a minimum point. In this case, the breakpoint
 			// value in the Breakpoints config is itself the device min point.
-			minBreakpoint = activeBreakpoints[ device ].value;
+			if ( activeBreakpoints[ device ] ) {
+				minBreakpoint = activeBreakpoints[ device ].value;
+			} else {
+				// If the widescreen breakpoint does not exist in the active breakpoints config (for example, in the
+				// case this method runs as the breakpoint is being added), get the value from the full config.
+				minBreakpoint = this.responsiveConfig.breakpoints.widescreen;
+			}
 		} else {
 			const deviceNameIndex = breakpointNames.indexOf( device ),
 				previousIndex = deviceNameIndex - 1;

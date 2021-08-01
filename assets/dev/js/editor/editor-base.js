@@ -1310,12 +1310,9 @@ export default class EditorBase extends Marionette.Application {
 					desktopAppeared = true;
 				} else {
 					direction = activeBreakpoints[ device ].direction;
-
-					if ( desktopAppeared ) {
-						controlArgs.parent = responsiveControlName;
-					}
 				}
 
+				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
 				controlArgs.responsive[ direction ] = device;
 
 				if ( controlArgs.min_affected_device ) {

@@ -43,7 +43,7 @@ export default function AdminTopBar( props ) {
 	};
 
 	const controlSign = environment.mac ? '⌘' : '^';
-	const finderTooltipText = __( 'Search anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
+	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
 
 	return (
 		<div className="e-admin-top-bar">
