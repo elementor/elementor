@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Check PHP files diff
+      - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v4
         with:
