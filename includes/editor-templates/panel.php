@@ -147,7 +147,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 	<div class="e-panel-search-area e-panel-controls-search-area">
 		<div class="e-panel-search-wrapper e-panel-controls-search-wrapper">
-			<label for="elementor-panel-controls-search-input" class="screen-reader-text"><?php echo __( 'Search Control:', 'elementor' ); ?></label>
+			<label for="elementor-panel-controls-search-input" class="screen-reader-text"><?php echo esc_html__( 'Search Control:', 'elementor' ); ?></label>
 			<input type="search" id="elementor-panel-controls-search-input" placeholder="<?php esc_attr_e( 'Search Control...', 'elementor' ); ?>" autocomplete="off"/>
 			<i class="eicon-search-bold" aria-hidden="true"></i>
 		</div>
