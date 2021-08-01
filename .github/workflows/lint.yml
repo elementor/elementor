@@ -3,9 +3,33 @@ name: Lint
 on: [push, pull_request]
 
 jobs:
-  JS-Lint:
+  file-diff:
     runs-on: ubuntu-16.04
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js_diff: ${{ steps.js_diff_files.outputs }}
+      prev_version: ${{ steps.php_diff_files.outputs }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Check JS files diff
+        id: js_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.+(js|ts|json|jsx|tsx)
+      - name: Check PHP files diff
+        id: php_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.php
+
+
+  JS-Lint:
+    runs-on: ubuntu-16.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.js_diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -15,7 +39,6 @@ jobs:
           PATTERNS: |
             **/*.+(js|ts|json|jsx|tsx)
       - name: Cache node modules
-        if: ${{ env.GIT_DIFF }} # exports from 'technote-space/get-diff-action' action
         uses: actions/cache@v2
         env:
           cache-name: cache-node-modules
@@ -27,43 +50,33 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install Dependencies
-        if: ${{ env.GIT_DIFF }}
         run: npm i
       - name: Run Lint
-        if: ${{ env.GIT_DIFF }}
-        run: ./node_modules/eslint/bin/eslint.js ${{ env.GIT_DIFF }}
+        run: ./node_modules/eslint/bin/eslint.js .
 
   PHP-Lint:
     runs-on: ubuntu-16.04
-    if: startsWith( github.repository, 'elementor/' )
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.php_diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Check PHP files diff
-        uses: technote-space/get-diff-action@v4
-        with:
-          PATTERNS: |
-            **/*.php
       - name: Setup PHP 7.4
-        if: ${{ env.GIT_DIFF }}
         uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
         with:
           php-version: '7.4'
       - name: Install Dependencies
-        if: ${{ env.GIT_DIFF }} # exports from 'technote-space/get-diff-action' action
         run: |
           composer install
           composer require php-parallel-lint/php-parallel-lint
       - name: Run Lint
-        if: ${{ env.GIT_DIFF }}
         run: |
-          vendor/bin/phpcs -p -s -n ${{ env.GIT_DIFF }} --standard=./phpcs.xml --extensions=php
+          vendor/bin/phpcs -p -s -n . --standard=./phpcs.xml --extensions=php
       - name: Run PHP Syntax Lint
-        if: ${{ env.GIT_DIFF }}
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
-          php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
-          php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
-          php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
-          php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
-          php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor ${{ env.GIT_DIFF }}
+          php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
