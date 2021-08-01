@@ -10,6 +10,7 @@ import form from '../mock/elments/form';
 import heading from '../mock/elments/heading';
 import section from '../mock/elments/section';
 import tabs from '../mock/elments/tabs';
+import video from '../mock/elments/video';
 import SchemeItems from '../mock/schemes/items';
 
 // Document.
@@ -22,6 +23,7 @@ config.document.widgets = {
 	heading,
 	tabs,
 	form,
+	video,
 };
 
 // Settings.

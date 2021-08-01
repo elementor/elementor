@@ -96,6 +96,17 @@ export default class ElementsHelper {
 		} );
 	}
 
+	static createVideo( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'video',
+				settings,
+			},
+		} );
+	}
+
 	static createInnerSection( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,

@@ -1,5 +1,4 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentHelper from 'elementor-document/helper';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -45,7 +44,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	behaviors() {
-		const groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+		const elementType = this.options.model.get( 'elType' );
+
+		const groups = elementor.hooks.applyFilters( `elements/${ elementType }/contextMenuGroups`, this.getContextMenuGroups(), this );
 
 		const behaviors = {
 			contextMenu: {
@@ -176,7 +177,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),

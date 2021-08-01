@@ -152,11 +152,11 @@
 
 		@include inline-width('');
 
-		@media (max-width: $screen-md-max) {
+		@media (max-width: $screen-tablet-max) {
 			@include inline-width(-tablet);
 		}
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-mobile-max) {
 			@include inline-width(-mobile);
 		}
 	}
@@ -288,7 +288,7 @@
 }
 
 // Alignment for Tablet
-@media (max-width: $screen-md-max) {
+@media (max-width: $screen-tablet-max) {
 
 	.elementor-tablet-align- {
 
@@ -326,7 +326,7 @@
 }
 
 // Alignment for Mobile
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-mobile-align- {
 

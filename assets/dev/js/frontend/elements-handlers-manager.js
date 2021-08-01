@@ -16,6 +16,7 @@ module.exports = function( $ ) {
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
+		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
@@ -136,10 +137,11 @@ module.exports = function( $ ) {
 
 		elementorFrontend.hooks.doAction( 'frontend/element_ready/global', $scope, $ );
 
-		elementorFrontend.hooks.doAction( 'frontend/element_ready/' + elementType, $scope, $ );
+		elementorFrontend.hooks.doAction( `frontend/element_ready/${ elementType }`, $scope, $ );
 
 		if ( 'widget' === elementType ) {
-			elementorFrontend.hooks.doAction( 'frontend/element_ready/' + $scope.attr( 'data-widget_type' ), $scope, $ );
+			const widgetType = $scope.attr( 'data-widget_type' );
+			elementorFrontend.hooks.doAction( `frontend/element_ready/${ widgetType }`, $scope, $ );
 		}
 	};
 
