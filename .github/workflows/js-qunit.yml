@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-16.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff }}
-    name: QUnit
+    name: Qunit
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
