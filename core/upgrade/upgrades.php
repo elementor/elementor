@@ -26,6 +26,14 @@ class Upgrades {
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
+
+		$uploads_manager = Plugin::$instance->uploads_manager;
+
+		$temp_dir = $uploads_manager->get_temp_dir();
+
+		if ( file_exists( $temp_dir ) ) {
+			$uploads_manager->remove_file_or_dir( $temp_dir );
+		}
 	}
 
 	/**
@@ -811,7 +819,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => esc_html__( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}

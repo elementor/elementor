@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -20,10 +20,7 @@ export default function ImportContent() {
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
-					onClick={ () => {
-						context.dispatch( { type: 'SET_FILE', payload: null } );
-						navigate( 'import' );
-					} }
+					onClick={ () => context.dispatch( { type: 'SET_FILE', payload: null } ) }
 				/>
 
 				<ImportButton />
@@ -35,13 +32,19 @@ export default function ImportContent() {
 			</InlineLink>
 		);
 
+	useEffect( () => {
+		if ( ! context.data.file ) {
+			navigate( 'import' );
+		}
+	}, [ context.data.file ] );
+
 	return (
 		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
 					heading={ __( 'Import a Template Kit', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your file.', 'elementor' ),
+						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
 							{ __( 'By default, all of your components will be imported.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,

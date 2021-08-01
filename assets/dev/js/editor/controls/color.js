@@ -94,6 +94,14 @@ export default class extends ControlBaseDataView {
 			kit = container.document;
 		}
 
+		// Add a tooltip to the Eye Dropper.
+		$colorPicker.tipsy( {
+			title() {
+				return __( 'Color Sampler', 'elementor' );
+			},
+			gravity: 's',
+		} );
+
 		$colorPicker.on( 'click', () => {
 			$e.run( 'elements-color-picker/start', {
 				container,

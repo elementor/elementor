@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Library extends Common_App {
 	public function get_title() {
-		return __( 'Library', 'elementor' );
+		return esc_html__( 'Library', 'elementor' );
 	}
 
 	/**
@@ -24,7 +24,7 @@ class Library extends Common_App {
 
 	public function get_template_content( $id ) {
 		if ( ! $this->is_connected() ) {
-			return new \WP_Error( '401', __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+			return new \WP_Error( '401', esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
 		$body_args = [
@@ -48,6 +48,11 @@ class Library extends Common_App {
 		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
 
 		$template_content = $this->request( 'get_template_content', $body_args, true );
+
+		if ( is_wp_error( $template_content ) && 401 === $template_content->get_error_code() ) {
+			// Normalize 401 message
+			return new \WP_Error( 401, __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+		}
 
 		return $template_content;
 	}
@@ -95,6 +100,12 @@ class Library extends Common_App {
 				'label' => 'Remote Library Info',
 				'value' => get_option( 'elementor_remote_info_library' ),
 			],
+		];
+	}
+
+	protected function get_popup_success_event_data() {
+		return [
+			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 		];
 	}
 

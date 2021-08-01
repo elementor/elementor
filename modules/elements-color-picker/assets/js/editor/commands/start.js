@@ -1,8 +1,15 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import { addNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
 
+/**
+ * Start the color picking process.
+ */
 export class Start extends CommandBase {
 	apply( args ) {
+		// Activate the component since the default behavior will activate it only on route change,
+		// but this component doesn't have any routes.
+		this.component.activate();
+
 		// Prevent elements from triggering edit mode on click.
 		elementor.changeEditMode( 'picker' );
 

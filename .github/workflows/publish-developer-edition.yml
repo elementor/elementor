@@ -16,7 +16,7 @@ jobs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
       - name: Check developer-edition GitHub checks
-        uses: maael/confirm-checks-action@34a392d22e36c0cc7aace0ed98958169f36e16a7 # master
+        uses: ronkelementor/confirm-checks-action@f1f421685b34aaf0b1933b47cc9344c3a35307d6 # main
         with:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
           commit: developer-edition
@@ -75,6 +75,15 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+      - name: Notify slack on failure
+        if: failure()
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
   publish:
     if: ${{ !needs.bump-version.outputs.cancel_workflow }}
     needs: bump-version
@@ -90,6 +99,17 @@ jobs:
           PACKAGE_VERSION=$(node -p "require('./package.json').last_dev_version")
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
           npm ci
+      - name: Get beta tag
+        run: |
+          npm install --no-package-lock --no-save semver@7.3.4
+          BETA_TAG=$(node ./.github/scripts/get-beta-version.js)
+          echo "BETA_TAG=${BETA_TAG}" >> $GITHUB_ENV
+      - name: Add beta tag
+        if: ${{ env.BETA_TAG }}
+        env:
+          PACKAGE_VERSION: ${{ env.BETA_TAG }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/add-to-readme-beta-tag.sh"
       - name: Build
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}

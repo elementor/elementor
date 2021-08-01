@@ -66,19 +66,34 @@ export default class Component extends ComponentBase {
 		}
 	}
 
+	/**
+	 * Retrieve the Eye-Dropper namespace.
+	 *
+	 * @returns {string}
+	 */
 	getNamespace() {
 		return 'elements-color-picker';
 	}
 
+	/**
+	 * Import the component commands.
+	 *
+	 * @returns {object}
+	 */
 	defaultCommands() {
 		return this.importCommands( commands );
 	}
 
+	/**
+	 * Set the commands keyboard shortcuts.
+	 *
+	 * @returns {object}
+	 */
 	defaultShortcuts() {
 		return {
 			end: {
 				keys: 'esc',
-				scopes: [ 'panel', 'preview' ],
+				scopes: [ this.getNamespace() ],
 			},
 		};
 	}
