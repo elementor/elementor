@@ -77,14 +77,16 @@ class Control_Exit_Animation extends Control_Animation {
 			],
 		];
 
+		$additional_animations = [];
+
 		/**
-		 * Element appearance animations list.
+		 * Element exit animations list.
 		 *
 		 * @since 2.5.0
 		 *
-		 * @param array $additional_animations Additional Animations array.
+		 * @param array $additional_animations Additional animations array.
 		 */
-		$additional_animations = apply_filters( 'elementor/controls/exit-animations/additional_animations', [] );
+		$additional_animations = apply_filters( 'elementor/controls/exit-animations/additional_animations', $additional_animations );
 
 		return array_merge( $animations, $additional_animations );
 	}
