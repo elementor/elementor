@@ -1306,13 +1306,14 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
+				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
+
 				if ( 'desktop' === device ) {
 					desktopAppeared = true;
 				} else {
 					direction = activeBreakpoints[ device ].direction;
 				}
 
-				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
 				controlArgs.responsive[ direction ] = device;
 
 				if ( controlArgs.min_affected_device ) {
