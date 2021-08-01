@@ -16,7 +16,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 	},
 
 	updatePlaceholder: function() {
-		const placeholder = this.model.get( 'placeholder' )?.unit;
+		const placeholder = this.getControlPlaceholder()?.unit;
 
 		this.ui.units.removeClass( 'e-units-placeholder' );
 
