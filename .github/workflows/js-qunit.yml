@@ -1,4 +1,4 @@
-name: JS-Qunit
+name: Qunit
 
 on: [push, pull_request]
 
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-16.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff }}
-    name: Qunit
+    name: Test
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
