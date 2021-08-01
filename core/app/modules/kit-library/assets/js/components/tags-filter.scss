@@ -1,3 +1,15 @@
+$root: e-kit-library__tags-filter;
+
+.#{$root} {
+	--e-kit-library-tags-filter-list-search-background-color: #{theme-colors('light')};
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-kit-library-tags-filter-list-search-background-color: #{dark-tints( 600 )};
+	}
+}
+
 .e-kit-library__tags-filter {
 	margin-top: spacing(44);
 
@@ -24,7 +36,7 @@
 		margin-bottom: spacing(10);
 
 		.eps-search-input {
-			background: theme-colors('light');
+			background: var(--e-kit-library-tags-filter-list-search-background-color);
 		}
 	}
 
