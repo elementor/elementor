@@ -511,6 +511,8 @@ button.swiper-pagination-bullet {
 
 	svg {
 		fill: $slides_gui;
+		height: 1em;
+		width: 1em;
 	}
 
 	&-prev {

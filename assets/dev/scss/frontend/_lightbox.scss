@@ -40,6 +40,12 @@
 			padding: .25em;
 			z-index: 2;
 			line-height: 1;
+			display: flex;
+
+			svg {
+				height: 1em;
+				width: 1em;
+			}
 		}
 	}
 
