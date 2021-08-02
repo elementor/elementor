@@ -37,15 +37,7 @@ export default class API {
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 		this.data = new Data();
-
-		// Wait for Elementor init in order to be able to use `window.elementor`,
-		// and then wait for the preview to be ready (since a UI state might use the `$previewContents`).
-		jQuery( window ).on( 'elementor:init', () => {
-			elementor.on( 'preview:loaded', () => {
-				this.uiStates = new UiStates();
-				jQuery( window ).trigger( 'elementor:init-ui-states' );
-			} );
-		} );
+		this.uiStates = new UiStates();
 
 		this.modules = {
 			CommandBase,
