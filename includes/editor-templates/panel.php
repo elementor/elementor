@@ -155,7 +155,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 	<# if ( elementData.reload_preview ) { #>
 		<div class="elementor-update-preview">
-			<div class="elementor-update-preview-title"><?php echo __( 'Update changes to page', 'elementor' ); ?></div>
+			<div class="elementor-update-preview-title"><?php echo esc_html__( 'Update changes to page', 'elementor' ); ?></div>
 			<div class="elementor-update-preview-button-wrapper">
 				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 			</div>
