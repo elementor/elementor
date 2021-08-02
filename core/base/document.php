@@ -539,7 +539,17 @@ abstract class Document extends Controls_Stack {
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
-		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
+		$additional_config = [];
+
+		/**
+		 * Additional document configuration.
+		 *
+		 * Filters the document configuration by adding additional configuration.
+		 *
+		 * @param array $additional_config The additional document configuration.
+		 * @param int   $post_id           The post ID of the document.
+		 */
+		$additional_config = apply_filters( 'elementor/document/config', $additional_config, $this->get_main_id() );
 
 		if ( ! empty( $additional_config ) ) {
 			$config = array_replace_recursive( $config, $additional_config );
@@ -554,6 +564,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	protected function register_controls() {
 		$this->register_document_controls();
+
 		/**
 		 * Register document controls.
 		 *
