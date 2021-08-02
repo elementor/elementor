@@ -72,7 +72,7 @@ class Elementor_3_Re_Migrate_Globals {
 		$kit_raw_settings = $kit->get_meta( $meta_key );
 
 		// Apply a default value for $kit_raw_settings in case it's not defined.
-		if ( empty( $kit_raw_settings )) {
+		if ( empty( $kit_raw_settings ) ) {
 			$kit_raw_settings = [];
 		}
 
