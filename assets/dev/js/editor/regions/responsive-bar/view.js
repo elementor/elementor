@@ -104,6 +104,30 @@ export default class View extends Marionette.ItemView {
 		this.ui.scaleValue.text( parseInt( this.scalePercentage ) );
 	}
 
+	/**
+	 * Get Scale for Widescreen
+	 *
+	 * When the Widescreen device is selected, it is most likely necessary to scale down the display in order for the
+	 * preview iframe to fit in the preview section (gray area).
+	 *
+	 * @returns {number}
+	 */
+	getScaleForWidescreen() {
+		const previewContainerWidth = elementor.$previewWrapper.innerWidth(),
+			// 40px are added to compensate for the resize handles.
+			widescreenValue = elementor.config.responsive.activeBreakpoints.widescreen.value + 40;
+
+		let widescreenPercentage = 100;
+
+		// If the widescreen value is larger than the current preview section width, we scale the preview iframe down.
+		if ( ( widescreenValue / previewContainerWidth ) > 1 ) {
+			// Get the appropriate scale, rounded down 1 decimal point.
+			widescreenPercentage = previewContainerWidth / widescreenValue * 100;
+		}
+
+		return widescreenPercentage;
+	}
+
 	onRender() {
 		this.addTipsyToIconButtons();
 		this.setScalePercentage();
@@ -127,6 +151,26 @@ export default class View extends Marionette.ItemView {
 
 		if ( currentDeviceMode !== selectedDeviceMode ) {
 			elementor.changeDeviceMode( selectedDeviceMode, false );
+
+			let scalePercentage = 100,
+				// Only change scaling if necessary. For example, if the scale is already 100% and you are moving to a
+				// device which also requires a scale of 100%, no need to run the scale functionality.
+				doScale = false;
+
+			if ( 'widescreen' === selectedDeviceMode ) {
+				// Scale for widescreen according to the preview area size.
+				scalePercentage = this.getScaleForWidescreen();
+
+				doScale = true;
+			} else if ( 100 !== this.scalePercentage ) {
+				// For all other devices, make sure to scale to 100%.
+				doScale = true;
+			}
+
+			if ( doScale ) {
+				this.setScalePercentage( scalePercentage );
+				this.scalePreview();
+			}
 		}
 	}
 
