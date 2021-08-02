@@ -1280,6 +1280,19 @@ export default class EditorBase extends Marionette.Application {
 				delete controlConfig.popover?.end;
 			}
 
+			// Move the control's default to the desktop control
+			if ( controlConfig.default ) {
+				controlConfig.desktop_default = controlConfig.default;
+			}
+
+			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
+
+			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
+			// controls receive that default value.
+			if ( multipleDefaultValue ) {
+				controlConfig.default = defaultValue;
+			}
+
 			devices.forEach( ( device, index ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
 
