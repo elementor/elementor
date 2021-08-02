@@ -15,6 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Base_Data_Control extends Base_Control {
 
+	public function __construct() {
+		parent::__construct();
+
+		$default_value = $this->get_default_value();
+
+		if ( '' !== $default_value ) {
+			$this->set_settings( 'default_value', $default_value );
+		}
+	}
+
 	/**
 	 * Get data control default value.
 	 *
