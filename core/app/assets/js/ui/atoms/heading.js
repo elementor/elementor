@@ -1,4 +1,5 @@
 import { arrayToClassName } from '../../utils/utils';
+import { Styled } from 'elementor-app/styled';
 
 export default function Heading( props ) {
 	const baseClassName = 'eps',
@@ -14,7 +15,7 @@ export default function Heading( props ) {
 		className: arrayToClassName( classes ),
 	}, props.children );
 
-	return <Element />;
+	return <Styled.Heading className={ arrayToClassName( classes ) } variant="h1">{ props.children }</Styled.Heading>;
 }
 
 Heading.propTypes = {
