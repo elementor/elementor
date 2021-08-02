@@ -28,16 +28,12 @@ export default class Component extends ComponentBase {
 					return false;
 				}
 
-				if ( draggedElType === parentElType ) {
+				// Allow only nested containers.
+				if ( draggedElType === parentElType && 'container' !== draggedElType ) {
 					return false;
 				}
 
 				if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
-					return false;
-				}
-
-				// Allow only nested containers.
-				if ( draggedElType === parentElType && 'container' !== draggedElType ) {
 					return false;
 				}
 
