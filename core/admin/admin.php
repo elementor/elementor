@@ -726,6 +726,15 @@ class Admin extends App {
 			],
 		];
 
-		return apply_filters( 'elementor/admin/localize_settings', $settings );
+		/**
+		 * Filters the initial localize settings in the admin.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $settings Initial localize settings.
+		 */
+		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
+
+		return $settings;
 	}
 }
