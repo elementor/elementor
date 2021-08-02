@@ -140,7 +140,7 @@ class Container extends Element_Base {
 		}
 
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'background-video-container' ); ?>>
+		<div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
 			<?php if ( $video_properties ) : ?>
 				<div class="elementor-background-video-embed"></div>
 				<?php
