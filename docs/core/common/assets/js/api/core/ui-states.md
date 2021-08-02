@@ -15,7 +15,7 @@
 	- Each UI state has its own options & callback for each option.
 	- When a UI state is being changed, it:
 		- Adds a CSS class to the context elements (`e-ui-state--${ stateID }__${ value }`) - Slashes are being replaced by hyphens (e.g. `document/direction-mode` will become `document-direction-mode`).
-		- Dispatches a custom event to the context elements (`state:${ stateID }`) with `oldValue` and `newValue` under `e.detail`.
+		- Dispatches a custom event to the scope elements (`state:${ stateID }`) with `oldValue` and `newValue` under `e.detail`.
 	- Setting an invalid option to a state will throw an error.
 
 ## Guidelines, Conventions & Files Structure:
