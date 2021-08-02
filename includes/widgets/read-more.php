@@ -85,7 +85,16 @@ class Widget_Read_More extends Widget_Base {
 			]
 		);
 
-		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', __( 'Continue reading', 'elementor' ) );
+		$default_link_text = __( 'Continue reading', 'elementor' );
+
+		/**
+		 * Read More widgets link text.
+		 *
+		 * Filters the link text in the "Read More" widget.
+		 *
+		 * @param string $default_link_text The link text in the "Read More" widget. Default is "Continue reading".
+		 */
+		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', $default_link_text );
 
 		$this->add_control(
 			'theme_support',
