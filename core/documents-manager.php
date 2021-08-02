@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -352,7 +351,7 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', 'elementor' );
+			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
 					/* translators: %s: Document title */
@@ -485,16 +484,16 @@ class Documents_Manager {
 		// Set the post as global post.
 		Plugin::$instance->db->switch_to_post( $document->get_post()->ID );
 
-		$status = DB::STATUS_DRAFT;
+		$status = Document::STATUS_DRAFT;
 
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ], true ) ) {
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE, Document::STATUS_PENDING, Document::STATUS_AUTOSAVE ], true ) ) {
 			$status = $request['status'];
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $status ) {
+		if ( Document::STATUS_AUTOSAVE === $status ) {
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.
-			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
+			if ( in_array( $document->get_post()->post_status, [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE ], true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
 		}
@@ -589,7 +588,7 @@ class Documents_Manager {
 		$this->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $post_id );
+		$document->set_is_built_with_elementor( true );
 
 		$doc_config = $document->get_config();
 
@@ -654,21 +653,6 @@ class Documents_Manager {
 		return $this->current_doc;
 	}
 
-	/**
-	 * Get groups.
-	 *
-	 * @since 2.0.0
-	 * @deprecated 2.4.0
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function get_groups() {
-		_deprecated_function( __METHOD__, '2.4.0' );
-
-		return [];
-	}
-
 	public function localize_settings( $settings ) {
 		$translations = [];
 
@@ -692,5 +676,32 @@ class Documents_Manager {
 			 */
 			do_action( 'elementor/documents/register', $this );
 		}
+	}
+
+	/**
+	 * Get create new post URL.
+	 *
+	 * Retrieve a custom URL for creating a new post/page using Elementor.
+	 *
+	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
+	 *
+	 * @return string A URL for creating new post using Elementor.
+	 */
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		$query_args = [
+			'action' => 'elementor_new_post',
+			'post_type' => $post_type,
+		];
+
+		if ( $template_type ) {
+			$query_args['template_type'] = $template_type;
+		}
+
+		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
+
+		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
+
+		return $new_post_url;
 	}
 }

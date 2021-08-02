@@ -1,10 +1,11 @@
 <?php
 namespace Elementor\Core\Kits\Documents\Tabs;
 
-use Elementor\DB;
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Plugin;
 use Elementor\Controls_Manager;
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,21 +14,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Layout extends Tab_Base {
 
+	const ACTIVE_BREAKPOINTS_CONTROL_ID = 'active_breakpoints';
+
 	public function get_id() {
 		return 'settings-layout';
 	}
 
 	public function get_title() {
-		return __( 'Layout', 'elementor' );
+		return esc_html__( 'Layout', 'elementor' );
+	}
+
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-layout-settings';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-layout';
 	}
 
 	protected function register_tab_controls() {
-		$default_breakpoints = Responsive::get_default_breakpoints();
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+		$breakpoint_key_mobile = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$breakpoint_key_tablet = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
 			[
-				'label' => __( 'Layout Settings', 'elementor' ),
+				'label' => esc_html__( 'Layout Settings', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -35,16 +52,16 @@ class Settings_Layout extends Tab_Base {
 		$this->add_responsive_control(
 			'container_width',
 			[
-				'label' => __( 'Content Width', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => '1140',
 				],
 				'tablet_default' => [
-					'size' => $default_breakpoints['lg'],
+					'size' => $breakpoints_default_config[ $breakpoint_key_tablet ]['default_value'],
 				],
 				'mobile_default' => [
-					'size' => $default_breakpoints['md'],
+					'size' => $breakpoints_default_config[ $breakpoint_key_mobile ]['default_value'],
 				],
 				'range' => [
 					'px' => [
@@ -53,7 +70,7 @@ class Settings_Layout extends Tab_Base {
 						'step' => 10,
 					],
 				],
-				'description' => __( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
+				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
 				],
@@ -63,7 +80,7 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => __( 'Widgets Space', 'elementor' ) . ' (px)',
+				'label' => esc_html__( 'Widgets Space', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 20,
@@ -75,7 +92,7 @@ class Settings_Layout extends Tab_Base {
 					],
 				],
 				'placeholder' => '20',
-				'description' => __( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
+				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -85,11 +102,11 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'page_title_selector',
 			[
-				'label' => __( 'Page Title Selector', 'elementor' ),
+				'label' => esc_html__( 'Page Title Selector', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'h1.entry-title',
 				'placeholder' => 'h1.entry-title',
-				'description' => __( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
+				'description' => esc_html__( 'Elementor lets you hide the page title. This works for themes that have "h1.entry-title" selector. If your theme\'s selector is different, please enter it above.', 'elementor' ),
 				'label_block' => true,
 				'selectors' => [
 					// Hack to convert the value into a CSS selector.
@@ -101,10 +118,10 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control(
 			'stretched_section_container',
 			[
-				'label' => __( 'Stretched Section Fit To', 'elementor' ),
+				'label' => esc_html__( 'Stretched Section Fit To', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => 'body',
-				'description' => __( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
+				'description' => esc_html__( 'Enter parent element selector to which stretched sections will fit to (e.g. #primary / .wrapper / main etc). Leave blank to fit to page width.', 'elementor' ),
 				'label_block' => true,
 				'frontend_available' => true,
 			]
@@ -116,11 +133,14 @@ class Settings_Layout extends Tab_Base {
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$page_templates = $page_templates_module->add_page_templates( [], null, null );
 
+		// Removes the Theme option from the templates because 'default' is already handled.
+		unset( $page_templates[ PageTemplatesModule::TEMPLATE_THEME ] );
+
 		$page_template_control_options = [
-			'label' => __( 'Default Page Layout', 'elementor' ),
+			'label' => esc_html__( 'Default Page Layout', 'elementor' ),
 			'options' => [
 				// This is here because the "Theme" string is different than the default option's string.
-				'default' => __( 'Theme', 'elementor' ),
+				'default' => esc_html__( 'Theme', 'elementor' ),
 			] + $page_templates,
 		];
 
@@ -131,74 +151,178 @@ class Settings_Layout extends Tab_Base {
 		$this->start_controls_section(
 			'section_breakpoints',
 			[
-				'label' => __( 'Breakpoints', 'elementor' ),
+				'label' => esc_html__( 'Breakpoints', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
 
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+		$options = [];
+
+		foreach ( $breakpoints_default_config as $breakpoint_key => $breakpoint ) {
+			$options[ $prefix . $breakpoint_key ] = $breakpoint['label'];
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
+			$active_breakpoints_control_type = Controls_Manager::SELECT2;
+		} else {
+			$active_breakpoints_control_type = Controls_Manager::HIDDEN;
+		}
+
 		$this->add_control(
-			'breakpoint_md_heading',
+			self::ACTIVE_BREAKPOINTS_CONTROL_ID,
 			[
-				'label' => __( 'Mobile', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Active Breakpoints', 'elementor' ),
+				'type' => $active_breakpoints_control_type,
+				'description' => esc_html__( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
+				'options' => $options,
+				'default' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
+				],
+				'select2options' => [
+					'allowClear' => false,
+				],
+				'lockedOptions' => [
+					$prefix . $breakpoint_key_mobile,
+					$prefix . $breakpoint_key_tablet,
+				],
+				'label_block' => true,
+				'render_type' => 'none',
+				'frontend_available' => true,
+				'multiple' => true,
 			]
 		);
 
-		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'md',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['sm'] + 1,
-				'max' => $default_breakpoints['lg'] - 1,
-				'default' => $default_breakpoints['md'],
-				'placeholder' => $default_breakpoints['md'],
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between tablet and mobile devices. Below this breakpoint mobile layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['md'] ),
-			]
-		);
+		$this->add_breakpoints_controls();
 
-		$this->add_control(
-			'breakpoint_lg_heading',
-			[
-				'label' => __( 'Tablet', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-			]
-		);
-
-		$this->add_control(
-			Responsive::BREAKPOINT_OPTION_PREFIX . 'lg',
-			[
-				'label' => __( 'Breakpoint', 'elementor' ) . ' (px)',
-				'type' => Controls_Manager::NUMBER,
-				'min' => $default_breakpoints['md'] + 1,
-				'max' => $default_breakpoints['xl'] - 1,
-				'default' => $default_breakpoints['lg'],
-				'placeholder' => $default_breakpoints['lg'],
-				/* translators: %d: Breakpoint value */
-				'desc' => sprintf( __( 'Sets the breakpoint between desktop and tablet devices. Below this breakpoint tablet layout will appear (Default: %dpx).', 'elementor' ), $default_breakpoints['lg'] ),
-			]
-		);
+		// Include the old mobile and tablet breakpoint controls as hidden for backwards compatibility.
+		$this->add_control( 'viewport_md', [ 'type' => Controls_Manager::HIDDEN ] );
+		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Before Save
+	 *
+	 * Runs Before the Kit document is saved.
+	 *
+	 * For backwards compatibility, when the mobile and tablet breakpoints are updated, we also update the
+	 * old breakpoint settings ('viewport_md', 'viewport_lg' ) with the saved values + 1px. The reason 1px
+	 * is added is because the old breakpoints system was min-width based, and the new system introduced in
+	 * Elementor v3.2.0 is max-width based.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param array $data
+	 * @return array $data
+	 */
+	public function before_save( array $data ) {
+		// When creating a default kit, $data['settings'] is empty and should remain empty, so settings.
+		if ( empty( $data['settings'] ) ) {
+			return $data;
+		}
+
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+		$mobile_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE;
+		$tablet_breakpoint_key = $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
+		$default_breakpoint_config = Breakpoints_Manager::get_default_config();
+
+		// Update the old mobile breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'md' ] = empty( $data['settings'][ $mobile_breakpoint_key ] )
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ]['default_value'] + 1
+			: $data['settings'][ $mobile_breakpoint_key ] + 1;
+
+		// Update the old tablet breakpoint. If the setting is empty, use the default value.
+		$data['settings'][ $prefix . 'lg' ] = empty( $data['settings'][ $tablet_breakpoint_key ] )
+			? $default_breakpoint_config[ Breakpoints_Manager::BREAKPOINT_KEY_TABLET ]['default_value'] + 1
+			: $data['settings'][ $tablet_breakpoint_key ] + 1;
+
+		return $data;
+	}
+
 	public function on_save( $data ) {
-		if ( ! isset( $data['settings'] ) || DB::STATUS_PUBLISH !== $data['settings']['post_status'] ) {
+		if ( ! isset( $data['settings'] ) || ( isset( $data['settings']['post_status'] ) && Document::STATUS_PUBLISH !== $data['settings']['post_status'] ) ) {
 			return;
 		}
 
 		$should_compile_css = false;
 
-		foreach ( Responsive::get_editable_breakpoints() as $breakpoint_key => $breakpoint ) {
-			$setting_key = "viewport_{$breakpoint_key}";
-			if ( isset( $data['settings'][ $setting_key ] ) ) {
+		$breakpoints_default_config = Breakpoints_Manager::get_default_config();
+
+		foreach ( $breakpoints_default_config as $breakpoint_key => $default_config ) {
+			$breakpoint_setting_key = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . $breakpoint_key;
+
+			if ( isset( $data['settings'][ $breakpoint_setting_key ] ) ) {
 				$should_compile_css = true;
 			}
 		}
 
 		if ( $should_compile_css ) {
-			Responsive::compile_stylesheet_templates();
+			Breakpoints_Manager::compile_stylesheet_templates();
+		}
+	}
+
+	private function add_breakpoints_controls() {
+		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+
+		// If the ACB experiment is inactive, only add the mobile and tablet controls.
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
+			$default_breakpoints_config = array_intersect_key( $default_breakpoints_config, array_flip( [ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE, Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] ) );
+		}
+
+		// Add a control for each of the **default** breakpoints.
+		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
+			$this->add_control(
+				'breakpoint_' . $breakpoint_key . '_heading',
+				[
+					'label' => $default_breakpoint_config['label'],
+					'type' => Controls_Manager::HEADING,
+					'conditions' => [
+						'terms' => [
+							[
+								'name' => 'active_breakpoints',
+								'operator' => 'contains',
+								'value' => $prefix . $breakpoint_key,
+							],
+						],
+					],
+				]
+			);
+
+			$control_config = [
+				'label' => esc_html__( 'Breakpoint', 'elementor' ) . ' (px)',
+				'type' => Controls_Manager::NUMBER,
+				'placeholder' => $default_breakpoint_config['default_value'],
+				'frontend_available' => true,
+				'validators' => [
+					'Breakpoint' => [
+						'breakpointName' => $breakpoint_key,
+					],
+				],
+				'conditions' => [
+					'terms' => [
+						[
+							'name' => 'active_breakpoints',
+							'operator' => 'contains',
+							'value' => $prefix . $breakpoint_key,
+						],
+					],
+				],
+			];
+
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $breakpoint_key ) {
+				$control_config['description'] = esc_html__(
+					'Widescreen breakpoint settings will apply from the selected value and up.',
+					'elementor'
+				);
+			}
+
+			// Add the breakpoint Control itself.
+			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}
 	}
 }

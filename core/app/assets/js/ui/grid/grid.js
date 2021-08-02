@@ -1,4 +1,4 @@
-import { Styled } from 'elementor-app/styled';
+import { arrayToClassName, pxToRem } from 'elementor-app/utils/utils.js';
 
 import './grid.scss';
 
@@ -21,17 +21,11 @@ export default function Grid( props ) {
 			xl: '-item-xl{{ -VALUE }}',
 			xxl: '-item-xxl{{ -VALUE }}',
 		},
-		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': props.spacing } : {},
+		getStyle = () => isValidPropValue( props.spacing ) ? { '--grid-spacing-gutter': pxToRem( props.spacing ) } : {},
 		classes = [ getBaseClassName(), props.className, ...getPropsClasses( propsMap, props ) ];
 
 	return (
-		<Styled.Grid { ...props }>
-			{ props.children }
-		</Styled.Grid>
-	);
-
-	return (
-		<div style={ getStyle() } className={ classes.filter( ( classItem ) => '' !== classItem ).join( ' ' ) }>
+		<div style={ getStyle() } className={ arrayToClassName( classes ) }>
 			{ props.children }
 		</div>
 	);
@@ -89,11 +83,7 @@ Grid.propTypes = {
 	lg: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
 	xxl: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 Grid.defaultProps = {

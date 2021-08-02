@@ -56,18 +56,21 @@ WidgetView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.edit = {
-			title: elementor.translate( 'edit_element', [ elementData.title ] ),
+			/* translators: %s: Element Name. */
+			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'edit',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				title: elementor.translate( 'duplicate_element', [ elementData.title ] ),
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 
 			editTools.remove = {
-				title: elementor.translate( 'delete_element', [ elementData.title ] ),
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
 				icon: 'close',
 			};
 		}
@@ -108,7 +111,7 @@ WidgetView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: elementor.translate( 'save_as_global' ),
+					title: __( 'Save as a Global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ),
 				},
@@ -135,8 +138,6 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	handleEmptyWidget: function() {
-		// TODO: REMOVE THIS !!
-		// TEMP CODING !!
 		this.$el
 			.addClass( 'elementor-widget-empty' )
 			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
@@ -203,7 +204,7 @@ WidgetView = BaseElementView.extend( {
 		this.$el.removeClass( 'elementor-loading' );
 
 		// If container document has been changed during the remote request, don't render.
-		if ( this.container.document.id !== elementor.documents.getCurrent().id ) {
+		if ( this.getContainer().document.id !== elementor.documents.getCurrent().id ) {
 			return;
 		}
 
@@ -227,7 +228,7 @@ WidgetView = BaseElementView.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				if ( 1 > self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
+				if ( ! self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );

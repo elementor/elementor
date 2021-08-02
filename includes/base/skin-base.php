@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * you to add new templates, set custom controls and more.
  *
  * To register new skins for your widget use the `add_skin()` method inside the
- * widget's `_register_skins()` method.
+ * widget's `register_skins()` method.
  *
  * @since 1.0.0
  * @abstract
@@ -56,6 +56,28 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @abstract
 	 */
 	abstract public function render();
+
+	/**
+	 * Render element in static mode.
+	 *
+	 * If not inherent will call the base render.
+	 */
+	public function render_static() {
+		$this->render();
+	}
+
+	/**
+	 * Determine the render logic.
+	 */
+	public function render_by_mode() {
+		if ( Plugin::$instance->frontend->is_static_render_mode() ) {
+			$this->render_static();
+
+			return;
+		}
+
+		$this->render();
+	}
 
 	/**
 	 * Register skin controls actions.

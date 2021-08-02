@@ -115,13 +115,11 @@ export class Settings extends CommandHistoryDebounce {
 				this.addToHistory( container, newSettings, container.oldValues );
 			}
 
-			if ( options.external ) {
-				container.settings.setExternalChange( newSettings );
-			} else {
-				container.settings.set( newSettings );
-			}
-
-			container.render();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				options,
+				settings: newSettings,
+			} );
 		} );
 	}
 

@@ -276,34 +276,6 @@ class Stylesheet {
 	}
 
 	/**
-	 * Get device maximum value.
-	 *
-	 * Retrieve the maximum size of any given device.
-	 *
-	 * @since 1.2.0
-	 * @access private
-	 *
-	 * @throws \RangeException If max value for this device is out of range.
-	 *
-	 * @param string $device_name Device name.
-	 *
-	 * @return int
-	 */
-	private function get_device_max_value( $device_name ) {
-		$devices_names = array_keys( $this->devices );
-
-		$device_name_index = array_search( $device_name, $devices_names );
-
-		$next_index = $device_name_index + 1;
-
-		if ( $next_index >= count( $devices_names ) ) {
-			throw new \RangeException( 'Max value for this device is out of range.' );
-		}
-
-		return $this->devices[ $devices_names[ $next_index ] ] - 1;
-	}
-
-	/**
 	 * Query to hash.
 	 *
 	 * Turns the media query into a hashed string that represents the query
@@ -351,7 +323,7 @@ class Stylesheet {
 
 			$device_name = $query_parts[1];
 
-			$query[ $end_point ] = 'max' === $end_point ? $this->get_device_max_value( $device_name ) : $this->devices[ $device_name ];
+			$query[ $end_point ] = 'max' === $end_point ? $this->devices[ $device_name ] : Plugin::$instance->breakpoints->get_device_min_breakpoint( $device_name );
 		}
 
 		return $query;

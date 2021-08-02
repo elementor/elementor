@@ -9,14 +9,31 @@
 	width: 100%;
 	line-height: 0;
 	direction: ltr; // Fix for RTL pages
-	z-index: -1; // Fix for Chrome 85 bug that brings shape to front when flipped and inverted
 
+	/*
+	 * @TODO: The `z-index: -1` rules below are temporary fixes for Chrome 85 issue.
+	 *   It will be removed in a future version of Chrome.
+	 */
 	&-top {
 		top: -1px;
+
+		&:not([data-negative="false"]) {
+
+			svg {
+				z-index: -1;
+			}
+		}
 	}
 
 	&-bottom {
 		bottom: -1px;
+
+		&:not([data-negative="true"]) {
+
+			svg {
+				z-index: -1;
+			}
+		}
 	}
 
 	&[data-negative="false"] {

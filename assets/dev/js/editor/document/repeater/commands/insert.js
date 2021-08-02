@@ -43,7 +43,7 @@ export class Insert extends CommandHistory {
 		return {
 			containers,
 			type: 'add',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 			data: {
 				model,
 				name,
@@ -69,13 +69,13 @@ export class Insert extends CommandHistory {
 			options.at = null === options.at ? collection.length : options.at;
 
 			// On `collection.push` the renderer needs a container, the container needs a settingsModel.
-			const rowSettingsModel = collection._prepareModel( model );
-
-			container.addRepeaterItem( name, rowSettingsModel, options.at );
+			const rowSettingsModel = collection._prepareModel( model ),
+				repeaterContainer = container.addRepeaterItem( name, rowSettingsModel, options.at );
 
 			result.push( collection.push( rowSettingsModel, options ) );
 
-			container.render();
+			// Trigger render on widget but with the settings of the control.
+			repeaterContainer.render();
 		} );
 
 		if ( 1 === result.length ) {

@@ -10,6 +10,12 @@ export class Load extends CommandInternalBase {
 	apply( args ) {
 		const { config } = args;
 
+		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
+			// When the Responsive Optimization experiment is active, the responsive controls are generated on the
+			// JS side instead of the PHP.
+			config.settings.controls = elementor.generateResponsiveControls( config.settings.controls );
+		}
+
 		elementor.config.document = config;
 
 		elementor.setAjax();
@@ -44,12 +50,12 @@ export class Load extends CommandInternalBase {
 		if ( elementor.loaded ) {
 			// TODO: Find better solution - Fix issue when globals does not render after saving from kit.
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
-			$e.data.get( 'globals/index' ).then( () =>
+			return $e.data.get( 'globals/index' ).then( () =>
 				$e.internal( 'editor/documents/attach-preview' )
 			);
 		}
 
-		return document;
+		return Promise.resolve( document );
 	}
 }
 

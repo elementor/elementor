@@ -200,7 +200,9 @@
 		}
 
 		.e-form__buttons__wrapper {
-			&,
+			flex-basis: 50%;
+			flex-grow: 1;
+
 			&__button {
 				flex-basis: 100%;
 			}
@@ -238,6 +240,8 @@
 		}
 
 		.e-form__buttons__wrapper {
+			flex-grow: initial;
+
 			&,
 			&__button {
 				flex-basis: initial;
@@ -250,14 +254,14 @@
 	@include btn-align();
 }
 
-@media screen and ( max-width: $screen-md-max ){
+@media screen and ( max-width: $screen-tablet-max ){
 
 	.elementor-tablet-button-align- {
 		@include btn-align();
 	}
 }
 
-@media screen and ( max-width: $screen-sm-max ){
+@media screen and ( max-width: $screen-mobile-max ){
 
 	.elementor-mobile-button-align- {
 		@include btn-align();

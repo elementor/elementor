@@ -1,5 +1,4 @@
-import Utils from '../../utils/utils';
-import { Styled } from 'elementor-app/styled';
+import { arrayToClassName } from '../../utils/utils';
 
 export default function Heading( props ) {
 	const baseClassName = 'eps',
@@ -7,14 +6,12 @@ export default function Heading( props ) {
 			props.className,
 		];
 
-	return <Styled.Heading { ...props }>{ props.children }</Styled.Heading>;
-
 	if ( props.variant ) {
 		classes.push( baseClassName + '-' + props.variant );
 	}
 
 	const Element = () => React.createElement( props.tag, {
-		className: Utils.arrayToClassName( classes ),
+		className: arrayToClassName( classes ),
 	}, props.children );
 
 	return <Element />;

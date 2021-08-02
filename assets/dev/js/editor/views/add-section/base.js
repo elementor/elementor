@@ -1,5 +1,3 @@
-import DocumentHelper from 'elementor-document/helper';
-
 class AddSectionBase extends Marionette.ItemView {
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
@@ -75,8 +73,8 @@ class AddSectionBase extends Marionette.ItemView {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
-						isEnabled: () => DocumentHelper.isPasteEnabled( elementor.getPreviewContainer() ),
+						title: __( 'Paste', 'elementor' ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( elementor.getPreviewContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: elementor.getPreviewContainer(),
 							options: {
@@ -92,12 +90,12 @@ class AddSectionBase extends Marionette.ItemView {
 				actions: [
 					{
 						name: 'copy_all_content',
-						title: elementor.translate( 'copy_all_content' ),
+						title: __( 'Copy All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/copy-all' ),
 					}, {
 						name: 'delete_all_content',
-						title: elementor.translate( 'delete_all_content' ),
+						title: __( 'Delete All Content', 'elementor' ),
 						isEnabled: hasContent,
 						callback: () => $e.run( 'document/elements/empty' ),
 					},

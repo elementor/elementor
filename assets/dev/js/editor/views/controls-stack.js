@@ -119,8 +119,14 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
+		let sectionToActivate;
+
 		if ( ! sectionControls[ 0 ] ) {
-			return;
+			self.activeSection = null;
+
+			sectionToActivate = null;
+		} else {
+			sectionToActivate = sectionControls[ 0 ].get( 'name' );
 		}
 
 		var preActivatedSection = sectionControls.filter( function( controlModel ) {
@@ -131,7 +137,7 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
+		self.activateSection( sectionToActivate );
 
 		return this;
 	},

@@ -17,17 +17,35 @@ export class KitAfterSave extends After {
 	apply( args ) {
 		if ( 'publish' === args.status ) {
 			elementor.notifications.showToast( {
-				message: elementor.translate( 'kit_changes_updated' ),
+				message: __( 'Your changes have been updated.', 'elementor' ),
 				buttons: [
 					{
 						name: 'back_to_editor',
-						text: elementor.translate( 'back_to_editor' ),
+						text: __( 'Back to Editor', 'elementor' ),
 						callback() {
 							$e.run( 'panel/global/close' );
 						},
 					},
 				],
 			} );
+		}
+
+		if ( elementor.activeBreakpointsUpdated ) {
+			const reloadConfirm = elementorCommon.dialogsManager.createWidget( 'alert', {
+				id: 'elementor-save-kit-refersh-page',
+				headerMessage: __( 'Reload Elementor Editor', 'elementor' ),
+				message: __( 'You have made modifications to the list of Active Breakpoints. For these changes to take effect, you need to reload Elementor Editor.', 'elementor' ),
+				position: {
+					my: 'center center',
+					at: 'center center',
+				},
+				strings: {
+					confirm: __( 'Reload Now', 'elementor' ),
+				},
+				onConfirm: () => location.reload(),
+			} );
+
+			reloadConfirm.show();
 		}
 	}
 }

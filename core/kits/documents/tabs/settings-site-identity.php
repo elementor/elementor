@@ -3,7 +3,8 @@
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
-use Elementor\DB;
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -16,7 +17,19 @@ class Settings_Site_Identity extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Site Identity', 'elementor' );
+		return esc_html__( 'Site Identity', 'elementor' );
+	}
+
+	public function get_group() {
+		return 'settings';
+	}
+
+	public function get_icon() {
+		return 'eicon-site-identity';
+	}
+
+	public function get_help_url() {
+		return 'https://go.elementor.com/global-site-identity';
 	}
 
 	protected function register_tab_controls() {
@@ -25,6 +38,9 @@ class Settings_Site_Identity extends Tab_Base {
 
 		$site_icon_id = get_option( 'site_icon' );
 		$site_icon_src = wp_get_attachment_image_src( $site_icon_id, 'full' );
+
+		// If CANNOT upload svg normally, it will add a custom inline option to force svg upload if requested. (in logo and favicon)
+		$should_include_svg_inline_option = ! Files_Upload_Handler::is_enabled();
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
@@ -38,7 +54,7 @@ class Settings_Site_Identity extends Tab_Base {
 			$this->get_id() . '_refresh_notice',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
+				'raw' => esc_html__( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 			]
 		);
@@ -46,46 +62,52 @@ class Settings_Site_Identity extends Tab_Base {
 		$this->add_control(
 			'site_name',
 			[
-				'label' => __( 'Site Name', 'elementor' ),
+				'label' => esc_html__( 'Site Name', 'elementor' ),
 				'default' => get_option( 'blogname' ),
-				'placeholder' => __( 'Choose name', 'elementor' ),
+				'placeholder' => esc_html__( 'Choose name', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
 		$this->add_control(
 			'site_description',
 			[
-				'label' => __( 'Site Description', 'elementor' ),
+				'label' => esc_html__( 'Site Description', 'elementor' ),
 				'default' => get_option( 'blogdescription' ),
-				'placeholder' => __( 'Choose description', 'elementor' ),
+				'placeholder' => esc_html__( 'Choose description', 'elementor' ),
 				'label_block' => true,
+				'export' => false,
 			]
 		);
 
 		$this->add_control(
 			'site_logo',
 			[
-				'label' => __( 'Site Logo', 'elementor' ),
+				'label' => esc_html__( 'Site Logo', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
 				],
-				'description' => __( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'description' => esc_html__( 'Suggested image dimensions: 350 × 100 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 
 		$this->add_control(
 			'site_favicon',
 			[
-				'label' => __( 'Site Favicon', 'elementor' ),
+				'label' => esc_html__( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
+				'should_include_svg_inline_option' => $should_include_svg_inline_option,
 				'default' => [
 					'id' => $site_icon_id,
 					'url' => $site_icon_src ? $site_icon_src[0] : '',
 				],
-				'description' => __( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
+				'description' => esc_html__( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
+				'export' => false,
 			]
 		);
 
@@ -94,8 +116,8 @@ class Settings_Site_Identity extends Tab_Base {
 
 	public function on_save( $data ) {
 		if (
-			! isset( $data['settings'] ) ||
-			DB::STATUS_PUBLISH !== $data['settings']['post_status'] ||
+			! isset( $data['settings']['post_status'] ) ||
+			Document::STATUS_PUBLISH !== $data['settings']['post_status'] ||
 			// Should check for the current action to avoid infinite loop
 			// when updating options like: "blogname" and "blogdescription".
 			strpos( current_action(), 'update_option_' ) === 0

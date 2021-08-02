@@ -6,34 +6,18 @@ $icon-size: var(--icon-size, 25px);
 $icon-padding: var(--icon-padding, 0.5em);
 $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
-
 .elementor-widget-social-icons {
-
-	&.elementor-grid-0 {
-		.elementor-grid {
-			display: block;
-			font-size: 0;
-			word-spacing: var(--grid-column-gap, 5px);
-
-			.elementor-grid-item {
-				margin-bottom: var(--grid-row-gap);
-			}
-		}
-
+/*TODO: This Grid-0 needs to be removed after PRO is Updated */
+	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
 		.elementor-widget-container {
-			margin-bottom: calc(-1 * var(--grid-row-gap));
+			line-height: 1;
+			font-size: 0;
 		}
 	}
 
-	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-		&.elementor-grid-tablet-0 .elementor-grid {
-			grid-template-columns: repeat(auto-fill, $icon-total-size);
-		}
-	}
-
-	@media (max-width: $screen-sm-max) {
-		&.elementor-grid-mobile-0 .elementor-grid {
-			grid-template-columns: repeat(auto-fill, $icon-total-size);
+	&:not(.elementor-grid-0):not(.elementor-grid-tablet-0):not(.elementor-grid-mobile-0) {
+		.elementor-grid {
+			display: inline-grid;
 		}
 	}
 
@@ -46,20 +30,30 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 }
 
-.elementor-social-icons-wrapper {
-}
-
-.elementor-social-icon {
-	background-color: $gray;
+// This is for specificity, to avoid being overridden by Theme Style Link Typography.
+.elementor-icon.elementor-social-icon {
 	font-size: $icon-size;
 	line-height: $icon-size;
 	width: $icon-total-size;
+	height: $icon-total-size;
+}
+
+.elementor-social-icon {
+	--e-social-icon-icon-color: #fff;
+
+	display: inline-flex;
+	background-color: $gray;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	padding: $icon-padding;
 	cursor: pointer;
 
 	i {
-		color: white;
+		color: var(--e-social-icon-icon-color);
+	}
+
+	svg {
+		fill: var(--e-social-icon-icon-color);
 	}
 
 	&:last-child {

@@ -5,12 +5,24 @@ on: [push, pull_request]
 jobs:
   Qunit:
     runs-on: ubuntu-16.04
+    if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout source code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       - name: "Grunt Scripts"
-        run: grunt scripts
+        run: npx grunt scripts
       - name: "Run Qunit"
-        run: grunt karma:unit
+        run: npx grunt karma:unit

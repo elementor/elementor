@@ -4,26 +4,27 @@
  */
 const path = require( 'path' );
 
+// Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
-const jsToScss = require( './js-to-scss.js' );
+// Cleaning up existing chunks before creating new ones.
+const RemoveChunksPlugin = require('./remove-chunks');
 
-const moduleRules = ( env ) => {
+// Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
+const getChunkName = ( chunkData, environment ) => {
+	const minSuffix = 'production' === environment ? '.min' : '',
+		name = chunkData.chunk.name ? '[name].' : '';
+
+	return `${ name }[contenthash].bundle${ minSuffix }.js`;
+};
+
+const getModuleRules = ( presets ) => {
 	return {
 		rules: [
-			// {
-			// 	enforce: 'pre',
-			// 	test: /\.js$/,
-			// 	exclude: /node_modules/,
-			// 	loader: 'eslint-loader',
-			// 	options: {
-			// 		failOnError: true,
-			// 	}
-			// },
 			{
 				test: /core[/\\]app.*\.(s)?css$/i,
 				use: [
@@ -38,39 +39,45 @@ const moduleRules = ( env ) => {
 				use: [
 					{
 						loader: 'babel-loader',
-						query: {
-							presets: [ '@wordpress/default' ],
+						options: {
+							presets,
 							plugins: [
 								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
 								[ '@babel/plugin-transform-react-jsx', {
 									'pragmaFrag': 'React.Fragment',
 								} ],
-								[ 'babel-plugin-styled-components',	{
-									'displayName': 'dev' === env,
-								}
-								],
-								[ '@babel/plugin-proposal-class-properties' ],
 								[ '@babel/plugin-transform-runtime' ],
 								[ '@babel/plugin-transform-modules-commonjs' ],
-								[ '@babel/plugin-proposal-optional-chaining' ],
 							],
 						},
 					},
 				],
 			},
-			{
-				test:/e-style.*\.(s)?css$/i,
-				use: [
-					{
-						loader: 'file-loader',
-						options: { outputPath: '../css', name: 'e-style.css'}
-					},
-					'sass-loader',
-				],
-			},
 		],
 	};
 };
+
+const moduleRules = getModuleRules( [ '@wordpress/default' ] );
+
+const frontendRulesPresets = [ [
+	'@babel/preset-env',
+	{
+		targets: {
+			browsers: [
+				'last 1 Android versions',
+				'last 1 ChromeAndroid versions',
+				'last 2 Chrome versions',
+				'last 2 Firefox versions',
+				'last 2 Safari versions',
+				'last 2 iOS versions',
+				'last 2 Edge versions',
+				'last 2 Opera versions',
+			],
+		},
+	}
+] ];
+
+const frontendModuleRules = getModuleRules( frontendRulesPresets );
 
 const entry = {
 	'editor': [
@@ -79,7 +86,7 @@ const entry = {
 		path.resolve( __dirname, '../assets/dev/js/editor/editor.js' ),
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
-	'admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
+	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
@@ -88,13 +95,17 @@ const entry = {
 	'app-loader': path.resolve( __dirname, '../core/app/assets/js/app-loader' ),
 	'app-packages': path.resolve( __dirname, '../core/app/assets/js/app-packages' ),
 	'beta-tester': path.resolve( __dirname, '../assets/dev/js/admin/beta-tester/beta-tester.js' ),
-	'frontend': path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ),
 	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
-	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
-	'e-style': path.resolve( __dirname, '../assets/dev/scss/app/e-style.scss' ),
+	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
+};
+
+const frontendEntries = {
+	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
+	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'preloaded-modules': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-modules.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
@@ -107,74 +118,157 @@ const externals = {
 };
 
 const plugins = [
-	new jsToScss( {
-		jsSourcePath: '../core/app/assets/styled/variants/index.js',
-		scssDestination: '../assets/dev/scss/app/e-style.scss',
-	} ),
 	new webpack.ProvidePlugin( {
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
 		__: ['@wordpress/i18n', '__'],
-		//styled: ['styled-components', 'default'],
-		//css: ['styled-components', 'css'],
-		//ThemeProvider: ['styled-components', 'ThemeProvider'],
-		//_$: [ 'elementor-styles/style.js', 'default' ],
+		sprintf: ['@wordpress/i18n', 'sprintf'],
 	} )
 ];
 
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
-	devtool: 'source-map',
 	externals,
-	plugins,
 	resolve: aliasList,
 };
 
-const webpackConfig = Object.assign( {}, baseConfig, {
-	module: moduleRules( 'dev' ),
+const devSharedConfig = {
+	...baseConfig,
+	devtool: 'source-map',
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
-	entry: entry,
 	watch: true,
-} );
+};
 
-const webpackProductionConfig = Object.assign( {}, baseConfig, {
-	module: moduleRules( 'prod' ),
+const webpackConfig = [
+	{
+		...devSharedConfig,
+		module: moduleRules,
+		plugins: [
+			...plugins,
+		],
+		name: 'base',
+		entry: entry,
+	},
+	{
+		...devSharedConfig,
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.js' ),
+			...plugins,
+		],
+		name: 'frontend',
+		optimization: {
+			runtimeChunk:  {
+				name: 'webpack.runtime',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+		entry: frontendEntries,
+	},
+];
+
+const prodSharedOptimization = {
+	minimize: true,
+	minimizer: [
+		new TerserPlugin( {
+			terserOptions: {
+				keep_fnames: true,
+			},
+			include: /\.min\.js$/
+		} ),
+	],
+};
+
+const prodSharedConfig = {
+	...baseConfig,
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
-	entry: {},
 	performance: { hints: false },
-	optimization: {
-		minimize: true,
-		minimizer: [
-			new TerserPlugin( {
-				terserOptions: {
-					keep_fnames: true,
-				},
-				include: /\.min\.js$/
-			} ),
+};
+
+const webpackProductionConfig = [
+	{
+		...prodSharedConfig,
+		module: moduleRules,
+		plugins: [
+			...plugins,
 		],
+		name: 'base',
+		entry: {
+			// Clone.
+			...entry,
+		},
+		optimization: {
+			...prodSharedOptimization,
+		},
 	},
+	{
+		...prodSharedConfig,
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.min.js' ),
+			...plugins,
+		],
+		name: 'frontend',
+		entry: {
+			// Clone.
+			...frontendEntries,
+		},
+		optimization: {
+			...prodSharedOptimization,
+			runtimeChunk: {
+				name: 'webpack.runtime.min',
+			},
+			splitChunks: {
+				minChunks: 2,
+			},
+		},
+	},
+];
+
+// Adding .min suffix to production entries.
+webpackProductionConfig.forEach( ( config, index ) => {
+	for ( const entryPoint in config.entry ) {
+		let entryValue = config.entry[ entryPoint ];
+
+		if ( entryValue.dependOn ) {
+			// We duplicate the 'entryValue' obj for not affecting the 'entry' obj used by the dev process.
+			entryValue = { ...entryValue };
+
+			entryValue.dependOn += '.min';
+		}
+
+		delete config.entry[ entryPoint ];
+		config.entry[ entryPoint + '.min' ] = entryValue;
+	}
 } );
 
-// Add minified entry points
-for ( const entryPoint in entry ) {
-	webpackProductionConfig.entry[ entryPoint ] = entry[ entryPoint ];
-	webpackProductionConfig.entry[ entryPoint + '.min' ] = entry[ entryPoint ];
-}
+const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
+	return { ...config, watch: false };
+} );
 
 const gruntWebpackConfig = {
 	development: webpackConfig,
-	production: webpackProductionConfig,
+	developmentNoWatch: developmentNoWatchConfig,
+	production: webpackProductionConfig
 };
 
 module.exports = gruntWebpackConfig;

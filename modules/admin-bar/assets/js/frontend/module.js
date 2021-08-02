@@ -18,6 +18,8 @@ class AdminBar extends elementorModules.ViewModule {
 			},
 			selectors: {
 				adminBar: '#wp-admin-bar-root-default',
+				editMenuItem: '#wp-admin-bar-edit',
+				newMenuItem: '#wp-admin-bar-new-content',
 			},
 		};
 	}
@@ -26,10 +28,12 @@ class AdminBar extends elementorModules.ViewModule {
 	 * @returns {{$adminBar: (jQuery)}}
 	 */
 	getDefaultElements() {
-		const { adminBar } = this.getSettings( 'selectors' );
+		const { adminBar, editMenuItem, newMenuItem } = this.getSettings( 'selectors' );
 
 		return {
 			$adminBar: jQuery( adminBar ),
+			$editMenuItem: jQuery( editMenuItem ),
+			$newMenuItem: jQuery( newMenuItem ),
 		};
 	}
 
@@ -48,9 +52,18 @@ class AdminBar extends elementorModules.ViewModule {
 	 * @param adminBarConfig
 	 */
 	createMenu( adminBarConfig ) {
-		this.elements.$adminBar.append(
-			this.createMenuItems( Object.values( adminBarConfig ) )
-		);
+		const $items = this.createMenuItems( Object.values( adminBarConfig ) );
+
+		if ( this.elements.$editMenuItem.length ) {
+			// This is the normal case, when user visit a preview page of single post.
+			this.elements.$editMenuItem.after( $items );
+		} else if ( this.elements.$newMenuItem ) {
+			// This is another case, when user visit a preview page that cannot be edited e.g: archive page.
+			this.elements.$newMenuItem.after( $items );
+		} else {
+			// Default fallback in case there are no "new" or "edit" button.
+			this.elements.$adminBar.append( $items );
+		}
 	}
 
 	/**
@@ -98,7 +111,7 @@ class AdminBar extends elementorModules.ViewModule {
 
 		return jQuery( '<li>', {
 			id,
-			class: children.length ? 'menupop' : '',
+			class: children.length ? 'menupop' : '' + ( item.parent_class || 'elementor-general-section' ),
 		} ).append( [ $item, children.length ? this.createSubMenuItems( id, children ) : null ] );
 	}
 
@@ -121,4 +134,4 @@ class AdminBar extends elementorModules.ViewModule {
 	}
 }
 
-jQuery( () => new AdminBar() );
+document.addEventListener( 'DOMContentLoaded', () => new AdminBar() );

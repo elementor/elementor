@@ -1,4 +1,5 @@
 import CommandBase from './command-base';
+import * as errors from './errors';
 
 export default class CommandData extends CommandBase {
 	/**
@@ -62,6 +63,11 @@ export default class CommandData extends CommandBase {
 			case 'update':
 				before = this.applyBeforeUpdate;
 				after = this.applyAfterUpdate;
+				break;
+
+			case 'options':
+				before = this.applyBeforeOptions;
+				after = this.applyAfterOptions;
 				break;
 
 			default:
@@ -176,5 +182,45 @@ export default class CommandData extends CommandBase {
 	 */
 	applyAfterUpdate( data, args = {} ) {// eslint-disable-line no-unused-vars
 		return data;
+	}
+
+	/**
+	 * @param [args={}]
+	 * @returns {{}} filtered args
+	 */
+	applyBeforeOptions( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterOptions( data, args = {} ) {// eslint-disable-line no-unused-vars
+		return data;
+	}
+
+	/**
+	 * Called after apply() failed.
+	 *
+	 * @param e
+	 */
+	onCatchApply( e ) {
+		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
+		const status = e?.data?.status || 0;
+
+		let dataError = Object.values( errors )
+			.find( ( error ) => error.getStatus() === status );
+
+		if ( ! dataError ) {
+			dataError = errors.DefaultError;
+		}
+
+		e = dataError.create( e.message, e.code, e.data || [] );
+
+		this.runCatchHooks( e );
+
+		e.notify();
 	}
 }

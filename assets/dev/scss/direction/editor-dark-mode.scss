@@ -1,5 +1,6 @@
 //Variables
 @import "../helpers/variables";
+@import "../helpers/mixins";
 
 $theme-dark-gray-darkest: #34383C;
 $theme-dark-gray-darker: #475158;
@@ -164,6 +165,13 @@ body {
 		color: $theme-dark-light;
 	}
 }
+.elementor-units-choices {
+	input {
+		&.e-units-placeholder + label {
+			color: $theme-dark-gray-lightest;
+		}
+	}
+}
 
 input, select, textarea, .elementor-input-style {
 	color: $theme-dark-light;
@@ -179,6 +187,10 @@ input, select, textarea, .elementor-input-style {
 
 	&[disabled] {
 		background-color: $theme-dark-gray;
+	}
+
+	&::placeholder {
+		color: $theme-dark-gray-light;
 	}
 }
 
@@ -273,6 +285,10 @@ select {
 				color: $theme-dark-light;
 			}
 		}
+	}
+
+	#elementor-panel-elements-search-area {
+		background-color: $theme-dark-gray-darkest;
 	}
 
 	#elementor-panel-elements-search-input {
@@ -426,6 +442,18 @@ select {
 			border-color: $theme-dark-gray-darkest;
 		}
 	}
+
+	&.elementor-control-type-select {
+
+		.elementor-control-input-wrapper {
+
+			select {
+				&.e-select-placeholder {
+					color: $theme-dark-gray-light;
+				}
+			}
+		}
+	}
 }
 
 .elementor-control-responsive-switchers {
@@ -449,8 +477,6 @@ a.elementor-responsive-switcher {
 		color: $theme-dark-accent;
 	}
 }
-
-$devices: 'desktop', 'tablet', 'mobile';
 
 @each $device in $devices {
 	.elementor-device-#{ $device } {
@@ -508,7 +534,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 }
 
 .elementor-control-media-area, .pcr-app[data-theme=monolith] .pcr-color-palette, .pcr-button {
-	background-image: linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest), linear-gradient(45deg, $theme-dark-gray-darkest 25%, transparent 25%, transparent 75%, $theme-dark-gray-darkest 75%, $theme-dark-gray-darkest);
+	@include checkers-background(12px, $theme-dark-gray-darkest);
 	background-color: $theme-dark-gray-light;
 }
 
@@ -516,6 +542,13 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	.elementor-control-media__preview i {
 		color: $theme-dark-gray-lightest;
+	}
+}
+
+.elementor-control-type-media {
+
+	.elementor-control-media__preview {
+		background-color: $theme-dark-gray-darkest;
 	}
 }
 
@@ -671,9 +704,14 @@ body.rtl .elementor-control-type-gallery {
 		}
 	}
 
-	& input:checked {
+	& input {
 
-		+ .elementor-choices-label {
+		&.e-choose-placeholder + .elementor-choices-label {
+			background-color: $theme-dark-gray-light;
+			border-color: $theme-dark-gray-light;
+		}
+
+		&:checked + .elementor-choices-label {
 			background-color: $theme-dark-gray-lighter;
 			border-color: $theme-dark-gray-lighter;
 		}
@@ -858,6 +896,10 @@ body.rtl .elementor-control-type-gallery {
 //Select2 Control
 .select2-container {
 
+	.e-select2-placeholder {
+		color: $theme-dark-gray-light;
+	}
+
 	&:not(.select2-container--open):not(.select2-container--focus) {
 
 		.select2-selection--single,
@@ -866,6 +908,11 @@ body.rtl .elementor-control-type-gallery {
 			color: $theme-dark-light;
 			border-color: $theme-dark-gray-light;
 		}
+	}
+
+	&:not(.select2-container--all-selected) .select2-selection--multiple .select2-search--inline::before {
+		background-color: $theme-dark-gray;
+		color: $theme-dark-gray-lightest;
 	}
 
 	&.select2-container--open,
@@ -886,37 +933,42 @@ body.rtl .elementor-control-type-gallery {
 			}
 		}
 	}
-}
 
-.select2-container--default {
+	&.select2-container--default {
 
-	.select2-selection--single {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray;
-	}
-
-	.select2-selection--multiple {
-		background-color: $theme-dark-gray-darkest;
-
-		.select2-selection__choice {
-			background-color: $theme-dark-gray;
+		.select2-selection--single {
+			background-color: $theme-dark-gray-darkest;
 			border-color: $theme-dark-gray;
+		}
+
+		.select2-selection--multiple {
+			background-color: $theme-dark-gray-darkest;
+
+			.select2-selection__choice {
+				background-color: $theme-dark-gray;
+				border-color: $theme-dark-gray;
+
+				&__remove {
+					color: $theme-dark-gray-lightest;
+				}
+			}
+		}
+
+		.select2-results__option--highlighted[aria-selected] {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
 		}
 	}
 
-	.select2-results__option--highlighted[aria-selected] {
-		background-color: $theme-dark-gray;
+	.select2-results__option[aria-selected=true] {
 		color: $theme-dark-light;
 	}
-}
 
-.select2-results__option[aria-selected=true] {
-	color: $theme-dark-light;
-}
+	.select2-dropdown {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-lighter;
+	}
 
-.select2-dropdown {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-lighter;
 }
 
 // Widget Pro Promotion Tooltip

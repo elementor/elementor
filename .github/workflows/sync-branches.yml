@@ -1,6 +1,7 @@
 name: Sync Branches
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 */2 * * *'
 
@@ -9,20 +10,31 @@ jobs:
     runs-on: ubuntu-16.04
     if: startsWith( github.repository, 'elementor/' )
     steps:
-      - name: Checkout source code
-        run: git clone "https://${{ secrets.MAINTAIN_USERNAME }}:${{ secrets.MAINTAIN_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" .
-      - name: Syncing..
+      - name: Checkout master branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          ref: master
+      - name: Sync developer-edition branch
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
-          export PACKAGE_VERSION=$(cat package.json \
-            | grep version \
-            | head -1 \
-            | awk -F: '{ print $2 }' \
-            | sed 's/[",]//g' \
-            | tr -d '[[:space:]]')
-          npm install semver --no-save
-          export NEXT_PACKAGE_VERSION=$(./node_modules/semver/bin/semver.js $PACKAGE_VERSION -i minor)
-          git config --local user.email "${{ secrets.MAINTAIN_EMAIL }}"
-          git config --local user.name "${{ secrets.MAINTAIN_USERNAME }}"
-          git checkout "release/${NEXT_PACKAGE_VERSION}"
-          git merge origin/develop
-          git push
+          bash "${GITHUB_WORKSPACE}/.github/scripts/sync-developer-edition-branch.sh"
+      - name: Sync feature branches into developer-edition branch
+        env:
+          TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          npm install --no-package-lock --no-save @octokit/core@3.3.1
+          node "${GITHUB_WORKSPACE}/.github/scripts/sync-features-branch-to-developer-branch.js"
+      - name: Notify slack on failure
+        if: failure()
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"

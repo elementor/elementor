@@ -2,10 +2,6 @@ import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
 import Icon from 'elementor-app/ui/atoms/icon';
 
-import { Styled } from 'elementor-app/styled';
-
-import './buttons.scss';
-
 export default class Button extends React.Component {
 	static propTypes = {
 		text: PropTypes.string.isRequired,
@@ -16,10 +12,12 @@ export default class Button extends React.Component {
 		className: PropTypes.string,
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		variant: PropTypes.oneOf( [ 'contained', 'underlined', '' ] ),
+		variant: PropTypes.oneOf( [ 'contained', 'underlined', 'outlined', '' ] ),
 		color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
 		size: PropTypes.oneOf( [ 'sm', 'md', 'lg' ] ),
 		target: PropTypes.string,
+		rel: PropTypes.string,
+		elRef: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -100,6 +98,14 @@ export default class Button extends React.Component {
 			attributes.onClick = this.props.onClick;
 		}
 
+		if ( this.props.rel ) {
+			attributes.rel = this.props.rel;
+		}
+
+		if ( this.props.elRef ) {
+			attributes.ref = this.props.elRef;
+		}
+
 		const buttonContent = (
 			<>
 				{ this.getIcon() }
@@ -110,11 +116,9 @@ export default class Button extends React.Component {
 		if ( this.props.url ) {
 			if ( 0 === this.props.url.indexOf( 'http' ) ) {
 				return (
-					<Styled.Button { ...this.props }>
-						<a href={ this.props.url } target={ this.props.target } { ...attributes }>
-							{ buttonContent }
-						</a>
-					</Styled.Button>
+					<a href={ this.props.url } target={ this.props.target } { ...attributes }>
+						{ buttonContent }
+					</a>
 				);
 			}
 
@@ -128,24 +132,20 @@ export default class Button extends React.Component {
 					className: attributes.className,
 				};
 			};
-			//
+
 			return (
 				<LocationProvider history={ router.appHistory }>
 					<Link to={ this.props.url } { ...attributes } >
-						<Styled.Button { ...this.props }>
-							{ buttonContent }
-						</Styled.Button>
+						{ buttonContent }
 					</Link>
 				</LocationProvider>
 			);
 		}
 
-		// { ...attributes }
-
 		return (
-			<Styled.Button { ...this.props }>
+			<div { ...attributes }>
 				{ buttonContent }
-			</Styled.Button>
+			</div>
 		);
 	}
 }

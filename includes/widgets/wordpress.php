@@ -219,14 +219,14 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->add_control(
 			'wp',
 			[
-				'label' => __( 'Form', 'elementor' ),
+				'label' => esc_html__( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_name(),
 				'id_base' => $this->get_widget_instance()->id_base,

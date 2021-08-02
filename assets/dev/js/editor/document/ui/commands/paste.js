@@ -1,5 +1,4 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import DocumentHelper from 'elementor-document/helper';
 
 export class Paste extends CommandBase {
 	initialize( args ) {
@@ -7,7 +6,7 @@ export class Paste extends CommandBase {
 
 		super.initialize( args );
 
-		this.storage = elementorCommon.storage.get( 'clipboard' );
+		this.storage = elementorCommon.storage.get( 'clipboard' ) || [];
 
 		this.storage = this.storage.map( ( model ) =>
 			new Backbone.Model( model )
@@ -22,7 +21,7 @@ export class Paste extends CommandBase {
 	}
 
 	apply( args ) {
-		if ( ! this.target ) {
+		if ( ! this.target || 0 === this.storage.length ) {
 			return false;
 		}
 
@@ -30,7 +29,7 @@ export class Paste extends CommandBase {
 
 		this.target.forEach( ( /* Container */ container ) => {
 			const { options = {} } = args,
-				pasteOptions = DocumentHelper.getPasteOptions( this.storage[ 0 ], container );
+				pasteOptions = $e.components.get( 'document/elements' ).utils.getPasteOptions( this.storage[ 0 ], container );
 
 			if ( ! pasteOptions.isValidChild ) {
 				if ( pasteOptions.isSameElement ) {

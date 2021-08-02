@@ -66,23 +66,6 @@ class Manager {
 	public function add_actions() {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
-
-		// TODO: bc since 2.3.0
-		add_action( 'wp_ajax_elementor_update_templates', function() {
-			if ( ! isset( $_POST['templates'] ) ) {
-				return;
-			}
-
-			foreach ( $_POST['templates'] as & $template ) {
-				if ( ! isset( $template['content'] ) ) {
-					return;
-				}
-
-				$template['content'] = stripslashes( $template['content'] );
-			}
-
-			wp_send_json_success( $this->handle_ajax_request( 'update_templates', $_POST ) );
-		} );
 	}
 
 	/**
@@ -459,20 +442,17 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
-		/** @var Source_Local $source */
-		$file_content = base64_decode( $data['fileData'] );
+		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
+		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
-		$tmp_file = tmpfile();
+		if ( is_wp_error( $upload_result ) ) {
+			return $upload_result;
+		}
 
-		fwrite( $tmp_file, $file_content );
+		/** @var Source_Local $source_local */
+		$source_local = $this->get_source( 'local' );
 
-		$source = $this->get_source( 'local' );
-
-		$result = $source->import_template( $data['fileName'], stream_get_meta_data( $tmp_file )['uri'] );
-
-		fclose( $tmp_file );
-
-		return $result;
+		return $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
 	}
 
 	/**
@@ -546,7 +526,7 @@ class Manager {
 			$editor_post_id = absint( $data['editor_post_id'] );
 
 			if ( ! get_post( $editor_post_id ) ) {
-				throw new \Exception( __( 'Post not found.', 'elementor' ) );
+				throw new \Exception( esc_html__( 'Post not found.', 'elementor' ) );
 			}
 
 			Plugin::$instance->db->switch_to_post( $editor_post_id );

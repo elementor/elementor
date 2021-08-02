@@ -6,6 +6,7 @@ const getBuildFiles = [
 	'**',
 	'!.git/**',
 	'!.github/**',
+	'!.run/**',
 	'!.gitignore',
 	'!.gitmodules',
 	'!.jscsrc',
@@ -34,12 +35,14 @@ const getBuildFiles = [
 	'!package-lock.json',
 	'!package.json',
 	'!phpunit.xml',
+	'!CHANGELOG.md',
 	'!README.md',
-	'!ruleset.xml',
+	'!phpcs.xml',
 	'!tests/**',
 	'!vendor/**',
 	'!yarn.lock',
 	'!*~',
+	'!commitlint.config.js',
 
 	// Conflict with above rule.
 	'core/files/assets/**',

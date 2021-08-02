@@ -1,6 +1,5 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
-import DocumentHelper from 'elementor-document/helper';
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -195,7 +194,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	dragShouldBeIgnored( draggedModel ) {
-		return ! DocumentHelper.isValidChild( draggedModel, this.model );
+		return ! $e.components.get( 'document/elements' ).utils.isValidChild( draggedModel, this.model );
 	}
 
 	addEditingClass() {
@@ -231,6 +230,11 @@ export default class extends Marionette.CompositeView {
 
 		settingsModel.set( '_title', newTitle );
 
+		// TODO: Remove - After merge pull request #13605.
+		$e.internal( 'document/save/set-is-modified', {
+			status: true,
+		} );
+
 		elementor.removeBackgroundClickListener( 'navigator' );
 	}
 
@@ -244,7 +248,7 @@ export default class extends Marionette.CompositeView {
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' ' + this.ui.elements.selector,
+			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' > .elementor-navigator__elements',
 			cancel: '[contenteditable="true"]',
 		} );
 	}

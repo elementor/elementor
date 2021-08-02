@@ -17,6 +17,70 @@ class Utils {
 
 	const DEPRECATION_RANGE = 0.4;
 
+	const EDITOR_BREAK_LINES_OPTION_KEY = 'elementor_editor_break_lines';
+
+	/**
+	 * A list of safe tage for `validate_html_tag` method.
+	 */
+	const ALLOWED_HTML_WRAPPER_TAGS = [
+		'a',
+		'article',
+		'aside',
+		'div',
+		'footer',
+		'h1',
+		'h2',
+		'h3',
+		'h4',
+		'h5',
+		'h6',
+		'header',
+		'main',
+		'nav',
+		'p',
+		'section',
+		'span',
+	];
+
+	const EXTENDED_ALLOWED_HTML_TAGS = [
+		'iframe' => [
+			'iframe' => [
+				'allow' => true,
+				'allowfullscreen' => true,
+				'frameborder' => true,
+				'height' => true,
+				'loading' => true,
+				'name' => true,
+				'referrerpolicy' => true,
+				'sandbox' => true,
+				'src' => true,
+				'width' => true,
+			],
+		],
+		'svg' => [
+			'svg' => [
+				'aria-hidden' => true,
+				'aria-labelledby' => true,
+				'class' => true,
+				'height' => true,
+				'role' => true,
+				'viewbox' => true,
+				'width' => true,
+				'xmlns' => true,
+			],
+			'g' => [
+				'fill' => true,
+			],
+			'title' => [
+				'title' => true,
+			],
+			'path' => [
+				'd' => true,
+				'fill' => true,
+			],
+		],
+	];
+
 	/**
 	 * Is ajax.
 	 *
@@ -33,6 +97,15 @@ class Utils {
 		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
 
 		return wp_doing_ajax();
+	}
+
+	/**
+	 * Is WP CLI.
+	 *
+	 * @return bool
+	 */
+	public static function is_wp_cli() {
+		return defined( 'WP_CLI' ) && WP_CLI;
 	}
 
 	/**
@@ -102,12 +175,12 @@ class Utils {
 		$to = trim( $to );
 
 		if ( $from === $to ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
 		}
 
 		global $wpdb;
@@ -120,8 +193,11 @@ class Utils {
 		// @codingStandardsIgnoreEnd
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
 		}
+
+		// Allow externals to replace-urls, when they have to.
+		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
 
@@ -320,18 +396,14 @@ class Utils {
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
 	 */
-	public static function get_create_new_post_url( $post_type = 'page' ) {
-		$new_post_url = add_query_arg( [
-			'action' => 'elementor_new_post',
-			'post_type' => $post_type,
-		], admin_url( 'edit.php' ) );
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.3.0', 'Plugin::$instance->documents->get_create_new_post_url()' );
 
-		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
-
-		return $new_post_url;
+		return Plugin::$instance->documents->get_create_new_post_url( $post_type, $template_type );
 	}
 
 	/**
@@ -423,6 +495,18 @@ class Utils {
 		return implode( ' ', $rendered_attributes );
 	}
 
+	/**
+	 * Safe print html attributes
+	 *
+	 * @access public
+	 * @static
+	 * @param array $attributes
+	 */
+	public static function print_html_attributes( array $attributes ) {
+		// PHPCS - the method render_html_attributes is safe.
+		echo self::render_html_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
 	public static function get_meta_viewport( $context = '' ) {
 		$meta_tag = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />';
 		/**
@@ -448,7 +532,7 @@ class Utils {
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
 
-		if ( get_option( 'elementor_editor_break_lines' ) ) {
+		if ( get_option( self::EDITOR_BREAK_LINES_OPTION_KEY ) ) {
 			// Add new lines to avoid memory limits in some hosting servers that handles the buffer output according to new line characters
 			$config = str_replace( '}},"', '}},' . PHP_EOL . '"', $config );
 		}
@@ -468,7 +552,7 @@ class Utils {
 		$alias_version_as_float = (float) $alias_version[0];
 
 		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::DEPRECATION_RANGE ) {
-			_deprecated_file( $item, $version, $replacement );
+			_deprecated_file( $item, $version, $replacement ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -583,5 +667,94 @@ class Utils {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Change Submenu First Item Label
+	 *
+	 * Overwrite the label of the first submenu item of an admin menu item.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param $menu_slug
+	 * @param $new_label
+	 * @access public
+	 */
+	public static function change_submenu_first_item_label( $menu_slug, $new_label ) {
+		global $submenu;
+
+		if ( isset( $submenu[ $menu_slug ] ) ) {
+			// @codingStandardsIgnoreStart
+			$submenu[ $menu_slug ][0][0] = $new_label;
+			// @codingStandardsIgnoreEnd
+		}
+	}
+
+	/**
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param string $tag
+	 *
+	 * @return string
+	 */
+	public static function validate_html_tag( $tag ) {
+		return in_array( strtolower( $tag ), self::ALLOWED_HTML_WRAPPER_TAGS ) ? $tag : 'div';
+	}
+
+	/**
+	 * Safe print a validated HTML tag.
+	 *
+	 * @param string $tag
+	 */
+	public static function print_validated_html_tag( $tag ) {
+		// PHPCS - the method validate_html_tag is safe.
+		echo self::validate_html_tag( $tag ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Print internal content (not user input) without escaping.
+	 */
+	public static function print_unescaped_internal_string( $string ) {
+		echo $string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Get recently edited posts query.
+	 *
+	 * Returns `WP_Query` of the recent edited posts.
+	 * By default max posts ( $args['posts_per_page'] ) is 3.
+	 *
+	 * @param array $args
+	 *
+	 * @return \WP_Query
+	 */
+	public static function get_recently_edited_posts_query( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'post_type' => 'any',
+			'post_status' => [ 'publish', 'draft' ],
+			'posts_per_page' => '3',
+			'meta_key' => '_elementor_edit_mode',
+			'meta_value' => 'builder',
+			'orderby' => 'modified',
+		] );
+
+		return new \WP_Query( $args );
+	}
+
+	public static function print_wp_kses_extended( string $string, array $tags ) {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+		// Since PHP 5.6 cannot use isset() on the result of an expression.
+		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
+
+		foreach ( $tags as $tag ) {
+			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
+				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
+				$allowed_html = array_merge( $allowed_html, $extended_tags );
+			}
+		}
+
+		echo wp_kses( $string, $allowed_html );
 	}
 }

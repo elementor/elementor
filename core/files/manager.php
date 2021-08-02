@@ -7,6 +7,7 @@ use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
 use Elementor\Core\Responsive\Files\Frontend;
 use Elementor\Utils;
 
@@ -108,18 +109,19 @@ class Manager {
 	 * @access public
 	 */
 	public function clear_cache() {
-		delete_post_meta_by_key( Post_CSS::META_KEY );
-
-		delete_option( Global_CSS::META_KEY );
-
-		delete_option( Frontend::META_KEY );
-
 		// Delete files.
 		$path = Base::get_base_uploads_dir() . Base::DEFAULT_FILES_DIR . '*';
 
 		foreach ( glob( $path ) as $file_path ) {
 			unlink( $file_path );
 		}
+
+		delete_post_meta_by_key( Post_CSS::META_KEY );
+
+		delete_option( Global_CSS::META_KEY );
+		delete_option( Frontend::META_KEY );
+
+		$this->reset_assets_data();
 
 		/**
 		 * Elementor clear files.
@@ -158,5 +160,17 @@ class Manager {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+	}
+
+	/**
+	 * Reset Assets Data.
+	 *
+	 * Reset the page assets data.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 */
+	private function reset_assets_data() {
+		delete_option( Page_Assets_Data_Manager::ASSETS_DATA_KEY );
 	}
 }

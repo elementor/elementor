@@ -52,7 +52,7 @@ export class Settings extends CommandHistoryDebounce {
 	}
 
 	apply( args ) {
-		const { settings, containers = [ args.container ] } = args;
+		const { settings, containers = [ args.container ], options = {} } = args;
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
@@ -63,9 +63,13 @@ export class Settings extends CommandHistoryDebounce {
 				container.globals.set( settings );
 			}
 
-			container.settings.set( '__globals__', container.globals.toJSON() );
-
-			container.render();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				options,
+				settings: {
+					__globals__: container.globals.toJSON(),
+				},
+			} );
 		} );
 	}
 
