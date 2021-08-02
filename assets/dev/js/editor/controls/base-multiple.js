@@ -38,7 +38,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	},
 
 	/**
-	 * Get control value without empty properties.
+	 * Get control value without empty properties, and without default values.
 	 *
 	 * @returns {{}}
 	 */
@@ -49,7 +49,9 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 
 		return Object.fromEntries(
 			Object.entries( this.getControlValue() )
-				.filter( ( [ , v ] ) => v )
+				.filter( ( [ k, v ] ) => {
+					return v && this.model.get( 'default' )[ k ] !== v;
+				} )
 		);
 	},
 
