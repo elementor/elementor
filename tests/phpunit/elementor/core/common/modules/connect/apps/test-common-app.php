@@ -265,6 +265,26 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
+	public function test_get_remote_authorize_url__propagate_query_args() {
+		// Arrange
+		$_REQUEST['black_list'] = 'test';
+		$_REQUEST['editor_cta'] = 'some_action';
+
+		// Act
+		$url = $this->app_stub->proxy_get_remote_authorize_url();
+
+		$query_args = [];
+
+		$parsed_url = wp_parse_url( $url );
+		parse_str( $parsed_url['query'], $query_args );
+
+		// Assert
+		$this->assertFalse( isset( $query_args['black_list'] ) );
+		$this->assertTrue( isset( $query_args['editor_cta'] ) );
+		$this->assertEquals( 'some_action', $query_args['editor_cta'] );
+
+	}
+
 	public function test_http_request__multi_urls_2_failed_last_success() {
 		// Arrange
 		$endpoint = 'test/1';

@@ -53,7 +53,15 @@ class Mock_App extends Common_App {
 		return $this->request( $action, $request_body, $as_array );
 	}
 
+	public function proxy_get_remote_authorize_url() {
+		return $this->get_remote_authorize_url();
+	}
+
 	protected function get_api_url() {
+		return static::BASE_URL;
+	}
+
+	protected function get_remote_site_url() {
 		return static::BASE_URL;
 	}
 

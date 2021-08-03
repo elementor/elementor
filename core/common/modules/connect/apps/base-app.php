@@ -524,7 +524,7 @@ abstract class Base_App {
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_auth_redirect_uri();
 
-		$url = add_query_arg( [
+		$query_args = [
 			'action' => 'authorize',
 			'response_type' => 'code',
 			'client_id' => $this->get( 'client_id' ),
@@ -533,9 +533,19 @@ abstract class Base_App {
 			'redirect_uri' => rawurlencode( $redirect_uri ),
 			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
 			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
-		], $this->get_remote_site_url() );
+		];
 
-		return $url;
+		$propagate_query_args_whitelist = [
+			'editor_cta',
+		];
+
+		foreach ( $propagate_query_args_whitelist as $key ) {
+			if ( isset( $_REQUEST[ $key ] ) ) {
+				$query_args[ $key ] = $_REQUEST[ $key ];
+			}
+		}
+
+		return add_query_arg( $query_args, $this->get_remote_site_url() );;
 	}
 
 	/**

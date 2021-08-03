@@ -11,7 +11,7 @@ export default function ConnectionButton( props ) {
 		}
 
 		jQuery( buttonRef.current ).elementorConnect( {
-			UTM: () => '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar',
+			UTM: () => '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar&editor_cta=top_bar',
 		} );
 	}, [] );
 
