@@ -9,7 +9,7 @@ on:
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
