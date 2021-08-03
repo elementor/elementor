@@ -15,7 +15,7 @@ export default function Heading( props ) {
 		className: arrayToClassName( classes ),
 	}, props.children );
 
-	return <Styled.Heading className={ arrayToClassName( classes ) } variant="h1">{ props.children }</Styled.Heading>;
+	return <Styled.Heading spacing="40px" className={ arrayToClassName( classes ) } variant="h1">{ props.children }</Styled.Heading>;
 }
 
 Heading.propTypes = {
