@@ -18,18 +18,20 @@ export default class FloatingBarHandler extends elementorModules.frontend.handle
 			return;
 		}
 
-		const floatingBar = document.createElement( 'div' );
-		floatingBar.classList.add( 'e-floating-bar' );
-		this.$element[ 0 ].appendChild( floatingBar );
+		if ( ! this.floatingBar ) {
+			this.floatingBar = document.createElement( 'div' );
+			this.floatingBar.classList.add( 'e-floating-bar' );
+			this.$element[ 0 ].appendChild( this.floatingBar );
+		}
 
 		const container = this.getContainer(),
 			model = container.model,
 			floatingBarConfig = {
-			...container.view.getFloatingBarConfig(),
-			elType: model.get( 'widgetType' ) || model.get( 'elType' ),
-		};
+				...container.view.getFloatingBarConfig(),
+				elType: model.get( 'widgetType' ) || model.get( 'elType' ),
+			};
 
-		ReactDOM.render( <FloatingBar config={ floatingBarConfig } container={ this.getContainer() } />, floatingBar );
+		ReactDOM.render( <FloatingBar config={ floatingBarConfig } container={ this.getContainer() } />, this.floatingBar );
 	}
 }
 

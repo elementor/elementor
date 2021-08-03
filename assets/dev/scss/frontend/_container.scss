@@ -88,6 +88,13 @@
 		transition: var( --overlay-transition );
 		border-radius: var( --border-radius );
 	}
+
+	.e-floating-bar {
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: calc( 100% + 5px );
+		z-index: $editor-layer;
+	}
 }
 
 /* Gutenberg Toolbar CSS */
@@ -96,10 +103,6 @@
 	--border-radius: 3px;
 	--box-shadow: 0 2px 10px 0 rgba( 0,0,0,.22 );
 
-	position: absolute;
-	inset-inline-start: 0;
-	inset-block-start: calc( 100% + 5px );
-	z-index: $editor-layer;
 	background: $white;
 	box-shadow: var( --box-shadow );
 	border-radius: var( --border-radius );
