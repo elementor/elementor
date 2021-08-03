@@ -240,9 +240,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 			cleanValue = this.getCleanControlValue();
 
 		if ( cleanValue instanceof Object ) {
-			return Object.keys( cleanValue ).length ?
-				Object.assign( {}, parentValue, cleanValue ) :
-				parentValue;
+			const values = Object.assign(
+				{},
+				this.model.get( 'placeholder' ),
+				parentValue,
+				cleanValue
+			);
+
+			return Object.keys( values ).length ? values : undefined;
 		}
 
 		return this.getControlValue() || parentValue;
