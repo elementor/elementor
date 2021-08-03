@@ -1252,7 +1252,7 @@ export default class EditorBase extends Marionette.Application {
 
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
-			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true } ),
 			newControlsStack = {};
 
 		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
