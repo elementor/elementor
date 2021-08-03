@@ -1290,7 +1290,7 @@ export default class EditorBase extends Marionette.Application {
 			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
 			// controls receive that default value.
 			if ( multipleDefaultValue ) {
-				controlConfig.default = defaultValue;
+				controlConfig.default = multipleDefaultValue;
 			}
 
 			devices.forEach( ( device, index ) => {
