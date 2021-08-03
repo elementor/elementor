@@ -16,10 +16,12 @@ $root: e-app-import-export-panel;
 
 	&__header {
 		background-color: var(--e-app-import-export-panel-header-background-color);
+		border-radius: $eps-radius;
 	}
 
 	&__body {
 		background-color: var(--e-app-import-export-panel-body-background-color);
+		border-radius: 0 0 $eps-radius $eps-radius;
 	}
 }
 
