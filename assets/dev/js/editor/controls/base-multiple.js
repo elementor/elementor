@@ -43,16 +43,18 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	 * @returns {{}}
 	 */
 	getCleanControlValue: function( key ) {
-		if ( key ) {
-			return this.getControlValue( key );
-		}
-
-		return Object.fromEntries(
+		const values = Object.fromEntries(
 			Object.entries( this.getControlValue() )
 				.filter( ( [ k, v ] ) => {
 					return v && this.model.get( 'default' )[ k ] !== v;
 				} )
 		);
+
+		if ( key ) {
+			return values[ key ];
+		}
+
+		return values;
 	},
 
 	setValue: function( key, value ) {
