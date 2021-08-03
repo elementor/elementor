@@ -693,6 +693,7 @@ class Widget_Video extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-custom-embed-play svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
@@ -940,6 +941,12 @@ class Widget_Video extends Widget_Base {
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">
 							<i class="eicon-play" aria-hidden="true"></i>
+							<?php
+								Icons_Manager::render_icon( [
+									'library' => 'eicons',
+									'value' => 'eicon-play',
+								], [ 'aria-hidden' => 'true' ] );
+							?>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Play Video', 'elementor' ); ?></span>
 						</div>
 					<?php endif; ?>

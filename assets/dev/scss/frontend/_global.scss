@@ -211,14 +211,29 @@
 
 .elementor-custom-embed-play {
 	@include absolute-center;
+	$elementor-custom-embed-play-icon-size: 100px;
+	$elementor-custom-embed-play-icon-color: #fff;
+	$elementor-custom-embed-play-icon-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 
 	i {
-		font-size: 100px;
-		color: #fff;
+		font-size: $elementor-custom-embed-play-icon-size;
+		color: $elementor-custom-embed-play-icon-color;
+		text-shadow: $elementor-custom-embed-play-icon-shadow;
+	}
+
+	svg {
+		height: $elementor-custom-embed-play-icon-size;
+		width: $elementor-custom-embed-play-icon-size;
+		fill: $elementor-custom-embed-play-icon-color;
+		filter: drop-shadow($elementor-custom-embed-play-icon-shadow);
+	}
+
+	i,
+	svg {
 		opacity: 0.8;
-		text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 		transition: all .5s;
 	}
+
 
 	&.elementor-playing {
 
