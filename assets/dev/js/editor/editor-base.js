@@ -1255,10 +1255,8 @@ export default class EditorBase extends Marionette.Application {
 			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
 			newControlsStack = {};
 
-		// Move desktop to be the fist device, so desktop will the the parent of all devices.
-		devices.unshift(
-			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
-		);
+		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		devices.unshift( 'desktop' );
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
 			let responsiveControlName;
