@@ -587,12 +587,14 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function save( $data ) {
 		/**
-		 * Fires when document save starts on Elementor.
+		 * Document save data.
 		 *
-		 * @param array $data.
-		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * Filter the document data when saving process starts.
 		 *
 		 * @since 3.3.0
+		 *
+		 * @param array                         $data The document data.
+		 * @param \Elementor\Core\Base\Document $this The document instance.
 		 */
 		$data = apply_filters( 'elementor/document/save/data', $data, $this );
 
