@@ -304,7 +304,17 @@ class Preview extends App {
 
 		wp_enqueue_script( 'react' );
 		wp_enqueue_script( 'react-dom' );
-		wp_enqueue_script( 'wp-components' );
+
+		wp_enqueue_script(
+			'e-components',
+			$this->get_assets_url( 'lib/e-components/e-components.min.js', '', null, false ),
+			[
+				'react',
+				'react-dom',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
 
 		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_script( 'wp-mediaelement' );

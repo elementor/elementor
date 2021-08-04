@@ -110,7 +110,6 @@ const frontendEntries = {
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-	'@wordpress/components': 'wp.components',
 	react: 'React',
 	'react-dom': 'ReactDOM',
 	'@elementor/app-ui': 'elementorAppPackages.appUi',

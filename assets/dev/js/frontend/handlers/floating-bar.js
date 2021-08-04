@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-import { Toolbar, ToolbarDropdownMenu } from '@wordpress/components';
+const { Toolbar, ToolbarDropdownMenu } = eComponents;
 
 /**
  * TODO: Super ugly temporary code. Don't bother reviewing this.
