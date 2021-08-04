@@ -117,13 +117,6 @@ export default class Container extends ArgsObject {
 	panel;
 
 	/**
-	 * Controls placeholders.
-	 *
-	 * @type {{}}
-	 */
-	placeholders = {};
-
-	/**
 	 * Function constructor().
 	 *
 	 * Create container.
