@@ -45,7 +45,7 @@ class Admin_Notices extends Module {
 		 *
 		 * Filters all the admin notice.
 		 *
-		 * @param array $notices A list of $notices.
+		 * @param array $notices A list of notices.
 		 */
 		$notices = apply_filters( 'elementor/core/admin/notices', $notices );
 
