@@ -90,13 +90,17 @@ class Module extends BaseApp {
 		}
 
 		/**
-		 * Register admin_bar config to parse later in the frontend and add to the admin bar with JS
+		 * Admin bar settings in the frontend.
 		 *
-		 * @param array $settings the admin_bar config
+		 * Register admin_bar config to parse later in the frontend and add to the admin bar with JS.
 		 *
 		 * @since 3.0.0
+		 *
+		 * @param array $settings the admin_bar config
 		 */
-		return apply_filters( 'elementor/frontend/admin_bar/settings', $settings );
+		$settings = apply_filters( 'elementor/frontend/admin_bar/settings', $settings );
+
+		return $settings;
 	}
 
 	/**
