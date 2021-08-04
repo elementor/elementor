@@ -372,7 +372,17 @@ abstract class Base_App {
 	 * @return array
 	 */
 	protected function get_connect_info() {
-		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this );
+		$additional_info = [];
+
+		/**
+		 * Additional connect info.
+		 *
+		 * Filters the connect info by adding additional information.
+		 *
+		 * @param array    $additional_info Additional info array.
+		 * @param Base_App $this            The base app instance.
+		 */
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', $additional_info, $this );
 
 		return array_merge(
 			[
