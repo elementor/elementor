@@ -205,6 +205,13 @@ class Tools extends Settings_Page {
 				$lowercase_version = strtolower( $version );
 				$is_valid_rollback_version = ! preg_match( '/(trunk|beta|rc|dev)/i', $lowercase_version );
 
+				/**
+				 * Is rollback version is valid.
+				 *
+				 * Filters the check whether the rollback version is valid.
+				 *
+				 * @param bool $is_valid_rollback_version Whether the rollback version is valid.
+				 */
 				$is_valid_rollback_version = apply_filters(
 					'elementor/settings/tools/rollback/is_valid_rollback_version',
 					$is_valid_rollback_version,
