@@ -107,6 +107,15 @@ class Module extends BaseModule {
 			$categories_data[ $category_name ] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
 		}
 
+		/**
+		 * Finder categories.
+		 *
+		 * Filters the list of finder categories.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $categories_data A list of finder categories.
+		 */
 		$categories_data = apply_filters( 'elementor/finder/categories', $categories_data );
 
 		return [
