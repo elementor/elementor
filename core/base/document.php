@@ -589,7 +589,7 @@ abstract class Document extends Controls_Stack {
 		/**
 		 * Document save data.
 		 *
-		 * Filter the document data when saving process starts.
+		 * Filter the document data before saving process starts.
 		 *
 		 * @since 3.3.0
 		 *
