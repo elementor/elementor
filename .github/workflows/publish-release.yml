@@ -13,7 +13,7 @@ on:
 
 jobs:
   merge-release-branch-to-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout master branch
