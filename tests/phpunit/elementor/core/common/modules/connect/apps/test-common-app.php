@@ -282,7 +282,6 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertFalse( isset( $query_args['black_list'] ) );
 		$this->assertTrue( isset( $query_args['editor_cta'] ) );
 		$this->assertEquals( 'some_action', $query_args['editor_cta'] );
-
 	}
 
 	public function test_http_request__multi_urls_2_failed_last_success() {
