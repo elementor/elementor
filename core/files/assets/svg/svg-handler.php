@@ -336,7 +336,16 @@ class Svg_Handler extends Files_Upload_Handler {
 			'textlength',
 		];
 
-		return apply_filters( 'elementor/files/svg/allowed_attributes', $allowed_attributes );
+		/**
+		 * Allowed attributes in SVG file.
+		 *
+		 * Filters the list of allowed attributes in SVG files.
+		 *
+		 * @param array $allowed_attributes A list of allowed attributes.
+		 */
+		$allowed_attributes = apply_filters( 'elementor/files/svg/allowed_attributes', $allowed_attributes );
+
+		return $allowed_attributes;
 	}
 
 	/**
