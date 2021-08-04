@@ -387,7 +387,17 @@ class Svg_Handler extends Files_Upload_Handler {
 			'tspan',
 			'use',
 		];
-		return apply_filters( 'elementor/files/svg/allowed_elements', $allowed_elements );
+
+		/**
+		 * Allowed elements in SVG file.
+		 *
+		 * Filters the list of allowed elements in SVG files.
+		 *
+		 * @param array $allowed_elements A list of allowed elements.
+		 */
+		$allowed_elements = apply_filters( 'elementor/files/svg/allowed_elements', $allowed_elements );
+
+		return $allowed_elements;
 	}
 
 	/**
