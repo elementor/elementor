@@ -119,7 +119,6 @@ BaseElementView = BaseContainer.extend( {
 				view: this,
 				parent: this._parent ? this._parent.getContainer() : {},
 				children: [],
-				placeholders: {},
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
