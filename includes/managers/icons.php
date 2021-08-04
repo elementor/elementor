@@ -339,7 +339,7 @@ class Icons_Manager {
 			 *
 			 * Filters whther the icons migration allowed.
 			 *
-			 * @param bool $migration_allowed Is icon migration allowed.
+			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */
 			$migration_allowed = apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
 		}
