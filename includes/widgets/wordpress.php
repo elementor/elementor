@@ -208,6 +208,7 @@ class Widget_WordPress extends Widget_Base {
 		if ( ! empty( $settings['wp'] ) ) {
 			$widget = $this->get_widget_instance();
 			$instance = $widget->update( $settings['wp'], [] );
+			/** This filter is documented in wp-includes/class-wp-widget.php */
 			$settings['wp'] = apply_filters( 'widget_update_callback', $instance, $settings['wp'], [], $widget );
 		}
 
