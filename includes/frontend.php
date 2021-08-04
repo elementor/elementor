@@ -859,6 +859,15 @@ class Frontend extends App {
 				'lt_LT' => 'latin-ext',
 			];
 
+			/**
+			 * Google font subsets.
+			 *
+			 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param array $subsets A list of font subsets.
+			 */
 			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
 
 			$locale = get_locale();
