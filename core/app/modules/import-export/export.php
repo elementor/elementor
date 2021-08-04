@@ -26,6 +26,14 @@ class Export extends Iterator {
 
 		$manifest_data = $root_directory->run_export();
 
+		/**
+		 * Manifest data from exported kit.
+		 *
+		 * Filters the manifest data of any exported kit.
+		 *
+		 * @param array  $manifest_data Manifest data.
+		 * @param Export $this          The export instance.
+		 */
 		$manifest_data = apply_filters( 'elementor/kit/export/manifest-data', $manifest_data, $this );
 
 		$this->set_current_archive_path( '' );
