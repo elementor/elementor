@@ -18,6 +18,6 @@ export default class KitLibrary {
 	}
 
 	hasAccessToModule() {
-		return elementorAppConfig[ 'kit-library' ]?.has_access_to_module;
+		return elementorAppConfig[ 'kit-library' ]?.['has_access_to_module'];
 	}
 }
