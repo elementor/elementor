@@ -704,7 +704,7 @@ class Element_Section extends Element_Base {
 					'darken' => esc_html__( 'Darken', 'elementor' ),
 					'lighten' => esc_html__( 'Lighten', 'elementor' ),
 					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
-					'saturation' => esc_html__'Saturation', 'elementor' ),
+					'saturation' => esc_html__( 'Saturation', 'elementor' ),
 					'color' => esc_html__( 'Color', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
