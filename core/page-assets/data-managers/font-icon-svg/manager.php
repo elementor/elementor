@@ -24,7 +24,7 @@ class Manager extends Base_Object {
 				],
 				'eicons' => [
 					'regex' => '/^eicons$/',
-					'manager' => new E_ICONS(),
+					'manager' => new E_Icons(),
 				],
 			];
 		}

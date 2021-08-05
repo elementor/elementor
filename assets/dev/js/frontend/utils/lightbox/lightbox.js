@@ -386,7 +386,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
 				const zoomOutAttrs = {
 					...showZoomAttrs,
-					class: this.getSettings( 'classes.hidden' ),
+					class: classes.hidden,
 				};
 
 				elements.$iconZoomOut = $( zoomOutBold.element ).attr( zoomOutAttrs ).on( 'click', this.toggleZoomMode );
@@ -422,7 +422,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
 				const minimizeAttrs = {
 					...fullScreenAttrs,
-					class: this.getSettings( 'classes.hidden' ),
+					class: classes.hidden,
 				};
 
 				elements.$iconMinimize = $( frameMinimize.element )
@@ -505,8 +505,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
 
 		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			this.elements.$iconExpand.addClass( this.getSettings( 'classes.hidden' ) ).attr( 'aria-checked', 'true' );
-			this.elements.$iconMinimize.removeClass( this.getSettings( 'classes.hidden' ) ).attr( 'aria-checked', 'true' );
+			this.elements.$iconExpand.addClass( classes.hidden ).attr( 'aria-checked', 'true' );
+			this.elements.$iconMinimize.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
 		} else {
 			this.elements.$iconExpand
 				.removeClass( classes.slideshow.iconExpand )
@@ -522,8 +522,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		screenfull.exit();
 
 		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			this.elements.$iconExpand.removeClass( this.getSettings( 'classes.hidden' ) ).attr( 'aria-checked', 'false' );
-			this.elements.$iconMinimize.addClass( this.getSettings( 'classes.hidden' ) ).attr( 'aria-checked', 'false' );
+			this.elements.$iconExpand.removeClass( classes.hidden ).attr( 'aria-checked', 'false' );
+			this.elements.$iconMinimize.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
 		} else {
 			this.elements.$iconExpand
 				.removeClass( classes.slideshow.iconShrink )
@@ -546,8 +546,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$container.addClass( classes.slideshow.zoomMode );
 
 		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			elements.$iconZoom.addClass( this.getSettings( 'classes.hidden' ) );
-			elements.$iconZoomOut.removeClass( this.getSettings( 'classes.hidden' ) );
+			elements.$iconZoom.addClass( classes.hidden );
+			elements.$iconZoomOut.removeClass( classes.hidden );
 		} else {
 			elements.$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
 		}
@@ -565,8 +565,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$container.removeClass( classes.slideshow.zoomMode );
 
 		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			elements.$iconZoom.removeClass( this.getSettings( 'classes.hidden' ) );
-			elements.$iconZoomOut.addClass( this.getSettings( 'classes.hidden' ) );
+			elements.$iconZoom.removeClass( classes.hidden );
+			elements.$iconZoomOut.addClass( classes.hidden );
 		} else {
 			elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
 		}

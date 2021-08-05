@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.4.0
  */
-class E_ICONS extends Base {
+class E_Icons extends Base {
 	const LIBRARY_CURRENT_VERSION = 5;
 
 	protected function get_config( $icon ) {
