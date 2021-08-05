@@ -234,16 +234,19 @@
 		transition: all .5s;
 	}
 
-
 	&.elementor-playing {
 
 		i {
 			font-family: eicons;
-			animation: fa-spin 2s infinite linear;
 
 			&:before {
 				content: '\e8fb';
 			}
+		}
+
+		i,
+		svg {
+			animation: eicon-spin 2s infinite linear;
 		}
 	}
 }

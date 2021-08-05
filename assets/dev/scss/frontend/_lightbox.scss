@@ -55,8 +55,16 @@
 		transition: $transition-hover;
 		opacity: 1;
 
+		svg {
+			fill: var(--lightbox-ui-color);
+		}
+
 		&:hover {
 			color:  var(--lightbox-ui-color-hover);
+
+			svg {
+				fill: var(--lightbox-ui-color-hover);
+			}
 		}
 	}
 
@@ -197,14 +205,29 @@
 		align-items: center;
 		z-index: 10;
 
-		> i {
-			font-size: inherit;
+		> i,
+		> svg {
 			cursor: pointer;
 			padding: .25em;
 			margin: 0 .35em;
+		}
+
+		> i {
+			font-size: inherit;
 
 			&:hover {
 				color: var(--lightbox-ui-color-hover);
+			}
+		}
+
+		> svg {
+			box-sizing: content-box;
+			fill: var(--lightbox-ui-color);
+			height: 1em;
+			width: 1em;
+
+			&:hover {
+				fill: var(--lightbox-ui-color-hover);
 			}
 		}
 
