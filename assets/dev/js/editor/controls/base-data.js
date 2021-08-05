@@ -175,6 +175,14 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	/**
+	 * Get the placeholder for the current control.
+	 * @returns {*}
+	 */
+	getControlPlaceholder() {
+		return this.container.placeholders[ this.model.get( 'name' ) ];
+	},
+
+	/**
 	 * Get the responsive parent view if exists.
 	 *
 	 * @returns {ControlBaseDataView|null}
@@ -208,7 +216,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
-			this.model.set( 'placeholder', parent.preparePlaceholderForChildren() );
+			const placeholder = parent.preparePlaceholderForChildren() || this.model.get( 'placeholder' );
+
+			this.container.placeholders[ this.model.get( 'name' ) ] = placeholder;
+			this.model.set( 'placeholder', placeholder );
 		}
 	},
 
