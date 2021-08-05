@@ -12,6 +12,7 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+// This animation is used by the _global.scss file and therefore can't be removed.
 @keyframes eicon-spin {
 	0% {
 		transform: rotate(0deg);

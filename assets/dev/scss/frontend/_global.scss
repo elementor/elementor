@@ -244,6 +244,7 @@
 			}
 		}
 
+		// Using the eicon-spin animation for not being dependent in any external library.
 		i,
 		svg {
 			animation: eicon-spin 2s infinite linear;
