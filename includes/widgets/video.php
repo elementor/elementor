@@ -940,7 +940,6 @@ class Widget_Video extends Widget_Base {
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
 						<div class="elementor-custom-embed-play" role="button">
-							<i class="eicon-play" aria-hidden="true"></i>
 							<?php
 								Icons_Manager::render_icon( [
 									'library' => 'eicons',
