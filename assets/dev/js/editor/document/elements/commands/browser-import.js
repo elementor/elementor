@@ -1,5 +1,4 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import SessionBuilder from '../../../utils/iomanager/session-builder';
 
 export class BrowserImport extends CommandBase {
 	/**
@@ -13,23 +12,20 @@ export class BrowserImport extends CommandBase {
 	 * @inheritDoc
 	 */
 	apply( args ) {
-		const { containers = [ args.container ], input, options = {
-			sessionHandler: undefined,
-		} } = args;
-		let sessionHandler = options.sessionHandler;
+		const { containers = [ args.container ], input, options = {} } = args;
 
 		containers.map( ( container ) => {
-			if ( ! sessionHandler ) {
-				sessionHandler = SessionBuilder
-					.createSession()
-					.normalizeInput( input )
-					.setContainer( container )
-					.getSessionHandler();
-			}
-
-			return sessionHandler.then( ( session ) => {
-				session.apply();
-			} );
+			elementor.browserImport
+				.createSession()
+				.normalizeInput( input )
+				.setContainer( container, options.container )
+				.setOptions( options )
+				.build()
+				.then( ( session ) => {
+					if ( session.validate() ) {
+						session.apply();
+					}
+				} );
 		} );
 	}
 }

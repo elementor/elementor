@@ -1,8 +1,6 @@
 /**
  * HTML5 - Drag and Drop
  */
-import SessionBuilder from "./iomanager/session-builder";
-
 ( function( $ ) {
 	var hasFullDataTransferSupport = function( event ) {
 		try {
@@ -267,27 +265,28 @@ import SessionBuilder from "./iomanager/session-builder";
 
 			setSide( event );
 
-			sessionHandler = SessionBuilder
+			elementor.browserImport
 				.createSession()
-				.normalizeInput( event.originalEvent.dataTransfer.files )
+				.normalizeInput( event.originalEvent.dataTransfer.items )
 				.setContainer( settings.getDropContainer() )
-				.getSessionHandler();
+				.build()
+				.then( ( session ) => {
+					isDroppingAllowedState = isDroppingAllowed( event ) || session.validate();
 
-			isDroppingAllowedState = isDroppingAllowed( event );
+					if ( ! isDroppingAllowedState ) {
+						return;
+					}
 
-			if ( ! isDroppingAllowedState ) {
-				return;
-			}
+					insertPlaceholder();
 
-			insertPlaceholder();
+					elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
-			elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
+					$( currentElement ).addClass( settings.currentElementClass );
 
-			$( currentElement ).addClass( settings.currentElementClass );
-
-			if ( 'function' === typeof settings.onDragEnter ) {
-				settings.onDragEnter.call( currentElement, currentSide, event, self );
-			}
+					if ( 'function' === typeof settings.onDragEnter ) {
+						settings.onDragEnter.call( currentElement, currentSide, event, self );
+					}
+				} );
 		};
 
 		var onDragOver = function( event ) {
@@ -331,22 +330,27 @@ import SessionBuilder from "./iomanager/session-builder";
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
+
+			isDroppingAllowedState = false;
 		};
 
 		var onDrop = function( event ) {
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
 			event.preventDefault();
 
 			$e.run( 'document/elements/browser-import', {
-				container: this.settings.getDropContainer(),
+				container: settings.getDropContainer(),
 				input: event.originalEvent.dataTransfer.files,
 				options: {
-					at: this.settings.getDropIndex( currentSide, event ),
+					event,
+					container: {
+						at: settings.getDropIndex( currentSide, event ),
+					},
 				},
 			} );
 		};

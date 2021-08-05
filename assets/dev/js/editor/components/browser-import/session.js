@@ -6,7 +6,9 @@ export default class Session {
 	 * @param target
 	 * @param options
 	 */
-	constructor( files = null, target = null, options = {} ) {
+	constructor( manager, files = null, target = null, options = {} ) {
+		this.manager = manager;
+
 		this.setFileList( files );
 		this.setTarget( target );
 		this.setOptions( options );
@@ -19,7 +21,7 @@ export default class Session {
 	 */
 	validate() {
 		for ( const file of this.getFiles() ) {
-			if ( ! FileHandlerRegistrar.getHandlerOf( file ) ) {
+			if ( ! this.manager.getReaderOf( file ) ) {
 				return false;
 			}
 		}
@@ -28,15 +30,24 @@ export default class Session {
 	}
 
 	/**
-	 * Handle all files and invoke their 'apply' method to fulfill their purpose.
+	 * Match files to a suitable reade
 	 */
 	apply() {
-		for ( const file of this.getFiles() ) {
-			const handler = FileHandlerRegistrar.getHandlerOf( file );
+		const result = [];
 
-			new handler( this, file )
-				.handle();
+		for ( const file of this.getFiles() ) {
+			const reader = this.manager.getReaderOf( file ),
+				parser = this.manager.getParserOf( reader, file );
+
+			if ( parser ) {
+				result.push(
+					new parser( this, file, reader )
+						.parse()
+				);
+			}
 		}
+
+		return result;
 	}
 
 	/**
@@ -88,6 +99,7 @@ export default class Session {
 	 * Set the session options.
 	 *
 	 * @param options
+	 * @returns this
 	 */
 	setOptions( options ) {
 		this.options = options;

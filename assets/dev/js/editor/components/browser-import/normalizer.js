@@ -1,17 +1,25 @@
 import FileListFactory from './files/file-list-factory';
-import JsonScheme from './schemes/json-scheme';
-import HtmlScheme from './schemes/html-scheme';
+import isInstanceof from '../../utils/is-instanceof';
 
 export default class Normalizer {
+	/**
+	 * Normalizer constructor.
+	 *
+	 * @param manager
+	 */
+	constructor( manager ) {
+		this.manager = manager;
+	}
+
 	/**
 	 * Normalize input so each item is represented as a File object and the whole collection is a FileList object.
 	 *
 	 * @param input
 	 * @returns {Promise<FileList>}
 	 */
-	static async normalize( input ) {
+	async normalize( input ) {
 		if ( ! FileListFactory.isFileList( input ) ) {
-			input = this.toFileList( input );
+			return this.toFileList( input );
 		}
 
 		return Promise.resolve( input );
@@ -24,9 +32,13 @@ export default class Normalizer {
 	 * @param input
 	 * @returns {Promise<FileList>}
 	 */
-	static async toFileList( input ) {
+	async toFileList( input ) {
+		if ( ! Array.isArray( input ) ) {
+			input = isInstanceof( input, DataTransferItemList ) ? Array.from( input ) : [ input ];
+		}
+
 		return Promise.all(
-			( Array.isArray( input ) ? input : [ input ] ).map( ( item ) => {
+			input.map( ( item ) => {
 				// Creating a FileList can only be made with an array of File objects. Therefore, unless the item is
 				// a File object, we should transform it into one.
 				if ( ! ( item instanceof File ) ) {
@@ -46,30 +58,19 @@ export default class Normalizer {
 	 * @param input
 	 * @returns {Promise<File>}
 	 */
-	static async toFile( input ) {
-		if ( ! ( input instanceof Blob ) ) {
-			// Here we are dealing with an input which is neither a Blob nor File objects. So it's probably a Json,
-			// Html or base64 string, or a JavaScript object of an another kind. The main goal of the method is to
-			// return a File object, and therefore, we need to provide among other things a mime-type. In case of
-			// base64 string, in order to extract the mime-type, we can dispatch a fetch request which resulting a
-			// Blob object that contains the mime-type. That is, dealing with Blob objects is a great way to
-			// eventually create a File object, because they include all things needed. If we're already creating
-			// a File object using a Blob object, we can use the same process for Json and Html strings, by
-			// initially converting them to a base64 string with the appropriate mime-type. This way, all strings
-			// are going through the same effective process without treating each string type differently in the
-			// way of creating the File object.
+	async toFile( input ) {
+		if ( ! ( input instanceof Blob || isInstanceof( input, DataTransferItem ) ) ) {
 			try {
 				// If conversion from base64 succeed, then it's a base64 and therefore we can continue to extracting
 				// its media-type and Blob object and put it into a File object.
 				window.atob( input );
 			} catch ( e ) {
-				if ( HtmlScheme.validate( input ) ) {
-					input = this.createDataUrl( input, HtmlScheme.mimeType );
+				const mimeType = this.manager.getMimeTypeOf( input );
+
+				if ( mimeType ) {
+					input = this.constructor.createDataUrl( input, mimeType );
 				} else {
-					input = this.createDataUrl(
-						input instanceof String ? input : JsonScheme.parse( input ),
-						JsonScheme.mimeType
-					);
+					throw new Error( 'The input provided cannot be resolved' );
 				}
 			}
 
@@ -77,7 +78,7 @@ export default class Normalizer {
 				.then( ( res ) => res.blob() );
 		}
 
-		return input.then(
+		return Promise.resolve( input ).then(
 			( blob ) => new File( [ blob ], null, { type: blob.type } )
 		);
 	}
