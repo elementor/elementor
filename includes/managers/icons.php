@@ -215,7 +215,7 @@ class Icons_Manager {
 			return;
 		}
 
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">';
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" id="e-font-icon-svg-symbols" style="display: none;">';
 
 		foreach ( self::$font_icon_svg_symbols as $symbol_id => $symbol ) {
 			$svg .= '<symbol id="' . $symbol_id . '" viewBox="0 0 ' . esc_attr( $symbol['width'] ) . ' ' . esc_attr( $symbol['height'] ) . '">';
