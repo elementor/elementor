@@ -692,6 +692,7 @@ class Widget_Video extends Widget_Base {
 					],
 				],
 				'selectors' => [
+					// Not using a CSS vars because the default size value is coming from a global scss file.
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'font-size: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} .elementor-custom-embed-play svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
 				],
