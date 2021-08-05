@@ -267,7 +267,7 @@ class Settings extends Settings_Page {
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLZyp9H25CboH8b_wsNyOmstckiOE8aUBg&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?v=icTcREd1tAg&amp;list=PLZyp9H25CboE6dhe7MnUxUdp4zU7OsNSe&amp;index=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
