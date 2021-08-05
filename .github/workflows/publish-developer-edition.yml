@@ -153,6 +153,17 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate DEV-CHANGELOG.md
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          npm i got@11.8.2 --no-package-lock --no-save
+          node ./.github/scripts/generate-dev-changelog-md.js
+          bash "${GITHUB_WORKSPACE}/.github/scripts/set-git-user.sh"
+          git add DEV-CHANGELOG.md
+          git commit -m "Update DEV-CHANGELOG.md"
+          git push
       - name: Read changelog and set current date
         run: |
           CHANGELOG=$(cat temp-changelog.txt | tr -d '\n')
