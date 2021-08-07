@@ -13,6 +13,8 @@ class Eicons {
 			'frame-minimize',
 			'zoom-in-bold',
 			'zoom-out-bold',
+			'chevron-left',
+			'chevron-right',
 		];
 	}
 

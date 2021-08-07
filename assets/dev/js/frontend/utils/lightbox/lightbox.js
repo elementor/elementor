@@ -1,5 +1,5 @@
 import screenfull from './screenfull';
-import { loading, close, shareArrow, frameExpand, frameMinimize, zoomInBold, zoomOutBold } from '../icons/eicons';
+import { loading, close, shareArrow, frameExpand, frameMinimize, zoomInBold, zoomOutBold, chevronLeft, chevronRight } from '../icons/eicons';
 
 module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
@@ -650,8 +650,11 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			const $prevButtonIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
+				$nextButtonIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
+
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $prevButtonIcon );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $nextButtonIcon );
 
 			$container.append(
 				$nextButton,
