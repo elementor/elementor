@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -45,10 +46,22 @@ class Module extends BaseApp {
 		</div>
 		<?php
 	}
+
 	protected function get_init_settings() {
-		return [
+		$settings = [
 			'is_administrator' => current_user_can( 'manage_options' ),
 		];
+
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		if ( $library ) {
+			$settings = array_merge($settings, [
+				'is_user_connected' => $library->is_connected(),
+				'connect_url' => $library->get_admin_url( 'authorize' ),
+			]);
+		}
+
+		return apply_filters( 'elementor/admin-top-bar/init_settings', $settings );
 	}
 
 	/**
