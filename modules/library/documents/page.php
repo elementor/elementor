@@ -35,7 +35,6 @@ class Page extends Library_Document {
 		$properties['support_kit'] = true;
 		$properties['show_in_finder'] = true;
 
-
 		return $properties;
 	}
 
@@ -59,11 +58,11 @@ class Page extends Library_Document {
 	}
 
 	public static function get_plural_title() {
-		return __( 'Pages', 'elementor' );
+		return esc_html__( 'Pages', 'elementor' );
 	}
 
 	public static function get_add_new_title() {
-		return __( 'Add New Library Page', 'elementor' );
+		return esc_html__( 'Add New Library Page', 'elementor' );
 	}
 
 	/**
