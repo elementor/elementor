@@ -11,6 +11,7 @@ import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
+import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
@@ -188,6 +189,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			swiper: Swiper,
 			environment: environment,
 			assetsLoader: new AssetsLoader(),
+			escapeHTML,
 		};
 
 		// TODO: BC since 2.4.0
@@ -331,7 +333,7 @@ export default class Frontend extends elementorModules.ViewModule {
 	 * Initialize the modules' widgets handlers.
 	 */
 	initModules() {
-		let handlers = {
+		const handlers = {
 			shapes: Shapes,
 		};
 
