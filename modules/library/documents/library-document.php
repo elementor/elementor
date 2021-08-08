@@ -46,6 +46,9 @@ abstract class Library_Document extends Document {
 		$properties['register_type'] = true;
 		$properties['cpt'] = [ Source_Local::CPT ];
 
+		// TODO - Remove - Backwards compatibility, since 'Theme_Document' does not support 'static::get_type'.
+		$properties['show_in_finder'] = false;
+
 		return $properties;
 	}
 

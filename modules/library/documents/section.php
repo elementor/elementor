@@ -19,6 +19,7 @@ class Section extends Library_Document {
 		$properties = parent::get_properties();
 
 		$properties['support_kit'] = true;
+		$properties['show_in_finder'] = true;
 
 		return $properties;
 	}
