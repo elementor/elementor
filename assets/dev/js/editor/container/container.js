@@ -159,8 +159,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		// Execute the code only for non-repeater containers.
-		if ( this.view && ! this.type.includes( 'repeater' ) ) {
+		if ( this.view && this.view instanceof Marionette.CompositeView ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
