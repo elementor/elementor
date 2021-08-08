@@ -27,7 +27,7 @@ body {
 	//Color Picker
 	.pcr-app {
 		background-color: $theme-dark-gray;
-		box-shadow: 0 .15em 1.5em 0 rgba(0,0,0,.5),0 0 1em 0 rgba(0,0,0,.05);
+		box-shadow: 0 .15em 1.5em 0 rgba(0,0,0,.5), 0 0 1em 0 rgba(0,0,0,.05);
 
 		.pcr-swatches > button {
 
@@ -165,6 +165,13 @@ body {
 		color: $theme-dark-light;
 	}
 }
+.elementor-units-choices {
+	input {
+		&.e-units-placeholder + label {
+			color: $theme-dark-gray-lightest;
+		}
+	}
+}
 
 input, select, textarea, .elementor-input-style {
 	color: $theme-dark-light;
@@ -180,6 +187,10 @@ input, select, textarea, .elementor-input-style {
 
 	&[disabled] {
 		background-color: $theme-dark-gray;
+	}
+
+	&::placeholder {
+		color: $theme-dark-gray-light;
 	}
 }
 
@@ -431,6 +442,18 @@ select {
 			border-color: $theme-dark-gray-darkest;
 		}
 	}
+
+	&.elementor-control-type-select {
+
+		.elementor-control-input-wrapper {
+
+			select {
+				&.e-select-placeholder {
+					color: $theme-dark-gray-light;
+				}
+			}
+		}
+	}
 }
 
 .elementor-control-responsive-switchers {
@@ -455,12 +478,10 @@ a.elementor-responsive-switcher {
 	}
 }
 
-$devices: 'desktop', 'tablet', 'mobile';
-
 @each $device in $devices {
 	.elementor-device-#{ $device } {
 		.elementor-responsive-switchers-open:not(:hover) {
-			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device }{
+			.elementor-responsive-switcher.elementor-responsive-switcher-#{ $device } {
 				color: $theme-dark-accent;
 			}
 		}
@@ -521,6 +542,13 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 	.elementor-control-media__preview i {
 		color: $theme-dark-gray-lightest;
+	}
+}
+
+.elementor-control-type-media {
+
+	.elementor-control-media__preview {
+		background-color: $theme-dark-gray-darkest;
 	}
 }
 
@@ -636,7 +664,7 @@ body.rtl .elementor-control-type-gallery {
 	.mce-toolbar .mce-btn-group .mce-btn:hover,
 	.mce-toolbar .mce-btn-group .mce-btn:focus,
 	.qt-dfw:hover,
-	.qt-dfw:focus{
+	.qt-dfw:focus {
 		background-color: $theme-dark-gray-dark;
 		box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 1px 0 rgba(0, 0, 0, 0.08);
 	}
@@ -676,9 +704,14 @@ body.rtl .elementor-control-type-gallery {
 		}
 	}
 
-	& input:checked {
+	& input {
 
-		+ .elementor-choices-label {
+		&.e-choose-placeholder + .elementor-choices-label {
+			background-color: $theme-dark-gray-light;
+			border-color: $theme-dark-gray-light;
+		}
+
+		&:checked + .elementor-choices-label {
 			background-color: $theme-dark-gray-lighter;
 			border-color: $theme-dark-gray-lighter;
 		}
@@ -863,6 +896,10 @@ body.rtl .elementor-control-type-gallery {
 //Select2 Control
 .select2-container {
 
+	.e-select2-placeholder {
+		color: $theme-dark-gray-light;
+	}
+
 	&:not(.select2-container--open):not(.select2-container--focus) {
 
 		.select2-selection--single,
@@ -896,41 +933,42 @@ body.rtl .elementor-control-type-gallery {
 			}
 		}
 	}
-}
 
-.select2-container--default {
+	&.select2-container--default {
 
-	.select2-selection--single {
-		background-color: $theme-dark-gray-darkest;
-		border-color: $theme-dark-gray;
-	}
-
-	.select2-selection--multiple {
-		background-color: $theme-dark-gray-darkest;
-
-		.select2-selection__choice {
-			background-color: $theme-dark-gray;
+		.select2-selection--single {
+			background-color: $theme-dark-gray-darkest;
 			border-color: $theme-dark-gray;
+		}
 
-			&__remove {
-				color: $theme-dark-gray-lightest;
+		.select2-selection--multiple {
+			background-color: $theme-dark-gray-darkest;
+
+			.select2-selection__choice {
+				background-color: $theme-dark-gray;
+				border-color: $theme-dark-gray;
+
+				&__remove {
+					color: $theme-dark-gray-lightest;
+				}
 			}
+		}
+
+		.select2-results__option--highlighted[aria-selected] {
+			background-color: $theme-dark-gray;
+			color: $theme-dark-light;
 		}
 	}
 
-	.select2-results__option--highlighted[aria-selected] {
-		background-color: $theme-dark-gray;
-		color: $theme-dark-light;
+	.select2-results__option[aria-selected=true] {
+		color: #FFF;
 	}
-}
 
-.select2-results__option[aria-selected=true] {
-	color: $theme-dark-light;
-}
+	.select2-dropdown {
+		background-color: $theme-dark-gray-darkest;
+		border-color: $theme-dark-gray-lighter;
+	}
 
-.select2-dropdown {
-	background-color: $theme-dark-gray-darkest;
-	border-color: $theme-dark-gray-lighter;
 }
 
 // Widget Pro Promotion Tooltip

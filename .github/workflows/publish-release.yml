@@ -13,7 +13,7 @@ on:
 
 jobs:
   merge-release-branch-to-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout master branch
@@ -146,7 +146,7 @@ jobs:
         with:
           tag_name: v${{ env.PACKAGE_VERSION }}
           files: elementor-*.zip
-          body_path: temp-changelog-from-changelog.txt
+          body_path: temp-changelog-from-readme.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       - name: Read changelog and set current date

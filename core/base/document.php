@@ -143,7 +143,7 @@ abstract class Document extends Controls_Stack {
 			'support_kit' => static::get_property( 'support_kit' ),
 			'messages' => [
 				/* translators: %s: the document title. */
-				'publish_notification' => sprintf( __( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
+				'publish_notification' => sprintf( esc_html__( 'Hurray! Your %s is live.', 'elementor' ), static::get_title() ),
 			],
 		];
 	}
@@ -160,7 +160,7 @@ abstract class Document extends Controls_Stack {
 	 * @return string Element title.
 	 */
 	public static function get_title() {
-		return __( 'Document', 'elementor' );
+		return esc_html__( 'Document', 'elementor' );
 	}
 
 	public static function get_plural_title() {
@@ -320,8 +320,10 @@ abstract class Document extends Controls_Stack {
 		$document = $this;
 
 		// Ajax request from editor.
-		if ( ! empty( $_POST['initial_document_id'] ) ) {
-			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] );
+		// PHPCS - only reading the value from $_POST['initial_document_id'].
+		if ( ! empty( $_POST['initial_document_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// PHPCS - only reading the value from $_POST['initial_document_id'].
+			$document = Plugin::$instance->documents->get( $_POST['initial_document_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$url = get_preview_post_link(
@@ -954,7 +956,7 @@ abstract class Document extends Controls_Stack {
 
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
-		<div <?php echo Utils::render_html_attributes( $this->get_container_attributes() ); ?>>
+		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
 			<?php if ( ! $is_dom_optimization_active ) { ?>
 			<div class="elementor-inner">
 			<?php } ?>
@@ -983,7 +985,7 @@ abstract class Document extends Controls_Stack {
 	public function get_panel_page_settings() {
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), static::get_title() ),
+			'title' => sprintf( esc_html__( '%s Settings', 'elementor' ), static::get_title() ),
 		];
 	}
 
@@ -1229,10 +1231,10 @@ abstract class Document extends Controls_Stack {
 
 		if ( $autosave_post || 'revision' === $post->post_type ) {
 			/* translators: 1: Saving date, 2: Author display name */
-			$last_edited = sprintf( __( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf( esc_html__( 'Draft saved on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		} else {
 			/* translators: 1: Editing date, 2: Author display name */
-			$last_edited = sprintf( __( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
+			$last_edited = sprintf( esc_html__( 'Last edited on %1$s by %2$s', 'elementor' ), '<time>' . $date . '</time>', $display_name );
 		}
 
 		return $last_edited;
@@ -1320,6 +1322,7 @@ abstract class Document extends Controls_Stack {
 		return [
 			'content' => $content,
 			'settings' => $this->get_data( 'settings' ),
+			'metadata' => $this->get_export_metadata(),
 		];
 	}
 
@@ -1390,6 +1393,12 @@ abstract class Document extends Controls_Stack {
 
 			set_post_thumbnail( $this->get_main_post(), $attachment['id'] );
 		}
+
+		if ( ! empty( $data['metadata'] ) ) {
+			foreach ( $data['metadata'] as $key => $value ) {
+				$this->update_meta( $key, $value );
+			}
+		}
 	}
 
 	private function process_element_import_export( Controls_Stack $element, $method ) {
@@ -1419,6 +1428,22 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $element_data;
+	}
+
+	protected function get_export_metadata() {
+		$metadata = get_post_meta( $this->get_main_id() );
+
+		foreach ( $metadata as $meta_key => $meta_value ) {
+			if ( is_protected_meta( $meta_key, 'post' ) ) {
+				unset( $metadata[ $meta_key ] );
+
+				continue;
+			}
+
+			$metadata[ $meta_key ] = $meta_value[0];
+		}
+
+		return $metadata;
 	}
 
 	protected function get_remote_library_config() {
@@ -1471,7 +1496,7 @@ abstract class Document extends Controls_Stack {
 		$this->start_controls_section(
 			'document_settings',
 			[
-				'label' => __( 'General Settings', 'elementor' ),
+				'label' => esc_html__( 'General Settings', 'elementor' ),
 				'tab' => Controls_Manager::TAB_SETTINGS,
 			]
 		);
@@ -1479,7 +1504,7 @@ abstract class Document extends Controls_Stack {
 		$this->add_control(
 			'post_title',
 			[
-				'label' => __( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => $this->post->post_title,
 				'label_block' => true,
@@ -1496,13 +1521,13 @@ abstract class Document extends Controls_Stack {
 
 			$statuses = $this->get_post_statuses();
 			if ( 'future' === $this->get_main_post()->post_status ) {
-				$statuses['future'] = __( 'Future', 'elementor' );
+				$statuses['future'] = esc_html__( 'Future', 'elementor' );
 			}
 
 			$this->add_control(
 				'post_status',
 				[
-					'label' => __( 'Status', 'elementor' ),
+					'label' => esc_html__( 'Status', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $this->get_main_post()->post_status,
 					'options' => $statuses,

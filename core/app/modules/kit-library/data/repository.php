@@ -97,7 +97,7 @@ class Repository {
 					];
 				}, $taxonomies ) );
 			}, new Collection( [] ) )
-			->unique( 'text' );
+			->unique( [ 'text', 'type' ] );
 	}
 
 	/**

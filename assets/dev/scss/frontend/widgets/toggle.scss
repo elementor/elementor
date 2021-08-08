@@ -18,6 +18,11 @@
 			display: inline-block;
 			width: 1em;
 
+			svg {
+				width: 1em;
+				height: 1em;
+			}
+
 			&.elementor-toggle-icon- {
 
 				&right {
@@ -59,7 +64,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-toggle {
 

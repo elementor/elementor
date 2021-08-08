@@ -24,7 +24,7 @@ class Create extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Create', 'elementor' );
+		return esc_html__( 'Create', 'elementor' );
 	}
 
 	/**
