@@ -159,7 +159,8 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view ) {
+		// Execute the code only for non-repeater containers.
+		if ( this.view && ! this.type.includes( 'repeater' ) ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
