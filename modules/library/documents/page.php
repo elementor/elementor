@@ -60,6 +60,10 @@ class Page extends Library_Document {
 		return __( 'Pages', 'elementor' );
 	}
 
+	public static function get_add_new_title() {
+		return __( 'Add New Library Page', 'elementor' );
+	}
+
 	/**
 	 * @since 2.1.3
 	 * @access public

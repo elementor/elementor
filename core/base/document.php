@@ -167,6 +167,10 @@ abstract class Document extends Controls_Stack {
 		return static::get_title();
 	}
 
+	public static function get_add_new_title() {
+		return sprintf( __( 'Add New %s', 'elementor' ), static::get_title() );
+	}
+
 	/**
 	 * Get property.
 	 *
