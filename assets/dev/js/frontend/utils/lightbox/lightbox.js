@@ -1,5 +1,5 @@
 import screenfull from './screenfull';
-import { loading, close, shareArrow, frameExpand, frameMinimize, zoomInBold, zoomOutBold, chevronLeft, chevronRight } from '../icons/eicons';
+import { loading, close, shareArrow, frameExpand, frameMinimize, zoomInBold, zoomOutBold, chevronLeft, chevronRight } from '@elementor/e-icons';
 
 module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
