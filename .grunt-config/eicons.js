@@ -6,15 +6,19 @@ class Eicons {
 	constructor() {
 		// Icons list that are being used in the frontend and can be imported as an HTML node element.
 		this.frontendAvailableIcons = [
-			'loading',
-			'close',
-			'share-arrow',
-			'frame-expand',
-			'frame-minimize',
-			'zoom-in-bold',
-			'zoom-out-bold',
 			'chevron-left',
 			'chevron-right',
+			'close',
+			'download-bold',
+			'facebook',
+			'frame-expand',
+			'frame-minimize',
+			'loading',
+			'pinterest',
+			'share-arrow',
+			'twitter',
+			'zoom-in-bold',
+			'zoom-out-bold',
 		];
 	}
 
@@ -34,7 +38,7 @@ class Eicons {
 
 			svgIconsJSContent += '\n';
 
-			const svgIconsJSDestination = path.resolve( __dirname, '../assets/dev/js/frontend/utils/icons/eicons.js' );
+			const svgIconsJSDestination = path.resolve( __dirname, '../assets/dev/js/frontend/utils/icons/e-icons.js' );
 
 			write.sync( svgIconsJSDestination, svgIconsJSContent );
 		}
