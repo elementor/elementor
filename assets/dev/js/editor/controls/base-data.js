@@ -216,7 +216,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
-			const placeholder = parent.preparePlaceholderForChildren() || this.model.get( 'placeholder' );
+			const placeholder = parent.preparePlaceholderForChildren();
 
 			this.container.placeholders[ this.model.get( 'name' ) ] = placeholder;
 			this.model.set( 'placeholder', placeholder );
@@ -236,16 +236,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	preparePlaceholderForChildren: function() {
-		const parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren(),
-			cleanValue = this.getCleanControlValue();
+		const cleanValue = this.getCleanControlValue(),
+			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren(),
+			placeholder = this.model.get( 'placeholder' );
 
 		if ( cleanValue instanceof Object ) {
-			return Object.keys( cleanValue ).length ?
-				Object.assign( {}, parentValue, cleanValue ) :
-				parentValue;
+			return Object.assign( {}, placeholder, parentValue, cleanValue );
 		}
 
-		return this.getControlValue() || parentValue;
+		return cleanValue || parentValue || placeholder;
 	},
 
 	/**
@@ -278,10 +277,15 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	/**
-	 * This method's primary implementation is written under base-multiple view,
-	 * please refer there for explanation.
+	 * Get control value without empty properties, and without default values.
+	 *
+	 * @returns {{}}
 	 */
-	getCleanControlValue: function() {},
+	getCleanControlValue: function() {
+		const value = this.getControlValue();
+
+		return value && value !== this.model.get( 'default' ) ? value : undefined;
+	},
 
 	onAfterChange: function( control ) {
 		if ( Object.keys( control.changed ).includes( this.model.get( 'name' ) ) ) {

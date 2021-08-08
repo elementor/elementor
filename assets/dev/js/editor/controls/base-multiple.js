@@ -38,9 +38,7 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 	},
 
 	/**
-	 * Get control value without empty properties, and without default values.
-	 *
-	 * @returns {{}}
+	 * @inheritDoc
 	 */
 	getCleanControlValue: function( key ) {
 		const values = Object.fromEntries(
@@ -51,10 +49,10 @@ ControlBaseMultipleItemView = ControlBaseDataView.extend( {
 		);
 
 		if ( key ) {
-			return values[ key ];
+			return values?.[ key ];
 		}
 
-		return values;
+		return Object.keys( values ).length ? values : undefined;
 	},
 
 	setValue: function( key, value ) {
