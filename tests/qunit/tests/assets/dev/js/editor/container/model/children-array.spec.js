@@ -1,6 +1,6 @@
 import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
 
-QUnit.module( 'File: assets/dev/js/editor/container/model/children-collection.js', ( hooks ) => {
+QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( hooks ) => {
 	hooks.beforeEach( () => {
 		ElementsHelper.empty();
 	} );

@@ -1,6 +1,6 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
-import ChildrenCollection from './model/children-collection';
+import ChildrenArray from './model/children-array';
 
 /**
  * TODO: ViewsOptions
@@ -64,9 +64,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container children(s).
 	 *
-	 * @type {ChildrenCollection}
+	 * @type {ChildrenArray}
 	 */
-	children = new ChildrenCollection();
+	children = new ChildrenArray();
 
 	/**
 	 * Container dynamic.

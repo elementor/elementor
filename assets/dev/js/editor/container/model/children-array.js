@@ -1,4 +1,4 @@
-export default class ChildrenCollection extends Array {
+export default class ChildrenArray extends Array {
 	clear() {
 		this.length = 0;
 	}
