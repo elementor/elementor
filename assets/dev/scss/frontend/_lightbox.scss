@@ -282,9 +282,18 @@
 				color: #000;
 			}
 
+			i,
+			svg {
+				@include margin-end(0.75em);
+			}
+
 			i {
 				font-size: 1.25em;
-				@include margin-end(0.75em);
+			}
+
+			svg {
+				height: 1.25em;
+				width: 1.25em;
 			}
 		}
 
@@ -392,6 +401,26 @@
 
 					&-download-bold {
 						color: $editor-light;
+					}
+				}
+
+				// SVG Icons.
+				.e-eicon {
+
+					&-twitter {
+						fill: $twitter;
+					}
+
+					&-facebook {
+						fill: $facebook;
+					}
+
+					&-pinterest {
+						fill: $pinterest;
+					}
+
+					&-download-bold {
+						fill: $editor-light;
 					}
 				}
 			}

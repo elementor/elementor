@@ -1,5 +1,19 @@
 import screenfull from './screenfull';
-import { loading, close, shareArrow, frameExpand, frameMinimize, zoomInBold, zoomOutBold, chevronLeft, chevronRight } from '@elementor/e-icons';
+import {
+	chevronLeft,
+	chevronRight,
+	close,
+	downloadBold,
+	facebook,
+	frameExpand,
+	frameMinimize,
+	loading,
+	pinterest,
+	shareArrow,
+	twitter,
+	zoomInBold,
+	zoomOutBold,
+} from '@elementor/e-icons';
 
 module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
@@ -268,9 +282,18 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				facebook: i18n.shareOnFacebook,
-				twitter: i18n.shareOnTwitter,
-				pinterest: i18n.pinIt,
+				facebook: {
+					label: i18n.shareOnFacebook,
+					iconElement: facebook,
+				},
+				twitter: {
+					label: i18n.shareOnTwitter,
+					iconElement: twitter,
+				},
+				pinterest: {
+					label: i18n.pinIt,
+					iconElement: pinterest,
+				},
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -288,17 +311,23 @@ module.exports = elementorModules.ViewModule.extend( {
 			itemUrl = $image.attr( 'src' );
 		}
 
-		$.each( socialNetworks, ( key, networkLabel ) => {
-			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
+		$.each( socialNetworks, ( key, data ) => {
+			const networkLabel = data.label,
+				$link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel ),
+				$socialNetworkIconElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
 
-			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
+			$link.prepend( $socialNetworkIconElement );
 			$linkList.append( $link );
 		} );
 
 		if ( ! videoUrl ) {
+			const $downloadIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( downloadBold.element ) : $( '<i>', { class: 'eicon-download-bold' } );
+
+			$downloadIcon.attr( 'aria-label', i18n.download );
+
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } )
 				.text( i18n.downloadImage )
-				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': i18n.download } ) ) );
+				.prepend( $downloadIcon ) );
 		}
 
 		return $linkList;
