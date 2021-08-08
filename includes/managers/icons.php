@@ -256,6 +256,7 @@ class Icons_Manager {
 		}
 
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
+		$attributes['class'][] = 'e-' . $icon_data['key'];
 
 		/**
 		 * If in edit mode inline the full svg, otherwise use the symbol.
