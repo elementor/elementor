@@ -858,10 +858,6 @@ class Widget_Image_Carousel extends Widget_Base {
 	private function render_swiper_button( $type ) {
 		$direction = 'next' === $type ? 'right' : 'left';
 
-		if ( is_rtl() ) {
-			$direction = 'right' === $direction ? 'left' : 'right';
-		}
-
 		$icon_value = 'eicon-chevron-' . $direction;
 
 		Icons_Manager::render_icon( [
