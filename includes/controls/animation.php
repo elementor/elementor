@@ -117,7 +117,12 @@ class Control_Animation extends Base_Data_Control {
 		$additional_animations = [];
 
 		/**
-		 * Element appearance animations list.
+		 * Entrance animations.
+		 *
+		 * Filters the animations list displayed in the animations control.
+		 *
+		 * This hook can be used to register animations in  addition to the
+		 * basic Elementor animations.
 		 *
 		 * @since 2.4.0
 		 *
