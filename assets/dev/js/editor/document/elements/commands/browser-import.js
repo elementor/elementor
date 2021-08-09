@@ -14,15 +14,15 @@ export class BrowserImport extends CommandBase {
 	apply( args ) {
 		const { containers = [ args.container ], input, options = {} } = args;
 
-		containers.map( ( container ) => {
+		containers.forEach( ( container ) => {
 			elementor.browserImport
 				.createSession()
 				.normalizeInput( input )
 				.setContainer( container, options.container )
 				.setOptions( options )
 				.build()
-				.then( ( session ) => {
-					if ( session.validate() ) {
+				.then( async ( session ) => {
+					if ( await session.validate() ) {
 						session.apply();
 					}
 				} );

@@ -1,6 +1,7 @@
 import SessionBuilder from './session-builder';
 import Normalizer from './normalizer';
-import DefaultConfig from './default-config';
+import FileReader from './files/file-reader';
+import FileParser from './files/file-parser';
 
 export default class Manager {
 	/**
@@ -48,7 +49,7 @@ export default class Manager {
 	}
 
 	/**
-	 * Register a new file-parser.
+	 * Register a new file-parser to a specific reader.
 	 *
 	 * @param readerName
 	 * @param parserName
@@ -76,9 +77,9 @@ export default class Manager {
 	 * @param file
 	 * @returns {FileReader|boolean}
 	 */
-	getReaderOf( file ) {
+	async getReaderOf( file ) {
 		for ( const reader of Object.values( this.getReaders() ) ) {
-			if ( reader.validate( file ) ) {
+			if ( await reader.validate( file ) ) {
 				return reader;
 			}
 		}
@@ -86,10 +87,23 @@ export default class Manager {
 		return false;
 	}
 
-	getParserOf( reader, file ) {
-		if ( this.readers[ reader.getName() ] ) {
-			for ( const parser of Object.values( this.parsers[ reader.getName() ] ) ) {
-				if ( parser.validate( file ) ) {
+	/**
+	 * Get the suitable parser for a file, according to its reader.
+	 *
+	 * @param file
+	 * @param reader
+	 * @returns {Promise<FileParser|boolean>}
+	 */
+	async getParserOf( file, reader ) {
+		// This methods requires an instance of FileReader since the parser's `validate` method using it to check
+		// whether it can handle the file.
+		if ( reader instanceof FileReader ) {
+			const parsers = Object.values(
+				this.parsers[ reader.constructor.getName() ] || {}
+			);
+
+			for ( const parser of parsers ) {
+				if ( await parser.validate( reader ) ) {
 					return parser;
 				}
 			}
@@ -98,9 +112,15 @@ export default class Manager {
 		return false;
 	}
 
-	getMimeTypeOf( input ) {
+	/**
+	 * Resolve the mime-type for an input using the registered parsers.
+	 *
+	 * @param input
+	 * @returns {Promise<string|boolean>}
+	 */
+	async getMimeTypeOf( input ) {
 		for ( const reader of Object.values( this.getReaders() ) ) {
-			const mimeType = reader.class.resolve( input );
+			const mimeType = await reader.resolve( input );
 
 			if ( mimeType ) {
 				return mimeType;
@@ -129,9 +149,9 @@ export default class Manager {
 	}
 
 	/**
-	 * Get all registered file-parsers, unless a reader name is specified and only its parsers are returned.
+	 * Get all registered file-parsers, unless a reader name is specified, in which case its parsers are returned.
 	 *
-	 * @returns {[]}
+	 * @returns {FileParser[]}
 	 */
 	getParsers( reader = null ) {
 		if ( reader ) {

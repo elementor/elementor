@@ -1,5 +1,6 @@
 import FileListFactory from './files/file-list-factory';
 import isInstanceof from '../../utils/is-instanceof';
+import Mime from 'mime/index';
 
 export default class Normalizer {
 	/**
@@ -12,7 +13,9 @@ export default class Normalizer {
 	}
 
 	/**
-	 * Normalize input so each item is represented as a File object and the whole collection is a FileList object.
+	 * Normalize input to a FileList collection, where each item is a File object. This method can be used to normalize
+	 * a vast spectrum of input types - from data url strings to blob objects, and array of them. Other kind of parsers
+	 * can be registered to the Manager.
 	 *
 	 * @param input
 	 * @returns {Promise<FileList>}
@@ -51,9 +54,9 @@ export default class Normalizer {
 	}
 
 	/**
-	 * Convert a single input item into a File object. This method can deal with Blob objects, strings like base64,
-	 * Json or even Html and produce a suitable file with appropriate mime-type. Other JavaScript objects are
-	 * converted to Json format.
+	 * Convert a single input item into a File object. First the method checks for Blob or DataTransferItem objects, and
+	 * then for data url strings. In any other case, it's trying to resolve the input using the parsers registered to
+	 * the Manager by the application.
 	 *
 	 * @param input
 	 * @returns {Promise<File>}
@@ -61,11 +64,14 @@ export default class Normalizer {
 	async toFile( input ) {
 		if ( ! ( input instanceof Blob || isInstanceof( input, DataTransferItem ) ) ) {
 			try {
-				// If conversion from base64 succeed, then it's a base64 and therefore we can continue to extracting
-				// its media-type and Blob object and put it into a File object.
-				window.atob( input );
+				// In order to check whether it's a data url string, we're trying to decode it. If it is a data url,
+				// we can extract the blob and the mime-type, and eventually generate a File object.
+				window.atob( input.split( ',' )[ 1 ] );
 			} catch ( e ) {
-				const mimeType = this.manager.getMimeTypeOf( input );
+				// If it's not a data url string, we should convert the input into one. At first, we have to find the
+				// mime-type, and then use the `createDataUrl` method. This way we can unitedly convert the input to
+				// a File object from a data url instead of referring each input format differently.
+				const mimeType = await this.manager.getMimeTypeOf( input );
 
 				if ( mimeType ) {
 					input = this.constructor.createDataUrl( input, mimeType );
@@ -74,17 +80,35 @@ export default class Normalizer {
 				}
 			}
 
+			// Extract the mime-type and the blob of the input.
 			input = fetch( input )
 				.then( ( res ) => res.blob() );
 		}
 
 		return Promise.resolve( input ).then(
-			( blob ) => new File( [ blob ], null, { type: blob.type } )
+			( blob ) => new File(
+				[ blob ],
+				this.constructor.createFileName( blob ),
+				{ type: blob.type }
+			)
 		);
 	}
 
 	/**
-	 * Create a data url string functionally.
+	 * Creates a random file name from a Blob object while using the suitable extension for the blob mime-type.
+	 *
+	 * @param blob
+	 * @returns {string}
+	 */
+	static createFileName( blob ) {
+		return [
+			( Math.random() + 1 ).toString( 36 ).substring( 7 ),
+			Mime.getExtension( blob.type ),
+		].join( '.' );
+	}
+
+	/**
+	 * A utility for creating a data url string functionally.
 	 *
 	 * @param data
 	 * @param mimeType

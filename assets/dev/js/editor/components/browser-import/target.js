@@ -17,8 +17,8 @@ export default class Target {
 		return this.container;
 	}
 
-	createWidget( widgetType, options = {} ) {
-		const model = this.constructor.getWidgetModel( widgetType ),
+	createElement( type, settings = {} ) {
+		const model = this.constructor.getElementModel( type, settings ),
 			historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: elementor.helpers.getModelLabel( model ),
@@ -46,7 +46,7 @@ export default class Target {
 		const widget = $e.run( 'document/elements/create', {
 			container,
 			model,
-			options: Object.assign( {}, this.options, options ),
+			options: this.options,
 		} );
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
@@ -54,14 +54,17 @@ export default class Target {
 		return widget;
 	}
 
-	static getWidgetModel( widgetType ) {
-		const model = new PanelElementsElementModel(
-			elementor.widgetsCache[ widgetType ]
+	static getElementModel( type, settings = {} ) {
+		const widget = Object.assign(
+			elementor.widgetsCache[ type ],
+			{
+				widgetType: type,
+				settings,
+			}
 		);
 
-		model.set( 'widgetType', model.get( 'widget_type' ) );
-
-		return model.attributes;
+		return new PanelElementsElementModel( widget )
+			.attributes;
 	}
 
 	getOptions() {

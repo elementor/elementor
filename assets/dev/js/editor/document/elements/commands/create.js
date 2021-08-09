@@ -78,8 +78,6 @@ export class Create extends CommandHistory {
 			}
 		} );
 
-		console.log( options );
-
 		if ( 1 === result.length ) {
 			result = result[ 0 ];
 		}

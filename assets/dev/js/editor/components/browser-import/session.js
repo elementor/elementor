@@ -2,6 +2,7 @@ export default class Session {
 	/**
 	 * Session constructor.
 	 *
+	 * @param manager
 	 * @param files
 	 * @param target
 	 * @param options
@@ -15,13 +16,13 @@ export default class Session {
 	}
 
 	/**
-	 * Validate all files can be handled.
+	 * Validate all files in this session can be handled.
 	 *
 	 * @returns {boolean}
 	 */
-	validate() {
+	async validate() {
 		for ( const file of this.getFiles() ) {
-			if ( ! this.manager.getReaderOf( file ) ) {
+			if ( ! await this.manager.getReaderOf( file ) ) {
 				return false;
 			}
 		}
@@ -32,19 +33,27 @@ export default class Session {
 	/**
 	 * Match files to a suitable reade
 	 */
-	apply() {
+	async apply() {
 		const result = [];
 
 		for ( const file of this.getFiles() ) {
-			const reader = this.manager.getReaderOf( file ),
-				parser = this.manager.getParserOf( reader, file );
+			const reader = await this.manager.getReaderOf( file );
 
-			if ( parser ) {
-				result.push(
-					new parser( this, file, reader )
-						.parse()
-				);
+			if ( reader ) {
+				const readerInstance = new reader( this, file ),
+					parser = await this.manager.getParserOf( file, readerInstance );
+
+				if ( parser ) {
+					result.push(
+						new parser( this, readerInstance )
+							.parse()
+					);
+
+					continue;
+				}
 			}
+
+			throw new Error( 'An error occurred when trying to parse the input' );
 		}
 
 		return result;

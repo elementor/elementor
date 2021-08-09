@@ -270,8 +270,8 @@
 				.normalizeInput( event.originalEvent.dataTransfer.items )
 				.setContainer( settings.getDropContainer() )
 				.build()
-				.then( ( session ) => {
-					isDroppingAllowedState = isDroppingAllowed( event ) || session.validate();
+				.then( async ( session ) => {
+					isDroppingAllowedState = isDroppingAllowed( event ) || await session.validate();
 
 					if ( ! isDroppingAllowedState ) {
 						return;

@@ -12,13 +12,15 @@ export class Widget extends FileParser {
 	 * @inheritDoc
 	 */
 	async parse() {
-		return $e.data.run( 'create', 'wp/media', { file: this.getFile(), options: {} } )
+		const file = this.reader.getFile();
+
+		return $e.data.run( 'create', 'wp/media', { file, options: {} } )
 			.then( ( { data: result } ) => {
-				this.session.getTarget().createWidget( 'image', {
+				this.session.getTarget().createElement( 'image', {
 					image: {
 						url: result.source_url,
 						id: result.id,
-						alt: this.getFile().name.split( '.' )[ 0 ],
+						alt: file.name.split( '.' )[ 0 ],
 						source: 'library',
 					},
 				} );
@@ -28,7 +30,7 @@ export class Widget extends FileParser {
 	/**
 	 * @inheritDoc
 	 */
-	static validate( file ) {
+	static async validate( reader ) {
 		return true;
 	}
 }
