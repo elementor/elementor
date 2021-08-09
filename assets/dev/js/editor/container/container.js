@@ -423,6 +423,26 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	findChildrenRecursive( callback ) {
+		elementorCommon.helpers.softDeprecated(
+			'container.findChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.findRecursive( callback )'
+		);
+
+		return this.children.findRecursive( callback );
+	}
+
+	forEachChildrenRecursive( callback ) {
+		elementorCommon.helpers.softDeprecated(
+			'container.forEachChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.forEachRecursive( callback )'
+		);
+
+		return this.children.forEachRecursive( callback );
+	}
+
 	/**
 	 * Function render().
 	 *
