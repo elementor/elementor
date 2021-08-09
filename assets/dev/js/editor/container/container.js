@@ -465,7 +465,7 @@ export default class Container extends ArgsObject {
 	}
 
 	isViewElement() {
-		return ! ! this.view && ! ! this.model.get( 'elType' );
+		return this.view && this.model.get( 'elType' );
 	}
 
 	getSetting( name, localOnly = false ) {
