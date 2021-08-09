@@ -472,7 +472,10 @@ class Utils {
 		/**
 		 * Viewport meta tag.
 		 *
-		 * Filters the Elementor preview URL.
+		 * Filters the meta tag containing the viewport information.
+		 *
+		 * This hook can be used to change the intial viewport meta tag set by Elementor
+		 * and replace it with a different viewport tag.
 		 *
 		 * @since 2.5.0
 		 *
