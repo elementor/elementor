@@ -123,7 +123,7 @@ class Model extends CSS_Model {
 
 		return [
 			/* translators: %s: Document title */
-			'title' => sprintf( __( '%s Settings', 'elementor' ), $document::get_title() ),
+			'title' => sprintf( esc_html__( '%s Settings', 'elementor' ), $document::get_title() ),
 		];
 	}
 

@@ -3,6 +3,7 @@
 namespace Elementor\Core\App\Modules\ImportExport;
 
 use Elementor\Plugin;
+use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -68,6 +69,10 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * [--overrideConditions]
 	 *      Templates ids to override conditions for.
 	 *
+	 * [--sourceType]
+	 *      Which source type is used in the current session. Available values are 'local', 'remote', 'library'.
+	 *      The default value is 'local'
+	 *
 	 * ## EXAMPLES
 	 *
 	 * 1. wp elementor kit import path/to/elementor-kit.zip
@@ -95,7 +100,24 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		\WP_CLI::line( 'Extracting zip archive...' );
 
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $args[0], [ 'json', 'xml' ] );
+		$assoc_args = wp_parse_args( $assoc_args, [
+			'sourceType' => 'local',
+		] );
+
+		$url = null;
+		$file_path = $args[0];
+
+		if ( 'library' === $assoc_args['sourceType'] ) {
+			$url = $this->get_url_from_library( $args[0] );
+		} elseif ( 'remote' === $assoc_args['sourceType'] ) {
+			$url = $args[0];
+		}
+
+		if ( $url ) {
+			$file_path = $this->create_temp_file_from_url( $url );
+		}
+
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $file_path, [ 'json', 'xml' ] );
 
 		if ( is_wp_error( $extraction_result ) ) {
 			\WP_CLI::error( $extraction_result->get_error_message() );
@@ -123,11 +145,63 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
 
+			// The file was created from remote or library request and it should be removed.
+			if ( $url ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_path ) );
+			}
+
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $import_settings['directory'] );
 
 			\WP_CLI::error( $error->getMessage() );
 		}
+	}
+
+	/**
+	 * Helper to get kit url by the kit id
+	 * TODO: Maybe extract it.
+	 *
+	 * @param $kit_id
+	 *
+	 * @return string
+	 */
+	private function get_url_from_library( $kit_id ) {
+		/** @var Kit_Library $app */
+		$app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'kit-library' );
+
+		if ( ! $app ) {
+			\WP_CLI::error( 'Kit library app not found' );
+		}
+
+		$response = $app->download_link( $kit_id );
+
+		if ( is_wp_error( $response ) ) {
+			\WP_CLI::error( "Library Response: {$response->get_error_message()}" );
+		}
+
+		return $response->download_link;
+	}
+
+	/**
+	 * Helper to get kit zip file path by the kit url
+	 * TODO: Maybe extract it.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	private function create_temp_file_from_url( $url ) {
+		$response = wp_remote_get( $url );
+
+		if ( is_wp_error( $response ) ) {
+			\WP_CLI::error( "Download file url: {$response->get_error_message()}" );
+		}
+
+		if ( 200 !== $response['response']['code'] ) {
+			\WP_CLI::error( "Download file url: {$response['response']['message']}" );
+		}
+
+		return Plugin::$instance->uploads_manager->create_temp_file( $response['body'], 'kit.zip' );
 	}
 }

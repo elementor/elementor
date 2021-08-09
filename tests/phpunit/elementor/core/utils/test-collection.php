@@ -274,6 +274,7 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [
 			[ 'text' => 'a', 'id' => 1 ],
 			[ 'text' => 'b', 'id' => 2 ],
+			[ 'id' => 4 ],
 			[ 'text' => 'c', 'id' => 5 ],
 		], $result->all() );
 	}
@@ -295,7 +296,32 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [
 			(object) [ 'text' => 'a', 'id' => 1 ],
 			(object) [ 'text' => 'b', 'id' => 2 ],
+			(object) [ 'id' => 4 ],
 			(object) [ 'text' => 'c', 'id' => 5 ],
+		], $result->all() );
+	}
+
+	public function test_unique__with_multiple_keys() {
+		// Arrange
+		$collection = new Collection( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'b', 'id' => 3 ],
+			[ 'text' => 'b', 'id' => 3 ],
+			[ 'id' => 4 ],
+			[ 'text' => 'c', 'id' => 5 ],
+		] );
+
+		// Act
+		$result = $collection->unique( [ 'text', 'id' ] );
+
+		// Assert
+		$this->assertEqualSets( [
+			[ 'text' => 'a', 'id' => 1 ],
+			[ 'text' => 'b', 'id' => 2 ],
+			[ 'text' => 'b', 'id' => 3 ],
+			[ 'id' => 4 ],
+			[ 'text' => 'c', 'id' => 5 ],
 		], $result->all() );
 	}
 
