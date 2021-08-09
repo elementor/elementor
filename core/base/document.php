@@ -545,6 +545,10 @@ abstract class Document extends Controls_Stack {
 		 * Additional document configuration.
 		 *
 		 * Filters the document configuration by adding additional configuration.
+		 * External developers can use this hook to add custom configuration in
+		 * addition to Elementor's initial configuration.
+		 *
+		 * Use the $post_id to add custom configuration for different pages.
 		 *
 		 * @param array $additional_config The additional document configuration.
 		 * @param int   $post_id           The post ID of the document.
@@ -570,6 +574,8 @@ abstract class Document extends Controls_Stack {
 		 *
 		 * Fires after Elementor registers the document controls.
 		 *
+		 * External developers can use this hook to add new controls to the document.
+		 *
 		 * @since 2.0.0
 		 *
 		 * @param Document $this The document instance.
@@ -590,6 +596,9 @@ abstract class Document extends Controls_Stack {
 		 * Document save data.
 		 *
 		 * Filter the document data before saving process starts.
+		 *
+		 * External developers can use this hook to change the data before
+		 * saving it to the database.
 		 *
 		 * @since 3.3.0
 		 *
