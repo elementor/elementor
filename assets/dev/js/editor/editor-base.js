@@ -1252,12 +1252,14 @@ export default class EditorBase extends Marionette.Application {
 
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
-			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true } ),
 			newControlsStack = {};
 
+		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		devices.unshift( 'desktop' );
+
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName,
-				desktopAppeared = false;
+			let responsiveControlName;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
@@ -1278,6 +1280,19 @@ export default class EditorBase extends Marionette.Application {
 			// control.
 			if ( popoverEndProperty ) {
 				delete controlConfig.popover?.end;
+			}
+
+			// Move the control's default to the desktop control
+			if ( controlConfig.default ) {
+				controlConfig.desktop_default = controlConfig.default;
+			}
+
+			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
+
+			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
+			// controls receive that default value.
+			if ( multipleDefaultValue ) {
+				controlConfig.default = multipleDefaultValue;
 			}
 
 			devices.forEach( ( device, index ) => {
@@ -1306,13 +1321,13 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
-				if ( 'desktop' === device ) {
-					desktopAppeared = true;
-				} else {
+				if ( 'desktop' !== device ) {
 					direction = activeBreakpoints[ device ].direction;
 				}
 
-				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
+				// Set the parent to be the previous device
+				controlArgs.parent = responsiveControlName;
+
 				controlArgs.responsive[ direction ] = device;
 
 				if ( controlArgs.min_affected_device ) {
