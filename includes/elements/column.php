@@ -125,6 +125,16 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$active_breakpoint_keys = array_reverse( array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() ) );
+		$inline_size_device_args = [];
+
+		foreach ( $active_breakpoint_keys as $breakpoint_key ) {
+			$inline_size_device_args[ $breakpoint_key ] = [
+				'max' => 100,
+				'required' => false,
+			];
+		}
+
 		$this->add_responsive_control(
 			'_inline_size',
 			[
@@ -133,18 +143,11 @@ class Element_Column extends Element_Base {
 				'min' => 2,
 				'max' => 98,
 				'required' => true,
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
-						'max' => 100,
-						'required' => false,
-					],
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-						'max' => 100,
-						'required' => false,
-					],
-				],
+				'device_args' => $inline_size_device_args,
 				'min_affected_device' => [
 					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
 					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
 				],
 				'selectors' => [
