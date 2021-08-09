@@ -9,7 +9,7 @@ on:
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
@@ -75,6 +75,15 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+      - name: Notify slack on failure
+        if: failure()
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
   publish:
     if: ${{ !needs.bump-version.outputs.cancel_workflow }}
     needs: bump-version

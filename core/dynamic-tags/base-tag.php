@@ -168,7 +168,7 @@ abstract class Base_Tag extends Controls_Stack {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		$this->start_controls_section( 'settings', [
-			'label' => __( 'Settings', 'elementor' ),
+			'label' => esc_html__( 'Settings', 'elementor' ),
 		] );
 
 		if ( $this->has_own_method( '_register_controls' ) ) {
