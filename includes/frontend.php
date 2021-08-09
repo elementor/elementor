@@ -1406,6 +1406,9 @@ class Frontend extends App {
 		 *
 		 * Filters the "more" link displayed after the content.
 		 *
+		 * This hook can be used either to change the link syntax or to change the
+		 * text inside the link.
+		 *
 		 * @since 2.0.4
 		 *
 		 * @param string $more_link      The more link.
