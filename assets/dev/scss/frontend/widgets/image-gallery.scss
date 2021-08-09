@@ -79,7 +79,7 @@
 	}
 
 	// Responsive mode
-	@media (min-width: $screen-mobile-min) and (max-width: $screen-mobile-max) {
+	@media (min-width: 480px) and (max-width: $screen-mobile-max) {
 
 		// All selectors needed for some themes and plugins
 		.gallery.gallery-columns- {

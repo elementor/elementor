@@ -137,7 +137,7 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_icon_manager_tabs() {
-		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() ) {
+		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() && ! Plugin::$instance->preview->is_preview_mode() ) {
 			self::$tabs = [];
 		} elseif ( ! self::$tabs ) {
 			self::init_tabs();
@@ -254,6 +254,10 @@ class Icons_Manager {
 		// Add the icon data to the symbols array for later use in page rendering process.
 		if ( ! in_array( $icon_data['key'], self::$font_icon_svg_symbols, true ) ) {
 			self::$font_icon_svg_symbols[ $icon_data['key'] ] = $icon_data;
+		}
+
+		if ( ! empty( $attributes['class'] ) && ! is_array( $attributes['class'] ) ) {
+			$attributes['class'] = [ $attributes['class'] ];
 		}
 
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;

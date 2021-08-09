@@ -2,12 +2,13 @@
 
 	&:after {
 
-		@media (min-width: $screen-widescreen-min) {
-			content: 'widescreen';
-		}
-
 		@media (min-width: $screen-desktop-min) {
 			content: 'desktop';
+		}
+
+		// 'widescreen' is under 'desktop' to make sure the 'desktop' media query doesn't override it.
+		@media (min-width: $screen-widescreen-min) {
+			content: 'widescreen';
 		}
 
 		@media (max-width: $screen-laptop-max) {

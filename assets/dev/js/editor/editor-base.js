@@ -89,7 +89,7 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 		promotion: {
-			ignore: '.elementor-panel-category-items',
+			ignore: '.elementor-responsive-panel',
 			callback: () => {
 				const dialog = elementor.promotion.dialog;
 
@@ -1252,10 +1252,15 @@ export default class EditorBase extends Marionette.Application {
 
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
-			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
+			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true } ),
 			newControlsStack = {};
 
+		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		devices.unshift( 'desktop' );
+
 		jQuery.each( controls, ( controlName, controlConfig ) => {
+			let responsiveControlName;
+
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
 				controlConfig.fields = this.generateResponsiveControls( controlConfig.fields );
@@ -1268,7 +1273,29 @@ export default class EditorBase extends Marionette.Application {
 				return;
 			}
 
-			devices.forEach( ( device ) => {
+			const popoverEndProperty = controlConfig.popover?.end;
+
+			// Since the `popoverEndProperty` variable now holds the value, we want to prevent this property from
+			// being duplicated to all responsive control instances. It should only be applied in the LAST responsive
+			// control.
+			if ( popoverEndProperty ) {
+				delete controlConfig.popover?.end;
+			}
+
+			// Move the control's default to the desktop control
+			if ( controlConfig.default ) {
+				controlConfig.desktop_default = controlConfig.default;
+			}
+
+			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
+
+			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
+			// controls receive that default value.
+			if ( multipleDefaultValue ) {
+				controlConfig.default = multipleDefaultValue;
+			}
+
+			devices.forEach( ( device, index ) => {
 				let controlArgs = elementorCommon.helpers.cloneObject( controlConfig );
 
 				if ( controlArgs.device_args ) {
@@ -1298,6 +1325,9 @@ export default class EditorBase extends Marionette.Application {
 					direction = activeBreakpoints[ device ].direction;
 				}
 
+				// Set the parent to be the previous device
+				controlArgs.parent = responsiveControlName;
+
 				controlArgs.responsive[ direction ] = device;
 
 				if ( controlArgs.min_affected_device ) {
@@ -1316,14 +1346,26 @@ export default class EditorBase extends Marionette.Application {
 					}
 				}
 
-				// For each new responsive control, delete
+				// If the control belongs to a group control with a popover, and this control is the last one, add the
+				// popover.end = true value to it to make sure it closes the popover.
+				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
+					controlArgs.popover = {
+						end: true,
+					};
+				}
+
+				// For each new responsive control, delete the responsive defaults
 				devices.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
 
 				delete controlArgs.is_responsive;
 
-				const responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
+
+				if ( controlArgs.parent ) {
+					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+				}
 
 				controlArgs.name = responsiveControlName;
 

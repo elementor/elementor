@@ -3,6 +3,7 @@ import BarHeading from './components/bar-heading/bar-heading';
 import ConnectionButton from './components/connection-button/connection-button';
 import { useEffect, useRef } from 'react';
 import { usePageTitle } from './hooks/use-page-title/use-page-title';
+import environment from 'elementor-common/utils/environment';
 
 export default function AdminTopBar( props ) {
 	const actionButtonsRef = useRef();
@@ -41,6 +42,9 @@ export default function AdminTopBar( props ) {
 		$e.route( 'finder' );
 	};
 
+	const controlSign = environment.mac ? '⌘' : '^';
+	const finderTooltipText = __( 'Search or do anything in Elementor', 'elementor' ) + ` ${ controlSign }+E`;
+
 	return (
 		<div className="e-admin-top-bar">
 			<div className="e-admin-top-bar__main-area">
@@ -50,7 +54,7 @@ export default function AdminTopBar( props ) {
 
 			<div className="e-admin-top-bar__secondary-area">
 				<div className="e-admin-top-bar__secondary-area-buttons">
-					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
+					{window.elementorAdminTopBarConfig.is_administrator ? <BarButton onClick={finderAction} dataInfo={finderTooltipText} icon="eicon-search-bold">{ __( 'Finder', 'elementor' ) }</BarButton> : ''}
 					{window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''}
 				</div>
 
@@ -61,5 +65,5 @@ export default function AdminTopBar( props ) {
 }
 
 AdminTopBar.propTypes = {
-	isDashboard: PropTypes.boolean,
+	isDashboard: PropTypes.bool,
 };

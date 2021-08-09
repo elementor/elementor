@@ -314,6 +314,13 @@ class Settings_Layout extends Tab_Base {
 				],
 			];
 
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $breakpoint_key ) {
+				$control_config['description'] = esc_html__(
+					'Widescreen breakpoint settings will apply from the selected value and up.',
+					'elementor'
+				);
+			}
+
 			// Add the breakpoint Control itself.
 			$this->add_control( $prefix . $breakpoint_key, $control_config );
 		}

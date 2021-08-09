@@ -9,14 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // TODO: Use API data instead of this static array, once it is available.
 $active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-$active_devices = Plugin::$instance->breakpoints->get_active_devices_list();
+$active_devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
 
 $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
 
-$breakpoints = array_reverse( $breakpoints );
-
 /* translators: %1$s: Device Name */
-$breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %2$spx screens and down', 'elementor' );
+$breakpoint_label = esc_html__( '%1$s <br> Settings added for the %1$s device will apply to %2$spx screens and down', 'elementor' );
 ?>
 
 <script type="text/template" id="tmpl-elementor-templates-responsive-bar">
@@ -24,7 +22,11 @@ $breakpoint_label = __( '%1$s <br> Settings added to %1$s device will apply to %
 		<div id="e-responsive-bar-switcher" class="e-responsive-bar--pipe">
 			<?php foreach ( $active_devices as $device_key ) {
 				if ( 'desktop' === $device_key ) {
-					$tooltip_label = __( 'Desktop <br> Settings added to Base device will apply to all breakpoints unless edited', 'elementor' );
+					$tooltip_label = esc_html__( 'Desktop <br> Settings added for the base device will apply to all breakpoints unless edited', 'elementor' );
+				} elseif ( 'widescreen' === $device_key ) {
+					$tooltip_label = esc_html__( 'Widescreen <br> Settings added for the Widescreen device will apply to screen sizes %dpx and up', 'elementor' );
+
+					$tooltip_label = sprintf( $tooltip_label, $active_breakpoints[ $device_key ]->get_value() );
 				} else {
 					$tooltip_label = sprintf( $breakpoint_label, $active_breakpoints[ $device_key ]->get_label(), $active_breakpoints[ $device_key ]->get_value() );
 				}

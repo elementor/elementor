@@ -96,8 +96,8 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= Translated to 56+ Languages & RTL supported. =
-We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (56+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
+= Translated to 59+ Languages & RTL supported. =
+We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (59+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
