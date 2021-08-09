@@ -80,7 +80,12 @@ class Control_Exit_Animation extends Control_Animation {
 		$additional_animations = [];
 
 		/**
-		 * Element exit animations list.
+		 * Exit animations.
+		 *
+		 * Filters the animations list displayed in the exit animations control.
+		 *
+		 * This hook can be used to register new animations in addition to the
+		 * basic Elementor exit animations.
 		 *
 		 * @since 2.5.0
 		 *
