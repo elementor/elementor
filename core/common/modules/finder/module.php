@@ -110,7 +110,8 @@ class Module extends BaseModule {
 		/**
 		 * Finder categories.
 		 *
-		 * Filters the list of finder categories.
+		 * Filters the list of finder categories. This hook is used to manage Finder
+		 * categories - to add new categories, remove and edit existing categories.
 		 *
 		 * @since 2.3.0
 		 *
