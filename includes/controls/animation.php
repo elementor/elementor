@@ -121,7 +121,7 @@ class Control_Animation extends Base_Data_Control {
 		 *
 		 * Filters the animations list displayed in the animations control.
 		 *
-		 * This hook can be used to register animations in  addition to the
+		 * This hook can be used to register animations in addition to the
 		 * basic Elementor animations.
 		 *
 		 * @since 2.4.0
