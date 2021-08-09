@@ -672,6 +672,7 @@ class Widget_Video extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-custom-embed-play i' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .elementor-custom-embed-play svg' => 'fill: {{VALUE}}',
 				],
 				'condition' => [
 					'show_image_overlay' => 'yes',
