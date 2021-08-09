@@ -18,10 +18,10 @@ use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Upgrade\Elementor_3_Re_Migrate_Globals;
-use Elementor\Core\Upgrade\Manager as Upgrades_Manager;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\Logger\Manager as Log_Manager;
+use Elementor\Core\Page_Assets\Loader as Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
@@ -40,6 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
+	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
 
 	/**
 	 * Instance.
@@ -303,7 +304,7 @@ class Plugin {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @var System_Info\Main
+	 * @var System_Info_Module
 	 */
 	public $system_info;
 
@@ -354,6 +355,13 @@ class Plugin {
 	 * @var Assets_Manager
 	 */
 	public $assets_manager;
+
+	/**
+	 * Icons Manager.
+	 *
+	 * @var Icons_Manager
+	 */
+	public $icons_manager;
 
 	/**
 	 * Files Manager.
@@ -471,6 +479,11 @@ class Plugin {
 	 * @var Breakpoints_Manager
 	 */
 	public $breakpoints;
+
+	/**
+	 * @var Assets_Loader
+	 */
+	public $assets_loader;
 
 	/**
 	 * Clone.
@@ -631,6 +644,7 @@ class Plugin {
 		$this->revisions_manager = new Revisions_Manager();
 		$this->images_manager = new Images_Manager();
 		$this->wp = new Wp_Api();
+		$this->assets_loader = new Assets_Loader();
 		$this->uploads_manager = new Uploads_Manager();
 
 		User::init();
@@ -706,7 +720,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function add_cpt_support() {
-		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+		$cpt_support = get_option( 'elementor_cpt_support', self::ELEMENTOR_DEFAULT_POST_TYPES );
 
 		foreach ( $cpt_support as $cpt_slug ) {
 			add_post_type_support( $cpt_slug, 'elementor' );
@@ -773,7 +787,7 @@ class Plugin {
 	}
 
 	final public static function get_title() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 }
 

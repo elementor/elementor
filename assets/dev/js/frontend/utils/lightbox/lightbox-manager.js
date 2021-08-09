@@ -42,7 +42,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 		const element = event.currentTarget,
 			$target = jQuery( event.target ),
 			editMode = elementorFrontend.isEditMode(),
-			isColorPickingMode = elementor.$previewContents.find( 'body' ).hasClass( 'elementor-editor__ui-state__color-picker' ),
+			isColorPickingMode = editMode && elementor.$previewContents.find( 'body' ).hasClass( 'elementor-editor__ui-state__color-picker' ),
 			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
 
 		if ( ! this.isLightboxLink( element ) ) {

@@ -6,6 +6,8 @@
  * @param {string} nsEvent - Namespaced event name, e.g. `click.color-picker`.
  * @param {function} callback - Callback handler to the attached event.
  * @param {object} options - Additional event options.
+ *
+ * @returns {void}
  */
 export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} ) => {
 	const [ event ] = nsEvent.split( '.' );
@@ -30,6 +32,8 @@ export const addNamespaceHandler = ( elements, nsEvent, callback, options = {} )
  *
  * @param {NodeList} elements - An HTML element to remove the event from.
  * @param {string} nsEvent - Namespaced event name, e.g. `click.color-picker`.
+ *
+ * @returns {void}
  */
 export const removeNamespaceHandler = ( elements, nsEvent ) => {
 	const [ event ] = nsEvent.split( '.' );

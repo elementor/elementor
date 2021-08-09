@@ -43,7 +43,6 @@
 	}
 
 	.elementor-responsive-panel {
-		overflow: hidden;
 		padding: 5px 10px;
 		display: grid;
 		gap: 10px;
@@ -51,6 +50,11 @@
 		// Ref: https://css-tricks.com/when-sass-and-new-css-features-collide/
 		// Because the gap is 10px, half of the total container width is ( 100% - 10px ) / 2 === ( 50% - 5px ).
 		grid-template-columns: repeat( auto-fill, minmax( Min( 135px, calc( 50% - 5px ) ), 1fr ) );
+
+		// Stretch a grid item to full width.
+		& > .e-responsive-panel-stretch {
+			grid-column: 1 / -1;
+		}
 	}
 
 	@import "reset";
@@ -130,7 +134,7 @@
 	// Hack to remove unwanted elements from the modal
 	.e-wp-media-elements-removed {
 		.embed-link-settings,
-		.embed-media-settings > :not( .wp-clearfix ){
+		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ):not( #alt-text-description ){
 			display: none;
 		}
 
@@ -141,7 +145,7 @@
 		.media-embed {
 			.thumbnail {
 				margin-top: 20px;
-				
+
 				&,
 				img {
 					max-height: initial;
