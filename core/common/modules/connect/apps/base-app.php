@@ -545,7 +545,7 @@ abstract class Base_App {
 			}
 		}
 
-		return add_query_arg( $query_args, $this->get_remote_site_url() );;
+		return add_query_arg( $query_args, $this->get_remote_site_url() );
 	}
 
 	/**
