@@ -633,6 +633,25 @@
 							"title": "Libraries per template type"
 						}
 					},
+					"examples": [
+						{
+							"kit": {
+								"publish": 1
+							},
+							"page": {
+								"draft": 3
+							},
+							"section": {
+								"draft": 1,
+								"publish": 1
+							},
+							"widget": {
+								"draft": 1,
+								"publish": 1,
+								"trash": 2
+							}
+						}
+					],
 					"additionalProperties": false
 				},
 				"elements": {
