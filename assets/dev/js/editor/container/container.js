@@ -159,7 +159,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view && this.view instanceof Marionette.CompositeView ) {
+		if ( this.view && this.isElement() ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
@@ -462,6 +462,10 @@ export default class Container extends ArgsObject {
 
 	isRepeaterItem() {
 		return Container.TYPE_REPEATER_ITEM === this.type;
+	}
+
+	isElement() {
+		return ! ! this.model.get( 'elType' );
 	}
 
 	getSetting( name, localOnly = false ) {
