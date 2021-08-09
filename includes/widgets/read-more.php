@@ -92,6 +92,8 @@ class Widget_Read_More extends Widget_Base {
 		 *
 		 * Filters the link text in the "Read More" widget.
 		 *
+		 * This hook can be used to set different default text in the widget.
+		 *
 		 * @param string $default_link_text The link text in the "Read More" widget. Default is "Continue reading".
 		 */
 		$default_link_text = apply_filters( 'elementor/widgets/read_more/default_link_text', $default_link_text );
