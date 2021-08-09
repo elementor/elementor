@@ -10,8 +10,10 @@ $screen-tablet-next: map_get($breakpoints, lg);
 // Additional Custom Breakpoints - SCSS placeholders
 $screen-mobile-extra-min: -1px;
 $screen-mobile-extra-max: -1px;
+$screen-mobile-extra-next: -1px;
 $screen-tablet-extra-min: -1px;
 $screen-tablet-extra-max: -1px;
+$screen-tablet-extra-next: -1px;
 $screen-laptop-min: -1px;
 $screen-laptop-max: -1px;
 $screen-widescreen-min: -1px;
