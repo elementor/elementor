@@ -73,7 +73,22 @@ class Module extends BaseModule {
 			'0.0.1',
 			false
 		);
-		// wp_register_script( 'webcomponents-loader', '', [], '1.0.0', false );
+
+		wp_register_script(
+			'ewc-button',
+			$this->get_assets_path() . '/button.js',
+			[],
+			'0.0.1',
+			false
+		);
+
+		wp_register_script(
+			'ewc-icon',
+			$this->get_assets_path() . '/icon.js',
+			[],
+			'0.0.1',
+			false
+		);
 	}
 
 	/**

@@ -44,6 +44,8 @@ class Widgets_Manager {
 			'common',
 			'heading',
 			'e-heading',
+			'e-button',
+			//'e-icon',
 			'image',
 			'text-editor',
 			'video',
@@ -173,6 +175,7 @@ class Widgets_Manager {
 	*/
 	private function require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
+		require ELEMENTOR_PATH . 'includes/base/web-component-base.php';
 	}
 
 	/**

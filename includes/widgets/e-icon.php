@@ -14,7 +14,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
  *
  * @since 1.0.0
  */
-class Widget_Icon extends Widget_Base {
+class Widget_E_Icon extends Web_Component_Base {
 
 	/**
 	 * Get widget name.
@@ -27,51 +27,23 @@ class Widget_Icon extends Widget_Base {
 	 * @return string Widget name.
 	 */
 	public function get_name() {
-		return 'icon';
+		return 'e-icon';
 	}
 
-	/**
-	 * Get widget title.
-	 *
-	 * Retrieve icon widget title.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget title.
-	 */
+	public function get_script_depends() {
+		return [ 'ewc-icon' ];
+	}
+
 	public function get_title() {
-		return __( 'Icon', 'elementor' );
+		return __( 'e-Icon', 'elementor' );
 	}
 
-	/**
-	 * Get widget icon.
-	 *
-	 * Retrieve icon widget icon.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string Widget icon.
-	 */
 	public function get_icon() {
 		return 'eicon-favorite';
 	}
 
-	/**
-	 * Get widget categories.
-	 *
-	 * Retrieve the list of categories the icon widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @return array Widget categories.
-	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'web-components' ];
 	}
 
 	/**
@@ -86,6 +58,31 @@ class Widget_Icon extends Widget_Base {
 	 */
 	public function get_keywords() {
 		return [ 'icon' ];
+	}
+
+	public static function get_button_colors() {
+		return [
+			'' => __( 'Default', 'elementor' ),
+			'primary' => __( 'Primary', 'elementor' ),
+			'secondary' => __( 'Secondary', 'elementor' ),
+			'danger' => __( 'Danger', 'elementor' ),
+			'success' => __( 'Success', 'elementor' ),
+			'warning' => __( 'Warning', 'elementor' ),
+			'info' => __( 'Info', 'elementor' ),
+			'magenta' => __( 'Magenta', 'elementor' ),
+			'fuchsia' => __( 'Fuchsia', 'elementor' ),
+			'purple' => __( 'Purple', 'elementor' ),
+			'indigo' => __( 'Indigo', 'elementor' ),
+			'blue' => __( 'Blue', 'elementor' ),
+			'teal' => __( 'Teal', 'elementor' ),
+			'green' => __( 'Green', 'elementor' ),
+			'celery' => __( 'Celery', 'elementor' ),
+			'lime' => __( 'Lime', 'elementor' ),
+			'yellow' => __( 'Yellow', 'elementor' ),
+			'orange' => __( 'Orange', 'elementor' ),
+			'red' => __( 'Red', 'elementor' ),
+			'custom' => __( 'Custom', 'elementor' ),
+		];
 	}
 
 	/**
@@ -105,11 +102,10 @@ class Widget_Icon extends Widget_Base {
 		);
 
 		$this->add_control(
-			'selected_icon',
+			'icon',
 			[
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
-				'fa4compatibility' => 'icon',
 				'default' => [
 					'value' => 'fas fa-star',
 					'library' => 'fa-solid',
@@ -117,18 +113,62 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'view',
+		$this->add_responsive_control(
+			'size',
 			[
-				'label' => __( 'View', 'elementor' ),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'stacked' => __( 'Stacked', 'elementor' ),
-					'framed' => __( 'Framed', 'elementor' ),
+					's' => __( 'Small', 'elementor' ),
+					'm' => __( 'Medium', 'elementor' ),
+					'l' => __( 'Large', 'elementor' ),
+					'xl' => __( 'XL', 'elementor' ),
+					'xxl' => __( 'XXL', 'elementor' ),
 				],
-				'default' => 'default',
-				'prefix_class' => 'elementor-view-',
+				'default' => 'm',
+				'render_type' => 'ui',
+				'component_prop' => true,
+			]
+		);
+
+		$this->add_control(
+			'color',
+			[
+				'label' => __( 'Color', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => self::get_icon_colors(),
+				'render_type' => 'ui',
+				'component_prop' => true,
+			]
+		);
+
+		$this->add_responsive_control(
+			'circular',
+			[
+				'label' => __( 'Circular', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'component_prop' => true,
+				'render_type' => 'ui',
+			]
+		);
+
+		$this->add_responsive_control(
+			'stacked',
+			[
+				'label' => __( 'Stacked', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'component_prop' => true,
+				'render_type' => 'ui',
+			]
+		);
+
+		$this->add_responsive_control(
+			'bordered',
+			[
+				'label' => __( 'Bordered', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'component_prop' => true,
+				'render_type' => 'ui',
 			]
 		);
 
@@ -384,83 +424,31 @@ class Widget_Icon extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Render icon widget output on the frontend.
-	 *
-	 * Written in PHP and used to generate the final HTML.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 */
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$this->add_render_attribute( 'wrapper', 'class', 'elementor-icon-wrapper' );
+		$icon_props = [ 'size', 'color', 'circular', 'stacked', 'bordered', 'padding' ];
 
-		$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-icon' );
-
-		if ( ! empty( $settings['hover_animation'] ) ) {
-			$this->add_render_attribute( 'icon-wrapper', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+		foreach ( $icon_props as $prop ) {
+			if ( ! empty( $settings[ $prop ] ) ) {
+				$this->add_render_attribute( 'icon', $prop, $settings[ $prop ] );
+			}
 		}
 
-		$icon_tag = 'div';
+		$icon_element = sprintf( '<e-icon %1$s>%2$s</e-icon>',
+			$this->get_render_attribute_string( 'icon' ),
+			Icons_Manager::render_icon( $settings['icon'] )
+		);
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'icon-wrapper', $settings['link'] );
+			$this->add_link_attributes( 'link', $settings['link'] );
 
-			$icon_tag = 'a';
+			$icon_element = sprintf( '<a %1$s>%2$s</a>',
+				$this->get_render_attribute_string( 'link' ),
+				$icon_element
+			);
 		}
 
-		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
-			// add old default
-			$settings['icon'] = 'fa fa-star';
-		}
-
-		if ( ! empty( $settings['icon'] ) ) {
-			$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
-			$this->add_render_attribute( 'icon', 'aria-hidden', 'true' );
-		}
-
-		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
-		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
-
-		?>
-		<div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>>
-			<<?php echo $icon_tag . ' ' . $this->get_render_attribute_string( 'icon-wrapper' ); ?>>
-			<?php if ( $is_new || $migrated ) :
-				Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
-			else : ?>
-				<i <?php echo $this->get_render_attribute_string( 'icon' ); ?>></i>
-			<?php endif; ?>
-			</<?php echo $icon_tag; ?>>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Render icon widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
-		?>
-		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
-				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-				iconTag = link ? 'a' : 'div';
-		#>
-		<div class="elementor-icon-wrapper">
-			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>
-				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
-					{{{ iconHTML.value }}}
-				<# } else { #>
-					<i class="{{ settings.icon }}" aria-hidden="true"></i>
-				<# } #>
-			</{{{ iconTag }}}>
-		</div>
-		<?php
+		echo $icon_element;
 	}
 }

@@ -190,7 +190,7 @@ WidgetView = BaseElementView.extend( {
 	isWebComponent: function() {
 		const editModel = this.getEditModel();
 		const widgetType = editModel.get( 'widgetType' );
-		const eComponents = [ 'e-heading', 'e-icon' ];
+		const eComponents = [ 'e-heading', 'e-icon', 'e-button' ];
 
 		return eComponents.includes( widgetType );
 	},
@@ -207,7 +207,15 @@ WidgetView = BaseElementView.extend( {
 		const isProp = ! ! control.component_prop;
 
 		if ( isProp ) {
-			component.setAttribute( changedProperty, newValue );
+			if ( 'switcher' === control.type ) {
+				if ( newValue ) {
+					component.setAttribute( changedProperty, true );
+				} else {
+					component.removeAttribute( changedProperty );
+				}
+			} else {
+				component.setAttribute( changedProperty, newValue );
+			}
 		}
 
 		const isSlot = ! isProp && ! ! control.component_slot;

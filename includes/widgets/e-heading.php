@@ -16,12 +16,11 @@ use Elementor\Utils;
 /**
  * Elementor e-heading web component.
  *
- * Elementor web component that displays an eye-catching headlines.
+ * Elementor web component that displays a heading element.
  *
  * @since 3.4.0
  */
-class Widget_E_Heading extends Widget_Base {
-
+class Widget_E_Heading extends Web_Component_Base {
 	/**
 	 * Get component name.
 	 *
@@ -42,10 +41,6 @@ class Widget_E_Heading extends Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-t-letter';
-	}
-
-	public function get_categories() {
-		return [ 'web-components' ];
 	}
 
 	public function get_keywords() {
@@ -128,7 +123,7 @@ class Widget_E_Heading extends Widget_Base {
 			[
 				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
+				'default' => '',
 				'options' => [
 					'' => __( 'Default', 'elementor' ),
 					's' => __( 'Small', 'elementor' ),
@@ -296,37 +291,5 @@ class Widget_E_Heading extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-	}
-
-	protected function render() {
-		$settings = $this->get_settings_for_display();
-
-		if ( ! $settings['main_content'] ) {
-			return;
-		}
-
-		$props = [ 'size', 'level', 'align', 'color', 'font', 'weight' ];
-
-		foreach ( $props as $prop ) {
-			if ( ! empty( $settings[ $prop ] ) ) {
-				$this->add_render_attribute( 'e-heading', $prop, $settings[ $prop ] );
-			}
-		}
-
-		$main_content = $settings['main_content'];
-
-		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'url', $settings['link'] );
-
-			$main_content = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $main_content );
-		}
-
-		$e_heading = sprintf(
-			'<e-heading %1$s>%2$s</e-heading>',
-			$this->get_render_attribute_string( 'e-heading' ),
-			$main_content
-		);
-
-		echo $e_heading;
 	}
 }
