@@ -69,7 +69,6 @@ class Module extends BaseModule {
 				return '__globals__' !== $key && isset( $widget_config['controls'][ $key ] );
 			} );
 
-
 		foreach ( $widget_config['controls'] as $control_key => $control_value ) {
 			$global_default_value = $global_defaults->get( $control_key );
 			$local_default_value = $local_defaults->get( $control_key );

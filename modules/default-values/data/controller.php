@@ -35,6 +35,8 @@ class Controller extends Base_Controller {
 				$request->get_param( 'type' ),
 				$request->get_param( 'settings' )
 			);
+
+			// TODO: Regenerate site css.
 		} catch ( Kit_Not_Exists $exception ) {
 			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
@@ -51,6 +53,8 @@ class Controller extends Base_Controller {
 			return (object) Repository::instance()->delete(
 				$request->get_param( 'type' )
 			);
+
+			// TODO: Regenerate site css.
 		} catch ( Kit_Not_Exists $exception ) {
 			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
