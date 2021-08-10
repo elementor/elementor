@@ -28,6 +28,10 @@ class Settings extends Base_Category {
 		return __( 'Settings', 'elementor' );
 	}
 
+	public function get_type() {
+		return 'settings';
+	}
+
 	/**
 	 * Get category items.
 	 *

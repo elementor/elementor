@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Common\Modules\Finder;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -34,9 +36,36 @@ class Categories_Manager {
 	 * @access public
 	 * @param string        $category_name
 	 * @param Base_Category $category
+	 *
+	 * @deprecated 3.5.0 - Use `$this->register()`.
 	 */
 	public function add_category( $category_name, Base_Category $category ) {
-		$this->categories[ $category_name ] = $category;
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
+
+		$this->register( $category, $category_name );
+	}
+
+	/**
+	 * Register a category.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 * @param Base_Category $instance - Instance of a category.
+	 * @param string        $category_name - Category name - for BC.
+	 *
+	 * @return void
+	 */
+	public function register( Base_Category $instance, $category_name = null ) {
+		// TODO: For BC. Remove in the future.
+		if ( ! $category_name ) {
+			$category_name = $instance->get_type();
+		}
+
+		$this->categories[ $category_name ] = $instance;
 	}
 
 	/**
@@ -75,7 +104,7 @@ class Categories_Manager {
 		foreach ( $this->categories_list as $category_name ) {
 			$class_name = __NAMESPACE__ . '\Categories\\' . $category_name;
 
-			$this->add_category( $category_name, new $class_name() );
+			$this->register( new $class_name() );
 		}
 
 		/**
@@ -86,9 +115,28 @@ class Categories_Manager {
 		 * This hook should be used to add your own Finder categories.
 		 *
 		 * @since 2.3.0
+		 * @deprecated 3.5.0 - Use `elementor/finder/categories/register`.
 		 *
 		 * @param Categories_Manager $this.
 		 */
-		do_action( 'elementor/finder/categories/init', $this );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+			'elementor/finder/categories/init',
+			[ $this ],
+			'3.5.0',
+			'elementor/finder/categories/register'
+		);
+
+		/**
+		 * Elementor Finder categories init.
+		 *
+		 * Fires after Elementor Finder initialize it's native categories.
+		 *
+		 * This hook should be used to add your own Finder categories.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param Categories_Manager $this.
+		 */
+		do_action( 'elementor/finder/categories/register', $this );
 	}
 }

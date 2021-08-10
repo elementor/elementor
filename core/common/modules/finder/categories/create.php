@@ -28,6 +28,10 @@ class Create extends Base_Category {
 		return __( 'Create', 'elementor' );
 	}
 
+	public function get_type() {
+		return 'create';
+	}
+
 	/**
 	 * Get category items.
 	 *

@@ -29,6 +29,10 @@ class General extends Base_Category {
 		return __( 'General', 'elementor' );
 	}
 
+	public function get_type() {
+		return 'general';
+	}
+
 	/**
 	 * Get category items.
 	 *

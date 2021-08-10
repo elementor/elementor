@@ -246,10 +246,29 @@ class Manager {
 			 * Fires when Elementor registers dynamic tags.
 			 *
 			 * @since 2.0.9
+			 * @deprecated 3.5.0 - Use `elementor/dynamic_tags/register`.
 			 *
 			 * @param Manager $this Dynamic tags manager.
 			 */
-			do_action( 'elementor/dynamic_tags/register_tags', $this );
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+				'elementor/dynamic_tags/register_tags',
+				[ $this ],
+				'3.5.0',
+				'elementor/dynamic_tags/register'
+			);
+		}
+
+		if ( ! did_action( 'elementor/dynamic_tags/register' ) ) {
+			/**
+			 * Register dynamic tags.
+			 *
+			 * Fires when Elementor registers dynamic tags.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param Manager $this Dynamic tags manager.
+			 */
+			do_action( 'elementor/dynamic_tags/register', $this );
 		}
 
 		return $this->tags_info;
@@ -258,26 +277,68 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 * @deprecated 3.5.0 - Use `$this->register()`.
 	 *
 	 * @param string $class
 	 */
 	public function register_tag( $class ) {
-		/** @var Tag $tag */
-		$tag = new $class();
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
-		$this->tags_info[ $tag->get_name() ] = [
-			'class' => $class,
-			'instance' => $tag,
+		/** @var Base_Tag $tag */
+		$instance = new $class();
+
+		$this->register( $instance );
+	}
+
+	/**
+	 * Register a new Dynamic Tag.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param Base_Tag $instance
+	 *
+	 * @return void
+	 */
+	public function register( Base_Tag $instance ) {
+		$this->tags_info[ $instance->get_name() ] = [
+			'class' => get_class( $instance ),
+			'instance' => $instance,
 		];
 	}
 
 	/**
 	 * @since 2.0.9
 	 * @access public
+	 * @deprecated 3.5.0 - Use `$this->unregister()`.
 	 *
 	 * @param string $tag_name
 	 */
 	public function unregister_tag( $tag_name ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
+
+		$this->unregister( $tag_name );
+	}
+
+	/**
+	 * Unregister a tag.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $tag_name - Tag name to unregister.
+	 *
+	 * @return void
+	 */
+	public function unregister( $tag_name ) {
 		unset( $this->tags_info[ $tag_name ] );
 	}
 

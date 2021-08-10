@@ -30,6 +30,10 @@ class Edit extends Base_Category {
 		return __( 'Edit', 'elementor' );
 	}
 
+	public function get_type() {
+		return 'edit';
+	}
+
 	/**
 	 * Is dynamic.
 	 *

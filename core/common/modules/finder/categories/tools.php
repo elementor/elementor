@@ -28,6 +28,10 @@ class Tools extends Base_Category {
 		return __( 'Tools', 'elementor' );
 	}
 
+	public function get_type() {
+		return 'tools';
+	}
+
 	/**
 	 * Get category items.
 	 *
