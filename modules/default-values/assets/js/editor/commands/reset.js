@@ -1,4 +1,6 @@
-export class Reset extends $e.modules.CommandBase {
+import Base from './base';
+
+export class Reset extends Base {
 	validateArgs( args ) {
 		this.requireArgument( 'type', args );
 	}
@@ -6,8 +8,7 @@ export class Reset extends $e.modules.CommandBase {
 	async apply( { type } ) {
 		await $e.data.delete( 'default-values/index', { type } );
 
-		// Fill the cache
-		$e.data.cache.set( `default-values/${ type }`, undefined );
+		this.recreateElements( type );
 	}
 }
 

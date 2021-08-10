@@ -16,6 +16,26 @@ export default class Component extends $e.modules.ComponentBase {
 		return this.importCommands( dataCommands );
 	}
 
+	addContextMenuItem( groups, view ) {
+		return groups.map( ( group ) => {
+			if ( group.name !== 'save' ) {
+				return group;
+			}
+
+			group.actions = [
+				...group.actions,
+				{
+					name: 'save-as-default',
+					title: __( 'Save as Default', 'elementor' ),
+					isEnabled: () => true,
+					callback: () => $e.run( 'default-values/create', { container: view.getContainer() } ),
+				},
+			];
+
+			return group;
+		} );
+	}
+
 	__construct( args = {} ) {
 		/**
 		 * Handlers responsible for the different strategies to manipulate and getting the settings
@@ -27,6 +47,8 @@ export default class Component extends $e.modules.ComponentBase {
 			new LocalValues(), // Must be first to allow the globals change the settings data.
 			new GlobalValues(),
 		];
+
+		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );
 
 		super.__construct( args );
 	}
