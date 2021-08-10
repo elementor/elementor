@@ -39,7 +39,7 @@ abstract class Base_Category extends Base_Object {
 	 */
 	public function get_type() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-			get_class( $this ) . '::'.  __FUNCTION__,
+			get_class( $this ) . '::' . __FUNCTION__,
 			'3.5.0',
 			'This function will be abstract in the future, please implement it.'
 		);
