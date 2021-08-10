@@ -11,8 +11,9 @@ export default class Session {
 		this.manager = manager;
 
 		this.setFileList( files );
-		this.setTarget( target );
 		this.setOptions( options );
+
+		this.setTarget( target );
 	}
 
 	/**
@@ -87,7 +88,7 @@ export default class Session {
 	}
 
 	/**
-	 * Set the session Target object.
+	 * Set the session Target object, and apply its options.
 	 *
 	 * @param target
 	 */

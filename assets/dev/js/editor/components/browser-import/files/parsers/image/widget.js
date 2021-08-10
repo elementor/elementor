@@ -17,11 +17,13 @@ export class Widget extends FileParser {
 		return $e.data.run( 'create', 'wp/media', { file, options: {} } )
 			.then( ( { data: result } ) => {
 				this.session.getTarget().createElement( 'image', {
-					image: {
-						url: result.source_url,
-						id: result.id,
-						alt: file.name.split( '.' )[ 0 ],
-						source: 'library',
+					settings: {
+						image: {
+							url: result.source_url,
+							id: result.id,
+							alt: file.name.split( '.' )[ 0 ],
+							source: 'library',
+						},
 					},
 				} );
 			} );

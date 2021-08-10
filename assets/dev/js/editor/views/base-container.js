@@ -88,6 +88,47 @@ module.exports = Marionette.CompositeView.extend( {
 		return newView;
 	},
 
+	onCreateElement( model, options = {} ) {
+		if ( elementor.helpers.maybeDisableWidget( model ) ) {
+			return;
+		}
+
+		const historyId = $e.internal( 'document/history/start-log', {
+			type: 'add',
+			title: elementor.helpers.getModelLabel( model ),
+		} );
+		let container = this.getContainer();
+
+		if ( options.newSection ) {
+			container = $e.run( 'document/elements/create', {
+				model: {
+					elType: 'section',
+				},
+				container,
+				columns: 1,
+				options: {
+					at: this.getOption( 'at' ),
+					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
+					trigger: {
+						beforeAdd: 'section:before:drop',
+						afterAdd: 'section:after:drop',
+					},
+				},
+			} ).view.children.findByIndex( 0 ).getContainer();
+		}
+
+		// Create the element in column.
+		const widget = $e.run( 'document/elements/create', {
+			container,
+			model,
+			options,
+		} );
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
+
+		return widget;
+	},
+
 	addChildElement: function( data, options ) {
 		elementorCommon.helpers.softDeprecated( 'addChildElement', '2.8.0', "$e.run( 'document/elements/create' )" );
 

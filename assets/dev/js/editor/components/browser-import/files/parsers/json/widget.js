@@ -16,7 +16,7 @@ export class Widget extends FileParser {
 
 		for ( const element of data.elements ) {
 			this.session.getTarget()
-				.createElement( element.type, element.settings );
+				.createElement( element.type, element.options );
 		}
 	}
 

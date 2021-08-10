@@ -17,14 +17,16 @@ export class Widget extends FileParser {
 		return $e.data.run( 'create', 'wp/media', { file, options: {} } )
 			.then( ( { data: result } ) => {
 				this.session.getTarget().createElement( 'video', {
-					video_type: 'hosted',
-					insert_url: 'yes',
-					external_url: {
-						url: result.source_url,
-						is_external: '',
-						nofollow: '',
-						custom_attributes: '',
-					}
+					settings: {
+						video_type: 'hosted',
+						insert_url: 'yes',
+						external_url: {
+							url: result.source_url,
+							is_external: '',
+							nofollow: '',
+							custom_attributes: '',
+						},
+					},
 				} );
 			} );
 	}

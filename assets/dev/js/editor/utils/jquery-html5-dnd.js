@@ -343,12 +343,26 @@
 
 			event.preventDefault();
 
+			const selected = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
+
 			$e.run( 'document/elements/browser-import', {
 				container: settings.getDropContainer(),
-				input: event.originalEvent.dataTransfer.files,
+				input: event.originalEvent.dataTransfer.files.length ?
+					event.originalEvent.dataTransfer.files :
+					JSON.stringify( {
+						elements: [
+							{
+								type: selected.widgetType,
+								options: {
+									custom: selected.custom,
+									settings: selected.settings,
+								},
+							},
+						],
+					} ),
 				options: {
 					event,
-					container: {
+					target: {
 						at: settings.getDropIndex( currentSide, event ),
 					},
 				},

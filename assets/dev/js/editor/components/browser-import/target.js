@@ -1,5 +1,4 @@
 import PanelElementsElementModel from '../../regions/panel/pages/elements/models/element';
-import Preview from 'elementor-views/preview';
 
 export default class Target {
 	/**
@@ -17,56 +16,46 @@ export default class Target {
 		return this.container;
 	}
 
-	createElement( type, settings = {} ) {
-		const model = this.constructor.getElementModel( type, settings ),
-			historyId = $e.internal( 'document/history/start-log', {
-				type: 'add',
-				title: elementor.helpers.getModelLabel( model ),
-			} );
-		let container = this.getContainer();
-
-		if ( container.view instanceof Preview ) {
-			container = $e.run( 'document/elements/create', {
-				model: {
-					elType: 'section',
-				},
-				container: elementor.getPreviewContainer(),
-				columns: 1,
-				options: {
-					at: this.options.at,
-					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
-					trigger: {
-						beforeAdd: 'section:before:drop',
-						afterAdd: 'section:after:drop',
-					},
-				},
-			} ).view.children.findByIndex( 0 ).getContainer();
-		}
-
-		const widget = $e.run( 'document/elements/create', {
-			container,
-			model,
-			options: this.options,
-		} );
-
-		$e.internal( 'document/history/end-log', { id: historyId } );
-
-		return widget;
+	/**
+	 * Create element of the specified type into the target container.
+	 *
+	 * @param type
+	 * @param options
+	 * @returns {}
+	 */
+	createElement( type, options = {} ) {
+		return this.getContainer().view
+			.onCreateElement(
+				this.constructor.getElementModel( type, options ),
+				Object.assign( this.getOptions(), options )
+			);
 	}
 
-	static getElementModel( type, settings = {} ) {
+	/**
+	 * Create a model for the specified type, with the provided settings.
+	 *
+	 * @param type
+	 * @param options
+	 * @returns {*}
+	 */
+	static getElementModel( type, options = {} ) {
 		const widget = Object.assign(
 			elementor.widgetsCache[ type ],
 			{
 				widgetType: type,
-				settings,
-			}
+			},
+			options,
 		);
 
 		return new PanelElementsElementModel( widget )
 			.attributes;
 	}
 
+	/**
+	 * Get the Target options.
+	 *
+	 * @returns {{}}
+	 */
 	getOptions() {
 		return this.options;
 	}

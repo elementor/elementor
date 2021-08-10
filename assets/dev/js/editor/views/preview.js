@@ -70,6 +70,14 @@ const Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 
+	onCreateElement: function( model, options = {} ) {
+		return BaseSectionsContainerView.prototype.onCreateElement.call(
+			this,
+			model,
+			Object.assign( {}, options, { newSection: true } )
+		);
+	},
+
 	onRender: function() {
 		let $contentContainer;
 
