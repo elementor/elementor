@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -47,22 +46,22 @@ class Module extends BaseApp {
 		<?php
 	}
 
-	protected function get_init_settings() {
-		$settings = [
-			'is_administrator' => current_user_can( 'manage_options' ),
-		];
-
-		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
-		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-		if ( $library ) {
-			$settings = array_merge($settings, [
-				'is_user_connected' => $library->is_connected(),
-				'connect_url' => $library->get_admin_url( 'authorize' ),
-			]);
-		}
-
-		return apply_filters( 'elementor/admin-top-bar/init_settings', $settings );
-	}
+	//protected function get_init_settings() {
+	//	$settings = [];
+	//	$settings['is_administrator'] = current_user_can( 'manage_options' );
+	//
+	//
+	//	/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+	//	$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+	//	if ( $library ) {
+	//		$settings = array_merge( $settings, [
+	//			'is_user_connected' => $library->is_connected(),
+	//			'connect_url' => $library->get_admin_url( 'authorize' ),
+	//		] );
+	//	}
+	//
+	//	return $settings;
+	//}
 
 	/**
 	 * Enqueue admin scripts
@@ -94,11 +93,12 @@ class Module extends BaseApp {
 	 *
 	 * Fired by `wp_dashboard_setup` action.
 	 *
-	 * @since 1.9.0
+	 * @since  1.9.0
 	 * @access public
 	 */
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
+		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {
+		} );
 	}
 
 	/**
@@ -118,5 +118,23 @@ class Module extends BaseApp {
 		add_action( 'wp_dashboard_setup', function () {
 			$this->register_dashboard_widgets();
 		} );
+
+		add_action( 'elementor/init', function () {
+			$settings = [];
+			$settings['is_administrator'] = current_user_can( 'manage_options' );
+
+			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+			$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+			if ( $library ) {
+				$settings = array_merge( $settings, [
+					'is_user_connected' => $library->is_connected(),
+					'connect_url' => $library->get_admin_url( 'authorize' ),
+				] );
+			}
+
+			$this->set_settings( $settings );
+
+			do_action( 'elementor/admin-top-bar/init', $this );
+		}, 12 /* After component 'connect' register the apps */, 1  );
 	}
 }
