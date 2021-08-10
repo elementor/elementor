@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Api;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Schemes\Base;
@@ -27,6 +28,7 @@ class Upgrades {
 
 	public static function _on_each_version( $updater ) {
 		self::recalc_usage_data( $updater );
+		self::remove_remote_info_api_data();
 
 		$uploads_manager = Plugin::$instance->uploads_manager;
 
@@ -929,12 +931,20 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
-	public static function _v_3_4_0_remove_old_elementor_scheme() {
+	public static function _v_3_5_0_remove_old_elementor_scheme() {
 		global $wpdb;
 
 		$key = Base::SCHEME_OPTION_PREFIX;
 
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
+	}
+
+	public static function remove_remote_info_api_data() {
+		global $wpdb;
+
+		$key = Api::TRANSIENT_KEY_PREFIX;
+
+		return $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
 	}
 
 	/**

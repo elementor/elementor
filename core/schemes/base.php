@@ -77,7 +77,7 @@ abstract class Base {
 		if ( ! $scheme_value ) {
 			$scheme_value = $this->get_default_scheme();
 
-			$this->update_scheme_option( $scheme_value, false );
+			update_option( self::SCHEME_OPTION_PREFIX . static::get_type(), $scheme_value );
 		}
 
 		return $scheme_value;
@@ -95,7 +95,9 @@ abstract class Base {
 	 * @param array $posted
 	 */
 	public function save_scheme( array $posted ) {
-		$this->update_scheme_option( $posted );
+		update_option( self::SCHEME_OPTION_PREFIX . static::get_type(), $posted );
+
+		update_option( self::LAST_UPDATED_META, time() );
 	}
 
 	/**
@@ -118,13 +120,5 @@ abstract class Base {
 		}
 
 		return $scheme;
-	}
-
-	private function update_scheme_option( $data, $should_update_timestamp = true ) {
-		update_option( self::SCHEME_OPTION_PREFIX . static::get_type(), $data, false );
-
-		if ( $should_update_timestamp ) {
-			update_option( self::LAST_UPDATED_META, time() );
-		}
 	}
 }
