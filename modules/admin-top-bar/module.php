@@ -46,23 +46,6 @@ class Module extends BaseApp {
 		<?php
 	}
 
-	//protected function get_init_settings() {
-	//	$settings = [];
-	//	$settings['is_administrator'] = current_user_can( 'manage_options' );
-	//
-	//
-	//	/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
-	//	$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-	//	if ( $library ) {
-	//		$settings = array_merge( $settings, [
-	//			'is_user_connected' => $library->is_connected(),
-	//			'connect_url' => $library->get_admin_url( 'authorize' ),
-	//		] );
-	//	}
-	//
-	//	return $settings;
-	//}
-
 	/**
 	 * Enqueue admin scripts
 	 */
