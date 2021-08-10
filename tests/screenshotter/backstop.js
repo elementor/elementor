@@ -54,11 +54,10 @@ module.exports = {
 	engine: 'puppeteer',
 	engineOptions: {
 		args: [ '--no-sandbox' ],
-		gotoTimeout: 80000,
-		timeout: 80000,
 		slowMo: 500,
+		waitTimeout: 240000,
 	},
-	asyncCaptureLimit: 30,
+	asyncCaptureLimit: 20,
 	asyncCompareLimit: 30,
 	debug: false,
 	debugWindow: false,

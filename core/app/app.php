@@ -36,8 +36,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Theme Builder', 'elementor' ),
-			__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);
@@ -146,7 +146,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.11.0'
+			'5.12.0'
 		);
 
 		wp_register_style(

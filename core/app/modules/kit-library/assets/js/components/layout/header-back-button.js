@@ -13,7 +13,7 @@ export default function HeaderBackButton() {
 			<Button
 				className="e-kit-library__header-back"
 				icon="eicon-chevron-left"
-				text={ __( 'Back', 'elementor' ) }
+				text={ __( 'Back to Library', 'elementor' ) }
 				onClick={ () => navigate( wp.url.addQueryArgs( '/kit-library', lastFilter ) ) }
 			/>
 		</div>
