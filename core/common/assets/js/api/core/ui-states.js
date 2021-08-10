@@ -67,7 +67,7 @@ export default class UiStates {
 
 	/**
 	 * Set the current state value and trigger its callbacks & events.
-	 * This function triggers a `state:${ stateID }` event to the context, with `oldValue` & `newValue`
+	 * This function triggers a `e-ui-state:${ stateID }` event to the context, with `oldValue` & `newValue`
 	 * under `e.detail`.
 	 * Additionally, it adds a `e-ui-state--${ stateID }__${ value }` class to the context's body.
 	 *
@@ -100,7 +100,7 @@ export default class UiStates {
 			}
 
 			// Dispatch a custom state-change event to the context.
-			const event = new CustomEvent( `state:${ state }`, {
+			const event = new CustomEvent( `e-ui-state:${ state }`, {
 				detail: {
 					oldValue,
 					newValue: value,

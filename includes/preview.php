@@ -306,8 +306,8 @@ class Preview extends App {
 		wp_enqueue_script( 'react-dom' );
 
 		wp_enqueue_script(
-			'e-components',
-			$this->get_assets_url( 'lib/e-components/e-components.min.js', '', null, false ),
+			'g-components',
+			$this->get_assets_url( 'lib/g-components/g-components.min.js', '', null, false ),
 			[
 				'react',
 				'react-dom',

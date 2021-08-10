@@ -1,5 +1,5 @@
 const { useState, useEffect } = React;
-const { Toolbar, ToolbarDropdownMenu } = eComponents;
+const { Toolbar, ToolbarDropdownMenu } = gComponents;
 
 /**
  * TODO: Super ugly temporary code. Don't bother reviewing this.
