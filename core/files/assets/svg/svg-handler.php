@@ -642,7 +642,7 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * set_svg_meta_data
 	 * @return mixed
 	 */
-	protected function set_svg_meta_data( $data, $id ) {
+	public function set_svg_meta_data( $data, $id ) {
 		$attachment = get_post( $id ); // Filter makes sure that the post is an attachment.
 		$mime_type = $attachment->post_mime_type;
 

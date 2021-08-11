@@ -1,3 +1,5 @@
+import FilesUploadHandler from '../utils/files-upload-handler';
+
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlMediaItemView;
 
@@ -61,6 +63,11 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		this.initFrame( action );
 
 		this.frame.open();
+
+		// Set params to trigger sanitizer
+		if ( FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			FilesUploadHandler.setUploadTypeCaller( this.frame );
+		}
 	},
 
 	initFrame: function( action ) {
@@ -85,12 +92,27 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.frame = wp.media( options );
 
+		this.setUploadMimeType();
+
 		// When a file is selected, run a callback.
 		this.frame.on( {
 			update: this.select,
 			'menu:render:default': this.menuRender,
 			'content:render:browse': this.gallerySettings,
 		}, this );
+	},
+
+	setUploadMimeType() {
+		// Set svg as only allowed upload extensions
+		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		this.frame.on( 'ready', () => {
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
+		} );
+
+		this.frame.on( 'close', () => {
+			// restore allowed upload extensions
+			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+		} );
 	},
 
 	menuRender: function( view ) {
