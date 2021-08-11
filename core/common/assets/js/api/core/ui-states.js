@@ -67,9 +67,9 @@ export default class UiStates {
 
 	/**
 	 * Set the current state value and trigger its callbacks & events.
-	 * This function triggers a `e-ui-state:${ stateID }` event to the context, with `oldValue` & `newValue`
+	 * This function triggers a `e-ui-state:${ stateID }` event to the scope, with `oldValue` & `newValue`
 	 * under `e.detail`.
-	 * Additionally, it adds a `e-ui-state--${ stateID }__${ value }` class to the context's body.
+	 * Additionally, it adds a `e-ui-state--${ stateID }__${ value }` class to the scope element.
 	 *
 	 * @param {string} state - State ID.
 	 * @param {string} value - New state value.
@@ -99,7 +99,7 @@ export default class UiStates {
 				scope.classList.add( newStateClass );
 			}
 
-			// Dispatch a custom state-change event to the context.
+			// Dispatch a custom state-change event to the scope.
 			const event = new CustomEvent( `e-ui-state:${ state }`, {
 				detail: {
 					oldValue,
