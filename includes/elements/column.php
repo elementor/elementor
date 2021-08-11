@@ -145,10 +145,11 @@ class Element_Column extends Element_Base {
 				'required' => true,
 				'device_args' => $inline_size_device_args,
 				'min_affected_device' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}%',
