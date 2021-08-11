@@ -583,17 +583,13 @@ class Module extends BaseModule {
 			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
 		}
 
-		DocumentSettingsUsage::create()
-		                     ->add( $document )
-		                     ->save();
+		DocumentSettingsUsage::create()->add( $document )->save();
 	}
 
 	private function remove_document_usage( $document ) {
 		$this->remove_document_elements_from_global( $document );
 
-		DocumentSettingsUsage::create()
-		                     ->remove( $document )
-		                     ->save();
+		DocumentSettingsUsage::create()->remove( $document )->save();
 	}
 
 	/**

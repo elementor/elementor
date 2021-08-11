@@ -780,6 +780,26 @@
 						},
 						"additionalProperties": false
 					},
+					"examples": [
+						{
+							"kit": {
+								"system_colors": 4,
+								"custom_colors": 7,
+								"system_typography": 4,
+								"custom_typography": 4,
+								"body_background_background": 1,
+								"body_background_color": 1,
+								"default_page_template": 1,
+								"viewport_md": 1,
+								"viewport_lg": 1
+							},
+							"wp-page": {
+								"background_background": 1,
+								"background_color": 1,
+								"background_color_stop": 1
+							}
+						}
+					],
 					"additionalProperties": false
 				},
 				"settings": {
