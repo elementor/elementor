@@ -85,6 +85,8 @@ export default class View extends Marionette.ItemView {
 			const scalePercentage = previewWidth / iframeWidth * 100;
 
 			this.setScalePercentage( scalePercentage );
+		} else {
+			this.setScalePercentage();
 		}
 
 		this.scalePreview();
@@ -127,11 +129,7 @@ export default class View extends Marionette.ItemView {
 
 		elementor.changeDeviceMode( selectedDeviceMode, false );
 
-		if ( 'widescreen' === selectedDeviceMode ) {
-			this.autoScale();
-		} else {
-			this.resetScale();
-		}
+		this.autoScale();
 	}
 
 	onBreakpointSettingsOpen() {
