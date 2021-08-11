@@ -541,7 +541,7 @@ abstract class Base_App {
 
 		foreach ( $propagate_query_args_whitelist as $key ) {
 			if ( isset( $_REQUEST[ $key ] ) ) {
-				$query_args[ $key ] = $_REQUEST[ $key ];
+				$query_args[ $key ] = esc_attr( $_REQUEST[ $key ] );
 			}
 		}
 
