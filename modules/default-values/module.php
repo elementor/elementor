@@ -2,10 +2,9 @@
 namespace Elementor\Modules\DefaultValues;
 
 use Elementor\Plugin;
-use ElementorPro\Base\Base_Widget;
+use Elementor\Controls_Stack;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\DefaultValues\Data\Controller;
 use Elementor\Modules\DefaultValues\Data\Repository;
@@ -45,52 +44,61 @@ class Module extends BaseModule {
 		);
 	}
 
-	/**
-	 * Run over widget config and replace the controls default values with
-	 * the dynamic default values + it add 'hardcoded-default' property to allow create new default value based on them and not
-	 * based on the dynamic default values.
-	 *
-	 * @param array $widget_config
-	 * @param       $widget
-	 *
-	 * @return array
-	 * @throws \Exception
-	 */
-	private function add_default_to_widget_config( array $widget_config, $widget ) {
-		$dynamic_defaults = new Collection( Repository::instance()->get( $widget->get_name() )['settings'] );
+	private function update_control_defaults( Controls_Stack $element ) {
+		$dynamic_defaults = new Collection(
+			Repository::instance()->get( $element->get_name() )['settings']
+		);
 
-		$global_defaults = ( new Collection( $dynamic_defaults->get( '__globals__', [] ) ) )
-			->filter( function ( $value, $key ) use ( $widget_config ) {
-				return isset( $widget_config['controls'][ $key ] );
-			} );
+		$this->update_local_control_defaults( $element, $dynamic_defaults );
+		$this->update_global_control_defaults( $element, $dynamic_defaults );
+	}
 
-		$local_defaults = $dynamic_defaults
-			->filter( function ( $value, $key ) use ( $widget_config ) {
-				return '__globals__' !== $key && isset( $widget_config['controls'][ $key ] );
-			} );
+	private function update_local_control_defaults( Controls_Stack $element, Collection $defaults ) {
+		$local_defaults = $defaults->filter( function ( $value, $key ) {
+			return '__globals__' !== $key;
+		} );
 
-		foreach ( $widget_config['controls'] as $control_key => $control_value ) {
-			$global_default_value = $global_defaults->get( $control_key );
-			$local_default_value = $local_defaults->get( $control_key );
+		foreach ( $local_defaults as $setting_name => $value ) {
+			$element->update_control(
+				$setting_name,
+				$this->prepare_default_data_for_update(
+					$element->get_controls( $setting_name ),
+					$value
+				),
+				[ 'recursive' => true ]
+			);
+		}
+	}
 
-			if ( isset( $widget_config['controls'][ $control_key ]['default'] ) ) {
-				$widget_config['controls'][ $control_key ]['hardcoded_default'] = $widget_config['controls'][ $control_key ]['default'];
-			}
+	private function update_global_control_defaults( Controls_Stack $element, Collection $defaults ) {
+		$global_defaults = new Collection(
+			$defaults->get( '__globals__', [] )
+		);
 
-			if ( isset( $widget_config['controls'][ $control_key ]['global']['default'] ) ) {
-				$widget_config['controls'][ $control_key ]['global']['hardcoded_default'] = $widget_config['controls'][ $control_key ]['global']['default'];
-			}
+		foreach ( $global_defaults as $setting_name => $value ) {
+			$control = $element->get_controls( $setting_name );
 
-			if ( $global_default_value ) {
-				$widget_config['controls'][ $control_key ]['global']['default'] = $global_default_value;
-			}
+			$element->update_control(
+				$setting_name,
+				[
+					'global' => $this->prepare_default_data_for_update(
+						isset( $control['global'] ) ? $control['global'] : [],
+						$value
+					),
+				],
+				[ 'recursive' => true ]
+			);
+		}
+	}
 
-			if ( $local_default_value ) {
-				$widget_config['controls'][ $control_key ]['default'] = $local_default_value;
-			}
+	private function prepare_default_data_for_update( array $control, $value ) {
+		$data = [ 'default' => $value ];
+
+		if ( isset( $control['default'] ) ) {
+			$data['hardcoded_default'] = $control['default'];
 		}
 
-		return $widget_config;
+		return $data;
 	}
 
 	public function __construct() {
@@ -100,9 +108,9 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		add_filter( 'elementor/data/widgets-config/prepare-for-response', function ( array $widget_config, $widget ) {
-			return $this->add_default_to_widget_config( $widget_config, $widget );
-		}, 10, 2 );
+		add_action( 'elementor/control_stack/controls/initiated', function ( Controls_Stack $element ) {
+			$this->update_control_defaults( $element );
+		} );
 
 		Plugin::$instance->data_manager->register_controller( Controller::class );
 	}

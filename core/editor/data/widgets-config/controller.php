@@ -67,14 +67,10 @@ class Controller extends Controller_Base {
 	 * @return array
 	 */
 	private function prepare_for_response( $widget ) {
-		return apply_filters(
-			'elementor/data/widgets-config/prepare-for-response',
-			[
-				'controls' => $widget->get_stack( false )['controls'],
-				'tabs_controls' => $widget->get_tabs_controls(),
-			],
-			$widget
-		);
+		return [
+			'controls' => $widget->get_stack( false )['controls'],
+			'tabs_controls' => $widget->get_tabs_controls(),
+		];
 	}
 
 	/**

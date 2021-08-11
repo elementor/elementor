@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\DefaultValues\Data;
 
+use Elementor\Plugin;
 use Elementor\Core\Kits\Exceptions\Kit_Not_Exists;
 use Elementor\Data\Base\Controller as Base_Controller;
 
@@ -31,12 +32,14 @@ class Controller extends Base_Controller {
 	 */
 	public function create_item( $request ) {
 		try {
-			return (object) Repository::instance()->store(
+			$response = Repository::instance()->store(
 				$request->get_param( 'type' ),
 				$request->get_param( 'settings' )
 			);
 
-			// TODO: Regenerate site css.
+			Plugin::$instance->files_manager->clear_cache();
+
+			return (object) $response;
 		} catch ( Kit_Not_Exists $exception ) {
 			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
@@ -50,11 +53,13 @@ class Controller extends Base_Controller {
 	 */
 	public function delete_item( $request ) {
 		try {
-			return (object) Repository::instance()->delete(
+			$response = Repository::instance()->delete(
 				$request->get_param( 'type' )
 			);
 
-			// TODO: Regenerate site css.
+			Plugin::$instance->files_manager->clear_cache();
+
+			return (object) $response;
 		} catch ( Kit_Not_Exists $exception ) {
 			return new \WP_Error( 'kit_not_exists', $exception->getMessage(), [ 'status' => 500 ] );
 		}
