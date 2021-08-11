@@ -114,22 +114,31 @@ class Manager extends Module {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param $reverse
+	 * @param array $args
 	 * @return array
 	 */
-	public function get_active_devices_list( $reverse = null ) {
+	public function get_active_devices_list( $args = [] ) {
+		$default_args = [
+			'add_desktop' => true,
+			'reverse' => false,
+		];
+
+		$args = array_merge( $default_args, $args );
+
 		$active_devices = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-		// Insert the 'desktop' device in the correct position.
-		if ( in_array( 'widescreen', $active_devices, true ) ) {
-			$widescreen_index = array_search( 'widescreen', $active_devices, true );
+		if ( $args['add_desktop'] ) {
+			// Insert the 'desktop' device in the correct position.
+			if ( in_array( 'widescreen', $active_devices, true ) ) {
+				$widescreen_index = array_search( 'widescreen', $active_devices, true );
 
-			array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
-		} else {
-			$active_devices[] = 'desktop';
+				array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
+			} else {
+				$active_devices[] = 'desktop';
+			}
 		}
 
-		if ( $reverse ) {
+		if ( $args['reverse'] ) {
 			$active_devices = array_reverse( $active_devices );
 		}
 
