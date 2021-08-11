@@ -1324,6 +1324,8 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
+				controlArgs.parent = null;
+
 				if ( 'desktop' !== device ) {
 					direction = activeBreakpoints[ device ].direction;
 
