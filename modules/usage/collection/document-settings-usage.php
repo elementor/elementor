@@ -106,7 +106,7 @@ class DocumentSettingsUsage extends Collection {
 			}
 
 			// Kit is unique and only exist one time.
-			if ( Kit::NAME !== $document_name && isset( $global_document_usage_ref[ $control_name ] ) ) {
+			if ( 'kit' !== $document_name && isset( $global_document_usage_ref[ $control_name ] ) ) {
 				$global_document_usage_ref[ $control_name ] += $control_count;
 			} else {
 				$global_document_usage_ref[ $control_name ] = $control_count;

@@ -34,7 +34,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->factory()->documents->publish_and_get();
 
 		// Delete current elements usage.
-		update_option( Module::OPTION_NAME, [] );
+		update_option( Module::ELEMENTS_OPTION_NAME, [] );
 
 		// Act.
 		$upgrades_manager = new Mock_Upgrades_Manager();
@@ -48,7 +48,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->factory()->documents->publish_and_get();
 
 		// Delete current elements usage.
-		update_option( Module::OPTION_NAME, [] );
+		update_option( Module::ELEMENTS_OPTION_NAME, [] );
 
 		// Set the new version.
 		update_option( Mock_Upgrades_Manager::OPTION_NEW_VERSION_NAME, '0.0.2' );
@@ -149,7 +149,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
-		$usage = get_option( $module::OPTION_NAME, [] );
+		$usage = get_option( $module::ELEMENTS_OPTION_NAME, [] );
 
 		// Check there usage.
 		$this->assertEquals( $posts_count, $usage['wp-post']['button']['count'] );
@@ -554,6 +554,16 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_v_3_5_0_remove_old_elements_usage() {
+		$this->ensure_removed_old_usage_data(
+			'elementor_controls_usage',
+			'_elementor_controls_usage',
+			function () {
+				Upgrades::_v_3_5_0_remove_old_elements_usage();
+			}
+		);
+	}
+
 	private function run_breakpoint_assertions( $settings ) {
 		// Mobile.
 		$this->assertEquals( $settings['viewport_md'] - 1, $settings['viewport_mobile'] );
@@ -563,5 +573,26 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$actual_value = $settings['viewport_tablet'];
 
 		$this->assertEquals( $expected_value, $actual_value );
+	}
+
+	/**
+	 * @param string $old_usage_option_name
+	 * @param string $old_usage_meta_key
+	 * @param callable $remove_old_usage_callback
+	 */
+	private function ensure_removed_old_usage_data( $old_usage_option_name, $old_usage_meta_key, $remove_old_usage_callback ) {
+		add_option( $old_usage_option_name, 'test' );
+
+		$document = $this->create_post();
+		$document->update_main_meta( $old_usage_meta_key, 'test' );
+
+		$this->assertEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
+
+		// Run upgrade.
+		$remove_old_usage_callback();
+
+		$this->assertNotEquals( 'test', get_option( $old_usage_option_name ) );
+		$this->assertNotEquals( 'test', $document->get_main_meta( $old_usage_meta_key ) );
 	}
 }

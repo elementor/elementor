@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Kit extends PageBase {
-	const NAME = 'kit';
-
 	/**
 	 * @var Tabs\Tab_Base[]
 	 */

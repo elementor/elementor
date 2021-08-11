@@ -281,7 +281,6 @@ class Module extends BaseModule {
 		$post_types = get_post_types( array( 'public' => true ) );
 
 		$query = new \WP_Query( [
-			'no_found_rows' => true,
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'private' ],
@@ -585,16 +584,16 @@ class Module extends BaseModule {
 		}
 
 		DocumentSettingsUsage::create()
-			->add( $document )
-			->save();
+		                     ->add( $document )
+		                     ->save();
 	}
 
 	private function remove_document_usage( $document ) {
 		$this->remove_document_elements_from_global( $document );
 
 		DocumentSettingsUsage::create()
-			->remove( $document )
-			->save();
+		                     ->remove( $document )
+		                     ->save();
 	}
 
 	/**
