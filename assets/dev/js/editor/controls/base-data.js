@@ -196,16 +196,21 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	/**
-	 * Get the responsive child view if exists.
+	 * Get the responsive children views if exists.
 	 *
 	 * @returns {ControlBaseDataView|null}
 	 */
-	getResponsiveChildView: function() {
-		const child = this.model.get( 'child' );
+	getResponsiveChildrenViews: function() {
+		const children = this.model.get( 'inheritors' ),
+			views = [];
 
 		try {
-			return child && this.container.panel.getControlView( child );
+			for ( const child of children ) {
+				views.push( this.container.panel.getControlView( child ) );
+			}
 		} catch ( e ) {}
+
+		return views;
 	},
 
 	/**
@@ -254,9 +259,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * to be applied only from the responsive child of this control and on.
 	 */
 	propagatePlaceholder: function() {
-		const child = this.getResponsiveChildView();
+		const children = this.getResponsiveChildrenViews();
 
-		if ( child ) {
+		for ( const child of children ) {
 			child.renderWithChildren();
 		}
 	},
@@ -267,13 +272,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * children.
 	 */
 	renderWithChildren: function() {
-		const child = this.getResponsiveChildView();
-
 		this.render();
 
-		if ( child ) {
-			child.renderWithChildren();
-		}
+		this.propagatePlaceholder();
 	},
 
 	/**
