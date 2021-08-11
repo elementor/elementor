@@ -69,6 +69,26 @@ class Test_Usage extends Base_Schema {
 		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
 
 
+		// Documents.
+		$this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				Document::PAGE_META_KEY => [
+					'background_background' => 'red',
+				],
+			],
+		] );
+
+		// Documents with kit.
+		$kit = Plugin::$instance->documents->get( Plugin::$instance->kits_manager->get_active_id(), false );
+
+		$kit->add_repeater_row( 'custom_colors', [
+			'_id' => Utils::generate_random_string(),
+			'title' => 'color 1',
+			'color' => 'green',
+		] );
+
+		$kit->save( [] );
+
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();
 		$usage = $tracking_data['usages'];

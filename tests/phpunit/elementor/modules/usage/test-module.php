@@ -157,7 +157,7 @@ class Test_Module extends Elementor_Test_Base {
 		$kit->save( [] );
 
 		// Assert.
-		$this->assertEquals( 1, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ Kit::NAME ]['custom_colors'] );
+		$this->assertEquals( 1, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ 'kit' ]['custom_colors'] );
 
 		// Arrange.
 		$kit->add_repeater_row( 'custom_colors', [
@@ -170,7 +170,7 @@ class Test_Module extends Elementor_Test_Base {
 		$kit->save( [] );
 
 		// Assert.
-		$this->assertEquals( 2, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ Kit::NAME ]['custom_colors'] );
+		$this->assertEquals( 2, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ 'kit' ]['custom_colors'] );
 	}
 
 	public function test_add_document_usage__ensure_elements_added_to_global() {

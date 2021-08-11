@@ -157,7 +157,7 @@ class Manager {
 	 * @param Documents_Manager $documents_manager
 	 */
 	public function register_document( $documents_manager ) {
-		$documents_manager->register_document_type( Kit::NAME, Kit::get_class_full_name() );
+		$documents_manager->register_document_type( 'kit', Kit::get_class_full_name() );
 	}
 
 	public function localize_settings( $settings ) {

@@ -146,6 +146,29 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '4', '5' ], 'c' => [ '6' ] ], $result->all() );
 	}
 
+	public function test_clear_empty_recursive() {
+		// Arrange.
+		$collection = new Collection( [ [ [] ], [ [ 0 ] ] ] );
+
+		// Act.
+		$actual = $collection->clear_empty_recursive();
+
+		// Assert.
+		$this->assertEquals( [], $actual );
+	}
+
+	public function test_clear_empty_recursive__ensure_value_not_removed() {
+		// Arrange.
+		$collection = new Collection( [ [ [ 1 ] ], [ [ 1 ] ] ] );
+		$excepted = $collection->all();
+
+		// Act.
+		$actual = $collection->clear_empty_recursive();
+
+		// Assert.
+		$this->assertEquals( $excepted, $actual );
+	}
+
 	public function test_implode() {
 		// Arrange
 		$collection = new Collection( [ '1', '2', '3' ] );
