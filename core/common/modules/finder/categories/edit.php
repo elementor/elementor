@@ -30,7 +30,7 @@ class Edit extends Base_Category {
 		return __( 'Edit', 'elementor' );
 	}
 
-	public function get_type() {
+	public function get_id() {
 		return 'edit';
 	}
 

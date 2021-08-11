@@ -26,7 +26,7 @@ class Site extends Base_Category {
 		return __( 'Site', 'elementor' );
 	}
 
-	public function get_type() {
+	public function get_id() {
 		return 'site';
 	}
 

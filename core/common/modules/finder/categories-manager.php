@@ -55,14 +55,14 @@ class Categories_Manager {
 	 * @since 3.5.0
 	 * @access public
 	 * @param Base_Category $instance - Instance of a category.
-	 * @param string        $category_name - Category name - for BC.
+	 * @param string        $category_name - Category name - for BC - Deprecated.
 	 *
 	 * @return void
 	 */
 	public function register( Base_Category $instance, $category_name = null ) {
 		// TODO: For BC. Remove in the future.
 		if ( ! $category_name ) {
-			$category_name = $instance->get_type();
+			$category_name = $instance->get_id();
 		}
 
 		$this->categories[ $category_name ] = $instance;

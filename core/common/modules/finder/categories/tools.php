@@ -28,7 +28,7 @@ class Tools extends Base_Category {
 		return __( 'Tools', 'elementor' );
 	}
 
-	public function get_type() {
+	public function get_id() {
 		return 'tools';
 	}
 

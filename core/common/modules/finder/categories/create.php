@@ -28,7 +28,7 @@ class Create extends Base_Category {
 		return __( 'Create', 'elementor' );
 	}
 
-	public function get_type() {
+	public function get_id() {
 		return 'create';
 	}
 

@@ -37,7 +37,7 @@ abstract class Base_Category extends Base_Object {
 	 *
 	 * @return string
 	 */
-	public function get_type() {
+	public function get_id() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			get_class( $this ) . '::' . __FUNCTION__,
 			'3.5.0',

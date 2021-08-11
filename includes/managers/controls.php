@@ -504,7 +504,7 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param Base_Control $control_instance Control instance, usually the current instance.
-	 * @param string       $control_id       Control ID - optional - for BC.
+	 * @param string       $control_id       Control ID - optional - for BC - Deprecated.
 	 *
 	 * @return void
 	 */
