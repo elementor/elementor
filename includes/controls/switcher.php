@@ -40,13 +40,12 @@ class Control_Switcher extends Base_Data_Control {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<label class="elementor-switch elementor-control-unit-2">
-					<input id="<?php echo $control_uid; ?>" type="checkbox" data-setting="{{ data.name }}" class="elementor-switch-input" value="{{ data.return_value }}">
+					<input id="<?php $this->print_control_uid(); ?>" type="checkbox" data-setting="{{ data.name }}" class="elementor-switch-input" value="{{ data.return_value }}">
 					<span class="elementor-switch-label" data-on="{{ data.label_on }}" data-off="{{ data.label_off }}"></span>
 					<span class="elementor-switch-handle"></span>
 				</label>
@@ -71,8 +70,8 @@ class Control_Switcher extends Base_Data_Control {
 	 */
 	protected function get_default_settings() {
 		return [
-			'label_off' => __( 'No', 'elementor' ),
-			'label_on' => __( 'Yes', 'elementor' ),
+			'label_off' => esc_html__( 'No', 'elementor' ),
+			'label_on' => esc_html__( 'Yes', 'elementor' ),
 			'return_value' => 'yes',
 		];
 	}

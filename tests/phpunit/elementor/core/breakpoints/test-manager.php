@@ -76,6 +76,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( 900 );
 
 		$this->assertTrue( Plugin::$instance->breakpoints->has_custom_breakpoints() );
+
+		// Revert breakpoint change to not affect other tests.
+		$this->set_custom_breakpoint_and_refresh_kit_and_breakpoints( '' );
 	}
 
 	/**
@@ -101,8 +104,6 @@ class Test_Manager extends Elementor_Test_Base {
 	 * @since 3.2.0
 	 */
 	public function test_get_device_min_breakpoint_mobile() {
-		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-
 		// Test for mobile specifically, which always has a min point of 320.
 		$this->assertEquals( 320, Plugin::$instance->breakpoints->get_device_min_breakpoint( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ) );
 	}
@@ -140,12 +141,14 @@ class Test_Manager extends Elementor_Test_Base {
 		$kit->save( [ 'settings' => $kit_settings ] );
 
 		// Refresh kit.
-		$kit = Plugin::$instance->documents->get( $kit->get_id(), false );
+		Plugin::$instance->documents->get( $kit->get_id(), false );
 
 		Plugin::$instance->breakpoints->refresh();
 
 		$laptop_breakpoint = Plugin::$instance->breakpoints->get_breakpoints( 'laptop' );
 
-		return $this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+		$this->assertEquals( $laptop_breakpoint->get_value() + 1, Plugin::$instance->breakpoints->get_desktop_min_point() );
+
+		$this->reset_breakpoints_to_default();
 	}
 }

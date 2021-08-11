@@ -1,9 +1,17 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
+/**
+ * Show the user a UI preview of the currently hovered color.
+ */
 export class EnterPreview extends CommandBase {
+	/**
+	 * Initialize the command.
+	 *
+	 * @param {object} args
+	 *
+	 * @returns {void}
+	 */
 	apply( args ) {
-		// Silent
-		this.component.currentPicker.container.settings.set( this.component.currentPicker.control, args.value );
-		this.component.currentPicker.container.view.renderUI();
+		this.component.renderUI( args.value );
 	}
 }

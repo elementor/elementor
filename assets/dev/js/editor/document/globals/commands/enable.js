@@ -10,9 +10,15 @@ export class Enable extends DisableEnable {
 
 			container.globals.set( settings );
 
-			container.settings.set( '__globals__', container.globals.toJSON() );
-
-			container.renderUI();
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					__globals__: container.globals.toJSON(),
+				},
+				options: {
+					renderUI: true,
+				},
+			} );
 
 			// Clear custom local settings.
 			Object.values( container.getGroupRelatedControls( settings ) ).forEach( ( control ) => {
