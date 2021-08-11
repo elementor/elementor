@@ -135,6 +135,12 @@ class Element_Column extends Element_Base {
 			];
 		}
 
+		if ( in_array( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA, $active_breakpoint_keys, true ) ) {
+			$min_affected_device_value = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+		} else {
+			$min_affected_device_value = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+		}
+
 		$this->add_responsive_control(
 			'_inline_size',
 			[
@@ -145,10 +151,11 @@ class Element_Column extends Element_Base {
 				'required' => true,
 				'device_args' => $inline_size_device_args,
 				'min_affected_device' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device_value,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}%',
