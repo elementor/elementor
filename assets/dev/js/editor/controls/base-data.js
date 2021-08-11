@@ -216,9 +216,12 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
-			const placeholder = parent.preparePlaceholderForChildren();
+			const name = this.model.get( 'name' ),
+				placeholder = '_inline_size_mobile' === name ?
+					100 :
+					parent.preparePlaceholderForChildren();
 
-			this.container.placeholders[ this.model.get( 'name' ) ] = placeholder;
+			this.container.placeholders[ name ] = placeholder;
 			this.model.set( 'placeholder', placeholder );
 		}
 	},
