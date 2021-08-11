@@ -802,7 +802,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( true );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
