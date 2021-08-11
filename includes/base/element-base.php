@@ -674,7 +674,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	protected function add_hidden_device_controls() {
 		// The 'Hide On X' controls are displayed from largest to smallest, while the method returns smallest to largest.
-		$active_devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $active_devices as $breakpoint_key ) {
