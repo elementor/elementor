@@ -4,6 +4,23 @@ import GlobalValues from './handlers/global-values';
 import LocalValues from './handlers/local-values';
 
 export default class Component extends $e.modules.ComponentBase {
+	__construct( args = {} ) {
+		/**
+		 * Handlers responsible for the different strategies to manipulate and getting the settings
+		 * from local values or globals
+		 *
+		 * @type {BaseHandler[]} BaseHandler path: './handlers/base-handler'
+		 */
+		this.handlers = [
+			new LocalValues(), // Must be first to allow the globals change the settings data.
+			new GlobalValues(),
+		];
+
+		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );
+
+		super.__construct( args );
+	}
+
 	getNamespace() {
 		return 'default-values';
 	}
@@ -34,22 +51,5 @@ export default class Component extends $e.modules.ComponentBase {
 
 			return group;
 		} );
-	}
-
-	__construct( args = {} ) {
-		/**
-		 * Handlers responsible for the different strategies to manipulate and getting the settings
-		 * from local values or globals
-		 *
-		 * @type {BaseHandler[]} BaseHandler path: './handlers/base-handler'
-		 */
-		this.handlers = [
-			new LocalValues(), // Must be first to allow the globals change the settings data.
-			new GlobalValues(),
-		];
-
-		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );
-
-		super.__construct( args );
 	}
 }

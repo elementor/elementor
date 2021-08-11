@@ -1,17 +1,13 @@
 import CommandInternal from 'elementor-api/modules/command-internal-base';
 
 export class Recreate extends CommandInternal {
-	constructor( args, commandsAPI ) {
-		super( args, commandsAPI );
-
-		this.isHistoryActive = elementor.documents.getCurrent().history.getActive();
-	}
-
 	validateArgs( args = {} ) {
 		this.requireArgumentType( 'models', 'object', args );
 	}
 
 	apply( { models } ) {
+		this.isHistoryActive = elementor.documents.getCurrent().history.getActive();
+
 		this.disableHistory();
 
 		Object.entries( models ).forEach( ( [ id, model ] ) => {
