@@ -152,7 +152,7 @@
   
 	In addition, a CSS class ( `e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ] ) will be added to both of the scopes that we provided ( editor & preview in this case ).
 
-	Plus, a custom event ( `e-ui-state:document/direction-mode` ) will be fired to the scopes and we can listen to that
+	Plus, a custom event ( `e-ui-state:document/direction-mode` ) will be fired to the scopes, and we can listen to that
   	event using a simple `addEventListener()`:
 
 	```javascript
