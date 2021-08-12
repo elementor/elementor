@@ -1537,7 +1537,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @return string Section HTML tag.
 	 */
-	private function get_html_tag() {
+	protected function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
@@ -1557,7 +1557,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @param string $side Shape divider side, used to set the shape key.
 	 */
-	private function print_shape_divider( $side ) {
+	protected function print_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
