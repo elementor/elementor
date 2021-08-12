@@ -642,7 +642,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<img src="<?php esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg' ); ?>"  alt="go-pro-wp-dashboard" />
+				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
 				<h2><?php echo esc_html__( 'Add Your Custom Code', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Custom Code is a tool gives you one place where you can insert scripts, rather than dealing with dozens of different plugins and deal with code.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( Utils::get_pro_link( 'http://go.elementor.com/go-pro-custom-code' ) ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
