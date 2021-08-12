@@ -379,7 +379,7 @@
 	display: var(--page-title-display);
 }
 
-// Global animation that should be available even when the elementor-icons library was not loaded.
+// Global animation that should be available even when the elementor-icons library is not loaded.
 @keyframes eicon-spin {
 	0% {
 		transform: rotate(0deg);
@@ -388,3 +388,9 @@
 		transform: rotate(359deg);
 	}
 }
+
+// Global animation class that should be available even when the elementor-icons library is not loaded.
+.eicon-animation-spin {
+	animation: eicon-spin 2s infinite linear;
+}
+
