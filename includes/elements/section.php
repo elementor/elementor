@@ -477,7 +477,9 @@ class Element_Section extends Element_Base {
 					'hidden' => esc_html__( 'Hidden', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => 'overflow: {{VALUE}}',
+					// The overflow property has to be attached to the container child of the wrapper, because the
+					// section width is set on that child element.
+					'{{WRAPPER}} .elementor-container' => 'overflow: {{VALUE}}',
 				],
 			]
 		);
