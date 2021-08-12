@@ -21,7 +21,7 @@
 ## Guidelines, Conventions & Files Structure:
 * Each UI state is owned by a [component](./components.md#guidelines-conventions--files-structure).
 * Each [component](./components.md#guidelines-conventions--files-structure) can override the `defaultUiStates()` method to return a set of UI states of its own.
-* The UI state are imported via built-in method called `importUiStates()`.
+* The UI states are imported via built-in method called `importUiStates()`.
 	* All the UI states should be exported in one index file:
 	    ```javascript
 		// ui-states/index.js
@@ -71,6 +71,7 @@
 	
 		getScopes() {
 			// List of `HTMLElement`s that the state will dispatch events && add CSS classes to.
+			// ( Defaults to `document.body` )
 			return [
 				window.document.body,
 			];
@@ -80,9 +81,6 @@
 			// Object of options that the state can be set to, with an optional callback for each option.
 			return {
 				{OPTION_VALUE_KEBAB_CASE}: '',
-				{OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
-					// Callback that runs when the state is set to this option.
-				},
 				'on': ( oldValue, newValue ) => {
 					// Callback that runs when the state is set to `on`.
 				},
@@ -92,7 +90,6 @@
  
 		onChange( oldValue, newValue ) {
 			// Callback that runs on state change.
-			// Do whatever with the old and new values.
 			console.log( { oldValue, newValue } );
 		}
 	}
