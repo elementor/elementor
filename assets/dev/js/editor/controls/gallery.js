@@ -92,7 +92,7 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		this.frame = wp.media( options );
 
-		this.setUploadMimeType();
+		this.addSvgMimeType();
 
 		// When a file is selected, run a callback.
 		this.frame.on( {
@@ -102,15 +102,19 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		}, this );
 	},
 
-	setUploadMimeType() {
-		// Set svg as only allowed upload extensions
+	addSvgMimeType() {
+		if ( ! FilesUploadHandler.isUploadEnabled( 'svg' ) ) {
+			return;
+		}
+
+		// Add the SVG to the currently allowed extensions
 		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
 		this.frame.on( 'ready', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
 		} );
 
+		// restore allowed upload extensions
 		this.frame.on( 'close', () => {
-			// restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
 		} );
 	},
