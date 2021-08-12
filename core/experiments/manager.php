@@ -500,9 +500,11 @@ class Manager extends Base_Object {
 		$is_feature_active = $this->is_feature_active( $feature['name'] );
 
 		if ( self::STATE_DEFAULT === $feature['state'] ) {
-			$label = $is_feature_active ? __( 'Active by default', 'elementor' ) : __( 'Inactive by default', 'elementor' );
+			$label = $is_feature_active ? esc_html__( 'Active by default', 'elementor' ) :
+				esc_html__( 'Inactive by default', 'elementor' );
 		} else {
-			$label = self::STATE_ACTIVE === $feature['state'] ? __( 'Active', 'elementor' ) : __( 'Inactive', 'elementor' );
+			$label = self::STATE_ACTIVE === $feature['state'] ? esc_html__( 'Active', 'elementor' ) :
+				esc_html__( 'Inactive', 'elementor' );
 		}
 
 		return $label;

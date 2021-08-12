@@ -8,16 +8,11 @@ use Elementor\Plugin;
  *
  * Elementor experiment report handler class responsible for generating a report for
  * the experiments included in Elementor and their status.
- *
- * @since 3.3.0
  */
 class Experiments extends Base {
 
 	/**
 	 * Get experiments reporter title.
-	 *
-	 * @since 3.3.0
-	 * @access public
 	 *
 	 * @return string Reporter title.
 	 */
@@ -27,9 +22,6 @@ class Experiments extends Base {
 
 	/**
 	 * Get experiments report fields.
-	 *
-	 * @since 3.3.0
-	 * @access public
 	 *
 	 * @return array Required report fields with field ID and field label.
 	 */
@@ -43,9 +35,6 @@ class Experiments extends Base {
 	 * Get Experiments.
 	 *
 	 * Retrieve the list of Elementor experiments and each experiment's status (active/inactive), in HTML table format.
-	 *
-	 * @since 3.3.0
-	 * @access public
 	 *
 	 * @return array
 	 */
@@ -73,9 +62,6 @@ class Experiments extends Base {
 	 *
 	 * Retrieve a string containing the list of Elementor experiments and each experiment's status (active/inactive).
 	 * The string is formatted in a non-table structure, and it is meant for export/download of the system info reports.
-	 *
-	 * @since 3.3.0
-	 * @access public
 	 *
 	 * @return array
 	 */
