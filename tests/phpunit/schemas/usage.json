@@ -223,7 +223,6 @@
 				"server",
 				"wordpress",
 				"theme",
-				"user",
 				"plugins"
 			],
 			"properties": {
@@ -495,10 +494,10 @@
 					"additionalProperties": false
 				},
 				"user": {
-					"$comment": "TODO: Remove - Not in use.",
+					"$comment": "Optional",
 					"$id": "#/system/user",
 					"type": "object",
-					"title": "The user schema (Ignore it, it's empty)",
+					"title": "The user schema",
 					"description": "Information about current user.",
 					"required": [
 						"role",

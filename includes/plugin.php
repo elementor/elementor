@@ -304,7 +304,7 @@ class Plugin {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @var System_Info\Main
+	 * @var System_Info_Module
 	 */
 	public $system_info;
 
@@ -787,7 +787,7 @@ class Plugin {
 	}
 
 	final public static function get_title() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 }
 

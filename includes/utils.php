@@ -42,6 +42,45 @@ class Utils {
 		'span',
 	];
 
+	const EXTENDED_ALLOWED_HTML_TAGS = [
+		'iframe' => [
+			'iframe' => [
+				'allow' => true,
+				'allowfullscreen' => true,
+				'frameborder' => true,
+				'height' => true,
+				'loading' => true,
+				'name' => true,
+				'referrerpolicy' => true,
+				'sandbox' => true,
+				'src' => true,
+				'width' => true,
+			],
+		],
+		'svg' => [
+			'svg' => [
+				'aria-hidden' => true,
+				'aria-labelledby' => true,
+				'class' => true,
+				'height' => true,
+				'role' => true,
+				'viewbox' => true,
+				'width' => true,
+				'xmlns' => true,
+			],
+			'g' => [
+				'fill' => true,
+			],
+			'title' => [
+				'title' => true,
+			],
+			'path' => [
+				'd' => true,
+				'fill' => true,
+			],
+		],
+	];
+
 	/**
 	 * Is ajax.
 	 *
@@ -136,12 +175,12 @@ class Utils {
 		$to = trim( $to );
 
 		if ( $from === $to ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be different', 'elementor' ) );
 		}
 
 		$is_valid_urls = ( filter_var( $from, FILTER_VALIDATE_URL ) && filter_var( $to, FILTER_VALIDATE_URL ) );
 		if ( ! $is_valid_urls ) {
-			throw new \Exception( __( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
+			throw new \Exception( esc_html__( 'The `from` and `to` URL\'s must be valid URL\'s', 'elementor' ) );
 		}
 
 		global $wpdb;
@@ -154,7 +193,7 @@ class Utils {
 		// @codingStandardsIgnoreEnd
 
 		if ( false === $rows_affected ) {
-			throw new \Exception( __( 'An error occurred', 'elementor' ) );
+			throw new \Exception( esc_html__( 'An error occurred', 'elementor' ) );
 		}
 
 		// Allow externals to replace-urls, when they have to.
@@ -513,7 +552,7 @@ class Utils {
 		$alias_version_as_float = (float) $alias_version[0];
 
 		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::DEPRECATION_RANGE ) {
-			_deprecated_file( $item, $version, $replacement );
+			_deprecated_file( $item, $version, $replacement ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -702,5 +741,20 @@ class Utils {
 		] );
 
 		return new \WP_Query( $args );
+	}
+
+	public static function print_wp_kses_extended( string $string, array $tags ) {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+		// Since PHP 5.6 cannot use isset() on the result of an expression.
+		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
+
+		foreach ( $tags as $tag ) {
+			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
+				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
+				$allowed_html = array_merge( $allowed_html, $extended_tags );
+			}
+		}
+
+		echo wp_kses( $string, $allowed_html );
 	}
 }

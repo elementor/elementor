@@ -78,20 +78,24 @@ export default class HashCommands {
 	 *
 	 * @param {Array.<HashCommand>} [commands=this.commands]
 	 */
-	run( commands = this.commands ) {
-		commands.forEach( ( hashCommand ) => {
+	async run( commands = this.commands ) {
+		// To allow validate the run first.
+		for ( const hashCommand of commands ) {
 			const dispatcher = this.dispatchersList[ hashCommand.method ];
 
 			if ( ! dispatcher ) {
-				throw Error( `No dispatcher found for the command: \`${ hashCommand.command }\`.` );
+				return Promise.reject( new Error( `No dispatcher found for the command: \`${ hashCommand.command }\`.` ) );
 			}
 
 			if ( ! dispatcher.isSafe( hashCommand.command ) ) {
-				throw Error( `Attempting to run unsafe or non exist command: \`${ hashCommand.command }\`.` );
+				return Promise.reject( new Error( `Attempting to run unsafe or non exist command: \`${ hashCommand.command }\`.` ) );
 			}
+		}
 
-			dispatcher.runner( hashCommand.command );
-		} );
+		// This logic will run the promises by sequence (will wait for dispatcher to finish, before run again).
+		for ( const hashCommand of commands ) {
+			await this.dispatchersList[ hashCommand.method ].runner( hashCommand.command );
+		}
 	}
 
 	/**
@@ -100,8 +104,8 @@ export default class HashCommands {
 	 * Do same as `run` but clear `this.commands` before leaving.
 	 */
 	runOnce() {
-		this.run( this.commands );
-
-		this.commands = [];
+		this.run( this.commands ).then( () => {
+			this.commands = [];
+		} );
 	}
 }
