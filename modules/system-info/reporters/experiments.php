@@ -31,6 +31,11 @@ class Experiments extends Base {
 		];
 	}
 
+	public function is_tracked() {
+		// Since manually handled by `get_settings_experiments_usage`.
+		return false;
+	}
+
 	/**
 	 * Get Experiments.
 	 *

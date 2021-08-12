@@ -225,7 +225,10 @@ class Tracker {
 	 * @return array The data from system reports.
 	 */
 	private static function get_system_reports_data() {
-		$reports = Plugin::$instance->system_info->load_reports( System_Info\Main::get_allowed_usage_reports() );
+		$reports = Plugin::$instance->system_info->load_reports(
+			System_Info_Module::get_allowed_reports(),
+			System_Info_Module::FORMAT_TRACKER
+		);
 
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {

@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.9.0
  */
 class Module extends BaseModule {
+
+	const FORMAT_TRACKER = 'tracker';
+
 	/**
 	 * Get module name.
 	 *
@@ -63,16 +66,6 @@ class Module extends BaseModule {
 		'network_plugins' => [],
 		'mu_plugins' => [],
 		'experiments' => [],
-	];
-
-	private static $usage_reports = [
-		'server' => [],
-		'wordpress' => [],
-		'theme' => [],
-		'user' => [],
-		'plugins' => [],
-		'network_plugins' => [],
-		'mu_plugins' => [],
 	];
 
 	/**
@@ -248,7 +241,7 @@ class Module extends BaseModule {
 	 * @access public
 	 *
 	 * @param array $reports An array of system info reports.
-	 * @param string $format - possible values: 'raw' or empty string, meaning 'html'
+	 * @param string $format - 'raw', 'html', 'tracker', default is 'html' (empty $format).
 	 *
 	 * @return array An array of system info reports.
 	 */
@@ -266,6 +259,10 @@ class Module extends BaseModule {
 			$reporter = $this->create_reporter( $reporter_params );
 
 			if ( ! $reporter instanceof Base ) {
+				continue;
+			}
+
+			if ( self::FORMAT_TRACKER === $format && ! $reporter->is_tracked() ) {
 				continue;
 			}
 
@@ -353,15 +350,6 @@ class Module extends BaseModule {
 	 */
 	public static function get_allowed_reports() {
 		return self::$reports;
-	}
-
-	/**
-	 * Get allowed reports for tracking data.
-	 *
-	 * @return array
-	 */
-	public static function get_allowed_usage_reports() {
-		return self::$usage_reports;
 	}
 
 	/**

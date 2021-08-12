@@ -67,6 +67,15 @@ abstract class Base {
 	}
 
 	/**
+	 * Is report tracked.
+	 *
+	 * @return bool Whether the report should be added to tracking data.
+	 */
+	public function is_tracked() {
+		return true;
+	}
+
+	/**
 	 * Get report.
 	 *
 	 * Retrieve the report with all it's containing fields.
