@@ -1289,10 +1289,14 @@ export default class EditorBase extends Marionette.Application {
 
 			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
 
+			let deleteControlDefault = true;
+
 			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
 			// controls receive that default value.
 			if ( multipleDefaultValue ) {
 				controlConfig.default = multipleDefaultValue;
+
+				deleteControlDefault = false;
 			}
 
 			devices.forEach( ( device, index ) => {
@@ -1358,6 +1362,10 @@ export default class EditorBase extends Marionette.Application {
 				devices.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
+
+				if ( deleteControlDefault ) {
+					delete controlArgs.default;
+				}
 
 				delete controlArgs.is_responsive;
 
