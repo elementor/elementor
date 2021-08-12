@@ -14,8 +14,8 @@
 * **Notes**:
 	- Each UI state has its own options & callback for each option.
 	- When a UI state is being changed, it:
-		- Adds a CSS class to the context elements (`e-ui-state--${ stateID }__${ value }`) - Slashes are being replaced by hyphens (e.g. `document/direction-mode` will become `document-direction-mode`).
-		- Dispatches a custom event to the scope elements (`e-ui-state:${ stateID }`, e.g. `e-ui-state:document/direction-mode`) with `oldValue` and `newValue` under `e.detail`.
+		- Adds a CSS class to the scope elements ( `e-ui-state--${ stateID }__${ value }` ) - Slashes are being replaced by hyphens ( e.g. `document/direction-mode` will become `document-direction-mode` ).
+		- Dispatches a custom event to the scope elements ( `e-ui-state:${ stateID }`, e.g. `e-ui-state:document/direction-mode` ) with `oldValue` and `newValue` under `e.detail`.
 	- Setting an invalid option to a state will throw an error.
 
 ## Guidelines, Conventions & Files Structure:
@@ -77,20 +77,23 @@
 		}
 	
 		getOptions() {
-			// Object of options that the state can be set to.
+			// Object of options that the state can be set to, with an optional callback for each option.
 			return {
+				{OPTION_VALUE_KEBAB_CASE}: '',
 				{OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
-					/* Callback that runs when the state is set to this option. */
+					// Callback that runs when the state is set to this option.
 				},
-				{OPTION_VALUE_KEBAB_CASE}: ( oldValue, newValue ) => {
-					/* Callback that runs when the state is set to this option. */
+				'on': ( oldValue, newValue ) => {
+					// Callback that runs when the state is set to `on`.
 				},
+				'off': this.onStateOff,
 			};
 		}
  
 		onChange( oldValue, newValue ) {
 			// Callback that runs on state change.
 			// Do whatever with the old and new values.
+			console.log( { oldValue, newValue } );
 		}
 	}
 	```
@@ -104,13 +107,15 @@
   |`{CUSTOM_PREFIX_KEBAB_CASE}`   | A kebab-case string.                                      | `some-custom-prefix`
   |`{OPTION_VALUE_KEBAB_CASE}`    | A kebab-case string.                                      | `option-1`
 
-  > Example - A UI state for editing-mode direction:
+  > Example - A UI state for editing direction-mode:
   
 	Let's assume we've created the following UI state: 
   
 	```javascript
 	import UiStateBase from 'elementor-api/core/states/ui-state-base';
 	
+	// A good practice is to export the state options as constants so you 
+	// can use them when you set the state from another place.
 	export const DIRECTION_ROW = 'row';
 	export const DIRECTION_COLUMN = 'column';
 	
@@ -145,12 +150,19 @@
  
 	Later on, on any state change, `onChange()` will be fired and will log the values to the console.
   
-	In addition, a CSS class ( `e-ui-state--document-direction-mode__column` or `__row`, depends on the state value ) will be added to both of the scopes that we provided ( editor & preview in this case ).
+	In addition, a CSS class ( `e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ] ) will be added to both of the scopes that we provided ( editor & preview in this case ).
 
 	Plus, a custom event ( `e-ui-state:document/direction-mode` ) will be fired to the scopes and we can listen to that
   	event using a simple `addEventListener()`:
 
 	```javascript
+	import { DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
+ 
+	// Change the `direction-mode` state:
+	$e.uiStates.set( 'document/direction-mode', DIRECTION_ROW );
+ 
+ 
+	// Listen to changes:
 	window.document.body.addEventListener( 'e-ui-state:document/direction-mode', ( e ) => {
 		const { oldValue, newValue } = e.detail;
 		
