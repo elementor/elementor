@@ -5,8 +5,8 @@ export default class Base extends $e.modules.CommandBase {
 	 * When finish to create or reset the default values this code will recreate the elements
 	 * on the document
 	 *
-	 * @param type
-	 * @param newSettings
+	 * @param {string} type
+	 * @param {Object} newSettings
 	 * @returns {Promise<void>}
 	 */
 	async recreateElements( type, newSettings = {} ) {
@@ -23,8 +23,8 @@ export default class Base extends $e.modules.CommandBase {
 	/**
 	 * Get all the elements that should recreate after the creating the new default.
 	 *
-	 * @param type
-	 * @param newDefaultSettings
+	 * @param {string} type
+	 * @param {Object} newDefaultSettings
 	 * @returns {{}}
 	 */
 	getAllElementsForRecreate( type, newDefaultSettings ) {
@@ -35,9 +35,14 @@ export default class Base extends $e.modules.CommandBase {
 				return;
 			}
 
-			elements[ element.id ] = pipe(
+			const pipeFunc = pipe(
 				...this.component.handlers.map( ( handler ) => handler.appendSettingsForRecreate )
-			)( element.model.toJSON( { remove: [ 'default' ] } ), newDefaultSettings );
+			);
+
+			elements[ element.id ] = pipeFunc(
+				element.model.toJSON( { remove: [ 'default' ] } ),
+				newDefaultSettings
+			);
 		} );
 
 		return elements;
@@ -46,7 +51,7 @@ export default class Base extends $e.modules.CommandBase {
 	/**
 	 * Get the new type from widget config and update the widget cache.
 	 *
-	 * @param type
+	 * @param {string} type
 	 * @returns {Promise<void>}
 	 */
 	async refreshWidgetsConfig( type ) {

@@ -6,32 +6,18 @@ use Elementor\Data\Base\Controller as Controller_Base;
 use Elementor\Plugin;
 
 class Controller extends Controller_Base {
-	/**
-	 * @return string
-	 */
 	public function get_name() {
 		return 'widgets-config';
 	}
 
-	/**
-	 * @return void
-	 */
 	public function register_endpoints() {
 		//
 	}
 
-	/**
-	 * @return void
-	 */
 	protected function register_internal_endpoints() {
 		$this->register_endpoint( Endpoints\Index::class );
 	}
 
-	/**
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return object
-	 */
 	public function get_items( $request ) {
 		$config = ( new Collection( Plugin::$instance->widgets_manager->get_widget_types() ) );
 
@@ -50,11 +36,6 @@ class Controller extends Controller_Base {
 			->all();
 	}
 
-	/**
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return object
-	 */
 	public function get_item( $request ) {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $request->get_param( 'id' ) );
 
@@ -73,11 +54,6 @@ class Controller extends Controller_Base {
 		];
 	}
 
-	/**
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return bool
-	 */
 	public function get_permission_callback( $request ) {
 		return current_user_can( 'edit_posts' );
 	}

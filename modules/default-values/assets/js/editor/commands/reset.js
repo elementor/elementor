@@ -2,7 +2,7 @@ import Base from './base';
 
 export class Reset extends Base {
 	validateArgs( args ) {
-		this.requireArgument( 'type', args );
+		this.requireArgumentType( 'type', 'string', args );
 	}
 
 	async apply( { type } ) {

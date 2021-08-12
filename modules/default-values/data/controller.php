@@ -22,14 +22,6 @@ class Controller extends Base_Controller {
 		//
 	}
 
-	/**
-	 * Create new default value.
-	 *
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return object|\WP_Error
-	 * @throws \Exception
-	 */
 	public function create_item( $request ) {
 		try {
 			$response = Repository::instance()->store(
@@ -45,12 +37,6 @@ class Controller extends Base_Controller {
 		}
 	}
 
-	/**
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return object|\WP_Error
-	 * @throws \Exception
-	 */
 	public function delete_item( $request ) {
 		try {
 			$response = Repository::instance()->delete(

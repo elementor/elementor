@@ -4,7 +4,7 @@ import GlobalValues from './handlers/global-values';
 import LocalValues from './handlers/local-values';
 
 export default class Component extends $e.modules.ComponentBase {
-	__construct( args = {} ) {
+	registerAPI() {
 		/**
 		 * Handlers responsible for the different strategies to manipulate and getting the settings
 		 * from local values or globals
@@ -18,7 +18,7 @@ export default class Component extends $e.modules.ComponentBase {
 
 		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );
 
-		super.__construct( args );
+		super.registerAPI();
 	}
 
 	getNamespace() {
