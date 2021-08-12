@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Font Awesome Icon Svg.
+ * E-Icons Svg.
  *
- * @since 3.4.0
+ * @since 3.5.0
  */
 class E_Icons extends Base {
 	const LIBRARY_CURRENT_VERSION = 5;
