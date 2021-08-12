@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import './search-input.scss';
 
 export default function SearchInput( props ) {
-	const [ localValue, setLocalValue ] = useState( props.value );
+	const [ localValue, setLocalValue ] = useState( props.value || '' );
 	const debouncedOnChange = useDebouncedCallback( ( value ) => props.onChange( value ), props.debounceTimeout );
 
 	useEffect( () => {

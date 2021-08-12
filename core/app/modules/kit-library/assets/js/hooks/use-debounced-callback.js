@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 
-export default function useDebouncedCallback( func, wait ) {
+export default function useDebouncedCallback( callback, wait ) {
 	const timeout = useRef();
 
 	return useCallback(
@@ -8,13 +8,13 @@ export default function useDebouncedCallback( func, wait ) {
 			const later = () => {
 				clearTimeout( timeout.current );
 
-				func( ...args );
+				callback( ...args );
 			};
 
 			clearTimeout( timeout.current );
 
 			timeout.current = setTimeout( later, wait );
 		},
-		[ func, wait ]
+		[ callback, wait ]
 	);
 }
