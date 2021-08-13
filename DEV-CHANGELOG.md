@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev7 - 2021-08-13
+* Fix: Responsive values cascade wrongly with different dimensions on different breakpoints [ED-4665] (#15955)
+
 #### 3.5.0-dev6 - 2021-08-12
 * New: Add dev-changelog.md on developer-edition release [ED-4286] (#15893)
 * Fix: Widescreen breakpoint preview didn't fit the screen [ED-4504] (#15941)
