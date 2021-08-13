@@ -41,6 +41,8 @@ export default class EditorBootstrap {
 
 		elementor.start();
 
+		this.bypassRemoveBehaviour();
+
 		elementor.$preview.trigger( 'load' );
 	}
 
@@ -70,6 +72,11 @@ export default class EditorBootstrap {
 				throw new Error( e );
 			}
 		};
+	}
+
+	bypassRemoveBehaviour() {
+		elementor.modules.elements.models.Element.prototype.renderRemoteServer = () => {};
+		elementor.helpers.fetchFa4ToFa5Mapping.prototype = () => {};
 	}
 
 	runTests() {
