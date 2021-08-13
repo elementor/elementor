@@ -135,6 +135,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			data = this.getDataToSave( {
 				data: settings,
 			} );
+
 		NProgress.start();
 
 		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
