@@ -307,18 +307,8 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return results;
 		}
 
-		// TODO: Check with mati.
 		if ( ! this.validateInstanceScope( instance, command, currentComponent ) ) {
-			// TODO: Code duplication, handle after review with mati.
-			const container = currentComponent.getRootContainer();
-
-			this.currentTrace.pop();
-			Commands.trace.pop();
-
-			delete this.current[ container ];
-			delete this.currentArgs[ container ];
-
-			return;
+			return this.releaseCurrent( currentComponent.getRootContainer() );
 		}
 
 		return this.runInstance( command, args, instance );
@@ -453,11 +443,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		this.trigger( 'run:after', component, command, args, results );
 
-		this.currentTrace.pop();
-		Commands.trace.pop();
-
-		delete this.current[ container ];
-		delete this.currentArgs[ container ];
+		this.releaseCurrent( container );
 	}
 
 	validateInstanceScope( instance, command, currentComponent ) {
@@ -475,6 +461,14 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		return true;
+	}
+
+	releaseCurrent( container ) {
+		this.currentTrace.pop();
+		Commands.trace.pop();
+
+		delete this.current[ container ];
+		delete this.currentArgs[ container ];
 	}
 
 	/**
