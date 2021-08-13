@@ -2,7 +2,7 @@ import CommandHistoryBase from './command-history-base';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
 /**
- * The class serve as base for commands who needs to 'enable/disable' behavior.
+ * The class serve as base for commands who needs the 'enable/disable' behavior.
  */
 export default class CommandDisableEnable extends CommandHistoryBase {
 	static getName() {
