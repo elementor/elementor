@@ -258,12 +258,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		const component = this.getComponent( command ),
 			container = component.getRootContainer();
 
-		this.currentTrace.push( command );
-
-		Commands.trace.push( command );
-
-		this.current[ container ] = command;
-		this.currentArgs[ container ] = args;
+		this.addCurrentTrace( container, command, args );
 
 		if ( args.onBefore ) {
 			args.onBefore.apply( component, [ args ] );
@@ -307,14 +302,21 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			return results;
 		}
 
-		if ( ! this.validateInstanceScope( instance, command, currentComponent ) ) {
-			return this.releaseCurrent( currentComponent.getRootContainer() );
+		if ( ! this.validateInstanceScope( instance, currentComponent, command ) ) {
+			return this.removeCurrentTrace( currentComponent );
 		}
 
-		return this.runInstance( command, args, instance );
+		return this.runInstance( instance );
 	}
 
-	runInstance( command, args, instance ) {
+	/**
+	 * Function runInstance().
+	 *
+	 * @param {CommandBase} instance
+	 *
+	 * @returns {boolean|Promise<*>}
+	 */
+	runInstance( instance ) {
 		let results = null;
 
 		// For UI Hooks.
@@ -329,72 +331,102 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			this.catchApply( e, instance );
 
 			if ( e instanceof $e.modules.HookBreak ) {
-				this.afterRun( command, args, e ); // To clear current.
+				this.removeCurrentTrace( instance.component );
 				return false;
 			}
 		}
 
-		return this.runAfter( command, instance, results );
+		return this.runAfter( instance, results );
 	}
 
-	runAfter( command, instance, result ) {
-		const onAfter = ( _result ) => {
-				// Run Data hooks.
-				instance.onAfterApply( instance.args, _result );
-
-				// For UI hooks.
-				instance.onAfterRun( instance.args, _result );
-
-				this.afterRun( command, instance.args, _result );
-			},
-			asyncOnAfter = async ( _result ) => {
-				// Run Data hooks.
-				const results = instance.onAfterApply( instance.args, _result ),
-					promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
-
-				if ( promises.length ) {
-					// Wait for hooks before return the value.
-					await Promise.all( promises );
-				}
-
-				// For UI hooks.
-				instance.onAfterRun( instance.args, _result );
-
-				this.afterRun( command, instance.args, _result );
-			},
-			handleResultJQueryDeferred = ( _result ) => {
-				_result.fail( ( e ) => {
-					this.catchApply( e, instance );
-					this.afterRun( command, instance.args, e );
-				} );
-				_result.done( onAfter );
-
-				return _result;
-			},
-			handleResultPromise = () => {
-				// Override initial result ( promise ) to await onAfter promises, first!.
-				return ( async () => {
-					await result.catch( ( e ) => {
-						this.catchApply( e, instance );
-						this.afterRun( command, instance.args, e );
-					} );
-					await result.then( ( _result ) => asyncOnAfter( _result ) );
-
-					return result;
-				} )();
-			},
-			handleResultNormal = ( _result ) => onAfter( _result );
-
+	/**
+	 * Function runAfter().
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*} result
+	 *
+	 * @returns {Promise<*>|*}
+	 */
+	runAfter( instance, result ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			return handleResultJQueryDeferred( result );
+			const handleJQueryDeferred = ( _result ) => {
+				_result.fail( ( e ) => {
+					this.catchApply( e, instance );
+					this.afterRun( instance.command, instance.args, e );
+				} );
+				_result.done( ( __result ) => {
+					this.handleOnAfter( instance, __result );
+				} );
+
+				return _result;
+			};
+
+			return handleJQueryDeferred( result );
 		} else if ( result instanceof Promise ) {
-			return handleResultPromise( result );
+			return this.handlePromiseResult( instance, result );
 		}
 
-		handleResultNormal( result );
+		this.handleOnAfter( instance, result );
 
 		return result;
+	}
+
+	/**
+	 * Function handleOnAfter().
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*} result
+	 */
+	handleOnAfter( instance, result ) {
+		// Run Data hooks.
+		instance.onAfterApply( instance.args, result );
+
+		// For UI hooks.
+		instance.onAfterRun( instance.args, result );
+
+		this.afterRun( instance.command, instance.args, result );
+	}
+
+	/**
+	 * Function handleOnAfter().
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*} result
+	 */
+	async handleOnAfterAsync( instance, result ) {
+		// Run Data hooks.
+		const results = instance.onAfterApply( instance.args, result ),
+			promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
+
+		if ( promises.length ) {
+			// Wait for hooks before return the value.
+			await Promise.all( promises );
+		}
+
+		// For UI hooks.
+		instance.onAfterRun( instance.args, result );
+
+		this.afterRun( instance.command, instance.args, result );
+	}
+
+	/**
+	 * Function handlePromiseResult().
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*} result
+	 */
+	handlePromiseResult( instance, result ) {
+		// Override initial result ( promise ) to await onAfter promises, first!.
+		return ( async () => {
+			await result.catch( ( e ) => {
+				this.catchApply( e, instance );
+				this.afterRun( instance.command, instance.args, e );
+			} );
+			await result.then( ( _result ) => this.handleOnAfterAsync( instance, _result ) );
+
+			return result;
+		} )();
 	}
 
 	/**
@@ -434,8 +466,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 * @param {*} results
 	 */
 	afterRun( command, args, results = undefined ) {
-		const component = this.getComponent( command ),
-			container = component.getRootContainer();
+		const component = this.getComponent( command );
 
 		if ( args.onAfter ) {
 			args.onAfter.apply( component, [ args, results ] );
@@ -443,10 +474,10 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		this.trigger( 'run:after', component, command, args, results );
 
-		this.releaseCurrent( container );
+		this.removeCurrentTrace( component );
 	}
 
-	validateInstanceScope( instance, command, currentComponent ) {
+	validateInstanceScope( instance, currentComponent, command ) {
 		if ( ! ( instance instanceof CommandBase ) ) {
 			this.error( `invalid instance, command: '${ command }' ` );
 		}
@@ -463,8 +494,20 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		return true;
 	}
 
-	releaseCurrent( container ) {
+	addCurrentTrace( container, command, args ) {
+		this.currentTrace.push( command );
+
+		Commands.trace.push( command );
+
+		this.current[ container ] = command;
+		this.currentArgs[ container ] = args;
+	}
+
+	removeCurrentTrace( currentComponent ) {
+		const container = currentComponent.getRootContainer();
+
 		this.currentTrace.pop();
+
 		Commands.trace.pop();
 
 		delete this.current[ container ];
