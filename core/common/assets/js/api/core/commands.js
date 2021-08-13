@@ -381,14 +381,14 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 				return _result;
 			},
-			handleResultPromise = ( _result ) => {
+			handleResultPromise = () => {
 				// Override initial result ( promise ) to await onAfter promises, first!.
 				return ( async () => {
 					await result.catch( ( e ) => {
 						this.catchApply( e, instance );
 						this.afterRun( command, instance.args, e );
 					} );
-					await result.then( ( __result ) => asyncOnAfter( __result ) );
+					await result.then( ( _result ) => asyncOnAfter( _result ) );
 
 					return result;
 				} )();

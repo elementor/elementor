@@ -6647,7 +6647,7 @@
 			"prefix_class": "elementor-",
 			"label_on": "Hide",
 			"label_off": "Show",
-			"return_value": "hidden-phone",
+			"return_value": "hidden-mobile",
 			"name": "hide_mobile"
 		},
 		"_section_attributes": {

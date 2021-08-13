@@ -153,9 +153,12 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
 					} )
-					.fail( function( reason ) {
+					.fail( function( { responseJSON } ) {
 						$thisButton.removeClass( 'loading' ).addClass( 'error' );
-						$thisButton.after( `<div class="e-recreate-kit-error-message">${ reason }</div>` );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
 					} );
 			} );
 

@@ -59,6 +59,14 @@ class Test_Usage extends Base_Schema {
 			]
 		] );
 
+		// Add missing tabs to page settings.
+		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
+		Plugin::$instance->modules_manager->get_modules( 'safe-mode' )->add_admin_button(
+			Plugin::$instance->tools
+		);
+		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
+
+
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();
 		$usage = $tracking_data[ 'usages' ];

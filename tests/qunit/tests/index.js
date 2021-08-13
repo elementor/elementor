@@ -18,6 +18,7 @@ export const tests = () => {
 	require( './core/common/assets/js/api/extras/hash-commands.spec' );
 
 	// Editor.
+	require( './assets/dev/js/editor/utils/helpers.spec' );
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// JS API editor

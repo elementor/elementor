@@ -1,6 +1,7 @@
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Card from 'elementor-app/ui/card/card';
+import Collapse from 'elementor-app/molecules/collapse';
 import PanelHeader from './panel-header';
 import PanelHeadline from './panel-headline';
 import PanelBody from './panel-body';
@@ -9,19 +10,23 @@ import './panel.scss';
 
 export default function Panel( props ) {
 	return (
-		<Card className={ arrayToClassName( [ 'e-app-import-export-panel', props.className ] ) }>
-			{ props.children }
-		</Card>
+		<Collapse isOpened={ props.isOpened }>
+			<Card className={ arrayToClassName( [ 'e-app-import-export-panel', props.className ] ) }>
+				{ props.children }
+			</Card>
+		</Collapse>
 	);
 }
 
 Panel.propTypes = {
 	className: PropTypes.string,
+	isOpened: PropTypes.bool,
 	children: PropTypes.any.isRequired,
 };
 
 Panel.defaultProps = {
 	className: '',
+	isOpened: false,
 };
 
 Panel.Header = PanelHeader;

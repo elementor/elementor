@@ -1,8 +1,20 @@
+$root: e-kit-library__tags-filter;
+
+.#{$root} {
+	--e-kit-library-tags-filter-list-search-background-color: #{theme-colors('light')};
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-kit-library-tags-filter-list-search-background-color: #{dark-tints( 600 )};
+	}
+}
+
 .e-kit-library__tags-filter {
 	margin-top: spacing(44);
 
 	&-list {
-		margin-bottom: spacing(30);
+		margin-bottom: spacing(44);
 
 		.eps-collapse__title {
 			padding-right: spacing(30);
@@ -24,12 +36,12 @@
 		margin-bottom: spacing(10);
 
 		.eps-search-input {
-			background: theme-colors('light');
+			background: var(--e-kit-library-tags-filter-list-search-background-color);
 		}
 	}
 
 	&-list-item {
-		padding: spacing(5) 0;
+		padding: spacing(10) 0;
 		display: flex;
 		align-items: center;
 		font-weight: 500;

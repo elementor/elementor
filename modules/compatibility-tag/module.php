@@ -33,7 +33,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	protected function get_plugin_label() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 
 	/**

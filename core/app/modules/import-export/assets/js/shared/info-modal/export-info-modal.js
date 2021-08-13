@@ -15,7 +15,7 @@ export default function ExportInfoModal( props ) {
 					<>
 						{ __( 'Select what to include from your site. We’ll use that to create a zip file.', 'elementor' ) }
 						<br />
-						{ __( 'That’s it!', 'elementor' ) } <InlineLink>{ __( 'Learn More', 'elementor' ) }</InlineLink>
+						{ __( 'That’s it!', 'elementor' ) } <InlineLink url="http://go.elementor.com/app-export-kit">{ __( 'Learn More', 'elementor' ) }</InlineLink>
 					</>
 				</InfoModal.Text>
 			</InfoModal.Section>
