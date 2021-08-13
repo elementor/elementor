@@ -40,16 +40,6 @@ export default class API {
 		this.uiStates = new UiStates();
 
 		this.modules = {
-			// get CommandInternalBase() {
-			// 	elementorCommon.helpers.softDeprecated(
-			// 		'$e.modules.CommandInternalBase',
-			// 		'3.0.3',
-			// 		'$e.modules.CommandInternal'
-			// 	);
-			//
-			// 	return this.CommandInternal;
-			// },
-
 			CommandBase,
 			CommandInternalBase,
 			CommandData,
