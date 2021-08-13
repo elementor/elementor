@@ -1,6 +1,9 @@
 import CommandHistoryBase from './command-history-base';
 import ElementsSettings from 'elementor-document/elements/commands/settings';
 
+/**
+ * The class serve for base for commands who needs to 'enable/disable' behavior.
+ */
 export default class CommandDisableEnable extends CommandHistoryBase {
 	static getName() {
 		elementorModules.ForceMethodImplementation();
