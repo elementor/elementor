@@ -57,7 +57,8 @@ class Plugin {
 	/**
 	 * Database.
 	 *
-	 * Holds the plugin database.
+	 * Holds the plugin database handler which is responsible for communicating
+	 * with the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -69,10 +70,11 @@ class Plugin {
 	/**
 	 * Ajax Manager.
 	 *
-	 * Holds the plugin ajax manager.
+	 * Holds the plugin ajax handlers which are responsible for ajax requests
+	 * and responses.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead.
 	 * @access public
 	 *
 	 * @var Ajax
@@ -82,7 +84,8 @@ class Plugin {
 	/**
 	 * Controls manager.
 	 *
-	 * Holds the plugin controls manager.
+	 * Holds the plugin controls manager handler is responsible for registering
+	 * and initializing controls.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -130,7 +133,8 @@ class Plugin {
 	/**
 	 * Widgets manager.
 	 *
-	 * Holds the plugin widgets manager.
+	 * Holds the plugin widgets manager which is responsible for registering and
+	 * initializing widgets.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -142,7 +146,8 @@ class Plugin {
 	/**
 	 * Revisions manager.
 	 *
-	 * Holds the plugin revisions manager.
+	 * Holds the plugin revisions manager which handles history and revisions
+	 * functionality.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -154,7 +159,8 @@ class Plugin {
 	/**
 	 * Images manager.
 	 *
-	 * Holds the plugin images manager.
+	 * Holds the plugin images manager which is responsible for retrieving image
+	 * details.
 	 *
 	 * @since 2.9.0
 	 * @access public
@@ -166,7 +172,8 @@ class Plugin {
 	/**
 	 * Maintenance mode.
 	 *
-	 * Holds the plugin maintenance mode.
+	 * Holds the maintenance mode manager responsible for the "Maintenance Mode"
+	 * and the "Coming Soon" features.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -214,12 +221,12 @@ class Plugin {
 	/**
 	 * Role Manager.
 	 *
-	 * Holds the plugin Role Manager
+	 * Holds the plugin role manager.
 	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @var \Elementor\Core\RoleManager\Role_Manager
+	 * @var Core\RoleManager\Role_Manager
 	 */
 	public $role_manager;
 
@@ -332,9 +339,9 @@ class Plugin {
 	public $skins_manager;
 
 	/**
-	 * Files Manager.
+	 * Files manager.
 	 *
-	 * Holds the files manager.
+	 * Holds the plugin files manager.
 	 *
 	 * @since 2.1.0
 	 * @access public
@@ -344,9 +351,9 @@ class Plugin {
 	public $files_manager;
 
 	/**
-	 * Assets Manager.
+	 * Assets manager.
 	 *
-	 * Holds the Assets manager.
+	 * Holds the plugin assets manager.
 	 *
 	 * @since 2.6.0
 	 * @access public
@@ -356,13 +363,13 @@ class Plugin {
 	public $assets_manager;
 
 	/**
-	 * Files Manager.
+	 * Files manager.
 	 *
-	 * Holds the files manager.
+	 * Holds the plugin files manager.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead.
 	 * @access public
-	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead
 	 *
 	 * @var Files_Manager
 	 */
@@ -383,7 +390,7 @@ class Plugin {
 	/**
 	 * Modules manager.
 	 *
-	 * Holds the modules manager.
+	 * Holds the plugin modules manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -405,193 +412,187 @@ class Plugin {
 	public $beta_testers;
 
 	/**
+	 * Debugger.
+	 *
+	 * Holds the plugin debugger data.
+	 *
+	 * @since
+	 * @deprecated 2.1.2 Use `Plugin::$inspector` instead.
+	 * @access public
+	 *
 	 * @var Inspector
-	 * @deprecated 2.1.2 Use $inspector.
 	 */
 	public $debugger;
 
 	/**
+	 * Inspector.
+	 *
+	 * Holds the plugin inspector data.
+	 *
+	 * @since 2.1.2
+	 * @access public
+	 *
 	 * @var Inspector
 	 */
 	public $inspector;
 
 	/**
+	 * Common functionality.
+	 *
+	 * Holds the plugin common functionality.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
 	 * @var CommonApp
 	 */
 	public $common;
 
 	/**
+	 * Log manager.
+	 *
+	 * Holds the plugin log manager.
+	 *
+	 * @since 
+	 * @access public
+	 *
 	 * @var Log_Manager
 	 */
 	public $logger;
 
 	/**
+	 * Dev tools.
+	 *
+	 * Holds the plugin dev tools.
+	 *
+	 * @since 
+	 * @access private
+	 *
 	 * @var Dev_Tools
 	 */
 	private $dev_tools;
 
 	/**
+	 * Upgrade manager.
+	 *
+	 * Holds the plugin upgrade manager.
+	 *
+	 * @since 
+	 * @access public
+	 *
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
 
 	/**
+	 * Kits manager.
+	 *
+	 * Holds the plugin kits manager.
+	 *
+	 * @since 
+	 * @access public
+	 *
 	 * @var Core\Kits\Manager
 	 */
 	public $kits_manager;
 
 	/**
+	 * Data manager.
+	 *
+	 * Holds the plugin data manager.
+	 *
+	 * @since 
+	 * @access public
+	 *
 	 * @var \Core\Data\Manager
 	 */
 	public $data_manager;
 
+	/**
+	 * Legacy mode.
+	 *
+	 * Holds the plugin legacy mode data.
+	 *
+	 * @since 
+	 * @access public
+	 *
+	 * @var array
+	 */
 	public $legacy_mode;
 
 	/**
+	 * App.
+	 *
+	 * Holds the plugin app data.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
 	 * @var Core\App\App
 	 */
 	public $app;
 
 	/**
+	 * WordPress API.
+	 *
+	 * Holds the methods that interact with WordPress Core API.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
 	 * @var Wp_Api
 	 */
 	public $wp;
 
 	/**
+	 * Experiments manager.
+	 *
+	 * Holds the plugin experiments manager.
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
 	 * @var Experiments_Manager
 	 */
 	public $experiments;
 
 	/**
+	 * Uploads manager.
+	 *
+	 * Holds the plugin uploads manager responsible for handling file uploads
+	 * that are not done with WordPress Media.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @var Uploads_Manager
 	 */
 	public $uploads_manager;
 
 	/**
+	 * Breakpoints manager.
+	 *
+	 * Holds the plugin breakpoints manager.
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
 	 * @var Breakpoints_Manager
 	 */
 	public $breakpoints;
 
 	/**
+	 * Assets loader.
+	 *
+	 * Holds the plugin assets loader responsible for conditionally enqueuing
+	 * styles and script assets that were pre-enabled.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @var Assets_Loader
 	 */
 	public $assets_loader;
-
-	/**
-	 * Clone.
-	 *
-	 * Disable class cloning and throw an error on object clone.
-	 *
-	 * The whole idea of the singleton design pattern is that there is a single
-	 * object. Therefore, we don't want the object to be cloned.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 */
-	public function __clone() {
-		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * Wakeup.
-	 *
-	 * Disable unserializing of the class.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 */
-	public function __wakeup() {
-		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
-	}
-
-	/**
-	 * Instance.
-	 *
-	 * Ensures only one instance of the plugin class is loaded or can be loaded.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
-	 * @return Plugin An instance of the class.
-	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new self();
-
-			/**
-			 * Elementor loaded.
-			 *
-			 * Fires when Elementor was fully loaded and instantiated.
-			 *
-			 * @since 1.0.0
-			 */
-			do_action( 'elementor/loaded' );
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Init.
-	 *
-	 * Initialize Elementor Plugin. Register Elementor support for all the
-	 * supported post types and initialize Elementor components.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function init() {
-		$this->add_cpt_support();
-
-		$this->init_components();
-
-		/**
-		 * Elementor init.
-		 *
-		 * Fires on Elementor init, after Elementor has finished loading but
-		 * before any headers are sent.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'elementor/init' );
-	}
-
-	/**
-	 * Get install time.
-	 *
-	 * Retrieve the time when Elementor was installed.
-	 *
-	 * @since 2.6.0
-	 * @access public
-	 * @static
-	 *
-	 * @return int Unix timestamp when Elementor was installed.
-	 */
-	public function get_install_time() {
-		$installed_time = get_option( '_elementor_installed_time' );
-
-		if ( ! $installed_time ) {
-			$installed_time = time();
-
-			update_option( '_elementor_installed_time', $installed_time );
-		}
-
-		return $installed_time;
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function on_rest_api_init() {
-		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
-		if ( ! $this->common ) {
-			$this->init_common();
-		}
-	}
 
 	/**
 	 * Init components.
