@@ -1114,7 +1114,7 @@ class Widget_Common extends Widget_Base {
 						"_transform_rotate_3d{$tab}!" => '',
 					],
 					'selectors' => [
-						'{{WRAPPER}}' => '--e-transform-perspective: {{SIZE}}px',
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-perspective: {{SIZE}}px',
 					],
 					'frontend_available' => true,
 				]
