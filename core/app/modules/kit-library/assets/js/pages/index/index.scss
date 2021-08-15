@@ -15,7 +15,7 @@ $e-kit-library-sticky-search-z-index: 2;
 		width: 100%;
 		z-index: $e-kit-library-sticky-search-z-index;
 		background-color: var(--app-background-color);
-		gap: spacing( 24 );
+		gap: spacing( 30 );
 
 		&-search, &-sort {
 			min-width: 265px;
