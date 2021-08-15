@@ -24,6 +24,6 @@ class Elementor_Test_Section extends Elementor_Test_Base {
 	public function test_should_return_title() {
 		$title = Section::get_title();
 
-		$this->assertEquals( __( 'Section', 'elementor' ), $title );
+		$this->assertEquals( esc_html__( 'Section', 'elementor' ), $title );
 	}
 }

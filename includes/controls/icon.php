@@ -864,13 +864,12 @@ class Control_Icon extends Base_Data_Control {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<select id="<?php echo $control_uid; ?>" class="elementor-control-icon" data-setting="{{ data.name }}" data-placeholder="<?php echo __( 'Select Icon', 'elementor' ); ?>">
-					<option value=""><?php echo __( 'Select Icon', 'elementor' ); ?></option>
+				<select id="<?php $this->print_control_uid(); ?>" class="elementor-control-icon" data-setting="{{ data.name }}" data-placeholder="<?php echo esc_html__( 'Select Icon', 'elementor' ); ?>">
+					<option value=""><?php echo esc_html__( 'Select Icon', 'elementor' ); ?></option>
 					<# _.each( data.options, function( option_title, option_value ) { #>
 					<option value="{{ option_value }}">{{{ option_title }}}</option>
 					<# } ); #>

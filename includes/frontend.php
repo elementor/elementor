@@ -267,7 +267,7 @@ class Frontend extends App {
 
 		if ( ! empty( $mobile_theme_color ) ) {
 			?>
-			<meta name="theme-color" content="<?php echo $mobile_theme_color; ?>">
+			<meta name="theme-color" content="<?php echo esc_html( $mobile_theme_color ); ?>">
 			<?php
 		}
 	}
@@ -1082,7 +1082,7 @@ class Frontend extends App {
 		if ( get_the_ID() === (int) $post_id ) {
 			$content = '';
 			if ( $editor->is_edit_mode() ) {
-				$content = '<div class="elementor-alert elementor-alert-danger">' . __( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
+				$content = '<div class="elementor-alert elementor-alert-danger">' . esc_html__( 'Invalid Data: The Template ID cannot be the same as the currently edited template. Please choose a different one.', 'elementor' ) . '</div>';
 			}
 
 			return $content;
@@ -1218,25 +1218,25 @@ class Frontend extends App {
 				'isScriptDebug' => Utils::is_script_debug(),
 			],
 			'i18n' => [
-				'shareOnFacebook' => __( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => __( 'Share on Twitter', 'elementor' ),
-				'pinIt' => __( 'Pin it', 'elementor' ),
-				'download' => __( 'Download', 'elementor' ),
-				'downloadImage' => __( 'Download image', 'elementor' ),
-				'fullscreen' => __( 'Fullscreen', 'elementor' ),
-				'zoom' => __( 'Zoom', 'elementor' ),
-				'share' => __( 'Share', 'elementor' ),
-				'playVideo' => __( 'Play Video', 'elementor' ),
-				'previous' => __( 'Previous', 'elementor' ),
-				'next' => __( 'Next', 'elementor' ),
-				'close' => __( 'Close', 'elementor' ),
+				'shareOnFacebook' => esc_html__( 'Share on Facebook', 'elementor' ),
+				'shareOnTwitter' => esc_html__( 'Share on Twitter', 'elementor' ),
+				'pinIt' => esc_html__( 'Pin it', 'elementor' ),
+				'download' => esc_html__( 'Download', 'elementor' ),
+				'downloadImage' => esc_html__( 'Download image', 'elementor' ),
+				'fullscreen' => esc_html__( 'Fullscreen', 'elementor' ),
+				'zoom' => esc_html__( 'Zoom', 'elementor' ),
+				'share' => esc_html__( 'Share', 'elementor' ),
+				'playVideo' => esc_html__( 'Play Video', 'elementor' ),
+				'previous' => esc_html__( 'Previous', 'elementor' ),
+				'next' => esc_html__( 'Next', 'elementor' ),
+				'close' => esc_html__( 'Close', 'elementor' ),
 			],
 			'is_rtl' => is_rtl(),
 			// 'breakpoints' object is kept for BC.
 			'breakpoints' => Responsive::get_breakpoints(),
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
-				'breakpoints' => $this->get_breakpoints_config(),
+				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
@@ -1303,24 +1303,6 @@ class Frontend extends App {
 		return $settings;
 	}
 
-	private function get_breakpoints_config() {
-		$breakpoints = Plugin::$instance->breakpoints->get_breakpoints();
-
-		$config = [];
-
-		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$config[ $breakpoint_name ] = [
-				'label' => $breakpoint->get_label(),
-				'value' => $breakpoint->get_value(),
-				'direction' => $breakpoint->get_direction(),
-				'is_enabled' => $breakpoint->is_enabled(),
-				'default_value' => $breakpoint->get_default_value(),
-			];
-		}
-
-		return $config;
-	}
-
 	/**
 	 * Restore content filters.
 	 *
@@ -1362,7 +1344,7 @@ class Frontend extends App {
 		}
 
 		if ( empty( $parts['more_text'] ) ) {
-			$parts['more_text'] = __( '(more&hellip;)', 'elementor' );
+			$parts['more_text'] = esc_html__( '(more&hellip;)', 'elementor' );
 		}
 
 		$more_link_text = sprintf(

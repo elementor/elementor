@@ -25,7 +25,7 @@ class Tools extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Tools', 'elementor' );
+		return esc_html__( 'Tools', 'elementor' );
 	}
 
 	/**
@@ -43,25 +43,25 @@ class Tools extends Base_Category {
 
 		return [
 			'tools' => [
-				'title' => __( 'Tools', 'elementor' ),
+				'title' => esc_html__( 'Tools', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url,
 				'keywords' => [ 'tools', 'regenerate css', 'safe mode', 'debug bar', 'sync library', 'elementor' ],
 			],
 			'replace-url' => [
-				'title' => __( 'Replace URL', 'elementor' ),
+				'title' => esc_html__( 'Replace URL', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url . '#tab-replace_url',
 				'keywords' => [ 'tools', 'replace url', 'domain', 'elementor' ],
 			],
 			'version-control' => [
-				'title' => __( 'Version Control', 'elementor' ),
+				'title' => esc_html__( 'Version Control', 'elementor' ),
 				'icon' => 'time-line',
 				'url' => $tools_url . '#tab-versions',
 				'keywords' => [ 'tools', 'version', 'control', 'rollback', 'beta', 'elementor' ],
 			],
 			'maintenance-mode' => [
-				'title' => __( 'Maintenance Mode', 'elementor' ),
+				'title' => esc_html__( 'Maintenance Mode', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url . '#tab-maintenance_mode',
 				'keywords' => [ 'tools', 'maintenance', 'coming soon', 'elementor' ],
