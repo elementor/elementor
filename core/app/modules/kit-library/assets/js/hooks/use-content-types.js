@@ -27,7 +27,23 @@ function fetchContentTypes() {
 		{
 			id: 'site-parts',
 			label: __( 'Site Parts', 'elementor' ),
-			doc_types: [ 'header', 'footer', 'single', 'archive', '404' ],
+			doc_types: [
+				'header',
+				'footer',
+				'single-post',
+				'single-page',
+				'search-results',
+				'archive',
+				'error-404',
+
+				// WooCommerce types
+				'product',
+				'product-archive',
+
+				// Legacy Types
+				'404',
+				'single',
+			],
 			order: 1,
 		},
 		{
