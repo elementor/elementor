@@ -1,4 +1,5 @@
 import AddSectionBase	from 'elementor-views/add-section/base';
+import ContextMenuMode from '../../../ui-states/context-menu-mode';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
@@ -81,7 +82,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		event.stopPropagation();
 
-		$e.uiStates.set( 'editor/documents/context-menu-mode', 'on' );
+		$e.uiStates.set( 'editor/documents/context-menu-mode', ContextMenuMode.MODE_ON );
 
 		this.getContextMenu().show( event );
 
