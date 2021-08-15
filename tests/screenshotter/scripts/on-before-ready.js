@@ -73,6 +73,14 @@ module.exports = async function( page ) {
 			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) );
 		} )
 		.on( 'load', async () => {
+
+		await page.evaluate( () => {
+			const placeholders = document.querySelectorAll( `[src='http://localhost/wp-content/plugins/elementor/assets/images/placeholder.png']` );
+			placeholders.forEach( ( img ) => {
+				img.setAttribute( 'src',
+					'http://localhost:8080/wp-content/plugins/elementor/assets/images/placeholder.png' );
+			} );
+		} );
 			const pageTitle = await page.title();
 			const cdp = await page.target().createCDPSession();
 			const { data } = await cdp.send( 'Page.captureSnapshot', { format: 'mhtml' } );
