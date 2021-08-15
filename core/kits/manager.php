@@ -121,7 +121,7 @@ class Manager {
 
 	public function create_default() {
 		return $this->create( [
-			'post_title' => __( 'Default Kit', 'elementor' ),
+			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
 		] );
 	}
 
@@ -335,9 +335,8 @@ class Manager {
 
 		$confirmation_content = ob_get_clean();
 
-		wp_die(
-			new \WP_Error( 'cant_delete_kit', $confirmation_content )
-		);
+		// PHPCS - the content does not contain user input value.
+		wp_die( new \WP_Error( 'cant_delete_kit', $confirmation_content ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -364,8 +363,8 @@ class Manager {
 		if ( $document ) {
 			$admin_bar_config['elementor_edit_page']['children'][] = [
 				'id' => 'elementor_site_settings',
-				'title' => __( 'Site Settings', 'elementor' ),
-				'sub_title' => __( 'Site', 'elementor' ),
+				'title' => esc_html__( 'Site Settings', 'elementor' ),
+				'sub_title' => esc_html__( 'Site', 'elementor' ),
 				'href' => $document->get_edit_url() . '#' . self::E_HASH_COMMAND_OPEN_SITE_SETTINGS,
 				'class' => 'elementor-site-settings',
 				'parent_class' => 'elementor-second-section',

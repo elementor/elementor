@@ -96,8 +96,8 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= Translated to 56+ Languages & RTL supported. =
-We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (56+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
+= Translated to 59+ Languages & RTL supported. =
+We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (59+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
@@ -217,6 +217,58 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.0 - 2021-08-17 =
+* New: Introducing Additional Custom Breakpoints - Pixel Perfect Design for up to 7 Devices ([#2043](https://github.com/elementor/elementor/issues/2043), [#15488](https://github.com/elementor/elementor/issues/15488), [#15782](https://github.com/elementor/elementor/issues/15782))
+* Experiment: Font Awesome Inline SVG for Optimized performance ([#11772](https://github.com/elementor/elementor/issues/11772))
+* Tweak: Responsive values visibility in Elementor controls ([#3356](https://github.com/elementor/elementor/issues/3356))
+* Tweak: Improved asset loading performance by serving lighter JS files ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Scale controls were added to responsive mode UI ([#15485](https://github.com/elementor/elementor/issues/15485))
+* Tweak: Responsive devices order was changed ([#14662](https://github.com/elementor/elementor/issues/14662), [#2043](https://github.com/elementor/elementor/issues/2043))
+* Tweak: Excluded Elementor Templates from WordPress default sitemap ([#14578](https://github.com/elementor/elementor/issues/14578), [Topic](https://wordpress.org/support/topic/how-to-stop-elementor-templates-appearing-in-wp-sitemap/))
+* Tweak: Responsive capability was added to Alignment control in Testimonial widget ([#11542](https://github.com/elementor/elementor/issues/11542))
+* Tweak: Added translation function to several locations (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Allow extending Section elements using Elementor API (props [@Oxibug](https://github.com/oxibug))
+* Tweak: Converted responsive controls generation in the Editor to JS ([Developers Blog Post](https://developers.elementor.com/additional-custom-breakpoints-technical-details-and-gotchas/))
+* Tweak: Updated Webpack library to v5.40.0
+* Tweak: Added an option to deep-link into Revisions panel screen
+* Tweak: Changed the Kit Library back button text to "Back to Library"
+* Tweak: Added additional information to usage data
+* Tweak: Added compatibility for future feature in Site Settings
+* Tweak: Added CLI support for Import Kit by ID
+* Tweak: Added informative tooltip for Finder element in Elementor admin top bar
+* Tweak: Use template literals in Elementor filter names
+* Tweak: Updated "Getting Started" video playlist
+* Tweak: Enforced better security policies
+* Fix: Dynamic content disappeared if chosen in Code Highlight widget ([#14766](https://github.com/elementor/elementor/issues/14766))
+* Fix: Text size increased on Icon list widget with size set to `em` and a link ([#14829](https://github.com/elementor/elementor/issues/14829))
+* Fix: Undefined `"pro_widgets"` array key message in edge cases (props [@jahir07](https://github.com/jahir07), [@codersaiful](https://github.com/codersaiful), [#15542](https://github.com/elementor/elementor/issues/15542))
+* Fix: UI glitch in Select2 control in Dark mode ([#15473](https://github.com/elementor/elementor/issues/15473))
+* Fix: Re-migrate globals are not working properly in edge cases ([#15477](https://github.com/elementor/elementor/issues/15477), props [@jvernooy](https://github.com/jvernooy))
+* Fix: Gallery widget with Dynamic gallery applied can't be edited or deleted ([#15529](https://github.com/elementor/elementor/issues/15529))
+* Fix: Improved Responsive bar compatibility to RTL sites
+* Fix: Dynamic tags UI glitch in Code Highlight widget
+* Fix: Default Mobile width changed to 360px in Responsive mode
+* Fix: Viewport meta tag was escaped in Canvas page layout
+* Fix: Setting zero offset to Sticky elements is not working properly
+* Fix: Icons are not vertically aligned in Icon List widget
+* Fix: WordPress Audio widget only shows correct styling in live preview but not in the actual site
+* Fix: New tabs do not appear instantly if alignment is not set to Default or Start in Tabs widget
+* Fix: Edit popover was trimmed by the template card in Theme Builder
+* Fix: Duplicate `<style>` tags were printed in several cases
+* Fix: Theme Builder is not working if Import/Export experiment is inactive
+* Fix: UI glitch in Responsive bar in RTL sites
+* Fix: "Edit with Elementor" isn’t working on static Homepages
+* Fix: UI glitches in Kit Library 
+* Fix: Library connect issues after URL change in Kit and template Library
+* Fix: Kit Library not showing all categories
+* Fix: Pro widget promotions flickers after clicking on "See it in action" button
+* Fix: Incorrect hover default color in Text Path widget
+* Fix: Text decoration is not working in Text Path widget
+* Fix: Browser's autocomplete is taking over the results in the Finder
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-4-planned-deprecations/)
 
 = 3.3.1 - 2021-07-20 =
 * Tweak: Added a back to Kit Library button to the Import Kit screen

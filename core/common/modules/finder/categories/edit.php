@@ -27,7 +27,7 @@ class Edit extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Edit', 'elementor' );
+		return esc_html__( 'Edit', 'elementor' );
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Edit extends Base_Category {
 			$icon = 'document-file';
 
 			if ( $is_template ) {
-				$description = __( 'Template', 'elementor' ) . ' / ' . $description;
+				$description = esc_html__( 'Template', 'elementor' ) . ' / ' . $description;
 
 				$icon = 'post-title';
 			}
