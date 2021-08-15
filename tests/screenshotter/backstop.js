@@ -7,7 +7,7 @@ const getScenarios = () => {
 	config.templates.forEach( ( pathname ) => {
 		scenarios.push( {
 			label: pathname,
-			url: `${ origin }/${ pathname }`,
+			url: `${ origin }/${ pathname }/`,
 			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
@@ -41,7 +41,7 @@ module.exports = {
 	viewports: testsViewports(),
 	scenarios: getScenarios(),
 	paths: {
-		bitmaps_reference: `backstop_data/reference`,
+		bitmaps_reference: `${ __dirname }/reference`,
 		bitmaps_test: `backstop_data/bitmaps_test`,
 		engine_scripts: `backstop_data/engine_scripts`,
 		html_report: `backstop_data/html_report`,
@@ -55,9 +55,9 @@ module.exports = {
 	engineOptions: {
 		args: [ '--no-sandbox' ],
 		slowMo: 500,
-		waitTimeout: 240000,
+		// waitTimeout: 90000,
 	},
-	asyncCaptureLimit: 20,
+	asyncCaptureLimit: 30,
 	asyncCompareLimit: 30,
 	debug: false,
 	debugWindow: false,

@@ -21,25 +21,25 @@ module.exports = async function( page ) {
 		} );
 	}
 
-	page.setRequestInterception( true );
+	// page.setRequestInterception( true );
 
 	page
-		.on( 'request', async ( request ) => {
-			const requestUrl = request.url();
-			const configHost = url.parse( config.url_origin, true ).host;
-			const requestHost = url.parse( requestUrl, true ).host;
-
-			if ( 'localhost' === requestHost ) {
-				request.respond( {
-					status: 302,
-					headers: {
-						location: requestUrl.replace( requestHost, configHost ),
-					},
-				} );
-			} else {
-				request.continue();
-			}
-		} )
+		// .on( 'request', async ( request ) => {
+		// 	const requestUrl = request.url();
+		// 	const configHost = url.parse( config.url_origin, true ).host;
+		// 	const requestHost = url.parse( requestUrl, true ).host;
+		//
+		// 	if ( 'localhost' === requestHost ) {
+		// 		request.respond( {
+		// 			status: 302,
+		// 			headers: {
+		// 				location: requestUrl.replace( requestHost, configHost ),
+		// 			},
+		// 		} );
+		// 	} else {
+		// 		request.continue();
+		// 	}
+		// } )
 		.on( 'console', ( message ) => {
 			const type = message.type().substr( 0, 3 ).toUpperCase();
 			const colors = {
@@ -56,10 +56,10 @@ module.exports = async function( page ) {
 			// eslint-disable-next-line no-console
 			console.log( chalk.red( message ) );
 		} )
-		.on( 'response', async ( response ) => {
-			// eslint-disable-next-line no-console
-			console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
-		} )
+		// .on( 'response', async ( response ) => {
+		// 	// eslint-disable-next-line no-console
+		// 	console.log( chalk.green( `${ response.status() } ${ response.url() }` ) );
+		// } )
 		.on( 'requestfailed', ( request ) => {
 			// eslint-disable-next-line no-console
 			console.log( chalk.magenta( `${ request.failure().errorText } ${ request.url() }` ) );
