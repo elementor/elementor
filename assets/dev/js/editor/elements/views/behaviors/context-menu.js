@@ -81,6 +81,8 @@ module.exports = Marionette.Behavior.extend( {
 
 		event.stopPropagation();
 
+		$e.uiStates.set( 'editor/documents/context-menu-mode', 'on' );
+
 		this.getContextMenu().show( event );
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
@@ -103,6 +105,7 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenuHide: function() {
+		$e.uiStates.remove( 'editor/documents/context-menu-mode' );
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},
 
