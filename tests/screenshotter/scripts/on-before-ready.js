@@ -21,6 +21,14 @@ module.exports = async function( page ) {
 		} );
 	}
 
+	await page.evaluate( () => {
+		const placeholders = document.querySelectorAll( `[src='http://localhost/wp-content/plugins/elementor/assets/images/placeholder.png']` );
+		placeholders.forEach( ( img ) => {
+			img.setAttribute( 'src',
+				'http://localhost:8080/wp-content/plugins/elementor/assets/images/placeholder.png' );
+		} );
+	} );
+
 	// page.setRequestInterception( true );
 
 	page
@@ -75,4 +83,7 @@ module.exports = async function( page ) {
 				console.log( chalk.red( `Failed to created file - ${ filePath }` ) );
 			}
 		} );
+
+
+
 };
