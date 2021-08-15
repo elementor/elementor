@@ -191,7 +191,6 @@ WidgetView = BaseElementView.extend( {
 		const editModel = this.getEditModel();
 		const widgetType = editModel.get( 'widgetType' );
 		const eComponents = [ 'e-heading', 'e-icon', 'e-button' ];
-
 		return eComponents.includes( widgetType );
 	},
 
@@ -200,33 +199,43 @@ WidgetView = BaseElementView.extend( {
 			return;
 		}
 
+		const editModel = this.getEditModel();
+		const widgetType = editModel.get( 'widgetType' );
 		const changedProperty = Object.keys( change.changed )[ 0 ];
 		const newValue = change.changed[ changedProperty ];
 		const control = change.controls[ changedProperty ];
-		const component = this.$el.children()[ this.$el.children().length - 1 ];
+
 		const isProp = ! ! control.component_prop;
 
 		if ( isProp ) {
+			const isDefultProp = 'default' === control.component_prop;
+			const component = isDefultProp ?
+				this.$el.find( widgetType ) :
+				this.$el.find( '[slot="' + control.component_prop + '"]' );
+			const element = component[ 0 ];
+
 			if ( 'switcher' === control.type ) {
 				if ( newValue ) {
-					component.setAttribute( changedProperty, true );
+					element.setAttribute( changedProperty, true );
 				} else {
-					component.removeAttribute( changedProperty );
+					element.removeAttribute( changedProperty );
 				}
 			} else {
-				component.setAttribute( changedProperty, newValue );
+				element.setAttribute( changedProperty, newValue );
 			}
 		}
 
-		const isSlot = ! isProp && ! ! control.component_slot;
+		const isSlot = ! ! control.component_slot;
 		const slotName = isSlot && control.component_slot;
 
-		if ( isSlot && 'default' === slotName ) {
-			component.innerHTML = newValue;
-		}
+		if ( isSlot ) {
+			const isDefultSlot = 'default' === control.component_slot;
+			const component = isDefultSlot ?
+				this.$el.find( widgetType ) :
+				this.$el.find( '[slot="' + slotName + '"]' );
+			const element = component[ 0 ];
 
-		if ( isSlot && 'default' !== slotName ) {
-			component.find( '[slot="' + slotName + '"]' ).innerHTML = newValue;
+			element.innerHTML = newValue;
 		}
 	},
 

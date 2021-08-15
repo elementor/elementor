@@ -15,87 +15,85 @@ abstract class Web_Component_Base extends Widget_Base {
 		return [ 'web-components' ];
 	}
 
-	public function render_content() {
-		do_action( 'elementor/widget/before_render_content', $this );
-		ob_start();
-		$this->render_by_mode();
-		$widget_content = ob_get_clean();
+	protected function get_component_props( $slot = 'default' ) {
+		$props = [];
 
-		if ( empty( $widget_content ) ) {
-			return;
+		foreach ( $this->get_controls() as $control_name => $control_args ) {
+			if ( isset( $control_args['component_prop'] ) && $slot === $control_args['component_prop'] ) {
+				$props[ $control_name ] = $slot;
+			}
 		}
 
-		if ( $this->is_widget_first_render() ) {
-			$this->register_runtime_widget( $this->get_group_name() );
-			$this->print_widget_css();
-		}
-
-		$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
-
-		echo $widget_content;
+		return $props;
 	}
 
-	protected function get_slots_dictionary() {
-		return [];
+	private $slots_map = [];
+
+	protected function add_slot( $slot_name, $slot_data ) {
+		$this->slots_map[ $slot_name ] = $slot_data;
+	}
+
+	protected function get_slots_data( $slot = false ) {
+		$slots_map = $this->slots_map;
+
+		if ( $slot ) {
+			return isset( $slots_map[ $slot ] ) ? $slots_map[ $slot ] : false;
+		}
+
+		return $slots_map;
 	}
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$element_name = $this->get_custom_element_tag_name();
-		$props = [];
-		$slots = [];
+		$component_name = $this->get_custom_element_tag_name();
+		$props = $this->get_component_props();
 
-		foreach ( $this->get_controls() as $control_name => $control_args ) {
-			if ( isset( $control_args['component_prop'] ) ) {
-				$props[] = $control_name;
-			}
-			if ( isset( $control_args['component_slot'] ) ) {
-				$slots[ $control_args['component_slot'] ] = $control_name;
+		foreach ( $props as $prop => $element_name ) {
+			if ( 'default' === $element_name && ! empty( $settings[ $prop ] ) ) {
+				$this->add_render_attribute( $component_name, $prop, $settings[ $prop ] );
 			}
 		}
 
-		if ( isset( $slots['default'] ) && ! $settings[ $slots['default'] ] ) {
-			return;
+		$attributes = ' ' . $this->get_render_attribute_string( $component_name );
+		$content = $this->render_slotted_nodes();
+
+		echo '<' . $component_name . $attributes . '>' . $content . '</' . $component_name . '>';
+	}
+
+	protected function render_slotted_nodes() {
+		$this->register_slots();
+		$slots = $this->get_slots_data();
+		$nodes = [];
+
+		foreach ( $slots as $slot_name => $slot_data ) {
+			$nodes[] = $this->render_node( $slot_name, $slot_data );
 		}
 
-		foreach ( $props as $prop ) {
-			if ( ! empty( $settings[ $prop ] ) ) {
-				$this->add_render_attribute( $element_name, $prop, $settings[ $prop ] );
+		return implode( '', $nodes );
+	}
+
+	protected function render_node( $slot_name, $slot_data ) {
+		$node_type = isset( $slot_data['node_type'] ) ? $slot_data['node_type'] : 'span';
+		$tag_name = $node_type;
+		$content = $slot_data['content'];
+		$prop_controls = $this->get_component_props( $slot_name );
+
+		if ( 'none' === $node_type ) {
+			return $content;
+		}
+
+		foreach ( $prop_controls as $control_name => $slot ) {
+			if ( $slot_name === $slot && ! empty( $settings[ $control_name ] ) ) {
+				$this->add_render_attribute( $slot_name, $control_name, $settings[ $control_name ] );
 			}
 		}
 
-		$element = sprintf(
-			'<%1s %2$s>%3$s</%1s>',
-			$element_name,
-			$this->get_render_attribute_string( $element_name ),
-			$this->render_slots( $slots )
-		);
+		$this->add_render_attribute( $slot_name, 'slot', $slot_name );
 
-		echo $element;
+		$attributes = ' ' . $this->get_render_attribute_string( $slot_name );
+
+		return '<' . $tag_name . $attributes . '>' . $content . '</' . $tag_name . '>';
 	}
 
-	protected function render_slots( $slots ) {
-		$content = '';
-		foreach ( $slots as $name => $control_name ) {
-			$content .= $this->render_slot( $control_name, $name );
-		}
-
-		return $content;
-	}
-
-	protected function render_slot( $control_name, $slot_name = false ) {
-		$settings = $this->get_settings_for_display();
-		$slot_tag_name = 'a';
-		$slot_content = $settings[ $control_name ];
-
-		$slot_element = '<' . $slot_tag_name;
-		if ( ! 'default' === $slot_name ) {
-			$slot_element .= ' slot="' . $slot_name . '"';
-		}
-		$slot_element .= '>';
-		$slot_element .= $slot_content;
-		$slot_element .= '</' . $slot_tag_name . '>';
-
-		return $slot_element;
-	}
+	protected function register_slots() {}
 }

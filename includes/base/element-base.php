@@ -405,6 +405,20 @@ abstract class Element_Base extends Controls_Stack {
 		return $this;
 	}
 
+	protected function render_anchor_tag( $name, array $url_control, $content, $slot = false, $overwrite = false ) {
+		$this->add_link_attributes( $name, $url_control, $overwrite );
+
+		if ( ! $url_control['url'] ) {
+			return $content;
+		}
+
+		if ( $slot ) {
+			$this->add_render_attribute( $name, 'slot', $slot );
+		}
+
+		return '<a ' . $this->get_render_attribute_string( $name ) . '>' . $content . '</a>';
+	}
+
 	/**
 	 * Print element.
 	 *

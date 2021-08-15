@@ -48,27 +48,7 @@ class Widget_E_Heading extends Web_Component_Base {
 	}
 
 	public function get_script_depends() {
-		return [ 'ewc-heading' ];
-	}
-
-	public function render_content() {
-		do_action( 'elementor/widget/before_render_content', $this );
-		ob_start();
-		$this->render_by_mode();
-		$widget_content = ob_get_clean();
-
-		if ( empty( $widget_content ) ) {
-			return;
-		}
-
-		if ( $this->is_widget_first_render() ) {
-			$this->register_runtime_widget( $this->get_group_name() );
-			$this->print_widget_css();
-		}
-
-		$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
-
-		echo $widget_content;
+		return [ 'ewc-basic' ];
 	}
 
 	/**
@@ -97,8 +77,8 @@ class Widget_E_Heading extends Web_Component_Base {
 				],
 				'placeholder' => __( 'Enter your title', 'elementor' ),
 				'default' => __( 'Add Your Heading Text Here', 'elementor' ),
-				'component_slot' => 'default',
 				'render_type' => 'ui',
+				'component_slot' => 'default',
 			]
 		);
 
@@ -132,7 +112,7 @@ class Widget_E_Heading extends Web_Component_Base {
 					'xl' => __( 'XL', 'elementor' ),
 					'xxl' => __( 'XXL', 'elementor' ),
 				],
-				'component_prop' => true,
+				'component_prop' => 'default',
 				'render_type' => 'ui',
 			]
 		);
@@ -151,7 +131,7 @@ class Widget_E_Heading extends Web_Component_Base {
 					'6' => 'H6',
 				],
 				'default' => '2',
-				'component_prop' => true,
+				'component_prop' => 'default',
 				'render_type' => 'ui',
 			]
 		);
@@ -179,7 +159,7 @@ class Widget_E_Heading extends Web_Component_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'component_prop' => true,
+				'component_prop' => 'default',
 				'render_type' => 'ui',
 			]
 		);
@@ -228,7 +208,7 @@ class Widget_E_Heading extends Web_Component_Base {
 					'yellow' => __( 'Yellow', 'elementor' ),
 					'custom' => __( 'Custom', 'elementor' ),
 				],
-				'component_prop' => true,
+				'component_prop' => 'default',
 				'render_type' => 'ui',
 			]
 		);
@@ -291,5 +271,14 @@ class Widget_E_Heading extends Web_Component_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	protected function register_slots() {
+		$settings = $this->get_settings_for_display();
+
+		$this->add_slot( 'default', [
+			'content' => $this->render_anchor_tag( 'link', $settings['link'], $settings['main_content'] ),
+			'node_type' => 'none',
+		] );
 	}
 }

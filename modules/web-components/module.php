@@ -67,16 +67,8 @@ class Module extends BaseModule {
 	 */
 	public function register_frontend_scripts() {
 		wp_register_script(
-			'ewc-heading',
-			$this->get_assets_path() . '/heading.js',
-			[],
-			'0.0.1',
-			false
-		);
-
-		wp_register_script(
-			'ewc-button',
-			$this->get_assets_path() . '/button.js',
+			'ewc-basic',
+			$this->get_assets_path() . '/basic-components.bundled.js',
 			[],
 			'0.0.1',
 			false

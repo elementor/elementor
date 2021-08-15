@@ -32,7 +32,7 @@ class Widget_E_Button extends Web_Component_Base {
 	}
 
 	public function get_script_depends() {
-		return [ 'ewc-button' ];
+		return [ 'ewc-basic' ];
 	}
 
 	public function get_title() {
@@ -45,26 +45,6 @@ class Widget_E_Button extends Web_Component_Base {
 
 	public function get_categories() {
 		return [ 'web-components' ];
-	}
-
-	public function render_content() {
-		do_action( 'elementor/widget/before_render_content', $this );
-		ob_start();
-		$this->render_by_mode();
-		$widget_content = ob_get_clean();
-
-		if ( empty( $widget_content ) ) {
-			return;
-		}
-
-		if ( $this->is_widget_first_render() ) {
-			$this->register_runtime_widget( $this->get_group_name() );
-			$this->print_widget_css();
-		}
-
-		$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
-
-		echo $widget_content;
 	}
 
 	/**
@@ -154,7 +134,7 @@ class Widget_E_Button extends Web_Component_Base {
 				'default' => __( 'Click here', 'elementor' ),
 				'placeholder' => __( 'Click here', 'elementor' ),
 				'render_type' => 'ui',
-				'component_slot' => 'default',
+				'component_slot' => 'title',
 			]
 		);
 
@@ -178,7 +158,7 @@ class Widget_E_Button extends Web_Component_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => self::get_button_colors(),
 				'render_type' => 'ui',
-				'component_prop' => true,
+				'component_prop' => 'default',
 			]
 		);
 
@@ -190,7 +170,7 @@ class Widget_E_Button extends Web_Component_Base {
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 				'render_type' => 'ui',
-				'component_prop' => true,
+				'component_prop' => 'default',
 			]
 		);
 
@@ -199,7 +179,7 @@ class Widget_E_Button extends Web_Component_Base {
 			[
 				'label' => __( 'Pill', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'component_prop' => true,
+				'component_prop' => 'default',
 				'render_type' => 'ui',
 			]
 		);
@@ -460,36 +440,27 @@ class Widget_E_Button extends Web_Component_Base {
 		$this->end_controls_section();
 	}
 
-
-	protected function render() {
+	protected function register_slots() {
 		$settings = $this->get_settings_for_display();
 
-		if ( ! $settings['text'] ) {
-			return;
+		if ( $settings['icon']['value'] ) {
+			$icon = Icons_Manager::render_font_icon( $settings['icon'],
+				[
+					'aria-hidden' => 'true',
+					'slot' => 'icon',
+				],
+				'e-icon'
+			);
+
+			$this->add_slot( 'icon', [
+				'content' => $icon,
+				'node_type' => 'none',
+			] );
 		}
 
-		$button_props = [ 'size', 'color', 'grow', 'pill' ];
-
-		foreach ( $button_props as $prop ) {
-			if ( ! empty( $settings[ $prop ] ) ) {
-				$this->add_render_attribute( 'button', $prop, $settings[ $prop ] );
-			}
-		}
-
-		$main_content = $settings['text'];
-
-		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'url', $settings['link'] );
-
-			$main_content = sprintf( '<a %1$s>%2$s</a>', $this->get_render_attribute_string( 'url' ), $main_content );
-		}
-
-		$button = sprintf(
-			'<e-button %1$s>%2$s</e-button>',
-			$this->get_render_attribute_string( 'button' ),
-			$main_content
-		);
-
-		echo $button;
+		$this->add_slot( 'title', [
+			'content' => $this->render_anchor_tag( 'title', $settings['link'], $settings['text'], 'title' ),
+			'node_type' => $settings['link']['url'] ? 'none' : 'span',
+		] );
 	}
 }
