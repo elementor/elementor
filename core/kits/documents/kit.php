@@ -208,8 +208,7 @@ class Kit extends PageBase {
 			'settings-background' => Tabs\Settings_Background::class,
 			'settings-layout' => Tabs\Settings_Layout::class,
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
-			// TODO: Revert when Page Transitions will be released.
-			//'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
+			'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
 			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
 		];
 
