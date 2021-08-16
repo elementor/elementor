@@ -199,6 +199,9 @@ class Widget_Testimonial extends Widget_Base {
 						'icon' => 'eicon-text-align-right',
 					],
 				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-testimonial-wrapper' => 'text-align: {{VALUE}}',
+				],
 				'style_transfer' => true,
 			]
 		);
@@ -416,10 +419,6 @@ class Widget_Testimonial extends Widget_Base {
 
 		$this->add_render_attribute( 'wrapper', 'class', 'elementor-testimonial-wrapper' );
 
-		if ( $settings['testimonial_alignment'] ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-testimonial-text-align-' . $settings['testimonial_alignment'] );
-		}
-
 		$this->add_render_attribute( 'meta', 'class', 'elementor-testimonial-meta' );
 
 		if ( $settings['testimonial_image']['url'] ) {
@@ -539,10 +538,9 @@ class Widget_Testimonial extends Widget_Base {
 			}
 		}
 
-		var testimonial_alignment = settings.testimonial_alignment ? ' elementor-testimonial-text-align-' + settings.testimonial_alignment : '';
 		var testimonial_image_position = settings.testimonial_image_position ? ' elementor-testimonial-image-position-' + settings.testimonial_image_position : '';
 		#>
-		<div class="elementor-testimonial-wrapper{{ testimonial_alignment }}">
+		<div class="elementor-testimonial-wrapper">
 			<# if ( '' !== settings.testimonial_content ) {
 				view.addRenderAttribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 
