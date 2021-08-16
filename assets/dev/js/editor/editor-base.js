@@ -1348,6 +1348,8 @@ export default class EditorBase extends Marionette.Application {
 					} else {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
+				} else if ( deleteControlDefault ) {
+					delete controlArgs.default;
 				}
 
 				// If the control belongs to a group control with a popover, and this control is the last one, add the
@@ -1362,10 +1364,6 @@ export default class EditorBase extends Marionette.Application {
 				devices.forEach( ( breakpoint ) => {
 					delete controlArgs[ breakpoint + '_default' ];
 				} );
-
-				if ( deleteControlDefault ) {
-					delete controlArgs.default;
-				}
 
 				delete controlArgs.is_responsive;
 
