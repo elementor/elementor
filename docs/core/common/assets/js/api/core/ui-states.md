@@ -1,5 +1,7 @@
 ## API - `$e.uiStates`
 *  **Description**: `$e.uiStates` API is a UI state manager that allows you to create custom UI states for your components.
+   We've added this API since we needed a way to reflect the component's state in the UI itself and react accordingly
+   ( i.e. rotate icons, hide buttons, etc. ).  
 *  **Location**: *core/common/assets/js/api/core/ui-states.js*
 *  **Methods**:
 
@@ -12,7 +14,7 @@
 | `$e.uiStates.remove()`     | `{String}` *state*                                       | `{void}`  | Remove a state.
 | `$e.uiStates.getCurrent()` | `{String}` *state*                                       | `{string}`| Get the current state value.
 * **Notes**:
-	- Each UI state has its own options & callback for each option.
+	- Each UI state has options and an optional callback for each option ( a callback that will execute each time the state has changed to this value ).
 	- When a UI state is being changed, it:
 		- Adds a CSS class to the scope elements ( `e-ui-state--${ stateID }__${ value }` ) - Slashes are being replaced by hyphens ( e.g. `document/direction-mode` will become `document-direction-mode` ).
 		- Dispatches a custom event to the scope elements ( `e-ui-state:${ stateID }`, e.g. `e-ui-state:document/direction-mode` ) with `oldValue` and `newValue` under `e.detail`.
@@ -21,7 +23,7 @@
 ## Guidelines, Conventions & Files Structure:
 * Each UI state is owned by a [component](./components.md#guidelines-conventions--files-structure).
 * Each [component](./components.md#guidelines-conventions--files-structure) can override the `defaultUiStates()` method to return a set of UI states of its own.
-* The UI states are imported via built-in method called `importUiStates()`.
+* The UI states are imported via a built-in method called `importUiStates()`.
 	* All the UI states should be exported in one index file:
 	    ```javascript
 		// ui-states/index.js
