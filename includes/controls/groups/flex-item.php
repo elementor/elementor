@@ -17,7 +17,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		$fields = [];
 
 		$fields['flex_basis'] = [
-			'label' => _x( 'Flex Basis', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Flex Basis', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -44,32 +44,32 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['flex_size'] = [
-			'label' => _x( 'Size', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Size', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'default' => '',
 			'options' => [
 				'none' => [
-					'title' => _x( 'None', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'None', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-ban',
 				],
 				'grow' => [
-					'title' => _x( 'Grow', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-h-align-stretch',
+					'title' => esc_html_x( 'Grow', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-flex-grow',
 				],
 				'shrink' => [
-					'title' => _x( 'Shrink', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Shrink', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-h-align-center',
 				],
 				'custom' => [
-					'title' => _x( 'Custom', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-apps',
+					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ellipsis-v',
 				],
 			],
 			'selectors_dictionary' => [
-				'grow' => '--flex-grow: 1;',
-				'shrink' => '--flex-shrink: 1;',
+				'grow' => '--flex-grow: 1; --flex-shrink: 0;',
+				'shrink' => '--flex-grow: 0; --flex-shrink: 1;',
 				'custom' => '',
-				'none' => '',
+				'none' => '--flex-grow: 0; --flex-shrink: 0;',
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '{{VALUE}};',
@@ -78,7 +78,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['flex_grow'] = [
-			'label' => _x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
@@ -92,7 +92,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['flex_shrink'] = [
-			'label' => _x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
@@ -106,23 +106,23 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['align_self'] = [
-			'label' => _x( 'Align Self', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Align Self', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
 				'flex-start' => [
-					'title' => _x( 'Flex Start', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex-align-start',
 				],
 				'center' => [
-					'title' => _x( 'Center', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex-align-center',
 				],
 				'flex-end' => [
-					'title' => _x( 'Flex End', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex-align-end',
 				],
 				'stretch' => [
-					'title' => _x( 'Stretch', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Stretch', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-flex-align-stretch',
 				],
 			],
@@ -134,21 +134,21 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['order'] = [
-			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'default' => '',
 			'options' => [
 				'start' => [
-					'title' => _x( 'Start', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-h-align-left',
 				],
 				'end' => [
-					'title' => _x( 'End', 'Flex Item Control', 'elementor' ),
+					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
 					'icon' => 'eicon-h-align-right',
 				],
 				'custom' => [
-					'title' => _x( 'Custom', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-apps',
+					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ellipsis-v',
 				],
 			],
 			'selectors_dictionary' => [
@@ -166,7 +166,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['order_custom'] = [
-			'label' => _x( 'Order', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
 				'{{SELECTOR}}' => '--order: {{VALUE}};',

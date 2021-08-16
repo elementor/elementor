@@ -1,6 +1,8 @@
 <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="1" height="12" rx="0.5" transform="matrix(1 8.74228e-08 8.74228e-08 -1 14 12.5)" fill="#6D7882"/>
-<rect width="1" height="12" rx="0.5" transform="matrix(1 8.74228e-08 8.74228e-08 -1 0 12.5)" fill="#6D7882"/>
-<rect width="2" height="5" rx="1" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 8 9)" fill="#6D7882"/>
-<rect width="2" height="9" rx="1" transform="matrix(4.37114e-08 -1 -1 -4.37114e-08 12 6)" fill="#6D7882"/>
+	<rect width="1" height="12" rx="0.5" transform="matrix(1 8.74228e-08 8.74228e-08 -1 14 12.5)" fill="#6D7882"/>
+	<rect width="1" height="12" rx="0.5" transform="matrix(1 8.74228e-08 8.74228e-08 -1 0 12.5)" fill="#6D7882"/>
+	<path d="M10 6C10.5523 6 11 5.55228 11 5C11 4.44772 10.5523 4 10 4L3.30769 4C3.13776 4 3 4.13776 3 4.30769L3 5.69231C3 5.86224 3.13776 6 3.30769 6L10 6Z" fill="#6D7882"/>
+	<path d="M10 5C10 5 12 4.99997 12 7C12 9.00003 10 9 10 9" stroke="#6D7882" stroke-width="2"/>
+	<path d="M10 10C10.5523 10 11 9.55228 11 9C11 8.44772 10.5523 8 10 8L7 8L7 10L10 10Z" fill="#6D7882"/>
+	<path d="M5.545 9.06C5.51833 9.02444 5.51833 8.97556 5.545 8.94L6.82 7.24C6.87766 7.16312 7 7.2039 7 7.3V10.7C7 10.7961 6.87766 10.8369 6.82 10.76L5.545 9.06Z" fill="#6D7882"/>
 </svg>

@@ -19,6 +19,10 @@
 
 .eicon-flex {
 
+	&-grow {
+		background-image: url( '../images/flex-icons/flex-grow.svg' );
+	}
+
 	&-align {
 		&-start {
 			background-image: url( '../images/flex-icons/flex-align-start.svg' );

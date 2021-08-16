@@ -9,6 +9,7 @@
 	--margin: 0;
 	--padding: 0;
 	--z-index: auto;
+	--overflow: visible;
 	--transition: 0;
 
 	--overlay-mix-blend-mode: initial;
@@ -25,6 +26,7 @@
 	margin: var( --margin );
 	padding: var( --padding );
 	z-index: var( --z-index );
+	overflow: var( --overflow );
 	transition: var( --transition );
 
 	// Force center only top-level containers.

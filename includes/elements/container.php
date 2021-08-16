@@ -43,7 +43,7 @@ class Container extends Element_Base {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Container', 'elementor' );
+		return esc_html__( 'Container', 'elementor' );
 	}
 
 	/**
@@ -219,7 +219,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_layout_container',
 			[
-				'label' => __( 'Container', 'elementor' ),
+				'label' => esc_html__( 'Container', 'elementor' ),
 				'tab' => Controls_Manager::TAB_LAYOUT,
 			]
 		);
@@ -238,12 +238,12 @@ class Container extends Element_Base {
 		$this->add_control(
 			'layout',
 			[
-				'label' => __( 'Content Width', 'elementor' ),
+				'label' => esc_html__( 'Content Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'boxed',
 				'options' => [
-					'full-width' => __( 'Full Width', 'elementor' ),
-					'boxed' => __( 'Boxed', 'elementor' ),
+					'full-width' => esc_html__( 'Full Width', 'elementor' ),
+					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 				],
 				'prefix_class' => 'e-container--',
 			]
@@ -252,7 +252,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'content_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -271,43 +271,17 @@ class Container extends Element_Base {
 		);
 
 		$this->add_responsive_control(
-			'gap',
-			[
-				'label' => _x( 'Gap', 'Flex Item Control', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'px' => [
-						'min' => 0,
-						'max' => 500,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'size_units' => [ '%', 'px', 'vw' ],
-				'selectors' => [
-					'{{WRAPPER}}' => '--gap: {{SIZE}}{{UNIT}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
 			'height',
 			[
-				'label' => __( 'Height', 'elementor' ),
+				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'default',
 				'tablet_default' => 'default',
 				'mobile_default' => 'default',
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'full' => __( 'Fit To Screen', 'elementor' ),
-					'min-height' => __( 'Min Height', 'elementor' ),
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
+					'min-height' => esc_html__( 'Min Height', 'elementor' ),
 				],
 				'prefix_class' => 'e-container--height-',
 			]
@@ -316,7 +290,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'custom_height',
 			[
-				'label' => __( 'Minimum Height', 'elementor' ),
+				'label' => esc_html__( 'Minimum Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 400,
@@ -350,11 +324,32 @@ class Container extends Element_Base {
 			[
 				'name' => 'container',
 				'selector' => '{{WRAPPER}}',
-				'exclude' => [
-					'gap',
+				'fields_options' => [
+					'gap' => [
+						'label' => esc_html_x( 'Spacing', 'Flex Item Control', 'elementor' ),
+					],
 				],
 				'condition' => [
 					'container_type' => 'flex',
+				],
+			]
+		);
+
+		$this->register_children_layout_controls();
+
+		$this->add_control(
+			'overflow',
+			[
+				'label' => esc_html__( 'Overflow', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'separator' => 'before',
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'hidden' => esc_html__( 'Hidden', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--overflow: {{VALUE}}',
 				],
 			]
 		);
@@ -371,16 +366,15 @@ class Container extends Element_Base {
 		];
 
 		$options = [
-			'' => __( 'Default', 'elementor' ),
+			'' => esc_html__( 'Default', 'elementor' ),
 		] + $possible_tags;
 
 		$this->add_responsive_control(
 			'html_tag',
 			[
-				'label' => __( 'HTML Tag', 'elementor' ),
+				'label' => esc_html__( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
-				'separator' => 'before',
 			]
 		);
 
@@ -393,11 +387,12 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	protected function register_children_layout_controls() {
-		$this->start_controls_section(
-			'section_layout_children',
+		$this->add_control(
+			'flex_children_heading',
 			[
-				'label' => __( 'Flex Children', 'elementor' ),
-				'tab' => Controls_Manager::TAB_LAYOUT,
+				'label' => esc_html__( 'Flex Children', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
 			]
 		);
 
@@ -412,8 +407,6 @@ class Container extends Element_Base {
 				'selector' => '{{WRAPPER}} > *',
 			]
 		);
-
-		$this->end_controls_section();
 	}
 
 	/**
@@ -423,8 +416,6 @@ class Container extends Element_Base {
 	 */
 	protected function register_layout_tab() {
 		$this->register_container_layout_controls();
-
-		$this->register_children_layout_controls();
 	}
 
 	/**
@@ -436,7 +427,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_background',
 			[
-				'label' => __( 'Background', 'elementor' ),
+				'label' => esc_html__( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -449,7 +440,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -474,7 +465,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -489,7 +480,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
@@ -521,7 +512,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_background_overlay',
 			[
-				'label' => __( 'Background Overlay', 'elementor' ),
+				'label' => esc_html__( 'Background Overlay', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -534,7 +525,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_overlay',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -549,7 +540,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_overlay_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -595,19 +586,19 @@ class Container extends Element_Base {
 		$this->add_control(
 			'overlay_blend_mode',
 			[
-				'label' => __( 'Blend Mode', 'elementor' ),
+				'label' => esc_html__( 'Blend Mode', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => __( 'Normal', 'elementor' ),
-					'multiply' => __( 'Multiply', 'elementor' ),
-					'screen' => __( 'Screen', 'elementor' ),
-					'overlay' => __( 'Overlay', 'elementor' ),
-					'darken' => __( 'Darken', 'elementor' ),
-					'lighten' => __( 'Lighten', 'elementor' ),
-					'color-dodge' => __( 'Color Dodge', 'elementor' ),
-					'saturation' => __( 'Saturation', 'elementor' ),
-					'color' => __( 'Color', 'elementor' ),
-					'luminosity' => __( 'Luminosity', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
+					'multiply' => esc_html__( 'Multiply', 'elementor' ),
+					'screen' => esc_html__( 'Screen', 'elementor' ),
+					'overlay' => esc_html__( 'Overlay', 'elementor' ),
+					'darken' => esc_html__( 'Darken', 'elementor' ),
+					'lighten' => esc_html__( 'Lighten', 'elementor' ),
+					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
+					'saturation' => esc_html__( 'Saturation', 'elementor' ),
+					'color' => esc_html__( 'Color', 'elementor' ),
+					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--overlay-mix-blend-mode: {{VALUE}}',
@@ -638,7 +629,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_background_overlay_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -653,7 +644,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => .5,
@@ -684,7 +675,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
@@ -719,7 +710,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_border',
 			[
-				'label' => __( 'Border', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
@@ -732,7 +723,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_border',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -746,7 +737,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -770,7 +761,7 @@ class Container extends Element_Base {
 		$this->start_controls_tab(
 			'tab_border_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -785,7 +776,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'border_radius_hover',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -805,7 +796,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -868,7 +859,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_advanced',
 			[
-				'label' => __( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -876,7 +867,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'margin',
 			[
-				'label' => __( 'Margin', 'elementor' ),
+				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
@@ -888,7 +879,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'padding',
 			[
-				'label' => __( 'Padding', 'elementor' ),
+				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'default' => [
@@ -907,7 +898,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'z_index',
 			[
-				'label' => __( 'Z-Index', 'elementor' ),
+				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'selectors' => [
@@ -919,13 +910,13 @@ class Container extends Element_Base {
 		$this->add_control(
 			'_element_id',
 			[
-				'label' => __( 'CSS ID', 'elementor' ),
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'dynamic' => [
 					'active' => true,
 				],
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 				'classes' => 'elementor-control-direction-ltr',
 			]
@@ -934,14 +925,14 @@ class Container extends Element_Base {
 		$this->add_control(
 			'css_classes',
 			[
-				'label' => __( 'CSS Classes', 'elementor' ),
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'dynamic' => [
 					'active' => true,
 				],
 				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
@@ -958,7 +949,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_flex',
 			[
-				'label' => __( 'Flex', 'elementor' ),
+				'label' => esc_html__( 'Flex', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
@@ -984,7 +975,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Motion Effects', 'elementor' ),
+				'label' => esc_html__( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -992,7 +983,7 @@ class Container extends Element_Base {
 		$this->add_responsive_control(
 			'animation',
 			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
 			]
@@ -1001,13 +992,13 @@ class Container extends Element_Base {
 		$this->add_control(
 			'animation_duration',
 			[
-				'label' => __( 'Animation Duration', 'elementor' ),
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
 				'condition' => [
@@ -1019,7 +1010,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'animation_delay',
 			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
 				'default' => '',
 				'min' => 0,
@@ -1044,7 +1035,7 @@ class Container extends Element_Base {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
-				'label' => __( 'Responsive', 'elementor' ),
+				'label' => esc_html__( 'Responsive', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -1052,7 +1043,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'heading_visibility',
 			[
-				'label' => __( 'Visibility', 'elementor' ),
+				'label' => esc_html__( 'Visibility', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 			]
 		);
@@ -1060,7 +1051,7 @@ class Container extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => __( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
