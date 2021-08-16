@@ -30,19 +30,19 @@ trait Button_Trait {
 	 */
 	public static function get_button_sizes() {
 		return [
-			'xs' => __( 'Extra Small', 'elementor'),
-			'sm' => __( 'Small', 'elementor'),
-			'md' => __( 'Medium', 'elementor'),
-			'lg' => __( 'Large', 'elementor'),
-			'xl' => __( 'Extra Large', 'elementor'),
+			'xs' => __( 'Extra Small', 'elementor' ),
+			'sm' => __( 'Small', 'elementor' ),
+			'md' => __( 'Medium', 'elementor' ),
+			'lg' => __( 'Large', 'elementor' ),
+			'xl' => __( 'Extra Large', 'elementor' ),
 		];
 	}
 
 	protected function register_button_content_controls( $args = [] ) {
 		$default_args = [
 			'section_condition' => [],
-			'button_text' => __( 'Click here', 'elementor'),
-			'control_label_name' => __( 'Text', 'elementor'),
+			'button_text' => __( 'Click here', 'elementor' ),
+			'control_label_name' => __( 'Text', 'elementor' ),
 			'prefix_class' => 'elementor%s-align-',
 			'alignment_default' => '',
 			'icon_exclude_inline_options' => [],
@@ -53,15 +53,15 @@ trait Button_Trait {
 		$this->add_control(
 			'button_type',
 			[
-				'label' => __( 'Type', 'elementor'),
+				'label' => __( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor'),
-					'info' => __( 'Info', 'elementor'),
-					'success' => __( 'Success', 'elementor'),
-					'warning' => __( 'Warning', 'elementor'),
-					'danger' => __( 'Danger', 'elementor'),
+					'' => __( 'Default', 'elementor' ),
+					'info' => __( 'Info', 'elementor' ),
+					'success' => __( 'Success', 'elementor' ),
+					'warning' => __( 'Warning', 'elementor' ),
+					'danger' => __( 'Danger', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-button-',
 				'condition' => $args['section_condition'],
@@ -85,12 +85,12 @@ trait Button_Trait {
 		$this->add_control(
 			'link',
 			[
-				'label' => __( 'Link', 'elementor'),
+				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'dynamic' => [
 					'active' => true,
 				],
-				'placeholder' => __( 'https://your-link.com', 'elementor'),
+				'placeholder' => __( 'https://your-link.com', 'elementor' ),
 				'default' => [
 					'url' => '#',
 				],
@@ -101,23 +101,23 @@ trait Button_Trait {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => __( 'Alignment', 'elementor'),
+				'label' => __( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'start'    => [
-						'title' => __( 'Left', 'elementor'),
+						'title' => __( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor'),
+						'title' => __( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'end' => [
-						'title' => __( 'Right', 'elementor'),
+					'right' => [
+						'title' => __( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor'),
+						'title' => __( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
@@ -130,7 +130,7 @@ trait Button_Trait {
 		$this->add_control(
 			'size',
 			[
-				'label' => __( 'Size', 'elementor'),
+				'label' => __( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
@@ -142,7 +142,7 @@ trait Button_Trait {
 		$this->add_control(
 			'selected_icon',
 			[
-				'label' => __( 'Icon', 'elementor'),
+				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
@@ -155,12 +155,12 @@ trait Button_Trait {
 		$this->add_control(
 			'icon_align',
 			[
-				'label' => __( 'Icon Position', 'elementor'),
+				'label' => __( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'left',
 				'options' => [
-					'left' => __( 'Before', 'elementor'),
-					'right' => __( 'After', 'elementor'),
+					'left' => __( 'Before', 'elementor' ),
+					'right' => __( 'After', 'elementor' ),
 				],
 				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
 			]
@@ -169,7 +169,7 @@ trait Button_Trait {
 		$this->add_control(
 			'icon_indent',
 			[
-				'label' => __( 'Icon Spacing', 'elementor'),
+				'label' => __( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -187,7 +187,7 @@ trait Button_Trait {
 		$this->add_control(
 			'view',
 			[
-				'label' => __( 'View', 'elementor'),
+				'label' => __( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
 				'condition' => $args['section_condition'],
@@ -197,14 +197,14 @@ trait Button_Trait {
 		$this->add_control(
 			'button_css_id',
 			[
-				'label' => __( 'Button ID', 'elementor'),
+				'label' => __( 'Button ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
 				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor'),
-				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor'),
+				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'description' => __( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
 				'separator' => 'before',
 				'condition' => $args['section_condition'],
 			]
@@ -246,7 +246,7 @@ trait Button_Trait {
 		$this->start_controls_tab(
 			'tab_button_normal',
 			[
-				'label' => __( 'Normal', 'elementor'),
+				'label' => __( 'Normal', 'elementor' ),
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -254,7 +254,7 @@ trait Button_Trait {
 		$this->add_control(
 			'button_text_color',
 			[
-				'label' => __( 'Text Color', 'elementor'),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -268,7 +268,7 @@ trait Button_Trait {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'background',
-				'label' => __( 'Background', 'elementor'),
+				'label' => __( 'Background', 'elementor' ),
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .elementor-button',
@@ -291,7 +291,7 @@ trait Button_Trait {
 		$this->start_controls_tab(
 			'tab_button_hover',
 			[
-				'label' => __( 'Hover', 'elementor'),
+				'label' => __( 'Hover', 'elementor' ),
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -299,7 +299,7 @@ trait Button_Trait {
 		$this->add_control(
 			'hover_color',
 			[
-				'label' => __( 'Text Color', 'elementor'),
+				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
@@ -313,7 +313,7 @@ trait Button_Trait {
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'button_background_hover',
-				'label' => __( 'Background', 'elementor'),
+				'label' => __( 'Background', 'elementor' ),
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
@@ -329,7 +329,7 @@ trait Button_Trait {
 		$this->add_control(
 			'button_hover_border_color',
 			[
-				'label' => __( 'Border Color', 'elementor'),
+				'label' => __( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'condition' => [
 					'border_border!' => '',
@@ -344,7 +344,7 @@ trait Button_Trait {
 		$this->add_control(
 			'hover_animation',
 			[
-				'label' => __( 'Hover Animation', 'elementor'),
+				'label' => __( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
 				'condition' => $args['section_condition'],
 			]
@@ -367,7 +367,7 @@ trait Button_Trait {
 		$this->add_control(
 			'border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor'),
+				'label' => __( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em' ],
 				'selectors' => [
@@ -389,7 +389,7 @@ trait Button_Trait {
 		$this->add_responsive_control(
 			'text_padding',
 			[
-				'label' => __( 'Padding', 'elementor'),
+				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
