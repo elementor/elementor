@@ -891,6 +891,13 @@ class Container extends Element_Base {
 				'label' => __( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'default' => [
+					'unit' => 'px',
+					'top' => 10,
+					'right' => 10,
+					'bottom' => 10,
+					'left' => 10,
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

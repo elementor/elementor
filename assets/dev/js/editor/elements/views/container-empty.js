@@ -151,11 +151,24 @@ module.exports = Marionette.ItemView.extend( {
 
 			case '50':
 				this.setContainerDirection( 'row' );
+				this.setContainerSettings( {
+					container_flex_direction: 'row',
+					flex_children_flex_basis: {
+						unit: '%',
+						size: '50',
+					},
+				} );
 				this.createContainers( 2 );
 				break;
 
 			case '50-50':
-				this.setContainerDirection( 'row' );
+				this.setContainerSettings( {
+					container_flex_direction: 'row',
+					flex_children_flex_basis: {
+						unit: '%',
+						size: '50',
+					},
+				} );
 
 				for ( let i = 0; i < 2; i++ ) {
 					const parent = this.createContainer();
@@ -165,19 +178,39 @@ module.exports = Marionette.ItemView.extend( {
 				break;
 
 			case '33':
-				this.setContainerDirection( 'row' );
+				this.setContainerSettings( {
+					container_flex_direction: 'row',
+					flex_children_flex_basis: {
+						unit: '%',
+						size: '33',
+					},
+				} );
 
 				this.createContainers( 3 );
 				break;
 
 			case '50-25':
-				this.setContainerDirection( 'row' );
+				this.setContainerSettings( {
+					container_flex_direction: 'row',
+					flex_children_flex_basis: {
+						unit: '%',
+						size: '50',
+					},
+				} );
 
 				const containers = this.createContainers( 2 );
 
 				this.createContainers( 2, {}, containers[ 1 ] );
 				break;
 		}
+
+		const container = this.getContainer();
+
+		$e.run( 'panel/editor/open', {
+			model: container.model,
+			view: container.view,
+			container,
+		} );
 	},
 
 	behaviors: function() {

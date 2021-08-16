@@ -41,10 +41,6 @@
 		max-width: var( --container-max-width, 1140px ); // Same as section.
 	}
 
-	& > & {
-		padding: 10px; // Same as columns.
-	}
-
 	.elementor-empty-view {
 		position: relative;
 		width: 100%;
@@ -87,6 +83,50 @@
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition );
 		border-radius: var( --border-radius );
+	}
+
+	// Inner Container handle.
+	// TODO: Find a better solution.
+	& > & {
+		// Hide any setting control which isn't the edit control.
+		.elementor-editor-element-setting {
+			&:not( .elementor-editor-element-edit ),
+			&:first-child::before {
+				display: none;
+			}
+		}
+
+		.elementor-editor-element-edit {
+			width: auto;
+
+			&:hover {
+				background-color: transparent;
+			}
+		}
+
+		.elementor-editor-element-settings {
+			inset: initial;
+			transform: none;
+			inset-inline-start: 0;
+			top: 0;
+			border-radius: 0;
+			border-end-end-radius: 3px;
+			height: auto;
+			background-color: $editor-darkest;
+
+			&:hover {
+				background-color: $editor-darker;
+			}
+
+			// Replace the eicon with FLEX badge.
+			i::before {
+				content: 'FLEX'; // Shouldn't be translated.
+				font-family: Roboto, Arial;
+				font-size: 10px;
+				display: block;
+				padding: 7px;
+			}
+		}
 	}
 
 	.e-floating-bar {
