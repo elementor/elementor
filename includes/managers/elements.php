@@ -263,7 +263,7 @@ class Elements_Manager {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'elementor/elements/elements_registered' );
+		do_action( 'elementor/elements/elements_registered', $this );
 	}
 
 	/**

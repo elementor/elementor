@@ -33,6 +33,14 @@ body {
 	justify-content: flex-start;
 	align-items: center;
 	position: relative;
+
+	// Fix child position:sticky for RTL ( browser bug )
+	@if 'rtl' == $direction {
+		direction: ltr;
+		& > div {
+			direction: rtl;
+		}
+	}
 }
 
 #elementor-preview-responsive-wrapper {
