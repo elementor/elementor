@@ -802,7 +802,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -894,7 +894,7 @@ abstract class Controls_Stack extends Base_Object {
 			$control_name = $id . $id_suffix;
 
 			// Set this control as child of previous iteration control.
-			$this->update_control( $control_args['parent'], [ 'child' => $control_name ] );
+			$this->update_control( $control_args['parent'], [ 'inheritors' => [ $control_name ] ] );
 
 			if ( ! empty( $options['overwrite'] ) ) {
 				$this->update_control( $control_name, $control_args, [

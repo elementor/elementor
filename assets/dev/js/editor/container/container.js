@@ -166,7 +166,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view ) {
+		if ( this.isViewElement() ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
@@ -469,6 +469,10 @@ export default class Container extends ArgsObject {
 
 	isRepeaterItem() {
 		return Container.TYPE_REPEATER_ITEM === this.type;
+	}
+
+	isViewElement() {
+		return this.view && this.model.get( 'elType' );
 	}
 
 	getSetting( name, localOnly = false ) {
