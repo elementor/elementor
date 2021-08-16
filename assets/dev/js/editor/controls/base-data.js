@@ -179,7 +179,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	getControlPlaceholder() {
-		return this.container.placeholders[ this.model.get( 'name' ) ];
+		return this.model.get( 'responsive' ) ?
+			this.container.placeholders[ this.model.get( 'name' ) ] :
+			this.model.get( 'placeholder' );
 	},
 
 	/**
@@ -221,13 +223,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
-			const name = this.model.get( 'name' ),
-				placeholder = '_inline_size_mobile' === name ?
-					100 :
-					parent.preparePlaceholderForChildren();
-
-			this.container.placeholders[ name ] = placeholder;
-			this.model.set( 'placeholder', placeholder );
+			this.container.placeholders[ this.model.get( 'name' ) ] = parent.preparePlaceholderForChildren();
 		}
 	},
 
@@ -245,14 +241,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 */
 	preparePlaceholderForChildren: function() {
 		const cleanValue = this.getCleanControlValue(),
-			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren(),
-			placeholder = this.model.get( 'placeholder' );
+			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
 
 		if ( cleanValue instanceof Object ) {
-			return Object.assign( {}, placeholder, parentValue, cleanValue );
+			return Object.assign( {}, parentValue, cleanValue );
 		}
 
-		return cleanValue || parentValue || placeholder;
+		return cleanValue || parentValue;
 	},
 
 	/**
