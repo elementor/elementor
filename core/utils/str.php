@@ -9,8 +9,9 @@ class Str {
 
 	/**
 	 * Convert a non-latin URL to an IDN one.
+	 * Note: Max length is 64 chars.
 	 *
-	 * @param string $url - A URL to encode. Note: Max length is 64 chars!
+	 * @param string $url - A URL to encode.
 	 *
 	 * @return string - IDN encoded URL ( e.g. `http://é.com` will be encoded to `http://xn--9ca.com` ).
 	 */
