@@ -276,6 +276,7 @@ class Module extends BaseModule {
 		$post_types = get_post_types( array( 'public' => true ) );
 
 		$query = new \WP_Query( [
+			'no_found_rows' => true,
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'private' ],
