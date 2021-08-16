@@ -297,7 +297,7 @@
 
 // Alignment for Widescreen
 @media (min-width: $screen-widescreen-min) {
-	@include button-alignment(laptop);
+	@include button-alignment(widescreen);
 }
 
 // Alignment for Laptop
