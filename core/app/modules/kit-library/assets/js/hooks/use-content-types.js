@@ -28,13 +28,13 @@ function fetchContentTypes() {
 			id: 'site-parts',
 			label: __( 'Site Parts', 'elementor' ),
 			doc_types: [
-				'header',
-				'footer',
-				'single-post',
-				'single-page',
-				'search-results',
 				'archive',
 				'error-404',
+				'footer',
+				'header',
+				'search-results',
+				'single-page',
+				'single-post',
 
 				// WooCommerce types
 				'product',
