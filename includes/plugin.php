@@ -595,6 +595,122 @@ class Plugin {
 	public $assets_loader;
 
 	/**
+	 * Clone.
+	 *
+	 * Disable class cloning and throw an error on object clone.
+	 *
+	 * The whole idea of the singleton design pattern is that there is a single
+	 * object. Therefore, we don't want the object to be cloned.
+	 *
+	 * @access public
+	 * @since 1.0.0
+	 */
+	public function __clone() {
+		// Cloning instances of the class is forbidden.
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+	}
+
+	/**
+	 * Wakeup.
+	 *
+	 * Disable unserializing of the class.
+	 *
+	 * @access public
+	 * @since 1.0.0
+	 */
+	public function __wakeup() {
+		// Unserializing instances of the class is forbidden.
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Something went wrong.', 'elementor' ), '1.0.0' );
+	}
+
+	/**
+	 * Instance.
+	 *
+	 * Ensures only one instance of the plugin class is loaded or can be loaded.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @static
+	 *
+	 * @return Plugin An instance of the class.
+	 */
+	public static function instance() {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+
+			/**
+			 * Elementor loaded.
+			 *
+			 * Fires when Elementor was fully loaded and instantiated.
+			 *
+			 * @since 1.0.0
+			 */
+			do_action( 'elementor/loaded' );
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Init.
+	 *
+	 * Initialize Elementor Plugin. Register Elementor support for all the
+	 * supported post types and initialize Elementor components.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 */
+	public function init() {
+		$this->add_cpt_support();
+
+		$this->init_components();
+
+		/**
+		 * Elementor init.
+		 *
+		 * Fires on Elementor init, after Elementor has finished loading but
+		 * before any headers are sent.
+		 *
+		 * @since 1.0.0
+		 */
+		do_action( 'elementor/init' );
+	}
+
+	/**
+	 * Get install time.
+	 *
+	 * Retrieve the time when Elementor was installed.
+	 *
+	 * @since 2.6.0
+	 * @access public
+	 * @static
+	 *
+	 * @return int Unix timestamp when Elementor was installed.
+	 */
+	public function get_install_time() {
+		$installed_time = get_option( '_elementor_installed_time' );
+
+		if ( ! $installed_time ) {
+			$installed_time = time();
+
+			update_option( '_elementor_installed_time', $installed_time );
+		}
+
+		return $installed_time;
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function on_rest_api_init() {
+		// On admin/frontend sometimes the rest API is initialized after the common is initialized.
+		if ( ! $this->common ) {
+			$this->init_common();
+		}
+	}
+
+	/**
 	 * Init components.
 	 *
 	 * Initialize Elementor components. Register actions, run setting manager,
