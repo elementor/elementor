@@ -625,27 +625,27 @@ export default class EditorBase extends Marionette.Application {
 					maxHeight: 896,
 				},
 				mobile_extra: {
-					minHeight: 320,
+					minHeight: 480,
 					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				tablet_extra: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				laptop: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				widescreen: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1200,
 				},
