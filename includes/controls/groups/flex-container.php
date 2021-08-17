@@ -51,28 +51,31 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['_flex_is_row'] = [
-			'type' => Controls_Manager::HIDDEN,
-			'default' => 'row',
-			'prefix_class' => 'e-container--placeholder-',
-			'conditions' => [
-				'relation' => 'or',
-				'terms' => [
-					[
-						'name' => 'flex_direction',
-						'value' => '',
-					],
-					[
-						'name' => 'flex_direction',
-						'value' => 'row',
-					],
-					[
-						'name' => 'flex_direction',
-						'value' => 'row-reverse',
+		// Don't add the prefix class when not in edit mode (to reduce bloatware).
+		if ( Plugin::instance()->editor->is_edit_mode() ) {
+			$fields['_flex_is_row'] = [
+				'type' => Controls_Manager::HIDDEN,
+				'default' => 'row',
+				'prefix_class' => 'e-container--placeholder-',
+				'conditions' => [
+					'relation' => 'or',
+					'terms' => [
+						[
+							'name' => 'flex_direction',
+							'value' => '',
+						],
+						[
+							'name' => 'flex_direction',
+							'value' => 'row',
+						],
+						[
+							'name' => 'flex_direction',
+							'value' => 'row-reverse',
+						],
 					],
 				],
-			],
-		];
+			];
+		}
 
 		$fields['align_items'] = [
 			'label' => esc_html_x( 'Align Items', 'Flex Container Control', 'elementor' ),

@@ -20,9 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="e-view elementor-add-new-section">
 			<?php
 				$experiments_manager = Plugin::$instance->experiments;
-				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? 'Add New Container' : 'Add New Section';
+				$add_container_title = esc_html__( 'Add New Container' , 'elementor' );
+				$add_section_title = esc_html__( 'Add New Section' , 'elementor' );
+
+				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? $add_container_title : $add_section_title;
 			?>
-			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_html__( $button_title, 'elementor' ); ?>">
+			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo $button_title ?>">
 				<i class="eicon-plus"></i>
 			</div>
 			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_html__( 'Add Template', 'elementor' ); ?>">
@@ -46,7 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</ul>
 		</div>
 		<div class="e-view e-container-select-preset">
-			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Add Container Structure', 'elementor' ); ?></div>
+			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
 			<div class="e-container-select-preset__list">
 				<#
 				const presets = [

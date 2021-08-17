@@ -245,7 +245,13 @@ class Container extends Element_Base {
 					'full-width' => esc_html__( 'Full Width', 'elementor' ),
 					'boxed' => esc_html__( 'Boxed', 'elementor' ),
 				],
-				'prefix_class' => 'e-container--',
+				'selectors_dictionary' => [
+					'full-width' => '100%',
+					'boxed' => 'var( --container-max-width, 1140px )', // Default same as section.
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--max-width: {{VALUE}};'
+				],
 			]
 		);
 
@@ -275,15 +281,18 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'tablet_default' => 'default',
-				'mobile_default' => 'default',
 				'options' => [
-					'default' => esc_html__( 'Default', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
 					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
 					'min-height' => esc_html__( 'Min Height', 'elementor' ),
 				],
-				'prefix_class' => 'e-container--height-',
+				'selectors_dictionary' => [
+					'full' => '100vh',
+					'min-height' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--height: {{VALUE}};',
+				],
 			]
 		);
 

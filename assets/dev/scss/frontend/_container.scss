@@ -5,6 +5,7 @@
 	--flex-basis: auto;
 	--max-width: inital;
 	--min-height: initial;
+	--height: auto;
 	--text-align: initial;
 	--margin: 0;
 	--padding: 0;
@@ -22,6 +23,7 @@
 	flex: 1 1 var( --flex-basis );
 	max-width: var( --max-width );
 	min-height: var( --min-height );
+	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin );
 	padding: var( --padding );
@@ -33,14 +35,6 @@
 	.elementor-section-wrap > & {
 		margin-right: auto;
 		margin-left: auto;
-	}
-
-	&--height-full {
-		height: 100vh;
-	}
-
-	&--boxed {
-		max-width: var( --container-max-width, 1140px ); // Same as section.
 	}
 
 	.elementor-empty-view {
