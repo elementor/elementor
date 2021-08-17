@@ -317,11 +317,11 @@ class Stylesheet {
 		$hash = array_filter( explode( '-', $hash ) );
 
 		foreach ( $hash as $single_query ) {
-			$query_parts = explode( '_', $single_query );
+			preg_match( '/(min|max)_(.*)/', $single_query, $query_parts );
 
-			$end_point = $query_parts[0];
+			$end_point = $query_parts[1];
 
-			$device_name = $query_parts[1];
+			$device_name = $query_parts[2];
 
 			$query[ $end_point ] = 'max' === $end_point ? $this->devices[ $device_name ] : Plugin::$instance->breakpoints->get_device_min_breakpoint( $device_name );
 		}

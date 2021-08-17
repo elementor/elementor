@@ -3,7 +3,9 @@
 	&.elementor-media-empty {
 
 		.elementor-control-media-area {
-			display: none;
+			.elementor-control-media__remove, .elementor-control-media__content__remove {
+				display: none;
+			}
 		}
 	}
 

@@ -127,7 +127,7 @@ class Module extends BaseModule {
 	 */
 	public function handle_ajax_request() {
 		if ( ! $this->verify_request_nonce() ) {
-			$this->add_response_data( false, __( 'Token Expired.', 'elementor' ) )
+			$this->add_response_data( false, esc_html__( 'Token Expired.', 'elementor' ) )
 				->send_error( Exceptions::UNAUTHORIZED );
 		}
 
@@ -158,7 +158,7 @@ class Module extends BaseModule {
 			$this->current_action_id = $id;
 
 			if ( ! isset( $this->ajax_actions[ $action_data['action'] ] ) ) {
-				$this->add_response_data( false, __( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
+				$this->add_response_data( false, esc_html__( 'Action not found.', 'elementor' ), Exceptions::BAD_REQUEST );
 
 				continue;
 			}
@@ -268,9 +268,9 @@ class Module extends BaseModule {
 			header( 'Content-Encoding: gzip' );
 			header( 'Content-Length: ' . strlen( $response ) );
 
-			echo $response;
+			echo $response; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
-			echo $json;
+			echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		wp_die( '', '', [ 'response' => null ] );

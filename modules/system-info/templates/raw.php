@@ -25,7 +25,7 @@ foreach ( $reports as $report_name => $report ) :
 	] );
 
 	if ( ! $is_plugins ) :
-		echo PHP_EOL . $indent . '== ' . $report['label'] . ' ==';
+		echo PHP_EOL . $indent . '== ' . $report['label'] . ' =='; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	endif;
 
 	echo PHP_EOL;
@@ -34,15 +34,15 @@ foreach ( $reports as $report_name => $report ) :
 		$sub_indent = str_repeat( "\t", $tabs_count );
 
 		if ( $is_plugins ) {
-			echo "== {$field['label']} ==" . PHP_EOL;
+			echo "== {$field['label']} ==" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			foreach ( $field['value'] as $plugin_info ) :
 				$plugin_properties = array_intersect_key( $plugin_info, $required_plugins_properties );
 
-				echo $sub_indent . $plugin_info['Name'];
+				echo esc_html( $sub_indent . $plugin_info['Name'] );
 
 				foreach ( $plugin_properties as $property_name => $property ) :
-					echo PHP_EOL . "{$sub_indent}\t{$property_name}: {$property}";
+					echo PHP_EOL . "{$sub_indent}\t{$property_name}: {$property}"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				endforeach;
 
 				echo PHP_EOL . PHP_EOL;
@@ -53,7 +53,7 @@ foreach ( $reports as $report_name => $report ) :
 			if ( ! empty( $label ) ) {
 				$label .= ': ';
 			}
-			echo "{$sub_indent}{$label}{$field['value']}" . PHP_EOL;
+			echo "{$sub_indent}{$label}{$field['value']}" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	endforeach;
 
