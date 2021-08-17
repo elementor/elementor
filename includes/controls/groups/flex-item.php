@@ -16,8 +16,18 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$fields['flex_basis'] = [
+		$fields['flex_basis_type'] = [
 			'label' => esc_html_x( 'Flex Basis', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => [
+				'' => esc_html_x( 'Auto / Default', 'Flex Item Control', 'elementor' ),
+				'custom' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
+			],
+			'responsive' => true,
+		];
+
+		$fields['flex_basis'] = [
+			'label' => esc_html_x( 'Custom Width', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
 				'px' => [
@@ -39,6 +49,9 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'size_units' => [ 'px', '%', 'vw' ],
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-basis: {{SIZE}}{{UNIT}};',
+			],
+			'condition' => [
+				'flex_basis_type' => 'custom',
 			],
 			'responsive' => true,
 		];
