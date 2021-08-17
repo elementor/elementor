@@ -123,32 +123,87 @@ presetsFactory = {
 	 */
 	getContainerPreset( presetId, text = '' ) {
 		const presets = {
-			33: `
+			'33-33-33': `
 				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect x="0.5" width="29" height="44" />
 					<rect x="30.5" width="29" height="44" />
 					<rect x="60.5" width="29" height="44" />
 				</svg>
 			`,
-			50: `
+			'50-50': `
 				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect x="0.5" width="44" height="44" />
 					<rect x="45.5" width="44" height="44" />
 				</svg>
 			`,
-			'50-25': `
+			'c100-c50-50': `
 				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect x="0.5" width="44" height="44" />
 					<rect x="45.5" width="44" height="21.5" />
 					<rect x="45.5" y="22.5" width="44" height="21.5" />
 				</svg>
 			`,
-			'50-50': `
+			'50-50-50-50': `
 				<svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect x="0.5" width="44" height="21.5" />
 					<rect x="45.5" width="44" height="21.5" />
 					<rect x="0.5" y="22.5" width="44" height="21.5" />
 					<rect x="45.5" y="22.5" width="44" height="21.5" />
+				</svg>
+			`,
+			'33-66': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="29" height="44"/>
+					<rect x="30" width="59" height="44"/>
+				</svg>
+			`,
+			'25-25-25-25': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="21.5" height="44"/>
+					<rect x="22.5" width="21.5" height="44"/>
+					<rect x="45" width="21.5" height="44"/>
+					<rect x="67.5" width="21.5" height="44"/>
+				</svg>
+			`,
+			'25-50-25': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="21.5" height="44"/>
+					<rect x="22.5" width="44" height="44"/>
+					<rect x="67.5" width="21.5" height="44"/>
+				</svg>
+			`,
+			'50-50-100': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="44" height="21.5"/>
+					<rect x="45" width="44" height="21.5"/>
+					<rect y="22.5" width="89" height="21.5"/>
+				</svg>
+			`,
+			'33-33-33-33-33-33': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="29" height="21.5"/>
+					<rect x="30" width="29" height="21.5"/>
+					<rect x="60" width="29" height="21.5"/>
+					<rect y="22.5" width="29" height="21.5"/>
+					<rect x="30" y="22.5" width="29" height="21.5"/>
+					<rect x="60" y="22.5" width="29" height="21.5"/>
+				</svg>
+			`,
+			'33-33-33-33-66': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="29" height="21.5"/>
+					<rect x="30" width="29" height="21.5"/>
+					<rect x="60" width="29" height="21.5"/>
+					<rect y="22.5" width="29" height="21.5"/>
+					<rect x="30" y="22.5" width="59" height="21.5"/>
+				</svg>
+			`,
+			'66-33-33-66': `
+				<svg width="89" height="44" viewBox="0 0 89 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<rect width="59" height="21.5"/>
+					<rect x="60" width="29" height="21.5"/>
+					<rect y="22.5" width="29" height="21.5"/>
+					<rect x="30" y="22.5" width="59" height="21.5"/>
 				</svg>
 			`,
 			100: `

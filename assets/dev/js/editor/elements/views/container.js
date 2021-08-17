@@ -4,12 +4,12 @@ import WidgetResizable from './behaviors/widget-resizeable';
 import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
-	ContainerEmptyView = require( 'elementor-elements/views/container-empty' );
+	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
 
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ContainerEmptyView,
+	emptyView: ColumnEmptyView,
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
