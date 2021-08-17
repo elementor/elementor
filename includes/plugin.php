@@ -416,7 +416,6 @@ class Plugin {
 	 *
 	 * Holds the plugin debugger data.
 	 *
-	 * @since
 	 * @deprecated 2.1.2 Use `Plugin::$inspector` instead.
 	 * @access public
 	 *
@@ -453,7 +452,6 @@ class Plugin {
 	 *
 	 * Holds the plugin log manager.
 	 *
-	 * @since 
 	 * @access public
 	 *
 	 * @var Log_Manager
@@ -465,7 +463,6 @@ class Plugin {
 	 *
 	 * Holds the plugin dev tools.
 	 *
-	 * @since 
 	 * @access private
 	 *
 	 * @var Dev_Tools
@@ -477,7 +474,6 @@ class Plugin {
 	 *
 	 * Holds the plugin upgrade manager.
 	 *
-	 * @since 
 	 * @access public
 	 *
 	 * @var Core\Upgrade\Manager
@@ -489,7 +485,6 @@ class Plugin {
 	 *
 	 * Holds the plugin kits manager.
 	 *
-	 * @since 
 	 * @access public
 	 *
 	 * @var Core\Kits\Manager
@@ -501,7 +496,6 @@ class Plugin {
 	 *
 	 * Holds the plugin data manager.
 	 *
-	 * @since 
 	 * @access public
 	 *
 	 * @var \Core\Data\Manager
@@ -513,7 +507,6 @@ class Plugin {
 	 *
 	 * Holds the plugin legacy mode data.
 	 *
-	 * @since 
 	 * @access public
 	 *
 	 * @var array
