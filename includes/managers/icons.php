@@ -137,7 +137,7 @@ class Icons_Manager {
 	 * @return array
 	 */
 	public static function get_icon_manager_tabs() {
-		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() ) {
+		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() && ! Plugin::$instance->preview->is_preview_mode() ) {
 			self::$tabs = [];
 		} elseif ( ! self::$tabs ) {
 			self::init_tabs();

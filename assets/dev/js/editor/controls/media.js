@@ -45,7 +45,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 	applySavedValue: function() {
 		const value = this.getControlValue( 'url' ),
-			url = value || this.model.get( 'placeholder' )?.url,
+			url = value || this.getControlPlaceholder()?.url,
 			mediaType = this.getMediaType();
 
 		if ( [ 'image', 'svg' ].includes( mediaType ) ) {

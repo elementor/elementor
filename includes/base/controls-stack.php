@@ -802,7 +802,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -886,15 +886,15 @@ abstract class Controls_Stack extends Base_Object {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
 			}
 
-			unset( $control_args['desktop_default'] );
-			unset( $control_args['tablet_default'] );
-			unset( $control_args['mobile_default'] );
+			foreach ( $devices as $device ) {
+				unset( $control_args[ $device . '_default' ] );
+			}
 
 			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;
 			$control_name = $id . $id_suffix;
 
 			// Set this control as child of previous iteration control.
-			$this->update_control( $control_args['parent'], [ 'child' => $control_name ] );
+			$this->update_control( $control_args['parent'], [ 'inheritors' => [ $control_name ] ] );
 
 			if ( ! empty( $options['overwrite'] ) ) {
 				$this->update_control( $control_name, $control_args, [

@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     if: startsWith( github.repository, 'elementor/' )
     strategy:
       fail-fast: false

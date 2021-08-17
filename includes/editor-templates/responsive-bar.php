@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // TODO: Use API data instead of this static array, once it is available.
 $active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
-$active_devices = array_reverse( Plugin::$instance->breakpoints->get_active_devices_list() );
+$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->get_responsive_icons_classes_map(), array_flip( $active_devices ) );
 

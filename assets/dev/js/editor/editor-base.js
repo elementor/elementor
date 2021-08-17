@@ -1253,11 +1253,16 @@ export default class EditorBase extends Marionette.Application {
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
 			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
-			newControlsStack = {};
+			newControlsStack = {},
+			secondDesktopChild = devices[ devices.indexOf( 'desktop' ) + 1 ];
+
+		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		devices.unshift(
+			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
+		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName,
-				desktopAppeared = false;
+			let responsiveControlName;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
@@ -1278,6 +1283,23 @@ export default class EditorBase extends Marionette.Application {
 			// control.
 			if ( popoverEndProperty ) {
 				delete controlConfig.popover?.end;
+			}
+
+			// Move the control's default to the desktop control
+			if ( controlConfig.default ) {
+				controlConfig.desktop_default = controlConfig.default;
+			}
+
+			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
+
+			let deleteControlDefault = true;
+
+			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
+			// controls receive that default value.
+			if ( multipleDefaultValue ) {
+				controlConfig.default = multipleDefaultValue;
+
+				deleteControlDefault = false;
 			}
 
 			devices.forEach( ( device, index ) => {
@@ -1306,12 +1328,13 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
-				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
+				controlArgs.parent = null;
 
-				if ( 'desktop' === device ) {
-					desktopAppeared = true;
-				} else {
+				if ( 'desktop' !== device ) {
 					direction = activeBreakpoints[ device ].direction;
+
+					// Set the parent to be the previous device
+					controlArgs.parent = device === secondDesktopChild ? controlName : responsiveControlName;
 				}
 
 				controlArgs.responsive[ direction ] = device;
@@ -1330,6 +1353,8 @@ export default class EditorBase extends Marionette.Application {
 					} else {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
+				} else if ( deleteControlDefault ) {
+					delete controlArgs.default;
 				}
 
 				// If the control belongs to a group control with a popover, and this control is the last one, add the
@@ -1350,7 +1375,13 @@ export default class EditorBase extends Marionette.Application {
 				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
 
 				if ( controlArgs.parent ) {
-					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+					const parentControlArgs = newControlsStack[ controlArgs.parent ];
+
+					if ( ! parentControlArgs.inheritors ) {
+						parentControlArgs.inheritors = [];
+					}
+
+					parentControlArgs.inheritors.push( responsiveControlName );
 				}
 
 				controlArgs.name = responsiveControlName;
