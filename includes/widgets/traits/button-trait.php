@@ -38,6 +38,20 @@ trait Button_Trait {
 		];
 	}
 
+	/**
+	 * @since 3.4.0
+	 *
+	 * @param array $args {
+	 *     An array of values for the button adjustments.
+	 *
+	 *     @type array  $section_condition  Set of conditions to hide the controls.
+	 *     @type string $button_text  Text contained in button.
+	 *     @type string $control_label_name  Name for the label of the text control.
+	 *     @type string $prefix_class  Prefix class name for the button alignment control.
+	 *     @type string $alignment_default  Default alignment for the button.
+	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
+	 * }
+	 */
 	protected function register_button_content_controls( $args = [] ) {
 		$default_args = [
 			'section_condition' => [],
