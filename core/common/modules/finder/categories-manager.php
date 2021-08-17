@@ -37,7 +37,7 @@ class Categories_Manager {
 	 * @param string        $category_name
 	 * @param Base_Category $category
 	 *
-	 * @deprecated 3.5.0 - Use `$this->register()`.
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 */
 	public function add_category( $category_name, Base_Category $category ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
@@ -50,22 +50,22 @@ class Categories_Manager {
 	}
 
 	/**
-	 * Register a category.
+	 * Register a finder category.
 	 *
-	 * @since 3.5.0
-	 * @access public
-	 * @param Base_Category $instance - Instance of a category.
-	 * @param string        $category_name - Category name - for BC - Deprecated.
+	 * @param Base_Category $finder_category_instance An Instance of a category.
+	 * @param string        $finder_category_name     A Category name. Deprecated parameter.
 	 *
 	 * @return void
+	 * @since 3.5.0
+	 * @access public
 	 */
-	public function register( Base_Category $instance, $category_name = null ) {
+	public function register( Base_Category $finder_category_instance, $finder_category_name = null ) {
 		// TODO: For BC. Remove in the future.
-		if ( ! $category_name ) {
-			$category_name = $instance->get_id();
+		if ( ! $finder_category_name ) {
+			$finder_category_name = $finder_category_instance->get_id();
 		}
 
-		$this->categories[ $category_name ] = $instance;
+		$this->categories[ $finder_category_name ] = $finder_category_instance;
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Categories_Manager {
 		 * This hook should be used to add your own Finder categories.
 		 *
 		 * @since 2.3.0
-		 * @deprecated 3.5.0 - Use `elementor/finder/categories/register`.
+		 * @deprecated 3.5.0 Use `elementor/finder/categories/register` hook instead.
 		 *
 		 * @param Categories_Manager $this.
 		 */
@@ -135,7 +135,7 @@ class Categories_Manager {
 		 *
 		 * @since 3.5.0
 		 *
-		 * @param Categories_Manager $this.
+		 * @param Categories_Manager $this Finder Categories manager.
 		 */
 		do_action( 'elementor/finder/categories/register', $this );
 	}

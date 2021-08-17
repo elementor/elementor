@@ -93,7 +93,7 @@ class Widgets_Manager {
 		 * Fires after Elementor widgets are registered.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 3.5.0 - Use `elementor/widgets/register`.
+		 * @deprecated 3.5.0 Use `elementor/widgets/register` hook instead.
 		 *
 		 * @param Widgets_Manager $this The widgets manager.
 		 */
@@ -198,7 +198,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->register()`.
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param Widget_Base $widget Elementor widget.
 	 *
@@ -217,19 +217,19 @@ class Widgets_Manager {
 	/**
 	 * Register a new widget type.
 	 *
+	 * @param \Elementor\Widget_Base $widget_instance Elementor Widget.
+	 *
+	 * @return true True if the widget was registered.
 	 * @since 3.5.0
 	 * @access public
 	 *
-	 * @param \Elementor\Widget_Base $widget - Elementor Widget.
-	 *
-	 * @return true True if the widget was registered.
 	 */
-	public function register( Widget_Base $widget ) {
+	public function register( Widget_Base $widget_instance ) {
 		if ( is_null( $this->_widget_types ) ) {
 			$this->init_widgets();
 		}
 
-		$this->_widget_types[ $widget->get_name() ] = $widget;
+		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
 
 		return true;
 	}
@@ -241,7 +241,7 @@ class Widgets_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->unregister()`.
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $name Widget name.
 	 *
@@ -267,7 +267,7 @@ class Widgets_Manager {
 	 *
 	 * @param string $name Widget name.
 	 *
-	 * @return boolean - Whether the widget was unregistered.
+	 * @return boolean Whether the widget was unregistered.
 	 */
 	public function unregister( $name ) {
 		if ( ! isset( $this->_widget_types[ $name ] ) ) {

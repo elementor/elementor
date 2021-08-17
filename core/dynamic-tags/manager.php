@@ -246,7 +246,7 @@ class Manager {
 			 * Fires when Elementor registers dynamic tags.
 			 *
 			 * @since 2.0.9
-			 * @deprecated 3.5.0 - Use `elementor/dynamic_tags/register`.
+			 * @deprecated 3.5.0 Use `elementor/dynamic_tags/register` hook instead.
 			 *
 			 * @param Manager $this Dynamic tags manager.
 			 */
@@ -277,7 +277,7 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->register()`.
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param string $class
 	 */
@@ -297,24 +297,24 @@ class Manager {
 	/**
 	 * Register a new Dynamic Tag.
 	 *
-	 * @since 3.5.0
-	 * @access public
-	 *
-	 * @param Base_Tag $instance
+	 * @param Base_Tag $dynamic_tag_instance
 	 *
 	 * @return void
+	 * @since  3.5.0
+	 * @access public
+	 *
 	 */
-	public function register( Base_Tag $instance ) {
-		$this->tags_info[ $instance->get_name() ] = [
-			'class' => get_class( $instance ),
-			'instance' => $instance,
+	public function register( Base_Tag $dynamic_tag_instance ) {
+		$this->tags_info[ $dynamic_tag_instance->get_name() ] = [
+			'class' => get_class( $dynamic_tag_instance ),
+			'instance' => $dynamic_tag_instance,
 		];
 	}
 
 	/**
 	 * @since 2.0.9
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->unregister()`.
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $tag_name
 	 */
@@ -329,12 +329,12 @@ class Manager {
 	}
 
 	/**
-	 * Unregister a tag.
+	 * Unregister a dynamic tag.
 	 *
 	 * @since 3.5.0
 	 * @access public
 	 *
-	 * @param string $tag_name - Tag name to unregister.
+	 * @param string $tag_name Dynamic Tag name to unregister.
 	 *
 	 * @return void
 	 */

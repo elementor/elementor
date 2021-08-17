@@ -447,7 +447,7 @@ class Controls_Manager {
 		 * Fires after Elementor controls are registered.
 		 *
 		 * @since 1.0.0
-		 * @deprecated 3.5.0 - Use `elementor/controls/register`.
+		 * @deprecated 3.5.0 Use `elementor/controls/register` hook instead.
 		 *
 		 * @param Controls_Manager $this The controls manager.
 		 */
@@ -478,7 +478,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->register()`.
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param string       $control_id       Control ID.
 	 * @param Base_Control $control_instance Control instance, usually the
@@ -504,7 +504,7 @@ class Controls_Manager {
 	 * @access public
 	 *
 	 * @param Base_Control $control_instance Control instance, usually the current instance.
-	 * @param string       $control_id       Control ID - optional - for BC - Deprecated.
+	 * @param string       $control_id       Control ID. Deprecated parameter.
 	 *
 	 * @return void
 	 */
@@ -524,7 +524,7 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @deprecated 3.5.0 - Use `$this->unregister()`.
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $control_id Control ID.
 	 *
@@ -550,7 +550,7 @@ class Controls_Manager {
 	 *
 	 * @param string $control_id Control ID.
 	 *
-	 * @return bool - Whether the controls has been unregistered.
+	 * @return bool Whether the controls has been unregistered.
 	 */
 	public function unregister( $control_id ) {
 		if ( ! isset( $this->controls[ $control_id ] ) ) {

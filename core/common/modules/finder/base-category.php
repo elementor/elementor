@@ -41,7 +41,7 @@ abstract class Base_Category extends Base_Object {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			get_class( $this ) . '::' . __FUNCTION__,
 			'3.5.0',
-			'This function will be abstract in the future, please implement it.'
+			'This method will be replaced with an abstract method.'
 		);
 
 		return '';
