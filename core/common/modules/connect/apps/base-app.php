@@ -5,6 +5,7 @@ use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -248,9 +249,7 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		// Encode base url, the encode is limited to 64 chars.
-		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
-
+		$admin_url = Str::encode_idn_url( get_admin_url() );
 		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
 
 		return add_query_arg( $params, $admin_url );
