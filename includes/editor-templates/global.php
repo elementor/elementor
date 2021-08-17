@@ -20,12 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="e-view elementor-add-new-section">
 			<?php
 				$experiments_manager = Plugin::$instance->experiments;
-				$add_container_title = esc_html__( 'Add New Container' , 'elementor' );
-				$add_section_title = esc_html__( 'Add New Section' , 'elementor' );
+				$add_container_title = esc_html__( 'Add New Container', 'elementor' );
+				$add_section_title = esc_html__( 'Add New Section', 'elementor' );
 
 				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? $add_container_title : $add_section_title;
 			?>
-			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo $button_title ?>">
+			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_html( $button_title ); ?>">
 				<i class="eicon-plus"></i>
 			</div>
 			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_html__( 'Add Template', 'elementor' ); ?>">

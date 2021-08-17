@@ -250,7 +250,7 @@ class Container extends Element_Base {
 					'boxed' => 'var( --container-max-width, 1140px )', // Default same as section.
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--max-width: {{VALUE}};'
+					'{{WRAPPER}}' => '--max-width: {{VALUE}};',
 				],
 			]
 		);
