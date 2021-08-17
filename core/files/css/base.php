@@ -700,11 +700,11 @@ abstract class Base extends Base_File {
 			$value = $control['selectors_dictionary'][ $value ];
 		}
 
-		if ( ! $value && ! empty( $control['global']['default'] ) ) {
-			return $this->get_selector_global_value( $control, $control['global']['default'] );
-		}
-
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
+			if ( ! empty( $control['global']['default'] ) ) {
+				return $this->get_selector_global_value( $control, $control['global']['default'] );
+			}
+
 			return null;
 		}
 
