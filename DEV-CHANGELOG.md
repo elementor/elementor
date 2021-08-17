@@ -1,5 +1,22 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev9 - 2021-08-17
+* Tweak: WP_Query - Don't calc the total rows if not needed [ED-3150] (#15688)
+* Tweak: Custom Code - Added promotion [ED-508] (#15615)
+* Fix: Multiple repeaters in same widget has conflicts [ED-4001] (#15612)
+* Fix: App - "x" button after refresh sent to the theme builder page [ED-4042] (#15616)
+* Tweak: Page Transitions - Change icon [ED-4318] (#15722)
+* Tweak: updated changelog for v3.4 (#15984)
+* Fix: Basic Gallery - SVG Icon is not displayed in the Basic Gallery widget [ED-4046] (#15551)
+* Tweak: Preparation in Core for future Page Transitions in Pro [ED-4571] (#15992)
+* Fix: Editor - Some respon. controls pass the desktop default to other devices accidentally (ED-4670) (#15962)
+* Fix: Alignment control in Testimonial widget doesn't work in responsive view (ED-4531) (#15995)
+* Fix: Button alignment functionality not responding with Additional Custom Breakpoints (ED-4675) (#15981)
+* Fix: Price & Quantity Ampersand sign is in HTML in Menu Cart widget (ED-4694) (#15997)
+* Tweak: Kit Library - Missing post types in Site Parts overview screen [ED-4485] (#15988)
+* Fix: Placeholder values of column width shouldn't cascade to mobile [ED-4664] (#15966)
+* Fix: Activation bug for IDN domains [ED-886] (#15983)
+
 #### 3.5.0-dev7 - 2021-08-13
 * Fix: Responsive values cascade wrongly with different dimensions on different breakpoints [ED-4665] (#15955)
 
