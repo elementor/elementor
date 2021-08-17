@@ -559,8 +559,9 @@ class Plugin {
 		/**
 		 * Elementor init.
 		 *
-		 * Fires on Elementor init, after Elementor has finished loading but
-		 * before any headers are sent.
+		 * Fires when Elementor components are initialized.
+		 *
+		 * After Elementor finished loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 */
