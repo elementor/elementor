@@ -12,7 +12,7 @@
 		max-width: 1em;
 	}
 
-	.e-ui-state--document-direction-mode__column &:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ) {
+	.e-ui-state--document-direction-mode__column &:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ):not( .eicon-flex-grow ) {
 		transform: rotate( 90deg );
 	}
 }
