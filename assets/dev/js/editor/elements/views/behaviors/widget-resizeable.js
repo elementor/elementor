@@ -85,7 +85,10 @@ export default class extends Marionette.Behavior {
 	onResizeStart( event ) {
 		event.stopPropagation();
 
-		this.view.model.trigger( 'request:edit' );
+		// Don't open edit mode when the item is a Container item ( for UX ).
+		if ( ! this.isContainerItem() ) {
+			this.view.model.trigger( 'request:edit' );
+		}
 	}
 
 	onResizeStop( event, ui ) {
