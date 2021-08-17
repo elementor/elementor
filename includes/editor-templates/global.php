@@ -25,10 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				$button_title = ( $experiments_manager->is_feature_active( 'container' ) ) ? $add_container_title : $add_section_title;
 			?>
-			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_html( $button_title ); ?>">
+			<div class="elementor-add-section-area-button elementor-add-section-button" title="<?php echo esc_attr( $button_title ); ?>">
 				<i class="eicon-plus"></i>
 			</div>
-			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_html__( 'Add Template', 'elementor' ); ?>">
+			<div class="elementor-add-section-area-button elementor-add-template-button" title="<?php echo esc_attr__( 'Add Template', 'elementor' ); ?>">
 				<i class="eicon-folder"></i>
 			</div>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
