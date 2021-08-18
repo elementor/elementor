@@ -28,6 +28,10 @@ class Create extends Base_Category {
 		return esc_html__( 'Create', 'elementor' );
 	}
 
+	public function get_id() {
+		return 'create';
+	}
+
 	/**
 	 * Get category items.
 	 *
