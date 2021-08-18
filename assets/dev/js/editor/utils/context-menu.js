@@ -2,6 +2,7 @@ module.exports = elementorModules.Module.extend( {
 
 	getDefaultSettings: function() {
 		return {
+			isIframe: true,
 			actions: {},
 			classes: {
 				list: 'elementor-context-menu-list',
@@ -108,7 +109,7 @@ module.exports = elementorModules.Module.extend( {
 				modal = elementorCommon.dialogsManager.createWidget( 'simple', {
 					className: 'elementor-context-menu',
 					message: this.buildActionsList(),
-					iframe: this.getSettings( 'outsideIframe' ) ? undefined : elementor.$preview,
+					iframe: this.getSettings( 'isIframe' ) ? elementor.$preview : undefined,
 					effects: {
 						hide: 'hide',
 						show: 'show',
