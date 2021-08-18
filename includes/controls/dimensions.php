@@ -104,7 +104,7 @@ class Control_Dimensions extends Control_Base_Units {
 								// PHPCS - the variable $dimension_key is a plain text.
 								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?>" placeholder="<#
-								placeholder = elementor.getPanelView().currentPageView.children.findByModelCid( data._cid )?.getControlPlaceholder();
+								placeholder = view.getControlPlaceholder();
 								if ( _.isObject( placeholder ) ) {
 									if ( ! _.isUndefined( placeholder.<?php
 										// PHPCS - the variable $dimension_key is a plain text.
