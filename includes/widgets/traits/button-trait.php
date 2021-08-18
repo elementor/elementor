@@ -454,8 +454,8 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>
-		<div <?php echo $instance->get_render_attribute_string( 'wrapper' ); ?>>
-			<a <?php echo $instance->get_render_attribute_string( 'button' ); ?>>
+		<div <?php echo $instance->get_render_attribute_string( 'wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<a <?php echo $instance->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php $this->render_text( $instance ); ?>
 			</a>
 		</div>
@@ -503,9 +503,9 @@ trait Button_Trait {
 		// TODO: replace the protected with public
 		//$instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
-		<span <?php echo $instance->get_render_attribute_string( 'content-wrapper' ); ?>>
+		<span <?php echo $instance->get_render_attribute_string( 'content-wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-				<span <?php echo $instance->get_render_attribute_string( 'icon-align' ); ?>>
+				<span <?php echo $instance->get_render_attribute_string( 'icon-align' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -513,7 +513,7 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php echo $instance->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; ?></span>
+			<span <?php echo $instance->get_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 		<?php
 	}
