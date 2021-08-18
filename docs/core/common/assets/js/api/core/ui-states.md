@@ -1,7 +1,7 @@
 ## API - `$e.uiStates`
 *  **Description**: `$e.uiStates` API is a UI state manager that allows you to create custom UI states for your components.
-   We've added this API since we needed a way to reflect the component's state in the UI itself and react accordingly
-   ( i.e. rotate icons, hide buttons, etc. ).  
+   It reflects the component's state in the UI itself and allows you to react accordingly
+   (i.e. rotate icons, hide buttons, etc.).  
 *  **Location**: *core/common/assets/js/api/core/ui-states.js*
 *  **Methods**:
 
@@ -9,15 +9,15 @@
 |----------------------------|----------------------------------------------------------|-----------|---------------------------------------------------------------------
 | `$e.uiStates.register()`   |`{UiStateBase}` *instance*   								| `{void}`  | Register a new UI state.
 | `$e.uiStates.getAll()`     |                                                          | `{Object}`| Get all existing UI states with their options.
-| `$e.uiStates.get()`        | `{String}` *state*                                       | `{Object}`| Get the state value, or return all of them if no `state` is set.
+| `$e.uiStates.get()`        | `{String}` *state* (optional)							| `{Object}`| Get the state value, or return all of them if no `state` is set.
 | `$e.uiStates.set()`        | `{String}` *state*, `{String}` *value*                   | `{void}`  | Set the current state value and trigger its callbacks & events.
 | `$e.uiStates.remove()`     | `{String}` *state*                                       | `{void}`  | Remove a state.
 | `$e.uiStates.getCurrent()` | `{String}` *state*                                       | `{string}`| Get the current state value.
 * **Notes**:
-	- Each UI state has options and an optional callback for each option ( a callback that will execute each time the state has changed to this value ).
+	- Each UI state has options and an optional callback for each option (a callback that will execute each time the state has changed to this value).
 	- When a UI state is being changed, it:
-		- Adds a CSS class to the scope elements ( `e-ui-state--${ stateID }__${ value }` ) - Slashes are being replaced by hyphens ( e.g. `document/direction-mode` will become `document-direction-mode` ).
-		- Dispatches a custom event to the scope elements ( `e-ui-state:${ stateID }`, e.g. `e-ui-state:document/direction-mode` ) with `oldValue` and `newValue` under `e.detail`.
+		- Adds a CSS class to the scope elements (`e-ui-state--${ stateID }__${ value }`) - Slashes are being replaced by hyphens (e.g. `document/direction-mode` will become `document-direction-mode`).
+		- Dispatches a custom event to the scope elements (`e-ui-state:${ stateID }`, e.g. `e-ui-state:document/direction-mode`) with `oldValue` and `newValue` under `e.detail`.
 	- Setting an invalid option to a state will throw an error.
 
 ## Guidelines, Conventions & Files Structure:
@@ -100,7 +100,7 @@
   > Legend
 
   | Name                          | Format - Description                                      | Example value
-    |-------------------------------|-----------------------------------------------------------|---------------------
+  |-------------------------------|-----------------------------------------------------------|---------------------
   |`{FILE_NAME_CAMEL_CASE}`       | CamelCase representation of the current file name.        | `DirectionMode`
   |`{FILE_NAME_WITHOUT_EXTENSION}`| Current file name without the `.js` extension.            | `direction-mode`
   |`{CUSTOM_PREFIX_KEBAB_CASE}`   | A kebab-case string.                                      | `some-custom-prefix`
@@ -108,7 +108,7 @@
 
   > Example - A UI state for editing direction-mode:
   
-	Let's assume we've created the following UI state: 
+	Let's assume you've created the following UI state: 
   
 	```javascript
 	import UiStateBase from 'elementor-api/core/states/ui-state-base';
@@ -149,9 +149,9 @@
  
 	Later on, on any state change, `onChange()` will be fired and will log the values to the console.
   
-	In addition, a CSS class ( `e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ] ) will be added to both of the scopes that we provided ( editor & preview in this case ).
+	In addition, a CSS class (`e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ]) will be added to both of the scopes that you provided (editor & preview in this case).
 
-	Plus, a custom event ( `e-ui-state:document/direction-mode` ) will be fired to the scopes, and we can listen to that
+	Plus, a custom event (`e-ui-state:document/direction-mode`) will be fired to the scopes, and you can listen to that
   	event using a simple `addEventListener()`:
 
 	```javascript
