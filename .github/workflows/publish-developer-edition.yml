@@ -9,7 +9,7 @@ on:
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-16.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
@@ -153,6 +153,17 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate DEV-CHANGELOG.md
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          npm i got@11.8.2 --no-package-lock --no-save
+          node ./.github/scripts/generate-dev-changelog-md.js
+          bash "${GITHUB_WORKSPACE}/.github/scripts/set-git-user.sh"
+          git add DEV-CHANGELOG.md
+          git commit -m "Update DEV-CHANGELOG.md"
+          git push
       - name: Read changelog and set current date
         run: |
           CHANGELOG=$(cat temp-changelog.txt | tr -d '\n')

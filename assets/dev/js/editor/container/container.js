@@ -117,6 +117,13 @@ export default class Container extends ArgsObject {
 	panel;
 
 	/**
+	 * Controls placeholders.
+	 *
+	 * @type {{}}
+	 */
+	placeholders = {};
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create container.
@@ -159,7 +166,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view ) {
+		if ( this.isViewElement() ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
@@ -464,6 +471,10 @@ export default class Container extends ArgsObject {
 		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 
+	isViewElement() {
+		return this.view && this.model.get( 'elType' );
+	}
+
 	getSetting( name, localOnly = false ) {
 		const localValue = this.settings.get( name );
 
@@ -501,7 +512,10 @@ export default class Container extends ArgsObject {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
+			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
+
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( responsivePrefixRegex, '' );
 
 			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
 				return;

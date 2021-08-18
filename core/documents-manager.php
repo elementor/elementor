@@ -360,7 +360,7 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', 'elementor' );
+			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
 					/* translators: %s: Document title */

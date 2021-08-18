@@ -893,9 +893,13 @@ html.elementor-html {
 }
 
 // Muted elements in the editor
+.e-preview--show-hidden-elements[data-elementor-device-mode="widescreen"] .elementor-edit-area-active .elementor-hidden-widescreen,
 .e-preview--show-hidden-elements[data-elementor-device-mode="desktop"] .elementor-edit-area-active .elementor-hidden-desktop,
+.e-preview--show-hidden-elements[data-elementor-device-mode="laptop"] .elementor-edit-area-active .elementor-hidden-laptop,
+.e-preview--show-hidden-elements[data-elementor-device-mode="tablet_extra"] .elementor-edit-area-active .elementor-hidden-tablet_extra,
 .e-preview--show-hidden-elements[data-elementor-device-mode="tablet"] .elementor-edit-area-active .elementor-hidden-tablet,
-.e-preview--show-hidden-elements[data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-phone {
+.e-preview--show-hidden-elements[data-elementor-device-mode="mobile_extra"] .elementor-edit-area-active .elementor-hidden-mobile_extra,
+.e-preview--show-hidden-elements[data-elementor-device-mode="mobile"] .elementor-edit-area-active .elementor-hidden-mobile {
 	display: inherit; //to overcome the display:none;
 	background: repeating-linear-gradient(125deg,rgba(0, 0, 0, 0.05),rgba(0, 0, 0, 0.05) 1px,transparent 2px,transparent 9px);
 	border: 1px solid rgba(0, 0, 0, 0.02);

@@ -40,6 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
+	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
 
 	/**
 	 * Instance.
@@ -356,6 +357,13 @@ class Plugin {
 	public $assets_manager;
 
 	/**
+	 * Icons Manager.
+	 *
+	 * @var Icons_Manager
+	 */
+	public $icons_manager;
+
+	/**
 	 * Files Manager.
 	 *
 	 * Holds the files manager.
@@ -551,8 +559,9 @@ class Plugin {
 		/**
 		 * Elementor init.
 		 *
-		 * Fires on Elementor init, after Elementor has finished loading but
-		 * before any headers are sent.
+		 * Fires when Elementor components are initialized.
+		 *
+		 * After Elementor finished loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 */
@@ -712,7 +721,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function add_cpt_support() {
-		$cpt_support = get_option( 'elementor_cpt_support', [ 'page', 'post' ] );
+		$cpt_support = get_option( 'elementor_cpt_support', self::ELEMENTOR_DEFAULT_POST_TYPES );
 
 		foreach ( $cpt_support as $cpt_slug ) {
 			add_post_type_support( $cpt_slug, 'elementor' );
@@ -779,7 +788,7 @@ class Plugin {
 	}
 
 	final public static function get_title() {
-		return __( 'Elementor', 'elementor' );
+		return esc_html__( 'Elementor', 'elementor' );
 	}
 }
 

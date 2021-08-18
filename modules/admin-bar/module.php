@@ -120,7 +120,7 @@ class Module extends BaseApp {
 
 		return [
 			'id' => 'elementor_edit_page',
-			'title' => __( 'Edit with Elementor', 'elementor' ),
+			'title' => esc_html__( 'Edit with Elementor', 'elementor' ),
 			'href' => $href,
 			'children' => array_map( function ( $document ) {
 				return [
