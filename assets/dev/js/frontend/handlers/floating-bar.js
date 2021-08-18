@@ -31,7 +31,7 @@ export default class FloatingBarHandler extends elementorModules.frontend.handle
 				elType: model.get( 'widgetType' ) || model.get( 'elType' ),
 			};
 
-		ReactDOM.render( <FloatingBar config={ floatingBarConfig } container={ this.getContainer() } />, this.floatingBar );
+		ReactDOM.render( <FloatingBar config={ floatingBarConfig } container={ container } />, this.floatingBar );
 	}
 }
 
@@ -79,6 +79,7 @@ function FloatingBar( props ) {
 				dropdowns.map( ( dropdown ) => {
 					return (
 						<ToolbarDropdownMenu key={ dropdown.id }
+							label={ dropdown.label }
 							icon={ getIcon( dropdown, activeSettings ) }
 							controls={ dropdown.controls } />
                     );
