@@ -349,7 +349,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'text_stroke',
 			[
-				'label' => __( 'Text Stroke', 'elementor' ),
+				'label' => esc_html__( 'Text Stroke', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', 'em', 'rem' ],
 				'range' => [
@@ -377,7 +377,7 @@ class Widget_Tabs extends Widget_Base {
 		$this->add_control(
 			'stroke_color',
 			[
-				'label' => __( 'Stroke Color', 'elementor' ),
+				'label' => esc_html__( 'Stroke Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#000',
 				'selectors' => [
