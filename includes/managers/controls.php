@@ -510,7 +510,11 @@ class Controls_Manager {
 	 */
 	public function register( Base_Control $control_instance, $control_id = null ) {
 		// TODO: For BC. Remove in the future.
-		if ( ! $control_id ) {
+		if ( $control_id ) {
+			Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
+				'$control_id', '3.5.0'
+			);
+		} else {
 			$control_id = $control_instance->get_type();
 		}
 
