@@ -220,6 +220,19 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.1 - 2021-08-18 =
+* Tweak: Missing post types in Site Parts overview screen in Kit Library ([#15249](https://github.com/elementor/elementor/issues/15249))
+* Tweak: Added source=generic parameter when connecting through the top bar
+* Tweak: Added Inline SVG support to the generic video Play icon
+* Fix: Control conditions are not being executed when has dash in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+* Fix: Gradient control doesn't work on frontend when using Global Colors ([#13288](https://github.com/elementor/elementor/issues/13288))
+* Fix: Placeholder values of Column width control shouldn't cascade to Mobile device
+* Fix: Alignment control doesn't work in responsive view in Testimonial widget
+* Fix: Certain responsive controls pass the desktop default to other devices accidentally
+* Fix: Alignment control doesn't work with Additional Custom Breakpoints in Button widget
+* Fix: SVG Icon is not being displayed in the Basic Gallery widget
+* Fix: Activation bug for IDN domains
+
 = 3.4.0 - 2021-08-17 =
 * New: Introducing Additional Custom Breakpoints - Pixel Perfect Design for up to 7 Devices ([#2043](https://github.com/elementor/elementor/issues/2043), [#15488](https://github.com/elementor/elementor/issues/15488), [#15782](https://github.com/elementor/elementor/issues/15782))
 * Experiment: Font Awesome Inline SVG for Optimized performance ([#11772](https://github.com/elementor/elementor/issues/11772))
