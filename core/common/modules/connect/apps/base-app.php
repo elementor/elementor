@@ -574,7 +574,7 @@ abstract class Base_App {
 			'get_client_id',
 			[
 				// phpcs:ignore WordPress.Security.NonceVerification
-				'source' => $_REQUEST['source'] ? esc_attr( $_REQUEST['source'] ) : '',
+				'source' => isset( $_REQUEST['source'] ) ? esc_attr( $_REQUEST['source'] ) : '',
 			]
 		);
 
