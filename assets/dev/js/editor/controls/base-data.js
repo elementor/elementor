@@ -179,9 +179,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	getControlPlaceholder() {
-		return this.model.get( 'responsive' ) ?
-			this.container.placeholders[ this.model.get( 'name' ) ] :
-			this.model.get( 'placeholder' );
+		let placeholder = this.model.get( 'placeholder' );
+
+		if ( this.model.get( 'responsive' ) ) {
+			placeholder = placeholder || this.container.placeholders[ this.model.get( 'name' ) ];
+		}
+
+		return placeholder;
 	},
 
 	/**
