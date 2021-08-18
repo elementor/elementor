@@ -92,7 +92,7 @@ class Icons_Manager {
 	 * @since 2.4.0
 	 */
 	private static function init_tabs() {
-		$icon_manager_tabs = [
+		$initial_tabs = [
 			'fa-regular' => [
 				'name' => 'fa-regular',
 				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
@@ -138,9 +138,9 @@ class Icons_Manager {
 		 *
 		 * @param array $icon_manager_tabs Initial icon manager tabs.
 		 */
-		$icon_manager_tabs = apply_filters( 'elementor/icons_manager/native', $icon_manager_tabs );
+		$initial_tabs = apply_filters( 'elementor/icons_manager/native', $initial_tabs );
 
-		self::$tabs = $icon_manager_tabs;
+		self::$tabs = $initial_tabs;
 	}
 
 	/**
