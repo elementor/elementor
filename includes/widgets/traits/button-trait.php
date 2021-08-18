@@ -46,8 +46,8 @@ trait Button_Trait {
 	 *
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
 	 *     @type string $button_text  Text contained in button.
-	 *     @type string $control_label_name  Name for the label of the text control.
-	 *     @type string $prefix_class  Prefix class name for the button alignment control.
+	 *     @type string $text_control_label  Name for the label of the text control.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
 	 *     @type string $alignment_default  Default alignment for the button.
 	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
 	 * }
@@ -55,9 +55,9 @@ trait Button_Trait {
 	protected function register_button_content_controls( $args = [] ) {
 		$default_args = [
 			'section_condition' => [],
-			'button_text' => esc_html__( 'Click here', 'elementor' ),
-			'control_label_name' => esc_html__( 'Text', 'elementor' ),
-			'prefix_class' => 'elementor%s-align-',
+			'button_default_text' => esc_html__( 'Click here', 'elementor' ),
+			'text_control_label' => esc_html__( 'Text', 'elementor' ),
+			'alignment_control_prefix_class' => 'elementor%s-align-',
 			'alignment_default' => '',
 			'icon_exclude_inline_options' => [],
 		];
@@ -85,13 +85,13 @@ trait Button_Trait {
 		$this->add_control(
 			'text',
 			[
-				'label' => $args['control_label_name'],
+				'label' => $args['text_control_label'],
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => $args['button_text'],
-				'placeholder' => $args['button_text'],
+				'default' => $args['button_default_text'],
+				'placeholder' => $args['button_default_text'],
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -135,7 +135,7 @@ trait Button_Trait {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => $args['prefix_class'],
+				'prefix_class' => $args['alignment_control_prefix_class'],
 				'default' => $args['alignment_default'],
 				'condition' => $args['section_condition'],
 			]

@@ -85,7 +85,7 @@ class Widget_Button extends Widget_Base {
 			]
 		);
 
-		$this->register_button_content_controls( [] );
+		$this->register_button_content_controls();
 
 		$this->end_controls_section();
 
