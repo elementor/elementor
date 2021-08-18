@@ -341,7 +341,10 @@ class Svg_Handler extends Files_Upload_Handler {
 		 *
 		 * Filters the list of allowed attributes in SVG files.
 		 *
-		 * This hook can be used to manage SVG attributes. To either add new allowed
+		 * Since SVG files can run JS code that may inject malicious code, all attributes
+		 * are removed except the allowed attributes.
+		 *
+		 * This hook can be used to manage allowed SVG attributes. To either add new
 		 * attributes or delete existing attributes. To strengthen or weaken site security.
 		 *
 		 * @param array $allowed_attributes A list of allowed attributes.
@@ -396,8 +399,11 @@ class Svg_Handler extends Files_Upload_Handler {
 		 *
 		 * Filters the list of allowed elements in SVG files.
 		 *
-		 * This hook can be used to manage SVG elements. To either add new allowed
-		 * elements or delete existing elements. To strengthen or weaken site security.
+		 * Since SVG files can run JS code that may inject malicious code, all elements
+		 * are removed except the allowed elements.
+		 *
+		 * This hook can be used to manage SVG elements. To either add new elements or
+		 * delete existing elements. To strengthen or weaken site security.
 		 *
 		 * @param array $allowed_elements A list of allowed elements.
 		 */
