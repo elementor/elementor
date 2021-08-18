@@ -429,7 +429,7 @@ module.exports = {
 				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
 				// isolate the term from the negative operator if exists. For example, a condition format can look
 				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
-				const conditionNameParts = conditionName.match( /(\w+(?:\[\w+])?)?(!?)$/i ),
+				const conditionNameParts = conditionName.match( /(^[a-z0-9-_\[\]]+)(!?)$/i ),
 					conditionRealName = conditionNameParts[ 1 ],
 					isNegativeCondition = !! conditionNameParts[ 2 ],
 					controlValue = values[ conditionRealName ];
