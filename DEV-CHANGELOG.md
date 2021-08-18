@@ -1,5 +1,15 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev10 - 2021-08-18
+* Fix: Internal - `{device}_default` control properties are not deleted for responsive controls (ED-4741) (#16004)
+* Fix: Gradient control doesn't work on frontend when using Global Colors (ED-3517) (#16002)
+* Tweak: Added source=generic parameter when connecting through the top bar [ED-4459] (#15998)
+* Fix: Control conditions are not being executed when has dash or underscore in the control slug (ED-4747) (#16014)
+* Tweak - Adding SVG support to the global video play-icon. (#16031)
+* Fix: Placeholder values of column width shouldn't cascade to mobile [ED-4664] (#16038)
+* Tweak: Updated changelog for v3.4.1 (#16039)
+* Fix: Source param at get_client_id request [ED-4459] (#16041)
+
 #### 3.5.0-dev9 - 2021-08-17
 * Tweak: WP_Query - Don't calc the total rows if not needed [ED-3150] (#15688)
 * Tweak: Custom Code - Added promotion [ED-508] (#15615)
