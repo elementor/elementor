@@ -346,6 +346,49 @@ class Widget_Tabs extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'text_stroke',
+			[
+				'label' => __( 'Text Stroke', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 10,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 1,
+						'step' => 0.01,
+					],
+					'rem' => [
+						'min' => 0,
+						'max' => 1,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tab-title' => '-webkit-text-stroke: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
+		$this->add_control(
+			'stroke_color',
+			[
+				'label' => __( 'Stroke Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#000',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-tab-title' => '-webkit-text-stroke-color: {{VALUE}};',
+				],
+				'condition' => [
+					'text_stroke[size]!' => '',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
 			[
