@@ -48,7 +48,7 @@ Conditions = function() {
 				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
 				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
 				// condition name and the sub key, so later it can be retrieved and examined.
-				const parsedName = term.name.match( /([\w-]+)(?:\[(\w+)])?/ ),
+				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
 					conditionSubKey = parsedName[ 2 ],
 					// We use null-safe operator since we're trying to get the current element, which is not always
@@ -64,7 +64,7 @@ Conditions = function() {
 					value = comparisonObject.__dynamic__[ conditionRealName ];
 				}
 
-				if ( value && conditionSubKey ) {
+				if ( 'object' === typeof value && conditionSubKey ) {
 					value = value[ conditionSubKey ];
 				}
 
