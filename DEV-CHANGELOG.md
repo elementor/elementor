@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev11 - 2021-08-19
+* Revert: Fix: Gradient control doesn't work on frontend when using Global Colors (#16053)
+* Fix: Background image controls missing when using dynamic image (Closes #16050) [ED-4785] (#16062)
+* Fix: Motion effects popover is not visible since v3.4.1 (#16044) [ED-4788] (#16061)
+* Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active (ED-4787) (#16060)
+* Tweak: Updated Changelog to v3.4.2 (#16066)
+
 #### 3.5.0-dev10 - 2021-08-18
 * Fix: Internal - `{device}_default` control properties are not deleted for responsive controls (ED-4741) (#16004)
 * Fix: Gradient control doesn't work on frontend when using Global Colors (ED-3517) (#16002)
