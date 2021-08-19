@@ -295,8 +295,13 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => __( 'Flex Container', 'elementor' ),
-			'description' => __( 'Create advanced layouts and responsive designs using the new "Container" element - taking advantage of display:flex properties.', 'elementor' ),
+			'title' => __( 'Container', 'elementor' ),
+			'description' => __(
+				'Create advanced layouts and responsive designs using the new Container element.
+				When this experiment is active, Containers will be the default building block.
+				Existing Sections, Inner Sections and Columns will not be affected.',
+				'elementor'
+			),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
 		] );
