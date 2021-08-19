@@ -48,6 +48,10 @@ module.exports = function( $ ) {
 			} else {
 				const handlerValue = Handler();
 
+				if ( ! handlerValue ) {
+					return;
+				}
+
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
 						this.addHandler( dynamicHandler, { $element }, true );

@@ -5,19 +5,11 @@ const { Toolbar, ToolbarDropdownMenu } = gComponents;
  * TODO: Super ugly temporary code. Don't bother reviewing this.
  */
 export default class FloatingBarHandler extends elementorModules.frontend.handlers.Base {
-	isActive() {
-		return elementorFrontend.isEditMode();
-	}
-
 	getContainer() {
 		return elementor.getContainer( this.getID() );
 	}
 
 	onInit() {
-		if ( ! this.isActive() ) {
-			return;
-		}
-
 		if ( ! this.floatingBar ) {
 			this.floatingBar = document.createElement( 'div' );
 			this.floatingBar.classList.add( 'e-floating-bar' );
