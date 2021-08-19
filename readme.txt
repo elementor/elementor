@@ -220,6 +220,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.2 - 2021-08-19 =
+* Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active ([#16055](https://github.com/elementor/elementor/issues/16055), [#16033](https://github.com/elementor/elementor/issues/16033))
+* Fix: Global colors are applied even when they are disabled on Frontend ([#16037](https://github.com/elementor/elementor/issues/16037))
+* Fix: Conditional controls missing when using Dynamic tags ([#16050](https://github.com/elementor/elementor/issues/16050))
+* Fix: Motion Effects popover is not visible ([#16044](https://github.com/elementor/elementor/issues/16044))
+* Fix: Control conditions are not being executed when has capital letter in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+
 = 3.4.1 - 2021-08-18 =
 * Tweak: Missing post types in Site Parts overview screen in Kit Library ([#15249](https://github.com/elementor/elementor/issues/15249))
 * Tweak: Added source=generic parameter when connecting through the top bar
