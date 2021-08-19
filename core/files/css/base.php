@@ -701,8 +701,18 @@ abstract class Base extends Base_File {
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
+			$is_color_control = 'color' === $control['type'];
+			$is_typography_control = isset( $control['groupType'] ) && 'typography' === $control['groupType'];
+			$global_enabled = false;
+
+			if ( $is_color_control ) {
+				$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+			} elseif ( $is_typography_control ) {
+				$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+			}
+
 			// Only apply the global default if Global Colors are enabled.
-			if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() && ! empty( $control['global']['default'] ) ) {
+			if ( $global_enabled && ! empty( $control['global']['default'] ) ) {
 				return $this->get_selector_global_value( $control, $control['global']['default'] );
 			}
 
