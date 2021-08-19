@@ -142,10 +142,24 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+
+		if ( ! $is_edit_mode ) {
+			// In the Front End, the Kit is initialized before CSS is generated, so we always duplicate controls in
+			// the kit.
+			$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
+		}
+
 		$this->register_document_controls();
 
 		foreach ( $this->tabs as $tab ) {
 			$tab->register_controls();
+		}
+
+		if ( ! $is_edit_mode ) {
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 		}
 	}
 
