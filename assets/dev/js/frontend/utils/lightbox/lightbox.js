@@ -230,7 +230,14 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
-			const videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			let videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+
+			if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
+				// Vimeo requires the '#t=' param to be last in the URL.
+				const timeMatch = /#t=[^&]*/.exec( videoURL );
+
+				videoURL = videoURL.slice( 0, timeMatch.index ) + videoURL.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
+			}
 
 			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
 		}
