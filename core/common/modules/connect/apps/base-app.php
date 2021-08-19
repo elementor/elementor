@@ -570,7 +570,13 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->request( 'get_client_id' );
+		$response = $this->request(
+			'get_client_id',
+			[
+				// phpcs:ignore WordPress.Security.NonceVerification
+				'source' => isset( $_REQUEST['source'] ) ? esc_attr( $_REQUEST['source'] ) : '',
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
