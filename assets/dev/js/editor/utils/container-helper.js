@@ -94,7 +94,7 @@ export class ContainerHelper {
 					unit: '%',
 					size,
 				},
-				_flex_flex_basis_mobile: {
+				_flex_flex_basis_mobile: { // For out-of-the-box responsiveness.
 					unit: '%',
 					size: '100',
 				},
