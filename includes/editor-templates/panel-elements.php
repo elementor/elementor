@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category-empty">
 	<div class="elementor-panel-category-items-empty elementor-panel-alert elementor-panel-alert-info">
-		<?php echo __( 'For easy access, favorite the widgets you use most often by right clicking > Add to Favorites.', 'Elementor' ); ?>
+		<?php echo __( 'For easy access, favorite the widgets you use most often by right clicking > Add to Favorites.', 'elementor' ); ?>
 	</div>
 </script>
 

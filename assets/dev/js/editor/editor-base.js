@@ -349,7 +349,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
-		this.favorites = new Favorites();
+		if ( elementorCommon.config.experimentalFeatures[ 'favorite-widgets' ] ) {
+			this.favorites = new Favorites();
+		}
 
 		this.history = new HistoryManager();
 

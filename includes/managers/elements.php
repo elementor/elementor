@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Experiments\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -268,11 +270,6 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
-			'favorites' => [
-				'title' => __( 'Favorites', 'elementor' ),
-				'icon' => 'eicon-font',
-				'display_when_empty' => true,
-			],
 			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
@@ -293,6 +290,16 @@ class Elements_Manager {
 				'active' => false,
 			],
 		];
+
+		if ( Plugin::instance()->experiments->is_feature_active( 'favorite-widgets' ) ) {
+			$this->categories = array_merge_recursive( [
+				'favorites' => [
+					'title' => __( 'Favorites', 'elementor' ),
+					'icon' => 'eicon-heart',
+					'display_when_empty' => true,
+				],
+			], $this->categories );
+		}
 
 		/**
 		 * When categories are registered.

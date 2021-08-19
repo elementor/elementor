@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Favorites;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\Favorites\Types\Widgets;
 use Elementor\Plugin;
 use WP_Error;
@@ -34,7 +35,7 @@ class Module extends BaseModule {
 	/**
 	 * Favorites module constructor.
 	 */
-	protected function __construct() {
+	public function __construct() {
 		// Register default types
 		$this->register( Widgets::class );
 		// ...
@@ -42,6 +43,21 @@ class Module extends BaseModule {
 		$this->populate();
 
 		Plugin::instance()->data_manager->register_controller( Controller::class );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function get_experimental_data() {
+		return [
+			'name' => 'favorite-widgets',
+			'title' => esc_html__( 'Favorite Widgets', 'elementor' ),
+			'description' => esc_html__( 'Mark widgets as favorites by right clicking them. Favorite widgets will always appear at the top of the editor panel for easy access.', 'elementor' ),
+			'release_status' => Manager::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+			],
+		];
 	}
 
 	/**
