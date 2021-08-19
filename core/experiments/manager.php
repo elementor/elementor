@@ -303,7 +303,7 @@ class Manager extends Base_Object {
 				'elementor'
 			),
 			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_ACTIVE,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
