@@ -27,6 +27,10 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.collection = new PanelElementsElementsCollection( this.model.get( 'items' ) );
 	},
 
+	behaviors: function() {
+		return elementor.hooks.applyFilters( 'panel/category/behaviors', {}, this );
+	},
+
 	onRender: function() {
 		var isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
 
@@ -42,9 +46,13 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onTitleClick: function() {
+		this.toggle();
+	},
+
+	toggle: function( state ) {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
-			isActive = this.$el.hasClass( activeClass ),
+			isActive = undefined !== state ? ! state : this.$el.hasClass( activeClass ),
 			slideFn = isActive ? 'slideUp' : 'slideDown';
 
 		elementor.channels.panelElements.reply( 'category:' + this.model.get( 'name' ) + ':active', ! isActive );

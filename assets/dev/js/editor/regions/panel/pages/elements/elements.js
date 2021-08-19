@@ -65,13 +65,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var elementsCollection = new PanelElementsElementsCollection(),
 			sectionConfig = elementor.config.elements.section;
 
-		elementsCollection.add( {
-			title: __( 'Inner Section', 'elementor' ),
-			elType: 'section',
-			categories: [ 'basic' ],
-			keywords: [ 'row', 'columns', 'nested' ],
-			icon: sectionConfig.icon,
-		} );
+		elementor.widgetsCache = Object.assign( {}, {
+			'inner-section': {
+				title: __( 'Inner Section', 'elementor' ),
+				elType: 'section',
+				categories: [ 'basic' ],
+				keywords: [ 'row', 'columns', 'nested' ],
+				icon: sectionConfig.icon,
+				widget_type: 'inner-section',
+				show_in_panel: true,
+			},
+		}, elementor.widgetsCache );
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
@@ -124,7 +128,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
 		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			if ( ! categories[ categoryName ] ) {
+			if ( ! categoryConfig.display_when_empty && ! categories[ categoryName ] ) {
 				return;
 			}
 

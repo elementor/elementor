@@ -1,9 +1,11 @@
 import FavoriteType from '../../favorite-type';
+import PanelCategoryBehavior from './behaviors/panel-category-behavior';
 
 export default class Widgets extends FavoriteType {
 	constructor() {
 		super();
 
+		elementor.hooks.addFilter( 'panel/category/behaviors', this.addCategoryBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'panel/element/contextMenuGroups', this.addContextMenuGroups.bind( this ) );
 	}
 
@@ -113,6 +115,14 @@ export default class Widgets extends FavoriteType {
 		return 'favorites';
 	}
 
+	addCategoryBehavior( behaviors, context ) {
+		return Object.assign( {}, behaviors, {
+			favoriteWidgets: {
+				behaviorClass: PanelCategoryBehavior,
+			},
+		} );
+	}
+
 	/**
 	 * A filter callback to add the favorites context menu groups to
 	 * element view.
@@ -122,10 +132,7 @@ export default class Widgets extends FavoriteType {
 	 * @returns {[]}
 	 */
 	addContextMenuGroups( groups, context ) {
-		const widget = context.options.model.get( 'widgetType' ),
-			toggleText = this.isFavorite( widget ) ?
-			__( 'Remove from Favorites', 'elementor' ) :
-			__( 'Add to Favorites', 'elementor' );
+		const widget = context.options.model.get( 'widgetType' );
 
 		return groups.concat( [
 			{
@@ -133,20 +140,13 @@ export default class Widgets extends FavoriteType {
 				actions: [
 					{
 						name: 'toggle',
-						icon: 'eicon-star',
-						title: toggleText,
+						icon: this.isFavorite( widget ) ?
+							'eicon-heart-o' :
+							'eicon-heart',
+						title: this.isFavorite( widget ) ?
+							__( 'Remove from Favorites', 'elementor' ) :
+							__( 'Add to Favorites', 'elementor' ),
 						callback: () => this.toggle( widget ),
-					},
-				],
-			},
-			{
-				name: 'favorite-reset',
-				actions: [
-					{
-						name: 'reset',
-						icon: 'eicon-undo',
-						title: __( 'Reset All Favorites', 'elementor' ),
-						callback: () => this.reset(),
 					},
 				],
 			},

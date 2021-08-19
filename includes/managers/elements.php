@@ -271,6 +271,7 @@ class Elements_Manager {
 			'favorites' => [
 				'title' => __( 'Favorites', 'elementor' ),
 				'icon' => 'eicon-font',
+				'display_when_empty' => true,
 			],
 			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
