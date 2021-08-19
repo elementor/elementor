@@ -64,7 +64,7 @@ Conditions = function() {
 					value = comparisonObject.__dynamic__[ conditionRealName ];
 				}
 
-				if ( value && conditionSubKey ) {
+				if ( 'object' === typeof value && conditionSubKey ) {
 					value = value[ conditionSubKey ];
 				}
 
