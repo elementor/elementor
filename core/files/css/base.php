@@ -701,7 +701,8 @@ abstract class Base extends Base_File {
 		}
 
 		if ( ! is_numeric( $value ) && ! is_float( $value ) && empty( $value ) ) {
-			if ( ! empty( $control['global']['default'] ) ) {
+			// Only apply the global default if Global Colors are enabled.
+			if ( Plugin::$instance->kits_manager->is_custom_colors_enabled() && ! empty( $control['global']['default'] ) ) {
 				return $this->get_selector_global_value( $control, $control['global']['default'] );
 			}
 
