@@ -183,7 +183,7 @@ class AddSectionBase extends Marionette.ItemView {
 		switch ( selectedPreset ) {
 			// Single Container without sub Containers.
 			case '100':
-				newContainer = ContainerHelper.createContainer( {}, elementor.getPreviewContainer() );
+				newContainer = ContainerHelper.createContainer( {}, elementor.getPreviewContainer(), this.options );
 				break;
 
 			// Exceptional preset.
