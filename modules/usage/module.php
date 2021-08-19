@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
+use Elementor\Modules\Usage\Analytics\Module as Analytics_Component;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -593,6 +594,8 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		$this->add_component( 'analytics', new Analytics_Component() );
+
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
 
