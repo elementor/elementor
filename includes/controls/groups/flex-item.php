@@ -20,7 +20,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'label' => esc_html_x( 'Flex Basis', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
-				'' => esc_html_x( 'Auto / Default', 'Flex Item Control', 'elementor' ),
+				'' => esc_html_x( 'Default', 'Flex Item Control', 'elementor' ),
 				'custom' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
 			],
 			'responsive' => true,
