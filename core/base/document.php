@@ -1516,7 +1516,7 @@ abstract class Document extends Controls_Stack {
 		if ( $is_published || $can_publish || ! Plugin::$instance->editor->is_edit_mode() ) {
 
 			$statuses = $this->get_post_statuses();
-			if ( 'future' === $this->get_main_post()->post_status ) {
+			if ( $this->get_main_post() && 'future' === $this->get_main_post()->post_status ) {
 				$statuses['future'] = esc_html__( 'Future', 'elementor' );
 			}
 
@@ -1525,7 +1525,7 @@ abstract class Document extends Controls_Stack {
 				[
 					'label' => esc_html__( 'Status', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
-					'default' => $this->get_main_post()->post_status,
+					'default' => $this->get_main_post() ? $this->get_main_post()->post_status : '',
 					'options' => $statuses,
 				]
 			);
