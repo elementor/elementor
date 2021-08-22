@@ -22,7 +22,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			</AppWrapper>,
 			adminTopBarElement
 		);
-	} else {
+		// Adds a inactive class only when the root element is added to the DOM (which does not happen in customizer).
+	} else if ( adminTopBarElement ) {
 		adminTopBarElement.classList.add( 'e-admin-top-bar--inactive' );
 	}
 } );
