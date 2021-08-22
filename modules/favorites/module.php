@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Modules\Favorites;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\Favorites\Types\Widgets;

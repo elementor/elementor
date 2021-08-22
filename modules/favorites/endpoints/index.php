@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Modules\Favorites\Endpoints;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Elementor\Modules\Favorites\Module;
 use Elementor\Data\Base\Endpoint;
 use Elementor\Plugin;

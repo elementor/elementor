@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Modules\Favorites\Types;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Elementor\Modules\Favorites\Favorites_Type;
 use Elementor\Plugin;
 

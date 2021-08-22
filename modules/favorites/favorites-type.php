@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Modules\Favorites;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Elementor\Core\Utils\Collection;
 
 abstract class Favorites_Type {

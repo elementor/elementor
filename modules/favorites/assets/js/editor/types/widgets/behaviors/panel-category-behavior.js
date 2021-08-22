@@ -9,11 +9,7 @@ export default Marionette.Behavior.extend( {
 
 	onRender: function() {
 		if ( this.isFavoritesCategory() ) {
-			if ( this.view.isEmpty() ) {
-				this.view.toggle( false );
-			} else {
-				this.view.toggle( true );
-			}
+			this.view.toggle( ! this.view.isEmpty() );
 		}
 	},
 
