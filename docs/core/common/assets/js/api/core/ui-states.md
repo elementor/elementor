@@ -1,6 +1,6 @@
 ## API - `$e.uiStates`
-*  **Description**: `$e.uiStates` API is a UI state manager that allows you to create custom UI states for your components.
-   It reflects the component's state in the UI itself and allows you to react accordingly
+*  **Description**: `$e.uiStates` API is a UI state manager that allows to create custom UI states for components.
+   It reflects the component's state in the UI itself and allows the whole editor to react accordingly
    (i.e. rotate icons, hide buttons, etc.).  
 *  **Location**: *core/common/assets/js/api/core/ui-states.js*
 *  **Methods**:
@@ -30,7 +30,7 @@
 		export { DirectionMode } from './direction-mode';
 		export { ColorPickingMode } from './color-picking-mode';
 		```
-	  You can have as many indexes as you wish in every hierarchy under `component/ui-states/some/long/path` in order to organize your code, but the requirement is to have a single index file
+	  A component can have as many indexes as needed in every hierarchy under `component/ui-states/some/long/path` in order to organize its code, but the requirement is to have a single index file
 	  at `component/ui-states/index.js` which exports all the UI states. Take the **index.js** example above as a scenario:
 	    ```html
 		📦 component
@@ -61,7 +61,7 @@
 	
 	export class {FILE_NAME_CAMEL_CASE} extends UiStateBase {
 		getId() {
-			// A unique ID for the current namesapce ( unlsess you've changed the default prefix ).
+			// A unique ID for the current namesapce ( unlsess it's overriden using `getPrefix()` ).
 			// Will be automatically prefixed with the component namespace by default.
 			return {FILE_NAME_WITHOUT_EXTENSION};
 		}
@@ -108,13 +108,13 @@
 
   > Example - A UI state for editing direction-mode:
   
-	Let's assume you've created the following UI state: 
+	Let's assume there is the following UI state: 
   
 	```javascript
 	import UiStateBase from 'elementor-api/core/states/ui-state-base';
 	
-	// A good practice is to export the state options as constants so you 
-	// can use them when you set the state from another place.
+	// A good practice is to export the state options as constants so they 
+	// can be used when setting the state from another place.
 	export const DIRECTION_ROW = 'row';
 	export const DIRECTION_COLUMN = 'column';
 	
@@ -149,9 +149,9 @@
  
 	Later on, on any state change, `onChange()` will be fired and will log the values to the console.
   
-	In addition, a CSS class (`e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ]) will be added to both of the scopes that you provided (editor & preview in this case).
+	In addition, a CSS class (`e-ui-state--document-direction-mode__column` [ or `__row`, depends on the state value ]) will be added to both of the scopes that were provided (editor & preview in this case).
 
-	Plus, a custom event (`e-ui-state:document/direction-mode`) will be fired to the scopes, and you can listen to that
+	Plus, a custom event (`e-ui-state:document/direction-mode`) will be fired to the scopes, and those scopes can listen to that
   	event using a simple `addEventListener()`:
 
 	```javascript
