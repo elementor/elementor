@@ -115,10 +115,9 @@
 					background-color: $editor-darker;
 				}
 
-				// Replace the eicon with FLEX badge.
+				// Replace the edit eicon with Container eicon.
 				i::before {
-					content: 'FLEX'; // Shouldn't be translated.
-					font-family: Roboto, Arial;
+					content: '\e98d'; // Container eicon.
 					font-size: 10px;
 					display: block;
 					padding: 7px;
