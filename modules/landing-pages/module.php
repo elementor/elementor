@@ -346,7 +346,11 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			$query->set( 'name', $query->query['pagename'] );
+			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+				set_query_var( 'name', $query->query['pagename'] );
+
+				return $value;
+			} );
 		}
 	}
 
