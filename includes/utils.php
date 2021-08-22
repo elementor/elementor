@@ -509,16 +509,23 @@ class Utils {
 
 	public static function get_meta_viewport( $context = '' ) {
 		$meta_tag = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />';
+
 		/**
 		 * Viewport meta tag.
 		 *
-		 * Filters the Elementor preview URL.
+		 * Filters the meta tag containing the viewport information.
+		 *
+		 * This hook can be used to change the intial viewport meta tag set by Elementor
+		 * and replace it with a different viewport tag.
 		 *
 		 * @since 2.5.0
 		 *
 		 * @param string $meta_tag Viewport meta tag.
+		 * @param string $context  Page context.
 		 */
-		return apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
+		$meta_tag = apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
+
+		return $meta_tag;
 	}
 
 	/**
