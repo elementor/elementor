@@ -13,16 +13,16 @@ export class ContainerHelper {
 	 *
 	 * @param {Number} count - Count of Containers to create.
 	 * @param {Object} settings - Settings to set to each Container.
-	 * @param {Container} container - The Container object to create the new Container elements inside.
+	 * @param {Container} target - The Container object to create the new Container elements inside.
 	 * @param {Object} options - Additional command options.
 	 *
 	 * @return {Container[]} - Array of the newly created Containers.
 	 */
-	static createContainers( count, settings, container = {}, options = {} ) {
+	static createContainers( count, settings, target = {}, options = {} ) {
 		const containers = [];
 
 		for ( let i = 0; i < count; i++ ) {
-			containers.push( this.createContainer( settings, container, options ) );
+			containers.push( this.createContainer( settings, target, options ) );
 		}
 
 		return containers;
@@ -32,14 +32,14 @@ export class ContainerHelper {
 	 * Create a Container element.
 	 *
 	 * @param {Object} settings - Settings to set to each Container.
-	 * @param {Container} container - The Container object to create the new Container elements inside.
+	 * @param {Container} target - The Container object to create the new Container elements inside.
 	 * @param {Object} options - Additional command options.
 	 *
 	 * @return {Container} - The newly created Container.
 	 */
-	static createContainer( settings = {}, container, options = {} ) {
+	static createContainer( settings = {}, target, options = {} ) {
 		return $e.run( 'document/elements/create', {
-			container,
+			container: target,
 			model: {
 				elType: 'container',
 				settings,
@@ -70,19 +70,18 @@ export class ContainerHelper {
 	 * Create a Container element based on a preset.
 	 *
 	 * @param {string} preset - Preset structure of the sub containers (e.g. `33-66-66-33`).
-	 * @param {Container} container - The parent container of the newly created Container.
+	 * @param {Container} target - The target container of the newly created Container.
 	 * @param {Object} options - Additional command options.
 	 *
 	 * @return {Container}
 	 */
-	static createContainerFromPreset( preset, container, options = {} ) {
+	static createContainerFromPreset( preset, target, options = {} ) {
 		const sizes = preset.split( '-' );
 
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
 				container_flex_wrap: 'wrap',
-			},
-			container, options );
+			}, target, options );
 
 		// Create all sub containers using the sizes array.
 		// Use flex basis to make the sizes explicit.
