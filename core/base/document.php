@@ -541,7 +541,21 @@ abstract class Document extends Controls_Stack {
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
-		$additional_config = apply_filters( 'elementor/document/config', [], $this->get_main_id() );
+		$additional_config = [];
+
+		/**
+		 * Additional document configuration.
+		 *
+		 * Filters the document configuration by adding additional configuration.
+		 * External developers can use this hook to add custom configuration in
+		 * addition to Elementor's initial configuration.
+		 *
+		 * Use the $post_id to add custom configuration for different pages.
+		 *
+		 * @param array $additional_config The additional document configuration.
+		 * @param int   $post_id           The post ID of the document.
+		 */
+		$additional_config = apply_filters( 'elementor/document/config', $additional_config, $this->get_main_id() );
 
 		if ( ! empty( $additional_config ) ) {
 			$config = array_replace_recursive( $config, $additional_config );
@@ -556,10 +570,13 @@ abstract class Document extends Controls_Stack {
 	 */
 	protected function register_controls() {
 		$this->register_document_controls();
+
 		/**
 		 * Register document controls.
 		 *
 		 * Fires after Elementor registers the document controls.
+		 *
+		 * External developers can use this hook to add new controls to the document.
 		 *
 		 * @since 2.0.0
 		 *
@@ -578,12 +595,17 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function save( $data ) {
 		/**
-		 * Fires when document save starts on Elementor.
+		 * Document save data.
 		 *
-		 * @param array $data.
-		 * @param \Elementor\Core\Base\Document $this The current document.
+		 * Filter the document data before saving process starts.
+		 *
+		 * External developers can use this hook to change the data before
+		 * saving it to the database.
 		 *
 		 * @since 3.3.0
+		 *
+		 * @param array                         $data The document data.
+		 * @param \Elementor\Core\Base\Document $this The document instance.
 		 */
 		$data = apply_filters( 'elementor/document/save/data', $data, $this );
 
