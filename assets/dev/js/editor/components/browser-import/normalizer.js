@@ -1,6 +1,6 @@
-import FileListFactory from './files/file-list-factory';
 import isInstanceof from '../../utils/is-instanceof';
 import Mime from 'mime/index';
+import FileCollection from 'elementor-editor/components/browser-import/files/file-collection';
 
 export default class Normalizer {
 	/**
@@ -21,11 +21,11 @@ export default class Normalizer {
 	 * @returns {Promise<FileList>}
 	 */
 	async normalize( input ) {
-		if ( ! FileListFactory.isFileList( input ) ) {
-			return this.toFileList( input );
+		if ( ! ( input instanceof FileCollection ) ) {
+			input = this.toFileCollection( input );
 		}
 
-		return Promise.resolve( input );
+		return input;
 	}
 
 	/**
@@ -35,22 +35,24 @@ export default class Normalizer {
 	 * @param input
 	 * @returns {Promise<FileList>}
 	 */
-	async toFileList( input ) {
+	async toFileCollection( input ) {
 		if ( ! Array.isArray( input ) ) {
-			input = isInstanceof( input, DataTransferItemList ) ? Array.from( input ) : [ input ];
+			input = isInstanceof( input, FileList ) || isInstanceof( input, DataTransferItemList ) ?
+				Array.from( input ) :
+				[ input ];
 		}
 
 		return Promise.all(
 			input.map( ( item ) => {
 				// Creating a FileList can only be made with an array of File objects. Therefore, unless the item is
 				// a File object, we should transform it into one.
-				if ( ! ( item instanceof File ) ) {
-					return this.toFile( item );
+				if ( ! isInstanceof( item, File ) ) {
+					item = this.toFile( item );
 				}
 
 				return item;
 			} )
-		).then( ( files ) => FileListFactory.createFileList( files ) );
+		).then( ( files ) => new FileCollection( files ) );
 	}
 
 	/**
@@ -81,17 +83,15 @@ export default class Normalizer {
 			}
 
 			// Extract the mime-type and the blob of the input.
-			input = fetch( input )
+			input = await fetch( input )
 				.then( ( res ) => res.blob() );
 		}
 
-		return Promise.resolve( input ).then(
-			( blob ) => new File(
-				[ blob ],
-				this.constructor.createFileName( blob ),
-				{ type: blob.type }
-			)
-		);
+		return new File(
+				[ input ],
+				this.constructor.createFileName( input ),
+				{ type: input.type }
+			);
 	}
 
 	/**
@@ -102,7 +102,7 @@ export default class Normalizer {
 	 */
 	static createFileName( blob ) {
 		return [
-			( Math.random() + 1 ).toString( 36 ).substring( 7 ),
+			elementorCommon.helpers.getUniqueId(),
 			Mime.getExtension( blob.type ),
 		].join( '.' );
 	}

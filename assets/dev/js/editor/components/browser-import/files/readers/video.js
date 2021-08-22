@@ -1,6 +1,6 @@
-import FileReader from '../file-reader';
+import FileReaderBase from '../file-reader-base';
 
-export class Video extends FileReader {
+export class Video extends FileReaderBase {
 	/**
 	 * @inheritDoc
 	 */

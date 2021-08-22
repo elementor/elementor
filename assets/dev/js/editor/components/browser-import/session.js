@@ -1,19 +1,45 @@
 export default class Session {
 	/**
+	 * The Manager instance.
+	 *
+	 * @type {Manager}
+	 */
+	manager;
+
+	/**
+	 * The FileCollection instance.
+	 *
+	 * @type {FileCollection}
+	 */
+	fileCollection;
+
+	/**
+	 * The Target instance.
+	 *
+	 * @type {Target}
+	 */
+	container;
+
+	/**
+	 * The Session options.
+	 *
+	 * @type {{}}
+	 */
+	options = {};
+
+	/**
 	 * Session constructor.
 	 *
 	 * @param manager
-	 * @param files
-	 * @param target
+	 * @param fileCollection
+	 * @param container
 	 * @param options
 	 */
-	constructor( manager, files = null, target = null, options = {} ) {
+	constructor( manager, fileCollection = null, container = null, options = {} ) {
 		this.manager = manager;
-
-		this.setFileList( files );
-		this.setOptions( options );
-
-		this.setTarget( target );
+		this.fileCollection = fileCollection;
+		this.container = container;
+		this.options = options;
 	}
 
 	/**
@@ -22,7 +48,7 @@ export default class Session {
 	 * @returns {boolean}
 	 */
 	async validate() {
-		for ( const file of this.getFiles() ) {
+		for ( const file of this.fileCollection.getFiles() ) {
 			if ( ! await this.manager.getReaderOf( file ) ) {
 				return false;
 			}
@@ -32,22 +58,21 @@ export default class Session {
 	}
 
 	/**
-	 * Match files to a suitable reade
+	 * Match files to a suitable reader and parser, and handle them.
 	 */
 	async apply() {
 		const result = [];
 
-		for ( const file of this.getFiles() ) {
+		for ( const file of this.fileCollection.getFiles() ) {
 			const reader = await this.manager.getReaderOf( file );
 
 			if ( reader ) {
-				const readerInstance = new reader( this, file ),
-					parser = await this.manager.getParserOf( file, readerInstance );
+				const readerInstance = new reader( file ),
+					parser = await this.manager.getParserOf( readerInstance );
 
 				if ( parser ) {
 					result.push(
-						new parser( this, readerInstance )
-							.parse()
+						new parser( readerInstance ).parse()
 					);
 
 					continue;
@@ -58,69 +83,5 @@ export default class Session {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Get an array of the session files.
-	 *
-	 * @returns {File[]}
-	 */
-	getFiles() {
-		return Array.from( this.files );
-	}
-
-	/**
-	 * Set the session FileList object.
-	 *
-	 * @param files
-	 */
-	setFileList( files ) {
-		this.files = files;
-	}
-
-	/**
-	 * Get the session FileList object.
-	 *
-	 * @returns {FileList}
-	 */
-	getFileList() {
-		return this.files;
-	}
-
-	/**
-	 * Set the session Target object, and apply its options.
-	 *
-	 * @param target
-	 */
-	setTarget( target ) {
-		this.target = target;
-	}
-
-	/**
-	 * Get the session target.
-	 *
-	 * @returns {*}
-	 */
-	getTarget() {
-		return this.target;
-	}
-
-	/**
-	 * Set the session options.
-	 *
-	 * @param options
-	 * @returns this
-	 */
-	setOptions( options ) {
-		this.options = options;
-	}
-
-	/**
-	 * Get the session options.
-	 *
-	 * @returns {{}}
-	 */
-	getOptions() {
-		return this.options;
 	}
 }

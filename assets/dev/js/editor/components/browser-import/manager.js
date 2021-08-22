@@ -1,9 +1,24 @@
-import SessionBuilder from './session-builder';
 import Normalizer from './normalizer';
-import FileReader from './files/file-reader';
-import FileParser from './files/file-parser';
+import FileReaderBase from './files/file-reader-base';
+import FileParserBase from './files/file-parser-base';
+import Session from 'elementor-editor/components/browser-import/session';
+import FileCollection from 'elementor-editor/components/browser-import/files/file-collection';
 
 export default class Manager {
+	/**
+	 * File-readers list.
+	 *
+	 * @type {{}}
+	 */
+	readers = {};
+
+	/**
+	 * File-parsers list according to their readers.
+	 *
+	 * @type {{}}
+	 */
+	parsers = {};
+
 	/**
 	 * Manager constructor.
 	 */
@@ -13,69 +28,65 @@ export default class Manager {
 		this.normalizer = new Normalizer( this );
 	}
 
+	/**
+	 * Parse the config for the Manager.
+	 *
+	 * @param config
+	 */
 	parseConfig( config = {} ) {
-		for ( const [ readerName, reader ] of Object.entries( config.readers ) ) {
-			this.registerFileReader( readerName, reader );
+		for ( const reader of config.readers ) {
+			this.registerFileReader( reader );
 		}
 
-		for ( const [ readerName, parsers ] of Object.entries( config.parsers ) ) {
-			for ( const [ parserName, parser ] of Object.entries( parsers ) ) {
-				this.registerFileParser( readerName, parserName, parser );
-			}
+		for ( const parser of config.parsers ) {
+			this.registerFileParser( parser );
 		}
 	}
 
 	/**
-	 * Create a new SessionBuilder.
+	 * Create a new Session instance and normalize input if needed.
 	 *
-	 * @returns {SessionBuilder}
+	 * @returns {Session}
 	 */
-	createSession() {
-		return new SessionBuilder( this );
+	async createSession( input, container, options = {} ) {
+		if ( ! ( input instanceof FileCollection ) ) {
+			input = await this.getNormalizer().normalize( input );
+		}
+
+		return new Session( this, input, container, options );
 	}
 
 	/**
 	 * Register a new file-reader.
 	 *
-	 * @param readerName
 	 * @param reader
 	 */
-	registerFileReader( readerName, reader ) {
-		if ( ! this.readers ) {
-			this.readers = {};
-		}
-
-		this.readers[ readerName ] = reader;
+	registerFileReader( reader ) {
+		this.readers[ reader.getName() ] = reader;
 	}
 
 	/**
-	 * Register a new file-parser to a specific reader.
+	 * Register a new file-parser.
 	 *
-	 * @param readerName
-	 * @param parserName
 	 * @param parser
 	 */
-	registerFileParser( readerName, parserName, parser ) {
-		const reader = this.readers[ readerName ];
+	registerFileParser( parser ) {
+		for ( const readerName of parser.getReaders() ) {
+			if ( ! this.readers[ readerName ] ) {
+				throw new Error( `Reader ${ readerName } is not registered.` );
+			} else if ( ! this.parsers[ readerName ] ) {
+				this.parsers[ readerName ] = {};
+			}
 
-		if ( ! reader ) {
-			throw new Error( `Reader ${ readerName } is not registered.` );
-		} else if ( ! this.parsers ) {
-			this.parsers = {};
+			this.parsers[ readerName ][ parser.getName() ] = parser;
 		}
-
-		if ( ! this.parsers[ readerName ] ) {
-			this.parsers[ readerName ] = {};
-		}
-
-		this.parsers[ readerName ][ parserName ] = parser;
 	}
 
 	/**
 	 * Get the file-handler that can handle the given file.
 	 *
 	 * @param file
-	 * @returns {FileReader|boolean}
+	 * @returns {FileReaderBase|boolean}
 	 */
 	async getReaderOf( file ) {
 		for ( const reader of Object.values( this.getReaders() ) ) {
@@ -90,19 +101,16 @@ export default class Manager {
 	/**
 	 * Get the suitable parser for a file, according to its reader.
 	 *
-	 * @param file
 	 * @param reader
-	 * @returns {Promise<FileParser|boolean>}
+	 * @returns {Promise<FileParserBase|boolean>}
 	 */
-	async getParserOf( file, reader ) {
-		// This methods requires an instance of FileReader since the parser's `validate` method using it to check
+	async getParserOf( reader ) {
+		// This methods requires an instance of a file-parser since the parser's `validate` method using it to check
 		// whether it can handle the file.
-		if ( reader instanceof FileReader ) {
-			const parsers = Object.values(
-				this.parsers[ reader.constructor.getName() ] || {}
-			);
+		if ( reader instanceof FileReaderBase ) {
+			const parsers = this.getParsers( reader.constructor.getName() );
 
-			for ( const parser of parsers ) {
+			for ( const parser of Object.values( parsers ) ) {
 				if ( await parser.validate( reader ) ) {
 					return parser;
 				}
@@ -151,13 +159,12 @@ export default class Manager {
 	/**
 	 * Get all registered file-parsers, unless a reader name is specified, in which case its parsers are returned.
 	 *
-	 * @returns {FileParser[]}
+	 * @param readerName
+	 * @returns {FileParserBase[]}
 	 */
-	getParsers( reader = null ) {
-		if ( reader ) {
-			return this.parsers[ reader ];
-		}
-
-		return this.parsers;
+	getParsers( readerName = null ) {
+		return readerName ?
+			this.parsers[ readerName ] :
+			this.parsers;
 	}
 }

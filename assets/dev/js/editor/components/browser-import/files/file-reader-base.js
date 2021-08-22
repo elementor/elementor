@@ -1,15 +1,20 @@
 /**
  * @abstract
  */
-export default class FileReader {
+export default class FileReaderBase {
 	/**
-	 * FileReader constructor.
+	 * The File instance.
 	 *
-	 * @param session
+	 * @type {File}
+	 */
+	file;
+
+	/**
+	 * FileReaderBase constructor.
+	 *
 	 * @param file
 	 */
-	constructor( session, file ) {
-		this.session = session;
+	constructor( file ) {
 		this.file = file;
 	}
 	/**
@@ -52,7 +57,10 @@ export default class FileReader {
 	 */
 	static async validate( file ) {
 		if ( ! this.validator ) {
-			this.validator = new RegExp( this.mimeTypes.join( '|' ), 'i' );
+			this.validator = new RegExp(
+				this.mimeTypes.join( '|' ),
+				'i'
+			);
 		}
 
 		return this.validator.test( file.type );
@@ -72,8 +80,8 @@ export default class FileReader {
 	 *
 	 * @returns {Promise<string>}
 	 */
-	getContent() {
-		const fileReader = new ( window.FileReader )(),
+	async getContent() {
+		const fileReader = new FileReader(),
 			handler = new Promise( ( resolve ) => {
 				fileReader.onloadend = () => resolve( fileReader.result );
 			} );

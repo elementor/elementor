@@ -1,6 +1,6 @@
-import FileReader from '../file-reader';
+import FileReaderBase from '../file-reader-base';
 
-export class Json extends FileReader {
+export class Json extends FileReaderBase {
 	/**
 	 * @inheritDoc
 	 */
@@ -12,7 +12,7 @@ export class Json extends FileReader {
 	 * @inheritDoc
 	 */
 	static get mimeTypes() {
-		return [ 'application\\/json' ];
+		return [ 'application\/json' ];
 	}
 
 	/**

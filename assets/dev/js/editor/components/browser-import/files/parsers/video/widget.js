@@ -1,11 +1,18 @@
-import FileParser from '../../file-parser';
+import FileParserBase from '../../file-parser-base';
 
-export class Widget extends FileParser {
+export class Widget extends FileParserBase {
 	/**
 	 * @inheritDoc
 	 */
 	static getName() {
 		return 'widget';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	static getReaders() {
+		return [ 'video' ];
 	}
 
 	/**

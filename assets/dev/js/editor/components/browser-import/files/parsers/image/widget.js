@@ -1,6 +1,6 @@
-import FileParser from '../../file-parser';
+import FileParserBase from '../../file-parser-base';
 
-export class Widget extends FileParser {
+export class Widget extends FileParserBase {
 	/**
 	 * @inheritDoc
 	 */
@@ -11,22 +11,30 @@ export class Widget extends FileParser {
 	/**
 	 * @inheritDoc
 	 */
-	async parse() {
-		const file = this.reader.getFile();
+	static getReaders() {
+		return [ 'image' ];
+	}
 
-		return $e.data.run( 'create', 'wp/media', { file, options: {} } )
-			.then( ( { data: result } ) => {
-				this.session.getTarget().createElement( 'image', {
-					settings: {
-						image: {
-							url: result.source_url,
-							id: result.id,
-							alt: file.name.split( '.' )[ 0 ],
-							source: 'library',
-						},
+	/**
+	 * @inheritDoc
+	 */
+	async parse() {
+		const file = this.reader.getFile(),
+			{ data: result } = $e.data.run( 'create', 'wp/media', { file, options: {} } );
+
+		return [
+			this.createContainer( {
+				type: 'widget',
+				settings: {
+					image: {
+						url: result.source_url,
+						id: result.id,
+						alt: file.name.split( '.' )[ 0 ],
+						source: 'library',
 					},
-				} );
-			} );
+				},
+			} ),
+		];
 	}
 
 	/**

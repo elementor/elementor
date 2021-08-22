@@ -1,1 +1,1 @@
-export { Widget } from './widget';
+export { Elements } from './elements';

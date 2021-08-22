@@ -1,6 +1,6 @@
-import FileReader from '../file-reader';
+import FileReaderBase from '../file-reader-base';
 
-export class Image extends FileReader {
+export class Image extends FileReaderBase {
 	/**
 	 * @inheritDoc
 	 */
