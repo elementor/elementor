@@ -116,10 +116,6 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandler = function( handlerName ) {
-		if ( ! handlerName ) {
-			return;
-		}
-
 		const elementHandler = this.elementsHandlers[ handlerName ];
 
 		if ( isClassHandler( elementHandler ) ) {
