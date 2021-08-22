@@ -60,7 +60,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayHasKey( 'data', $result );
-		$this->assertCount( 5, $result['data'] );
+		$this->assertCount( 8, $result['data'] );
 		$this->assertEqualSets( [
 			[
 				'text' => 'Creative',
@@ -81,6 +81,20 @@ class Test_Controller extends Elementor_Test_Base {
 			[
 				'text' => 'Creative',
 				'type' => 'tags',
+			],
+
+			// Subscription plans added as taxonomies locally and not from server
+			[
+				'text' => 'Free',
+				'type' => 'subscription_plans'
+			],
+			[
+				'text' => 'Pro',
+				'type' => 'subscription_plans'
+			],
+			[
+				'text' => 'Expert',
+				'type' => 'subscription_plans'
 			],
 		], $result['data'] );
 	}

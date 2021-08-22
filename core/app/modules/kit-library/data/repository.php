@@ -30,6 +30,11 @@ class Repository {
 	protected $user_favorites;
 
 	/**
+	 * @var Collection
+	 */
+	protected $subscription_plans;
+
+	/**
 	 * Get all kits.
 	 *
 	 * @param false $force_api_request
@@ -97,6 +102,14 @@ class Repository {
 					];
 				}, $taxonomies ) );
 			}, new Collection( [] ) )
+			->merge(
+				$this->subscription_plans->map( function ( $label ) {
+					return [
+						'text' => $label ? $label : 'Free',
+						'type' => 'subscription_plans',
+					];
+				} )
+			)
 			->unique( [ 'text', 'type' ] );
 	}
 
@@ -213,11 +226,15 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
-		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, array_map( function ( $taxonomy ) {
-				return $taxonomy->name;
-			}, $kit->{$key} ) );
-		}, [] );
+		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
+
+		$taxonomies = ( new Collection( static::TAXONOMIES_KEYS ) )
+			->reduce( function ( Collection $current, $key ) use ( $kit ) {
+				return $current->merge(
+					( new Collection( $kit->{$key} ) )->pluck( 'name' )
+				);
+			}, new Collection( [] ) )
+			->merge( [ $subscription_plan_tag ? $subscription_plan_tag : 'Free' ] );
 
 		return array_merge(
 			[
@@ -226,7 +243,7 @@ class Repository {
 				'thumbnail_url' => $kit->thumbnail,
 				'access_level' => $kit->access_level,
 				'keywords' => $kit->keywords,
-				'taxonomies' => $taxonomies,
+				'taxonomies' => $taxonomies->values(),
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
 				// TODO: Remove all the isset when the API stable.
 				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
@@ -281,13 +298,13 @@ class Repository {
 	}
 
 	/**
-	 * Repository constructor.
-	 *
 	 * @param Kit_Library    $kit_library
 	 * @param User_Favorites $user_favorites
+	 * @param Collection     $subscription_plans
 	 */
-	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites ) {
+	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites, Collection $subscription_plans ) {
 		$this->api = $kit_library;
 		$this->user_favorites = $user_favorites;
+		$this->subscription_plans = $subscription_plans;
 	}
 }

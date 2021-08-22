@@ -57,7 +57,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'thumbnail_url' => 'https://localhost/image.png',
 				'access_level' => 0,
 				'keywords' => [ 'word', 'word2' ],
-				'taxonomies' => ['a', 'b', 'c', 'd', 'e'],
+				'taxonomies' => ['a', 'b', 'c', 'd', 'e', 'Free'], // Subscription plan also added as taxonomy
 				'is_favorite' => false,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -71,7 +71,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'thumbnail_url' => 'https://localhost/image2.png',
 				'access_level' => 1,
 				'keywords' => [],
-				'taxonomies' => ['1', '2', '3', '4', '5'],
+				'taxonomies' => ['1', '2', '3', '4', '5', 'Pro'], // Subscription plan also added as taxonomy
 				'is_favorite' => true,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -101,7 +101,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'thumbnail_url' => 'https://localhost/image.png',
 			'access_level' => 0,
 			'keywords' => [ 'word', 'word2' ],
-			'taxonomies' => ['a', 'b', 'c', 'd', 'e'],
+			'taxonomies' => ['a', 'b', 'c', 'd', 'e', 'Free'], // Subscription plan also added as taxonomy
 			'is_favorite' => false,
 			'trend_index' => 20,
 			'featured_index' => 30,

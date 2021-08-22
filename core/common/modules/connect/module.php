@@ -184,7 +184,7 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public function get_subscription_plans( $context ) {
+	public function get_subscription_plans( $context = '' ) {
 		return [
 			static::ACCESS_LEVEL_CORE => [
 				'label' => null,
