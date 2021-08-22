@@ -760,6 +760,26 @@
 					},
 					"additionalProperties": false
 				},
+				"favorites": {
+					"$id": "#/usages/favorites",
+					"title": "The favorites schema",
+					"description": "Usage of favorites by favorite-type.",
+					"type": "object",
+					"patternProperties": {
+						"([^\\s]+)": {
+							"$id": "#/usages/favorites/$type",
+							"type": "array",
+							"description": "Each favorite-type holding the elements marked as favorites.",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/favorites/$type/$element",
+									"type": "string",
+									"description": "Elements marked as favorites in the favorite-type."
+								}
+							}
+						}
+					}
+				},
 				"settings": {
 					"$id": "#/usages/settings",
 					"title": "The settings schema",
