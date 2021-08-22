@@ -43,6 +43,8 @@ class Module extends BaseModule {
 		$this->populate();
 
 		Plugin::instance()->data_manager->register_controller( Controller::class );
+
+		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 	}
 
 	/**
@@ -61,6 +63,19 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Add usage data related to favorites.
+	 *
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	public function add_tracking_data( $params ) {
+		$params[ 'usages' ][ 'favorites' ] = $this->get();
+
+		return $params;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function get_name() {
@@ -75,10 +90,14 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function get( $type = null ) {
-		if ( null === $type || is_array( $type ) ) {
+		if ( null === $type ) {
+			$type = array_keys( $this->types );
+		}
+
+		if ( is_array( $type ) ) {
 			return array_intersect_key(
-				array_flip( (array) $type ),
-				$this->combined()
+				$this->combined(),
+				array_flip( (array) $type )
 			);
 		}
 
@@ -199,7 +218,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Compbine favorites from all types into a single array.
+	 * Combine favorites from all types into a single array.
 	 *
 	 * @return array
 	 */

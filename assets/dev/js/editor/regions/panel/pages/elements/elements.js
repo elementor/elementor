@@ -62,20 +62,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initElementsCollection: function() {
-		var elementsCollection = new PanelElementsElementsCollection(),
-			sectionConfig = elementor.config.elements.section;
-
-		elementor.widgetsCache = Object.assign( {}, {
-			'inner-section': {
-				title: __( 'Inner Section', 'elementor' ),
-				elType: 'section',
-				categories: [ 'basic' ],
-				keywords: [ 'row', 'columns', 'nested' ],
-				icon: sectionConfig.icon,
-				widget_type: 'inner-section',
-				show_in_panel: true,
-			},
-		}, elementor.widgetsCache );
+		var elementsCollection = new PanelElementsElementsCollection();
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {

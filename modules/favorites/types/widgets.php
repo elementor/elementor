@@ -36,9 +36,9 @@ class Widgets extends Favorites_Type {
 	 * @return string[]
 	 */
 	public function get_available() {
-		return (array) array_merge( array_keys(
+		return (array) array_keys(
 			Plugin::instance()->widgets_manager->get_widget_types()
-		), [ 'inner-section' ] );
+		);
 	}
 
 	/**
