@@ -42,8 +42,8 @@ const ContainerView = BaseElementView.extend( {
 					icon: 'eicons-container', // TODO: For future use.
 					settings: {
 						container_flex_direction: '',
-						container_align_items: '',
-						container_justify_content: '',
+						container_flex_align_items: '',
+						container_flex_justify_content: '',
 						container_flex_wrap: '',
 					},
 				},

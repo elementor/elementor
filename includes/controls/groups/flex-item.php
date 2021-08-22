@@ -16,7 +16,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 	protected function init_fields() {
 		$fields = [];
 
-		$fields['flex_basis_type'] = [
+		$fields['basis_type'] = [
 			'label' => esc_html_x( 'Flex Basis', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
@@ -26,7 +26,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['flex_basis'] = [
+		$fields['basis'] = [
 			'label' => esc_html_x( 'Custom Width', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'range' => [
@@ -51,12 +51,12 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'{{SELECTOR}}' => '--flex-basis: {{SIZE}}{{UNIT}};',
 			],
 			'condition' => [
-				'flex_basis_type' => 'custom',
+				'basis_type' => 'custom',
 			],
 			'responsive' => true,
 		];
 
-		$fields['flex_size'] = [
+		$fields['size'] = [
 			'label' => esc_html_x( 'Size', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'default' => '',
@@ -90,7 +90,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['flex_grow'] = [
+		$fields['grow'] = [
 			'label' => esc_html_x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
@@ -100,11 +100,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'placeholder' => 1,
 			'responsive' => true,
 			'condition' => [
-				'flex_size' => 'custom',
+				'size' => 'custom',
 			],
 		];
 
-		$fields['flex_shrink'] = [
+		$fields['shrink'] = [
 			'label' => esc_html_x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
@@ -114,7 +114,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'placeholder' => 1,
 			'responsive' => true,
 			'condition' => [
-				'flex_size' => 'custom',
+				'size' => 'custom',
 			],
 		];
 

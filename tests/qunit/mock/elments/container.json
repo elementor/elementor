@@ -198,7 +198,7 @@
 			"name": "container_flex_wrap_mobile",
 			"default": ""
 		},
-		"container_justify_content": {
+		"container_flex_justify_content": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -223,9 +223,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_justify_content"
+			"name": "container_flex_justify_content"
 		},
-		"container_justify_content_tablet": {
+		"container_flex_justify_content_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -249,10 +249,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_justify_content_tablet",
+			"name": "container_flex_justify_content_tablet",
 			"default": ""
 		},
-		"container_justify_content_mobile": {
+		"container_flex_justify_content_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -276,10 +276,10 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_justify_content_mobile",
+			"name": "container_flex_justify_content_mobile",
 			"default": ""
 		},
-		"container_align_items": {
+		"container_flex_align_items": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -302,9 +302,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_align_items"
+			"name": "container_flex_align_items"
 		},
-		"container_align_items_tablet": {
+		"container_flex_align_items_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -326,10 +326,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_align_items_tablet",
+			"name": "container_flex_align_items_tablet",
 			"default": ""
 		},
-		"container_align_items_mobile": {
+		"container_flex_align_items_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -351,7 +351,7 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_align_items_mobile",
+			"name": "container_flex_align_items_mobile",
 			"default": ""
 		},
 		"container_align_content": {
@@ -2365,7 +2365,7 @@
 			"label": "Flex",
 			"name": "section_flex"
 		},
-		"_flex_flex_basis": {
+		"_flex_basis": {
 			"type": "slider",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2391,14 +2391,14 @@
 			"responsive": {
 				"max": "desktop"
 			},
-			"name": "_flex_flex_basis",
+			"name": "_flex_basis",
 			"default": {
 				"unit": "px",
 				"size": "",
 				"sizes": []
 			}
 		},
-		"_flex_flex_basis_tablet": {
+		"_flex_basis_tablet": {
 			"type": "slider",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2424,14 +2424,14 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "_flex_flex_basis_tablet",
+			"name": "_flex_basis_tablet",
 			"default": {
 				"unit": "px",
 				"size": "",
 				"sizes": []
 			}
 		},
-		"_flex_flex_basis_mobile": {
+		"_flex_basis_mobile": {
 			"type": "slider",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2457,14 +2457,14 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "_flex_flex_basis_mobile",
+			"name": "_flex_basis_mobile",
 			"default": {
 				"unit": "px",
 				"size": "",
 				"sizes": []
 			}
 		},
-		"_flex_flex_grow": {
+		"_flex_grow": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2476,10 +2476,10 @@
 			"responsive": {
 				"max": "desktop"
 			},
-			"name": "_flex_flex_grow",
+			"name": "_flex_grow",
 			"default": ""
 		},
-		"_flex_flex_grow_tablet": {
+		"_flex_grow_tablet": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2491,10 +2491,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "_flex_flex_grow_tablet",
+			"name": "_flex_grow_tablet",
 			"default": ""
 		},
-		"_flex_flex_grow_mobile": {
+		"_flex_grow_mobile": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2506,10 +2506,10 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "_flex_flex_grow_mobile",
+			"name": "_flex_grow_mobile",
 			"default": ""
 		},
-		"_flex_flex_shrink": {
+		"_flex_shrink": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2521,10 +2521,10 @@
 			"responsive": {
 				"max": "desktop"
 			},
-			"name": "_flex_flex_shrink",
+			"name": "_flex_shrink",
 			"default": ""
 		},
-		"_flex_flex_shrink_tablet": {
+		"_flex_shrink_tablet": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2536,10 +2536,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "_flex_flex_shrink_tablet",
+			"name": "_flex_shrink_tablet",
 			"default": ""
 		},
-		"_flex_flex_shrink_mobile": {
+		"_flex_shrink_mobile": {
 			"type": "number",
 			"tab": "advanced",
 			"section": "section_flex",
@@ -2551,7 +2551,7 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "_flex_flex_shrink_mobile",
+			"name": "_flex_shrink_mobile",
 			"default": ""
 		},
 		"_flex_order": {

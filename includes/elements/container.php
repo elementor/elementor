@@ -331,11 +331,14 @@ class Container extends Element_Base {
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			[
-				'name' => 'container',
+				'name' => 'container_flex',
 				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Spacing', 'Flex Item Control', 'elementor' ),
+					],
+					'direction' => [
+						'default' => 'column',
 					],
 				],
 				'condition' => [
@@ -408,7 +411,7 @@ class Container extends Element_Base {
 		$this->add_group_control(
 			Group_Control_Flex_Item::get_type(),
 			[
-				'name' => 'flex_children',
+				'name' => 'children_flex',
 				'exclude' => [
 					'align_self',
 					'order',

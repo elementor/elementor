@@ -80,6 +80,7 @@ export class ContainerHelper {
 
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
+				container_flex_direction: ContainerHelper.DIRECTION_ROW,
 				container_flex_wrap: 'wrap',
 			}, target, options );
 
@@ -88,12 +89,12 @@ export class ContainerHelper {
 		sizes.forEach( ( size ) => {
 			this.createContainer( {
 				container_flex_direction: this.DIRECTION_COLUMN,
-				_flex_flex_basis_type: 'custom',
-				_flex_flex_basis: {
+				_flex_basis_type: 'custom',
+				_flex_basis: {
 					unit: '%',
 					size,
 				},
-				_flex_flex_basis_mobile: { // For out-of-the-box responsiveness.
+				_flex_basis_mobile: { // For out-of-the-box responsiveness.
 					unit: '%',
 					size: '100',
 				},

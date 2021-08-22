@@ -189,13 +189,14 @@ class AddSectionBase extends Marionette.ItemView {
 			// Exceptional preset.
 			case 'c100-c50-50':
 				newContainer = ContainerHelper.createContainer( {
+					container_flex_direction: ContainerHelper.DIRECTION_ROW,
 					container_flex_wrap: 'wrap',
-					flex_children_flex_basis_type: 'custom',
-					flex_children_flex_basis: {
+					children_flex_basis_type: 'custom',
+					children_flex_basis: {
 						unit: '%',
 						size: '50',
 					},
-					flex_children_flex_basis_mobile: {
+					children_flex_basis_mobile: {
 						unit: '%',
 						size: '100',
 					},

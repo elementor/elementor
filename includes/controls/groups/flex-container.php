@@ -19,7 +19,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields = [];
 
-		$fields['flex_direction'] = [
+		$fields['direction'] = [
 			'label' => esc_html_x( 'Direction', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'options' => [
@@ -53,7 +53,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		// Don't add the prefix class when not in edit mode (to reduce bloatware).
 		if ( Plugin::instance()->editor->is_edit_mode() ) {
-			$fields['_flex_is_row'] = [
+			$fields['_is_row'] = [
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'row',
 				'prefix_class' => 'e-container--placeholder-',
@@ -165,7 +165,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['flex_wrap'] = [
+		$fields['wrap'] = [
 			'label' => esc_html_x( 'Wrap', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'options' => [
