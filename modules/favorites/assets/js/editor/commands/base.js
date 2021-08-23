@@ -5,7 +5,7 @@ export default class CommandsBase extends CommandBase {
 	 * @inheritDoc
 	 */
 	initialize( args = {} ) {
-		Object.assign( this.args, { store: true, ...args } );
+		this.args = { ...this.args, store: true, ...args };
 	}
 
 	/**

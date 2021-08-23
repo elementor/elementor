@@ -109,7 +109,7 @@ module.exports = elementorModules.Module.extend( {
 				modal = elementorCommon.dialogsManager.createWidget( 'simple', {
 					className: 'elementor-context-menu',
 					message: this.buildActionsList(),
-					iframe: this.getSettings( 'isIframe' ) ? elementor.$preview : undefined,
+					iframe: this.getSettings( 'isIframe' ) ? elementor.$preview : null,
 					effects: {
 						hide: 'hide',
 						show: 'show',

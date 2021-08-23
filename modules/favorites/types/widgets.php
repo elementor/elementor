@@ -46,17 +46,16 @@ class Widgets extends Favorites_Type {
 	}
 
 	/**
-	 * Updat
+	 * Update the categories of a widget inside a filter.
 	 *
 	 * @param $categories
+	 * @param $widget
 	 *
 	 * @return string[]
 	 */
 	public function update_widget_categories( $categories, $widget ) {
 		if ( false !== array_search( $widget->get_name(), $this->values() ) ) {
 			$categories[] = static::CATEGORY_SLUG;
-
-			return $categories;
 		}
 
 		return $categories;

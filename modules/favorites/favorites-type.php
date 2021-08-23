@@ -10,7 +10,7 @@ use Elementor\Core\Utils\Collection;
 abstract class Favorites_Type {
 
 	/**
-	 * The Laravel inspired Collection.
+	 * The favorites Collection.
 	 *
 	 * @var Collection|null
 	 */

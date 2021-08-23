@@ -294,7 +294,7 @@ class Elements_Manager {
 		if ( Plugin::instance()->experiments->is_feature_active( 'favorite-widgets' ) ) {
 			$this->categories = array_merge_recursive( [
 				'favorites' => [
-					'title' => __( 'Favorites', 'elementor' ),
+					'title' => esc_html__( 'Favorites', 'elementor' ),
 					'icon' => 'eicon-heart',
 					'display_when_empty' => true,
 				],

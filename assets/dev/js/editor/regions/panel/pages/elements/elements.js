@@ -62,7 +62,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	initElementsCollection: function() {
-		var elementsCollection = new PanelElementsElementsCollection();
+		const elementsCollection = new PanelElementsElementsCollection();
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
