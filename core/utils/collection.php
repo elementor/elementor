@@ -189,12 +189,8 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	public function pluck( $key ) {
 		$result = [];
 
-		foreach ( $this->items as $value ) {
-			if ( is_object( $value ) && isset( $value->{$key} ) ) {
-				$result[] = $value->{$key};
-			} elseif ( is_array( $value ) && isset( $value[ $key ] ) ) {
-				$result[] = $value[ $key ];
-			}
+		foreach ( $this->items as $item ) {
+			$result[] = $this->get_item_value( $item, $key );
 		}
 
 		return new static( $result );
@@ -210,16 +206,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	public function group_by( $group_by ) {
 		$result = [];
 
-		foreach ( $this->items as $value ) {
-			$group_key = 0;
+		foreach ( $this->items as $item ) {
+			$group_key = $this->get_item_value( $item, $group_by, 0 );
 
-			if ( is_object( $value ) && isset( $value->{$group_by} ) ) {
-				$group_key = $value->{$group_by};
-			} elseif ( is_array( $value ) && isset( $value[ $group_by ] ) ) {
-				$group_key = $value[ $group_by ];
-			}
-
-			$result[ $group_key ][] = $value;
+			$result[ $group_key ][] = $item;
 		}
 
 		return new static( $result );
@@ -298,29 +288,39 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
-	 * @param null $key
+	 * @param null|string|string[] $keys
 	 *
 	 * @return $this
 	 */
-	public function unique( $key = null ) {
-		if ( ! $key ) {
+	public function unique( $keys = null ) {
+		if ( ! $keys ) {
 			return new static(
 				array_unique( $this->items )
 			);
 		}
 
+		if ( ! is_array( $keys ) ) {
+			$keys = [ $keys ];
+		}
+
 		$exists = [];
 
-		return $this->filter( function ( $item ) use ( $key, &$exists ) {
+		return $this->filter( function ( $item ) use ( $keys, &$exists ) {
 			$value = null;
 
-			if ( is_object( $item ) && isset( $item->{$key} ) ) {
-				$value = $item->{$key};
-			} elseif ( is_array( $item ) && isset( $item[ $key ] ) ) {
-				$value = $item[ $key ];
+			foreach ( $keys as $key ) {
+				$current_value = $this->get_item_value( $item, $key );
+
+				$value .= "{$key}:{$current_value};";
 			}
 
-			if ( null !== $value && ! in_array( $value, $exists, true ) ) {
+			// If no value for the specific key return the item.
+			if ( null === $value ) {
+				return true;
+			}
+
+			// If value is not exists, add to the exists array and return the item.
+			if ( ! in_array( $value, $exists, true ) ) {
 				$exists[] = $value;
 
 				return true;
@@ -407,5 +407,24 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 */
 	public function count() {
 		return count( $this->items );
+	}
+
+	/**
+	 * @param      $item
+	 * @param      $key
+	 * @param null $default
+	 *
+	 * @return mixed|null
+	 */
+	private function get_item_value( $item, $key, $default = null ) {
+		$value = $default;
+
+		if ( is_object( $item ) && isset( $item->{$key} ) ) {
+			$value = $item->{$key};
+		} elseif ( is_array( $item ) && isset( $item[ $key ] ) ) {
+			$value = $item[ $key ];
+		}
+
+		return $value;
 	}
 }

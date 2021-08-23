@@ -44,7 +44,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	behaviors() {
-		const groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+		const elementType = this.options.model.get( 'elType' );
+
+		const groups = elementor.hooks.applyFilters( `elements/${ elementType }/contextMenuGroups`, this.getContextMenuGroups(), this );
 
 		const behaviors = {
 			contextMenu: {
@@ -116,7 +118,6 @@ BaseElementView = BaseContainer.extend( {
 				settings: settingsModel,
 				view: this,
 				parent: this._parent ? this._parent.getContainer() : {},
-				children: [],
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
