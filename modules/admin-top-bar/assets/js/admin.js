@@ -3,6 +3,11 @@ import AdminTopBar from './admin-top-bar';
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 document.addEventListener( 'DOMContentLoaded', () => {
 	const adminTopBarElement = document.getElementById( 'e-admin-top-bar-root' );
+
+	if ( ! adminTopBarElement ) {
+		return;
+	}
+
 	const isTopBarOptionWidgetChecked = !! document.querySelector( '#e-dashboard-widget-admin-top-bar-hide' );
 	const elementorMenuItemIds = [
 		'toplevel_page_elementor',
@@ -23,7 +28,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			adminTopBarElement
 		);
 		// Adds a inactive class only when the root element is added to the DOM (which does not happen in customizer).
-	} else if ( adminTopBarElement ) {
+	} else {
 		adminTopBarElement.classList.add( 'e-admin-top-bar--inactive' );
 	}
 } );
