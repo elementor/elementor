@@ -180,7 +180,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param $context
+	 * @param string $context Where this subscription plan should be shown.
 	 *
 	 * @return array
 	 */

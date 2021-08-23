@@ -11,6 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
+	/**
+	 * There is no label for subscription plan with access_level=0 + it should not
+	 * be translated.
+	 */
+	const SUBSCRIPTION_PLAN_FREE_TAG = 'Free';
+
 	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'features', 'types' ];
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
@@ -105,7 +111,7 @@ class Repository {
 			->merge(
 				$this->subscription_plans->map( function ( $label ) {
 					return [
-						'text' => $label ? $label : 'Free',
+						'text' => $label ? $label : self::SUBSCRIPTION_PLAN_FREE_TAG,
 						'type' => 'subscription_plans',
 					];
 				} )
@@ -232,7 +238,7 @@ class Repository {
 			->only( static::TAXONOMIES_KEYS )
 			->flatten()
 			->pluck( 'name' )
-			->push( $subscription_plan_tag ? $subscription_plan_tag : 'Free' );
+			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
 
 		return array_merge(
 			[

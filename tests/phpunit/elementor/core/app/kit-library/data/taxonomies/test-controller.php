@@ -5,6 +5,7 @@ use Elementor\Plugin;
 use Elementor\Testing\Traits\Rest_Trait;
 use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Module;
+use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies\Controller;
 
@@ -59,6 +60,8 @@ class Test_Controller extends Elementor_Test_Base {
 		$result = $this->http_get( 'kit-taxonomies', [ 'force' => true ] );
 
 		// Assert
+		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
+
 		$this->assertArrayHasKey( 'data', $result );
 		$this->assertCount( 8, $result['data'] );
 		$this->assertEqualSets( [
@@ -85,15 +88,15 @@ class Test_Controller extends Elementor_Test_Base {
 
 			// Subscription plans added as taxonomies locally and not from server
 			[
-				'text' => 'Free',
+				'text' => Repository::SUBSCRIPTION_PLAN_FREE_TAG,
 				'type' => 'subscription_plans'
 			],
 			[
-				'text' => 'Pro',
+				'text' => $subscription_plans[Module::ACCESS_LEVEL_PRO]['label'],
 				'type' => 'subscription_plans'
 			],
 			[
-				'text' => 'Expert',
+				'text' => $subscription_plans[Module::ACCESS_LEVEL_EXPERT]['label'],
 				'type' => 'subscription_plans'
 			],
 		], $result['data'] );
