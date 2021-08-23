@@ -228,13 +228,11 @@ class Repository {
 	private function transform_kit_api_response( $kit, $manifest = null ) {
 		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
 
-		$taxonomies = ( new Collection( static::TAXONOMIES_KEYS ) )
-			->reduce( function ( Collection $current, $key ) use ( $kit ) {
-				return $current->merge(
-					( new Collection( $kit->{$key} ) )->pluck( 'name' )
-				);
-			}, new Collection( [] ) )
-			->merge( [ $subscription_plan_tag ? $subscription_plan_tag : 'Free' ] );
+		$taxonomies = ( new Collection( (array) $kit ) )
+			->only( static::TAXONOMIES_KEYS )
+			->flatten()
+			->pluck( 'name' )
+			->push( $subscription_plan_tag ? $subscription_plan_tag : 'Free' );
 
 		return array_merge(
 			[

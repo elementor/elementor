@@ -5,7 +5,6 @@ use Elementor\Plugin;
 use Elementor\Data\Base\Controller;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Library\User_Favorites;
-use Elementor\Core\Common\Modules\Connect\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,7 +21,7 @@ abstract class Base_Controller extends Controller {
 	 */
 	public function get_repository() {
 		if ( ! $this->repository ) {
-			/** @var Module $connect */
+			/** @var \Elementor\Core\Common\Modules\Connect\Module $connect */
 			$connect = Plugin::$instance->common->get_component( 'connect' );
 
 			$subscription_plans = ( new Collection( $connect->get_subscription_plans() ) )
