@@ -461,6 +461,7 @@ class Widget_Icon_List extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-list-icon' => 'text-align: {{VALUE}};',
 				],
+				'prefix_class' => 'e%s-align-icon-',
 			]
 		);
 
