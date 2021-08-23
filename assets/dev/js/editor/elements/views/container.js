@@ -24,7 +24,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getCurrentUiStates() {
 		return {
-			directionMode: this.container.settings.get( 'container_flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
+			directionMode: this.container.settings.get( 'flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
 		};
 	},
 
@@ -41,10 +41,10 @@ const ContainerView = BaseElementView.extend( {
 					title: __( 'Container', 'elementor' ),
 					icon: 'eicons-container', // TODO: For future use.
 					settings: {
-						container_flex_direction: '',
-						container_flex_align_items: '',
-						container_flex_justify_content: '',
-						container_flex_wrap: '',
+						flex_direction: '',
+						flex_align_items: '',
+						flex_justify_content: '',
+						flex_wrap: '',
 					},
 				},
 			},

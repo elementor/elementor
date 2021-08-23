@@ -22,7 +22,7 @@
 			},
 			"name": "container_type"
 		},
-		"container_flex_direction": {
+		"flex_direction": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -45,9 +45,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_flex_direction"
+			"name": "flex_direction"
 		},
-		"container_flex_direction_tablet": {
+		"flex_direction_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -69,10 +69,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_flex_direction_tablet",
+			"name": "flex_direction_tablet",
 			"default": ""
 		},
-		"container_flex_direction_mobile": {
+		"flex_direction_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -94,7 +94,7 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_flex_direction_mobile",
+			"name": "flex_direction_mobile",
 			"default": ""
 		},
 		"container__flex_is_row": {
@@ -107,15 +107,15 @@
 				"relation": "or",
 				"terms": [
 					{
-						"name": "container_flex_direction",
+						"name": "flex_direction",
 						"value": ""
 					},
 					{
-						"name": "container_flex_direction",
+						"name": "flex_direction",
 						"value": "row"
 					},
 					{
-						"name": "container_flex_direction",
+						"name": "flex_direction",
 						"value": "row-reverse"
 					}
 				]
@@ -126,7 +126,7 @@
 			},
 			"name": "container__flex_is_row"
 		},
-		"container_flex_wrap": {
+		"flex_wrap": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -148,9 +148,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_flex_wrap"
+			"name": "flex_wrap"
 		},
-		"container_flex_wrap_tablet": {
+		"flex_wrap_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -171,10 +171,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_flex_wrap_tablet",
+			"name": "flex_wrap_tablet",
 			"default": ""
 		},
-		"container_flex_wrap_mobile": {
+		"flex_wrap_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -195,10 +195,10 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_flex_wrap_mobile",
+			"name": "flex_wrap_mobile",
 			"default": ""
 		},
-		"container_flex_justify_content": {
+		"flex_justify_content": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -223,9 +223,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_flex_justify_content"
+			"name": "flex_justify_content"
 		},
-		"container_flex_justify_content_tablet": {
+		"flex_justify_content_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -249,10 +249,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_flex_justify_content_tablet",
+			"name": "flex_justify_content_tablet",
 			"default": ""
 		},
-		"container_flex_justify_content_mobile": {
+		"flex_justify_content_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -276,10 +276,10 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_flex_justify_content_mobile",
+			"name": "flex_justify_content_mobile",
 			"default": ""
 		},
-		"container_flex_align_items": {
+		"flex_align_items": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -302,9 +302,9 @@
 				"max": "desktop"
 			},
 			"default": "",
-			"name": "container_flex_align_items"
+			"name": "flex_align_items"
 		},
-		"container_flex_align_items_tablet": {
+		"flex_align_items_tablet": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -326,10 +326,10 @@
 			"responsive": {
 				"max": "tablet"
 			},
-			"name": "container_flex_align_items_tablet",
+			"name": "flex_align_items_tablet",
 			"default": ""
 		},
-		"container_flex_align_items_mobile": {
+		"flex_align_items_mobile": {
 			"type": "select",
 			"tab": "content",
 			"section": "section_content_container",
@@ -351,7 +351,7 @@
 			"responsive": {
 				"max": "mobile"
 			},
-			"name": "container_flex_align_items_mobile",
+			"name": "flex_align_items_mobile",
 			"default": ""
 		},
 		"container_align_content": {

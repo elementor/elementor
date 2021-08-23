@@ -71,7 +71,7 @@ export default class extends Marionette.Behavior {
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode;
 
-		return this.view.getContainer().parent?.model?.getSetting( `container_flex_direction${ deviceSuffix }` );
+		return this.view.getContainer().parent?.model?.getSetting( `flex_direction${ deviceSuffix }` );
 	}
 
 	onRender() {

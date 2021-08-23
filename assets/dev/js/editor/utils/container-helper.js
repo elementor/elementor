@@ -80,15 +80,15 @@ export class ContainerHelper {
 
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
-				container_flex_direction: ContainerHelper.DIRECTION_ROW,
-				container_flex_wrap: 'wrap',
+				flex_direction: ContainerHelper.DIRECTION_ROW,
+				flex_wrap: 'wrap',
 			}, target, options );
 
 		// Create all sub containers using the sizes array.
 		// Use flex basis to make the sizes explicit.
 		sizes.forEach( ( size ) => {
 			this.createContainer( {
-				container_flex_direction: this.DIRECTION_COLUMN,
+				flex_direction: this.DIRECTION_COLUMN,
 				_flex_basis_type: 'custom',
 				_flex_basis: {
 					unit: '%',

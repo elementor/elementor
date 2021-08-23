@@ -331,7 +331,7 @@ class Container extends Element_Base {
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
 			[
-				'name' => 'container_flex',
+				'name' => 'flex',
 				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'gap' => [
