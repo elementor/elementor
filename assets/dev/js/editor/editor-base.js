@@ -971,33 +971,26 @@ export default class EditorBase extends Marionette.Application {
 		setTimeout( console.log.bind( console, text, 'color: #9B0A46', '' ) ); // eslint-disable-line
 	}
 
-	requestWidgetsConfig() {
-		const excludeWidgets = {};
+	async requestWidgetsConfig() {
+		const exclude = Object.entries( this.widgetsCache )
+			.filter( ( [ , widgetConfig ] ) => widgetConfig.controls )
+			.map( ( [ widgetKey ] ) => widgetKey );
 
-		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
-			if ( widgetConfig.controls ) {
-				excludeWidgets[ widgetName ] = true;
-			}
-		} );
+		const { data } = await $e.data.get( 'widgets-config/index', { exclude }, { refresh: true } );
 
-		elementorCommon.ajax.addRequest( 'get_widgets_config', {
-			data: {
-				exclude: excludeWidgets,
-			},
-			success: ( data ) => {
-				this.addWidgetsCache( data );
+		this.addWidgetsCache( data );
 
-				if ( this.loaded ) {
-					this.kitManager.renderGlobalsDefaultCSS();
+		if ( this.loaded ) {
+			this.kitManager.renderGlobalsDefaultCSS();
 
-					$e.internal( 'panel/state-ready' );
-				} else {
-					this.once( 'panel:init', () => {
-						$e.internal( 'panel/state-ready' );
-					} );
-				}
-			},
-		} );
+			$e.internal( 'panel/state-ready' );
+		} else {
+			this.once( 'panel:init', () => {
+				$e.internal( 'panel/state-ready' );
+			} );
+		}
+
+		return data;
 	}
 
 	getPreferences( key ) {

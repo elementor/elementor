@@ -8,17 +8,21 @@ export default class CommandHistory extends CommandBase {
 	constructor( args ) {
 		super( args );
 
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
+		const { useHistory = true } = args;
 
-		/**
-		 * @type {number|boolean}
-		 */
-		this.historyId = false;
+		if ( useHistory ) {
+			/**
+			 * Get History from child command.
+			 *
+			 * @type {{}|boolean}
+			 */
+			this.history = this.getHistory( args );
+
+			/**
+			 * @type {number|boolean}
+			 */
+			this.historyId = false;
+		}
 	}
 
 	/**
@@ -42,13 +46,13 @@ export default class CommandHistory extends CommandBase {
 	 * @returns {boolean}
 	 */
 	isHistoryActive() {
-		return elementor.documents.getCurrent().history.getActive();
+		return this.history && elementor.documents.getCurrent().history.getActive();
 	}
 
 	onBeforeRun( args ) {
 		super.onBeforeRun( args );
 
-		if ( this.history && this.isHistoryActive() ) {
+		if ( this.isHistoryActive() ) {
 			this.historyId = $e.internal( 'document/history/start-log', this.history );
 		}
 	}
@@ -56,7 +60,7 @@ export default class CommandHistory extends CommandBase {
 	onAfterRun( args, result ) {
 		super.onAfterRun( args, result );
 
-		if ( this.history && this.isHistoryActive() ) {
+		if ( this.isHistoryActive() ) {
 			$e.internal( 'document/history/end-log', { id: this.historyId } );
 		}
 	}
