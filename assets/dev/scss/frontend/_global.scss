@@ -239,12 +239,26 @@
 
 .elementor-custom-embed-play {
 	@include absolute-center;
+	$elementor-custom-embed-play-icon-size: 100px;
+	$elementor-custom-embed-play-icon-color: #fff;
+	$elementor-custom-embed-play-icon-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 
 	i {
-		font-size: 100px;
-		color: #fff;
+		font-size: $elementor-custom-embed-play-icon-size;
+		color: $elementor-custom-embed-play-icon-color;
+		text-shadow: $elementor-custom-embed-play-icon-shadow;
+	}
+
+	svg {
+		height: $elementor-custom-embed-play-icon-size;
+		width: $elementor-custom-embed-play-icon-size;
+		fill: $elementor-custom-embed-play-icon-color;
+		filter: drop-shadow($elementor-custom-embed-play-icon-shadow);
+	}
+
+	i,
+	svg {
 		opacity: 0.8;
-		text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 		transition: all .5s;
 	}
 
@@ -287,10 +301,8 @@
 	}
 }
 
-// Alignment for Tablet
-@media (max-width: $screen-tablet-max) {
-
-	.elementor-tablet-align- {
+@mixin button-alignment($device) {
+	.elementor-#{$device}-align- {
 
 		&center {
 			text-align: center;
@@ -325,42 +337,34 @@
 	}
 }
 
+// Alignment for Widescreen
+@media (min-width: $screen-widescreen-min) {
+	@include button-alignment(widescreen);
+}
+
+// Alignment for Laptop
+@media (max-width: $screen-laptop-max) {
+	@include button-alignment(laptop);
+}
+
+// Alignment for Tablet Extra
+@media (max-width: $screen-tablet-extra-max) {
+	@include button-alignment(tablet_extra);
+}
+
+// Alignment for Tablet
+@media (max-width: $screen-tablet-max) {
+	@include button-alignment(tablet);
+}
+
+// Alignment for Mobile Extra
+@media (max-width: $screen-mobile-extra-max) {
+	@include button-alignment(mobile_extra);
+}
+
 // Alignment for Mobile
 @media (max-width: $screen-mobile-max) {
-
-	.elementor-mobile-align- {
-
-		&center {
-			text-align: center;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&right {
-			text-align: right;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&left {
-			text-align: left;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&justify {
-
-			.elementor-button {
-				width: 100%;
-			}
-		}
-	}
+	@include button-alignment(mobile);
 }
 
 // Admin Bar - Icon (Front-End)

@@ -859,6 +859,15 @@ class Frontend extends App {
 				'lt_LT' => 'latin-ext',
 			];
 
+			/**
+			 * Google font subsets.
+			 *
+			 * Filters the list of Google font subsets from which locale will be enqueued in frontend.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param array $subsets A list of font subsets.
+			 */
 			$subsets = apply_filters( 'elementor/frontend/google_font_subsets', $subsets );
 
 			$locale = get_locale();
@@ -1211,6 +1220,19 @@ class Frontend extends App {
 
 		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
+		$assets_url = ELEMENTOR_ASSETS_URL;
+
+		/**
+		 * Frontend assets URL
+		 *
+		 * Filters Elementor frontend assets URL.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string $assets_url The frontend assets URL. Default is ELEMENTOR_ASSETS_URL.
+		 */
+		$assets_url = apply_filters( 'elementor/frontend/assets_url', $assets_url );
+
 		$settings = [
 			'environmentMode' => [
 				'edit' => $is_preview_mode,
@@ -1242,7 +1264,7 @@ class Frontend extends App {
 			'is_static' => $this->is_static_render_mode(),
 			'experimentalFeatures' => $active_experimental_features,
 			'urls' => [
-				'assets' => apply_filters( 'elementor/frontend/assets_url', ELEMENTOR_ASSETS_URL ),
+				'assets' => $assets_url,
 			],
 		];
 
@@ -1359,7 +1381,22 @@ class Frontend extends App {
 			$parts['more_text']
 		);
 
-		$more_link = apply_filters( 'the_content_more_link', sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text ), $more_link_text );
+		$more_link = sprintf( ' <a href="%s#more-%s" class="more-link elementor-more-link">%s</a>', get_permalink(), $post->ID, $more_link_text );
+
+		/**
+		 * The content "more" link.
+		 *
+		 * Filters the "more" link displayed after the content.
+		 *
+		 * This hook can be used either to change the link syntax or to change the
+		 * text inside the link.
+		 *
+		 * @since 2.0.4
+		 *
+		 * @param string $more_link      The more link.
+		 * @param string $more_link_text The text inside the more link.
+		 */
+		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
 	}
