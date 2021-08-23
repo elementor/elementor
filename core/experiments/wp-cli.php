@@ -22,13 +22,13 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @param array $args
 	 */
 	public function activate( $args ) {
-		if ( empty( $args[ 0 ] ) ) {
+		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please specify an experiment.' );
 		}
 
 		try {
 			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[ 0 ] );
+			$option = $experiments_manager->get_feature_option_key( $args[0] );
 
 			update_option( $option, Experiments_Manager::STATE_ACTIVE );
 
@@ -49,13 +49,13 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @param array $args
 	 */
 	public function deactivate( $args ) {
-		if ( empty( $args[ 0 ] ) ) {
+		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please specify an experiment.' );
 		}
 
 		try {
 			$experiments_manager = Plugin::instance()->experiments;
-			$option = $experiments_manager->get_feature_option_key( $args[ 0 ] );
+			$option = $experiments_manager->get_feature_option_key( $args[0] );
 
 			update_option( $option, Experiments_Manager::STATE_INACTIVE );
 
