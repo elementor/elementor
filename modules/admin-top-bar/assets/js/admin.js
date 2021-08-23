@@ -4,6 +4,7 @@ const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fra
 document.addEventListener( 'DOMContentLoaded', () => {
 	const adminTopBarElement = document.getElementById( 'e-admin-top-bar-root' );
 
+	// When root element is not exists, the admin top bar should not be rendered.
 	if ( ! adminTopBarElement ) {
 		return;
 	}
@@ -27,7 +28,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 			</AppWrapper>,
 			adminTopBarElement
 		);
-		// Adds a inactive class only when the root element is added to the DOM (which does not happen in customizer).
 	} else {
 		adminTopBarElement.classList.add( 'e-admin-top-bar--inactive' );
 	}
