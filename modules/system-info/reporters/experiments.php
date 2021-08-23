@@ -17,7 +17,7 @@ class Experiments extends Base {
 	 * @return string Reporter title.
 	 */
 	public function get_title() {
-		return 'Elementor Experiments';
+		return esc_html__( 'Elementor Experiments', 'elementor' );
 	}
 
 	/**
