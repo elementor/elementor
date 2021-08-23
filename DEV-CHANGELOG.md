@@ -1,5 +1,16 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev13 - 2021-08-23
+* New: Docs - UI States [ED-4628] (#15961)
+* Fix: Reflect inherited value in slider control [ED-4766] (#16040)
+* Tweak: Library - On open, don't query all templates [ED-3149] (#15662)
+* Fix: Custom Code Promotion [ED-508] (#15960)
+* Tweak: Changed default cards view in Kit Library [ED-4484] (#15982)
+* Tweak: Added the option to search by tag names in Kit Library [ED-4482] (#15959)
+* Tweak: Changed Kit Library tab name [ED-3727] (#15986)
+* Fix: Finder incorrectly identifies pages created. [ED-3708] (#15352)
+* Fix: Admin Top Bar conflicts with WP customizer [ED-4768] (#16101)
+
 #### 3.5.0-dev11 - 2021-08-19
 * Revert: Fix: Gradient control doesn't work on frontend when using Global Colors (#16053)
 * Fix: Background image controls missing when using dynamic image (Closes #16050) [ED-4785] (#16062)
