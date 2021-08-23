@@ -6,19 +6,15 @@ export class Recreate extends CommandInternal {
 	}
 
 	apply( { models } ) {
-		this.isHistoryActive = elementor.documents.getCurrent().history.getActive();
-
-		this.disableHistory();
-
 		Object.entries( models ).forEach( ( [ id, model ] ) => {
-			const container = elementor.getContainer( id );
+			const container = elementor.getContainer( id ),
+				parent = container.parent,
+				location = parent.children.indexOf( container );
 
-			const parent = container.parent;
-			const location = parent.children.indexOf( container );
-
-			$e.run( 'document/elements/delete', { container } );
+			$e.run( 'document/elements/delete', { useHistory: false, container } );
 
 			$e.run( 'document/elements/create', {
+				useHistory: false,
 				container: parent,
 				model,
 				options: {
@@ -27,16 +23,6 @@ export class Recreate extends CommandInternal {
 				},
 			} );
 		} );
-
-		this.resetHistory();
-	}
-
-	disableHistory() {
-		elementor.documents.getCurrent().history.setActive( false );
-	}
-
-	resetHistory() {
-		elementor.documents.getCurrent().history.setActive( this.isHistoryActive );
 	}
 }
 

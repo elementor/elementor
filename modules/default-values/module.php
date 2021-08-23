@@ -108,7 +108,7 @@ class Module extends BaseModule {
 			$this->enqueue_scripts();
 		} );
 
-		add_action( 'elementor/control_stack/controls/initiated', function ( Controls_Stack $element ) {
+		add_action( 'elementor/control_stack/controls/init', function ( Controls_Stack $element ) {
 			$this->update_control_defaults( $element );
 		} );
 

@@ -4,6 +4,18 @@ import GlobalValues from './handlers/global-values';
 import LocalValues from './handlers/local-values';
 
 export default class Component extends $e.modules.ComponentBase {
+	getNamespace() {
+		return 'default-values';
+	}
+
+	defaultCommands() {
+		return this.importCommands( commands );
+	}
+
+	defaultData() {
+		return this.importCommands( dataCommands );
+	}
+
 	registerAPI() {
 		/**
 		 * Handlers responsible for the different strategies to manipulate and getting the settings
@@ -19,18 +31,6 @@ export default class Component extends $e.modules.ComponentBase {
 		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );
 
 		super.registerAPI();
-	}
-
-	getNamespace() {
-		return 'default-values';
-	}
-
-	defaultCommands() {
-		return this.importCommands( commands );
-	}
-
-	defaultData() {
-		return this.importCommands( dataCommands );
 	}
 
 	addContextMenuItem( groups, view ) {

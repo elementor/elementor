@@ -1,4 +1,4 @@
-import { pipe } from '../utils';
+import pipe from 'elementor-utils/pipe';
 
 export default class Base extends $e.modules.CommandBase {
 	/**
@@ -11,7 +11,7 @@ export default class Base extends $e.modules.CommandBase {
 	 */
 	async recreateElements( type, newSettings = {} ) {
 		// Get all the elements that should recreate (e.g: type = 'heading' it will recreate all the heading)
-		const elementsToRecreate = this.getAllElementsForRecreate( type, newSettings );
+		const elementsToRecreate = this.getElementsForRecreate( type, newSettings );
 
 		// Fetch new widget config
 		await this.refreshWidgetsConfig( type );
@@ -27,7 +27,7 @@ export default class Base extends $e.modules.CommandBase {
 	 * @param {Object} newDefaultSettings
 	 * @returns {{}}
 	 */
-	getAllElementsForRecreate( type, newDefaultSettings ) {
+	getElementsForRecreate( type, newDefaultSettings ) {
 		const elements = {};
 
 		elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
@@ -35,6 +35,7 @@ export default class Base extends $e.modules.CommandBase {
 				return;
 			}
 
+			// The element settings run throw the "pipe" and the methods of the handles append their settings (global values and local values)
 			const pipeFunc = pipe(
 				...this.component.handlers.map( ( handler ) => handler.appendSettingsForRecreate )
 			);

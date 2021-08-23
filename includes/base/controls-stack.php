@@ -2205,7 +2205,7 @@ abstract class Controls_Stack extends Base_Object {
 			$this->register_controls();
 		}
 
-		do_action( 'elementor/control_stack/controls/initiated', $this );
+		do_action( 'elementor/control_stack/controls/init', $this );
 	}
 
 	protected function handle_control_position( array $args, $control_id, $overwrite ) {

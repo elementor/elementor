@@ -11,5 +11,4 @@ class Kit_Not_Exists extends \Exception {
 
 		parent::__construct( $message, $code, $previous );
 	}
-
 }

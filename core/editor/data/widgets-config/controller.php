@@ -11,11 +11,7 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		//
-	}
-
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Endpoints\Index::class );
+		// Must extend this method.
 	}
 
 	public function get_items( $request ) {
@@ -42,6 +38,15 @@ class Controller extends Controller_Base {
 		return (object) $this->prepare_for_response( $widget );
 	}
 
+	public function get_permission_callback( $request ) {
+		return current_user_can( 'edit_posts' );
+	}
+
+
+	protected function register_internal_endpoints() {
+		$this->register_endpoint( Endpoints\Index::class );
+	}
+
 	/**
 	 * @param $widget
 	 *
@@ -52,9 +57,5 @@ class Controller extends Controller_Base {
 			'controls' => $widget->get_stack( false )['controls'],
 			'tabs_controls' => $widget->get_tabs_controls(),
 		];
-	}
-
-	public function get_permission_callback( $request ) {
-		return current_user_can( 'edit_posts' );
 	}
 }

@@ -19,7 +19,7 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
-		//
+		// Must extend this method.
 	}
 
 	public function create_item( $request ) {

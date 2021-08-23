@@ -1,13 +1,7 @@
 import Base from './base';
-import { pipe } from '../utils';
+import pipe from 'elementor-utils/pipe';
 
 export class Create extends Base {
-	initialize( { containerId } ) {
-		if ( containerId ) {
-			this.args.container = elementor.getContainer( containerId );
-		}
-	}
-
 	validateArgs( { container } ) {
 		this.requireContainer();
 

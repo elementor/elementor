@@ -404,12 +404,12 @@ BaseSettingsModel = Backbone.Model.extend( {
 			}
 		} );
 
-		if ( options.remove && -1 !== options.remove.indexOf( 'default' ) ) {
-			this.removeDataDefaults( data, this.controls );
-		}
-
-		if ( options.remove && -1 !== options.remove.indexOf( 'hardcoded-default' ) ) {
-			this.removeDataDefaults( data, this.controls, true );
+		if ( options.remove ) {
+			if ( -1 !== options.remove.indexOf( 'default' ) ) {
+				this.removeDataDefaults( data, this.controls );
+			} else if ( -1 !== options.remove.indexOf( 'hardcoded-default' ) ) {
+				this.removeDataDefaults( data, this.controls, true );
+			}
 		}
 
 		return elementorCommon.helpers.cloneObject( data );
