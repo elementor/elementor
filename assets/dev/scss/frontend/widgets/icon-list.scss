@@ -84,12 +84,14 @@
 
 	// Should be applied only on the icon-list widget, and not on any other widget that rely on this CSS.
 	&.elementor-widget-icon-list {
+		$e-icon-list-svg-icon-side-margin-size: calc(#{$e-icon-list-svg-icon-size} * 0.25);
+
 		.elementor-icon-list-icon svg {
-			margin: 0 calc(#{$e-icon-list-svg-icon-size} * 0.25) 0 0;
+			margin: 0 $e-icon-list-svg-icon-side-margin-size 0 0;
 		}
 
 		&.e-align-icon-right .elementor-icon-list-icon svg {
-			margin: 0 0 0 calc(#{$e-icon-list-svg-icon-size} * 0.25);
+			margin: 0 0 0 $e-icon-list-svg-icon-side-margin-size;
 		}
 
 		&.e-align-icon-center .elementor-icon-list-icon svg {
