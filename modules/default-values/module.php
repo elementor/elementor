@@ -27,8 +27,8 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'default-values',
-			'title' => __( 'Default Values', 'elementor' ),
-			'description' => __( 'This is default values!', 'elementor' ),
+			'title' => __( 'Custom Default Styles', 'elementor' ),
+			'description' => __( 'Keep widget designs consistent throughout your site by defining a default style for each widget. This is the first step towards more features that will enable you to create and manage your site’s design system.', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'default' => Manager::STATE_INACTIVE,
 		];

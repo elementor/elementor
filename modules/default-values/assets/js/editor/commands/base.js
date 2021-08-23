@@ -30,7 +30,7 @@ export default class Base extends $e.modules.CommandBase {
 	getElementsForRecreate( type, newDefaultSettings ) {
 		const elements = {};
 
-		elementor.getPreviewContainer().forEachChildrenRecursive( ( element ) => {
+		elementor.getPreviewContainer().children.forEachRecursive( ( element ) => {
 			if ( type !== element.settings.get( 'widgetType' ) ) {
 				return;
 			}
