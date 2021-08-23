@@ -234,9 +234,9 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
 				// Vimeo requires the '#t=' param to be last in the URL.
-				const timeMatch = /#t=[^&]*/.exec( videoURL );
+				const timeMatch = videoURL.match( /#t=[^&]*/ );
 
-				videoURL = videoURL.slice( 0, timeMatch.index ) + videoURL.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
+				videoURL = videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
 			}
 
 			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
