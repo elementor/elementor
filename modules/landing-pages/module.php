@@ -64,6 +64,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$trashed_posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
@@ -92,6 +93,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any landing pages.
 		$posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
@@ -395,6 +397,7 @@ class Module extends BaseModule {
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
 		$possible_new_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
 		] );

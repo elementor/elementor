@@ -115,7 +115,7 @@ class Control_Slider extends Control_Base_Units {
 				<div class="elementor-slider"></div>
 				<# if ( ! isMultiple ) { #>
 					<div class="elementor-slider-input">
-						<input id="<?php $this->print_control_uid(); ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" placeholder="{{ data.placeholder?.size }}" data-setting="size" />
+						<input id="<?php $this->print_control_uid(); ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" placeholder="{{ view.getControlPlaceholder()?.size }}" data-setting="size" />
 					</div>
 				<# } #>
 			</div>

@@ -58,7 +58,8 @@ class Plugin {
 	/**
 	 * Database.
 	 *
-	 * Holds the plugin database.
+	 * Holds the plugin database handler which is responsible for communicating
+	 * with the database.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -70,10 +71,11 @@ class Plugin {
 	/**
 	 * Ajax Manager.
 	 *
-	 * Holds the plugin ajax manager.
+	 * Holds the plugin ajax handlers which are responsible for ajax requests
+	 * and responses.
 	 *
 	 * @since 1.9.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead
+	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead.
 	 * @access public
 	 *
 	 * @var Ajax
@@ -83,7 +85,8 @@ class Plugin {
 	/**
 	 * Controls manager.
 	 *
-	 * Holds the plugin controls manager.
+	 * Holds the plugin controls manager handler is responsible for registering
+	 * and initializing controls.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -131,7 +134,8 @@ class Plugin {
 	/**
 	 * Widgets manager.
 	 *
-	 * Holds the plugin widgets manager.
+	 * Holds the plugin widgets manager which is responsible for registering and
+	 * initializing widgets.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -143,7 +147,8 @@ class Plugin {
 	/**
 	 * Revisions manager.
 	 *
-	 * Holds the plugin revisions manager.
+	 * Holds the plugin revisions manager which handles history and revisions
+	 * functionality.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -155,7 +160,8 @@ class Plugin {
 	/**
 	 * Images manager.
 	 *
-	 * Holds the plugin images manager.
+	 * Holds the plugin images manager which is responsible for retrieving image
+	 * details.
 	 *
 	 * @since 2.9.0
 	 * @access public
@@ -167,7 +173,8 @@ class Plugin {
 	/**
 	 * Maintenance mode.
 	 *
-	 * Holds the plugin maintenance mode.
+	 * Holds the maintenance mode manager responsible for the "Maintenance Mode"
+	 * and the "Coming Soon" features.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -215,12 +222,12 @@ class Plugin {
 	/**
 	 * Role Manager.
 	 *
-	 * Holds the plugin Role Manager
+	 * Holds the plugin role manager.
 	 *
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @var \Elementor\Core\RoleManager\Role_Manager
+	 * @var Core\RoleManager\Role_Manager
 	 */
 	public $role_manager;
 
@@ -333,9 +340,9 @@ class Plugin {
 	public $skins_manager;
 
 	/**
-	 * Files Manager.
+	 * Files manager.
 	 *
-	 * Holds the files manager.
+	 * Holds the plugin files manager.
 	 *
 	 * @since 2.1.0
 	 * @access public
@@ -345,9 +352,9 @@ class Plugin {
 	public $files_manager;
 
 	/**
-	 * Assets Manager.
+	 * Assets manager.
 	 *
-	 * Holds the Assets manager.
+	 * Holds the plugin assets manager.
 	 *
 	 * @since 2.6.0
 	 * @access public
@@ -359,6 +366,10 @@ class Plugin {
 	/**
 	 * Icons Manager.
 	 *
+	 * Holds the plugin icons manager.
+	 *
+	 * @access public
+	 *
 	 * @var Icons_Manager
 	 */
 	public $icons_manager;
@@ -366,11 +377,11 @@ class Plugin {
 	/**
 	 * Files Manager.
 	 *
-	 * Holds the files manager.
+	 * Holds the plugin files manager.
 	 *
 	 * @since 1.0.0
+	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead.
 	 * @access public
-	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead
 	 *
 	 * @var Files_Manager
 	 */
@@ -391,7 +402,7 @@ class Plugin {
 	/**
 	 * Modules manager.
 	 *
-	 * Holds the modules manager.
+	 * Holds the plugin modules manager.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -413,74 +424,177 @@ class Plugin {
 	public $beta_testers;
 
 	/**
+	 * Debugger.
+	 *
+	 * Holds the plugin debugger data.
+	 *
+	 * @deprecated 2.1.2 Use `Plugin::$inspector` instead.
+	 * @access public
+	 *
 	 * @var Inspector
-	 * @deprecated 2.1.2 Use $inspector.
 	 */
 	public $debugger;
 
 	/**
+	 * Inspector.
+	 *
+	 * Holds the plugin inspector data.
+	 *
+	 * @since 2.1.2
+	 * @access public
+	 *
 	 * @var Inspector
 	 */
 	public $inspector;
 
 	/**
+	 * Common functionality.
+	 *
+	 * Holds the plugin common functionality.
+	 *
+	 * @since 2.3.0
+	 * @access public
+	 *
 	 * @var CommonApp
 	 */
 	public $common;
 
 	/**
+	 * Log manager.
+	 *
+	 * Holds the plugin log manager.
+	 *
+	 * @access public
+	 *
 	 * @var Log_Manager
 	 */
 	public $logger;
 
 	/**
+	 * Dev tools.
+	 *
+	 * Holds the plugin dev tools.
+	 *
+	 * @access private
+	 *
 	 * @var Dev_Tools
 	 */
 	private $dev_tools;
 
 	/**
+	 * Upgrade manager.
+	 *
+	 * Holds the plugin upgrade manager.
+	 *
+	 * @access public
+	 *
 	 * @var Core\Upgrade\Manager
 	 */
 	public $upgrade;
 
 	/**
+	 * Kits manager.
+	 *
+	 * Holds the plugin kits manager.
+	 *
+	 * @access public
+	 *
 	 * @var Core\Kits\Manager
 	 */
 	public $kits_manager;
 
 	/**
+	 * Data manager.
+	 *
+	 * Holds the plugin data manager.
+	 *
+	 * @access public
+	 *
 	 * @var \Core\Data\Manager
 	 */
 	public $data_manager;
 
+	/**
+	 * Legacy mode.
+	 *
+	 * Holds the plugin legacy mode data.
+	 *
+	 * @access public
+	 *
+	 * @var array
+	 */
 	public $legacy_mode;
 
 	/**
+	 * App.
+	 *
+	 * Holds the plugin app data.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
 	 * @var Core\App\App
 	 */
 	public $app;
 
 	/**
+	 * WordPress API.
+	 *
+	 * Holds the methods that interact with WordPress Core API.
+	 *
+	 * @since 3.0.0
+	 * @access public
+	 *
 	 * @var Wp_Api
 	 */
 	public $wp;
 
 	/**
+	 * Experiments manager.
+	 *
+	 * Holds the plugin experiments manager.
+	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
 	 * @var Experiments_Manager
 	 */
 	public $experiments;
 
 	/**
+	 * Uploads manager.
+	 *
+	 * Holds the plugin uploads manager responsible for handling file uploads
+	 * that are not done with WordPress Media.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @var Uploads_Manager
 	 */
 	public $uploads_manager;
 
 	/**
+	 * Breakpoints manager.
+	 *
+	 * Holds the plugin breakpoints manager.
+	 *
+	 * @since 3.2.0
+	 * @access public
+	 *
 	 * @var Breakpoints_Manager
 	 */
 	public $breakpoints;
 
 	/**
+	 * Assets loader.
+	 *
+	 * Holds the plugin assets loader responsible for conditionally enqueuing
+	 * styles and script assets that were pre-enabled.
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @var Assets_Loader
 	 */
 	public $assets_loader;
@@ -559,8 +673,9 @@ class Plugin {
 		/**
 		 * Elementor init.
 		 *
-		 * Fires on Elementor init, after Elementor has finished loading but
-		 * before any headers are sent.
+		 * Fires when Elementor components are initialized.
+		 *
+		 * After Elementor finished loading but before any headers are sent.
 		 *
 		 * @since 1.0.0
 		 */

@@ -735,6 +735,22 @@ class Admin extends App {
 			],
 		];
 
-		return apply_filters( 'elementor/admin/localize_settings', $settings );
+		/**
+		 * Localize settings.
+		 *
+		 * Filters the initial localize settings in the admin.
+		 *
+		 * WordPress has it's own way to pass localized data from PHP (backend) to
+		 * JS (frontend). Elementor uses this method to pass localize data in the
+		 * admin. This hook can be used to add more localized settings in addition
+		 * to the initial Elementor settings.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $settings Initial localize settings.
+		 */
+		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
+
+		return $settings;
 	}
 }
