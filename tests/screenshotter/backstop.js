@@ -1,5 +1,31 @@
 const config = require( './config' );
 
+/**
+ * Execute a command.
+ *
+ * @param {string} command - Command to execute.
+ *
+ * @return {void}
+ */
+const exec = ( command ) => {
+	const { execSync } = require( 'child_process' ),
+		results = execSync( command ).toString();
+	// eslint-disable-next-line no-console
+	console.log( command + ' ' + results );
+};
+
+/**
+ * Prepare the test.
+ *
+ * Execute environment preparations before running the test.
+ *
+ * @return {void}
+ */
+const prepare = () => {
+	// Activate the Container experiment by default.
+	exec( 'wp elementor experiments activate container' );
+};
+
 const getScenarios = () => {
 	const scenarios = [];
 	const origin = config.url_origin;
@@ -35,6 +61,8 @@ const testsViewports = () => {
 
 	return view;
 };
+
+prepare();
 
 module.exports = {
 	id: 'elementor_screenshotter',
