@@ -7,11 +7,11 @@
 # Overview
 | API Name                                              | Access          | Description                    |
 |-------------------------------------------------------|-----------------|--------------------------------|
+| [Commands](core/commands.md)                          | `$e.commands`   | Commands management.
 | [Components](core/components.md)                      | `$e.components` | Components management.
+| [Data](core/data.md)                                  | `$e.data`       | Data ( Restful API ) Commands management.
 | [Hooks](core/hooks.md)                                | `$e.hooks`      | Hooks.
 | [UI-States](core/ui-states.md)                        | `$e.uiStates`   | UI State manager.
-| [Commands](core/commands.md)                          | `$e.commands`   | Commands management.
-| [Data](core/data.md)                                  | `$e.data`       | Data ( Restful API ) Commands management.
 | Routes                                                | `$e.routes`     | Routes management.   
 | Shortcuts                                             | `$e.shortcuts`  | Shortcuts component.      
 | DevTools                                              | `$e.devTools`   | External plugin for developers. 
