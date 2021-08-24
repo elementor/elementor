@@ -1,5 +1,6 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
+import ChildrenArray from './model/children-array';
 
 /**
  * TODO: ViewsOptions
@@ -63,9 +64,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container children(s).
 	 *
-	 * @type {Array}
+	 * @type {ChildrenArray}
 	 */
-	children = [];
+	children = new ChildrenArray();
 
 	/**
 	 * Container dynamic.
@@ -117,6 +118,13 @@ export default class Container extends ArgsObject {
 	panel;
 
 	/**
+	 * Controls placeholders.
+	 *
+	 * @type {{}}
+	 */
+	placeholders = {};
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create container.
@@ -159,7 +167,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view ) {
+		if ( this.isViewElement() ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
@@ -209,6 +217,57 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getAffectingControls().
+	 *
+	 * Should return all controls that effecting the container.
+	 */
+	getAffectingControls() {
+		const result = {},
+			activeControls = this.settings.getActiveControls();
+
+		Object.entries( activeControls ).forEach( ( [ controlName, control ] ) => {
+			const controlValue = this.settings.get( control.name );
+
+			if ( control.global && ! controlValue?.length ) {
+				if ( this.globals.get( control.name )?.length || this.getGlobalDefault( controlName ).length ) {
+					control.global.utilized = true;
+
+					result[ controlName ] = control;
+
+					return;
+				}
+			}
+
+			if ( control.dynamic ) {
+				if ( this.dynamic.get( controlName ) ) {
+					control.dynamic.utilized = true;
+
+					result[ controlName ] = control;
+
+					return;
+				}
+			}
+
+			if ( controlValue === control.default ) {
+				return;
+			}
+
+			if ( ! controlValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof controlValue &&
+				Object.values( controlValue ).join() === Object.values( control.default ).join() ) {
+				return;
+			}
+
+			result[ controlName ] = control;
+		} );
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
@@ -217,11 +276,15 @@ export default class Container extends ArgsObject {
 				}
 				const container = view.container;
 
-				container.parent.children[ view._index ] = container;
+				// Since the way 'global-widget' rendered, it does not have parent sometimes.
+				if ( container.parent.children ) {
+					container.parent.children[ view._index ] = container;
+				}
+
 				container.handleChildrenRecursive();
 			} );
 		} else {
-			this.children = [];
+			this.children.clear();
 		}
 	}
 
@@ -286,6 +349,17 @@ export default class Container extends ArgsObject {
 		}
 	}
 
+	/**
+	 * Function addRepeaterItem().
+	 *
+	 * The method add repeater item, find the repeater control by it name, and create new container for the item.
+	 *
+	 * @param {string} repeaterName
+	 * @param {Backbone.Model} rowSettingsModel
+	 * @param {number} index
+	 *
+	 * @returns {Container}
+	 */
 	addRepeaterItem( repeaterName, rowSettingsModel, index ) {
 		let rowId = rowSettingsModel.get( '_id' );
 
@@ -308,6 +382,8 @@ export default class Container extends ArgsObject {
 			controls: rowSettingsModel.options.controls,
 			renderer: this.renderer,
 		} ) );
+
+		return this.repeaters[ repeaterName ];
 	}
 
 	/**
@@ -358,6 +434,26 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	findChildrenRecursive( callback ) {
+		elementorCommon.helpers.softDeprecated(
+			'container.findChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.findRecursive( callback )'
+		);
+
+		return this.children.findRecursive( callback );
+	}
+
+	forEachChildrenRecursive( callback ) {
+		elementorCommon.helpers.softDeprecated(
+			'container.forEachChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.forEachRecursive( callback )'
+		);
+
+		return this.children.forEachRecursive( callback );
+	}
+
 	/**
 	 * Function render().
 	 *
@@ -399,8 +495,12 @@ export default class Container extends ArgsObject {
 		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 
-	getSetting( controlName, localOnly = false ) {
-		const localValue = this.settings.get( controlName );
+	isViewElement() {
+		return this.view && this.model.get( 'elType' );
+	}
+
+	getSetting( name, localOnly = false ) {
+		const localValue = this.settings.get( name );
 
 		if ( localOnly ) {
 			return localValue;
@@ -436,7 +536,10 @@ export default class Container extends ArgsObject {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
+			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
+
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( responsivePrefixRegex, '' );
 
 			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
 				return;

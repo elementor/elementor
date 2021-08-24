@@ -38,18 +38,36 @@ class Frontend extends Base {
 
 		$file_content = file_get_contents( $this->template_file );
 
-		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z]+)_([A-Z]+)/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
+		// The regex pattern parses placeholders located in the frontend _templates.scss file.
+		$file_content = preg_replace_callback( '/ELEMENTOR_SCREEN_([A-Z_]+)(?:_(MIN|MAX|NEXT))/', function ( $placeholder_data ) use ( $breakpoints_keys, $breakpoints ) {
 			// Handle BC for legacy template files and Elementor Pro builds.
 			$placeholder_data = $this->maybe_convert_placeholder_data( $placeholder_data );
 
+			$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
+
 			if ( 'DESKTOP' === $placeholder_data[1] ) {
-				$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+				if ( 'MIN' === $placeholder_data[2] ) {
+					$value = Plugin::$instance->breakpoints->get_desktop_min_point();
+				} elseif ( isset( $breakpoints['widescreen'] ) ) {
+					// If the 'widescreen' breakpoint is active, the Desktop's max value is the Widescreen breakpoint - 1px.
+					$value = $breakpoints['widescreen']->get_value() - 1;
+				} else {
+					// If the 'widescreen' breakpoint is not active, the Desktop device should not have a max value.
+					$value = 99999;
+				}
+			} elseif ( false === $breakpoint_index ) {
+				// If the breakpoint in the placeholder is not active - use a -1 value for the media query, to make
+				// sure the setting is printed (to avoid a PHP error) but doesn't apply.
+				$value = -1;
+			} elseif ( 'WIDESCREEN' === $placeholder_data[1] ) {
+				$value = $breakpoints['widescreen']->get_value();
 			} else {
 				$breakpoint_index = array_search( strtolower( $placeholder_data[1] ), $breakpoints_keys, true );
 
 				$is_max_point = 'MAX' === $placeholder_data[2];
 
-				if ( ! $is_max_point ) {
+				// If the placeholder capture is `MOBILE_NEXT` or `TABLET_NEXT`, the original breakpoint value is used.
+				if ( ! $is_max_point && 'NEXT' !== $placeholder_data[2] ) {
 					$breakpoint_index--;
 				}
 

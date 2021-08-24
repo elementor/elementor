@@ -74,13 +74,13 @@ class Elementor_Dev_Notice extends Base_Notice {
 	public function get_config() {
 		return [
 			'id' => static::ID,
-			'title' => __( 'Elementor Developer Edition', 'elementor' ),
+			'title' => esc_html__( 'Elementor Developer Edition', 'elementor' ),
 			'description' => __(
 				'Get a sneak peek at our in progress development versions, and help us improve Elementor to perfection. Developer Edition releases contain experimental functionality for testing purposes.',
 				'elementor'
 			),
 			'button' => [
-				'text' => __( 'Install & Activate', 'elementor' ),
+				'text' => esc_html__( 'Install & Activate', 'elementor' ),
 				'url' => wp_nonce_url(
 					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
 					'install-plugin_' . static::PLUGIN_SLUG

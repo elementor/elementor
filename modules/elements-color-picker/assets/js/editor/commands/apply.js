@@ -1,6 +1,14 @@
 import CommandBase from 'elementor-api/modules/command-base';
 
+/**
+ * Apply & Save the selected color on click.
+ */
 export class Apply extends CommandBase {
+	/**
+	 * Validate the command arguments.
+	 *
+	 * @param {object} args
+	 */
 	validateArgs( args ) {
 		this.requireArgumentType( 'value', 'string' );
 	}
@@ -10,6 +18,8 @@ export class Apply extends CommandBase {
 	 *
 	 * @param {string} value The new color to apply.
 	 * @param {HTMLElement} trigger The element which triggered the Apply command. Used to show `Selected` text & listen to `mouseleave`.
+	 *
+	 * @returns {void}
 	 */
 	apply( { value, trigger } ) {
 		this.setColor( value );
@@ -40,6 +50,8 @@ export class Apply extends CommandBase {
 	 * Set a color to the current selected element.
 	 *
 	 * @param color
+	 *
+	 * @returns {void}
 	 */
 	setColor( color ) {
 		$e.run( 'document/elements/settings', {

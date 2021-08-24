@@ -22,7 +22,7 @@ abstract class Inspection_Base {
 	 * @return string
 	 */
 	public function get_header_message() {
-		return __( 'The preview could not be loaded', 'elementor' );
+		return esc_html__( 'The preview could not be loaded', 'elementor' );
 	}
 
 	/**
