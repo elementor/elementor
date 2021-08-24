@@ -1,5 +1,4 @@
 import AddSectionView from './add-section/independent';
-import DocumentHelper from 'elementor-document/helper';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
@@ -42,7 +41,7 @@ const Preview = BaseSectionsContainerView.extend( {
 					{
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
-						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
 						callback: ( at ) => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 							options: {

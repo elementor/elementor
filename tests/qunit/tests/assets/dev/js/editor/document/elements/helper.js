@@ -10,7 +10,7 @@ export default class ElementsHelper {
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;
@@ -28,7 +28,7 @@ export default class ElementsHelper {
 		} );
 
 		if ( returnFirstColumn ) {
-			return eSection.view.children._views[ Object.keys( eSection.view.children._views )[ 0 ] ].getContainer();
+			return eSection.children[ 0 ];
 		}
 
 		return eSection;
@@ -81,6 +81,17 @@ export default class ElementsHelper {
 			model: {
 				elType: 'widget',
 				widgetType: 'button',
+				settings,
+			},
+		} );
+	}
+
+	static createVideo( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'video',
 				settings,
 			},
 		} );

@@ -30,7 +30,7 @@ class WP_Exporter {
 		'status' => false,
 		'offset' => 0,
 		'limit' => -1,
-		'meta_key' => '', // If specified `meta_key` then will include all post(s) that have this meta_key.
+		'meta_query' => [], // If specified `meta_key` then will include all post(s) that have this meta_key.
 	];
 
 	/**
@@ -47,7 +47,7 @@ class WP_Exporter {
 	 * Run export, by requested args.
 	 * Returns XML with exported data.
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function run() {
 		if ( 'all' !== $this->args['content'] && post_type_exists( $this->args['content'] ) ) {
@@ -98,21 +98,37 @@ class WP_Exporter {
 			$limit = 'LIMIT ' . (int) $this->args['limit'] . ' OFFSET ' . (int) $this->args['offset'];
 		}
 
-		if ( ! empty( $this->args['meta_key'] ) ) {
+		if ( ! empty( $this->args['meta_query'] ) ) {
 			if ( $join ) {
 				$join .= ' ';
 			}
 
 			if ( $where ) {
-				$where .= ' AND ';
+				$where .= ' ';
 			}
 
-			$join .= "LEFT JOIN {$this->wpdb->postmeta} ON ({$this->wpdb->posts}.ID = {$this->wpdb->postmeta}.post_id)";
-			$where .= $this->wpdb->prepare( "{$this->wpdb->postmeta}.meta_key = %s", $this->args['meta_key'] );// phpcs:ignore
+			$meta_query = new \WP_Meta_Query( $this->args['meta_query'] );
+
+			global $wpdb;
+
+			$query_clauses = $meta_query->get_sql( 'post', $wpdb->posts, 'ID' );
+
+			$join .= $query_clauses['join'];
+			$where .= $query_clauses['where'];
 		}
 
 		// Grab a snapshot of post IDs, just in case it changes during the export.
 		$post_ids = $this->wpdb->get_col( "SELECT ID FROM {$this->wpdb->posts} $join WHERE $where $limit" );// phpcs:ignore
+
+		if ( ! empty( $this->args['include_post_featured_image_as_attachment'] ) ) {
+			foreach ( $post_ids as $post_id ) {
+				$thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true );
+
+				if ( $thumbnail_id && false === array_search( $thumbnail_id, $post_ids, true ) ) {
+					$post_ids [] = $thumbnail_id;
+				}
+			}
+		}
 
 		/*
 		 * Get the requested terms ready, empty unless posts filtered by category
@@ -156,7 +172,10 @@ class WP_Exporter {
 			unset( $categories, $custom_taxonomies, $custom_terms );
 		}
 
-		return $this->get_xml_export( $post_ids, $cats, $tags, $terms );
+		return [
+			'ids' => $post_ids,
+			'xml' => $this->get_xml_export( $post_ids, $cats, $tags, $terms ),
+		];
 	}
 
 	/**
@@ -554,7 +573,7 @@ class WP_Exporter {
 					$comments  = array_map( 'get_comment', $_comments );
 					foreach ( $comments as $c ) {
 
-						$result .= $result .= $this->indent( 3 ) . '<wp:comment>' . PHP_EOL;
+						$result .= $this->indent( 3 ) . '<wp:comment>' . PHP_EOL;
 
 						$result .= $this->indent( 4 ) . '<wp:comment_id>' . (int) $c->comment_ID . '</wp:comment_id>' . PHP_EOL;
 						$result .= $this->indent( 4 ) . '<wp:comment_author>' . $this->wxr_cdata( $c->comment_author ) . '</wp:comment_author>' . PHP_EOL;
@@ -587,15 +606,15 @@ class WP_Exporter {
 								continue;
 							}
 
-							$result .= $result .= $this->indent( 4 ) . '<wp:commentmeta>' . PHP_EOL;
+							$result .= $this->indent( 4 ) . '<wp:commentmeta>' . PHP_EOL;
 
 							$result .= $this->indent( 5 ) . '<wp:meta_key>' . $this->wxr_cdata( $meta->meta_key ) . '</wp:meta_key>' . PHP_EOL;
 							$result .= $this->indent( 5 ) . '<wp:meta_value>' . $this->wxr_cdata( $meta->meta_key ) . '</wp:meta_value>' . PHP_EOL;
 
-							$result .= $result .= $this->indent( 4 ) . '</wp:commentmeta>' . PHP_EOL;
+							$result .= $this->indent( 4 ) . '</wp:commentmeta>' . PHP_EOL;
 						}
 
-						$result .= $result .= $this->indent( 3 ) . '</wp:comment>' . PHP_EOL;
+						$result .= $this->indent( 3 ) . '</wp:comment>' . PHP_EOL;
 					}
 
 					$result .= $this->indent( 2 ) . '</item>' . PHP_EOL;
@@ -679,6 +698,18 @@ class WP_Exporter {
 		$rss_info_language = get_bloginfo_rss( 'language' );
 		$pub_date = gmdate( 'D, d M Y H:i:s +0000' );
 
+		$show_page_on_front = 'page' === get_option( 'show_on_front' );
+
+		$page_on_front_xml = '';
+
+		if ( $show_page_on_front ) {
+			$page_on_front_id = (int) get_option( 'page_on_front' );
+
+			if ( in_array( $page_on_front_id, $post_ids ) ) {
+				$page_on_front_xml = "<wp:page_on_front>$page_on_front_id</wp:page_on_front>";
+			}
+		}
+
 		$dynamic = $this->wxr_authors_list( $post_ids ) .
 					$this->wxr_categories_list( $cats ) .
 					$this->wxr_tags_list( $tags ) .
@@ -732,6 +763,7 @@ $generator
 		<wp:wxr_version>$wxr_version</wp:wxr_version>
 		<wp:base_site_url>$wxr_site_url</wp:base_site_url>
 		<wp:base_blog_url>$rss_info_url</wp:base_blog_url>
+		$page_on_front_xml
 $dynamic
 	</channel>
 </rss>

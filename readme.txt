@@ -2,9 +2,9 @@
 Contributors: elemntor, KingYes, ariel.k, jzaltzberg, mati1000, pojosh, bainternet
 Tags: page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, under construction, website builder, landing page builder, front-end builder
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.2.3
+Stable tag: 3.4.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -96,8 +96,8 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= Translated to 56+ Languages & RTL supported. =
-We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (56+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
+= Translated to 59+ Languages & RTL supported. =
+We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (59+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
@@ -217,6 +217,165 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.2 - 2021-08-19 =
+* Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active ([#16055](https://github.com/elementor/elementor/issues/16055), [#16033](https://github.com/elementor/elementor/issues/16033))
+* Fix: Global colors are applied even when they are disabled on Frontend ([#16037](https://github.com/elementor/elementor/issues/16037))
+* Fix: Conditional controls missing when using Dynamic tags ([#16050](https://github.com/elementor/elementor/issues/16050))
+* Fix: Motion Effects popover is not visible ([#16044](https://github.com/elementor/elementor/issues/16044))
+* Fix: Control conditions are not being executed when has capital letter in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+
+= 3.4.1 - 2021-08-18 =
+* Tweak: Missing post types in Site Parts overview screen in Kit Library ([#15249](https://github.com/elementor/elementor/issues/15249))
+* Tweak: Added source=generic parameter when connecting through the top bar
+* Tweak: Added Inline SVG support to the generic video Play icon
+* Fix: Control conditions are not being executed when has dash in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+* Fix: Gradient control doesn't work on frontend when using Global Colors ([#13288](https://github.com/elementor/elementor/issues/13288))
+* Fix: Placeholder values of Column width control shouldn't cascade to Mobile device
+* Fix: Alignment control doesn't work in responsive view in Testimonial widget
+* Fix: Certain responsive controls pass the desktop default to other devices accidentally
+* Fix: Alignment control doesn't work with Additional Custom Breakpoints in Button widget
+* Fix: SVG Icon is not being displayed in the Basic Gallery widget
+* Fix: Activation bug for IDN domains
+
+= 3.4.0 - 2021-08-17 =
+* New: Introducing Additional Custom Breakpoints - Pixel Perfect Design for up to 7 Devices ([#2043](https://github.com/elementor/elementor/issues/2043), [#15488](https://github.com/elementor/elementor/issues/15488), [#15782](https://github.com/elementor/elementor/issues/15782))
+* Experiment: Font Awesome Inline SVG for Optimized performance ([#11772](https://github.com/elementor/elementor/issues/11772))
+* Tweak: Responsive values visibility in Elementor controls ([#3356](https://github.com/elementor/elementor/issues/3356))
+* Tweak: Improved asset loading performance by serving lighter JS files ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Scale controls were added to responsive mode UI ([#15485](https://github.com/elementor/elementor/issues/15485))
+* Tweak: Responsive devices order was changed ([#14662](https://github.com/elementor/elementor/issues/14662), [#2043](https://github.com/elementor/elementor/issues/2043))
+* Tweak: Excluded Elementor Templates from WordPress default sitemap ([#14578](https://github.com/elementor/elementor/issues/14578), [Topic](https://wordpress.org/support/topic/how-to-stop-elementor-templates-appearing-in-wp-sitemap/))
+* Tweak: Responsive capability was added to Alignment control in Testimonial widget ([#11542](https://github.com/elementor/elementor/issues/11542))
+* Tweak: Added translation function to several locations (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Allow extending Section elements using Elementor API (props [@Oxibug](https://github.com/oxibug))
+* Tweak: Converted responsive controls generation in the Editor to JS ([Developers Blog Post](https://developers.elementor.com/additional-custom-breakpoints-technical-details-and-gotchas/))
+* Tweak: Updated Webpack library to v5.40.0
+* Tweak: Added an option to deep-link into Revisions panel screen
+* Tweak: Changed the Kit Library back button text to "Back to Library"
+* Tweak: Added additional information to usage data
+* Tweak: Added compatibility for future feature in Site Settings
+* Tweak: Added CLI support for Import Kit by ID
+* Tweak: Added informative tooltip for Finder element in Elementor admin top bar
+* Tweak: Use template literals in Elementor filter names
+* Tweak: Updated "Getting Started" video playlist
+* Tweak: Enforced better security policies
+* Fix: Dynamic content disappeared if chosen in Code Highlight widget ([#14766](https://github.com/elementor/elementor/issues/14766))
+* Fix: Text size increased on Icon list widget with size set to `em` and a link ([#14829](https://github.com/elementor/elementor/issues/14829))
+* Fix: Undefined `"pro_widgets"` array key message in edge cases (props [@jahir07](https://github.com/jahir07), [@codersaiful](https://github.com/codersaiful), [#15542](https://github.com/elementor/elementor/issues/15542))
+* Fix: UI glitch in Select2 control in Dark mode ([#15473](https://github.com/elementor/elementor/issues/15473))
+* Fix: Re-migrate globals are not working properly in edge cases ([#15477](https://github.com/elementor/elementor/issues/15477), props [@jvernooy](https://github.com/jvernooy))
+* Fix: Gallery widget with Dynamic gallery applied can't be edited or deleted ([#15529](https://github.com/elementor/elementor/issues/15529))
+* Fix: Improved Responsive bar compatibility to RTL sites
+* Fix: Dynamic tags UI glitch in Code Highlight widget
+* Fix: Default Mobile width changed to 360px in Responsive mode
+* Fix: Viewport meta tag was escaped in Canvas page layout
+* Fix: Setting zero offset to Sticky elements is not working properly
+* Fix: Icons are not vertically aligned in Icon List widget
+* Fix: WordPress Audio widget only shows correct styling in live preview but not in the actual site
+* Fix: New tabs do not appear instantly if alignment is not set to Default or Start in Tabs widget
+* Fix: Edit popover was trimmed by the template card in Theme Builder
+* Fix: Duplicate `<style>` tags were printed in several cases
+* Fix: Theme Builder is not working if Import/Export experiment is inactive
+* Fix: UI glitch in Responsive bar in RTL sites
+* Fix: "Edit with Elementor" isn’t working on static Homepages
+* Fix: UI glitches in Kit Library 
+* Fix: Library connect issues after URL change in Kit and template Library
+* Fix: Kit Library not showing all categories
+* Fix: Pro widget promotions flickers after clicking on "See it in action" button
+* Fix: Incorrect hover default color in Text Path widget
+* Fix: Text decoration is not working in Text Path widget
+* Fix: Browser's autocomplete is taking over the results in the Finder
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-4-planned-deprecations/)
+
+= 3.3.1 - 2021-07-20 =
+* Tweak: Added a back to Kit Library button to the Import Kit screen
+* Tweak: Updated `eicons` library to 5.12.0
+* Tweak: Declared compatibility for WordPress 5.8
+* Fix: Some widget style breaks when Improved CSS Loading Experiment is active in certain cases ([#15632](https://github.com/elementor/elementor/issues/15632), [#15683](https://github.com/elementor/elementor/issues/15683), [#15660](https://github.com/elementor/elementor/issues/15660))
+* Fix: Improved CSS Loading experiment learn more link leads to the wrong doc ([#15622](https://github.com/elementor/elementor/issues/15622))
+* Fix: JS error is thrown when using Global widget since Elementor v3.3.0 ([#15648](https://github.com/elementor/elementor/issues/15648), [#15672](https://github.com/elementor/elementor/issues/15672))
+* Fix: Removed deprecated classes calls in System Info screen
+
+= 3.3.0 - 2021-07-13 =
+* New: Introducing Kits Library - Create Entire Websites Faster Than Ever ([#4417](https://github.com/elementor/elementor/issues/4417), [#11341](https://github.com/elementor/elementor/issues/11341))
+* New: Meet the Color Color Sampler - fetch colors from every image and populated color control ([#14868](https://github.com/elementor/elementor/issues/14868))
+* Experiment: Improved CSS Loading - Load widgets CSS only when needed ([#13533](https://github.com/elementor/elementor/issues/13533), [#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Added Animations CSS library to be loaded conditionally when needed when Improved Asset Load experiment is active ([#13533](https://github.com/elementor/elementor/issues/13533), [#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Added the ability to fetch Image from external URL ([#413](https://github.com/elementor/elementor/issues/413))
+* Tweak: Added responsive capabilities to Content width in Section and Inner Section elements ([#12963](https://github.com/elementor/elementor/issues/12963))
+* Tweak: Added “Hidden Elements” User Preference control to choose whether to show or hide hidden elements in responsive mode ([#12316](https://github.com/elementor/elementor/issues/12316))
+* Tweak: Added User Preference control to set the default responsive device when the responsive view is triggered ([#14662](https://github.com/elementor/elementor/issues/14662))
+* Tweak: Added an Elementor top bar to all Elementor screens in the WordPress admin pages for better discoverability ([#15276](https://github.com/elementor/elementor/issues/15276), [#15250](https://github.com/elementor/elementor/issues/15250))
+* Tweak: Added gradient button capabilities to Button instances in Theme Style ([#14731](https://github.com/elementor/elementor/issues/14731))
+* Tweak: Changed Landing Pages experiment to be active by default on all websites
+* Tweak: Improved Kit Import and Export tool to include Posts, Pages, Custom Post Types and WooCommerce Products
+* Tweak: Allow unlimited export of Elementor-created content in Import/Export tool
+* Tweak: Included Homepage setting in Import/Export tool
+* Tweak: Throw an error when running Import process via CLI if user is not Administrator role
+* Tweak: Added Informative modal links in Import/Export tool
+* Tweak: Modified Kit information area to be collapsible in Import/Export tool
+* Tweak: Added custom fields support to Import/Export Experiment
+* Tweak: Added future support for Additional Breakpoints
+* Tweak: Changing the `content-filters` to be accessed publicly
+* Tweak: Regenerate Files admin button resets all page-assets data
+* Tweak: Improved Kit Import and Export tool to include conditions conflicts resolver
+* Tweak: Added Kit information to Import and Export tool
+* Tweak: Added summary screens to Import and Export tool
+* Tweak: Converted Improved Asset Loading Experiment registration to the post save process instead of loading process
+* Tweak: Widgets search can accept non-english strings for better UX
+* Tweak: Polished Responsive top bar UI
+* Tweak: Created an Uploads manager util to better handle files being uploaded
+* Tweak: Added default height to Tablet and Mobile devices
+* Tweak: Polished Select2 control UI
+* Tweak: Added Pro promotion in Submission feature page
+* Tweak: Updated Font Awesome icons library to v5.15.3
+* Tweak: Added a new filter `elementor/document/save/data` to allow manipulation when document save starts
+* Tweak: Added usage schema in `schemas/usage`
+* Tweak: Recalculate elements usage each upgrade
+* Tweak: Added "Recreate Kit" button in Elementor settings only when the Default Kit does not exist
+* Tweak: Made `elementorFrontend.getDeviceSetting()` method dynamic
+* Fix: Inline editing not working when the Optimized DOM experiment is on ([#14703](https://github.com/elementor/elementor/issues/14703))
+* Fix: Exit animation flickers in several cases ([#14459](https://github.com/elementor/elementor/issues/14459), [#13180](https://github.com/elementor/elementor/issues/14703))
+* Fix: Lightbox is not working in the frontend ([#15080](https://github.com/elementor/elementor/issues/15080), [#15085](https://github.com/elementor/elementor/issues/15085))
+* Fix: Prevent Default Kit from being recreated when kit not exists ([#13299](https://github.com/elementor/elementor/issues/13299))
+* Fix: Social icons alignment shift right in Safari browsers ([#13122](https://github.com/elementor/elementor/issues/13122))
+* Fix: Gradient control doesn't work when using Global Colors ([#13288](https://github.com/elementor/elementor/issues/13288))
+* Fix: Social Icons and Share button space disappeared when optimizing the HTML ([#13279](https://github.com/elementor/elementor/issues/13279))
+* Fix: UI glitch in the empty state of Global widgets tab
+* Fix: Breakpoints values in the Panel are not enforced
+* Fix: Error thrown in Template library if Expert template been imported
+* Fix: Panel search bar appears above the overlay on load
+* Fix: Slides widget is not displaying properly in the Editor
+* Fix: Activation account connection error on IDN domains
+* Fix: Video item didn’t started playing without adding an image overlay in Media Carousel widget
+* Fix: Inline editing not working when the Optimized DOM experiment is active
+* Fix: Site Identity data been transferred when importing a Kit
+* Fix: WordPress content Featured images are not being imported when applying a Kit
+* Fix: Post Excerpt is not imported when applying a Kit via Import Kit tool
+* Fix: Default Kit file not being created in Multisite WordPress instances
+* Fix: Dark mode UI glitches in Import/Export tool
+* Fix: Close and back to dashboard buttons are not being redirected to the correct page in Import/Export experiment
+* Fix: Collapse button disappeared on mobile if the user not logged in Video Playlist widget
+* Fix: Import process fail message is shown when importing a Kit from ThemeForest
+* Fix: Large images optimized by WordPress can't be displayed properly via dynamic Toolset fields
+* Fix: Dynamic control is not working in Text Path widget
+* Fix: Column removed from a section in the Navigator resulted in an empty section
+* Fix: Unable to drag and drop columns from one above other
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-3-planned-deprecations/)
+
+= 3.2.5 - 2021-06-16 =
+* Fix: Reverted Replace URL fix that caused the Default Kit to get regenerated in certain cases ([#14892](https://github.com/elementor/elementor/issues/14892))
+
+= 3.2.4 - 2021-05-26 =
+* Tweak: Changed Google Maps widget to use API v3 instead of deprecated v2 ([#15090](https://github.com/elementor/elementor/issues/15090))
+* Tweak: Updated Google Fonts list to 05/2021 ([#14732](https://github.com/elementor/elementor/issues/14732), [#14536](https://github.com/elementor/elementor/issues/14536), [#13595](https://github.com/elementor/elementor/issues/13595))
+* Tweak: Changed "Missing Header" text for Compatibility tags in System info screen
+* Fix: Google Maps widget is not loading due to API deprecation ([#15090](https://github.com/elementor/elementor/issues/15090))
+* Fix: Disable Lightbox user preference does not affect the Basic Gallery widget ([#12913](https://github.com/elementor/elementor/issues/12913))
+* Fix: Hardened Lightbox capabilities to enforce better security policies
 
 = 3.2.3 - 2021-05-05 =
 * Fix: `eicons` file couldn't be found when using Custom Breakpoints ([#14718](https://github.com/elementor/elementor/issues/14718), [#14712](https://github.com/elementor/elementor/issues/14712))
