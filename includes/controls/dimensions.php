@@ -85,10 +85,10 @@ class Control_Dimensions extends Control_Base_Units {
 	 */
 	public function content_template() {
 		$dimensions = [
-			'top' => __( 'Top', 'elementor' ),
-			'right' => __( 'Right', 'elementor' ),
-			'bottom' => __( 'Bottom', 'elementor' ),
-			'left' => __( 'Left', 'elementor' ),
+			'top' => esc_html__( 'Top', 'elementor' ),
+			'right' => esc_html__( 'Right', 'elementor' ),
+			'bottom' => esc_html__( 'Bottom', 'elementor' ),
+			'left' => esc_html__( 'Left', 'elementor' ),
 		];
 		?>
 		<div class="elementor-control-field">
@@ -98,34 +98,48 @@ class Control_Dimensions extends Control_Base_Units {
 				<ul class="elementor-control-dimensions">
 					<?php
 					foreach ( $dimensions as $dimension_key => $dimension_title ) :
-						$control_uid = $this->get_control_uid( $dimension_key );
 						?>
 						<li class="elementor-control-dimension">
-							<input id="<?php echo $control_uid; ?>" type="number" data-setting="<?php echo esc_attr( $dimension_key ); ?>"
-								   placeholder="<#
-							   if ( _.isObject( data.placeholder ) ) {
-								if ( ! _.isUndefined( data.placeholder.<?php echo $dimension_key; ?> ) ) {
-									print( data.placeholder.<?php echo $dimension_key; ?> );
-								}
-							   } else {
-								print( data.placeholder );
-							   } #>"
-							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php echo $dimension_key; ?>' ) ) { #>
+							<input id="<?php $this->print_control_uid( $dimension_key ); ?>" type="number" data-setting="<?php
+								// PHPCS - the variable $dimension_key is a plain text.
+								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>" placeholder="<#
+								placeholder = view.getControlPlaceholder();
+								if ( _.isObject( placeholder ) ) {
+									if ( ! _.isUndefined( placeholder.<?php
+										// PHPCS - the variable $dimension_key is a plain text.
+										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									?> ) ) {
+										print( placeholder.<?php
+											// PHPCS - the variable $dimension_key is a plain text.
+											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										?> );
+									}
+								} else {
+								print( placeholder );
+								} #>"
+							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
+								// PHPCS - the variable $dimension_key is a plain text.
+								echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>' ) ) { #>
 								disabled
 								<# } #>
 									/>
-							<label for="<?php echo esc_attr( $control_uid ); ?>" class="elementor-control-dimension-label"><?php echo $dimension_title; ?></label>
+							<label for="<?php $this->print_control_uid( $dimension_key ); ?>" class="elementor-control-dimension-label"><?php
+								// PHPCS - the variable $dimension_title holds an escaped translated value.
+								echo $dimension_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?></label>
 						</li>
 					<?php endforeach; ?>
 					<li>
 						<button class="elementor-link-dimensions tooltip-target" data-tooltip="<?php echo esc_attr__( 'Link values together', 'elementor' ); ?>">
 							<span class="elementor-linked">
 								<i class="eicon-link" aria-hidden="true"></i>
-								<span class="elementor-screen-only"><?php echo __( 'Link values together', 'elementor' ); ?></span>
+								<span class="elementor-screen-only"><?php echo esc_html__( 'Link values together', 'elementor' ); ?></span>
 							</span>
 							<span class="elementor-unlinked">
 								<i class="eicon-chain-broken" aria-hidden="true"></i>
-								<span class="elementor-screen-only"><?php echo __( 'Unlinked values', 'elementor' ); ?></span>
+								<span class="elementor-screen-only"><?php echo esc_html__( 'Unlinked values', 'elementor' ); ?></span>
 							</span>
 						</button>
 					</li>

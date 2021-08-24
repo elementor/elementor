@@ -12,18 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
-	public function tearDown() {
-		parent::tearDown();
-
-		$experiments = $this->elementor()->experiments;
-
-		$features = $experiments->get_features();
-
-		foreach ( $features as $feature_name => $feature ) {
-			$experiments->remove_feature( $feature_name );
-		}
-	}
-
 	/** @dataProvider promotion_options_data_provider */
 	public function test_should_print__when_option_is_enabled( $option_name ) {
 		// Arrange
@@ -76,6 +64,8 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 
 		// Act
 		$result = $notice->should_print();
+
+		$this->remove_test_features();
 
 		// Assert
 		$this->assertTrue( $result );
@@ -173,6 +163,8 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 		// Act
 		$result = $notice->should_print();
 
+		$this->remove_test_features();
+
 		// Assert
 		$this->assertFalse( $result );
 	}
@@ -191,5 +183,14 @@ class Test_Elementor_Dev_Notice extends Elementor_Test_Base {
 
 		/** @var Elementor_Dev_Notice $notice */
 		return $notice;
+	}
+
+	private function remove_test_features() {
+		$test_features = [ 'test_feature', 'test_feature2' ];
+
+		foreach ( $test_features as $feature_name ) {
+			$this->elementor()->experiments->remove_feature( $feature_name );
+		}
+
 	}
 }

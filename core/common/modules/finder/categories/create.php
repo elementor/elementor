@@ -2,8 +2,8 @@
 namespace Elementor\Core\Common\Modules\Finder\Categories;
 
 use Elementor\Core\Common\Modules\Finder\Base_Category;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -25,7 +25,7 @@ class Create extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Create', 'elementor' );
+		return esc_html__( 'Create', 'elementor' );
 	}
 
 	/**
@@ -54,12 +54,12 @@ class Create extends Base_Category {
 			if ( Source_Local::CPT === $post_type ) {
 				$url = admin_url( Source_Local::ADMIN_MENU_SLUG . '#add_new' );
 			} else {
-				$url = Utils::get_create_new_post_url( $post_type );
+				$url = Plugin::$instance->documents->get_create_new_post_url( $post_type );
 			}
 
 			$items[ $post_type ] = [
 				/* translators: %s the title of the post type */
-				'title' => sprintf( __( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
+				'title' => sprintf( esc_html__( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
 				'icon' => 'plus-circle-o',
 				'url' => $url,
 				'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],

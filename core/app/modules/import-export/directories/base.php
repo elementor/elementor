@@ -59,7 +59,7 @@ abstract class Base {
 			$parent_name = $this->parent->get_name();
 
 			if ( $parent_name ) {
-				$parent_name .= DIRECTORY_SEPARATOR;
+				$parent_name .= '/';
 			}
 
 			$path = $parent_name . $path;
@@ -120,7 +120,20 @@ abstract class Base {
 
 	private function register_directories() {
 		$sub_directories = $this->get_default_sub_directories();
+		$path = $this->get_path();
 
-		$this->sub_directories = apply_filters( 'elementor/kit/import-export/directory/' . $this->get_path(), $sub_directories, $this );
+		/**
+		 * Kit sub directories.
+		 *
+		 * Filters sub directories when importing/exporting kits.
+		 *
+		 * The dynamic portion of the hook name, `$path`, refers to the directory path.
+		 *
+		 * @param array $sub_directories A list of sub directories.
+		 * @param Elementor\Core\App\Modules\ImportExport\Directories\Base $this The base class instance.
+		 */
+		$sub_directories = apply_filters( "elementor/kit/import-export/directory/{$path}", $sub_directories, $this );
+
+		$this->sub_directories = $sub_directories;
 	}
 }

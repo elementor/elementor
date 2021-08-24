@@ -20,7 +20,7 @@ SLACK_CHANNELS_ARRAY=(`echo $SLACK_CHANNELS | sed 's/,/\n/g'`)
 SLACK_BOT_NAME="ElementorBot"
 
 messageText="@channel Elementor \`v${PACKAGE_VERSION}\` has been released! Saddle up partners!"
-#for CHANNEL in "${SLACK_CHANNELS_ARRAY[@]}"
-#do
-#	curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${CHANNEL}&text=${messageText}&link_names=true"
-#done
+for CHANNEL in "${SLACK_CHANNELS_ARRAY[@]}"
+do
+	curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${CHANNEL}&text=${messageText}&link_names=true"
+done
