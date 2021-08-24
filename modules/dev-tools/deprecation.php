@@ -235,7 +235,8 @@ class Deprecation {
 		$print_deprecated = $this->check_deprecation( $function, $version, $replacement, $base_version );
 
 		if ( $print_deprecated ) {
-			_deprecated_function( $function, $version, $replacement );
+			// PHPCS - We need to echo special characters because they can exist in function calls.
+			_deprecated_function( $function, esc_html( $version ), $replacement );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -256,7 +257,7 @@ class Deprecation {
 		$print_deprecated = $this->check_deprecation( $hook, $version, $replacement, $base_version );
 
 		if ( $print_deprecated ) {
-			_deprecated_hook( $hook, $version, $replacement );
+			_deprecated_hook( esc_html( $hook ), esc_html( $version ), esc_html( $replacement ) );
 		}
 	}
 
@@ -278,22 +279,25 @@ class Deprecation {
 
 		if ( $print_deprecated ) {
 			$message = empty( $message ) ? '' : ' ' . $message;
-			$error_message_args = [ $argument, $version ];
+			// These arguments are escaped because they are printed later, and are not escaped when printed.
+			$error_message_args = [ esc_html( $argument ), esc_html( $version ) ];
 
 			if ( $replacement ) {
 				/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
-				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s! Use %3$s instead.', 'elementor' );
+				$translation_string = esc_html__( 'The %1$s argument is deprecated since version %2$s! Use %3$s instead.', 'elementor' );
 				$error_message_args[] = $replacement;
 			} else {
 				/* translators: 1: Function argument, 2: Elementor version number. */
-				$translation_string = __( 'The %1$s argument is <strong>deprecated</strong> since version %2$s!', 'elementor' );
+				$translation_string = esc_html__( 'The %1$s argument is deprecated since version %2$s!', 'elementor' );
 			}
 
 			trigger_error(
 				vsprintf(
-					$translation_string,
-					$error_message_args
-				) . $message,
+					// PHPCS - $translation_string is already escaped above.
+					$translation_string,  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					// PHPCS - $error_message_args is an array.
+					$error_message_args  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				) . esc_html( $message ),
 				E_USER_DEPRECATED
 			);
 		}

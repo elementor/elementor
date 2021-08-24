@@ -9,6 +9,7 @@ import CardImage from './ui/card/card-image';
 import CardHeader from './ui/card/card-header';
 import CardOverlay from './ui/card/card-overlay';
 import Checkbox from './ui/atoms/checkbox';
+import Collapse from './molecules/collapse';
 import CssGrid from './ui/atoms/css-grid';
 import Dialog from './ui/dialog/dialog';
 import DragDrop from './ui/atoms/drag-drop';
@@ -42,6 +43,7 @@ export default {
 	CardImage,
 	CardOverlay,
 	Checkbox,
+	Collapse,
 	CssGrid,
 	Dialog,
 	DragDrop,
