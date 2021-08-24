@@ -21,7 +21,7 @@ export class ContextMenuMode extends UiStateBase {
 		// This proccess can be heavy in large document, the timeout makes sure that this proccess will be last in the stack.
 		// ref: https://www.youtube.com/watch?v=8aGhZQkoFbQ
 		setTimeout( () => {
-			elementor.getPreviewContainer().forEachChildrenRecursive( ( child ) => {
+			elementor.getPreviewContainer().children.forEachRecursive( ( child ) => {
 				child.view.triggerMethod( 'toggleSortMode', isActive );
 			} );
 		}, 0 );
