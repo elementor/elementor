@@ -25,7 +25,7 @@ class Create extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Create', 'elementor' );
+		return esc_html__( 'Create', 'elementor' );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Create extends Base_Category {
 
 			$items[ $post_type ] = [
 				/* translators: %s the title of the post type */
-				'title' => sprintf( __( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
+				'title' => sprintf( esc_html__( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
 				'icon' => 'plus-circle-o',
 				'url' => $url,
 				'keywords' => [ 'post', 'page', 'template', 'new', 'create' ],

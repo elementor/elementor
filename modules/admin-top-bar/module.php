@@ -4,7 +4,6 @@ namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +22,8 @@ class Module extends BaseApp {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'admin-top-bar',
-			'title' => __( 'Admin Top Bar', 'elementor' ),
-			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
+			'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
+			'description' => esc_html__( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
