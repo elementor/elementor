@@ -1,5 +1,5 @@
 import AddSectionBase	from 'elementor-views/add-section/base';
-import ContextMenuMode from '../../../ui-states/context-menu-mode';
+import ContextMenuMode from 'elementor-editor/ui-states/context-menu-mode';
 
 var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 
