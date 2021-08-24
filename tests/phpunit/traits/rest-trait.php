@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Traits;
 
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 /**
  * @mixin Elementor_Test_Base

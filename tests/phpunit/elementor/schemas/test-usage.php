@@ -2,11 +2,10 @@
 namespace Elementor\Tests\Phpunit\Schemas;
 
 use Elementor\Plugin;
-use Elementor\Testing\Base_Schema;
-use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
+use ElementorEditorTesting\Base_Schema;
 use JsonSchema\Exception\ValidationException;
 
 class Test_Usage extends Base_Schema {

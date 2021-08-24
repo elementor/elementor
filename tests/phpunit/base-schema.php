@@ -3,6 +3,7 @@ namespace Elementor\Testing;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Tracker;
+use ElementorEditorTesting\Elementor_Test_Base;
 use JsonSchema\Exception\ValidationException;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Validator;

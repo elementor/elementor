@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\History;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\History\Revisions_Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 

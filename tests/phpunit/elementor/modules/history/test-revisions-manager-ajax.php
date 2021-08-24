@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\History;
 
 use Elementor\Modules\History\Revisions_Manager;
-use Elementor\Testing\Elementor_Test_AJAX;
+use ElementorEditorTesting\Elementor_Test_AJAX;
 
 class Elementor_Test_Revisions_Manager_Ajax extends Elementor_Test_AJAX {
 
