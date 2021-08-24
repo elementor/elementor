@@ -87,7 +87,7 @@
 	&.elementor-widget-icon-list {
 
 		.elementor-icon-list-icon svg {
-			$e-icon-list-svg-icon-margin-default-size: 0 calc(var(--e-icon-list-icon-size, 1em) * 0.25) 0 0;
+			$e-icon-list-svg-icon-margin-default-size: 0 calc(#{$e-icon-list-svg-icon-size} * 0.25) 0 0;
 
 			margin: var(--e-icon-list-icon-margin, $e-icon-list-svg-icon-margin-default-size);
 		}
