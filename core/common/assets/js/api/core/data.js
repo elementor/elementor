@@ -123,7 +123,7 @@ export default class Data extends Commands {
 	 * @param {{}} args
 	 * @param {string|null} [format]
 	 *
-	 * @returnss {string} endpoint
+	 * @returns {string} endpoint
 	 */
 	commandToEndpoint( command, args, format = null ) {
 		let endpoint = command;
@@ -200,7 +200,7 @@ export default class Data extends Commands {
 	 * @param {string} command
 	 * @param {object} args
 	 *
-	 * @returnss {ExtractedCommand} command
+	 * @returns {ExtractedCommand} command
 	 */
 	commandExtractArgs( command, args = {} ) {
 		if ( command?.includes( '?' ) ) {
@@ -312,7 +312,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {string} endpoint
 	 *
-	 * @returnss {string} endpoint
+	 * @returns {string} endpoint
 	 */
 	prepareEndpoint( endpoint ) {
 		const splitUrl = endpoint.split( '?' ),
@@ -392,7 +392,7 @@ export default class Data extends Commands {
 	 * @param {string} command
 	 * @param {{}} query
 	 *
-	 * @returnss {{}}
+	 * @returns {{}}
 	 */
 	getCache( component, command, query = {} ) {
 		const args = { query };
