@@ -4,9 +4,9 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
+use ElementorEditorTesting\Factories\Documents;
 
 class Test_Module extends Elementor_Test_Base {
 	/**

@@ -6,12 +6,9 @@ use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Modules\AdminBar\Module as Adminbar_Module;
-use Elementor\Testing\Traits\Kit_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
-	use Kit_Trait;
-
 	public function test_create_default_kit() {
 		// Arrange
 		$manager = Plugin::$instance->kits_manager;

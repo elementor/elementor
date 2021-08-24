@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1644fdd2e6764eebe5aee825bc9cd658",
+    "content-hash": "9690e8c3ea6722e16f368c1c0ccb10e9",
     "packages": [],
     "packages-dev": [
         {
@@ -147,17 +147,17 @@
             "time": "2020-11-10T18:47:58+00:00"
         },
         {
-            "name": "inewlegend/elementor-test-base",
+            "name": "inewlegend/elementor-editor-testing",
             "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNewLegend/elementor-editor-testing.git",
-                "reference": "e2dad247eccb8c7890f4e742f0400f8b23a63124"
+                "reference": "28ab13e4ce923c240b4944ad4ae37d6357044af5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iNewLegend/elementor-editor-testing/zipball/e2dad247eccb8c7890f4e742f0400f8b23a63124",
-                "reference": "e2dad247eccb8c7890f4e742f0400f8b23a63124",
+                "url": "https://api.github.com/repos/iNewLegend/elementor-editor-testing/zipball/28ab13e4ce923c240b4944ad4ae37d6357044af5",
+                "reference": "28ab13e4ce923c240b4944ad4ae37d6357044af5",
                 "shasum": ""
             },
             "require": {
@@ -186,8 +186,7 @@
                 "issues": "https://github.com/iNewLegend/elementor-editor-testing/issues",
                 "source": "https://github.com/iNewLegend/elementor-editor-testing/tree/main"
             },
-            "abandoned": "inewlegend/elementor-editor-testing",
-            "time": "2021-08-23T09:38:44+00:00"
+            "time": "2021-08-24T08:16:48+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -1993,7 +1992,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "inewlegend/elementor-test-base": 20
+        "inewlegend/elementor-editor-testing": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

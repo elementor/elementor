@@ -35,8 +35,6 @@ tests_add_filter( 'muplugins_loaded', function () {
 tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
 require $_tests_dir . '/includes/bootstrap.php';
-require __DIR__ . '/phpunit/traits/rest-trait.php';
-require __DIR__ . '/phpunit/traits/kit-trait.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
