@@ -36,21 +36,32 @@ The full list of data commands, ( including custom & 3rd party commands ) are av
 * It will be priceless to lose such hooks, which can be easily manged by existing mechanism (`$e.commands`).
 
 ## How to use?
-* Create a [Component](components.md) And add a endpoint to it:
+* Create a [Component](components.md) And add endpoints to it:
   
     ```javascript
-    class Component extends $e.modules.ComponentBase {
-      getNamespace() {
-        return 'documents';
-      }
+    class Index extends $e.modules.CommandData {
+        static getEndpointFormat() {
+            return 'documents/{id}';
+        }
+    }
     
-      defaultData() {
-          return {
-            'command-name': 'endpoint-format',
-            'index': 'documents/{id}',
-            'save': 'documents/{id}/save',
-          }
-      }
+    class Save extends $e.modules.CommandData {
+        static getEndpointFormat() {
+            return 'documents/{id}/save';
+        }
+    }
+    
+    class Component extends $e.modules.ComponentBase {
+        getNamespace() {
+            return 'documents';
+        }
+        
+        defaultData() {
+            return {
+                Index,
+                Save,
+            };
+        }
     }
     ```
     
@@ -94,8 +105,39 @@ The full list of data commands, ( including custom & 3rd party commands ) are av
 
         
 ## Guidelines, conventions & file's structure
-  * Please visit [`$e.commands`](commands.md#guidelines-conventions--files-structure)    
+*
+    ```html class:"lineNo"
+    1  📦 component
+    2  │   📜 component.js
+    3  │
+    4  └───📂 commands-data
+    5  │   │   📜 index.js ( has all the commands exported )
+    6  │   │   📜 data-command.js
+    7  │   │   ...
+    ```
 
+* `component/commands-data/index.js` file at line *5*:
+    ```javascript
+    export { DataCommand } from './data-command';
+    ```
+* use `importCommands` example: `component/component.js` file at line *2*:
+    ```javascript
+    import * as commandsData from './commands-data/';
+
+    export class Component extends $e.modules.ComponentBase {
+        getNamespace() {
+            return 'component-name';
+        }
+
+        defaultData() {
+            return this.importCommands( commandsData );
+        }
+    }
+    ```
+  * Please visit [`$e.commands`](commands.md#guidelines-conventions--files-structure)  for more information.  
+
+* Example
+    
 ### **Note:** further information about [`{$e.modules.CommandData}`](../modules/command-data.full.md)**class**.
 
 ### [Back](../index.md) 
