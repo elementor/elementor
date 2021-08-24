@@ -79,6 +79,12 @@ class Utils {
 				'fill' => true,
 			],
 		],
+		'image' => [
+			'img' => [
+				'srcset' => true,
+				'sizes' => true,
+			],
+		],
 	];
 
 	/**
@@ -758,7 +764,7 @@ class Utils {
 		foreach ( $tags as $tag ) {
 			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
 				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
-				$allowed_html = array_merge( $allowed_html, $extended_tags );
+				$allowed_html = array_replace_recursive( $allowed_html, $extended_tags );
 			}
 		}
 
