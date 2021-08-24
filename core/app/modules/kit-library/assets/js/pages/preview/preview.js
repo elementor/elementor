@@ -1,8 +1,10 @@
-import { Icon } from '@elementor/app-ui';
+import ElementorLoading from '../../components/elementor-loading';
 import ItemHeader from '../../components/item-header';
 import Layout from '../../components/layout';
+import PageLoader from '../../components/page-loader';
 import PreviewResponsiveControls from './preview-responsive-controls';
 import useKit from '../../hooks/use-kit';
+import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
@@ -92,12 +94,19 @@ export default function Preview( props ) {
 		[ activeDevice ]
 	);
 
+	usePageTitle( {
+		title: data ?
+			`${ __( 'Kit Library', 'elementor' ) } | ${ data.title }` :
+			__( 'Loading...', 'elementor' ),
+	} );
+
 	if ( isError ) {
-		return __( 'Error!', 'elementor' );
+		// Will be caught by the App error boundary.
+		throw new Error();
 	}
 
 	if ( isLoading ) {
-		return __( 'Loading...', 'elementor' );
+		return <ElementorLoading />;
 	}
 
 	return (
@@ -108,12 +117,7 @@ export default function Preview( props ) {
 				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
 			/>
 		}>
-			{
-				isIframeLoading &&
-					<div className="e-kit-library__preview-loader">
-						<Icon className="eicon-loading eicon-animation-spin" />
-					</div>
-			}
+			{ isIframeLoading && <PageLoader className="e-kit-library__preview-loader" /> }
 			{
 				previewUrl &&
 					<PreviewIframe

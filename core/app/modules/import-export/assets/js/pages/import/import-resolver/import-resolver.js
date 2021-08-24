@@ -71,8 +71,8 @@ export default function ImportResolver() {
 					</Notice>
 				}
 
-				<Panel>
-					<Panel.Header>
+				<Panel isOpened={ true }>
+					<Panel.Header toggle={ false }>
 						<Panel.Headline>{ __( 'Select the items you want to keep and apply:', 'elementor' ) }</Panel.Headline>
 					</Panel.Header>
 

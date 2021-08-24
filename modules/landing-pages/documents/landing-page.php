@@ -27,6 +27,10 @@ class Landing_Page extends PageBase {
 		return $properties;
 	}
 
+	public static function get_type() {
+		return Landing_Pages_Module::DOCUMENT_TYPE;
+	}
+
 	/**
 	 * @access public
 	 */
@@ -39,7 +43,7 @@ class Landing_Page extends PageBase {
 	 * @static
 	 */
 	public static function get_title() {
-		return __( 'Landing Page', 'elementor' );
+		return esc_html__( 'Landing Page', 'elementor' );
 	}
 
 	/**
@@ -48,6 +52,10 @@ class Landing_Page extends PageBase {
 	 */
 	public static function get_plural_title() {
 		return __( 'Landing Pages', 'elementor' );
+	}
+
+	public static function get_create_url() {
+		return parent::get_create_url() . '#library';
 	}
 
 	/**

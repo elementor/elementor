@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Connect extends Common_App {
 
 	public function get_title() {
-		return __( 'Connect', 'elementor' );
+		return esc_html__( 'Connect', 'elementor' );
 	}
 
 	/**

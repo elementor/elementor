@@ -270,7 +270,8 @@ class Test_Manager extends Elementor_Test_Base {
 	public function test_commands_formats() {
 		$this->manager->run_server();
 
-		// Deprecated.
-		$this->assertEquals( [], $this->manager->command_formats );
+		$this->assertEquals( [
+			'template-library/templates' => 'template-library/templates',
+		], $this->manager->command_formats );
 	}
 }

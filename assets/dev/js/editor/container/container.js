@@ -1,5 +1,6 @@
 import ArgsObject from '../../modules/imports/args-object';
 import Panel from './panel';
+import ChildrenArray from './model/children-array';
 
 /**
  * TODO: ViewsOptions
@@ -63,9 +64,9 @@ export default class Container extends ArgsObject {
 	/**
 	 * Container children(s).
 	 *
-	 * @type {Array}
+	 * @type {ChildrenArray}
 	 */
-	children = [];
+	children = new ChildrenArray();
 
 	/**
 	 * Container dynamic.
@@ -117,6 +118,13 @@ export default class Container extends ArgsObject {
 	panel;
 
 	/**
+	 * Controls placeholders.
+	 *
+	 * @type {{}}
+	 */
+	placeholders = {};
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create container.
@@ -159,7 +167,7 @@ export default class Container extends ArgsObject {
 	}
 
 	initialize() {
-		if ( this.view ) {
+		if ( this.isViewElement() ) {
 			this.addToParent();
 			this.handleChildrenRecursive();
 
@@ -209,6 +217,57 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
+	/**
+	 * Function getAffectingControls().
+	 *
+	 * Should return all controls that effecting the container.
+	 */
+	getAffectingControls() {
+		const result = {},
+			activeControls = this.settings.getActiveControls();
+
+		Object.entries( activeControls ).forEach( ( [ controlName, control ] ) => {
+			const controlValue = this.settings.get( control.name );
+
+			if ( control.global && ! controlValue?.length ) {
+				if ( this.globals.get( control.name )?.length || this.getGlobalDefault( controlName ).length ) {
+					control.global.utilized = true;
+
+					result[ controlName ] = control;
+
+					return;
+				}
+			}
+
+			if ( control.dynamic ) {
+				if ( this.dynamic.get( controlName ) ) {
+					control.dynamic.utilized = true;
+
+					result[ controlName ] = control;
+
+					return;
+				}
+			}
+
+			if ( controlValue === control.default ) {
+				return;
+			}
+
+			if ( ! controlValue ) {
+				return;
+			}
+
+			if ( 'object' === typeof controlValue &&
+				Object.values( controlValue ).join() === Object.values( control.default ).join() ) {
+				return;
+			}
+
+			result[ controlName ] = control;
+		} );
+
+		return result;
+	}
+
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
 			Object.values( this.view.children._views ).forEach( ( view ) => {
@@ -217,11 +276,15 @@ export default class Container extends ArgsObject {
 				}
 				const container = view.container;
 
-				container.parent.children[ view._index ] = container;
+				// Since the way 'global-widget' rendered, it does not have parent sometimes.
+				if ( container.parent.children ) {
+					container.parent.children[ view._index ] = container;
+				}
+
 				container.handleChildrenRecursive();
 			} );
 		} else {
-			this.children = [];
+			this.children.clear();
 		}
 	}
 
@@ -371,52 +434,24 @@ export default class Container extends ArgsObject {
 		return result;
 	}
 
-	/**
-	 * Function findChildrenRecursive().
-	 *
-	 * Will run over children recursively and pass the children to the callback till the callback returns positive value.
-	 *
-	 * @param {function(container:Container)} callback
-	 *
-	 * @returns {false|Container}
-	 */
 	findChildrenRecursive( callback ) {
-		if ( callback( this ) ) {
-			return this;
-		}
+		elementorCommon.helpers.softDeprecated(
+			'container.findChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.findRecursive( callback )'
+		);
 
-		if ( this.children.length ) {
-			for ( const container of this.children ) {
-				const foundChildren = container.findChildrenRecursive( callback );
-
-				if ( foundChildren ) {
-					return foundChildren;
-				}
-			}
-		}
-
-		return false;
+		return this.children.findRecursive( callback );
 	}
 
-	/**
-	 * Function forEachChildrenRecursive().
-	 *
-	 * Will run over children recursively.
-	 *
-	 * @param {function(container:Container)} callback
-	 *
-	 * @returns {false|Container}
-	 */
 	forEachChildrenRecursive( callback ) {
-		callback( this );
+		elementorCommon.helpers.softDeprecated(
+			'container.forEachChildrenRecursive( callback )',
+			'3.5.0',
+			'container.children.forEachRecursive( callback )'
+		);
 
-		if ( this.children.length ) {
-			for ( const container of this.children ) {
-				container.forEachChildrenRecursive( callback );
-			}
-		}
-
-		return false;
+		return this.children.forEachRecursive( callback );
 	}
 
 	/**
@@ -460,6 +495,10 @@ export default class Container extends ArgsObject {
 		return Container.TYPE_REPEATER_ITEM === this.type;
 	}
 
+	isViewElement() {
+		return this.view && this.model.get( 'elType' );
+	}
+
 	getSetting( name, localOnly = false ) {
 		const localValue = this.settings.get( name );
 
@@ -497,7 +536,10 @@ export default class Container extends ArgsObject {
 
 		// it's a global settings with additional controls in group.
 		if ( control.groupType ) {
-			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( /(_tablet|_mobile)$/, '' );
+			// A regex containing all of the active breakpoints' prefixes ('_mobile', '_tablet' etc.).
+			const responsivePrefixRegex = elementor.breakpoints.getActiveMatchRegex();
+
+			let propertyName = control.name.replace( control.groupPrefix, '' ).replace( responsivePrefixRegex, '' );
 
 			if ( ! data.value[ elementor.config.kit_config.typography_prefix + propertyName ] ) {
 				return;

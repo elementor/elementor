@@ -9,20 +9,24 @@ import ImportFailedDialog from '../../../shared/import-failed-dialog/import-fail
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
+import Button from 'elementor-app/ui/molecules/button';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax } = useAjax(),
+	const { ajaxState, setAjax, ajaxActions } = useAjax(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
+		referrer = location.hash.match( 'referrer=([^&]+)' ),
 		resetImportProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
+			setIsLoading( false );
+			ajaxActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
@@ -47,6 +51,8 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
+		} else if ( 'error' === ajaxState.status ) {
+			setIsImportFailed( true );
 		}
 	}, [ ajaxState.status ] );
 
@@ -63,6 +69,16 @@ export default function ImportKit() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
+				{
+					'kit-library' === referrer?.[1] &&
+					<Button
+						className="e-app-import__back-to-library"
+						icon="eicon-chevron-left"
+						text={ __( 'Back to Kit Library', 'elementor' ) }
+						onClick={ () => navigate( '/kit-library' ) }
+					/>
+				}
+
 				<PageHeader
 					heading={ __( 'Import a Template Kit', 'elementor' ) }
 					description={ [

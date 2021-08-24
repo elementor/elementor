@@ -18,6 +18,16 @@ $root: e-app-export-kit;
 			margin-inline-start: spacing(10);
 		}
 	}
+
+	&-info-modal {
+		&__icon {
+			padding-inline-start: spacing(10);
+		}
+
+		&__heading {
+			margin-bottom: spacing(20);
+		}
+	}
 }
 
 .eps-theme-dark {

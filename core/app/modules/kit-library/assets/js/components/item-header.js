@@ -19,17 +19,8 @@ import './item-header.scss';
  * @param onApply
  * @returns {object}
  */
-function useKitCallToActionButton( model, { onConnect, setError } ) {
-	const navigate = useNavigate();
+function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } ) {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessLevel );
-
-	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
-		model,
-		{
-			onSuccess: ( { data } ) => navigate( `/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library` ),
-			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
-		}
-	);
 
 	return useMemo( () => {
 		if ( type === TYPE_CONNECT ) {
@@ -76,13 +67,41 @@ function useKitCallToActionButton( model, { onConnect, setError } ) {
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
+	const navigate = useNavigate();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ error, setError ] = useState( false );
 
+	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
+		props.model,
+		{
+			onSuccess: ( { data } ) => navigate(
+				`/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library`
+			),
+			onError: ( errorResponse ) => {
+				if ( 401 === errorResponse.code ) {
+					updateSettings( {
+						is_library_connected: false,
+						access_level: 0,
+					} );
+
+					setIsConnectDialogOpen( true );
+
+					return;
+				}
+
+				setError( {
+					code: errorResponse.code,
+					message: __( 'Something went wrong.', 'elementor' ),
+				} );
+			},
+		}
+	);
+
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
-		setError,
+		apply,
+		isApplyLoading,
 	} );
 
 	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
@@ -90,16 +109,19 @@ export default function ItemHeader( props ) {
 	return (
 		<>
 			{
-				error && <Dialog
-					title={ error }
-					approveButtonText={ __( 'Learn More', 'elementor-pro' ) }
-					approveButtonColor="link"
-					approveButtonUrl="#"
-					approveButtonOnClick={ () => setError( false ) }
-					dismissButtonText={ __( 'Close', 'elementor-pro' ) }
-					dismissButtonOnClick={ () => setError( false ) }
-					onClose={ () => setError( false ) }
-				/>
+				error && (
+					<Dialog
+						title={ error.message }
+						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+						approveButtonText={ __( 'Learn More', 'elementor' ) }
+						approveButtonColor="link"
+						approveButtonUrl="http://go.elementor.com/app-kit-library-error"
+						approveButtonOnClick={ () => setError( false ) }
+						dismissButtonText={ __( 'Got it', 'elementor' ) }
+						dismissButtonOnClick={ () => setError( false ) }
+						onClose={ () => setError( false ) }
+					/>
+				)
 			}
 			{
 				isConnectDialogOpen && <ConnectDialog
@@ -116,7 +138,7 @@ export default function ItemHeader( props ) {
 
 						apply();
 					} }
-					onError={ ( message ) => setError( message ) }
+					onError={ ( message ) => setError( { message } ) }
 				/>
 			}
 			<Header
