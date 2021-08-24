@@ -29,6 +29,7 @@ jobs:
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
       - name: Prepare Test
         run: |
+          cd /tmp/wordpress
           wp elementor experiments activate container
       - name: Import Templates
         run: |
