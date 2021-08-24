@@ -39,6 +39,8 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 				callback: ( event ) => {
 					if ( event.isInViewport ) {
 						this.animate();
+
+						observer.unobserve( this.$element[ 0 ] );
 					}
 				},
 			} );
