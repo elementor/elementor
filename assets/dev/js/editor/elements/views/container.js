@@ -4,12 +4,12 @@ import WidgetResizable from './behaviors/widget-resizeable';
 import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' ),
-	ContainerEmptyView = require( 'elementor-elements/views/container-empty' );
+	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
 
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ContainerEmptyView,
+	emptyView: ColumnEmptyView,
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
@@ -24,7 +24,7 @@ const ContainerView = BaseElementView.extend( {
 
 	getCurrentUiStates() {
 		return {
-			directionMode: this.container.settings.get( 'container_flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
+			directionMode: this.container.settings.get( 'flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
 		};
 	},
 
@@ -41,10 +41,10 @@ const ContainerView = BaseElementView.extend( {
 					title: __( 'Container', 'elementor' ),
 					icon: 'eicons-container', // TODO: For future use.
 					settings: {
-						container_flex_direction: '',
-						container_align_items: '',
-						container_justify_content: '',
-						container_flex_wrap: '',
+						flex_direction: '',
+						flex_align_items: '',
+						flex_justify_content: '',
+						flex_wrap: '',
 					},
 				},
 			},

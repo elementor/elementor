@@ -5,10 +5,12 @@
 	--flex-basis: auto;
 	--max-width: inital;
 	--min-height: initial;
+	--height: auto;
 	--text-align: initial;
 	--margin: 0;
 	--padding: 0;
 	--z-index: auto;
+	--overflow: visible;
 	--transition: 0;
 
 	--overlay-mix-blend-mode: initial;
@@ -21,28 +23,18 @@
 	flex: 1 1 var( --flex-basis );
 	max-width: var( --max-width );
 	min-height: var( --min-height );
+	height: var( --height );
 	border-radius: var( --border-radius );
 	margin: var( --margin );
 	padding: var( --padding );
 	z-index: var( --z-index );
+	overflow: var( --overflow );
 	transition: var( --transition );
 
 	// Force center only top-level containers.
 	.elementor-section-wrap > & {
 		margin-right: auto;
 		margin-left: auto;
-	}
-
-	&--height-full {
-		height: 100vh;
-	}
-
-	&--boxed {
-		max-width: var( --container-max-width, 1140px ); // Same as section.
-	}
-
-	& > & {
-		padding: 10px; // Same as columns.
 	}
 
 	.elementor-empty-view {
@@ -89,6 +81,51 @@
 		border-radius: var( --border-radius );
 	}
 
+	// Inner Container handle.
+	// TODO: Find a better solution.
+	& > & {
+		> .elementor-element-overlay {
+			// Hide any setting control which isn't the edit control.
+			.elementor-editor-element-setting {
+				&:not( .elementor-editor-element-edit ),
+				&:first-child::before {
+					display: none;
+				}
+			}
+
+			.elementor-editor-element-edit {
+				width: auto;
+
+				&:hover {
+					background-color: transparent;
+				}
+			}
+
+			.elementor-editor-element-settings {
+				inset: initial;
+				transform: none;
+				inset-inline-start: 0;
+				top: 0;
+				border-radius: 0;
+				border-end-end-radius: 3px;
+				height: auto;
+				background-color: $editor-darkest;
+
+				&:hover {
+					background-color: $editor-darker;
+				}
+
+				// Replace the edit eicon with Container eicon.
+				i::before {
+					content: '\e98d'; // Container eicon.
+					font-size: 10px;
+					display: block;
+					padding: 7px;
+				}
+			}
+		}
+	}
+
 	.e-floating-bar {
 		position: absolute;
 		inset-inline-start: 0;
@@ -131,13 +168,6 @@
 
 		&:focus {
 			outline: none;
-		}
-
-		// TEMP
-		[class^="eicon-flex"] {
-			height: 1.3em;
-			width: 1.3em;
-			background-size: contain;
 		}
 
 		svg {

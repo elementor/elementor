@@ -79,7 +79,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		const self = this,
 			isContainerActive = elementorCommon.config.experimentalFeatures.container;
 
-		// Register the `Inner Section` first if the container experiment is disabled.
+		// Register the `Inner Section` only if the Container experiment is disabled.
 		if ( ! isContainerActive ) {
 			elementsCollection.add( self.getInnerSectionData() );
 		}
@@ -104,11 +104,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				custom: widget.custom,
 				editable: widget.editable,
 			} );
-
-			// Register the `Inner Section` after `Container`.
-			if ( 'container' === widget.name ) {
-				elementsCollection.add( self.getInnerSectionData() );
-			}
 		} );
 
 		jQuery.each( elementor.config.promotionWidgets, ( index, widget ) => {

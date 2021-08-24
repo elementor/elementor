@@ -1,7 +1,12 @@
 import globalHandler from './handlers/global';
-import sectionHandlers from './handlers/section/section';
+import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
+
+// Section handlers.
+import HandlesPosition from './handlers/section/handles-position';
+import StretchedSection from './handlers/section/stretched-section';
+import Shapes from './handlers/section/shapes';
 
 module.exports = function( $ ) {
 	const handlersInstances = {};
@@ -22,8 +27,20 @@ module.exports = function( $ ) {
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
-		this.elementsHandlers.section = sectionHandlers;
-		this.elementsHandlers.container = containerHandlers;
+		this.elementsHandlers.section = [
+			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
+			...backgroundHandlers,
+			HandlesPosition,
+			Shapes,
+		];
+
+		this.elementsHandlers.container = [ ...backgroundHandlers ];
+
+		// Add editor-only handlers.
+		if ( elementorFrontend.isEditMode() ) {
+			this.elementsHandlers.container.push( ...containerHandlers );
+		}
+
 		this.elementsHandlers.column = columnHandlers;
 
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
@@ -47,6 +64,10 @@ module.exports = function( $ ) {
 				this.addHandler( Handler, { $element }, true );
 			} else {
 				const handlerValue = Handler();
+
+				if ( ! handlerValue ) {
+					return;
+				}
 
 				if ( handlerValue instanceof Promise ) {
 					handlerValue.then( ( { default: dynamicHandler } ) => {
@@ -95,10 +116,6 @@ module.exports = function( $ ) {
 	};
 
 	this.getHandler = function( handlerName ) {
-		if ( ! handlerName ) {
-			return;
-		}
-
 		const elementHandler = this.elementsHandlers[ handlerName ];
 
 		if ( isClassHandler( elementHandler ) ) {

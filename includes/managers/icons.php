@@ -92,7 +92,7 @@ class Icons_Manager {
 	 * @since 2.4.0
 	 */
 	private static function init_tabs() {
-		self::$tabs = apply_filters( 'elementor/icons_manager/native', [
+		$initial_tabs = [
 			'fa-regular' => [
 				'name' => 'fa-regular',
 				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
@@ -129,7 +129,18 @@ class Icons_Manager {
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
 			],
-		] );
+		];
+
+		/**
+		 * Initial icon manager tabs.
+		 *
+		 * Filters the list of initial icon manager tabs.
+		 *
+		 * @param array $icon_manager_tabs Initial icon manager tabs.
+		 */
+		$initial_tabs = apply_filters( 'elementor/icons_manager/native', $initial_tabs );
+
+		self::$tabs = $initial_tabs;
 	}
 
 	/**
@@ -143,7 +154,16 @@ class Icons_Manager {
 			self::init_tabs();
 		}
 
-		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', [] );
+		$additional_tabs = [];
+
+		/**
+		 * Additional icon manager tabs.
+		 *
+		 * Filters additional icon manager tabs.
+		 *
+		 * @param array $additional_tabs Additional icon manager tabs. Default is an empty array.
+		 */
+		$additional_tabs = apply_filters( 'elementor/icons_manager/additional_tabs', $additional_tabs );
 
 		return array_merge( self::$tabs, $additional_tabs );
 	}
@@ -429,7 +449,11 @@ class Icons_Manager {
 			$migration_allowed = null === self::get_needs_upgrade_option();
 
 			/**
-			 * allowed to filter migration allowed
+			 * Is icon migration allowed.
+			 *
+			 * Filters whther the icons migration allowed.
+			 *
+			 * @param bool $migration_allowed Is icon migration is allowed.
 			 */
 			$migration_allowed = apply_filters( 'elementor/icons_manager/migration_allowed', $migration_allowed );
 		}

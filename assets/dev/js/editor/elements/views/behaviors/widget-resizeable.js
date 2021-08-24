@@ -71,7 +71,7 @@ export default class extends Marionette.Behavior {
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode;
 
-		return this.view.getContainer().parent?.model?.getSetting( `container_flex_direction${ deviceSuffix }` );
+		return this.view.getContainer().parent?.model?.getSetting( `flex_direction${ deviceSuffix }` );
 	}
 
 	onRender() {
@@ -85,7 +85,10 @@ export default class extends Marionette.Behavior {
 	onResizeStart( event ) {
 		event.stopPropagation();
 
-		this.view.model.trigger( 'request:edit' );
+		// Don't open edit mode when the item is a Container item ( for UX ).
+		if ( ! this.isContainerItem() ) {
+			this.view.model.trigger( 'request:edit' );
+		}
 	}
 
 	onResizeStop( event, ui ) {
@@ -94,7 +97,7 @@ export default class extends Marionette.Behavior {
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			editModel = this.view.getEditModel(),
-			widthKey = this.isContainerItem() ? '_flex_flex_basis' : '_element_custom_width',
+			widthKey = this.isContainerItem() ? '_flex_basis' : '_element_custom_width',
 			unit = editModel.getSetting( widthKey + deviceSuffix ).unit,
 			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
 			settingToChange = {};
@@ -103,9 +106,10 @@ export default class extends Marionette.Behavior {
 		settingToChange[ widthKey + deviceSuffix ] = { unit, size: width };
 
 		if ( this.isContainerItem() ) {
-			settingToChange[ '_flex_flex_size' + deviceSuffix ] = 'custom';
-			settingToChange[ '_flex_flex_shrink' + deviceSuffix ] = 0;
-			settingToChange[ '_flex_flex_grow' + deviceSuffix ] = 0;
+			settingToChange[ '_flex_basis_type' + deviceSuffix ] = 'custom';
+			settingToChange[ '_flex_size' + deviceSuffix ] = 'custom';
+			settingToChange[ '_flex_shrink' + deviceSuffix ] = 0;
+			settingToChange[ '_flex_grow' + deviceSuffix ] = 0;
 		}
 
 		$e.run( 'document/elements/settings', {
