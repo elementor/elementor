@@ -18,19 +18,16 @@ export class KitUpdateBreakpointsPreview extends $e.modules.hookUI.After {
 	apply( args ) {
 		const { settings } = args;
 
-		// If the 'active_breakpoints' control was changed, we need to make sure that all of the breakpoints in the new
-		// setting are now set to active.
 		if ( settings.active_breakpoints ) {
-			// Clear the active breakpoints object before repopulating it, to make sure unselected breakpoints are removed.
-			elementorFrontend.config.responsive.activeBreakpoints = {};
+			// Updating the current document config necessary, even if the page has to be reloaded for these settings
+			// to take place, because users can add breakpoints and then immediately choose a value for them, before
+			// saving the site settings. The breakpoint control's validator needs to have the actual active breakpoints
+			// in the panel at that moment breakpoints config in order to validate the user input properly.
+			elementor.documents.currentDocument.config.settings.settings.active_breakpoints = settings.active_breakpoints;
 
-			settings.active_breakpoints.forEach( ( breakpointName ) => {
-				breakpointName = breakpointName.replace( 'viewport_', '' );
-				// Set its state to enabled.
-				elementorFrontend.config.responsive.breakpoints[ breakpointName ].is_enabled = true;
-				// Add/re-add the breakpoint to the emptied activeBreakpoints object.
-				elementorFrontend.config.responsive.activeBreakpoints[ breakpointName ] = elementorFrontend.config.responsive.breakpoints[ breakpointName ];
-			} );
+			// This flag is used to notify users that if they make a change to the active breakpoints list, they need
+			// to reload the editor for the changes to take effect.
+			elementor.activeBreakpointsUpdated = true;
 
 			// If this is the modified setting, no need to do further checks.
 			return;
