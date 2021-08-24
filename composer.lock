@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9690e8c3ea6722e16f368c1c0ccb10e9",
+    "content-hash": "34bb7aa74df7112833a0ed29431992de",
     "packages": [],
     "packages-dev": [
         {
@@ -148,7 +148,7 @@
         },
         {
             "name": "inewlegend/elementor-editor-testing",
-            "version": "dev-main",
+            "version": "v0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNewLegend/elementor-editor-testing.git",
@@ -163,7 +163,6 @@
             "require": {
                 "justinrainbow/json-schema": "^5.2"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -184,7 +183,7 @@
             "description": "Elementor editor testing base",
             "support": {
                 "issues": "https://github.com/iNewLegend/elementor-editor-testing/issues",
-                "source": "https://github.com/iNewLegend/elementor-editor-testing/tree/main"
+                "source": "https://github.com/iNewLegend/elementor-editor-testing/tree/v0.0.1"
             },
             "time": "2021-08-24T08:16:48+00:00"
         },
@@ -1991,9 +1990,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "inewlegend/elementor-editor-testing": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
