@@ -756,7 +756,7 @@ class Utils {
 		return new \WP_Query( $args );
 	}
 
-	public static function print_wp_kses_extended( string $string, array $tags ) {
+	public static function print_wp_kses_extended( $string, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
 		// Since PHP 5.6 cannot use isset() on the result of an expression.
 		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
