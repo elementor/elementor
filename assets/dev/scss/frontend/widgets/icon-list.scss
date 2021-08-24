@@ -70,7 +70,6 @@
 
 	.elementor-icon-list-icon {
 		display: flex;
-		text-align: var(--e-icon-list-icon-align);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;
@@ -86,10 +85,14 @@
 	// Should be applied only on the icon-list widget, and not on any other widget that rely on this CSS.
 	&.elementor-widget-icon-list {
 
-		.elementor-icon-list-icon svg {
-			$e-icon-list-svg-icon-margin-default-size: 0 calc(#{$e-icon-list-svg-icon-size} * 0.25) 0 0;
+		.elementor-icon-list-icon {
+			text-align: var(--e-icon-list-icon-align);
 
-			margin: var(--e-icon-list-icon-margin, $e-icon-list-svg-icon-margin-default-size);
+			svg {
+				$e-icon-list-svg-icon-margin-default-size: 0 calc(#{$e-icon-list-svg-icon-size} * 0.25) 0 0;
+
+				margin: var(--e-icon-list-icon-margin, $e-icon-list-svg-icon-margin-default-size);
+			}
 		}
 	}
 
