@@ -138,10 +138,10 @@ export class Save extends CommandInternalBase {
 			message = elementor.createAjaxErrorMessage( data );
 
 			if ( 0 === data.readyState ) {
-				message += ' ' + elementor.translate( 'saving_disabled' );
+				message += ' ' + __( 'Saving has been disabled until you’re reconnected.', 'elementor' );
 			}
 		} else if ( data[ 0 ] && data[ 0 ].code ) {
-			message = elementor.translate( 'server_error' ) + ' ' + data[ 0 ].code;
+			message = __( 'Server Error', 'elementor' ) + ' ' + data[ 0 ].code;
 		}
 
 		elementor.notifications.showToast( {

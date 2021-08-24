@@ -15,7 +15,7 @@ export class Move extends CommandHistory {
 		return {
 			containers,
 			type: 'move',
-			subTitle: elementor.translate( 'Item' ),
+			subTitle: __( 'Item', 'elementor' ),
 		};
 	}
 

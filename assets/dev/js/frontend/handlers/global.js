@@ -35,7 +35,15 @@ class GlobalHandler extends elementorModules.frontend.handlers.Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 		if ( this.getAnimation() ) {
-			elementorFrontend.waypoint( this.$element, () => this.animate() );
+			const observer = elementorModules.utils.Scroll.scrollObserver( {
+				callback: ( event ) => {
+					if ( event.isInViewport ) {
+						this.animate();
+					}
+				},
+			} );
+
+			observer.observe( this.$element[ 0 ] );
 		}
 	}
 

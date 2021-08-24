@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * you to add new templates, set custom controls and more.
  *
  * To register new skins for your widget use the `add_skin()` method inside the
- * widget's `_register_skins()` method.
+ * widget's `register_skins()` method.
  *
  * @since 1.0.0
  * @abstract

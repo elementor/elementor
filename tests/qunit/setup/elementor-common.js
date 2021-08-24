@@ -8,4 +8,5 @@ const elementorCommonConfig = {
 	urls: {
 		rest: 'http://localtest/wp-json/',
 	},
+	experimentalFeatures: {},
 };

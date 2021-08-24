@@ -17,25 +17,23 @@ export const Auto = () => {
 			// Editor is not edit able!
 			document.editor.status = 'closed';
 
-			// TODO: Cannot use `assert.rejects` since its return JQuery promise.
-			assert.expect( 1 );
-
-			const deferred = $e.run( 'document/save/auto', { document } );
-
-			deferred.fail( ( message ) => {
-				assert.equal( message, 'Document is not editable' );
-			} );
-
-			// Put back as it was before.
-			deferred.always( () => {
-				document.editor.status = defaultStatus;
-			} );
+			assert.throws(
+				() => {
+					// Put back as it was before.
+					$e.run( 'document/save/auto', { document } ).always( () => {
+						document.editor.status = defaultStatus;
+					} );
+				},
+				new Error( 'Document is not editable' ),
+			);
 		} );
 
 		QUnit.test( 'Resolved: "Document is not changed"', async ( assert ) => {
-			// Create fake document.
 			const document = elementor.documents.getCurrent(),
 				defaultIsChanged = document.editor.isChanged;
+
+			// Editor is edit able!
+			document.editor.status = 'open';
 
 			// Editor is not changed.
 			$e.internal( 'document/save/set-is-modified', { status: false } );

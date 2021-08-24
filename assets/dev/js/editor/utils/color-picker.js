@@ -53,7 +53,7 @@ export default class ColorPicker extends elementorModules.Module {
 
 	addTipsyToClearButton() {
 		this.$clearButton.tipsy( {
-			title: () => elementor.translate( 'clear' ),
+			title: () => __( 'Clear', 'elementor' ),
 			gravity: () => 's',
 		} );
 	}
@@ -79,7 +79,7 @@ export default class ColorPicker extends elementorModules.Module {
 	createPickerHeader() {
 		const { classes } = this.getSettings(),
 			$pickerHeader = jQuery( '<div>', { class: classes.pickerHeader } )
-				.text( elementor.translate( 'color_picker' ) ),
+				.text( __( 'Color Picker', 'elementor' ) ),
 			$pickerToolsContainer = jQuery( '<div>', { class: classes.pickerToolsContainer } ),
 			addButton = this.getSettings( 'addButton' );
 
@@ -106,7 +106,7 @@ export default class ColorPicker extends elementorModules.Module {
 		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.$addButton.tipsy( {
-			title: () => elementor.translate( 'create_global_color' ),
+			title: () => __( 'Create New Global Color', 'elementor' ),
 			gravity: () => 's',
 		} );
 	}

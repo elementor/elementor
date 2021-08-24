@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Library\Documents;
 
 use Elementor\Core\Base\Document;
+use Elementor\Modules\Library\Traits\Library;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.0.0
  */
 abstract class Library_Document extends Document {
+
+	// Library Document Trait
+	use Library;
 
 	/**
 	 * The taxonomy type slug for the library document.
@@ -65,25 +69,5 @@ abstract class Library_Document extends Document {
 		];
 
 		return $config;
-	}
-
-	public function print_admin_column_type() {
-		$admin_filter_url = admin_url( Source_Local::ADMIN_MENU_SLUG . '&elementor_library_type=' . $this->get_name() );
-
-		printf( '<a href="%s">%s</a>', $admin_filter_url, $this->get_title() );
-	}
-
-	/**
-	 * Save document type.
-	 *
-	 * Set new/updated document type.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 */
-	public function save_template_type() {
-		parent::save_template_type();
-
-		wp_set_object_terms( $this->post->ID, $this->get_name(), self::TAXONOMY_TYPE_SLUG );
 	}
 }

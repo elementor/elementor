@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -44,18 +46,74 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * @param $shape String Shape name.
+	 *
+	 * @return string The shape path in the assets folder.
+	 */
+	private function get_shape_url( $shape ) {
+		return ELEMENTOR_ASSETS_URL . 'mask-shapes/' . $shape . '.svg';
+	}
+
+	/**
+	 * Return a translated user-friendly list of the available masking shapes.
+	 *
+	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 *
+	 * @return array Array of shapes with their URL as key.
+	 */
+	private function get_shapes( $add_custom = true ) {
+		$shapes = [
+			'circle' => esc_html__( 'Circle', 'elementor' ),
+			'flower' => esc_html__( 'Flower', 'elementor' ),
+			'sketch' => esc_html__( 'Sketch', 'elementor' ),
+			'triangle' => esc_html__( 'Triangle', 'elementor' ),
+			'blob' => esc_html__( 'Blob', 'elementor' ),
+			'hexagon' => esc_html__( 'Hexagon', 'elementor' ),
+		];
+
+		if ( $add_custom ) {
+			$shapes['custom'] = esc_html__( 'Custom', 'elementor' );
+		}
+
+		return $shapes;
+	}
+
+	/**
+	 * Gets a string of CSS rules to apply, and returns an array of selectors with those rules.
+	 * This function has been created in order to deal with masking for image widget.
+	 * For most of the widgets the mask is being applied to the wrapper itself, but in the case of an image widget,
+	 * the `img` tag should be masked directly. So instead of writing a lot of selectors every time,
+	 * this function builds both of those selectors easily.
+	 *
+	 * @param $rules string The CSS rules to apply.
+	 *
+	 * @return array Selectors with the rules applied.
+	 */
+	private function get_mask_selectors( $rules ) {
+		$mask_selectors = [
+			'default' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container',
+			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img',
+		];
+
+		return [
+			$mask_selectors['default'] => $rules,
+			$mask_selectors['image'] => $rules,
+		];
+	}
+
+	/**
 	 * Register common widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'_section_style',
 			[
-				'label' => __( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Advanced', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -64,7 +122,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_title',
 			[
-				'label' => __( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'render_type' => 'none',
 			]
@@ -73,7 +131,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_margin',
 			[
-				'label' => __( 'Margin', 'elementor' ),
+				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
@@ -85,7 +143,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_padding',
 			[
-				'label' => __( 'Padding', 'elementor' ),
+				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
@@ -97,7 +155,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_z_index',
 			[
-				'label' => __( 'Z-Index', 'elementor' ),
+				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'selectors' => [
@@ -110,13 +168,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_element_id',
 			[
-				'label' => __( 'CSS ID', 'elementor' ),
+				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
 				'default' => '',
-				'title' => __( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
+				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'style_transfer' => false,
 				'classes' => 'elementor-control-direction-ltr',
 			]
@@ -125,13 +183,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_css_classes',
 			[
-				'label' => __( 'CSS Classes', 'elementor' ),
+				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
 				],
 				'prefix_class' => '',
-				'title' => __( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
+				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);
@@ -141,7 +199,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'section_effects',
 			[
-				'label' => __( 'Motion Effects', 'elementor' ),
+				'label' => esc_html__( 'Motion Effects', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -149,7 +207,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_animation',
 			[
-				'label' => __( 'Entrance Animation', 'elementor' ),
+				'label' => esc_html__( 'Entrance Animation', 'elementor' ),
 				'type' => Controls_Manager::ANIMATION,
 				'frontend_available' => true,
 			]
@@ -158,13 +216,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'animation_duration',
 			[
-				'label' => __( 'Animation Duration', 'elementor' ),
+				'label' => esc_html__( 'Animation Duration', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'slow' => __( 'Slow', 'elementor' ),
-					'' => __( 'Normal', 'elementor' ),
-					'fast' => __( 'Fast', 'elementor' ),
+					'slow' => esc_html__( 'Slow', 'elementor' ),
+					'' => esc_html__( 'Normal', 'elementor' ),
+					'fast' => esc_html__( 'Fast', 'elementor' ),
 				],
 				'prefix_class' => 'animated-',
 				'condition' => [
@@ -176,7 +234,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_animation_delay',
 			[
-				'label' => __( 'Animation Delay', 'elementor' ) . ' (ms)',
+				'label' => esc_html__( 'Animation Delay', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
 				'default' => '',
 				'min' => 0,
@@ -194,7 +252,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_background',
 			[
-				'label' => __( 'Background', 'elementor' ),
+				'label' => esc_html__( 'Background', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -204,7 +262,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_tab(
 			'_tab_background_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -221,7 +279,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_tab(
 			'_tab_background_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -236,7 +294,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_background_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -261,7 +319,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_border',
 			[
-				'label' => __( 'Border', 'elementor' ),
+				'label' => esc_html__( 'Border', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -271,7 +329,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_tab(
 			'_tab_border_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -286,7 +344,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -308,7 +366,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_tab(
 			'_tab_border_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -323,7 +381,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_border_radius_hover',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -343,7 +401,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_border_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'range' => [
@@ -365,9 +423,252 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_section();
 
 		$this->start_controls_section(
+			'_section_masking',
+			[
+				'label' => esc_html__( 'Mask', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->add_control(
+			'_mask_switch',
+			[
+				'label' => esc_html__( 'Mask', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'default' => '',
+			]
+		);
+
+		$this->add_control( '_mask_shape', [
+			'label' => esc_html__( 'Shape', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'options' => $this->get_shapes(),
+			'default' => 'circle',
+			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+			'condition' => [
+				'_mask_switch!' => '',
+			],
+		] );
+
+		$this->add_control(
+			'_mask_image',
+			[
+				'label' => esc_html__( 'Image', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'media_type' => 'image',
+				'should_include_svg_inline_option' => true,
+				'library_type' => 'image/svg+xml',
+				'dynamic' => [
+					'active' => true,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( {{URL}} );' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_shape' => 'custom',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_mask_notice',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
+						'<br>' .
+						sprintf(
+							/* translators: %1$s Link open tag, %2$s: Link close tag. */
+							esc_html__( 'Explore additional Premium Shape packs and use them in your site. %1$sLearn More%2$s', 'elementor' ),
+							'<a target="_blank" href="https://go.elementor.com/mask-control">',
+							'</a>'
+						),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_size',
+			[
+				'label' => esc_html__( 'Size', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'contain' => esc_html__( 'Fit', 'elementor' ),
+					'cover' => esc_html__( 'Fill', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
+				],
+				'default' => 'contain',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_size_scale',
+			[
+				'label' => esc_html__( 'Scale', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 100,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-size: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_size' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => esc_html__( 'Center Center', 'elementor' ),
+					'center left' => esc_html__( 'Center Left', 'elementor' ),
+					'center right' => esc_html__( 'Center Right', 'elementor' ),
+					'top center' => esc_html__( 'Top Center', 'elementor' ),
+					'top left' => esc_html__( 'Top Left', 'elementor' ),
+					'top right' => esc_html__( 'Top Right', 'elementor' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+					'custom' => esc_html__( 'Custom', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position_x',
+			[
+				'label' => esc_html__( 'X Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-x: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_position_y',
+			[
+				'label' => esc_html__( 'Y Position', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', '%', 'vw' ],
+				'range' => [
+					'px' => [
+						'min' => -500,
+						'max' => 500,
+					],
+					'em' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'%' => [
+						'min' => -100,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => -100,
+						'max' => 100,
+					],
+				],
+				'default' => [
+					'unit' => '%',
+					'size' => 0,
+				],
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-position-y: {{SIZE}}{{UNIT}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_position' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_mask_repeat',
+			[
+				'label' => esc_html__( 'Repeat', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'no-repeat' => esc_html__( 'No-Repeat', 'elementor' ),
+					'repeat' => esc_html__( 'Repeat', 'elementor' ),
+					'repeat-x' => esc_html__( 'Repeat-X', 'elementor' ),
+					'repeat-Y' => esc_html__( 'Repeat-Y', 'elementor' ),
+					'round' => esc_html__( 'Round', 'elementor' ),
+					'space' => esc_html__( 'Space', 'elementor' ),
+				],
+				'default' => 'no-repeat',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-repeat: {{VALUE}};' ),
+				'condition' => [
+					'_mask_switch!' => '',
+					'_mask_size!' => 'cover',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
 			'_section_position',
 			[
-				'label' => __( 'Positioning', 'elementor' ),
+				'label' => esc_html__( 'Positioning', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -375,14 +676,14 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_width',
 			[
-				'label' => __( 'Width', 'elementor' ),
+				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'inherit' => __( 'Full Width', 'elementor' ) . ' (100%)',
-					'auto' => __( 'Inline', 'elementor' ) . ' (auto)',
-					'initial' => __( 'Custom', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'inherit' => esc_html__( 'Full Width', 'elementor' ) . ' (100%)',
+					'auto' => esc_html__( 'Inline', 'elementor' ) . ' (auto)',
+					'initial' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors_dictionary' => [
 					'inherit' => '100%',
@@ -397,7 +698,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
-				'label' => __( 'Custom Width', 'elementor' ),
+				'label' => esc_html__( 'Custom Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -413,12 +714,12 @@ class Widget_Common extends Widget_Base {
 					'_element_width' => 'initial',
 				],
 				'device_args' => [
-					Controls_Stack::RESPONSIVE_TABLET => [
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
 						'condition' => [
 							'_element_width_tablet' => [ 'initial' ],
 						],
 					],
-					Controls_Stack::RESPONSIVE_MOBILE => [
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
 						'condition' => [
 							'_element_width_mobile' => [ 'initial' ],
 						],
@@ -434,19 +735,19 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_element_vertical_align',
 			[
-				'label' => __( 'Vertical Align', 'elementor' ),
+				'label' => esc_html__( 'Vertical Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'flex-start' => [
-						'title' => __( 'Start', 'elementor' ),
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'center' => [
-						'title' => __( 'Center', 'elementor' ),
+						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
 					],
 					'flex-end' => [
-						'title' => __( 'End', 'elementor' ),
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
@@ -463,7 +764,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_position_description',
 			[
-				'raw' => '<strong>' . __( 'Please note!', 'elementor' ) . '</strong> ' . __( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 				'render_type' => 'ui',
@@ -476,26 +777,26 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_position',
 			[
-				'label' => __( 'Position', 'elementor' ),
+				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
-					'' => __( 'Default', 'elementor' ),
-					'absolute' => __( 'Absolute', 'elementor' ),
-					'fixed' => __( 'Fixed', 'elementor' ),
+					'' => esc_html__( 'Default', 'elementor' ),
+					'absolute' => esc_html__( 'Absolute', 'elementor' ),
+					'fixed' => esc_html__( 'Fixed', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-',
 				'frontend_available' => true,
 			]
 		);
 
-		$start = is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
-		$end = ! is_rtl() ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' );
+		$start = is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
+		$end = ! is_rtl() ? esc_html__( 'Right', 'elementor' ) : esc_html__( 'Left', 'elementor' );
 
 		$this->add_control(
 			'_offset_orientation_h',
 			[
-				'label' => __( 'Horizontal Orientation', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'toggle' => false,
 				'default' => 'start',
@@ -520,7 +821,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_x',
 			[
-				'label' => __( 'Offset', 'elementor' ),
+				'label' => esc_html__( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -559,7 +860,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_x_end',
 			[
-				'label' => __( 'Offset', 'elementor' ),
+				'label' => esc_html__( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -598,17 +899,17 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'_offset_orientation_v',
 			[
-				'label' => __( 'Vertical Orientation', 'elementor' ),
+				'label' => esc_html__( 'Vertical Orientation', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'toggle' => false,
 				'default' => 'start',
 				'options' => [
 					'start' => [
-						'title' => __( 'Top', 'elementor' ),
+						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 					'end' => [
-						'title' => __( 'Bottom', 'elementor' ),
+						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
@@ -622,7 +923,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_y',
 			[
-				'label' => __( 'Offset', 'elementor' ),
+				'label' => esc_html__( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -660,7 +961,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_offset_y_end',
 			[
-				'label' => __( 'Offset', 'elementor' ),
+				'label' => esc_html__( 'Offset', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -700,7 +1001,7 @@ class Widget_Common extends Widget_Base {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
-				'label' => __( 'Responsive', 'elementor' ),
+				'label' => esc_html__( 'Responsive', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -708,50 +1009,13 @@ class Widget_Common extends Widget_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => __( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
 		);
 
-		$this->add_control(
-			'hide_desktop',
-			[
-				'label' => __( 'Hide On Desktop', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-desktop',
-			]
-		);
-
-		$this->add_control(
-			'hide_tablet',
-			[
-				'label' => __( 'Hide On Tablet', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-tablet',
-			]
-		);
-
-		$this->add_control(
-			'hide_mobile',
-			[
-				'label' => __( 'Hide On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'label_on' => 'Hide',
-				'label_off' => 'Show',
-				'return_value' => 'hidden-phone',
-			]
-		);
+		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
 

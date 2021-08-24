@@ -27,7 +27,7 @@ class Edit extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Edit', 'elementor' );
+		return esc_html__( 'Edit', 'elementor' );
 	}
 
 	/**
@@ -65,9 +65,6 @@ class Edit extends Base_Category {
 			'is_editable' => true,
 			'show_in_finder' => true,
 		] );
-
-		// TODO: Remove on 2.4.0.
-		unset( $document_types['widget'] );
 
 		$recently_edited_query_args = [
 			'post_type' => $post_types,
@@ -113,7 +110,7 @@ class Edit extends Base_Category {
 			$icon = 'document-file';
 
 			if ( $is_template ) {
-				$description = __( 'Template', 'elementor' ) . ' / ' . $description;
+				$description = esc_html__( 'Template', 'elementor' ) . ' / ' . $description;
 
 				$icon = 'post-title';
 			}

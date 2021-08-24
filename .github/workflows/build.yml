@@ -49,3 +49,8 @@ jobs:
           mv build elementor
           zip -r $PLUGIN_ZIP_FILENAME elementor
           curl --fail -F "package=@${PLUGIN_ZIP_FILENAME}" "${{ secrets.DEPLOY_BUILDS_ENDPOINT}}&type=core"
+          echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@master
+        with:
+          name: ${{ env.PLUGIN_ZIP_FILENAME }}
+          path: elementor-*.zip

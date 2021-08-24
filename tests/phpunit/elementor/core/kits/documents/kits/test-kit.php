@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents;
 
+use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Plugin;
 use Elementor\Testing\Elementor_Test_Base;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 class Test_Kit extends Elementor_Test_Base {
 
@@ -13,6 +15,8 @@ class Test_Kit extends Elementor_Test_Base {
 	private $kit;
 
 	public function setUp() {
+		parent::setUp();
+
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -49,5 +53,25 @@ class Test_Kit extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertCount( $excepted_count, Revisions_Manager::get_revisions( $this->kit->get_main_id() ) );
+	}
+
+	public function test_settings_layout_before_save() {
+		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
+		$kit_id = $this->kit->get_id();
+		$settings = $this->kit->get_settings();
+
+		// Set custom values for the mobile and tablet settings.
+		$settings['viewport_mobile'] = 599;
+		$settings['viewport_tablet'] = 799;
+
+		// Save the kit to trigger `before_save()`.
+		$this->kit->save( [ 'settings' => $settings ] );
+		// Refresh the kit and kit settings variables.
+		$this->kit = Plugin::$instance->documents->get( $kit_id, false );
+		$settings = $this->kit->get_settings();
+
+		// Check that the legacy mobile and tablet values are equal to the newer mobile and tablet settings + 1px.
+		$this->assertEquals( $settings['viewport_md'], $settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_MOBILE ] + 1 );
+		$this->assertEquals( $settings['viewport_lg'], $settings[ $prefix . Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] + 1 );
 	}
 }

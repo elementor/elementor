@@ -79,7 +79,7 @@ export const Insert = () => {
 				const historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'add', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

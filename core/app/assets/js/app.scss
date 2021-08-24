@@ -1,4 +1,3 @@
-@import "../styles/common";
 @import "./app-api";
 @import "../styles/base";
 
@@ -36,7 +35,7 @@
 		background-color: var(--app-header-background-color);
 		box-shadow: $app-header-box-shadow;
 		position: relative;
-		z-index: 1;
+		z-index: $app-header-z-index;
 		height: $app-header-height;
 		padding: $app-header-padding-y $spp-header-padding-x;
 	}
@@ -54,7 +53,7 @@
 		font-size: $app-header-btn-font-size;
 		line-height: $app-header-btn-line-height;
 
-		&:first-child:not(:last-child) {
+		&:first-child {
 			border-inline-start: 1px solid var(--app-header-buttons-separator-color);
 		}
 
@@ -108,7 +107,7 @@
 		flex-grow: 0;
 		overflow-y: auto;
 		box-shadow: $app-sidebar-box-shadow;
-		z-index: 2;
+		z-index: $app-sidebar-z-index;
 	}
 
 	&__content {

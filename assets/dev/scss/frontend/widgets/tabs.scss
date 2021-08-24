@@ -82,7 +82,7 @@
 
 	.elementor-tab-title {
 		cursor: pointer;
-		outline: none;
+		outline: var(--focus-outline, none);
 	}
 
 	.elementor-tab-desktop-title {
@@ -116,7 +116,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-tabs {
 
@@ -140,7 +140,7 @@
 	}
 }
 
-@media (min-width: $screen-md-min) {
+@media (min-width: $screen-mobile-next) {
 
 	.elementor-widget-tabs {
 
@@ -148,6 +148,10 @@
 
 			.elementor-tabs {
 				display: flex;
+			}
+
+			.elementor-tabs-wrapper {
+				flex-direction: column;
 			}
 
 			.elementor-tabs-content-wrapper {
@@ -165,6 +169,45 @@
 			.elementor-tab-content {
 				border-style: solid;
 				border-top-style: none;
+			}
+		}
+
+		&.elementor-tabs-alignment- {
+
+			&center,
+			&end,
+			&stretch {
+
+				.elementor-tabs-wrapper {
+					display: flex;
+				}
+			}
+
+			&center {
+
+				.elementor-tabs-wrapper {
+					justify-content: center;
+				}
+			}
+
+			&end {
+				.elementor-tabs-wrapper {
+					justify-content: flex-end;
+				}
+			}
+
+			&stretch.elementor-tabs-view-horizontal  {
+
+				.elementor-tab-title {
+					width: 100%;
+				}
+			}
+
+			&stretch.elementor-tabs-view-vertical {
+
+				.elementor-tab-title {
+					height: 100%;
+				}
 			}
 		}
 	}

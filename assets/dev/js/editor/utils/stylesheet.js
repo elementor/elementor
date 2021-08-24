@@ -5,18 +5,6 @@
 			rawCSS = {},
 			devices = {};
 
-		var getDeviceMaxValue = function( deviceName ) {
-			var deviceNames = Object.keys( devices ),
-				deviceNameIndex = deviceNames.indexOf( deviceName ),
-				nextIndex = deviceNameIndex + 1;
-
-			if ( nextIndex >= deviceNames.length ) {
-				throw new RangeError( 'Max value for this device is out of range.' );
-			}
-
-			return devices[ deviceNames[ nextIndex ] ] - 1;
-		};
-
 		var queryToHash = function( query ) {
 			var hash = [];
 
@@ -33,11 +21,12 @@
 			hash = hash.split( '-' ).filter( String );
 
 			hash.forEach( function( singleQuery ) {
-				var queryParts = singleQuery.split( '_' ),
+				// split {max}/{min}_{device name} to separate strings
+				var queryParts = singleQuery.split( /_(.+)/ ),
 					endPoint = queryParts[ 0 ],
 					deviceName = queryParts[ 1 ];
 
-				query[ endPoint ] = 'max' === endPoint ? getDeviceMaxValue( deviceName ) : devices[ deviceName ];
+				query[ endPoint ] = 'max' === endPoint ? devices[ deviceName ] : elementorFrontend.breakpoints.getDeviceMinBreakpoint( deviceName );
 			} );
 
 			return query;
