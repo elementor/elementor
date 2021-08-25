@@ -266,10 +266,7 @@
 			setSide( event );
 
 			elementor.browserImport
-				.createSession()
-				.normalizeInput( event.originalEvent.dataTransfer.items )
-				.setContainer( settings.getDropContainer() )
-				.build()
+				.createSession( event.originalEvent.dataTransfer.items, settings.getDropContainer() )
 				.then( async ( session ) => {
 					isDroppingAllowedState = isDroppingAllowed( event ) || await session.validate();
 
@@ -343,26 +340,20 @@
 
 			event.preventDefault();
 
-			const selected = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
+			const serialized = JSON.stringify( {
+				elements: elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
+			} );
 
 			$e.run( 'document/elements/browser-import', {
 				container: settings.getDropContainer(),
 				input: event.originalEvent.dataTransfer.files.length ?
 					event.originalEvent.dataTransfer.files :
-					JSON.stringify( {
-						elements: [
-							{
-								type: selected.widgetType,
-								options: {
-									custom: selected.custom,
-									settings: selected.settings,
-								},
-							},
-						],
-					} ),
+					serialized,
 				options: {
+					reader: 'json',
+					parser: 'elements',
 					event,
-					target: {
+					container: {
 						at: settings.getDropIndex( currentSide, event ),
 					},
 				},

@@ -16,11 +16,7 @@ export class BrowserImport extends CommandBase {
 
 		containers.forEach( ( container ) => {
 			elementor.browserImport
-				.createSession()
-				.normalizeInput( input )
-				.setContainer( container, options.target )
-				.setOptions( options )
-				.build()
+				.createSession( input, container, options )
 				.then( async ( session ) => {
 					if ( await session.validate() ) {
 						session.apply();

@@ -86,12 +86,13 @@ export default class Manager {
 	 * Get the file-handler that can handle the given file.
 	 *
 	 * @param file
+	 * @param instantiate
 	 * @returns {FileReaderBase|boolean}
 	 */
-	async getReaderOf( file ) {
+	async getReaderOf( file, instantiate = false ) {
 		for ( const reader of Object.values( this.getReaders() ) ) {
 			if ( await reader.validate( file ) ) {
-				return reader;
+				return instantiate ? new reader( file ) : reader;
 			}
 		}
 
@@ -99,26 +100,26 @@ export default class Manager {
 	}
 
 	/**
-	 * Get the suitable parser for a file, according to its reader.
+	 * Get the file-parser that can handle the given file.
 	 *
-	 * @param reader
+	 * @param file
+	 * @param instantiate
 	 * @returns {Promise<FileParserBase|boolean>}
 	 */
-	async getParserOf( reader ) {
-		// This methods requires an instance of a file-parser since the parser's `validate` method using it to check
-		// whether it can handle the file.
-		if ( reader instanceof FileReaderBase ) {
-			const parsers = this.getParsers( reader.constructor.getName() );
+	async getParserOf( file, instantiate = false ) {
+		const reader = await this.getReaderOf( file, true ),
+			parsers = this.getParsers( reader.constructor.getName() );
 
-			for ( const parser of Object.values( parsers ) ) {
-				if ( await parser.validate( reader ) ) {
-					return parser;
-				}
+		for ( const parser of Object.values( parsers ) ) {
+			if ( await parser.validate( reader ) ) {
+				return instantiate ? new parser( reader ) : parser;
 			}
 		}
 
 		return false;
 	}
+
+
 
 	/**
 	 * Resolve the mime-type for an input using the registered parsers.

@@ -59,14 +59,4 @@ export default class FileParserBase {
 	static async validate( reader ) {
 		return false;
 	}
-
-	/**
-	 * Creates a new Container object.
-	 *
-	 * @param args
-	 * @returns {Container}
-	 */
-	createContainer( args ) {
-		return new Container( args );
-	}
 }

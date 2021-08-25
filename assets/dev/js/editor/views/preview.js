@@ -70,8 +70,8 @@ const Preview = BaseSectionsContainerView.extend( {
 		];
 	},
 
-	onCreateElement: function( model, options = {} ) {
-		return BaseSectionsContainerView.prototype.onCreateElement.call(
+	createElementFromModel: function( model, options = {} ) {
+		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
 			Object.assign( {}, options, { newSection: true } )

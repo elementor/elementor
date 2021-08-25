@@ -1,3 +1,6 @@
+import Container from '../../../editor/container/container';
+import PanelElementsElementModel from 'elementor-panel/pages/elements/models/element';
+
 export default class Session {
 	/**
 	 * The Manager instance.
@@ -16,7 +19,7 @@ export default class Session {
 	/**
 	 * The Target instance.
 	 *
-	 * @type {Target}
+	 * @type {Container}
 	 */
 	container;
 
@@ -58,30 +61,41 @@ export default class Session {
 	}
 
 	/**
-	 * Match files to a suitable reader and parser, and handle them.
+	 * Handle files with a suitable file-parser.
+	 *
+	 * @returns {Container[]}
 	 */
 	async apply() {
-		const result = [];
+		const parsed = [];
 
 		for ( const file of this.fileCollection.getFiles() ) {
-			const reader = await this.manager.getReaderOf( file );
+			const parser = await this.manager.getParserOf( file, true);
 
-			if ( reader ) {
-				const readerInstance = new reader( file ),
-					parser = await this.manager.getParserOf( readerInstance );
-
-				if ( parser ) {
-					result.push(
-						new parser( readerInstance ).parse()
-					);
-
-					continue;
-				}
+			if ( parser ) {
+				parsed.push(
+					parser.parse()
+				);
+			} else {
+				throw new Error( 'An error occurred when trying to parse the input' );
 			}
-
-			throw new Error( 'An error occurred when trying to parse the input' );
 		}
 
-		return result;
+		return Promise.all( parsed )
+			.then( ( result ) => this.containerize( result.flat() ) );
+	}
+
+	containerize( elements ) {
+		return elements.map( ( element ) => {
+			switch ( element.type ) {
+				case 'element':
+				case 'widget':
+					return this.container.view.createElementFromContainer(
+						element,
+						Object.assign( this.options.container, {
+							event: this.options.event,
+						} )
+					);
+			}
+		} );
 	}
 }

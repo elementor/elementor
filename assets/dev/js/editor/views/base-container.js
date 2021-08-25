@@ -88,13 +88,29 @@ module.exports = Marionette.CompositeView.extend( {
 		return newView;
 	},
 
-	onCreateElement( model, options = {} ) {
+	createElementFromContainer( container, options = {} ) {
+		const model = container.model.attributes;
+
+		return this.createElementFromModel( Object.assign(
+			model,
+			model.custom,
+			{ settings: model.settings.attributes }
+		), options );
+	},
+
+	createElementFromModel( model, options = {} ) {
+		if ( model instanceof Backbone.Model ) {
+			model = model.attributes;
+		}
+
+		model = Object.assign( model, model.custom );
+
 		if ( elementor.helpers.maybeDisableWidget( model ) ) {
 			return;
 		}
 
 		const historyId = $e.internal( 'document/history/start-log', {
-			type: 'add',
+			type: this.getHistoryType( options.event ),
 			title: elementor.helpers.getModelLabel( model ),
 		} );
 		let container = this.getContainer();
@@ -127,6 +143,21 @@ module.exports = Marionette.CompositeView.extend( {
 		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		return widget;
+	},
+
+	getHistoryType( event ) {
+		if ( event.originalEvent ) {
+			event = event.originalEvent;
+		}
+
+		switch ( event.constructor.name ) {
+			case 'DragEvent':
+				return 'add';
+			case 'ClipboardEvent':
+				return 'paste';
+			default:
+				return 'import';
+		}
 	},
 
 	addChildElement: function( data, options ) {
