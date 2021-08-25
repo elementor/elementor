@@ -438,7 +438,6 @@ class Widget_Icon_List extends Widget_Base {
 			]
 		);
 
-
 		$e_icon_list_icon_css_var = 'var(--e-icon-list-icon-size, 1em)';
 		$e_icon_list_icon_align_left = sprintf( '0 calc(%s * 0.25) 0 0', $e_icon_list_icon_css_var );
 		$e_icon_list_icon_align_center = sprintf( '0 calc(%s * 0.125)', $e_icon_list_icon_css_var );
