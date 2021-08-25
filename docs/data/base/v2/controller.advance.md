@@ -171,6 +171,6 @@
 ```
 
 ## The full example:
- [https://github.com/iNewLegend/elementor-rest-api-example](https://github.com/iNewLegend/elementor-rest-api-example)
+ [Click here](house-full-example)
 
 ## [Back](controller.md)
