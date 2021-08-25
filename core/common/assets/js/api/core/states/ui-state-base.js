@@ -32,9 +32,6 @@ export default class UiStateBase {
 		// Change the current state.
 		this.currentState = newValue;
 
-		// Trigger the `onChange` method before the option's callback.
-		this.onChange( oldValue, newValue );
-
 		// Run the callback if it's callable.
 		if ( 'function' === typeof callback ) {
 			callback( oldValue, newValue );
@@ -94,16 +91,6 @@ export default class UiStateBase {
 			on: '',
 			off: '',
 		};
-	}
-
-	/**
-	 * Triggered on every UI state change.
-	 *
-	 * @param {string} oldValue
-	 * @param {string} newValue
-	 */
-	onChange( oldValue, newValue ) {
-		// Override this method if needed.
 	}
 
 	/**

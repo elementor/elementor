@@ -2,7 +2,6 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import Document from './document';
 import * as commands from './commands/';
 import * as internalCommands from './commands/internal/';
-import * as uiStates from './ui-states/';
 
 export default class Component extends ComponentBase {
 	__construct( args = {} ) {
@@ -35,10 +34,6 @@ export default class Component extends ComponentBase {
 
 	defaultCommandsInternal() {
 		return this.importCommands( internalCommands );
-	}
-
-	defaultUiStates() {
-		return this.importUiStates( uiStates );
 	}
 
 	/**
