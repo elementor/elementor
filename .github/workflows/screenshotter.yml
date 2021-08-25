@@ -33,6 +33,10 @@ jobs:
       - name: Build Package & Run Test
         run: |
           elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true
+      - name: Clean up report data
+        if: failure()
+        run: |
+          node ./.github/scripts/screenshotter-cleanup.js
       - uses: actions/upload-artifact@master
         if: failure()
         with:
