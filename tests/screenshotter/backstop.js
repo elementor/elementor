@@ -1,7 +1,7 @@
 const config = require( './config' );
 
 const getDelay = ( pathname ) => {
-	switch ( pathname) {
+	switch ( pathname ) {
 		case 'audio':
 		case 'video':
 		case 'image-gallery':
@@ -9,7 +9,7 @@ const getDelay = ( pathname ) => {
 		default:
 			return 1000;
 	}
-}
+};
 
 const getScenarios = () => {
 	const scenarios = [];
