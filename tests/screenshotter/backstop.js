@@ -1,15 +1,14 @@
 const config = require( './config' );
 
 const getDelay = ( pathname ) => {
-  switch ( pathname) {
-	  case 'audio':
-	  case 'video':
-	  case 'image-gallery':
-	  	return 3000;
-
-	  default:
-		return 1000;
-  }
+	switch ( pathname) {
+		case 'audio':
+		case 'video':
+		case 'image-gallery':
+			return 3000;
+		default:
+			return 1000;
+	}
 }
 
 const getScenarios = () => {
