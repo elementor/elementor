@@ -266,6 +266,7 @@ abstract class Base_Route {
 			$this->id_arg_name => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
+				'required' => true,
 			],
 		], $args );
 
