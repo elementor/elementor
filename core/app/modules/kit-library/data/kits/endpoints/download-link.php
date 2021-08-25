@@ -21,7 +21,9 @@ class Download_Link extends Endpoint {
 	}
 
 	protected function register() {
-		$this->register_item_route();
+		$this->register_item_route( \WP_REST_Server::READABLE, [
+			'id_arg_type_regex' => '[\w]+',
+		] );
 	}
 
 	public function get_item( $id, $request ) {

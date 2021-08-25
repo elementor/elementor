@@ -2,7 +2,6 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits\Endpoints;
 
 use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
-use Elementor\Core\App\Modules\KitLibrary\Data\Exceptions\Wp_Error_Exception;
 use Elementor\Data\V2\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,7 +25,8 @@ class Favorites extends Endpoint {
 			'id_arg_type_regex' => '[\w]+',
 		];
 
-		$this->register_item_route( \WP_REST_Server::READABLE, $args );
+		$this->register_item_route( \WP_REST_Server::CREATABLE, $args );
+		$this->register_item_route( \WP_REST_Server::DELETABLE, $args );
 	}
 
 	public function create_item( $id, $request ) {

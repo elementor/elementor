@@ -2,6 +2,7 @@
 namespace Elementor\Core\App\Modules\KitLibrary\Data\Kits;
 
 use Elementor\Core\App\Modules\KitLibrary\Data\Base_Controller;
+use Elementor\Data\V2\Base\Exceptions\Error_404;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,7 +26,7 @@ class Controller extends Base_Controller {
 		$data = $this->get_repository()->find( $request->get_param( 'id' ) );
 
 		if ( ! $data ) {
-			return new \WP_Error( 'kit_not_exists', __( 'Kit not exists.', 'elementor' ), [ 'status' => 404 ] );
+			return new Error_404( __( 'Kit not exists.', 'elementor' ), 'kit_not_exists' );
 		}
 
 		return [
@@ -33,7 +34,7 @@ class Controller extends Base_Controller {
 		];
 	}
 
-	public function get_items_args( $methods ) {
+	public function get_collection_params() {
 		return [
 			'force' => [
 				'description' => 'Force an API request and skip the cache.',
