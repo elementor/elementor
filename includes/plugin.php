@@ -506,6 +506,8 @@ class Plugin {
 
 	/**
 	 * @var \Elementor\Data\Manager
+	 *
+	 * @deprecated 3.5.0 Use `\Elementor\Data\V2\Manager` instead.
 	 */
 	public $data_manager;
 
