@@ -57,13 +57,6 @@ class Manager extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/init', function () {
-			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-				'Elementor\Data\Manager',
-				'3.4.0',
-				'Elementor\Data\V2\Manager'
-			);
-		} );
 		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
 	}
 
