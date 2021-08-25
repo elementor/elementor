@@ -41,13 +41,10 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'landing-pages',
-			'title' => __( 'Landing Pages', 'elementor' ),
-			'description' => __( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
+			'title' => esc_html__( 'Landing Pages', 'elementor' ),
+			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.1.0-beta',
-			],
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 	}
 
@@ -143,7 +140,7 @@ class Module extends BaseModule {
 			$landing_page_menu_callback = [ $this, 'print_empty_landing_pages_page' ];
 		}
 
-		$landing_pages_title = __( 'Landing Pages', 'elementor' );
+		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
 
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
@@ -168,7 +165,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
 		}
 		return $this->new_lp_url;
 	}
@@ -190,11 +187,18 @@ class Module extends BaseModule {
 		<div class="e-landing-pages-empty">
 		<?php
 		/** @var Source_Local $source_local */
-		$source_local->print_blank_state_template( __( 'Landing Page', 'elementor' ), $this->get_add_new_landing_page_url(), __( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' ) );
+		$source_local->print_blank_state_template( esc_html__( 'Landing Page', 'elementor' ), $this->get_add_new_landing_page_url(), esc_html__( 'Build Effective Landing Pages for your business\' marketing campaigns.', 'elementor' ) );
 
 		if ( ! empty( $trashed_posts ) ) : ?>
 			<div class="e-trashed-items">
-				<?php echo sprintf( __( 'Or view <a href="%s">Trashed Items</a>', 'elementor' ), admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ); ?>
+				<?php
+					printf(
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ) . '">',
+						'</a>'
+					);
+				?>
 			</div>
 		<?php endif; ?>
 		</div>
@@ -248,19 +252,19 @@ class Module extends BaseModule {
 	 */
 	private function register_landing_page_cpt() {
 		$labels = [
-			'name' => __( 'Landing Pages', 'elementor' ),
-			'singular_name' => __( 'Landing Page', 'elementor' ),
-			'add_new' => __( 'Add New', 'elementor' ),
-			'add_new_item' => __( 'Add New Landing Page', 'elementor' ),
-			'edit_item' => __( 'Edit Landing Page', 'elementor' ),
-			'new_item' => __( 'New Landing Page', 'elementor' ),
-			'all_items' => __( 'All Landing Pages', 'elementor' ),
-			'view_item' => __( 'View Landing Page', 'elementor' ),
-			'search_items' => __( 'Search Landing Pages', 'elementor' ),
-			'not_found' => __( 'No landing pages found', 'elementor' ),
-			'not_found_in_trash' => __( 'No landing pages found in trash', 'elementor' ),
+			'name' => esc_html__( 'Landing Pages', 'elementor' ),
+			'singular_name' => esc_html__( 'Landing Page', 'elementor' ),
+			'add_new' => esc_html__( 'Add New', 'elementor' ),
+			'add_new_item' => esc_html__( 'Add New Landing Page', 'elementor' ),
+			'edit_item' => esc_html__( 'Edit Landing Page', 'elementor' ),
+			'new_item' => esc_html__( 'New Landing Page', 'elementor' ),
+			'all_items' => esc_html__( 'All Landing Pages', 'elementor' ),
+			'view_item' => esc_html__( 'View Landing Page', 'elementor' ),
+			'search_items' => esc_html__( 'Search Landing Pages', 'elementor' ),
+			'not_found' => esc_html__( 'No landing pages found', 'elementor' ),
+			'not_found_in_trash' => esc_html__( 'No landing pages found in trash', 'elementor' ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Landing Pages', 'elementor' ),
+			'menu_name' => esc_html__( 'Landing Pages', 'elementor' ),
 		];
 
 		$args = [
@@ -342,7 +346,11 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			$query->set( 'name', $query->query['pagename'] );
+			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+				set_query_var( 'name', $query->query['pagename'] );
+
+				return $value;
+			} );
 		}
 	}
 
