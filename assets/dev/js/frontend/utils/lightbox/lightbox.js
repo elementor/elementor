@@ -230,16 +230,15 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
-			let videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			let apiProvider = elementorFrontend.utils.baseVideoLoader;
 
-			if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
-				// Vimeo requires the '#t=' param to be last in the URL.
-				const timeMatch = videoURL.match( /#t=[^&]*/ );
-
-				videoURL = videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
+			if ( -1 !== options.url.indexOf( 'vimeo.com' ) ) {
+				apiProvider = elementorFrontend.utils.vimeo;
+			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+				apiProvider = elementorFrontend.utils.youtube;
 			}
 
-			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
 		}
 
 		$videoContainer.append( $videoWrapper );
