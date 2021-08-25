@@ -86,13 +86,29 @@ export default class Manager {
 	 * Get the file-handler that can handle the given file.
 	 *
 	 * @param file
-	 * @param instantiate
+	 * @param options
 	 * @returns {FileReaderBase|boolean}
 	 */
-	async getReaderOf( file, instantiate = false ) {
-		for ( const reader of Object.values( this.getReaders() ) ) {
-			if ( await reader.validate( file ) ) {
-				return instantiate ? new reader( file ) : reader;
+	async getReaderOf( file, options = {} ) {
+		const { instantiate = false, reader: readerName } = options,
+			prepare = async ( reader ) => {
+				return await reader.validate( file ) &&
+					( instantiate ? new reader( file ) : reader );
+			};
+
+		if ( readerName ) {
+			const reader = this.getReaders()[ readerName ];
+
+			if ( reader ) {
+				return await prepare( reader );
+			}
+		} else {
+			for ( const reader of Object.values( this.getReaders() ) ) {
+				const prepared = await prepare( reader );
+
+				if ( prepared ) {
+					return prepared;
+				}
 			}
 		}
 
@@ -103,23 +119,41 @@ export default class Manager {
 	 * Get the file-parser that can handle the given file.
 	 *
 	 * @param file
-	 * @param instantiate
+	 * @param options
 	 * @returns {Promise<FileParserBase|boolean>}
 	 */
-	async getParserOf( file, instantiate = false ) {
-		const reader = await this.getReaderOf( file, true ),
+	async getParserOf( file, options = {} ) {
+		const { instantiate = false, reader: readerName, parser: parserName } = options,
+			reader = await this.getReaderOf( file, {
+				reader: readerName,
+				instantiate: true,
+			} ),
+			prepare = async ( parser ) => {
+				return await parser.validate( reader ) &&
+					( instantiate ? new parser( reader ) : parser );
+			},
 			parsers = this.getParsers( reader.constructor.getName() );
 
-		for ( const parser of Object.values( parsers ) ) {
-			if ( await parser.validate( reader ) ) {
-				return instantiate ? new parser( reader ) : parser;
+		if ( reader ) {
+			if ( parserName ) {
+				const parser = parsers[ parserName ];
+
+				if ( parser ) {
+					return await prepare( parser );
+				}
+			} else {
+				for ( const parser of Object.values( parsers ) ) {
+					const prepared = await prepare( parser );
+
+					if ( prepared ) {
+						return prepared;
+					}
+				}
 			}
 		}
 
 		return false;
 	}
-
-
 
 	/**
 	 * Resolve the mime-type for an input using the registered parsers.

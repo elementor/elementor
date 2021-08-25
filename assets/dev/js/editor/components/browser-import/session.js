@@ -69,7 +69,7 @@ export default class Session {
 		const parsed = [];
 
 		for ( const file of this.fileCollection.getFiles() ) {
-			const parser = await this.manager.getParserOf( file, true);
+			const parser = await this.manager.getParserOf( file, { instantiate: true } );
 
 			if ( parser ) {
 				parsed.push(

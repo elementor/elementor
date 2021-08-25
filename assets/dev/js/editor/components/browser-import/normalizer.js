@@ -7,10 +7,8 @@ export default class Normalizer {
 	 * Normalizer constructor.
 	 *
 	 * @param manager
-	 * @param input
-	 * @param options
 	 */
-	constructor( manager, input, options = {} ) {
+	constructor( manager ) {
 		this.manager = manager;
 	}
 

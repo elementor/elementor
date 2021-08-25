@@ -341,7 +341,9 @@
 			event.preventDefault();
 
 			const serialized = JSON.stringify( {
-				elements: elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
+				elements: [
+					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes
+				],
 			} );
 
 			$e.run( 'document/elements/browser-import', {
