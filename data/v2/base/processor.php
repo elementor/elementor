@@ -21,6 +21,13 @@ abstract class Processor {
 	private $controller;
 
 	/**
+	 * Get processor command.
+	 *
+	 * @return string
+	 */
+	abstract public function get_command();
+
+	/**
 	 * Processor constructor.
 	 *
 	 * @param \Elementor\Data\V2\Base\Controller $controller
@@ -28,11 +35,4 @@ abstract class Processor {
 	public function __construct( $controller ) {
 		$this->controller = $controller;
 	}
-
-	/**
-	 * Get processor command.
-	 *
-	 * @return string
-	 */
-	abstract public function get_command();
 }

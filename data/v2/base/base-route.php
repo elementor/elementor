@@ -53,21 +53,6 @@ abstract class Base_Route {
 	protected $id_arg_type_regex = '[\d]+';
 
 	/**
-	 * Constructor.
-	 *
-	 * run `$this->register()`.
-	 *
-	 * @param \Elementor\Data\V2\Base\Controller $controller
-	 * @param string $route
-	 */
-	protected function __construct( Controller $controller, $route ) {
-		$this->controller = $controller;
-		$this->route = $this->ensure_slashes( $route );
-
-		$this->register();
-	}
-
-	/**
 	 * Ensure start-with and end-with slashes.
 	 *
 	 * '/' => '/'
@@ -362,5 +347,20 @@ abstract class Base_Route {
 		}
 
 		return rest_ensure_response( $result );
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * run `$this->register()`.
+	 *
+	 * @param \Elementor\Data\V2\Base\Controller $controller
+	 * @param string $route
+	 */
+	protected function __construct( Controller $controller, $route ) {
+		$this->controller = $controller;
+		$this->route = $this->ensure_slashes( $route );
+
+		$this->register();
 	}
 }

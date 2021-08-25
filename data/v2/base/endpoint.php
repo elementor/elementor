@@ -23,24 +23,6 @@ abstract class Endpoint extends Base_Route {
 	protected $sub_endpoints = [];
 
 	/**
-	 * Endpoint constructor.
-	 *
-	 * @param \Elementor\Data\V2\Base\Controller|\Elementor\Data\V2\Base\Endpoint $parent
-	 * @param string $route
-	 */
-	public function __construct( $parent, $route = '/' ) {
-		$controller = $parent;
-		$this->parent = $parent;
-
-		// In case, its behave like sub-endpoint.
-		if ( ! ( $parent instanceof Controller ) ) {
-			$controller = $parent->get_controller();
-		}
-
-		parent::__construct( $controller, $route );
-	}
-
-	/**
 	 * Get endpoint name.
 	 *
 	 * @return string
@@ -150,5 +132,23 @@ abstract class Endpoint extends Base_Route {
 		} while ( $current );
 
 		return array_reverse( $ancestors );
+	}
+
+	/**
+	 * Endpoint constructor.
+	 *
+	 * @param \Elementor\Data\V2\Base\Controller|\Elementor\Data\V2\Base\Endpoint $parent
+	 * @param string $route
+	 */
+	public function __construct( $parent, $route = '/' ) {
+		$controller = $parent;
+		$this->parent = $parent;
+
+		// In case, its behave like sub-endpoint.
+		if ( ! ( $parent instanceof Controller ) ) {
+			$controller = $parent->get_controller();
+		}
+
+		parent::__construct( $controller, $route );
 	}
 }
