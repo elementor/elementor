@@ -16,8 +16,6 @@ class Manager extends BaseModule {
 
 	const ROOT_NAMESPACE = 'elementor';
 
-	const REST_BASE = '';
-
 	const VERSION = '1';
 
 	/**
@@ -298,13 +296,15 @@ class Manager extends BaseModule {
 	 * @param string $endpoint
 	 * @param array $args
 	 * @param string $method
+	 * @param string $namespace (optional)
+	 * @param string $version (optional)
 	 *
 	 * @return \WP_REST_Response
 	 */
-	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE ) {
+	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE, $namespace = self::ROOT_NAMESPACE, $version = self::VERSION ) {
 		$this->run_server();
 
-		$endpoint = '/' . self::ROOT_NAMESPACE . '/v' . self::VERSION . '/' . trim( $endpoint, '/' );
+		$endpoint = '/' . $namespace . '/v' . $version . '/' . trim( $endpoint, '/' );
 
 		// Run reset api.
 		$request = new \WP_REST_Request( $method, $endpoint );

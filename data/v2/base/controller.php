@@ -43,15 +43,22 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	private $sub_controllers = [];
 
+	public static function get_default_namespace() {
+		return Manager::ROOT_NAMESPACE;
+	}
+
+	public static function get_default_version() {
+		return Manager::VERSION;
+	}
+
 	/**
 	 * Controller constructor.
 	 *
 	 * Register endpoints on 'rest_api_init'.
-	 *
 	 */
 	public function __construct() {
-		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
-		$this->rest_base = Manager::REST_BASE . $this->get_name();
+		$this->namespace = static::get_default_namespace() . '/v' . static::get_default_version();
+		$this->rest_base = $this->get_name();
 
 		add_action( 'rest_api_init', function () {
 			$this->register(); // Because 'register' is protected.
@@ -299,7 +306,8 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	protected function register_index_endpoint() {
 		if ( ! $this->parent ) {
-			return $this->register_endpoint( new Endpoint\Index( $this ) );
+			$this->register_endpoint( new Endpoint\Index( $this ) );
+			return;
 		}
 
 		$this->register_endpoint( new Endpoint\Index\Sub_Index_Endpoint( $this ) );

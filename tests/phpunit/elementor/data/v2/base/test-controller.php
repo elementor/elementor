@@ -2,7 +2,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base;
 
 use Elementor\Data\V2\Base\Endpoint\Index;
-use Elementor\Data\V2\Manager;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as ControllerWithProcessor;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;
@@ -41,7 +40,7 @@ class Test_Controller extends Data_Test_Base {
 		$actual = $controller->get_namespace();
 
 		// Assert.
-		$this->assertEquals( Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION, $actual );
+		$this->assertEquals( $controller::get_default_namespace() . '/v' . $controller::get_default_version(), $actual );
 	}
 
 	public function test_get_base_route() {
@@ -52,7 +51,7 @@ class Test_Controller extends Data_Test_Base {
 		$actual = $controller->get_base_route() ;
 
 		// Assert.
-		$this->assertEquals( Manager::REST_BASE . $controller->get_name(), $actual );
+		$this->assertEquals( $controller->get_name(), $actual );
 	}
 
 	public function test_get_controller_route() {
