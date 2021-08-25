@@ -5,7 +5,7 @@ var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
-		isIframe: true,
+		context: 'preview',
 		groups: [],
 		eventTargets: [ 'el' ],
 	},
@@ -39,7 +39,7 @@ module.exports = Marionette.Behavior.extend( {
 			afterGroupIndex = contextMenuGroups.length;
 		}
 
-		if ( this.getOption( 'isIframe' ) ) {
+		if ( 'preview' === this.getOption( 'context' ) ) {
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
 				actions: [
@@ -57,7 +57,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
-			isIframe: this.getOption( 'isIframe' ),
+			context: this.getOption( 'context' ),
 		} );
 
 		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
@@ -76,9 +76,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		const isAddSectionView = this.view instanceof AddSectionBase;
-		if ( ! isAddSectionView && this.getOption( 'isIframe' ) && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) ) {
+			const isAddSectionView = this.view instanceof AddSectionBase;
+			if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
 				return;
+			}
 		}
 
 		event.preventDefault();

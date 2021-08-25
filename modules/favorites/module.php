@@ -42,7 +42,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		// Register default types
 		$this->register( Widgets::class );
-		// ...
 
 		$this->populate();
 
@@ -281,7 +280,7 @@ class Module extends BaseModule {
 			new WP_Error(
 				'action_doesnt_exists',
 				sprintf(
-					__( "Action '%s' to apply on favorites doesn't exists", 'elementor' ),
+					esc_html__( "Action '%s' to apply on favorites doesn't exists", 'elementor' ),
 					$action
 				)
 			)
@@ -298,7 +297,7 @@ class Module extends BaseModule {
 			new WP_Error(
 				'type_doesnt_exists',
 				sprintf(
-					__( "Favorites type '%s' doesn't exists", 'elementor' ),
+					esc_html__( "Favorites type '%s' doesn't exists", 'elementor' ),
 					$type
 				)
 			)
@@ -315,7 +314,7 @@ class Module extends BaseModule {
 			new WP_Error(
 				'class_doesnt_exists',
 				sprintf(
-					__( "Can't register type because class '%s' doesn't exists", 'elementor' ),
+					esc_html__( "Can't register type because class '%s' doesn't exists", 'elementor' ),
 					$class
 				)
 			)

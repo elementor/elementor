@@ -168,7 +168,7 @@ export default class Widgets extends FavoriteType {
 	}
 
 	/**
-	 * Get the widget cache object which store widgets config.
+	 * Get the widget cache object which stores the widgets config.
 	 *
 	 * @param widget
 	 * @returns {{}}

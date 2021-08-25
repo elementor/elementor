@@ -34,7 +34,7 @@ module.exports = Marionette.ItemView.extend( {
 		if ( groups.length ) {
 			behaviors.contextMenu = {
 				behaviorClass: ContextMenu,
-				isIframe: false,
+				context: 'panel',
 				groups,
 			};
 		}
