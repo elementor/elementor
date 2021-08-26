@@ -230,6 +230,14 @@ class Group_Control_Typography extends Group_Control_Base {
 				'unit' => 'em',
 			],
 			'size_units' => [ 'px', 'em' ],
+			'range' => [
+				'px' => [
+					'step' => 1,
+				],
+				'em' => [
+					'step' => 0.1,
+				],
+			],
 			'responsive' => true,
 			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',
 		];
