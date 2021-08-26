@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   file-diff:
     runs-on: ubuntu-18.04
-    name: File Diff
+    name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
