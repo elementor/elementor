@@ -3,6 +3,7 @@ const config = require( './config' );
 const getDelay = ( pathname ) => {
 	switch ( pathname ) {
 		case 'audio':
+			return 6000;
 		case 'video':
 		case 'image-gallery':
 			return 3000;
