@@ -1,5 +1,21 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev14 - 2021-08-26
+* Fix: consistent hook names (#16099)
+* New: Default values first iteration [ED-3683] (#15518)
+* Fix: Landing page builder experiments causes page not found/ 404 errors with media files URLs (#15943) (ED-4806) (#16096)
+* Fix: Animated elements disappear before entering the viewport (#2806) (ED-2513) (#16095)
+* Tweak: Added Elementor price plan filter to Kit Library (closes #16075) [ED-4804] (#16102)
+* Tweak: Entrance Animations - Once the element has been animated, unobserve it [ED-4845] (#16127)
+* Tweak: Internal - Remove all usages of `Elementor\Utils::get_create_new_post_url()` (#16128)
+* Fix: Controls in the Editor's JS system always have an empty string value as default, so they cannot be deleted (ED-4772) (#16042)
+* Fix: Can't upload SVG files using Elementor (#16084, #16119, #16088) [ED-4813] (#16125)
+* Fix: `wp_kses_post` strips `srcset` attribute from images (#16111) [ED-4840] (#16122)
+* Fix: Inline CSS is parsed to an invalid charcaters. (#16143)
+* Fix: When the inline-SVG experiment is active the list icons alignment can not be changed [ED-4758] (#16109)
+* Fix: Autoplay not working for Vimeo videos in Lightbox (ED-4796) (#16068)
+* Fix: Missing translations escaping in default values module (#16151)
+
 #### 3.5.0-dev13 - 2021-08-23
 * New: Docs - UI States [ED-4628] (#15961)
 * Fix: Reflect inherited value in slider control [ED-4766] (#16040)
