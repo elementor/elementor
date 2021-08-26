@@ -6,7 +6,7 @@ export default function Index() {
 		queryParams = Object.fromEntries( urlSearchParams.entries() );
 
 	// The 'action' query param is translated into a route URL.
-	let	url = queryParams?.action && actionsMap[ queryParams.action ];
+	let url = queryParams?.action && actionsMap[ queryParams.action ];
 
 	if ( ! url ) {
 		url = elementorAppConfig.menu_url.split( '#' )?.[1] || '/not-found';
