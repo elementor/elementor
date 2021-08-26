@@ -7,6 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
 use Elementor\Utils;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -295,81 +296,14 @@ class TextPath extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'text_heading',
-			[
-				'label' => esc_html__( 'Text', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-			]
-		);
-
 		$this->add_group_control(
-			Group_Control_Typography::get_type(),
+			Group_Control_Text_Stroke::get_type(),
 			[
-				'name' => 'text_typography',
-				'selector' => '{{WRAPPER}}',
-				'global' => [
-					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-				'fields_options' => [
-					'font_size' => [
-						'default' => [
-							'size' => '20',
-							'unit' => 'px',
-						],
-						'size_units' => [ 'px' ],
-					],
-					// Text decoration isn't an inherited property, so it's required to explicitly
-					// target the specific `textPath` element.
-					'text_decoration' => [
-						'selectors' => [
-							'{{WRAPPER}} textPath' => 'text-decoration: {{VALUE}};',
-						],
-					],
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_stroke',
-			[
-				'label' => esc_html__( 'Text Stroke', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem' ],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 10,
-					],
-					'em' => [
-						'min' => 0,
-						'max' => 1,
-						'step' => 0.01,
-					],
-					'rem' => [
-						'min' => 0,
-						'max' => 1,
-						'step' => 0.01,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} textPath' => 'stroke-width: {{SIZE}}{{UNIT}}',
-				],
-			]
-		);
-
-		$this->add_control(
-			'stroke_color',
-			[
-				'label' => esc_html__( 'Stroke Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '#000',
-				'selectors' => [
-					'{{WRAPPER}} textPath' => 'stroke: {{VALUE}};',
-				],
-				'condition' => [
-					'text_stroke[size]!' => '',
-				],
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} textPath',
+				// 'selectors' => [
+				// 	'{{WRAPPER}} textPath' => 'stroke-width: {{SIZE}}{{UNIT}}; stroke: {{VALUE}};',
+				// ],
 			]
 		);
 

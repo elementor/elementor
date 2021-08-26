@@ -358,6 +358,7 @@ class Controls_Manager {
 			'box-shadow',
 			'css-filter',
 			'text-shadow',
+			'text-stroke',
 		];
 	}
 
