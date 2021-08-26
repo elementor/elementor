@@ -1,8 +1,8 @@
 # Experiments Manager
 
-Since some of our features are still being worked on, and to avoid any potential issues,
-we’ve given you the option of switching them on and off and testing how they impact your site.
-You’ll be able to try out these features in a safe environment and influence future releases.
+Since some of Elementor's features are still being worked on, and to avoid any potential issues,
+Elementor has given the users an option of switching them on and off and testing how they impact the site.
+The users will be able to try out these features in a safe environment and influence future releases.
 
 ## Product Knowledge Base:
 
@@ -19,12 +19,44 @@ You’ll be able to try out these features in a safe environment and influence f
 
 This is the Experiment Manager of Elementor. It registers and manages all the experimental features in Elementor.
 
-Each module (`Elementor\Core\Base\Module`) can register its own experiments using the static `get_experimental_data()` method.
+Each module (`Elementor\Core\Base\Module`) can register its own experiments using the static `get_experimental_data()` method:
 
-In addition, you can "talk" directly to the manager in order to register an experiment using `Plugin::instance()->experiments->add_feature()`.
+```PHP
+// modules/admin-top-bar/module.php
+
+public static function get_experimental_data() {
+	return [
+		'name' => 'admin-top-bar',
+		'title' => __( 'Admin Top Bar', 'elementor' ),
+		'description' => __( 'Adds a top bar to elementor pages in admin area.', 'elementor' ),
+		'release_status' => Elementor\Core\Experiments\Manager::RELEASE_STATUS_BETA,
+		'new_site' => [
+			'default_active' => true,
+		],
+	];
+}
+```
+
+In addition, you can "talk" directly to the manager in order to register an experiment using `\Elementor\Plugin::instance()->experiments->add_feature()`:
+
+```PHP
+// core/experiments/manager.php
+
+\Elementor\Plugin::instance()->experiments->add_feature( [
+	'name' => 'a11y_improvements',
+	'title' => __( 'Accessibility Improvements', 'elementor' ),
+	'description' => __( 'Accessibility Improvements Description', 'elementor' ),
+	'release_status' => Elementor\Core\Experiments\Manager::RELEASE_STATUS_BETA,
+	'new_site' => [
+		'default_active' => true,
+		'minimum_installation_version' => '3.1.0-beta',
+	],
+] );
+```
 
 Using both of the above methods, you can set the experiment name, description, release status (alpha, beta, dev, etc.),
-default state (active / inactive) and more! You can even pass a callback to run when the feature state has changed!
+default state (active / inactive) and more! You can even pass a callback to run when the feature state has changed! 
+(using the `on_state_change` key in the experiment settings array).
 
 Then, in order to check whether the experiment is active or not, you can ask the manager:
 
