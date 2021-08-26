@@ -17,7 +17,7 @@ The users will be able to try out these features in a safe environment and influ
 
 ## Technical Description:
 
-This is the Experiment Manager of Elementor. It registers and manages all the experimental features in Elementor.
+This is the Experiments Manager of Elementor. It registers and manages all the experimental features in Elementor.
 
 Each module (`Elementor\Core\Base\Module`) can register its own experiments using the static `get_experimental_data()` method:
 
@@ -90,7 +90,8 @@ elementorFrontend.config.experimentalFeatures[ 'your-feature-name' ];
   As a rule of thumb - Don't ship alpha features as active by default. 
 
 
-- You can also register a default experiment (usually a core code which doesn't have a dedicated module) using the `add_default_features()` method.
+- You can also register a default experiment (usually a core code which doesn't have a dedicated module) using the
+  `add_default_features()` method in the `core/experiments/manager.php` file.
 
 
 ___
