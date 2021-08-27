@@ -217,6 +217,31 @@ class Group_Control_Typography extends Group_Control_Base {
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
 		];
 
+		$fields['word_spacing'] = [
+			'label' => _x( 'Word Spacing', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'desktop_default' => [
+				'unit' => 'em',
+			],
+			'tablet_default' => [
+				'unit' => 'em',
+			],
+			'mobile_default' => [
+				'unit' => 'em',
+			],
+			'size_units' => [ 'px', 'em' ],
+			'range' => [
+				'px' => [
+					'step' => 1,
+				],
+				'em' => [
+					'step' => 0.1,
+				],
+			],
+			'responsive' => true,
+			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',
+		];
+
 		return $fields;
 	}
 

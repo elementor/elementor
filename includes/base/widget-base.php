@@ -975,7 +975,8 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $replacement   Widget replacement
 	 */
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
-		$this->start_controls_section( 'Deprecated',
+		$this->start_controls_section(
+			'Deprecated',
 			[
 				'label' => esc_html__( 'Deprecated', 'elementor' ),
 			]
@@ -1074,15 +1075,7 @@ abstract class Widget_Base extends Element_Base {
 			return;
 		}
 
-		$widget_css = $this->get_widget_css();
-
-		echo wp_kses( $widget_css, [
-			'style' => [],
-			'link' => [
-				'rel' => true,
-				'href' => true,
-			],
-		] );
+		Utils::print_unescaped_internal_string( $this->get_widget_css() );
 	}
 
 	private function get_widgets_css_data_manager() {

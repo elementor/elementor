@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from 'elementor-editor/component';
+import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -1292,10 +1292,14 @@ export default class EditorBase extends Marionette.Application {
 
 			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
 
+			let deleteControlDefault = true;
+
 			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
 			// controls receive that default value.
 			if ( multipleDefaultValue ) {
 				controlConfig.default = multipleDefaultValue;
+
+				deleteControlDefault = false;
 			}
 
 			devices.forEach( ( device, index ) => {
@@ -1349,6 +1353,9 @@ export default class EditorBase extends Marionette.Application {
 					} else {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
+				} else if ( deleteControlDefault ) {
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
 				// If the control belongs to a group control with a popover, and this control is the last one, add the
