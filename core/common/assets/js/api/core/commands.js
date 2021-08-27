@@ -293,7 +293,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		const currentComponent = this.getComponent( command );
 
-		// Route?.
+		// Is simple callback? (e.g.  a route)
 		if ( ! ( instance instanceof CommandBase ) ) {
 			const results = instance.apply( currentComponent, [ args ] );
 
