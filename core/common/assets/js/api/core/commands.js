@@ -284,29 +284,30 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 		this.beforeRun( command, args );
 
-		// Call to new command or callback.
-		let instance = this.commands[ command ];
+		// Get command class or callback.
+		let context = this.commands[ command ];
 
-		if ( instance.getInstanceType ) {
-			instance = new instance( args );
+		// Is it command-base based class?
+		if ( context.getInstanceType ) {
+			context = new context( args );
 		}
 
 		const currentComponent = this.getComponent( command );
 
 		// Is simple callback? (e.g.  a route)
-		if ( ! ( instance instanceof CommandBase ) ) {
-			const results = instance.apply( currentComponent, [ args ] );
+		if ( ! ( context instanceof CommandBase ) ) {
+			const results = context.apply( currentComponent, [ args ] );
 
 			this.afterRun( command, args, results );
 
 			return results;
 		}
 
-		if ( ! this.validateInstanceScope( instance, currentComponent, command ) ) {
+		if ( ! this.validateInstanceScope( context, currentComponent, command ) ) {
 			return this.removeCurrentTrace( currentComponent );
 		}
 
-		return this.runInstance( instance );
+		return this.runInstance( context );
 	}
 
 	/**
