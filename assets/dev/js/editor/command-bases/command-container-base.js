@@ -4,9 +4,9 @@ import CommandBase from 'elementor-api/modules/command-base';
  * This class should be used only when its 'really' required.
  * Not evey command in the editor should use this only when you required to have the logic in it.
  */
-export default class CommandEditorBase extends CommandBase {
+export default class CommandContainerBase extends CommandBase {
 	static getInstanceType() {
-		return 'CommandEditorBase';
+		return 'CommandContainerBase';
 	}
 
 	/**

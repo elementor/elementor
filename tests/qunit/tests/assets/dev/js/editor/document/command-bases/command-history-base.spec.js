@@ -4,8 +4,8 @@ import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
-import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
-import CommandEditorInternal from 'elementor-editor/command-bases/command-editor-internal';
+import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
+import CommandContainerInternal from 'elementor-editor/command-bases/command-container-internal';
 
 jQuery( () => {
 	QUnit.module( 'File: editor/document/base/command-history.js', () => {
@@ -54,8 +54,8 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof CommandInternalBase, false, );
 					assert.equal( historyCommand instanceof CommandData, false, );
 					// Editor.
-					assert.equal( historyCommand instanceof CommandEditorBase, true, );
-					assert.equal( historyCommand instanceof CommandEditorInternal, false );
+					assert.equal( historyCommand instanceof CommandContainerBase, true, );
+					assert.equal( historyCommand instanceof CommandContainerInternal, false );
 					// Editor-Document.
 					assert.equal( historyCommand instanceof CommandHistoryBase, true );
 					assert.equal( historyCommand instanceof CommandHistoryDebounceBase, false );
@@ -65,8 +65,8 @@ jQuery( () => {
 					assert.equal( historyCommand instanceof $e.modules.CommandInternalBase, false );
 					assert.equal( historyCommand instanceof $e.modules.CommandData, false );
 					// Editor.
-					assert.equal( historyCommand instanceof $e.modules.editor.CommandEditorBase, true );
-					assert.equal( historyCommand instanceof $e.modules.editor.CommandEditorInternal, false );
+					assert.equal( historyCommand instanceof $e.modules.editor.CommandContainerBase, true );
+					assert.equal( historyCommand instanceof $e.modules.editor.CommandContainerInternal, false );
 					// Editor-Document.
 					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryBase, true );
 					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounceBase, false );

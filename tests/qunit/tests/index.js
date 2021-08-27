@@ -22,8 +22,8 @@ export const tests = () => {
 	require( './assets/dev/js/editor/container/container.spec' );
 
 	// JS API editor
-	require( './assets/dev/js/editor/command-bases/command-editor-base.spec' );
-	require( './assets/dev/js/editor/command-bases/command-editor-internal.spec' );
+	require( './assets/dev/js/editor/command-bases/command-container-base.spec' );
+	require( './assets/dev/js/editor/command-bases/command-container-internal.spec' );
 
 	// JS API editor document.
 	require( './assets/dev/js/editor/document/command-bases/command-history-base.spec' );

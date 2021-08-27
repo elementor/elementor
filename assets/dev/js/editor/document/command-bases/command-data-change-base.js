@@ -1,6 +1,6 @@
-import CommandEditorBase from 'elementor-editor/command-bases/command-editor-base';
+import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 
-export default class CommandDataChangeBase extends CommandEditorBase {
+export default class CommandDataChangeBase extends CommandContainerBase {
 	static getInstanceType() {
 		return 'CommandDataChangeBase';
 	}
