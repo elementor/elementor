@@ -1,6 +1,6 @@
-import CommandDataChangeBase from './command-data-change-base';
+import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
 
-export default class CommandHistoryBase extends CommandDataChangeBase {
+export default class CommandHistoryBase extends CommandContainerBase {
 	static getInstanceType() {
 		return 'CommandHistoryBase';
 	}
@@ -56,6 +56,14 @@ export default class CommandHistoryBase extends CommandDataChangeBase {
 
 		if ( this.history && this.isHistoryActive() ) {
 			$e.internal( 'document/history/end-log', { id: this.historyId } );
+		}
+	}
+
+	onAfterApply( args = {}, result ) {
+		super.onAfterApply( args, result );
+
+		if ( this.isDataChanged() ) {
+			$e.internal( 'document/save/set-is-modified', { status: true } );
 		}
 	}
 
