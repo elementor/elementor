@@ -58,7 +58,7 @@ class Create extends Base_Category {
 			}
 
 			$items[ $post_type ] = [
-				/* translators: %s the title of the post type */
+				/* translators: %s: Post type singular label. */
 				'title' => sprintf( esc_html__( 'Add New %s', 'elementor' ), $post_type_object->labels->singular_name ),
 				'icon' => 'plus-circle-o',
 				'url' => $url,

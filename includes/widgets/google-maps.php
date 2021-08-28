@@ -113,6 +113,7 @@ class Widget_Google_Maps extends Widget_Base {
 					[
 						'type' => Controls_Manager::RAW_HTML,
 						'raw' => sprintf(
+							/* translators: 1: Link to integrations settings tab, 2: Link to google maps api key documentation. */
 							esc_html__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
 							Settings::get_url() . '#tab-integrations',
 							'https://developers.google.com/maps/documentation/embed/get-api-key'
