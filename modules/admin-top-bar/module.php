@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
@@ -96,7 +95,8 @@ class Module extends BaseApp {
 		add_action( 'current_screen', function () {
 			$current_screen = get_current_screen();
 
-			if ( ! $current_screen || 'dashboard' === $current_screen->id ) {
+			// Only in elementor based pages.
+			if ( ! $current_screen || ! strstr( $current_screen->id, 'elementor' ) ) {
 				return;
 			}
 
