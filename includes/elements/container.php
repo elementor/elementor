@@ -235,42 +235,28 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'layout',
-			[
-				'label' => esc_html__( 'Content Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'boxed',
-				'options' => [
-					'full-width' => esc_html__( 'Full Width', 'elementor' ),
-					'boxed' => esc_html__( 'Boxed', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'full-width' => '100%',
-					'boxed' => 'var( --container-max-width, 1140px )', // Default same as section.
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--max-width: {{VALUE}};',
-				],
-			]
-		);
-
 		$this->add_responsive_control(
-			'content_width',
+			'width',
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
 				'range' => [
 					'px' => [
 						'min' => 500,
 						'max' => 1600,
 					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vw' => [
+						'min' => 0,
+						'max' => 100,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--max-width: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'layout' => [ 'boxed' ],
 				],
 				'separator' => 'none',
 			]
@@ -280,50 +266,28 @@ class Container extends Element_Base {
 			'height',
 			[
 				'label' => esc_html__( 'Height', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
-					'min-height' => esc_html__( 'Min Height', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'full' => '100vh',
-					'min-height' => '',
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--height: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'custom_height',
-			[
-				'label' => esc_html__( 'Minimum Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 400,
-				],
+				'size_units' => [ 'px', '%', 'vh' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 1440,
 					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
 					'vh' => [
 						'min' => 0,
 						'max' => 100,
 					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'description' => sprintf(
+					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
+					'100vh'
+				),
 				'selectors' => [
-					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'height' => [ 'min-height' ],
+					'{{WRAPPER}}' => 'height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

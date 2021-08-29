@@ -3,7 +3,7 @@
 	--border-radius: 0;
 	--display: flex;
 	--flex-basis: auto;
-	--max-width: inital;
+	--max-width: var( --container-max-width, 1140px );
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
