@@ -233,6 +233,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: HTML captions are stripped in Image carousel widget ([#16073](https://github.com/elementor/elementor/issues/16073))
 * Fix: Carousels are not working properly in the Editor when Additional Custom Breakpoints experiment is active
 * Fix: Responsive values are not being reflected in Slider controls
+* Fix: Elementor Top Admin Bar loads in WordPress dashboard when the experiment is active
 * Fix: Prevent Admin Top Bar to conflict with WordPress customizer
 * Fix: Can't change alignment of icons when Font Awesome Inline experiment is active in Icon List widget
 * Fix: Import deeplink redirect loses target screen parameters when user needs to log in
