@@ -220,6 +220,24 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.3 - 2021-08-29 =
+* Tweak: Added "Justified" option in Typography text alignment in Column & Section elements ([#11480](https://github.com/elementor/elementor/issues/11480))
+* Tweak: Enlarged cards view in the Kit Library for better visibility
+* Tweak: Changed Kit Library tab title
+* Fix: Landing pages experiment causes 404 errors with attachment pages ([#15943](https://github.com/elementor/elementor/issues/15943))
+* Fix: Can't upload SVG files using Elementor ([#16084](https://github.com/elementor/elementor/issues/16084), [#16119](https://github.com/elementor/elementor/issues/16119), [#16088](https://github.com/elementor/elementor/issues/16088))
+* Fix: `wp_kses_post` strips `srcset` attribute from images ([#16111](https://github.com/elementor/elementor/issues/16111))
+* Fix: Inline CSS is parsed to an invalid characters ([#16140](https://github.com/elementor/elementor/issues/16140))
+* Fix: Animated elements disappear before entering the viewport ([#2806](https://github.com/elementor/elementor/issues/2806))
+* Fix: Autoplay not working for Vimeo videos in Lightbox ([#16068](https://github.com/elementor/elementor/issues/16068))
+* Fix: HTML captions are stripped in Image carousel widget ([#16073](https://github.com/elementor/elementor/issues/16073))
+* Fix: Carousels are not working properly in the Editor when Additional Custom Breakpoints experiment is active
+* Fix: Responsive values are not being reflected in Slider controls
+* Fix: Prevent Admin Top Bar to conflict with WordPress customizer
+* Fix: Can't change alignment of icons when Font Awesome Inline experiment is active in Icon List widget
+* Fix: Import deeplink redirect loses target screen parameters when user needs to log in
+* Deprecated: Removed all usages of `Elementor\Utils::get_create_new_post_url()`
+
 = 3.4.2 - 2021-08-19 =
 * Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active ([#16055](https://github.com/elementor/elementor/issues/16055), [#16033](https://github.com/elementor/elementor/issues/16033))
 * Fix: Global colors are applied even when they are disabled on Frontend ([#16037](https://github.com/elementor/elementor/issues/16037))
