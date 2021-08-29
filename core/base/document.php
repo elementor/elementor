@@ -847,6 +847,10 @@ abstract class Document extends Controls_Stack {
 		$editor_data = [];
 
 		foreach ( $data as $element_data ) {
+			if ( ! is_array( $element_data ) ) {
+				throw new \Exception( 'Invalid data: ' . wp_json_encode( $data ) );
+			}
+
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
