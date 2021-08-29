@@ -248,7 +248,7 @@ class AddSectionBase extends Marionette.ItemView {
 				},
 			} );
 
-		if ( AddSectionBase.IS_CONTAINER_ACTIVE ) {
+		if ( AddSectionBase.IS_CONTAINER_ACTIVE && 'container' !== selectedElement.model.get( 'elType' ) ) {
 			// Create the element in the container.
 			containingElement.view.addElementFromPanel();
 		} else {
