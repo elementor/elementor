@@ -202,9 +202,12 @@ class AddSectionBase extends Marionette.ItemView {
 					},
 				}, elementor.getPreviewContainer(), this.options );
 
-				const containers = ContainerHelper.createContainers( 2, {}, newContainer, { edit: false } );
+				ContainerHelper.createContainer( {}, newContainer, { edit: false } );
 
-				ContainerHelper.createContainers( 2, {}, containers[ 1 ], { edit: false } );
+				// Create the right Container with 0 padding (default is 10px) to fix UI.
+				const rightContainer = ContainerHelper.createContainer( { padding: { size: '' } }, newContainer, { edit: false } );
+
+				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
 				break;
 
