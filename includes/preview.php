@@ -302,19 +302,19 @@ class Preview extends App {
 			true
 		);
 
-		wp_enqueue_script( 'react' );
-		wp_enqueue_script( 'react-dom' );
-
-		wp_enqueue_script(
-			'g-components',
-			$this->get_assets_url( 'lib/g-components/g-components.min.js', '', null, false ),
-			[
-				'react',
-				'react-dom',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
+		//wp_enqueue_script( 'react' );
+		//wp_enqueue_script( 'react-dom' );
+		//
+		//wp_enqueue_script(
+		//	'g-components',
+		//	$this->get_assets_url( 'lib/g-components/g-components.min.js', '', null, false ),
+		//	[
+		//		'react',
+		//		'react-dom',
+		//	],
+		//	ELEMENTOR_VERSION,
+		//	true
+		//);
 
 		// Handle the 'wp audio' in editor preview.
 		wp_enqueue_script( 'wp-mediaelement' );
