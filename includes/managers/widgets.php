@@ -333,11 +333,11 @@ class Widgets_Manager {
 			$config[ $widget_key ] = $widget->get_config();
 		}
 
-		return array_merge_recursive( $this->additional_config, $config );
+		return array_merge_recursive( $config, $this->additional_config );
 	}
 
 	public function set_widget_types_config( $config ) {
-		$this->additional_config = $config;
+		$this->additional_config = array_merge_recursive( $this->additional_config, $config );
 	}
 
 	public function ajax_get_widget_types_controls_config( array $data ) {

@@ -74,7 +74,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( activeClass, ! isActive );
 
 		if ( immediate ) {
-			$items[ visibilityFn ]( 0, updateScrollbar() );
+			$items[ visibilityFn ]( 0, updateScrollbar );
 		} else {
 			$items[ slideFn ]( 300, updateScrollbar );
 		}
