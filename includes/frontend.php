@@ -233,6 +233,10 @@ class Frontend extends App {
 		$document = Plugin::$instance->documents->get( $this->post_id );
 
 		if ( is_singular() && $document && $document->is_built_with_elementor() ) {
+			add_action( 'wp_enqueue_scripts', function () {
+				wp_dequeue_style( 'wp-block-library' );
+			} );
+
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		}
 
