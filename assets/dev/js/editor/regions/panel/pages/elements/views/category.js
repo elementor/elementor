@@ -24,7 +24,15 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	childViewContainer: '.elementor-panel-category-items',
 
 	initialize: function() {
-		this.collection = new PanelElementsElementsCollection( this.model.get( 'items' ) );
+		const items = this.model.get( 'items' ) || [];
+
+		this.collection = new PanelElementsElementsCollection(
+			this.model.get( 'alphabetically' ) ?
+				items.sort(
+					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1
+				) :
+				items
+		);
 	},
 
 	behaviors: function() {
@@ -43,25 +51,33 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		} else {
 			this.ui.items.css( 'display', 'none' );
 		}
+
+		if ( this.model.get( 'conditionallyToggled' ) ) {
+			this.toggle( ! this.isEmpty(), true );
+		}
 	},
 
 	onTitleClick: function() {
 		this.toggle();
 	},
 
-	toggle: function( state ) {
+	toggle: function( state, immediate = false ) {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
 			isActive = undefined !== state ? ! state : this.$el.hasClass( activeClass ),
-			slideFn = isActive ? 'slideUp' : 'slideDown';
+			visibilityFn = isActive ? 'hide' : 'show',
+			slideFn = isActive ? 'slideUp' : 'slideDown',
+			updateScrollbar = () => elementor.getPanelView().updateScrollbar();
 
 		elementor.channels.panelElements.reply( 'category:' + this.model.get( 'name' ) + ':active', ! isActive );
 
 		this.$el.toggleClass( activeClass, ! isActive );
 
-		$items[ slideFn ]( 300, function() {
-			elementor.getPanelView().updateScrollbar();
-		} );
+		if ( immediate ) {
+			$items[ visibilityFn ]( 0, updateScrollbar() );
+		} else {
+			$items[ slideFn ]( 300, updateScrollbar );
+		}
 	},
 } );
 

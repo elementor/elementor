@@ -162,9 +162,12 @@ export default class Widgets extends FavoriteType {
 			psScrollTop = psElement.scrollTop,
 			psHeight = psElement.scrollHeight;
 
-		$e.route( 'panel/elements/categories', { refresh: true } );
-
-		psElement.scrollTop = psScrollTop + ( psElement.scrollHeight - psHeight );
+		$e.route( 'panel/elements/categories', {
+			refresh: true,
+			onAfter: () => {
+				psElement.scrollTop = psScrollTop + ( psElement.scrollHeight - psHeight );
+			},
+		} );
 	}
 
 	/**

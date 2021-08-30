@@ -17,7 +17,7 @@ class Widgets extends Favorites_Type {
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'elementor/widget/categories', [ $this, 'update_widget_categories' ], 10, 2 );
+		add_action( 'elementor/document/get_config', [ $this, 'update_widget_categories' ], 10, 1 );
 	}
 
 	/**
@@ -48,16 +48,15 @@ class Widgets extends Favorites_Type {
 	/**
 	 * Update the categories of a widget inside a filter.
 	 *
-	 * @param $categories
-	 * @param $widget
-	 *
-	 * @return string[]
+	 * @param $document
 	 */
-	public function update_widget_categories( $categories, $widget ) {
-		if ( false !== array_search( $widget->get_name(), $this->values() ) ) {
-			$categories[] = static::CATEGORY_SLUG;
+	public function update_widget_categories( $document ) {
+		$config = [];
+
+		foreach( $this->values() as $favorite ) {
+			$config[ $favorite ][ 'categories' ] = static::CATEGORY_SLUG;
 		}
 
-		return $categories;
+		Plugin::$instance->widgets_manager->set_widget_types_config( $config );
 	}
 }

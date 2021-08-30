@@ -536,6 +536,8 @@ abstract class Document extends Controls_Stack {
 			],
 		];
 
+		do_action( 'elementor/document/get_config', $this );
+
 		if ( static::get_property( 'has_elements' ) ) {
 			$config['elements'] = $this->get_elements_raw_data( null, true );
 			$config['widgets'] = Plugin::$instance->widgets_manager->get_widget_types_config();

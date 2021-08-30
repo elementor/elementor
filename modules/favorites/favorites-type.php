@@ -6,22 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Static_Collection;
 
-abstract class Favorites_Type {
-
-	/**
-	 * The favorites Collection.
-	 *
-	 * @var Collection|null
-	 */
-	protected $collection = null;
-
-	/**
-	 * Favorites Type constructor.
-	 */
-	public function __construct() {
-		$this->collection = new Collection( [] );
-	}
+abstract class Favorites_Type extends Static_Collection {
 
 	/**
 	 * Get the name of the type.
@@ -43,24 +30,5 @@ abstract class Favorites_Type {
 		}
 
 		return $favorites;
-	}
-
-	/**
-	 * Since this class is a wrapper, every call which has no declaration here,
-	 * will be forwarded to wrapped class. Most of the collection methods returns
-	 * a new collection instance, and therefore it will be assigned as the current
-	 * collection instance after executing any method.
-	 *
-	 * @param string $name
-	 * @param array $arguments
-	 */
-	public function __call( $name, $arguments ) {
-		$call = call_user_func_array( [ $this->collection, $name ], $arguments );
-
-		if ( null !== $call && $call instanceof Collection ) {
-			$this->collection = $call->unique();
-		}
-
-		return $call;
 	}
 }

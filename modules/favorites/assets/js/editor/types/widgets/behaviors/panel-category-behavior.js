@@ -7,12 +7,6 @@ export default class PanelCategoryBehavior extends Marionette.Behavior {
 		}
 	}
 
-	onRender() {
-		if ( this.isFavoritesCategory() ) {
-			this.view.toggle( ! this.view.isEmpty() );
-		}
-	}
-
 	isFavoritesCategory() {
 		return 'favorites' === this.view.options.model.get( 'name' );
 	}

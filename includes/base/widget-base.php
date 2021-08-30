@@ -344,7 +344,7 @@ abstract class Widget_Base extends Element_Base {
 		$config = [
 			'widget_type' => $this->get_name(),
 			'keywords' => $this->get_keywords(),
-			'categories' => apply_filters( 'elementor/widget/categories', $this->get_categories(), $this ),
+			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 		];

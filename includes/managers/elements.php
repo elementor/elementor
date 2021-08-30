@@ -296,7 +296,8 @@ class Elements_Manager {
 				'favorites' => [
 					'title' => esc_html__( 'Favorites', 'elementor' ),
 					'icon' => 'eicon-heart',
-					'display_when_empty' => true,
+					'alphabetically' => true,
+					'conditionally_toggled' => true,
 				],
 			], $this->categories );
 		}
