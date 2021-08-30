@@ -883,6 +883,24 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'absolute' => esc_html__( 'Absolute', 'elementor' ),
+					'fixed' => esc_html__( 'Fixed', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--position: {{VALUE}};',
+				],
+				'frontend_available' => true,
+			]
+		);
+
 		$this->add_responsive_control(
 			'z_index',
 			[
@@ -922,24 +940,6 @@ class Container extends Element_Base {
 				'prefix_class' => '',
 				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'classes' => 'elementor-control-direction-ltr',
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
-	 * Register the Container's flex child controls.
-	 *
-	 * @return void
-	 */
-	protected function register_flex_child_controls() {
-		$this->start_controls_section(
-			'section_flex',
-			[
-				'label' => esc_html__( 'Flex', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
 
@@ -1049,8 +1049,6 @@ class Container extends Element_Base {
 	 */
 	protected function register_advanced_tab() {
 		$this->register_advanced_controls();
-
-		$this->register_flex_child_controls();
 
 		$this->register_motion_effects_controls();
 

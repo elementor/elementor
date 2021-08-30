@@ -9,6 +9,7 @@
 	--text-align: initial;
 	--margin: 0;
 	--padding: 0;
+	--position: relative;
 	--z-index: auto;
 	--overflow: visible;
 	--transition: 0;
@@ -17,7 +18,7 @@
 	--overlay-opacity: 1;
 	--overlay-transition: 0;
 
-	position: relative;
+	position: var( --position );
 	display: var( --display );
 	text-align: var( --text-align );
 	flex: 0 1 var( --flex-basis );
