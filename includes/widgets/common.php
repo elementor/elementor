@@ -1398,7 +1398,7 @@ class Widget_Common extends Widget_Base {
 					'options' => [
 						'transform' => [
 							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
-							'icon' => 'eicon-flip eicon-tilted',
+							'icon' => 'eicon-flip',
 						],
 					],
 					'prefix_class' => $transform_prefix_class,
