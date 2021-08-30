@@ -575,7 +575,7 @@ class Module extends BaseModule {
 					'document_name' => $document->get_name(),
 				] );
 
-				return; // Do nothing.
+				return;
 			};
 		}
 	}
