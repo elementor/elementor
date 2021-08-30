@@ -3,7 +3,7 @@
 	--border-radius: 0;
 	--display: flex;
 	--flex-basis: auto;
-	--max-width: var( --container-max-width, 1140px );
+	--width: var( --container-max-width, 1140px );
 	--min-height: initial;
 	--height: auto;
 	--text-align: initial;
@@ -20,8 +20,9 @@
 	position: relative;
 	display: var( --display );
 	text-align: var( --text-align );
-	flex: 1 1 var( --flex-basis );
-	max-width: var( --max-width );
+	flex: 0 1 var( --flex-basis );
+	width: var( --width );
+	max-width: 100%;
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );

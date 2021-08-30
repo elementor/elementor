@@ -191,21 +191,23 @@ class AddSectionBase extends Marionette.ItemView {
 				newContainer = ContainerHelper.createContainer( {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
-					children_flex_basis_type: 'custom',
-					children_flex_basis: {
+				}, elementor.getPreviewContainer(), this.options );
+
+				const settings = {
+					width: {
 						unit: '%',
 						size: '50',
 					},
-					children_flex_basis_mobile: {
+					width_mobile: {
 						unit: '%',
 						size: '100',
 					},
-				}, elementor.getPreviewContainer(), this.options );
+				};
 
-				ContainerHelper.createContainer( {}, newContainer, { edit: false } );
+				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
 
 				// Create the right Container with 0 padding (default is 10px) to fix UI.
-				const rightContainer = ContainerHelper.createContainer( { padding: { size: '' } }, newContainer, { edit: false } );
+				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
 
 				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
@@ -251,7 +253,7 @@ class AddSectionBase extends Marionette.ItemView {
 		if ( AddSectionBase.IS_CONTAINER_ACTIVE && 'container' !== selectedElement.model.get( 'elType' ) ) {
 			// Create the element in the container.
 			containingElement.view.addElementFromPanel();
-		} else {
+		} else if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
 			// Create the element in column.
 			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
 		}

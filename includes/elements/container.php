@@ -178,6 +178,12 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function before_render() {
+		$link = $this->get_settings( 'link' );
+
+		if ( ! empty( $link['url'] ) ) {
+			$this->add_link_attributes( '_wrapper', $link );
+		}
+
 		?>
 		<<?php $this->print_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
@@ -256,7 +262,7 @@ class Container extends Element_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--max-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'none',
 			]
@@ -311,8 +317,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->register_children_layout_controls();
-
 		$this->add_control(
 			'overflow',
 			[
@@ -339,6 +343,7 @@ class Container extends Element_Base {
 			'section' => 'section',
 			'aside' => 'aside',
 			'nav' => 'nav',
+			'a' => 'a',
 		];
 
 		$options = [
@@ -354,35 +359,23 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->end_controls_section();
-	}
-
-	/**
-	 * Register the Container's flex items layout controls.
-	 *
-	 * @return void
-	 */
-	protected function register_children_layout_controls() {
 		$this->add_control(
-			'flex_children_heading',
+			'link',
 			[
-				'label' => esc_html__( 'Flex Children', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
+				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Flex_Item::get_type(),
-			[
-				'name' => 'children_flex',
-				'exclude' => [
-					'align_self',
-					'order',
-				],
-				'selector' => '{{WRAPPER}} > *',
-			]
-		);
+		$this->end_controls_section();
 	}
 
 	/**
@@ -833,9 +826,9 @@ class Container extends Element_Base {
 	 */
 	protected function register_advanced_controls() {
 		$this->start_controls_section(
-			'section_advanced',
+			'section_layout',
 			[
-				'label' => esc_html__( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -846,6 +839,13 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'allowed_dimensions' => 'vertical',
+				'placeholder' => [
+					'top' => '',
+					'right' => 'auto',
+					'bottom' => '',
+					'left' => 'auto',
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -868,6 +868,18 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Flex_Item::get_type(),
+			[
+				'name' => '_flex',
+				'include' => [
+					'align_self',
+					'order',
+				],
+				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 			]
 		);
 
@@ -928,14 +940,6 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Flex', 'elementor' ),
 				'type' => Controls_Manager::SECTION,
 				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Flex_Item::get_type(),
-			[
-				'name' => '_flex',
-				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 			]
 		);
 

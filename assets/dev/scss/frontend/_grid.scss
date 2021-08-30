@@ -2,6 +2,15 @@
 // Grid
 //
 
+.elementor-section-wrap {
+	display: flex;
+	// To be able to drop Containers alongside each other on the page itself.
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-evenly;
+}
+
 // Section
 .elementor-section {
 	position: relative;
