@@ -571,7 +571,7 @@ class Module extends BaseModule {
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
 				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
-					'document' => $document->get_id(),
+					'document_id' => $document->get_id(),
 					'document_name' => $document->get_name(),
 				] );
 
