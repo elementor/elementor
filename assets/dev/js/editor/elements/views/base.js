@@ -188,7 +188,7 @@ BaseElementView = BaseContainer.extend( {
 		 *
 		 * This filter allows adding new context menu groups to elements.
 		 *
-		 * @param array customGroups - array of group objects.
+		 * @param array customGroups - An array of group objects.
 		 * @param string elementType - The current element type.
 		 */
 		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
