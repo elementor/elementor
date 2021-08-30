@@ -1098,6 +1098,28 @@ class Widget_Common extends Widget_Base {
 				]
 			);
 
+			$this->add_responsive_control(
+				"_transform_perspective_effect{$tab}",
+				[
+					'label' => __( 'Perspective', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 1000,
+						],
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+						"_transform_rotate_3d{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-perspective: {{SIZE}}px',
+					],
+					'frontend_available' => true,
+				]
+			);
+
 			$this->end_popover();
 
 			$this->add_control(
