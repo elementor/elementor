@@ -108,6 +108,12 @@
 		&-separator {
 			color: $editor-dark;
 		}
+
+		&[disabled] {
+			background-color: transparent;
+			color: $editor-dark;
+			cursor: default;
+		}
 	}
 
 }
