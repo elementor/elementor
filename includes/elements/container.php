@@ -878,11 +878,26 @@ class Container extends Element_Base {
 				'include' => [
 					'align_self',
 					'order',
+					'order_custom',
 				],
 				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 			]
 		);
 
+		$this->add_control(
+			'position_description',
+			[
+				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		// TODO: Extract to group control.
 		$this->add_control(
 			'position',
 			[
@@ -898,6 +913,215 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--position: {{VALUE}};',
 				],
 				'frontend_available' => true,
+			]
+		);
+
+		$left = esc_html__( 'Left', 'elementor' );
+		$right = esc_html__( 'Right', 'elementor' );
+
+		$start = is_rtl() ? $right : $left;
+		$end = ! is_rtl() ? $right : $left;
+
+		$this->add_control(
+			'_offset_orientation_h',
+			[
+				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => $start,
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => $end,
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h!' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 0.1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_offset_orientation_v',
+			[
+				'label' => esc_html__( 'Vertical Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'end' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v!' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v' => 'end',
+					'position!' => '',
+				],
 			]
 		);
 

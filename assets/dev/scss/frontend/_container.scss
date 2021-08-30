@@ -21,9 +21,12 @@
 	position: var( --position );
 	display: var( --display );
 	text-align: var( --text-align );
-	flex: 0 1 var( --flex-basis );
+	flex: 1 1 var( --flex-basis );
 	width: var( --width );
-	max-width: 100%;
+	// Use the `min()` function to fix cases when a top Container is 100% width due to `max-width: 100%;`,
+	// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
+	// Capital `M` in order to use the CSS function and not SCSS.
+	max-width: Min( 100%, var( --width ) );
 	min-height: var( --min-height );
 	height: var( --height );
 	border-radius: var( --border-radius );
