@@ -108,6 +108,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 		$fields['justify_content'] = [
 			'label' => esc_html_x( 'Justify Content', 'Flex Container Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
+			'label_block' => true,
 			'default' => '',
 			'options' => [
 				'flex-start' => [
