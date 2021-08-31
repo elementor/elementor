@@ -764,7 +764,10 @@
 					"$id": "#/usages/favorites",
 					"title": "The favorites schema",
 					"description": "Usage of favorites by favorite-type.",
-					"type": "object",
+					"type": [
+						"object",
+						"array"
+					],
 					"patternProperties": {
 						"([^\\s]+)": {
 							"$id": "#/usages/favorites/$type",
