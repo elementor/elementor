@@ -770,15 +770,12 @@
 							"$id": "#/usages/favorites/$type",
 							"type": "array",
 							"description": "Each favorite-type holding the elements marked as favorites.",
-							"patternProperties": {
-								"([^\\s]+)": {
-									"$id": "#/usages/favorites/$type/$element",
-									"type": "string",
-									"description": "Elements marked as favorites in the favorite-type."
-								}
+							"items": {
+								"type": "string",
 							}
 						}
-					}
+					},
+					"additionalProperties": false
 				},
 				"settings": {
 					"$id": "#/usages/settings",
