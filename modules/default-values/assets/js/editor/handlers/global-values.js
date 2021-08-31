@@ -1,10 +1,18 @@
 import BaseHandler from './base-handler';
 
 export default class GlobalValues extends BaseHandler {
+	widgetConfig = [];
+
+	constructor( widgetConfig ) {
+		super();
+
+		this.widgetConfig = widgetConfig;
+	}
+
 	appendSettingsForSave( settings, container ) {
 		const type = container.model.attributes.widgetType;
 
-		const widgetControls = elementor.widgetsCache[ type ].controls;
+		const widgetControls = this.widgetConfig[ type ].controls;
 
 		const globalSettings = Object.fromEntries(
 			Object.entries( container.settings.attributes?.__globals__ || {} )
@@ -57,7 +65,9 @@ export default class GlobalValues extends BaseHandler {
 		// (default globals should be empty and not directly assign to the control setting)
 		element.settings.__globals__ = Object.fromEntries(
 			Object.entries( element.settings.__globals__ )
-				.filter( ( [ key ] ) => ! newDefaultSettingsKeys.includes( key )
+				.filter( ( [ key, value ] ) =>
+					! newDefaultSettingsKeys.includes( key ) ||
+					value !== newDefaultSettings.__globals__[ key ]
 			)
 		);
 
