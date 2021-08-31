@@ -3,10 +3,11 @@
 $composer_autoloader_file = __DIR__ . '/../vendor/autoload.php';
 
 if ( ! file_exists( $composer_autoloader_file ) ) {
-	exit( 'Installing composer are required for running the tests.' );
+	die( 'Installing composer are required for running the tests.' );
 }
 
 require $composer_autoloader_file;
+
 
 use Elementor\Autoloader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
