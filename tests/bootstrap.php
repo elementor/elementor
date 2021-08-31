@@ -1,6 +1,13 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+$composer_autoloader_file = __DIR__ . '/../vendor/autoload.php';
+
+if ( ! file_exists( $composer_autoloader_file ) ) {
+	die( 'Installing composer are required for running the tests.' );
+}
+
+require $composer_autoloader_file;
+
 
 use Elementor\Autoloader;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -35,19 +42,7 @@ tests_add_filter( 'muplugins_loaded', function () {
 tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
 require $_tests_dir . '/includes/bootstrap.php';
-require __DIR__ . '/phpunit/traits/base-elementor.php';
-require __DIR__ . '/phpunit/traits/extra-assertions.php';
-require __DIR__ . '/phpunit/traits/auth-helpers.php';
-require __DIR__ . '/phpunit/traits/elementor-library-trait.php';
-require __DIR__ . '/phpunit/traits/breakpoints-trait.php';
-require __DIR__ . '/phpunit/traits/rest-trait.php';
-require __DIR__ . '/phpunit/traits/kit-trait.php';
-require __DIR__ . '/phpunit/base-class.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
-require __DIR__ . '/phpunit/ajax-class.php';
-require __DIR__ . '/phpunit/base-schema.php';
-require __DIR__ . '/phpunit/factories/factory.php';
-require __DIR__ . '/phpunit/factories/documents.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
