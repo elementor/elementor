@@ -5,15 +5,33 @@ export class Recreate extends CommandInternal {
 		this.requireArgumentType( 'models', 'object', args );
 	}
 
-	apply( { models } ) {
-		Object.entries( models ).forEach( ( [ id, model ] ) => {
+	async apply( { models } ) {
+		const currentElement = elementor.getCurrentElement(),
+			isCurrentElementIsEditable = !! currentElement?.model?.get( 'elType' ),
+			currentElementId = currentElement?.model?.get( 'id' );
+
+		const recreatePromises = Object.entries( models ).map(
+			( [ id, model ] ) => this.recreateElement( id, model )
+		);
+
+		await Promise.all( recreatePromises );
+
+		if ( isCurrentElementIsEditable && currentElementId ) {
+			this.openLastEditedElementPanel(
+				elementor.getContainer( currentElementId )
+			);
+		}
+	}
+
+	recreateElement( id, model ) {
+		return new Promise( ( resolve ) => {
 			const container = elementor.getContainer( id ),
 				parent = container.parent,
 				location = parent.children.indexOf( container );
 
 			$e.run( 'document/elements/delete', { useHistory: false, container } );
 
-			$e.run( 'document/elements/create', {
+			const newContainer = $e.run( 'document/elements/create', {
 				useHistory: false,
 				container: parent,
 				model,
@@ -22,6 +40,20 @@ export class Recreate extends CommandInternal {
 					edit: false,
 				},
 			} );
+
+			newContainer.view.once( 'render:after', resolve );
+		} );
+	}
+
+	openLastEditedElementPanel( container ) {
+		$e.run( 'panel/editor/open', {
+			view: container.view,
+			model: container.model,
+		} );
+
+		container.view.el.scrollIntoView( {
+			behavior: 'auto',
+			block: 'center',
 		} );
 	}
 }
