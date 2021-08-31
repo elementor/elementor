@@ -61,6 +61,7 @@ class Widgets_Manager {
 			'progress',
 			'testimonial',
 			'tabs',
+			'tabs-v2',
 			'accordion',
 			'toggle',
 			'social-icons',

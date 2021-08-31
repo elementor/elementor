@@ -228,7 +228,11 @@ WidgetView = BaseElementView.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				if ( ! self.$el.children( '.elementor-widget-container' ).outerHeight() ) {
+				// Since 'outerHeight' will not handle hidden elements, and mark them as empty ( eg tabs ).
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ),
+					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+
+				if ( shouldHandleEmptyWidget ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );
@@ -236,7 +240,9 @@ WidgetView = BaseElementView.extend( {
 		} );
 	},
 
-	onClickEdit: function() {
+	onClickEdit: function( e ) {
+		e.stopPropagation();
+
 		if ( this.container.isEditable() ) {
 			this.model.trigger( 'request:edit' );
 		}

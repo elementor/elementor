@@ -11,6 +11,7 @@ module.exports = function( $ ) {
 		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
 		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
 		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
+		'tabs-v2.default': () => import( /* webpackChunkName: 'tabs-v2' */ './handlers/tabs' ),
 		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),

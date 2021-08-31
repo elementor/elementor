@@ -1,5 +1,7 @@
 var ElementModel = require( 'elementor-elements/models/element' );
 
+import ElementRepeaterModel from 'elementor-elements/models/element-repeater';
+
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {
 		if ( ( ! options || ! options.silent ) && ! isCorrectSet ) {
@@ -10,10 +12,16 @@ var ElementsCollection = Backbone.Collection.extend( {
 	},
 
 	model: function( attrs, options ) {
-		var ModelClass = Backbone.Model;
+		// TODO: Temp code.
+		let ModelClass = Backbone.Model,
+			model = ElementModel;
+
+		if ( 'tabs-v2' === attrs.widgetType ) {
+			model = ElementRepeaterModel;
+		}
 
 		if ( attrs.elType ) {
-			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
+			ModelClass = elementor.hooks.applyFilters( 'element/model', model, attrs );
 		}
 
 		return new ModelClass( attrs, options );

@@ -88,12 +88,29 @@ BaseElementView = BaseContainer.extend( {
 		let ChildView;
 		const elType = model.get( 'elType' );
 
-		if ( 'section' === elType ) {
-			ChildView = require( 'elementor-elements/views/section' );
-		} else if ( 'column' === elType ) {
-			ChildView = require( 'elementor-elements/views/column' );
-		} else {
-			ChildView = elementor.modules.elements.views.Widget;
+		switch ( elType ) {
+			case 'section':
+				ChildView = require( 'elementor-elements/views/section' );
+				break;
+
+			case 'column':
+				ChildView = require( 'elementor-elements/views/column' );
+				break;
+
+			case 'widget':
+				if ( elementor.widgetsCache[ model.get( 'widgetType' ) ]?.support_repeater_elements ) {
+					ChildView = require( 'elementor-elements/views/widget-repeater' );
+				} else {
+					ChildView = elementor.modules.elements.views.Widget;
+				}
+				break;
+			default:
+				if ( ! model.attributes.length ) {
+					ChildView = require( 'elementor-elements/views/column-empty' );
+					break;
+				}
+
+				throw new Error( `Cannot getChildView() invalid model, elType: ${ elType }` );
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );

@@ -17,6 +17,7 @@ elementorFrontend.elements.$window.on( 'elementor/frontend/init', () => {
 		'counter.default': Counter,
 		'progress.default': Progress,
 		'tabs.default': Tabs,
+		'tabs-v2.default': Tabs,
 		'toggle.default': Toggle,
 		'video.default': Video,
 		'image-carousel.default': ImageCarousel,

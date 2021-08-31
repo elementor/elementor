@@ -32,6 +32,11 @@ export default class Component extends ComponentBase {
 					return false;
 				}
 
+				if ( draggedElType === parentElType ) {
+					// Support nested elements.
+					return !! elementor.widgetsCache[ parentModel.get( 'widgetType' ) ]?.support_repeater_elements;
+				}
+
 				if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
 					return false;
 				}
