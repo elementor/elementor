@@ -17,7 +17,7 @@ class Widgets extends Favorites_Type {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/document/get_config', [ $this, 'update_widget_categories' ], 10, 1 );
+		add_action( 'elementor/document/before_get_config', [ $this, 'update_widget_categories' ], 10, 1 );
 	}
 
 	/**
@@ -51,12 +51,9 @@ class Widgets extends Favorites_Type {
 	 * @param $document
 	 */
 	public function update_widget_categories( $document ) {
-		$config = [];
-
 		foreach( $this->values() as $favorite ) {
-			$config[ $favorite ][ 'categories' ] = static::CATEGORY_SLUG;
+			Plugin::$instance->widgets_manager->get_widget_types( $favorite )
+				->set_config( [ 'categories' => [ static::CATEGORY_SLUG ] ] );
 		}
-
-		Plugin::$instance->widgets_manager->set_widget_types_config( $config );
 	}
 }

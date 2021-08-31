@@ -540,7 +540,7 @@ abstract class Document extends Controls_Stack {
 			],
 		];
 
-		do_action( 'elementor/document/get_config', $this );
+		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
 			$config['elements'] = $this->get_elements_raw_data( null, true );

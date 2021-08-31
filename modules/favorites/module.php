@@ -9,6 +9,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\Favorites\Types\Widgets;
 use Elementor\Plugin;
+use http\Exception\InvalidArgumentException;
 use WP_Error;
 
 class Module extends BaseModule {
@@ -271,53 +272,38 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Display action doesn't exists error.
+	 * Throw action doesn't exist exception.
 	 *
 	 * @param string $action
 	 */
 	public function action_doesnt_exists( $action ) {
-		wp_die(
-			new WP_Error(
-				'action_doesnt_exists',
-				sprintf(
-					esc_html__( "Action '%s' to apply on favorites doesn't exists", 'elementor' ),
-					$action
-				)
-			)
-		);
+		throw new \InvalidArgumentException( sprintf(
+			esc_html__( "Action '%s' to apply on favorites doesn't exists", 'elementor' ),
+			$action
+		) );
 	}
 
 	/**
-	 * Display type doesn't exists error.
+	 * Throw type doesn't exist exception.
 	 *
 	 * @param string $type
 	 */
 	public function type_doesnt_exists( $type ) {
-		wp_die(
-			new WP_Error(
-				'type_doesnt_exists',
-				sprintf(
-					esc_html__( "Favorites type '%s' doesn't exists", 'elementor' ),
-					$type
-				)
-			)
-		);
+		throw new \InvalidArgumentException( sprintf(
+			esc_html__( "Favorites type '%s' doesn't exists", 'elementor' ),
+			$type
+		) );
 	}
 
 	/**
-	 * Display class doesn't exists error.
+	 * Throw class doesn't exist exception.
 	 *
 	 * @param string $class
 	 */
 	public function class_doesnt_exists( $class ) {
-		wp_die(
-			new WP_Error(
-				'class_doesnt_exists',
-				sprintf(
-					esc_html__( "Can't register type because class '%s' doesn't exists", 'elementor' ),
-					$class
-				)
-			)
-		);
+		throw new InvalidArgumentException( sprintf(
+			esc_html__( "Can't register type because class '%s' doesn't exists", 'elementor' ),
+			$class
+		) );
 	}
 }

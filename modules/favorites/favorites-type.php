@@ -10,6 +10,10 @@ use Elementor\Core\Utils\Static_Collection;
 
 abstract class Favorites_Type extends Static_Collection {
 
+	public function __construct( array $items = [] ) {
+		parent::__construct( $items, true );
+	}
+
 	/**
 	 * Get the name of the type.
 	 *

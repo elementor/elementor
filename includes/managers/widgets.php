@@ -31,18 +31,6 @@ class Widgets_Manager {
 	private $_widget_types = null;
 
 	/**
-	 * Additional config.
-	 *
-	 * Holds a list of additional config values.
-	 *
-	 * @since 3.5.0
-	 * @access private
-	 *
-	 * @var array
-	 */
-	private $additional_config = [];
-
-	/**
 	 * Init widgets.
 	 *
 	 * Initialize Elementor widgets manager. Include all the the widgets files
@@ -333,11 +321,7 @@ class Widgets_Manager {
 			$config[ $widget_key ] = $widget->get_config();
 		}
 
-		return array_merge_recursive( $config, $this->additional_config );
-	}
-
-	public function set_widget_types_config( $config ) {
-		$this->additional_config = array_merge_recursive( $this->additional_config, $config );
+		return $config;
 	}
 
 	public function ajax_get_widget_types_controls_config( array $data ) {

@@ -19,6 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Element_Base extends Controls_Stack {
 
 	/**
+	 * Additional config.
+	 *
+	 * Holds a list of additional config values.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $additional_config = [];
+
+	/**
 	 * Child elements.
 	 *
 	 * Holds all the child elements of the element.
@@ -777,7 +789,19 @@ abstract class Element_Base extends Controls_Stack {
 			$config['editable'] = false;
 		}
 
-		return $config;
+		return array_merge_recursive( $this->additional_config, $config );
+	}
+	/**
+	 * Set additional config.
+	 *
+	 * Set additional config to be merged with the initial config for this
+	 * specific widget.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function set_config( $config ) {
+		$this->additional_config = array_merge( $this->additional_config, $config );
 	}
 
 	/**

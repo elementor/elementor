@@ -115,7 +115,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
 		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			if ( ! categoryConfig.conditionally_toggled && ! categories[ categoryName ] ) {
+			if ( ! categoryConfig.dynamic && ! categories[ categoryName ] ) {
 				return;
 			}
 
@@ -133,8 +133,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
 				defaultActive: categoryConfig.active,
-				alphabetically: categoryConfig.alphabetically,
-				conditionallyToggled: categoryConfig.conditionally_toggled,
+				sort: categoryConfig.sort,
+				dynamic: categoryConfig.dynamic,
 				items: categories[ categoryName ],
 			} );
 		} );

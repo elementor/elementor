@@ -27,7 +27,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		const items = this.model.get( 'items' ) || [];
 
 		this.collection = new PanelElementsElementsCollection(
-			this.model.get( 'alphabetically' ) ?
+			this.model.get( 'sort' ) ?
 				items.sort(
 					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1
 				) :
@@ -52,8 +52,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			this.ui.items.css( 'display', 'none' );
 		}
 
-		if ( this.model.get( 'conditionallyToggled' ) ) {
-			this.toggle( ! this.isEmpty(), true );
+		if ( this.model.get( 'dynamic' ) ) {
+			this.toggle( ! this.isEmpty(), false );
 		}
 	},
 
@@ -61,7 +61,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.toggle();
 	},
 
-	toggle: function( state, immediate = false ) {
+	toggle: function( state, animate = true ) {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
 			isActive = undefined !== state ? ! state : this.$el.hasClass( activeClass ),
@@ -73,10 +73,10 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 		this.$el.toggleClass( activeClass, ! isActive );
 
-		if ( immediate ) {
-			$items[ visibilityFn ]( 0, updateScrollbar );
-		} else {
+		if ( animate ) {
 			$items[ slideFn ]( 300, updateScrollbar );
+		} else {
+			$items[ visibilityFn ]( 0, updateScrollbar );
 		}
 	},
 } );
