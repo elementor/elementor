@@ -3,6 +3,12 @@ import AdminTopBar from './admin-top-bar';
 const AppWrapper = elementorCommon.config.isDebug ? React.StrictMode : React.Fragment;
 document.addEventListener( 'DOMContentLoaded', () => {
 	const adminTopBarElement = document.getElementById( 'e-admin-top-bar-root' );
+
+	// When root element is not exists, the admin top bar should not be rendered.
+	if ( ! adminTopBarElement ) {
+		return;
+	}
+
 	const isTopBarOptionWidgetChecked = !! document.querySelector( '#e-dashboard-widget-admin-top-bar-hide' );
 	const elementorMenuItemIds = [
 		'toplevel_page_elementor',
