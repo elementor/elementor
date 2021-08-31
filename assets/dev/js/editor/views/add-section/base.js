@@ -1,11 +1,19 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
+
 class AddSectionBase extends Marionette.ItemView {
+	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
+
+	// Views.
+	static VIEW_CHOOSE_ACTION = 'choose-action';
+	static VIEW_SELECT_PRESET = ( AddSectionBase.IS_CONTAINER_ACTIVE ) ? 'select-container-preset' : 'select-preset';
+
 	template() {
 		return Marionette.TemplateCache.get( '#tmpl-elementor-add-section' );
 	}
 
 	attributes() {
 		return {
-			'data-view': 'choose-action',
+			'data-view': AddSectionBase.VIEW_CHOOSE_ACTION,
 		};
 	}
 
@@ -17,6 +25,7 @@ class AddSectionBase extends Marionette.ItemView {
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
+			containerPresets: '.e-container-preset',
 		};
 	}
 
@@ -26,6 +35,7 @@ class AddSectionBase extends Marionette.ItemView {
 			'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.presets': 'onPresetSelected',
+			'click @ui.containerPresets': 'onContainerPresetSelected',
 		};
 	}
 
@@ -47,11 +57,11 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	showSelectPresets() {
-		this.setView( 'select-preset' );
+		this.setView( AddSectionBase.VIEW_SELECT_PRESET );
 	}
 
 	closeSelectPresets() {
-		this.setView( 'choose-action' );
+		this.setView( AddSectionBase.VIEW_CHOOSE_ACTION );
 	}
 
 	getTemplatesModalOptions() {
@@ -104,6 +114,23 @@ class AddSectionBase extends Marionette.ItemView {
 		];
 	}
 
+	/**
+	 * Create a Container element.
+	 *
+	 * @param {Object} options - command options.
+	 *
+	 * @return {void}
+	 */
+	createContainer( options = {} ) {
+		$e.run( 'document/elements/create', {
+			model: {
+				elType: 'container',
+			},
+			container: elementor.getPreviewContainer(),
+			options,
+		} );
+	}
+
 	onAddSectionButtonClick() {
 		this.showSelectPresets();
 	}
@@ -140,6 +167,58 @@ class AddSectionBase extends Marionette.ItemView {
 		} );
 	}
 
+	/**
+	 * Create a Container preset when the user chooses a preset.
+	 *
+	 * @param {MouseEvent} e - Click event.
+	 *
+	 * @return void
+	 */
+	onContainerPresetSelected( e ) {
+		this.closeSelectPresets();
+
+		const selectedPreset = e.currentTarget.dataset.preset;
+		let newContainer;
+
+		switch ( selectedPreset ) {
+			// Single Container without sub Containers.
+			case '100':
+				newContainer = ContainerHelper.createContainer( {}, elementor.getPreviewContainer(), this.options );
+				break;
+
+			// Exceptional preset.
+			case 'c100-c50-50':
+				newContainer = ContainerHelper.createContainer( {
+					flex_direction: ContainerHelper.DIRECTION_ROW,
+					flex_wrap: 'wrap',
+					children_flex_basis_type: 'custom',
+					children_flex_basis: {
+						unit: '%',
+						size: '50',
+					},
+					children_flex_basis_mobile: {
+						unit: '%',
+						size: '100',
+					},
+				}, elementor.getPreviewContainer(), this.options );
+
+				const containers = ContainerHelper.createContainers( 2, {}, newContainer, { edit: false } );
+
+				ContainerHelper.createContainers( 2, {}, containers[ 1 ], { edit: false } );
+
+				break;
+
+			// Containers by preset.
+			default:
+				newContainer = ContainerHelper.createContainerFromPreset(
+					selectedPreset,
+					elementor.getPreviewContainer(),
+					this.options
+				);
+				break;
+		}
+	}
+
 	onDropping() {
 		if ( elementor.helpers.maybeDisableWidget() ) {
 			return;
@@ -150,9 +229,9 @@ class AddSectionBase extends Marionette.ItemView {
 				type: 'add',
 				title: elementor.helpers.getModelLabel( selectedElement.model ),
 			} ),
-			eSection = $e.run( 'document/elements/create', {
+			containingElement = $e.run( 'document/elements/create', {
 				model: {
-					elType: 'section',
+					elType: AddSectionBase.IS_CONTAINER_ACTIVE ? 'container' : 'section',
 				},
 				container: elementor.getPreviewContainer(),
 				columns: 1,
@@ -166,8 +245,13 @@ class AddSectionBase extends Marionette.ItemView {
 				},
 			} );
 
-		// Create the element in column.
-		eSection.view.children.findByIndex( 0 ).addElementFromPanel();
+		if ( AddSectionBase.IS_CONTAINER_ACTIVE ) {
+			// Create the element in the container.
+			containingElement.view.addElementFromPanel();
+		} else {
+			// Create the element in column.
+			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	}
