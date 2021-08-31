@@ -32,7 +32,7 @@ describe( 'Default Values - Handlers - Global Values', () => {
 						title_color: 'globals/colors?id=secondary',
 						typography_typography: 'globals/typography?id=primary',
 						control_default_color: 'globals/colors?id=primary',
-						local_settings: 'global index',
+						local_setting: 'global index',
 						empty_global: '',
 					},
 				},
@@ -41,19 +41,19 @@ describe( 'Default Values - Handlers - Global Values', () => {
 
 		// Act
 		const result = globalValues.appendSettingsForSave( {
-			local_settings: 'red',
-			another_local_settings: 'blue',
+			local_setting: 'red',
+			another_local_setting: 'blue',
 		}, container );
 
 		// Assert
 		expect( result ).toEqual( {
-			another_local_settings: 'blue',
+			another_local_setting: 'blue',
 			__globals__: {
 				title_color: 'globals/colors?id=secondary',
 				typography_typography: 'globals/typography?id=primary',
 				control_default_color: 'globals/colors?id=primary',
 				control_default_typography: 'globals/typography?id=sec',
-				local_settings: 'global index',
+				local_setting: 'global index',
 			},
 		} );
 	} );

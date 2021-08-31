@@ -5,7 +5,7 @@ export default class LocalValues extends BaseHandler {
 		const controls = container.settings.controls;
 		const settingsWithoutHardcodedDefaults = container.settings.toJSON( { remove: [ 'hardcoded-default' ] } );
 
-		// Filter all the non styled controls
+		// Filter all the non styled controls.
 		const localSettings = Object.entries( settingsWithoutHardcodedDefaults ).filter(
 			( [ controlName ] ) => controls[ controlName ] && container.view.isStyleTransferControl( controls[ controlName ] )
 		);

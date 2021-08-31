@@ -1,2 +1,2 @@
-// Must be exists!
-// it will replace all the import of scss and css in the test env with this file.
+// Must exist!
+// It will replace all the CSS/SCSS imports in the test env with this file.

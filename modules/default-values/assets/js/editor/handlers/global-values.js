@@ -59,15 +59,15 @@ export default class GlobalValues extends BaseHandler {
 			return element;
 		}
 
-		const newDefaultSettingsKeys = Object.keys( newDefaultSettings.__globals__ );
-
 		// Remove all the global default values from the settings.
 		// (default globals should be empty and not directly assign to the control setting)
 		element.settings.__globals__ = Object.fromEntries(
 			Object.entries( element.settings.__globals__ )
-				.filter( ( [ key, value ] ) =>
-					! newDefaultSettingsKeys.includes( key ) ||
-					value !== newDefaultSettings.__globals__[ key ]
+				.filter( ( [ key, value ] ) => {
+					const defaultSettingValue = newDefaultSettings.__globals__?.[ key ];
+
+					return ! defaultSettingValue || defaultSettingValue !== value;
+				}
 			)
 		);
 
