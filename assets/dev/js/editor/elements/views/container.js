@@ -84,7 +84,7 @@ const ContainerView = BaseElementView.extend( {
 		return {
 			connectWith: '.e-container, .elementor-widget-wrap',
 			items: '> .elementor-element',
-			tolerance: 'pointer',
+			tolerance: 'intersect',
 			swappable: true,
 		};
 	},
