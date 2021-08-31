@@ -74,7 +74,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function add_tracking_data( $params ) {
-		$params[ 'usages' ][ 'favorites' ] = $this->get();
+		$params['usages']['favorites'] = $this->get();
 
 		return $params;
 	}

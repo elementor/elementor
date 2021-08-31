@@ -19,14 +19,14 @@ class Static_Collection {
 	 *
 	 * @var bool
 	 */
-	protected $uniqueCollection = false;
+	protected $unique_values = false;
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct( array $items = [], $unique = false ) {
+	public function __construct( array $items = [], $unique_values = false ) {
 		$this->collection = new Collection( $items );
-		$this->uniqueCollection = $unique;
+		$this->unique_values = $unique_values;
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Static_Collection {
 		$call = call_user_func_array( [ $this->collection, $name ], $arguments );
 
 		if ( $call instanceof Collection ) {
-			$this->collection = $this->uniqueCollection ?
+			$this->collection = $this->unique_values ?
 				$call->unique() :
 				$call;
 		}

@@ -68,7 +68,7 @@ class Index extends Endpoint {
 	 */
 	public function create_item( $type, $request ) {
 		$module = $this->get_module();
-		$favorite = $request->get_query_params()[ 'favorite' ];
+		$favorite = $request->get_query_params()['favorite'];
 
 		$module->update( $type, $favorite, $module::ACTION_MERGE );
 
@@ -80,7 +80,7 @@ class Index extends Endpoint {
 	 */
 	public function delete_item( $type, $request ) {
 		$module = $this->get_module();
-		$favorite = $request->get_query_params()[ 'favorite' ];
+		$favorite = $request->get_query_params()['favorite'];
 
 		$module->update( $type, $favorite, $module::ACTION_DELETE );
 

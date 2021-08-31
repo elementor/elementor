@@ -51,7 +51,7 @@ class Widgets extends Favorites_Type {
 	 * @param $document
 	 */
 	public function update_widget_categories( $document ) {
-		foreach( $this->values() as $favorite ) {
+		foreach ( $this->values() as $favorite ) {
 			Plugin::$instance->widgets_manager->get_widget_types( $favorite )
 				->set_config( [ 'categories' => [ static::CATEGORY_SLUG ] ] );
 		}
