@@ -336,7 +336,22 @@ class Svg_Handler extends Files_Upload_Handler {
 			'textlength',
 		];
 
-		return apply_filters( 'elementor/files/svg/allowed_attributes', $allowed_attributes );
+		/**
+		 * Allowed attributes in SVG file.
+		 *
+		 * Filters the list of allowed attributes in SVG files.
+		 *
+		 * Since SVG files can run JS code that may inject malicious code, all attributes
+		 * are removed except the allowed attributes.
+		 *
+		 * This hook can be used to manage allowed SVG attributes. To either add new
+		 * attributes or delete existing attributes. To strengthen or weaken site security.
+		 *
+		 * @param array $allowed_attributes A list of allowed attributes.
+		 */
+		$allowed_attributes = apply_filters( 'elementor/files/svg/allowed_attributes', $allowed_attributes );
+
+		return $allowed_attributes;
 	}
 
 	/**
@@ -378,7 +393,23 @@ class Svg_Handler extends Files_Upload_Handler {
 			'tspan',
 			'use',
 		];
-		return apply_filters( 'elementor/files/svg/allowed_elements', $allowed_elements );
+
+		/**
+		 * Allowed elements in SVG file.
+		 *
+		 * Filters the list of allowed elements in SVG files.
+		 *
+		 * Since SVG files can run JS code that may inject malicious code, all elements
+		 * are removed except the allowed elements.
+		 *
+		 * This hook can be used to manage SVG elements. To either add new elements or
+		 * delete existing elements. To strengthen or weaken site security.
+		 *
+		 * @param array $allowed_elements A list of allowed elements.
+		 */
+		$allowed_elements = apply_filters( 'elementor/files/svg/allowed_elements', $allowed_elements );
+
+		return $allowed_elements;
 	}
 
 	/**
