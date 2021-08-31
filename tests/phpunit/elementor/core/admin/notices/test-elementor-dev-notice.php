@@ -2,10 +2,9 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin\Notices;
 
 use Elementor\User;
-use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Admin\Notices\Elementor_Dev_Notice;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

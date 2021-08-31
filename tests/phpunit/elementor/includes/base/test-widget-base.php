@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Tests\Phpunit\Includes\Base\Mock\Mock_Skin;

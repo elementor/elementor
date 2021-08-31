@@ -5,7 +5,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tracker;
 use Elementor\Utils;
 
