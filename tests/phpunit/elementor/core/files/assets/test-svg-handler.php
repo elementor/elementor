@@ -1,9 +1,8 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Assets;
 
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
