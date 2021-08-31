@@ -14,6 +14,8 @@
 // Section
 .elementor-section {
 	position: relative;
+	// Need to stretch the section to full width since the section-wrap is flex.
+	width: 100%;
 
 	// Container
 	.elementor-container {
