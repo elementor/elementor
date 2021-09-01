@@ -5,6 +5,7 @@ use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -70,16 +71,25 @@ abstract class Base_App {
 	 * @abstract
 	 */
 	public function render_admin_widget() {
-		echo '<h2>' . $this->get_title() . '</h2>';
+		// PHPCS - the method get_title return a plain string.
+		echo '<h2>' . $this->get_title() . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			$title = sprintf( __( 'Connected as %s', 'elementor' ), '<strong>' . $remote_user->email . '</strong>' );
-			$label = __( 'Disconnect', 'elementor' );
+			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
+			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
-			echo sprintf( '%s <a %s href="%s">%s</a>', $title, $attr, esc_attr( $url ), esc_html( $label ) );
+			echo sprintf(
+				'%s <a %s href="%s">%s</a>',
+				// PHPCS - the variable $title is already escaped above.
+				$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				// PHPCS - the variable $attr is a plain string.
+				$attr, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_attr( $url ),
+				esc_html( $label )
+			);
 		} else {
 			echo 'Not Connected';
 		}
@@ -89,7 +99,7 @@ abstract class Base_App {
 		$this->print_app_info();
 
 		if ( current_user_can( 'manage_options' ) ) {
-			printf( '<div><a href="%s">%s</a></div>', $this->get_admin_url( 'reset' ), __( 'Reset Data', 'elementor' ) );
+			printf( '<div><a href="%s">%s</a></div>', esc_url( $this->get_admin_url( 'reset' ) ), esc_html__( 'Reset Data', 'elementor' ) );
 		}
 
 		echo '<hr>';
@@ -127,7 +137,8 @@ abstract class Base_App {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, $response->get_error_message() );
+			// PHPCS - the variable $response does not contain a user input value.
+			wp_die( $response, $response->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		// Use state as usual.
@@ -140,7 +151,7 @@ abstract class Base_App {
 	 */
 	public function action_authorize() {
 		if ( $this->is_connected() ) {
-			$this->add_notice( __( 'Already connected.', 'elementor' ), 'info' );
+			$this->add_notice( esc_html__( 'Already connected.', 'elementor' ), 'info' );
 			$this->redirect_to_admin_page();
 			return;
 		}
@@ -199,7 +210,7 @@ abstract class Base_App {
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( __( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -211,7 +222,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( __( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -238,9 +249,7 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		// Encode base url, the encode is limited to 64 chars.
-		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
-
+		$admin_url = Str::encode_idn_url( get_admin_url() );
 		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
 
 		return add_query_arg( $params, $admin_url );
@@ -341,8 +350,6 @@ abstract class Base_App {
 	}
 
 	/**
-	 * @deprecated Please use `http_request` method instead of this method.
-	 *
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
@@ -369,24 +376,34 @@ abstract class Base_App {
 	}
 
 	/**
-	 * Get all the connect info
+	 * Get all the connect information
 	 *
 	 * @return array
 	 */
 	protected function get_connect_info() {
-		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this );
+		$connect_info = [
+			'app' => $this->get_slug(),
+			'access_token' => $this->get( 'access_token' ),
+			'client_id' => $this->get( 'client_id' ),
+			'local_id' => get_current_user_id(),
+			'site_key' => $this->get_site_key(),
+			'home_url' => trailingslashit( home_url() ),
+		];
 
-		return array_merge(
-			[
-				'app' => $this->get_slug(),
-				'access_token' => $this->get( 'access_token' ),
-				'client_id' => $this->get( 'client_id' ),
-				'local_id' => get_current_user_id(),
-				'site_key' => $this->get_site_key(),
-				'home_url' => trailingslashit( home_url() ),
-			],
-			$additional_info
-		);
+		$additional_info = [];
+
+		/**
+		 * Additional connect info.
+		 *
+		 * Filters the connection information when connecting to Elementor servers.
+		 * This hook can be used to add more information or add more data.
+		 *
+		 * @param array    $additional_info Additional connecting information array.
+		 * @param Base_App $this            The base app instance.
+		 */
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', $additional_info, $this );
+
+		return array_merge( $connect_info, $additional_info );
 	}
 
 	/**
@@ -436,7 +453,8 @@ abstract class Base_App {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, [ 'back_link' => true ] );
+			// PHPCS - the variable $response does not contain a user input value.
+			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -466,7 +484,10 @@ abstract class Base_App {
 
 			if ( 401 === $code ) {
 				$this->delete();
-				$this->action_authorize();
+
+				if ( 'xhr' !== $this->auth_mode ) {
+					$this->action_authorize();
+				}
 			}
 
 			return new \WP_Error( $code, $message );
@@ -497,7 +518,6 @@ abstract class Base_App {
 	protected function get_api_url() {
 		return static::API_URL . '/' . $this->get_slug();
 	}
-
 	/**
 	 * @since 2.3.0
 	 * @access protected
@@ -560,10 +580,17 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->request( 'get_client_id' );
+		$response = $this->request(
+			'get_client_id',
+			[
+				// phpcs:ignore WordPress.Security.NonceVerification
+				'source' => isset( $_REQUEST['source'] ) ? esc_attr( $_REQUEST['source'] ) : '',
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
-			wp_die( $response, $response->get_error_message() );
+			// PHPCS - the variable $response does not contain a user input value.
+			wp_die( $response, $response->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$this->set( 'client_id', $response->client_id );
@@ -600,7 +627,7 @@ abstract class Base_App {
 				window.close();
 				opener.focus();
 			} else {
-				location = '<?php echo $url; ?>';
+				location = '<?php echo esc_url( $url ); ?>';
 			}
 		</script>
 		<?php
@@ -666,7 +693,7 @@ abstract class Base_App {
 		switch ( $this->auth_mode ) {
 			case 'cli':
 				foreach ( $notices as $notice ) {
-					printf( '[%s] %s', $notice['type'], $notice['content'] );
+					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( $notice['content'] ) );
 				}
 				break;
 			default:
@@ -703,7 +730,8 @@ abstract class Base_App {
 				$color = 'red';
 			}
 
-			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status );
+			// PHPCS - the values of $item['label'], $color, $status are plain strings.
+			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 	}
@@ -720,12 +748,14 @@ abstract class Base_App {
 		}, $base_urls );
 	}
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+	private function init_auth_mode() {
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		$is_ajax = wp_doing_ajax();
+
+		if ( $is_rest || $is_ajax ) {
+			// Set default to 'xhr' if rest or ajax request.
+			$this->auth_mode = 'xhr';
+		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$allowed_auth_modes = [
@@ -742,6 +772,16 @@ abstract class Base_App {
 				$this->auth_mode = $mode;
 			}
 		}
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		$this->init_auth_mode();
 
 		$this->http = new Http();
 

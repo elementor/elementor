@@ -180,11 +180,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param $context
+	 * @param string $context Where this subscription plan should be shown.
 	 *
 	 * @return array
 	 */
-	public function get_subscription_plans( $context ) {
+	public function get_subscription_plans( $context = '' ) {
 		return [
 			static::ACCESS_LEVEL_CORE => [
 				'label' => null,

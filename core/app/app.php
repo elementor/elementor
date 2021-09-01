@@ -36,8 +36,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Theme Builder', 'elementor' ),
-			__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);
@@ -87,11 +87,15 @@ class App extends BaseApp {
 	}
 
 	protected function get_init_settings() {
+		$referer = wp_get_referer();
+
 		return [
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
-			'return_url' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
+			'admin_url' => admin_url(),
+			'login_url' => wp_login_url(),
 		];
 	}
 
@@ -146,7 +150,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.11.0'
+			'5.12.0'
 		);
 
 		wp_register_style(

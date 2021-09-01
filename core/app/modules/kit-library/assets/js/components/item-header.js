@@ -78,7 +78,23 @@ export default function ItemHeader( props ) {
 			onSuccess: ( { data } ) => navigate(
 				`/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library`
 			),
-			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
+			onError: ( errorResponse ) => {
+				if ( 401 === errorResponse.code ) {
+					updateSettings( {
+						is_library_connected: false,
+						access_level: 0,
+					} );
+
+					setIsConnectDialogOpen( true );
+
+					return;
+				}
+
+				setError( {
+					code: errorResponse.code,
+					message: __( 'Something went wrong.', 'elementor' ),
+				} );
+			},
 		}
 	);
 
@@ -93,17 +109,19 @@ export default function ItemHeader( props ) {
 	return (
 		<>
 			{
-				error && <Dialog
-					title={ error }
-					text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
-					approveButtonText={ __( 'Learn More', 'elementor' ) }
-					approveButtonColor="link"
-					approveButtonUrl="http://go.elementor.com/app-kit-library-error"
-					approveButtonOnClick={ () => setError( false ) }
-					dismissButtonText={ __( 'Got it', 'elementor' ) }
-					dismissButtonOnClick={ () => setError( false ) }
-					onClose={ () => setError( false ) }
-				/>
+				error && (
+					<Dialog
+						title={ error.message }
+						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+						approveButtonText={ __( 'Learn More', 'elementor' ) }
+						approveButtonColor="link"
+						approveButtonUrl="http://go.elementor.com/app-kit-library-error"
+						approveButtonOnClick={ () => setError( false ) }
+						dismissButtonText={ __( 'Got it', 'elementor' ) }
+						dismissButtonOnClick={ () => setError( false ) }
+						onClose={ () => setError( false ) }
+					/>
+				)
 			}
 			{
 				isConnectDialogOpen && <ConnectDialog
@@ -120,7 +138,7 @@ export default function ItemHeader( props ) {
 
 						apply();
 					} }
-					onError={ ( message ) => setError( message ) }
+					onError={ ( message ) => setError( { message } ) }
 				/>
 			}
 			<Header

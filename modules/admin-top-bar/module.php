@@ -1,10 +1,8 @@
 <?php
-
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +21,8 @@ class Module extends BaseApp {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'admin-top-bar',
-			'title' => __( 'Admin Top Bar', 'elementor' ),
-			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
+			'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
+			'description' => esc_html__( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
@@ -94,16 +92,25 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'in_admin_header', function () {
-			$this->render_admin_top_bar();
-		} );
+		add_action( 'current_screen', function () {
+			$current_screen = get_current_screen();
 
-		add_action( 'admin_enqueue_scripts', function () {
-			$this->enqueue_scripts();
-		} );
+			// Only in elementor based pages.
+			if ( ! $current_screen || ! strstr( $current_screen->id, 'elementor' ) ) {
+				return;
+			}
 
-		add_action( 'wp_dashboard_setup', function () {
-			$this->register_dashboard_widgets();
+			add_action( 'in_admin_header', function () {
+				$this->render_admin_top_bar();
+			} );
+
+			add_action( 'admin_enqueue_scripts', function () {
+				$this->enqueue_scripts();
+			} );
+
+			add_action( 'wp_dashboard_setup', function () {
+				$this->register_dashboard_widgets();
+			} );
 		} );
 	}
 }

@@ -19,6 +19,7 @@ class Section extends Library_Document {
 		$properties = parent::get_properties();
 
 		$properties['support_kit'] = true;
+		$properties['show_in_finder'] = true;
 
 		return $properties;
 	}
@@ -39,7 +40,7 @@ class Section extends Library_Document {
 	 * @return string Document title.
 	 */
 	public static function get_title() {
-		return __( 'Section', 'elementor' );
+		return esc_html__( 'Section', 'elementor' );
 	}
 
 	public static function get_plural_title() {
