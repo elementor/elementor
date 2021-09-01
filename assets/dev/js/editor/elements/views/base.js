@@ -226,9 +226,31 @@ BaseElementView = BaseContainer.extend( {
 
 	getHandlesOverlay: function() {
 		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } );
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } ),
+			elementType = this.options.model.get( 'elType' ),
+			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
+			elementData = elementor.getElementData( this.model );
 
-		jQuery.each( this.getEditButtons(), ( toolName, tool ) => {
+		let editButtons = this.getEditButtons();
+
+		// We should only allow external modification to edit buttons if the user enabled edit buttons.
+		if ( editButtonsEnabled ) {
+			// A filter for adding edit buttons to all element types.
+			editButtons = elementor.hooks.applyFilters( `elements/base/edit-buttons`, editButtons );
+			// A filter for adding edit buttons only to a specific element type.
+			editButtons = elementor.hooks.applyFilters( `elements/${ elementType }/edit-buttons`, editButtons );
+		}
+
+		// Only sections always have the remove button, even if the Editing Handles preference is off.
+		if ( 'section' === elementType || editButtonsEnabled ) {
+			editButtons.remove = {
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
+			};
+		}
+
+		jQuery.each( editButtons, ( toolName, tool ) => {
 			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
 				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
 				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
