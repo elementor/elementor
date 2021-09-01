@@ -146,18 +146,20 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getHistoryType( event ) {
-		if ( event.originalEvent ) {
-			event = event.originalEvent;
+		if ( event ) {
+			if ( event.originalEvent ) {
+				event = event.originalEvent;
+			}
+
+			switch ( event.constructor.name ) {
+				case 'DragEvent':
+					return 'add';
+				case 'ClipboardEvent':
+					return 'paste';
+			}
 		}
 
-		switch ( event.constructor.name ) {
-			case 'DragEvent':
-				return 'add';
-			case 'ClipboardEvent':
-				return 'paste';
-			default:
-				return 'import';
-		}
+		return 'import';
 	},
 
 	addChildElement: function( data, options ) {

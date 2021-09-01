@@ -15,7 +15,7 @@ import Cache from './data/cache';
  * @property {number} timestamp
  * @property {string} endpoint
  *
- * @property {string} [baseEndpointAddress]
+ * @property {string} [baseEndpointURL]
  * @property {string} [namespace]
  * @property {string} [version]
  * @property {('hit'|'miss')} [cache]
@@ -41,7 +41,7 @@ export default class Data extends Commands {
 		this.args = Object.assign( args, {
 			namespace: 'elementor',
 			version: '1',
-			baseEndpointAddress: elementorCommon.config.urls.rest,
+			baseEndpointURL: elementorCommon.config.urls.rest,
 		} );
 
 		this.cache = new Cache( this );
@@ -110,7 +110,7 @@ export default class Data extends Commands {
 	}
 
 	/**
-	 * Function getEndpointAddress().
+	 * Function getEndpointURL().
 	 *
 	 * Get remote endpoint address.
 	 *
@@ -119,15 +119,15 @@ export default class Data extends Commands {
 	 *
 	 * @returns {string}
 	 */
-	getEndpointAddress( requestData, endpoint = requestData.endpoint ) {
+	getEndpointURL( requestData, endpoint = requestData.endpoint ) {
 		// Allow to request data override default namespace and args.
 		const {
-			baseEndpointAddress = this.args.baseEndpointAddress,
+			baseEndpointURL = this.args.baseEndpointURL,
 			namespace = this.args.namespace,
 			version = this.args.version,
 		} = requestData;
 
-		return `${ baseEndpointAddress }${ namespace }/v${ version }/` + endpoint;
+		return `${ baseEndpointURL }${ namespace }/v${ version }/` + endpoint;
 	}
 
 	/**
@@ -339,7 +339,7 @@ export default class Data extends Commands {
 		const splitEndpoint = requestData.endpoint.split( '?' ),
 			endpoint = splitEndpoint.shift();
 
-		let endpointAddress = this.getEndpointAddress( requestData, endpoint );
+		let endpointAddress = this.getEndpointURL( requestData, endpoint );
 
 		if ( splitEndpoint.length ) {
 			const separator = endpointAddress.includes( '?' ) ? '&' : '?';

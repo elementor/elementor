@@ -1,5 +1,5 @@
 import FileParserBase from '../../file-parser-base';
-import ContainerFactory from 'elementor-editor/components/browser-import/container-factory';
+import ContainerFactory from '../../../container-factory';
 
 export class Elements extends FileParserBase {
 	/**
@@ -20,7 +20,7 @@ export class Elements extends FileParserBase {
 	 * @inheritDoc
 	 */
 	async parse() {
-		return ( await this.reader.getData() ).elements.map(
+		return ( await this.reader.getData() ).content.map(
 			( element ) => ContainerFactory.createElementContainer( element )
 		);
 	}
@@ -31,7 +31,7 @@ export class Elements extends FileParserBase {
 	static async validate( reader ) {
 		const data = await reader.getData();
 
-		return 1 === Object.keys( data ).length &&
-			Array.isArray( data.elements );
+		return data.version && data.type &&
+			Array.isArray( data.content );
 	}
 }

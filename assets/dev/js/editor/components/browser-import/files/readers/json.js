@@ -33,8 +33,12 @@ export class Json extends FileReaderBase {
 	 *
 	 * @returns {{}}
 	 */
-	getData() {
-		return this.getContent()
-			.then( ( content ) => JSON.parse( content ) );
+	async getData() {
+		if ( ! this._data ) {
+			this._data = await this.getContent()
+				.then( ( content ) => JSON.parse( content ) );
+		}
+
+		return this._data;
 	}
 }

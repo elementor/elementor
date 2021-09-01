@@ -1,5 +1,4 @@
 import Container from '../../../editor/container/container';
-import PanelElementsElementModel from 'elementor-panel/pages/elements/models/element';
 
 export default class Session {
 	/**
@@ -10,11 +9,11 @@ export default class Session {
 	manager;
 
 	/**
-	 * The FileCollection instance.
+	 * The ItemCollection instance.
 	 *
-	 * @type {FileCollection}
+	 * @type {ItemCollection}
 	 */
-	fileCollection;
+	itemCollection;
 
 	/**
 	 * The Target instance.
@@ -28,21 +27,23 @@ export default class Session {
 	 *
 	 * @type {{}}
 	 */
-	options = {};
+	options = {
+		container: {},
+	};
 
 	/**
 	 * Session constructor.
 	 *
 	 * @param manager
-	 * @param fileCollection
+	 * @param itemCollection
 	 * @param container
 	 * @param options
 	 */
-	constructor( manager, fileCollection = null, container = null, options = {} ) {
+	constructor( manager, itemCollection = null, container = null, options = {} ) {
 		this.manager = manager;
-		this.fileCollection = fileCollection;
+		this.itemCollection = itemCollection;
 		this.container = container;
-		this.options = options;
+		this.options = Object.assign( this.options, options );
 	}
 
 	/**
@@ -51,8 +52,8 @@ export default class Session {
 	 * @returns {boolean}
 	 */
 	async validate() {
-		for ( const file of this.fileCollection.getFiles() ) {
-			if ( ! await this.manager.getReaderOf( file ) ) {
+		for ( const item of this.itemCollection.getItems() ) {
+			if ( ! await this.manager.getReaderOf( item ) ) {
 				return false;
 			}
 		}
@@ -68,24 +69,28 @@ export default class Session {
 	async apply() {
 		const parsed = [];
 
-		for ( const file of this.fileCollection.getFiles() ) {
-			const parser = await this.manager.getParserOf( file, { instantiate: true } );
+		for ( const item of this.itemCollection.getItems() ) {
+			const parser = await this.manager.getParserOf( item, true );
 
 			if ( parser ) {
-				parsed.push(
-					parser.parse()
-				);
+				parsed.push( parser.parse() );
 			} else {
 				throw new Error( 'An error occurred when trying to parse the input' );
 			}
 		}
 
 		return Promise.all( parsed )
-			.then( ( result ) => this.containerize( result.flat() ) );
+			.then( ( result ) => this.resolve( result.flat() ) );
 	}
 
-	containerize( elements ) {
-		return elements.map( ( element ) => {
+	/**
+	 * Resolve containers to fulfill their purpose.
+	 *
+	 * @param containers
+	 * @returns {*}
+	 */
+	resolve( containers ) {
+		return containers.map( ( element ) => {
 			switch ( element.type ) {
 				case 'element':
 				case 'widget':

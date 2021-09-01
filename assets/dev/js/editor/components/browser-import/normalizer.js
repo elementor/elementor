@@ -1,6 +1,6 @@
 import isInstanceof from '../../utils/is-instanceof';
-import Mime from 'mime/index';
-import FileCollection from 'elementor-editor/components/browser-import/files/file-collection';
+import Item from './items/item';
+import ItemCollection from './items/item-collection';
 
 export default class Normalizer {
 	/**
@@ -13,98 +13,84 @@ export default class Normalizer {
 	}
 
 	/**
-	 * Normalize input to a FileList collection, where each item is a File object. This method can be used to normalize
-	 * a vast spectrum of input types - from data url strings to blob objects, and array of them. Other kind of parsers
+	 * Normalize input to an ItemCollection, where each item is an Item object. This method can be used to normalize a
+	 * vast spectrum of input types - from data url strings to blob objects, and array of them. Other kind of parsers
 	 * can be registered to the Manager.
 	 *
 	 * @param input
-	 * @returns {Promise<FileList>}
+	 * @returns {Promise<ItemCollection>}
 	 */
 	async normalize( input ) {
-		if ( ! ( input instanceof FileCollection ) ) {
-			input = this.toFileCollection( input );
+		if ( ! ( input instanceof ItemCollection ) ) {
+			input = this.toItemCollection( input );
 		}
 
 		return input;
 	}
 
 	/**
-	 * Convert an single or multiple input items into a FileList object. To learn more about the way each item is
-	 * treated, please refer to the 'toFile' method.
+	 * Convert an single or multiple input subjects into a ItemCollection object. To learn more about the way each
+	 * subject is treated, please refer the 'toItem' method.
 	 *
-	 * @param input
-	 * @returns {Promise<FileList>}
+	 * @param subjects
+	 * @returns {Promise<ItemCollection>}
 	 */
-	async toFileCollection( input ) {
-		if ( ! Array.isArray( input ) ) {
-			input = isInstanceof( input, FileList ) || isInstanceof( input, DataTransferItemList ) ?
-				Array.from( input ) :
-				[ input ];
+	async toItemCollection( subjects ) {
+		if ( ! Array.isArray( subjects ) ) {
+			subjects = isInstanceof( subjects, FileList ) || isInstanceof( subjects, DataTransferItemList ) ?
+				Array.from( subjects ) :
+				[ subjects ];
 		}
 
 		return Promise.all(
-			input.map( ( item ) => {
-				// Creating a FileList can only be made with an array of File objects. Therefore, unless the item is
-				// a File object, we should transform it into one.
-				if ( ! isInstanceof( item, File ) ) {
-					item = this.toFile( item );
+			subjects.map( ( subject ) => {
+				// Creating a ItemCollection can only be made with an array of Item objects. Therefore, unless the
+				// subject is an Item object, we should transform it into one.
+				if ( ! ( subject instanceof Item ) ) {
+					subject = this.toItem( subject );
 				}
 
-				return item;
+				return subject;
 			} )
-		).then( ( files ) => new FileCollection( files ) );
+		).then( ( items ) => new ItemCollection( items ) );
 	}
 
 	/**
-	 * Convert a single input item into a File object. First the method checks for Blob or DataTransferItem objects, and
-	 * then for data url strings. In any other case, it's trying to resolve the input using the parsers registered to
-	 * the Manager by the application.
+	 * Convert a single subject into an Item object.
 	 *
-	 * @param input
-	 * @returns {Promise<File>}
+	 * @param subject
+	 * @returns {Promise<Item>}
 	 */
-	async toFile( input ) {
-		if ( ! ( input instanceof Blob || isInstanceof( input, DataTransferItem ) ) ) {
+	async toItem( subject ) {
+		// The method purpose is to generate an Item object, which requires a Blob/File objects. When the subject is
+		// already a Blob/File or a DataTransferItem object, no further actions has to be taken in order to create an
+		// Item object. In other cases, we check whether it's a data url (which can be used to create a Blob), or
+		// otherwise try to resolve the input using the readers registered to the Manager by the application.
+		if ( ! isInstanceof( subject, [ Blob, File, DataTransferItem ] ) ) {
 			try {
 				// In order to check whether it's a data url string, we're trying to decode it. If it is a data url,
-				// we can extract the blob and the mime-type, and eventually generate a File object.
-				window.atob( input.split( ',' )[ 1 ] );
+				// we can extract the blob later using `fetch`.
+				window.atob( subject.split( ',' )[ 1 ] );
 			} catch ( e ) {
-				// If it's not a data url string, we should convert the input into one. At first, we have to find the
-				// mime-type, and then use the `createDataUrl` method. This way we can unitedly convert the input to
-				// a File object from a data url instead of referring each input format differently.
-				const mimeType = await this.manager.getMimeTypeOf( input );
+				// If it's not a data url string, we should resolve the subject by the readers registered to the
+				// Manager. At first, we have to find the mime-type, and then use the `createDataUrl` method. This way
+				// we can unitedly convert the input to a Blob object from a data url using `fetch`, instead of
+				// referring each input format differently.
+				const mimeType = await this.manager.getMimeTypeOf( subject );
 
 				if ( mimeType ) {
-					input = this.constructor.createDataUrl( input, mimeType );
+					subject = this.constructor.createDataUrl( subject, mimeType );
 				} else {
 					throw new Error( 'The input provided cannot be resolved' );
 				}
 			}
 
-			// Extract the mime-type and the blob of the input.
-			input = await fetch( input )
+			// Extract the Blob object of the input.
+			subject = await fetch( subject )
 				.then( ( res ) => res.blob() );
 		}
 
-		return new File(
-				[ input ],
-				this.constructor.createFileName( input ),
-				{ type: input.type }
-			);
-	}
-
-	/**
-	 * Creates a random file name from a Blob object while using the suitable extension for the blob mime-type.
-	 *
-	 * @param blob
-	 * @returns {string}
-	 */
-	static createFileName( blob ) {
-		return [
-			elementorCommon.helpers.getUniqueId(),
-			Mime.getExtension( blob.type ),
-		].join( '.' );
+		return new Item( subject );
 	}
 
 	/**

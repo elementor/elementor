@@ -4,10 +4,18 @@
  * check whether it's instanceof by using the objects constructor and prototype names.
  *
  * @param object
- * @param classDeclaration
+ * @param constructors
  * @returns {boolean}
  */
 
-export default ( object, classDeclaration ) => {
-	return object.constructor.name === classDeclaration.prototype[ Symbol.toStringTag ];
+export default ( object, constructors ) => {
+	constructors = Array.isArray( constructors ) ? constructors : [ constructors ];
+
+	for ( const constructor of constructors ) {
+		if ( object.constructor.name === constructor.prototype[ Symbol.toStringTag ] ) {
+			return true;
+		}
+	}
+
+	return false;
 };

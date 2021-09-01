@@ -1,4 +1,5 @@
 import FileParserBase from '../../file-parser-base';
+import ContainerFactory from '../../../container-factory';
 
 export class Widget extends FileParserBase {
 	/**
@@ -19,23 +20,21 @@ export class Widget extends FileParserBase {
 	 * @inheritDoc
 	 */
 	async parse() {
-		const file = this.reader.getFile();
+		const file = this.reader.getFile(),
+			{ data: result } = await $e.data.run( 'create', 'wp/media', { file, options: {} } );
 
-		return $e.data.run( 'create', 'wp/media', { file, options: {} } )
-			.then( ( { data: result } ) => {
-				this.session.getTarget().createElement( 'video', {
-					settings: {
-						video_type: 'hosted',
-						insert_url: 'yes',
-						external_url: {
-							url: result.source_url,
-							is_external: '',
-							nofollow: '',
-							custom_attributes: '',
-						},
-					},
-				} );
-			} );
+		return ContainerFactory.createElementContainer( {
+			widgetType: 'video',
+			settings: {
+				video_type: 'hosted',
+				hosted_url: {
+					url: result.source_url,
+					id: result.id,
+					alt: file.name.split( '.' )[ 0 ],
+					source: 'library',
+				},
+			},
+		} );
 	}
 
 	/**

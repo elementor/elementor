@@ -341,8 +341,10 @@
 			event.preventDefault();
 
 			const serialized = JSON.stringify( {
-				elements: [
-					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes
+				type: 'section',
+				version: '0.4',
+				content: [
+					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
 				],
 			} );
 
@@ -352,8 +354,6 @@
 					event.originalEvent.dataTransfer.files :
 					serialized,
 				options: {
-					reader: 'json',
-					parser: 'elements',
 					event,
 					container: {
 						at: settings.getDropIndex( currentSide, event ),

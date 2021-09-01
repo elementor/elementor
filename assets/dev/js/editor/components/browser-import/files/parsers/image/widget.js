@@ -1,4 +1,5 @@
 import FileParserBase from '../../file-parser-base';
+import ContainerFactory from '../../../container-factory';
 
 export class Widget extends FileParserBase {
 	/**
@@ -20,21 +21,19 @@ export class Widget extends FileParserBase {
 	 */
 	async parse() {
 		const file = this.reader.getFile(),
-			{ data: result } = $e.data.run( 'create', 'wp/media', { file, options: {} } );
+			{ data: result } = await $e.data.run( 'create', 'wp/media', { file, options: {} } );
 
-		return [
-			this.createContainer( {
-				type: 'widget',
-				settings: {
-					image: {
-						url: result.source_url,
-						id: result.id,
-						alt: file.name.split( '.' )[ 0 ],
-						source: 'library',
-					},
+		return ContainerFactory.createElementContainer( {
+			widgetType: 'image',
+			settings: {
+				image: {
+					url: result.source_url,
+					id: result.id,
+					alt: file.name.split( '.' )[ 0 ],
+					source: 'library',
 				},
-			} ),
-		];
+			},
+		} );
 	}
 
 	/**

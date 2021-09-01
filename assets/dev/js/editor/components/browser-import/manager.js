@@ -1,8 +1,6 @@
 import Normalizer from './normalizer';
-import FileReaderBase from './files/file-reader-base';
-import FileParserBase from './files/file-parser-base';
 import Session from 'elementor-editor/components/browser-import/session';
-import FileCollection from 'elementor-editor/components/browser-import/files/file-collection';
+import ItemCollection from 'elementor-editor/components/browser-import/items/item-collection';
 
 export default class Manager {
 	/**
@@ -49,7 +47,7 @@ export default class Manager {
 	 * @returns {Session}
 	 */
 	async createSession( input, container, options = {} ) {
-		if ( ! ( input instanceof FileCollection ) ) {
+		if ( ! ( input instanceof ItemCollection ) ) {
 			input = await this.getNormalizer().normalize( input );
 		}
 
@@ -83,32 +81,24 @@ export default class Manager {
 	}
 
 	/**
-	 * Get the file-handler that can handle the given file.
+	 * Get the file-handler that can handle the File of the given Item.
 	 *
-	 * @param file
-	 * @param options
+	 * @param item
+	 * @param instantiate
 	 * @returns {FileReaderBase|boolean}
 	 */
-	async getReaderOf( file, options = {} ) {
-		const { instantiate = false, reader: readerName } = options,
-			prepare = async ( reader ) => {
-				return await reader.validate( file ) &&
-					( instantiate ? new reader( file ) : reader );
-			};
+	async getReaderOf( item, instantiate = false ) {
+		const file = item.getFile(),
+			readerName = item.getReader(),
+			readers = this.getReaders( readerName );
 
-		if ( readerName ) {
-			const reader = this.getReaders()[ readerName ];
-
-			if ( reader ) {
-				return await prepare( reader );
-			}
-		} else {
-			for ( const reader of Object.values( this.getReaders() ) ) {
-				const prepared = await prepare( reader );
-
-				if ( prepared ) {
-					return prepared;
+		for ( const reader of Object.values( readers ) ) {
+			if ( await reader.validate( file ) ) {
+				if ( ! readerName ) {
+					item.setReader( reader.getName() );
 				}
+
+				return instantiate ? new reader( file ) : reader;
 			}
 		}
 
@@ -116,38 +106,29 @@ export default class Manager {
 	}
 
 	/**
-	 * Get the file-parser that can handle the given file.
+	 * Get the file-parser that can handle the File of the given Item.
 	 *
-	 * @param file
-	 * @param options
+	 * @param item
+	 * @param instantiate
 	 * @returns {Promise<FileParserBase|boolean>}
 	 */
-	async getParserOf( file, options = {} ) {
-		const { instantiate = false, reader: readerName, parser: parserName } = options,
-			reader = await this.getReaderOf( file, {
-				reader: readerName,
-				instantiate: true,
-			} ),
-			prepare = async ( parser ) => {
-				return await parser.validate( reader ) &&
-					( instantiate ? new parser( reader ) : parser );
-			},
-			parsers = this.getParsers( reader.constructor.getName() );
+	async getParserOf( item, instantiate = false ) {
+		const reader = await this.getReaderOf( item, true ),
+			parserName = item.getParser();
 
 		if ( reader ) {
-			if ( parserName ) {
-				const parser = parsers[ parserName ];
+			const parsers = this.getParsers(
+				reader.constructor.getName(),
+				parserName
+			);
 
-				if ( parser ) {
-					return await prepare( parser );
-				}
-			} else {
-				for ( const parser of Object.values( parsers ) ) {
-					const prepared = await prepare( parser );
-
-					if ( prepared ) {
-						return prepared;
+			for ( const parser of Object.values( parsers ) ) {
+				if ( await parser.validate( reader ) ) {
+					if ( ! parserName ) {
+						item.setParser( parser.getName() );
 					}
+
+					return instantiate ? new parser( reader ) : parser;
 				}
 			}
 		}
@@ -185,21 +166,39 @@ export default class Manager {
 	/**
 	 * Get all registered file-readers.
 	 *
-	 * @returns {[]}
+	 * @param readers
+	 * @returns {{}}
 	 */
-	getReaders() {
-		return this.readers;
+	getReaders( readers = [] ) {
+		readers = Array.isArray( readers ) ? readers : [ readers ];
+
+		if ( ! readers.length ) {
+			return this.readers;
+		}
+
+		return Object.fromEntries(
+			readers.filter( ( reader ) => reader in this.readers )
+				.map( ( reader ) => [ reader, this.readers[ reader ] ] )
+		);
 	}
 
 	/**
 	 * Get all registered file-parsers, unless a reader name is specified, in which case its parsers are returned.
 	 *
-	 * @param readerName
-	 * @returns {FileParserBase[]}
+	 * @param reader
+	 * @param parsers
+	 * @returns {{}}
 	 */
-	getParsers( readerName = null ) {
-		return readerName ?
-			this.parsers[ readerName ] :
-			this.parsers;
+	getParsers( reader, parsers = [] ) {
+		parsers = Array.isArray( parsers ) ? parsers : [ parsers ];
+
+		if ( ! parsers.length ) {
+			return this.parsers[ reader ] || {};
+		}
+
+		return Object.fromEntries(
+			parsers.filter( ( parser ) => parser in this.parsers[ reader ] )
+				.map( ( parser ) => [ parser, this.parsers[ reader ][ parser ] ] )
+		);
 	}
 }

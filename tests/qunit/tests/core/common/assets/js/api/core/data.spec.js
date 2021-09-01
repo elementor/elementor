@@ -190,24 +190,24 @@ jQuery( () => {
 			const { version, namespace } = $e.data.args,
 				endpoint = 'component/command?a=1&b=2',
 				result = $e.data.prepareEndpoint( { endpoint } ),
-				expected = `${ $e.data.args.baseEndpointAddress }${ namespace }/v${ version }/${ endpoint }`;
+				expected = `${ $e.data.args.baseEndpointURL }${ namespace }/v${ version }/${ endpoint }`;
 
 			assert.equal( result, expected );
 		} );
 
 		QUnit.test( 'prepareEndpoint(): permalinks in plain mode ', ( assert ) => {
-			const baseEndpointAddressOrig = $e.data.args.baseEndpointAddress;
+			const baseEndpointURLOrig = $e.data.args.baseEndpointURL;
 
-			$e.data.args.baseEndpointAddress = 'https://example.com/index.php?route=/';
+			$e.data.args.baseEndpointURL = 'https://example.com/index.php?route=/';
 
 			const { version, namespace } = $e.data.args,
 				endpoint = 'component/command?a=1&b=2',
 				result = $e.data.prepareEndpoint( { endpoint } ),
-				expectedPrefix = `${ $e.data.args.baseEndpointAddress }${ namespace }/v${ version }/`;
+				expectedPrefix = `${ $e.data.args.baseEndpointURL }${ namespace }/v${ version }/`;
 
 			assert.equal( result, expectedPrefix + 'component/command&a=1&b=2' );
 
-			$e.data.args.baseEndpointAddress = baseEndpointAddressOrig;
+			$e.data.args.baseEndpointURL = baseEndpointURLOrig;
 		} );
 
 		/**
@@ -248,7 +248,7 @@ jQuery( () => {
 			eData.restoreFetch();
 
 			await $e.data.fetch( requestData, ( input ) => {
-				assert.equal( input, $e.data.getEndpointAddress( requestData, command + '?param1=valueA' ) );
+				assert.equal( input, $e.data.getEndpointURL( requestData, command + '?param1=valueA' ) );
 				return Promise.resolve( new Response( JSON.stringify( {} ) ) );
 			} );
 		} );
@@ -284,7 +284,7 @@ jQuery( () => {
 					args,
 				},
 				result = await $e.data.fetch( requestData, ( input ) => {
-					assert.equal( input, $e.data.getEndpointAddress( requestData, command + '?param1=valueA' ) );
+					assert.equal( input, $e.data.getEndpointURL( requestData, command + '?param1=valueA' ) );
 					return Promise.resolve( new Response( JSON.stringify( fakeResponse ) ) );
 				} );
 

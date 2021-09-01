@@ -8,11 +8,12 @@ export default class ContainerFactory {
 	 * @returns {Container}
 	 */
 	static createElementContainer( element ) {
-		const model = new ElementModel( element );
+		const widget = elementor.widgetsCache[ element.widgetType ] || {},
+			model = new ElementModel( Object.assign( {}, widget, element ) );
 
 		return new elementorModules.editor.Container( {
 			id: model.get( 'id' ) || elementorCommon.helpers.getUniqueId().toString(),
-			type: model.get( 'elType' ),
+			type: model.get( 'elType' ) || 'widget',
 			settings: model.get( 'settings' ),
 			model,
 		} );
