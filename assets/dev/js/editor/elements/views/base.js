@@ -72,6 +72,10 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
+	getFloatingBarConfig() {
+		return {};
+	},
+
 	getElementType() {
 		return this.model.get( 'elType' );
 	},
@@ -97,20 +101,17 @@ BaseElementView = BaseContainer.extend( {
 				ChildView = require( 'elementor-elements/views/column' );
 				break;
 
-			case 'widget':
+			case 'container':
+				ChildView = require( 'elementor-elements/views/container' );
+				break;
+
+			default:
 				if ( elementor.widgetsCache[ model.get( 'widgetType' ) ]?.support_repeater_elements ) {
 					ChildView = require( 'elementor-elements/views/widget-repeater' );
 				} else {
 					ChildView = elementor.modules.elements.views.Widget;
-				}
-				break;
-			default:
-				if ( ! model.attributes.length ) {
-					ChildView = require( 'elementor-elements/views/column-empty' );
 					break;
 				}
-
-				throw new Error( `Cannot getChildView() invalid model, elType: ${ elType }` );
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
@@ -353,7 +354,8 @@ BaseElementView = BaseContainer.extend( {
 			model.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === model.elType ) {
 			model.isInner = true;
-		} else {
+		} else if ( 'container' !== model.elType ) {
+			// Don't allow adding anything other than widget, inner-section or a container.
 			return;
 		}
 

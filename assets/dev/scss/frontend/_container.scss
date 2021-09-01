@@ -1,0 +1,255 @@
+.e-container {
+	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
+	--border-radius: 0;
+	--display: flex;
+	--flex-basis: auto;
+	--max-width: inital;
+	--min-height: initial;
+	--height: auto;
+	--text-align: initial;
+	--margin: 0;
+	--padding: 0;
+	--z-index: auto;
+	--overflow: visible;
+	--transition: 0;
+
+	--overlay-mix-blend-mode: initial;
+	--overlay-opacity: 1;
+	--overlay-transition: 0;
+
+	position: relative;
+	display: var( --display );
+	text-align: var( --text-align );
+	flex: 1 1 var( --flex-basis );
+	max-width: var( --max-width );
+	min-height: var( --min-height );
+	height: var( --height );
+	border-radius: var( --border-radius );
+	margin: var( --margin );
+	padding: var( --padding );
+	z-index: var( --z-index );
+	overflow: var( --overflow );
+	transition: var( --transition );
+
+	// Force center only top-level containers.
+	.elementor-section-wrap > & {
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	.elementor-empty-view {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		min-height: 100px;
+
+		.elementor-first-add {
+			width: auto;
+			height: auto;
+			inset: 0;
+		}
+	}
+
+	&.e-container--placeholder-row > .elementor-widget-placeholder {
+		width: 10px;
+		align-self: stretch;
+		height: auto;
+		min-height: 100%;
+		flex-shrink: 0;
+		animation-name: dnd-placeholder-widget-vertical;
+	}
+
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor-widget.elementor-widget {
+		// Override the default margin-bottom of widgets.
+		margin-bottom: 0;
+	}
+
+	// Background overlay.
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		z-index: 0;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		mix-blend-mode: var( --overlay-mix-blend-mode );
+		opacity: var( --overlay-opacity );
+		transition: var( --overlay-transition );
+		border-radius: var( --border-radius );
+	}
+
+	// Inner Container handle.
+	// TODO: Find a better solution.
+	& > & {
+		> .elementor-element-overlay {
+			// Hide any setting control which isn't the edit control.
+			.elementor-editor-element-setting {
+				&:not( .elementor-editor-element-edit ),
+				&:first-child::before {
+					display: none;
+				}
+			}
+
+			.elementor-editor-element-edit {
+				width: auto;
+
+				&:hover {
+					background-color: transparent;
+				}
+			}
+
+			.elementor-editor-element-settings {
+				inset: initial;
+				transform: none;
+				inset-inline-start: 0;
+				top: 0;
+				border-radius: 0;
+				border-end-end-radius: 3px;
+				height: auto;
+				background-color: $editor-darkest;
+
+				&:hover {
+					background-color: $editor-darker;
+				}
+
+				// Replace the edit eicon with Container eicon.
+				i::before {
+					content: '\e98d'; // Container eicon.
+					font-size: 10px;
+					display: block;
+					padding: 7px;
+				}
+			}
+		}
+	}
+
+	.e-floating-bar {
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: calc( 100% + 5px );
+		z-index: $editor-layer;
+	}
+}
+
+/* Gutenberg Toolbar CSS */
+.components-accessible-toolbar,
+.components-toolbar {
+	--border-radius: 3px;
+	--box-shadow: 0 2px 10px 0 rgba( 0,0,0,.22 );
+
+	background: $white;
+	box-shadow: var( --box-shadow );
+	border-radius: var( --border-radius );
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	font-size: 10px;
+
+	button.components-button,
+	button.components-button {
+		font-size: inherit;
+		position: relative;
+		background-color: $white;
+		color: $editor-dark;
+		padding: 10px;
+		border: none;
+		border-radius: inherit;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		transition: .3s background;
+
+		&:hover {
+			background-color: $editor-background-light;
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		svg {
+			height: 1.5em;
+			width: auto;
+			fill: $editor-dark;
+		}
+
+		// Tooltip.
+		span {
+			position: absolute;
+			left: 50%;
+			bottom: calc( 100% + 2px);
+			transform: translateX( -50% );
+			background: $black;
+			color: $white;
+			font-size: 12px;
+			padding: 5px 12px;
+		}
+	}
+
+	> * {
+		&:first-child {
+			border-start-start-radius: var( --border-radius );
+			border-end-start-radius: var( --border-radius );
+		}
+
+		&:last-child {
+			border-end-end-radius: var( --border-radius );
+			border-start-end-radius: var( --border-radius );
+		}
+
+		&:not( :last-child ) {
+			border-inline-end: 1px solid $editor-background-light !important;
+		}
+	}
+
+	.components-dropdown-menu {
+		position: relative;
+		display: flex;
+		align-items: stretch;
+		justify-content: center;
+
+		&__toggle::after {
+			content: '';
+			background: $editor-lighter;
+			height: 1em;
+			width: .8em;
+			display: inline-block;
+			margin-right: -.5em;
+			clip-path: polygon(
+					0 30%,
+					100% 30%,
+					50% 70%
+			);
+		}
+
+		&__popover {
+			position: absolute;
+			border-radius: var( --border-radius );
+			box-shadow: var( --box-shadow );
+			overflow: hidden;
+			// To override inline CSS set by React.
+			left: 0 !important;
+			top: calc( 100% + 8px ) !important;
+		}
+
+		&__menu {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+		}
+	}
+}
+
+@keyframes dnd-placeholder-widget-vertical {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 10px;
+		opacity: .9;
+	}
+}
