@@ -220,7 +220,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_STABLE,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
@@ -273,7 +273,7 @@ class Manager extends Base_Object {
 				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_STABLE,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
