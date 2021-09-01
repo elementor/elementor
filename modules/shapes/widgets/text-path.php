@@ -3,8 +3,6 @@
 namespace Elementor\Modules\Shapes\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
 use Elementor\Utils;
 use Elementor\Group_Control_Text_Stroke;
@@ -301,9 +299,6 @@ class TextPath extends Widget_Base {
 			[
 				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} textPath',
-				// 'selectors' => [
-				// 	'{{WRAPPER}} textPath' => 'stroke-width: {{SIZE}}{{UNIT}}; stroke: {{VALUE}};',
-				// ],
 			]
 		);
 

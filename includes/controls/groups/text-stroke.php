@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor text stroke control.
  *
- * A base control for creating text stroke control. Displays input fields to define
+ * A group control for creating a stroke effect on text. Displays input fields to define
  * the text stroke and color stroke.
  *
  * @since 3.5.0
@@ -24,14 +24,14 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 	 * @access protected
 	 * @static
 	 *
-	 * @var array Box shadow control fields.
+	 * @var array Text Stroke control fields.
 	 */
 	protected static $fields;
 
 	/**
 	 * Get text stroke control type.
 	 *
-	 * Retrieve the control type, in this case `box-shadow`.
+	 * Retrieve the control type, in this case `text-stroke`.
 	 *
 	 * @since 3.5.0
 	 * @access public
