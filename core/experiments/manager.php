@@ -248,6 +248,11 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.3.0-beta',
+			],
+
 		] );
 
 		$this->add_feature( [
@@ -281,6 +286,11 @@ class Manager extends Base_Object {
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.2.0-beta',
+			],
+
 		] );
 
 		$this->add_feature( [
