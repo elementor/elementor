@@ -3,14 +3,13 @@ namespace Elementor;
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Includes\Base\Widget_Repeater_Base;
+use Elementor\Includes\Base\Widget_Container_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Widget_Tabs_V2 extends Widget_Repeater_Base {
-
+class Widget_Tabs_V2 extends Widget_Container_Base {
 	public function get_name() {
 		return 'tabs-v2';
 	}
@@ -25,6 +24,35 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 
 	public function get_keywords() {
 		return [ 'tabs', 'accordion', 'toggle' ];
+	}
+
+	protected function get_default_children() {
+		return [
+			[
+				'elType' => 'container',
+				'elements' => [
+					'elType' => 'widget',
+					'widgetType' => 'heading',
+					'settings' => [
+						'title' => esc_html__( 'Tab 1.', 'elementor' ),
+					],
+				],
+			],
+			[
+				'elType' => 'container',
+				'elements' => [
+					'elType' => 'widget',
+					'widgetType' => 'heading',
+					'settings' => [
+						'title' => esc_html__( 'Tab 2.', 'elementor' ),
+					],
+				],
+			],
+		];
+	}
+
+	protected function get_children_placeholder_class() {
+		return 'children_placeholder';
 	}
 
 	protected function get_html_wrapper_class() {
@@ -44,7 +72,7 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 		$repeater->add_control(
 			'tab_title',
 			[
-				'label' => esc_html__( 'Title & Description', 'elementor' ),
+				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Tab Title', 'elementor' ),
 				'placeholder' => esc_html__( 'Tab Title', 'elementor' ),
@@ -52,17 +80,6 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-			]
-		);
-
-		$repeater->add_control(
-			'tab_content',
-			[
-				'label' => esc_html__( 'Content', 'elementor' ),
-				'default' => esc_html__( 'Tab Content', 'elementor' ),
-				'placeholder' => esc_html__( 'Tab Content', 'elementor' ),
-				'type' => Controls_Manager::WYSIWYG,
-				'show_label' => false,
 			]
 		);
 
@@ -303,76 +320,6 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 			]
 		);
 
-		$this->add_control(
-			'title_align',
-			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-title' => 'text-align: {{VALUE}};',
-				],
-				'condition' => [
-					'tabs_align' => 'stretch',
-				],
-			]
-		);
-
-		$this->add_control(
-			'heading_content',
-			[
-				'label' => esc_html__( 'Content', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'content_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_TEXT,
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'content_typography',
-				'selector' => '{{WRAPPER}} .elementor-tab-content',
-				'global' => [
-					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Text_Shadow::get_type(),
-			[
-				'name' => 'content_shadow',
-				'selector' => '{{WRAPPER}} .elementor-tab-content',
-			]
-		);
-
 		$this->end_controls_section();
 	}
 
@@ -446,8 +393,6 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 						$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
 						?></div>
 					<div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
-						$this->print_text_editor( $item['tab_content'] );
-
 						$this->print_children( $index );
 						?></div>
 				<?php endforeach; ?>
@@ -492,14 +437,10 @@ class Widget_Tabs_V2 extends Widget_Repeater_Base {
 				'role' : 'tabpanel',
 				'aria-labelledby' : 'elementor-tab-title-' + elementUid + tabCount
 				} );
-
-				// view.addInlineEditingAttributes( tabContentKey, 'advanced' );
-
 				#>
 				<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
 				<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>
-					{{{ item.tab_content }}}
-					<div class="repeater-item-placeholder-{{{ item._id }}}">
+					<div class="<?php echo esc_html( $this->get_children_placeholder_class() ); ?>" data-index="{{ index }}">
 					</div>
 				</div>
 				<# } ); #>

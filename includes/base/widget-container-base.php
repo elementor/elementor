@@ -8,14 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Widget_Repeater_Base extends Widget_Base {
+abstract class Widget_Container_Base extends Widget_Base {
 
-	protected function get_initial_config() {
-		$result = parent::get_initial_config();
+	abstract protected function get_default_children();
 
-		$result['support_repeater_elements'] = true;
-
-		return $result;
+	protected function get_children_placeholder_class() {
+		// Empty string, means will be added at the end.
+		return '';
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
@@ -24,6 +23,16 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 		}
 
 		return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
+	}
+
+	protected function get_initial_config() {
+		$result = parent::get_initial_config();
+
+		$result['support_nesting'] = true;
+		$result['default_children'] = $this->get_default_children();
+		$result['children_placeholder_class'] = $this->get_children_placeholder_class();
+
+		return $result;
 	}
 
 	public function get_raw_data( $with_html_content = false ) {

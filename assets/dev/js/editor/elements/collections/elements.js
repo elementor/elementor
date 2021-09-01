@@ -1,10 +1,11 @@
-var ElementModel = require( 'elementor-elements/models/element' );
+import WidgetContainerModel from 'elementor-elements/models/widget-container-model';
 
-import ElementRepeaterModel from 'elementor-elements/models/element-repeater';
+var ElementModel = require( 'elementor-elements/models/element' );
 
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {
 		if ( ( ! options || ! options.silent ) && ! isCorrectSet ) {
+			debugger;
 			throw 'Call Error: Adding model to element collection is allowed only by the dedicated addChildModel() method.';
 		}
 
@@ -12,16 +13,15 @@ var ElementsCollection = Backbone.Collection.extend( {
 	},
 
 	model: function( attrs, options ) {
-		// TODO: Temp code.
-		let ModelClass = Backbone.Model,
-			model = ElementModel;
+		var ModelClass = Backbone.Model;
 
-		if ( 'tabs-v2' === attrs.widgetType ) {
-			model = ElementRepeaterModel;
-		}
-
+		// TODO: Temp code, find better solution.
 		if ( attrs.elType ) {
-			ModelClass = elementor.hooks.applyFilters( 'element/model', model, attrs );
+			if ( attrs.widgetType && elementor.widgetsCache[ attrs.widgetType ].support_nesting ) {
+				ModelClass = WidgetContainerModel;
+			} else {
+				ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
+			}
 		}
 
 		return new ModelClass( attrs, options );

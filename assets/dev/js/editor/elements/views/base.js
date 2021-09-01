@@ -5,6 +5,9 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+/**
+ * @extends {BaseContainer}
+ */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
@@ -106,8 +109,8 @@ BaseElementView = BaseContainer.extend( {
 				break;
 
 			default:
-				if ( elementor.widgetsCache[ model.get( 'widgetType' ) ]?.support_repeater_elements ) {
-					ChildView = require( 'elementor-elements/views/widget-repeater' );
+				if ( elementor.widgetsCache[ model.get( 'widgetType' ) ]?.support_nesting ) {
+					ChildView = require( 'elementor-elements/views/widget-container' );
 				} else {
 					ChildView = elementor.modules.elements.views.Widget;
 					break;
@@ -139,6 +142,8 @@ BaseElementView = BaseContainer.extend( {
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
+
+			this.container.view.trigger( 'container:created' );
 		}
 		return this.container;
 	},

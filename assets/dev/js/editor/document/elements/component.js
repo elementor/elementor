@@ -28,14 +28,10 @@ export default class Component extends ComponentBase {
 					return false;
 				}
 
-				// Allow only nested containers.
-				if ( draggedElType === parentElType && 'container' !== draggedElType ) {
-					return false;
-				}
-
+				// Support nested elements.
 				if ( draggedElType === parentElType ) {
-					// Support nested elements.
-					return !! elementor.widgetsCache[ parentModel.get( 'widgetType' ) ]?.support_repeater_elements;
+					return 'container' === draggedElType ||
+						elementor.widgetsCache[ parentModel.get( 'widgetType' ) ]?.support_nesting;
 				}
 
 				if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {

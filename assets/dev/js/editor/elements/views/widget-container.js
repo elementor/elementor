@@ -1,6 +1,14 @@
-module.exports = class WidgetRepeater extends require( 'elementor-elements/views/base' ) {
+const BaseElementView = require( 'elementor-elements/views/base' ),
+	WidgetBase = require( 'elementor-elements/views/widget' );
+
+/**
+ * @extends {BaseElementView}
+ */
+class WidgetContainer extends BaseElementView {
 	initialize() {
 		this.config = elementor.widgetsCache[ this.options.model.attributes.widgetType ];
+
+		this.once( 'container:created', this.onContainerCreatedOnce.bind( this ) );
 
 		super.initialize();
 	}
@@ -43,62 +51,24 @@ module.exports = class WidgetRepeater extends require( 'elementor-elements/views
 	}
 
 	getChildViewContainer( containerView, childView, index = -1 ) {
-		if ( -1 === index ) {
-			return super.getChildViewContainer( containerView, childView, index );
+		if ( -1 !== index && this.config.children_placeholder_class ) {
+			const childrenPlaceholder = this.config.children_placeholder_class,
+				isRepeater = containerView.model
+				.get( 'settings' )
+				.get( containerView.config.name );
+
+			if ( ! isRepeater ) {
+				return containerView.$el.find( `.${ childrenPlaceholder }` );
+			}
+
+			return containerView.$el.find( `.${ childrenPlaceholder }[data-index="${ index }"]` );
 		}
 
-		const repeaterItemId = containerView.model
-			.get( 'settings' )
-			.get( containerView.config.name )
-			.at( index )
-			.get( '_id' );
-
-		if ( ! repeaterItemId ) {
-			return super.getChildViewContainer( containerView, childView );
-		}
-
-		return containerView.$el.find( `.repeater-item-placeholder-${ repeaterItemId }` );
-	}
-
-	getEditButtons() {
-		const elementData = elementor.getElementData( this.model ),
-			editTools = {};
-
-		editTools.edit = {
-			/* translators: %s: Element Name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'edit',
-		};
-
-		if ( elementor.getPreferences( 'edit_buttons' ) ) {
-			editTools.duplicate = {
-				/* translators: %s: Element Name. */
-				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
-				icon: 'clone',
-			};
-
-			editTools.remove = {
-				/* translators: %s: Element Name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-				icon: 'close',
-			};
-		}
-
-		return editTools;
-	}
-
-	getTemplate() {
-		const editModel = this.getEditModel();
-
-		return Marionette.TemplateCache.get( '#tmpl-elementor-' + editModel.get( 'widgetType' ) + '-content' );
+		return super.getChildViewContainer( containerView, childView );
 	}
 
 	getChildType() {
-		return [ 'section' ];
-	}
-
-	getRepeaterSettingKey( settingKey, repeaterKey, repeaterItemIndex ) {
-		return [ repeaterKey, repeaterItemIndex, settingKey ].join( '.' );
+		return [ 'section', 'container' ];
 	}
 
 	onRender() {
@@ -114,4 +84,18 @@ module.exports = class WidgetRepeater extends require( 'elementor-elements/views
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
 	}
-};
+
+	onContainerCreatedOnce() {
+		const { defaultChildren = [] } = this.container.model;
+
+		if ( defaultChildren.length ) {
+			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel ) );
+		}
+	}
+}
+
+WidgetContainer.prototype.getTemplate = WidgetBase.prototype.getTemplate;
+WidgetContainer.prototype.getEditButtons = WidgetBase.prototype.getEditButtons;
+WidgetContainer.prototype.getRepeaterSettingKey = WidgetBase.prototype.getRepeaterSettingKey;
+
+module.exports = WidgetContainer;
