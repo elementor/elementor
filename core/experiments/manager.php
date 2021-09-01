@@ -220,7 +220,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Developers, Please Note! This experiment includes some markup changes. If you\'ve used custom code in Elementor, you might have experienced a snippet of code not running. Turning this experiment off allows you to keep prior Elementor markup output settings, and have that lovely code running again.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-legacy-optimized-dom" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
@@ -234,6 +234,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.2.0-beta',
+			],
 		] );
 
 		$this->add_feature( [
@@ -243,6 +247,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.3.0-beta',
+			],
 		] );
 
 		$this->add_feature( [
@@ -252,6 +260,10 @@ class Manager extends Base_Object {
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.4.0-beta',
+			],
 		] );
 
 		$this->add_feature( [
@@ -261,7 +273,7 @@ class Manager extends Base_Object {
 				. '<br><strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'These enhancements may include some markup changes to existing elementor widgets', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-a11y-improvements" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.1.0-beta',
@@ -276,6 +288,10 @@ class Manager extends Base_Object {
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.2.0-beta',
+			],
 		] );
 
 		$this->add_feature( [
@@ -406,28 +422,35 @@ class Manager extends Base_Object {
 	 */
 	private function render_settings_intro() {
 		?>
-		<h2><?php echo esc_html__( 'Experiments', 'elementor' ); ?></h2>
+		<h2>
+			<?php echo esc_html__( 'Elementor Experiments', 'elementor' ); ?>
+		</h2>
 		<p>
+			<?php echo esc_html__( 'Here\'s where you can access new and experimental features from Elementor before they\'re officially released.', 'elementor' ); ?>
+		<br>
 			<?php
 				printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed altogether. %1$sLearn More.%2$s', 'elementor' ),
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					esc_html__( 'To use an experiment on your site, activate it from the dropdown. You can switch back at any time. %1$sLearn More.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
 					'</a>'
 				);
 			?>
-		</p>
-		<p><?php echo esc_html__( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?></p>
-		<p>
+		<br>
 			<?php
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'Your feedback is important - %1$shelp us%2$s improve these features by sharing your thoughts and inputs.', 'elementor' ),
+					esc_html__( 'As always, %1$swe love your feedback.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
 					'</a>'
 				);
 			?>
 		</p>
+		<br>
+		<br>
+		<button type="submit" class="button e-experiments-button" value="active">Activate All Experiments</button>
+		<button type="submit" class="button e-experiments-button" value="inactive">Deactivate All Experiments</button>
+		<hr>
 		<?php
 	}
 
@@ -448,7 +471,9 @@ class Manager extends Base_Object {
 				<?php } ?>
 			</select>
 			<p class="description"><?php echo $feature['description']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-			<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+			<?php if ( 'stable' !== $feature['release_status'] ) { ?>
+				<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+			<?php } ?>
 		</div>
 		<?php
 	}
