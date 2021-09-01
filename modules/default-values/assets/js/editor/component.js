@@ -1,9 +1,11 @@
 import * as commands from './commands/index';
 import * as dataCommands from './commands-data/index';
+import * as hooksUI from './hooks/ui/index';
+import ComponentBase from 'elementor-api/modules/component-base';
 import GlobalValues from './handlers/global-values';
 import LocalValues from './handlers/local-values';
 
-export default class Component extends $e.modules.ComponentBase {
+export default class Component extends ComponentBase {
 	getNamespace() {
 		return 'default-values';
 	}
@@ -14,6 +16,10 @@ export default class Component extends $e.modules.ComponentBase {
 
 	defaultData() {
 		return this.importCommands( dataCommands );
+	}
+
+	defaultHooks() {
+		return this.importHooks( hooksUI );
 	}
 
 	registerAPI() {

@@ -63,12 +63,4 @@ export default class Base extends $e.modules.CommandBase {
 		// TODO: Maybe in the command?
 		elementor.kitManager.renderGlobalsDefaultCSS();
 	}
-
-	showLoader() {
-		jQuery( '#elementor-preview-loading' ).show();
-	}
-
-	hideLoader() {
-		jQuery( '#elementor-preview-loading' ).fadeOut( 600 );
-	}
 }

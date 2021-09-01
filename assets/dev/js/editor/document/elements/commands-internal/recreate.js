@@ -6,9 +6,7 @@ export class Recreate extends CommandInternal {
 	}
 
 	async apply( { models } ) {
-		const currentElement = elementor.getCurrentElement(),
-			isCurrentElementIsEditable = !! currentElement?.model?.get( 'elType' ),
-			currentElementId = currentElement?.model?.get( 'id' );
+		const currentElementId = elementor.getCurrentElement()?.model?.get( 'id' );
 
 		const recreatePromises = Object.entries( models ).map(
 			( [ id, model ] ) => this.recreateElement( id, model )
@@ -16,11 +14,7 @@ export class Recreate extends CommandInternal {
 
 		await Promise.all( recreatePromises );
 
-		if ( isCurrentElementIsEditable && currentElementId ) {
-			this.openLastEditedElementPanel(
-				elementor.getContainer( currentElementId )
-			);
-		}
+		this.openLastEditedElementPanel( currentElementId );
 	}
 
 	recreateElement( id, model ) {
@@ -45,7 +39,13 @@ export class Recreate extends CommandInternal {
 		} );
 	}
 
-	openLastEditedElementPanel( container ) {
+	openLastEditedElementPanel( containerId ) {
+		const container = elementor.getContainer( containerId || null );
+
+		if ( ! container ) {
+			return;
+		}
+
 		$e.run( 'panel/editor/open', {
 			view: container.view,
 			model: container.model,
