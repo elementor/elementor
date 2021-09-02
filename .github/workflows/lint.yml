@@ -29,7 +29,7 @@ jobs:
   JS-Lint:
     runs-on: ubuntu-18.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.event.ref == 'ED-4938' }}
+    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/head/ED-4938' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
