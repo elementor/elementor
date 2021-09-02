@@ -6,7 +6,6 @@ jobs:
   file-diff:
     runs-on: ubuntu-18.04
     name: Lint - File Diff
-    if: startsWith( github.repository, 'elementor/' )
     outputs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
