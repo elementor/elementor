@@ -19,6 +19,8 @@ export const tests = () => {
 
 	require( './assets/dev/js/editor/document/component.spec' );
 
+	require( './assets/dev/js/editor/utils/helpers.spec' );
+
 	require( './assets/dev/js/editor/data/globals/component.spec' );
 
 	require( './core/kits/assets/js/manager.spec' );

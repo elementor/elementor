@@ -18,7 +18,7 @@ class Theme_Style_Images extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Images', 'elementor' );
+		return esc_html__( 'Images', 'elementor' );
 	}
 
 	public function get_group() {
@@ -48,7 +48,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->start_controls_section(
 			'section_images',
 			[
-				'label' => __( 'Images', 'elementor' ),
+				'label' => esc_html__( 'Images', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -60,7 +60,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_image_normal',
 			[
-				'label' => __( 'Normal', 'elementor' ),
+				'label' => esc_html__( 'Normal', 'elementor' ),
 			]
 		);
 
@@ -80,7 +80,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_responsive_control(
 			'image_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -92,7 +92,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_control(
 			'image_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -131,7 +131,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->start_controls_tab(
 			'tab_image_hover',
 			[
-				'label' => __( 'Hover', 'elementor' ),
+				'label' => esc_html__( 'Hover', 'elementor' ),
 			]
 		);
 
@@ -151,7 +151,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_responsive_control(
 			'image_hover_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
@@ -163,7 +163,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_control(
 			'image_hover_opacity',
 			[
-				'label' => __( 'Opacity', 'elementor' ),
+				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
@@ -200,7 +200,7 @@ class Theme_Style_Images extends Tab_Base {
 		$this->add_control(
 			'image_hover_transition',
 			[
-				'label' => __( 'Transition Duration', 'elementor' ) . ' (s)',
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [

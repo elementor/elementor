@@ -11,6 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
+	/**
+	 * There is no label for subscription plan with access_level=0 + it should not
+	 * be translated.
+	 */
+	const SUBSCRIPTION_PLAN_FREE_TAG = 'Free';
+
 	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'features', 'types' ];
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
@@ -28,6 +34,11 @@ class Repository {
 	 * @var User_Favorites
 	 */
 	protected $user_favorites;
+
+	/**
+	 * @var Collection
+	 */
+	protected $subscription_plans;
 
 	/**
 	 * Get all kits.
@@ -97,7 +108,15 @@ class Repository {
 					];
 				}, $taxonomies ) );
 			}, new Collection( [] ) )
-			->unique( 'text' );
+			->merge(
+				$this->subscription_plans->map( function ( $label ) {
+					return [
+						'text' => $label ? $label : self::SUBSCRIPTION_PLAN_FREE_TAG,
+						'type' => 'subscription_plans',
+					];
+				} )
+			)
+			->unique( [ 'text', 'type' ] );
 	}
 
 	/**
@@ -213,11 +232,13 @@ class Repository {
 	 * @return array
 	 */
 	private function transform_kit_api_response( $kit, $manifest = null ) {
-		$taxonomies = array_reduce( static::TAXONOMIES_KEYS, function ( $current, $key ) use ( $kit ) {
-			return array_merge( $current, array_map( function ( $taxonomy ) {
-				return $taxonomy->name;
-			}, $kit->{$key} ) );
-		}, [] );
+		$subscription_plan_tag = $this->subscription_plans->get( $kit->access_level );
+
+		$taxonomies = ( new Collection( (array) $kit ) )
+			->only( static::TAXONOMIES_KEYS )
+			->flatten()
+			->pluck( 'name' )
+			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
 
 		return array_merge(
 			[
@@ -226,7 +247,7 @@ class Repository {
 				'thumbnail_url' => $kit->thumbnail,
 				'access_level' => $kit->access_level,
 				'keywords' => $kit->keywords,
-				'taxonomies' => $taxonomies,
+				'taxonomies' => $taxonomies->values(),
 				'is_favorite' => $this->user_favorites->exists( 'elementor', 'kits', $kit->_id ),
 				// TODO: Remove all the isset when the API stable.
 				'trend_index' => isset( $kit->trend_index ) ? $kit->trend_index : 0,
@@ -281,13 +302,13 @@ class Repository {
 	}
 
 	/**
-	 * Repository constructor.
-	 *
 	 * @param Kit_Library    $kit_library
 	 * @param User_Favorites $user_favorites
+	 * @param Collection     $subscription_plans
 	 */
-	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites ) {
+	public function __construct( Kit_Library $kit_library, User_Favorites $user_favorites, Collection $subscription_plans ) {
 		$this->api = $kit_library;
 		$this->user_favorites = $user_favorites;
+		$this->subscription_plans = $subscription_plans;
 	}
 }

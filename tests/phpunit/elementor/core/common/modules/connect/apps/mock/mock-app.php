@@ -66,8 +66,4 @@ class Mock_App extends Common_App {
 	public function set_http( $http_service ) {
 		$this->http = $http_service;
 	}
-
-	protected function update_settings() {
-		//
-	}
 }
