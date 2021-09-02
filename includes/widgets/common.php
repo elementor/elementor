@@ -441,16 +441,19 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
-		$this->add_control( '_mask_shape', [
-			'label' => esc_html__( 'Shape', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'options' => $this->get_shapes(),
-			'default' => 'circle',
-			'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
-			'condition' => [
-				'_mask_switch!' => '',
-			],
-		] );
+		$this->add_control(
+			'_mask_shape',
+			[
+				'label' => esc_html__( 'Shape', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => $this->get_shapes(),
+				'default' => 'circle',
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+				'condition' => [
+					'_mask_switch!' => '',
+				],
+			]
+		);
 
 		$this->add_control(
 			'_mask_image',

@@ -195,10 +195,10 @@ class Test_Controller extends Data_Test_Base {
 
 		// Assert.
 		foreach ( $controller->endpoints as $endpoint ) {
-			$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
+			$this->assert_array_have_keys( [ '/' . $controller->get_controller_route() . '/' . $endpoint->get_name() ], $rest_routes, 'Validate `$this->register_endpoints();`.' );
 		}
 
-		$this->assertArrayHaveKeys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_index_endpoint();`.' );
+		$this->assert_array_have_keys( [ '/' . $controller->get_controller_route() ], $rest_routes, 'Validate `$this->register_index_endpoint();`.' );
 		$this->assertInstanceOf( Index::class, $controller->get_endpoint_index() );
 	}
 

@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from 'elementor-editor/component';
+import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -1354,7 +1354,8 @@ export default class EditorBase extends Marionette.Application {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
 				} else if ( deleteControlDefault ) {
-					delete controlArgs.default;
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
 				// If the control belongs to a group control with a popover, and this control is the last one, add the

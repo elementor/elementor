@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
 use Elementor\Core\Editor\Data;

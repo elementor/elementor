@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Data\V2\Base;
 
 use Elementor\Data\V2\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 abstract class Data_Test_Base extends Elementor_Test_Base {
 	/**

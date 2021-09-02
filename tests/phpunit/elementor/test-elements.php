@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing;
 
+use ElementorEditorTesting\Elementor_Test_Base;
+
 class Elementor_Test_Elements extends Elementor_Test_Base {
 
 	public function test_getInstance() {
@@ -37,7 +39,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 	}
 
 	public function test_redeclareControl() {
-		$this->expectDoingItWrong('Elementor\Controls_Manager::add_control_to_stack');
+		$this->expect_doing_it_wrong('Elementor\Controls_Manager::add_control_to_stack');
 
 		$element_obj = $this->elementor()->elements_manager->get_element_types( 'section' );
 

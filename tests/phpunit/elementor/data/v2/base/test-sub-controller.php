@@ -46,7 +46,7 @@ class Test_Sub_Controller extends Data_Test_Base {
 		$rest_index = $this->manager->run_endpoint( $controller->get_name() );
 
 		// Assert.
-		$this->assertArrayHaveKeys( [ $route ], $rest_index['routes'] );
+		$this->assert_array_have_keys( [ $route ], $rest_index['routes'] );
 	}
 
 	public function test_run_endpoint__with_parent_sub_controller_from_index_endpoint() {
