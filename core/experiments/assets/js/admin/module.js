@@ -5,7 +5,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 				experimentIndicators: '.e-experiment__title__indicator',
 				experimentForm: '#elementor-settings-form[action="options.php#tab-experiments"]',
 				experimentSelects: '.e-experiment__select',
-				experimentsButtons: '.e-experiments-button',
+				experimentsButtons: '.e-experiment__button',
 			},
 		};
 	}

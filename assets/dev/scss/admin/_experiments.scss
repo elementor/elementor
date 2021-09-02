@@ -1,4 +1,3 @@
-
 // Experiments
 .e-experiment {
 
@@ -33,5 +32,9 @@
 		font-size: 13px;
 		font-weight: bold;
 		font-style: italic;
+	}
+
+	&__button {
+		@include margin(20px, 5px, 18px, 0 !important);
 	}
 }

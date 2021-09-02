@@ -446,10 +446,8 @@ class Manager extends Base_Object {
 				);
 			?>
 		</p>
-		<br>
-		<br>
-		<button type="submit" class="button e-experiments-button" value="active">Activate All Experiments</button>
-		<button type="submit" class="button e-experiments-button" value="inactive">Deactivate All Experiments</button>
+		<button type="submit" class="button e-experiment__button" value="active">Activate All Experiments</button>
+		<button type="submit" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
 		<hr>
 		<?php
 	}
