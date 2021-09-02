@@ -66,6 +66,8 @@ export default class GlobalValues extends BaseHandler {
 				.filter( ( [ key, value ] ) => {
 					const defaultSettingValue = newDefaultSettings.__globals__?.[ key ];
 
+					// All elements global values that not exists in the new default settings should remains
+					// or the elements global values that has different value from the new default settings.
 					return ! defaultSettingValue || defaultSettingValue !== value;
 				}
 			)

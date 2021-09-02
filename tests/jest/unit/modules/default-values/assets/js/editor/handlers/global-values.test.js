@@ -80,15 +80,15 @@ describe( 'Default Values - Handlers - Global Values', () => {
 			},
 		};
 
-		const newSettings = {
+		const newDefaultSettings = {
 			__globals__: {
 				title_color: 'globals/colors?id=secondary',
 			},
 		};
 
 		// Act
-		const result = globalValues.appendSettingsForRecreate( firstElement, newSettings );
-		const result2 = globalValues.appendSettingsForRecreate( secondElement, newSettings );
+		const result = globalValues.appendSettingsForRecreate( firstElement, newDefaultSettings );
+		const result2 = globalValues.appendSettingsForRecreate( secondElement, newDefaultSettings );
 
 		// Assert
 		expect( result.settings.__globals__ ).toEqual( {

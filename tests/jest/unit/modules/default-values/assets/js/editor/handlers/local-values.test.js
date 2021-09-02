@@ -48,7 +48,7 @@ describe( 'Default Values - Handlers - LocalValues', () => {
 		expect( result ).toBe( element );
 	} );
 
-	test( 'appendSettingsForSave - return only non hardcoded default values and styled controls', () => {
+	test( 'appendSettingsForSave - return only styled controls that are non hardcoded default value', () => {
 		// Arrange
 		const localValues = new LocalValues();
 
