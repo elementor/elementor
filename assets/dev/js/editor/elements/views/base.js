@@ -128,7 +128,7 @@ BaseElementView = BaseContainer.extend( {
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
-		return [
+		let groups = [
 			{
 				name: 'general',
 				actions: [
@@ -138,10 +138,10 @@ BaseElementView = BaseContainer.extend( {
 						/* translators: %s: Element Name. */
 						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
 						callback: () => $e.run( 'panel/editor/open', {
-								model: this.options.model, // Todo: remove on merge router
-								view: this, // Todo: remove on merge router
-								container: this.getContainer(),
-							} ),
+							model: this.options.model, // Todo: remove on merge router
+							view: this, // Todo: remove on merge router
+							container: this.getContainer(),
+						} ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
@@ -178,19 +178,39 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
-			}, {
-				name: 'delete',
-				actions: [
-					{
-						name: 'delete',
-						icon: 'eicon-trash',
-						title: __( 'Delete', 'elementor' ),
-						shortcut: '⌦',
-						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
-					},
-				],
 			},
 		];
+
+		let customGroups = [];
+
+		/**
+		 * Filter Additional Context Menu Groups.
+		 *
+		 * This filter allows adding new context menu groups to elements.
+		 *
+		 * @param array customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
+		 */
+		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
+
+		if ( customGroups.length ) {
+			groups = [ ...groups, ...customGroups ];
+		}
+
+		groups.push( {
+			name: 'delete',
+			actions: [
+				{
+					name: 'delete',
+					icon: 'eicon-trash',
+					title: __( 'Delete', 'elementor' ),
+					shortcut: '⌦',
+					callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
+				},
+			],
+		} );
+
+		return groups;
 	},
 
 	getEditButtons: function() {
