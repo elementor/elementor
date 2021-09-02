@@ -22,7 +22,7 @@ jobs:
   test:
     runs-on: ubuntu-18.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.php_diff }}
+    if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
       fail-fast: false
       matrix:
