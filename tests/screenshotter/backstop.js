@@ -7,7 +7,7 @@ const getScenarios = () => {
 	config.templates.forEach( ( pathname ) => {
 		scenarios.push( {
 			label: pathname,
-			url: `${ origin }/${ pathname }`,
+			url: `${ origin }/${ pathname }/`,
 			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
@@ -55,7 +55,6 @@ module.exports = {
 	engineOptions: {
 		args: [ '--no-sandbox' ],
 		slowMo: 500,
-		waitTimeout: 90000,
 	},
 	asyncCaptureLimit: 30,
 	asyncCompareLimit: 30,

@@ -78,12 +78,15 @@ export default class View extends Marionette.ItemView {
 	autoScale() {
 		const handlesWidth = 40 * this.scalePercentage / 100,
 			previewWidth = elementor.$previewWrapper.width() - handlesWidth,
-			iframeScaleWidth = this.ui.sizeInputWidth.val() * this.scalePercentage / 100;
+			iframeWidth = parseInt( elementor.$preview.css( '--e-editor-preview-width' ) ),
+			iframeScaleWidth = iframeWidth * this.scalePercentage / 100;
 
 		if ( iframeScaleWidth > previewWidth ) {
-			const scalePercentage = previewWidth / this.ui.sizeInputWidth.val() * 100;
+			const scalePercentage = previewWidth / iframeWidth * 100;
 
 			this.setScalePercentage( scalePercentage );
+		} else {
+			this.setScalePercentage();
 		}
 
 		this.scalePreview();
@@ -91,7 +94,7 @@ export default class View extends Marionette.ItemView {
 
 	scalePreview() {
 		const scale = this.scalePercentage / 100;
-		elementor.$previewResponsiveWrapper.css( 'transform', 'scale(' + ( scale ) + ')' );
+		elementor.$previewWrapper.css( '--e-preview-scale', scale );
 	}
 
 	resetScale() {
@@ -122,12 +125,11 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onBreakpointSelected( e ) {
-		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-			selectedDeviceMode = e.target.value;
+		const selectedDeviceMode = e.target.value;
 
-		if ( currentDeviceMode !== selectedDeviceMode ) {
-			elementor.changeDeviceMode( selectedDeviceMode, false );
-		}
+		elementor.changeDeviceMode( selectedDeviceMode, false );
+
+		this.autoScale();
 	}
 
 	onBreakpointSettingsOpen() {

@@ -12,7 +12,10 @@ export default function ImportProcess() {
 	const { ajaxState, setAjax } = useAjax(),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		fileURL = location.hash.match( 'file_url=([^&]+)' ),
+		urlSearchParams = new URLSearchParams( window.location.search ),
+		queryParams = Object.fromEntries( urlSearchParams.entries() ),
+		// We need to support query-params for external navigations, but also parsing the value from the hash for internal navigation between different routes.
+		fileURL = queryParams?.[ 'file_url' ] || location.hash.match( 'file_url=([^&]+)' )?.[ 1 ],
 		onLoad = () => {
 			const ajaxConfig = {
 				data: {
@@ -21,12 +24,12 @@ export default function ImportProcess() {
 			};
 
 			if ( fileURL || context.data.fileResponse ) {
-				if ( fileURL ) {
-					fileURL[ 1 ] = decodeURIComponent( fileURL[ 1 ] );
+				if ( fileURL && ! context.data.file ) { // When the starting point of the app is the import/process screen and importing via file_url.
+					const decodedFileURL = decodeURIComponent( fileURL );
 
-					context.dispatch( { type: 'SET_FILE', payload: fileURL } );
+					context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
-					ajaxConfig.data.e_import_file = fileURL[ 1 ];
+					ajaxConfig.data.e_import_file = decodedFileURL;
 					ajaxConfig.data.data = JSON.stringify( {
 						stage: 1,
 					} );
@@ -36,7 +39,7 @@ export default function ImportProcess() {
 					if ( referrer ) {
 						context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
 					}
-				} else {
+				} else { // When the import/process is the second step of the kit import process, after selecting the kit content.
 					ajaxConfig.data.data = {
 						stage: 2,
 						session: context.data.fileResponse.stage1.session,

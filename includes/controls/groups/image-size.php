@@ -153,7 +153,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *                               as the image key.
 	 */
 	public static function print_attachment_image_html( array $settings, $image_size_key = 'image', $image_key = null ) {
-		echo wp_kses_post( self::get_attachment_image_html( $settings, $image_size_key, $image_key ) );
+		Utils::print_wp_kses_extended( self::get_attachment_image_html( $settings, $image_size_key, $image_key ), [ 'image' ] );
 	}
 
 	/**
@@ -294,7 +294,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		$fields['custom_dimension'] = [
 			'label' => _x( 'Image Dimension', 'Image Size Control', 'elementor' ),
 			'type' => Controls_Manager::IMAGE_DIMENSIONS,
-			'description' => __( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
+			'description' => esc_html__( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
 			'condition' => [
 				'size' => 'custom',
 			],
