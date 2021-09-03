@@ -1,0 +1,122 @@
+{
+  "white": {
+	"hex": "#fff",
+	"rgb": "rgb(255, 255, 255)",
+	"hsl": "hsl(0, 0%, 100%)"
+  },
+  "black": {
+	"hex": "#000",
+	"rgb": "rgb(0, 0, 0)",
+	"hsl": "hsl(0, 0%, 0%)"
+  },
+  "cyan-ionized-air-glow": {
+	"hex": "#58d0f5",
+	"rgb": "rgb(88, 208, 245)",
+	"hsl": "hsl(0.54, 0.89, 0.65)"
+  },
+  "red-rose-garnet": {
+	"hex": "#93003F",
+	"rgb": "rgb(211, 12, 92)",
+	"hsl": "hsl(0.93, 0.89, 0.44)"
+  },
+  "red-carnelian": {
+	"hex": "#b01b1b",
+	"rgb": "rgb(176, 27, 27)",
+	"hsl": "hsl(0, 0.73, 0.40)"
+  },
+  "red-tomato-frog": {
+	"hex": "#F84343",
+	"rgb": "rgb(248, 67, 67)",
+	"hsl": "hsl(0.00, 0.93, 0.62)"
+  },
+  "yellow-hot-sun": {
+	"hex": "#fcb92c",
+	"rgb": "rgb(252, 185, 44)",
+	"hsl": "hsl(0.11, 0.97, 0.58)"
+  },
+  "green-spandex": {
+	"hex": "#39b54a",
+	"rgb": "rgb(57, 181, 74)",
+	"hsl": "hsl(0.36, 0.52, 0.47)"
+  },
+  "gray-anthracite": {
+	"hex": "#26292C",
+	"rgb": "rgb(38, 41, 44)",
+	"hsl": "hsl(0.58, 0.07, 0.16)"
+  },
+  "gray-metalise": {
+	"hex": "#34383c",
+	"rgb": "rgb(52, 56, 60)",
+	"hsl": "hsl(0.58, 0.07, 0.22)"
+  },
+  "gray-napoleon": {
+	"hex": "#404349",
+	"rgb": "rgb(64, 67, 73)",
+	"hsl": "hsl(0.61, 0.07, 0.27)"
+  },
+  "gray-lamp-post": {
+	"hex": "#495157",
+	"rgb": "rgb(73, 81, 87)",
+	"hsl": "hsl(0.57, 0.09, 0.31)"
+  },
+  "gray-abbey": {
+	"hex": "#4c4f56",
+	"rgb": "rgb(76, 79, 86)",
+	"hsl": "hsl(0.62, 0.06, 0.32)"
+  },
+  "gray-blue-planet": {
+	"hex": "#556068",
+	"rgb": "rgb(85, 96, 104)",
+	"hsl": "hsl(0.57, 0.10, 0.37)"
+  },
+  "gray-stone-hearth": {
+	"hex": "#64666a",
+	"rgb": "rgb(100, 102, 106)",
+	"hsl": "hsl(0.61, 0.03, 0.40)"
+  },
+  "gray-sheffield": {
+	"hex": "#6d7882",
+	"rgb": "rgb(109, 120, 130)",
+	"hsl": "hsl(0.58, 0.09, 0.47)"
+  },
+  "gray-silver-filigree": {
+	"hex": "#7d7e82",
+	"rgb": "rgb(125, 126, 130)",
+	"hsl": "hsl(0.63, 0.02, 0.50)"
+  },
+  "gray-special-delivery": {
+	"hex": "#a4afb7",
+	"rgb": "rgb(164, 175, 183)",
+	"hsl": "hsl(0.57, 0.12, 0.68)"
+  },
+  "gray-brainstem": {
+	"hex": "#b4b5b7",
+	"rgb": "rgb(180, 181, 183)",
+	"hsl": "hsl(0.61, 0.02, 0.71)"
+  },
+  "gray-stone-golem": {
+	"hex": "#c2cbd2",
+	"rgb": "rgb(194, 203, 210)",
+	"hsl": "hsl(0.57, 0.15, 0.79)"
+  },
+  "gray-hidden-creek": {
+	"hex": "#d5dadf",
+	"rgb": "rgb(213, 218, 223)",
+	"hsl": "hsl(0.58, 0.14, 0.85)"
+  },
+  "gray-yin-bai-silver": {
+	"hex": "#e0e1e3",
+	"rgb": "rgb(224, 225, 227)",
+	"hsl": "hsl(0.61, 0.05, 0.88)"
+  },
+  "gray-anti-flash": {
+	"hex": "#f1f3f5",
+	"rgb": "rgb(241, 243, 245)",
+	"hsl": "hsl(0.58, 0.17, 0.95)"
+  },
+  "gray-emptiness": {
+	"hex": "#fcfcfc",
+	"rgb": "rgb(252, 252, 252)",
+	"hsl": "hsl(0, 0, 0.99)"
+  }
+}

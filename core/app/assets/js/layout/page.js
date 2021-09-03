@@ -3,6 +3,8 @@ import Sidebar from './sidebar';
 import Content from './content';
 import Footer from './footer';
 
+import Theme from 're-styled/theme';
+
 export default function Page( props ) {
 	const AppSidebar = () => {
 		if ( ! props.sidebar ) {
@@ -26,18 +28,20 @@ export default function Page( props ) {
 	};
 
 	return (
-		<div className={`eps-app__lightbox ${ props.className }`}>
-			<div className="eps-app">
-				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
-				<div className="eps-app__main">
-					{ AppSidebar() }
-					<Content>
-						{ props.content }
-					</Content>
+		<Theme variants={ { dark: document.body.classList.contains( `eps-theme-dark` ) } }>
+			<div className={`eps-app__lightbox ${ props.className }`}>
+				<div className="eps-app">
+					<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
+					<div className="eps-app__main">
+						{ AppSidebar() }
+						<Content>
+							{ props.content }
+						</Content>
+					</div>
+					{ AppFooter() }
 				</div>
-				{ AppFooter() }
 			</div>
-		</div>
+		</Theme>
 	);
 }
 
