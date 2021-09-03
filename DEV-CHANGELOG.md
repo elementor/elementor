@@ -1,5 +1,30 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev16 - 2021-09-03
+* JS API/Editor: Fix - Move 'Editor/Documents' to components folder. (#14602)
+* Fix: Image content html tags appeared on Image carousel widget [ED-4828] (#16129)
+* Tweak: Controls PHPCS (#16141)
+* Tweak: Added "Justified" text alignment to columns & sections (#11512)
+* Tweak: Add new "Word Spacing" control to typography controls [ED-4621] (#9152)
+* Fix: PHP Lint failing during syntax lint (#16165)
+* Tweak: Add step size to typography "Word Spacing" control [ED-4621] (#16167)
+* Fix: Unable to import a kit via URL when not logged-in to WP [ED-4836] (#16157)
+* Tweak: Show admin-top-bar only on elementor pages [ED-4879, ED-4899] (#16190)
+* Tweak: Updated changelog for v3.4.3 (#16194)
+* Tweak: Updated changelog for v3.4.3 (#16197)
+* Fix: Page settings layout description [ED-1210] (#13360)
+* Tweak: Add perspective to CSS transform [ED-4304] (#15774)
+* Tweak: Changed default values experiment name [ED-4876] (#16155)
+* Fix: Lighthouse CI test is failing - removed unused css [ED-3698] (#16200)
+* Tweak: CSS Transform - Change flip icon [ED-4462] (#15933)
+* Fix: Optimize Kit library index page performance [ED-4669] (#16201)
+* Revert "Fix: Lighthouse CI test is failing - removed unused css [ED-3698] (#16200)" (#16207)
+* Fix: Data Updater causes fatal error due to DB corruption [ED-4839] (#16195)
+* Fix: SVG sanitizer is failing if there is a line break after "</svg" [ED-4853] (#16132)
+* Tweak: Responsive bar - Make the minimum height smaller for all responsive devices (ED-4359) (#16017)
+* Tweak: Internal - Add external filter for Context Menu Groups [ED-4483] (#16160)
+* Tweak: Add CSS Transform section [ED-4767] (#16064)
+
 #### 3.5.0-dev14 - 2021-08-26
 * Fix: consistent hook names (#16099)
 * New: Default values first iteration [ED-3683] (#15518)
