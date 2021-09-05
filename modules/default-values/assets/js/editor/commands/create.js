@@ -17,6 +17,8 @@ export class Create extends Base {
 	 * @returns {Promise<void>}
 	 */
 	async apply( { container } ) {
+		this.startLoading();
+
 		// e.g: heading, button, image.
 		const type = container.settings.get( 'widgetType' );
 
@@ -27,6 +29,8 @@ export class Create extends Base {
 		const { data } = await $e.data.create( 'default-values/index', { settings }, { type } );
 
 		await this.recreateElements( type, data.settings );
+
+		this.finishLoading();
 	}
 
 	/**

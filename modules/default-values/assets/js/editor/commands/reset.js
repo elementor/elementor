@@ -6,9 +6,13 @@ export class Reset extends Base {
 	}
 
 	async apply( { type } ) {
+		this.startLoading();
+
 		await $e.data.delete( 'default-values/index', { type } );
 
 		await this.recreateElements( type );
+
+		this.finishLoading();
 	}
 }
 

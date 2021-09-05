@@ -1,4 +1,5 @@
 import pipe from 'elementor-utils/pipe';
+import PreviewLoading from 'elementor-editor/ui-states/preview-loading';
 
 export default class Base extends $e.modules.CommandBase {
 	/**
@@ -62,5 +63,13 @@ export default class Base extends $e.modules.CommandBase {
 
 		// TODO: Maybe in the command?
 		elementor.kitManager.renderGlobalsDefaultCSS();
+	}
+
+	startLoading() {
+		$e.uiStates.set( 'editor/documents/preview-loading', PreviewLoading.ON );
+	}
+
+	finishLoading() {
+		$e.uiStates.remove( 'editor/documents/preview-loading' );
 	}
 }
