@@ -125,7 +125,7 @@ class Widget_Google_Maps extends Widget_Base {
 					[
 						'type' => Controls_Manager::RAW_HTML,
 						'raw' => sprintf(
-							__( 'Set your Google Maps API Key in Elementor\'s %1$s page. Create your key %2$s', 'elementor' ),
+							esc_html__( 'Set your Google Maps API Key in Elementor\'s %1$s page. Create your key %2$s', 'elementor' ),
 							$integration_settings_link,
 							$create_key_link
 						),
