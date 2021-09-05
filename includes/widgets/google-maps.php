@@ -108,14 +108,26 @@ class Widget_Google_Maps extends Widget_Base {
 			$api_key = get_option( 'elementor_google_maps_api_key' );
 
 			if ( ! $api_key ) {
+				$link_template = '<a href="%1$s" target="_blank">%2$s</a>';
+				$integration_settings_link = sprintf(
+					$link_template,
+					Settings::get_url() . '#tab-integrations',
+					esc_html__( 'Integrations Settings' )
+				);
+				$create_key_link = sprintf(
+					$link_template,
+					'https://developers.google.com/maps/documentation/embed/get-api-key',
+					esc_html__( 'here.' )
+				);
+
 				$this->add_control(
 					'api_key_notification',
 					[
 						'type' => Controls_Manager::RAW_HTML,
 						'raw' => sprintf(
-							esc_html__( 'Set your Google Maps API Key in Elementor\'s <a href="%1$s" target="_blank">Integrations Settings</a> page. Create your key <a href="%2$s" target="_blank">here.', 'elementor' ),
-							Settings::get_url() . '#tab-integrations',
-							'https://developers.google.com/maps/documentation/embed/get-api-key'
+							__( 'Set your Google Maps API Key in Elementor\'s %1$s page. Create your key %2$s', 'elementor' ),
+							$integration_settings_link,
+							$create_key_link
 						),
 						'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 					]
