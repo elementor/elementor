@@ -37,7 +37,7 @@ export default class Base extends $e.modules.CommandBase {
 
 			// The element settings run throw the "pipe" and the methods of the handles append their settings (global values and local values)
 			const pipeFunc = pipe(
-				...this.component.handlers.map( ( handler ) => handler.appendSettingsForRecreate )
+				...this.component.handlers.map( ( handler ) => handler.appendSettingsForRecreate.bind( handler ) )
 			);
 
 			elements[ element.id ] = pipeFunc(

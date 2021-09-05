@@ -36,7 +36,7 @@ export class Create extends Base {
 	 */
 	getSettingsForSave( container ) {
 		const pipeFunc = pipe(
-			...this.component.handlers.map( ( handler ) => handler.appendSettingsForSave )
+			...this.component.handlers.map( ( handler ) => handler.appendSettingsForSave.bind( handler ) )
 		);
 
 		return pipeFunc( {}, container );
