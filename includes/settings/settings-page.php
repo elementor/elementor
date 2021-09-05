@@ -374,8 +374,6 @@ abstract class Settings_Page {
 	private function render_ongoing_experiments_section() {
 		echo '<h2>' . esc_html__( 'Ongoing Experiments', 'elementor' ) . '</h2>';
 
-		echo '<p>' . esc_html__( 'Ongoing experiments are still being worked on. Therefore they may change, evolve, or even be removed altogether.', 'elementor' ) . '</p>';
-
 		echo '<table class="form-table">';
 
 		do_settings_fields( static::PAGE_ID, 'elementor-experiments-ongoing-section' );
@@ -386,7 +384,6 @@ abstract class Settings_Page {
 
 		echo '<h2>Stable Features</h2>';
 
-		echo '<p>' . esc_html__( 'These features are mature and active by default. You can deactivate them if needed.', 'elementor' ) . '</p>';
 	}
 
 	public function get_usage_fields() {

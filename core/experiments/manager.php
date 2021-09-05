@@ -425,22 +425,24 @@ class Manager extends Base_Object {
 		<h2>
 			<?php echo esc_html__( 'Elementor Experiments', 'elementor' ); ?>
 		</h2>
-		<p>
-			<?php echo esc_html__( 'Here\'s where you can access new and experimental features from Elementor before they\'re officially released.', 'elementor' ); ?>
-		<br>
+		<p class="e-experiment__description">
 			<?php
 				printf(
 						/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'To use an experiment on your site, activate it from the dropdown. You can switch back at any time. %1$sLearn More.%2$s', 'elementor' ),
+					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. %1$sLearn More.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
 					'</a>'
 				);
 			?>
-		<br>
+		</p>
+		<p class="e-experiment__description">
+			<?php echo esc_html__( 'To use an experiment on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ); ?>
+		</p>
+		<p class="e-experiment__description">
 			<?php
 				printf(
 					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-					esc_html__( 'As always, %1$swe love your feedback.%2$s', 'elementor' ),
+					esc_html__( 'Your feedback is important - %1$shelp us%2$s improve these features by sharing your thoughts and inputs.', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
 					'</a>'
 				);
