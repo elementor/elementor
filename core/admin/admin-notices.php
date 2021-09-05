@@ -40,7 +40,19 @@ class Admin_Notices extends Module {
 			new Elementor_Dev_Notice(),
 		];
 
-		return apply_filters( 'elementor/core/admin/notices', $notices );
+		/**
+		 * Admin notices.
+		 *
+		 * Filters Elementor admin notices.
+		 *
+		 * This hook can be used by external developers to manage existing
+		 * admin notice or to add new notices for Elementor addons.
+		 *
+		 * @param array $notices A list of notice classes.
+		 */
+		$notices = apply_filters( 'elementor/core/admin/notices', $notices );
+
+		return $notices;
 	}
 
 	private function get_install_time() {
@@ -54,6 +66,7 @@ class Admin_Notices extends Module {
 	private function get_elementor_pages_count() {
 		if ( null === $this->elementor_pages_count ) {
 			$elementor_pages = new \WP_Query( [
+				'no_found_rows' => true,
 				'post_type' => 'any',
 				'post_status' => 'publish',
 				'fields' => 'ids',

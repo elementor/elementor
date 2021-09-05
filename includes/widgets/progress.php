@@ -134,15 +134,18 @@ class Widget_Progress extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'display_percentage', [
-			'label' => esc_html__( 'Display Percentage', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'default' => 'show',
-			'options' => [
-				'show' => esc_html__( 'Show', 'elementor' ),
-				'hide' => esc_html__( 'Hide', 'elementor' ),
-			],
-		] );
+		$this->add_control(
+			'display_percentage',
+			[
+				'label' => esc_html__( 'Display Percentage', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'show',
+				'options' => [
+					'show' => esc_html__( 'Show', 'elementor' ),
+					'hide' => esc_html__( 'Hide', 'elementor' ),
+				],
+			]
+		);
 
 		$this->add_control(
 			'inner_text',

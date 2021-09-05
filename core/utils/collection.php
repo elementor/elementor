@@ -359,6 +359,44 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Support only one level depth.
+	 *
+	 * @return $this
+	 */
+	public function flatten() {
+		$result = [];
+
+		foreach ( $this->all() as $item ) {
+			$item = $item instanceof Collection ? $item->all() : $item;
+
+			if ( ! is_array( $item ) ) {
+				$result[] = $item;
+			} else {
+				$values = array_values( $item );
+
+				foreach ( $values as $value ) {
+					$result[] = $value;
+				}
+			}
+		}
+
+		return new static( $result );
+	}
+
+	/**
+	 * @param ...$values
+	 *
+	 * @return $this
+	 */
+	public function push( ...$values ) {
+		foreach ( $values as $value ) {
+			$this->items[] = $value;
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param mixed $key
 	 *
 	 * @return bool

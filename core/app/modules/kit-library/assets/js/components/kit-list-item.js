@@ -6,7 +6,7 @@ import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Butt
 
 import './kit-list-item.scss';
 
-export default function KitListItem( props ) {
+const KitListItem = ( props ) => {
 	const [ type, { subscriptionPlan } ] = useKitCallToAction( props.model.accessLevel );
 
 	return (
@@ -57,8 +57,10 @@ export default function KitListItem( props ) {
 			</CardBody>
 		</Card>
 	);
-}
+};
 
 KitListItem.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 };
+
+export default React.memo( KitListItem );

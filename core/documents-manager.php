@@ -182,6 +182,15 @@ class Documents_Manager {
 			return false;
 		}
 
+		/**
+		 * Retrieve document post ID.
+		 *
+		 * Filters the document post ID.
+		 *
+		 * @since 2.0.7
+		 *
+		 * @param int $post_id The post ID of the document.
+		 */
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
