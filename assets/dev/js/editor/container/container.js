@@ -335,18 +335,18 @@ export default class Container extends ArgsObject {
 
 		// Backwards Compatibility: if there is only one repeater (type=repeater), set it's children as current children.
 		// Since 3.0.0.
-		// if ( [ 'widget', 'document' ].includes( this.type ) ) {
-		// 	const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
-		//
-		// 	if ( 1 === repeaters.length ) {
-		// 		Object.defineProperty( this, 'children', {
-		// 			get() {
-		// 				elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
-		// 				return this.repeaters[ repeaters[ 0 ].name ].children;
-		// 			},
-		// 		} );
-		// 	}
-		// }
+		if ( [ 'widget', 'document' ].includes( this.type ) ) {
+			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
+
+			if ( 1 === repeaters.length ) {
+				Object.defineProperty( this, 'children', {
+					get() {
+						elementorCommon.helpers.softDeprecated( 'children', '3.0.0', 'container.repeaters[ repeaterName ].children' );
+						return this.repeaters[ repeaters[ 0 ].name ].children;
+					},
+				} );
+			}
+		}
 	}
 
 	/**

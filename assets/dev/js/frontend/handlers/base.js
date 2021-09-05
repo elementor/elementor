@@ -33,7 +33,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		var $mainElement = this.$element;
 
 		return $mainElement.find( selector ).filter( function() {
-			return jQuery( this ).closest( '.elementor-element' ).is( $mainElement );
+			// Use closet starts from parent, since currently self can be element.
+			return jQuery( this ).parent().closest( '.elementor-element' ).is( $mainElement );
 		} );
 	},
 

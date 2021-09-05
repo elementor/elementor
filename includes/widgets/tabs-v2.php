@@ -30,6 +30,9 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 		return [
 			[
 				'elType' => 'container',
+				'settings' => [
+					'tab_title' => esc_html__( 'Tab #1', 'elementor' ),
+				],
 				'elements' => [
 					'elType' => 'widget',
 					'widgetType' => 'heading',
@@ -40,6 +43,9 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 			],
 			[
 				'elType' => 'container',
+				'settings' => [
+					'tab_title' => esc_html__( 'Tab #2', 'elementor' ),
+				],
 				'elements' => [
 					'elType' => 'widget',
 					'widgetType' => 'heading',
@@ -52,7 +58,7 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 	}
 
 	protected function get_children_placeholder_class() {
-		return 'children_placeholder';
+		return 'elementor-tabs-content-wrapper';
 	}
 
 	protected function get_html_wrapper_class() {
@@ -64,51 +70,6 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 			'section_tabs',
 			[
 				'label' => esc_html__( 'Tabs', 'elementor' ),
-			]
-		);
-
-		$repeater = new Repeater();
-
-		$repeater->add_control(
-			'tab_title',
-			[
-				'label' => esc_html__( 'Title', 'elementor' ),
-				'type' => Controls_Manager::TEXT,
-				'default' => esc_html__( 'Tab Title', 'elementor' ),
-				'placeholder' => esc_html__( 'Tab Title', 'elementor' ),
-				'label_block' => true,
-				'dynamic' => [
-					'active' => true,
-				],
-			]
-		);
-
-		$this->add_control(
-			$this->get_name(),
-			[
-				'label' => esc_html__( 'Tabs Items', 'elementor' ),
-				'type' => Controls_Manager::REPEATER,
-				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
-						'tab_title' => esc_html__( 'Tab #1', 'elementor' ),
-						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-					[
-						'tab_title' => esc_html__( 'Tab #2', 'elementor' ),
-						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
-				'title_field' => '{{{ tab_title }}}',
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
 			]
 		);
 
@@ -324,7 +285,7 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 	}
 
 	protected function render() {
-		$tabs = $this->get_settings_for_display( $this->get_name() );
+		$tabs = $this->get_children();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
@@ -337,9 +298,10 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 			<div class="elementor-tabs-wrapper" role="tablist" >
 				<?php
 				foreach ( $tabs as $index => $item ) :
+					$item_settings = $item->get_settings();
 					$tab_count = $index + 1;
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-					$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+					$tab_title = $a11y_improvements_experiment ? $item_settings['tab_title'] : '<a href="">' . $item_settings['tab_title'] . '</a>';
 
 					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
@@ -404,10 +366,10 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">
-			<# if ( settings['tabs-v2'] ) {
+			<# if ( children.length ) {
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="elementor-tabs-wrapper" role="tablist">
-				<# _.each( settings['tabs-v2'], function( item, index ) {
+				<# _.each( children, function( item, index ) {
 				var tabCount = index + 1,
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
@@ -422,28 +384,10 @@ class Widget_Tabs_V2 extends Widget_Container_Base {
 				'aria-expanded': 'false',
 				} );
 				#>
-				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>
+				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.settings.tab_title }}}</div>
 				<# } ); #>
 			</div>
 			<div class="elementor-tabs-content-wrapper">
-				<# _.each( settings['tabs-v2'], function( item, index ) {
-				var tabCount = index + 1,
-				tabContentKey = view.getRepeaterSettingKey( 'tab_content', 'tabs',index );
-
-				view.addRenderAttribute( tabContentKey, {
-				'id': 'elementor-tab-content-' + elementUid + tabCount,
-				'class': [ 'elementor-tab-content', 'elementor-clearfix', 'elementor-repeater-item-' + item._id ],
-				'data-tab': tabCount,
-				'role' : 'tabpanel',
-				'aria-labelledby' : 'elementor-tab-title-' + elementUid + tabCount
-				} );
-				#>
-				<div class="elementor-tab-title elementor-tab-mobile-title" data-tab="{{ tabCount }}" role="tab">{{{ item.tab_title }}}</div>
-				<div {{{ view.getRenderAttributeString( tabContentKey ) }}}>
-					<div class="<?php echo esc_html( $this->get_children_placeholder_class() ); ?>" data-index="{{ index }}">
-					</div>
-				</div>
-				<# } ); #>
 			</div>
 			<# } #>
 		</div>

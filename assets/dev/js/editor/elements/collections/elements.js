@@ -5,7 +5,6 @@ var ElementModel = require( 'elementor-elements/models/element' );
 var ElementsCollection = Backbone.Collection.extend( {
 	add: function( models, options, isCorrectSet ) {
 		if ( ( ! options || ! options.silent ) && ! isCorrectSet ) {
-			debugger;
 			throw 'Call Error: Adding model to element collection is allowed only by the dedicated addChildModel() method.';
 		}
 

@@ -22,53 +22,81 @@ class WidgetContainer extends BaseElementView {
 	events() {
 		const events = super.events();
 
-		events.click = () => $e.run( 'panel/editor/open', {
-			model: this.options.model,
-			view: this,
-		} );
+		events.click = ( e ) => {
+			e.stopPropagation();
+
+			$e.run( 'panel/editor/open', {
+				model: this.options.model,
+				view: this,
+			} );
+		};
 
 		return events;
 	}
 
-	attachHtml( collectionView, childView, index ) {
-		// Same as original but passes index to '_insertAfter'.
-		if ( collectionView._isBuffering ) {
-			// buffering happens on reset events and initial renders
-			// in order to reduce the number of inserts into the
-			// document, which are expensive.
-			collectionView._bufferedChildren.splice( index, 0, childView );
-		} else if ( ! collectionView._insertBefore( childView, index ) ) {
-			// If we've already rendered the main collection, append
-			// the new child into the correct order if we need to. Otherwise
-			// append to the end.
-			collectionView._insertAfter( childView, index );
+	templateHelpers() {
+		const baseTemplateHelpers = super.templateHelpers();
+
+		// TODO: Find better solution.
+		if ( $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
+			baseTemplateHelpers.children = this.model.defaultChildren.map( ( item ) => item.toJSON() );
+		} else {
+			baseTemplateHelpers.children = this.model.get( 'elements' ).toJSON();
+		}
+
+		return baseTemplateHelpers;
+	}
+
+	showCollection() {
+		// Same as original but passes index to `getChildView`.
+		let ChildView;
+
+		const models = this._filteredSortedModels();
+
+		_.each( models, function( child, index ) {
+			ChildView = this.getChildView( child, index );
+			this.addChild( child, ChildView, index );
+		}, this );
+	}
+
+	_onCollectionAdd( child, collection, opts ) {
+		// Same as original but passes index to `getChildView`.
+
+		// `index` is present when adding with `at` since BB 1.2; indexOf fallback for < 1.2
+		let index = opts.at !== undefined && ( opts.index || collection.indexOf( child ) );
+
+		// When filtered or when there is no initial index, calculate index.
+		if ( this.getOption( 'filter' ) || false === index ) {
+			index = _.indexOf( this._filteredSortedModels( index ), child );
+		}
+
+		if ( this._shouldAddChild( child, index ) ) {
+			this.destroyEmptyView();
+			const ChildView = this.getChildView( child, index );
+			this.addChild( child, ChildView, index );
 		}
 	}
 
-	_insertAfter( childView, index ) {
-		const $container = this.getChildViewContainer( this, childView, index );
-		$container.append( childView.el );
-	}
-
-	getChildViewContainer( containerView, childView, index = -1 ) {
-		if ( -1 !== index && this.config.children_placeholder_class ) {
-			const childrenPlaceholder = this.config.children_placeholder_class,
-				isRepeater = containerView.model
-				.get( 'settings' )
-				.get( containerView.config.name );
-
-			if ( ! isRepeater ) {
-				return containerView.$el.find( `.${ childrenPlaceholder }` );
-			}
-
-			return containerView.$el.find( `.${ childrenPlaceholder }[data-index="${ index }"]` );
+	getChildViewContainer( containerView, childView ) {
+		if ( this.config.children_placeholder_class ) {
+			return containerView.$el.find( `.${ this.config.children_placeholder_class }` );
 		}
 
 		return super.getChildViewContainer( containerView, childView );
 	}
 
 	getChildType() {
-		return [ 'section', 'container' ];
+		return [ 'container' ];
+	}
+
+	getChildView( model, index ) {
+		if ( 'tabs-v2' === this.model.get( 'widgetType' ) ) {
+			model.set( '_index', index );
+
+			return require( './widget-container/tab-container' ).default;
+		}
+
+		return super.getChildView( model );
 	}
 
 	onRender() {
@@ -96,6 +124,5 @@ class WidgetContainer extends BaseElementView {
 
 WidgetContainer.prototype.getTemplate = WidgetBase.prototype.getTemplate;
 WidgetContainer.prototype.getEditButtons = WidgetBase.prototype.getEditButtons;
-WidgetContainer.prototype.getRepeaterSettingKey = WidgetBase.prototype.getRepeaterSettingKey;
 
 module.exports = WidgetContainer;
