@@ -24,15 +24,17 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	childViewContainer: '.elementor-panel-category-items',
 
 	initialize: function() {
-		const items = this.model.get( 'items' ) || [];
+		let items = this.model.get( 'items' ) || [];
 
-		this.collection = new PanelElementsElementsCollection(
-			this.model.get( 'sort' ) ?
-				items.sort(
+		switch ( this.model.get( 'sort' ) ) {
+			case 'a-z':
+				items = items.sort(
 					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1
-				) :
-				items
-		);
+				);
+				break;
+		}
+
+		this.collection = new PanelElementsElementsCollection( items );
 	},
 
 	behaviors: function() {
@@ -40,20 +42,20 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onRender: function() {
-		var isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
+		let isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
 
 		if ( undefined === isActive ) {
 			isActive = this.model.get( 'defaultActive' );
+		}
+
+		if ( ! this.collection.length && this.model.get( 'hideIfEmpty' ) ) {
+			this.$el.css( 'display', 'none' );
 		}
 
 		if ( isActive ) {
 			this.$el.addClass( 'elementor-active' );
 		} else {
 			this.ui.items.css( 'display', 'none' );
-		}
-
-		if ( this.model.get( 'dynamic' ) ) {
-			this.toggle( ! this.isEmpty(), false );
 		}
 	},
 

@@ -115,10 +115,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
 		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			if ( ! categoryConfig.dynamic && ! categories[ categoryName ] ) {
-				return;
-			}
-
 			// Set defaults.
 			if ( 'undefined' === typeof categoryConfig.active ) {
 				categoryConfig.active = true;
@@ -134,7 +130,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: categoryConfig.icon,
 				defaultActive: categoryConfig.active,
 				sort: categoryConfig.sort,
-				dynamic: categoryConfig.dynamic,
+				hideIfEmpty: undefined !== categoryConfig.hideIfEmpty ?
+					categoryConfig.hideIfEmpty :
+					true,
 				items: categories[ categoryName ],
 			} );
 		} );

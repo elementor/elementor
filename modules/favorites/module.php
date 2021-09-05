@@ -172,17 +172,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Check whether favorites type is registered.
-	 *
-	 * @param string $type
-	 *
-	 * @return bool
-	 */
-	public function exists( $type ) {
-		return in_array( $type, array_keys( $this->types ), true );
-	}
-
-	/**
 	 * Get registered favorites type instance.
 	 *
 	 * @param string $type
@@ -190,10 +179,6 @@ class Module extends BaseModule {
 	 * @return Favorites_Type
 	 */
 	public function type_instance( $type ) {
-		if ( ! $this->exists( $type ) ) {
-			$this->type_doesnt_exists( $type );
-		}
-
 		return $this->types[ $type ];
 	}
 
@@ -203,10 +188,6 @@ class Module extends BaseModule {
 	 * @param string $class
 	 */
 	public function register( $class ) {
-		if ( ! class_exists( $class ) ) {
-			$this->class_doesnt_exists( $class );
-		}
-
 		$type_instance = new $class();
 
 		$this->types[ $type_instance->get_name() ] = $type_instance;
@@ -278,32 +259,8 @@ class Module extends BaseModule {
 	 */
 	public function action_doesnt_exists( $action ) {
 		throw new \InvalidArgumentException( sprintf(
-			esc_html__( "Action '%s' to apply on favorites doesn't exists", 'elementor' ),
+			"Action '%s' to apply on favorites doesn't exists",
 			$action
-		) );
-	}
-
-	/**
-	 * Throw type doesn't exist exception.
-	 *
-	 * @param string $type
-	 */
-	public function type_doesnt_exists( $type ) {
-		throw new \InvalidArgumentException( sprintf(
-			esc_html__( "Favorites type '%s' doesn't exists", 'elementor' ),
-			$type
-		) );
-	}
-
-	/**
-	 * Throw class doesn't exist exception.
-	 *
-	 * @param string $class
-	 */
-	public function class_doesnt_exists( $class ) {
-		throw new InvalidArgumentException( sprintf(
-			esc_html__( "Can't register type because class '%s' doesn't exists", 'elementor' ),
-			$class
 		) );
 	}
 }
