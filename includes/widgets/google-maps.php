@@ -112,12 +112,12 @@ class Widget_Google_Maps extends Widget_Base {
 				$integration_settings_link = sprintf(
 					$link_template,
 					Settings::get_url() . '#tab-integrations',
-					esc_html__( 'Integrations Settings' )
+					esc_html__( 'Integrations Settings', 'elementor' )
 				);
 				$create_key_link = sprintf(
 					$link_template,
 					'https://developers.google.com/maps/documentation/embed/get-api-key',
-					esc_html__( 'here.' )
+					esc_html__( 'here.', 'elementor' )
 				);
 
 				$this->add_control(
