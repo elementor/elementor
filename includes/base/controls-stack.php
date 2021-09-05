@@ -976,17 +976,19 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array|null The config.
 	 */
 	final public function get_config() {
-		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This if statement should be removed when the method is hard-deprecated
-		if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
-			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
+		if ( null === $this->config ) {
+			// TODO: This is for backwards compatibility starting from 2.9.0
+			// This if statement should be removed when the method is hard-deprecated
+			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
 
-			$config = $this->_get_initial_config();
-		} else {
-			$config = $this->get_initial_config();
+				$this->config = $this->_get_initial_config();
+			} else {
+				$this->config = $this->get_initial_config();
+			}
 		}
 
-		return array_merge_recursive( $config, is_array( $this->config ) ? $this->config : [] );
+		return $this->config;
 	}
 
 	/**
@@ -998,9 +1000,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 */
 	public function set_config( $key, $value ) {
-		if ( null === $this->config ) {
-			$this->config = [];
-		}
+		$this->config = $this->get_config();
 
 		if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
 			$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
