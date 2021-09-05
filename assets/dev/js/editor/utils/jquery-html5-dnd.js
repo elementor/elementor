@@ -265,25 +265,25 @@
 
 			setSide( event );
 
-			elementor.browserImport
-				.createSession( event.originalEvent.dataTransfer.items, settings.getDropContainer() )
-				.then( async ( session ) => {
-					isDroppingAllowedState = isDroppingAllowed( event ) || await session.validate();
+			$e.run( 'editor/browser-import/validate', {
+				input: event.originalEvent.dataTransfer.items,
+			} ).then( ( importAllowed ) => {
+				isDroppingAllowedState = isDroppingAllowed( event ) || importAllowed;
 
-					if ( ! isDroppingAllowedState ) {
-						return;
-					}
+				if ( ! isDroppingAllowedState ) {
+					return;
+				}
 
-					insertPlaceholder();
+				insertPlaceholder();
 
-					elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
+				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
-					$( currentElement ).addClass( settings.currentElementClass );
+				$( currentElement ).addClass( settings.currentElementClass );
 
-					if ( 'function' === typeof settings.onDragEnter ) {
-						settings.onDragEnter.call( currentElement, currentSide, event, self );
-					}
-				} );
+				if ( 'function' === typeof settings.onDragEnter ) {
+					settings.onDragEnter.call( currentElement, currentSide, event, self );
+				}
+			} );
 		};
 
 		var onDragOver = function( event ) {
@@ -332,6 +332,8 @@
 		};
 
 		var onDrop = function( event ) {
+			const input = event.originalEvent.dataTransfer.files;
+
 			setSide( event );
 
 			if ( ! isDroppingAllowedState ) {
@@ -340,26 +342,25 @@
 
 			event.preventDefault();
 
-			const serialized = JSON.stringify( {
-				type: 'section',
-				version: '0.4',
-				content: [
-					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
-				],
-			} );
-
-			$e.run( 'document/elements/browser-import', {
-				container: settings.getDropContainer(),
-				input: event.originalEvent.dataTransfer.files.length ?
-					event.originalEvent.dataTransfer.files :
-					serialized,
-				options: {
-					event,
-					container: {
-						at: settings.getDropIndex( currentSide, event ),
+			if ( input.length ) {
+				$e.run( 'editor/browser-import/import', {
+					input,
+					target: settings.getDropContainer(),
+					options: {
+						event,
+						target: {
+							at: settings.getDropIndex( currentSide, event ),
+						},
 					},
-				},
-			} );
+				} );
+			} else {
+				settings.getDropContainer().view.createElementFromModel(
+					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
+					{
+						at: settings.getDropIndex( currentSide, event ),
+					}
+				);
+			}
 		};
 
 		var attachEvents = function() {

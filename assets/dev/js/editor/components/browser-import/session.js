@@ -20,7 +20,7 @@ export default class Session {
 	 *
 	 * @type {Container}
 	 */
-	container;
+	target;
 
 	/**
 	 * The Session options.
@@ -36,13 +36,13 @@ export default class Session {
 	 *
 	 * @param manager
 	 * @param itemCollection
-	 * @param container
+	 * @param target
 	 * @param options
 	 */
-	constructor( manager, itemCollection = null, container = null, options = {} ) {
+	constructor( manager, itemCollection = null, target = null, options = {} ) {
 		this.manager = manager;
 		this.itemCollection = itemCollection;
-		this.container = container;
+		this.target = target;
 		this.options = Object.assign( this.options, options );
 	}
 
@@ -94,9 +94,9 @@ export default class Session {
 			switch ( element.type ) {
 				case 'element':
 				case 'widget':
-					return this.container.view.createElementFromContainer(
+					return this.target.view.createElementFromContainer(
 						element,
-						Object.assign( this.options.container, {
+						Object.assign( this.options.target, {
 							event: this.options.event,
 						} )
 					);

@@ -1,8 +1,10 @@
+import Component from './component';
+import DefaultConfig from './default-config';
+import ItemCollection from 'elementor-editor/components/browser-import/items/item-collection';
 import Normalizer from './normalizer';
 import Session from 'elementor-editor/components/browser-import/session';
-import ItemCollection from 'elementor-editor/components/browser-import/items/item-collection';
 
-export default class Manager {
+export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * File-readers list.
 	 *
@@ -20,10 +22,16 @@ export default class Manager {
 	/**
 	 * Manager constructor.
 	 */
-	constructor( config = {} ) {
-		this.parseConfig( config );
+	constructor() {
+		super();
 
 		this.normalizer = new Normalizer( this );
+
+		$e.components.register(
+			new Component( { manager: this } )
+		);
+
+		this.parseConfig( DefaultConfig );
 	}
 
 	/**
@@ -32,11 +40,11 @@ export default class Manager {
 	 * @param config
 	 */
 	parseConfig( config = {} ) {
-		for ( const reader of config.readers ) {
+		for ( const reader of config.readers || {} ) {
 			this.registerFileReader( reader );
 		}
 
-		for ( const parser of config.parsers ) {
+		for ( const parser of config.parsers || {} ) {
 			this.registerFileParser( parser );
 		}
 	}
@@ -46,12 +54,12 @@ export default class Manager {
 	 *
 	 * @returns {Session}
 	 */
-	async createSession( input, container, options = {} ) {
+	async createSession( input, target, options = {} ) {
 		if ( ! ( input instanceof ItemCollection ) ) {
 			input = await this.getNormalizer().normalize( input );
 		}
 
-		return new Session( this, input, container, options );
+		return new Session( this, input, target, options );
 	}
 
 	/**

@@ -94,11 +94,11 @@ const Preview = BaseSectionsContainerView.extend( {
 		$contentContainer.html( this.$childViewContainer );
 
 		if ( elementor.userCan( 'design' ) ) {
-			this.addNewSectionView = new AddSectionView();
+			const addNewSectionView = new AddSectionView();
 
-			this.addNewSectionView.render();
+			addNewSectionView.render();
 
-			$contentContainer.append( this.addNewSectionView.$el );
+			$contentContainer.append( addNewSectionView.$el );
 		}
 	},
 } );

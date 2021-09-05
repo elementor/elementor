@@ -2,7 +2,6 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import DefaultBrowserImportConfig from './components/browser-import/default-config';
 import EditorDocuments from 'elementor-editor/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
@@ -356,7 +355,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.devTools = new DevTools();
 
-		this.browserImport = new BrowserImport( DefaultBrowserImportConfig );
+		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 

@@ -105,7 +105,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		model = Object.assign( model, model.custom );
 
-		if ( elementor.helpers.maybeDisableWidget( model ) ) {
+		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
 			return;
 		}
 
