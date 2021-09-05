@@ -225,9 +225,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay: function() {
-		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } ),
-			elementType = this.options.model.get( 'elType' ),
+		const elementType = this.getElementType(),
+			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
