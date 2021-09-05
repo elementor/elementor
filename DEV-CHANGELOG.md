@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev18 - 2021-09-05
+* Fix: Default global values override local global values [ED-4917] (#16206)
+
 #### 3.5.0-dev16 - 2021-09-03
 * JS API/Editor: Fix - Move 'Editor/Documents' to components folder. (#14602)
 * Fix: Image content html tags appeared on Image carousel widget [ED-4828] (#16129)
