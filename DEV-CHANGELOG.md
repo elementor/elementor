@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev19 - 2021-09-06
+* Fix: Editor doesn't load on v3.5.0 if `ELEMENTOR_DEBUG` is enabled [ED-4937] (#16256)
+
 #### 3.5.0-dev18 - 2021-09-05
 * Fix: Default global values override local global values [ED-4917] (#16206)
 
