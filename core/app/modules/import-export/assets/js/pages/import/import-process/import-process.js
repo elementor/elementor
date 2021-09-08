@@ -6,10 +6,10 @@ import FileProcess from '../../../shared/file-process/file-process';
 
 import { Context } from '../../../context/context-provider';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+	const { kitState, kitActions } = useKit(),
 		[ isError, setIsError ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
@@ -18,49 +18,25 @@ export default function ImportProcess() {
 		// We need to support query-params for external navigations, but also parsing the value from the hash for internal navigation between different routes.
 		fileURL = queryParams.file_url || location.hash.match( 'file_url=([^&]+)' )?.[ 1 ],
 		isApplyAllForced = 'apply-all' === queryParams.action_type,
-		getAjaxConfig = () => {
-			return {
-				data: {
-					action: 'elementor_import_kit',
-				},
-			};
-		},
 		uploadKit = () => {
-			const ajaxConfig = getAjaxConfig(),
-				decodedFileURL = decodeURIComponent( fileURL );
-
-			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
-
-			ajaxConfig.data.e_import_file = decodedFileURL;
-			ajaxConfig.data.data = JSON.stringify( {
-				stage: 1,
-			} );
-
-			const referrer = location.hash.match( 'referrer=([^&]+)' );
+			const decodedFileURL = decodeURIComponent( fileURL ),
+				referrer = location.hash.match( 'referrer=([^&]+)' );
 
 			if ( referrer ) {
 				context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
 			}
 
-			setAjax( ajaxConfig );
+			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+
+			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			const ajaxConfig = getAjaxConfig();
-
-			ajaxConfig.data.data = {
-				stage: 2,
+			kitActions.import( {
 				session: context.data.fileResponse.stage1.session,
 				include: context.data.includes,
 				overrideConditions: context.data.overrideConditions,
-			};
-
-			if ( context.data.referrer ) {
-				ajaxConfig.data.data.referrer = context.data.referrer;
-			}
-
-			ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
-
-			setAjax( ajaxConfig );
+				referrer: context.data.referrer,
+			} );
 		},
 		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
@@ -80,26 +56,26 @@ export default function ImportProcess() {
 	}, [] );
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
+		if ( 'success' === kitState.status ) {
 			const previousResponse = context.data.fileResponse,
-				payload = previousResponse?.stage1 ? { ...previousResponse, stage2: ajaxState.response } : { stage1: ajaxState.response };
+				payload = previousResponse?.stage1 ? { ...previousResponse, stage2: kitState.response } : { stage1: kitState.response };
 
 			context.dispatch( { type: 'SET_FILE_RESPONSE', payload } );
-		} else if ( 'error' === ajaxState.status ) {
+		} else if ( 'error' === kitState.status ) {
 			setIsError( true );
 		}
-	}, [ ajaxState.status ] );
+	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
+		if ( 'success' === kitState.status ) {
 			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
 				if ( context.data.fileResponse.stage1.conflicts ) {
 					navigate( '/import/resolver' );
 				} else {
-					// The ajaxState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
-					ajaxActions.reset();
+					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
+					kitActions.reset();
 
 					importKit();
 				}

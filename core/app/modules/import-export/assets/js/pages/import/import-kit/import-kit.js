@@ -11,12 +11,12 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+	const { kitState, kitActions } = useKit(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
@@ -26,7 +26,7 @@ export default function ImportKit() {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
 			setIsLoading( false );
-			ajaxActions.reset();
+			kitActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
@@ -36,25 +36,17 @@ export default function ImportKit() {
 
 	useEffect( () => {
 		if ( context.data.file ) {
-			setAjax( {
-				data: {
-					e_import_file: context.data.file,
-					action: 'elementor_import_kit',
-					data: JSON.stringify( {
-						stage: 1,
-					} ),
-				},
-			} );
+			kitActions.upload( { file: context.data.file } );
 		}
 	}, [ context.data.file ] );
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
-		} else if ( 'error' === ajaxState.status ) {
+		if ( 'success' === kitState.status ) {
+			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: kitState.response } } );
+		} else if ( 'error' === kitState.status ) {
 			setIsImportFailed( true );
 		}
-	}, [ ajaxState.status ] );
+	}, [ kitState.status ] );
 
 	useEffect( () => {
 		if ( context.data.fileResponse && context.data.file ) {
