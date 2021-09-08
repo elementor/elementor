@@ -9,7 +9,7 @@ import { Context } from '../../../context/context-provider';
 import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
-	const { kitState, kitActions } = useKit(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ isError, setIsError ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
@@ -32,7 +32,7 @@ export default function ImportProcess() {
 		},
 		importKit = () => {
 			kitActions.import( {
-				session: context.data.fileResponse.stage1.session,
+				session: context.data.uploadedData.session,
 				include: context.data.includes,
 				overrideConditions: context.data.overrideConditions,
 				referrer: context.data.referrer,
@@ -44,34 +44,37 @@ export default function ImportProcess() {
 		};
 
 	useEffect( () => {
-		if ( fileURL || context.data.fileResponse ) {
-			if ( fileURL && ! context.data.file ) {
-				// When the starting point of the app is the import/process screen and importing via file_url.
-				uploadKit();
-			} else {
-				// When the import/process is the second step of the kit import process, after selecting the kit content.
-				importKit();
-			}
+		if ( fileURL && ! context.data.file ) {
+			// When the starting point of the app is the import/process screen and importing via file_url.
+			uploadKit();
+		} else if ( context.data.uploadedData ) {
+			// When the import/process is the second step of the kit import process, after selecting the kit content.
+			importKit();
 		}
 	}, [] );
 
 	useEffect( () => {
-		if ( 'success' === kitState.status ) {
-			const previousResponse = context.data.fileResponse,
-				payload = previousResponse?.stage1 ? { ...previousResponse, stage2: kitState.response } : { stage1: kitState.response };
-
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload } );
-		} else if ( 'error' === kitState.status ) {
-			setIsError( true );
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			switch ( kitState.status ) {
+				case KIT_STATUS_MAP.IMPORTED:
+					context.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.UPLOADED:
+					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.ERROR:
+					setIsError( true );
+					break;
+			}
 		}
 	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( 'success' === kitState.status ) {
-			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) { // After kit upload.
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			if ( context.data.importedData ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
-				if ( context.data.fileResponse.stage1.conflicts ) {
+				if ( context.data.uploadedData.isConflicts ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
@@ -83,7 +86,7 @@ export default function ImportProcess() {
 				navigate( '/import/content' );
 			}
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.uploadedData, context.data.importedData ] );
 
 	return (
 		<Layout type="import">

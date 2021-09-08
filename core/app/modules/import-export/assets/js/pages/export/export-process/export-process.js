@@ -31,17 +31,17 @@ export default function ExportProcess() {
 
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: ajaxState.response } );
+			context.dispatch( { type: 'SET_EXPORTED_DATA', payload: ajaxState.response } );
 		} else if ( 'error' === ajaxState.status ) {
 			setIsError( true );
 		}
 	}, [ ajaxState.status ] );
 
 	useEffect( () => {
-		if ( context.data.fileResponse ) {
+		if ( context.data.exportedData ) {
 			navigate( 'export/complete' );
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.exportedData ] );
 
 	return (
 		<Layout type="export">

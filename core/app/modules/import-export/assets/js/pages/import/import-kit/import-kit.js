@@ -16,7 +16,7 @@ import useKit from '../../../hooks/use-kit';
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { kitState, kitActions } = useKit(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
@@ -41,18 +41,19 @@ export default function ImportKit() {
 	}, [ context.data.file ] );
 
 	useEffect( () => {
-		if ( 'success' === kitState.status ) {
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: kitState.response } } );
+		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
+			//context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: kitState.response } } );
+			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.response } );
 		} else if ( 'error' === kitState.status ) {
 			setIsImportFailed( true );
 		}
 	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( context.data.fileResponse && context.data.file ) {
+		if ( context.data.uploadedData && context.data.file ) {
 			navigate( '/import/content' );
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.uploadedData ] );
 
 	useEffect( () => {
 		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );

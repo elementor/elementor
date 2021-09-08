@@ -10,7 +10,6 @@ export default function ContextProvider( props ) {
 	const initialState = {
 		includes: kitContentData.map( ( item ) => item.type ),
 		downloadUrl: '',
-		fileResponse: null,
 		file: null,
 		overrideConditions: [],
 		referrer: null,
@@ -18,6 +17,9 @@ export default function ContextProvider( props ) {
 			title: null,
 			description: null,
 		},
+		uploadedData: null,
+		importedData: null,
+		exportedData: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

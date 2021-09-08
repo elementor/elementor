@@ -1,7 +1,22 @@
+import { useState, useEffect } from 'react';
+
 import useAjax from 'elementor-app/hooks/use-ajax';
+
+const KIT_STATUS_MAP = {
+	INITIAL: 'initial',
+	UPLOADED: 'uploaded',
+	IMPORTED: 'imported',
+	ERROR: 'error',
+};
 
 export default function useKit() {
 	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+		kitStateInitialState = {
+			status: KIT_STATUS_MAP.INITIAL,
+			data: null,
+			isConflicts: false,
+		},
+		[ kitState, setKitState ] = useState( kitStateInitialState ),
 		getAjaxConfig = () => {
 			return {
 				data: {
@@ -39,8 +54,33 @@ export default function useKit() {
 		},
 		reset = () => ajaxActions.reset();
 
+	useEffect( () => {
+		if ( 'initial' !== ajaxState.status ) {
+			const newState = {};
+
+			if ( 'success' === ajaxState.status ) {
+				newState.data = ajaxState.response;
+
+				if ( ajaxState.response.manifest ) {
+					if ( ajaxState.response.conflicts ) {
+						newState.isConflicts = true;
+					}
+
+					newState.status = KIT_STATUS_MAP.UPLOADED;
+				} else {
+					newState.status = KIT_STATUS_MAP.IMPORTED;
+				}
+			} else if ( 'error' === ajaxState.status ) {
+				newState.status = KIT_STATUS_MAP.ERROR;
+			}
+
+			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
+		}
+	}, [ ajaxState ] );
+
 	return {
-		kitState: ajaxState,
+		kitState,
+		KIT_STATUS_MAP,
 		kitActions: {
 			upload: uploadKit,
 			import: importKit,
