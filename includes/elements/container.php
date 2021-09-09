@@ -900,7 +900,7 @@ class Container extends Element_Base {
 			]
 		);
 
-		// TODO: Extract to group control.
+		// TODO: Copied from `common.php` - Extract to group control.
 		$this->add_control(
 			'position',
 			[

@@ -4,8 +4,7 @@
 
 .elementor-section-wrap {
 	display: flex;
-	// To be able to drop Containers alongside each other on the page itself.
-	flex-direction: row;
+	flex-direction: row; // To be able to drop Containers alongside each other on the page itself.
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-evenly;
@@ -14,7 +13,7 @@
 // Section
 .elementor-section {
 	position: relative;
-	// Need to stretch the section to full width since the section-wrap is flex.
+	// Need to explicitly stretch the section to full width since the section-wrap is flex.
 	width: 100%;
 
 	// Container

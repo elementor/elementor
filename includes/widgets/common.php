@@ -152,6 +152,32 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		// TODO: For BC - Remove in the future.
+		$this->add_responsive_control(
+			'_element_width',
+			[
+				'label' => esc_html__( 'Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'inherit' => esc_html__( 'Full Width', 'elementor' ) . ' (100%)',
+					'auto' => esc_html__( 'Inline', 'elementor' ) . ' (auto)',
+					'initial' => esc_html__( 'Custom', 'elementor' ),
+				],
+				'selectors_dictionary' => [
+					'inherit' => '100%',
+				],
+				'condition' => [
+					'_element_width!' => '', // TODO: For BC.
+				],
+				'prefix_class' => 'elementor-widget%s__width-',
+				'selectors' => [
+					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[
@@ -211,6 +237,37 @@ class Widget_Common extends Widget_Base {
 					'align_self',
 					'order',
 					'order_custom',
+				],
+			]
+		);
+
+		// TODO: For BC - Remove in the future.
+		$this->add_responsive_control(
+			'_element_vertical_align',
+			[
+				'label' => esc_html__( 'Vertical Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'flex-start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'flex-end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'condition' => [
+					'_element_width!' => '',
+					'_position' => '',
+					'_element_vertical_align!' => '', // TODO: For BC.
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],
 			]
 		);

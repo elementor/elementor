@@ -250,12 +250,12 @@ class AddSectionBase extends Marionette.ItemView {
 				},
 			} );
 
-		if ( AddSectionBase.IS_CONTAINER_ACTIVE && 'container' !== selectedElement.model.get( 'elType' ) ) {
-			// Create the element in the container.
-			containingElement.view.addElementFromPanel();
-		} else if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
+		if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
 			// Create the element in column.
 			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
+			// Create the element in a Container, only if the dragged element is not a Container already.
+			containingElement.view.addElementFromPanel();
 		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
