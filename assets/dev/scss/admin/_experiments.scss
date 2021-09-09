@@ -34,7 +34,7 @@
 		font-style: italic;
 	}
 
-	&__button {
-		@include margin(20px, 5px, 18px, 0 !important);
+	&__button.button {
+		@include margin(20px, 5px, 18px, 0);
 	}
 }
