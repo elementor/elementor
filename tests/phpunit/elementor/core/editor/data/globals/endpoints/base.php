@@ -1,10 +1,9 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals\Endpoints;
 
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Editor\Data;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 abstract class Base extends Elementor_Test_Base {
 

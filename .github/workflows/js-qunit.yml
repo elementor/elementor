@@ -1,11 +1,29 @@
-name: JS-Qunit
+name: Qunit
 
 on: [push, pull_request]
 
 jobs:
-  Qunit:
-    runs-on: ubuntu-16.04
+  file-diff:
+    runs-on: ubuntu-18.04
+    name: Qunit - File Diff
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js_diff: ${{ steps.js_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Check JS files diff
+        id: js_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.+(js|ts|json|jsx|tsx)
+
+  q-unit:
+    runs-on: ubuntu-18.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
+    name: Qunit - Test
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2

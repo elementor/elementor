@@ -2,10 +2,10 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Utils\Http;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App_Multiple_Urls;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
