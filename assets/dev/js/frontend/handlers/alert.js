@@ -1,4 +1,4 @@
-class Alert extends elementorModules.frontend.handlers.Base {
+export default class Alert extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -22,10 +22,4 @@ class Alert extends elementorModules.frontend.handlers.Base {
 		this.$element.fadeOut();
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( Alert, {
-		$element: $scope,
-	} );
-};
 

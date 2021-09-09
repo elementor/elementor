@@ -26,19 +26,19 @@ PanelMenu.initGroups = () => {
 	// Keep the old `more` for BC, since 3.0.0.
 	PanelMenu.groups.add( {
 		name: 'more',
-		title: elementor.translate( 'more' ),
+		title: __( 'More', 'elementor' ),
 		items: [],
 	} );
 
 	PanelMenu.groups.add( {
 		name: 'navigate_from_page',
-		title: elementor.translate( 'navigate_from_page' ),
+		title: __( 'Navigate From Page', 'elementor' ),
 		items: [
 			// Todo: internal command.
 			{
 				name: 'view-page',
 				icon: 'eicon-preview-thin',
-				title: elementor.translate( 'view_page' ),
+				title: __( 'View Page', 'elementor' ),
 				type: 'link',
 				link: elementor.config.document.urls.permalink,
 			},
@@ -46,7 +46,7 @@ PanelMenu.initGroups = () => {
 			{
 				name: 'exit-to-dashboard',
 				icon: 'eicon-wordpress-light',
-				title: elementor.translate( 'exit_to_dashboard' ),
+				title: __( 'Exit To Dashboard', 'elementor' ),
 				type: 'link',
 				link: elementor.config.document.urls.exit_to_dashboard,
 			},
@@ -61,12 +61,12 @@ PanelMenu.initGroups = () => {
 PanelMenu.addAdminMenu = () => {
 	PanelMenu.groups.add( {
 		name: 'style',
-		title: elementor.translate( 'settings' ),
+		title: __( 'Settings', 'elementor' ),
 		items: [
 			{
 				name: 'editor-preferences',
 				icon: 'eicon-user-preferences',
-				title: elementor.translate( 'user_preferences' ),
+				title: __( 'User Preferences', 'elementor' ),
 				type: 'page',
 				callback: () => $e.route( 'panel/editor-preferences' ),
 			},
@@ -76,7 +76,7 @@ PanelMenu.addAdminMenu = () => {
 	PanelMenu.addItem( {
 		name: 'finder',
 		icon: 'eicon-search',
-		title: elementorCommon.translate( 'finder', 'finder' ),
+		title: __( 'Finder', 'elementor' ),
 		callback: () => $e.route( 'finder' ),
 	}, 'navigate_from_page', 'view-page' );
 };

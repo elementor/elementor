@@ -3,6 +3,7 @@ namespace Elementor\Core\Common\Modules\Finder\Categories;
 
 use Elementor\Core\Common\Modules\Finder\Base_Category;
 use Elementor\Core\RoleManager\Role_Manager;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +26,7 @@ class General extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'General', 'elementor' );
+		return esc_html__( 'General', 'elementor' );
 	}
 
 	/**
@@ -47,21 +48,27 @@ class General extends Base_Category {
 				'keywords' => [ 'template', 'section', 'page', 'library' ],
 			],
 			'system-info' => [
-				'title' => __( 'System Info', 'elementor' ),
+				'title' => esc_html__( 'System Info', 'elementor' ),
 				'icon' => 'info-circle-o',
 				'url' => admin_url( 'admin.php?page=elementor-system-info' ),
 				'keywords' => [ 'system', 'info', 'environment', 'elementor' ],
 			],
 			'role-manager' => [
-				'title' => __( 'Role Manager', 'elementor' ),
+				'title' => esc_html__( 'Role Manager', 'elementor' ),
 				'icon' => 'person',
 				'url' => Role_Manager::get_url(),
 				'keywords' => [ 'role', 'manager', 'user', 'elementor' ],
 			],
 			'knowledge-base' => [
-				'title' => __( 'Knowledge Base', 'elementor' ),
+				'title' => esc_html__( 'Knowledge Base', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
 				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
+			],
+			'theme-builder' => [
+				'title' => esc_html__( 'Theme Builder', 'elementor' ),
+				'icon' => 'library-save',
+				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
+				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
 			],
 		];
 	}

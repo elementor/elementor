@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Global_CSS;
 
 class Test_Settings extends Elementor_Test_Base {
@@ -11,7 +11,6 @@ class Test_Settings extends Elementor_Test_Base {
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
 			'elementor_css_print_method',
-			'elementor_optimized_dom_output',
 		];
 
 		foreach ( $css_settings as $option_name ) {

@@ -7,8 +7,8 @@ export default class Component extends ComponentBase {
 
 	defaultTabs() {
 		return {
-			categories: { title: elementor.translate( 'elements' ) },
-			global: { title: elementor.translate( 'global' ) },
+			categories: { title: __( 'Elements', 'elementor' ) },
+			global: { title: __( 'Global', 'elementor' ) },
 		};
 	}
 

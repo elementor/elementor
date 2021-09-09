@@ -11,7 +11,7 @@ export default class extends Repeater {
 	templateHelpers() {
 		const templateHelpers = super.templateHelpers();
 
-		templateHelpers.addButtonText = elementor.translate( 'custom_colors' === this.model.get( 'name' ) ? 'add_color' : 'add_style' );
+		templateHelpers.addButtonText = 'custom_colors' === this.model.get( 'name' ) ? __( 'Add Color', 'elementor' ) : __( 'Add Style', 'elementor' );
 
 		return templateHelpers;
 	}
@@ -19,7 +19,7 @@ export default class extends Repeater {
 	getDefaults() {
 		const defaults = super.getDefaults();
 
-		defaults.title = `${ elementor.translate( 'new_item' ) } #${ this.children.length + 1 }`;
+		defaults.title = `${ __( 'New Item', 'elementor' ) } #${ this.children.length + 1 }`;
 
 		return defaults;
 	}

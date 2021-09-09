@@ -3,6 +3,7 @@
 //
 
 .elementor-control {
+	--control-title-size: 12px;
 	background-color: #fff;
 	position: relative;
 	padding: 0 20px 15px;
@@ -16,6 +17,10 @@
 		&:hover {
 			border-bottom-color: inherit;
 		}
+
+		&.elementor-responsive-switcher {
+			border-bottom: 0;
+		}
 	}
 
 	//Avoid collapsing margin in the repeater control
@@ -25,7 +30,7 @@
 	}
 
 	.elementor-control-title {
-		font-size: 12px;
+		font-size: var(--control-title-size);
 		line-height: 1;
 		@include margin-end(5px);
 	}
@@ -133,24 +138,12 @@
 
 	&.elementor-control-responsive- {
 
-		&desktop {
+		@each $device in $devices {
 
-			body:not(.elementor-device-desktop) & {
-				display: none;
-			}
-		}
-
-		&tablet {
-
-			body:not(.elementor-device-tablet) & {
-				display: none;
-			}
-		}
-
-		&mobile {
-
-			body:not(.elementor-device-mobile) & {
-				display: none;
+			&#{ $device } {
+				body:not(.elementor-device-#{ $device }) & {
+					display: none;
+				}
 			}
 		}
 	}
@@ -176,6 +169,14 @@
 				@include padding-start(5px); //fix for Chrome
 				@include padding-end(20px);
 				cursor: pointer;
+
+				&.e-select-placeholder {
+					color: $editor-light;
+				}
+			}
+
+			option.e-option-placeholder {
+				display: none;
 			}
 
 			&:after {
@@ -361,6 +362,11 @@
 			color: $editor-light;
 		}
 
+		&.e-units-placeholder + label {
+			color: $editor-lighter;
+			text-decoration: underline;
+		}
+
 		&:checked + label {
 			text-decoration: underline;
 		}
@@ -387,13 +393,14 @@
 $item-size: 2em;
 
 .elementor-control-responsive-switchers {
-	@include margin-end(5px);
 	--selected-option: 0;
 	--pointer-position: var(--selected-option);
 
 	position: relative;
 	width: $item-size;
 	height: $item-size;
+	margin: calc( -#{$item-size} + var(--control-title-size)) 0;
+	@include margin-end(5px);
 
 	&__holder {
 		position: absolute;
@@ -446,8 +453,6 @@ a.elementor-responsive-switcher {
 		color: $editor-info;
 	}
 }
-
-$devices: 'desktop', 'tablet', 'mobile';
 
 @each $device in $devices {
 	.elementor-device-#{ $device } {
@@ -544,7 +549,7 @@ $devices: 'desktop', 'tablet', 'mobile';
 
 @import "controls/tabs";
 
-@import "controls/textarea";
+@import "controls/textarea_and_code";
 
 @import "controls/url";
 

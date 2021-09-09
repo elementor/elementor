@@ -1,6 +1,10 @@
 export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
+	isActive() {
+		return elementorFrontend.isEditMode();
+	}
+
 	isFirstSection() {
-		return this.$element.is( '.elementor-edit-mode .elementor-top-section:first' );
+		return this.$element[ 0 ] === document.querySelector( '.elementor-edit-mode .elementor-top-section' );
 	}
 
 	isOverflowHidden() {
@@ -47,6 +51,10 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 	}
 
 	onInit() {
+		if ( ! this.isActive() ) {
+			return;
+		}
+
 		this.setHandlesPosition();
 
 		this.$element.on( 'mouseenter', this.setHandlesPosition.bind( this ) );

@@ -3,6 +3,8 @@ import * as commands from './commands/';
 import * as commandsInternal from './commands/internal/';
 
 export default class Component extends ComponentBase {
+	stateReadyOnce = false;
+
 	getNamespace() {
 		return 'panel';
 	}

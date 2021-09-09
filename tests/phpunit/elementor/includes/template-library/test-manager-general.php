@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\TemplateLibrary\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	/**

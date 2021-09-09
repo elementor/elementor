@@ -38,7 +38,7 @@
 		};
 
 		var onDragEnd = function( event ) {
-			if ( $.isFunction( settings.onDragEnd ) ) {
+			if ( 'function' === typeof settings.onDragEnd ) {
 				settings.onDragEnd.call( elementsCache.$element, event, self );
 			}
 		};
@@ -53,7 +53,7 @@
 				event.originalEvent.dataTransfer.setData( JSON.stringify( dataContainer ), true );
 			}
 
-			if ( $.isFunction( settings.onDragStart ) ) {
+			if ( 'function' === typeof settings.onDragStart ) {
 				settings.onDragStart.call( elementsCache.$element, event, self );
 			}
 		};
@@ -230,7 +230,7 @@
 				}
 			}
 
-			if ( $.isFunction( settings.isDroppingAllowed ) ) {
+			if ( 'function' === typeof settings.isDroppingAllowed ) {
 				droppingAllowed = settings.isDroppingAllowed.call( currentElement, currentSide, event, self );
 
 				if ( ! droppingAllowed ) {
@@ -272,7 +272,7 @@
 
 			$( currentElement ).addClass( settings.currentElementClass );
 
-			if ( $.isFunction( settings.onDragEnter ) ) {
+			if ( 'function' === typeof settings.onDragEnter ) {
 				settings.onDragEnter.call( currentElement, currentSide, event, self );
 			}
 		};
@@ -298,7 +298,7 @@
 				insertPlaceholder();
 			}
 
-			if ( $.isFunction( settings.onDragging ) ) {
+			if ( 'function' === typeof settings.onDragging ) {
 				settings.onDragging.call( this, currentSide, event, self );
 			}
 		};
@@ -329,7 +329,7 @@
 
 			event.preventDefault();
 
-			if ( $.isFunction( settings.onDropping ) ) {
+			if ( 'function' === typeof settings.onDropping ) {
 				settings.onDropping.call( this, currentSide, event, self );
 			}
 		};
@@ -357,7 +357,7 @@
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
 
-			if ( $.isFunction( settings.onDragLeave ) ) {
+			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );
 			}
 

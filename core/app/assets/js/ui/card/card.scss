@@ -3,7 +3,9 @@
 // this should emulate external packages consumption
 @import "./card-api";
 
-.#{$eps-prefix}card {
+$root: $eps-prefix + card;
+
+.#{$root} {
 	background-color: var(--card-background-color);
 	box-shadow: $card-box-shadow;
 	border-radius: $card-border-radius;
@@ -16,6 +18,10 @@
 		min-height: $card-header-height;
 		display: flex;
 		align-items: center;
+
+		&--padding {
+			padding: var(--eps-card-header-padding);
+		}
 	}
 
 	/*
@@ -32,6 +38,10 @@
 
 	&__body {
 		padding: $card-body-padding-y $card-body-padding-x;
+
+		&--padding {
+			padding: var(--eps-card-body-padding);
+		}
 	}
 
 	// figure is here to assist with aspect ratio, and dealing with different image sizes and bg-color for shorter images e.g. header, footer.
@@ -71,6 +81,10 @@
 		padding: $card-padding;
 		border-top: var(--card-header-footer-border);
 		font-size: $card-footer-font-size;
+
+		&--padding {
+			padding: var(--eps-card-footer-padding);
+		}
 	}
 
 	&:hover {

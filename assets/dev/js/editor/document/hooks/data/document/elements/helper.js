@@ -14,7 +14,7 @@ export default class Helper {
 				/**
 				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
 				 */
-				container.view.addChildModel( model, options );
+				container.view.addChildModel( model );
 
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`

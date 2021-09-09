@@ -1,5 +1,3 @@
-import DocumentHelper from 'elementor-document/helper';
-
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
 
@@ -25,8 +23,8 @@ module.exports = Marionette.ItemView.extend( {
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
-						isEnabled: () => DocumentHelper.isPasteEnabled( this._parent.getContainer() ),
+						title: __( 'Paste', 'elementor' ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this._parent.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this._parent.getContainer(),
 						} ),

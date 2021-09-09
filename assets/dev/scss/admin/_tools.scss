@@ -1,7 +1,8 @@
 
+// Tools
 #tab-replace_url.elementor-active,
-#tab-fontawesome4_migration.elementor-active {
-
+#tab-fontawesome4_migration.elementor-active,
+#tab-import-export-kit.elementor-active {
 	~ p.submit {
 		display: none;
 	}
@@ -10,13 +11,67 @@
 #elementor_rollback,
 #elementor_rollback_pro,
 #elementor_replace_url {
-
 	> div {
 		display: flex;
 
 		input,
 		select {
 			@include margin-end(6px);
+		}
+	}
+}
+
+// Import / Export Kit
+.tab-import-export-kit {
+	&__wrapper {
+		margin: 40px 0;
+		max-width: 700px;
+	}
+
+	&__container {
+		background-color: white;
+		font-size: 16px;
+		max-width: 700px;
+		padding: 30px;
+
+		&:not(:first-child) {
+			margin-top: 5px;
+		}
+
+		p {
+			color: #A4AFB7;
+			font-size: 16px;
+			margin: 20px 0 25px;
+		}
+	}
+
+	&__info {
+		font-size: 14px;
+	}
+
+	&__container a:not(.elementor-button),
+	&__info a {
+		color: #58d0f5;
+		text-decoration: underline;
+	}
+
+	&__box {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+
+		h2 {
+			color: #6D7882;
+			font-size: 28px;
+			font-weight: normal;
+			line-height: 1;
+			margin: 0;
+		}
+
+		.elementor-button.elementor-button-success {
+			font-weight: bold;
+			padding: 8px 16px;
+			text-transform: initial;
 		}
 	}
 }

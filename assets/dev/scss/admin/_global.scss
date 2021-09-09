@@ -313,13 +313,66 @@ body {
 .e-major-update-warning {
 	margin-bottom: 5px;
 	max-width: 1000px;
+	display: flex;
+
+	&__separator {
+		margin: 15px -12px;
+	}
+
+	&__icon {
+		font-size: 17px;
+		@include margin-end(9px);
+		@include margin-start(2px);
+	}
 
 	&__title {
-		font-weight: bold;
-		margin: 10px 0;
+		font-weight: 600;
+		margin-bottom: 10px;
 	}
 
 	+ p {
 		display: none;
+	}
+}
+
+.notice-success .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-success;
+	}
+
+	&__icon {
+		color: $wp-success-text;
+	}
+}
+
+.notice-warning .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-warning;
+	}
+
+	&__icon {
+		color: $wp-warning-text;
+	}
+}
+
+.plugins table.e-compatibility-update-table {
+	tr {
+		background: transparent;
+
+		th {
+			font-weight: 600;
+		}
+
+		th, td {
+			min-width: 250px;
+			font-size: 13px;
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			@include padding-end(15px);
+			@include padding-start(0);
+		}
 	}
 }

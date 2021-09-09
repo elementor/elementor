@@ -49,15 +49,15 @@ export class Close extends CommandBase {
 
 		this.confirmDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-document-save-on-close',
-			headerMessage: elementor.translate( 'Save Changes' ),
-			message: elementor.translate( 'Would you like to save the changes you\'ve made?' ),
+			headerMessage: __( 'Save Changes', 'elementor' ),
+			message: __( 'Would you like to save the changes you\'ve made?', 'elementor' ),
 			position: {
 				my: 'center center',
 				at: 'center center',
 			},
 			strings: {
-				confirm: elementor.translate( 'Save' ),
-				cancel: elementor.translate( 'Discard' ),
+				confirm: __( 'Save', 'elementor' ),
+				cancel: __( 'Discard', 'elementor' ),
 			},
 			onHide: () => {
 				// If still not action chosen. use `defer` because onHide is called before onConfirm/onCancel.

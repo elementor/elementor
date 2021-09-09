@@ -5,8 +5,6 @@
 
 
 .#{$eps-prefix}grid {
-	@include grid-custom-properties();
-
 	// Flex Structure rules
 	// apply to all screen size
 	// @props: container
@@ -30,12 +28,12 @@
 		// container width and negative margin are calculated dynamically
 		// @markup <Grid container spacing={5} and so on >
 		&--spacing {
-			--grid-row-gutter: calc(var(--grid-spacing-gutter) * -#{px-to-rem(1)});
+			--grid-row-gutter: calc(-1 * #{$grid-spacing-gutter});
 			width: var(--grid-spacing-width);
 			margin: var(--grid-row-gutter);
 
 			> .#{$eps-prefix}grid-item {
-				padding: calc(var(--grid-spacing-gutter) * #{px-to-rem(1)});
+				padding: var(--grid-spacing-gutter);
 			}
 		}
 	}
@@ -190,9 +188,26 @@
 		@include grid-item-auto($breakpoint);
 	}
 }
+
 // Generating cols per each media breakpoint
-@each $breakpoint in map-keys($breakpoints) {
-	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
-		@include grid-col-generator($breakpoint);
-	}
+@include grid-col-generator(xs);
+
+@media screen and (min-width: $editor-screen-sm-min) {
+	@include grid-col-generator(sm);
+}
+
+@media screen and (min-width: $editor-screen-md-min) {
+	@include grid-col-generator(md);
+}
+
+@media screen and (min-width: $editor-screen-lg-min) {
+	@include grid-col-generator(lg);
+}
+
+@media screen and (min-width: $editor-screen-xl-min) {
+	@include grid-col-generator(xl);
+}
+
+@media screen and (min-width: $editor-screen-xxl-min) {
+	@include grid-col-generator(xxl);
 }
