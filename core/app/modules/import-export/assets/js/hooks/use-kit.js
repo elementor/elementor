@@ -14,7 +14,6 @@ export default function useKit() {
 		kitStateInitialState = {
 			status: KIT_STATUS_MAP.INITIAL,
 			data: null,
-			isConflicts: false,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
 		getAjaxConfig = () => {
@@ -62,15 +61,7 @@ export default function useKit() {
 				// When importing only the site-settings the response is empty.
 				newState.data = ajaxState.response || {};
 
-				if ( ajaxState.response?.manifest ) {
-					if ( ajaxState.response.conflicts ) {
-						newState.isConflicts = true;
-					}
-
-					newState.status = KIT_STATUS_MAP.UPLOADED;
-				} else {
-					newState.status = KIT_STATUS_MAP.IMPORTED;
-				}
+				newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;
 			} else if ( 'error' === ajaxState.status ) {
 				newState.status = KIT_STATUS_MAP.ERROR;
 			}

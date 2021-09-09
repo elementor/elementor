@@ -74,7 +74,7 @@ export default function ImportProcess() {
 			if ( context.data.importedData ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
-				if ( context.data.uploadedData.isConflicts ) {
+				if ( context.data.uploadedData.conflicts ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
