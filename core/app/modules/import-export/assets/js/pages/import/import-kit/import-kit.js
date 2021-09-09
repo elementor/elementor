@@ -42,8 +42,7 @@ export default function ImportKit() {
 
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
-			//context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: kitState.response } } );
-			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.response } );
+			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
 			setIsImportFailed( true );
 		}

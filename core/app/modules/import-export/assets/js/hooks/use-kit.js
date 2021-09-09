@@ -59,9 +59,10 @@ export default function useKit() {
 			const newState = {};
 
 			if ( 'success' === ajaxState.status ) {
-				newState.data = ajaxState.response;
+				// When importing only the site-settings the response is empty.
+				newState.data = ajaxState.response || {};
 
-				if ( ajaxState.response.manifest ) {
+				if ( ajaxState.response?.manifest ) {
 					if ( ajaxState.response.conflicts ) {
 						newState.isConflicts = true;
 					}
@@ -76,7 +77,7 @@ export default function useKit() {
 
 			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
 		}
-	}, [ ajaxState ] );
+	}, [ ajaxState.status ] );
 
 	return {
 		kitState,
