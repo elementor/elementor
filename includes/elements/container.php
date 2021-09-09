@@ -272,9 +272,9 @@ class Container extends Element_Base {
 		);
 
 		$this->add_responsive_control(
-			'height',
+			'min_height',
 			[
-				'label' => esc_html__( 'Height', 'elementor' ),
+				'label' => esc_html__( 'Min Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'vh' ],
 				'range' => [
@@ -296,7 +296,7 @@ class Container extends Element_Base {
 					'100vh'
 				),
 				'selectors' => [
-					'{{WRAPPER}}' => 'height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
