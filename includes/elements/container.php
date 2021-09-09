@@ -261,6 +261,9 @@ class Container extends Element_Base {
 						'max' => 100,
 					],
 				],
+				'default' => [
+					'unit' => '%',
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
