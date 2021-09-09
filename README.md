@@ -29,6 +29,12 @@ There are many ways to contribute to Elementor:
 
 **Translate**: You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
+## Reporting Security Issues
+We welcome ethical security researchers and accept responsible disclosures. Elementor runs a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
+
+The program contains all the needed information about which features and endpoints are considered ‘in scope’, details of the rewards we offer and the full terms and conditions of our program.
+
+
 ## Support
 Please **DO NOT** open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on one of the proper support channels:
 
