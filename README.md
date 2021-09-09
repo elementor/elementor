@@ -25,15 +25,11 @@ There are many ways to contribute to Elementor:
 
 **Bug Report**: If you find a bug in the source code, you can help us by [submitting a bug report](https://github.com/elementor/elementor/issues/new?template=Bug_report.md). Even better, you can [submit a Pull Request](https://github.com/elementor/elementor/blob/master/.github/CONTRIBUTING.md#before-submitting-a-pr) with a fix.
 
+**Security Report**: We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection. The program contains all the needed information about which features and endpoints are considered ‘in scope’, details of the rewards we offer and the full terms and conditions of our program.
+
 **Feature Request**: Provide feedback and suggestions on enhancements by [open a feature request](https://github.com/elementor/elementor/issues/new?template=Feature_request.md).
 
 **Translate**: You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
-
-## Reporting Security Issues
-We welcome ethical security researchers and accept responsible disclosures. Elementor runs a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
-
-The program contains all the needed information about which features and endpoints are considered ‘in scope’, details of the rewards we offer and the full terms and conditions of our program.
-
 
 ## Support
 Please **DO NOT** open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests. You've got much better chances of getting your question answered on one of the proper support channels:
