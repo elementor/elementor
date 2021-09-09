@@ -637,7 +637,7 @@ class Widget_Common extends Widget_Base {
 					'options' => [
 						'transform' => [
 							'title' => esc_html__( 'Flip Horizontal', 'elementor' ),
-							'icon' => 'fa fa-align-left',
+							'icon' => 'eicon-flip eicon-tilted',
 						],
 					],
 					'prefix_class' => $transform_prefix_class,
@@ -656,7 +656,7 @@ class Widget_Common extends Widget_Base {
 					'options' => [
 						'transform' => [
 							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
-							'icon' => 'fa fa-align-center',
+							'icon' => 'eicon-flip',
 						],
 					],
 					'prefix_class' => $transform_prefix_class,
