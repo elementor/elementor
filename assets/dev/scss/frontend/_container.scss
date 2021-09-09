@@ -73,7 +73,7 @@
 
 	// Background overlay.
 	&::before {
-		content: '';
+		content: var( --background-overlay );
 		display: block;
 		position: absolute;
 		z-index: 0;

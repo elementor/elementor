@@ -506,6 +506,14 @@ class Container extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}}::before',
+				'fields_options' => [
+					'background' => [
+						'selectors' => [
+							// Hack to set the `::before` content in order to render it only when there is a background overlay.
+							'{{WRAPPER}}::before' => '--background-overlay: \'\';',
+						],
+					],
+				],
 			]
 		);
 
@@ -610,6 +618,14 @@ class Container extends Element_Base {
 			[
 				'name' => 'background_overlay_hover',
 				'selector' => '{{WRAPPER}}:hover::before',
+				'fields_options' => [
+					'background' => [
+						'selectors' => [
+							// Hack to set the `::before` content in order to render it only when there is a background overlay.
+							'{{WRAPPER}}:hover::before' => '--background-overlay: \'\';',
+						],
+					],
+				],
 			]
 		);
 
