@@ -37,13 +37,13 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
 			insideHandleClass = 'elementor-section--handles-inside';
 
+		$handlesElement.css( 'top', '' );
+
 		if ( offset < 25 ) {
 			this.$element.addClass( insideHandleClass );
 
 			if ( offset < -5 ) {
 				$handlesElement.css( 'top', -offset );
-			} else {
-				$handlesElement.css( 'top', '' );
 			}
 		} else {
 			this.$element.removeClass( insideHandleClass );
