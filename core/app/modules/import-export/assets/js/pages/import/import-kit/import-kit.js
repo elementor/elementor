@@ -11,6 +11,7 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
@@ -21,7 +22,7 @@ export default function ImportKit() {
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		referrer = location.hash.match( 'referrer=([^&]+)' ),
+		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
@@ -62,7 +63,7 @@ export default function ImportKit() {
 		<Layout type="import">
 			<section className="e-app-import">
 				{
-					'kit-library' === referrer?.[1] &&
+					'kit-library' === referrer &&
 					<Button
 						className="e-app-import__back-to-library"
 						icon="eicon-chevron-left"

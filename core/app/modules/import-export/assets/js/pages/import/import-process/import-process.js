@@ -6,6 +6,7 @@ import FileProcess from '../../../shared/file-process/file-process';
 
 import { Context } from '../../../context/context-provider';
 
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
@@ -13,17 +14,13 @@ export default function ImportProcess() {
 		[ isError, setIsError ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		urlSearchParams = new URLSearchParams( window.location.search ),
-		queryParams = Object.fromEntries( urlSearchParams.entries() ),
-		// We need to support query-params for external navigations, but also parsing the value from the hash for internal navigation between different routes.
-		fileURL = queryParams.file_url || location.hash.match( 'file_url=([^&]+)' )?.[ 1 ],
-		isApplyAllForced = 'apply-all' === queryParams.action_type,
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		isApplyAllForced = 'apply-all' === actionType,
 		uploadKit = () => {
-			const decodedFileURL = decodeURIComponent( fileURL ),
-				referrer = location.hash.match( 'referrer=([^&]+)' );
+			const decodedFileURL = decodeURIComponent( fileURL );
 
 			if ( referrer ) {
-				context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
+				context.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 			}
 
 			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );

@@ -19,7 +19,7 @@ import './import-resolver.scss';
 export default function ImportResolver() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		conflicts = context.data?.uploadedData.conflicts || {},
+		conflicts = context.data?.uploadedData?.conflicts || {},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
