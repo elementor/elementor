@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev21 - 2021-09-10
+* Tweak: CSS Transform - Change flip icon [ED-4462] (#16284)
+
 #### 3.5.0-dev19 - 2021-09-06
 * Fix: Editor doesn't load on v3.5.0 if `ELEMENTOR_DEBUG` is enabled [ED-4937] (#16256)
 
