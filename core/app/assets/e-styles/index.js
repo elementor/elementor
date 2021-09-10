@@ -20,9 +20,7 @@ export const tints = ( key ) => {
 	return tintsMap[ key ] && tintsMap[ key ].hex;
 };
 
-export const spacing = ( key ) => {
-	return spacingMap.values[ key ] && ( spacingMap.values[ key ] * spacingMap.base.spacer ) + spacingMap.base.units;
-};
+export const spacing = ( key ) => spacingMap[ key ];
 
 export const heading = ( key ) => headingMap[ key ];
 export const text = ( key ) => textMap[ key ];

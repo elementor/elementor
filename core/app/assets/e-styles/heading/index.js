@@ -48,22 +48,22 @@ export default {
 				font-weight: ${ fontWeight( 'bold' ) };
 				margin-top: 0;
 			`,
-			display1: `
+			'display-1': `
 				--e-styles-heading-font-size: ${ heading( 'display1' ) };
 				--e-styles-heading-margin-bottom: ${ spacingBase };
 				margin-top: ${ spacingBase };
 			`,
-			display2: `
+			'display-2': `
 				--e-styles-heading-font-size: ${ heading( 'display1' ) };
 				--e-styles-heading-margin-bottom: ${ spacingBase };
 				margin-top: ${ spacingBase };
 			`,
-			display3: `
+			'display-3': `
 				--e-styles-heading-font-size: ${ heading( 'display3' ) };
 				--e-styles-heading-margin-bottom: 2.5 * ${ spacingBase };
 				margin-top: 0;
 			`,
-			display4: `
+			'display-4': `
 				--e-styles-heading-font-size: ${ heading( 'display4' ) };
 				--e-styles-heading-margin-bottom: ${ spacingBase };
 				margin-top: ${ spacingBase };
