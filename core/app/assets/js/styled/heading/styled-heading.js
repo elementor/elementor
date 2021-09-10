@@ -3,9 +3,6 @@ import { getVariant } from 're-styled/utils';
 import style from 'e-styles/heading';
 
 const Heading = styled.h1`
-	font-size: 21px;
-	font-weight: bold;
-
 	${ ( props ) => getVariant( props, style, props.variant ) }
 `;
 
