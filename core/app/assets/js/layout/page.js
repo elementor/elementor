@@ -6,29 +6,30 @@ import Footer from './footer';
 import Theme from 're-styled/theme';
 
 export default function Page( props ) {
-	const AppSidebar = () => {
-		if ( ! props.sidebar ) {
-			return;
-		}
-		return (
-			<Sidebar>
-				{ props.sidebar }
-			</Sidebar>
-		);
-	},
-	AppFooter = () => {
-		if ( ! props.footer ) {
-			return;
-		}
-		return (
-			<Footer>
-				{props.footer}
-			</Footer>
-		);
-	};
+	const isDarkMode = document.body.classList.contains( `eps-theme-dark` ),
+		AppSidebar = () => {
+			if ( ! props.sidebar ) {
+				return;
+			}
+			return (
+				<Sidebar>
+					{ props.sidebar }
+				</Sidebar>
+			);
+		},
+		AppFooter = () => {
+			if ( ! props.footer ) {
+				return;
+			}
+			return (
+				<Footer>
+					{props.footer}
+				</Footer>
+			);
+		};
 
 	return (
-		<Theme variants={ { dark: document.body.classList.contains( `eps-theme-dark` ) } }>
+		<Theme variants={ { light: ! isDarkMode, dark: isDarkMode } }>
 			<div className={`eps-app__lightbox ${ props.className }`}>
 				<div className="eps-app">
 					<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />

@@ -1,2 +1,2 @@
-export { StyledHeading } from './heading/styled-heading';
-export { StyledButton } from './button/styled-button';
+export { StyledHeading } from './styled-heading';
+export { StyledButton } from './styled-button';

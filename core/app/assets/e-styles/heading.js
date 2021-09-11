@@ -1,4 +1,4 @@
-import { themeColors, tints, heading, lineHeight, fontWeight, spacing } from 'e-styles';
+import { tints, darkTints, heading, lineHeight, fontWeight, spacing } from 'e-styles';
 
 const spacingBase = spacing( 'base' );
 
@@ -11,14 +11,12 @@ export default {
 		`,
 		variants: {
 			h1: `
-				--e-styles-heading-color: ${ tints( '600' ) };
 				--e-styles-heading-font-size: ${ heading( 'h1' ) };
 				--e-styles-heading-margin-bottom: 2.5 * ${ spacingBase };
 				font-weight: ${ fontWeight( 'medium' ) };
 				line-height: ${ lineHeight( 'flat' ) };
 			`,
 			h2: `
-				--e-styles-heading-color: ${ tints( '600' ) };
 				--e-styles-heading-font-size: ${ heading( 'h2' ) };
 				--e-styles-heading-margin-bottom: 2.5 * ${ spacingBase };
 				font-weight: ${ fontWeight( 'medium' ) };
@@ -72,19 +70,12 @@ export default {
 	},
 	light: {
 		variants: {
-			h1: `
-				--color: ${ themeColors( 'primary' ) };
-			`,
-			h2: `
-				border: 1px solid blue;
-			`,
+			h1: `--e-styles-heading-color: ${ tints( '600' ) };`,
+			h2: `--e-styles-heading-color: ${ tints( '600' ) };`,
+			'display-3': `--e-styles-heading-color: ${ tints( '600' ) };`,
 		},
 	},
 	dark: {
-		variants: {
-			h1: `
-				--color: ${ themeColors( 'info' ) };
-			`,
-		},
+		shared: `--e-styles-heading-color: ${ darkTints( '100' ) };`,
 	},
 };

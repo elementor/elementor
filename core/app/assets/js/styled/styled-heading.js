@@ -1,7 +1,9 @@
+import { forwardRef } from 'react';
 import styled from 'styled-components';
 import { getVariant } from 're-styled/utils';
 import style from 'e-styles/heading';
 
+console.log( 'forwardRef', forwardRef );
 const Heading = styled.h1`
 	${ ( props ) => getVariant( props, style, props.variant ) }
 `;
@@ -12,9 +14,11 @@ const Heading = styled.h1`
 	${ ( props ) => props.theme.variants.dark && style.dark.variants[ props.variant ] }
 */
 
-export const StyledHeading = ( props ) => (
-	<Heading { ...props } as={ props.tag }>{ props.children }</Heading>
-);
+export const StyledHeading = forwardRef( ( props, ref ) => (
+	<Heading { ...props } as={ props.tag } ref={ ref }>{ props.children }</Heading>
+) );
+
+StyledHeading.displayName = 'StyledHeading';
 
 StyledHeading.propTypes = {
 	className: PropTypes.string,
