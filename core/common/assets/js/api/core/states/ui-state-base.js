@@ -98,6 +98,11 @@ export default class UiStateBase {
 
 	/**
 	 * Triggered on every UI state change.
+	 *
+	 * @param {string} oldValue - Previous UI state value.
+	 * @param {string} newValue - New UI state value.
+	 *
+	 * @return {void}
 	 */
 	onChange() {
 		// Override this method if needed.
