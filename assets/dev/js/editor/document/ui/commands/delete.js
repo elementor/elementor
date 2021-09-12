@@ -2,11 +2,11 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Delete extends CommandBase {
 	apply() {
-		const selectedElement = elementor.getCurrentElement();
+		const selectedElements = elementor.getSelectedElements();
 
-		if ( selectedElement ) {
+		if ( selectedElements.length ) {
 			return $e.run( 'document/elements/delete', {
-				container: selectedElement.getContainer(),
+				containers: selectedElements,
 			} );
 		}
 

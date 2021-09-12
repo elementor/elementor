@@ -16,7 +16,7 @@ export default class Component extends ComponentBase {
 		return '#elementor-panel-elements-navigation';
 	}
 
-	renderTab( tab ) {
-		this.manager.setPage( 'elements' ).showView( tab );
+	renderTab( tab, args = {} ) {
+		this.manager.setPage( 'elements', null, args ).showView( tab );
 	}
 }

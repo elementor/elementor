@@ -31,6 +31,16 @@ export default class EditorBase extends Marionette.Application {
 
 	activeBreakpointsUpdated = false;
 
+	selectedElements = {};
+
+	/**
+	 * Represents the common type of multiple selected elements, or false when the selected elements are of different
+	 * types.
+	 *
+	 * @type {string|boolean}
+	 */
+	selectedElementsType = false;
+
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
 	schemes = require( 'elementor-editor-utils/schemes' );
@@ -699,6 +709,31 @@ export default class EditorBase extends Marionette.Application {
 		}
 	}
 
+	getSelectedElements( fallback = null ) {
+		let result = Object.values( this.selectedElements );
+
+		if ( ! result.length && fallback ) {
+			result = Array.isArray( fallback ) ? fallback : [ fallback ];
+		}
+
+		return result;
+	}
+
+	multipleElementsSelected() {
+		return this.getSelectedElements().length > 1;
+	}
+
+	/**
+	 * Return the common type of the selected elements, or false if the selected elements are of different types. When
+	 * no element is selected, return true.
+	 *
+	 * @returns {boolean|string}
+	 */
+	selectedElementsAreOfSameType() {
+		return ! this.getSelectedElements().length ||
+			this.selectedElementsType;
+	}
+
 	preventClicksInsideEditor() {
 		this.$previewContents.on( 'submit', ( event ) =>
 			event.preventDefault()
@@ -721,7 +756,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.internal( 'panel/open-default' );
+				$e.run( 'document/elements/deselect', { all: true } );
 			}
 		} );
 	}

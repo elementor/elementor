@@ -18,6 +18,14 @@ export class Duplicate extends CommandHistory {
 		const { containers = [ args.container ] } = args,
 			result = [];
 
+		if ( ! elementor.selectedElementsAreOfSameType() ) {
+			elementor.notifications.showToast( {
+				message: __( 'Oops, you can’t copy this selection because it contains different element types.', 'elementor' ),
+			} );
+
+			return false;
+		}
+
 		containers.forEach( ( container ) => {
 			const parent = container.parent,
 				at = container.view._index + 1;
