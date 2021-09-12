@@ -1,7 +1,7 @@
 import { tints, darkTints, text, lineHeight, fontWeight } from 'e-styles';
 
 export default {
-	root: {
+	base: {
 		shared: `
 			color: var(--e-styles-text-color, ${ tints( '800' ) });
 			font-size: var(--e-styles-text-font-size, ${ text( 'base' ) });

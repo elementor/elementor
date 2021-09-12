@@ -3,16 +3,9 @@ import styled from 'styled-components';
 import { getVariant } from 're-styled/utils';
 import style from 'e-styles/heading';
 
-console.log( 'forwardRef', forwardRef );
 const Heading = styled.h1`
 	${ ( props ) => getVariant( props, style, props.variant ) }
 `;
-
-/*
-	${ style.default.shared }
-	${ ( props ) => style.default.variants[ props.variant ] }
-	${ ( props ) => props.theme.variants.dark && style.dark.variants[ props.variant ] }
-*/
 
 export const StyledHeading = forwardRef( ( props, ref ) => (
 	<Heading { ...props } as={ props.tag } ref={ ref }>{ props.children }</Heading>

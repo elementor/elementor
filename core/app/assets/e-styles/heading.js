@@ -3,7 +3,7 @@ import { tints, darkTints, heading, lineHeight, fontWeight, spacing } from 'e-st
 const spacingBase = spacing( 'base' );
 
 export default {
-	root: {
+	base: {
 		shared: `
 			color: var(--e-styles-heading-color, ${ tints( '800' ) });
 			font-size: var(--e-styles-heading-font-size);

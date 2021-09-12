@@ -17,10 +17,10 @@ export const bindProps = ( data ) => {
 };
 
 export const getVariant = ( props, style, variant ) => {
-	let variantStyle = style.root?.shared || '',
+	let variantStyle = style.base?.shared || '',
 		themeVariants = props.theme.variants;
 
-	variantStyle += style.root?.variants?.[ variant ] || '';
+	variantStyle += style.base?.variants?.[ variant ] || '';
 
 	for ( const key in themeVariants ) {
 		// e.g: if dark = true.
