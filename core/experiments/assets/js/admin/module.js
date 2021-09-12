@@ -11,11 +11,13 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 	}
 
 	getDefaultElements() {
+		const { selectors } = this.getSettings();
+
 		return {
-			$experimentIndicators: jQuery( this.getSettings( 'selectors.experimentIndicators' ) ),
-			$experimentForm: jQuery( this.getSettings( 'selectors.experimentForm' ) ),
-			$experimentSelects: jQuery( this.getSettings( 'selectors.experimentSelects' ) ),
-			$experimentsButtons: jQuery( this.getSettings( 'selectors.experimentsButtons' ) ),
+			$experimentIndicators: jQuery( selectors.experimentIndicators ),
+			$experimentForm: jQuery( selectors.experimentForm ),
+			$experimentSelects: jQuery( selectors.experimentSelects ),
+			$experimentsButtons: jQuery( selectors.experimentsButtons ),
 		};
 	}
 

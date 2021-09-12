@@ -428,7 +428,7 @@ class Manager extends Base_Object {
 		<p class="e-experiment__description">
 			<?php
 				printf(
-						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					/* translators: %1$s Link open tag, %2$s: Link close tag. */
 					esc_html__( 'Access new and experimental features from Elementor before they\'re officially released. As these features are still in development, they are likely to change, evolve or even be removed  altogether. %1$sLearn More.%2$s', 'elementor' ),
 					'<a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">',
 					'</a>'
