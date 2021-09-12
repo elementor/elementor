@@ -56,6 +56,7 @@ const config = {
 	 * Declare the url origin of local server for testing
 	 */
 	url_origin: 'http://localhost:8080',
+
 	/**
 	 * An array of screen size objects your DOM will be tested against. Add as many as you like -- but add at least one.
 	 */
