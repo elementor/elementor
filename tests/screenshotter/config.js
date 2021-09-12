@@ -40,7 +40,6 @@ const config = {
 	 */
 	templates: [
 		'buttons',
-		'container',
 		'dividers',
 		'global-settings',
 		'headings',
