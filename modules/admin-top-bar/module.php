@@ -76,12 +76,11 @@ class Module extends BaseApp {
 	 *
 	 * Fired by `wp_dashboard_setup` action.
 	 *
-	 * @since  1.9.0
+	 * @since 1.9.0
 	 * @access public
 	 */
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {
-		} );
+		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
 	}
 
 	/**
@@ -118,6 +117,6 @@ class Module extends BaseApp {
 			$this->set_settings( $settings );
 
 			do_action( 'elementor/admin-top-bar/init', $this );
-		}, 12 /* After component 'connect' register the apps */, 1  );
+		}, 12 /* After component 'connect' register the apps */ );
 	}
 }
