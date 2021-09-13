@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev24 - 2021-09-13
+* Fix: If a responsive control is the first control in a popover, it breaks the popover for non-desktop devices   [ED-4979] (#16318)
+* Fix: Large images are fully displayed before the swiper is initialized. (#16317)
+* Tweak: Updated changelog for v3.4.4 (#16326)
+
 #### 3.5.0-dev23 - 2021-09-13
 * Fix: Element dragging after ctrl + click on Mac [ED-1827] (#15980)
 
