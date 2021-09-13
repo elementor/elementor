@@ -1,10 +1,12 @@
 <?php
 namespace Elementor\Core\Files;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\Assets\Json\Json_Handler;
 use Elementor\Core\Files\Assets\Svg\Svg_Handler;
+use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
@@ -131,6 +133,36 @@ class Manager {
 		 * @since 2.1.0
 		 */
 		do_action( 'elementor/core/files/clear_cache' );
+	}
+
+	/**
+	 * Generate all CSS cache or files.
+	 *
+	 * @access public
+	 */
+	public function generate_all_css() {
+		$query = new \WP_Query( [
+			'meta_key ' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'meta_value' => 'builder',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		$generated_count = 0;
+
+		foreach ( $query->posts as $post_id ) {
+			$post_css = Post_CSS::create( $post_id );
+
+			if ( ! $post_css->get_meta( 'status' ) ) {
+				$post_css->update();
+				$generated_count++;
+			}
+		}
+
+		return [
+			'posts' => $query->found_posts,
+			'generated' => $generated_count,
+		];
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {

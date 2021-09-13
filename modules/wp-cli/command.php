@@ -60,6 +60,49 @@ class Command extends \WP_CLI_Command {
 	}
 
 	/**
+	 * Generate all Elementor Content CSS files.
+	 *
+	 * [--network]
+	 *      Generate CSS for all the sites in the network.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *  1. wp elementor generate-all-css
+	 *      - This will generate the CSS files for all Elementor content.
+	 *
+	 *  2. wp elementor generate-all-css --network
+	 *      - This will generate the CSS files for Elementor content in all the sites in the network.
+	 *
+	 * @access public
+	 * @alias generate-all-css
+	 */
+	public function generate_all_css( $args, $assoc_args ) {
+		$network = ! empty( $assoc_args['network'] ) && is_multisite();
+
+		if ( $network ) {
+			/** @var \WP_Site[] $blogs */
+			$blogs = get_sites();
+
+			foreach ( $blogs as $keys => $blog ) {
+				// Cast $blog as an array instead of  object
+				$blog_id = $blog->blog_id;
+
+				switch_to_blog( $blog_id );
+
+				$results = Plugin::$instance->files_manager->generate_all_css();
+
+				\WP_CLI::success( "Generated the CSS for site ({$results['generated']}/{$results['posts']}) - " . get_option( 'home' ) );
+
+				restore_current_blog();
+			}
+		} else {
+			$results = Plugin::$instance->files_manager->generate_all_css();
+
+			\WP_CLI::success( "Generated the CSS ({$results['generated']}/{$results['posts']})" );
+		}
+	}
+
+	/**
 	 * Print system info powered by Elementor
 	 *
 	 * ## EXAMPLES
