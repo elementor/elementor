@@ -1,11 +1,9 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Editor\Data\Globals;
 
 use Elementor\Data\Manager;
-use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Editor\Data\Globals;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Controller extends Elementor_Test_Base  {
 	/**

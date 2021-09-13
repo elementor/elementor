@@ -1,10 +1,9 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -60,7 +59,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		$test_feature = $experiments->get_features( 'test_feature' );
 
-		$this->assertArrayHaveKeys( [ 'test_feature' ], $features );
+		$this->assert_array_have_keys( [ 'test_feature' ], $features );
 
 		$this->assertNotEmpty( $test_feature );
 	}
