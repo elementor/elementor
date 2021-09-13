@@ -241,10 +241,6 @@ abstract class Settings_Page {
 
 				add_settings_section( $full_section_id, $label, $section_callback, static::PAGE_ID );
 
-				if ( 'experiments' === $section_id ) {
-					add_settings_section( 'elementor-experiments-ongoing-section', $label, $section_callback, static::PAGE_ID );
-				}
-
 				foreach ( $section['fields'] as $field_id => $field ) {
 					$full_field_id = ! empty( $field['full_field_id'] ) ? $field['full_field_id'] : 'elementor_' . $field_id;
 
@@ -267,7 +263,7 @@ abstract class Settings_Page {
 						isset( $field['label'] ) ? $field['label'] : '',
 						$field['render'],
 						static::PAGE_ID,
-						( 'experiments' === $section_id && 'stable' !== $field['field_args']['release_status'] ) ? 'elementor-experiments-ongoing-section' : $full_section_id,
+						$full_section_id,
 						$field['field_args']
 					);
 
@@ -350,10 +346,6 @@ abstract class Settings_Page {
 							$section['callback']();
 						}
 
-						if ( 'experiments' === $section_id ) {
-							$this->render_ongoing_experiments_section();
-						}
-
 						echo '<table class="form-table">';
 
 						do_settings_fields( static::PAGE_ID, $full_section_id );
@@ -369,21 +361,6 @@ abstract class Settings_Page {
 			</form>
 		</div><!-- /.wrap -->
 		<?php
-	}
-
-	private function render_ongoing_experiments_section() {
-		echo '<h2>' . esc_html__( 'Ongoing Experiments', 'elementor' ) . '</h2>';
-
-		echo '<table class="form-table">';
-
-		do_settings_fields( static::PAGE_ID, 'elementor-experiments-ongoing-section' );
-
-		echo '</table>';
-
-		echo '<hr>';
-
-		echo '<h2>Stable Features</h2>';
-
 	}
 
 	public function get_usage_fields() {

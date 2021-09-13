@@ -376,42 +376,61 @@ class Manager extends Base_Object {
 
 			$feature_key = 'experiment-' . $feature_name;
 
-			$fields[ $feature_key ]['label'] = $this->get_feature_settings_label_html( $feature );
+			$section = 'stable' === $feature['release_status'] ? 'stable' : 'ongoing';
 
-			$fields[ $feature_key ]['field_args'] = $feature;
+			$fields[ $section ][ $feature_key ]['label'] = $this->get_feature_settings_label_html( $feature );
 
-			$fields[ $feature_key ]['render'] = function( $feature ) {
+			$fields[ $section ][ $feature_key ]['field_args'] = $feature;
+
+			$fields[ $section ][ $feature_key ]['render'] = function( $feature ) {
 				$this->render_feature_settings_field( $feature );
 			};
 		}
 
-		if ( ! $features ) {
-			$fields['no_features'] = [
-				'label' => esc_html__( 'No available experiments', 'elementor' ),
-				'field_args' => [
-					'type' => 'raw_html',
-					'html' => esc_html__( 'The current version of Elementor doesn\'t have any experimental features . if you\'re feeling curious make sure to come back in future versions.', 'elementor' ),
-				],
-			];
-		}
+		foreach ( [ 'stable', 'ongoing' ] as $section ) {
+			if ( ! $features ) {
+				$fields[ $section ]['no_features'] = [
+					'label' => esc_html__( 'No available experiments', 'elementor' ),
+					'field_args' => [
+						'type' => 'raw_html',
+						'html' => esc_html__( 'The current version of Elementor doesn\'t have any experimental features . if you\'re feeling curious make sure to come back in future versions.', 'elementor' ),
+					],
+				];
+			}
 
-		if ( ! Tracker::is_allow_track() ) {
-			$fields += $settings->get_usage_fields();
+			if ( ! Tracker::is_allow_track() ) {
+				$fields[ $section ] += $settings->get_usage_fields();
+			}
 		}
 
 		$settings->add_tab(
 			'experiments', [
 				'label' => esc_html__( 'Experiments', 'elementor' ),
 				'sections' => [
-					'experiments' => [
+					'ongoing_experiments' => [
 						'callback' => function() {
 							$this->render_settings_intro();
 						},
-						'fields' => $fields,
+						'fields' => $fields['ongoing'],
+					],
+					'stable_experiments' => [
+						'callback' => function() {
+							$this->render_stable_section_title();
+						},
+						'fields' => $fields['stable'],
 					],
 				],
 			]
 		);
+	}
+
+	private function render_stable_section_title() {
+		?>
+		<hr>
+		<h2>
+			<?php echo esc_html__( 'Stable Features', 'elementor' ); ?>
+		</h2>
+		<?php
 	}
 
 	/**
