@@ -446,11 +446,15 @@ module.exports = elementorModules.ViewModule.extend( {
 					...fullScreenAttrs,
 				};
 
+			// Only if the experiment is not active, we use the class-name in order to render the icon.
 			if ( ! elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
 				expandAttrs.class = slideshowClasses.iconExpand;
 			}
 
-			elements.$iconExpand = $( iconElement ).append( $( '<span>' ), $( '<span>' ) ).attr( expandAttrs ).on( 'click', this.toggleFullscreen );
+			elements.$iconExpand = $( iconElement )
+				.append( $( '<span>' ), $( '<span>' ) )
+				.attr( expandAttrs )
+				.on( 'click', this.toggleFullscreen );
 
 			fullScreenElements.push( elements.$iconExpand );
 

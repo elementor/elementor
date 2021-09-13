@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.5.0
  */
 class E_Icons extends Base {
-	const LIBRARY_CURRENT_VERSION = 5;
+	const LIBRARY_CURRENT_VERSION = '5.13.0';
 
 	protected function get_config( $icon ) {
 		return [
