@@ -27,8 +27,8 @@ Each module (`Elementor\Core\Base\Module`) can register its own experiments usin
 public static function get_experimental_data() {
 	return [
 		'name' => 'admin-top-bar',
-		'title' => __( 'Admin Top Bar', 'elementor' ),
-		'description' => __( 'Adds a top bar to elementor pages in admin area.', 'elementor' ),
+		'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
+		'description' => esc_html__( 'Adds a top bar to elementor pages in admin area.', 'elementor' ),
 		'release_status' => Elementor\Core\Experiments\Manager::RELEASE_STATUS_BETA,
 		'new_site' => [
 			'default_active' => true,
@@ -44,8 +44,8 @@ In addition, you can "talk" directly to the manager in order to register an expe
 
 \Elementor\Plugin::instance()->experiments->add_feature( [
 	'name' => 'a11y_improvements',
-	'title' => __( 'Accessibility Improvements', 'elementor' ),
-	'description' => __( 'Accessibility Improvements Description', 'elementor' ),
+	'title' => esc_html__( 'Accessibility Improvements', 'elementor' ),
+	'description' => esc_html__( 'Accessibility Improvements Description', 'elementor' ),
 	'release_status' => Elementor\Core\Experiments\Manager::RELEASE_STATUS_BETA,
 	'new_site' => [
 		'default_active' => true,
