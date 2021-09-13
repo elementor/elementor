@@ -698,15 +698,15 @@ class Element_Section extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => esc_html__( 'Normal', 'elementor' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'luminosity' => 'Luminosity',
+					'multiply' => esc_html__( 'Multiply', 'elementor' ),
+					'screen' => esc_html__( 'Screen', 'elementor' ),
+					'overlay' => esc_html__( 'Overlay', 'elementor' ),
+					'darken' => esc_html__( 'Darken', 'elementor' ),
+					'lighten' => esc_html__( 'Lighten', 'elementor' ),
+					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
+					'saturation' => esc_html__( 'Saturation', 'elementor' ),
+					'color' => esc_html__( 'Color', 'elementor' ),
+					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',
@@ -1155,6 +1155,10 @@ class Element_Section extends Element_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
@@ -1537,7 +1541,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @return string Section HTML tag.
 	 */
-	private function get_html_tag() {
+	protected function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
@@ -1557,7 +1561,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @param string $side Shape divider side, used to set the shape key.
 	 */
-	private function print_shape_divider( $side ) {
+	protected function print_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );

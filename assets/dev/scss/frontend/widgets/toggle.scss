@@ -19,6 +19,7 @@
 			width: 1em;
 
 			svg {
+				margin-inline-start: -5px; // The position of the SVG icon is different from the <i> tag icon position.
 				width: 1em;
 				height: 1em;
 			}

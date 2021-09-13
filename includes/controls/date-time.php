@@ -62,7 +62,7 @@ class Control_Date_Time extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<input id="<?php $this->print_control_uid(); ?>" placeholder="{{ data.placeholder }}" class="elementor-date-time-picker flatpickr" type="text" data-setting="{{ data.name }}">
+				<input id="<?php $this->print_control_uid(); ?>" placeholder="{{ view.getControlPlaceholder() }}" class="elementor-date-time-picker flatpickr" type="text" data-setting="{{ data.name }}">
 			</div>
 		</div>
 		<# if ( data.description ) { #>

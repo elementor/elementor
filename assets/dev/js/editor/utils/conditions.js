@@ -48,13 +48,13 @@ Conditions = function() {
 				// A term consists of a control name to be examined, and a sub key if needed. For example, a term
 				// can look like 'image_overlay[url]' (the 'url' is the sub key). Here we want to isolate the
 				// condition name and the sub key, so later it can be retrieved and examined.
-				const parsedName = term.name.match( /(\w+)(?:\[(\w+)])?/ ),
+				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
 					conditionSubKey = parsedName[ 2 ],
-					// We use null-safe operator since we're trying to get the control model, which is not always
-					// exists, since it's only created when the specific control appears in the panel.
-					placeholder = elementor.getPanelView().getCurrentPageView()
-						?.getControlModel?.( conditionRealName )?.get( 'placeholder' );
+					// We use null-safe operator since we're trying to get the current element, which is not always
+					// exists, since it's only created when the specific element appears in the panel.
+					placeholder = elementor.getCurrentElement()?.container
+						?.placeholders[ conditionRealName ];
 
 				// If a placeholder exists for the examined control, we check against it. In any other case, we
 				// use the 'comparisonObject', which includes all values of the selected widget.
@@ -64,7 +64,7 @@ Conditions = function() {
 					value = comparisonObject.__dynamic__[ conditionRealName ];
 				}
 
-				if ( value && conditionSubKey ) {
+				if ( 'object' === typeof value && conditionSubKey ) {
 					value = value[ conditionSubKey ];
 				}
 

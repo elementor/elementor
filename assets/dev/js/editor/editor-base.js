@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from 'elementor-editor/component';
+import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -625,27 +625,27 @@ export default class EditorBase extends Marionette.Application {
 					maxHeight: 896,
 				},
 				mobile_extra: {
-					minHeight: 320,
+					minHeight: 480,
 					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				tablet_extra: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				laptop: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				widescreen: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1200,
 				},
@@ -1253,11 +1253,16 @@ export default class EditorBase extends Marionette.Application {
 	generateResponsiveControls( controls ) {
 		const { activeBreakpoints } = this.config.responsive,
 			devices = this.breakpoints.getActiveBreakpointsList( { largeToSmall: true, withDesktop: true } ),
-			newControlsStack = {};
+			newControlsStack = {},
+			secondDesktopChild = devices[ devices.indexOf( 'desktop' ) + 1 ];
+
+		// Set the desktop to be the fist device, so desktop will the the parent of all devices.
+		devices.unshift(
+			devices.splice( devices.indexOf( 'desktop' ), 1 )[ 0 ]
+		);
 
 		jQuery.each( controls, ( controlName, controlConfig ) => {
-			let responsiveControlName,
-				desktopAppeared = false;
+			let responsiveControlName;
 
 			// Handle repeater controls.
 			if ( 'object' === typeof controlConfig.fields ) {
@@ -1287,10 +1292,14 @@ export default class EditorBase extends Marionette.Application {
 
 			const multipleDefaultValue = this.config.controls[ controlConfig.type ].default_value;
 
+			let deleteControlDefault = true;
+
 			// For multiple controls that implement get_default_value() in the control class, make sure the duplicated
 			// controls receive that default value.
 			if ( multipleDefaultValue ) {
 				controlConfig.default = multipleDefaultValue;
+
+				deleteControlDefault = false;
 			}
 
 			devices.forEach( ( device, index ) => {
@@ -1319,12 +1328,13 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
-				controlArgs.parent = desktopAppeared ? responsiveControlName : null;
+				controlArgs.parent = null;
 
-				if ( 'desktop' === device ) {
-					desktopAppeared = true;
-				} else {
+				if ( 'desktop' !== device ) {
 					direction = activeBreakpoints[ device ].direction;
+
+					// Set the parent to be the previous device
+					controlArgs.parent = device === secondDesktopChild ? controlName : responsiveControlName;
 				}
 
 				controlArgs.responsive[ direction ] = device;
@@ -1343,6 +1353,9 @@ export default class EditorBase extends Marionette.Application {
 					} else {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
+				} else if ( deleteControlDefault ) {
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
 				// If the control belongs to a group control with a popover, and this control is the last one, add the
@@ -1363,7 +1376,13 @@ export default class EditorBase extends Marionette.Application {
 				responsiveControlName = 'desktop' === device ? controlName : controlName + '_' + device;
 
 				if ( controlArgs.parent ) {
-					newControlsStack[ controlArgs.parent ].child = responsiveControlName;
+					const parentControlArgs = newControlsStack[ controlArgs.parent ];
+
+					if ( ! parentControlArgs.inheritors ) {
+						parentControlArgs.inheritors = [];
+					}
+
+					parentControlArgs.inheritors.push( responsiveControlName );
 				}
 
 				controlArgs.name = responsiveControlName;

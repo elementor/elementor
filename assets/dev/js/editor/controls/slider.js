@@ -88,7 +88,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend( {
 			value = this.getControlValue( property );
 
 		return value ||
-			this.model.get( 'placeholder' )?.[ property ] ||
+			this.getControlPlaceholder()?.[ property ] ||
 			this.model.get( 'default' )?.[ property ];
 	},
 

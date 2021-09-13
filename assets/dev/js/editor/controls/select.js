@@ -22,7 +22,7 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 	},
 
 	onReady() {
-		const placeholder = this.model.get( 'placeholder' );
+		const placeholder = this.getControlPlaceholder();
 
 		if ( placeholder ) {
 			jQuery( '<option>' ).val( '' )

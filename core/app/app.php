@@ -36,8 +36,8 @@ class App extends BaseApp {
 	public function register_admin_menu() {
 		add_submenu_page(
 			Source_Local::ADMIN_MENU_SLUG,
-			__( 'Theme Builder', 'elementor' ),
-			__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID
 		);
@@ -94,6 +94,8 @@ class App extends BaseApp {
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
+			'admin_url' => admin_url(),
+			'login_url' => wp_login_url(),
 		];
 	}
 
