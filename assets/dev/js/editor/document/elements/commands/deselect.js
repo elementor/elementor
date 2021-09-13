@@ -8,12 +8,7 @@ export class Deselect extends CommandBase {
 			containers.push( args.container );
 		}
 
-		( all ? elementor.getSelectedElements() : containers )
-			.forEach( ( container ) => {
-				delete elementor.selectedElements[ container.id ];
-
-				container.view.deselect();
-			} );
+		elementor.selection.remove( containers, all );
 	}
 }
 

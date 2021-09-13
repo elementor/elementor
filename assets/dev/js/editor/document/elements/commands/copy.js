@@ -8,7 +8,7 @@ export class Copy extends CommandBase {
 	apply( args ) {
 		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
 
-		if ( ! elementor.selectedElementsAreOfSameType() ) {
+		if ( ! elementor.selection.isSameType() ) {
 			elementor.notifications.showToast( {
 				message: __( 'Oops, you can’t copy this selection because it contains different element types.', 'elementor' ),
 			} );

@@ -114,7 +114,7 @@ WidgetView = BaseElementView.extend( {
 					title: __( 'Save as a Global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
 					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
-						! elementor.multipleElementsSelected(),
+						! elementor.selection.isMultiple(),
 				},
 			],
 		} );

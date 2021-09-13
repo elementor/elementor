@@ -15,6 +15,7 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Selection from './components/selection/manager';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
@@ -30,16 +31,6 @@ export default class EditorBase extends Marionette.Application {
 	previewLoadedOnce = false;
 
 	activeBreakpointsUpdated = false;
-
-	selectedElements = {};
-
-	/**
-	 * Represents the common type of multiple selected elements, or false when the selected elements are of different
-	 * types.
-	 *
-	 * @type {string|boolean}
-	 */
-	selectedElementsType = false;
 
 	helpers = require( 'elementor-editor-utils/helpers' );
 	imagesManager = require( 'elementor-editor-utils/images-manager' ); // TODO: Unused.
@@ -341,6 +332,8 @@ export default class EditorBase extends Marionette.Application {
 			Notifications = require( 'elementor-editor-utils/notifications' );
 
 		this.hooks = new EventManager();
+
+		this.selection = new Selection();
 
 		this.settings = new Settings();
 
@@ -707,31 +700,6 @@ export default class EditorBase extends Marionette.Application {
 			style.setProperty( '--e-editor-preview-width', widthToShow + 'px' );
 			style.setProperty( '--e-editor-preview-height', breakpointResizeOptions.height + 'px' );
 		}
-	}
-
-	getSelectedElements( fallback = null ) {
-		let result = Object.values( this.selectedElements );
-
-		if ( ! result.length && fallback ) {
-			result = Array.isArray( fallback ) ? fallback : [ fallback ];
-		}
-
-		return result;
-	}
-
-	multipleElementsSelected() {
-		return this.getSelectedElements().length > 1;
-	}
-
-	/**
-	 * Return the common type of the selected elements, or false if the selected elements are of different types. When
-	 * no element is selected, return true.
-	 *
-	 * @returns {boolean|string}
-	 */
-	selectedElementsAreOfSameType() {
-		return ! this.getSelectedElements().length ||
-			this.selectedElementsType;
 	}
 
 	preventClicksInsideEditor() {

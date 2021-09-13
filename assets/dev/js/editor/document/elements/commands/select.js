@@ -8,16 +8,7 @@ export class Select extends CommandBase {
 	apply( args ) {
 		const { containers = [ args.container ], multiple = false } = args;
 
-		containers.forEach( ( container ) => {
-			// If command/ctrl+click not clicked, clear selected elements.
-			if ( ! multiple ) {
-				$e.run( 'document/elements/deselect', { all: true } );
-			}
-
-			elementor.selectedElements[ container.id ] = container;
-
-			container.view.select();
-		} );
+		elementor.selection.add( containers, multiple );
 	}
 }
 

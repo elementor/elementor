@@ -64,7 +64,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.initContextMenu();
 		}
 
-		if ( ! elementor.getSelectedElements().includes( this.view.getContainer() ) ) {
+		if ( ! elementor.selection.has( this.view.getContainer() ) ) {
 			$e.run( 'document/elements/deselect', { all: true } );
 		}
 

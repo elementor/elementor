@@ -122,7 +122,7 @@ const SectionView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
-					isEnabled: () => ! elementor.multipleElementsSelected(),
+					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),
 				},
 			],

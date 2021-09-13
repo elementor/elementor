@@ -136,8 +136,8 @@ BaseElementView = BaseContainer.extend( {
 						name: 'edit',
 						icon: 'eicon-edit',
 						/* translators: %s: Element Name. */
-						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.multipleElementsSelected() ? '' : this.options.model.getTitle() ),
-						isEnabled: () => ! elementor.multipleElementsSelected(),
+						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
+						isEnabled: () => ! elementor.selection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
 							model: this.options.model, // Todo: remove on merge router
 							view: this, // Todo: remove on merge router
@@ -148,8 +148,8 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						isEnabled: () => elementor.selectedElementsAreOfSameType(),
-						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.getSelectedElements( this.getContainer() ) } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			}, {
@@ -159,27 +159,27 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						isEnabled: () => elementor.selectedElementsAreOfSameType(),
-						callback: () => $e.run( 'document/elements/copy', { containers: elementor.getSelectedElements( this.getContainer() ) } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
 						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
-							elementor.selectedElementsAreOfSameType(),
+							elementor.selection.isSameType(),
 						callback: () => $e.run( 'document/ui/paste', {
-							container: elementor.getSelectedElements()[ 0 ],
+							container: this.getContainer(),
 						} ),
 					}, {
 						name: 'pasteStyle',
 						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
-						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.getSelectedElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.getSelectedElements( this.getContainer() ) } ),
+						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			},
@@ -207,11 +207,11 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: () => elementor.multipleElementsSelected() ?
-							sprintf( __( 'Delete %d items', 'elementor' ), elementor.getSelectedElements().length ) :
+					title: () => elementor.selection.isMultiple() ?
+							sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length ) :
 							__( 'Delete', 'elementor' ),
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.getSelectedElements( this.getContainer() ) } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 				},
 			],
 		} );
