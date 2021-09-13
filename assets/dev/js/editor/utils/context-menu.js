@@ -82,6 +82,14 @@ module.exports = elementorModules.Module.extend( {
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
 	},
 
+	/**
+	 * Update the action title.
+	 *
+	 * Sometimes the action title should dynamically change. This can be done by passing a function as the `title`
+	 * property when initializing the context-menu, and here it actually invoked and assigned as the title.
+	 *
+	 * @param action
+	 */
 	updateActionTitle: function( action ) {
 		if ( 'function' === typeof action.title ) {
 			action.$item.find( '.' + this.getSettings( 'classes' ).itemTitle ).text( action.title() );

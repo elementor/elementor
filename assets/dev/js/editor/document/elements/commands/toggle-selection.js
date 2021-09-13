@@ -6,11 +6,11 @@ export class ToggleSelection extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
+		const { containers = [ args.container ], append = false } = args;
 
 		containers.forEach( ( container ) => {
 			$e.run(
-				elementor.selection.has( container ) ?
+				elementor.selection.has( container ) && append ?
 					'document/elements/deselect' :
 					'document/elements/select',
 				args

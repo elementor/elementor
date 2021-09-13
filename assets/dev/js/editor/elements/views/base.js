@@ -694,7 +694,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onEditButtonClick( event ) {
-		this.model.trigger( 'request:edit', { multiple: event.ctrlKey || event.metaKey } );
+		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
 	onEditRequest( options = {} ) {
@@ -715,14 +715,20 @@ BaseElementView = BaseContainer.extend( {
 
 		$e.run( 'document/elements/toggle-selection', {
 			container: this.getContainer(),
-			multiple: options.multiple,
+			append: options.append,
 		} );
 	},
 
+	/**
+	 * Select current element.
+	 */
 	select() {
 		this.$el.addClass( 'elementor-element-editable' );
 	},
 
+	/**
+	 * Deselect current element.
+	 */
 	deselect() {
 		this.$el.removeClass( 'elementor-element-editable' );
 	},

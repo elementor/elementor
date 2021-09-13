@@ -35,6 +35,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 						target.updateType();
 						target.updatePanelPage();
+						target.updateNavigator();
 
 						return result;
 					};
@@ -160,6 +161,17 @@ export default class Manager extends elementorModules.editor.utils.Module {
 				autoFocusSearch: false,
 			} );
 		}
+	}
+
+	/**
+	 * Update navigator selections.
+	 *
+	 * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
+	 * updating the navigator.
+	 */
+	updateNavigator() {
+		elementor.navigator.getLayout()
+			.elements.currentView.recursiveChildInvoke( 'updateSelection' );
 	}
 
 	/**
