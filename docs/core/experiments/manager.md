@@ -58,6 +58,18 @@ Using both of the above methods, you can set the experiment name, description, r
 default state (active / inactive) and more! You can even pass a callback to run when the feature state has changed! 
 (using the `on_state_change` key in the experiment settings array).
 
+### Available Options:
+| Option                              		| Type																																						| Default					| Description
+| :-----------------------------------------| :---------------------------------------------------------------------------------------------------------------------------------------------------------| :-------------------------| :-------------  
+| `description`                       		| `{String}`																																				| `''`						| Description that will be shown in the admin panel.
+| `release_status`                    		| `{String}` Constant, one of: `RELEASE_STATUS_DEV`, `RELEASE_STATUS_ALPHA`, `RELEASE_STATUS_BETA`, `RELEASE_STATUS_RC`, `RELEASE_STATUS_STABLE`.			| `RELEASE_STATUS_ALPHA`	| Experiment release status.
+| `default`                    		  		| `{String}` Constant, one of: `STATE_ACTIVE`, `STATE_INACTIVE`.																							| `STATE_INACTIVE`			| Default state (active/inactive). 
+| `new_site`                    	  		| `{Array}`																																					| 							| Experiment settings for new sites.
+| `new_site.default_active`			  		| `{Boolean}`																																				| `false`					| Whether the experiment is active by default.
+| `new_site.always_active`			  		| `{Boolean}`																																				| `false`					| Whether the experiment is active and the state immutable.
+| `new_site.minimum_installation_version`	| `{String}`																																				| `null`					| Minimum version to determine if the current installation is a new one. 
+| `on_state_change`							| `{Callable}`																																				| `null`					| A callback that runs on each state change. 
+
 Then, in order to check whether the experiment is active or not, you can ask the manager:
 
 ### PHP:
