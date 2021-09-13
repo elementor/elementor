@@ -122,6 +122,10 @@ class Widget_Image_Carousel extends Widget_Base {
 					'' => esc_html__( 'Default', 'elementor' ),
 				] + $slides_to_show,
 				'frontend_available' => true,
+				'render_type' => 'template',
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-image-carousel-slides-to-show: {{VALUE}}',
+				],
 			]
 		);
 
