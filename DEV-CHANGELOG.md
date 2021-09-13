@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev23 - 2021-09-13
+* Fix: Element dragging after ctrl + click on Mac [ED-1827] (#15980)
+
 #### 3.5.0-dev21 - 2021-09-10
 * Tweak: CSS Transform - Change flip icon [ED-4462] (#16284)
 
