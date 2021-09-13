@@ -451,12 +451,15 @@ class Controls_Manager {
 		 *
 		 * @param Controls_Manager $this The controls manager.
 		 */
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
-			'elementor/controls/controls_registered',
-			[ $this ],
-			'3.5.0',
-			'elementor/controls/register'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+		//	'elementor/controls/controls_registered',
+		//	[ $this ],
+		//	'3.5.0',
+		//	'elementor/controls/register'
+		//);
+
+		do_action( 'elementor/controls/controls_registered', $this );
 
 		/**
 		 * After controls registered.
@@ -485,11 +488,12 @@ class Controls_Manager {
 	 *                                       current instance.
 	 */
 	public function register_control( $control_id, Base_Control $control_instance ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-			__METHOD__,
-			'3.5.0',
-			'register'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'register'
+		//);
 
 		$this->register( $control_instance, $control_id );
 	}
@@ -509,14 +513,17 @@ class Controls_Manager {
 	 * @return void
 	 */
 	public function register( Base_Control $control_instance, $control_id = null ) {
+		// TODO: Uncomment when Pro uses the new hook.
+
 		// TODO: For BC. Remove in the future.
-		if ( $control_id ) {
-			Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
-				'$control_id', '3.5.0'
-			);
-		} else {
-			$control_id = $control_instance->get_type();
-		}
+		//if ( $control_id ) {
+		//	Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
+		//		'$control_id', '3.5.0'
+		//	);
+		//} else {
+		//}
+
+		$control_id = $control_instance->get_type();
 
 		$this->controls[ $control_id ] = $control_instance;
 	}
@@ -535,11 +542,12 @@ class Controls_Manager {
 	 * @return bool True if the control was removed, False otherwise.
 	 */
 	public function unregister_control( $control_id ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-			__METHOD__,
-			'3.5.0',
-			'unregister'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'unregister'
+		//);
 
 		return $this->unregister( $control_id );
 	}

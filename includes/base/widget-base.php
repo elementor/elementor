@@ -975,7 +975,8 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $replacement   Widget replacement
 	 */
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
-		$this->start_controls_section( 'Deprecated',
+		$this->start_controls_section(
+			'Deprecated',
 			[
 				'label' => esc_html__( 'Deprecated', 'elementor' ),
 			]

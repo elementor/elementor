@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.2
+Stable tag: 3.4.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -104,45 +104,13 @@ Elementor website builder is free and open source. It’s the perfect plugin to 
 
 To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
-= Translations =
-- [English (Australia)](https://translate.wordpress.org/locale/en-au/default/wp-plugins/elementor) - (en_AU)
-- [English (UK)](https://translate.wordpress.org/locale/en-gb/default/wp-plugins/elementor) - (en_GB)
-- [English (Canada)](https://translate.wordpress.org/locale/en-ca/default/wp-plugins/elementor) - (en_CA)
-- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
-- [French (Belgium)](https://translate.wordpress.org/locale/fr-be/default/wp-plugins/elementor) - (fr_BE)
-- [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
-- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
-- [Spanish (Mexico)](https://translate.wordpress.org/locale/es-mx/default/wp-plugins/elementor) - (es_MX)
-- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
-- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
-- [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
-- [Swedish](https://translate.wordpress.org/locale/sv/default/wp-plugins/elementor) - (sv_SE)
-- [Dutch](https://translate.wordpress.org/locale/nl/default/wp-plugins/elementor) - (nl_NL)
-- [Danish](https://translate.wordpress.org/locale/da/default/wp-plugins/elementor) - (da_DK)
-- [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
-- [Chinese (China)](https://translate.wordpress.org/locale/zh-cn/default/wp-plugins/elementor) - (zh_CN)
-- [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
-- [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
-- [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Russian](https://translate.wordpress.org/locale/ru/default/wp-plugins/elementor) - (ru_RU)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
-- [Bulgarian](https://translate.wordpress.org/locale/bg/default/wp-plugins/elementor) - (bg_BG)
-- [Greek](https://translate.wordpress.org/locale/el/default/wp-plugins/elementor) - (el)
-- [Catalan](https://translate.wordpress.org/locale/ca/default/wp-plugins/elementor) - (ca)
-- [Czech](https://translate.wordpress.org/locale/cs/default/wp-plugins/elementor) - (cs_CZ)
-- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU)
-- [Croatian](https://translate.wordpress.org/locale/hr/default/wp-plugins/elementor) - (hr)
-- [Finnish](https://translate.wordpress.org/locale/fi/default/wp-plugins/elementor) - (fi)
-- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar)
-- [Afrikaans](https://translate.wordpress.org/locale/af/default/wp-plugins/elementor) - (af)
-- [Ukrainian](https://translate.wordpress.org/locale/uk/default/wp-plugins/elementor) - (uk)
-
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
 
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
+
+= Security Report =
+We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection. 
 
 = Documentation and Support =
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -219,6 +187,25 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.3 - 2021-08-29 =
+* Tweak: Added "Justified" option in Typography text alignment in Column & Section elements ([#11480](https://github.com/elementor/elementor/issues/11480))
+* Tweak: Enlarged cards view in the Kit Library for better visibility
+* Tweak: Changed Kit Library tab title
+* Fix: Landing pages experiment causes 404 errors with attachment pages ([#15943](https://github.com/elementor/elementor/issues/15943))
+* Fix: Can't upload SVG files using Elementor ([#16084](https://github.com/elementor/elementor/issues/16084), [#16119](https://github.com/elementor/elementor/issues/16119), [#16088](https://github.com/elementor/elementor/issues/16088))
+* Fix: `wp_kses_post` strips `srcset` attribute from images ([#16111](https://github.com/elementor/elementor/issues/16111))
+* Fix: Inline CSS is parsed to an invalid characters ([#16140](https://github.com/elementor/elementor/issues/16140))
+* Fix: Animated elements disappear before entering the viewport ([#2806](https://github.com/elementor/elementor/issues/2806))
+* Fix: Autoplay not working for Vimeo videos in Lightbox ([#16068](https://github.com/elementor/elementor/issues/16068))
+* Fix: HTML captions are stripped in Image carousel widget ([#16073](https://github.com/elementor/elementor/issues/16073))
+* Fix: Carousels are not working properly in the Editor when Additional Custom Breakpoints experiment is active
+* Fix: Responsive values are not being reflected in Slider controls
+* Fix: Elementor Top Admin Bar loads in WordPress dashboard when the experiment is active
+* Fix: Prevent Admin Top Bar to conflict with WordPress customizer
+* Fix: Can't change alignment of icons when Font Awesome Inline experiment is active in Icon List widget
+* Fix: Import deeplink redirect loses target screen parameters when user needs to log in
+* Deprecated: Removed all usages of `Elementor\Utils::get_create_new_post_url()`
 
 = 3.4.2 - 2021-08-19 =
 * Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active ([#16055](https://github.com/elementor/elementor/issues/16055), [#16033](https://github.com/elementor/elementor/issues/16033))

@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_AJAX;
+use ElementorEditorTesting\Elementor_Test_AJAX;
 
 class Test_Tools extends Elementor_Test_AJAX {
 	public function setUp() {

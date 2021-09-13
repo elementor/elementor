@@ -150,6 +150,17 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
+	 * strip_line_breaks
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_line_breaks( $string ) {
+		// Remove line breaks.
+		return preg_replace( '/\r|\n/', '', $string );
+	}
+
+	/**
 	 * wp_prepare_attachment_for_js
 	 *
 	 * @deprecated 3.5.0
