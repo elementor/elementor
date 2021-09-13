@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.3
+Stable tag: 3.4.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -187,6 +187,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.4 - 2021-09-13 =
+* Fix: Custom popover responsive controls breaks when used in responsive breakpoints view when Additional Breakpoints experiment is active ([#16312](https://github.com/elementor/elementor/issues/16312))
+* Fix: Data Updater causes fatal error due to DB corruption ([#16100](https://github.com/elementor/elementor/issues/16100))
+* Fix: Page settings layout description strings were inaccurate
+* Fix: Specific image sizes causes the first image to load in large dimensions on load in Image Carousel widget
 
 = 3.4.3 - 2021-08-29 =
 * Tweak: Added "Justified" option in Typography text alignment in Column & Section elements ([#11480](https://github.com/elementor/elementor/issues/11480))
