@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
-use Elementor\Utils;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -74,6 +74,10 @@ class Module extends BaseModule {
 			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 			add_action( 'elementor/init', [ $this, 'init' ], 11 );
 		}
+
+		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
+			return $this->add_tracking_data( $params );
+		} );
 	}
 
 	/**
@@ -216,4 +220,22 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function add_tracking_data( $params ) {
+		$connect_common_data_user_emails = [];
+
+		foreach ( get_users() as $user ) {
+			$connect_common_data = get_user_option( Base_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
+
+			if ( $connect_common_data ) {
+				$connect_common_data_user_emails [] = $connect_common_data['user']->email;
+			}
+		}
+
+		$params['usages'][ $this->get_name() ] = [
+			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+			'users' => $connect_common_data_user_emails,
+		];
+
+		return $params;
+	}
 }

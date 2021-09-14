@@ -486,7 +486,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		$user = get_user_by( 'id', $user_test_id );
 		wp_set_current_user( $user_test_id );
 
-		update_user_option( $user_test_id, 'elementor_connect_common_data', [
+		update_user_option( $user_test_id, Base_App::OPTION_CONNECT_COMMON_DATA_KEY, [
 			'client_id' => 'client_id_test',
 			'auth_secret' => 'auth_secret_test',
 			'access_token' => 'access_token_test',
@@ -497,7 +497,7 @@ class Test_Common_App extends Elementor_Test_Base {
 			]
 		] );
 
-		update_option( 'elementor_connect_site_key', 'site_key_test' );
+		update_option( Base_App::OPTION_CONNECT_SITE_KEY, 'site_key_test' );
 
 		return $user;
 	}

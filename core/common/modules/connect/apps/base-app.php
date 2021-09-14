@@ -17,12 +17,16 @@ abstract class Base_App {
 
 	const OPTION_NAME_PREFIX = 'elementor_connect_';
 
+	const OPTION_CONNECT_SITE_KEY = self::OPTION_NAME_PREFIX . 'site_key';
+	const OPTION_CONNECT_COMMON_DATA_KEY = self::OPTION_NAME_PREFIX . 'common_data';
+
 	const SITE_URL = 'https://my.elementor.com/connect/v1';
 
 	const API_URL = 'https://my.elementor.com/api/connect/v1';
 
 	const HTTP_RETURN_TYPE_OBJECT = 'object';
 	const HTTP_RETURN_TYPE_ARRAY = 'array';
+
 
 	protected $data = [];
 
@@ -163,10 +167,10 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_user_option( get_current_user_id(), 'elementor_connect_common_data' );
+		delete_user_option( get_current_user_id(), self::OPTION_CONNECT_COMMON_DATA_KEY );
 
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_connect_site_key' );
+			delete_option( self::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -652,11 +656,11 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	public function get_site_key() {
-		$site_key = get_option( 'elementor_connect_site_key' );
+		$site_key = get_option( self::OPTION_CONNECT_SITE_KEY );
 
 		if ( ! $site_key ) {
 			$site_key = md5( uniqid( wp_generate_password() ) );
-			update_option( 'elementor_connect_site_key', $site_key );
+			update_option( self::OPTION_CONNECT_SITE_KEY, $site_key );
 		}
 
 		return $site_key;

@@ -1102,6 +1102,38 @@
 						}
 					],
 					"additionalProperties": false
+				},
+				"connect": {
+					"$id": "#/usages/connect",
+					"title": "The connect schema",
+					"description": "Usage of elementor connect license.",
+					"properties": {
+						"site_key": {
+							"$id": "#/usages/connect/site-key",
+							"title": "Site key",
+							"type": [
+								"string",
+								"boolean"
+							]
+						},
+						"users": {
+							"$id": "#/usages/connect/users",
+							"title": "User emails",
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/global/email"
+							}
+						}
+					},
+					"examples": [
+						{
+							"site_key": "fake382c41f7a628306a1835df1bf@K3",
+							"users": [
+								"user@localhost"
+							]
+						}
+					],
+					"additionalProperties": false
 				}
 			},
 			"additionalProperties": false
