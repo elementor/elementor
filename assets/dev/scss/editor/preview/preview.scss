@@ -109,7 +109,7 @@ html.elementor-html {
 
 .elementor-section-wrap {
 	position: relative;
-	z-index: 1;
+	z-index: 1; // Fix: Handle-Setting disappear when mouse hover the handle-setting in a section beneath the header.
 
 	&:empty {
 		min-height: 25px;
