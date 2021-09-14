@@ -26,9 +26,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	constructor() {
 		super();
 
+		// When returning Proxy from constructor, external invocations intercepted with it so hooks for `add`/`remove`
+		// methods can be executed. This way, internal invocations not triggering the hooks.
 		return new Proxy( this, {
 			get: function( target, prop ) {
-				// Add a hook after executing the `add`/`remove` methods.
 				if ( [ 'add', 'remove' ].includes( prop ) ) {
 					return ( ...args ) => {
 						const result = target[ prop ]( ...args );
@@ -52,7 +53,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * Get the list of selected elements as an array of containers. If a fallback element container specified, it will
 	 * be returned when there are no selected elements.
 	 *
-	 * @param fallback
+	 * @param {Container[]|Container} fallback
 	 * @returns {Container[]}
 	 */
 	getElements( fallback = null ) {
@@ -71,18 +72,18 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * Add new elements to selection by their container, and clear the currently selected elements unless appending is
 	 * active, in which case the new elements are just added to the current selection.
 	 *
-	 * @param containers
-	 * @param append
+	 * @param {Container[]|Container} containers
+	 * @param {bool} append
 	 */
 	add( containers, append = false ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
-		for ( const container of containers ) {
-			// If command/ctrl+click not clicked, clear selected elements.
-			if ( ! append ) {
-				this.remove( null, true );
-			}
+		// If command/ctrl+click not clicked, clear selected elements.
+		if ( ! append ) {
+			this.remove( [], true );
+		}
 
+		for ( const container of containers ) {
 			this.elements[ container.id ] = container;
 
 			container.view.select();
@@ -95,8 +96,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * Remove elements from selection by their container, unless the parameter for clearing all selected elements is
 	 * active, in which case the the whole selection is cleared.
 	 *
-	 * @param containers
-	 * @param all
+	 * @param {Container[]|Container} containers
+	 * @param {bool} all
 	 */
 	remove( containers, all = false ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
@@ -117,7 +118,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * Check whether an element container exists in the selected elements.
 	 *
-	 * @param container
+	 * @param {Container} container
 	 * @returns {boolean}
 	 */
 	has( container ) {
@@ -132,13 +133,15 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * of different types, `false` is assigned.
 	 */
 	updateType() {
-		this.type = this.elements.length && this.elements.reduce( ( previous, current ) => {
+		const elements = this.getElements();
+
+		this.type = Boolean( elements.length ) && elements.reduce( ( previous, current ) => {
 			if ( previous === current.type ) {
 				return current.type;
 			}
 
 			return false;
-		}, this.elements[ 0 ] );
+		}, elements[ 0 ].type );
 	}
 
 	/**
@@ -203,10 +206,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * Check whether the selected elements are of same type.
 	 *
-	 * @returns {boolean|*}
+	 * @returns {boolean}
 	 */
 	isSameType() {
 		return ! this.getElements().length ||
-			this.type;
+			Boolean( this.type );
 	}
 }

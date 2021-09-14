@@ -724,7 +724,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.run( 'document/elements/deselect', { all: true } );
+				$e.run( 'document/elements/deselect-all' );
 			}
 		} );
 	}
