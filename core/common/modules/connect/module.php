@@ -227,7 +227,7 @@ class Module extends BaseModule {
 			$connect_common_data = get_user_option( Base_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
 
 			if ( $connect_common_data ) {
-				$connect_common_data_user_emails [] = $connect_common_data['user']->email;
+				$connect_common_data_user_emails[] = $connect_common_data['user']->email;
 			}
 		}
 
