@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev25 - 2021-09-14
+* Fix: Elements panel UI glitch [ED-4959] (#16282)
+* Fix: Offsets not working properly with an absolutely positioned widget and Improved DOM experiment [ED-4945] (#16253)
+
 #### 3.5.0-dev24 - 2021-09-13
 * Fix: If a responsive control is the first control in a popover, it breaks the popover for non-desktop devices   [ED-4979] (#16318)
 * Fix: Large images are fully displayed before the swiper is initialized. (#16317)
