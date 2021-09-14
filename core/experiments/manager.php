@@ -388,7 +388,7 @@ class Manager extends Base_Object {
 		}
 
 		foreach ( [ 'stable', 'ongoing' ] as $section ) {
-			if ( ! $features ) {
+			if ( ! isset( $fields[ $section ] ) ) {
 				$fields[ $section ]['no_features'] = [
 					'label' => esc_html__( 'No available experiments', 'elementor' ),
 					'field_args' => [
@@ -467,9 +467,14 @@ class Manager extends Base_Object {
 				);
 			?>
 		</p>
+		<?php if ( $this->get_features() ) { ?>
 		<button type="submit" class="button e-experiment__button" value="active">Activate All Experiments</button>
 		<button type="submit" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
+		<?php } ?>
 		<hr>
+		<h2>
+			<?php echo esc_html__( 'Ongoing Experiments', 'elementor' ); ?>
+		</h2>
 		<?php
 	}
 
