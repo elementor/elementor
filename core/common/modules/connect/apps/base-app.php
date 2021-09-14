@@ -27,7 +27,6 @@ abstract class Base_App {
 	const HTTP_RETURN_TYPE_OBJECT = 'object';
 	const HTTP_RETURN_TYPE_ARRAY = 'array';
 
-
 	protected $data = [];
 
 	protected $auth_mode = '';
