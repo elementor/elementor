@@ -27,6 +27,12 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
+		const insideHandleClass = 'elementor-section--handles-inside';
+
+		if ( elementor.settings.page.model.attributes.scroll_snap ) {
+			this.$element.addClass( insideHandleClass );
+		}
+
 		const isOverflowHidden = this.isOverflowHidden();
 
 		if ( ! isOverflowHidden && ! this.isFirstSection() ) {
@@ -34,16 +40,15 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		}
 
 		const offset = isOverflowHidden ? 0 : this.getOffset(),
-			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
-			insideHandleClass = 'elementor-section--handles-inside';
+			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
+
+		$handlesElement.css( 'top', '' );
 
 		if ( offset < 25 ) {
 			this.$element.addClass( insideHandleClass );
 
 			if ( offset < -5 ) {
 				$handlesElement.css( 'top', -offset );
-			} else {
-				$handlesElement.css( 'top', '' );
 			}
 		} else {
 			this.$element.removeClass( insideHandleClass );
