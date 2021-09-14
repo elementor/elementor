@@ -76,6 +76,8 @@
 
 	// Background overlay.
 	&::before {
+		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
+		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var( --background-overlay );
 		display: block;
 		position: absolute;

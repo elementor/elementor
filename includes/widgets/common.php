@@ -102,14 +102,11 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
-	 * Register common widget controls.
+	 * Register the Layout section.
 	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
-	 * @since 3.1.0
-	 * @access protected
+	 * @return void
 	 */
-	protected function register_controls() {
+	private function register_layout_section() {
 		$this->start_controls_section(
 			'_section_style',
 			[
@@ -550,7 +547,14 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Register the Motion Effects section.
+	 *
+	 * @return void
+	 */
+	private function register_effects_section() {
 		$this->start_controls_section(
 			'section_effects',
 			[
@@ -603,7 +607,14 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Register the Background section.
+	 *
+	 * @return void
+	 */
+	private function register_background_section() {
 		$this->start_controls_section(
 			'_section_background',
 			[
@@ -670,7 +681,14 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
+	}
 
+	/**
+	 * Register the Border section.
+	 *
+	 * @return void
+	 */
+	private function register_border_section() {
 		$this->start_controls_section(
 			'_section_border',
 			[
@@ -776,7 +794,15 @@ class Widget_Common extends Widget_Base {
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
+	}
 
+
+	/**
+	 * Register the Mask section.
+	 *
+	 * @return void
+	 */
+	private function register_masking_section() {
 		$this->start_controls_section(
 			'_section_masking',
 			[
@@ -1022,7 +1048,15 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+
+	/**
+	 * Register the Responsive section.
+	 *
+	 * @return void
+	 */
+	private function register_responsive_section() {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
@@ -1043,6 +1077,28 @@ class Widget_Common extends Widget_Base {
 		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
+	}
+
+	/**
+	 * Register common widget controls.
+	 *
+	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function register_controls() {
+		$this->register_layout_section();
+
+		$this->register_effects_section();
+
+		$this->register_background_section();
+
+		$this->register_border_section();
+
+		$this->register_masking_section();
+
+		$this->register_responsive_section();
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this );
 

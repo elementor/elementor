@@ -84,7 +84,7 @@ const ContainerView = BaseElementView.extend( {
 		return {
 			connectWith: '.e-container, .elementor-widget-wrap',
 			items: '> .elementor-element',
-			tolerance: 'intersect',
+			tolerance: 'intersect', // Use a lower tolerance option since the other one makes the DnD fragile (See https://api.jqueryui.com/sortable/#option-tolerance).
 			swappable: true,
 		};
 	},
