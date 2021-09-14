@@ -291,15 +291,9 @@ export default class extends Marionette.CompositeView {
 
 	/**
 	 * Select the element.
-	 *
-	 * @param deselectAll
 	 */
-	select( deselectAll = false ) {
+	select() {
 		this.recursiveParentInvoke( 'toggleList', true );
-
-		if ( deselectAll ) {
-			elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
-		}
 
 		this.addEditingClass();
 
@@ -451,7 +445,9 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onEditRequest() {
-		this.select();
+		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
+
+		this.select( true );
 	}
 
 	onIndicatorClick( event ) {
