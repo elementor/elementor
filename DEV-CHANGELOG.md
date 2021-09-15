@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev26 - 2021-09-15
+* Tweak: Updated featured video in readme.txt (#16332)
+
 #### 3.5.0-dev25 - 2021-09-14
 * Fix: Elements panel UI glitch [ED-4959] (#16282)
 * Fix: Offsets not working properly with an absolutely positioned widget and Improved DOM experiment [ED-4945] (#16253)
