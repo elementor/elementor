@@ -19,7 +19,7 @@ import './import-resolver.scss';
 export default function ImportResolver() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		conflicts = context.data?.fileResponse?.stage1.conflicts || {},
+		conflicts = context.data?.uploadedData?.conflicts || {},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -43,7 +43,7 @@ export default function ImportResolver() {
 		),
 		isHomePageOverride = () => {
 			if ( context.data.includes.includes( 'content' ) ) {
-				const pages = context.data?.fileResponse?.stage1.manifest.content?.page || {};
+				const pages = context.data?.uploadedData?.manifest.content?.page || {};
 
 				return Object.entries( pages ).find( ( pageData ) => pageData[ 1 ].show_on_front );
 			}
