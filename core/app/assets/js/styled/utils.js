@@ -16,24 +16,38 @@ export const bindProps = ( data ) => {
 	return data.map( ( obj ) => bindProp( obj ) );
 };
 
-export const getVariant = ( props, style, variant ) => {
-	let variantStyle = style.base?.shared || '',
-		themeVariants = props.theme.variants;
+export const getStyle = ( styles, { theme, props } ) => {
+	// Creating an array that holds only the active theme variants values.
+	const themeVariants = Object.keys( theme.variants ).filter( ( key ) => theme.variants[ key ] );
 
-	variantStyle += style.base?.variants?.[ variant ] || '';
+	// Adding the 'base' key to be included as the first variant.
+	themeVariants.unshift( 'base' );
 
-	for ( const key in themeVariants ) {
-		// e.g: if dark = true.
-		if ( themeVariants[ key ] ) {
-			const themeVariant = style[ key ];
+	let variantStyle = '';
 
-			// If key exist in the style obj.
-			if ( themeVariant ) {
-				variantStyle += themeVariant.shared || '';
-				variantStyle += themeVariant.variants?.[ variant ] || '';
-			}
+	themeVariants.forEach( ( key ) => {
+		const themeVariant = styles[ key ];
+
+		// If key exist in the styles obj (dark, light etc.)
+		if ( themeVariant ) {
+			variantStyle += themeVariant.shared || '';
+
+			Object.entries( props ).forEach( ( [ propName, propValue ] ) => {
+				const styleData = themeVariant[ propName ];
+
+				if ( styleData && propValue ) {
+					if ( 'string' === typeof styleData ) {
+						variantStyle += styleData;
+					} else {
+						variantStyle += styleData.shared || '';
+						variantStyle += styleData[ propValue ] || '';
+					}
+				}
+			} );
 		}
-	}
+	} );
+
+	console.log( 'variantStyle', variantStyle );
 
 	return variantStyle;
 };

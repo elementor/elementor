@@ -8,7 +8,7 @@ export default {
 			font-weight: ${ fontWeight( 'normal' ) };
 			line-height: var(--e-styles-text-line-height, ${ lineHeight( 'base' ) });
 		`,
-		variant: {
+		variants: {
 			xxs: `
 				--e-styles-text-font-size: ${ text( 'xxs' ) };
 				--e-styles-text-line-height: ${ lineHeight( 'sm' ) };

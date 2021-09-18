@@ -9,7 +9,7 @@ export default {
 			font-size: var(--e-styles-heading-font-size);
 			margin-bottom: var(--e-styles-heading-margin-bottom);
 		`,
-		variants: {
+		variant: {
 			h1: `
 				--e-styles-heading-font-size: ${ heading( 'h1' ) };
 				--e-styles-heading-margin-bottom: 2.5 * ${ spacingBase };
@@ -67,9 +67,10 @@ export default {
 				margin-top: ${ spacingBase };
 			`,
 		},
+		size: `--size-value: default;`,
 	},
 	light: {
-		variants: {
+		variant: {
 			h1: `--e-styles-heading-color: ${ tints( '600' ) };`,
 			h2: `--e-styles-heading-color: ${ tints( '600' ) };`,
 			'display-3': `--e-styles-heading-color: ${ tints( '600' ) };`,

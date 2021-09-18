@@ -7,6 +7,12 @@ import Theme from 're-styled/theme';
 
 export default function Page( props ) {
 	const isDarkMode = document.body.classList.contains( `eps-theme-dark` ),
+		themeConfig = {
+			variants: {
+				light: ! isDarkMode,
+				dark: isDarkMode,
+			},
+		},
 		AppSidebar = () => {
 			if ( ! props.sidebar ) {
 				return;
@@ -29,7 +35,7 @@ export default function Page( props ) {
 		};
 
 	return (
-		<Theme variants={ { light: ! isDarkMode, dark: isDarkMode } }>
+		<Theme config={ themeConfig }>
 			<div className={`eps-app__lightbox ${ props.className }`}>
 				<div className="eps-app">
 					<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
