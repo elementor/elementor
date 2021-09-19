@@ -182,7 +182,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 *
 	 * Check whether an element is selected by it's container.
 	 *
-	 * @param container
+	 * @param {Container} container
 	 * @returns {boolean}
 	 */
 	hasElement( container ) {
