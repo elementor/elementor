@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev28 - 2021-09-19
+* Tweak: Adding a URL parameter to the import-export that skips the kit-content selection [ED-4750] (#16275)
+* Tweak: Internal - Allow external extending of Element Editing Handles Buttons [ED-4480] (#16232)
+
 #### 3.5.0-dev26 - 2021-09-15
 * Tweak: Updated featured video in readme.txt (#16332)
 
