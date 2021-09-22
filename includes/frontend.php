@@ -535,15 +535,7 @@ class Frontend extends App {
 		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
-
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
-
-			$frontend_file_url = $frontend_file->get_url();
+			$frontend_file_url = $this->get_custom_frontend_file_url( $frontend_file_name );
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
@@ -552,9 +544,17 @@ class Frontend extends App {
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
+			$frontend_legacy_file_name = 'frontend-legacy' . $direction_suffix . $min_suffix . '.css';
+
+			if ( $has_custom_file ) {
+				$frontend_legacy_file_url = $this->get_custom_frontend_file_url( $frontend_legacy_file_name );
+			} else {
+				$frontend_legacy_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_legacy_file_name;
+			}
+
 			wp_register_style(
 				'elementor-frontend-legacy',
-				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				$frontend_legacy_file_url,
 				[],
 				ELEMENTOR_VERSION
 			);
@@ -679,6 +679,26 @@ class Frontend extends App {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get Custom Frontend File URL
+	 *
+	 * Generate a custom frontend CSS file based on a passed template file name, and return the generated file's URL.
+	 *
+	 * @since 3.4.5
+	 * @access public
+	 */
+	private function get_custom_frontend_file_url( $frontend_file_name ) {
+		$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+
+		$time = $frontend_file->get_meta( 'time' );
+
+		if ( ! $time ) {
+			$frontend_file->update();
+		}
+
+		return $frontend_file->get_url();
 	}
 
 	/**
