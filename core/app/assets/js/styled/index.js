@@ -1,19 +1,19 @@
 import { useContext } from 'react';
 import styled, { ThemeContext } from 'styled-components';
-import { getStyle, mergeStyles } from 're-styled/utils';
+import { getStyle } from 're-styled/utils';
 
 export default function Styled( props ) {
-	console.log( 'props', props );
 	const themeContext = useContext( ThemeContext ),
-		styledProps = { ...props };
-
-	const styles = mergeStyles( props.styles, props.extendStyles );
+		styledProps = { ...props },
+		nonStyledProps = [ 'children', 'className', 'component', 'tag', 'styles', 'extendStyles', 'extend' ];
 
 	// Removing props that are not related to the component styles object.
-	[ 'children', 'className', 'component', 'tag', 'styles' ].forEach( ( prop ) => delete styledProps[ prop ] );
+	nonStyledProps.forEach( ( prop ) => delete styledProps[ prop ] );
 
-	const componentCss = getStyle( styles, { theme: themeContext.config, props: styledProps } ),
-		StyledComponent = styled[ props.tag ]`${ componentCss }`;
+	const stylesData = { props: styledProps, config: themeContext.config },
+		componentCss = getStyle( props.styles, stylesData ),
+		stylesExtension = getStyle( props.extendStyles, stylesData ),
+		StyledComponent = styled[ props.tag ]`${ componentCss }${ stylesExtension }`;
 
 	return <StyledComponent { ...props }>{ props.children }</StyledComponent>;
 }

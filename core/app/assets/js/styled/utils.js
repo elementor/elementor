@@ -18,17 +18,21 @@ export const bindProps = ( data ) => {
 
 /**
  * @param styles - { base: { shared: '', variant: { h1: '', h2: '' } }, dark: { shared: '', variant: { h1: '', h2: '' } } }
- * @param theme - { variants: { light: true, dark: false } }
- * @param props - { variant: 'h1' }
+ * @param config - { variants: { light: true, dark: false } }
+ * @param props - { variant: 'h1', size: 'xl' }
  * @returns {string}
  */
-export const getStyle = ( styles, { theme, props } ) => {
+export const getStyle = ( styles, { props, config } ) => {
+	if ( ! styles ) {
+		return '';
+	}
+
 	if ( 'string' === typeof styles ) {
-		styles = { base: styles };
+		return styles;
 	}
 
 	// Creating an array that holds only the active theme variants values.
-	const themeVariants = Object.keys( theme.variants ).filter( ( key ) => theme.variants[ key ] );
+	const themeVariants = Object.keys( config.variants ).filter( ( key ) => config.variants[ key ] );
 
 	// Adding the 'base' key to be included as the first variant.
 	themeVariants.unshift( 'base' );
@@ -46,6 +50,7 @@ export const getStyle = ( styles, { theme, props } ) => {
 				variantStyle += themeVariant.shared || '';
 			}
 
+			// Getting the styled props css from the styles object.
 			Object.entries( props ).forEach( ( [ propName, propValue ] ) => {
 				const styleData = themeVariant[ propName ];
 
@@ -62,15 +67,4 @@ export const getStyle = ( styles, { theme, props } ) => {
 	} );
 
 	return variantStyle;
-};
-
-export const mergeStyles = ( ...styles ) => {
-	// Making sure that each value of styles is an object with the specific styles structure.
-	styles = styles.map( ( style ) => 'string' === typeof style ? { base: { shared: style } } : style );
-
-	const mergedObj = {};
-
-	// Merging the styles objects.
-
-	return '';
 };
