@@ -1,8 +1,8 @@
-import { useContext } from 'react';
+import { useContext, forwardRef } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import { getStyle } from 're-styled/utils';
 
-export default function Styled( props ) {
+const Styled = forwardRef( ( props, ref ) => {
 	const themeContext = useContext( ThemeContext ),
 		styledProps = { ...props },
 		nonStyledProps = [ 'children', 'className', 'component', 'tag', 'styles', 'extendStyles', 'extend' ];
@@ -15,8 +15,10 @@ export default function Styled( props ) {
 		stylesExtension = getStyle( props.extendStyles, stylesData ),
 		StyledComponent = styled[ props.tag ]`${ componentCss }${ stylesExtension }`;
 
-	return <StyledComponent { ...props }>{ props.children }</StyledComponent>;
-}
+	return <StyledComponent { ...props } ref={ ref }>{ props.children }</StyledComponent>;
+} );
+
+Styled.displayName = 'Styled';
 
 Styled.propTypes = {
 	tag: PropTypes.string.isRequired,
@@ -32,15 +34,18 @@ Styled.defaultProps = {
 	extendStyles: '',
 };
 
+export default Styled;
+
 export const withStyles = ( StyledComponent ) => {
-	return ( props ) => {
+	return forwardRef( ( props, ref ) => {
 		const newProps = { ...props };
 
 		if ( props.styles ) {
 			// Preventing the collision of the outer component 'styles' prop and the inner component 'styles' prop.
 			newProps.extendStyles = props.styles;
+			delete newProps.styles;
 		}
 
-		return <StyledComponent { ...newProps } />;
-	};
+		return <StyledComponent { ...newProps } ref={ ref } />;
+	} );
 };
