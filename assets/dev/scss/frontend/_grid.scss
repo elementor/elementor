@@ -137,6 +137,11 @@
 	> .elementor-element {
 		width: 100%;
 	}
+
+	// Fix: When adding margin to column of carousel-widget, it breaks the UI
+	&.e-has-image-carousel-widget {
+		width: calc(100% - (var(--e-column-margin-left, 0px) + var(--e-column-margin-right, 0px)));
+	}
 }
 
 .elementor-widget {
