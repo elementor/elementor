@@ -2,7 +2,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 	getDefaultSettings() {
 		return {
 			selectors: {
-				widgetWrapper: '.elementor-widget-wrap',
 				carousel: '.elementor-image-carousel-wrapper',
 				slideContent: '.swiper-slide',
 			},
@@ -14,7 +13,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 
 		const elements = {
 			$swiperContainer: this.$element.find( selectors.carousel ),
-			$widgetWrapper: this.$element.closest( selectors.widgetWrapper ),
 		};
 
 		elements.$slides = elements.$swiperContainer.find( selectors.slideContent );
@@ -107,9 +105,6 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Sw
 		}
 
 		const Swiper = elementorFrontend.utils.swiper;
-
-		// Fix: When adding margin to column of carousel-widget, it breaks the UI
-		this.elements.$widgetWrapper.addClass( 'e-has-image-carousel-widget' );
 
 		this.swiper = await new Swiper( this.elements.$swiperContainer, this.getSwiperSettings() );
 

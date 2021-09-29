@@ -33,6 +33,9 @@ export default class SwiperBC {
 			legacySwiper();
 		}
 
+		// Fix: When adding margin to column of "media-carousel widget" it breaks the UI
+		container.closest( '.elementor-widget-wrap' ).addClass( 'e-has-image-carousel-widget' );
+
 		SwiperSource.prototype.adjustConfig = this.adjustConfig;
 
 		return new SwiperSource( container, config );
