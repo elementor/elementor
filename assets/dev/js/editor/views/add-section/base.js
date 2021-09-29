@@ -191,20 +191,25 @@ class AddSectionBase extends Marionette.ItemView {
 				newContainer = ContainerHelper.createContainer( {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
-					children_flex_basis_type: 'custom',
-					children_flex_basis: {
+				}, elementor.getPreviewContainer(), this.options );
+
+				const settings = {
+					width: {
 						unit: '%',
 						size: '50',
 					},
-					children_flex_basis_mobile: {
+					width_mobile: {
 						unit: '%',
 						size: '100',
 					},
-				}, elementor.getPreviewContainer(), this.options );
+				};
 
-				const containers = ContainerHelper.createContainers( 2, {}, newContainer, { edit: false } );
+				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
 
-				ContainerHelper.createContainers( 2, {}, containers[ 1 ], { edit: false } );
+				// Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
+
+				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
 				break;
 
@@ -245,12 +250,12 @@ class AddSectionBase extends Marionette.ItemView {
 				},
 			} );
 
-		if ( AddSectionBase.IS_CONTAINER_ACTIVE ) {
-			// Create the element in the container.
-			containingElement.view.addElementFromPanel();
-		} else {
+		if ( ! AddSectionBase.IS_CONTAINER_ACTIVE ) {
 			// Create the element in column.
 			containingElement.view.children.findByIndex( 0 ).addElementFromPanel();
+		} else if ( 'container' !== selectedElement.model.get( 'elType' ) ) {
+			// Create the element in a Container, only if the dragged element is not a Container already.
+			containingElement.view.addElementFromPanel();
 		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
