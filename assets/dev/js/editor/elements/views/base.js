@@ -72,10 +72,6 @@ BaseElementView = BaseContainer.extend( {
 		};
 	},
 
-	getFloatingBarConfig() {
-		return {};
-	},
-
 	getElementType() {
 		return this.model.get( 'elType' );
 	},

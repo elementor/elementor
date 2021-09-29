@@ -178,6 +178,12 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function before_render() {
+		$link = $this->get_settings( 'link' );
+
+		if ( ! empty( $link['url'] ) ) {
+			$this->add_link_attributes( '_wrapper', $link );
+		}
+
 		?>
 		<<?php $this->print_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
@@ -235,81 +241,18 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'layout',
-			[
-				'label' => esc_html__( 'Content Width', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'boxed',
-				'options' => [
-					'full-width' => esc_html__( 'Full Width', 'elementor' ),
-					'boxed' => esc_html__( 'Boxed', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'full-width' => '100%',
-					'boxed' => 'var( --container-max-width, 1140px )', // Default same as section.
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--max-width: {{VALUE}};',
-				],
-			]
-		);
-
 		$this->add_responsive_control(
-			'content_width',
+			'width',
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vw' ],
 				'range' => [
 					'px' => [
 						'min' => 500,
 						'max' => 1600,
 					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--max-width: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'layout' => [ 'boxed' ],
-				],
-				'separator' => 'none',
-			]
-		);
-
-		$this->add_responsive_control(
-			'height',
-			[
-				'label' => esc_html__( 'Height', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'' => esc_html__( 'Default', 'elementor' ),
-					'full' => esc_html__( 'Fit To Screen', 'elementor' ),
-					'min-height' => esc_html__( 'Min Height', 'elementor' ),
-				],
-				'selectors_dictionary' => [
-					'full' => '100vh',
-					'min-height' => '',
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--height: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'custom_height',
-			[
-				'label' => esc_html__( 'Minimum Height', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'default' => [
-					'size' => 400,
-				],
-				'range' => [
-					'px' => [
-						'min' => 0,
-						'max' => 1440,
-					],
-					'vh' => [
+					'%' => [
 						'min' => 0,
 						'max' => 100,
 					],
@@ -318,12 +261,42 @@ class Container extends Element_Base {
 						'max' => 100,
 					],
 				],
-				'size_units' => [ 'px', 'vh', 'vw' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
+				],
+				'separator' => 'none',
+			]
+		);
+
+		$this->add_responsive_control(
+			'min_height',
+			[
+				'label' => esc_html__( 'Min Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'vh' ],
+				'range' => [
+					'px' => [
+						'min' => 0,
+						'max' => 1440,
+					],
+					'%' => [
+						'min' => 0,
+						'max' => 100,
+					],
+					'vh' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
+				'description' => sprintf(
+					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
+					'100vh'
+				),
 				'selectors' => [
 					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
-				],
-				'condition' => [
-					'height' => [ 'min-height' ],
 				],
 			]
 		);
@@ -346,8 +319,6 @@ class Container extends Element_Base {
 				],
 			]
 		);
-
-		$this->register_children_layout_controls();
 
 		$this->add_control(
 			'overflow',
@@ -375,6 +346,7 @@ class Container extends Element_Base {
 			'section' => 'section',
 			'aside' => 'aside',
 			'nav' => 'nav',
+			'a' => 'a',
 		];
 
 		$options = [
@@ -390,35 +362,23 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->end_controls_section();
-	}
-
-	/**
-	 * Register the Container's flex items layout controls.
-	 *
-	 * @return void
-	 */
-	protected function register_children_layout_controls() {
 		$this->add_control(
-			'flex_children_heading',
+			'link',
 			[
-				'label' => esc_html__( 'Flex Children', 'elementor' ),
-				'type' => Controls_Manager::HEADING,
-				'separator' => 'before',
+				'label' => esc_html__( 'Link', 'elementor' ),
+				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
+				'placeholder' => esc_html__( 'https://your-link.com', 'elementor' ),
+				'condition' => [
+					'html_tag' => 'a',
+				],
+				'description' => esc_html__( 'Don\'t use for nested links, this will cause semantic issues and unexpected behavior.', 'elementor' ),
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Flex_Item::get_type(),
-			[
-				'name' => 'children_flex',
-				'exclude' => [
-					'align_self',
-					'order',
-				],
-				'selector' => '{{WRAPPER}} > *',
-			]
-		);
+		$this->end_controls_section();
 	}
 
 	/**
@@ -546,6 +506,14 @@ class Container extends Element_Base {
 			[
 				'name' => 'background_overlay',
 				'selector' => '{{WRAPPER}}::before',
+				'fields_options' => [
+					'background' => [
+						'selectors' => [
+							// Hack to set the `::before` content in order to render it only when there is a background overlay.
+							'{{WRAPPER}}::before' => '--background-overlay: \'\';',
+						],
+					],
+				],
 			]
 		);
 
@@ -650,6 +618,14 @@ class Container extends Element_Base {
 			[
 				'name' => 'background_overlay_hover',
 				'selector' => '{{WRAPPER}}:hover::before',
+				'fields_options' => [
+					'background' => [
+						'selectors' => [
+							// Hack to set the `::before` content in order to render it only when there is a background overlay.
+							'{{WRAPPER}}:hover::before' => '--background-overlay: \'\';',
+						],
+					],
+				],
 			]
 		);
 
@@ -869,9 +845,9 @@ class Container extends Element_Base {
 	 */
 	protected function register_advanced_controls() {
 		$this->start_controls_section(
-			'section_advanced',
+			'section_layout',
 			[
-				'label' => esc_html__( 'Advanced', 'elementor' ),
+				'label' => esc_html__( 'Layout', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
@@ -882,6 +858,13 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'allowed_dimensions' => 'vertical',
+				'placeholder' => [
+					'top' => '',
+					'right' => 'auto',
+					'bottom' => '',
+					'left' => 'auto',
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -903,6 +886,260 @@ class Container extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Flex_Item::get_type(),
+			[
+				'name' => '_flex',
+				'include' => [
+					'align_self',
+					'order',
+					'order_custom',
+				],
+				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
+			]
+		);
+
+		$this->add_control(
+			'position_description',
+			[
+				'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Custom positioning is not considered best practice for responsive web design and should not be used too frequently.', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		// TODO: Copied from `common.php` - Extract to group control.
+		$this->add_control(
+			'position',
+			[
+				'label' => esc_html__( 'Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'absolute' => esc_html__( 'Absolute', 'elementor' ),
+					'fixed' => esc_html__( 'Fixed', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--position: {{VALUE}};',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$left = esc_html__( 'Left', 'elementor' );
+		$right = esc_html__( 'Right', 'elementor' );
+
+		$start = is_rtl() ? $right : $left;
+		$end = ! is_rtl() ? $right : $left;
+
+		$this->add_control(
+			'_offset_orientation_h',
+			[
+				'label' => esc_html__( 'Horizontal Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => $start,
+						'icon' => 'eicon-h-align-left',
+					],
+					'end' => [
+						'title' => $end,
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h!' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_x_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 0.1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'default' => [
+					'size' => '0',
+				],
+				'size_units' => [ 'px', '%', 'vw', 'vh' ],
+				'selectors' => [
+					'body:not(.rtl) {{WRAPPER}}' => 'right: {{SIZE}}{{UNIT}}',
+					'body.rtl {{WRAPPER}}' => 'left: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_h' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'_offset_orientation_v',
+			[
+				'label' => esc_html__( 'Vertical Orientation', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'toggle' => false,
+				'default' => 'start',
+				'options' => [
+					'start' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'end' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'render_type' => 'ui',
+				'condition' => [
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'top: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v!' => 'end',
+					'position!' => '',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_offset_y_end',
+			[
+				'label' => esc_html__( 'Offset', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'min' => -1000,
+						'max' => 1000,
+						'step' => 1,
+					],
+					'%' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vh' => [
+						'min' => -200,
+						'max' => 200,
+					],
+					'vw' => [
+						'min' => -200,
+						'max' => 200,
+					],
+				],
+				'size_units' => [ 'px', '%', 'vh', 'vw' ],
+				'default' => [
+					'size' => '0',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'bottom: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [
+					'_offset_orientation_v' => 'end',
+					'position!' => '',
 				],
 			]
 		);
@@ -946,32 +1183,6 @@ class Container extends Element_Base {
 				'prefix_class' => '',
 				'title' => esc_html__( 'Add your custom class WITHOUT the dot. e.g: my-class', 'elementor' ),
 				'classes' => 'elementor-control-direction-ltr',
-			]
-		);
-
-		$this->end_controls_section();
-	}
-
-	/**
-	 * Register the Container's flex child controls.
-	 *
-	 * @return void
-	 */
-	protected function register_flex_child_controls() {
-		$this->start_controls_section(
-			'section_flex',
-			[
-				'label' => esc_html__( 'Flex', 'elementor' ),
-				'type' => Controls_Manager::SECTION,
-				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Flex_Item::get_type(),
-			[
-				'name' => '_flex',
-				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 			]
 		);
 
@@ -1081,8 +1292,6 @@ class Container extends Element_Base {
 	 */
 	protected function register_advanced_tab() {
 		$this->register_advanced_controls();
-
-		$this->register_flex_child_controls();
 
 		$this->register_motion_effects_controls();
 

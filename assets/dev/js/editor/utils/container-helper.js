@@ -89,12 +89,11 @@ export class ContainerHelper {
 		sizes.forEach( ( size ) => {
 			this.createContainer( {
 				flex_direction: this.DIRECTION_COLUMN,
-				_flex_basis_type: 'custom',
-				_flex_basis: {
+				width: {
 					unit: '%',
 					size,
 				},
-				_flex_basis_mobile: { // For out-of-the-box responsiveness.
+				width_mobile: { // For out-of-the-box responsiveness.
 					unit: '%',
 					size: '100',
 				},

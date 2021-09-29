@@ -28,29 +28,6 @@ const ContainerView = BaseElementView.extend( {
 		};
 	},
 
-	getFloatingBarConfig() {
-		return {
-			position: {
-				// TODO: For future use.
-				left: 0,
-				bottom: 0,
-			},
-			defaultGroup: 'container',
-			groups: {
-				container: {
-					title: __( 'Container', 'elementor' ),
-					icon: 'eicons-container', // TODO: For future use.
-					settings: {
-						flex_direction: '',
-						flex_align_items: '',
-						flex_justify_content: '',
-						flex_wrap: '',
-					},
-				},
-			},
-		};
-	},
-
 	behaviors: function() {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
@@ -71,21 +48,41 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
-
-		// Hide the Floating Bar when exiting element edit mode.
-		this.model.on( 'editor:close', () => {
-			if ( this.setFloatingBarVisible ) {
-				this.setFloatingBarVisible( false );
-			}
-		} );
 	},
 
 	getSortableOptions: function() {
 		return {
 			connectWith: '.e-container, .elementor-widget-wrap',
 			items: '> .elementor-element',
-			tolerance: 'pointer',
+			tolerance: 'intersect', // Use a lower tolerance option since the other one makes the DnD fragile (See https://api.jqueryui.com/sortable/#option-tolerance).
 			swappable: true,
+		};
+	},
+
+	getDroppableOptions: function() {
+		return {
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+			groups: [ 'elementor-element' ],
+			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'e-dragging-over',
+			onDropping: ( side, event ) => {
+				event.stopPropagation();
+
+				// Triggering drag end manually, since it won't fired above iframe
+				elementor.getPreviewView().onPanelElementDragEnd();
+
+				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
+				let newIndex = widgets.indexOf( event.currentTarget );
+
+				// Plus one in order to insert it after the current target element.
+				if ( [ 'bottom', 'right' ].includes( side ) ) {
+					newIndex++;
+				}
+
+				this.addElementFromPanel( { at: newIndex } );
+			},
 		};
 	},
 
@@ -227,52 +224,9 @@ const ContainerView = BaseElementView.extend( {
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
-		// Show the floating bar if the current element is in edit mode.
-		// TODO: Find out why the element is being rendered when setting a control value to its current value.
-		if ( this.model.get( 'id' ) === elementor.getCurrentElement()?.model?.get( 'id' ) ) {
-			setTimeout( () => {
-				// TODO: Wait for the handler to initialize the Floating Bar when creating a new Container
-				//  so the `setFloatingBarVisible` will be available for the view.
-				if ( this.setFloatingBarVisible ) {
-					this.setFloatingBarVisible( true );
-				}
-			}, 10 );
-		}
-
 		this.changeContainerClasses();
 
-		// Defer in order to wait until the element is fully initialized.
-		// TODO: Find a better solution.
-		_.defer( () => {
-			if ( this.isNested() ) {
-				this.$el.find( '.elementor-editor-element-add' ).remove();
-			}
-		} );
-
-		this.$el.html5Droppable( {
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add, > .elementor-empty-view .e-container-select-preset__inner',
-			groups: [ 'elementor-element' ],
-			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
-			currentElementClass: 'elementor-html5dnd-current-element',
-			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
-			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: ( side, event ) => {
-				event.stopPropagation();
-
-				// Triggering drag end manually, since it won't fired above iframe
-				elementor.getPreviewView().onPanelElementDragEnd();
-
-				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
-				let newIndex = widgets.indexOf( event.currentTarget );
-
-				// Plus one in order to insert it after the current target element.
-				if ( [ 'bottom', 'right' ].includes( side ) ) {
-					newIndex++;
-				}
-
-				this.addElementFromPanel( { at: newIndex } );
-			},
-		} );
+		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 } );
 
