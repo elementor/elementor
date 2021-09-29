@@ -13,27 +13,13 @@ export default {
 				--e-styles-text-font-size: ${ text( 'xxs' ) };
 				--e-styles-text-line-height: ${ lineHeight( 'sm' ) };
 			`,
-			xs: `
-				--e-styles-text-font-size: ${ text( 'xs' ) };
-			`,
-			sm: `
-				--e-styles-text-font-size: ${ text( 'sm' ) };
-			`,
-			md: `
-				--e-styles-text-font-size: ${ text( 'md' ) };
-			`,
-			lg: `
-				--e-styles-text-font-size: ${ text( 'lg' ) };
-			`,
-			xl: `
-				--e-styles-text-font-size: ${ text( 'xl' ) };
-			`,
+			xs: `--e-styles-text-font-size: ${ text( 'xs' ) };`,
+			sm: `--e-styles-text-font-size: ${ text( 'sm' ) };`,
+			md: `--e-styles-text-font-size: ${ text( 'md' ) };`,
+			lg: `--e-styles-text-font-size: ${ text( 'lg' ) };`,
+			xl: `--e-styles-text-font-size: ${ text( 'xl' ) };`,
 		},
 	},
-	light: {
-		shared: `--e-styles-text-color: ${ tints( '800' ) };`,
-	},
-	dark: {
-		shared: `--e-styles-text-color: ${ darkTints( '200' ) };`,
-	},
+	light: `--e-styles-text-color: ${ tints( '800' ) };`,
+	dark: `--e-styles-text-color: ${ darkTints( '200' ) };`,
 };

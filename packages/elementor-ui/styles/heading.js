@@ -76,7 +76,5 @@ export default {
 			'display-3': `--e-styles-heading-color: ${ tints( '600' ) };`,
 		},
 	},
-	dark: {
-		shared: `--e-styles-heading-color: ${ darkTints( '100' ) };`,
-	},
+	dark: `--e-styles-heading-color: ${ darkTints( '100' ) };`,
 };
