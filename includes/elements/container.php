@@ -309,6 +309,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Spacing', 'Flex Item Control', 'elementor' ),
+						'placeholder' => '20',
 					],
 					'direction' => [
 						'default' => 'column',

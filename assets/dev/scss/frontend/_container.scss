@@ -13,6 +13,7 @@
 	--z-index: auto;
 	--overflow: visible;
 	--transition: 0;
+	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
 
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;

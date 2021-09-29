@@ -80,8 +80,12 @@ export class ContainerHelper {
 
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
-				flex_direction: ContainerHelper.DIRECTION_ROW,
+				flex_direction: this.DIRECTION_ROW,
 				flex_wrap: 'wrap',
+				flex_gap: {
+					unit: 'px',
+					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+				},
 			}, target, options );
 
 		// Create all sub containers using the sizes array.

@@ -191,6 +191,10 @@ class AddSectionBase extends Marionette.ItemView {
 				newContainer = ContainerHelper.createContainer( {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
 				}, elementor.getPreviewContainer(), this.options );
 
 				const settings = {
