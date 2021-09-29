@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
@@ -67,6 +68,30 @@ class Module extends BaseApp {
 		$this->print_config();
 	}
 
+	private function add_frontend_settings() {
+		$settings = [];
+		$settings['is_administrator'] = current_user_can( 'manage_options' );
+		$current_screen = get_current_screen();
+
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		if ( $library ) {
+			$settings = array_merge( $settings, [
+				'is_user_connected' => $library->is_connected(),
+				'connect_url' => $library->get_admin_url( 'authorize', [
+					'utm_source' => 'top-bar',
+					'utm_medium' => 'wp-dash',
+					'utm_campaign' => 'connect-account',
+					'utm_content' => $current_screen ? $current_screen->id : '',
+				] ),
+			] );
+		}
+
+		$this->set_settings( $settings );
+
+		do_action( 'elementor/admin-top-bar/init', $this );
+	}
+
 	/**
 	 * Register dashboard widgets.
 	 *
@@ -95,6 +120,8 @@ class Module extends BaseApp {
 				return;
 			}
 
+			$this->add_frontend_settings();
+
 			add_action( 'in_admin_header', function () {
 				$this->render_admin_top_bar();
 			} );
@@ -107,23 +134,5 @@ class Module extends BaseApp {
 				$this->register_dashboard_widgets();
 			} );
 		} );
-
-		add_action( 'elementor/init', function () {
-			$settings = [];
-			$settings['is_administrator'] = current_user_can( 'manage_options' );
-
-			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
-			$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-			if ( $library ) {
-				$settings = array_merge( $settings, [
-					'is_user_connected' => $library->is_connected(),
-					'connect_url' => $library->get_admin_url( 'authorize' ),
-				] );
-			}
-
-			$this->set_settings( $settings );
-
-			do_action( 'elementor/admin-top-bar/init', $this );
-		}, 12 /* After component 'connect' register the apps */ );
 	}
 }
