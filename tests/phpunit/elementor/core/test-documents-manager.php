@@ -3,7 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core;
 
 use Elementor\Core\Base\Document;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Documents_Manager extends Elementor_Test_Base {
 	public function test_ajax_get_document_config__set_id_build_with_elementor() {

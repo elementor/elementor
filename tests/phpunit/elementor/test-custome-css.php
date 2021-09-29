@@ -1,6 +1,7 @@
 <?php
-
 namespace Elementor\Testing;
+
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Document_Types extends Elementor_Test_Base {
 
