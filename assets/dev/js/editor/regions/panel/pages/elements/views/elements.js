@@ -18,6 +18,10 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
+		if ( elementorCommon.config.experimentalFeatures[ 'e_hidden_wordpress_widgets' ] && childModel.get( 'categories' ).includes( 'wordpress' ) ) {
+			return false;
+		}
+
 		if ( -1 !== childModel.get( 'title' ).toLowerCase().indexOf( filterValue.toLowerCase() ) ) {
 			return true;
 		}
