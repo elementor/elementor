@@ -5,7 +5,7 @@ on: [push, pull_request_target]
 jobs:
   run:
     if: github.repository_owner == 'elementor'
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
     steps:
