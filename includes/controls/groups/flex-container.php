@@ -61,15 +61,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => '',
 						],
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => 'row',
 						],
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => 'row-reverse',
 						],
 					],
