@@ -1,21 +1,3 @@
-import { css } from 'styled-components';
-
-const bindProp = ( obj ) => {
-	const [ key, value ] = Object.entries( obj )[ 0 ];
-
-	return value && css`
-			${ key }: ${ value };
-		`;
-};
-
-export const bindProps = ( data ) => {
-	if ( ! Array.isArray( data ) ) {
-		data = [ data ];
-	}
-
-	return data.map( ( obj ) => bindProp( obj ) );
-};
-
 /**
  * @param styles - { base: { shared: '', variant: { h1: '', h2: '' } }, dark: { shared: '', variant: { h1: '', h2: '' } } }
  * @param config - { variants: { light: true, dark: false } }
