@@ -818,7 +818,7 @@ abstract class Controls_Stack extends Base_Object {
 		$is_frontend_available = ! empty( $args['frontend_available'] );
 		$has_prefix_class = ! empty( $args['prefix_class'] );
 
-		if ( $options['overwrite'] ) {
+		if ( ! empty( $options['overwrite'] ) ) {
 			// If this is an updated control, check if it needs to be duplicated or not.
 			$is_duplicated_overwrite = $this->is_duplicated_overwrite( $id );
 		} else {
