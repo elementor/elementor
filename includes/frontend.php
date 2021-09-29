@@ -141,18 +141,6 @@ class Frontend extends App {
 	];
 
 	/**
-	 * Has Custom Breakpoints
-	 *
-	 * Whether custom breakpoints are active in the system.
-	 *
-	 * @since 3.4.5
-	 * @access private
-	 *
-	 * @var bool
-	 */
-	private $has_custom_breakpoints;
-
-	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -545,13 +533,13 @@ class Frontend extends App {
 
 		$frontend_dependencies = [];
 
-		$this->has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
-				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css' ),
+				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
 				[],
 				ELEMENTOR_VERSION
 			);
@@ -561,9 +549,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$this->get_frontend_file_url( $frontend_file_name ),
+			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
 			$frontend_dependencies,
-			$this->has_custom_breakpoints ? null : ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		/**
@@ -681,19 +669,20 @@ class Frontend extends App {
 	/**
 	 * Get Frontend File URL
 	 *
-	 * Returns the URL for the CSS file to be loaded in the front end. If there are custom breakpoints, a custom file
-	 * is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
 	 *
 	 * @since 3.4.5
 	 *
 	 * @access private
 	 *
 	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
 	 *
 	 * @return string frontend file URL
 	 */
-	private function get_frontend_file_url( $frontend_file_name ) {
-		if ( $this->has_custom_breakpoints ) {
+	private function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
 			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
 
 			$time = $frontend_file->get_meta( 'time' );
