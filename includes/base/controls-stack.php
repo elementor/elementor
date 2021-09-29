@@ -812,18 +812,21 @@ abstract class Controls_Stack extends Base_Object {
 			unset( $args['devices'] );
 		}
 
-		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
-		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
-		$control_is_dynamic = ! empty( $args['dynamic']['active'] );
-		$is_frontend_available = ! empty( $args['frontend_available'] );
-		$has_prefix_class = ! empty( $args['prefix_class'] );
+		$control_to_check = $args;
 
 		if ( ! empty( $options['overwrite'] ) ) {
-			// If this is an updated control, check if it needs to be duplicated or not.
-			$is_duplicated_overwrite = $this->is_duplicated_overwrite( $id );
-		} else {
-			$is_duplicated_overwrite = false;
+			$existing_control = Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id );
+
+			if ( ! is_wp_error( $existing_control ) ) {
+				$control_to_check = $existing_control;
+			}
 		}
+
+		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
+		$control_is_dynamic = ! empty( $control_to_check['dynamic']['active'] );
+		$is_frontend_available = ! empty( $control_to_check['frontend_available'] );
+		$has_prefix_class = ! empty( $control_to_check['prefix_class'] );
 
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
@@ -833,7 +836,6 @@ abstract class Controls_Stack extends Base_Object {
 			// Some responsive controls need responsive settings to be available to the widget handler, even when empty.
 			&& ! $is_frontend_available
 			&& ! $has_prefix_class
-			&& ! $is_duplicated_overwrite
 		) {
 			$args['is_responsive'] = true;
 
@@ -2279,33 +2281,6 @@ abstract class Controls_Stack extends Base_Object {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.9.0', __CLASS__ . '::init()' );
 
 		$this->init( $data );
-	}
-
-	/**
-	 * Is Duplicated Overwrite
-	 *
-	 * This method accepts a control ID of a responsive control, and checks if the control already exists, and if it
-	 * does, determines whether it should be duplicated or not.
-	 *
-	 * @since 3.4.5
-	 *
-	 * @param $control_id
-	 * @return bool
-	 */
-	private function is_duplicated_overwrite( $control_id ) {
-		$existing_control = Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id );
-
-		if ( is_wp_error( $existing_control ) ) {
-			// This is a new control and not an existing control being updated.
-			$is_duplicated_overwrite = false;
-		} else {
-			// This is an existing control being updated, make sure it is duplicated if necessary.
-			$is_duplicated_overwrite = ! empty( $existing_control['frontend_available'] )
-				|| ! empty( $existing_control['prefix_class'] )
-				|| ! empty( $existing_control['dynamic']['active'] );
-		}
-
-		return $is_duplicated_overwrite;
 	}
 
 	/**
