@@ -179,6 +179,11 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'icon' => 'eicon-flex-wrap',
 				],
 			],
+			'description' => esc_html_x(
+				'Define whether the items are forced in a single line (No Wrap) or can be flowed into multiple lines (Wrap)',
+				'Flex Container Control',
+				'elementor'
+			),
 			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-wrap: {{VALUE}};',
