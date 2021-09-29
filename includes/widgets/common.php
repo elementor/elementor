@@ -194,32 +194,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_height',
-			[
-				'label' => esc_html__( 'Height', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'max' => 100,
-						'step' => 1,
-					],
-					'vh' => [
-						'max' => 100,
-						'step' => 1,
-					],
-				],
-				'size_units' => [ 'px', '%', 'vh' ],
-				'selectors' => [
-					'{{WRAPPER}}' => 'height: {{SIZE}}{{UNIT}}; max-height: {{SIZE}}{{UNIT}}',
-				],
 				'separator' => 'after',
 			]
 		);
