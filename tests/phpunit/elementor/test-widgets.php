@@ -2,6 +2,7 @@
 namespace Elementor\Testing;
 
 use Elementor\Utils;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Widgets extends Elementor_Test_Base {
 

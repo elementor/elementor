@@ -2,12 +2,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\KitLibrary\Data\Taxonomies;
 
 use Elementor\Plugin;
-use Elementor\Testing\Traits\Rest_Trait;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Module;
 use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies\Controller;
+use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Rest_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

@@ -2,6 +2,7 @@
 namespace Elementor\Testing;
 
 use Elementor\Controls_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Controls extends Elementor_Test_Base {
 
