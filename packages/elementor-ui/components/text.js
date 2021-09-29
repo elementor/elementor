@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import Styled, { withStyles } from 're-styled';
+import { Styled, withStyles } from 'e-components';
 import styles from 'e-styles/text';
 
 const Text = forwardRef( ( props, ref ) => (

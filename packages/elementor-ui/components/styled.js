@@ -1,6 +1,6 @@
 import { useContext, forwardRef } from 'react';
 import styled, { ThemeContext } from 'styled-components';
-import { getStyle } from 're-styled/utils';
+import { getStyle } from 'e-components/utils';
 
 const Styled = forwardRef( ( props, ref ) => {
 	const themeContext = useContext( ThemeContext ),

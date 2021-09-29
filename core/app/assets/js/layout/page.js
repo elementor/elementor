@@ -3,7 +3,7 @@ import Sidebar from './sidebar';
 import Content from './content';
 import Footer from './footer';
 
-import Theme from 're-styled/theme';
+import Theme from 'e-components/theme';
 
 export default function Page( props ) {
 	const isDarkMode = document.body.classList.contains( `eps-theme-dark` ),
