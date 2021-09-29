@@ -220,6 +220,7 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'height: {{SIZE}}{{UNIT}}; max-height: {{SIZE}}{{UNIT}}',
 				],
+				'separator' => 'after',
 			]
 		);
 
@@ -295,6 +296,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-',
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -513,7 +515,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 

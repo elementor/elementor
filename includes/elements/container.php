@@ -901,6 +901,7 @@ class Container extends Element_Base {
 					'order_custom',
 				],
 				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
+				'separator' => 'before',
 			]
 		);
 
@@ -933,6 +934,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--position: {{VALUE}};',
 				],
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
