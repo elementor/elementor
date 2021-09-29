@@ -28,8 +28,30 @@
 		max-width: 1em;
 	}
 
-	.e-ui-state--document-direction-mode__column &:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ):not( .eicon-flex-grow ) {
-		transform: rotate( 90deg );
+	// Rotate flex icons based on direction.
+	&:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ):not( .eicon-flex-grow ) {
+		// Container direction column / reversed column.
+		:is( .e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse ) & {
+			transform: rotate( 90deg );
+
+			&:is( .eicon-flex-align-start, .eicon-flex-align-end ) {
+				transform: rotate( -90deg );
+			}
+		}
+
+		// Container direction reversed column.
+		.e-ui-state--document-direction-mode__column-reverse & {
+			&:is( .eicon-flex-justify-start, .eicon-flex-justify-end ) {
+				transform: rotate( -90deg );
+			}
+		}
+
+		// Container direction reversed row
+		.e-ui-state--document-direction-mode__row-reverse & {
+			&:is( .eicon-flex-justify-start, .eicon-flex-justify-end ) {
+				transform: rotate( 180deg );
+			}
+		}
 	}
 }
 
