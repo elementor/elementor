@@ -45,6 +45,12 @@ html.elementor-html {
 		--primary-color: #0098C7;
 		--secondary-color: #{ darken(#0098C7, 10%) };
 		--outline-color: var( --primary-color );
+
+		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
+		// between Containers.
+		&.e-dragging-over {
+			outline: 1px solid var( --outline-color );
+		}
 	}
 
 	.elementor-inner-section {
