@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\AdminBar;
 
 use Elementor\Plugin;
 use Elementor\Modules\AdminBar\Module;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
