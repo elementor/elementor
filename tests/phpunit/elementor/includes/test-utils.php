@@ -3,7 +3,7 @@ namespace Elementor\Testing\Includes;
 
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
