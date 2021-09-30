@@ -16,10 +16,39 @@ export default class extends Marionette.Behavior {
 		this.view.options.resizeable = this;
 	}
 
+	/**
+	 * Get the resizable options object.
+	 *
+	 * @return {Object}
+	 */
+	getOptions() {
+		let handles = 'e, w';
+
+		// If it's a container item, add resize handles only at the end of the element in order to prevent UI
+		// glitches when resizing from start.
+		if ( this.isContainerItem() ) {
+			handles = elementorCommon.config.isRTL ? 'w' : 'e';
+		}
+
+		return {
+			handles,
+		};
+	}
+
+	/**
+	 * Determine if the current element should have resize handles.
+	 *
+	 * @return {boolean}
+	 */
+	shouldHaveHandles() {
+		const isRowContainer = this.isContainerItem() && [ 'row', 'row-reverse', '' ].includes( this.getParentFlexDirection() ),
+			isRegularItem = ! this.isContainerItem();
+
+		return isRowContainer || isRegularItem;
+	}
+
 	activate() {
-		this.$el.resizable( {
-			handles: 'e, w',
-		} );
+		this.$el.resizable( this.getOptions() );
 	}
 
 	deactivate() {
@@ -33,14 +62,11 @@ export default class extends Marionette.Behavior {
 	toggle() {
 		const editModel = this.view.getEditModel(),
 			isAbsolute = editModel.getSetting( '_position' ),
-			isInline = 'initial' === editModel.getSetting( '_element_width' ),
-			isRowContainer = this.isContainerItem() && [ 'row', 'row-reverse', '' ].includes( this.getParentFlexDirection() ),
-			isRegularItem = ! this.isContainerItem(),
-			shouldHaveHandles = isRowContainer || isRegularItem;
+			isInline = 'initial' === editModel.getSetting( '_element_width' );
 
 		this.deactivate();
 
-		if ( ! shouldHaveHandles ) {
+		if ( ! this.shouldHaveHandles() ) {
 			return;
 		}
 
