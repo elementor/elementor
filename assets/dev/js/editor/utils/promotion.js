@@ -22,7 +22,7 @@ export default class extends elementorModules.Module {
 
 		this.dialog.addButton( {
 			name: 'action',
-			text: __( 'See it in Action', 'elementor' ),
+			text: elementor.helpers.hasPro() ? __( 'Connect & Activate', 'elementor' ) : __( 'See it in Action', 'elementor' ),
 			callback: () => {
 				open( this.actionURL, '_blank' );
 			},
