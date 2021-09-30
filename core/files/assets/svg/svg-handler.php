@@ -528,6 +528,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		// Strip php tags
 		$content = $this->strip_comments( $content );
 		$content = $this->strip_php_tags( $content );
+		$content = $this->strip_line_breaks( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
@@ -605,6 +606,17 @@ class Svg_Handler extends Files_Upload_Handler {
 			return '';
 		}
 		return $string;
+	}
+
+	/**
+	 * strip_line_breaks
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_line_breaks( $string ) {
+		// Remove line breaks.
+		return preg_replace( '/\r|\n/', '', $string );
 	}
 
 	/**

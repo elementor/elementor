@@ -72,12 +72,6 @@ ColumnView = BaseElementView.extend( {
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
-
-			editTools.remove = {
-				/* translators: %s: Element Name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-				icon: 'close',
-			};
 		}
 
 		return editTools;

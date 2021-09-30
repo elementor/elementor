@@ -1,4 +1,4 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
@@ -6,66 +6,34 @@ import FileProcess from '../../../shared/file-process/file-process';
 
 import { Context } from '../../../context/context-provider';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
-	const { ajaxState, setAjax } = useAjax(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ isError, setIsError ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		urlSearchParams = new URLSearchParams( window.location.search ),
-		queryParams = Object.fromEntries( urlSearchParams.entries() ),
-		// We need to support query-params for external navigations, but also parsing the value from the hash for internal navigation between different routes.
-		fileURL = queryParams?.[ 'file_url' ] || location.hash.match( 'file_url=([^&]+)' )?.[ 1 ],
-		onLoad = () => {
-			const ajaxConfig = {
-				data: {
-					action: 'elementor_import_kit',
-				},
-			};
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		isApplyAllForced = 'apply-all' === actionType,
+		uploadKit = () => {
+			const decodedFileURL = decodeURIComponent( fileURL );
 
-			if ( fileURL || context.data.fileResponse ) {
-				if ( fileURL && ! context.data.file ) { // When the starting point of the app is the import/process screen and importing via file_url.
-					const decodedFileURL = decodeURIComponent( fileURL );
-
-					context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
-
-					ajaxConfig.data.e_import_file = decodedFileURL;
-					ajaxConfig.data.data = JSON.stringify( {
-						stage: 1,
-					} );
-
-					const referrer = location.hash.match( 'referrer=([^&]+)' );
-
-					if ( referrer ) {
-						context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
-					}
-				} else { // When the import/process is the second step of the kit import process, after selecting the kit content.
-					ajaxConfig.data.data = {
-						stage: 2,
-						session: context.data.fileResponse.stage1.session,
-						include: context.data.includes,
-						overrideConditions: context.data.overrideConditions,
-					};
-
-					if ( context.data.referrer ) {
-						ajaxConfig.data.data.referrer = context.data.referrer;
-					}
-
-					ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
-				}
-
-				setAjax( ajaxConfig );
+			if ( referrer ) {
+				context.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 			}
+
+			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+
+			kitActions.upload( { file: decodedFileURL } );
 		},
-		onSuccess = () => {
-			if ( context.data.fileResponse?.stage1 ) {
-				const previousFileResponse = context.data.fileResponse,
-					fileResponse = { ...previousFileResponse, stage2: ajaxState.response };
-
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
-			} else {
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
-			}
+		importKit = () => {
+			kitActions.import( {
+				session: context.data.uploadedData.session,
+				include: context.data.includes,
+				overrideConditions: context.data.overrideConditions,
+				referrer: context.data.referrer,
+			} );
 		},
 		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
@@ -73,21 +41,54 @@ export default function ImportProcess() {
 		};
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) {
+		if ( fileURL && ! context.data.file ) {
+			// When the starting point of the app is the import/process screen and importing via file_url.
+			uploadKit();
+		} else if ( context.data.uploadedData ) {
+			// When the import/process is the second step of the kit import process, after selecting the kit content.
+			importKit();
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			switch ( kitState.status ) {
+				case KIT_STATUS_MAP.IMPORTED:
+					context.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.UPLOADED:
+					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.ERROR:
+					setIsError( true );
+					break;
+			}
+		}
+	}, [ kitState.status ] );
+
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			if ( context.data.importedData ) { // After kit upload.
 				navigate( '/import/complete' );
+			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
+				if ( context.data.uploadedData.conflicts ) {
+					navigate( '/import/resolver' );
+				} else {
+					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
+					kitActions.reset();
+
+					importKit();
+				}
 			} else {
 				navigate( '/import/content' );
 			}
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.uploadedData, context.data.importedData ] );
 
 	return (
 		<Layout type="import">
 			<FileProcess
-				status={ ajaxState.status }
-				onLoad={ onLoad }
-				onSuccess={ onSuccess }
+				isError={ isError }
 				onDialogApprove={ () => {} }
 				onDialogDismiss={ onDialogDismiss }
 			/>

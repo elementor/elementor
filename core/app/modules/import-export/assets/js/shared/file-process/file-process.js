@@ -1,20 +1,9 @@
-import { useEffect } from 'react';
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import ImportFailedDialog from '../import-failed-dialog/import-failed-dialog';
 import WizardStep from '../../ui/wizard-step/wizard-step';
 
 export default function FileProcess( props ) {
-	useEffect( () => {
-		props.onLoad();
-	}, [] );
-
-	useEffect( () => {
-		if ( 'success' === props.status ) {
-			props.onSuccess();
-		}
-	}, [ props.status ] );
-
 	return (
 		<WizardStep
 			className={ arrayToClassName( [ 'e-app-import-export-file-process', props.className ] ) }
@@ -28,7 +17,7 @@ export default function FileProcess( props ) {
 				</>
 			}
 		>
-			{ 'error' === props.status &&
+			{ props.isError &&
 			<ImportFailedDialog
 				onApprove={ props.onDialogApprove }
 				onDismiss={ props.onDialogDismiss }
@@ -40,13 +29,12 @@ export default function FileProcess( props ) {
 
 FileProcess.propTypes = {
 	className: PropTypes.string,
-	status: PropTypes.oneOf( [ 'initial', 'success', 'error' ] ),
-	onLoad: PropTypes.func.isRequired,
-	onSuccess: PropTypes.func.isRequired,
 	onDialogApprove: PropTypes.func.isRequired,
 	onDialogDismiss: PropTypes.func.isRequired,
+	isError: PropTypes.bool,
 };
 
 FileProcess.defaultProps = {
 	className: '',
+	isError: false,
 };

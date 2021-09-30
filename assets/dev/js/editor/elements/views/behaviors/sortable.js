@@ -21,11 +21,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function( activeMode ) {
-		if ( 'edit' === activeMode ) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
+		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
 	onRender: function() {
@@ -38,6 +34,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.deactivate();
+	},
+
+	onToggleSortMode( isActive ) {
+		if ( isActive ) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
 	},
 
 	activate: function() {
