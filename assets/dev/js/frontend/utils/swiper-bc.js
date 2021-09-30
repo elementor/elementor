@@ -7,6 +7,9 @@ export default class SwiperBC {
 			this.config = this.adjustConfig( config );
 		}
 
+		// When adding margin to column of carousel widgets, the column will overlap the next column or the section.
+		container.closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
+
 		// In case of a legacy behaviour the constructor should return a new Swiper instance instead of a Promise.
 		if ( config.legacy ) {
 			return this.createSwiperInstance( container, this.config );
@@ -32,9 +35,6 @@ export default class SwiperBC {
 			// Once the SwiperSource has the Swiper lib function, we need to overwrite window.Swiper with the legacySwiper class.
 			legacySwiper();
 		}
-
-		// Fix: When adding margin to column of carousel widgets, it breaks the UI.
-		container.closest( '.elementor-widget-wrap' ).addClass( 'e-has-image-carousel-widget' );
 
 		SwiperSource.prototype.adjustConfig = this.adjustConfig;
 

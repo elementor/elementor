@@ -138,8 +138,8 @@
 		width: 100%;
 	}
 
-	// Fix: When adding margin to column of carousel widgets, it breaks the UI.
-	&.e-has-image-carousel-widget {
+	// When adding margin to column of carousel widgets, the column will overlap the next column or the section.
+	&.e-swiper-container {
 		width: calc(100% - (var(--e-column-margin-left, 0px) + var(--e-column-margin-right, 0px)));
 	}
 }
