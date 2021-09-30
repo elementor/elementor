@@ -135,7 +135,7 @@ BaseElementView = BaseContainer.extend( {
 				controls: settingsModel.options.controls,
 			} );
 
-			this.container.view.trigger( 'container:created' );
+			this.container.view.triggerMethod( 'container:created' );
 		}
 		return this.container;
 	},

@@ -10,14 +10,13 @@ export class NestedElementsRemove extends Base {
 	}
 
 	apply( args ) {
-		// Since `container.children` not refreshed yet.
-		setTimeout( () => {
-			const { containers = [ args.container ] } = args;
+		const { containers = [ args.container ] } = args;
 
-			containers.forEach( ( container ) => {
-				$e.run( 'document/elements/delete', {
-					container: container.children[ args.index ],
-				} );
+		containers.forEach( ( container ) => {
+			const childView = container.view.children.findByIndex( args.index );
+
+			$e.run( 'document/elements/delete', {
+				container: childView.getContainer(),
 			} );
 		} );
 	}
