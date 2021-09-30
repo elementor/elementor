@@ -23,6 +23,10 @@ export default class Component extends ComponentBase {
 					parentIsInner = parentModel.get( 'isInner' ),
 					draggedIsInner = childModel.get( 'isInner' );
 
+				if ( elementor.hooks.applyFilters( 'elementor/editor/element/is-valid-child', false, childModel, parentModel ) ) {
+					return true;
+				}
+
 				// Block's inner-section at inner-section column.
 				if ( draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType ) {
 					return false;

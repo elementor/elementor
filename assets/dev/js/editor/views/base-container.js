@@ -1,3 +1,7 @@
+/**
+ * @name BaseContainer
+ * @extends {Marionette.CompositeView}
+ */
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {

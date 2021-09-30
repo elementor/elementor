@@ -33,7 +33,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		var $mainElement = this.$element;
 
 		return $mainElement.find( selector ).filter( function() {
-			return jQuery( this ).closest( '.elementor-element' ).is( $mainElement );
+			// Start `closest` from parent since self can be `.elementor-element`.
+			return jQuery( this ).parent().closest( '.elementor-element' ).is( $mainElement );
 		} );
 	},
 

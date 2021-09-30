@@ -5,6 +5,9 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseContainer = require( 'elementor-views/base-container' ),
 	BaseElementView;
 
+/**
+ * @extends {BaseContainer}
+ */
 BaseElementView = BaseContainer.extend( {
 	tagName: 'div',
 
@@ -131,6 +134,8 @@ BaseElementView = BaseContainer.extend( {
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
+
+			this.container.view.trigger( 'container:created' );
 		}
 		return this.container;
 	},

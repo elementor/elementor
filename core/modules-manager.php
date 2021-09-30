@@ -81,6 +81,7 @@ class Modules_Manager {
 			'admin-bar',
 			'history',
 			'library',
+			'nested-elements',
 			'dynamic-tags',
 			'page-templates',
 			'gutenberg',

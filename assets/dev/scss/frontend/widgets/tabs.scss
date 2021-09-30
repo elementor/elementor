@@ -3,6 +3,30 @@
 //
 
 .elementor-widget-tabs {
+	--tabs-wrapper-display: flex;
+	--tabs-wrapper-justify-content: start;
+	--tabs-wrapper-title-size: auto;
+	--tabs-border-width: 1px;
+	--tabs-border-color: #{$gray-light};
+	--tabs-background-color: transparent;
+
+	/* TODO Find better solution for all global defaults. */
+	--tabs-title-color: var( --e-global-color-primary );
+	--tabs-title-active-color: var( --e-global-color-accent );
+
+	--tabs-title-typography-font-family: var( --e-global-typography-primary-font-family );
+	--tabs-title-typography-font-size: initial;
+	--tabs-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
+	--tabs-title-typography-text-transform: initial;
+	--tabs-title-typography-font-style: initial;
+	--tabs-title-typography-text-decoration: initial;
+	--tabs-title-typography-line-height: initial;
+	--tabs-title-typography-letter-spacing: initial;
+	--tabs-title-typography-word-spacing: initial;
+
+	.elementor-tabs-content-wrapper {
+		background-color: var( --tabs-background-color );
+	}
 
 	&.elementor-tabs-view-vertical {
 
@@ -11,10 +35,11 @@
 			flex-shrink: 0;
 		}
 
-
 		.elementor-tab-desktop-title {
 
 			&.elementor-active {
+				background-color: var( --tabs-background-color );
+
 				@include border-end-property(style, none);
 
 				&:before,
@@ -68,21 +93,48 @@
 	.elementor-tab-title:before,
 	.elementor-tab-title:after,
 	.elementor-tab-content,
+	.e-container,
 	.elementor-tabs-content-wrapper {
-		border: 1px none $gray-light;
+		border: 1px none var( --tabs-border-color );
 	}
 
 	.elementor-tabs {
 		text-align: $start;
+
+		& .elementor-tab-title {
+			color: var( --tabs-title-color );
+			cursor: pointer;
+			outline: var(--focus-outline, none);
+
+			font-family: var( --tabs-title-typography-font-family );
+			font-size: var( --tabs-title-typography-font-size );
+			font-weight: var( --tabs-title-typography-font-weight );
+			text-transform: var( --tabs-title-typography-text-transform );
+			font-style: var( --tabs-title-typography-font-style );
+			text-decoration: var( --tabs-title-typography-text-decoration );
+			line-height: var( --tabs-title-typography-line-height );
+			letter-spacing: var( --tabs-title-typography-letter-spacing );
+			word-spacing: var( --tabs-title-typography-word-spacing );
+
+			& a {
+				color: var( --tabs-title-color );
+			}
+
+			&.elementor-active {
+				color: var( --tabs-title-active-color );
+
+				& a {
+					color: var( --tabs-title-active-color );
+				}
+			}
+		}
 	}
 
 	.elementor-tabs-wrapper {
 		overflow: hidden;
-	}
 
-	.elementor-tab-title {
-		cursor: pointer;
-		outline: var(--focus-outline, none);
+		display: var( --tabs-wrapper-display );
+		justify-content: var( --tabs-wrapper-justify-content );
 	}
 
 	.elementor-tab-desktop-title {
@@ -93,7 +145,7 @@
 		border: solid transparent;
 
 		&.elementor-active {
-			border-color: $gray-light;
+			border-color: var( --tabs-border-color );
 
 			&:before,
 			&:after {
@@ -109,9 +161,18 @@
 		cursor: pointer;
 	}
 
-	.elementor-tab-content {
+	.elementor-tab-content, .e-container {
 	    padding: 20px;
 	    display: none;
+	}
+
+	.elementor-tab-title,
+	.elementor-tab-title:before,
+	.elementor-tab-title:after,
+	.e-container,
+	.elementor-tab-content,
+	.elementor-tabs-content-wrapper {
+		border-width: var(--tabs-border-width)
 	}
 }
 
@@ -121,7 +182,7 @@
 	.elementor-tabs {
 
 		.elementor-tab-title,
-		.elementor-tab-content {
+		.elementor-tab-content, .e-container {
 			border-style: solid;
 			border-bottom-style: none;
 		}
@@ -134,7 +195,7 @@
 			border-bottom-style: solid;
 		}
 
-		.elementor-tab-content {
+		.elementor-tab-content, .e-container {
 			padding: 10px;
 		}
 	}
@@ -166,47 +227,34 @@
 
 		&.elementor-tabs-view-horizontal {
 
-			.elementor-tab-content {
+			.elementor-tab-content, .e-container {
 				border-style: solid;
 				border-top-style: none;
+			}
+
+			.elementor-tab-title {
+				width: var( --tabs-wrapper-title-size );
+			}
+		}
+
+		&.elementor-tabs-view-vertical {
+			.elementor-tab-title {
+				height: var(--tabs-wrapper-title-size);
 			}
 		}
 
 		&.elementor-tabs-alignment- {
-
-			&center,
-			&end,
-			&stretch {
-
-				.elementor-tabs-wrapper {
-					display: flex;
-				}
-			}
-
-			&center {
-
-				.elementor-tabs-wrapper {
-					justify-content: center;
-				}
-			}
-
-			&end {
-				.elementor-tabs-wrapper {
-					justify-content: flex-end;
-				}
-			}
-
 			&stretch.elementor-tabs-view-horizontal  {
 
 				.elementor-tab-title {
-					width: 100%;
+					--tabs-wrapper-title-size: 100%;
 				}
 			}
 
 			&stretch.elementor-tabs-view-vertical {
 
 				.elementor-tab-title {
-					height: 100%;
+					--tabs-wrapper-title-size: 100%;
 				}
 			}
 		}
