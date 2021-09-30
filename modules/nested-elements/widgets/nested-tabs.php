@@ -269,7 +269,6 @@ class NestedTabs extends Widget_Container_Base {
 
 		$this->add_group_control( Group_Control_Typography::get_type(), [
 			'name' => 'tab_typography',
-			//'selector' => '{{WRAPPER}} .elementor-tab-title',
 			'global' => [
 				'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
 			],
@@ -324,7 +323,13 @@ class NestedTabs extends Widget_Container_Base {
 
 		$this->add_group_control( Group_Control_Text_Shadow::get_type(), [
 			'name' => 'title_shadow',
-			'selector' => '{{WRAPPER}} .elementor-tab-title',
+			'fields_options' => [
+				'text_shadow' => [
+					'selectors' => [
+						'{{WRAPPER}}' => '--tabs-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
+					],
+				],
+			]
 		] );
 
 		$this->end_controls_section();
