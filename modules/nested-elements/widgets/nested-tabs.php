@@ -329,7 +329,7 @@ class NestedTabs extends Widget_Container_Base {
 						'{{WRAPPER}}' => '--tabs-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
 					],
 				],
-			]
+			],
 		] );
 
 		$this->end_controls_section();
