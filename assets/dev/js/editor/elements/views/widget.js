@@ -67,12 +67,6 @@ WidgetView = BaseElementView.extend( {
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
-
-			editTools.remove = {
-				/* translators: %s: Element Name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-				icon: 'close',
-			};
 		}
 
 		return editTools;
