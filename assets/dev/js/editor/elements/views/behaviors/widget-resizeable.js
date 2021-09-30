@@ -22,6 +22,7 @@ export default class extends Marionette.Behavior {
 	 * @return {Object}
 	 */
 	getOptions() {
+		// jQuery UI handles are using Cardinal Directions (n, e, s, w, etc.).
 		let handles = 'e, w';
 
 		// If it's a container item, add resize handles only at the end of the element in order to prevent UI
