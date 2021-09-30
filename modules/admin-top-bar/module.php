@@ -4,6 +4,7 @@ namespace Elementor\Modules\AdminTopBar;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -42,11 +43,6 @@ class Module extends BaseApp {
 		<div id="e-admin-top-bar-root">
 		</div>
 		<?php
-	}
-	protected function get_init_settings() {
-		return [
-			'is_administrator' => current_user_can( 'manage_options' ),
-		];
 	}
 
 	/**
@@ -112,5 +108,23 @@ class Module extends BaseApp {
 				$this->register_dashboard_widgets();
 			} );
 		} );
+
+		add_action( 'elementor/init', function () {
+			$settings = [];
+			$settings['is_administrator'] = current_user_can( 'manage_options' );
+
+			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+			$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+			if ( $library ) {
+				$settings = array_merge( $settings, [
+					'is_user_connected' => $library->is_connected(),
+					'connect_url' => $library->get_admin_url( 'authorize' ),
+				] );
+			}
+
+			$this->set_settings( $settings );
+
+			do_action( 'elementor/admin-top-bar/init', $this );
+		}, 12 /* After component 'connect' register the apps */ );
 	}
 }

@@ -128,6 +128,13 @@
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
+
+		// If the optimized DOM experiment is active, inherit the parent padding so the widget
+		// will take the parent padding in account when setting a position.
+		.elementor-column > & {
+			padding: inherit;
+			box-sizing: content-box; // To keep the width from the control, since the padding was added.
+		}
 	}
 
 	> .elementor-element.elementor-fixed {
