@@ -210,8 +210,14 @@ class AddSectionBase extends Marionette.ItemView {
 
 				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
 
-				// Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
-				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
+				const rightContainer = ContainerHelper.createContainer( {
+					...settings,
+					padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
+				}, newContainer, { edit: false } );
 
 				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
