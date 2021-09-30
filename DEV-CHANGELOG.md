@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev30 - 2021-09-30
+* Tweak: Apply filter for activate user in admin tool bar [ED-4309] (#15714)
+* Fix: GitHub - Update servers to ubuntu 20.04 (#16413)
+* Fix: GitHub - Update servers to ubuntu 20.04 (#16416)
+* Fix: Admin top bar breaks admin dashboard [ED-5044] (#16424)
+
 #### 3.5.0-dev28 - 2021-09-19
 * Tweak: Adding a URL parameter to the import-export that skips the kit-content selection [ED-4750] (#16275)
 * Tweak: Internal - Allow external extending of Element Editing Handles Buttons [ED-4480] (#16232)
