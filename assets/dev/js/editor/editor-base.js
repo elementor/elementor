@@ -1347,11 +1347,19 @@ export default class EditorBase extends Marionette.Application {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
 				} else if ( deleteControlDefault ) {
-					delete controlArgs.default;
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
-				// If the control belongs to a group control with a popover, and this control is the last one, add the
-				// popover.end = true value to it to make sure it closes the popover.
+				// If the control is the first inside a popover, only the first device starts the popover,
+				// so the 'start' property has to be deleted from all other devices.
+				if ( 0 !== index && controlArgs.popover?.start ) {
+					delete controlArgs.popover.start;
+				}
+
+				// If the control is inside a popover, AND this control is the last one in the popover, AND this is the
+				// last device in the devices array - add the 'popover.end = true' value to it to make sure it closes
+				// the popover.
 				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
 					controlArgs.popover = {
 						end: true,

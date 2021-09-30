@@ -1,6 +1,10 @@
+import useAction from 'elementor-app/hooks/use-action';
+
 import Button from './header-button';
 
 export default function HeaderButtons( props ) {
+	const action = useAction();
+
 	let tools = '';
 
 	if ( props.buttons.length ) {
@@ -21,15 +25,7 @@ export default function HeaderButtons( props ) {
 				text={ __( 'Close', 'elementor' ) }
 				icon="eicon-close"
 				className="eps-app__close-button"
-				onClick={ () => {
-					if ( window.top === window ) {
-						// Directly.
-						window.top.location = elementorAppConfig.return_url;
-					} else {
-						// Iframe.
-						window.top.$e.run( 'app/close' );
-					}
-				} }
+				onClick={ action.backToDashboard }
 			/>
 			{ tools }
 		</div>

@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Canary_Deployment extends Elementor_Test_Base {
 

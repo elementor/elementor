@@ -2,12 +2,11 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Files\Manager as Files_Manager;
 use Elementor\Modules\AdminBar\Module as Adminbar_Module;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
 	public function test_create_default_kit() {

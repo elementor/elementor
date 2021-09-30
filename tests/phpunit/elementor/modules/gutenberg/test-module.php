@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Gutenberg;
 
 use Elementor\Core\Base\Document;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
