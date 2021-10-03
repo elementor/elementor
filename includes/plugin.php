@@ -505,13 +505,6 @@ class Plugin {
 	public $kits_manager;
 
 	/**
-	 * @var \Elementor\Data\Manager
-	 *
-	 * @deprecated 3.5.0 Use `\Elementor\Data\V2\Manager` instead.
-	 */
-	public $data_manager;
-
-	/**
 	 * @var \Elementor\Data\V2\Manager
 	 */
 	public $data_manager_v2;
@@ -875,6 +868,10 @@ class Plugin {
 			return $this->files_manager;
 		}
 
+		if ( 'data_manager' === $property ) {
+			return Data_Manager::instance();
+		}
+
 		if ( property_exists( $this, $property ) ) {
 			throw new \Exception( 'Cannot access private property' );
 		}
@@ -894,7 +891,6 @@ class Plugin {
 		$this->register_autoloader();
 
 		$this->logger = Log_Manager::instance();
-		$this->data_manager = Data_Manager::instance();
 		$this->data_manager_v2 = Data_Manager_V2::instance();
 
 		Maintenance::init();
