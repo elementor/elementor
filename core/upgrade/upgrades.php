@@ -641,7 +641,7 @@ class Upgrades {
 	 * @return bool
 	 */
 	public static function recalc_usage_data( $updater ) {
-		if ( Tracker::is_allow_track() ) {
+		if ( ! Tracker::is_allow_track() ) {
 			return false;
 		}
 

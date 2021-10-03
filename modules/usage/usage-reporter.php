@@ -44,10 +44,6 @@ class Usage_Reporter extends Base {
 		];
 	}
 
-	public function is_enabled() {
-		return Tracker::is_allow_track();
-	}
-
 	public function get_usage() {
 		/** @var Module $module */
 		$module = Module::instance();
