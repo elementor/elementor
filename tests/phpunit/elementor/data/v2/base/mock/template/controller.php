@@ -17,10 +17,6 @@ class Controller extends \Elementor\Data\V2\Base\Controller {
 		return 'controller';
 	}
 
-	public function register_endpoints() {
-		// TODO: Implement register_endpoints() method.
-	}
-
 	public function do_register_index_endpoint() {
 		$this->bypass_original_register();
 

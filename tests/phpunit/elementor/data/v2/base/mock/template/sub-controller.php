@@ -29,10 +29,6 @@ class Sub_Controller extends \Elementor\Data\V2\Base\Controller {
 		return 'sub-controller';
 	}
 
-	public function register_endpoints() {
-		// TODO: Implement register_endpoints() method.
-	}
-
 	public function get_items( $request ) {
 		$test_data = $this->get_test_data( __FUNCTION__ );
 

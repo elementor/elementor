@@ -8,7 +8,7 @@
 	| Method                                  | Parameters                     | Returns                                        | Description
 	|-----------------------------------------|--------------------------------|------------------------------------------------|------------------------------|
 	| `Controller::get_name()`                |                                | `string` Controller name                       | **Abstract**, Get controller name.
-	| `Controller::register_endpoints()`      |                                |                                                | **Abstract**, Register controller endpoints.
+	| `Controller::register_endpoints()`      |                                |                                                | Register controller endpoints.
 	| `Controller::get_parent_name()`         |                                | `null` or `string` Parent controller name.     | Get parent controller name, if provided, controller will work as sub controller.
 	| `Controller::get_full_name()`           |                                | `string` Full controller name                  | Get full controller name, if parent exist it will be included.
 	| `Controller::get_controller_route()`    |                                | `string` Controller route                      | Get full controller route including the namespace.
@@ -176,15 +176,15 @@
     	
        public function get_name() {
     		return 'catalog-items';
-    	}
+       }
             
-        public function register_endpoints() {
-           $this->index_endpoint->register_item_route(); // To support 'catalog-items/{id}'.
+       public function register_endpoints() {
+          $this->index_endpoint->register_item_route(); // To support 'catalog-items/{id}'.
         
-           $this->register_endpoint( new Status( $this ) ); // Register 'status' endpoint.
-        }
+          $this->register_endpoint( new Status( $this ) ); // Register 'status' endpoint.
+       }
     
-        public function get_items( $request ) {
+       public function get_items( $request ) {
             // GET TO 'catalog-items' will return:
             /**
                [
@@ -197,9 +197,9 @@
                ];
             */
            return self::MOCK_DATA;
-        }
+       }
   
-        public function get_item( $request ) {
+       public function get_item( $request ) {
             // GET TO 'catalog-items/1' will return:
             /**
                   [
@@ -207,9 +207,9 @@
                   ],
             */
            return self::MOCK_DATA[ $request->get_param( 'id' ) ];
-        } 
+       } 
     
-        public function get_permission_callback( $request ) {
+       public function get_permission_callback( $request ) {
             // In real word, it would check the user permission to the current resource.
             return false;
         }

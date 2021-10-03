@@ -31,8 +31,4 @@ class Controller extends Base_Controller {
 			'data' => $data->values(),
 		];
 	}
-
-	public function register_endpoints() {
-		// Only index endpoint is used so controller is enough.
-	}
 }

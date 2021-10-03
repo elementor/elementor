@@ -90,7 +90,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Register endpoints.
 	 */
-	abstract public function register_endpoints();
+	public function register_endpoints() {}
 
 	/**
 	 * Get parent controller name.
