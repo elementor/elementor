@@ -138,7 +138,7 @@
 		width: 100%;
 	}
 
-	// When adding margin to column of carousel widgets, the column will overlap the next column or the section.
+	// The Swiper will overlap the column width when applying custom margin values on the column.
 	&.e-swiper-container {
 		width: calc(100% - (var(--e-column-margin-left, 0px) + var(--e-column-margin-right, 0px)));
 	}
