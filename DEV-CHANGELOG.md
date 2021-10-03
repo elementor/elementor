@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev33 - 2021-10-03
+* Fix: Default value check for control validity [ED-5071] (#16437)
+
 #### 3.5.0-dev31 - 2021-10-01
 * Fix: When the "Optimized DOM" experiment is off and custom breakpoints are defined... [ED-4994] (#16385)
 
