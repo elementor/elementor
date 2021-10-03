@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Usage;
 
 use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,6 +42,10 @@ class Usage_Reporter extends Base {
 		return [
 			'usage' => '',
 		];
+	}
+
+	public function is_enabled() {
+		return Tracker::is_allow_track();
 	}
 
 	public function get_usage() {
