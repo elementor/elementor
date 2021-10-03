@@ -69,44 +69,17 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Register dashboard widgets.
-	 *
-	 * Adds a new Elementor widgets to WordPress dashboard.
-	 *
-	 * Fired by `wp_dashboard_setup` action.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 */
-	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
-	}
-
-	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'current_screen', function () {
-			$current_screen = get_current_screen();
+		add_action( 'in_admin_header', function () {
+			$this->render_admin_top_bar();
+		} );
 
-			// Only in elementor based pages.
-			if ( ! $current_screen || ! strstr( $current_screen->id, 'elementor' ) ) {
-				return;
-			}
-
-			add_action( 'in_admin_header', function () {
-				$this->render_admin_top_bar();
-			} );
-
-			add_action( 'admin_enqueue_scripts', function () {
-				$this->enqueue_scripts();
-			} );
-
-			add_action( 'wp_dashboard_setup', function () {
-				$this->register_dashboard_widgets();
-			} );
+		add_action( 'admin_enqueue_scripts', function () {
+			$this->enqueue_scripts();
 		} );
 
 		add_action( 'elementor/init', function () {
