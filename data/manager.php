@@ -1,10 +1,8 @@
 <?php
-
 namespace Elementor\Data;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Data\Base\Processor;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
