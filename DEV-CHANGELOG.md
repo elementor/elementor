@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev31 - 2021-10-01
+* Fix: When the "Optimized DOM" experiment is off and custom breakpoints are defined... [ED-4994] (#16385)
+
 #### 3.5.0-dev30 - 2021-09-30
 * Tweak: Apply filter for activate user in admin tool bar [ED-4309] (#15714)
 * Fix: GitHub - Update servers to ubuntu 20.04 (#16413)
