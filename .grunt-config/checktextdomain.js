@@ -29,6 +29,7 @@ const checkTextDomain = {
 				'!node_modules/**',
 				'!build/**',
 				'!tests/**',
+				'!tmp/**',
 				'!.github/**',
 				'!.run/**',
 				'!vendor/**',
