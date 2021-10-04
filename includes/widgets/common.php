@@ -180,6 +180,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
 				'range' => [
 					'px' => [
 						'max' => 1000,

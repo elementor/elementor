@@ -36,18 +36,6 @@ export default class extends Marionette.Behavior {
 		};
 	}
 
-	/**
-	 * Determine if the current element should have resize handles.
-	 *
-	 * @return {boolean}
-	 */
-	shouldHaveHandles() {
-		const isRowContainer = this.isContainerItem() && [ 'row', 'row-reverse', '' ].includes( this.getParentFlexDirection() ),
-			isRegularItem = ! this.isContainerItem();
-
-		return isRowContainer || isRegularItem;
-	}
-
 	activate() {
 		this.$el.resizable( this.getOptions() );
 	}
@@ -66,10 +54,6 @@ export default class extends Marionette.Behavior {
 			isInline = 'initial' === editModel.getSetting( '_element_width' );
 
 		this.deactivate();
-
-		if ( ! this.shouldHaveHandles() ) {
-			return;
-		}
 
 		if ( ( ( isAbsolute || isInline ) && this.view.container.isDesignable() ) || this.isContainerItem() ) {
 			this.activate();
