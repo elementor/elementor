@@ -1,5 +1,5 @@
 import Styled, { withStyles } from './styled';
 
 export { Styled, withStyles };
-export { default as StyledHeading } from './heading';
-export { default as StyledText } from './text';
+export { default as StyledHeading } from './ui/heading';
+export { default as StyledText } from './ui/text';

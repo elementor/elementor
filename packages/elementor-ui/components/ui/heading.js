@@ -3,7 +3,7 @@ import { Styled, withStyles } from 'e-components';
 import styles from 'e-styles/heading';
 
 const Heading = forwardRef( ( props, ref ) => (
-	<Styled { ...props } tag="h1" styles={ styles } ref={ ref }>{ props.children }</Styled>
+	<Styled { ...props } styles={ styles } ref={ ref }>{ props.children }</Styled>
 ) );
 
 Heading.displayName = 'Heading';
@@ -14,8 +14,9 @@ Heading.propTypes = {
 	tag: PropTypes.oneOf( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] ),
 };
 
-Heading.baseProps = {
+Heading.defaultProps = {
 	className: '',
+	tag: 'h1',
 };
 
 export default withStyles( Heading );

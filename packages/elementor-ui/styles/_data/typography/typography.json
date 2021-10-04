@@ -19,10 +19,7 @@
   "line-height-sm": 1.2,
   "line-height-lg": 1.8,
 
-  "display-1-font-size": "1.85rem",
-  "display-2-font-size": "1.85rem",
-  "display-3-font-size": "1.85rem",
-  "display-4-font-size": "1.85rem",
+  "display-font-size": "1.85rem",
 
   "h-1-font-size": "1.625rem",
   "h-2-font-size": "1.25rem",
@@ -45,5 +42,4 @@
   "small-font-size": "80%",
   "paragraph-margin-bottom": "",
   "headings-margin-bottom": ""
-
 }

@@ -5,7 +5,7 @@ import { getStyle } from 'e-components/utils';
 const Styled = forwardRef( ( props, ref ) => {
 	const themeContext = useContext( ThemeContext ),
 		styledProps = { ...props },
-		nonStyledProps = [ 'children', 'className', 'component', 'tag', 'styles', 'extendStyles', 'extend' ];
+		nonStyledProps = [ 'children', 'className', 'component', 'tag', 'styles', 'extendStyles', 'extend', 'style' ];
 
 	// Removing props that are not related to the component styles object.
 	nonStyledProps.forEach( ( prop ) => delete styledProps[ prop ] );
