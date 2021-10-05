@@ -256,12 +256,17 @@
 
 			currentElement = this;
 
-			// Get both parents and children and do a drag-leave on them in order to prevent a UI glitches
-			// that happens when the user drags from parent to child and vice versa.
-			const parents = elementsCache.$element.parents(),
-				children = elementsCache.$element.children();
+			// Get both parents and children and do a drag-leave on them in order to prevent UI glitches
+			// of the placeholder that happen when the user drags from parent to child and vice versa.
+			const $parents = elementsCache.$element.parents(),
+				$children = elementsCache.$element.children();
 
-			parents.add( children ).each( function() {
+			// Remove all current element classes to take in account nested Droppable instances.
+			// TODO #1: Move to `doDragLeave()`?
+			// TODO #2: Find a better solution.
+			$children.find( '.' + settings.currentElementClass ).removeClass( settings.currentElementClass );
+
+			$parents.add( $children ).each( function() {
 				var droppableInstance = $( this ).data( 'html5Droppable' );
 
 				if ( ! droppableInstance ) {
