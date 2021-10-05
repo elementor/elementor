@@ -1,6 +1,6 @@
-import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
+import HookDataAfter from 'elementor-api/modules/hooks/data/after';
 
-export default class Base extends HookUIAfter {
+export default class Base extends HookDataAfter {
 	getContainerType() {
 		return 'widget';
 	}
