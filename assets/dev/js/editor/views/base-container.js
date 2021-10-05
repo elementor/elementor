@@ -153,13 +153,13 @@ module.exports = Marionette.CompositeView.extend( {
 
 			switch ( event.constructor.name ) {
 				case 'DragEvent':
-					return 'add';
+					return 'import';
 				case 'ClipboardEvent':
 					return 'paste';
 			}
 		}
 
-		return 'import';
+		return 'add';
 	},
 
 	addChildElement: function( data, options ) {

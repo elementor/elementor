@@ -28,7 +28,7 @@ export default class Session {
 	 * @type {{}}
 	 */
 	options = {
-		container: {},
+		target: {},
 	};
 
 	/**
@@ -43,7 +43,8 @@ export default class Session {
 		this.manager = manager;
 		this.itemCollection = itemCollection;
 		this.target = target;
-		this.options = Object.assign( this.options, options );
+
+		Object.assign( this.options, options );
 	}
 
 	/**
