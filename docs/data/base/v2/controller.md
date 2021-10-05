@@ -220,7 +220,7 @@
 ```php
 <?php
 
-Elementor\Data\Manager::instance()->register_controller( Controller::class );
+\Elementor\Data\V2\Manager::instance()->register_controller( Controller::class );
 ```
     
 # Create two levels deep resource.
