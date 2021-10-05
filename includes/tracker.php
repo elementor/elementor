@@ -61,12 +61,16 @@ class Tracker {
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
-			self::send_tracking_data( true );
+			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
+				'opt_in_recalculate_usage',
+				'opt_in_send_tracking_data',
+			] );
 		}
 
 		if ( empty( $new_value ) ) {
 			$new_value = 'no';
 		}
+
 		return $new_value;
 	}
 
