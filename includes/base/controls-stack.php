@@ -812,11 +812,21 @@ abstract class Controls_Stack extends Base_Object {
 			unset( $args['devices'] );
 		}
 
+		$control_to_check = $args;
+
+		if ( ! empty( $options['overwrite'] ) ) {
+			$existing_control = Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id );
+
+			if ( ! is_wp_error( $existing_control ) ) {
+				$control_to_check = $existing_control;
+			}
+		}
+
 		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
-		$control_is_dynamic = ! empty( $args['dynamic']['active'] );
-		$is_frontend_available = ! empty( $args['frontend_available'] );
-		$has_prefix_class = ! empty( $args['prefix_class'] );
+		$control_is_dynamic = ! empty( $control_to_check['dynamic']['active'] );
+		$is_frontend_available = ! empty( $control_to_check['frontend_available'] );
+		$has_prefix_class = ! empty( $control_to_check['prefix_class'] );
 
 		// If the new responsive controls experiment is active, create only one control - duplicates per device will
 		// be created in JS in the Editor.
