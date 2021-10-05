@@ -625,27 +625,27 @@ export default class EditorBase extends Marionette.Application {
 					maxHeight: 896,
 				},
 				mobile_extra: {
-					minHeight: 320,
+					minHeight: 480,
 					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				tablet_extra: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				laptop: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				widescreen: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1200,
 				},
@@ -1358,8 +1358,15 @@ export default class EditorBase extends Marionette.Application {
 					controlArgs.default = '';
 				}
 
-				// If the control belongs to a group control with a popover, and this control is the last one, add the
-				// popover.end = true value to it to make sure it closes the popover.
+				// If the control is the first inside a popover, only the first device starts the popover,
+				// so the 'start' property has to be deleted from all other devices.
+				if ( 0 !== index && controlArgs.popover?.start ) {
+					delete controlArgs.popover.start;
+				}
+
+				// If the control is inside a popover, AND this control is the last one in the popover, AND this is the
+				// last device in the devices array - add the 'popover.end = true' value to it to make sure it closes
+				// the popover.
 				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
 					controlArgs.popover = {
 						end: true,

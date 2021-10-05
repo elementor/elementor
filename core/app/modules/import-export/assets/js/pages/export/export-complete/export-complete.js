@@ -23,7 +23,7 @@ export default function ExportComplete() {
 			if ( ! downloadLink.current ) {
 				const link = document.createElement( 'a' );
 
-				link.href = 'data:text/plain;base64,' + context.data.fileResponse.file;
+				link.href = 'data:text/plain;base64,' + context.data.exportedData.file;
 				link.download = 'elementor-kit.zip';
 
 				downloadLink.current = link;
@@ -55,7 +55,7 @@ export default function ExportComplete() {
 					</>
 				) }
 			>
-				<KitData data={ context.data.fileResponse?.manifest } />
+				<KitData data={ context.data.exportedData.manifest } />
 			</WizardStep>
 		</Layout>
 	);

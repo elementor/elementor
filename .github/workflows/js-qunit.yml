@@ -22,7 +22,7 @@ jobs:
   q-unit:
     runs-on: ubuntu-18.04
     needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff }}
+    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     name: Qunit - Test
     steps:
       - name: Checkout source code

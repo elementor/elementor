@@ -9,7 +9,7 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 
-import kitContentData from './kit-content-data/kit-content-data';
+import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content.scss';
 
