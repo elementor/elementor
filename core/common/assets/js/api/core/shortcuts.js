@@ -1,6 +1,8 @@
 import environment from 'elementor-common/utils/environment';
 
 export default class Shortcuts {
+	ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl';
+
 	constructor( $window ) {
 		this.specialKeys = {
 			13: 'enter',
