@@ -20,7 +20,7 @@ ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend( {
 
 		this.ui.units.removeClass( 'e-units-placeholder' );
 
-		if ( placeholder && placeholder !== this.getControlValue( 'unit' ) ) {
+		if ( placeholder !== this.getControlValue( 'unit' ) ) {
 			this.ui.units.filter( `[value="${ placeholder }"]` )
 				.addClass( 'e-units-placeholder' );
 		}
