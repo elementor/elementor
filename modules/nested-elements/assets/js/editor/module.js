@@ -28,6 +28,14 @@ class NestedElementsModule extends elementorModules.editor.utils.Module {
 				'widget' === parentElType &&
 				this.isWidgetSupportNesting( parentModel.get( 'widgetType' ) );
 		} );
+
+		elementor.hooks.addFilter( 'elementor/editor/navigator/element/has-children', ( defaultReturn, model ) => {
+			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
+				return true;
+			}
+
+			return defaultReturn;
+		} );
 	}
 
 	onElementorInitComponents() {

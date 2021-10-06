@@ -109,6 +109,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
+		if ( elementor.hooks.applyFilters( 'elementor/editor/navigator/element/has-children', false, this.model ) ) {
+			return true;
+		}
+
 		return 'widget' !== this.model.get( 'elType' );
 	}
 
