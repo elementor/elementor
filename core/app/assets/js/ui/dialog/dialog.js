@@ -12,7 +12,8 @@ export default function Dialog( props ) {
 		<DialogWrapper onSubmit={ props.onSubmit } onClose={ props.onClose }>
 			<DialogContent>
 				{ props.title && <DialogTitle>{ props.title }</DialogTitle> }
-				{ props.text && <DialogText>{ props.text }</DialogText> }
+				{ props.text && Array.isArray( props.text ) && props.text.map( ( text ) => <DialogText key={text}>{ text }</DialogText> ) }
+				{ props.text && ! Array.isArray( props.text ) && <DialogText>{ props.text }</DialogText> }
 				{ props.children }
 			</DialogContent>
 			<DialogActions>
