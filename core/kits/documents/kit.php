@@ -41,7 +41,7 @@ class Kit extends PageBase {
 	}
 
 	public static function get_title() {
-		return __( 'Kit', 'elementor' );
+		return esc_html__( 'Kit', 'elementor' );
 	}
 
 	/**
@@ -142,17 +142,31 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+
+		if ( ! $is_edit_mode ) {
+			// In the Front End, the Kit is initialized before CSS is generated, so we always duplicate controls in
+			// the kit.
+			$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
+		}
+
 		$this->register_document_controls();
 
 		foreach ( $this->tabs as $tab ) {
 			$tab->register_controls();
 		}
+
+		if ( ! $is_edit_mode ) {
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
+		}
 	}
 
 	protected function get_post_statuses() {
 		return [
-			'draft' => sprintf( '%s (%s)', __( 'Disabled', 'elementor' ), __( 'Draft', 'elementor' ) ),
-			'publish' => __( 'Published', 'elementor' ),
+			'draft' => sprintf( '%s (%s)', esc_html__( 'Disabled', 'elementor' ), esc_html__( 'Draft', 'elementor' ) ),
+			'publish' => esc_html__( 'Published', 'elementor' ),
 		];
 	}
 

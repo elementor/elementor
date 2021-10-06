@@ -4,6 +4,7 @@ import Layout from '../../components/layout';
 import PageLoader from '../../components/page-loader';
 import PreviewResponsiveControls from './preview-responsive-controls';
 import useKit from '../../hooks/use-kit';
+import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
 import { useState, useMemo } from 'react';
@@ -92,6 +93,12 @@ export default function Preview( props ) {
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
 		[ activeDevice ]
 	);
+
+	usePageTitle( {
+		title: data ?
+			`${ __( 'Kit Library', 'elementor' ) } | ${ data.title }` :
+			__( 'Loading...', 'elementor' ),
+	} );
 
 	if ( isError ) {
 		// Will be caught by the App error boundary.

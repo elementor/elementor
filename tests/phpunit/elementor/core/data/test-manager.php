@@ -3,11 +3,10 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Data;
 
 use Elementor\Data\Base\Processor;
 use Elementor\Data\Manager;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Template\Controller as ControllerTemplate;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Simple\Controller as ControllerSimple;
 use Elementor\Tests\Phpunit\Elementor\Data\Base\Mock\Processor\Controller as ControllerWithProcessor;
-
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
 
@@ -274,6 +273,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'globals/index' => 'globals/index',
 			'globals/colors' => 'globals/colors/{id}',
 			'globals/typography' => 'globals/typography/{id}',
+			'template-library/templates' => 'template-library/templates',
 		], $this->manager->command_formats );
 	}
 }

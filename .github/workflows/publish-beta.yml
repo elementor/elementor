@@ -5,8 +5,8 @@ on:
 
 jobs:
   bump-version:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     outputs:
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
     steps:
@@ -47,7 +47,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
   publish:
     needs: bump-version
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2

@@ -103,12 +103,6 @@ const SectionView = BaseElementView.extend( {
 			};
 		}
 
-		editTools.remove = {
-			/* translators: %s: Element Name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
-
 		return editTools;
 	},
 

@@ -7,6 +7,9 @@ export default class SwiperBC {
 			this.config = this.adjustConfig( config );
 		}
 
+		// The Swiper will overlap the column width when applying custom margin values on the column.
+		container.closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
+
 		// In case of a legacy behaviour the constructor should return a new Swiper instance instead of a Promise.
 		if ( config.legacy ) {
 			return this.createSwiperInstance( container, this.config );
@@ -38,17 +41,6 @@ export default class SwiperBC {
 		return new SwiperSource( container, config );
 	}
 
-	getElementorBreakpointValues() {
-		const elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
-			elementorBreakpointValues = [];
-
-		Object.values( elementorBreakpoints ).forEach( ( breakpointConfig ) => {
-			elementorBreakpointValues.push( breakpointConfig.value );
-		} );
-
-		return elementorBreakpointValues;
-	}
-
 	// Backwards compatibility for Elementor Pro <2.9.0 (old Swiper version - <5.0.0)
 	// In Swiper 5.0.0 and up, breakpoints changed from acting as max-width to acting as min-width
 	adjustConfig( config ) {
@@ -58,7 +50,7 @@ export default class SwiperBC {
 		}
 
 		const elementorBreakpoints = elementorFrontend.config.responsive.activeBreakpoints,
-			elementorBreakpointValues = this.getElementorBreakpointValues();
+			elementorBreakpointValues = elementorFrontend.breakpoints.getBreakpointValues();
 
 		Object.keys( config.breakpoints ).forEach( ( configBPKey ) => {
 			const configBPKeyInt = parseInt( configBPKey );

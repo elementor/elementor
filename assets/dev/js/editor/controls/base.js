@@ -28,7 +28,9 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! _.isEmpty( responsive ) ) {
-			classes += ' elementor-control-responsive-' + responsive.max;
+			const responsiveControlName = responsive.max || responsive.min;
+
+			classes += ' elementor-control-responsive-' + responsiveControlName;
 		}
 
 		return classes;
@@ -102,7 +104,11 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
-		this.listenTo( settings, 'change', this.toggleControlVisibility );
+		this.listenTo( settings, 'change', this.onAfterChange );
+	},
+
+	onAfterChange: function() {
+		this.toggleControlVisibility();
 	},
 
 	toggleControlVisibility: function() {
