@@ -26,7 +26,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
     }
 
 	onSettingsSubmit( event ) {
-		const submitButton = jQuery( event.originalEvent.submitter );
+		const $submitButton = jQuery( event.originalEvent.submitter );
 
 		if ( submitButton.is( this.elements.$experimentsButtons ) ) {
 			this.elements.$experimentSelects.val( submitButton.val() );
