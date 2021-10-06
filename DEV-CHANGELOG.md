@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev34 - 2021-10-06
+* Fix: Slides per view controls disappeared in multiple breakpoints in Testimonial Carousel [ED-5025] (#16388)
+
 #### 3.5.0-dev33 - 2021-10-03
 * Fix: Default value check for control validity [ED-5071] (#16437)
 
