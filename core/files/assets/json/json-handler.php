@@ -7,6 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Json Handler
+ *
+ * Deprecated, use Elementor\Core\Files\File_Types\Svg instead, accessed by calling:
+ * `Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );`
+ *
+ * @deprecated 3.5.0
+ */
 class Json_Handler extends Files_Upload_Handler {
 	public static function get_name() {
 		return 'json-handler';

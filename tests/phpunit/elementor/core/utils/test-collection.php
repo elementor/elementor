@@ -231,6 +231,63 @@ class Test_Collection extends Elementor_Test_Base {
 		], $result2->all() );
 	}
 
+	public function test_flatten() {
+		// Arrange
+		$collection = new Collection( [
+			'a' => 1,
+			'b' => '2',
+			'c' => true,
+			'd' => (object) [ 'e' => 3 ],
+		] );
+
+		// Act
+		$result = $collection->flatten();
+
+		// Assert
+		$this->assertEqualSets(
+			[ 1, '2', true, (object) [ 'e' => 3 ] ],
+			$result->all()
+		);
+	}
+
+	public function test_flatten__with_objects() {
+		// Arrange
+		$collection = new Collection( [
+			'a' => [
+				(object) [ 'name' => '1' ],
+				(object) [ 'name' => '2' ],
+			],
+			'b' => [
+				(object) [ 'name' => '3' ],
+				(object) [ 'name' => '4' ],
+			]
+		] );
+
+		// Act
+		$result = $collection->flatten();
+
+		// Assert
+		$this->assertEqualSets( [
+			(object) [ 'name' => '1' ],
+			(object) [ 'name' => '2' ],
+			(object) [ 'name' => '3' ],
+			(object) [ 'name' => '4' ],
+		], $result->all() );
+	}
+
+	public function test_push() {
+		// Arrange
+		$collection = new Collection( [ '1', '2', '3' ] );
+
+		// Act
+		$collection->push( '4', '5', '6' );
+
+		// Assert
+		$this->assertEqualSets( [
+			'1', '2', '3', '4', '5', '6'
+		], $collection->all() );
+	}
+
 	public function test_get() {
 		// Arrange
 		$collection = new Collection( ['a' => 1, 'b' => 2] );

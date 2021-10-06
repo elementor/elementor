@@ -2,9 +2,6 @@
 namespace Elementor\Core\Files;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Files\Assets\Files_Upload_Handler;
-use Elementor\Core\Files\Assets\Json\Json_Handler;
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
@@ -36,9 +33,6 @@ class Manager {
 	 */
 	public function __construct() {
 		$this->register_actions();
-
-		new Svg_Handler();
-		new Json_Handler();
 	}
 
 	public function get( $class, $args ) {
@@ -142,7 +136,7 @@ class Manager {
 			return;
 		}
 
-		update_option( Files_Upload_Handler::OPTION_KEY, 1 );
+		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, 1 );
 	}
 
 	/**
