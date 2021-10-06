@@ -24,6 +24,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	player: null,
 
+	isFontIconSvgExperiment: elementorFrontend.config.experimentalFeatures.e_font_icon_svg,
+
 	getDefaultSettings: function() {
 		return {
 			classes: {
@@ -96,7 +98,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		const closeIcon = {};
 
 		// If the experiment is active the closeIcon should be an entire SVG element otherwise it should pass the eicon class name.
-		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
+		if ( this.isFontIconSvgExperiment ) {
 			closeIcon.iconElement = close.element;
 		} else {
 			closeIcon.iconClass = 'eicon-close';
@@ -320,14 +322,14 @@ module.exports = elementorModules.ViewModule.extend( {
 		$.each( socialNetworks, ( key, data ) => {
 			const networkLabel = data.label,
 				$link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel ),
-				$socialNetworkIconElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
+				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
 
 			$link.prepend( $socialNetworkIconElement );
 			$linkList.append( $link );
 		} );
 
 		if ( ! videoUrl ) {
-			const $downloadIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( downloadBold.element ) : $( '<i>', { class: 'eicon-download-bold' } );
+			const $downloadIcon = this.isFontIconSvgExperiment ? $( downloadBold.element ) : $( '<i>', { class: 'eicon-download-bold' } );
 
 			$downloadIcon.attr( 'aria-label', i18n.download );
 
@@ -374,7 +376,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } );
 
 		if ( showShare ) {
-			const iconElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? shareArrow.element : '<i>';
+			const iconElement = this.isFontIconSvgExperiment ? shareArrow.element : '<i>';
 
 			elements.$iconShare = $( iconElement, {
 				class: slideshowClasses.iconShare,
@@ -399,7 +401,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showZoom ) {
-			const iconElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? zoomInBold.element : '<i>',
+			const iconElement = this.isFontIconSvgExperiment ? zoomInBold.element : '<i>',
 				showZoomElements = [],
 				showZoomAttrs = {
 					role: 'switch',
@@ -410,7 +412,7 @@ module.exports = elementorModules.ViewModule.extend( {
 					...showZoomAttrs,
 				};
 
-			if ( ! elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
+			if ( ! this.isFontIconSvgExperiment ) {
 				zoomAttrs.class = slideshowClasses.iconZoomIn;
 			}
 
@@ -418,13 +420,11 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			showZoomElements.push( elements.$iconZoom );
 
-			if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-				const zoomOutAttrs = {
-					...showZoomAttrs,
-					class: classes.hidden,
-				};
-
-				elements.$iconZoomOut = $( zoomOutBold.element ).attr( zoomOutAttrs ).on( 'click', this.toggleZoomMode );
+			if ( this.isFontIconSvgExperiment ) {
+				elements.$iconZoomOut = $( zoomOutBold.element )
+					.attr( showZoomAttrs )
+					.addClass( classes.hidden )
+					.on( 'click', this.toggleZoomMode );
 
 				showZoomElements.push( elements.$iconZoomOut );
 			}
@@ -435,7 +435,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showFullscreen ) {
-			const iconElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? frameExpand.element : '<i>',
+			const iconElement = this.isFontIconSvgExperiment ? frameExpand.element : '<i>',
 				fullScreenElements = [],
 				fullScreenAttrs = {
 					role: 'switch',
@@ -447,7 +447,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				};
 
 			// Only if the experiment is not active, we use the class-name in order to render the icon.
-			if ( ! elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
+			if ( ! this.isFontIconSvgExperiment ) {
 				expandAttrs.class = slideshowClasses.iconExpand;
 			}
 
@@ -458,14 +458,10 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			fullScreenElements.push( elements.$iconExpand );
 
-			if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-				const minimizeAttrs = {
-					...fullScreenAttrs,
-					class: classes.hidden,
-				};
-
+			if ( this.isFontIconSvgExperiment ) {
 				elements.$iconMinimize = $( frameMinimize.element )
-					.attr( minimizeAttrs )
+					.attr( fullScreenAttrs )
+					.addClass( classes.hidden )
 					.on( 'click', this.toggleFullscreen );
 
 				fullScreenElements.push( elements.$iconMinimize );
@@ -543,8 +539,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
 
-		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			this.elements.$iconExpand.addClass( classes.hidden ).attr( 'aria-checked', 'true' );
+		if ( this.isFontIconSvgExperiment ) {
+			this.elements.$iconExpand.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
 			this.elements.$iconMinimize.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
 		} else {
 			this.elements.$iconExpand
@@ -560,8 +556,8 @@ module.exports = elementorModules.ViewModule.extend( {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
 
-		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			this.elements.$iconExpand.removeClass( classes.hidden ).attr( 'aria-checked', 'false' );
+		if ( this.isFontIconSvgExperiment ) {
+			this.elements.$iconExpand.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
 			this.elements.$iconMinimize.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
 		} else {
 			this.elements.$iconExpand
@@ -584,9 +580,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		swiper.allowTouchMove = false;
 		elements.$container.addClass( classes.slideshow.zoomMode );
 
-		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			elements.$iconZoom.addClass( classes.hidden );
-			elements.$iconZoomOut.removeClass( classes.hidden );
+		if ( this.isFontIconSvgExperiment ) {
+			elements.$iconZoom.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
+			elements.$iconZoomOut.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
 		} else {
 			elements.$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
 		}
@@ -603,9 +599,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		swiper.allowTouchMove = true;
 		elements.$container.removeClass( classes.slideshow.zoomMode );
 
-		if ( elementorFrontend.config.experimentalFeatures.e_font_icon_svg ) {
-			elements.$iconZoom.removeClass( classes.hidden );
-			elements.$iconZoomOut.addClass( classes.hidden );
+		if ( this.isFontIconSvgExperiment ) {
+			elements.$iconZoom.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
+			elements.$iconZoomOut.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
 		} else {
 			elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
 		}
@@ -649,7 +645,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const playVideoLoadingElement = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? loading.element : '<i>',
+				const playVideoLoadingElement = this.isFontIconSvgExperiment ? loading.element : '<i>',
 					$playIcon = $( '<div>', { class: classes.playButton } )
 						.html( $( playVideoLoadingElement ).attr( 'aria-label', i18n.playVideo ).addClass( classes.playButtonIcon ) );
 
@@ -689,8 +685,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			const $prevButtonIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
-				$nextButtonIcon = elementorFrontend.config.experimentalFeatures.e_font_icon_svg ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
+			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
+				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
 
 			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $prevButtonIcon );
 			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $nextButtonIcon );
