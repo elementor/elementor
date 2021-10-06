@@ -92,7 +92,14 @@ module.exports = function( grunt ) {
 			files: [ {
 				expand: true,
 				cwd: 'assets/dev/scss/direction',
-				src: [ 'frontend.scss', 'frontend-rtl.scss', 'frontend-lite.scss', 'frontend-lite-rtl.scss' ],
+				src: [
+					'frontend.scss',
+					'frontend-rtl.scss',
+					'frontend-lite.scss',
+					'frontend-lite-rtl.scss',
+					'frontend-legacy.scss',
+					'frontend-legacy-rtl.scss',
+				],
 				dest: 'assets/css/templates',
 				ext: '.css',
 			} ],
