@@ -10,10 +10,10 @@
 	--tabs-border-color: #{$gray-light};
 	--tabs-background-color: transparent;
 
-	//--tabs-title-color: var( --e-global-color-primary );
-	//--tabs-title-active-color: var( --e-global-color-accent );
-
 	/* TODO Find better solution for all global defaults. */
+	--tabs-title-color: var( --e-global-color-primary );
+	--tabs-title-active-color: var( --e-global-color-accent );
+
 	--tabs-title-typography-font-family: var( --e-global-typography-primary-font-family );
 	--tabs-title-typography-font-size: initial;
 	--tabs-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
