@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
-use Elementor\Core\Base\Document;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -532,29 +531,15 @@ class Frontend extends App {
 
 		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
-		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
-
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
-
-			$frontend_file_url = $frontend_file->get_url();
-		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
-		}
-
 		$frontend_dependencies = [];
+
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
-				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
 				[],
 				ELEMENTOR_VERSION
 			);
@@ -564,9 +549,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$frontend_file_url,
+			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
 			$frontend_dependencies,
-			$has_custom_file ? null : ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		/**
@@ -679,6 +664,38 @@ class Frontend extends App {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.4.5
+	 *
+	 * @access private
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file URL
+	 */
+	private function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+
+			$time = $frontend_file->get_meta( 'time' );
+
+			if ( ! $time ) {
+				$frontend_file->update();
+			}
+			$frontend_file_url = $frontend_file->get_url();
+		} else {
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_url;
 	}
 
 	/**

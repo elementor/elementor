@@ -8,8 +8,8 @@ use Elementor\Core\Upgrade\Upgrades;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Test_Upgrades_Trait;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Upgrades extends Elementor_Test_Base {
 

@@ -165,7 +165,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
 		}
 		return $this->new_lp_url;
 	}
@@ -346,7 +346,11 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			$query->set( 'name', $query->query['pagename'] );
+			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+				set_query_var( 'name', $query->query['pagename'] );
+
+				return $value;
+			} );
 		}
 	}
 

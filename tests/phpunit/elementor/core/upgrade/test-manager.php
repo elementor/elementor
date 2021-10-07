@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Upgrade;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
 

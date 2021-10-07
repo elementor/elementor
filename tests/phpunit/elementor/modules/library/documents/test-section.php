@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Library\Documents;
 
 use Elementor\Modules\Library\Documents\Section;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Section extends Elementor_Test_Base {
 
