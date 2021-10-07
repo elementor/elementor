@@ -1,5 +1,14 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev35 - 2021-10-07
+* Tweak: Height and width fields in Responsive bar cannot be edit in Desktop [ED-4529] (#16198)
+* Fix: When adding margin to column of media-carousel widget it breaks the UI [ED-4915] (#16258)
+* Tweak: Added an option for Storke in multiple widgets [ED-3914] (#16029)
+* Tweak: Adjusting the widget promotional popup CTA text [ED-3971] (#16438)
+* Tweak: New Experiments UI [ED-4179] (#16233)
+* Tweak: Deprecate old properties [ED-4880] (#16158)
+* Fix: Dividers not vertically centered in Icon List wisget [ED-5053] (#16440)
+
 #### 3.5.0-dev34 - 2021-10-06
 * Fix: Slides per view controls disappeared in multiple breakpoints in Testimonial Carousel [ED-5025] (#16388)
 
