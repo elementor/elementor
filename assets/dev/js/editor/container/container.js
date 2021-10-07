@@ -473,7 +473,7 @@ export default class Container extends ArgsObject {
 			return;
 		}
 
-		this.renderer.view.renderOnChange( this.settings );
+		this.renderer.view.renderOnChange( this.settings, this );
 	}
 
 	renderUI() {

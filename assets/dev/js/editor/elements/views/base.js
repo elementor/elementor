@@ -575,11 +575,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	renderOnChange( settings ) {
-		if ( ! this.allowRender ) {
-			return;
-		}
-
+	applyChanges( settings, render = true ) {
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
@@ -617,14 +613,25 @@ BaseElementView = BaseContainer.extend( {
 				return;
 			}
 
-			if ( ! isContentChanged ) {
+			if ( render && ! isContentChanged ) {
 				this.renderUI();
-				return;
+
+				return true;
 			}
 		}
 
-		// Re-render the template
-		this.renderHTML();
+		return false;
+	},
+
+	renderOnChange( settings ) {
+		if ( ! this.allowRender ) {
+			return;
+		}
+
+		if ( ! this.applyChanges( settings ) ) {
+			// Re-render the template
+			this.renderHTML();
+		}
 	},
 
 	getDynamicParsingSettings() {
