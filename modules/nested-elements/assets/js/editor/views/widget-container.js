@@ -1,5 +1,5 @@
 const BaseElementView = require( 'elementor-elements/views/base' ),
-	WidgetBase = require( 'elementor-elements/views/widget' );
+	WidgetView = require( 'elementor-elements/views/widget' );
 
 /**
  * @extends {BaseElementView}
@@ -10,7 +10,7 @@ class WidgetContainer extends BaseElementView {
 
 		this.once( 'container:created', this.onContainerCreatedOnce.bind( this ) );
 
-		super.initialize();
+		WidgetView.prototype.initialize.apply( this, arguments );
 	}
 
 	events() {
@@ -63,9 +63,12 @@ class WidgetContainer extends BaseElementView {
 	}
 }
 
-WidgetContainer.prototype.className = WidgetBase.prototype.className;
-WidgetContainer.prototype.getTemplate = WidgetBase.prototype.getTemplate;
-WidgetContainer.prototype.getEditButtons = WidgetBase.prototype.getEditButtons;
-WidgetContainer.prototype.getRepeaterSettingKey = WidgetBase.prototype.getRepeaterSettingKey;
+WidgetContainer.prototype.className = WidgetView.prototype.className;
+WidgetContainer.prototype.getTemplate = WidgetView.prototype.getTemplate;
+WidgetContainer.prototype.getEditButtons = WidgetView.prototype.getEditButtons;
+WidgetContainer.prototype.getRepeaterSettingKey = WidgetView.prototype.getRepeaterSettingKey;
+WidgetContainer.prototype.onModelBeforeRemoteRender = WidgetView.prototype.onModelBeforeRemoteRender;
+WidgetContainer.prototype.onModelRemoteRender = WidgetView.prototype.onModelRemoteRender;
+WidgetContainer.prototype.onBeforeDestroy = WidgetView.prototype.onBeforeDestroy;
 
 module.exports = WidgetContainer;
