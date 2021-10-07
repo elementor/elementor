@@ -399,6 +399,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 3.3.0
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
@@ -745,6 +746,7 @@ class Utils {
 	 */
 	public static function get_recently_edited_posts_query( $args = [] ) {
 		$args = wp_parse_args( $args, [
+			'no_found_rows' => true,
 			'post_type' => 'any',
 			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '3',

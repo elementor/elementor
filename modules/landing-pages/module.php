@@ -43,8 +43,12 @@ class Module extends BaseModule {
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0-beta',
+			],
 		];
 	}
 
@@ -64,6 +68,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$trashed_posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
@@ -92,6 +97,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any landing pages.
 		$posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
@@ -399,6 +405,7 @@ class Module extends BaseModule {
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
 		$possible_new_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
 		] );

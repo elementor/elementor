@@ -325,7 +325,7 @@ class Tracker {
 
 		if ( $results ) {
 			foreach ( $results as $result ) {
-				$usage[ $result->post_type ][ $result->post_status ] = $result->hits;
+				$usage[ $result->post_type ][ $result->post_status ] = (int) $result->hits;
 			}
 		}
 
@@ -451,6 +451,46 @@ class Tracker {
 	}
 
 	/**
+	 * Get library usage extend.
+	 *
+	 * Retrieve the number of Elementor library items saved.
+	 *
+	 * @return array The number of Elementor library items grouped by post types, post status
+	 *               and meta value.
+	 */
+	public static function get_library_usage_extend() {
+		global $wpdb;
+
+		$usage = [];
+
+		$results = $wpdb->get_results(
+			"SELECT `meta_value`, COUNT(`ID`) `hits`, `post_status`
+				FROM {$wpdb->posts} `p`
+				LEFT JOIN {$wpdb->postmeta} `pm` ON(`p`.`ID` = `pm`.`post_id`)
+				WHERE `post_type` = 'elementor_library'
+					AND `meta_key` = '_elementor_template_type'
+				GROUP BY `post_type`, `meta_value`, `post_status`;"
+		);
+
+		if ( $results ) {
+			foreach ( $results as $result ) {
+				if ( empty( $usage[ $result->meta_value ] ) ) {
+					$usage[ $result->meta_value ] = [];
+				}
+
+				if ( empty( $usage[ $result->meta_value ][ $result->post_status ] ) ) {
+					$usage[ $result->meta_value ][ $result->post_status ] = 0;
+				}
+
+				$usage[ $result->meta_value ][ $result->post_status ] += $result->hits;
+			}
+		}
+
+		return $usage;
+
+	}
+
+	/**
 	 * Get the tracking data
 	 *
 	 * Retrieve tracking data and apply filter
@@ -481,6 +521,7 @@ class Tracker {
 					'version' => self::get_tools_version_control_usage(),
 					'maintenance' => self::get_tools_maintenance_usage(),
 				],
+				'library-details' => self::get_library_usage_extend(),
 			],
 			'is_first_time' => $is_first_time,
 			'install_time' => Plugin::instance()->get_install_time(),

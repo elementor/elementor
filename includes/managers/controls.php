@@ -358,6 +358,7 @@ class Controls_Manager {
 			'box-shadow',
 			'css-filter',
 			'text-shadow',
+			'text-stroke',
 		];
 	}
 
@@ -430,7 +431,7 @@ class Controls_Manager {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
 			$class_name = __NAMESPACE__ . '\Control_' . $control_class_id;
 
-			$this->register_control( $control_id, new $class_name() );
+			$this->register( new $class_name() );
 		}
 
 		// Group Controls
@@ -447,10 +448,30 @@ class Controls_Manager {
 		 * Fires after Elementor controls are registered.
 		 *
 		 * @since 1.0.0
+		 * @deprecated 3.5.0 Use `elementor/controls/register` hook instead.
 		 *
 		 * @param Controls_Manager $this The controls manager.
 		 */
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+		//	'elementor/controls/controls_registered',
+		//	[ $this ],
+		//	'3.5.0',
+		//	'elementor/controls/register'
+		//);
+
 		do_action( 'elementor/controls/controls_registered', $this );
+
+		/**
+		 * After controls registered.
+		 *
+		 * Fires after Elementor controls are registered.
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param Controls_Manager $this The controls manager.
+		 */
+		do_action( 'elementor/controls/register', $this );
 	}
 
 	/**
@@ -461,12 +482,50 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param string       $control_id       Control ID.
 	 * @param Base_Control $control_instance Control instance, usually the
 	 *                                       current instance.
 	 */
 	public function register_control( $control_id, Base_Control $control_instance ) {
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'register'
+		//);
+
+		$this->register( $control_instance, $control_id );
+	}
+
+	/**
+	 * Register control.
+	 *
+	 * This method adds a new control to the controls list. It adds any given
+	 * control to any given control instance.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param Base_Control $control_instance Control instance, usually the current instance.
+	 * @param string       $control_id       Control ID. Deprecated parameter.
+	 *
+	 * @return void
+	 */
+	public function register( Base_Control $control_instance, $control_id = null ) {
+		// TODO: Uncomment when Pro uses the new hook.
+
+		// TODO: For BC. Remove in the future.
+		//if ( $control_id ) {
+		//	Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
+		//		'$control_id', '3.5.0'
+		//	);
+		//} else {
+		//}
+
+		$control_id = $control_instance->get_type();
+
 		$this->controls[ $control_id ] = $control_instance;
 	}
 
@@ -477,12 +536,36 @@ class Controls_Manager {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $control_id Control ID.
 	 *
 	 * @return bool True if the control was removed, False otherwise.
 	 */
 	public function unregister_control( $control_id ) {
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'unregister'
+		//);
+
+		return $this->unregister( $control_id );
+	}
+
+	/**
+	 * Unregister control.
+	 *
+	 * This method removes control from the controls list.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $control_id Control ID.
+	 *
+	 * @return bool Whether the controls has been unregistered.
+	 */
+	public function unregister( $control_id ) {
 		if ( ! isset( $this->controls[ $control_id ] ) ) {
 			return false;
 		}
