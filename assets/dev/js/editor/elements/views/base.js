@@ -540,6 +540,8 @@ BaseElementView = BaseContainer.extend( {
 	runReadyTrigger: function() {
 		const self = this;
 
+		self.linksData();
+
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
@@ -660,6 +662,37 @@ BaseElementView = BaseContainer.extend( {
 	save() {
 		$e.route( 'library/save-template', {
 			model: this.model,
+		} );
+	},
+
+	linksData() {
+		const id = this.$el.data( 'id' );
+
+		if ( ! id ) {
+			return;
+		}
+
+		const self = this;
+
+		this.$el.find( '[data-link]' ).filter( function() {
+			const $current = jQuery( this );
+
+			// To support nested links bypass nested links that are not part of the current.
+			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
+				if ( this.dataset.link ) {
+					if ( ! self.links ) {
+						/**
+						 * @type {DOMStringMap[]}
+						 */
+						self.links = [];
+					}
+
+					self.links.push( {
+						el: this,
+						dataset: this.dataset,
+					} );
+				}
+			}
 		} );
 	},
 
