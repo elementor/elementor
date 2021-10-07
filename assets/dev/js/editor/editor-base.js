@@ -7,6 +7,7 @@ import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -353,6 +354,8 @@ export default class EditorBase extends Marionette.Application {
 		this.promotion = new Promotion();
 
 		this.devTools = new DevTools();
+
+		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
