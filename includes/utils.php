@@ -399,6 +399,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 3.3.0
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.

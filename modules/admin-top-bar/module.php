@@ -4,6 +4,7 @@ namespace Elementor\Modules\AdminTopBar;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -43,11 +44,6 @@ class Module extends BaseApp {
 		</div>
 		<?php
 	}
-	protected function get_init_settings() {
-		return [
-			'is_administrator' => current_user_can( 'manage_options' ),
-		];
-	}
 
 	/**
 	 * Enqueue admin scripts
@@ -73,44 +69,35 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Register dashboard widgets.
-	 *
-	 * Adds a new Elementor widgets to WordPress dashboard.
-	 *
-	 * Fired by `wp_dashboard_setup` action.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 */
-	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
-	}
-
-	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'current_screen', function () {
-			$current_screen = get_current_screen();
+		add_action( 'in_admin_header', function () {
+			$this->render_admin_top_bar();
+		} );
 
-			// Only in elementor based pages.
-			if ( ! $current_screen || ! strstr( $current_screen->id, 'elementor' ) ) {
-				return;
+		add_action( 'admin_enqueue_scripts', function () {
+			$this->enqueue_scripts();
+		} );
+
+		add_action( 'elementor/init', function () {
+			$settings = [];
+			$settings['is_administrator'] = current_user_can( 'manage_options' );
+
+			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+			$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+			if ( $library ) {
+				$settings = array_merge( $settings, [
+					'is_user_connected' => $library->is_connected(),
+					'connect_url' => $library->get_admin_url( 'authorize' ),
+				] );
 			}
 
-			add_action( 'in_admin_header', function () {
-				$this->render_admin_top_bar();
-			} );
+			$this->set_settings( $settings );
 
-			add_action( 'admin_enqueue_scripts', function () {
-				$this->enqueue_scripts();
-			} );
-
-			add_action( 'wp_dashboard_setup', function () {
-				$this->register_dashboard_widgets();
-			} );
-		} );
+			do_action( 'elementor/admin-top-bar/init', $this );
+		}, 12 /* After component 'connect' register the apps */ );
 	}
 }
