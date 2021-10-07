@@ -44,16 +44,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	activate: function() {
+	applySortable() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
-			return;
-		}
-
-		var $childViewContainer = this.getChildViewContainer(),
+		const $childViewContainer = this.getChildViewContainer(),
 			defaultSortableOptions = {
 				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
@@ -70,6 +66,16 @@ SortableBehavior = Marionette.Behavior.extend( {
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
 		$childViewContainer.sortable( sortableOptions );
+	},
+
+	activate: function() {
+		if ( ! this.getChildViewContainer().sortable( 'instance' ) ) {
+			this.applySortable();
+
+			return;
+		}
+
+		this.getChildViewContainer().sortable( 'enable' );
 	},
 
 	_getSortableHelper: function( event, $item ) {
@@ -104,7 +110,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 		var childViewContainer = this.getChildViewContainer();
 
 		if ( childViewContainer.sortable( 'instance' ) ) {
-			childViewContainer.sortable( 'destroy' );
+			childViewContainer.sortable( 'disable' );
 		}
 	},
 

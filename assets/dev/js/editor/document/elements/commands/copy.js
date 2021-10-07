@@ -10,7 +10,13 @@ export class Copy extends CommandBase {
 
 		if ( ! elementor.selection.isSameType() ) {
 			elementor.notifications.showToast( {
-				message: __( 'Oops, you can’t copy this selection because it contains different element types.', 'elementor' ),
+				message: __( 'That didn’t work. Try copying one kind of element at a time.', 'elementor' ),
+				buttons: [
+					{
+						name: 'got_it',
+						text: __( 'Got it', 'elementor' ),
+					},
+				],
 			} );
 
 			return false;

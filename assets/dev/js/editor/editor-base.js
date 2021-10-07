@@ -371,6 +371,17 @@ export default class EditorBase extends Marionette.Application {
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
+	/**
+	 * Toggle sortable state globally.
+	 *
+	 * @param state
+	 */
+	toggleSortableState( state = true ) {
+		elementor.documents.getCurrent().$element.find( '.ui-sortable' ).sortable(
+			state ? 'enable' : 'disable'
+		);
+	}
+
 	// TODO: BC method since 2.3.0
 	initDialogsManager() {
 		this.dialogsManager = elementorCommon.dialogsManager;

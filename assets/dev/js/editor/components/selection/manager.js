@@ -35,6 +35,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 						const result = target[ prop ]( ...args );
 
 						target.updateType();
+						target.updateSortable()
 						target.updatePanelPage();
 						target.updateNavigator();
 
@@ -142,6 +143,15 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			return false;
 		}, elements[ 0 ].type );
+	}
+
+	/**
+	 * Update sortable state.
+	 *
+	 * In case more than one element is selected, currently sorting supposed to be disabled, and vice-versa.
+	 */
+	updateSortable() {
+		elementor.toggleSortableState( ! this.isMultiple() );
 	}
 
 	/**
