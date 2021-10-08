@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev36 - 2021-10-08
+* Fix: Admin Top Bar experiment causes the WP "Add New Plugin" to disappear [ED-5090] (#16504)
+* New: Drag image from desktop [ED-3817] (#15652)
+* Fix: Section handler not reachable if Scroll snap is active [ED-4926] (#16508)
+* Tweak: Updating the dialog library. (#16164)
+* Tweak: Added reverse columns to Additional Custom Breakpoints Experiment (ED-4631) (#16098)
+
 #### 3.5.0-dev35 - 2021-10-07
 * Tweak: Height and width fields in Responsive bar cannot be edit in Desktop [ED-4529] (#16198)
 * Fix: When adding margin to column of media-carousel widget it breaks the UI [ED-4915] (#16258)
