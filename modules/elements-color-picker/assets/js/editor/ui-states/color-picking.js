@@ -31,20 +31,12 @@ export class ColorPicking extends UiStateBase {
 	 * @return {void}
 	 */
 	onChange( oldValue, newValue ) {
-		const editAreaClass = 'elementor-edit-area-active';
+		const editAreaClass = 'elementor-edit-area-active',
+			isColorPickingOn = ( COLOR_PICKING_ON === newValue ),
+			editMode = isColorPickingOn ? 'picker' : 'edit';
 
-		if ( COLOR_PICKING_ON === newValue ) {
-			// Prevent elements from triggering edit mode on click.
-			elementor.changeEditMode( 'picker' );
-
-			this.toggleScopesClass( editAreaClass, true );
-			return;
-		}
-
-		this.toggleScopesClass( editAreaClass, false );
-
-		// Return to edit mode.
-		elementor.changeEditMode( 'edit' );
+		elementor.changeEditMode( editMode );
+		this.toggleScopesClass( editAreaClass, isColorPickingOn );
 	}
 
 	/**
