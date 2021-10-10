@@ -1,32 +1,80 @@
 import { useContext, forwardRef } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import { ThemeContext } from 'styled-components';
 import { getStyle } from 'e-components/utils';
+import styled from 'e-components';
+//import styled from '@emotion/styled';
+
+import { css } from '@emotion/css';
 
 const baseComponents = {},
 	cachedComponents = {};
 
 const Styled = forwardRef( ( props, ref ) => {
 	const themeContext = useContext( ThemeContext ),
-		{ cacheGroup, cacheKey, tag, extendStyles } = props,
+		{ cacheGroup, cacheKey, tag, extendStyles, extend } = props,
 		styledProps = getStyledProps( props ),
 		stylesData = { props: styledProps, config: themeContext.config },
-		styles = getStyle( props.styles, stylesData );
+		styles = getStyle( props.styles, stylesData ),
+		finalProps = { ...props };
 
-	let StyledComponent;
+	const StyledComponent = styled( extend || tag )``;
 
-	if ( cacheGroup && cacheKey ) {
-		StyledComponent = createCachedComponent( { cacheKey, cacheGroup, tag, styles, styledProps } );
-	} else {
-		StyledComponent = styled[ tag ]`${ styles.shared }${ styles.unique }`;
+	// if ( cacheGroup && cacheKey ) {
+	// 	StyledComponent = createCachedComponent( { cacheKey, cacheGroup, tag, styles, styledProps } );
+	// } else {
+	// 	StyledComponent = styled( tag )`${ styles.shared }${ styles.unique }`;
+	// }
+
+	// The css should not be executed in 'extend' mode, because it's css should be inserted to the DOM only after the extended component was rendered.
+	if ( ! extend ) {
+		console.log( '' );
+		console.log( 'NOT EXTEND:', { ...finalProps } );
+		console.log( '### - finalProps', { ...finalProps } );
+		console.log( '### - props', { ...props } );
+		console.log( '### - extendStyles', extendStyles );
+		finalProps.className += ' ' + css`${ styles.shared }${ styles.unique }`;
+
+		if ( extendStyles?.length ) {
+			extendStyles.forEach( ( styleItem ) => {
+				const { shared, unique } = getStyle( styleItem, stylesData );
+
+				finalProps.className += ' ' + css`${ shared }${ unique }`;
+			} );
+		}
 	}
 
-	if ( extendStyles ) {
-		const extendedStyles = getStyle( extendStyles, stylesData );
+	const nonStyledProps = [ 'tag', 'styles', 'extend', 'extendStyles', 'displayName', 'propTypes', 'cacheKey', 'cacheGroup', 'extendClassName' ];
 
-		StyledComponent = styled( StyledComponent )`${ extendedStyles.shared }${ extendedStyles.unique }`;
+	// Removing props that are not related to the component styles object.
+	nonStyledProps.forEach( ( prop ) => delete finalProps[ prop ] );
+
+	if ( extend ) {
+		console.log( '' );
+		console.log( 'EXTEND:', { ...finalProps } );
+		console.log( '1. ### - finalProps', { ...finalProps } );
+		console.log( '### - props', { ...props } );
+		if ( ! Array.isArray( finalProps.extendStyles ) ) {
+			finalProps.extendStyles = [];
+		}
+		if ( ! Array.isArray( finalProps.extendClassName ) ) {
+			finalProps.extendClassName = [];
+		}
+
+		finalProps.extendStyles.push( props.styles );
+		finalProps.extendClassName.push( props.className );
+
+		if ( props.extendStyles?.length ) {
+			finalProps.extendStyles = [ ...finalProps.extendStyles, ...props.extendStyles ];
+		}
+
+		if ( props.extendClassName?.length ) {
+			finalProps.extendClassName = [ ...finalProps.extendClassName, ...props.extendClassName ];
+		}
+
+		console.log( '2. ### - finalProps', { ...finalProps } );
 	}
 
-	return <StyledComponent { ...props } ref={ ref }>{ props.children }</StyledComponent>;
+	return <StyledComponent { ...finalProps } ref={ ref }>{ finalProps.children }</StyledComponent>;
 } );
 
 const createCachedComponent = ( { cacheGroup, cacheKey, tag, styles, styledProps } ) => {
@@ -86,7 +134,7 @@ const getStyledProps = ( props ) => {
 		return styledPropTypes;
 	}
 
-	const nonStyledProps = [ ...baseProps, 'tag', 'styles', 'extendStyles', 'extend', 'style', 'displayName', 'propTypes', 'cacheKey', 'cacheGroup' ],
+	const nonStyledProps = [ ...baseProps, 'tag', 'styles', 'extendStyles', 'extend', 'style', 'displayName', 'propTypes', 'cacheKey', 'cacheGroup', 'extendClassName' ],
 		styledProps = { ...props };
 
 	// Removing props that are not related to the component styles object.
@@ -106,21 +154,24 @@ const getStyledProps = ( props ) => {
 Styled.displayName = 'Styled';
 
 Styled.propTypes = {
-	tag: PropTypes.string.isRequired,
+	tag: PropTypes.string,
 	cacheGroup: PropTypes.string,
 	cacheKey: PropTypes.string,
 	className: PropTypes.string,
 	children: PropTypes.any,
 	component: PropTypes.string,
+	extend: PropTypes.any,
 	propTypes: PropTypes.object,
 	styles: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
-	extendStyles: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
+	extendStyles: PropTypes.array,
+	extendClassName: PropTypes.array,
 };
 
 Styled.defaultProps = {
 	className: '',
 	styles: '',
-	extendStyles: '',
+	extendStyles: [],
+	extendClassName: [],
 };
 
 export default Styled;

@@ -1,24 +1,10 @@
-import { useContext } from 'react';
-
-import { AppContext } from 'elementor-app/app-context';
-
 import Header from './header';
 import Sidebar from './sidebar';
 import Content from './content';
 import Footer from './footer';
 
-import Theme from 'e-components/theme';
-
 export default function Page( props ) {
-	const appContext = useContext( AppContext ),
-		{ isDarkMode } = appContext.state,
-		themeConfig = {
-			variants: {
-				light: ! isDarkMode,
-				dark: isDarkMode,
-			},
-		},
-		AppSidebar = () => {
+		const AppSidebar = () => {
 			if ( ! props.sidebar ) {
 				return;
 			}
@@ -40,20 +26,18 @@ export default function Page( props ) {
 		};
 
 	return (
-		<Theme config={ themeConfig }>
-			<div className={`eps-app__lightbox ${ props.className }`}>
-				<div className="eps-app">
-					<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
-					<div className="eps-app__main">
-						{ AppSidebar() }
-						<Content>
-							{ props.content }
-						</Content>
-					</div>
-					{ AppFooter() }
+		<div className={`eps-app__lightbox ${ props.className }`}>
+			<div className="eps-app">
+				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } />
+				<div className="eps-app__main">
+					{ AppSidebar() }
+					<Content>
+						{ props.content }
+					</Content>
 				</div>
+				{ AppFooter() }
 			</div>
-		</Theme>
+		</div>
 	);
 }
 

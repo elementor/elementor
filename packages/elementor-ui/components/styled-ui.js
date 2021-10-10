@@ -6,13 +6,16 @@ const StyledUI = forwardRef( ( props, ref ) => {
 		<Styled
 			{ ...props }
 			ref={ ref }
-			cacheGroup="ui"
-			cacheKey={ props.cacheKey || props.displayName }
 		>
 			{ props.children }
 		</Styled>
 	);
 } );
+
+/*
+			cacheGroup="ui"
+			cacheKey={ props.cacheKey || props.displayName }
+* */
 
 StyledUI.displayName = 'StyledUI';
 
