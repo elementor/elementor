@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Schemas;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
@@ -70,8 +71,8 @@ class Test_Usage extends Base_Schema {
 		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
 
 		// Add fake connect data.
-		update_option(Base_App::OPTION_CONNECT_SITE_KEY, 'fake' );
-		update_user_option( get_current_user_id(), Base_App::OPTION_CONNECT_COMMON_DATA_KEY, [
+		update_option( Base_App::OPTION_CONNECT_SITE_KEY, 'test' );
+		update_user_option( get_current_user_id(), Common_App::OPTION_CONNECT_COMMON_DATA_KEY, [
 			'user' => (object) [
 				'email' => 'user@localhost',
 			],

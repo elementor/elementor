@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Core\Utils\Http;
-use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -18,7 +18,6 @@ abstract class Base_App {
 	const OPTION_NAME_PREFIX = 'elementor_connect_';
 
 	const OPTION_CONNECT_SITE_KEY = self::OPTION_NAME_PREFIX . 'site_key';
-	const OPTION_CONNECT_COMMON_DATA_KEY = self::OPTION_NAME_PREFIX . 'common_data';
 
 	const SITE_URL = 'https://my.elementor.com/connect/v1';
 
@@ -166,7 +165,7 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_user_option( get_current_user_id(), self::OPTION_CONNECT_COMMON_DATA_KEY );
+		delete_user_option( get_current_user_id(), Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
 
 		if ( current_user_can( 'manage_options' ) ) {
 			delete_option( self::OPTION_CONNECT_SITE_KEY );

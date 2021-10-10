@@ -174,7 +174,7 @@
 						"AuthorName": {
 							"$id": "#/system/plugins/active_plugins/$plugin/AuthorName",
 							"type": "string",
-							"title": "Plugin Autor Name",
+							"title": "Plugin Author Name",
 							"examples": [
 								"Elementor.com"
 							]
@@ -1118,18 +1118,26 @@
 						},
 						"users": {
 							"$id": "#/usages/connect/users",
-							"title": "User emails",
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/global/email"
-							}
+							"title": "User data",
+							"type": "object",
+							"patternProperties": {
+								"^[0-9]*$": {
+									"$ref": "#/definitions/global/email",
+									"$id": "#/usages/connect/users/$user-id/email",
+									"type": "string",
+									"title": "User email"
+								}
+							},
+							"additionalProperties": false
 						}
 					},
 					"examples": [
 						{
 							"site_key": "fake382c41f7a628306a1835df1bf@K3",
 							"users": [
-								"user@localhost"
+								{
+									"1": "user@localhost"
+								}
 							]
 						}
 					],

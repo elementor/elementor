@@ -3,10 +3,12 @@ namespace Elementor\Core\Common\Modules\Connect;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
 use Elementor\Utils;
+use WP_User_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -223,17 +225,25 @@ class Module extends BaseModule {
 	private function add_tracking_data( $params ) {
 		$connect_common_data_user_emails = [];
 
-		foreach ( get_users() as $user ) {
-			$connect_common_data = get_user_option( Base_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
+		$users = new WP_User_Query( [
+			'count_total' => false, // Disable SQL_CALC_FOUND_ROWS.
+			'meta_query' => [
+				'key' => Common_App::OPTION_CONNECT_COMMON_DATA_KEY,
+				'compare' => 'EXISTS',
+			],
+		] );
+
+		foreach ( $users->get_results() as $user ) {
+			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
 
 			if ( $connect_common_data ) {
-				$connect_common_data_user_emails[] = $connect_common_data['user']->email;
+				$connect_common_data_user_emails[ $user->ID ] = $connect_common_data['user']->email;
 			}
 		}
 
 		$params['usages'][ $this->get_name() ] = [
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'users' => $connect_common_data_user_emails,
+			'users' => (object) $connect_common_data_user_emails,
 		];
 
 		return $params;
