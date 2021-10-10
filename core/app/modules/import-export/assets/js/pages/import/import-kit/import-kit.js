@@ -11,22 +11,23 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { ajaxState, setAjax, ajaxActions } = useAjax(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ isImportFailed, setIsImportFailed ] = useState( false ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		referrer = location.hash.match( 'referrer=([^&]+)' ),
+		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
 			setIsLoading( false );
-			ajaxActions.reset();
+			kitActions.reset();
 		},
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
@@ -36,31 +37,23 @@ export default function ImportKit() {
 
 	useEffect( () => {
 		if ( context.data.file ) {
-			setAjax( {
-				data: {
-					e_import_file: context.data.file,
-					action: 'elementor_import_kit',
-					data: JSON.stringify( {
-						stage: 1,
-					} ),
-				},
-			} );
+			kitActions.upload( { file: context.data.file } );
 		}
 	}, [ context.data.file ] );
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
-		} else if ( 'error' === ajaxState.status ) {
+		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
+			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+		} else if ( 'error' === kitState.status ) {
 			setIsImportFailed( true );
 		}
-	}, [ ajaxState.status ] );
+	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( context.data.fileResponse && context.data.file ) {
+		if ( context.data.uploadedData && context.data.file ) {
 			navigate( '/import/content' );
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.uploadedData ] );
 
 	useEffect( () => {
 		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
@@ -70,7 +63,7 @@ export default function ImportKit() {
 		<Layout type="import">
 			<section className="e-app-import">
 				{
-					'kit-library' === referrer?.[1] &&
+					'kit-library' === referrer &&
 					<Button
 						className="e-app-import__back-to-library"
 						icon="eicon-chevron-left"

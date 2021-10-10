@@ -140,35 +140,6 @@ The full list of commands, including custom & 3rd commands, is available via: `$
                 }
             }
             ```
-    * Commands data
-        * Example:
-            ```html class:"lineNo"
-            1  📦 component
-            2  │   📜 component.js
-            3  │
-            4  └───📂 commands-data
-            5  │   │   📜 index.js ( has all the commands exported )
-            6  │   │   📜 data-command.js
-            7  │   │   ...
-            ```
-        * `component/commands-data/index.js` file at line *5*:
-            ```javascript
-            export { DataCommand } from './data-command';
-            ```
-        * use `importCommands` example: `component/component.js` file at line *2*:
-            ```javascript
-            import * as commandsData from './commands-data/';
-    
-            export class Component extends $e.modules.ComponentBase {
-                getNamespace() {
-                    return 'component-name';
-                }
-    
-                defaultData() {
-                    return this.importCommands( commandsData );
-                }
-            }
-            ```
 ### **Note:** further information about [`{$e.modules.CommandBase}`](../modules/command-base.full.md)**class**.
 
-### [Back](../readme.md) 
+### [Back](../index.md) 

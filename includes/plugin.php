@@ -69,20 +69,6 @@ class Plugin {
 	public $db;
 
 	/**
-	 * Ajax Manager.
-	 *
-	 * Holds the plugin ajax handlers which are responsible for ajax requests
-	 * and responses.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.3.0 Use `Plugin::$instance->common->get_component( 'ajax' )` instead.
-	 * @access public
-	 *
-	 * @var Ajax
-	 */
-	public $ajax;
-
-	/**
 	 * Controls manager.
 	 *
 	 * Holds the plugin controls manager handler is responsible for registering
@@ -375,19 +361,6 @@ class Plugin {
 	public $icons_manager;
 
 	/**
-	 * Files Manager.
-	 *
-	 * Holds the plugin files manager.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.1.0 Use `Plugin::$files_manager` instead.
-	 * @access public
-	 *
-	 * @var Files_Manager
-	 */
-	private $posts_css_manager;
-
-	/**
 	 * WordPress widgets manager.
 	 *
 	 * Holds the WordPress widgets manager.
@@ -422,18 +395,6 @@ class Plugin {
 	 * @var Beta_Testers
 	 */
 	public $beta_testers;
-
-	/**
-	 * Debugger.
-	 *
-	 * Holds the plugin debugger data.
-	 *
-	 * @deprecated 2.1.2 Use `Plugin::$inspector` instead.
-	 * @access public
-	 *
-	 * @var Inspector
-	 */
-	public $debugger;
 
 	/**
 	 * Inspector.
@@ -730,7 +691,6 @@ class Plugin {
 		$this->experiments = new Experiments_Manager();
 		$this->breakpoints = new Breakpoints_Manager();
 		$this->inspector = new Inspector();
-		$this->debugger = $this->inspector;
 
 		Settings_Manager::run();
 
@@ -787,8 +747,6 @@ class Plugin {
 		$this->common = new CommonApp();
 
 		$this->common->init_components();
-
-		$this->ajax = $this->common->get_component( 'ajax' );
 	}
 
 	/**
