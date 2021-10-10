@@ -71,10 +71,12 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel: function( model, options = {} ) {
+		const newSection = 'section' !== ( model.elType || model?.get( 'elType' ) );
+
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			Object.assign( {}, options, { newSection: true } )
+			{ ...options, newSection },
 		);
 	},
 

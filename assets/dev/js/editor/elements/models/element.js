@@ -24,7 +24,12 @@ ElementModel = Backbone.Model.extend( {
 		if ( undefined !== elements ) {
 			var ElementsCollection = require( 'elementor-elements/collections/elements' );
 
-			this.set( 'elements', new ElementsCollection( elements ) );
+			this.set(
+				'elements',
+				ElementsCollection.prototype.isPrototypeOf( elements ) ?
+					elements :
+					new ElementsCollection( elements )
+			);
 		}
 
 		if ( 'widget' === elType ) {
@@ -67,9 +72,11 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		settings = new SettingsModel( settings, {
-			controls: elementor.getElementControls( this ),
-		} );
+		if ( ! SettingsModel.prototype.isPrototypeOf( settings ) ) {
+			settings = new SettingsModel( settings, {
+				controls: elementor.getElementControls( this ),
+			} );
+		}
 
 		this.set( 'settings', settings );
 

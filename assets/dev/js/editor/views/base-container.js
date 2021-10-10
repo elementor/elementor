@@ -89,13 +89,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromContainer( container, options = {} ) {
-		const model = container.model.attributes;
-
-		return this.createElementFromModel( Object.assign(
-			model,
-			model.custom,
-			{ settings: model.settings.attributes }
-		), options );
+		return this.createElementFromModel( container.model, options );
 	},
 
 	createElementFromModel( model, options = {} ) {

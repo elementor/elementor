@@ -27,7 +27,22 @@ export class Media extends CommandData {
 
 		args.data = this.file;
 
+		if ( args.options?.progress ) {
+			this.toast = elementor.notifications.showToast( {
+				message: __( 'Uploading...' ),
+				sticky: true,
+			} );
+		}
+
 		return args;
+	}
+
+	applyAfterCreate( data, args ) {
+		if ( args.options?.progress ) {
+			this.toast.hide();
+		}
+
+		return data;
 	}
 
 	async run() {

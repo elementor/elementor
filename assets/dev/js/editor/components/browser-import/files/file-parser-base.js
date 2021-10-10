@@ -12,6 +12,13 @@ export default class FileParserBase {
 	reader;
 
 	/**
+	 * Tasks to complete, even after parsing completed.
+	 *
+	 * @type {[]}
+	 */
+	tasks = [];
+
+	/**
 	 * FileParseBase constructor.
 	 *
 	 * @param reader
