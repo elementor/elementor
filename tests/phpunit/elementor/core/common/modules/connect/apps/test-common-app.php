@@ -479,7 +479,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		$_GET['utm_source'] = 'test-source';
 		$_GET['utm_medium'] = 'test-medium';
 		$_GET['utm_campaign'] = 'test-campaign';
-		$_GET['utm_test'] = 'test-test';
+		$_GET['utm_not_allowed_param'] = 'test-test';
 
 		// Act
 		$url = $this->app_stub->proxy_get_remote_authorize_url();
@@ -495,7 +495,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( 'test-source', $parsed_query_params['utm_source'] );
 		$this->assertEquals( 'test-medium', $parsed_query_params['utm_medium'] );
 		$this->assertEquals( 'test-campaign', $parsed_query_params['utm_campaign'] );
-		$this->assertArrayNotHasKey( 'utm_test', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_not_allowed_param', $parsed_query_params );
 		$this->assertArrayNotHasKey( 'utm_term', $parsed_query_params );
 		$this->assertArrayNotHasKey( 'utm_content', $parsed_query_params );
 	}
