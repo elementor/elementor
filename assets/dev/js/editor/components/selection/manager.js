@@ -35,7 +35,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 						const result = target[ prop ]( ...args );
 
 						target.updateType();
-						target.updateSortable()
+						target.updateSortable();
 						target.updatePanelPage();
 						target.updateNavigator();
 
@@ -185,19 +185,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	updateNavigator() {
 		elementor.navigator.getLayout()
 			.elements.currentView.recursiveChildInvoke( 'updateSelection' );
-	}
-
-	/**
-	 * Does selection has element.
-	 *
-	 * Check whether an element is selected by it's container.
-	 *
-	 * @param {Container} container
-	 * @returns {boolean}
-	 */
-	hasElement( container ) {
-		return this.getElements()
-			.includes( container );
 	}
 
 	/**
