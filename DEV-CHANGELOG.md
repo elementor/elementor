@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev37 - 2021-10-11
+* Fix: Cannot open context menu in new section area [ED-5011] (#16361)
+* Tweak: Changing the font-icon-svg experiment to be inactive for new sites. (#16535)
+* New: CSS Transform [ED-4168] (#15800)
+
 #### 3.5.0-dev36 - 2021-10-08
 * Fix: Admin Top Bar experiment causes the WP "Add New Plugin" to disappear [ED-5090] (#16504)
 * New: Drag image from desktop [ED-3817] (#15652)
