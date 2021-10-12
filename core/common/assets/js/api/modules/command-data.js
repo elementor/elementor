@@ -1,5 +1,5 @@
 import CommandBase from './command-base';
-import * as errors from './errors';
+import * as errors from '../core/data/errors/';
 
 export default class CommandData extends CommandBase {
 	/**
@@ -202,16 +202,19 @@ export default class CommandData extends CommandBase {
 	}
 
 	/**
-	 * Called after apply() failed.
-	 *
-	 * @param e
+	 * @param {BaseError} e
 	 */
+	applyAfterCatch( e ) {
+		e.notify();
+	}
+
 	onCatchApply( e ) {
 		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
-		const status = e?.data?.status || 0;
+		const httpErrorCode = e?.data?.status || 501;
 
-		let dataError = Object.values( errors )
-			.find( ( error ) => error.getStatus() === status );
+		let dataError = Object.values( errors ).find(
+			( error ) => error.getHTTPErrorCode() === httpErrorCode
+		);
 
 		if ( ! dataError ) {
 			dataError = errors.DefaultError;
@@ -221,6 +224,6 @@ export default class CommandData extends CommandBase {
 
 		this.runCatchHooks( e );
 
-		e.notify();
+		this.applyAfterCatch( e );
 	}
 }
