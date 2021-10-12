@@ -165,14 +165,7 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_user_option( get_current_user_id(), Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
-
-		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( self::OPTION_CONNECT_SITE_KEY );
-			delete_option( 'elementor_remote_info_library' );
-		}
-
-		$this->redirect_to_admin_page();
+		delete_option( static::OPTION_CONNECT_SITE_KEY );
 	}
 
 	/**
@@ -654,11 +647,11 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	public function get_site_key() {
-		$site_key = get_option( self::OPTION_CONNECT_SITE_KEY );
+		$site_key = get_option( static::OPTION_CONNECT_SITE_KEY );
 
 		if ( ! $site_key ) {
 			$site_key = md5( uniqid( wp_generate_password() ) );
-			update_option( self::OPTION_CONNECT_SITE_KEY, $site_key );
+			update_option( static::OPTION_CONNECT_SITE_KEY, $site_key );
 		}
 
 		return $site_key;
