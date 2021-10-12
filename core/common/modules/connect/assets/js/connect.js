@@ -11,12 +11,7 @@ export default class extends elementorModules.ViewModule {
 						message: __( 'Unable to connect', 'elementor' ),
 					} );
 				},
-				UTM: () => {
-					const prevLibraryRoute = $e.routes.getHistory( 'library' ).reverse()[ 0 ].route,
-						tabName = prevLibraryRoute.split( '/' )[ 2 ];
-
-					return `&utm_source=editor-panel&utm_medium=wp-dash&utm_campaign=insert_${ tabName }`;
-				},
+				parseUrl: ( url ) => url, // Allow to change the url, e.g: replace placeholders like '%%template_type%%' with actual value.
 			}, options );
 
 			this.each( function() {
@@ -28,7 +23,7 @@ export default class extends elementorModules.ViewModule {
 				$this.attr( {
 					target: '_blank',
 					rel: 'opener',
-					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId + settings.UTM(),
+					href: settings.parseUrl( $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId ),
 				} );
 
 				elementorCommon.elements.$window

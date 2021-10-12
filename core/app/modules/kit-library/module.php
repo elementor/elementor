@@ -54,7 +54,12 @@ class Module extends BaseModule {
 			'subscription_plans' => $connect->get_subscription_plans( 'wp-kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
-			'library_connect_url'  => $kit_library->get_admin_url( 'authorize' ),
+			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', [
+				'utm_source' => 'kit-library',
+				'utm_medium' => 'wp-dash',
+				'utm_campaign' => 'library-connect',
+				'utm_term' => '%%page%%', // Will be replaced in the frontend.
+			] ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 		] );
 	}

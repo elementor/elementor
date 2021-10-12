@@ -533,18 +533,28 @@ abstract class Base_App {
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_auth_redirect_uri();
 
-		$url = add_query_arg( [
-			'action' => 'authorize',
-			'response_type' => 'code',
-			'client_id' => $this->get( 'client_id' ),
-			'auth_secret' => $this->get( 'auth_secret' ),
-			'state' => $this->get( 'state' ),
-			'redirect_uri' => rawurlencode( $redirect_uri ),
-			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
-			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
-		], $this->get_remote_site_url() );
+		$allowed_query_params_to_propagate = [
+			'utm_source',
+			'utm_medium',
+			'utm_campaign',
+			'utm_term',
+			'utm_content',
+		];
 
-		return $url;
+		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore
+			->only( $allowed_query_params_to_propagate )
+			->merge( [
+				'action' => 'authorize',
+				'response_type' => 'code',
+				'client_id' => $this->get( 'client_id' ),
+				'auth_secret' => $this->get( 'auth_secret' ),
+				'state' => $this->get( 'state' ),
+				'redirect_uri' => rawurlencode( $redirect_uri ),
+				'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
+				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
+			] );
+
+		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}
 
 	/**
