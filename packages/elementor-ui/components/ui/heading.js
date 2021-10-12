@@ -1,13 +1,8 @@
-import { forwardRef } from 'react';
-import { withStyles } from 'e-components';
-import StyledUI from '../styled-ui';
+import styled from 'styled-components';
+import { getStyle } from 'e-components/utils';
 import styles from 'e-styles/heading';
 
-const Heading = forwardRef( ( props, ref ) => (
-	<StyledUI { ...props } styles={ styles } ref={ ref } cacheKey="heading">{ props.children }</StyledUI>
-) );
-
-Heading.displayName = 'Heading';
+const Heading = styled.h1`${ ( props ) => getStyle( styles, props ) }`;
 
 Heading.propTypes = {
 	className: PropTypes.string,
@@ -22,4 +17,4 @@ Heading.defaultProps = {
 	variant: 'h1',
 };
 
-export default withStyles( Heading );
+export default Heading;

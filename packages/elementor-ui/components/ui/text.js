@@ -1,12 +1,8 @@
-import { forwardRef } from 'react';
-import { Styled, withStyles } from 'e-components';
+import styled from 'styled-components';
+import { getStyle } from 'e-components/utils';
 import styles from 'e-styles/text';
 
-const Text = forwardRef( ( props, ref ) => (
-	<Styled { ...props } styles={ styles } ref={ ref }>{ props.children }</Styled>
-) );
-
-Text.displayName = 'Text';
+const Text = styled.p`${ ( props ) => getStyle( styles, props ) }`;
 
 Text.propTypes = {
 	className: PropTypes.string,
@@ -20,4 +16,4 @@ Text.defaultProps = {
 	tag: 'p',
 };
 
-export default withStyles( Text );
+export default Text;

@@ -11,14 +11,14 @@ import sizeMap from './_maps/typography/size';
 
 import fontWeightMap from './_maps/font/font-weight';
 
-export const themeColors = ( key ) => themeColorsMap[ key ];
-export const tints = ( key ) => tintsMap[ key ];
-export const darkTints = ( key ) => darkTintsMap[ key ];
+export const themeColors = themeColorsMap;
+export const tints = tintsMap;
+export const darkTints = darkTintsMap;
 
-export const spacing = ( key ) => spacingMap[ key ];
+export const spacing = spacingMap;
 
-export const heading = ( key ) => headingMap[ key ];
-export const text = ( key ) => textMap[ key ];
-export const lineHeight = ( key ) => lineHeightMap[ key ];
-export const size = ( key ) => sizeMap[ key ];
-export const fontWeight = ( key ) => fontWeightMap[ key ];
+export const heading = headingMap;
+export const text = textMap;
+export const lineHeight = lineHeightMap;
+export const size = sizeMap;
+export const fontWeight = fontWeightMap;

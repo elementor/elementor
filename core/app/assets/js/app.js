@@ -12,17 +12,19 @@ import './app.scss';
 
 import { AppContext } from 'elementor-app/app-context';
 
-import Theme from 'e-components/theme';
+import { ThemeProvider } from 'styled-components';
 
 const { Suspense } = React;
 
 export default function App() {
 	const appContext = useContext( AppContext ),
 		{ isDarkMode } = appContext.state,
-		themeConfig = {
-			variants: {
-				light: ! isDarkMode,
-				dark: isDarkMode,
+		theme = {
+			config: {
+				variants: {
+					light: ! isDarkMode,
+					dark: isDarkMode,
+				},
 			},
 		};
 
@@ -34,13 +36,13 @@ export default function App() {
 		<ErrorBoundary>
 			<LocationProvider history={ router.appHistory }>
 				<Suspense fallback={ null }>
-					<Theme config={ themeConfig }>
+					<ThemeProvider theme={ theme }>
 						<Router>
 							{ router.getRoutes() }
 							<Index path="/" />
 							<NotFound default />
 						</Router>
-					</Theme>
+					</ThemeProvider>
 				</Suspense>
 			</LocationProvider>
 		</ErrorBoundary>

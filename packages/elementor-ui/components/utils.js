@@ -4,11 +4,12 @@
  * @param props - { variant: 'h1', size: 'xl' }
  * @returns {object} - { shared: 'background-color: #000;', unique: 'color: #fff;' }
  */
-export const getStyle = ( styles, { props, config } ) => {
-	const style = {
-		shared: '',
-		unique: '',
-	};
+export const getStyle = ( styles, props ) => {
+	const config = props?.theme?.config || { variants: {} },
+		style = {
+			shared: '',
+			unique: '',
+		};
 
 	if ( ! styles ) {
 		return style;
@@ -46,8 +47,10 @@ export const getStyle = ( styles, { props, config } ) => {
 		if ( themeVariant ) {
 			addStyle( themeVariant, [ 'shared' ] );
 
+			const styledProps = getStyledProps( props );
+
 			// Getting the styled props css from the styles object.
-			Object.entries( props ).forEach( ( [ propName, propValue ] ) => {
+			Object.entries( styledProps ).forEach( ( [ propName, propValue ] ) => {
 				const styleData = themeVariant[ propName ];
 
 				if ( styleData && propValue ) {
@@ -57,5 +60,14 @@ export const getStyle = ( styles, { props, config } ) => {
 		}
 	} );
 
-	return style;
+	return style.shared + style.unique;
+};
+
+const getStyledProps = ( props ) => {
+	const styledProps = { ...props };
+
+	// Removing props names that are not related to the styles objects.
+	[ 'className', 'children', 'tag', 'as', 'theme' ].forEach( ( prop ) => delete styledProps[ prop ] );
+
+	return styledProps;
 };
