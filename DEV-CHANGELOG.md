@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev38 - 2021-10-12
+* Tweak: Updated featured video in readme.txt (#16552)
+
 #### 3.5.0-dev37 - 2021-10-11
 * Fix: Cannot open context menu in new section area [ED-5011] (#16361)
 * Tweak: Changing the font-icon-svg experiment to be inactive for new sites. (#16535)
