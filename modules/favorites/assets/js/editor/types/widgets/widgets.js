@@ -9,16 +9,10 @@ export default class Widgets extends FavoriteType {
 		elementor.hooks.addFilter( 'panel/element/contextMenuGroups', this.addContextMenuGroups.bind( this ) );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	getName() {
 		return 'widgets';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	create( favorite ) {
 		const widgetCache = this.getWidgetCache( favorite );
 
@@ -42,9 +36,6 @@ export default class Widgets extends FavoriteType {
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	delete( favorite ) {
 		const widgetCache = this.getWidgetCache( favorite );
 
@@ -67,9 +58,6 @@ export default class Widgets extends FavoriteType {
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	toggle( favorite ) {
 		const widgetCache = this.getWidgetCache( favorite );
 

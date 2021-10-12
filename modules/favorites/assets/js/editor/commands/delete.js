@@ -1,9 +1,6 @@
 import CommandsBase from './base';
 
 export class Delete extends CommandsBase {
-	/**
-	 * @inheritDoc
-	 */
 	apply( args ) {
 		const manager = this.component.manager;
 

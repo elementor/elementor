@@ -14,9 +14,6 @@ class FavoritesModule extends elementorModules.editor.utils.Module {
 		types.forEach( ( classRef ) => this.register( classRef ) );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	onElementorLoaded() {
 		this.component = $e.components.register(
 			new Component( { manager: this } )

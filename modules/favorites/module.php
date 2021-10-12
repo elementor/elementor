@@ -51,9 +51,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public static function get_experimental_data() {
 		return [
 			'name' => 'favorite-widgets',
@@ -79,9 +76,6 @@ class Module extends BaseModule {
 		return $params;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function get_name() {
 		return 'favorites';
 	}
@@ -112,9 +106,9 @@ class Module extends BaseModule {
 	/**
 	 * Merge new user favorites to a type.
 	 *
-	 * @param string $type
-	 * @param array  $favorites
-	 * @param bool   $store
+	 * @param string        $type
+	 * @param array|string  $favorites
+	 * @param bool          $store
 	 *
 	 * @return array|bool
 	 */
@@ -125,9 +119,9 @@ class Module extends BaseModule {
 	/**
 	 * Delete existing favorites from a type.
 	 *
-	 * @param string $type
-	 * @param array  $favorites
-	 * @param bool   $store
+	 * @param string        $type
+	 * @param array|string  $favorites
+	 * @param bool          $store
 	 *
 	 * @return array|int
 	 */

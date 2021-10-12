@@ -20,16 +20,10 @@ class Widgets extends Favorites_Type {
 		add_action( 'elementor/document/before_get_config', [ $this, 'update_widget_categories' ], 10, 1 );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function get_name() {
 		return 'widgets';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function prepare( $favorites ) {
 		return array_intersect( parent::prepare( $favorites ), $this->get_available() );
 	}

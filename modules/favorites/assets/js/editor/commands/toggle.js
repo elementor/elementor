@@ -1,9 +1,6 @@
 import CommandsBase from './base';
 
 export class Toggle extends CommandsBase {
-	/**
-	 * @inheritDoc
-	 */
 	apply( args ) {
 		const manager = this.component.manager;
 

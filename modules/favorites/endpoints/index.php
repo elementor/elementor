@@ -11,16 +11,10 @@ use Elementor\Plugin;
 
 class Index extends Endpoint {
 
-	/**
-	 * @inheritDoc
-	 */
 	public function get_name() {
 		return 'index';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function register() {
 		$this->register_route(
 			'(?P<id>[\w]+)',
@@ -63,9 +57,6 @@ class Index extends Endpoint {
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function create_item( $type, $request ) {
 		$module = $this->get_module();
 		$favorite = $request->get_query_params()['favorite'];
@@ -75,9 +66,6 @@ class Index extends Endpoint {
 		return $module->get( $type );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function delete_item( $type, $request ) {
 		$module = $this->get_module();
 		$favorite = $request->get_query_params()['favorite'];

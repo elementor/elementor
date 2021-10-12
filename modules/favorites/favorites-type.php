@@ -24,7 +24,7 @@ abstract class Favorites_Type extends Static_Collection {
 	/**
 	 * Prepare favorites before taking any action.
 	 *
-	 * @param array $favorites
+	 * @param Collection|array|string $favorites
 	 *
 	 * @return array
 	 */
