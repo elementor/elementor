@@ -188,6 +188,15 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.5 - 2021-10-12 =
+* Tweak: Updated featured video in the WordPress repository plugin page
+* Tweak: Added support for future features compatibility
+* Fix: Additional breakpoints responsive CSS classes clash when Optimized DOM Output experiment is inactive [#16322](https://github.com/elementor/elementor/issues/16322)
+* Fix: Escaped several translation strings for better security (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Fix: Slides per view and slides to scroll controls disappeared when using multiple breakpoints in Testimonial Carousel widget
+* Fix: Padding not applied properly with absolute positioned widgets when the Optimized DOM Output experiment is active
+* Fix: Missing padding in the widgets panel layout
+
 = 3.4.4 - 2021-09-13 =
 * Fix: Custom popover responsive controls breaks when used in responsive breakpoints view when Additional Breakpoints experiment is active ([#16312](https://github.com/elementor/elementor/issues/16312))
 * Fix: Data Updater causes fatal error due to DB corruption ([#16100](https://github.com/elementor/elementor/issues/16100))
