@@ -115,6 +115,7 @@ export default function Preview( props ) {
 				model={ data }
 				buttons={ headersButtons }
 				centerColumn={ <PreviewResponsiveControls active={ activeDevice } onChange={ setActiveDevice }/> }
+				pageId="demo"
 			/>
 		}>
 			{ isIframeLoading && <PageLoader className="e-kit-library__preview-loader" /> }

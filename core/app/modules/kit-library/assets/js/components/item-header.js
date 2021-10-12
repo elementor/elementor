@@ -125,6 +125,7 @@ export default function ItemHeader( props ) {
 			}
 			{
 				isConnectDialogOpen && <ConnectDialog
+					pageId={ props.pageId }
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
 						updateSettings( {
@@ -154,4 +155,5 @@ ItemHeader.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	centerColumn: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	pageId: PropTypes.string,
 };
