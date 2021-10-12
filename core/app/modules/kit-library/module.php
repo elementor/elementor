@@ -63,8 +63,8 @@ class Module extends BaseModule {
 	 * Module constructor.
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Kits_Controller::class );
-		Plugin::$instance->data_manager->register_controller( Taxonomies_Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();

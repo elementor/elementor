@@ -7,6 +7,9 @@ export default class SwiperBC {
 			this.config = this.adjustConfig( config );
 		}
 
+		// The Swiper will overlap the column width when applying custom margin values on the column.
+		container.closest( '.elementor-widget-wrap' ).addClass( 'e-swiper-container' );
+
 		// In case of a legacy behaviour the constructor should return a new Swiper instance instead of a Promise.
 		if ( config.legacy ) {
 			return this.createSwiperInstance( container, this.config );
