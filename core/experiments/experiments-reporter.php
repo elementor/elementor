@@ -34,7 +34,6 @@ class Experiments_Reporter extends Base {
 
 	/**
 	 * Get Experiments.
-	 *Experiments_Reporter
 	 */
 	public function get_experiments() {
 		$result = [];
