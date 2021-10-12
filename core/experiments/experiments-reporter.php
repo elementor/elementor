@@ -1,6 +1,7 @@
 <?php
-namespace Elementor\Modules\System_Info\Reporters;
+namespace Elementor\Core\Experiments;
 
+use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Plugin;
 
 /**
@@ -9,7 +10,7 @@ use Elementor\Plugin;
  * Elementor experiment report handler class responsible for generating a report for
  * the experiments included in Elementor and their status.
  */
-class Experiments extends Base {
+class Experiments_Reporter extends Base {
 
 	/**
 	 * Get experiments reporter title.
@@ -31,34 +32,34 @@ class Experiments extends Base {
 		];
 	}
 
-	public function is_tracked() {
-		// Since manually handled by `get_settings_experiments_usage`.
-		return false;
-	}
-
 	/**
 	 * Get Experiments.
-	 *
-	 * Retrieve the list of Elementor experiments and each experiment's status (active/inactive), in HTML table format.
-	 *
-	 * @return array
+	 *Experiments_Reporter
 	 */
 	public function get_experiments() {
-		$experiments = Plugin::$instance->experiments->get_features();
+		$result = [];
 
-		$output = '';
+		$experiments_manager = Plugin::$instance->experiments;
 
-		foreach ( $experiments as $experiment ) {
-			// If the state is default, add the default state to the string.
-			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
+		// TODO: Those keys should be at `$experiments_manager`.
+		$tracking_keys = [
+			'default',
+			'state',
+		];
 
-			$output .= '<tr><td>' . esc_html( $experiment['title'] ) . ': </td>';
-			$output .= '<td>' . esc_html( $state ) . '</td>';
-			$output .= '</tr>';
+		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
+			$data_to_collect = [];
+
+			// Extract only tracking keys.
+			foreach ( $tracking_keys as $tracking_key ) {
+				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
+			}
+
+			$result[ $feature_name ] = $data_to_collect;
 		}
 
 		return [
-			'value' => $output,
+			'value' => $result,
 		];
 	}
 
@@ -89,6 +90,32 @@ class Experiments extends Base {
 			$output .= $experiment['title'] . ': ' . $state . PHP_EOL;
 
 			$is_first_item = false;
+		}
+
+		return [
+			'value' => $output,
+		];
+	}
+
+	/**
+	 * Get HTML Experiments.
+	 *
+	 * Retrieve the list of Elementor experiments and each experiment's status (active/inactive), in HTML table format.
+	 *
+	 * @return array
+	 */
+	public function get_html_experiments() {
+		$experiments = Plugin::$instance->experiments->get_features();
+
+		$output = '';
+
+		foreach ( $experiments as $experiment ) {
+			// If the state is default, add the default state to the string.
+			$state = Plugin::$instance->experiments->get_feature_state_label( $experiment );
+
+			$output .= '<tr><td>' . esc_html( $experiment['title'] ) . ': </td>';
+			$output .= '<td>' . esc_html( $state ) . '</td>';
+			$output .= '</tr>';
 		}
 
 		return [

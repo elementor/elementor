@@ -19,8 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 
-	const FORMAT_TRACKER = 'tracker';
-
 	/**
 	 * Get module name.
 	 *
@@ -65,7 +63,6 @@ class Module extends BaseModule {
 		'plugins' => [],
 		'network_plugins' => [],
 		'mu_plugins' => [],
-		'experiments' => [],
 	];
 
 	/**
@@ -152,10 +149,7 @@ class Module extends BaseModule {
 	public function display_page() {
 		$reports_info = self::get_allowed_reports();
 
-		$reports = $this->load_reports( $reports_info, 'html' );
-
-		$raw_reports = $this->load_reports( $reports_info, 'raw' );
-
+		$reports = $this->load_reports( $reports_info );
 		?>
 		<div id="elementor-system-info">
 			<h3 class="wp-heading-inline"><?php echo esc_html__( 'System Info', 'elementor' ); ?></h3>
@@ -165,9 +159,7 @@ class Module extends BaseModule {
 				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php echo esc_html__( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ); ?></label>
 				<textarea id="elementor-system-info-raw-code" readonly>
 					<?php
-						unset( $raw_reports['wordpress']['report']['admin_email'] );
-
-						$this->print_report( $raw_reports, 'raw' );
+						$this->print_report( $reports, 'raw' );
 					?>
 				</textarea>
 				<script>
@@ -204,7 +196,7 @@ class Module extends BaseModule {
 		}
 
 		$reports_info = self::get_allowed_reports();
-		$reports = $this->load_reports( $reports_info, 'raw' );
+		$reports = $this->load_reports( $reports_info );
 
 		$domain = parse_url( site_url(), PHP_URL_HOST );
 
@@ -241,17 +233,15 @@ class Module extends BaseModule {
 	 * @access public
 	 *
 	 * @param array $reports An array of system info reports.
-	 * @param string $format - 'raw', 'html', 'tracker', default is 'html' (empty $format).
 	 *
 	 * @return array An array of system info reports.
 	 */
-	public function load_reports( $reports, $format = '' ) {
+	public function load_reports( $reports ) {
 		$result = [];
 
 		foreach ( $reports as $report_name => $report_info ) {
 			$reporter_params = [
 				'name' => $report_name,
-				'format' => $format,
 			];
 
 			$reporter_params = array_merge( $reporter_params, $report_info );
@@ -262,12 +252,8 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			if ( self::FORMAT_TRACKER === $format && ! $reporter->is_tracked() ) {
-				continue;
-			}
-
 			$result[ $report_name ] = [
-				'report' => $reporter->get_report( $format ),
+				'report' => $reporter,
 				'label' => $reporter->get_title(),
 			];
 
@@ -324,13 +310,6 @@ class Module extends BaseModule {
 	 */
 	public function print_report( $reports, $template = 'raw' ) {
 		static $tabs_count = 0;
-
-		static $required_plugins_properties = [
-			'Name',
-			'Version',
-			'URL',
-			'Author',
-		];
 
 		$template_path = __DIR__ . '/templates/' . $template . '.php';
 

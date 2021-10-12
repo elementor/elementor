@@ -1,9 +1,9 @@
 <?php
-
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -574,6 +574,15 @@ class Manager extends Base_Object {
 		$this->init_release_statuses();
 
 		$this->init_features();
+
+		add_action( 'admin_init', function () {
+			System_Info::add_report(
+				'experiments', [
+					'file_name' => __DIR__ . '/experiments-reporter.php',
+					'class_name' => __NAMESPACE__ . '\Experiments_Reporter',
+				]
+			);
+		}, 79 /* Before log */ );
 
 		if ( is_admin() ) {
 			$page_id = Settings::PAGE_ID;
