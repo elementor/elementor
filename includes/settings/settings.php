@@ -72,8 +72,8 @@ class Settings extends Settings_Page {
 		}
 
 		add_menu_page(
-			__( 'Elementor', 'elementor' ),
-			__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
@@ -132,8 +132,8 @@ class Settings extends Settings_Page {
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Submissions', 'elementor' ),
-			__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
 			'manage_options',
 			'e-form-submissions',
 			function() {
@@ -143,8 +143,8 @@ class Settings extends Settings_Page {
 
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Custom Fonts', 'elementor' ),
-			__( 'Custom Fonts', 'elementor' ),
+			esc_html__( 'Custom Fonts', 'elementor' ),
+			esc_html__( 'Custom Fonts', 'elementor' ),
 			'manage_options',
 			'elementor_custom_fonts',
 			[ $this, 'elementor_custom_fonts' ]
@@ -152,8 +152,8 @@ class Settings extends Settings_Page {
 
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Custom Icons', 'elementor' ),
-			__( 'Custom Icons', 'elementor' ),
+			esc_html__( 'Custom Icons', 'elementor' ),
+			esc_html__( 'Custom Icons', 'elementor' ),
 			'manage_options',
 			'elementor_custom_icons',
 			[ $this, 'elementor_custom_icons' ]
@@ -194,7 +194,7 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			__( 'Get Help', 'elementor' ),
+			esc_html__( 'Get Help', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
 			[ $this, 'handle_external_redirects' ]
