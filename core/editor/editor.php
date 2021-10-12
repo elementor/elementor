@@ -873,7 +873,7 @@ class Editor {
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Data\Globals\Controller() );
-		Plugin::$instance->data_manager->register_controller( Data\WidgetsConfig\Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Data\WidgetsConfig\Controller() );
 
 		$this->notice_bar = new Notice_Bar();
 

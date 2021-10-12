@@ -122,6 +122,6 @@ class Module extends BaseModule {
 			$this->update_control_defaults( $element );
 		} );
 
-		Plugin::$instance->data_manager->register_controller( Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 }
