@@ -69,6 +69,31 @@ class Module extends BaseApp {
 	}
 
 	/**
+	private function add_frontend_settings() {
+		$settings = [];
+		$settings['is_administrator'] = current_user_can( 'manage_options' );
+		$current_screen = get_current_screen();
+
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		if ( $library ) {
+			$settings = array_merge( $settings, [
+				'is_user_connected' => $library->is_connected(),
+				'connect_url' => $library->get_admin_url( 'authorize', [
+					'utm_source' => 'top-bar',
+					'utm_medium' => 'wp-dash',
+					'utm_campaign' => 'connect-account',
+					'utm_content' => $current_screen->id,
+				] ),
+			] );
+		}
+
+		$this->set_settings( $settings );
+
+		do_action( 'elementor/admin-top-bar/init', $this );
+	}
+
+	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
