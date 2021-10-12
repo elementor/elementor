@@ -37,12 +37,6 @@ abstract class Common_App extends Base_User_App {
 	public function action_reset() {
 		delete_user_option( get_current_user_id(), static::OPTION_CONNECT_COMMON_DATA_KEY );
 
-		if ( current_user_can( 'manage_options' ) ) {
-			parent::action_reset();
-
-			delete_option( 'elementor_remote_info_library' );
-		}
-
-		$this->redirect_to_admin_page();
+		parent::action_reset();
 	}
 }

@@ -165,7 +165,12 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_option( static::OPTION_CONNECT_SITE_KEY );
+		if ( current_user_can( 'manage_options' ) ) {
+			delete_option( static::OPTION_CONNECT_SITE_KEY );
+			delete_option( 'elementor_remote_info_library' );
+		}
+
+		$this->redirect_to_admin_page();
 	}
 
 	/**
