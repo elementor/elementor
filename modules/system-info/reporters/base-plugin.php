@@ -22,7 +22,7 @@ abstract class Base_Plugin extends Base {
 				<tr>
 					<td><?php
 					if ( $plugin_info['PluginURI'] ) :
-						$plugin_name = "<a href='{$plugin_info['PluginURI']}'>{$plugin_info['Name']}</a>";
+							$plugin_name = sprintf( '<a href="%s">%s</a>', $plugin_info['PluginURI'], $plugin_info['Name'] );
 						else :
 							$plugin_name = $plugin_info['Name'];
 						endif;
@@ -36,7 +36,7 @@ abstract class Base_Plugin extends Base {
 					<td><?php
 					if ( $plugin_info['Author'] ) :
 						if ( $plugin_info['AuthorURI'] ) :
-							$author = "<a href='{$plugin_info['AuthorURI']}'>{$plugin_info['Author']}</a>";
+								$author = sprintf( '<a href="%s">%s</a>', $plugin_info['AuthorURI'], $plugin_info['Author'] );
 							else :
 								$author = $plugin_info['Author'];
 							endif;

@@ -76,10 +76,10 @@ abstract class Base {
 				<td><?php Utils::print_unescaped_internal_string( $log_label ); ?></td>
 				<td><?php Utils::print_unescaped_internal_string( $field['value'] ); ?></td>
 				<td><?php
-					if ( ! empty( $field['recommendation'] ) ) :
-						Utils::print_unescaped_internal_string( $field['recommendation'] );
+				if ( ! empty( $field['recommendation'] ) ) :
+					Utils::print_unescaped_internal_string( $field['recommendation'] );
 					endif;
-					?></td>
+				?></td>
 			</tr>
 			<?php
 		}
