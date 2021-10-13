@@ -1,2 +1,2 @@
-export { default as StyledHeading } from './ui/heading';
-export { default as StyledText } from './ui/text';
+export { default as Heading } from './ui/heading';
+export { default as Text } from './ui/text';
