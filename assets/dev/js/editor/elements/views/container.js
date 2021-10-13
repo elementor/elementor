@@ -78,7 +78,7 @@ const ContainerView = BaseElementView.extend( {
 	getSortableOptions: function() {
 		return {
 			connectWith: '.e-container, .elementor-widget-wrap',
-			items: '> .elementor-element',
+			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			tolerance: 'intersect', // Use a lower tolerance option since the other one makes the DnD fragile (See https://api.jqueryui.com/sortable/#option-tolerance).
 			swappable: true,
 		};
