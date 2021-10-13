@@ -64,6 +64,10 @@ const ContainerView = BaseElementView.extend( {
 	getNestingLevel: function() {
 		const parent = this._parent;
 
+		if ( ! parent ) {
+			return -1;
+		}
+
 		if ( 'document' === parent.getContainer().type ) {
 			return 0;
 		}
