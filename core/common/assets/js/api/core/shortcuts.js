@@ -49,6 +49,13 @@ export default class Shortcuts {
 				this.handlers[ shortcut ] = [];
 			}
 
+			if ( args.keys ) {
+				args.formatted = args.keys
+					.replace( 'ctrl', this.ctrlLabel )
+					.replaceAll( '+', ' + ' )
+					.toUpperCase();
+			}
+
 			this.handlers[ shortcut ].push( args );
 		} );
 	}

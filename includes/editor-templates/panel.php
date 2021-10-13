@@ -63,21 +63,11 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
 	<#
-	const ctrlLabel = $e.shortcuts.ctrlLabel,
-		keys = {
-			navigator: $e.components.get('navigator').getShortcuts().toggle.keys,
-			history: $e.components.get( 'panel/history' ).getShortcuts().actions.keys,
-			responsiveMode: $e.components.get( 'panel' ).getShortcuts()['change-device-mode'].keys,
-		};
-
-	// Make the tooltip readable format.
-	for ( const i in keys ) {
-		keys[ i ] = keys[ i ]
-			.replace( 'ctrl', ctrlLabel )
-			.replaceAll( '+', ' + ' )
-			.toUpperCase();
-	}
-
+	const keys = {
+			navigator: $e.components.get('navigator').getShortcuts().toggle.formatted,
+			history: $e.components.get( 'panel/history' ).getShortcuts().actions.formatted,
+			responsiveMode: $e.components.get( 'panel' ).getShortcuts()['change-device-mode'].formatted,
+	};
 	#>
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
