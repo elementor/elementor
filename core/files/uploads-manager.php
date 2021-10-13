@@ -348,9 +348,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_wp_media_upload() {
-		return isset( $_POST['elementor_wp_media_upload'] ); // phpcs:ignore
-		// TODO: In the files upload handler its as follows. Check which to use.
-		//return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**
