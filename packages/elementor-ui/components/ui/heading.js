@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import { getStyle } from 'e-components/utils';
+import { getStyle } from 'e-utils';
 import styles from 'e-styles/heading';
 
-const Heading = styled.h1`${ ( props ) => getStyle( styles, props ) }`;
+const HeadingBase = styled.h1.attrs( ( props ) => ( { as: props.tag } ) )`${ ( props ) => getStyle( styles, props, 'shared' ) }`;
+
+const Heading = styled( HeadingBase )`${ ( props ) => getStyle( styles, props, 'unique' ) }`;
 
 Heading.propTypes = {
 	className: PropTypes.string,
@@ -14,7 +16,6 @@ Heading.propTypes = {
 Heading.defaultProps = {
 	className: '',
 	tag: 'h1',
-	variant: 'h1',
 };
 
 export default Heading;

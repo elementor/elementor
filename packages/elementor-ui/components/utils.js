@@ -1,10 +1,11 @@
 /**
- * @param styles - { base: { shared: '', variant: { shared: '', h1: '', h2: '' } }, dark: { shared: '', variant: { shared: '', h1: '', h2: '' } } }
- * @param config - { variants: { light: true, dark: false } }
- * @param props - { variant: 'h1', size: 'xl' }
- * @returns {object} - { shared: 'background-color: #000;', unique: 'color: #fff;' }
+ * @param styles {object} - { base: { shared: '', variant: { shared: '', h1: '', h2: '' } }, dark: { shared: '', variant: { shared: '', h1: '', h2: '' } } }
+ * @param config {object} - { variants: { light: true, dark: false } }
+ * @param props {object} - { variant: 'h1', size: 'xl' }
+ * @param type {string} - shared/unique (in case that only the shared/unique styles are needed)
+ * @returns {string} - 'background-color: #000; color: #fff;'
  */
-export const getStyle = ( styles, props ) => {
+export const getStyle = ( styles, props, type ) => {
 	const config = props?.theme?.config || { variants: {} },
 		style = {
 			shared: '',
@@ -33,7 +34,9 @@ export const getStyle = ( styles, props ) => {
 			Object.values( keys ).map( ( key ) => {
 				const styleObjKey = 'shared' !== key ? 'unique' : 'shared';
 
-				style[ styleObjKey ] += data[ key ] || '';
+				if ( ! type || styleObjKey === type ) {
+					style[ styleObjKey ] += data[ key ] || '';
+				}
 			} );
 		};
 
@@ -60,6 +63,7 @@ export const getStyle = ( styles, props ) => {
 		}
 	} );
 
+	// Both properties are returned but their values are depended on the third argument of this function, if empty: both will be calculated.
 	return style.shared + style.unique;
 };
 

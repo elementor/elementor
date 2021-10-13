@@ -4,26 +4,26 @@ import Content from './content';
 import Footer from './footer';
 
 export default function Page( props ) {
-		const AppSidebar = () => {
-			if ( ! props.sidebar ) {
-				return;
-			}
-			return (
-				<Sidebar>
-					{ props.sidebar }
-				</Sidebar>
-			);
-		},
-		AppFooter = () => {
-			if ( ! props.footer ) {
-				return;
-			}
-			return (
-				<Footer>
-					{props.footer}
-				</Footer>
-			);
-		};
+	const AppSidebar = () => {
+		if ( ! props.sidebar ) {
+			return;
+		}
+		return (
+			<Sidebar>
+				{ props.sidebar }
+			</Sidebar>
+		);
+	},
+	AppFooter = () => {
+		if ( ! props.footer ) {
+			return;
+		}
+		return (
+			<Footer>
+				{props.footer}
+			</Footer>
+		);
+	};
 
 	return (
 		<div className={`eps-app__lightbox ${ props.className }`}>

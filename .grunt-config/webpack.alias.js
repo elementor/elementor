@@ -28,6 +28,7 @@ module.exports = {
 			'elementor-views': path.resolve( __dirname, '../assets/dev/js/editor/views' ),
 			'e-styles': path.resolve( __dirname, '../packages/elementor-ui/styles' ),
 			'e-components': path.resolve( __dirname, '../packages/elementor-ui/components' ),
+			'e-utils': path.resolve( __dirname, '../packages/elementor-ui/components/utils' ),
 		},
 	},
 };

@@ -1,8 +1,12 @@
 import styled from 'styled-components';
-import { getStyle } from 'e-components/utils';
+import { getStyle } from 'e-utils';
 import styles from 'e-styles/text';
 
-const Text = styled.p`${ ( props ) => getStyle( styles, props ) }`;
+let componentStyles;
+
+const TextBase = styled.p.attrs( ( props ) => ( { as: props.tag } ) )`${ ( props ) => getStyle( styles, props, 'shared' ) }`;
+
+const Text = styled( TextBase )`${ ( props ) => getStyle( styles, props, 'unique' ) }`;
 
 Text.propTypes = {
 	className: PropTypes.string,
