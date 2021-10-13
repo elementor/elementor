@@ -811,6 +811,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	enterDeviceMode() {
+		this.channels.responsivePreview.trigger( 'open' );
+
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 
 		this.activatePreviewResizable();
