@@ -6,9 +6,11 @@ import { infoButtonProps } from '../shared/info-modal/info-modal';
 import ImportInfoModal from '../shared/info-modal/import-info-modal';
 import ExportInfoModal from '../shared/info-modal/export-info-modal';
 
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+
 export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
-		referrer = location.hash.match( 'referrer=([^&]+)' ),
+		{ referrer } = useQueryParams().getAll(),
 		getContent = () => {
 			const infoModalProps = {
 				show: showInfoModal,

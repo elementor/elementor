@@ -2,7 +2,7 @@
 namespace Elementor\Core\Editor\Data\WidgetsConfig;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Data\Base\Controller as Controller_Base;
+use Elementor\Data\V2\Base\Controller as Controller_Base;
 use Elementor\Plugin;
 
 class Controller extends Controller_Base {
@@ -11,7 +11,33 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		// Must extend this method.
+		$this->index_endpoint->register_item_route(
+			\WP_REST_Server::READABLE,
+			[
+				'id_arg_type_regex' => '[\w]+',
+				'exclude' => [
+					'description' => 'ids of widgets that should be excluded',
+					'type' => 'array',
+					'default' => [],
+					'items' => [
+						'type' => 'string',
+					],
+				],
+			]
+		);
+	}
+
+	public function get_items_args( $methods ) {
+		return [
+			'exclude' => [
+				'description' => 'ids of widgets that should be excluded',
+				'type' => 'array',
+				'default' => [],
+				'items' => [
+					'type' => 'string',
+				],
+			],
+		];
 	}
 
 	public function get_items( $request ) {
@@ -40,11 +66,6 @@ class Controller extends Controller_Base {
 
 	public function get_permission_callback( $request ) {
 		return current_user_can( 'edit_posts' );
-	}
-
-
-	protected function register_internal_endpoints() {
-		$this->register_endpoint( Endpoints\Index::class );
 	}
 
 	/**

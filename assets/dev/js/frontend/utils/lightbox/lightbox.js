@@ -230,9 +230,15 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
-			const videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			let apiProvider = elementorFrontend.utils.baseVideoLoader;
 
-			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+			if ( -1 !== options.url.indexOf( 'vimeo.com' ) ) {
+				apiProvider = elementorFrontend.utils.vimeo;
+			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+				apiProvider = elementorFrontend.utils.youtube;
+			}
+
+			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
 		}
 
 		$videoContainer.append( $videoWrapper );

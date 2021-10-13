@@ -1,10 +1,8 @@
 <?php
-
 namespace Elementor\Testing\Core\Base;
-use Elementor\Testing\Elementor_Test_Base;
 
 use Elementor\Plugin;
-use Elementor\Controls_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Document extends Elementor_Test_Base {
 

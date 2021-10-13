@@ -26,7 +26,7 @@ export default class Component extends ComponentBase {
 		 */
 		this.handlers = [
 			new LocalValues(), // Must be first to allow the globals change the settings data.
-			new GlobalValues(),
+			new GlobalValues( elementor.widgetsCache ),
 		];
 
 		elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', this.addContextMenuItem );

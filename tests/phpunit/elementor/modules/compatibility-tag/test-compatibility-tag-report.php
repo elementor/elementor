@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\CompatibilityTag;
 
 use Elementor\Core\Utils\Version;
 use Elementor\Core\Utils\Collection;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag_Report;
 

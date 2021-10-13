@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Modules\System_Info\Reporters\User;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_User extends Elementor_Test_Base {
 	/**

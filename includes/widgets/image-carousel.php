@@ -122,6 +122,10 @@ class Widget_Image_Carousel extends Widget_Base {
 					'' => esc_html__( 'Default', 'elementor' ),
 				] + $slides_to_show,
 				'frontend_available' => true,
+				'render_type' => 'template',
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-image-carousel-slides-to-show: {{VALUE}}',
+				],
 			]
 		);
 
@@ -732,7 +736,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			$slide_html = '<div class="swiper-slide">' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
 
 			if ( ! empty( $image_caption ) ) {
-				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . esc_html( $image_caption ) . '</figcaption>';
+				$slide_html .= '<figcaption class="elementor-image-carousel-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
 			}
 
 			$slide_html .= '</figure>';

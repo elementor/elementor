@@ -59,10 +59,16 @@ class Module extends BaseModule {
 		} );
 
 		foreach ( $local_defaults as $setting_name => $value ) {
+			$control = $element->get_controls( $setting_name );
+
+			if ( ! $control ) {
+				continue;
+			}
+
 			$element->update_control(
 				$setting_name,
 				$this->prepare_default_data_for_update(
-					$element->get_controls( $setting_name ),
+					$control,
 					$value
 				),
 				[ 'recursive' => true ]
@@ -77,6 +83,10 @@ class Module extends BaseModule {
 
 		foreach ( $global_defaults as $setting_name => $value ) {
 			$control = $element->get_controls( $setting_name );
+
+			if ( ! $control ) {
+				continue;
+			}
 
 			$element->update_control(
 				$setting_name,
@@ -112,6 +122,6 @@ class Module extends BaseModule {
 			$this->update_control_defaults( $element );
 		} );
 
-		Plugin::$instance->data_manager->register_controller( Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 }
