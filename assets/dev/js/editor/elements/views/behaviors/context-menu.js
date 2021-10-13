@@ -83,7 +83,9 @@ module.exports = Marionette.Behavior.extend( {
 
 		// Disable sortable when context menu opened
 		// TODO: Should be in UI hook when the context menu will move to command
-		this.view._parent.triggerMethod( 'toggleSortMode', false );
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', false );
+		}
 
 		this.getContextMenu().show( event );
 
@@ -109,7 +111,9 @@ module.exports = Marionette.Behavior.extend( {
 	onContextMenuHide: function() {
 		// enable sortable when context menu closed
 		// TODO: Should be in UI hook when the context menu will move to command
-		this.view._parent.triggerMethod( 'toggleSortMode', true );
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', true );
+		}
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},

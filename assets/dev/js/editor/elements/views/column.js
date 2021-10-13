@@ -55,28 +55,22 @@ ColumnView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'column',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
 
 			editTools.add = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
-			};
-
-			editTools.remove = {
-				/* translators: %s: Element Name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-				icon: 'close',
 			};
 		}
 

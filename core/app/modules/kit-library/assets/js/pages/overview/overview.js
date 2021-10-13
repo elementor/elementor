@@ -51,7 +51,7 @@ export default function Overview( props ) {
 
 	return (
 		<Layout
-			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
+			header={ <ItemHeader model={ kit } buttons={ headerButtons } pageId="overview" /> }
 			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
 		>
 			{
