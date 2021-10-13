@@ -208,7 +208,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-			/* translators: %d: Number of rows */
+			/* translators: %d: Number of rows. */
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
@@ -399,6 +399,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 3.3.0
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
