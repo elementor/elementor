@@ -1,5 +1,5 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import { removeNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
+import { removeNamespaceHandler } from '../utils';
 
 /**
  * End the color picking process and return to the normal editor state.
@@ -16,8 +16,6 @@ export class End extends CommandBase {
 		this.component.inactivate();
 
 		// Remove all elements & event listeners.
-		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.remove( 'elementor-editor__ui-state__color-picker' );
-
 		elementor.$previewContents[ 0 ].querySelectorAll( '.e-element-color-picker' ).forEach( ( picker ) => {
 			jQuery( picker ).tipsy( 'hide' );
 			picker.remove();
@@ -36,7 +34,7 @@ export class End extends CommandBase {
 		// Reset the current picker.
 		this.component.resetPicker();
 
-		// Return to edit mode.
-		elementor.changeEditMode( 'edit' );
+		// Exit color picking mode.
+		$e.uiStates.remove( 'elements-color-picker/color-picking' );
 	}
 }

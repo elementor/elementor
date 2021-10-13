@@ -18,6 +18,14 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
+		// Remove widgets from search results by 'widgets categories'.
+		const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
+			.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
+
+		if ( ! showInSearchResult ) {
+			return false;
+		}
+
 		if ( -1 !== childModel.get( 'title' ).toLowerCase().indexOf( filterValue.toLowerCase() ) ) {
 			return true;
 		}

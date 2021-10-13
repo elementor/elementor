@@ -2,6 +2,7 @@
 namespace Elementor\Data\Base;
 
 use Elementor\Data\Manager;
+use Elementor\Plugin;
 use WP_REST_Controller;
 use WP_REST_Server;
 
@@ -28,6 +29,7 @@ abstract class Controller extends WP_REST_Controller {
 	 */
 	public function __construct() {
 		// TODO: Controllers and endpoints can have common interface.
+		$this->deprecated();
 
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();
@@ -320,5 +322,23 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		return false;
+	}
+
+	private static $notify_deprecated = true;
+
+	private function deprecated() {
+		add_action( 'elementor/init', function () {
+			if ( ! self::$notify_deprecated ) {
+				return;
+			}
+
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+				'Elementor\Data\Manager',
+				'3.5.0',
+				'Elementor\Data\V2\Manager'
+			);
+
+			self::$notify_deprecated = false;
+		} );
 	}
 }

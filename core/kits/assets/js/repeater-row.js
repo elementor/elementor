@@ -89,7 +89,7 @@ export default class extends RepeaterRow {
 		const globalType = this.ui.removeButton.data( 'e-global-type' ),
 			globalTypeTranslatedCapitalized = 'font' === globalType ? __( 'Font', 'elementor' ) : __( 'Color', 'elementor' ),
 			globalTypeTranslatedLowercase = 'font' === globalType ? __( 'font', 'elementor' ) : __( 'color', 'elementor' ),
-			/* translators: First %s: Font/Color. Second %s: typography/color */
+			/* translators: 1: Font/Color, 2: typography/color. */
 			translatedMessage = sprintf( __( 'You\'re about to delete a Global %s. Note that if it\'s being used anywhere on your site, it will inherit a default %s.', 'elementor' ), globalTypeTranslatedCapitalized, globalTypeTranslatedLowercase );
 
 		this.confirmDeleteModal = elementorCommon.dialogsManager.createWidget( 'confirm', {

@@ -18,6 +18,10 @@ export const taxonomyType = [
 		key: 'features',
 		label: __( 'Features', 'elementor' ),
 	},
+	{
+		key: 'subscription_plans',
+		label: __( 'Kits by plan', 'elementor' ),
+	},
 ];
 
 export default class Taxonomy extends BaseModel {

@@ -528,6 +528,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		// Strip php tags
 		$content = $this->strip_comments( $content );
 		$content = $this->strip_php_tags( $content );
+		$content = $this->strip_line_breaks( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
@@ -605,6 +606,17 @@ class Svg_Handler extends Files_Upload_Handler {
 			return '';
 		}
 		return $string;
+	}
+
+	/**
+	 * strip_line_breaks
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_line_breaks( $string ) {
+		// Remove line breaks.
+		return preg_replace( '/\r|\n/', '', $string );
 	}
 
 	/**
@@ -709,6 +721,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
 			$display_type = strtoupper( $this->get_file_type() );
 
+			/* translators: %s: File type. */
 			$file['error'] = sprintf( esc_html__( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
 		}
 

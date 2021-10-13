@@ -53,13 +53,13 @@ module.exports = Marionette.ItemView.extend( {
 		const title = this.model.get( 'title' );
 
 		elementor.promotion.showDialog( {
-			/* translators: %s: Widget Title. */
+			/* translators: %s: Widget title. */
 			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
-			/* translators: %s: Widget Title. */
+			/* translators: %s: Widget title. */
 			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
 			top: '-7',
 			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
+			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) || this.model.get( 'widgetType' ) ),
 		} );
 	},
 } );

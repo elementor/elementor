@@ -116,6 +116,9 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				title() {
 					return this.getAttribute( 'data-tooltip' );
 				},
+				html() {
+					return !! this.getAttribute( 'data-tooltip-unsafe-html' );
+				},
 			} );
 		} );
 	}
