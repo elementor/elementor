@@ -1,4 +1,5 @@
 import pipe from 'elementor-utils/pipe';
+import PreviewLoading from 'elementor-editor/components/documents/ui-states/preview-loading';
 
 export default class Base extends $e.modules.CommandBase {
 	/**
@@ -17,7 +18,7 @@ export default class Base extends $e.modules.CommandBase {
 		await this.refreshWidgetsConfig( type );
 
 		// Will recreate all the elements with the same type to apply the default values.
-		$e.commandsInternal.run( 'document/elements/recreate', { models: elementsToRecreate } );
+		await $e.commandsInternal.run( 'document/elements/recreate', { models: elementsToRecreate } );
 	}
 
 	/**
@@ -62,5 +63,13 @@ export default class Base extends $e.modules.CommandBase {
 
 		// TODO: Maybe in the command?
 		elementor.kitManager.renderGlobalsDefaultCSS();
+	}
+
+	startLoading() {
+		$e.uiStates.set( 'editor/documents/preview-loading', PreviewLoading.ON );
+	}
+
+	finishLoading() {
+		$e.uiStates.remove( 'editor/documents/preview-loading' );
 	}
 }

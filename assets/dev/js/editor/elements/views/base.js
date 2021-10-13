@@ -703,6 +703,8 @@ BaseElementView = BaseContainer.extend( {
 				}, { timeout: 500 } );
 			}
 		}
+
+		this.triggerMethod( 'render:after' );
 	},
 
 	onEditSettingsChanged( changedModel ) {
