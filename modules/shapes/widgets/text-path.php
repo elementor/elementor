@@ -126,7 +126,7 @@ class TextPath extends Widget_Base {
 					'active' => true,
 				],
 				'description' => sprintf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					/* translators: 1: Link open tag, 2: Link close tag. */
 					esc_html__( 'Want to create custom text paths with SVG? %1$sLearn More%2$s', 'elementor' ),
 					'<a target="_blank" href="https://go.elementor.com/text-path-create-paths/">',
 					'</a>'
