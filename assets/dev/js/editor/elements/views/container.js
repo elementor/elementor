@@ -71,15 +71,6 @@ const ContainerView = BaseElementView.extend( {
 		return parent.getNestingLevel() + 1;
 	},
 
-	getSortableOptions: function() {
-		return {
-			connectWith: '.e-container, .elementor-widget-wrap',
-			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
-			tolerance: 'intersect', // Use a lower tolerance option since the other one makes the DnD fragile (See https://api.jqueryui.com/sortable/#option-tolerance).
-			swappable: true,
-		};
-	},
-
 	getDroppableOptions: function() {
 		return {
 			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
@@ -266,14 +257,14 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this.changeContainerClasses();
+		this.$el.html5Droppable( this.getDroppableOptions() );
 
+		// Defer to wait for other Containers to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 		}, 0 );
-
-		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
 	onDragStart: function() {
