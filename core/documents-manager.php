@@ -363,7 +363,7 @@ class Documents_Manager {
 			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
-					/* translators: %s: Document title */
+					/* translators: %s: Document title. */
 					__( 'Elementor %s', 'elementor' ),
 					call_user_func( [ $class, 'get_title' ] )
 				);

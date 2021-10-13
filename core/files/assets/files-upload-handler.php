@@ -76,11 +76,13 @@ abstract class Files_Upload_Handler {
 		$display_type = strtoupper( $file_type );
 
 		if ( $file_type !== $ext ) {
+			/* translators: 1: File extension, 2: File type. */
 			$file['error'] = sprintf( esc_html__( 'The uploaded %1$s file is not supported. Please upload a valid %2$s file', 'elementor' ), $ext, $display_type );
 			return $file;
 		}
 
 		if ( ! self::is_enabled() ) {
+			/* translators: %s: File type. */
 			$file['error'] = sprintf( esc_html__( '%1$s file is not allowed for security reasons', 'elementor' ), $display_type );
 			return $file;
 		}
