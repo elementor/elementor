@@ -1,5 +1,14 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev39 - 2021-10-13
+* Tweak: Updated changelog to v3.4.5 (#16553)
+* Fix: Merge release/3.5.0 into feature/default-values (#16561)
+* Tweak: Made placeholder values clearer in controls with CSS units [ED-4841] (#16488)
+* Tweak: Hide the Archive Posts and Archive Title widgets from panel search results when not relevant [ED-4983] (#16486)
+* Tweak: System Info - New experiments reporter [ED-1938] (#14800)
+* Tweak: Added shortkey to panel tooltips [ED-4220] (#16478)
+* Tweak: Default-Values - Loader on default values save [ED-4925] (#16212)
+
 #### 3.5.0-dev38 - 2021-10-12
 * Tweak: Updated featured video in readme.txt (#16552)
 
