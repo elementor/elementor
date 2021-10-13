@@ -6,27 +6,26 @@
  * @returns {string} - 'background-color: #000; color: #fff;'
  */
 export const getStyle = ( styles, props, type ) => {
+	console.log( '***************************** type: ', type );
+	if ( ! styles ) {
+		return '';
+	}
+
+	if ( 'string' === typeof styles ) {
+		return styles;
+	}
+
 	const config = props?.theme?.config || { variants: {} },
 		style = {
 			shared: '',
 			unique: '',
 		};
 
-	if ( ! styles ) {
-		return style;
-	}
-
-	if ( 'string' === typeof styles ) {
-		style.unique = styles;
-
-		return style;
-	}
-
 	// Creating an array that holds only the active theme variants values.
 	const themeVariants = Object.keys( config.variants ).filter( ( key ) => config.variants[ key ] ),
 		addStyle = ( data, keys = [] ) => {
-			if ( 'string' === typeof data ) {
-				style.unique += data;
+			if ( 'string' === typeof data && 'unique' !== type ) {
+				style.shared += data;
 
 				return;
 			}
@@ -34,9 +33,20 @@ export const getStyle = ( styles, props, type ) => {
 			Object.values( keys ).map( ( key ) => {
 				const styleObjKey = 'shared' !== key ? 'unique' : 'shared';
 
+				console.log( '' );
+				console.log( '--------------------------------------------' );
+				console.log( 'keys', keys );
+				console.log( 'styleObjKey', styleObjKey );
+				console.log( 'type', type );
 				if ( ! type || styleObjKey === type ) {
+					console.log( 'ADDING STYLE!', data[ key ] );
 					style[ styleObjKey ] += data[ key ] || '';
+				} else {
+					console.log( 'IGNORE STYLE!' );
 				}
+
+				console.log( '--------------------------------------------' );
+				console.log( '' );
 			} );
 		};
 
@@ -62,6 +72,13 @@ export const getStyle = ( styles, props, type ) => {
 			} );
 		}
 	} );
+
+	console.log( 'FINAL:' );
+	console.log( 'props', { ...props } );
+	console.log( 'style.shared', style.shared );
+	console.log( 'style.unique', style.unique );
+	console.log( '' );
+	console.log( '' );
 
 	// Both properties are returned but their values are depended on the third argument of this function, if empty: both will be calculated.
 	return style.shared + style.unique;
