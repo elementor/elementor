@@ -424,7 +424,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.8.1',
+			'4.9.0',
 			true
 		);
 
@@ -1380,7 +1380,7 @@ class Frontend extends App {
 		$more_link_text = sprintf(
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
-				/* translators: %s: Name of current post */
+				/* translators: %s: Current post name. */
 				__( 'Continue reading %s', 'elementor' ),
 				the_title_attribute( [
 					'echo' => false,

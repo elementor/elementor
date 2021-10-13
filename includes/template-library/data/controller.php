@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Includes\TemplateLibrary\Data;
 
-use Elementor\Data\Base\Controller as Controller_Base;
+use Elementor\Data\V2\Base\Controller as Controller_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,6 +14,10 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->register_endpoint( Endpoints\Templates::class );
+		$this->register_endpoint( new Endpoints\Templates( $this ) );
+	}
+
+	protected function register_index_endpoint() {
+		// Bypass, currently does not required.
 	}
 }
