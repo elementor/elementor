@@ -41,10 +41,6 @@ const ContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
-			Sortable: {
-				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'widget',
-			},
 			Resizable: {
 				behaviorClass: WidgetResizable,
 			},
@@ -106,6 +102,24 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				}
 
+				const draggedView = elementor.channels.editor.request( 'element:dragged' );
+
+				// Sort.
+				if ( draggedView ) {
+					elementor.channels.editor.reply( 'element:dragged', null );
+
+					$e.run( 'document/elements/move', {
+						container: draggedView.getContainer(),
+						target: this.getContainer(),
+						options: {
+							at: newIndex,
+						},
+					} );
+
+					return;
+				}
+
+				// Element from panel.
 				this.addElementFromPanel( { at: newIndex } );
 			},
 		};
@@ -161,7 +175,9 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		const elementView = elementor.channels.panelElements.request( 'element:selected' );
+		const elementView =
+			elementor.channels.panelElements.request( 'element:selected' ) ||
+			elementor.channels.editor.request( 'element:dragged' );
 
 		if ( ! elementView ) {
 			return false;
@@ -257,6 +273,14 @@ const ContainerView = BaseElementView.extend( {
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
 		}, 0 );
 
+		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	onDragStart: function() {
+		this.$el.html5Droppable( 'destroy' );
+	},
+
+	onDragEnd: function() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 } );

@@ -672,6 +672,9 @@ BaseElementView = BaseContainer.extend( {
 				}, { timeout: 500 } );
 			}
 		}
+
+		// Defer to wait for all of the children to render.
+		setTimeout( () => this.initDraggable(), 0 );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -733,6 +736,57 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+	},
+
+	/**
+	 * On `$el` drag start event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragStart() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * On `$el` drag end event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragEnd() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * Initialize the Droppable instance.
+	 *
+	 * @return void
+	 */
+	initDraggable: function() {
+		// Init the draggable only for Containers and their children.
+		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
+			return;
+		}
+
+		this.$el.html5Draggable( {
+			onDragStart: ( e ) => {
+				e.stopPropagation();
+
+				this.onDragStart( e );
+
+				const container = this.getContainer();
+
+				elementor.channels.editor.reply( 'element:dragged', container.view );
+			},
+			onDragEnd: ( e ) => {
+				e.stopPropagation();
+
+				this.onDragEnd( e );
+			},
+
+			groups: [ 'elementor-element' ],
+		} );
 	},
 } );
 
