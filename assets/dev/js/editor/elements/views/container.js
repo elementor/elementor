@@ -59,6 +59,22 @@ const ContainerView = BaseElementView.extend( {
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
+	/**
+	 * Get the Container nesting level recursively.
+	 * Top-level Containers (direct children of document) start from 0.
+	 *
+	 * @return {number}
+	 */
+	getNestingLevel: function() {
+		const parent = this._parent;
+
+		if ( 'document' === parent.getContainer().type ) {
+			return 0;
+		}
+
+		return parent.getNestingLevel() + 1;
+	},
+
 	getSortableOptions: function() {
 		return {
 			connectWith: '.e-container, .elementor-widget-wrap',
@@ -234,6 +250,12 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this.changeContainerClasses();
+
+		setTimeout( () => {
+			this.nestingLevel = this.getNestingLevel();
+
+			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+		}, 0 );
 
 		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
