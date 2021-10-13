@@ -1,5 +1,5 @@
 import pipe from 'elementor-utils/pipe';
-import PreviewLoading from 'elementor-editor/ui-states/preview-loading';
+import PreviewLoading from 'elementor-editor/components/documents/ui-states/preview-loading';
 
 export default class Base extends $e.modules.CommandBase {
 	/**
