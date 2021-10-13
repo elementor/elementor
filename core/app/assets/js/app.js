@@ -35,15 +35,15 @@ export default function App() {
 	return (
 		<ErrorBoundary>
 			<LocationProvider history={ router.appHistory }>
-				<Suspense fallback={ null }>
-					<ThemeProvider theme={ theme }>
+				<ThemeProvider theme={ theme }>
+					<Suspense fallback={ null }>
 						<Router>
 							{ router.getRoutes() }
 							<Index path="/" />
 							<NotFound default />
 						</Router>
-					</ThemeProvider>
-				</Suspense>
+					</Suspense>
+				</ThemeProvider>
 			</LocationProvider>
 		</ErrorBoundary>
 	);
