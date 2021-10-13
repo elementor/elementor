@@ -24,6 +24,7 @@ use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Core\Page_Assets\Loader as Assets_Loader;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
+use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
 use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
@@ -465,15 +466,9 @@ class Plugin {
 	public $kits_manager;
 
 	/**
-	 * Data manager.
-	 *
-	 * Holds the plugin data manager.
-	 *
-	 * @access public
-	 *
-	 * @var \Core\Data\Manager
+	 * @var \Elementor\Data\V2\Manager
 	 */
-	public $data_manager;
+	public $data_manager_v2;
 
 	/**
 	 * Legacy mode.
@@ -831,6 +826,10 @@ class Plugin {
 			return $this->files_manager;
 		}
 
+		if ( 'data_manager' === $property ) {
+			return Data_Manager::instance();
+		}
+
 		if ( property_exists( $this, $property ) ) {
 			throw new \Exception( 'Cannot access private property' );
 		}
@@ -850,7 +849,7 @@ class Plugin {
 		$this->register_autoloader();
 
 		$this->logger = Log_Manager::instance();
-		$this->data_manager = Data_Manager::instance();
+		$this->data_manager_v2 = Data_Manager_V2::instance();
 
 		Maintenance::init();
 		Compatibility::register_actions();

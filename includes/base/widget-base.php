@@ -731,7 +731,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param null $repeater_name
 	 * @param null $index
 	 */
-	final protected function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
+	final public function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
 		if ( $repeater_name ) {
 			$repeater = $this->get_settings_for_display( $repeater_name );
 			$output = $repeater[ $index ][ $setting ];

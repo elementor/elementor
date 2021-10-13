@@ -208,7 +208,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-			/* translators: %d: Number of rows */
+			/* translators: %d: Number of rows. */
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
