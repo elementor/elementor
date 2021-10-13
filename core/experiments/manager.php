@@ -1,9 +1,9 @@
 <?php
-
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -519,11 +519,8 @@ class Manager extends Base_Object {
 			$indicator_classes .= ' e-experiment__title__indicator--active';
 		}
 
-		if ( self::STATE_DEFAULT === $feature['state'] ) {
-			$indicator_tooltip = $is_feature_active ? esc_html__( 'Active by default', 'elementor' ) : esc_html__( 'Inactive by default', 'elementor' );
-		} else {
-			$indicator_tooltip = self::STATE_ACTIVE === $feature['state'] ? esc_html__( 'Active', 'elementor' ) : esc_html__( 'Inactive', 'elementor' );
-		}
+		$indicator_tooltip = $this->get_feature_state_label( $feature );
+
 		?>
 		<div class="e-experiment__title">
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
@@ -532,6 +529,27 @@ class Manager extends Base_Object {
 		<?php
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get Feature State Label
+	 *
+	 * @param array $feature
+	 *
+	 * @return string
+	 */
+	public function get_feature_state_label( array $feature ) {
+		$is_feature_active = $this->is_feature_active( $feature['name'] );
+
+		if ( self::STATE_DEFAULT === $feature['state'] ) {
+			$label = $is_feature_active ? esc_html__( 'Active by default', 'elementor' ) :
+				esc_html__( 'Inactive by default', 'elementor' );
+		} else {
+			$label = self::STATE_ACTIVE === $feature['state'] ? esc_html__( 'Active', 'elementor' ) :
+				esc_html__( 'Inactive', 'elementor' );
+		}
+
+		return $label;
 	}
 
 	/**
@@ -601,6 +619,15 @@ class Manager extends Base_Object {
 		$this->init_release_statuses();
 
 		$this->init_features();
+
+		add_action( 'admin_init', function () {
+			System_Info::add_report(
+				'experiments', [
+					'file_name' => __DIR__ . '/experiments-reporter.php',
+					'class_name' => __NAMESPACE__ . '\Experiments_Reporter',
+				]
+			);
+		}, 79 /* Before log */ );
 
 		if ( is_admin() ) {
 			$page_id = Settings::PAGE_ID;

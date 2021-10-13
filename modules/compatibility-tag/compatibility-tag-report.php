@@ -77,11 +77,31 @@ class Compatibility_Tag_Report extends Base {
 			$this->plugins_to_check
 		);
 
-		if ( 'html' === $this->_properties['format'] ) {
-			$compatibility_status = $this->get_html_from_compatibility_status( $compatibility_status );
-		} elseif ( 'raw' === $this->_properties['format'] ) {
-			$compatibility_status = $this->get_raw_from_compatibility_status( $compatibility_status );
-		}
+		return [
+			'value' => $compatibility_status,
+		];
+	}
+
+	public function get_html_report_data() {
+		$compatibility_status = $this->compatibility_tag_service->check(
+			$this->plugin_version,
+			$this->plugins_to_check
+		);
+
+		$compatibility_status = $this->get_html_from_compatibility_status( $compatibility_status );
+
+		return [
+			'value' => $compatibility_status,
+		];
+	}
+
+	public function get_raw_report_data() {
+		$compatibility_status = $this->compatibility_tag_service->check(
+			$this->plugin_version,
+			$this->plugins_to_check
+		);
+
+		$compatibility_status = $this->get_raw_from_compatibility_status( $compatibility_status );
 
 		return [
 			'value' => $compatibility_status,
