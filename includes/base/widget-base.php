@@ -731,7 +731,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param null $repeater_name
 	 * @param null $index
 	 */
-	final protected function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
+	final public function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
 		if ( $repeater_name ) {
 			$repeater = $this->get_settings_for_display( $repeater_name );
 			$output = $repeater[ $index ][ $setting ];
@@ -1046,7 +1046,7 @@ abstract class Widget_Base extends Element_Base {
 					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
 				}
 
-				$widget_css .= $widgets_css_data_manager->get_asset_data( $config );
+				$widget_css .= $widgets_css_data_manager->get_asset_data_from_config( $config );
 
 				self::$registered_inline_css_widgets[] = $widget_name;
 			}

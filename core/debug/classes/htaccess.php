@@ -26,6 +26,7 @@ class Htaccess extends Inspection_Base {
 
 		if ( strstr( $server, 'APACHE' ) ) {
 			$htaccess_file = get_home_path() . '.htaccess';
+			/* translators: %s: Path to .htaccess file. */
 			$this->message .= ' ' . sprintf( esc_html__( 'File Path: %s', 'elementor' ), $htaccess_file ) . ' ';
 			return file_exists( $htaccess_file );
 		}
