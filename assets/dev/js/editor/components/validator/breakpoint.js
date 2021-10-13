@@ -1,5 +1,3 @@
-import Stylesheet from 'elementor-editor-utils/stylesheet';
-
 const NumberValidator = require( 'elementor-validator/number' );
 
 export default class BreakpointValidator extends NumberValidator {
@@ -12,13 +10,35 @@ export default class BreakpointValidator extends NumberValidator {
 		};
 	}
 
-	initBreakpointProperties() {
-		const validationTerms = this.getSettings( 'validationTerms' );
+	/**
+	 * Get Panel Active Breakpoints
+	 *
+	 * Since the active kit used in the Site Settings panel could be a draft, we need to use the panel's active
+	 * breakpoints settings and not the elementorFrontend.config values (which come from the DB).
+	 *
+	 * @returns Object
+	 */
+	getPanelActiveBreakpoints() {
+		const panelBreakpoints = elementor.documents.currentDocument.config.settings.settings.active_breakpoints.map( ( breakpointName ) => {
+			return breakpointName.replace( 'viewport_', '' );
+		} ),
+			panelActiveBreakpoints = {};
 
-		this.breakpointKeysArray = Object.keys( elementorFrontend.config.responsive.activeBreakpoints );
-		this.breakpointIndex = this.breakpointKeysArray.indexOf( validationTerms.breakpointName );
-		this.topBreakpoint = elementorFrontend.config.responsive.activeBreakpoints[ this.breakpointKeysArray[ this.breakpointIndex + 1 ] ]?.value;
-		this.bottomBreakpoint = Stylesheet.getDeviceMinBreakpoint( validationTerms.breakpointName );
+		panelBreakpoints.forEach( ( breakpointName ) => {
+			panelActiveBreakpoints[ breakpointName ] = elementorFrontend.config.responsive.breakpoints[ breakpointName ];
+		} );
+
+		return panelActiveBreakpoints;
+	}
+
+	initBreakpointProperties() {
+		const validationTerms = this.getSettings( 'validationTerms' ),
+			activeBreakpoints = this.getPanelActiveBreakpoints(),
+			breakpointKeys = Object.keys( activeBreakpoints );
+
+		this.breakpointIndex = breakpointKeys.indexOf( validationTerms.breakpointName );
+		this.topBreakpoint = activeBreakpoints[ breakpointKeys[ this.breakpointIndex + 1 ] ]?.value;
+		this.bottomBreakpoint = activeBreakpoints[ breakpointKeys[ this.breakpointIndex - 1 ] ]?.value;
 	}
 
 	validationMethod( newValue ) {

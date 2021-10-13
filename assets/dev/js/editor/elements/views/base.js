@@ -1,5 +1,4 @@
 import environment from 'elementor-common/utils/environment';
-import DocumentHelper from 'elementor-document/helper';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -45,7 +44,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	behaviors() {
-		const groups = elementor.hooks.applyFilters( 'elements/' + this.options.model.get( 'elType' ) + '/contextMenuGroups', this.getContextMenuGroups(), this );
+		const elementType = this.options.model.get( 'elType' );
+
+		const groups = elementor.hooks.applyFilters( `elements/${ elementType }/contextMenuGroups`, this.getContextMenuGroups(), this );
 
 		const behaviors = {
 			contextMenu: {
@@ -117,7 +118,6 @@ BaseElementView = BaseContainer.extend( {
 				settings: settingsModel,
 				view: this,
 				parent: this._parent ? this._parent.getContainer() : {},
-				children: [],
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
 			} );
@@ -128,20 +128,20 @@ BaseElementView = BaseContainer.extend( {
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
-		return [
+		let groups = [
 			{
 				name: 'general',
 				actions: [
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						/* translators: %s: Element Name. */
+						/* translators: %s: Element name. */
 						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
 						callback: () => $e.run( 'panel/editor/open', {
-								model: this.options.model, // Todo: remove on merge router
-								view: this, // Todo: remove on merge router
-								container: this.getContainer(),
-							} ),
+							model: this.options.model, // Todo: remove on merge router
+							view: this, // Todo: remove on merge router
+							container: this.getContainer(),
+						} ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
@@ -162,7 +162,7 @@ BaseElementView = BaseContainer.extend( {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => DocumentHelper.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -178,19 +178,39 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
 					},
 				],
-			}, {
-				name: 'delete',
-				actions: [
-					{
-						name: 'delete',
-						icon: 'eicon-trash',
-						title: __( 'Delete', 'elementor' ),
-						shortcut: '⌦',
-						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
-					},
-				],
 			},
 		];
+
+		let customGroups = [];
+
+		/**
+		 * Filter Additional Context Menu Groups.
+		 *
+		 * This filter allows adding new context menu groups to elements.
+		 *
+		 * @param array customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
+		 */
+		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
+
+		if ( customGroups.length ) {
+			groups = [ ...groups, ...customGroups ];
+		}
+
+		groups.push( {
+			name: 'delete',
+			actions: [
+				{
+					name: 'delete',
+					icon: 'eicon-trash',
+					title: __( 'Delete', 'elementor' ),
+					shortcut: '⌦',
+					callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
+				},
+			],
+		} );
+
+		return groups;
 	},
 
 	getEditButtons: function() {
@@ -225,10 +245,32 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay: function() {
-		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } );
+		const elementType = this.getElementType(),
+			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
+			elementData = elementor.getElementData( this.model );
 
-		jQuery.each( this.getEditButtons(), ( toolName, tool ) => {
+		let editButtons = this.getEditButtons();
+
+		// We should only allow external modification to edit buttons if the user enabled edit buttons.
+		if ( editButtonsEnabled ) {
+			// A filter for adding edit buttons to all element types.
+			editButtons = elementor.hooks.applyFilters( `elements/base/edit-buttons`, editButtons );
+			// A filter for adding edit buttons only to a specific element type.
+			editButtons = elementor.hooks.applyFilters( `elements/${ elementType }/edit-buttons`, editButtons );
+		}
+
+		// Only sections always have the remove button, even if the Editing Handles preference is off.
+		if ( 'section' === elementType || editButtonsEnabled ) {
+			editButtons.remove = {
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
+			};
+		}
+
+		jQuery.each( editButtons, ( toolName, tool ) => {
 			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
 				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
 				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );

@@ -1,14 +1,11 @@
 @import "../global/global";
-@import "breakpoints/breakpoints";
+@import "breakpoints/proxy";
 @import "../helpers/mixins";
 
 // Core CSS
 @import "global";
 @import "grid";
 @import "devices";
-
-// E-icons classes being used in the frontend.
-@import "eicons";
 
 //Forms (Input, Textarea, Select Etc..)
 @import "forms";

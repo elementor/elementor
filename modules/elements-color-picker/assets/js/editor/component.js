@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import * as uiStates from './ui-states/';
 
 export default class Component extends ComponentBase {
 	/**
@@ -85,6 +86,15 @@ export default class Component extends ComponentBase {
 	}
 
 	/**
+	 * Import the component UI states.
+	 *
+	 * @returns {object}
+	 */
+	defaultUiStates() {
+		return this.importUiStates( uiStates );
+	}
+
+	/**
 	 * Set the commands keyboard shortcuts.
 	 *
 	 * @returns {object}
@@ -93,7 +103,7 @@ export default class Component extends ComponentBase {
 		return {
 			end: {
 				keys: 'esc',
-				scopes: [ 'panel', 'preview' ],
+				scopes: [ this.getNamespace() ],
 			},
 		};
 	}

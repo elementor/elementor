@@ -180,11 +180,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param $context
+	 * @param string $context Where this subscription plan should be shown.
 	 *
 	 * @return array
 	 */
-	public function get_subscription_plans( $context ) {
+	public function get_subscription_plans( $context = '' ) {
 		return [
 			static::ACCESS_LEVEL_CORE => [
 				'label' => null,
@@ -203,17 +203,4 @@ class Module extends BaseModule {
 			],
 		];
 	}
-
-	protected function get_init_settings() {
-		/** @var Connect $connect */
-		$connect = $this->get_app( 'library' );
-		if ( ! $connect ) {
-			return [];
-		}
-		return [
-			'is_user_connected' => $connect->is_connected(),
-			'connect_url' => $connect->get_admin_url( 'authorize' ),
-		];
-	}
-
 }

@@ -160,6 +160,10 @@ class Api {
 	public static function get_promotion_widgets() {
 		$data = self::get_info_data();
 
+		if ( ! isset( $data['pro_widgets'] ) ) {
+			$data['pro_widgets'] = [];
+		}
+
 		return $data['pro_widgets'];
 	}
 

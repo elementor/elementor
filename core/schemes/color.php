@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Schemes;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -61,7 +63,7 @@ class Color extends Base_UI {
 	 * @return string Color scheme title.
 	 */
 	public function get_title() {
-		return __( 'Colors', 'elementor' );
+		return esc_html__( 'Colors', 'elementor' );
 	}
 
 	/**
@@ -75,7 +77,7 @@ class Color extends Base_UI {
 	 * @return string Color scheme disabled title.
 	 */
 	public function get_disabled_title() {
-		return __( 'Color Palettes', 'elementor' );
+		return esc_html__( 'Color Palettes', 'elementor' );
 	}
 
 	/**
@@ -90,10 +92,10 @@ class Color extends Base_UI {
 	 */
 	public function get_scheme_titles() {
 		return [
-			self::COLOR_1 => __( 'Primary', 'elementor' ),
-			self::COLOR_2 => __( 'Secondary', 'elementor' ),
-			self::COLOR_3 => __( 'Text', 'elementor' ),
-			self::COLOR_4 => __( 'Accent', 'elementor' ),
+			self::COLOR_1 => esc_html__( 'Primary', 'elementor' ),
+			self::COLOR_2 => esc_html__( 'Secondary', 'elementor' ),
+			self::COLOR_3 => esc_html__( 'Text', 'elementor' ),
+			self::COLOR_4 => esc_html__( 'Accent', 'elementor' ),
 		];
 	}
 
@@ -129,20 +131,20 @@ class Color extends Base_UI {
 		?>
 		<div class="elementor-panel-scheme-content elementor-panel-box">
 			<div class="elementor-panel-heading">
-				<div class="elementor-panel-heading-title"><?php echo $this->_get_current_scheme_title(); ?></div>
+				<div class="elementor-panel-heading-title"><?php echo esc_html__( 'Color Palette', 'elementor' ); ?></div>
 			</div>
 			<?php
 			$description = static::get_description();
 
 			if ( $description ) :
 				?>
-				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo $description; ?></div>
+				<div class="elementor-panel-scheme-description elementor-descriptor"><?php echo esc_html( $description ); ?></div>
 			<?php endif; ?>
 			<div class="elementor-panel-scheme-items elementor-panel-box-content"></div>
 		</div>
 		<div class="elementor-panel-scheme-colors-more-palettes elementor-panel-box">
 			<div class="elementor-panel-heading">
-				<div class="elementor-panel-heading-title"><?php echo __( 'More Palettes', 'elementor' ); ?></div>
+				<div class="elementor-panel-heading-title"><?php echo esc_html__( 'More Palettes', 'elementor' ); ?></div>
 			</div>
 			<div class="elementor-panel-box-content">
 				<?php foreach ( $this->_get_system_schemes_to_print() as $scheme_name => $scheme ) : ?>
@@ -152,7 +154,7 @@ class Color extends Base_UI {
 								<div class="elementor-panel-scheme-color-system-item" style="background-color: <?php echo esc_attr( $color_value ); ?>;"></div>
 							<?php endforeach; ?>
 						</div>
-						<div class="elementor-title"><?php echo $scheme['title']; ?></div>
+						<div class="elementor-title"><?php echo esc_html( $scheme['title'] ); ?></div>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -277,10 +279,13 @@ class Color extends Base_UI {
 	 *
 	 * @since 1.0.0
 	 * @access protected
+	 * @deprecated 3.3.0
 	 *
 	 * @return string The current color scheme title.
 	 */
 	protected function _get_current_scheme_title() {
-		return __( 'Color Palette', 'elementor' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_funtion( __METHOD__, '3.3.0' );
+
+		return esc_html__( 'Color Palette', 'elementor' );
 	}
 }

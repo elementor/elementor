@@ -3,19 +3,23 @@ export default class View extends Marionette.ItemView {
 		return '#tmpl-elementor-templates-responsive-bar';
 	}
 
-	className() {
+	id() {
 		return 'e-responsive-bar';
 	}
 
 	ui() {
-		const prefix = '.' + this.className();
+		const prefix = '#' + this.id();
 
 		return {
-			switcherInput: prefix + '-switcher__option input',
-			switcherLabel: prefix + '-switcher__option',
+			switcherInput: '.e-responsive-bar-switcher__option input',
+			switcherLabel: '.e-responsive-bar-switcher__option',
 			switcher: prefix + '-switcher',
 			sizeInputWidth: prefix + '__input-width',
 			sizeInputHeight: prefix + '__input-height',
+			scaleValue: prefix + '-scale__value',
+			scalePlusButton: prefix + '-scale__plus',
+			scaleMinusButton: prefix + '-scale__minus',
+			scaleResetButton: prefix + '-scale__reset',
 			closeButton: prefix + '__close-button',
 			breakpointSettingsButton: prefix + '__settings-button',
 		};
@@ -26,6 +30,9 @@ export default class View extends Marionette.ItemView {
 			'change @ui.switcherInput': 'onBreakpointSelected',
 			'input @ui.sizeInputWidth': 'onSizeInputChange',
 			'input @ui.sizeInputHeight': 'onSizeInputChange',
+			'click @ui.scalePlusButton': 'onScalePlusButtonClick',
+			'click @ui.scaleMinusButton': 'onScaleMinusButtonClick',
+			'click @ui.scaleResetButton': 'onScaleResetButtonClick',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
 		};
@@ -34,6 +41,8 @@ export default class View extends Marionette.ItemView {
 	initialize() {
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 		this.listenTo( elementor.channels.responsivePreview, 'resize', this.onPreviewResize );
+		this.listenTo( elementor.channels.responsivePreview, 'open', this.onPreviewOpen );
+		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 	}
 
 	addTipsyToIconButtons() {
@@ -67,9 +76,48 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => tipsy.hide(), 3000 );
 	}
 
+	autoScale() {
+		const handlesWidth = 40 * this.scalePercentage / 100,
+			previewWidth = elementor.$previewWrapper.width() - handlesWidth,
+			iframeWidth = parseInt( elementor.$preview.css( '--e-editor-preview-width' ) ),
+			iframeScaleWidth = iframeWidth * this.scalePercentage / 100;
+
+		if ( iframeScaleWidth > previewWidth ) {
+			const scalePercentage = previewWidth / iframeWidth * 100;
+
+			this.setScalePercentage( scalePercentage );
+		} else {
+			this.setScalePercentage();
+		}
+
+		this.scalePreview();
+	}
+
+	scalePreview() {
+		const scale = this.scalePercentage / 100;
+		elementor.$previewWrapper.css( '--e-preview-scale', scale );
+	}
+
+	resetScale() {
+		this.setScalePercentage();
+		this.scalePreview();
+	}
+
+	setScalePercentage( scalePercentage = 100 ) {
+		this.scalePercentage = scalePercentage;
+		this.ui.scaleValue.text( parseInt( this.scalePercentage ) );
+	}
+
+	onRender() {
+		this.addTipsyToIconButtons();
+		this.setScalePercentage();
+	}
+
 	onDeviceModeChange() {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 			$currentDeviceSwitcherInput = this.ui.switcherInput.filter( '[value=' + currentDeviceMode + ']' );
+
+		this.setWidthHeightInputsEditableState();
 
 		this.ui.switcherLabel.attr( 'aria-selected', false );
 		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true );
@@ -80,12 +128,11 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onBreakpointSelected( e ) {
-		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-			selectedDeviceMode = e.target.value;
+		const selectedDeviceMode = e.target.value;
 
-		if ( currentDeviceMode !== selectedDeviceMode ) {
-			elementor.changeDeviceMode( selectedDeviceMode, false );
-		}
+		elementor.changeDeviceMode( selectedDeviceMode, false );
+
+		this.autoScale();
 	}
 
 	onBreakpointSettingsOpen() {
@@ -124,13 +171,24 @@ export default class View extends Marionette.ItemView {
 		this.ui.sizeInputHeight.val( Math.round( size.height ) );
 	}
 
-	onRender() {
-		this.addTipsyToIconButtons();
+	onPreviewOpen() {
+		this.setWidthHeightInputsEditableState();
+	}
+
+	setWidthHeightInputsEditableState() {
+		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' );
+		//TODO: disable inputs
+		if ( 'desktop' === currentDeviceMode ) {
+			this.ui.sizeInputWidth.attr( 'disabled', 'disabled' );
+			this.ui.sizeInputHeight.attr( 'disabled', 'disabled' );
+		} else {
+			this.ui.sizeInputWidth.removeAttr( 'disabled' );
+			this.ui.sizeInputHeight.removeAttr( 'disabled' );
+		}
 	}
 
 	onCloseButtonClick() {
 		elementor.changeDeviceMode( 'desktop' );
-
 		// Force exit if device mode is already desktop
 		elementor.exitDeviceMode();
 	}
@@ -156,5 +214,33 @@ export default class View extends Marionette.ItemView {
 		setTimeout( () => this.updatingPreviewSize = false, 300 );
 
 		elementor.updatePreviewSize( size );
+
+		this.autoScale();
+	}
+
+	onScalePlusButtonClick() {
+		const scaleUp = 0 === this.scalePercentage % 10 ? this.scalePercentage + 10 : Math.ceil( this.scalePercentage / 10 ) * 10;
+
+		if ( scaleUp > 200 ) {
+			return;
+		}
+
+		this.setScalePercentage( scaleUp );
+		this.scalePreview();
+	}
+
+	onScaleMinusButtonClick() {
+		const scaleDown = 0 === this.scalePercentage % 10 ? this.scalePercentage - 10 : Math.floor( this.scalePercentage / 10 ) * 10;
+
+		if ( scaleDown < 50 ) {
+			return;
+		}
+
+		this.setScalePercentage( scaleDown );
+		this.scalePreview();
+	}
+
+	onScaleResetButtonClick() {
+		this.resetScale();
 	}
 }

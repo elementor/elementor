@@ -2,10 +2,10 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps;
 
 use Elementor\Core\Utils\Http;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App_Multiple_Urls;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -76,6 +76,41 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+	}
+
+	public function test_http_request__unauthorized_request_when_auth_mode_xhr() {
+		// Arrange
+		$user = $this->act_as_admin();
+
+		update_user_option( $user->ID, $this->app_stub->get_option_name(), [ 'a' => 1 ] );
+
+		add_filter( 'wp_doing_ajax', '__return_true' );
+
+		$this->app_stub = new Mock_App();
+		$this->app_stub->set_http( $this->http_stub );
+
+		remove_filter( 'wp_doing_ajax', '__return_true' );
+
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
+			->willReturn( [
+				'response' => [
+					'code' => 401,
+				],
+				'body' => '{"status": "failed", "message": "UnAuthorize"}',
+			] );
+
+		// Assert Before
+		$this->assertNotFalse( get_user_option( $this->app_stub->get_option_name(), $user->ID ) );
+
+		// Act
+		$result = $this->app_stub->proxy_http_request( 'POST', 'test' );
+
+		// Assert After
+		$this->assertEmpty( get_user_option( $this->app_stub->get_option_name(), $user->ID ) );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertEquals( 401, $result->get_error_code() );
 	}
 
 	public function test_http_request__return_error_when_not_response_code() {
@@ -437,6 +472,32 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
+	}
+
+	public function test_get_remote_authorize_url(  ) {
+		// Arrange
+		$_GET['utm_source'] = 'test-source';
+		$_GET['utm_medium'] = 'test-medium';
+		$_GET['utm_campaign'] = 'test-campaign';
+		$_GET['utm_not_allowed_param'] = 'test-test';
+
+		// Act
+		$url = $this->app_stub->proxy_get_remote_authorize_url();
+
+		// Assert
+		$parsed_url = parse_url( $url );
+		$parsed_query_params = [];
+		parse_str( $parsed_url['query'], $parsed_query_params );
+
+		$this->assertEquals(  'my.elementor.com', $parsed_url['host'] );
+		$this->assertEquals(  '/connect/v1/mock-app', $parsed_url['path'] );
+		$this->assertEquals( 'authorize', $parsed_query_params['action'] );
+		$this->assertEquals( 'test-source', $parsed_query_params['utm_source'] );
+		$this->assertEquals( 'test-medium', $parsed_query_params['utm_medium'] );
+		$this->assertEquals( 'test-campaign', $parsed_query_params['utm_campaign'] );
+		$this->assertArrayNotHasKey( 'utm_not_allowed_param', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_term', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_content', $parsed_query_params );
 	}
 
 	private function get_connected_user() {

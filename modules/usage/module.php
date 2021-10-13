@@ -276,6 +276,7 @@ class Module extends BaseModule {
 		$post_types = get_post_types( array( 'public' => true ) );
 
 		$query = new \WP_Query( [
+			'no_found_rows' => true,
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'private' ],
@@ -570,7 +571,12 @@ class Module extends BaseModule {
 
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
-				return; // Do nothing.
+				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
+					'document_id' => $document->get_id(),
+					'document_name' => $document->get_name(),
+				] );
+
+				return;
 			};
 		}
 	}

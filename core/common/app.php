@@ -121,7 +121,7 @@ class App extends BaseApp {
 			[
 				'jquery-ui-position',
 			],
-			'4.8.1',
+			'4.9.0',
 			true
 		);
 
@@ -208,7 +208,7 @@ class App extends BaseApp {
 	 */
 	public function print_templates() {
 		foreach ( $this->templates as $template ) {
-			echo $template;
+			echo $template; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

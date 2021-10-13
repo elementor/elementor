@@ -3,14 +3,14 @@ name: Publish Developer Edition Version
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 10 * * *' # run at 10 AM UTC
+    - cron: '0 9 * * *' # run at 9 AM UTC
   repository_dispatch:
     types: [new-release]
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
       prev_version: ${{ steps.bump_version_step.outputs.prev_version }}
@@ -20,7 +20,7 @@ jobs:
         with:
           github_token: ${{ secrets.MAINTAIN_TOKEN }}
           commit: developer-edition
-          checks: 'JS-Lint,PHP-Lint,Qunit,Lighthouse test - WP latest on PHP 7.4'
+          checks: 'JS-Lint,PHP-Lint,Qunit - Test,Lighthouse test - WP latest on PHP 7.4'
       - name: Checkout master branch
         if: github.event_name == 'repository_dispatch' && github.event.action == 'new-release'
         uses: actions/checkout@v2
@@ -75,10 +75,19 @@ jobs:
           MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
+      - name: Notify slack on failure
+        if: failure()
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_SYNC_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+        run: |
+          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link> - <https://github.com/elementor/elementor/commits/developer-edition|commits>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
   publish:
     if: ${{ !needs.bump-version.outputs.cancel_workflow }}
     needs: bump-version
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout developer-edition branch
         uses: actions/checkout@v2
@@ -144,6 +153,17 @@ jobs:
           body_path: temp-changelog.txt
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      - name: Generate DEV-CHANGELOG.md
+        env:
+          MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
+          MAINTAIN_USERNAME: ${{ secrets.MAINTAIN_USERNAME }}
+        run: |
+          npm i got@11.8.2 --no-package-lock --no-save
+          node ./.github/scripts/generate-dev-changelog-md.js
+          bash "${GITHUB_WORKSPACE}/.github/scripts/set-git-user.sh"
+          git add DEV-CHANGELOG.md
+          git commit -m "Update DEV-CHANGELOG.md"
+          git push
       - name: Read changelog and set current date
         run: |
           CHANGELOG=$(cat temp-changelog.txt | tr -d '\n')
