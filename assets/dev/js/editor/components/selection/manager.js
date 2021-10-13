@@ -26,8 +26,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	constructor() {
 		super();
 
-		// When returning Proxy from constructor, external invocations intercepted with it so hooks for `add`/`remove`
-		// methods can be executed. This way, internal invocations not triggering the hooks.
+		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
+		// `remove` methods may be executed many times, when update methods will be used only once.
 		return new Proxy( this, {
 			get: function( target, prop ) {
 				if ( [ 'add', 'remove' ].includes( prop ) ) {
