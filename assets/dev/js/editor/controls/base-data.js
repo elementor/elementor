@@ -181,7 +181,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 	getControlPlaceholder() {
 		let placeholder = this.model.get( 'placeholder' );
 
-		if ( this.model.get( 'responsive' ) && ! this.model.get( 'unreflected' ) ) {
+		if ( this.model.get( 'responsive' ) && ! this.model.get( 'dontInheritPlaceholders' ) ) {
 			placeholder = placeholder || this.container.placeholders[ this.model.get( 'name' ) ];
 		}
 
