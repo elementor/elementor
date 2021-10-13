@@ -3,92 +3,80 @@
 namespace Elementor\Testing\Modules\Favorites;
 
 use Elementor\Modules\Favorites\Module;
+use Elementor\Modules\Favorites\Types\Widgets;
 use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Testing\Modules\Favorites\Types\Concrete_Favorite_Type;
-use Elementor\Testing\Modules\Favorites\Types\Test_Widgets;
 
 class Test_Module extends Elementor_Test_Base {
 
-	const CONCRETE_FAVORITE_TYPE = 'concrete-favorite-type';
-	const WIDGETS = 'widgets';
+	const FAVORITES_DATA = [ 'heading', 'image', 'button' ];
+
+	public function setUp() {
+		parent::setUpBeforeClass();
+
+		$this->act_as_admin();
+	}
 
 	public function test_should_get_name() {
 		$module = new Module();
 
-		$this->assertEquals( $module->get_name(), 'favorites' );
-	}
-
-	public function test_type_registration() {
-		$module = new Module();
-
-		$module->register( Concrete_Favorite_Type::class );
-
-		$this->assertInstanceof(
-			$module->type_instance( static::CONCRETE_FAVORITE_TYPE ),
-			Concrete_Favorite_Type::class
-		);
+		$this->assertEquals( 'favorites', $module->get_name() );
 	}
 
 	public function test_get_instance_of_type() {
 		$module = $this->generate_populated_module_instance();
 
 		$this->assertInstanceof(
-			$module->type_instance( static::CONCRETE_FAVORITE_TYPE ),
-			Concrete_Favorite_Type::class
+			Widgets::class,
+			$module->type_instance( 'widgets' )
 		);
 	}
 
 	public function test_get_available_types() {
 		$module = $this->generate_populated_module_instance();
 
-		$this->assertInstanceof(
-			$module->available(),
-			[ static::CONCRETE_FAVORITE_TYPE, static::WIDGETS ]
+		$this->assertEquals(
+			[ 'widgets' ],
+			$module->available()
 		);
 	}
 
 	public function test_merge_single_favorite() {
 		$module = $this->generate_populated_module_instance();
-		$new_favorite = 'forth-favorite-name';
+		$new_favorite = 'icon';
 
 		$this->assertEquals(
-			$module->merge( static::CONCRETE_FAVORITE_TYPE, $new_favorite ),
-			array_merge( Test_Favorite_Type::FAVORITES_DATA, [ $new_favorite ] )
+			array_merge( static::FAVORITES_DATA, [ $new_favorite ] ),
+			$module->merge( 'widgets', $new_favorite )
 		);
 	}
 
 	public function test_merge_multiple_favorites() {
 		$module = $this->generate_populated_module_instance();
-		$new_favorites = [ 'forth-favorite-name', 'fifth-favorite-name' ];
+		$new_favorites = [ 'icon', 'video' ];
 
 		$this->assertEquals(
-			$module->merge( static::CONCRETE_FAVORITE_TYPE, $new_favorites ),
-			array_merge( Test_Favorite_Type::FAVORITES_DATA, $new_favorites )
+			array_merge( static::FAVORITES_DATA, $new_favorites ),
+			$module->merge( 'widgets', $new_favorites )
 		);
 	}
 
 	public function test_delete_favorite() {
 		$module = $this->generate_populated_module_instance();
-		$deleted_favorite = 'third-favorite-name';
+		$deleted_favorite = 'image';
 
 		$this->assertEquals(
-			$module->delete( static::CONCRETE_FAVORITE_TYPE, $deleted_favorite ),
-			array_diff( Test_Favorite_Type::FAVORITES_DATA, [ $deleted_favorite ] )
+			array_values( array_diff( static::FAVORITES_DATA, [ $deleted_favorite ] ) ),
+			$module->delete( 'widgets', $deleted_favorite )
 		);
 	}
 
 	public function test_delete_multiple_favorites() {
 		$module = $this->generate_populated_module_instance();
-		$deleted_favorites = [ 'second-favorite-name', 'third-favorite-name' ];
+		$deleted_favorites = [ 'image', 'button' ];
 
 		$this->assertEquals(
-			$module->delete(
-				static::CONCRETE_FAVORITE_TYPE,
-				array_map( function( $value ) {
-					return Test_Favorite_Type::FAVORITES_DATA[ $value ];
-				}, $deleted_favorites )
-			),
-			array_diff( Test_Favorite_Type::FAVORITES_DATA, $deleted_favorites )
+			array_values( array_diff( static::FAVORITES_DATA, $deleted_favorites ) ),
+			$module->delete( 'widgets', $deleted_favorites )
 		);
 	}
 
@@ -96,8 +84,8 @@ class Test_Module extends Elementor_Test_Base {
 		$module = $this->generate_populated_module_instance();
 
 		$this->assertEquals(
-			$module->get( static::CONCRETE_FAVORITE_TYPE ),
-			Test_Favorite_Type::FAVORITES_DATA
+			static::FAVORITES_DATA,
+			$module->get( 'widgets' )
 		);
 	}
 
@@ -105,20 +93,17 @@ class Test_Module extends Elementor_Test_Base {
 		$module = $this->generate_populated_module_instance();
 
 		$this->assertEquals(
-			$module->get(),
 			[
-				static::CONCRETE_FAVORITE_TYPE => Test_Favorite_Type::FAVORITES_DATA,
-				static::WIDGETS => Test_Widgets::FAVORITES_DATA,
-			]
+				'widgets' => static::FAVORITES_DATA,
+			],
+			$module->get()
 		);
 	}
 
 	protected function generate_populated_module_instance() {
 		$module = new Module();
-		$module->register( Concrete_Favorite_Type::class );
 
-		$module->merge( static::CONCRETE_FAVORITE_TYPE, Test_Favorite_Type::FAVORITES_DATA );
-		$module->merge( static::WIDGETS, Test_Widgets::FAVORITES_DATA );
+		$module->merge( 'widgets', static::FAVORITES_DATA );
 
 		return $module;
 	}

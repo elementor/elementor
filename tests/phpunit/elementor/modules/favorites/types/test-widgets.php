@@ -8,12 +8,12 @@ use Elementor\Testing\Elementor_Test_Base;
 
 class Test_Widgets extends Elementor_Test_Base {
 
-	const FAVORITES_DATA = [ 'heading', 'image', 'not-really-a-widget' ];
+	const FAVORITES_DATA = [ 'heading', 'image', 'button', 'not-really-a-widget' ];
 
 	public function test_should_get_name() {
 		$module = new Widgets();
 
-		$this->assertEquals( $module->get_name(), 'widgets' );
+		$this->assertEquals( 'widgets', $module->get_name() );
 	}
 
 	public function test_prepare() {
@@ -21,8 +21,8 @@ class Test_Widgets extends Elementor_Test_Base {
 		$unavailable_widget_index = 'not-really-a-widget';
 
 		$this->assertEquals(
-			$module->prepare( static::FAVORITES_DATA ),
-			array_diff( static::FAVORITES_DATA, [ $unavailable_widget_index ] )
+			array_diff( static::FAVORITES_DATA, [ $unavailable_widget_index ] ),
+			$module->prepare( static::FAVORITES_DATA )
 		);
 	}
 }

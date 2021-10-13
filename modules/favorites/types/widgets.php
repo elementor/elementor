@@ -14,8 +14,8 @@ class Widgets extends Favorites_Type {
 	/**
 	 * Widgets favorites type constructor.
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct( array $items = [] ) {
+		parent::__construct( $items );
 
 		add_action( 'elementor/document/before_get_config', [ $this, 'update_widget_categories' ], 10, 1 );
 	}
