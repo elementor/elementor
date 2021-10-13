@@ -27,6 +27,9 @@ class Api {
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
+	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
+
+
 	/**
 	 * API info URL.
 	 *
@@ -66,7 +69,7 @@ class Api {
 	 * @return array|false Info data, or false.
 	 */
 	private static function get_info_data( $force_update = false ) {
-		$cache_key = 'elementor_remote_info_api_data_' . ELEMENTOR_VERSION;
+		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
 
