@@ -366,7 +366,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', 'elementor:init-components' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
 
 	// TODO: BC method since 2.3.0
@@ -1054,11 +1054,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', 'elementor:loaded' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
-				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', 'elementor:init' );
+				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
 
