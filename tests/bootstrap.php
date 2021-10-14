@@ -46,7 +46,7 @@ require __DIR__ . '/phpunit/trait-test-upgrades.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
-update_option( 'elementor_allow_tracking', 'yes' );
+require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
 
 Autoloader::run();
 
