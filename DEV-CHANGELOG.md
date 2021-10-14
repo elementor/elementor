@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev40 - 2021-10-14
+* Tweak: Eicons to SVG [ED-2650] (#15897)
+* Fix: Header Handle - handles don't show up [ED-1628] (#15700)
+* Tweak: Removing a temporary BC support. (#16421)
+* Tweak: Added a quick Apply Kit option using a popup modal in Kit Library [ED-4049] (#16492)
+* Fix: Cleanup API info + `autoload=no` and  delete 'elementor_scheme_%'. [ED-3204] (#15755)
+
 #### 3.5.0-dev39 - 2021-10-13
 * Tweak: Updated changelog to v3.4.5 (#16553)
 * Fix: Merge release/3.5.0 into feature/default-values (#16561)
