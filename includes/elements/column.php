@@ -126,13 +126,22 @@ class Element_Column extends Element_Base {
 		);
 
 		$active_breakpoint_keys = array_reverse( array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() ) );
-		$inline_size_device_args = [];
+		$inline_size_device_args = [
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [ 'placeholder' => 100 ],
+		];
 
 		foreach ( $active_breakpoint_keys as $breakpoint_key ) {
-			$inline_size_device_args[ $breakpoint_key ] = [
-				'max' => 100,
-				'required' => false,
-			];
+			if ( ! isset( $inline_size_device_args[ $breakpoint_key ] ) ) {
+				$inline_size_device_args[ $breakpoint_key ] = [];
+			}
+
+			$inline_size_device_args[ $breakpoint_key ] = array_merge_recursive(
+				$inline_size_device_args[ $breakpoint_key ],
+				[
+					'max' => 100,
+					'required' => false,
+				]
+			);
 		}
 
 		if ( in_array( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA, $active_breakpoint_keys, true ) ) {
@@ -689,6 +698,10 @@ class Element_Column extends Element_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
@@ -715,7 +728,8 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};
+					--e-column-margin-right: {{RIGHT}}{{UNIT}}; --e-column-margin-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);

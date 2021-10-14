@@ -5,8 +5,9 @@ import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
+import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper-bc';
+import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -177,6 +178,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.utils = {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
+			baseVideoLoader: new BaseVideoLoader(),
 			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();

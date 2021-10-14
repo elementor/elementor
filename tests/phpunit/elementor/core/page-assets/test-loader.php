@@ -3,7 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Page_Assets;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Page_Assets\Loader as Assets_Loader;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

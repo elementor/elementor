@@ -43,8 +43,12 @@ class Module extends BaseModule {
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.1.0-beta',
+			],
 		];
 	}
 
@@ -64,6 +68,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
 		$trashed_posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
@@ -92,6 +97,7 @@ class Module extends BaseModule {
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any landing pages.
 		$posts_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
@@ -165,7 +171,7 @@ class Module extends BaseModule {
 	 */
 	private function get_add_new_landing_page_url() {
 		if ( ! $this->new_lp_url ) {
-			$this->new_lp_url = Utils::get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
+			$this->new_lp_url = Plugin::$instance->documents->get_create_new_post_url( self::CPT, self::DOCUMENT_TYPE ) . '#library';
 		}
 		return $this->new_lp_url;
 	}
@@ -346,7 +352,11 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			$query->set( 'name', $query->query['pagename'] );
+			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+				set_query_var( 'name', $query->query['pagename'] );
+
+				return $value;
+			} );
 		}
 	}
 
@@ -395,6 +405,7 @@ class Module extends BaseModule {
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
 		$possible_new_query = new \WP_Query( [
+			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
 		] );
