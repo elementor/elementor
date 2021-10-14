@@ -111,7 +111,7 @@ class AdminBar extends elementorModules.ViewModule {
 
 		return jQuery( '<li>', {
 			id,
-			class: children.length ? 'menupop' : '',
+			class: children.length ? 'menupop' : '' + ( item.parent_class || 'elementor-general-section' ),
 		} ).append( [ $item, children.length ? this.createSubMenuItems( id, children ) : null ] );
 	}
 

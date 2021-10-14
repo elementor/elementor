@@ -1,8 +1,12 @@
+body {
+	--e-editor-navigator-width: 240px;
+}
+
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 240px;
-	height: 339px;
+	width: var( --e-editor-navigator-width );
+	height: 50vh;
 	@include end(30px);
 	background-color: #fff;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
@@ -15,7 +19,6 @@
 		top: 0;
 		@include end(0);
 		height: 100%;
-		position: relative;
 	}
 
 	body:not(.elementor-navigator-docked) & {

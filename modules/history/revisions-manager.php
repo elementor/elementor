@@ -154,13 +154,13 @@ class Revisions_Manager {
 
 			if ( $revision->ID === $post->ID ) {
 				$type = 'current';
-				$type_label = __( 'Current Version', 'elementor' );
+				$type_label = esc_html__( 'Current Version', 'elementor' );
 			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
-				$type_label = __( 'Autosave', 'elementor' );
+				$type_label = esc_html__( 'Autosave', 'elementor' );
 			} else {
 				$type = 'revision';
-				$type_label = __( 'Revision', 'elementor' );
+				$type_label = esc_html__( 'Revision', 'elementor' );
 			}
 
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
@@ -175,7 +175,7 @@ class Revisions_Manager {
 				'author' => self::$authors[ $revision->post_author ]['display_name'],
 				'timestamp' => strtotime( $revision->post_modified ),
 				'date' => sprintf(
-					/* translators: 1: Human readable time difference, 2: Date */
+					/* translators: 1: Human readable time difference, 2: Date. */
 					__( '%1$s ago (%2$s)', 'elementor' ),
 					$human_time,
 					$date
@@ -261,7 +261,7 @@ class Revisions_Manager {
 		}
 
 		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
-			throw new \Exception( __( 'Access denied.', 'elementor' ) );
+			throw new \Exception( esc_html__( 'Access denied.', 'elementor' ) );
 		}
 
 		$revision_data = [

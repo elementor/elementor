@@ -25,13 +25,13 @@ class Button extends Base_Object {
 			return;
 		}
 
-		$html_tag = ! empty( $options['link'] ) ? 'a' : 'button';
+		$html_tag = ! empty( $options['url'] ) ? 'a' : 'button';
 		$before = '';
 		$icon = '';
 		$attributes = [];
 
 		if ( ! empty( $options['icon'] ) ) {
-			$icon = '<i class="' . $options['icon'] . '"></i>';
+			$icon = '<i class="' . esc_attr( $options['icon'] ) . '"></i>';
 		}
 
 		$classes = $options['classes'];
@@ -49,12 +49,12 @@ class Button extends Base_Object {
 		}
 
 		if ( ! empty( $options['before'] ) ) {
-			$before = '<span>' . $options['before'] . '</span>';
+			$before = '<span>' . wp_kses_post( $options['before'] ) . '</span>';
 		}
 
-		if ( ! empty( $options['link'] ) ) {
-			$attributes['href'] = $options['link'];
-			if ( isset( $options['new_tab'] ) ) {
+		if ( ! empty( $options['url'] ) ) {
+			$attributes['href'] = $options['url'];
+			if ( $options['new_tab'] ) {
 				$attributes['target'] = '_blank';
 			}
 		}
@@ -66,7 +66,7 @@ class Button extends Base_Object {
 		$html .= '<span>' . sanitize_text_field( $options['text'] ) . '</span>';
 		$html .= '</' . $html_tag . '>';
 
-		echo $html;
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

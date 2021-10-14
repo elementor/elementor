@@ -1,3 +1,5 @@
+import { escapeHTML } from 'elementor-frontend/utils/utils';
+
 export default class TextPathHandler extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
@@ -40,7 +42,8 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	}
 
 	/**
-	 * Set the start offset for the text.
+	 *  Gets a text offset (relative to the starting point) as a string or int, and set it as percents to the
+	 *  `startOffset` attribute of the `<textPath>` element.
 	 *
 	 * @param offset {string|int} The text start offset.
 	 *
@@ -91,7 +94,8 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	}
 
 	/**
-	 * Attach a unique id to the path.
+	 * Attach a unique ID to the `path` element in the SVG, based on the container's ID.
+	 * This function selects the first `path` with a `data-path-anchor` attribute, or defaults to the first `path` element.
 	 *
 	 * @returns {void}
 	 */
@@ -102,15 +106,13 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	}
 
 	/**
-	 * Initialize the text path element.
+	 * Initialize & build the SVG markup of the widget using the settings from the panel.
 	 *
 	 * @returns {void}
 	 */
 	initTextPath() {
-		const {
-			text,
-			startOffset,
-		} = this.elements.pathContainer.dataset;
+		const { start_point: startPoint } = this.getElementSettings();
+		const text = this.elements.pathContainer.dataset.text;
 
 		this.attachIdToPath();
 
@@ -124,27 +126,30 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		// Regenerate the elements object to have access to `this.elements.textPath`.
 		this.elements.textPath = this.elements.svg.querySelector( `#${ this.textPathId }` );
 
-		this.setOffset( startOffset );
+		this.setOffset( startPoint.size );
 		this.setText( text );
 	}
 
 	/**
-	 * Set the new text into the path.
+	 * Sets the text on the SVG path, including the link (if set) and its properties.
 	 *
 	 * @param newText {string} The new text to put in the text path.
 	 *
 	 * @returns {void}
 	 */
 	setText( newText ) {
-		let {
-			href,
-			target,
-			rel,
-		} = this.elements.pathContainer.dataset;
+		const {
+			url,
+			is_external: isExternal,
+			nofollow,
+		} = this.getElementSettings()?.link;
+
+		const target = isExternal ? '_blank' : '',
+			rel = nofollow ? 'nofollow' : '';
 
 		// Add link attributes.
-		if ( href ) {
-			newText = `<a href="${ href }" rel="${ rel }" target="${ target }">${ newText }</a>`;
+		if ( url ) {
+			newText = `<a href="${ escapeHTML( url ) }" rel="${ rel }" target="${ target }">${ escapeHTML( newText ) }</a>`;
 		}
 
 		// Set the text.
@@ -171,7 +176,7 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 	}
 
 	/**
-	 * Determine if the current layout should be RTL.
+	 * Determine if the text direction of the widget should be RTL or not, based on the site direction and the widget's settings.
 	 *
 	 * @returns {boolean}
 	 */

@@ -1,5 +1,6 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
+import environment from '../../../../core/common/assets/js/utils/environment';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -135,6 +136,29 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				} )
 					.done( function() {
 						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} );
+			} );
+
+			$( '#elementor-recreate-kit-button' ).on( 'click', function( event ) {
+				event.preventDefault();
+				var $thisButton = $( this );
+
+				$thisButton.removeClass( 'success error' ).addClass( 'loading' )
+					.next( '.e-recreate-kit-error-message' ).remove();
+
+				$.post( ajaxurl, {
+					action: 'elementor_recreate_kit',
+					_nonce: $thisButton.data( 'nonce' ),
+				} )
+					.done( function() {
+						$thisButton.removeClass( 'loading' ).addClass( 'success' );
+					} )
+					.fail( function( { responseJSON } ) {
+						$thisButton.removeClass( 'loading' ).addClass( 'error' );
+
+						if ( responseJSON.data?.message ) {
+							$thisButton.after( `<div class="e-recreate-kit-error-message">${ responseJSON.data.message }</div>` );
+						}
 					} );
 			} );
 
@@ -288,6 +312,8 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 
 			this.openGetHelpInNewTab();
 
+			this.addUserAgentClasses();
+
 			this.roleManager.init();
 
 			if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -295,6 +321,17 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 			}
 
 			new ExperimentsModule();
+		},
+
+		addUserAgentClasses() {
+			const body = document.querySelector( 'body' );
+			Object.entries( environment ).forEach( ( [ key, value ] ) => {
+				if ( ! value ) {
+					return;
+				}
+
+				body.classList.add( 'e--ua-' + key );
+			} );
 		},
 
 		openGetHelpInNewTab: function() {
@@ -310,7 +347,7 @@ import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea;
 
-			self.elements.$formAnchor = $( 'h1' );
+			self.elements.$formAnchor = $( '.wp-header-end' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
 

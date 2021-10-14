@@ -1,57 +1,97 @@
-import { useState, useContext, useEffect } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
-import Message from '../../../ui/message/message';
-import ImportFailedDialog from '../../../shared/import-failed-dialog/import-failed-dialog';
-import Icon from 'elementor-app/ui/atoms/icon';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
+import FileProcess from '../../../shared/file-process/file-process';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
-import useUploadFile from 'elementor-app/hooks/use-upload-file';
-
-import './import-process-style.scss';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
-	const { uploadFileStatus, setUploadFile } = useUploadFile( 'e_import_file', 'elementor_import_kit', {
-			include: [ 'templates', 'content', 'site-settings' ],
-		} ),
-		importContext = useContext( Context ),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ isError, setIsError ] = useState( false ),
+		context = useContext( Context ),
 		navigate = useNavigate(),
-		resetImportProcess = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		isApplyAllForced = 'apply-all' === actionType,
+		uploadKit = () => {
+			const decodedFileURL = decodeURIComponent( fileURL );
+
+			if ( referrer ) {
+				context.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+			}
+
+			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+
+			kitActions.upload( { file: decodedFileURL } );
+		},
+		importKit = () => {
+			kitActions.import( {
+				session: context.data.uploadedData.session,
+				include: context.data.includes,
+				overrideConditions: context.data.overrideConditions,
+				referrer: context.data.referrer,
+			} );
+		},
+		onDialogDismiss = () => {
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );
 		};
 
 	useEffect( () => {
-		setUploadFile( importContext.data.file );
+		if ( fileURL && ! context.data.file ) {
+			// When the starting point of the app is the import/process screen and importing via file_url.
+			uploadKit();
+		} else if ( context.data.uploadedData ) {
+			// When the import/process is the second step of the kit import process, after selecting the kit content.
+			importKit();
+		}
 	}, [] );
 
 	useEffect( () => {
-		if ( 'success' === uploadFileStatus.status ) {
-			navigate( '/import/success' );
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			switch ( kitState.status ) {
+				case KIT_STATUS_MAP.IMPORTED:
+					context.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.UPLOADED:
+					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.ERROR:
+					setIsError( true );
+					break;
+			}
 		}
-	}, [ uploadFileStatus ] );
+	}, [ kitState.status ] );
+
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			if ( context.data.importedData ) { // After kit upload.
+				navigate( '/import/complete' );
+			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
+				if ( context.data.uploadedData.conflicts ) {
+					navigate( '/import/resolver' );
+				} else {
+					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
+					kitActions.reset();
+
+					importKit();
+				}
+			} else {
+				navigate( '/import/content' );
+			}
+		}
+	}, [ context.data.uploadedData, context.data.importedData ] );
 
 	return (
 		<Layout type="import">
-			<Message className="e-app-import-process">
-				<Icon className="e-app-import-process__icon eicon-loading eicon-animation-spin" />
-
-				<Heading variant="display-3" className="e-app-import-process__title">
-					{ __( 'Processing your file...', 'elementor' ) }
-				</Heading>
-
-				<Text variant="xl" className="e-app-import-process__text">
-					{ __( 'This usually takes a few moments.', 'elementor' ) }
-					<br />
-					{ __( 'Don\'t close this window until your import is finished.', 'elementor' ) }
-				</Text>
-
-				{ 'error' === uploadFileStatus.status && <ImportFailedDialog onRetry={ resetImportProcess } /> }
-			</Message>
+			<FileProcess
+				isError={ isError }
+				onDialogApprove={ () => {} }
+				onDialogDismiss={ onDialogDismiss }
+			/>
 		</Layout>
 	);
 }

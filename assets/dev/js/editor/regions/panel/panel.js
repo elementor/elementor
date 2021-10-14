@@ -50,11 +50,16 @@ module.exports = BaseRegion.extend( {
 
 				elementor.getPanelView().updateScrollbar();
 
-				self.saveSize( ui.size.width + 'px' );
+				self.saveSize( { width: ui.size.width + 'px' } );
 			},
 			resize: function( event, ui ) {
 				elementorCommon.elements.$body.css( '--e-editor-panel-width', ui.size.width + 'px' );
-				self.$el.css( 'width', '' );
+
+				self.$el.css( {
+					width: '',
+					// For RTL
+					left: '',
+				} );
 			},
 		} );
 	},

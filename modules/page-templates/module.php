@@ -289,11 +289,11 @@ class Module extends BaseModule {
 	public function add_template_controls( Document $document, $control_id, $control_options ) {
 		// Default Control Options
 		$default_control_options = [
-			'label' => __( 'Page Layout', 'elementor' ),
+			'label' => esc_html__( 'Page Layout', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'default',
 			'options' => [
-				'default' => __( 'Default', 'elementor' ),
+				'default' => esc_html__( 'Default', 'elementor' ),
 			],
 		];
 
@@ -308,7 +308,7 @@ class Module extends BaseModule {
 			$control_id . '_default_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<b>' . __( 'Default Page Template from your theme', 'elementor' ) . '</b>',
+				'raw' => '<b>' . esc_html__( 'The default page template as defined in Elementor Panel → Hamburger Menu → Site Settings.', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => 'default',
@@ -317,10 +317,22 @@ class Module extends BaseModule {
 		);
 
 		$document->add_control(
+			$control_id . '_theme_description',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '<b>' . esc_html__( 'Default Page Template from your theme.', 'elementor' ) . '</b>',
+				'content_classes' => 'elementor-descriptor',
+				'condition' => [
+					$control_id => self::TEMPLATE_THEME,
+				],
+			]
+		);
+
+		$document->add_control(
 			$control_id . '_canvas_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<b>' . __( 'No header, no footer, just Elementor', 'elementor' ) . '</b>',
+				'raw' => '<b>' . esc_html__( 'No header, no footer, just Elementor', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_CANVAS,
@@ -332,7 +344,7 @@ class Module extends BaseModule {
 			$control_id . '_header_footer_description',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => '<b>' . __( 'This template includes the header, full-width content and footer', 'elementor' ) . '</b>',
+				'raw' => '<b>' . esc_html__( 'This template includes the header, full-width content and footer', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
 				'condition' => [
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
@@ -345,7 +357,7 @@ class Module extends BaseModule {
 				'reload_preview_description',
 				[
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => __( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
+					'raw' => esc_html__( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
 					'content_classes' => 'elementor-descriptor',
 				]
 			);

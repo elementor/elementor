@@ -21,11 +21,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function( activeMode ) {
-		if ( 'edit' === activeMode ) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
+		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
 	onRender: function() {
@@ -38,6 +34,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	onDestroy: function() {
 		this.deactivate();
+	},
+
+	onToggleSortMode( isActive ) {
+		if ( isActive ) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
 	},
 
 	activate: function() {
@@ -58,7 +62,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 				},
 				helper: this._getSortableHelper.bind( this ),
 				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title',
-
+				// Fix: Sortable - Unable to drag and drop sections with huge height.
+				start: () => {
+					$childViewContainer.sortable( 'refreshPositions' );
+				},
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 

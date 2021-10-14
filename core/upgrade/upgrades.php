@@ -1,11 +1,12 @@
 <?php
 namespace Elementor\Core\Upgrade;
 
+use Elementor\Api;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Kits\Documents\Tabs\Settings_Layout;
-use Elementor\Core\Responsive\Responsive;
+use Elementor\Core\Schemes\Base;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Core\Settings\Page\Manager as SettingsPageManager;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
@@ -24,6 +25,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Upgrades {
+
+	public static function _on_each_version( $updater ) {
+		self::recalc_usage_data( $updater );
+		self::remove_remote_info_api_data();
+
+		$uploads_manager = Plugin::$instance->uploads_manager;
+
+		$temp_dir = $uploads_manager->get_temp_dir();
+
+		if ( file_exists( $temp_dir ) ) {
+			$uploads_manager->remove_file_or_dir( $temp_dir );
+		}
+	}
 
 	/**
 	 * Upgrade Elementor 0.3.2
@@ -662,7 +676,7 @@ class Upgrades {
 				return;
 			}
 
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$current_settings = get_option( '_elementor_general_settings', [] );
 			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
 			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
@@ -727,7 +741,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_colors'] ) ) {
 				self::notice( 'System colors already exist. nothing to do.' );
@@ -769,7 +783,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['custom_colors'] ) ) {
 				self::notice( 'Custom colors already exist. nothing to do.' );
@@ -808,7 +822,7 @@ class Upgrades {
 			foreach ( $colors_to_save as $index => $color ) {
 				$kit->add_repeater_row( 'custom_colors', [
 					'_id' => Utils::generate_random_string(),
-					'title' => __( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
+					'title' => esc_html__( 'Saved Color', 'elementor' ) . ' #' . ( $index + 1 ),
 					'color' => $color,
 				] );
 			}
@@ -834,7 +848,7 @@ class Upgrades {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			// Already exist. use raw settings that doesn't have default values.
-			$meta_key = \Elementor\Core\Settings\Page\Manager::META_KEY;
+			$meta_key = SettingsPageManager::META_KEY;
 			$kit_raw_settings = $kit->get_meta( $meta_key );
 			if ( isset( $kit_raw_settings['system_typography'] ) ) {
 				self::notice( 'System typography already exist. nothing to do.' );
@@ -880,7 +894,12 @@ class Upgrades {
 		$callback = function( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
-			$kit_settings = $kit->get_settings();
+			$kit_settings = $kit->get_meta( SettingsPageManager::META_KEY );
+
+			if ( ! $kit_settings ) {
+				// Nothing to upgrade.
+				return;
+			}
 
 			$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 			$old_mobile_option_key = $prefix . 'md';
@@ -910,6 +929,22 @@ class Upgrades {
 		};
 
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
+	}
+
+	public static function _v_3_5_0_remove_old_elementor_scheme() {
+		global $wpdb;
+
+		$key = Base::SCHEME_OPTION_PREFIX;
+
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
+	}
+
+	public static function remove_remote_info_api_data() {
+		global $wpdb;
+
+		$key = Api::TRANSIENT_KEY_PREFIX;
+
+		return $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '{$key}%';" ); // phpcs:ignore
 	}
 
 	/**
