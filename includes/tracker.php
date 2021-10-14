@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Experiments\Experiments_Reporter;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -230,7 +231,7 @@ class Tracker {
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
 			$system_reports[ $report_key ] = [];
-			foreach ( $report_details['report'] as $sub_report_key => $sub_report_details ) {
+			foreach ( $report_details['report']->get_report() as $sub_report_key => $sub_report_details ) {
 				$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
 			}
 		}
@@ -396,28 +397,16 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_settings_experiments_usage() {
-		$result = [];
+		$system_info = Plugin::$instance->system_info;
 
-		$experiments_manager = Plugin::$instance->experiments;
+		/**
+		 * @var $experiments_report Experiments_Reporter
+		 */
+		$experiments_report = $system_info->create_reporter( [
+			'class_name' => Experiments_Reporter::class,
+		] );
 
-		// TODO: Those keys should be at `$experiments_manager`.
-		$tracking_keys = [
-			'default',
-			'state',
-		];
-
-		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
-			$data_to_collect = [];
-
-			// Extract only tracking keys.
-			foreach ( $tracking_keys as $tracking_key ) {
-				$data_to_collect[ $tracking_key ] = $feature_data[ $tracking_key ];
-			}
-
-			$result[ $feature_name ] = $data_to_collect;
-		}
-
-		return $result;
+		return $experiments_report->get_experiments()['value'];
 	}
 
 	/**
