@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev41 - 2021-10-15
+* Tweak: Adding styled-components infrastructure [ED-4561] (#16414)
+
 #### 3.5.0-dev40 - 2021-10-14
 * Tweak: Eicons to SVG [ED-2650] (#15897)
 * Fix: Header Handle - handles don't show up [ED-1628] (#15700)
