@@ -46,6 +46,8 @@ require __DIR__ . '/phpunit/trait-test-upgrades.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
+require __DIR__ . '/phpunit/elementor/schemas/bootstrap.php';
+
 Autoloader::run();
 
 remove_action( 'admin_init', '_maybe_update_themes' );
