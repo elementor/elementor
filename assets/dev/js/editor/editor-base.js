@@ -20,6 +20,7 @@ import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -368,7 +369,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
 
 	// TODO: BC method since 2.3.0
@@ -1049,11 +1050,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
 
