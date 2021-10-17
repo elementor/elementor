@@ -60,17 +60,26 @@
 		}
 	}
 
-	&.e-container--placeholder-row > .elementor-widget-placeholder {
-		--width: 10px;
+	.elementor-widget-placeholder {
+		--size: 10px;
 
+		flex-shrink: 0;
 		align-self: stretch;
-		width: var( --width );
-		margin: 0 calc( -1 * var( --width ) / 2 ); // To make sure that it doesn't push & break the layout when appearing.
+		z-index: $first-layer;
+	}
+
+	&.e-container--placeholder-row > .elementor-widget-placeholder {
+		width: var( --size );
+		margin: 0 calc( -1 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
 		height: auto;
 		min-height: 100%;
-		flex-shrink: 0;
-		z-index: $first-layer;
 		animation-name: dnd-placeholder-widget-vertical;
+	}
+
+	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
+		height: var( --size );
+		margin: calc( -1 * var( --size ) ) 0; // To make sure that it doesn't push & break the layout when appearing.
+		animation-name: dnd-placeholder-widget-horizontal;
 	}
 
 	// Hack to increase specificity and avoid using `!important`.
@@ -145,11 +154,28 @@
 
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
-		width: 0;
+		transform-origin: 0 50%;
+		transform: scaleX( 0 );
 		opacity: 0;
 	}
+
 	100% {
-		width: var( --width, 10px );
+		transform-origin: 0 50%;
+		transform: scaleX( 1 );
+		opacity: .9;
+	}
+}
+
+@keyframes dnd-placeholder-widget-horizontal {
+	0% {
+		transform-origin: 50% 0;
+		transform: scaleY( 0 );
+		opacity: 0;
+	}
+
+	100% {
+		transform-origin: 50% 0;
+		transform: scaleY( 1 );
 		opacity: .9;
 	}
 }
