@@ -132,7 +132,7 @@ class Library extends \WP_CLI_Command {
 
 		$app = $this->get_library_app();
 
-		$app->set_auth_mode('cli');
+		$app->set_auth_mode( 'cli' );
 
 		$app->action_authorize();
 
