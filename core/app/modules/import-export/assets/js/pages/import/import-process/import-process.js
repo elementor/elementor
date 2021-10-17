@@ -3,6 +3,7 @@ import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
+import UnfilteredFilesDialog from './components/unfiltered-files-dialog/unfiltered-files-dialog';
 
 import { Context } from '../../../context/context-provider';
 
@@ -16,6 +17,9 @@ export default function ImportProcess() {
 		navigate = useNavigate(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		isApplyAllForced = 'apply-all' === actionType,
+		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
+		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
+		[ startImport, setStartImport ] = useState( false ),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -28,18 +32,19 @@ export default function ImportProcess() {
 			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			kitActions.import( {
-				session: context.data.uploadedData.session,
-				include: context.data.includes,
-				overrideConditions: context.data.overrideConditions,
-				referrer: context.data.referrer,
-			} );
+			// Start the import if the unfiltered-files flag is enabled or when the 'includes' contain only the 'settings' that are not related to unfiltered-files.
+			if ( isUnfilteredFilesEnabled || ( 1 === context.data.includes.length && 'settings' === context.data.includes[ 0 ] ) ) {
+				setStartImport( true );
+			} else {
+				setShowUnfilteredFilesDialog( true );
+			}
 		},
 		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 			navigate( '/import' );
 		};
 
+	// on load.
 	useEffect( () => {
 		if ( fileURL && ! context.data.file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
@@ -50,6 +55,19 @@ export default function ImportProcess() {
 		}
 	}, [] );
 
+	// Starting the import process.
+	useEffect( () => {
+		if ( startImport ) {
+			kitActions.import( {
+				session: context.data.uploadedData.session,
+				include: context.data.includes,
+				overrideConditions: context.data.overrideConditions,
+				referrer: context.data.referrer,
+			} );
+		}
+	}, [ startImport ] );
+
+	// Updating the kit data after upload/import.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			switch ( kitState.status ) {
@@ -66,6 +84,7 @@ export default function ImportProcess() {
 		}
 	}, [ kitState.status ] );
 
+	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			if ( context.data.importedData ) { // After kit upload.
@@ -87,11 +106,24 @@ export default function ImportProcess() {
 
 	return (
 		<Layout type="import">
-			<FileProcess
-				isError={ isError }
-				onDialogApprove={ () => {} }
-				onDialogDismiss={ onDialogDismiss }
-			/>
+			<section>
+				<FileProcess
+					isError={ isError }
+					onDialogApprove={ () => {} }
+					onDialogDismiss={ onDialogDismiss }
+				/>
+				<UnfilteredFilesDialog
+					show={ showUnfilteredFilesDialog }
+					onSelected={ () => {
+						setShowUnfilteredFilesDialog( false );
+						setStartImport( true );
+					} }
+					onError={ () => {
+						setShowUnfilteredFilesDialog( false );
+						setIsError( true );
+					} }
+				/>
+			</section>
 		</Layout>
 	);
 }

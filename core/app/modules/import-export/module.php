@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
@@ -53,11 +54,14 @@ class Module extends BaseModule {
 
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		$svg_handler = new Svg_Handler();
 
 		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
+			'isUnfilteredFilesEnabled' => $svg_handler->is_enabled(),
 		];
 	}
 
@@ -154,7 +158,7 @@ class Module extends BaseModule {
 	}
 
 	private function on_admin_init() {
-		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
+		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
@@ -178,7 +182,7 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
+		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['_nonce'], 'elementor_export' ) ) {
 			return;
 		}
 
