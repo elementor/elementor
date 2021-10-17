@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
@@ -43,11 +44,6 @@ class Module extends BaseApp {
 		</div>
 		<?php
 	}
-	protected function get_init_settings() {
-		return [
-			'is_administrator' => current_user_can( 'manage_options' ),
-		];
-	}
 
 	/**
 	 * Enqueue admin scripts
@@ -72,18 +68,28 @@ class Module extends BaseApp {
 		$this->print_config();
 	}
 
-	/**
-	 * Register dashboard widgets.
-	 *
-	 * Adds a new Elementor widgets to WordPress dashboard.
-	 *
-	 * Fired by `wp_dashboard_setup` action.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 */
-	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
+	private function add_frontend_settings() {
+		$settings = [];
+		$settings['is_administrator'] = current_user_can( 'manage_options' );
+		$current_screen = get_current_screen();
+
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		if ( $library ) {
+			$settings = array_merge( $settings, [
+				'is_user_connected' => $library->is_connected(),
+				'connect_url' => $library->get_admin_url( 'authorize', [
+					'utm_source' => 'top-bar',
+					'utm_medium' => 'wp-dash',
+					'utm_campaign' => 'connect-account',
+					'utm_content' => $current_screen->id,
+				] ),
+			] );
+		}
+
+		$this->set_settings( $settings );
+
+		do_action( 'elementor/admin-top-bar/init', $this );
 	}
 
 	/**
@@ -92,25 +98,16 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'in_admin_header', function () {
+			$this->render_admin_top_bar();
+		} );
+
+		add_action( 'admin_enqueue_scripts', function () {
+			$this->enqueue_scripts();
+		} );
+
 		add_action( 'current_screen', function () {
-			$current_screen = get_current_screen();
-
-			// Only in elementor based pages.
-			if ( ! $current_screen || ! strstr( $current_screen->id, 'elementor' ) ) {
-				return;
-			}
-
-			add_action( 'in_admin_header', function () {
-				$this->render_admin_top_bar();
-			} );
-
-			add_action( 'admin_enqueue_scripts', function () {
-				$this->enqueue_scripts();
-			} );
-
-			add_action( 'wp_dashboard_setup', function () {
-				$this->register_dashboard_widgets();
-			} );
+			$this->add_frontend_settings();
 		} );
 	}
 }

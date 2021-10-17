@@ -55,7 +55,7 @@ class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		$this->register_default_sources();
 

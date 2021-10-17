@@ -1,7 +1,7 @@
 {
     "name": "elementor",
     "slug": "elementor",
-    "version": "3.4.3",
+    "version": "3.4.5",
     "last_beta_version": "3.4.0-beta5",
     "prev_stable_version": "3.1.4",
     "author": "Elementor Team",
@@ -64,6 +64,7 @@
         "path": "^0.12.7",
         "qunit": "2.15.0",
         "react-query": "^3.16.0",
+        "styled-components": "^5.3.1",
         "terser-webpack-plugin": "^5.0.3",
         "webpack": "^5.40.0"
     },
