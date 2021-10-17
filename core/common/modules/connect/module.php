@@ -66,8 +66,14 @@ class Module extends BaseModule {
 			'library' => Library::get_class_name(),
 		];
 
-		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-		add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		// When using REST API the parent module is construct after the action 'elementor/init'
+		// so this part of code make sure to register the module "apps".
+		if ( did_action( 'elementor/init' ) ) {
+			$this->init();
+		} else {
+			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
+			add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		}
 	}
 
 	/**
@@ -174,11 +180,11 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @param $context
+	 * @param string $context Where this subscription plan should be shown.
 	 *
 	 * @return array
 	 */
-	public function get_subscription_plans( $context ) {
+	public function get_subscription_plans( $context = '' ) {
 		return [
 			static::ACCESS_LEVEL_CORE => [
 				'label' => null,
@@ -197,5 +203,4 @@ class Module extends BaseModule {
 			],
 		];
 	}
-
 }

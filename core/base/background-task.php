@@ -26,7 +26,7 @@ abstract class Background_Task extends WP_Background_Process {
 		$dispatched = parent::dispatch();
 
 		if ( is_wp_error( $dispatched ) ) {
-			wp_die( $dispatched );
+			wp_die( esc_html( $dispatched ) );
 		}
 	}
 
@@ -307,8 +307,8 @@ abstract class Background_Task extends WP_Background_Process {
 		// Adds every 5 minutes to the existing schedules.
 		$schedules[ $this->identifier . '_cron_interval' ] = array(
 			'interval' => MINUTE_IN_SECONDS * $interval,
-			/* translators: %d: interval */
-			'display' => sprintf( __( 'Every %d minutes', 'elementor' ), $interval ),
+			/* translators: %d: Interval in minutes. */
+			'display' => sprintf( esc_html__( 'Every %d minutes', 'elementor' ), $interval ),
 		);
 
 		return $schedules;

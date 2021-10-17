@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\CompatibilityTag;
 
 use Elementor\Core\Utils\Version;
 use Elementor\Core\Utils\Collection;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag;
 use Elementor\Modules\CompatibilityTag\Compatibility_Tag_Report;
 
@@ -32,12 +32,12 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 		$report = $this->create_instance( 'html' );
 
 		// Act
-		$result = $report->get_report_data();
+		$result = $report->get_html_report_data();
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );
-		$this->assertRegExp( '/<tr><td> A <\/td><td> compatible <\/td><\/tr>/', $result['value'] );
-		$this->assertRegExp( '/<tr><td> B <\/td><td> incompatible <\/td><\/tr>/', $result['value'] );
+		$this->assertRegExp( '/<tr><td> A <\/td><td> Compatible <\/td><\/tr>/', $result['value'] );
+		$this->assertRegExp( '/<tr><td> B <\/td><td> Incompatible <\/td><\/tr>/', $result['value'] );
 	}
 
 	public function test_get_report_data__with_raw_format() {
@@ -45,12 +45,12 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 		$report = $this->create_instance( 'raw' );
 
 		// Act
-		$result = $report->get_report_data();
+		$result = $report->get_raw_report_data();
 
 		// Assert
 		$this->assertArrayHasKey( 'value', $result );
-		$this->assertRegExp( '/A: compatible/', $result['value'] );
-		$this->assertRegExp( '/B: incompatible/', $result['value'] );
+		$this->assertRegExp( '/A: Compatible/', $result['value'] );
+		$this->assertRegExp( '/B: Incompatible/', $result['value'] );
 	}
 
 	/**

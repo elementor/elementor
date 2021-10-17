@@ -40,7 +40,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Menu Anchor', 'elementor' );
+		return esc_html__( 'Menu Anchor', 'elementor' );
 	}
 
 	/**
@@ -83,17 +83,17 @@ class Widget_Menu_Anchor extends Widget_Base {
 		$this->start_controls_section(
 			'section_anchor',
 			[
-				'label' => __( 'Anchor', 'elementor' ),
+				'label' => esc_html__( 'Anchor', 'elementor' ),
 			]
 		);
 
 		$this->add_control(
 			'anchor',
 			[
-				'label' => __( 'The ID of Menu Anchor.', 'elementor' ),
+				'label' => esc_html__( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'placeholder' => __( 'For Example: About', 'elementor' ),
-				'description' => __( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
+				'placeholder' => esc_html__( 'For Example: About', 'elementor' ),
+				'description' => esc_html__( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
 			]
 		);
@@ -102,7 +102,11 @@ class Widget_Menu_Anchor extends Widget_Base {
 			'anchor_note',
 			[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => sprintf( __( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ), '`A-Z, a-z, 0-9, _ , -`' ),
+				'raw' => sprintf(
+					/* translators: %s: Accepted chars. */
+					esc_html__( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ),
+					'`A-Z, a-z, 0-9, _ , -`'
+				),
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 			]
 		);
@@ -127,7 +131,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 
 		$this->add_render_attribute( 'inner', 'class', 'elementor-menu-anchor' );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'inner' ); ?>></div>
+		<div <?php $this->print_render_attribute_string( 'inner' ); ?>></div>
 		<?php
 	}
 

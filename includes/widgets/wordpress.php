@@ -208,6 +208,7 @@ class Widget_WordPress extends Widget_Base {
 		if ( ! empty( $settings['wp'] ) ) {
 			$widget = $this->get_widget_instance();
 			$instance = $widget->update( $settings['wp'], [] );
+			/** This filter is documented in wp-includes/class-wp-widget.php */
 			$settings['wp'] = apply_filters( 'widget_update_callback', $instance, $settings['wp'], [], $widget );
 		}
 
@@ -226,7 +227,7 @@ class Widget_WordPress extends Widget_Base {
 		$this->add_control(
 			'wp',
 			[
-				'label' => __( 'Form', 'elementor' ),
+				'label' => esc_html__( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_name(),
 				'id_base' => $this->get_widget_instance()->id_base,

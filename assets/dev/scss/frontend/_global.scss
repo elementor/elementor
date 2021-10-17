@@ -128,6 +128,13 @@
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
+
+		// If the optimized DOM experiment is active, inherit the parent padding so the widget
+		// will take the parent padding in account when setting a position.
+		.elementor-column > & {
+			padding: inherit;
+			box-sizing: content-box; // To keep the width from the control, since the padding was added.
+		}
 	}
 
 	> .elementor-element.elementor-fixed {
@@ -152,11 +159,11 @@
 
 		@include inline-width('');
 
-		@media (max-width: $screen-md-max) {
+		@media (max-width: $screen-tablet-max) {
 			@include inline-width(-tablet);
 		}
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-mobile-max) {
 			@include inline-width(-mobile);
 		}
 	}
@@ -211,12 +218,26 @@
 
 .elementor-custom-embed-play {
 	@include absolute-center;
+	$elementor-custom-embed-play-icon-size: 100px;
+	$elementor-custom-embed-play-icon-color: #fff;
+	$elementor-custom-embed-play-icon-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 
 	i {
-		font-size: 100px;
-		color: #fff;
+		font-size: $elementor-custom-embed-play-icon-size;
+		color: $elementor-custom-embed-play-icon-color;
+		text-shadow: $elementor-custom-embed-play-icon-shadow;
+	}
+
+	svg {
+		height: $elementor-custom-embed-play-icon-size;
+		width: $elementor-custom-embed-play-icon-size;
+		fill: $elementor-custom-embed-play-icon-color;
+		filter: drop-shadow($elementor-custom-embed-play-icon-shadow);
+	}
+
+	i,
+	svg {
 		opacity: 0.8;
-		text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 		transition: all .5s;
 	}
 
@@ -224,11 +245,16 @@
 
 		i {
 			font-family: eicons;
-			animation: fa-spin 2s infinite linear;
 
 			&:before {
 				content: '\e8fb';
 			}
+		}
+
+		// Using the eicon-spin animation for not being dependent in any external library.
+		i,
+		svg {
+			animation: eicon-spin 2s infinite linear;
 		}
 	}
 }
@@ -259,10 +285,8 @@
 	}
 }
 
-// Alignment for Tablet
-@media (max-width: $screen-md-max) {
-
-	.elementor-tablet-align- {
+@mixin button-alignment($device) {
+	.elementor-#{$device}-align- {
 
 		&center {
 			text-align: center;
@@ -297,42 +321,34 @@
 	}
 }
 
+// Alignment for Widescreen
+@media (min-width: $screen-widescreen-min) {
+	@include button-alignment(widescreen);
+}
+
+// Alignment for Laptop
+@media (max-width: $screen-laptop-max) {
+	@include button-alignment(laptop);
+}
+
+// Alignment for Tablet Extra
+@media (max-width: $screen-tablet-extra-max) {
+	@include button-alignment(tablet_extra);
+}
+
+// Alignment for Tablet
+@media (max-width: $screen-tablet-max) {
+	@include button-alignment(tablet);
+}
+
+// Alignment for Mobile Extra
+@media (max-width: $screen-mobile-extra-max) {
+	@include button-alignment(mobile_extra);
+}
+
 // Alignment for Mobile
-@media (max-width: $screen-sm-max) {
-
-	.elementor-mobile-align- {
-
-		&center {
-			text-align: center;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&right {
-			text-align: right;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&left {
-			text-align: left;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&justify {
-
-			.elementor-button {
-				width: 100%;
-			}
-		}
-	}
+@media (max-width: $screen-mobile-max) {
+	@include button-alignment(mobile);
 }
 
 // Admin Bar - Icon (Front-End)
@@ -359,3 +375,19 @@
 .elementor-page-title, h1.entry-title {
 	display: var(--page-title-display);
 }
+
+// Global animation that should be available even when the elementor-icons library is not loaded.
+@keyframes eicon-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+// Global animation class that should be available even when the elementor-icons library is not loaded.
+.eicon-animation-spin {
+	animation: eicon-spin 2s infinite linear;
+}
+

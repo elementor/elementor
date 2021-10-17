@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/import/import-context';
+import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -9,39 +9,75 @@ import ImportFailedDialog from '../../../shared/import-failed-dialog/import-fail
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
+import Button from 'elementor-app/ui/molecules/button';
+
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const [ isImportFailed, setIsImportFailed ] = useState( false ),
-		importContext = useContext( Context ),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ isImportFailed, setIsImportFailed ] = useState( false ),
+		[ isLoading, setIsLoading ] = useState( false ),
+		context = useContext( Context ),
 		navigate = useNavigate(),
+		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
+			context.dispatch( { type: 'SET_FILE', payload: null } );
 			setIsImportFailed( false );
+			setIsLoading( false );
+			kitActions.reset();
 		},
 		getLearnMoreLink = () => (
-			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
+			<InlineLink url="https://go.elementor.com/app-what-are-kits" key="learn-more-link" italic>
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);
 
 	useEffect( () => {
-		if ( importContext.data.file ) {
-			navigate( '/import/process' );
+		if ( context.data.file ) {
+			kitActions.upload( { file: context.data.file } );
 		}
-	}, [ importContext.data.file ] );
+	}, [ context.data.file ] );
+
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
+			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+		} else if ( 'error' === kitState.status ) {
+			setIsImportFailed( true );
+		}
+	}, [ kitState.status ] );
+
+	useEffect( () => {
+		if ( context.data.uploadedData && context.data.file ) {
+			navigate( '/import/content' );
+		}
+	}, [ context.data.uploadedData ] );
+
+	useEffect( () => {
+		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+	}, [] );
 
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
+				{
+					'kit-library' === referrer &&
+					<Button
+						className="e-app-import__back-to-library"
+						icon="eicon-chevron-left"
+						text={ __( 'Back to Kit Library', 'elementor' ) }
+						onClick={ () => navigate( '/kit-library' ) }
+					/>
+				}
+
 				<PageHeader
-					heading={ __( 'Import Kits', 'elementor' ) }
-					description={
-						<>
-							{ __( 'Upload a file with Elementor components - pages, site settings, headers, etc. - so you can access them later and quickly apply them to your site.', 'elementor' ) } { getLearnMoreLink() }
-						</>
-					}
+					heading={ __( 'Import a Template Kit', 'elementor' ) }
+					description={ [
+						__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
+						getLearnMoreLink(),
+					] }
 				/>
 
 				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
@@ -55,12 +91,19 @@ export default function ImportKit() {
 					secondaryText={ __( 'Or', 'elementor' ) }
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
-						importContext.dispatch( { type: 'SET_FILE', payload: file } );
+						setIsLoading( true );
+						context.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
 					onError={ () => setIsImportFailed( true ) }
+					isLoading={ isLoading }
 				/>
 
-				{ isImportFailed && <ImportFailedDialog onRetry={ resetImportProcess } /> }
+				{ isImportFailed &&
+					<ImportFailedDialog
+						onApprove={ () => window.open( 'https://elementor.com/help/import-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
+						onDismiss={ resetImportProcess }
+					/>
+				}
 			</section>
 		</Layout>
 	);

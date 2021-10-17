@@ -129,7 +129,7 @@ class Group_Control_Typography extends Group_Control_Base {
 		];
 
 		$typo_weight_options = [
-			'' => __( 'Default', 'elementor' ),
+			'' => esc_html__( 'Default', 'elementor' ),
 		];
 
 		foreach ( array_merge( [ 'normal', 'bold' ], range( 100, 900, 100 ) ) as $weight ) {
@@ -148,7 +148,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
 				'uppercase' => _x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => _x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => _x( 'Capitalize', 'Typography Control', 'elementor' ),
@@ -161,7 +161,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
 				'normal' => _x( 'Normal', 'Typography Control', 'elementor' ),
 				'italic' => _x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => _x( 'Oblique', 'Typography Control', 'elementor' ),
@@ -173,7 +173,7 @@ class Group_Control_Typography extends Group_Control_Base {
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'options' => [
-				'' => __( 'Default', 'elementor' ),
+				'' => esc_html__( 'Default', 'elementor' ),
 				'underline' => _x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => _x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => _x( 'Line Through', 'Typography Control', 'elementor' ),
@@ -215,6 +215,31 @@ class Group_Control_Typography extends Group_Control_Base {
 			],
 			'responsive' => true,
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
+		];
+
+		$fields['word_spacing'] = [
+			'label' => _x( 'Word Spacing', 'Typography Control', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'desktop_default' => [
+				'unit' => 'em',
+			],
+			'tablet_default' => [
+				'unit' => 'em',
+			],
+			'mobile_default' => [
+				'unit' => 'em',
+			],
+			'size_units' => [ 'px', 'em' ],
+			'range' => [
+				'px' => [
+					'step' => 1,
+				],
+				'em' => [
+					'step' => 0.1,
+				],
+			],
+			'responsive' => true,
+			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',
 		];
 
 		return $fields;

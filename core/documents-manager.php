@@ -182,6 +182,15 @@ class Documents_Manager {
 			return false;
 		}
 
+		/**
+		 * Retrieve document post ID.
+		 *
+		 * Filters the document post ID.
+		 *
+		 * @since 2.0.7
+		 *
+		 * @param int $post_id The post ID of the document.
+		 */
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
@@ -351,10 +360,10 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', 'elementor' );
+			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
-					/* translators: %s: Document title */
+					/* translators: %s: Document title. */
 					__( 'Elementor %s', 'elementor' ),
 					call_user_func( [ $class, 'get_title' ] )
 				);
@@ -653,21 +662,6 @@ class Documents_Manager {
 		return $this->current_doc;
 	}
 
-	/**
-	 * Get groups.
-	 *
-	 * @since 2.0.0
-	 * @deprecated 2.4.0
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function get_groups() {
-		_deprecated_function( __METHOD__, '2.4.0' );
-
-		return [];
-	}
-
 	public function localize_settings( $settings ) {
 		$translations = [];
 
@@ -691,5 +685,32 @@ class Documents_Manager {
 			 */
 			do_action( 'elementor/documents/register', $this );
 		}
+	}
+
+	/**
+	 * Get create new post URL.
+	 *
+	 * Retrieve a custom URL for creating a new post/page using Elementor.
+	 *
+	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
+	 *
+	 * @return string A URL for creating new post using Elementor.
+	 */
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		$query_args = [
+			'action' => 'elementor_new_post',
+			'post_type' => $post_type,
+		];
+
+		if ( $template_type ) {
+			$query_args['template_type'] = $template_type;
+		}
+
+		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
+
+		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
+
+		return $new_post_url;
 	}
 }
