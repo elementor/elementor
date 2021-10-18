@@ -41,9 +41,14 @@ export default function ImportProcess() {
 				setShowUnfilteredFilesDialog( true );
 			}
 		},
-		onDialogDismiss = () => {
+		onCancelProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
-			navigate( '/import' );
+
+			if ( 'kit-library' === referrer ) {
+				navigate( '/kit-library' );
+			} else {
+				navigate( '/import' );
+			}
 		};
 
 	// on load.
@@ -112,17 +117,20 @@ export default function ImportProcess() {
 				<FileProcess
 					isError={ isError }
 					onDialogApprove={ () => {} }
-					onDialogDismiss={ onDialogDismiss }
+					onDialogDismiss={ onCancelProcess }
 				/>
+
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
+					setShow={ setShowUnfilteredFilesDialog }
 					onReady={ () => {
 						setShowUnfilteredFilesDialog( false );
 						setStartImport( true );
 					} }
-					onError={ () => {
+					onCancel={ () => {
 						setShowUnfilteredFilesDialog( false );
-						actions.backToDashboard();
+
+						onCancelProcess();
 					} }
 				/>
 			</section>

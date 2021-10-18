@@ -5,7 +5,7 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, onReady, onError } = props,
+	const { show, setShow, onReady, onCancel } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
@@ -13,6 +13,8 @@ export default function UnfilteredFilesDialog( props ) {
 	// Sending the enable unfiltered files request.
 	useEffect( () => {
 		if ( enableUnfilteredFiles ) {
+			setShow( false );
+
 			setAjax( {
 				data: {
 					action: 'elementor_ajax',
@@ -28,10 +30,14 @@ export default function UnfilteredFilesDialog( props ) {
 
 	// Enabling unfiltered files ajax status.
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			onReady();
-		} else if ( 'error' === ajaxState.status ) {
-			setIsEnableError( true );
+		switch ( ajaxState.status ) {
+			case 'success':
+				onReady();
+				break;
+			case 'error':
+				setIsEnableError( true );
+				setShow( true );
+				break;
 		}
 	}, [ ajaxState ] );
 
@@ -50,8 +56,8 @@ export default function UnfilteredFilesDialog( props ) {
 					approveButtonText={ __( 'Got it', 'elementor' ) }
 					approveButtonOnClick={ onReady }
 					dismissButtonText={ __( 'Close', 'elementor' ) }
-					dismissButtonOnClick={ onError }
-					onClose={ onError }
+					dismissButtonOnClick={ onCancel }
+					onClose={ onCancel }
 				/> :
 				<Dialog
 					title={ __( 'Enable unfiltered files upload', 'elementor' ) }
@@ -70,8 +76,9 @@ export default function UnfilteredFilesDialog( props ) {
 
 UnfilteredFilesDialog.propTypes = {
 	show: PropTypes.bool,
+	setShow: PropTypes.func.isRequired,
 	onReady: PropTypes.func.isRequired,
-	onError: PropTypes.func.isRequired,
+	onCancel: PropTypes.func.isRequired,
 };
 
 UnfilteredFilesDialog.defaultProps = {
