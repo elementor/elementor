@@ -882,6 +882,8 @@ abstract class Controls_Stack extends Base_Object {
 				$direction = $active_breakpoints[ $device_name ]->get_direction();
 			}
 
+			$control_args[ 'inherit_placeholders' ] = true;
+
 			$control_args['responsive'][ $direction ] = $device_name;
 
 			if ( isset( $control_args['min_affected_device'] ) ) {
