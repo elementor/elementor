@@ -450,7 +450,7 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( $settings['hover_animation'] ) {
+		if ( ! empty($settings['hover_animation'] )) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>
