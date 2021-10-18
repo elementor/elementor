@@ -32,7 +32,7 @@ tests_add_filter( 'muplugins_loaded', function () {
 
 // Removes all sql tables on shutdown
 // Do this action last
-//tests_add_filter( 'shutdown', 'drop_tables', 999999 );
+tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 
 require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/traits/base-elementor.php';
