@@ -378,9 +378,13 @@ export default class EditorBase extends Marionette.Application {
 	 * @param state
 	 */
 	toggleSortableState( state = true ) {
-		elementor.documents.getCurrent().$element.find( '.ui-sortable' ).sortable(
-			state ? 'enable' : 'disable'
-		);
+		const $element = elementor.documents.getCurrent()?.$element;
+
+		if ( $element ) {
+			$element.find( '.ui-sortable' ).sortable(
+				state ? 'enable' : 'disable'
+			);
+		}
 	}
 
 	// TODO: BC method since 2.3.0
