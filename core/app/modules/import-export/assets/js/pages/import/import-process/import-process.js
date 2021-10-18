@@ -114,13 +114,9 @@ export default function ImportProcess() {
 				/>
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
-					onSelected={ () => {
+					onReady={ () => {
 						setShowUnfilteredFilesDialog( false );
 						setStartImport( true );
-					} }
-					onError={ () => {
-						setShowUnfilteredFilesDialog( false );
-						setIsError( true );
 					} }
 				/>
 			</section>
