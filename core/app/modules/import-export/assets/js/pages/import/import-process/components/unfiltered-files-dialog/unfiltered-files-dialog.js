@@ -55,7 +55,7 @@ export default function UnfilteredFilesDialog( props ) {
 					approveButtonColor="link"
 					approveButtonText={ __( 'Got it', 'elementor' ) }
 					approveButtonOnClick={ onReady }
-					dismissButtonText={ __( 'Close', 'elementor' ) }
+					dismissButtonText={ __( 'Go back', 'elementor' ) }
 					dismissButtonOnClick={ onCancel }
 					onClose={ onCancel }
 				/> :
