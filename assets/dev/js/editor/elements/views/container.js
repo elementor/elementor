@@ -23,17 +23,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
-		const directionMap = {
-			row: DIRECTION_ROW,
-			column: DIRECTION_COLUMN,
-			'row-reverse': DIRECTION_ROW_REVERSE,
-			'column-reverse': DIRECTION_COLUMN_REVERSE,
-		};
-
 		const currentDirection = this.container.settings.get( 'flex_direction' );
 
 		return {
-			directionMode: directionMap[ currentDirection ] || DIRECTION_ROW,
+			directionMode: currentDirection || DIRECTION_ROW,
 		};
 	},
 
@@ -57,22 +50,24 @@ const ContainerView = BaseElementView.extend( {
 
 	/**
 	 * Get the Container nesting level recursively.
-	 * Top-level Containers (direct children of document) start from 0.
+	 * The farthest parent Container is level 0.
 	 *
 	 * @return {number}
 	 */
 	getNestingLevel: function() {
-		const parent = this._parent;
-
-		if ( ! parent ) {
-			return -1;
+		// Use the memoized value is preset, to prevent too many calculations.
+		if ( this.nestingLevel ) {
+			return this.nestingLevel;
 		}
 
-		if ( 'document' === parent.getContainer().type ) {
+		const parent = this.container.parent;
+
+		// Start counting nesting level only from the closest Container parent.
+		if ( 'container' !== parent.type ) {
 			return 0;
 		}
 
-		return parent.getNestingLevel() + 1;
+		return parent.view.getNestingLevel() + 1;
 	},
 
 	getDroppableOptions: function() {
@@ -268,7 +263,7 @@ const ContainerView = BaseElementView.extend( {
 			this.nestingLevel = this.getNestingLevel();
 
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-		}, 0 );
+		} );
 	},
 
 	onDragStart: function() {
