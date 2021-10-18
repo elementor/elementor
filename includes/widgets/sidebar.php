@@ -103,12 +103,15 @@ class Widget_Sidebar extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'sidebar', [
-			'label' => esc_html__( 'Choose Sidebar', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
-			'default' => $default_key,
-			'options' => $options,
-		] );
+		$this->add_control(
+			'sidebar',
+			[
+				'label' => esc_html__( 'Choose Sidebar', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => $default_key,
+				'options' => $options,
+			]
+		);
 
 		$this->end_controls_section();
 	}

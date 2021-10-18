@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from 'elementor-editor/component';
+import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
@@ -20,6 +20,7 @@ import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -370,7 +371,7 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
 
 	// TODO: BC method since 2.3.0
@@ -630,27 +631,27 @@ export default class EditorBase extends Marionette.Application {
 					maxHeight: 896,
 				},
 				mobile_extra: {
-					minHeight: 320,
+					minHeight: 480,
 					height: 736,
 					maxHeight: 896,
 				},
 				tablet: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				tablet_extra: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				laptop: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1024,
 				},
 				widescreen: {
-					minHeight: 768,
+					minHeight: 320,
 					height: previewHeight,
 					maxHeight: 1200,
 				},
@@ -816,6 +817,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	enterDeviceMode() {
+		this.channels.responsivePreview.trigger( 'open' );
+
 		elementorCommon.elements.$body.addClass( 'e-is-device-mode' );
 
 		this.activatePreviewResizable();
@@ -1056,11 +1059,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
 
@@ -1359,11 +1362,19 @@ export default class EditorBase extends Marionette.Application {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
 				} else if ( deleteControlDefault ) {
-					delete controlArgs.default;
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
-				// If the control belongs to a group control with a popover, and this control is the last one, add the
-				// popover.end = true value to it to make sure it closes the popover.
+				// If the control is the first inside a popover, only the first device starts the popover,
+				// so the 'start' property has to be deleted from all other devices.
+				if ( 0 !== index && controlArgs.popover?.start ) {
+					delete controlArgs.popover.start;
+				}
+
+				// If the control is inside a popover, AND this control is the last one in the popover, AND this is the
+				// last device in the devices array - add the 'popover.end = true' value to it to make sure it closes
+				// the popover.
 				if ( index === ( devices.length - 1 ) && popoverEndProperty ) {
 					controlArgs.popover = {
 						end: true,

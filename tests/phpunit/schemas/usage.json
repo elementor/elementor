@@ -61,7 +61,7 @@
 			"type": "object",
 			"patternProperties": {
 				".*\\.php$": {
-					"$id": "#/system/plugins/active_plugins/$plugin",
+					"$id": "#/definitions/plugins/plugin",
 					"type": "object",
 					"required": [
 						"Elementor tested up to",
@@ -201,12 +201,23 @@
 					"patternProperties": {
 						"(draft|pending|private|publish|inherit|trash)$": {
 							"$id": "#/usages/posts/$post-type/$post-status",
-							"$comment": "TODO: Should be number",
-							"type": "string",
+							"type": "integer",
 							"title": "Count of post(s) per post-type"
 						}
 					},
 					"additionalProperties": false
+				}
+			},
+			"additionalProperties": false
+		},
+		"count_per_post_status": {
+			"$id": "#/definitions/count_per_post_status",
+			"type": "object",
+			"patternProperties": {
+				"(draft|pending|private|publish|inherit|trash)$": {
+					"$id": "#/definitions/count_per_post_status/count",
+					"type": "integer",
+					"title": "Count per post-status"
 				}
 			},
 			"additionalProperties": false
@@ -611,6 +622,7 @@
 				"posts",
 				"non-elementor-posts",
 				"library",
+				"library-details",
 				"elements"
 			],
 			"properties": {
@@ -626,18 +638,18 @@
 					"examples": [
 						{
 							"attachment": {
-								"inherit": "15"
+								"inherit": 15
 							},
 							"elementor_snippet": {
-								"auto-draft": "1",
-								"publish": "1"
+								"auto-draft": 1,
+								"publish": 1
 							},
 							"page": {
-								"draft": "1",
-								"publish": "1"
+								"draft": 1,
+								"publish": 1
 							},
 							"post": {
-								"auto-draft": "2"
+								"auto-draft": 2
 							}
 						}
 					]
@@ -659,6 +671,43 @@
 							"type": "string"
 						}
 					},
+					"additionalProperties": false
+				},
+				"library-details": {
+					"$id": "#/usages/library-details",
+					"$comment": "Array ( [] ) means the value is empty",
+					"type": [
+						"object",
+						"array"
+					],
+					"title": "The library details schema",
+					"description": "The usage of library templates by template-type and post-status, the value is the count.",
+					"patternProperties": {
+						"([^\\s]+)": {
+							"$id": "#/usages/library-details/$template_type",
+							"$ref": "#/definitions/count_per_post_status",
+							"title": "Libraries per template type"
+						}
+					},
+					"examples": [
+						{
+							"kit": {
+								"publish": 1
+							},
+							"page": {
+								"draft": 3
+							},
+							"section": {
+								"draft": 1,
+								"publish": 1
+							},
+							"widget": {
+								"draft": 1,
+								"publish": 1,
+								"trash": 2
+							}
+						}
+					],
 					"additionalProperties": false
 				},
 				"elements": {

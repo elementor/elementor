@@ -7,7 +7,7 @@ import { useState, useMemo } from 'react';
 
 const MIN_TAGS_LENGTH_FOR_SEARCH_INPUT = 15;
 
-export default function TaxonomiesFilterList( props ) {
+const TaxonomiesFilterList = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( props.taxonomiesByType.isOpenByDefault );
 	const [ search, setSearch ] = useState( '' );
 
@@ -63,7 +63,7 @@ export default function TaxonomiesFilterList( props ) {
 			</div>
 		</Collapse>
 	);
-}
+};
 
 TaxonomiesFilterList.propTypes = {
 	taxonomiesByType: PropTypes.shape( {
@@ -75,3 +75,5 @@ TaxonomiesFilterList.propTypes = {
 	selected: PropTypes.objectOf( PropTypes.arrayOf( PropTypes.string ) ),
 	onSelect: PropTypes.func,
 };
+
+export default React.memo( TaxonomiesFilterList );

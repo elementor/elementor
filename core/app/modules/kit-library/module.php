@@ -54,7 +54,12 @@ class Module extends BaseModule {
 			'subscription_plans' => $connect->get_subscription_plans( 'wp-kit-library' ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
-			'library_connect_url'  => $kit_library->get_admin_url( 'authorize' ),
+			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', [
+				'utm_source' => 'kit-library',
+				'utm_medium' => 'wp-dash',
+				'utm_campaign' => 'library-connect',
+				'utm_term' => '%%page%%', // Will be replaced in the frontend.
+			] ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 		] );
 	}
@@ -63,8 +68,8 @@ class Module extends BaseModule {
 	 * Module constructor.
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Kits_Controller::class );
-		Plugin::$instance->data_manager->register_controller( Taxonomies_Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();
