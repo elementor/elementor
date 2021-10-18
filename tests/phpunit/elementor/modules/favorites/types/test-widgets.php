@@ -4,7 +4,7 @@ namespace Elementor\Testing\Modules\Favorites\Types;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Favorites\Types\Widgets;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Widgets extends Elementor_Test_Base {
 
