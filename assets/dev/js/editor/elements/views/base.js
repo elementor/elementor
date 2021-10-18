@@ -145,8 +145,9 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						/* translators: %s: Element name. */
-						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
+						/* translators: %s: Element Name. */
+						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
+						isEnabled: () => ! elementor.selection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
 							model: this.options.model, // Todo: remove on merge router
 							view: this, // Todo: remove on merge router
@@ -157,7 +158,8 @@ BaseElementView = BaseContainer.extend( {
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			}, {
@@ -167,12 +169,14 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
+							elementor.selection.isSameType(),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -181,11 +185,11 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
-						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			},
@@ -213,9 +217,11 @@ BaseElementView = BaseContainer.extend( {
 				{
 					name: 'delete',
 					icon: 'eicon-trash',
-					title: __( 'Delete', 'elementor' ),
+					title: () => elementor.selection.isMultiple() ?
+							sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length ) :
+							__( 'Delete', 'elementor' ),
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 				},
 			],
 		} );
@@ -723,8 +729,8 @@ BaseElementView = BaseContainer.extend( {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
 	},
 
-	onEditButtonClick() {
-		this.model.trigger( 'request:edit' );
+	onEditButtonClick( event ) {
+		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
 	onEditRequest( options = {} ) {
@@ -743,10 +749,24 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		$e.run( 'panel/editor/open', {
-			model: model,
-			view: this,
+		$e.run( 'document/elements/toggle-selection', {
+			container: this.getContainer(),
+			append: options.append,
 		} );
+	},
+
+	/**
+	 * Select current element.
+	 */
+	select() {
+		this.$el.addClass( 'elementor-element-editable' );
+	},
+
+	/**
+	 * Deselect current element.
+	 */
+	deselect() {
+		this.$el.removeClass( 'elementor-element-editable' );
 	},
 
 	onDuplicateButtonClick( event ) {
