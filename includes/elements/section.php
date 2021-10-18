@@ -1155,6 +1155,10 @@ class Element_Section extends Element_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
@@ -1310,27 +1314,21 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		$this->add_control(
-			'reverse_order_tablet',
-			[
-				'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . esc_html__( 'Tablet', 'elementor' ) . ')',
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'reverse-tablet',
-			]
-		);
+		// The controls should be displayed from largest to smallest breakpoint, so we reverse the array.
+		$active_breakpoints = array_reverse( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-		$this->add_control(
-			'reverse_order_mobile',
-			[
-				'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . esc_html__( 'Mobile', 'elementor' ) . ')',
-				'type' => Controls_Manager::SWITCHER,
-				'default' => '',
-				'prefix_class' => 'elementor-',
-				'return_value' => 'reverse-mobile',
-			]
-		);
+		foreach ( $active_breakpoints as $breakpoint_key => $breakpoint ) {
+			$this->add_control(
+				'reverse_order_' . $breakpoint_key,
+				[
+					'label' => esc_html__( 'Reverse Columns', 'elementor' ) . ' (' . $breakpoint->get_label() . ')',
+					'type' => Controls_Manager::SWITCHER,
+					'default' => '',
+					'prefix_class' => 'elementor-',
+					'return_value' => 'reverse-' . $breakpoint_key,
+				]
+			);
+		}
 
 		$this->add_control(
 			'heading_visibility',
@@ -1537,7 +1535,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @return string Section HTML tag.
 	 */
-	private function get_html_tag() {
+	protected function get_html_tag() {
 		$html_tag = $this->get_settings( 'html_tag' );
 
 		if ( empty( $html_tag ) ) {
@@ -1557,7 +1555,7 @@ class Element_Section extends Element_Base {
 	 *
 	 * @param string $side Shape divider side, used to set the shape key.
 	 */
-	private function print_shape_divider( $side ) {
+	protected function print_shape_divider( $side ) {
 		$settings = $this->get_active_settings();
 		$base_setting_key = "shape_divider_$side";
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );

@@ -11,6 +11,7 @@ import SearchInput from '../../components/search-input';
 import SortSelect from '../../components/sort-select';
 import TaxonomiesFilter from '../../components/taxonomies-filter';
 import useKits, { defaultQueryParams } from '../../hooks/use-kits';
+import usePageTitle from 'elementor-app/hooks/use-page-title';
 import useTaxonomies from '../../hooks/use-taxonomies';
 import { Grid } from '@elementor/app-ui';
 import { useCallback, useMemo, useEffect } from 'react';
@@ -132,6 +133,10 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 }
 
 export default function Index( props ) {
+	usePageTitle( {
+		title: __( 'Kit Library', 'elementor' ),
+	} );
+
 	const menuItems = useMenuItems( props.path );
 
 	const {

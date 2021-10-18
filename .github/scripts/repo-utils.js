@@ -39,3 +39,12 @@ module.exports.getFeatureBranches = async (auth, owner, repo) => {
 	const res = await getBranches(auth, owner, repo);
 	return res.data.map(({ name }) => name).filter((name) => name.startsWith('feature/'));
 }
+
+module.exports.getPrCommits = (data) => {
+	return data.commits
+		.filter(({ commit }) => commit.verification.verified)
+		.map(({ commit }) => commit.message)
+		.map(message => message.split('\n')[0])
+		.filter((message) => /\(#\d{1,72}\)/.test(message))
+		.filter((message) => !message.startsWith('Internal:'));
+}

@@ -28,6 +28,10 @@ class Tools extends Base_Category {
 		return esc_html__( 'Tools', 'elementor' );
 	}
 
+	public function get_id() {
+		return 'tools';
+	}
+
 	/**
 	 * Get category items.
 	 *
