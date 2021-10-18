@@ -1,6 +1,8 @@
 import environment from 'elementor-common/utils/environment';
 
 export default class Shortcuts {
+	ctrlLabel = environment.mac ? 'Cmd' : 'Ctrl';
+
 	constructor( $window ) {
 		this.specialKeys = {
 			13: 'enter',
@@ -45,6 +47,13 @@ export default class Shortcuts {
 		shortcuts.replace( ' ', '' ).split( ',' ).forEach( ( shortcut ) => {
 			if ( ! this.handlers[ shortcut ] ) {
 				this.handlers[ shortcut ] = [];
+			}
+
+			if ( args.keys ) {
+				args.formatted = args.keys
+					.replace( 'ctrl', this.ctrlLabel )
+					.replaceAll( '+', ' + ' )
+					.toUpperCase();
 			}
 
 			this.handlers[ shortcut ].push( args );

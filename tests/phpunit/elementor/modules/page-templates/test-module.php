@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Page_Templates;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Module extends Elementor_Test_Base {
 

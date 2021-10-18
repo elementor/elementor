@@ -10,7 +10,7 @@ import Button from 'elementor-app/ui/molecules/button';
 
 export default function Conflict( props ) {
 	const context = useContext( Context ),
-		manifest = context.data.fileResponse?.stage1?.manifest,
+		manifest = context.data.uploadedData?.manifest,
 		getConflictTitle = ( id ) => {
 			const templateType = manifest.templates[ id ].doc_type,
 				summaryTitle = elementorAppConfig[ 'import-export' ].summaryTitles.templates?.[ templateType ];

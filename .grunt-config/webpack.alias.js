@@ -26,6 +26,10 @@ module.exports = {
 			'elementor-utils': path.resolve( __dirname, '../assets/dev/js/utils' ),
 			'elementor-validator': path.resolve( __dirname, '../assets/dev/js/editor/components/validator' ),
 			'elementor-views': path.resolve( __dirname, '../assets/dev/js/editor/views' ),
+			'@elementor/e-icons': path.resolve( __dirname, '../assets/dev/js/frontend/utils/icons/e-icons' ),
+			'e-styles': path.resolve( __dirname, '../packages/elementor-ui/styles' ),
+			'e-components': path.resolve( __dirname, '../packages/elementor-ui/components' ),
+			'e-utils': path.resolve( __dirname, '../packages/elementor-ui/components/utils' ),
 		},
 	},
 };

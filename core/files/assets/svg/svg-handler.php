@@ -528,6 +528,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		// Strip php tags
 		$content = $this->strip_comments( $content );
 		$content = $this->strip_php_tags( $content );
+		$content = $this->strip_line_breaks( $content );
 
 		// Find the start and end tags so we can cut out miscellaneous garbage.
 		$start = strpos( $content, '<svg' );
@@ -608,6 +609,17 @@ class Svg_Handler extends Files_Upload_Handler {
 	}
 
 	/**
+	 * strip_line_breaks
+	 * @param $string
+	 *
+	 * @return string
+	 */
+	private function strip_line_breaks( $string ) {
+		// Remove line breaks.
+		return preg_replace( '/\r|\n/', '', $string );
+	}
+
+	/**
 	 * wp_prepare_attachment_for_js
 	 * @param $attachment_data
 	 * @param $attachment
@@ -682,8 +694,7 @@ class Svg_Handler extends Files_Upload_Handler {
 			// If the svg metadata are empty or the width is empty or the height is empty.
 			// then get the attributes from xml.
 			if ( empty( $data ) || empty( $data['width'] ) || empty( $data['height'] ) ) {
-
-				$xml = simplexml_load_file( wp_get_attachment_url( $id ) );
+				$xml = simplexml_load_file( get_attached_file( $id ) );
 				$attr = $xml->attributes();
 				$view_box = explode( ' ', $attr->viewBox );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				$data['width'] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[2] : null );
@@ -710,6 +721,7 @@ class Svg_Handler extends Files_Upload_Handler {
 		if ( ! $file['error'] && self::file_sanitizer_can_run() && ! $this->sanitize_svg( $file['tmp_name'] ) ) {
 			$display_type = strtoupper( $this->get_file_type() );
 
+			/* translators: %s: File type. */
 			$file['error'] = sprintf( esc_html__( 'Invalid %1$s Format, file not uploaded for security reasons', 'elementor' ), $display_type );
 		}
 
