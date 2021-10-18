@@ -263,8 +263,8 @@ class Test_Manager extends Data_Test_Base {
 			'globals/typography' => 'globals/typography/{id}',
 			'template-library/templates' => 'template-library/templates',
 			'widgets-config/index' => 'widgets-config/{id}',
-            'default-values/index' => 'default-values/{id}'
-			'favorites/index' => 'favorites/{id}'
+            'default-values/index' => 'default-values/{id}',
+			'favorites/index' => 'favorites/{id}',
 		], $this->manager->command_formats );
 	}
 }
