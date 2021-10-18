@@ -94,7 +94,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 	createElementFromModel( model, options = {} ) {
 		if ( model instanceof Backbone.Model ) {
-			model = model.attributes;
+			model = model.toJSON();
 		}
 
 		model = Object.assign( model, model.custom );

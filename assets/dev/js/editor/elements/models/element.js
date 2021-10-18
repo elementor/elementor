@@ -24,13 +24,7 @@ ElementModel = Backbone.Model.extend( {
 		if ( undefined !== elements ) {
 			var ElementsCollection = require( 'elementor-elements/collections/elements' );
 
-			this.set(
-				'elements',
-				// If `elements` already contains an `ElementsCollection` object, there's no need to generate a new one.
-				ElementsCollection.prototype.isPrototypeOf( elements ) ?
-					elements :
-					new ElementsCollection( elements )
-			);
+			this.set( 'elements', new ElementsCollection( elements ) );
 		}
 
 		if ( 'widget' === elType ) {
@@ -73,12 +67,9 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
-		// If `settings` already contains a `SettingsModel` object, there's no need to generate a new one.
-		if ( ! SettingsModel.prototype.isPrototypeOf( settings ) ) {
-			settings = new SettingsModel( settings, {
-				controls: elementor.getElementControls( this ),
-			} );
-		}
+		settings = new SettingsModel( settings, {
+			controls: elementor.getElementControls( this ),
+		} );
 
 		this.set( 'settings', settings );
 
