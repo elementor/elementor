@@ -89,18 +89,12 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromContainer( container, options = {} ) {
-		const model = container.model.attributes;
-
-		return this.createElementFromModel( Object.assign(
-			model,
-			model.custom,
-			{ settings: model.settings.attributes }
-		), options );
+		return this.createElementFromModel( container.model, options );
 	},
 
 	createElementFromModel( model, options = {} ) {
 		if ( model instanceof Backbone.Model ) {
-			model = model.attributes;
+			model = model.toJSON();
 		}
 
 		model = Object.assign( model, model.custom );
@@ -115,13 +109,15 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 		let container = this.getContainer();
 
-		if ( options.newSection ) {
+		if ( options.shouldWrap ) {
+			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+
 			container = $e.run( 'document/elements/create', {
 				model: {
-					elType: 'section',
+					elType: containerExperiment ? 'container' : 'section',
 				},
 				container,
-				columns: 1,
+				columns: Number( ! containerExperiment ),
 				options: {
 					at: this.getOption( 'at' ),
 					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
