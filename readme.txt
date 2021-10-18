@@ -188,6 +188,13 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.6 - 2021-10-19 =
+* Tweak: Updated `eicons` library to 5.13.0
+* Fix: Custom SVG is not supported in some servers environments in Text Path widget
+* Fix: Lottie animations are not imported in Template import process
+* Fix: Can't connect to Library via CLI
+* Fix: Scroll event listener is not optimized in Counter widget
+
 = 3.4.5 - 2021-10-12 =
 * Tweak: Updated featured video in the WordPress repository plugin page
 * Tweak: Added support for future features compatibility
