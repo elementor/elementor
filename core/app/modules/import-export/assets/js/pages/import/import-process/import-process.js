@@ -22,6 +22,7 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		actions = useAction(),
+		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -34,8 +35,7 @@ export default function ImportProcess() {
 			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			// Start the import if the unfiltered-files flag is enabled or when the 'includes' contain only the 'settings' that are not related to unfiltered-files.
-			if ( isUnfilteredFilesEnabled || ( 1 === context.data.includes.length && 'settings' === context.data.includes[ 0 ] ) ) {
+			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
 				setStartImport( true );
 			} else {
 				setShowUnfilteredFilesDialog( true );
