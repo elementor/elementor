@@ -26,6 +26,7 @@ ElementModel = Backbone.Model.extend( {
 
 			this.set(
 				'elements',
+				// If `elements` already contains an `ElementsCollection` object, there's no need to generate a new one.
 				ElementsCollection.prototype.isPrototypeOf( elements ) ?
 					elements :
 					new ElementsCollection( elements )
@@ -72,6 +73,7 @@ ElementModel = Backbone.Model.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
+		// If `settings` already contains a `SettingsModel` object, there's no need to generate a new one.
 		if ( ! SettingsModel.prototype.isPrototypeOf( settings ) ) {
 			settings = new SettingsModel( settings, {
 				controls: elementor.getElementControls( this ),

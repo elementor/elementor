@@ -48,6 +48,10 @@ export class Media extends CommandData {
 	async run() {
 		this.file = this.args.file;
 
+		if ( this.file.size > parseInt( window._wpPluploadSettings.defaults.filters.max_file_size, 10 ) ) {
+			throw new Error( 'The file exceeds the maximum upload size for this site.' );
+		}
+
 		return await super.run();
 	}
 }

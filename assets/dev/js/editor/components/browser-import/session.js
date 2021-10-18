@@ -93,6 +93,7 @@ export default class Session {
 	resolve( containers ) {
 		return containers.map( ( element ) => {
 			switch ( element.type ) {
+				case 'container':
 				case 'section':
 				case 'column':
 				case 'widget':

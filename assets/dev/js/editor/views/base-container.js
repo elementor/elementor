@@ -109,13 +109,15 @@ module.exports = Marionette.CompositeView.extend( {
 		} );
 		let container = this.getContainer();
 
-		if ( options.newSection ) {
+		if ( options.shouldWrap ) {
+			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+
 			container = $e.run( 'document/elements/create', {
 				model: {
-					elType: 'section',
+					elType: containerExperiment ? 'container' : 'section',
 				},
 				container,
-				columns: 1,
+				columns: Number( ! containerExperiment ),
 				options: {
 					at: this.getOption( 'at' ),
 					// BC: Deprecated since 2.8.0 - use `$e.hooks`.

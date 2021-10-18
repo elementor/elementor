@@ -20,7 +20,7 @@ export class MediaParser extends FileParserBase {
 			},
 		} ).catch( ( result ) => {
 			elementor.notifications.showToast( {
-				message: __( 'Oops, there was an error uploading the file.' ),
+				message: result,
 			} );
 
 			return Promise.reject( result );
