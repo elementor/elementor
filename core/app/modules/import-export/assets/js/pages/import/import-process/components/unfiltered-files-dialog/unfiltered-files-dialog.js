@@ -5,11 +5,12 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function UnfilteredFilesDialog( props ) {
-	const { show, onReady } = props,
+	const { show, onReady, onError } = props,
 		{ ajaxState, setAjax } = useAjax(),
 		[ enableUnfilteredFiles, setEnableUnfilteredFiles ] = useState( false ),
 		[ isEnableError, setIsEnableError ] = useState( false );
 
+	// Sending the enable unfiltered files request.
 	useEffect( () => {
 		if ( enableUnfilteredFiles ) {
 			setAjax( {
@@ -25,6 +26,7 @@ export default function UnfilteredFilesDialog( props ) {
 		}
 	}, [ enableUnfilteredFiles ] );
 
+	// Enabling unfiltered files ajax status.
 	useEffect( () => {
 		if ( 'success' === ajaxState.status ) {
 			onReady();
@@ -48,8 +50,8 @@ export default function UnfilteredFilesDialog( props ) {
 					approveButtonText={ __( 'Got it', 'elementor' ) }
 					approveButtonOnClick={ onReady }
 					dismissButtonText={ __( 'Close', 'elementor' ) }
-					dismissButtonOnClick={ onReady }
-					onClose={ onReady }
+					dismissButtonOnClick={ onError }
+					onClose={ onError }
 				/> :
 				<Dialog
 					title={ __( 'Enable unfiltered files upload', 'elementor' ) }
@@ -68,7 +70,8 @@ export default function UnfilteredFilesDialog( props ) {
 
 UnfilteredFilesDialog.propTypes = {
 	show: PropTypes.bool,
-	onReady: PropTypes.func,
+	onReady: PropTypes.func.isRequired,
+	onError: PropTypes.func.isRequired,
 };
 
 UnfilteredFilesDialog.defaultProps = {
