@@ -46,7 +46,7 @@ class Module extends BaseModule {
 
 		$this->populate();
 
-		Plugin::instance()->data_manager->register_controller( Controller::class );
+		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 	}
