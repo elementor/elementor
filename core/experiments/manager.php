@@ -2,6 +2,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
@@ -302,6 +303,17 @@ class Manager extends Base_Object {
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.4.0-beta',
+			],
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_hidden_wordpress_widgets',
+			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
+			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.5.0',
 			],
 		] );
 
