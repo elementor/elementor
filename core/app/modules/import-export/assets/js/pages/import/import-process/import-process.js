@@ -8,7 +8,6 @@ import UnfilteredFilesDialog from './components/unfiltered-files-dialog/unfilter
 import { Context } from '../../../context/context-provider';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import useAction from 'elementor-app/hooks/use-action';
 import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
@@ -21,7 +20,6 @@ export default function ImportProcess() {
 		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
-		actions = useAction(),
 		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
