@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev42 - 2021-10-18
+* Fix: Text Path custom SVG is not supported in some servers environment [ED-4557] (#16571)
+* Tweak: In widget search, WP widgets are hidden [ED-4683] (#16422)
+
 #### 3.5.0-dev41 - 2021-10-15
 * Tweak: Adding styled-components infrastructure [ED-4561] (#16414)
 
