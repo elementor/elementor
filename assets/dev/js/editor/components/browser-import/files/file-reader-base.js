@@ -90,4 +90,20 @@ export default class FileReaderBase {
 
 		return handler;
 	}
+
+	/**
+	 * Get the file-reader File object data url string.
+	 *
+	 * @returns {Promise<string>}
+	 */
+	async getDataUrl() {
+		const fileReader = new FileReader(),
+			handler = new Promise( ( resolve ) => {
+				fileReader.onloadend = () => resolve( fileReader.result );
+			} );
+
+		fileReader.readAsDataURL( this.getFile() );
+
+		return handler;
+	}
 }
