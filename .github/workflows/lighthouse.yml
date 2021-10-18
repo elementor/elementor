@@ -93,18 +93,18 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
       - name: Save HTML dumps on failure
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
       - name: Upload Lighthouse reports on failure
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/upload-artifact@v2
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
           retention-days: 7
       - name: Upload Lighthouse HTML dumps on failure
-        if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
+        if: failure() || matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         uses: actions/upload-artifact@v2
         with:
           name: lighthouseci-htmls
