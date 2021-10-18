@@ -683,7 +683,7 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_control(
 				'hide_' . $breakpoint_key,
 				[
-					/* translators: %s: Device Name. */
+					/* translators: %s: Device name. */
 					'label' => sprintf( __( 'Hide On %s', 'elementor' ), $label ),
 					'type' => Controls_Manager::SWITCHER,
 					'default' => '',

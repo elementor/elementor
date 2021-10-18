@@ -29,7 +29,7 @@ html.elementor-html {
 
 .elementor {
 
-	&.loading{
+	&.loading {
 		opacity: 0.5;
 	}
 }
@@ -128,6 +128,8 @@ html.elementor-html {
 }
 
 .elementor-section-wrap {
+	position: relative;
+	z-index: 1; // Fix: When the Header has a hight z-index, the handle-Setting disappear on mouse hover the handle-setting in a section beneath the header.
 
 	&:empty {
 		min-height: 25px;
@@ -765,7 +767,7 @@ html.elementor-html {
 .elementor-add-new-section {
 	display: inline-block; // For smooth dragging above
 
-	.elementor-add-section-area-button  {
+	.elementor-add-section-area-button {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -922,8 +924,8 @@ html.elementor-html {
 	&:after {
 		content: '';
 		position: absolute;
-		width:0;
-		height:0;
+		width: 0;
+		height: 0;
 		border: 8.5px solid transparent;
 		top: 0;
 	}
