@@ -29,7 +29,7 @@ abstract class Favorites_Type extends Static_Collection {
 	 * @return array
 	 */
 	public function prepare( $favorites ) {
-		if ( $favorites instanceof Collection) {
+		if ( $favorites instanceof Collection ) {
 			$favorites = $favorites->values();
 		}
 
