@@ -1,3 +1,4 @@
+import ApplyKitDialog from './apply-kit-dialog';
 import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
@@ -6,7 +7,6 @@ import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
-import { useNavigate } from '@reach/router';
 import { useSettingsContext } from '../context/settings-context';
 
 import './item-header.scss';
@@ -67,17 +67,15 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
-	const navigate = useNavigate();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
+	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
 	const [ error, setError ] = useState( false );
 
 	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
 		props.model,
 		{
-			onSuccess: ( { data } ) => navigate(
-				`/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library`
-			),
+			onSuccess: ( { data } ) => setDownloadLinkData( data ),
 			onError: ( errorResponse ) => {
 				if ( 401 === errorResponse.code ) {
 					updateSettings( {
@@ -122,6 +120,13 @@ export default function ItemHeader( props ) {
 						onClose={ () => setError( false ) }
 					/>
 				)
+			}
+			{
+				downloadLinkData && <ApplyKitDialog
+					downloadLink={ downloadLinkData.data.download_link }
+					nonce={ downloadLinkData.meta.nonce }
+					onClose={ () => setDownloadLinkData( null ) }
+				/>
 			}
 			{
 				isConnectDialogOpen && <ConnectDialog
