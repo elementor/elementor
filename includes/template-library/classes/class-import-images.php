@@ -136,12 +136,12 @@ class Import_Images {
 
 		$filetype = wp_check_filetype( $filename );
 
-		// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
 		if ( 'svg' === $filetype['ext'] ) {
 			if ( ! self::$svg_handler ) {
 				self::$svg_handler = new Svg_Handler();
 			}
 
+			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
 			if ( ! self::$svg_handler->is_enabled() ) {
 				return false;
 			}
