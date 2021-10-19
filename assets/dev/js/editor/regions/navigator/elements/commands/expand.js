@@ -7,7 +7,7 @@ export class Expand extends CommandNavigator {
 		containers.forEach( ( container ) => {
 			const view = container.navigator.view;
 
-			// TODO: move to UI HOOK.
+			// TODO: Hook UI or Use the new uiState manager.
 			view.ui.item.toggleClass( 'elementor-active', true );
 
 			view.ui.elements.slideDown( 300, callback );

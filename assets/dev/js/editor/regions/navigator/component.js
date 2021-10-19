@@ -3,6 +3,7 @@ import ElementsComponent from './elements/component';
 
 import * as commands from './commands/';
 import * as hooks from './hooks/index';
+import * as commandsInternal from './commands-internal/';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -23,6 +24,10 @@ export default class Component extends ComponentBase {
 
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	defaultCommandsInternal() {
+		return this.importCommands( commandsInternal );
 	}
 
 	defaultShortcuts() {

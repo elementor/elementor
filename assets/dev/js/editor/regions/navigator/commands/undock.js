@@ -8,10 +8,10 @@ export class Undock extends CommandBase {
 			return false;
 		}
 
-		// TODO: Move to UI hook
+		// TODO: Hook UI or Use the new uiState manager.
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
 
-		elementor.navigator.setSize();
+		$e.internal( 'navigator/set-size' );
 
 		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 

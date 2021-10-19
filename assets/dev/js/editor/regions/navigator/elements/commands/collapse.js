@@ -7,7 +7,7 @@ export class Collapse extends CommandNavigator {
 		containers.forEach( ( container ) => {
 			const { view } = container.navigator;
 
-			// TODO: move to UI HOOK.
+			// TODO: Hook UI or Use the new uiState manager.
 			view.ui.item.toggleClass( 'elementor-active', false );
 
 			view.ui.elements.slideUp( 300, callback );

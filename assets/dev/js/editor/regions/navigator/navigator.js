@@ -10,7 +10,6 @@ export default class Navigator extends BaseRegion {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.setSize();
 
 		this.indicators = {
 			customPosition: {
@@ -79,7 +78,9 @@ export default class Navigator extends BaseRegion {
 				}
 			},
 			resize: ( event, ui ) => {
-				this.setSize( ui.size.width + 'px' );
+				$e.internal( 'navigator/set-size', {
+					size: ui.size.width + 'px',
+				} );
 			},
 		};
 	}
@@ -94,7 +95,7 @@ export default class Navigator extends BaseRegion {
 	open( model ) {
 		this.$el.show();
 
-		this.setSize();
+		$e.internal( 'navigator/set-size' );
 
 		if ( this.storage.docked ) {
 			$e.run( 'navigator/dock' );
@@ -135,7 +136,7 @@ export default class Navigator extends BaseRegion {
 
 	dock() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
-			'3.0.2',
+			'3.0.5',
 			"$e.run( 'navigator/dock' )"
 		);
 
@@ -144,28 +145,20 @@ export default class Navigator extends BaseRegion {
 
 	undock( silent ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
-			'3.0.2',
+			'3.0.5',
 			"$e.run( 'navigator/undock', { silent } )"
 		);
 
 		$e.run( 'navigator/undock', { silent } );
 	}
 
-	/**
-	 * Set the navigator size to a specific value or default to the storage-saved value.
-	 *
-	 * @param {String} size A specific new size.
-	 */
 	setSize( size = null ) {
-		if ( size ) {
-			this.storage.size.width = size;
-		} else {
-			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
-		}
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
+			'3.0.5',
+			"$e.internal( 'navigator/set-size', { size } )"
+		);
 
-		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
-		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
-		this.$el.css( 'width', '' );
+		$e.internal( 'navigator/set-size', { size } );
 	}
 
 	ensurePosition() {

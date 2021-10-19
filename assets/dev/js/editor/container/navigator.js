@@ -1,5 +1,6 @@
 import Base from './base';
 
+// TODO Remove, navigator should be module.
 export default class Navigator extends Base {
 	/**
 	 * @type {e.elementor.navigator.Element}

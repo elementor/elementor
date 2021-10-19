@@ -6,10 +6,10 @@ export class Dock extends CommandBase {
 			return false;
 		}
 
-		// TODO: Move to UI hook.
+		// TODO: Hook UI or Use the new uiState manager.
 		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
 
-		elementor.navigator.setSize();
+		$e.internal( 'navigator/set-size' );
 
 		const resizableOptions = elementor.navigator.getResizableOptions();
 
