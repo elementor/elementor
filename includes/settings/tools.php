@@ -286,7 +286,7 @@ class Tools extends Settings_Page {
 					'replace_url' => [
 						'callback' => function() {
 							$intro_text = sprintf(
-								/* translators: %s: Codex URL */
+								/* translators: %s: WordPress backups documentation. */
 								__( '<strong>Important:</strong> It is strongly recommended that you <a target="_blank" href="%s">backup your database</a> before using Replace URL.', 'elementor' ),
 								'http://go.elementor.com/wordpress-backups/'
 							);
@@ -315,7 +315,7 @@ class Tools extends Settings_Page {
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
-								/* translators: %s: Elementor version */
+								/* translators: %s: Elementor version. */
 								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
 								ELEMENTOR_VERSION
 							);
@@ -345,7 +345,7 @@ class Tools extends Settings_Page {
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
 							echo sprintf(
-								/* translators: %1$s Link open tag, %2$s: Link close tag. */
+								/* translators: 1: Link open tag, 2: Link close tag. */
 								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
 								'<a id="beta-tester-first-to-know" href="#">',
 								'</a>'

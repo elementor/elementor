@@ -127,7 +127,7 @@ class TextPath extends Widget_Base {
 					'active' => true,
 				],
 				'description' => sprintf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					/* translators: 1: Link open tag, 2: Link close tag. */
 					esc_html__( 'Want to create custom text paths with SVG? %1$sLearn More%2$s', 'elementor' ),
 					'<a target="_blank" href="https://go.elementor.com/text-path-create-paths/">',
 					'</a>'
@@ -668,9 +668,8 @@ class TextPath extends Widget_Base {
 		if ( 'custom' !== $settings['path'] ) {
 			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
 		} else {
-			$url = esc_url( $settings['custom_path']['url'] );
-			// Get the file contents only if it's svg.
-			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
+			$path = get_attached_file( $settings['custom_path']['id'] );
+			$path_svg = Shapes_Module::read_svg( $path );
 		}
 
 		// Add Text Path text.

@@ -76,6 +76,7 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
+			/* translators: %s: Remote user. */
 			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
@@ -754,7 +755,7 @@ abstract class Base_App {
 
 		if ( $is_rest || $is_ajax ) {
 			// Set default to 'xhr' if rest or ajax request.
-			$this->auth_mode = 'xhr';
+			$this->set_auth_mode( 'xhr' );
 		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
@@ -769,9 +770,13 @@ abstract class Base_App {
 			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
-				$this->auth_mode = $mode;
+				$this->set_auth_mode( $mode );
 			}
 		}
+	}
+
+	public function set_auth_mode( $mode ) {
+		$this->auth_mode = $mode;
 	}
 
 	/**

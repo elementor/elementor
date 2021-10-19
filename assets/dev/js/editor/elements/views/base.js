@@ -136,7 +136,7 @@ BaseElementView = BaseContainer.extend( {
 					{
 						name: 'edit',
 						icon: 'eicon-edit',
-						/* translators: %s: Element Name. */
+						/* translators: %s: Element name. */
 						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
 						callback: () => $e.run( 'panel/editor/open', {
 								model: this.options.model, // Todo: remove on merge router
