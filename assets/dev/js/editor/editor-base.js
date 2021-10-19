@@ -1328,8 +1328,6 @@ export default class EditorBase extends Marionette.Application {
 
 				let direction = 'max';
 
-				controlArgs.inherit_placeholders = true;
-
 				controlArgs.parent = null;
 
 				if ( 'desktop' !== device ) {

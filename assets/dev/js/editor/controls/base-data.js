@@ -79,6 +79,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 			this.setPlaceholderFromParent();
 		}
 
+		if ( undefined === this.model.get( 'inherit_placeholders' ) ) {
+			this.model.set( 'inherit_placeholders', true );
+		}
+
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
