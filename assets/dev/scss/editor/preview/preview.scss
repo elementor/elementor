@@ -45,6 +45,13 @@ html.elementor-html {
 		--primary-color: #0098C7;
 		--secondary-color: #{ darken(#0098C7, 10%) };
 		--outline-color: var( --primary-color );
+
+		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
+		// between Containers.
+		&.e-dragging-over,
+		&.elementor-dragging-on-child {
+			outline: 1px solid var( --outline-color );
+		}
 	}
 
 	.elementor-inner-section {
@@ -126,6 +133,11 @@ html.elementor-html {
 
 	&:empty {
 		min-height: 25px;
+	}
+
+	// Make the first child's overlay higher than the others to fix bug ED-5010 where the overlays overlap each other.
+	> :first-child > .elementor-element-overlay {
+		z-index: $editor-layer;
 	}
 }
 
