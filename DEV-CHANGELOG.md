@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev44 - 2021-10-19
+* Fix: Updated Admin Top Bar font for Non-English languages [ED-4903] (#16620)
+* Tweak: Allow disabling Responsive Placeholder inheritance  [ED-5095] (#16513)
+
 #### 3.5.0-dev43 - 2021-10-19
 * Fix: SVG & Lottie files that don't already exist on a website, are not imported when included in templates (#15936)
 * New: Added option to Multiselect page elements [ED-3682] (#16314)
