@@ -15,10 +15,12 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Selection from './components/selection/manager';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -332,6 +334,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.hooks = new EventManager();
 
+		this.selection = new Selection();
+
 		this.settings = new Settings();
 
 		this.dynamicTags = new DynamicTags();
@@ -365,7 +369,22 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
+	}
+
+	/**
+	 * Toggle sortable state globally.
+	 *
+	 * @param state
+	 */
+	toggleSortableState( state = true ) {
+		const $element = elementor.documents.getCurrent()?.$element;
+
+		if ( $element ) {
+			$element.find( '.ui-sortable' ).sortable(
+				state ? 'enable' : 'disable'
+			);
+		}
 	}
 
 	// TODO: BC method since 2.3.0
@@ -721,7 +740,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.internal( 'panel/open-default' );
+				$e.run( 'document/elements/deselect-all' );
 			}
 		} );
 	}
@@ -1053,11 +1072,11 @@ export default class EditorBase extends Marionette.Application {
 
 		this.addDeprecatedConfigProperties();
 
-		elementorCommon.elements.$window.trigger( 'elementor:loaded' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
-				elementorCommon.elements.$window.trigger( 'elementor:init' );
+				Events.dispatch( elementorCommon.elements.$window, 'elementor/init', null, 'elementor:init' );
 				this.initNavigator();
 			} );
 
