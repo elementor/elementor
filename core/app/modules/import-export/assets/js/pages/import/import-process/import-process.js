@@ -127,7 +127,6 @@ export default function ImportProcess() {
 					} }
 					onCancel={ () => {
 						setShowUnfilteredFilesDialog( false );
-
 						onCancelProcess();
 					} }
 				/>
