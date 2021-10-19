@@ -1,5 +1,14 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev43 - 2021-10-19
+* Fix: SVG & Lottie files that don't already exist on a website, are not imported when included in templates (#15936)
+* New: Added option to Multiselect page elements [ED-3682] (#16314)
+* Tweak: Drag from desktop fixes [ED-5108] (#16537)
+* New: Update E-Icons library to 5.13.0 [ED-5211] (#16619)
+* Fix: Counter and Progress tracker didn't work with Scroll snap [ED-5210] (#16618)
+* New: Added favorite widgets section to the editor panel [ED-1501] (#15068)
+* Tweak: Updated changelog for v3.4.6 (#16621)
+
 #### 3.5.0-dev42 - 2021-10-18
 * Fix: Text Path custom SVG is not supported in some servers environment [ED-4557] (#16571)
 * Tweak: In widget search, WP widgets are hidden [ED-4683] (#16422)
