@@ -1,17 +1,15 @@
 import Component from './component';
+import NavigatorLayout from './layout';
 
 const BaseRegion = require( 'elementor-regions/base' );
 
-import NavigatorLayout from './layout';
-
-export default class extends BaseRegion {
+export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
 		this.isDocked = false;
-		this.setSize();
 
 		this.indicators = {
 			customPosition: {
@@ -25,10 +23,6 @@ export default class extends BaseRegion {
 		this.ensurePosition = this.ensurePosition.bind( this );
 
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
-
-		// TODO: Move to hook on 'editor/documents/load'.
-		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
-		elementor.on( 'document:unloaded', this.onDocumentUnloaded.bind( this ) );
 	}
 
 	getStorageKey() {
@@ -84,7 +78,9 @@ export default class extends BaseRegion {
 				}
 			},
 			resize: ( event, ui ) => {
-				this.setSize( ui.size.width + 'px' );
+				$e.internal( 'navigator/set-size', {
+					size: ui.size.width + 'px',
+				} );
 			},
 		};
 	}
@@ -99,10 +95,10 @@ export default class extends BaseRegion {
 	open( model ) {
 		this.$el.show();
 
-		this.setSize();
+		$e.internal( 'navigator/set-size' );
 
 		if ( this.storage.docked ) {
-			this.dock();
+			$e.run( 'navigator/dock' );
 		}
 
 		if ( model ) {
@@ -120,7 +116,7 @@ export default class extends BaseRegion {
 		this.$el.hide();
 
 		if ( this.isDocked ) {
-			this.undock( true );
+			$e.run( 'navigator/undock', { silent: true } );
 		}
 
 		if ( ! silent ) {
@@ -135,70 +131,34 @@ export default class extends BaseRegion {
 	}
 
 	isOpen() {
-		return this.$el.is( ':visible' );
+		return this.component.isOpen;
 	}
 
 	dock() {
-		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
-		this.setSize();
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
+			'3.0.5',
+			"$e.run( 'navigator/dock' )"
+		);
 
-		const resizableOptions = this.getResizableOptions();
-
-		this.$el.css( {
-			height: '',
-			top: '',
-			bottom: '',
-			left: '',
-			right: '',
-		} );
-
-		if ( this.$el.resizable( 'instance' ) ) {
-			this.$el.resizable( 'destroy' );
-		}
-
-		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
-
-		this.$el.resizable( resizableOptions );
-
-		this.isDocked = true;
-
-		this.saveStorage( 'docked', true );
+		$e.run( 'navigator/dock' );
 	}
 
 	undock( silent ) {
-		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
-		this.setSize();
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
+			'3.0.5',
+			"$e.run( 'navigator/undock', { silent } )"
+		);
 
-		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
-
-		if ( this.$el.resizable( 'instance' ) ) {
-			this.$el.resizable( 'destroy' );
-
-			this.$el.resizable( this.getResizableOptions() );
-		}
-
-		this.isDocked = false;
-
-		if ( ! silent ) {
-			this.saveStorage( 'docked', false );
-		}
+		$e.run( 'navigator/undock', { silent } );
 	}
 
-	/**
-	 * Set the navigator size to a specific value or default to the storage-saved value.
-	 *
-	 * @param {String} size A specific new size.
-	 */
 	setSize( size = null ) {
-		if ( size ) {
-			this.storage.size.width = size;
-		} else {
-			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
-		}
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
+			'3.0.5',
+			"$e.internal( 'navigator/set-size', { size } )"
+		);
 
-		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
-		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
-		this.$el.css( 'width', '' );
+		$e.internal( 'navigator/set-size', { size } );
 	}
 
 	ensurePosition() {
@@ -230,7 +190,7 @@ export default class extends BaseRegion {
 					return false;
 				}
 			} else {
-				this.undock();
+				$e.run( 'navigator/undock' );
 			}
 
 			return;
@@ -264,7 +224,7 @@ export default class extends BaseRegion {
 		const elementRight = ui.position.left + this.el.offsetWidth;
 
 		if ( 0 > ui.position.left || elementRight > innerWidth ) {
-			this.dock();
+			$e.run( 'navigator/dock' );
 		}
 
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator--dock-hint' );
@@ -281,22 +241,6 @@ export default class extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
-		}
-	}
-
-	onDocumentLoaded( document ) {
-		if ( document.config.panel.has_elements ) {
-			this.initLayout();
-
-			if ( this.storage.visible ) {
-				$e.route( 'navigator' );
-			}
-		}
-	}
-
-	onDocumentUnloaded() {
-		if ( this.component.isOpen ) {
-			this.component.close( true );
 		}
 	}
 }

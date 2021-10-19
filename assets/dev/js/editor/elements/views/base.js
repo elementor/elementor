@@ -239,8 +239,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
-			.listenTo( this.model, 'request:edit', this.onEditRequest )
-			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
+			.listenTo( this.model, 'request:edit', this.onEditRequest );
 
 		this.initControlsCSSParser();
 

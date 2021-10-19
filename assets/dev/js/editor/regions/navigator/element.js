@@ -1,7 +1,10 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
-export default class extends Marionette.CompositeView {
+/**
+ * @memberOf e.elementor.navigator
+ */
+export default class Element extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -95,8 +98,23 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this.listenTo( this.model, 'change', this.onModelChange )
-			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+		/**
+		 * Since the way elements are rendered.
+		 * If you create element on exists column, everything is fine because JS engine callstack is empty
+		 * and it will create the widget container, but if u drag element it will be 2 ticks.
+		 * 1. Create section & column.
+		 * 2. Create the widget in the column.
+		 * For this situation 'linkContainer' without `setTimeout` will fail because the widget container does not exist yet.
+		 */
+		setTimeout( this.linkContainer.bind( this ) );
+	}
+
+	linkContainer() {
+		if ( ! this.isRoot() ) {
+			this.container = elementor.getContainer( this.model.id );
+			this.container.navigator.view = this;
+			this.container.navigator.model = this.model;
+		}
 	}
 
 	getIndent() {
@@ -112,25 +130,19 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( ! this.hasChildren() || this.isRoot() ) {
-			return;
+		if ( this.container ) {
+			const args = {
+				container: this.container,
+			};
+
+			args.state = state;
+
+			if ( callback ) {
+				args.callback = callback;
+			}
+
+			$e.run( 'navigator/elements/toggle-folding', args );
 		}
-
-		const isActive = this.ui.item.hasClass( 'elementor-active' );
-
-		if ( isActive === state ) {
-			return;
-		}
-
-		this.ui.item.toggleClass( 'elementor-active', state );
-
-		let slideMethod = 'slideToggle';
-
-		if ( undefined !== state ) {
-			slideMethod = 'slide' + ( state ? 'Down' : 'Up' );
-		}
-
-		this.ui.elements[ slideMethod ]( 300, callback );
 	}
 
 	toggleHiddenClass() {
@@ -218,20 +230,11 @@ export default class extends Marionette.CompositeView {
 	exitTitleEditing() {
 		this.ui.title.attr( 'contenteditable', false );
 
-		const settingsModel = this.model.get( 'settings' ),
-			oldTitle = settingsModel.get( '_title' ),
-			newTitle = this.ui.title.text().trim();
-
-		// When there isn't an old title and a new title, allow backbone to recognize the `set` as a change
-		if ( ! oldTitle ) {
-			settingsModel.unset( '_title', { silent: true } );
-		}
-
-		settingsModel.set( '_title', newTitle );
-
-		// TODO: Remove - After merge pull request #13605.
-		$e.internal( 'document/save/set-is-modified', {
-			status: true,
+		$e.run( 'document/elements/settings', {
+			container: this.container,
+			settings: {
+				_title: this.ui.title.text().trim(),
+			},
 		} );
 
 		elementor.removeBackgroundClickListener( 'navigator' );
@@ -321,27 +324,17 @@ export default class extends Marionette.CompositeView {
 		this.renderIndicators();
 	}
 
-	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
-			this.toggleHiddenClass();
-		}
-	}
-
-	onModelSettingsChange( settingsModel ) {
-		if ( undefined !== settingsModel.changed._title ) {
-			this.ui.title.text( this.model.getTitle() );
-		}
-
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
-			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
-				this.renderIndicators();
-
-				return false;
-			}
-		} );
-	}
-
 	onItemClick( event ) {
+		// const container = this.container;
+		//
+		// $e.run( 'panel/editor/open', {
+		// 	model: container.model,
+		// 	view: container.view,
+		// } );
+		//
+		// // Will not effect recording.
+		// elementor.helpers.scrollToView( container.view.$el );
+
 		this.model.trigger( 'request:edit', {
 			append: event.ctrlKey || event.metaKey,
 			scrollIntoView: true,
@@ -351,7 +344,7 @@ export default class extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		this.model.trigger( 'request:toggleVisibility' );
+		$e.run( 'navigator/elements/toggle-visibility', { container: this.container } );
 	}
 
 	onTitleDoubleClick() {
