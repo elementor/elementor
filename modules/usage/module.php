@@ -576,6 +576,10 @@ class Module extends BaseModule {
 	}
 
 	private function add_document_usage( $document, $data ) {
+		if ( $this->should_skip_document( $document ) ) {
+			return;
+		}
+
 		if ( $data ) {
 			$elements_usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
@@ -588,9 +592,26 @@ class Module extends BaseModule {
 	}
 
 	private function remove_document_usage( $document ) {
+		if ( $this->should_skip_document( $document ) ) {
+			return;
+		}
+
 		$this->remove_document_elements_from_global( $document );
 
 		DocumentSettingsUsage::create()->remove( $document )->save();
+	}
+
+	private function should_skip_document( $document ) {
+		// Skip document which are kit and not the active kit.
+		if ( 'kit' === $document->get_name() ) {
+			$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+			if ( $kit->get_id() !== $document->get_id() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
