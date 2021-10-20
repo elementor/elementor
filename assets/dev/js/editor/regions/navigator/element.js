@@ -325,17 +325,12 @@ export default class Element extends Marionette.CompositeView {
 	}
 
 	onItemClick( event ) {
-		// const container = this.container;
-		//
-		// $e.run( 'panel/editor/open', {
-		// 	model: container.model,
-		// 	view: container.view,
-		// } );
-		//
-		// // Will not effect recording.
-		// elementor.helpers.scrollToView( container.view.$el );
+		const container = this.container,
+			{ model, view } = container;
 
-		this.model.trigger( 'request:edit', {
+		container.view.onEditRequest( {
+			model,
+			view,
 			append: event.ctrlKey || event.metaKey,
 			scrollIntoView: true,
 		} );
