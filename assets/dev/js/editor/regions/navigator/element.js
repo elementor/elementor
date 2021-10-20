@@ -95,8 +95,7 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this.listenTo( this.model, 'request:edit', this.onEditRequest )
-            .listenTo( this.model, 'change', this.onModelChange )
+		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 	}
 
@@ -276,6 +275,38 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
+	/**
+	 * Update the selection of the current navigator element according to it's corresponding document element.
+	 */
+	updateSelection() {
+		if (
+			Object.keys( elementor.selection.elements )
+				.includes( this.model.get( 'id' ) )
+		) {
+			this.select();
+		} else {
+			this.deselect();
+		}
+	}
+
+	/**
+	 * Select the element.
+	 */
+	select() {
+		this.recursiveParentInvoke( 'toggleList', true );
+
+		this.addEditingClass();
+
+		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
+	}
+
+	/**
+	 * Deselect the element.
+	 */
+	deselect() {
+		this.removeEditingClass();
+	}
+
 	onRender() {
 		this.activateSortable();
 
@@ -310,8 +341,11 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
-	onItemClick() {
-		this.model.trigger( 'request:edit', { scrollIntoView: true } );
+	onItemClick( event ) {
+		this.model.trigger( 'request:edit', {
+			append: event.ctrlKey || event.metaKey,
+			scrollIntoView: true,
+		} );
 	}
 
 	onToggleClick( event ) {
@@ -411,13 +445,9 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onEditRequest() {
-		this.recursiveParentInvoke( 'toggleList', true );
-
 		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
-		this.addEditingClass();
-
-		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
+		this.select( true );
 	}
 
 	onIndicatorClick( event ) {

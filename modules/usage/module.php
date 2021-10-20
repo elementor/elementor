@@ -8,6 +8,7 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -610,6 +611,10 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		if ( ! Tracker::is_allow_track() ) {
+			return;
+		}
+
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
 

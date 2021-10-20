@@ -6,6 +6,7 @@ import OverviewContentGroup from './overview-content-group';
 import OverviewSidebar from './overview-sidebar';
 import useKit from '../../hooks/use-kit';
 import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
+import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
@@ -33,6 +34,12 @@ export default function Overview( props ) {
 	const { data: documentsByType } = useKitDocumentByType( kit );
 	const headerButtons = useHeaderButtons( props.id );
 
+	usePageTitle( {
+		title: kit ?
+			`${ __( 'Kit Library', 'elementor' ) } | ${ kit.title }` :
+			__( 'Loading...', 'elementor' ),
+	} );
+
 	if ( isError ) {
 		// Will be caught by the App error boundary.
 		throw new Error();
@@ -44,7 +51,7 @@ export default function Overview( props ) {
 
 	return (
 		<Layout
-			header={ <ItemHeader model={ kit } buttons={ headerButtons }/> }
+			header={ <ItemHeader model={ kit } buttons={ headerButtons } pageId="overview" /> }
 			sidebar={ <OverviewSidebar model={ kit } groupedKitContent={ documentsByType }/> }
 		>
 			{

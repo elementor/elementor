@@ -5,10 +5,10 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Testing\Factories\Documents;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
+use ElementorEditorTesting\Factories\Documents;
 use Elementor\Utils;
 
 class Test_Module extends Elementor_Test_Base {

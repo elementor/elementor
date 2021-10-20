@@ -62,20 +62,27 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
+	<#
+	const keys = {
+			navigator: $e.components.get('navigator').getShortcuts().toggle.formatted,
+			history: $e.components.get( 'panel/history' ).getShortcuts().actions.formatted,
+			responsiveMode: $e.components.get( 'panel' ).getShortcuts()['change-device-mode'].formatted,
+	};
+	#>
 	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?><br />{{ keys.navigator }}">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?><br />{{ keys.history }}">
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
+		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip-unsafe-html="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?><br />{{ keys.responsiveMode }}"></i>
 		<span class="elementor-screen-only">
 			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
 		</span>
@@ -282,7 +289,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div class="elementor-tags-list__teaser-text">
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
-			<a href="{{{ elementor.config.dynamicPromotionURL }}}" class="elementor-tags-list__teaser-link" target="_blank">
+			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
 				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
 			</a>
 		</div>

@@ -182,6 +182,15 @@ class Documents_Manager {
 			return false;
 		}
 
+		/**
+		 * Retrieve document post ID.
+		 *
+		 * Filters the document post ID.
+		 *
+		 * @since 2.0.7
+		 *
+		 * @param int $post_id The post ID of the document.
+		 */
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
@@ -354,7 +363,7 @@ class Documents_Manager {
 			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
-					/* translators: %s: Document title */
+					/* translators: %s: Document title. */
 					__( 'Elementor %s', 'elementor' ),
 					call_user_func( [ $class, 'get_title' ] )
 				);

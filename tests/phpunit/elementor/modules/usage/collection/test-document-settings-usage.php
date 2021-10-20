@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
 use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class TestDocumentSettingsUsage extends Elementor_Test_Base {
 	const DOCUMENTS_TEST_COUNT = 2;

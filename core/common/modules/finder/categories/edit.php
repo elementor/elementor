@@ -30,6 +30,10 @@ class Edit extends Base_Category {
 		return esc_html__( 'Edit', 'elementor' );
 	}
 
+	public function get_id() {
+		return 'edit';
+	}
+
 	/**
 	 * Is dynamic.
 	 *

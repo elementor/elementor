@@ -44,10 +44,13 @@ class Model extends BaseModel {
 	 * @access protected
 	 */
 	protected function register_controls() {
-		$this->start_controls_section( 'preferences', [
-			'tab' => Controls_Manager::TAB_SETTINGS,
-			'label' => esc_html__( 'Preferences', 'elementor' ),
-		] );
+		$this->start_controls_section(
+			'preferences',
+			[
+				'tab' => Controls_Manager::TAB_SETTINGS,
+				'label' => esc_html__( 'Preferences', 'elementor' ),
+			]
+		);
 
 		$this->add_control(
 			'ui_theme',
