@@ -1116,16 +1116,27 @@
 								"boolean"
 							]
 						},
+						"count": {
+							"$id": "#/usages/connect/site-key",
+							"title": "User(s) count",
+							"type": "integer"
+						},
 						"users": {
 							"$id": "#/usages/connect/users",
 							"title": "User data",
 							"type": "object",
 							"patternProperties": {
 								"^[0-9]*$": {
-									"$ref": "#/definitions/global/email",
-									"$id": "#/usages/connect/users/$user-id/email",
-									"type": "string",
-									"title": "User email"
+									"$id": "#/usages/connect/users/$user-id/user",
+									"type": "object",
+									"title": "User info",
+									"properties": {
+										"email": {
+											"$ref": "#/definitions/global/email",
+											"title": "The user email"
+										}
+									},
+									"additionalProperties": false
 								}
 							},
 							"additionalProperties": false
@@ -1134,9 +1145,12 @@
 					"examples": [
 						{
 							"site_key": "fake382c41f7a628306a1835df1bf@K3",
+							"count": 1,
 							"users": [
 								{
-									"1": "user@localhost"
+									"1": {
+										"email": "user@localhost"
+									}
 								}
 							]
 						}

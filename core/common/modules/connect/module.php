@@ -225,12 +225,15 @@ class Module extends BaseModule {
 			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
 
 			if ( $connect_common_data ) {
-				$connect_common_data_user_emails[ $user->ID ] = $connect_common_data['user']->email;
+				$connect_common_data_user_emails[ $user->ID ] = [
+					'email' => $connect_common_data['user']->email,
+				];
 			}
 		}
 
 		$params['usages'][ $this->get_name() ] = [
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+			'count' => count( $connect_common_data_user_emails ),
 			'users' => (object) $connect_common_data_user_emails,
 		];
 
