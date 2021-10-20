@@ -4,18 +4,9 @@ export class ToggleFoldingAll extends CommandBase {
 	apply( args ) {
 		const layout = elementor.navigator.getLayout(),
 			state = args.hasOwnProperty( 'state' ) ? args.state : 'expand' === layout.ui.toggleAll.data( 'elementor-action' ),
-			classes = [ 'eicon-collapse', 'eicon-expand' ],
-			all = [];
+			classes = [ 'eicon-collapse', 'eicon-expand' ];
 
-		elementor.getPreviewContainer().children.forEach( ( section ) => {
-			all.push( section );
-
-			section.children.forEach( ( column ) => {
-				all.push( column );
-			} );
-		} );
-
-		all.forEach( ( container ) => {
+		elementor.getPreviewContainer().children.forEachRecursive( ( container ) => {
 			$e.run( 'navigator/elements/toggle-folding', {
 				container,
 				state,
