@@ -1124,20 +1124,25 @@
 						"users": {
 							"$id": "#/usages/connect/users",
 							"title": "User data",
-							"type": "object",
-							"patternProperties": {
-								"^[0-9]*$": {
-									"$id": "#/usages/connect/users/$user-id/user",
-									"type": "object",
-									"title": "User info",
-									"properties": {
-										"email": {
-											"$ref": "#/definitions/global/email",
-											"title": "The user email"
-										}
+							"type": "array",
+							"items": {
+								"$id": "#/usages/connect/users/$user",
+								"type": "object",
+								"title": "User info",
+								"properties": {
+									"id": {
+										"$id": "#/usages/connect/users/$user/id",
+										"$comment": "The unique ID is only per WP Site and not globally as may assumed.",
+										"type": "integer",
+										"title": "The user Unique ID"
 									},
-									"additionalProperties": false
-								}
+									"email": {
+										"$id": "#/usages/connect/users/$user/email",
+										"$ref": "#/definitions/global/email",
+										"title": "The user email"
+									}
+								},
+								"additionalProperties": false
 							},
 							"additionalProperties": false
 						}
@@ -1148,9 +1153,8 @@
 							"count": 1,
 							"users": [
 								{
-									"1": {
-										"email": "user@localhost"
-									}
+									"id": 1,
+									"email": "user@localhost"
 								}
 							]
 						}

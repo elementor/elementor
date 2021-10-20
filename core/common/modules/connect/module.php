@@ -211,9 +211,9 @@ class Module extends BaseModule {
 	}
 
 	private function add_tracking_data( $params ) {
-		$connect_common_data_user_emails = [];
+		$users = [];
 
-		$users = new WP_User_Query( [
+		$users_query = new WP_User_Query( [
 			'count_total' => false, // Disable SQL_CALC_FOUND_ROWS.
 			'meta_query' => [
 				'key' => Common_App::OPTION_CONNECT_COMMON_DATA_KEY,
@@ -221,11 +221,12 @@ class Module extends BaseModule {
 			],
 		] );
 
-		foreach ( $users->get_results() as $user ) {
+		foreach ( $users_query->get_results() as $user ) {
 			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
 
 			if ( $connect_common_data ) {
-				$connect_common_data_user_emails[ $user->ID ] = [
+				$users [] = [
+					'id' => $user->ID,
 					'email' => $connect_common_data['user']->email,
 				];
 			}
@@ -233,8 +234,8 @@ class Module extends BaseModule {
 
 		$params['usages'][ $this->get_name() ] = [
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'count' => count( $connect_common_data_user_emails ),
-			'users' => (object) $connect_common_data_user_emails,
+			'count' => count( $users ),
+			'users' => $users,
 		];
 
 		return $params;
