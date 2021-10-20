@@ -5,7 +5,7 @@ export default class Navigator {
 	}
 
 	/**
-	 * @type {e.elementor.navigator.Element}
+	 * @type {Element}
 	 */
 	view;
 

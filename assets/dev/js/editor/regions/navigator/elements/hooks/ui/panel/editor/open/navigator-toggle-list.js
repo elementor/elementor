@@ -34,16 +34,19 @@ export class NavigatorToggleList extends Base {
 	}
 
 	/**
-	 * @param {e.elementor.navigator.Element} view
+	 * @param {Element} view
 	 */
 	toggleList( view ) {
 		view.recursiveParentInvoke( 'toggleList', true );
 
-		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
+		const { region } = $e.components.get( 'navigator' ),
+			layout = region.getLayout();
+
+		layout.elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
 		view.addEditingClass();
 
-		elementor.helpers.scrollToView( view.$el, 400, elementor.navigator.getLayout().elements.$el );
+		elementor.helpers.scrollToView( view.$el, 400, layout.elements.$el );
 	}
 }
 

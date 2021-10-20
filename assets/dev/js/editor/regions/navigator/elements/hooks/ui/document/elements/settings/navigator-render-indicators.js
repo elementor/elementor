@@ -24,7 +24,7 @@ export class NavigatorRenderIndicators extends Base {
 				view.ui.title.text( model.getTitle() );
 			}
 
-			jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+			jQuery.each( this.component.region.indicators, ( indicatorName, indicatorSettings ) => {
 				if ( Object.keys( container.settings.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
 					view.renderIndicators();
 

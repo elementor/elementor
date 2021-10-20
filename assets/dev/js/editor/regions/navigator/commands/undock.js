@@ -4,9 +4,11 @@ export class Undock extends CommandBase {
 	apply( args ) {
 		const { silent } = args;
 
-		if ( ! elementor.navigator.isDocked ) {
+		if ( ! this.component.isDocked ) {
 			return false;
 		}
+
+		const { region } = this.component;
 
 		// TODO: Hook UI or Use the new uiState manager.
 		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
@@ -15,16 +17,16 @@ export class Undock extends CommandBase {
 
 		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
-		if ( elementor.navigator.$el.resizable( 'instance' ) ) {
-			elementor.navigator.$el.resizable( 'destroy' );
+		if ( region.$el.resizable( 'instance' ) ) {
+			region.$el.resizable( 'destroy' );
 
-			elementor.navigator.$el.resizable( elementor.navigator.getResizableOptions() );
+			region.$el.resizable( region.getResizableOptions() );
 		}
 
-		elementor.navigator.isDocked = false;
+		this.component.isDocked = false;
 
 		if ( ! silent ) {
-			elementor.navigator.saveStorage( 'docked', false );
+			region.saveStorage( 'docked', false );
 		}
 
 		return true;

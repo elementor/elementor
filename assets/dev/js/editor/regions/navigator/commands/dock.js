@@ -2,7 +2,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class Dock extends CommandBase {
 	apply() {
-		if ( elementor.navigator.isDocked ) {
+		if ( this.component.isDocked ) {
 			return false;
 		}
 
@@ -11,9 +11,10 @@ export class Dock extends CommandBase {
 
 		$e.internal( 'navigator/set-size' );
 
-		const resizableOptions = elementor.navigator.getResizableOptions();
+		const { region } = this.component,
+			resizableOptions = region.getResizableOptions();
 
-		elementor.navigator.$el.css( {
+		region.$el.css( {
 			height: '',
 			top: '',
 			bottom: '',
@@ -21,17 +22,17 @@ export class Dock extends CommandBase {
 			right: '',
 		} );
 
-		if ( elementor.navigator.$el.resizable( 'instance' ) ) {
-			elementor.navigator.$el.resizable( 'destroy' );
+		if ( region.$el.resizable( 'instance' ) ) {
+			region.$el.resizable( 'destroy' );
 		}
 
 		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
 
-		elementor.navigator.$el.resizable( resizableOptions );
+		region.$el.resizable( resizableOptions );
 
-		elementor.navigator.isDocked = true;
+		this.component.isDocked = true;
 
-		elementor.navigator.saveStorage( 'docked', true );
+		region.saveStorage( 'docked', true );
 
 		return true;
 	}

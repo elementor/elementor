@@ -7,7 +7,7 @@ QUnit.module( 'Component: navigator/elements', ( hooks ) => {
 		// Have clean board with open navigator.
 		ElementsHelper.empty();
 
-		if ( ! elementor.navigator.isOpen() ) {
+		if ( ! elementor.navigator.isOpen ) {
 			$e.run( 'navigator/open' );
 		}
 	} );

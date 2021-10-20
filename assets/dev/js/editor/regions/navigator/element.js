@@ -1,9 +1,6 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
-/**
- * @memberOf e.elementor.navigator
- */
 export default class Element extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
@@ -260,7 +257,7 @@ export default class Element extends Marionette.CompositeView {
 
 		this.ui.indicators.empty();
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+		jQuery.each( elementor.navigator.region.indicators, ( indicatorName, indicatorSettings ) => {
 			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
 
 			if ( ! isShouldBeIndicated ) {
@@ -300,7 +297,7 @@ export default class Element extends Marionette.CompositeView {
 
 		this.addEditingClass();
 
-		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
+		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.region.getLayout().elements.$el );
 	}
 
 	/**
@@ -373,11 +370,11 @@ export default class Element extends Marionette.CompositeView {
 
 		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 
-		elementor.navigator.getLayout().activateElementsMouseInteraction();
+		elementor.navigator.region.getLayout().activateElementsMouseInteraction();
 	}
 
 	onSortStop() {
-		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
+		elementor.navigator.region.getLayout().deactivateElementsMouseInteraction();
 	}
 
 	onSortOver( event ) {
@@ -433,7 +430,7 @@ export default class Element extends Marionette.CompositeView {
 	}
 
 	onEditRequest() {
-		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
+		elementor.navigator.region.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
 		this.select( true );
 	}

@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from './components/documents/component';
+import EditorDocumentsComponent from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
@@ -10,7 +10,8 @@ import IconsManager from './components/icons-manager/icons-manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
-import Navigator from './regions/navigator/navigator';
+import NavigatorComponent from './regions/navigator/component';
+import NavigatorLayout from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
@@ -367,7 +368,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.devTools = new DevTools();
 
-		this.documents = $e.components.register( new EditorDocuments() );
+		this.documents = $e.components.register( new EditorDocumentsComponent() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -543,9 +544,11 @@ export default class EditorBase extends Marionette.Application {
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
-				regionClass: Navigator,
+				regionClass: NavigatorLayout,
 			},
 		} );
+
+		this.navigator = $e.components.register( new NavigatorComponent( { manager: this.navigator } ) );
 
 		this.trigger( 'navigator:init' );
 	}

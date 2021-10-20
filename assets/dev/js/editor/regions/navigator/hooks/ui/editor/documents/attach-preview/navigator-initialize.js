@@ -14,9 +14,11 @@ export class NavigatorInitialize extends After {
 	}
 
 	apply( args ) {
-		elementor.navigator.initLayout();
+		const { region } = $e.components.get( 'navigator' );
 
-		if ( elementor.navigator.storage.visible ) {
+		region.initLayout();
+
+		if ( region.storage.visible ) {
 			$e.route( 'navigator' );
 		}
 	}

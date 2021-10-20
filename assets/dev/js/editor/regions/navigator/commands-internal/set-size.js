@@ -8,17 +8,19 @@ export class SetSize extends CommandInternalBase {
 	 * @property args.size {String|null} size A specific new size.
 	 */
 	apply( { size = null } ) {
+		const { storage } = this.component.region;
+
 		if ( size ) {
-			elementor.navigator.storage.size.width = size;
+			storage.size.width = size;
 		} else {
-			elementor.navigator.storage.size.width = elementor.navigator.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
+			storage.size.width = storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
 		}
 
 		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
 		// TODO: Hook UI or Use the new uiState manager.
-		elementorCommon.elements.$body.css( '--e-editor-navigator-width', elementor.navigator.storage.size.width );
+		elementorCommon.elements.$body.css( '--e-editor-navigator-width', storage.size.width );
 
-		elementor.navigator.$el.css( 'width', '' );
+		this.component.region.$el.css( 'width', '' );
 	}
 }
 

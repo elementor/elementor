@@ -1,4 +1,3 @@
-import Component from './component';
 import NavigatorLayout from './layout';
 
 const BaseRegion = require( 'elementor-regions/base' );
@@ -7,9 +6,7 @@ export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
-		this.component = $e.components.register( new Component( { manager: this } ) );
-
-		this.isDocked = false;
+		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
 
 		this.indicators = {
 			customPosition: {
@@ -69,7 +66,7 @@ export default class Navigator extends BaseRegion {
 			stop: () => {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
-				if ( this.isDocked ) {
+				if ( this.component.isDocked ) {
 					this.storage.size.width = elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ).width;
 
 					elementorCommon.storage.set( 'navigator', this.storage );
@@ -115,7 +112,7 @@ export default class Navigator extends BaseRegion {
 	close( silent ) {
 		this.$el.hide();
 
-		if ( this.isDocked ) {
+		if ( this.component.isDocked ) {
 			$e.run( 'navigator/undock', { silent: true } );
 		}
 
@@ -134,35 +131,8 @@ export default class Navigator extends BaseRegion {
 		return this.component.isOpen;
 	}
 
-	dock() {
-		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
-			'3.0.5',
-			"$e.run( 'navigator/dock' )"
-		);
-
-		$e.run( 'navigator/dock' );
-	}
-
-	undock( silent ) {
-		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
-			'3.0.5',
-			"$e.run( 'navigator/undock', { silent } )"
-		);
-
-		$e.run( 'navigator/undock', { silent } );
-	}
-
-	setSize( size = null ) {
-		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
-			'3.0.5',
-			"$e.internal( 'navigator/set-size', { size } )"
-		);
-
-		$e.internal( 'navigator/set-size', { size } );
-	}
-
 	ensurePosition() {
-		if ( this.isDocked ) {
+		if ( this.component.isDocked ) {
 			return;
 		}
 
@@ -184,7 +154,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	onDrag( event, ui ) {
-		if ( this.isDocked ) {
+		if ( this.component.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
 				if ( ui.position.top !== ui.originalPosition.top ) {
 					return false;
@@ -215,7 +185,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	onDragStop( event, ui ) {
-		if ( this.isDocked ) {
+		if ( this.component.isDocked ) {
 			return;
 		}
 

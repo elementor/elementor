@@ -6,10 +6,14 @@ import * as hooks from './hooks/index';
 import * as commandsInternal from './commands-internal/';
 
 export default class Component extends ComponentBase {
+	isDocked = false;
+
 	__construct( args ) {
 		super.__construct( args );
 
-		this.elements = $e.components.register( new ElementsComponent() );
+		this.region = args.manager;
+
+		this.elements = $e.components.register( new ElementsComponent( { manager: this } ) );
 	}
 
 	getNamespace() {
@@ -46,7 +50,7 @@ export default class Component extends ComponentBase {
 	open( args ) {
 		const { model = false } = args;
 
-		this.manager.open( model );
+		this.region.open( model );
 
 		return true;
 	}
@@ -56,8 +60,37 @@ export default class Component extends ComponentBase {
 			return false;
 		}
 
-		this.manager.close( silent );
+		this.region.close( silent );
 
 		return true;
+	}
+
+	// TODO: Add all possible BC from region to here.
+
+	dock() {
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
+			'3.0.5',
+			"$e.run( 'navigator/dock' )"
+		);
+
+		$e.run( 'navigator/dock' );
+	}
+
+	undock( silent ) {
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
+			'3.0.5',
+			"$e.run( 'navigator/undock', { silent } )"
+		);
+
+		$e.run( 'navigator/undock', { silent } );
+	}
+
+	setSize( size = null ) {
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
+			'3.0.5',
+			"$e.internal( 'navigator/set-size', { size } )"
+		);
+
+		$e.internal( 'navigator/set-size', { size } );
 	}
 }

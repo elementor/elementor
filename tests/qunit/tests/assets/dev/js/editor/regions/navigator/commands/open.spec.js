@@ -1,13 +1,13 @@
 export const Open = () => {
 	QUnit.module( 'Open', () => {
 		QUnit.test( 'Simple', ( assert ) => {
-			if ( elementor.navigator.isOpen() ) {
+			if ( elementor.navigator.isOpen ) {
 				$e.run( 'navigator/close' );
 			}
 
 			$e.run( 'navigator/open' );
 
-			assert.equal( elementor.navigator.isOpen(), true );
+			assert.equal( elementor.navigator.isOpen, true );
 		} );
 	} );
 };

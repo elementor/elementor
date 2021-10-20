@@ -16,7 +16,7 @@ jQuery( () => {
 		hooks.after( () => {
 			$e.run( 'navigator/close' );
 
-			elementor.navigator.getLayout().destroy();
+			elementor.navigator.region.getLayout().destroy();
 		} );
 
 		DocumentHelper.testCommands( commands );
