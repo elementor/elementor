@@ -1140,6 +1140,11 @@
 										"$id": "#/usages/connect/users/$user/email",
 										"$ref": "#/definitions/global/email",
 										"title": "The user email"
+									},
+									"roles": {
+										"$id": "#/usages/connect/users/$user/roles",
+										"type": "string",
+										"title": "The user roles"
 									}
 								},
 								"additionalProperties": false
@@ -1154,7 +1159,8 @@
 							"users": [
 								{
 									"id": 1,
-									"email": "user@localhost"
+									"email": "user@localhost",
+									"roles": "Administrator"
 								}
 							]
 						}

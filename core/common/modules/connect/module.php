@@ -228,6 +228,7 @@ class Module extends BaseModule {
 				$users [] = [
 					'id' => $user->ID,
 					'email' => $connect_common_data['user']->email,
+					'roles' => implode( ', ', $user->roles ),
 				];
 			}
 		}
