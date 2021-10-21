@@ -477,7 +477,6 @@ class Source_Local extends Source_Base {
 			[
 				'post_title' => $template_data['title'],
 				'post_status' => $template_data['status'],
-				'post_type' => self::CPT,
 			]
 		);
 
