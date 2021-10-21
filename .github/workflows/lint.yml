@@ -3,9 +3,34 @@ name: Lint
 on: [push, pull_request]
 
 jobs:
-  JS-Lint:
-    runs-on: ubuntu-16.04
+  file-diff:
+    runs-on: ubuntu-18.04
+    name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js_diff: ${{ steps.js_diff_files.outputs.diff }}
+      php_diff: ${{ steps.php_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Check JS files diff
+        id: js_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.+(js|ts|json|jsx|tsx)
+      - name: Check PHP files diff
+        id: php_diff_files
+        uses: technote-space/get-diff-action@v4
+        with:
+          PATTERNS: |
+            **/*.php
+
+
+  JS-Lint:
+    runs-on: ubuntu-18.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.js_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -26,8 +51,9 @@ jobs:
         run: ./node_modules/eslint/bin/eslint.js .
 
   PHP-Lint:
-    runs-on: ubuntu-16.04
-    if: startsWith( github.repository, 'elementor/' )
+    runs-on: ubuntu-18.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -45,8 +71,25 @@ jobs:
       - name: Run PHP Syntax Lint
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
-          php5.6 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
-          php7.0 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.1 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.2 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
           php7.3 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php7.4 vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 5.6 # not included in ubuntu 18.04
+        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
+        with:
+          php-version: '5.6'
+      - name: Run PHP Syntax Lint 5.6
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+      - name: Setup PHP 7.0 # not included in ubuntu 18.04
+        uses: shivammathur/setup-php@9882bed06691b3a085010c1602ce43ef18f15c5b # v2
+        with:
+          php-version: '7.0'
+      - name: Run PHP Syntax Lint 7.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .

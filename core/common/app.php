@@ -162,7 +162,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.12.0'
+			'5.13.0'
 		);
 
 		wp_enqueue_style(
@@ -208,7 +208,7 @@ class App extends BaseApp {
 	 */
 	public function print_templates() {
 		foreach ( $this->templates as $template ) {
-			echo $template;
+			echo $template; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

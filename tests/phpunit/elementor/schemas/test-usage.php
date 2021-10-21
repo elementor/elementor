@@ -1,12 +1,13 @@
 <?php
 namespace Elementor\Tests\Phpunit\Schemas;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
-use Elementor\Testing\Base_Schema;
-use Elementor\Testing\Factories\Documents;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
 use Elementor\Tracker;
+use ElementorEditorTesting\Base_Schema;
+use ElementorEditorTesting\Factories\Documents;
 use JsonSchema\Exception\ValidationException;
 
 class Test_Usage extends Base_Schema {
@@ -59,18 +60,52 @@ class Test_Usage extends Base_Schema {
 			]
 		] );
 
+		// Add missing tabs to page settings.
+		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
+		Plugin::$instance->modules_manager->get_modules( 'safe-mode' )->add_admin_button(
+			Plugin::$instance->tools
+		);
+		Plugin::$instance->maintenance_mode->register_settings_fields( Plugin::$instance->tools );
+
+
 		// Act.
 		$tracking_data = Tracker::get_tracking_data();
 		$usage = $tracking_data[ 'usages' ];
 
 		// Assert - Ensure tracking data have arranged data.
-		$this->assertArrayHaveKeys( ['publish'], $usage['posts']['post'] );
-		$this->assertArrayHaveKeys( ['not-supported'], $usage['library'] );
-		$this->assertArrayHaveKeys( ['wp-post'], $usage['elements'] );
+		$this->assert_array_have_keys( ['publish'], $usage['posts']['post'] );
+		$this->assert_array_have_keys( ['not-supported'], $usage['library'] );
+		$this->assert_array_have_keys( ['wp-post'], $usage['elements'] );
 		$this->assertCount( 4, $usage['elements']['wp-post'] );
-		$this->assertArrayHaveKeys( ['__dynamic__'], $usage['elements']['wp-post']['heading']['controls']['general'] );
+		$this->assert_array_have_keys( ['__dynamic__'], $usage['elements']['wp-post']['heading']['controls']['general'] );
 
 		// Assert - Validate schema.
 		$this->assertTrue( $this->validate_against_schema( $tracking_data, $this->schema_file ) );
+	}
+
+	private function generate_plugins_mock() {
+		// Arrange
+		$plugins = new Collection( [
+			'elementor/elementor.php' => [
+				'Elementor tested up to' => '',
+				'Name' => 'Elementor',
+				'PluginURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash',
+				'Version' => ELEMENTOR_VERSION,
+				'Description' => 'The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!',
+				'Author' => "Elementor.com",
+				'AuthorURI' => 'https:\/\/elementor.com\/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash',
+				'TextDomain' => 'elementor',
+				'DomainPath' => '',
+				'Network' => false,
+				'RequiresWP' => '',
+				'RequiresPHP' => '',
+				'Title' => 'Elementor',
+				'AuthorName' => 'Elementor.com',
+			],
+		] );
+
+		$this->mock_wp_api( [
+			'get_plugins' => $plugins,
+		] );
 	}
 }

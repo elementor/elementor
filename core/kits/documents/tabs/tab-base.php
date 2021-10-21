@@ -74,7 +74,12 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 				[
 					'name' => $current_section['section'] . '_schemes_notice',
 					'type' => Controls_Manager::RAW_HTML,
-					'raw' => sprintf( __( 'In order for Theme Style to affect all relevant Elementor elements, please disable Default Colors and Fonts from the <a href="%s" target="_blank">Settings Page</a>.', 'elementor' ), Settings::get_url() ),
+					'raw' => sprintf(
+						/* translators: 1: Link open tag, 2: Link close tag. */
+						esc_html__( 'In order for Theme Style to affect all relevant Elementor elements, please disable Default Colors and Fonts from the %1$sSettings Page%2$s.', 'elementor' ),
+						'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank">',
+						'</a>'
+					),
 					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
 					'render_type' => 'ui',
 				]

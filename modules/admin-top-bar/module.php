@@ -1,11 +1,10 @@
 <?php
-
 namespace Elementor\Modules\AdminTopBar;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,8 +22,8 @@ class Module extends BaseApp {
 	public static function get_experimental_data() {
 		return [
 			'name' => 'admin-top-bar',
-			'title' => __( 'Admin Top Bar', 'elementor' ),
-			'description' => __( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
+			'title' => esc_html__( 'Admin Top Bar', 'elementor' ),
+			'description' => esc_html__( 'Adds a top bar to elementors pages in admin area.', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
@@ -44,11 +43,6 @@ class Module extends BaseApp {
 		<div id="e-admin-top-bar-root">
 		</div>
 		<?php
-	}
-	protected function get_init_settings() {
-		return [
-			'is_administrator' => current_user_can( 'manage_options' ),
-		];
 	}
 
 	/**
@@ -75,20 +69,6 @@ class Module extends BaseApp {
 	}
 
 	/**
-	 * Register dashboard widgets.
-	 *
-	 * Adds a new Elementor widgets to WordPress dashboard.
-	 *
-	 * Fired by `wp_dashboard_setup` action.
-	 *
-	 * @since 1.9.0
-	 * @access public
-	 */
-	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-widget-admin-top-bar', __( 'Elementor Top Bar', 'elementor' ), function () {} );
-	}
-
-	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
@@ -102,8 +82,22 @@ class Module extends BaseApp {
 			$this->enqueue_scripts();
 		} );
 
-		add_action( 'wp_dashboard_setup', function () {
-			$this->register_dashboard_widgets();
-		} );
+		add_action( 'elementor/init', function () {
+			$settings = [];
+			$settings['is_administrator'] = current_user_can( 'manage_options' );
+
+			/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+			$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+			if ( $library ) {
+				$settings = array_merge( $settings, [
+					'is_user_connected' => $library->is_connected(),
+					'connect_url' => $library->get_admin_url( 'authorize' ),
+				] );
+			}
+
+			$this->set_settings( $settings );
+
+			do_action( 'elementor/admin-top-bar/init', $this );
+		}, 12 /* After component 'connect' register the apps */ );
 	}
 }

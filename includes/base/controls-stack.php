@@ -4,6 +4,7 @@ namespace Elementor;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,16 +23,22 @@ abstract class Controls_Stack extends Base_Object {
 
 	/**
 	 * Responsive 'desktop' device name.
+	 *
+	 * @deprecated 3.4.0
 	 */
 	const RESPONSIVE_DESKTOP = 'desktop';
 
 	/**
 	 * Responsive 'tablet' device name.
+	 *
+	 * @deprecated 3.4.0
 	 */
 	const RESPONSIVE_TABLET = 'tablet';
 
 	/**
 	 * Responsive 'mobile' device name.
+	 *
+	 * @deprecated 3.4.0
 	 */
 	const RESPONSIVE_MOBILE = 'mobile';
 
@@ -136,6 +143,18 @@ abstract class Controls_Stack extends Base_Object {
 	 * @var bool
 	 */
 	private $settings_sanitized = false;
+
+	/**
+	 * Element render attributes.
+	 *
+	 * Holds all the render attributes of the element. Used to store data like
+	 * the HTML class name and the class value, or HTML element ID name and value.
+	 *
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $render_attributes = [];
 
 	/**
 	 * Get element name.
@@ -507,7 +526,7 @@ abstract class Controls_Stack extends Base_Object {
 			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ||
 			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true )
 		) {
-			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' );
+			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			return false;
 		}
@@ -666,7 +685,7 @@ abstract class Controls_Stack extends Base_Object {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
-			wp_die( sprintf( '%s::%s: Group "%s" not found.', get_called_class(), __FUNCTION__, $group_name ) );
+			wp_die( sprintf( '%s::%s: Group "%s" not found.', get_called_class(), __FUNCTION__, $group_name ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$group->add_controls( $this, $args, $options );
@@ -762,7 +781,13 @@ abstract class Controls_Stack extends Base_Object {
 	 * Add new responsive control to stack.
 	 *
 	 * Register a set of controls to allow editing based on user screen size.
-	 * This method registers three screen sizes: Desktop, Tablet and Mobile.
+	 * This method registers one or more controls per screen size/device, depending on the current Responsive Control
+	 * Duplication Mode. There are 3 control duplication modes:
+	 * * 'off' - Only a single control is generated. In the Editor, this control is duplicated in JS.
+	 * * 'on' - Multiple controls are generated, one control per enabled device/breakpoint + a default/desktop control.
+	 * * 'dynamic' - If the control includes the `'dynamic' => 'active' => true` property - the control is duplicated,
+	 *               once for each device/breakpoint + default/desktop.
+	 *               If the control doesn't include the `'dynamic' => 'active' => true` property - the control is not duplicated.
 	 *
 	 * @since 1.4.0
 	 * @access public
@@ -775,11 +800,9 @@ abstract class Controls_Stack extends Base_Object {
 	final public function add_responsive_control( $id, array $args, $options = [] ) {
 		$args['responsive'] = [];
 
-		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
-		];
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -787,6 +810,44 @@ abstract class Controls_Stack extends Base_Object {
 			$args['responsive']['devices'] = $devices;
 
 			unset( $args['devices'] );
+		}
+
+		$control_to_check = $args;
+
+		if ( ! empty( $options['overwrite'] ) ) {
+			$existing_control = Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $id );
+
+			if ( ! is_wp_error( $existing_control ) ) {
+				$control_to_check = $existing_control;
+			}
+		}
+
+		$responsive_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+		$additional_breakpoints_active = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' );
+		$control_is_dynamic = ! empty( $control_to_check['dynamic']['active'] );
+		$is_frontend_available = ! empty( $control_to_check['frontend_available'] );
+		$has_prefix_class = ! empty( $control_to_check['prefix_class'] );
+
+		// If the new responsive controls experiment is active, create only one control - duplicates per device will
+		// be created in JS in the Editor.
+		if (
+			$additional_breakpoints_active
+			&& ( 'off' === $responsive_duplication_mode || ( 'dynamic' === $responsive_duplication_mode && ! $control_is_dynamic ) )
+			// Some responsive controls need responsive settings to be available to the widget handler, even when empty.
+			&& ! $is_frontend_available
+			&& ! $has_prefix_class
+		) {
+			$args['is_responsive'] = true;
+
+			if ( ! empty( $options['overwrite'] ) ) {
+				$this->update_control( $id, $args, [
+					'recursive' => ! empty( $options['recursive'] ),
+				] );
+			} else {
+				$this->add_control( $id, $args, $options );
+			}
+
+			return;
 		}
 
 		if ( isset( $args['default'] ) ) {
@@ -798,6 +859,9 @@ abstract class Controls_Stack extends Base_Object {
 		foreach ( $devices as $device_name ) {
 			$control_args = $args;
 
+			// Set parent using the name from previous iteration.
+			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
+
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
 					$control_args = array_merge( $control_args, $control_args['device_args'][ $device_name ] );
@@ -807,12 +871,18 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			if ( ! empty( $args['prefix_class'] ) ) {
-				$device_to_replace = self::RESPONSIVE_DESKTOP === $device_name ? '' : '-' . $device_name;
+				$device_to_replace = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '-' . $device_name;
 
 				$control_args['prefix_class'] = sprintf( $args['prefix_class'], $device_to_replace );
 			}
 
-			$control_args['responsive']['max'] = $device_name;
+			$direction = 'max';
+
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP !== $device_name ) {
+				$direction = $active_breakpoints[ $device_name ]->get_direction();
+			}
+
+			$control_args['responsive'][ $direction ] = $device_name;
 
 			if ( isset( $control_args['min_affected_device'] ) ) {
 				if ( ! empty( $control_args['min_affected_device'][ $device_name ] ) ) {
@@ -826,18 +896,22 @@ abstract class Controls_Stack extends Base_Object {
 				$control_args['default'] = $control_args[ $device_name . '_default' ];
 			}
 
-			unset( $control_args['desktop_default'] );
-			unset( $control_args['tablet_default'] );
-			unset( $control_args['mobile_default'] );
+			foreach ( $devices as $device ) {
+				unset( $control_args[ $device . '_default' ] );
+			}
 
-			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;
+			$control_name = $id . $id_suffix;
+
+			// Set this control as child of previous iteration control.
+			$this->update_control( $control_args['parent'], [ 'inheritors' => [ $control_name ] ] );
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id . $id_suffix, $control_args, [
+				$this->update_control( $control_name, $control_args, [
 					'recursive' => ! empty( $options['recursive'] ),
 				] );
 			} else {
-				$this->add_control( $id . $id_suffix, $control_args, $options );
+				$this->add_control( $control_name, $control_args, $options );
 			}
 		}
 	}
@@ -875,13 +949,13 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function remove_responsive_control( $id ) {
 		$devices = [
-			self::RESPONSIVE_DESKTOP,
-			self::RESPONSIVE_TABLET,
-			self::RESPONSIVE_MOBILE,
+			Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP,
+			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
 		];
 
 		foreach ( $devices as $device_name ) {
-			$id_suffix = self::RESPONSIVE_DESKTOP === $device_name ? '' : '_' . $device_name;
+			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;
 
 			$this->remove_control( $id . $id_suffix );
 		}
@@ -1347,7 +1421,7 @@ abstract class Controls_Stack extends Base_Object {
 		$this->add_control( $section_id, $args );
 
 		if ( null !== $this->current_section ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->current_section['section'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start a section before the end of the previous section "%s".', $this->current_section['section'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$this->current_section = $this->get_section_args( $section_id );
@@ -1480,7 +1554,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function start_controls_tabs( $tabs_id, array $args = [] ) {
 		if ( null !== $this->current_tab ) {
-			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs "%s".', $this->current_tab['tabs_wrapper'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs "%s".', $this->current_tab['tabs_wrapper'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$args['type'] = Controls_Manager::TABS;
@@ -1535,7 +1609,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function start_controls_tab( $tab_id, $args ) {
 		if ( ! empty( $this->current_tab['inner_tab'] ) ) {
-			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab "%s".', $this->current_tab['inner_tab'] ) ); // XSS ok.
+			wp_die( sprintf( 'Elementor: You can\'t start a tab before the end of the previous tab "%s".', $this->current_tab['inner_tab'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$args['type'] = Controls_Manager::TAB;
@@ -1610,6 +1684,194 @@ abstract class Controls_Stack extends Base_Object {
 		];
 
 		$this->update_control( $last_control_key, $args, $options );
+	}
+
+	/**
+	 * Add render attribute.
+	 *
+	 * Used to add attributes to a specific HTML element.
+	 *
+	 * The HTML tag is represented by the element parameter, then you need to
+	 * define the attribute key and the attribute key. The final result will be:
+	 * `<element attribute_key="attribute_value">`.
+	 *
+	 * Example usage:
+	 *
+	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
+	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
+	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array|string $element   The HTML element.
+	 * @param array|string $key       Optional. Attribute key. Default is null.
+	 * @param array|string $value     Optional. Attribute value. Default is null.
+	 * @param bool         $overwrite Optional. Whether to overwrite existing
+	 *                                attribute. Default is false, not to overwrite.
+	 *
+	 * @return self Current instance of the element.
+	 */
+	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
+		if ( is_array( $element ) ) {
+			foreach ( $element as $element_key => $attributes ) {
+				$this->add_render_attribute( $element_key, $attributes, null, $overwrite );
+			}
+
+			return $this;
+		}
+
+		if ( is_array( $key ) ) {
+			foreach ( $key as $attribute_key => $attributes ) {
+				$this->add_render_attribute( $element, $attribute_key, $attributes, $overwrite );
+			}
+
+			return $this;
+		}
+
+		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
+			$this->render_attributes[ $element ][ $key ] = [];
+		}
+
+		settype( $value, 'array' );
+
+		if ( $overwrite ) {
+			$this->render_attributes[ $element ][ $key ] = $value;
+		} else {
+			$this->render_attributes[ $element ][ $key ] = array_merge( $this->render_attributes[ $element ][ $key ], $value );
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Get Render Attributes
+	 *
+	 * Used to retrieve render attribute.
+	 *
+	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
+	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
+	 *
+	 * Returns null if one of the requested parameters isn't set.
+	 *
+	 * @since 2.2.6
+	 * @access public
+	 * @param string $element
+	 * @param string $key
+	 *
+	 * @return array
+	 */
+	public function get_render_attributes( $element = '', $key = '' ) {
+		$attributes = $this->render_attributes;
+
+		if ( $element ) {
+			if ( ! isset( $attributes[ $element ] ) ) {
+				return null;
+			}
+
+			$attributes = $attributes[ $element ];
+
+			if ( $key ) {
+				if ( ! isset( $attributes[ $key ] ) ) {
+					return null;
+				}
+
+				$attributes = $attributes[ $key ];
+			}
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Set render attribute.
+	 *
+	 * Used to set the value of the HTML element render attribute or to update
+	 * an existing render attribute.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array|string $element The HTML element.
+	 * @param array|string $key     Optional. Attribute key. Default is null.
+	 * @param array|string $value   Optional. Attribute value. Default is null.
+	 *
+	 * @return self Current instance of the element.
+	 */
+	public function set_render_attribute( $element, $key = null, $value = null ) {
+		return $this->add_render_attribute( $element, $key, $value, true );
+	}
+
+	/**
+	 * Remove render attribute.
+	 *
+	 * Used to remove an element (with its keys and their values), key (with its values),
+	 * or value/s from an HTML element's render attribute.
+	 *
+	 * @since 2.7.0
+	 * @access public
+	 *
+	 * @param string $element       The HTML element.
+	 * @param string $key           Optional. Attribute key. Default is null.
+	 * @param array|string $values   Optional. Attribute value/s. Default is null.
+	 */
+	public function remove_render_attribute( $element, $key = null, $values = null ) {
+		if ( $key && ! isset( $this->render_attributes[ $element ][ $key ] ) ) {
+			return;
+		}
+
+		if ( $values ) {
+			$values = (array) $values;
+
+			$this->render_attributes[ $element ][ $key ] = array_diff( $this->render_attributes[ $element ][ $key ], $values );
+
+			return;
+		}
+
+		if ( $key ) {
+			unset( $this->render_attributes[ $element ][ $key ] );
+
+			return;
+		}
+
+		if ( isset( $this->render_attributes[ $element ] ) ) {
+			unset( $this->render_attributes[ $element ] );
+		}
+	}
+
+	/**
+	 * Get render attribute string.
+	 *
+	 * Used to retrieve the value of the render attribute.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param string $element The element.
+	 *
+	 * @return string Render attribute string, or an empty string if the attribute
+	 *                is empty or not exist.
+	 */
+	public function get_render_attribute_string( $element ) {
+		if ( empty( $this->render_attributes[ $element ] ) ) {
+			return '';
+		}
+
+		return Utils::render_html_attributes( $this->render_attributes[ $element ] );
+	}
+
+	/**
+	 * Print render attribute string.
+	 *
+	 * Used to output the rendered attribute.
+	 *
+	 * @since 2.0.0
+	 * @access public
+	 *
+	 * @param array|string $element The element.
+	 */
+	public function print_render_attribute_string( $element ) {
+		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}
 
 	/**
@@ -1904,7 +2166,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		echo $template_content;
+		echo $template_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -1973,7 +2235,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		if ( null !== $target_section_args ) {
 			if ( ! empty( $args['section'] ) || ! empty( $args['tab'] ) ) {
-				_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $control_id ), '1.0.0' );
+				_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), sprintf( 'Cannot redeclare control with `tab` or `section` args inside section "%s".', $control_id ), '1.0.0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 			$args = array_replace_recursive( $target_section_args, $args );
@@ -1982,7 +2244,7 @@ abstract class Controls_Stack extends Base_Object {
 				$args = array_replace_recursive( $target_tab, $args );
 			}
 		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
-			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) );
+			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		return $args;

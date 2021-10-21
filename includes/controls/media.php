@@ -67,7 +67,11 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
+		add_filter( 'upload_mimes', [ $this, 'support_svg_and_json_import' ], 100 );
+
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
+
+		remove_filter( 'upload_mimes', [ $this, 'support_svg_and_json_import' ], 100 );
 
 		if ( ! $settings ) {
 			$settings = [
@@ -77,6 +81,23 @@ class Control_Media extends Control_Base_Multiple {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Support SVG and JSON Import
+	 *
+	 * Called by the 'upload_mimes' filter. Adds SVG and JSON mime types to the list of WordPress' allowed mime types.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param $mimes
+	 * @return mixed
+	 */
+	public function support_svg_and_json_import( $mimes ) {
+		$mimes['svg'] = 'image/svg+xml';
+		$mimes['json'] = 'application/json';
+
+		return $mimes;
 	}
 
 	/**
@@ -192,11 +213,8 @@ class Control_Media extends Control_Base_Multiple {
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
-							<i class="eicon-plus-circle" aria-hidden="true"></i>
-						</div>
 						<div class="elementor-control-media-area elementor-fit-aspect-ratio">
-							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o"></i>
 							</div>
 							<#
@@ -216,6 +234,9 @@ class Control_Media extends Control_Base_Multiple {
 								}
 							#>
 						</div>
+						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
+							<i class="eicon-plus-circle" aria-hidden="true"></i>
+						</div>
 						<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 							<#
 								data.media_types.forEach( ( type ) => {
@@ -230,7 +251,7 @@ class Control_Media extends Control_Base_Multiple {
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">
 					<div class="elementor-control-media__file__content">
-						<div class="elementor-control-media__file__content__label"><?php echo __( 'Click the media icon to upload file', 'elementor' ); ?></div>
+						<div class="elementor-control-media__file__content__label"><?php echo esc_html__( 'Click the media icon to upload file', 'elementor' ); ?></div>
 						<div class="elementor-control-media__file__content__info">
 							<div class="elementor-control-media__file__content__info__icon">
 								<i class="eicon-document-file"></i>
@@ -239,10 +260,10 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 					<div class="elementor-control-media__file__controls">
-						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo __( 'Remove', 'elementor' ); ?>">
+						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
 							<i class="eicon-trash-o"></i>
 						</div>
-						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo __( 'Upload', 'elementor' ); ?>">
+						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo esc_html__( 'Upload', 'elementor' ); ?>">
 							<i class="eicon-upload"></i>
 						</div>
 					</div>

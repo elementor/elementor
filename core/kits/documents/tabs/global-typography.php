@@ -25,7 +25,7 @@ class Global_Typography extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Global Fonts', 'elementor' );
+		return esc_html__( 'Global Fonts', 'elementor' );
 	}
 
 	public function get_group() {
@@ -44,7 +44,7 @@ class Global_Typography extends Tab_Base {
 		$this->start_controls_section(
 			'section_text_style',
 			[
-				'label' => __( 'Global Fonts', 'elementor' ),
+				'label' => esc_html__( 'Global Fonts', 'elementor' ),
 				'tab' => $this->get_id(),
 			]
 		);
@@ -120,28 +120,28 @@ class Global_Typography extends Tab_Base {
 		$default_typography = [
 			[
 				'_id' => 'primary',
-				'title' => __( 'Primary', 'elementor' ),
+				'title' => esc_html__( 'Primary', 'elementor' ),
 				$typography_key => 'custom',
 				$font_family_key => 'Roboto',
 				$font_weight_key => '600',
 			],
 			[
 				'_id' => 'secondary',
-				'title' => __( 'Secondary', 'elementor' ),
+				'title' => esc_html__( 'Secondary', 'elementor' ),
 				$typography_key => 'custom',
 				$font_family_key => 'Roboto Slab',
 				$font_weight_key => '400',
 			],
 			[
 				'_id' => 'text',
-				'title' => __( 'Text', 'elementor' ),
+				'title' => esc_html__( 'Text', 'elementor' ),
 				$typography_key => 'custom',
 				$font_family_key => 'Roboto',
 				$font_weight_key => '400',
 			],
 			[
 				'_id' => 'accent',
-				'title' => __( 'Accent', 'elementor' ),
+				'title' => esc_html__( 'Accent', 'elementor' ),
 				$typography_key => 'custom',
 				$font_family_key => 'Roboto',
 				$font_weight_key => '500',
@@ -172,10 +172,10 @@ class Global_Typography extends Tab_Base {
 		$this->add_control(
 			'default_generic_fonts',
 			[
-				'label' => __( 'Fallback Font Family', 'elementor' ),
+				'label' => esc_html__( 'Fallback Font Family', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'Sans-serif',
-				'description' => __( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
+				'description' => esc_html__( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 				'label_block' => true,
 				'separator' => 'before',
 			]
