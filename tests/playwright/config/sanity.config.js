@@ -12,7 +12,7 @@ const config = {
   use: {
     headless: true,
     storageState: 'storageState.json',
-    baseURL:'http://test.local/',
+    baseURL:'http://localhost:8888/',
     viewport: { width: 1440, height: 960 },
     video: 'on-first-retry',
   },
