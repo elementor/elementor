@@ -54,8 +54,8 @@ In addition, it's possible work directly with the manager in order to register a
 ] );
 ```
 
-Using both of the above methods, you can set the experiment name, description, release status (alpha, beta, dev, etc.),
-default state (active / inactive) and more! You can even pass a callback to run when the feature state has changed! 
+Using both of the above methods, properties like the experiment name, description and release status (alpha, beta, dev, etc.) can be set,
+default state (active / inactive) and more! Even a callback could be supplied to run when the feature state has changed! 
 (using the `on_state_change` key in the experiment settings array).
 
 ### Available Options:
@@ -70,39 +70,39 @@ default state (active / inactive) and more! You can even pass a callback to run 
 | `new_site.minimum_installation_version`	| `{String}`																																				| `null`					| Minimum version to determine if the current installation is a new one. 
 | `on_state_change`							| `{Callable}`																																				| `null`					| A callback that runs on each state change. 
 
-Then, in order to check whether the experiment is active or not, you can ask the manager:
+Then, the experiment state (active or inactive) can be checked directly through the manager:
 
 ### PHP:
 ```php
-Plugin::instance()->experiments->is_feature_active( 'your-feature-name' );
+Plugin::instance()->experiments->is_feature_active( 'feature-name' );
 
 // OR in the Pro version:
 
-Plugin::elementor()->experiments->is_feature_active( 'your-feature-name' );
+Plugin::elementor()->experiments->is_feature_active( 'feature-name' );
 ```
 
 ### JS:
 ```js
-elementorCommon.config.experimentalFeatures[ 'your-feature-name' ];
+elementorCommon.config.experimentalFeatures[ 'feature-name' ];
 
 // OR in frontend pages:
 
-elementorFrontend.config.experimentalFeatures[ 'your-feature-name' ];
+elementorFrontend.config.experimentalFeatures[ 'feature-name' ];
 ```
 
 
 ## Attention Needed / Known Issues:
 
-- Make sure to load your assets ONLY WHEN THE EXPERIMENT IS ACTIVE, or it might cause unexpected behaviors and will send
+- Make sure to load the assets ONLY WHEN THE EXPERIMENT IS ACTIVE, or it might cause unexpected behaviors and will send
   unnecessary code to the end-user (which in turn will slow down the website and ruin the user experience).
   
 
-- Handle the release status & default state carefully - you don't want to break production with an untested alpha-state feature.
+- Handle the release status & default state carefully - the production could be broken due to untested alpha-state feature.
 
   As a rule of thumb - Don't ship alpha features as active by default. 
 
 
-- You can also register a default experiment (usually a core code which doesn't have a dedicated module) using the
+- There is also an option register a default experiment (usually a core code which doesn't have a dedicated module) using the
   `add_default_features()` method in the `core/experiments/manager.php` file.
 
 
