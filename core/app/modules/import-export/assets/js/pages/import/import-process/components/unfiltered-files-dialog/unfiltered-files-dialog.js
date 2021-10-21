@@ -50,8 +50,8 @@ export default function UnfilteredFilesDialog( props ) {
 			{
 				isEnableError ?
 				<Dialog
-					title={ __( 'Sorry, something went wrong', 'elementor' ) }
-					text={ __( 'There is an error with enabling unfiltered files upload. The upload will continue without the SVG files.', 'elementor' ) }
+					title={ __( 'Sorry, something went wrong.', 'elementor' ) }
+					text={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
 					approveButtonColor="link"
 					approveButtonText={ __( 'Got it', 'elementor' ) }
 					approveButtonOnClick={ onReady }
@@ -60,8 +60,8 @@ export default function UnfilteredFilesDialog( props ) {
 					onClose={ onCancel }
 				/> :
 				<Dialog
-					title={ __( 'Enable unfiltered files upload', 'elementor' ) }
-					text={ __( 'This Kit might use unfiltered files (SVG), note that this kind of file might include a security risk when provided from an unknown source. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor' ) }
+					title={ __( 'First, enable unfiltered file uploads.', 'elementor' ) }
+					text={ __( 'This allows Elementor to scan your SVGs for malicious content. Otherwise, you can skip any SVGs in this import.', 'elementor' ) }
 					approveButtonColor="link"
 					approveButtonText={ __( 'Enable', 'elementor' ) }
 					approveButtonOnClick={ () => setEnableUnfilteredFiles( true ) }
