@@ -37,7 +37,7 @@ public static function get_experimental_data() {
 }
 ```
 
-In addition, you can "talk" directly to the manager in order to register an experiment using `\Elementor\Plugin::instance()->experiments->add_feature()`:
+In addition, it's possible work directly with the manager in order to register an experiment using `\Elementor\Plugin::instance()->experiments->add_feature()`:
 
 ```PHP
 // core/experiments/manager.php
