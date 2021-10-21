@@ -4,9 +4,7 @@ const { wpAdminPage } = require('../pages/wp-admin-page');
 
 test('Image widget sanity test', async ({ page }) => {
   const wpAdmin = new wpAdminPage(page);
-  await wpAdmin.goto();
-  await wpAdmin.login();
-  await wpAdmin.openNewPage();
+  await wpAdmin.createNewPage();
 
   const editor = new editorPage(page);
   await editor.addWidgitByName('image')

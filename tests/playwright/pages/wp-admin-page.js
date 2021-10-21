@@ -39,10 +39,17 @@ exports.wpAdminPage = class wpAdminPage {
   }
 
   async skipTutorial() {
-    await this.page.waitForTimeout(20000);
+    await this.page.waitForTimeout(1000);
     const next = await this.page.$("text='Next'");
     if (next) {
       await this.page.click('[aria-label="Close dialog"]');
     }
   }
+
+  async createNewPage() {
+    await this.goto();
+    await this.login();
+    await this.openNewPage();
+  }
+
 };
