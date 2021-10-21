@@ -8,13 +8,13 @@ const config = {
   reporter: 'list',
   testDir: '../sanity',
   globalSetup: require.resolve('./global-setup'),
-  // retries:1,
+  retries:1,
   use: {
     headless: true,
     storageState: 'storageState.json',
     baseURL:'http://localhost:8888/',
     viewport: { width: 1440, height: 960 },
-    video: 'on',
+    video: 'on-first-retry',
   },
 };
 

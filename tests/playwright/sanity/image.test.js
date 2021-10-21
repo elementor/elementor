@@ -16,6 +16,7 @@ test('Image widget sanity test', async ({ page }) => {
   await page.waitForSelector('text=Insert Media');
   await page.waitForTimeout(1000);
 
+  // Check if previous image is already uploaded
   const previousImage = await page.$('[aria-label="mountain-image"], li[tabindex="0"]');
   if (previousImage) {
     await page.click('[aria-label="mountain-image"], li[tabindex="0"]');
