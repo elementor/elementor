@@ -78,15 +78,27 @@ export class ContainerHelper {
 	static createContainerFromPreset( preset, target, options = {} ) {
 		const sizes = preset.split( '-' );
 
+		// Map rounded, user-readable sizes to actual percentages.
+		const sizesMap = {
+			33: '33.3333',
+			66: '66.6666',
+		};
+
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
-				flex_direction: ContainerHelper.DIRECTION_ROW,
+				flex_direction: this.DIRECTION_ROW,
 				flex_wrap: 'wrap',
+				flex_gap: {
+					unit: 'px',
+					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+				},
 			}, target, options );
 
 		// Create all sub containers using the sizes array.
 		// Use flex basis to make the sizes explicit.
 		sizes.forEach( ( size ) => {
+			size = sizesMap[ size ] || size;
+
 			this.createContainer( {
 				flex_direction: this.DIRECTION_COLUMN,
 				width: {

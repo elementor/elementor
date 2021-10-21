@@ -98,16 +98,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	activate: function() {
+	applySortable() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
-			return;
-		}
-
-		var $childViewContainer = this.getChildViewContainer(),
+		const $childViewContainer = this.getChildViewContainer(),
 			defaultSortableOptions = {
 				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
@@ -120,8 +116,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 				start: () => {
 					$childViewContainer.sortable( 'refreshPositions' );
 				},
-			},
-			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
+			};
+
+		let	sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
 		// Add a swappable behavior (used for flex containers).
 		if ( this.isSwappable() ) {
@@ -130,6 +127,21 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		$childViewContainer.sortable( sortableOptions );
+	},
+
+	/**
+	 * Enable sorting for this element, and generate sortable instance for it unless already generated.
+	 */
+	activate: function() {
+		if ( ! this.getChildViewContainer().sortable( 'instance' ) ) {
+			// Generate sortable instance for this element. Since fresh instances of sortable already allowing sorting,
+			// we can return.
+			this.applySortable();
+
+			return;
+		}
+
+		this.getChildViewContainer().sortable( 'enable' );
 	},
 
 	_getSortableHelper: function( event, $item ) {
@@ -152,11 +164,15 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return widgets.indexOf( $element[ 0 ] );
 	},
 
+	/**
+	 * Disable sorting of the element unless no sortable instance exists, in which case there is already no option to
+	 * sort.
+	 */
 	deactivate: function() {
 		var childViewContainer = this.getChildViewContainer();
 
 		if ( childViewContainer.sortable( 'instance' ) ) {
-			childViewContainer.sortable( 'destroy' );
+			childViewContainer.sortable( 'disable' );
 		}
 	},
 
