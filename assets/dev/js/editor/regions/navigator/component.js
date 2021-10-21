@@ -14,6 +14,13 @@ export default class Component extends ComponentBase {
 		this.region = args.manager;
 
 		this.elements = $e.components.register( new ElementsComponent( { manager: this } ) );
+
+		Object.defineProperty( this, 'indicators', {
+			get() {
+				elementorCommon.helpers.softDeprecated( 'elementor.navigator.indicators', '3.0.5', 'elementor.navigator.region.indicators' );
+				return this.region.indicators;
+			},
+		} );
 	}
 
 	getNamespace() {
@@ -65,8 +72,6 @@ export default class Component extends ComponentBase {
 		return true;
 	}
 
-	// TODO: Add all possible BC from region to here.
-
 	dock() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
 			'3.0.5',
@@ -92,5 +97,14 @@ export default class Component extends ComponentBase {
 		);
 
 		$e.internal( 'navigator/set-size', { size } );
+	}
+
+	getLayout() {
+		elementorCommon.helpers.softDeprecated( 'elementor.navigator.getLayout()',
+			'3.0.5',
+			'elementor.navigator.region.getLayout()'
+		);
+
+		return this.region.getLayout();
 	}
 }

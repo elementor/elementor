@@ -11,7 +11,7 @@ import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import NavigatorComponent from './regions/navigator/component';
-import NavigatorLayout from './regions/navigator/navigator';
+import NavigatorRegion from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
@@ -544,7 +544,7 @@ export default class EditorBase extends Marionette.Application {
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
-				regionClass: NavigatorLayout,
+				regionClass: NavigatorRegion,
 			},
 		} );
 

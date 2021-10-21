@@ -19,9 +19,6 @@ import UiStates from './core/ui-states';
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
 
-/**
- * @name $e
- */
 export default class API {
 	/**
 	 * Function constructor().
