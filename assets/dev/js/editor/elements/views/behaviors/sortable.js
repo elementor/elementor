@@ -118,7 +118,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 				},
 			};
 
-		let	sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
+		let sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
 		// Add a swappable behavior (used for flex containers).
 		if ( this.isSwappable() ) {

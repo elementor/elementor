@@ -869,7 +869,7 @@ html.elementor-html {
 
 			&::before {
 				content: var( --text );
-				font-family: Roboto, Arial, Helvetica, sans-serif;
+				font-family: $admin-font-family;
 				font-size: 13px;
 				font-weight: 500;
 				position: absolute;
@@ -1033,7 +1033,7 @@ html.elementor-html {
 	}
 
 	&__title {
-		font-family: Roboto, Arial, Helvetica, sans-serif;
+		font-family: $admin-font-family;
 		font-size: 13px;
 		font-weight: 500;
 		text-transform: uppercase;

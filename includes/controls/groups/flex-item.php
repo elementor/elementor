@@ -67,11 +67,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				],
 				'grow' => [
 					'title' => esc_html_x( 'Grow', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex-grow',
+					'icon' => 'eicon-grow',
 				],
 				'shrink' => [
 					'title' => esc_html_x( 'Shrink', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-h-align-center',
+					'icon' => 'eicon-shrink',
 				],
 				'custom' => [
 					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
@@ -124,19 +124,19 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'options' => [
 				'flex-start' => [
 					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-start',
+					'icon' => 'eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-center',
+					'icon' => 'eicon-align-center-v',
 				],
 				'flex-end' => [
 					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-end',
+					'icon' => 'eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-stretch',
+					'icon' => 'eicon-align-stretch-v',
 				],
 			],
 			'default' => '',
@@ -153,11 +153,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-h-align-left',
+					'icon' => 'eicon-order-start',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-h-align-right',
+					'icon' => 'eicon-order-end',
 				],
 				'custom' => [
 					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),

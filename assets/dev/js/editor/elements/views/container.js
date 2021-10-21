@@ -55,7 +55,7 @@ const ContainerView = BaseElementView.extend( {
 	 * @return {number}
 	 */
 	getNestingLevel: function() {
-		// Use the memoized value is preset, to prevent too many calculations.
+		// Use the memoized value if present, to prevent too many calculations.
 		if ( this.nestingLevel ) {
 			return this.nestingLevel;
 		}

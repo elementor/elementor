@@ -158,8 +158,7 @@ class Container extends Element_Base {
 			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 		}
 
-		?>
-		<div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
+		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
 			<?php if ( $video_properties ) : ?>
 				<div class="elementor-background-video-embed"></div>
 				<?php
@@ -172,8 +171,7 @@ class Container extends Element_Base {
 				?>
 				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
-		</div>
-		<?php
+		</div><?php
 	}
 
 	/**
@@ -203,9 +201,7 @@ class Container extends Element_Base {
 			$this->add_link_attributes( '_wrapper', $link );
 		}
 
-		?>
-		<<?php $this->print_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-		<?php
+		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
 		$this->render_video_background();
 	}
 
@@ -215,9 +211,7 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		?>
-		</<?php $this->print_html_tag(); ?> >
-		<?php
+		?></<?php $this->print_html_tag(); ?>><?php
 	}
 
 	/**
