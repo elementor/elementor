@@ -53,7 +53,7 @@ export default function UnfilteredFilesDialog( props ) {
 					title={ __( 'Sorry, something went wrong.', 'elementor' ) }
 					text={ __( 'Nothing to worry about, just continue without importing SVGs or go back and start the import again.', 'elementor' ) }
 					approveButtonColor="link"
-					approveButtonText={ __( 'Got it', 'elementor' ) }
+					approveButtonText={ __( 'Continue', 'elementor' ) }
 					approveButtonOnClick={ onReady }
 					dismissButtonText={ __( 'Go back', 'elementor' ) }
 					dismissButtonOnClick={ onCancel }
