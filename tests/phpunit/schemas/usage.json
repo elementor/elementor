@@ -174,7 +174,7 @@
 						"AuthorName": {
 							"$id": "#/system/plugins/active_plugins/$plugin/AuthorName",
 							"type": "string",
-							"title": "Plugin Autor Name",
+							"title": "Plugin Author Name",
 							"examples": [
 								"Elementor.com"
 							]
@@ -1099,6 +1099,70 @@
 								"exclude": "logged_in",
 								"template_id": ""
 							}
+						}
+					],
+					"additionalProperties": false
+				},
+				"connect": {
+					"$id": "#/usages/connect",
+					"title": "The connect schema",
+					"description": "Usage of elementor connect license.",
+					"properties": {
+						"site_key": {
+							"$id": "#/usages/connect/site-key",
+							"title": "Site key",
+							"type": [
+								"string",
+								"boolean"
+							]
+						},
+						"count": {
+							"$id": "#/usages/connect/site-key",
+							"title": "User(s) count",
+							"type": "integer"
+						},
+						"users": {
+							"$id": "#/usages/connect/users",
+							"title": "User data",
+							"type": "array",
+							"items": {
+								"$id": "#/usages/connect/users/$user",
+								"type": "object",
+								"title": "User info",
+								"properties": {
+									"id": {
+										"$id": "#/usages/connect/users/$user/id",
+										"$comment": "The unique ID is only per WP Site and not globally as may assumed.",
+										"type": "integer",
+										"title": "The user Unique ID"
+									},
+									"email": {
+										"$id": "#/usages/connect/users/$user/email",
+										"$ref": "#/definitions/global/email",
+										"title": "The user email"
+									},
+									"roles": {
+										"$id": "#/usages/connect/users/$user/roles",
+										"type": "string",
+										"title": "The user roles"
+									}
+								},
+								"additionalProperties": false
+							},
+							"additionalProperties": false
+						}
+					},
+					"examples": [
+						{
+							"site_key": "fake382c41f7a628306a1835df1bf@K3",
+							"count": 1,
+							"users": [
+								{
+									"id": 1,
+									"email": "user@localhost",
+									"roles": "Administrator"
+								}
+							]
 						}
 					],
 					"additionalProperties": false
