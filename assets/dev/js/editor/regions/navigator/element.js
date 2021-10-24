@@ -98,7 +98,7 @@ export default class Element extends Marionette.CompositeView {
 		/**
 		 * Since the way elements are rendered.
 		 * If you create element on exists column, everything is fine because JS engine callstack is empty
-		 * and it will create the widget container, but if u drag element it will be 2 ticks.
+		 * and it will create the widget container, but if an element was dragged it will be 2 ticks.
 		 * 1. Create section & column.
 		 * 2. Create the widget in the column.
 		 * For this situation 'linkContainer' without `setTimeout` will fail because the widget container does not exist yet.
