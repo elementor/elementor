@@ -618,7 +618,7 @@ BaseElementView = BaseContainer.extend( {
 			} );
 
 			if ( ! isRenderRequired ) {
-				return;
+				return true;
 			}
 
 			if ( render && ! isContentChanged ) {
