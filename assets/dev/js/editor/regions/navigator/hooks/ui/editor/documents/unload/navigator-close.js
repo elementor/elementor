@@ -13,8 +13,8 @@ export class NavigatorClose extends After {
 		return $e.components.get( 'navigator' ).isOpen;
 	}
 
-	apply( args ) {
-		$e.components.get( 'navigator' ).close();
+	apply() {
+		$e.run( 'navigator/close' );
 	}
 }
 
