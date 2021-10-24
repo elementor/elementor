@@ -1,26 +1,4 @@
-// Temp flex icons
-// TODO: Use eicons.
-@font-face {
-	font-family: 'eicons-flex';
-	src: url('../lib/eicons/fonts/eicons-flex.woff?iaxlkf') format('woff');
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
-}
-
 [class^="eicon-flex"], [class*=" eicon-flex"] {
-	font-family: 'eicons-flex' !important;
-	speak: never;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-
 	transition: .3s all;
 
 	&.eicon-inline {
@@ -29,66 +7,28 @@
 	}
 
 	// Rotate flex icons based on direction.
-	&:not( .eicon-flex-wrap ):not( .eicon-flex-no-wrap ):not( .eicon-flex-grow ) {
+	&:not( .eicon-wrap ):not( .eicon-nowrap ):not( .eicon-grow ) {
 		// Container direction column / reversed column.
 		:is( .e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse ) & {
 			transform: rotate( 90deg );
 
-			&:is( .eicon-flex-align-start, .eicon-flex-align-end ) {
+			&:is( .eicon-align-start-v, .eicon-align-end-v ) {
 				transform: rotate( -90deg );
 			}
 		}
 
 		// Container direction reversed column.
 		.e-ui-state--document-direction-mode__column-reverse & {
-			&:is( .eicon-flex-justify-start, .eicon-flex-justify-end ) {
+			&:is( .eicon-justify-start-h, .eicon-justify-end-h ) {
 				transform: rotate( -90deg );
 			}
 		}
 
 		// Container direction reversed row
 		.e-ui-state--document-direction-mode__row-reverse & {
-			&:is( .eicon-flex-justify-start, .eicon-flex-justify-end ) {
+			&:is( .eicon-justify-start-h, .eicon-justify-end-h ) {
 				transform: rotate( 180deg );
 			}
 		}
 	}
-}
-
-.eicon-flex-align-center:before {
-	content: "\e900";
-}
-.eicon-flex-align-end:before {
-	content: "\e901";
-}
-.eicon-flex-align-start:before {
-	content: "\e902";
-}
-.eicon-flex-align-stretch:before {
-	content: "\e903";
-}
-.eicon-flex-grow:before {
-	content: "\e904";
-}
-.eicon-flex-justify-center:before {
-	content: "\e905";
-}
-.eicon-flex-justify-end:before {
-	content: "\e906";
-}
-.eicon-flex-justify-space-around:before,
-.eicon-flex-justify-space-evenly:before {
-	content: "\e907";
-}
-.eicon-flex-justify-space-between:before {
-	content: "\e908";
-}
-.eicon-flex-justify-start:before {
-	content: "\e909";
-}
-.eicon-flex-no-wrap:before {
-	content: "\e90a";
-}
-.eicon-flex-wrap:before {
-	content: "\e90b";
 }

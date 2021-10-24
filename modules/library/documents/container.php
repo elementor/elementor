@@ -49,6 +49,6 @@ class Container extends Library_Document {
 	 * @return string Document title.
 	 */
 	public static function get_title() {
-		return __( 'Container', 'elementor' );
+		return esc_html__( 'Container', 'elementor' );
 	}
 }
