@@ -1,6 +1,6 @@
 import CommandNavigator from './command-navigator';
 
-export class CommandNavigatorVisibility extends CommandNavigator {
+export class CommandNavigatorShowHide extends CommandNavigator {
 	/**
 	 * Function shouldHide().
 	 *
@@ -23,4 +23,4 @@ export class CommandNavigatorVisibility extends CommandNavigator {
 	}
 }
 
-export default CommandNavigatorVisibility;
+export default CommandNavigatorShowHide;

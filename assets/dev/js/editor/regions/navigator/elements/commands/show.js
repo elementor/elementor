@@ -1,6 +1,6 @@
-import CommandNavigatorVisibility from './base/command-navigator-visibility';
+import CommandNavigatorShowHide from './base/command-navigator-show-hide';
 
-export class Show extends CommandNavigatorVisibility {
+export class Show extends CommandNavigatorShowHide {
 	shouldHide() {
 		return false;
 	}
