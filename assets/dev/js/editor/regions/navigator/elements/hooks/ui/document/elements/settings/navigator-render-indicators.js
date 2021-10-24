@@ -9,22 +9,14 @@ export class NavigatorRenderIndicators extends Base {
 		return 'navigator-render-indicators';
 	}
 
-	getConditions( args ) {
-		return super.getConditions() && 'string' === typeof args.settings._title;
-	}
-
 	apply( args ) {
-		const { containers = [ args.container ] } = args;
+		const { containers = [ args.container ] } = args,
+			component = $e.components.get( 'navigator' );
 
 		containers.forEach( ( container ) => {
-			const { view, model } = container.navigator;
+			const { view } = container.navigator;
 
-			// Prevent empty title. ( consider move to another hook ).
-			if ( 0 === args.settings._title.length ) {
-				view.ui.title.text( model.getTitle() );
-			}
-
-			jQuery.each( this.component.region.indicators, ( indicatorName, indicatorSettings ) => {
+			jQuery.each( component.region.indicators, ( indicatorName, indicatorSettings ) => {
 				if ( Object.keys( container.settings.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
 					view.renderIndicators();
 
