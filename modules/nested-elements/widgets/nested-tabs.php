@@ -344,69 +344,64 @@ class NestedTabs extends Widget_Container_Base {
 
 		$this->add_render_attribute( 'elementor-tabs', 'class', 'elementor-tabs' );
 
+		$tabs_title_html = '';
+		$tabs_content_html = '';
+
+		foreach ( $tabs as $index => $item ) {
+			// Tabs title.
+			$tab_count = $index + 1;
+			$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+			$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
+			$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
+
+			$this->add_render_attribute( $tab_title_setting_key, [
+				'id' => 'elementor-tab-title-' . $id_int . $tab_count,
+				'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+				'data-tab' => $tab_count,
+				'role' => 'tab',
+				'tabindex' => 1 === $tab_count ? '0' : '-1',
+				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+				'aria-expanded' => 'false',
+			] );
+
+			$this->add_render_attribute( $tab_title_mobile_setting_key, [
+				'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
+				'aria-selected' => 1 === $tab_count ? 'true' : 'false',
+				'data-tab' => $tab_count,
+				'role' => 'tab',
+				'tabindex' => 1 === $tab_count ? '0' : '-1',
+				'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
+				'aria-expanded' => 'false',
+			] );
+
+			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
+			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
+
+			$tabs_title_html .= "
+			<div $title_render_attributes >
+			$tab_title
+			</div>";
+
+			// Tabs content.
+			ob_start();
+			$this->print_children( $index );
+			$tab_content = ob_get_clean();
+
+			$tabs_content_html .= "
+			<div $mobile_title_attributes >
+				$tab_title
+			</div>
+			$tab_content
+			";
+		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
 			<div class="elementor-tabs-wrapper" role="tablist">
-				<?php
-				foreach ( $tabs as $index => $item ) :
-					$tab_count = $index + 1;
-					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
-					$tab_title = $a11y_improvements_experiment ? $item['tab_title'] : '<a href="">' . $item['tab_title'] . '</a>';
-
-					$this->add_render_attribute( $tab_title_setting_key, [
-						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
-						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
-						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
-						'data-tab' => $tab_count,
-						'role' => 'tab',
-						'tabindex' => 1 === $tab_count ? '0' : '-1',
-						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
-						'aria-expanded' => 'false',
-					] );
-					?>
-					<div <?php $this->print_render_attribute_string( $tab_title_setting_key ); ?>><?php
-						// PHPCS - the main text of a widget should not be escaped.
-						echo $tab_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					?></div>
-				<?php endforeach; ?>
+				<?php echo $tabs_title_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<div class="elementor-tabs-content-wrapper" role="tablist" aria-orientation="vertical">
-				<?php
-				foreach ( $tabs as $index => $item ) :
-					$tab_count = $index + 1;
-					$hidden = 1 === $tab_count ? 'false' : 'hidden';
-
-					$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
-					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
-
-					$this->add_render_attribute( $tab_content_setting_key, [
-						'id' => 'elementor-tab-content-' . $id_int . $tab_count,
-						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
-						'data-tab' => $tab_count,
-						'role' => 'tabpanel',
-						'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
-						'tabindex' => '0',
-						'hidden' => $hidden,
-					] );
-
-					$this->add_render_attribute( $tab_title_mobile_setting_key, [
-						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
-						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
-						'data-tab' => $tab_count,
-						'role' => 'tab',
-						'tabindex' => 1 === $tab_count ? '0' : '-1',
-						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
-						'aria-expanded' => 'false',
-					] );
-
-					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
-					?>
-					<div <?php $this->print_render_attribute_string( $tab_title_mobile_setting_key ); ?>><?php
-						$this->print_unescaped_setting( 'tab_title', 'tabs', $index );
-					?></div>
-
-					<?php $this->print_children( $index ); ?>
-				<?php endforeach; ?>
+				<?php echo $tabs_content_html;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 		</div>
 		<?php

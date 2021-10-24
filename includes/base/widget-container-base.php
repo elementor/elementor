@@ -52,7 +52,6 @@ abstract class Widget_Container_Base extends Widget_Base {
 			'elType' => $data['elType'],
 			'widgetType' => $data['widgetType'],
 			'settings' => $data['settings'],
-			'isInner' => $data['isInner'],
 			'elements' => $elements,
 		];
 	}
