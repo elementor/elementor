@@ -97,7 +97,7 @@ export default class Element extends Marionette.CompositeView {
 
 		/**
 		 * Since the way elements are rendered.
-		 * If you create element on exists column, everything is fine because JS engine callstack is empty
+		 * On creating an element on an existing column, everything will work because the JS engine call stack is empty
 		 * and it will create the widget container, but if an element was dragged it will be 2 ticks.
 		 * 1. Create section & column.
 		 * 2. Create the widget in the column.
