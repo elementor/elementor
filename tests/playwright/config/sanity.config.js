@@ -11,7 +11,7 @@ const config = {
   retries:1,
   use: {
     headless: true,
-    storageState: 'storageState.json',
+    storageState: './tests/playwright/config/storageState.json',
     baseURL:'http://localhost:8888/',
     viewport: { width: 1440, height: 960 },
     video: 'on-first-retry',

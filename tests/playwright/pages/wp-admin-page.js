@@ -24,17 +24,22 @@ exports.wpAdminPage = class wpAdminPage {
   }
 
   async openNewPage() {
-    await this.page.waitForSelector("text=Dashboard");
-    await this.page.click("text=Pages"),
-    await Promise.all([
-      this.page.waitForNavigation({ url: '/wp-admin/post-new.php?post_type=page'}),
-      this.page.click('div[role="main"] >> text=Add New'),
-    ]);
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.skipTutorial(),
-      this.page.click("text=← Back to WordPress Editor Edit with Elementor"),
-    ]);
+    try {
+      await this.page.click('text=Create New Page', {timeout: 5000});
+    } catch (err) {
+      console.error("Click on Elementor 'Create New Page' button failed");
+      await this.page.waitForSelector("text=Dashboard");
+      await this.page.click("text=Pages"),
+        await Promise.all([
+          this.page.waitForNavigation({ url: '/wp-admin/post-new.php?post_type=page' }),
+          this.page.click('div[role="main"] >> text=Add New'),
+        ]);
+      await Promise.all([
+        this.page.waitForNavigation(),
+        this.skipTutorial(),
+        this.page.click("text=← Back to WordPress Editor Edit with Elementor"),
+      ]);
+    }
     await this.page.waitForSelector("#elementor-panel-header-title");
   }
 

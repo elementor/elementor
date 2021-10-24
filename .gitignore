@@ -28,4 +28,4 @@ coverage/
 
 # playwright
 test-results/
-storageState.json
+tests/playwright/config/storageState.json
