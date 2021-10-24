@@ -64,6 +64,7 @@
         "path": "^0.12.7",
         "qunit": "2.15.0",
         "react-query": "^3.16.0",
+        "styled-components": "^5.3.1",
         "terser-webpack-plugin": "^5.0.3",
         "webpack": "^5.40.0"
     },

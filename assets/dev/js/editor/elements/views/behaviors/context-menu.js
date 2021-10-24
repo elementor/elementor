@@ -56,12 +56,16 @@ module.exports = Marionette.Behavior.extend( {
 			groups: contextMenuGroups,
 		} );
 
-		this.contextMenu.getModal().on( 'hide', this.onContextMenuHide );
+		this.contextMenu.getModal().on( 'hide', () => this.onContextMenuHide() );
 	},
 
 	getContextMenu: function() {
 		if ( ! this.contextMenu ) {
 			this.initContextMenu();
+		}
+
+		if ( ! elementor.selection.has( this.view.getContainer() ) ) {
+			$e.run( 'document/elements/deselect-all' );
 		}
 
 		return this.contextMenu;
@@ -80,6 +84,12 @@ module.exports = Marionette.Behavior.extend( {
 		event.preventDefault();
 
 		event.stopPropagation();
+
+		// Disable sortable when context menu opened
+		// TODO: Should be in UI hook when the context menu will move to command
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', false );
+		}
 
 		this.getContextMenu().show( event );
 
@@ -103,6 +113,12 @@ module.exports = Marionette.Behavior.extend( {
 	},
 
 	onContextMenuHide: function() {
+		// enable sortable when context menu closed
+		// TODO: Should be in UI hook when the context menu will move to command
+		if ( this.view._parent ) {
+			this.view._parent.triggerMethod( 'toggleSortMode', true );
+		}
+
 		elementor.channels.editor.reply( 'contextMenu:targetView', null );
 	},
 

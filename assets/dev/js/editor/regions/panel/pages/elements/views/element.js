@@ -59,7 +59,7 @@ module.exports = Marionette.ItemView.extend( {
 			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
 			top: '-7',
 			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
+			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) || this.model.get( 'widgetType' ) ),
 		} );
 	},
 } );

@@ -72,12 +72,6 @@ ColumnView = BaseElementView.extend( {
 				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
 				icon: 'plus',
 			};
-
-			editTools.remove = {
-				/* translators: %s: Element name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-				icon: 'close',
-			};
 		}
 
 		return editTools;
@@ -110,7 +104,7 @@ ColumnView = BaseElementView.extend( {
                     icon: 'eicon-plus',
 					title: __( 'Add New Column', 'elementor' ),
 					callback: this.addNewColumn.bind( this ),
-					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS,
+					isEnabled: () => self.model.collection.length < DEFAULT_MAX_COLUMNS && ! elementor.selection.isMultiple(),
 				},
 			],
 		} );

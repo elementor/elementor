@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
+use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -276,6 +277,7 @@ class Module extends BaseModule {
 		$post_types = get_post_types( array( 'public' => true ) );
 
 		$query = new \WP_Query( [
+			'no_found_rows' => true,
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
 			'post_status' => [ 'publish', 'private' ],
@@ -598,6 +600,10 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		if ( ! Tracker::is_allow_track() ) {
+			return;
+		}
+
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
 
