@@ -639,11 +639,10 @@ BaseElementView = BaseContainer.extend( {
 	 * How to use?
 	 *  Assuming you know the element which should be renderd for an settings key, you know add the following attributes to the element to avoid full re-render:
 	 *  Example for repeater item:
-	 *
-	 *  	'data-link': 'true',                    // Enables the data link.
-	 *		'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
-	 *		'data-link-setting': 'tab_title',       // Setting key that effect the link.
-	 *		'data-link-index': tabCount,            // Index is required for repeater items.
+	 * 'data-link': 'true',                    // Enables the data link.
+	 * 'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
+	 * 'data-link-setting': 'tab_title',       // Setting key that effect the link.
+	 * 'data-link-index': tabCount,            // Index is required for repeater items.
 	 *
 	 * Current Limitation:
 	 * Not working with dynamics or globals, those will required full re-render.
