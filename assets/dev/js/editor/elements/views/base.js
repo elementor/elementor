@@ -6,6 +6,12 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseElementView;
 
 /**
+ * @typedef {{}} DataLink
+ * @property {DOMStringMap} dataset
+ * @property {HTMLElement} el
+ */
+
+/**
  * @extends {BaseContainer}
  */
 BaseElementView = BaseContainer.extend( {
@@ -625,8 +631,97 @@ BaseElementView = BaseContainer.extend( {
 		return false;
 	},
 
+	/**
+	 * Function linksData().
+	 *
+	 * Link data to allow partial render, instead of full re-render
+	 *
+	 * How to use?
+	 *  Assuming you know the element which should be renderd for an settings key, you know add the following attributes to the element to avoid full re-render:
+	 *  Example for repeater item:
+	 *
+	 *  	'data-link': 'true',                    // Enables the data link.
+	 *		'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
+	 *		'data-link-setting': 'tab_title',       // Setting key that effect the link.
+	 *		'data-link-index': tabCount,            // Index is required for repeater items.
+	 *
+	 * Current Limitation:
+	 * Not working with dynamics or globals, those will required full re-render.
+	 * Working only with repeater items.
+	 */
+	linksData() {
+		const id = this.$el.data( 'id' );
+
+		if ( ! id ) {
+			return;
+		}
+
+		const self = this;
+
+		/**
+		 * @type {Array.<DataLink>}
+		 */
+		self.links = [];
+
+		this.$el.find( '[data-link]' ).filter( function() {
+			const $current = jQuery( this );
+
+			// To support nested links bypass nested links that are not part of the current.
+			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
+				if ( this.dataset.link ) {
+					self.links.push( {
+						el: this,
+						dataset: this.dataset,
+					} );
+				}
+			}
+		} );
+	},
+
+	/**
+	 * Function renderLinks().
+	 *
+	 * Render linked data.
+	 *
+	 * TODO: Add links to non repeater items.
+	 *
+	 * @param {Object} settings
+	 * @param {Array.<DataLink>} links
+	 * @returns {boolean} - false on fail.
+	 */
+	renderLinks( settings, links ) {
+		let changed = false;
+
+		links.forEach( ( link ) => {
+			switch ( link.dataset.linkType ) {
+				case 'repeater-item': {
+					const index = this.container.parent.children.indexOf( this.container );
+
+					if ( index === parseInt( link.dataset.linkIndex - 1 ) ) {
+						const change = settings.changed[ link.dataset.linkSetting ];
+
+						if ( change ) {
+							changed = true;
+							jQuery( link.el ).html( change );
+						}
+					}
+				}
+			}
+		} );
+
+		if ( changed ) {
+			this.applyChanges( settings, false );
+		}
+
+		return changed;
+	},
+
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
+			return;
+		}
+
+		if ( ! settings.__dynamic__ && this.links && this.renderLinks( settings, this.links ) ) {
 			return;
 		}
 
@@ -662,37 +757,6 @@ BaseElementView = BaseContainer.extend( {
 	save() {
 		$e.route( 'library/save-template', {
 			model: this.model,
-		} );
-	},
-
-	linksData() {
-		const id = this.$el.data( 'id' );
-
-		if ( ! id ) {
-			return;
-		}
-
-		const self = this;
-
-		this.$el.find( '[data-link]' ).filter( function() {
-			const $current = jQuery( this );
-
-			// To support nested links bypass nested links that are not part of the current.
-			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
-				if ( this.dataset.link ) {
-					if ( ! self.links ) {
-						/**
-						 * @type {DOMStringMap[]}
-						 */
-						self.links = [];
-					}
-
-					self.links.push( {
-						el: this,
-						dataset: this.dataset,
-					} );
-				}
-			}
 		} );
 	},
 
@@ -773,6 +837,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onDestroy() {
+		delete this.links;
+
 		this.controlsCSSParser.removeStyleFromDocument();
 
 		this.getEditModel().get( 'settings' ).validators = {};

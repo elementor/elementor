@@ -52,32 +52,6 @@ class WidgetContainer extends BaseElementView {
 			.removeClass( 'elementor-widget-empty' )
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
-
-		this.linksData();
-	}
-
-	renderOnChange( settings, requestedContainer ) {
-		if ( this.links ) {
-			this.links.forEach( ( link ) => {
-				switch ( link.dataset.linkType ) {
-					case 'repeater-item': {
-						const index = requestedContainer.parent.children.indexOf( requestedContainer );
-
-						if ( index === parseInt( link.dataset.linkIndex - 1 ) ) {
-							const change = settings.changed[ link.dataset.linkSetting ];
-
-							if ( change ) {
-								jQuery( link.el ).html( change );
-							}
-						}
-					}
-				}
-			} );
-
-			return this.applyChanges( settings, false );
-		}
-
-		super.renderOnChange( settings );
 	}
 
 	onContainerCreatedOnce() {

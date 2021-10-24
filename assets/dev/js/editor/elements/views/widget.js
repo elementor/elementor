@@ -228,7 +228,7 @@ WidgetView = BaseElementView.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				// Since 'outerHeight' will not handle hidden elements, and mark them as empty ( eg tabs ).
+				// Since 'outerHeight' will not handle hidden elements, and mark them as empty (e.g. nested tabs).
 				const $widgetContainer = self.$el.children( '.elementor-widget-container' ),
 					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
 
@@ -241,6 +241,7 @@ WidgetView = BaseElementView.extend( {
 	},
 
 	onClickEdit: function( e ) {
+		// `stopPropagation()` is used here to prevent parent `request:edit` since nested elements where added.
 		e.stopPropagation();
 
 		if ( this.container.isEditable() ) {
