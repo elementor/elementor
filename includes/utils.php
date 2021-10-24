@@ -26,6 +26,7 @@ class Utils {
 		'a',
 		'article',
 		'aside',
+		'button',
 		'div',
 		'footer',
 		'h1',
