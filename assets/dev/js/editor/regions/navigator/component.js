@@ -17,7 +17,7 @@ export default class Component extends ComponentBase {
 
 		Object.defineProperty( this, 'indicators', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementor.navigator.indicators', '3.0.5', 'elementor.navigator.region.indicators' );
+				elementorCommon.helpers.softDeprecated( 'elementor.navigator.indicators', '3.6.0', 'elementor.navigator.region.indicators' );
 				return this.region.indicators;
 			},
 		} );
@@ -74,7 +74,7 @@ export default class Component extends ComponentBase {
 
 	dock() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.dock()',
-			'3.0.5',
+			'3.6.0',
 			"$e.run( 'navigator/dock' )"
 		);
 
@@ -83,7 +83,7 @@ export default class Component extends ComponentBase {
 
 	undock( silent ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.undock()',
-			'3.0.5',
+			'3.6.0',
 			"$e.run( 'navigator/undock', { silent } )"
 		);
 
@@ -92,7 +92,7 @@ export default class Component extends ComponentBase {
 
 	setSize( size = null ) {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.setSize()',
-			'3.0.5',
+			'3.6.0',
 			"$e.internal( 'navigator/set-size', { size } )"
 		);
 
@@ -101,7 +101,7 @@ export default class Component extends ComponentBase {
 
 	getLayout() {
 		elementorCommon.helpers.softDeprecated( 'elementor.navigator.getLayout()',
-			'3.0.5',
+			'3.6.0',
 			'elementor.navigator.region.getLayout()'
 		);
 
