@@ -322,7 +322,7 @@ class Tools extends Settings_Page {
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
-							/* translators: %s: Elementor version. */
+								/* translators: %s: Elementor version. */
 								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
 								ELEMENTOR_VERSION
 							);
@@ -350,7 +350,7 @@ class Tools extends Settings_Page {
 						'callback' => function() {
 							echo '<p>' . esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) . '</p>';
 							echo sprintf(
-							/* translators: 1: Link open tag, 2: Link close tag. */
+								/* translators: 1: Link open tag, 2: Link close tag. */
 								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
 								'<a id="beta-tester-first-to-know" href="#">',
 								'</a>'
