@@ -331,6 +331,7 @@ export default class Element extends Marionette.CompositeView {
 				container,
 			} );
 		} else {
+			$e.run( 'document/elements/deselect-all' );
 			$e.run( 'panel/editor/open', {
 				model: container.model,
 				view: container.view,
