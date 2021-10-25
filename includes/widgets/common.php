@@ -315,6 +315,9 @@ class Widget_Common extends Widget_Base {
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
+					],
 				]
 			);
 
