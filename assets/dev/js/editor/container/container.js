@@ -340,7 +340,7 @@ export default class Container extends ArgsObject {
 
 			if ( 1 === repeaters.length ) {
 				// TODO: Remove with the BC.
-				if ( elementor.nestedElements.isWidgetSupportNesting( this.model.get( 'widgetType' ) ) ) {
+				if ( elementor.modules.nestedElements.isWidgetSupportNesting( this.model.get( 'widgetType' ) ) ) {
 					return;
 				}
 

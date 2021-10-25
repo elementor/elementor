@@ -7,6 +7,6 @@ export default class Base extends HookDataAfter {
 
 	getConditions( args ) {
 		// eslint-disable-next-line camelcase
-		return elementor.nestedElements.isWidgetSupportNesting( args.name );
+		return elementor.modules.nestedElements.isWidgetSupportNesting( args.name );
 	}
 }
