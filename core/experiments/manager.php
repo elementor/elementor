@@ -591,7 +591,7 @@ class Manager extends Base_Object {
 	 */
 	private function get_feature_actual_state( array $feature ) {
 		if ( get_option( Safe_Mode::OPTION_ENABLED, '' ) ) {
-			return 'inactive';
+			return self::STATE_INACTIVE;
 		}
 
 		if ( self::STATE_DEFAULT !== $feature['state'] ) {
