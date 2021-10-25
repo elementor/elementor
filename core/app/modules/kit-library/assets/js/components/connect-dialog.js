@@ -11,7 +11,7 @@ export default function ConnectDialog( props ) {
 		jQuery( approveButtonRef.current ).elementorConnect( {
 			success: ( e, data ) => props.onSuccess( data ),
 			error: () => props.onError( __( 'Unable to connect', 'elementor' ) ),
-			UTM: () => '&utm_source=kit-library&utm_medium=wp-dash&utm_campaign=',
+			parseUrl: ( url ) => url.replace( '%%page%%', props.pageId ),
 		} );
 	}, [] );
 
@@ -35,4 +35,5 @@ ConnectDialog.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	onError: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired,
+	pageId: PropTypes.string,
 };

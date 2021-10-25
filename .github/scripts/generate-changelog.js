@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const { Octokit } = require('@octokit/core');
-const { repoToOwnerAndOwner } = require('./repo-utils');
+const { repoToOwnerAndOwner, getPrCommits } = require('./repo-utils');
 const { REPOSITORY, HEAD_BRANCH_NAME, BASE_TAG_NAME, TOKEN } = process.env;
 
 if (!TOKEN) {
@@ -40,12 +40,8 @@ const { owner, repo } = repoToOwnerAndOwner(REPOSITORY);
 			base: BASE_TAG_NAME,
 			head: HEAD_BRANCH_NAME,
 		});
-		const prAndVerifiedCommits = res.data.commits
-			.filter(({ commit }) => commit.verification.verified)
-			.map(({ commit }) => commit.message)
-			.map(message => message.split('\n')[0])
-			.filter((message) => /\(#\d{1,72}\)/.test(message))
-			.filter((message) => !message.startsWith('Internal:'));
+
+		const prAndVerifiedCommits = getPrCommits(res.data);
 		const markdown = prAndVerifiedCommits.map((message) => `* ${message}`).join('\n');
 		fs.writeFileSync('temp-changelog.txt', markdown);
 	} catch (err) {

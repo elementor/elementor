@@ -3,6 +3,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as errors from 'elementor-api/core/data/errors/';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-data.js', () => {
@@ -57,6 +58,29 @@ jQuery( () => {
 
 				validateCommandData( new CommandData( { __manualConstructorHandling: true } ) );
 				validateCommandData( new $e.modules.CommandData( { __manualConstructorHandling: true } ) );
+			} );
+
+			QUnit.test( 'onCatchApply(): make sure it transform the error to our semantic errors', ( assert ) => {
+				const notFoundCalled = assert.async();
+				const defaultCalled = assert.async();
+
+				const commandData = new CommandData( {
+					__manualConstructorHandling: true,
+				} );
+
+				// Mock the notify functions.
+				errors.Error404.prototype.notify = () => {
+					assert.ok( true, 'NotFoundError notify has been called.' );
+					notFoundCalled();
+				};
+
+				errors.DefaultError.prototype.notify = () => {
+					assert.ok( true, 'DefaultError notify has not been called.' );
+					defaultCalled();
+				};
+
+				commandData.onCatchApply( { data: { status: 404 } } );
+				commandData.onCatchApply( {} );
 			} );
 		} );
 	} );

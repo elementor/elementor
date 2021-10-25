@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
-use Elementor\Core\Base\Document;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Global_CSS;
@@ -160,15 +159,6 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
-
-		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
-		add_action( 'wp_enqueue_scripts', function() {
-			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
-				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
-
-				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
-			}
-		}, 30 );
 
 		$this->add_content_filter();
 
@@ -434,7 +424,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.8.1',
+			'4.9.0',
 			true
 		);
 
@@ -507,7 +497,7 @@ class Frontend extends App {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.12.0'
+			'5.13.0'
 		);
 
 		wp_register_style(
@@ -532,29 +522,15 @@ class Frontend extends App {
 
 		$frontend_file_name = $frontend_base_file_name . $direction_suffix . $min_suffix . '.css';
 
-		$has_custom_file = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( $has_custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
-
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
-
-			$frontend_file_url = $frontend_file->get_url();
-		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
-		}
-
 		$frontend_dependencies = [];
+
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
 			// If The Dom Optimization feature is disabled, register the legacy CSS
 			wp_register_style(
 				'elementor-frontend-legacy',
-				ELEMENTOR_ASSETS_URL . 'css/frontend-legacy' . $direction_suffix . $min_suffix . '.css',
+				$this->get_frontend_file_url( 'frontend-legacy' . $direction_suffix . $min_suffix . '.css', $has_custom_breakpoints ),
 				[],
 				ELEMENTOR_VERSION
 			);
@@ -564,9 +540,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$frontend_file_url,
+			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
 			$frontend_dependencies,
-			$has_custom_file ? null : ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		/**
@@ -653,7 +629,7 @@ class Frontend extends App {
 			$this->add_elementor_icons_inline_css();
 
 			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
-			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) || Plugin::$instance->preview->is_preview_mode() ) {
 				wp_enqueue_style( 'elementor-icons' );
 			}
 
@@ -679,6 +655,38 @@ class Frontend extends App {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.4.5
+	 *
+	 * @access private
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file URL
+	 */
+	private function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+
+			$time = $frontend_file->get_meta( 'time' );
+
+			if ( ! $time ) {
+				$frontend_file->update();
+			}
+			$frontend_file_url = $frontend_file->get_url();
+		} else {
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_url;
 	}
 
 	/**
@@ -1372,7 +1380,7 @@ class Frontend extends App {
 		$more_link_text = sprintf(
 			'<span aria-label="%1$s">%2$s</span>',
 			sprintf(
-				/* translators: %s: Name of current post */
+				/* translators: %s: Current post name. */
 				__( 'Continue reading %s', 'elementor' ),
 				the_title_attribute( [
 					'echo' => false,

@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Controls\Groups;
 
 use Elementor\Group_Control_Image_Size;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
