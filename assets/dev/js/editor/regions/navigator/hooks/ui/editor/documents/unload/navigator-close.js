@@ -14,7 +14,8 @@ export class NavigatorClose extends After {
 	}
 
 	apply() {
-		$e.run( 'navigator/close' );
+		// Calling directly to component close will no effect the navigator storage, the navigator will be opened again after reload.
+		$e.components.get( 'navigator' ).close();
 	}
 }
 

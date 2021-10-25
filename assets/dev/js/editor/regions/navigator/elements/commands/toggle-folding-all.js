@@ -5,8 +5,6 @@ export class ToggleFoldingAll extends CommandBase {
 		const layout = this.component.manager.region.getLayout(),
 			state = args.hasOwnProperty( 'state' ) ? args.state : 'expand' === layout.ui.toggleAll.data( 'elementor-action' );
 
-		let	classes = [ 'eicon-collapse', 'eicon-expand' ];
-
 		elementor.getPreviewContainer().children.forEachRecursive( ( container ) => {
 			$e.run( 'navigator/elements/toggle-folding', {
 				container,
@@ -14,14 +12,10 @@ export class ToggleFoldingAll extends CommandBase {
 			} );
 		} );
 
-		if ( ! state ) {
-			classes = classes.reverse();
-		}
-
 		layout.ui.toggleAll
 			.data( 'elementor-action', state ? 'collapse' : 'expand' )
-			.removeClass( classes[ 0 ] )
-			.addClass( classes[ 1 ] );
+			.toggleClass( 'eicon-collapse', state )
+			.toggleClass( 'eicon-expand', ! state );
 	}
 }
 
