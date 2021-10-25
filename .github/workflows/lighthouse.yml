@@ -82,15 +82,14 @@ jobs:
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "wp --user=admin elementor library import-dir /var/www/html/elementor-templates"
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
       - name: WordPress debug information
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
           npx wp-env run tests-cli "wp core version"
           npx wp-env run tests-cli "wp --info"
           npx wp-env run tests-cli "wp post list --post_type=page"
-          npx wp-env run tests-cli "wp post list --post_type=wp-page"
-          npx wp-env run tests-cli "wp post list --post_type=elementor_library"
+          npx wp-env run tests-cli "wp theme list --status=active"
       - name: Run Lighthouse tests
         if: matrix.wpCoreVersion != 'master' || github.event_name == 'schedule'
         run: |
