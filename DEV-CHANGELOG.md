@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev45 - 2021-10-25
+* Fix: PayPal button is unclickable [ED-5228] (#16656)
+* Fix: Drag and Drop of multiple elements shouldn't be allowed in Navigator [ED-5266] (#16693)
+* Fix: Right-click context-menu doesn't appear in favorite widgets [ED-5264] (#16692)
+* Deprecated Utils::get_create_new_post_url  : Replaced by Plugin::$instance->documents->get_create_new_post_url (#15776)
+* Tweak: Delete deprecated ajax method (#16688)
+
 #### 3.5.0-dev44 - 2021-10-19
 * Fix: Updated Admin Top Bar font for Non-English languages [ED-4903] (#16620)
 * Tweak: Allow disabling Responsive Placeholder inheritance  [ED-5095] (#16513)
