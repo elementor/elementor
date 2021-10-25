@@ -482,6 +482,6 @@ import Events from 'elementor-utils/events';
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init', null, 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );
