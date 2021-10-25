@@ -1,23 +1,22 @@
-exports.addWidget = async (WidgetName) => {
-  if (typeof WidgetName !== "string") {
-    throw new Error('Step is missing "WidgetName" parameter value');
+exports.addWidget = async ( WidgetName ) => {
+  if ( typeof WidgetName !== 'string' ) {
+    throw new Error( 'Step is missing "WidgetName" parameter value' );
   }
 
   const eSection = $e.run(
-    "document/elements/create",
+    'document/elements/create',
     {
-      model: { elType: "section" },
+      model: { elType: 'section' },
       columns: 1,
-      container: elementor.getContainer("document"),
+      container: elementor.getContainer( 'document' ),
     }
   );
 
   const eWidget = $e.run(
-    "document/elements/create",
+    'document/elements/create',
     {
-      model: { elType: "widget", widgetType: WidgetName },
-      container: eSection.children[0],
+      model: { elType: 'widget', widgetType: WidgetName },
+      container: eSection.children[ 0 ],
     }
   );
-
 };
