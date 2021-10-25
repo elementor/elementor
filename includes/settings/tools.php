@@ -130,6 +130,10 @@ class Tools extends Settings_Page {
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
+		if ( ! $this->can_user_rollback_versions() ) {
+			wp_die( esc_html__( 'Not allowed to rollback versions', 'elementor' ) );
+		}
+
 		$rollback_versions = $this->get_rollback_versions();
 		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
@@ -308,14 +312,17 @@ class Tools extends Settings_Page {
 					],
 				],
 			],
-			'versions' => [
+		];
+
+		if ( $this->can_user_rollback_versions() ) {
+			$tabs['versions'] = [
 				'label' => esc_html__( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
 						'callback' => function() {
 							$intro_text = sprintf(
-								/* translators: %s: Elementor version. */
+							/* translators: %s: Elementor version. */
 								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
 								ELEMENTOR_VERSION
 							);
@@ -341,11 +348,9 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
 						'callback' => function() {
-							echo '<p>' .
-								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
-								'</p>';
+							echo '<p>' . esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) . '</p>';
 							echo sprintf(
-								/* translators: 1: Link open tag, 2: Link close tag. */
+							/* translators: 1: Link open tag, 2: Link close tag. */
 								esc_html__( '%1$sClick here%2$s to join our first-to-know email updates.', 'elementor' ),
 								'<a id="beta-tester-first-to-know" href="#">',
 								'</a>'
@@ -367,8 +372,8 @@ class Tools extends Settings_Page {
 						],
 					],
 				],
-			],
-		];
+			];
+		}
 
 		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
 			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
@@ -395,5 +400,14 @@ class Tools extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
+	}
+
+	/**
+	 * Check if the current user can access the version control tab and rollback versions.
+	 *
+	 * @return bool
+	 */
+	private function can_user_rollback_versions() {
+		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
 	}
 }
