@@ -2,6 +2,7 @@
 namespace Elementor\Core\Files;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\File_Types\Base as File_Type_Base;
 use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
@@ -201,6 +202,59 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
+	 * Check filetype and ext
+	 *
+	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
+	 * with inconsistent reporting behaviour.
+	 * ref: https://core.trac.wordpress.org/ticket/39550
+	 * ref: https://core.trac.wordpress.org/ticket/40175
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param $data
+	 * @param $file
+	 * @param $filename
+	 * @param $mimes
+	 *
+	 * @return mixed
+	 */
+	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
+		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
+			return $data;
+		}
+
+		$wp_file_type = wp_check_filetype( $filename, $mimes );
+
+		$file_type_handlers = $this->get_file_type_handlers();
+
+		if ( isset( $file_type_handlers[ $wp_file_type['ext'] ] ) ) {
+			$file_type_handler = $file_type_handlers[ $wp_file_type['ext'] ];
+
+			$data['ext'] = $file_type_handler->get_file_extension();
+			$data['type'] = $file_type_handler->get_mime_type();
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Remove File Or Directory
+	 *
+	 * Directory is deleted recursively with all of its contents (subdirectories and files).
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param string $path
+	 */
+	public function remove_file_or_dir( $path ) {
+		if ( is_dir( $path ) ) {
+			$this->remove_directory_with_files( $path );
+		} else {
+			unlink( $path );
+		}
+	}
+
+	/**
 	 * Create Temp File
 	 *
 	 * Create a random temporary file.
@@ -314,7 +368,23 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		$elementor_media_upload_key = 'elementor-wp-media-upload';
+
+		$is_elementor_media_upload = isset( $_POST['uploadTypeCaller'] ) && $elementor_media_upload_key === $_POST['uploadTypeCaller']; // phpcs:ignore
+
+		// If this is an Elementor AJAX request, check for the 'uploadTypeCaller' property in the request data.
+		if ( isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'] && isset( $_POST['actions'] ) ) { // phpcs:ignore
+			$actions = json_decode( stripslashes( $_POST['actions'] ), true ); // phpcs:ignore
+
+			if (
+				isset( $actions['import_template'] )
+				&& ! empty( $actions['import_template']['data']['uploadTypeCaller'] )
+				&& $elementor_media_upload_key === $actions['import_template']['data']['uploadTypeCaller']
+			) {
+				$is_elementor_media_upload = true;
+			}
+		}
+		return $is_elementor_media_upload;
 	}
 
 	/**
@@ -421,59 +491,6 @@ class Uploads_Manager extends Base_Object {
 
 		// Here is each file type handler's chance to run its own specific validations
 		return $file_type_handler->validate_file( $file_path );
-	}
-
-	/**
-	 * Check filetype and ext
-	 *
-	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
-	 * with inconsistent reporting behaviour.
-	 * ref: https://core.trac.wordpress.org/ticket/39550
-	 * ref: https://core.trac.wordpress.org/ticket/40175
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param $data
-	 * @param $file
-	 * @param $filename
-	 * @param $mimes
-	 *
-	 * @return mixed
-	 */
-	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
-			return $data;
-		}
-
-		$wp_file_type = wp_check_filetype( $filename, $mimes );
-
-		$file_type_handlers = $this->get_file_type_handlers();
-
-		if ( isset( $file_type_handlers[ $wp_file_type['ext'] ] ) ) {
-			$file_type_handler = $file_type_handlers[ $wp_file_type['ext'] ];
-
-			$data['ext'] = $file_type_handler->get_file_extension();
-			$data['type'] = $file_type_handler->get_mime_type();
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Remove File Or Directory
-	 *
-	 * Directory is deleted recursively with all of its contents (subdirectories and files).
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $path
-	 */
-	public function remove_file_or_dir( $path ) {
-		if ( is_dir( $path ) ) {
-			$this->remove_directory_with_files( $path );
-		} else {
-			unlink( $path );
-		}
 	}
 
 	/**

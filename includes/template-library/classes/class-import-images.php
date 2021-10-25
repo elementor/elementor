@@ -117,7 +117,7 @@ class Import_Images {
 		$request = wp_safe_remote_get( $attachment['url'] );
 
 		// Make sure the request returns a valid result.
-		if ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['result']['response']['code'] ) {
+		if ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['response']['code'] ) {
 			return false;
 		}
 
