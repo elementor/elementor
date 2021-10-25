@@ -323,14 +323,21 @@ export default class Element extends Marionette.CompositeView {
 
 	onItemClick( event ) {
 		const container = this.container,
-			{ model, view } = container;
+			append = event.ctrlKey || event.metaKey;
 
-		container.view.onEditRequest( {
-			model,
-			view,
-			append: event.ctrlKey || event.metaKey,
-			scrollIntoView: true,
-		} );
+		if ( append ) {
+			$e.run( 'document/elements/toggle-selection', {
+				append,
+				container,
+			} );
+		} else {
+			$e.run( 'panel/editor/open', {
+				model: container.model,
+				view: container.view,
+			} );
+
+			elementor.helpers.scrollToView( container.view.$el );
+		}
 	}
 
 	onToggleClick( event ) {
