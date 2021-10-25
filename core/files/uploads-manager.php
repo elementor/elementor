@@ -260,6 +260,35 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
+	 * Register Ajax Actions
+	 *
+	 * Runs on the 'elementor/ajax/register_actions' hook. Receives the AJAX module as a parameter and registers
+	 * callbacks for specified action IDs.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param Ajax $ajax
+	 */
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'enable_unfiltered_files_upload' ] );
+	}
+
+	/**
+	 * Set Unfiltered Files Upload
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function enable_unfiltered_files_upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		update_option( self::UNFILTERED_FILE_UPLOADS_KEY, 1 );
+	}
+
+	/**
 	 * Support Unfiltered File Uploads
 	 *
 	 * When uploading a file within Elementor, this method adds the registered
@@ -499,5 +528,8 @@ class Uploads_Manager extends Base_Object {
 		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_elementor_file_uploads' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_elementor_wp_media_upload' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }
