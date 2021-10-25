@@ -646,11 +646,15 @@ class Svg extends Base {
 			// If the svg metadata are empty or the width is empty or the height is empty.
 			// then get the attributes from xml.
 			if ( empty( $data ) || empty( $data['width'] ) || empty( $data['height'] ) ) {
-				$xml = simplexml_load_file( wp_get_attachment_url( $id ) );
-				$attr = $xml->attributes();
-				$view_box = explode( ' ', $attr->viewBox );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				$data['width'] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[2] : null );
-				$data['height'] = isset( $attr->height ) && preg_match( '/\d+/', $attr->height, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[3] : null );
+				$attachment = wp_get_attachment_url( $id );
+				$xml = simplexml_load_file( $attachment );
+
+				if ( ! empty( $xml ) ) {
+					$attr = $xml->attributes();
+					$view_box = explode( ' ', $attr->viewBox );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$data['width'] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[2] : null );
+					$data['height'] = isset( $attr->height ) && preg_match( '/\d+/', $attr->height, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[3] : null );
+				}
 			}
 		}
 
