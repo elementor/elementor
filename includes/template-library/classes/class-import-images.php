@@ -114,7 +114,14 @@ class Import_Images {
 		// Extract the file name and extension from the url.
 		$filename = basename( $attachment['url'] );
 
-		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
+		$request = wp_safe_remote_get( $attachment['url'] );
+
+		// Make sure the request returns a valid result.
+		if ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['result']['response']['code'] ) {
+			return false;
+		}
+
+		$file_content = wp_remote_retrieve_body( $request );
 
 		if ( empty( $file_content ) ) {
 			return false;
