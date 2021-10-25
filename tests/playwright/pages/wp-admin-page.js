@@ -1,4 +1,3 @@
-const { addWidget } = require( '../assets/addWidget' );
 exports.wpAdminPage = class wpAdminPage {
   /**
    * @param {import('@playwright/test').Page} page
@@ -29,11 +28,11 @@ exports.wpAdminPage = class wpAdminPage {
     } catch ( err ) {
       console.error( "Click on Elementor 'Create New Page' button failed" );
       await this.page.waitForSelector( 'text=Dashboard' );
-      await this.page.click( 'text=Pages' ),
-        await Promise.all( [
-          this.page.waitForNavigation( { url: '/wp-admin/post-new.php?post_type=page' } ),
-          this.page.click( 'div[role="main"] >> text=Add New' ),
-        ] );
+      await this.page.click( 'text=Pages' );
+      await Promise.all( [
+        this.page.waitForNavigation( { url: '/wp-admin/post-new.php?post_type=page' } ),
+        this.page.click( 'div[role="main"] >> text=Add New' ),
+      ] );
       await Promise.all( [
         this.page.waitForNavigation(),
         this.skipTutorial(),
