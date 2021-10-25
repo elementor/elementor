@@ -345,6 +345,16 @@ class Editor {
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		wp_register_script(
+			'elementor-experiments',
+			ELEMENTOR_ASSETS_URL . 'js/elementor-experiments' . $suffix . '.js',
+			[
+				'elementor-common-modules',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-editor-modules',
 			ELEMENTOR_ASSETS_URL . 'js/editor-modules' . $suffix . '.js',
 			[
@@ -479,6 +489,7 @@ class Editor {
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
+				'elementor-experiments',
 				'wp-auth-check',
 				'jquery-ui-sortable',
 				'jquery-ui-resizable',

@@ -2,7 +2,7 @@ import Component from './component';
 import WidgetContainer from './views/widget-container';
 import WidgetContainerModel from './models/widget-container-model';
 
-class NestedElementsModule extends elementorModules.editor.utils.Module {
+elementor.modules.nestedElements = new class NestedElementsModule extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'element/view', ( DefaultView, model ) => {
 			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
@@ -46,6 +46,5 @@ class NestedElementsModule extends elementorModules.editor.utils.Module {
 		// eslint-disable-next-line camelcase
 		return elementor.widgetsCache[ widgetType ]?.support_nesting;
 	}
-}
+};
 
-export default NestedElementsModule;
