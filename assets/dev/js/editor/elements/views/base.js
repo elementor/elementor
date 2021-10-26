@@ -637,7 +637,7 @@ BaseElementView = BaseContainer.extend( {
 	 * Link data to allow partial render, instead of full re-render
 	 *
 	 * How to use?
-	 *  If element which should be rendered for an setting key is known in advance, its possible to add the following attributes to the element to avoid full re-render:
+	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
 	 *  Example for repeater item:
 	 * 'data-link': 'true',                    // Enables the data link.
 	 * 'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
