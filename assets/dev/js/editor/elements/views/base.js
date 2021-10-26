@@ -639,7 +639,6 @@ BaseElementView = BaseContainer.extend( {
 	 * How to use?
 	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
 	 *  Example for repeater item:
-	 * 'data-link': 'true',                    // Enables the data link.
 	 * 'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
 	 * 'data-link-setting': 'tab_title',       // Setting key that effect the link.
 	 * 'data-link-index': tabCount,            // Index is required for repeater items.
@@ -662,7 +661,7 @@ BaseElementView = BaseContainer.extend( {
 		 */
 		self.links = [];
 
-		this.$el.find( '[data-link]' ).filter( function() {
+		this.$el.find( '[data-link-type]' ).filter( function() {
 			const $current = jQuery( this );
 
 			// To support nested links bypass nested links that are not part of the current.
