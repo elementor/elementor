@@ -502,6 +502,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
+					// The opacity property will override the default inactive dot color which is opacity 0.2.
 					'{{WRAPPER}} .swiper-pagination-bullet:not(.swiper-pagination-bullet-active)' => 'background: {{VALUE}}; opacity: 1',
 				],
 				'condition' => [
