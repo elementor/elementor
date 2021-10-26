@@ -715,6 +715,13 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
+	/**
+	 * Function renderOnChange().
+	 *
+	 * Render the changes in the settings according to the current situation.
+	 *
+	 * @param {Object} settings
+	 */
 	renderOnChange( settings ) {
 		if ( ! this.allowRender ) {
 			return;
