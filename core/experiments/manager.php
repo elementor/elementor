@@ -1,13 +1,14 @@
 <?php
-
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\Utils;
+use PHPUnit\Runner\Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -71,7 +72,7 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change', 'dependency' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
@@ -110,8 +111,15 @@ class Manager extends Base_Object {
 		if ( $feature_is_mutable && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
-			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
-				$this->on_feature_state_change( $experimental_data, $new_state );
+			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
+				try {
+					$this->on_feature_state_change( $experimental_data, $new_state );
+				} catch ( Exceptions\Dependency_Exception $e ) {
+					// Rollback.
+					update_option( $feature_option_key, wp_json_encode( $experimental_data ) );
+
+					wp_die( __( $e->getMessage() ), 403 );
+				}
 			};
 
 			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
@@ -463,8 +471,22 @@ class Manager extends Base_Object {
 			</select>
 			<p class="description"><?php echo $feature['description']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 			<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-		</div>
+			<?php $this->render_feature_dependency( $feature ); ?>
+			</div>
 		<?php
+	}
+
+	private function render_feature_dependency( $feature ) {
+		if ( ! empty( $feature['dependency'] ) ) {
+			?>
+			<div class="e-experiment__dependency">
+				<b class="e-experiment__dependency__title"><?php echo esc_html__( 'Depends on:', 'elementor' ); ?></b>
+			<?php foreach ( $feature['dependency'] as $dependency ) : ?>
+				<span class="e-experiment__dependency__item"><?php echo $dependency; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php endforeach; ?>
+			</div>
+			<?php
+		}
 	}
 
 	/**
@@ -545,13 +567,17 @@ class Manager extends Base_Object {
 	 * @param string $new_state
 	 */
 	private function on_feature_state_change( array $old_feature_data, $new_state ) {
-		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
-
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
+
+		if ( ! empty( $new_feature_data['dependency'] ) && 'active' === $new_state ) {
+			$this->validate_dependency( $new_feature_data );
+		}
 
 		$actual_old_state = $this->get_feature_actual_state( $old_feature_data );
 
 		$actual_new_state = $this->get_feature_actual_state( $new_feature_data );
+
+		$this->features[ $old_feature_data['name'] ]['state'] = $new_state;
 
 		if ( $actual_old_state === $actual_new_state ) {
 			return;
@@ -561,6 +587,18 @@ class Manager extends Base_Object {
 
 		if ( $new_feature_data['on_state_change'] ) {
 			$new_feature_data['on_state_change']( $actual_old_state, $actual_new_state );
+		}
+
+	}
+
+	private function validate_dependency( array $feature_data ) {
+		foreach ( $feature_data['dependency'] as $dependency ) {
+			$dependency_feature = $this->get_features( $dependency );
+
+			// If dependency is not active.
+			if ( 'inactive' === $dependency_feature['state'] ) {
+				throw new Exceptions\Dependency_Exception( "To turn on '{$feature_data['name']}', Experiment: '{$dependency_feature['name']}' activity is required!"  );
+			}
 		}
 	}
 
