@@ -2,13 +2,11 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\Utils;
-use PHPUnit\Runner\Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -118,7 +116,7 @@ class Manager extends Base_Object {
 					// Rollback.
 					update_option( $feature_option_key, wp_json_encode( $experimental_data ) );
 
-					wp_die( __( $e->getMessage() ), 403 );
+					wp_die( '<p>' . esc_html__( $e->getMessage(), 'elementor' ) . '</p> <p><a href="#" onclick="history.back(); return false;">' . esc_html__( 'Back', 'elementor' ) . '</a>' ); // phpcs:ignore
 				}
 			};
 
@@ -597,7 +595,7 @@ class Manager extends Base_Object {
 
 			// If dependency is not active.
 			if ( 'inactive' === $dependency_feature['state'] ) {
-				throw new Exceptions\Dependency_Exception( "To turn on '{$feature_data['name']}', Experiment: '{$dependency_feature['name']}' activity is required!"  );
+				throw new Exceptions\Dependency_Exception( "To turn on '{$feature_data['name']}', Experiment: '{$dependency_feature['name']}' activity is required!" );
 			}
 		}
 	}
