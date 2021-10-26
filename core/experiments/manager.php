@@ -113,7 +113,7 @@ class Manager extends Base_Object {
 				try {
 					$this->on_feature_state_change( $experimental_data, $new_state, $feature_option_key );
 				} catch ( Exceptions\Dependency_Exception $e ) {
-					$script = 'history.back() ';
+					$script = 'history.back()';
 					wp_die( '<p>' . esc_html__( $e->getMessage(), 'elementor' ) . '</p> <p><a href="#" onclick="' . $script .  '">' . esc_html__( 'Back', 'elementor' ) . '</a>' ); // phpcs:ignore
 				}
 			};
@@ -594,17 +594,17 @@ class Manager extends Base_Object {
 				$dependency_feature = $this->get_features( $dependency );
 
 				// If dependency is not active.
-				if ( self::STATE_ACTIVE === $dependency_feature['state'] ) {
+				if ( self::STATE_INACTIVE === $dependency_feature['state'] ) {
 					// Rollback.
 					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
 
 					throw new Exceptions\Dependency_Exception( "To turn on '{$feature_data['name']}', Experiment: '{$dependency_feature['name']}' activity is required!" );
 				}
 			}
-		} else {
+		} elseif( self::STATE_INACTIVE === $new_state ) {
 			// Validate if current feature that goes 'inactive' is not an dependency of current active feature.
 			foreach ( $this->get_features() as $feature ) {
-				if ( ! empty( $feature['dependency'] ) && in_array( $feature_data['name'] , $feature['dependency'] ) ) {
+				if ( $feature['state'] === self::STATE_ACTIVE && ! empty( $feature['dependency'] ) && in_array( $feature_data['name'] , $feature['dependency'] ) ) {
 					// Rollback.
 					update_option( $feature_option_key, self::STATE_ACTIVE );
 
