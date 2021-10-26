@@ -283,7 +283,7 @@ abstract class Module extends Base_Object {
 	final protected function enqueue_module_assets() {
 		add_action( 'elementor/common/after_register_scripts', function () {
 			wp_enqueue_script(
-				'nested-elements',
+				$this->get_name(),
 				$this->get_js_assets_url( "elementor-modules/{$this->get_name()}" ),
 				[
 					'elementor-common',
