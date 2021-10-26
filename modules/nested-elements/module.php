@@ -34,9 +34,10 @@ class Module extends \Elementor\Core\Base\Module {
 			'nested-elements',
 			$this->get_js_assets_url( 'elementor-modules/nested-elements' ),
 			[
-				'elementor-common'
+				'elementor-common',
 			],
-			ELEMENTOR_VERSION
+			ELEMENTOR_VERSION,
+			true
 		);
 
 	}
