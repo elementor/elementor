@@ -2,8 +2,8 @@ import Component from './component';
 import WidgetContainer from './views/widget-container';
 import WidgetContainerModel from './models/widget-container-model';
 
-elementor.modules.nestedElements = new class NestedElementsModule extends elementorModules.editor.utils.Module {
-	onElementorInit() {
+export default class NestedElementsModule extends elementorModules.editor.utils.Module {
+	onElementorInitComponents() {
 		elementor.hooks.addFilter( 'element/view', ( DefaultView, model ) => {
 			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
 				return WidgetContainer;
@@ -36,9 +36,7 @@ elementor.modules.nestedElements = new class NestedElementsModule extends elemen
 
 			return defaultReturn;
 		} );
-	}
 
-	onElementorInitComponents() {
 		this.component = $e.components.register( new Component() );
 	}
 
@@ -46,5 +44,5 @@ elementor.modules.nestedElements = new class NestedElementsModule extends elemen
 		// eslint-disable-next-line camelcase
 		return elementor.widgetsCache[ widgetType ]?.support_nesting;
 	}
-};
+}
 

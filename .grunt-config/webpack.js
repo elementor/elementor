@@ -100,7 +100,7 @@ const entry = {
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
-	'elementor-experiments': path.resolve( __dirname, '../core/experiments/assets/js/index.js' ),
+	'elementor-modules/nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/index.js' ),
 };
 
 const frontendEntries = {

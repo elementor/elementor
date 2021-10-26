@@ -365,8 +365,6 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.elementsColorPicker = new ElementsColorPicker();
 		}
 
-		this.nestedElements = new NestedElementsModule();
-
 		elementorCommon.elements.$window.trigger( 'elementor:init-components' );
 	}
 
