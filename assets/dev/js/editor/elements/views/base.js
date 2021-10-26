@@ -836,7 +836,9 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onDestroy() {
-		delete this.links;
+		if ( this.links ) {
+			delete this.links;
+		}
 
 		this.controlsCSSParser.removeStyleFromDocument();
 
