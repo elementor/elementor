@@ -280,6 +280,20 @@ abstract class Module extends Base_Object {
 		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
 	}
 
+	final protected function enqueue_module_assets() {
+		add_action( 'elementor/common/after_register_scripts', function () {
+			wp_enqueue_script(
+				'nested-elements',
+				$this->get_js_assets_url( "elementor-modules/{$this->get_name()}" ),
+				[
+					'elementor-common',
+				],
+				ELEMENTOR_VERSION,
+				true
+			);
+		} );
+	}
+
 	/**
 	 * Get assets base url
 	 *

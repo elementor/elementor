@@ -32,24 +32,9 @@ class Module extends \Elementor\Core\Base\Module {
 		];
 	}
 
-	private function enqueue_scripts() {
-		wp_enqueue_script(
-			'nested-elements',
-			$this->get_js_assets_url( 'elementor-modules/nested-elements' ),
-			[
-				'elementor-common',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-	}
-
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/common/after_register_scripts', function () {
-			$this->enqueue_scripts();
-		} );
+		$this->enqueue_module_assets();
 	}
 }
