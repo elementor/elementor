@@ -27,6 +27,7 @@ class Svg extends Base {
 	 * Returns the file type's file extension
 	 *
 	 * @since 3.5.0
+	 * @access public
 	 *
 	 * @return string - file extension
 	 */
@@ -40,11 +41,251 @@ class Svg extends Base {
 	 * Returns the file type's mime type
 	 *
 	 * @since 3.5.0
+	 * @access public
 	 *
 	 * @return string mime type
 	 */
 	public function get_mime_type() {
 		return 'image/svg+xml';
+	}
+
+	/**
+	 * Sanitize SVG
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param $filename
+	 * @return bool
+	 */
+	public function sanitize_svg( $filename ) {
+		$original_content = file_get_contents( $filename );
+		$is_encoded = $this->is_encoded( $original_content );
+
+		if ( $is_encoded ) {
+			$decoded = $this->decode_svg( $original_content );
+			if ( false === $decoded ) {
+				return false;
+			}
+			$original_content = $decoded;
+		}
+
+		$valid_svg = $this->sanitizer( $original_content );
+
+		if ( false === $valid_svg ) {
+			return false;
+		}
+
+		// If we were gzipped, we need to re-zip
+		if ( $is_encoded ) {
+			$valid_svg = $this->encode_svg( $valid_svg );
+		}
+		file_put_contents( $filename, $valid_svg );
+
+		return true;
+	}
+
+	/**
+	 * Validate File
+	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
+	 * @param $file
+	 * @return bool|\WP_Error
+	 */
+	public function validate_file( $file ) {
+		if ( ! $this->sanitize_svg( $file['tmp_name'] ) ) {
+			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'This file is not allowed for security reasons.', 'elementor' ) );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Sanitizer
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param $content
+	 * @return bool|string
+	 */
+	public function sanitizer( $content ) {
+		// Strip php tags
+		$content = $this->strip_comments( $content );
+		$content = $this->strip_php_tags( $content );
+		$content = $this->strip_line_breaks( $content );
+
+		// Find the start and end tags so we can cut out miscellaneous garbage.
+		$start = strpos( $content, '<svg' );
+		$end = strrpos( $content, '</svg>' );
+		if ( false === $start || false === $end ) {
+			return false;
+		}
+
+		$content = substr( $content, $start, ( $end - $start + 6 ) );
+
+		// If the server's PHP version is 8 or up, make sure to Disable the ability to load external entities
+		$php_version_under_eight = version_compare( PHP_VERSION, '8.0.0', '<' );
+		if ( $php_version_under_eight ) {
+			$libxml_disable_entity_loader = libxml_disable_entity_loader( true ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
+		}
+		// Suppress the errors
+		$libxml_use_internal_errors = libxml_use_internal_errors( true );
+
+		// Create DomDocument instance
+		$this->svg_dom = new \DOMDocument();
+		$this->svg_dom->formatOutput = false;
+		$this->svg_dom->preserveWhiteSpace = false;
+		$this->svg_dom->strictErrorChecking = false;
+
+		$open_svg = $this->svg_dom->loadXML( $content );
+		if ( ! $open_svg ) {
+			return false;
+		}
+
+		$this->strip_doctype();
+		$this->sanitize_elements();
+
+		// Export sanitized svg to string
+		// Using documentElement to strip out <?xml version="1.0" encoding="UTF-8"...
+		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
+
+		// Restore defaults
+		if ( $php_version_under_eight ) {
+			libxml_disable_entity_loader( $libxml_disable_entity_loader ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
+		}
+		libxml_use_internal_errors( $libxml_use_internal_errors );
+
+		return $sanitized;
+	}
+
+	/**
+	 * WP Prepare Attachment For J
+	 *
+	 * Runs on the `wp_prepare_attachment_for_js` filter.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param $attachment_data
+	 * @param $attachment
+	 * @param $meta
+	 *
+	 * @return mixed
+	 */
+	public function wp_prepare_attachment_for_js( $attachment_data, $attachment, $meta ) {
+		if ( 'image' !== $attachment_data['type'] || 'svg+xml' !== $attachment_data['subtype'] || ! class_exists( 'SimpleXMLElement' ) ) {
+			return $attachment_data;
+		}
+
+		$svg = self::get_inline_svg( $attachment->ID );
+
+		if ( ! $svg ) {
+			return $attachment_data;
+		}
+
+		try {
+			$svg = new \SimpleXMLElement( $svg );
+		} catch ( \Exception $e ) {
+			return $attachment_data;
+		}
+
+		$src = $attachment_data['url'];
+		$width = (int) $svg['width'];
+		$height = (int) $svg['height'];
+
+		// Media Gallery
+		$attachment_data['image'] = compact( 'src', 'width', 'height' );
+		$attachment_data['thumb'] = compact( 'src', 'width', 'height' );
+
+		// Single Details of Image
+		$attachment_data['sizes']['full'] = [
+			'height' => $height,
+			'width' => $width,
+			'url' => $src,
+			'orientation' => $height > $width ? 'portrait' : 'landscape',
+		];
+		return $attachment_data;
+	}
+
+	/**
+	 * Set Svg Meta Data
+	 *
+	 * Adds dimensions metadata to uploaded SVG files, since WordPress doesn't do it.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function set_svg_meta_data( $data, $id ) {
+		$attachment = get_post( $id ); // Filter makes sure that the post is an attachment.
+		$mime_type = $attachment->post_mime_type;
+
+		// If the attachment is an svg
+		if ( 'image/svg+xml' === $mime_type ) {
+			// If the svg metadata are empty or the width is empty or the height is empty.
+			// then get the attributes from xml.
+			if ( empty( $data ) || empty( $data['width'] ) || empty( $data['height'] ) ) {
+				$attachment = wp_get_attachment_url( $id );
+				$xml = simplexml_load_file( $attachment );
+
+				if ( ! empty( $xml ) ) {
+					$attr = $xml->attributes();
+					$view_box = explode( ' ', $attr->viewBox );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$data['width'] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[2] : null );
+					$data['height'] = isset( $attr->height ) && preg_match( '/\d+/', $attr->height, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[3] : null );
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Delete Meta Cache
+	 *
+	 * Deletes the Inline SVG post meta entry.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function delete_meta_cache() {
+		delete_post_meta_by_key( self::META_KEY );
+	}
+
+	/**
+	 * Get Inline SVG
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 * @static
+	 *
+	 * @param $attachment_id
+	 * @return bool|mixed|string
+	 */
+	public static function get_inline_svg( $attachment_id ) {
+		$svg = get_post_meta( $attachment_id, self::META_KEY, true );
+
+		if ( ! empty( $svg ) ) {
+			return $svg;
+		}
+
+		$attachment_file = get_attached_file( $attachment_id );
+
+		if ( ! $attachment_file ) {
+			return '';
+		}
+
+		$svg = file_get_contents( $attachment_file );
+
+		if ( ! empty( $svg ) ) {
+			update_post_meta( $attachment_id, self::META_KEY, $svg );
+		}
+
+		return $svg;
 	}
 
 	/**
@@ -54,6 +295,7 @@ class Svg extends Base {
 	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
 	 *
 	 * @since 3.5.0
+	 * @access private
 	 *
 	 * @param $contents
 	 *
@@ -69,9 +311,12 @@ class Svg extends Base {
 	}
 
 	/**
-	 * encode_svg
-	 * @param $content
+	 * Encode SVG
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $content
 	 * @return string
 	 */
 	private function encode_svg( $content ) {
@@ -81,7 +326,8 @@ class Svg extends Base {
 	/**
 	 * Decode SVG
 	 *
-	 * @since 2.5.0
+	 * @since 3.5.0
+	 * @access private
 	 *
 	 * @param $content
 	 *
@@ -92,9 +338,12 @@ class Svg extends Base {
 	}
 
 	/**
-	 * is_allowed_tag
-	 * @param $element
+	 * Is Allowed Tag
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $element
 	 * @return bool
 	 */
 	private function is_allowed_tag( $element ) {
@@ -113,15 +362,28 @@ class Svg extends Base {
 		return true;
 	}
 
+	/**
+	 * Remove Element
+	 *
+	 * Removes the passed element from its DomDocument tree
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $element
+	 */
 	private function remove_element( $element ) {
 		$element->parentNode->removeChild( $element ); // phpcs:ignore -- php DomDocument
 	}
 
 	/**
-	 * is_a_attribute
+	 * Is It An Attribute
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @param $name
 	 * @param $check
-	 *
 	 * @return bool
 	 */
 	private function is_a_attribute( $name, $check ) {
@@ -129,9 +391,12 @@ class Svg extends Base {
 	}
 
 	/**
-	 * is_remote_value
-	 * @param $value
+	 * Is Remote Value
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $value
 	 * @return string
 	 */
 	private function is_remote_value( $value ) {
@@ -146,9 +411,12 @@ class Svg extends Base {
 	}
 
 	/**
-	 * has_js_value
-	 * @param $value
+	 * Has JS Value
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $value
 	 * @return false|int
 	 */
 	private function has_js_value( $value ) {
@@ -156,7 +424,13 @@ class Svg extends Base {
 	}
 
 	/**
-	 * get_allowed_attributes
+	 * Get Allowed Attributes
+	 *
+	 * Returns an array of allowed tag attributes in SVG files.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @return array
 	 */
 	private function get_allowed_attributes() {
@@ -270,7 +544,13 @@ class Svg extends Base {
 	}
 
 	/**
-	 * get_allowed_elements
+	 * Get Allowed Elements
+	 *
+	 * Returns an array of allowed element tags to be in SVG files.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @return array
 	 */
 	private function get_allowed_elements() {
@@ -328,7 +608,11 @@ class Svg extends Base {
 	}
 
 	/**
-	 * validate_allowed_attributes
+	 * Validate Allowed Attributes
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @param \DOMElement $element
 	 */
 	private function validate_allowed_attributes( $element ) {
@@ -358,7 +642,11 @@ class Svg extends Base {
 	}
 
 	/**
-	 * strip_xlinks
+	 * Strip xlinks
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @param \DOMElement $element
 	 */
 	private function strip_xlinks( $element ) {
@@ -383,7 +671,11 @@ class Svg extends Base {
 	}
 
 	/**
-	 * validate_use_tag
+	 * Validate Use Tag
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @param $element
 	 */
 	private function validate_use_tag( $element ) {
@@ -394,7 +686,11 @@ class Svg extends Base {
 	}
 
 	/**
-	 * strip_docktype
+	 * Strip Doctype
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 */
 	private function strip_doctype() {
 		foreach ( $this->svg_dom->childNodes as $child ) {
@@ -405,7 +701,10 @@ class Svg extends Base {
 	}
 
 	/**
-	 * sanitize_elements
+	 * Sanitize Elements
+	 *
+	 * @since 3.5.0
+	 * @access private
 	 */
 	private function sanitize_elements() {
 		$elements = $this->svg_dom->getElementsByTagName( '*' );
@@ -433,111 +732,13 @@ class Svg extends Base {
 		}
 	}
 
-
 	/**
-	 * sanitize_svg
-	 * @param $filename
-	 *
-	 * @return bool
-	 */
-	public function sanitize_svg( $filename ) {
-		$original_content = file_get_contents( $filename );
-		$is_encoded = $this->is_encoded( $original_content );
-
-		if ( $is_encoded ) {
-			$decoded = $this->decode_svg( $original_content );
-			if ( false === $decoded ) {
-				return false;
-			}
-			$original_content = $decoded;
-		}
-
-		$valid_svg = $this->sanitizer( $original_content );
-
-		if ( false === $valid_svg ) {
-			return false;
-		}
-
-		// If we were gzipped, we need to re-zip
-		if ( $is_encoded ) {
-			$valid_svg = $this->encode_svg( $valid_svg );
-		}
-		file_put_contents( $filename, $valid_svg );
-
-		return true;
-	}
-
-	public function validate_file( $file ) {
-		if ( ! $this->sanitize_svg( $file['tmp_name'] ) ) {
-			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'This file is not allowed for security reasons.', 'elementor' ) );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Sanitizer
+	 * Strip PHP Tags
 	 *
 	 * @since 3.5.0
+	 * @access private
 	 *
-	 * @param $content
-	 *
-	 * @return bool|string
-	 */
-	public function sanitizer( $content ) {
-		// Strip php tags
-		$content = $this->strip_comments( $content );
-		$content = $this->strip_php_tags( $content );
-		$content = $this->strip_line_breaks( $content );
-
-		// Find the start and end tags so we can cut out miscellaneous garbage.
-		$start = strpos( $content, '<svg' );
-		$end = strrpos( $content, '</svg>' );
-		if ( false === $start || false === $end ) {
-			return false;
-		}
-
-		$content = substr( $content, $start, ( $end - $start + 6 ) );
-
-		// If the server's PHP version is 8 or up, make sure to Disable the ability to load external entities
-		$php_version_under_eight = version_compare( PHP_VERSION, '8.0.0', '<' );
-		if ( $php_version_under_eight ) {
-			$libxml_disable_entity_loader = libxml_disable_entity_loader( true ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
-		}
-		// Suppress the errors
-		$libxml_use_internal_errors = libxml_use_internal_errors( true );
-
-		// Create DomDocument instance
-		$this->svg_dom = new \DOMDocument();
-		$this->svg_dom->formatOutput = false;
-		$this->svg_dom->preserveWhiteSpace = false;
-		$this->svg_dom->strictErrorChecking = false;
-
-		$open_svg = $this->svg_dom->loadXML( $content );
-		if ( ! $open_svg ) {
-			return false;
-		}
-
-		$this->strip_doctype();
-		$this->sanitize_elements();
-
-		// Export sanitized svg to string
-		// Using documentElement to strip out <?xml version="1.0" encoding="UTF-8"...
-		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
-
-		// Restore defaults
-		if ( $php_version_under_eight ) {
-			libxml_disable_entity_loader( $libxml_disable_entity_loader ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated
-		}
-		libxml_use_internal_errors( $libxml_use_internal_errors );
-
-		return $sanitized;
-	}
-
-	/**
-	 * strip_php_tags
 	 * @param $string
-	 *
 	 * @return string
 	 */
 	private function strip_php_tags( $string ) {
@@ -553,9 +754,12 @@ class Svg extends Base {
 	}
 
 	/**
-	 * strip_comments
-	 * @param $string
+	 * Strip Comments
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $string
 	 * @return string
 	 */
 	private function strip_comments( $string ) {
@@ -569,137 +773,17 @@ class Svg extends Base {
 	}
 
 	/**
-	 * strip_line_breaks
-	 * @param $string
+	 * Strip Line Breaks
 	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $string
 	 * @return string
 	 */
 	private function strip_line_breaks( $string ) {
 		// Remove line breaks.
 		return preg_replace( '/\r|\n/', '', $string );
-	}
-
-	/**
-	 * WP Prepare Attachment For JS
-	 * wp_prepare_attachment_for_js
-	 *
-	 * Runs on the `wp_prepare_attachment_for_js` filter.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param $attachment_data
-	 * @param $attachment
-	 * @param $meta
-	 *
-	 * @return mixed
-	 */
-	public function wp_prepare_attachment_for_js( $attachment_data, $attachment, $meta ) {
-		if ( 'image' !== $attachment_data['type'] || 'svg+xml' !== $attachment_data['subtype'] || ! class_exists( 'SimpleXMLElement' ) ) {
-			return $attachment_data;
-		}
-
-		$svg = self::get_inline_svg( $attachment->ID );
-
-		if ( ! $svg ) {
-			return $attachment_data;
-		}
-
-		try {
-			$svg = new \SimpleXMLElement( $svg );
-		} catch ( \Exception $e ) {
-			return $attachment_data;
-		}
-
-		$src = $attachment_data['url'];
-		$width = (int) $svg['width'];
-		$height = (int) $svg['height'];
-
-		// Media Gallery
-		$attachment_data['image'] = compact( 'src', 'width', 'height' );
-		$attachment_data['thumb'] = compact( 'src', 'width', 'height' );
-
-		// Single Details of Image
-		$attachment_data['sizes']['full'] = [
-			'height' => $height,
-			'width' => $width,
-			'url' => $src,
-			'orientation' => $height > $width ? 'portrait' : 'landscape',
-		];
-		return $attachment_data;
-	}
-
-	/**
-	 * Set Svg Meta Data
-	 *
-	 * Adds dimensions metadata to uploaded SVG files, since WordPress doesn't do it.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @return mixed
-	 */
-	public function set_svg_meta_data( $data, $id ) {
-		$attachment = get_post( $id ); // Filter makes sure that the post is an attachment.
-		$mime_type = $attachment->post_mime_type;
-
-		// If the attachment is an svg
-		if ( 'image/svg+xml' === $mime_type ) {
-			// If the svg metadata are empty or the width is empty or the height is empty.
-			// then get the attributes from xml.
-			if ( empty( $data ) || empty( $data['width'] ) || empty( $data['height'] ) ) {
-				$attachment = wp_get_attachment_url( $id );
-				$xml = simplexml_load_file( $attachment );
-
-				if ( ! empty( $xml ) ) {
-					$attr = $xml->attributes();
-					$view_box = explode( ' ', $attr->viewBox );// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$data['width'] = isset( $attr->width ) && preg_match( '/\d+/', $attr->width, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[2] : null );
-					$data['height'] = isset( $attr->height ) && preg_match( '/\d+/', $attr->height, $value ) ? (int) $value[0] : ( 4 === count( $view_box ) ? (int) $view_box[3] : null );
-				}
-			}
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Delete Meta Cache
-	 *
-	 * Deletes the Inline SVG post meta entry.
-	 *
-	 * @since 3.5.0
-	 */
-	public function delete_meta_cache() {
-		delete_post_meta_by_key( self::META_KEY );
-	}
-
-	/**
-	 * Get Inline SVG
-	 *
-	 * @since 3.5.0
-	 * @param $attachment_id
-	 *
-	 * @return bool|mixed|string
-	 */
-	public static function get_inline_svg( $attachment_id ) {
-		$svg = get_post_meta( $attachment_id, self::META_KEY, true );
-
-		if ( ! empty( $svg ) ) {
-			return $svg;
-		}
-
-		$attachment_file = get_attached_file( $attachment_id );
-
-		if ( ! $attachment_file ) {
-			return '';
-		}
-
-		$svg = file_get_contents( $attachment_file );
-
-		if ( ! empty( $svg ) ) {
-			update_post_meta( $attachment_id, self::META_KEY, $svg );
-		}
-
-		return $svg;
 	}
 
 	public function __construct() {
