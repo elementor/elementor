@@ -26,6 +26,8 @@ class Module extends BaseModule {
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
 
+	const MANIFEST_ERROR_KEY = 'manifest-error';
+
 	/**
 	 * @var Export
 	 */
@@ -133,7 +135,18 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
+		$manifest_file_content = file_get_contents( $session_dir . 'manifest.json', true );
+
+		if ( ! $manifest_file_content ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		$manifest_data = json_decode( $manifest_file_content, true );
+
+		// In case that the manifest content is not a valid JSON or empty.
+		if ( ! $manifest_data ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
 
@@ -166,9 +179,9 @@ class Module extends BaseModule {
 
 		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
 
-		$this->import = new Import( $import_settings );
-
 		try {
+			$this->import = new Import( $import_settings );
+
 			if ( 1 === $import_settings['stage'] ) {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
@@ -204,7 +217,7 @@ class Module extends BaseModule {
 				'file' => base64_encode( $file ),
 			] );
 		} catch ( \Error $error ) {
-			wp_die( esc_html( $error->getMessage() ) );
+			wp_send_json_error( $error->getMessage() );
 		}
 	}
 
