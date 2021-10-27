@@ -18,6 +18,10 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return true;
 		}
 
+		if ( elementorCommon.config.experimentalFeatures[ 'e_hidden_wordpress_widgets' ] && childModel.get( 'categories' ).includes( 'wordpress' ) ) {
+			return false;
+		}
+
 		// Remove widgets from search results by 'widgets categories'.
 		const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
 			.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
