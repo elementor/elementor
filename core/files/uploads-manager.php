@@ -355,23 +355,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		$elementor_media_upload_key = 'elementor-wp-media-upload';
-
-		$is_elementor_media_upload = isset( $_POST['uploadTypeCaller'] ) && $elementor_media_upload_key === $_POST['uploadTypeCaller']; // phpcs:ignore
-
-		// If this is an Elementor AJAX request, check for the 'uploadTypeCaller' property in the request data.
-		if ( isset( $_POST['action'] ) && 'elementor_ajax' === $_POST['action'] && isset( $_POST['actions'] ) ) { // phpcs:ignore
-			$actions = json_decode( stripslashes( $_POST['actions'] ), true ); // phpcs:ignore
-
-			if (
-				isset( $actions['import_template'] )
-				&& ! empty( $actions['import_template']['data']['uploadTypeCaller'] )
-				&& $elementor_media_upload_key === $actions['import_template']['data']['uploadTypeCaller']
-			) {
-				$is_elementor_media_upload = true;
-			}
-		}
-		return $is_elementor_media_upload;
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**

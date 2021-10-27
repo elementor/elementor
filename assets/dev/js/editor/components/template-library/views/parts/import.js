@@ -43,7 +43,6 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			data: {
 				fileName: fileName,
 				fileData: fileData,
-				uploadTypeCaller: 'elementor-wp-media-upload',
 			},
 			success: ( successData ) => {
 				elementor.templates.getTemplatesCollection().add( successData );
@@ -59,6 +58,8 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				layout.hideLoadingView();
 			},
 		};
+
+		elementorCommon.ajax.addRequestConstant( 'uploadTypeCaller', 'elementor-wp-media-upload' );
 
 		elementorCommon.ajax.addRequest( 'import_template', options );
 
