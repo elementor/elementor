@@ -118,6 +118,26 @@ class Embed {
 			}
 
 			$replacements['{TIME}'] = $time_text;
+
+			/**
+			 * Handle Vimeo private videos
+			 *
+			 * Vimeo requires an additional parameter when displaying private/unlisted videos. It has two ways of
+			 * passing that parameter:
+			 * * as an endpoint - vimeo.com/{video_id}/{privacy_token}
+			 * OR
+			 * * as a GET parameter named `h` - vimeo.com/{video_id}?h={privacy_token}
+			 *
+			 * The following regex match looks for either of these methods in the Vimeo URL, and if it finds a privacy
+			 * token, it adds it to the embed params array as the `h` parameter (which is how Vimeo can receive it when
+			 * using Oembed).
+			 */
+			$h_param = [];
+			preg_match( '/(?|(?:[\?|\&]h={1})([\w]+)|\d\/([\w]+))/', $video_url, $h_param );
+
+			if ( ! empty( $h_param ) ) {
+				$embed_url_params['h'] = $h_param[1];
+			}
 		}
 
 		$embed_pattern = str_replace( array_keys( $replacements ), $replacements, $embed_pattern );

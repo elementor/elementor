@@ -93,12 +93,11 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 		}
 	}
 
-	prepareVimeoVideo( Vimeo, videoId ) {
+	prepareVimeoVideo( Vimeo, videoLink ) {
 		const elementSettings = this.getElementSettings(),
-			startTime = elementSettings.background_video_start ? elementSettings.background_video_start : 0,
 			videoSize = this.elements.$backgroundVideoContainer.outerWidth(),
 			vimeoOptions = {
-				id: videoId,
+				url: videoLink,
 				width: videoSize.width,
 				autoplay: true,
 				loop: ! elementSettings.background_play_once,
@@ -228,7 +227,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				}
 
 				if ( 'vimeo' === this.videoType ) {
-					this.prepareVimeoVideo( apiObject, videoID );
+					this.prepareVimeoVideo( apiObject, videoLink );
 				}
 			} );
 		} else {

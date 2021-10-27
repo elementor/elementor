@@ -364,7 +364,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 
 		// Keep this line before `initOnReadyComponents` call
-		Events.dispatch( this.elements.$window, 'elementor/frontend/init', null, 'elementor/frontend/init' );
+		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
 
 		this.initModules();
 

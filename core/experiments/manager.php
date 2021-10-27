@@ -8,6 +8,7 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
+use Elementor\Modules\SafeMode\Module as Safe_Mode;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -476,8 +477,8 @@ class Manager extends Base_Object {
 			?>
 		</p>
 		<?php if ( $this->get_features() ) { ?>
-		<button type="submit" class="button e-experiment__button" value="active">Activate All Experiments</button>
-		<button type="submit" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="active">Activate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
 		<?php } ?>
 		<hr>
 		<h2>
@@ -589,6 +590,10 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	private function get_feature_actual_state( array $feature ) {
+		if ( get_option( Safe_Mode::OPTION_ENABLED, '' ) ) {
+			return self::STATE_INACTIVE;
+		}
+
 		if ( self::STATE_DEFAULT !== $feature['state'] ) {
 			return $feature['state'];
 		}
