@@ -132,7 +132,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && self::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && Svg::file_sanitizer_can_run();
 
 		/**
 		 * Allow Unfiltered Files Upload.
@@ -146,19 +146,6 @@ class Uploads_Manager extends Base_Object {
 		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
 
 		return $enabled;
-	}
-
-	/**
-	 * File Sanitizer Can Run
-	 *
-	 * Checks if the classes required for the file sanitizer are in memory.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @return bool
-	 */
-	public static function file_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
 	}
 
 	/**

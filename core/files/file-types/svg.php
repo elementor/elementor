@@ -257,6 +257,21 @@ class Svg extends Base {
 	}
 
 	/**
+	 * File Sanitizer Can Run
+	 *
+	 * Checks if the classes required for the file sanitizer are in memory.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 * @static
+	 *
+	 * @return bool
+	 */
+	public static function file_sanitizer_can_run() {
+		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+	}
+
+	/**
 	 * Get Inline SVG
 	 *
 	 * @since 3.5.0
