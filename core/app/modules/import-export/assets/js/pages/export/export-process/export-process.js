@@ -10,7 +10,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ExportProcess() {
 	const { ajaxState, setAjax } = useAjax(),
-		[ errorType, setErrorType ] = useState( null ),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		onDialogDismiss = () => {

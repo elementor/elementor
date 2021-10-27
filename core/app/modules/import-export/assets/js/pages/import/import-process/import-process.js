@@ -12,7 +12,7 @@ import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
 	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ errorType, setErrorType ] = useState( null ),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),

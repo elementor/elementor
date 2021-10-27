@@ -18,7 +18,7 @@ import './import-kit.scss';
 
 export default function ImportKit() {
 	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ errorType, setErrorType ] = useState( null ),
+		[ errorType, setErrorType ] = useState( '' ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
