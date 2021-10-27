@@ -455,6 +455,15 @@ class Plugin {
 	public $upgrade;
 
 	/**
+	 * Tasks manager.
+	 *
+	 * Holds the plugin tasks manager.
+	 *
+	 * @var Core\Upgrade\Custom_Tasks_Manager
+	 */
+	public $custom_tasks;
+
+	/**
 	 * Kits manager.
 	 *
 	 * Holds the plugin kits manager.
@@ -722,6 +731,7 @@ class Plugin {
 		Tracker::init();
 
 		$this->upgrade = new Core\Upgrade\Manager();
+		$this->custom_tasks = new Core\Upgrade\Custom_Tasks_Manager();
 
 		$this->app = new Core\App\App();
 

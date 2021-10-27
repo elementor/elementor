@@ -35,12 +35,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor {
 
 	/**
-	 * The nonce key for Elementor editor.
-	 * @deprecated 2.3.0
-	 */
-	const EDITING_NONCE_KEY = 'elementor-editing';
-
-	/**
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';

@@ -640,9 +640,8 @@ class TextPath extends Widget_Base {
 		if ( 'custom' !== $settings['path'] ) {
 			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
 		} else {
-			$url = esc_url( $settings['custom_path']['url'] );
-			// Get the file contents only if it's svg.
-			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
+			$path = get_attached_file( $settings['custom_path']['id'] );
+			$path_svg = Shapes_Module::read_svg( $path );
 		}
 
 		// Add Text Path text.
