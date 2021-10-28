@@ -232,23 +232,24 @@ class Test_Manager extends Data_Test_Base {
 		$this->manager->run_server();
 		$endpoint = array_values( $controller->endpoints )[ 0 ];
 
+		$endpoint->set_test_data( 'get_items', 'valid' );
+
 		$command = $controller->get_name() . '/' . $endpoint->get_name();
 
 		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
 
 		$data = $this->manager->run_endpoint( $endpoint );
-		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
-		$this->assertEquals( $controller->get_name(), $data_controller_name );
+		$this->assertEquals( 'valid', $data );
 	}
 
 	public function test_run() {
 		$controller = $this->manager->register_controller( new ControllerWithEndpoint );
 
 		$this->manager->run_server();
-		$endpoint = array_values( $controller->endpoints )[ 0 ];
+		$index_endpoint = $controller->index_endpoint;
 
-		$data = $this->manager->run( $controller->get_name() . '/' . $endpoint->get_name() );
+		$data = $this->manager->run( $controller->get_name() . '/' . $index_endpoint->get_name() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );

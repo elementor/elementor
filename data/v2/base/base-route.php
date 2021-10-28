@@ -113,7 +113,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_items( $request ) {
-		return $this->controller->get_items( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -125,7 +125,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_item( $id, $request ) {
-		return $this->controller->get_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -148,7 +148,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function create_item( $id, $request ) {
-		return $this->controller->create_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -171,7 +171,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function update_item( $id, $request ) {
-		return $this->controller->update_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -194,7 +194,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function delete_item( $id, $request ) {
-		return $this->controller->delete_item( $request );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**

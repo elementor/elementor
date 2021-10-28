@@ -54,35 +54,6 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Controller constructor.
-	 *
-	 * Register endpoints on 'rest_api_init'.
-	 */
-	public function __construct() {
-		$this->namespace = static::get_default_namespace() . '/v' . static::get_default_version();
-		$this->rest_base = $this->get_name();
-
-		add_action( 'rest_api_init', function () {
-			$this->register(); // Because 'register' is protected.
-		} );
-
-		/**
-		 * Since all actions were removed for custom internal REST server.
-		 * Re-add the actions.
-		 */
-		add_action( 'elementor_rest_api_before_init', function () {
-			add_action( 'rest_api_init', function () {
-				$this->register();
-			} );
-		} );
-
-		$parent_name = $this->get_parent_name();
-		if ( $parent_name ) {
-			$this->act_as_sub_controller( $parent_name );
-		}
-	}
-
-	/**
 	 * Get controller name.
 	 *
 	 * @return string
@@ -93,6 +64,15 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register endpoints.
 	 */
 	public function register_endpoints() {
+	}
+
+	public function register_routes() {
+		_doing_it_wrong(
+			'Elementor\Data\V2\Controller::register_routes',
+			/* translators: %s: register_routes() */
+			sprintf( "Method '%s' deprecated. use `register_endpoints()`." , __METHOD__ ),
+			'3.5.0'
+		);
 	}
 
 	/**
@@ -186,7 +166,9 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get items args for specific endpoint.
+	 * Get items args of index endpoint.
+	 *
+	 * Is method is used when `get_collection_params()` is not enough, and need of knowing the methods is required.
 	 *
 	 * @param string $methods
 	 *
@@ -197,6 +179,17 @@ abstract class Controller extends WP_REST_Controller {
 			return $this->get_collection_params();
 		}
 
+		return [];
+	}
+
+	/**
+	 * Get item args of index endpoint.
+	 *
+	 * @param string $methods
+	 *
+	 * @return array
+	 */
+	public function get_item_args( $methods ) {
 		return [];
 	}
 
@@ -459,5 +452,34 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$this->parent->sub_controllers [] = $this;
+	}
+
+	/**
+	 * Controller constructor.
+	 *
+	 * Register endpoints on 'rest_api_init'.
+	 */
+	public function __construct() {
+		$this->namespace = static::get_default_namespace() . '/v' . static::get_default_version();
+		$this->rest_base = $this->get_name();
+
+		add_action( 'rest_api_init', function () {
+			$this->register(); // Because 'register' is protected.
+		} );
+
+		/**
+		 * Since all actions were removed for custom internal REST server.
+		 * Re-add the actions.
+		 */
+		add_action( 'elementor_rest_api_before_init', function () {
+			add_action( 'rest_api_init', function () {
+				$this->register();
+			} );
+		} );
+
+		$parent_name = $this->get_parent_name();
+		if ( $parent_name ) {
+			$this->act_as_sub_controller( $parent_name );
+		}
 	}
 }

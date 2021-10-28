@@ -542,12 +542,11 @@ class Test_Base_Route extends Data_Test_Base {
 	public function test_base_callback__ensure_unknown_exception_converted_to_default_wp_error() {
 		// Arrange.
 		$controller = new ControllerGetItemsException();
-		$controller->bypass_original_register();
 
-		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
+		$this->manager->run_server();
 
 		// Act
-		$result = $endpoint->base_callback( \WP_REST_Server::READABLE, new \WP_REST_Request(), true, [
+		$result = $controller->get_endpoint_index()->base_callback( \WP_REST_Server::READABLE, new \WP_REST_Request(), true, [
 			'is_debug' => false,
 		] );
 
