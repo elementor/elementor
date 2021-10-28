@@ -1306,7 +1306,7 @@ class Source_Local extends Source_Base {
 					printf( esc_html__( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
 				</h2>
-				<p><?php echo esc_html( $description ); ?></p>
+				<p><?php echo wp_kses_post( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
