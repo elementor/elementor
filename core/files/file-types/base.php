@@ -31,6 +31,17 @@ abstract class Base extends Base_Object {
 	abstract public function get_file_extension();
 
 	/**
+	 * Get Mime Type
+	 *
+	 * Returns the file type's mime type
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string - file extension
+	 */
+	abstract public function get_mime_type();
+
+	/**
 	 * Validate File
 	 *
 	 * This method give file types the chance to run file-type-specific validations before returning the file for upload.

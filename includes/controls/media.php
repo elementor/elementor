@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,11 +68,7 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		add_filter( 'upload_mimes', [ $this, 'support_svg_and_json_import' ], 100 );
-
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
-
-		remove_filter( 'upload_mimes', [ $this, 'support_svg_and_json_import' ], 100 );
 
 		if ( ! $settings ) {
 			$settings = [
@@ -88,14 +85,14 @@ class Control_Media extends Control_Base_Multiple {
 	 *
 	 * Called by the 'upload_mimes' filter. Adds SVG and JSON mime types to the list of WordPress' allowed mime types.
 	 *
-	 * @since 3.4.0
+	 * @since 3.4.6
+	 * @deprecated 3.5.0
 	 *
 	 * @param $mimes
 	 * @return mixed
 	 */
 	public function support_svg_and_json_import( $mimes ) {
-		$mimes['svg'] = 'image/svg+xml';
-		$mimes['json'] = 'application/json';
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
 
 		return $mimes;
 	}
