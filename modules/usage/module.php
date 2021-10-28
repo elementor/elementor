@@ -37,7 +37,7 @@ class Module extends BaseModule {
 	/**
 	 * @var \Elementor\Modules\Usage\Global_Settings_Page_Usage
 	 */
-	private $global_settings_page;
+	private $global_settings_page_usage;
 
 	/**
 	 * Get module name.
@@ -263,7 +263,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
-		$params['usages']['documents'] = $this->global_settings_page->create_from_global()->get_collection()->all();
+		$params['usages']['documents'] = $this->global_settings_page_usage->create_from_global()->get_collection()->all();
 
 		return $params;
 	}
@@ -594,7 +594,7 @@ class Module extends BaseModule {
 			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
 		}
 
-		$this->global_settings_page->add( $document )->save_global();
+		$this->global_settings_page_usage->add( $document )->save_global();
 	}
 
 	private function remove_document_usage( $document ) {
@@ -604,7 +604,7 @@ class Module extends BaseModule {
 
 		$this->remove_document_elements_from_global( $document );
 
-		$this->global_settings_page->remove( $document )->save_global();
+		$this->global_settings_page_usage->remove( $document )->save_global();
 	}
 
 	private function should_skip_document( $document ) {
@@ -642,7 +642,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->global_settings_page = new Global_Settings_Page_Usage();
+		$this->global_settings_page_usage = new Global_Settings_Page_Usage();
 
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
