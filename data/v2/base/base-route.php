@@ -206,7 +206,7 @@ abstract class Base_Route {
 		$this->register_items_route();
 	}
 
-	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
+	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
 			trigger_error( "Invalid method: '$methods'.", E_USER_ERROR ); // phpcs:ignore
 		}
@@ -218,13 +218,23 @@ abstract class Base_Route {
 			'route' => $route,
 		];
 
+		$is_multi = ! empty( $args['is_multi'] );
+
+		if ( $is_multi ) {
+			unset( $args['is_multi'] );
+		}
+
+		$callback = function ( $request ) use ( $methods, $args, $is_multi ) {
+			return $this->base_callback( $methods, $request,  $is_multi );
+		};
+
 		return register_rest_route( $this->controller->get_namespace(), $route, [
 			[
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
-				'permission_callback' => function ( $request ) {
-					return $this->get_permission_callback( $request );
+				'permission_callback' => function () {
+					return true;
 				},
 			],
 		] );
@@ -237,9 +247,9 @@ abstract class Base_Route {
 	 * @param array $args
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
-		$this->register_route( '', $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request, true );
-		}, $args );
+		$args['is_multi'] = true;
+
+		$this->register_route( '', $methods, $args );
 	}
 
 	/**
@@ -277,9 +287,7 @@ abstract class Base_Route {
 			'route' => $route,
 		];
 
-		$this->register_route( $route, $methods, function ( $request ) use ( $methods ) {
-			return $this->base_callback( $methods, $request );
-		}, $args );
+		$this->register_route( $route, $methods, $args );
 	}
 
 	/**
@@ -306,7 +314,7 @@ abstract class Base_Route {
 			'is_debug' => defined( 'WP_DEBUG' ),
 		] );
 
-		$result = [];
+		$result = new \WP_Error( 'invalid_permission_callback', 'Invalid permission.' );
 
 		if ( $this->get_permission_callback( $request ) ) {
 			try {
