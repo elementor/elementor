@@ -10,8 +10,6 @@ class Endpoint extends \Elementor\Data\V2\Base\Endpoint {
 	 */
 	public $controller;
 
-	private $endpoint_to_controller_link;
-
 	use Traits\Mock_Random_Name_Type, Traits\Mock_Items, Traits\Mock_Bypass_Register;
 
 	public function get_type() {
