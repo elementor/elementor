@@ -216,6 +216,7 @@ abstract class Controller extends WP_REST_Controller {
 		$result = false;
 
 		// The function is public since endpoint need to access it.
+		// Utilize 'WP_REST_Controller' get_permission_check methods.
 		switch ( $request->get_method() ) {
 			case 'GET':
 				$result = $is_multi ? $this->get_items_permissions_check( $request ) : $this->get_item_permissions_check( $request );

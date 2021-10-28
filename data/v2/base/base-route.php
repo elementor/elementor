@@ -218,6 +218,12 @@ abstract class Base_Route {
 			'route' => $route,
 		];
 
+		/**
+		 * Determine behaviour of `base_callback()` and `get_permission_callback()`
+		 * For calling the right method, case for each situation:
+		 * like `get_item()` or `get_items()` and such for `base_callback()`.
+		 * and `get_item_permission_callback()` or `get_items_permission_callback()` and such for `get_permission_callback()`.
+		 */
 		$is_multi = ! empty( $args['is_multi'] );
 
 		if ( $is_multi ) {
@@ -225,7 +231,7 @@ abstract class Base_Route {
 		}
 
 		$callback = function ( $request ) use ( $methods, $args, $is_multi ) {
-			return $this->base_callback( $methods, $request,  $is_multi );
+			return $this->base_callback( $methods, $request, $is_multi );
 		};
 
 		return register_rest_route( $this->controller->get_namespace(), $route, [
