@@ -13,22 +13,17 @@ export class Events {
 	 * @return {void}
 	 */
 	static dispatch( context, event, data = null, bcEvent = null ) {
-		// Get the jQuery & native scopes.
-		const isJq = ( context instanceof jQuery ),
-			nativeScope = isJq ? context[ 0 ] : context,
-			jqScope = isJq ? context : jQuery( context );
+		// Make sure to use the native context if it's a jQuery instance.
+		context = ( context instanceof jQuery ) ? context[ 0 ] : context;
 
 		// Dispatch the BC event only if exists.
 		if ( bcEvent ) {
-			// jQuery `trigger` expects an array to be passed.
-			if ( ! Array.isArray( data ) ) {
-				data = [ data ];
-			}
-
-			jqScope.trigger( bcEvent, data );
+			context.dispatchEvent( new CustomEvent( bcEvent, { detail: data } ) );
 		}
 
-		nativeScope.dispatchEvent( new CustomEvent( event, { detail: data } ) );
+		// jQuery's `.on()` listens also to native custom events, so there is no need
+		// to dispatch also a jQuery event.
+		context.dispatchEvent( new CustomEvent( event, { detail: data } ) );
 	}
 }
 
