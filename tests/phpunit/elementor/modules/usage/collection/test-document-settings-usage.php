@@ -47,15 +47,15 @@ class TestDocumentSettingsUsage extends Elementor_Test_Base {
 		$differ_count = 0;
 
 		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
-			++$differ_count;
+			$current = $collection->get( 'wp-post' );
+
+			// Assert.
+			$this->assertEquals( self::DOCUMENTS_TEST_COUNT - $differ_count, $current['background_background'] );
 
 			// Act.
 			$collection = $collection->remove( $document );
 
-			$current = $collection->get( 'wp-post' );
-	
-			// Assert.
-			$this->assertEquals( self::DOCUMENTS_TEST_COUNT - $differ_count, $current['background_background'] );
+			++$differ_count;
 		}
 
 		// Assert - Validate nothing left.
