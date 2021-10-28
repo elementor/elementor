@@ -2,13 +2,17 @@ import Component from './component';
 
 const BaseRegion = require( 'elementor-regions/base' );
 
-import NavigatorLayout from './layout';
+import ReactDOM from 'react-dom';
+import Navigator from './components/navigator';
+import ElementModel from 'elementor-elements/models/element';
 
 export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
 		this.component = $e.components.register( new Component( { manager: this } ) );
+
+		this.el = this.$el[ 0 ];
 
 		this.isDocked = false;
 		this.setSize();
@@ -90,7 +94,9 @@ export default class extends BaseRegion {
 	}
 
 	initLayout() {
-		this.show( new NavigatorLayout() );
+		this.initialModel = new ElementModel( { elements: [] } );
+
+		ReactDOM.render( <Navigator />, this.$el[ 0 ] );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

@@ -506,6 +506,16 @@ export default class EditorBase extends Marionette.Application {
 		};
 	}
 
+	activateElementSection( section ) {
+		const page = this.getPanelView().currentPageView;
+
+		page.activateSection( section );
+		page.activateTab(
+			page.getControlModel( section ).get( 'tab' )
+		);
+		page.render();
+	}
+
 	getCurrentElement() {
 		const isPreview = ( -1 !== [ 'BODY', 'IFRAME' ].indexOf( document.activeElement.tagName ) && 'BODY' === elementorFrontend.elements.window.document.activeElement.tagName );
 

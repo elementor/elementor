@@ -19,6 +19,13 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	type = false;
 
 	/**
+	 * List of event subscribers.
+	 *
+	 * @type {{}}
+	 */
+	subscribers = {};
+
+	/**
 	 * Manager constructor.
 	 *
 	 * @returns {Manager}
@@ -37,7 +44,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 						target.updateType();
 						target.updateSortable();
 						target.updatePanelPage();
-						target.updateNavigator();
 
 						return result;
 					};
@@ -88,6 +94,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			this.elements[ container.id ] = container;
 
 			container.view.select();
+
+			this.trigger( 'change', { container, state: true } );
 		}
 	}
 
@@ -111,6 +119,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			delete this.elements[ container.id ];
 
 			container.view.deselect();
+
+			this.trigger( 'change', { container, state: false } );
 		}
 	}
 
@@ -174,17 +184,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 				autoFocusSearch: false,
 			} );
 		}
-	}
-
-	/**
-	 * Update navigator selections.
-	 *
-	 * Any change in the document selected elements should be reflected in the navigator, this method is responsible for
-	 * updating the navigator.
-	 */
-	updateNavigator() {
-		elementor.navigator.getLayout()
-			.elements.currentView.recursiveChildInvoke( 'updateSelection' );
 	}
 
 	/**
