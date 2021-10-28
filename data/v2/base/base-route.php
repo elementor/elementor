@@ -316,8 +316,10 @@ abstract class Base_Route {
 
 		$result = new \WP_Error( 'invalid_permission_callback', 'Invalid permission.' );
 
-		if ( $this->get_permission_callback( $request ) ) {
-			try {
+		$request->set_param( 'is_multi', $is_multi );
+
+		try {
+			if ( $this->get_permission_callback( $request ) ) {
 				switch ( $methods ) {
 					case WP_REST_Server::READABLE:
 						$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
@@ -335,23 +337,23 @@ abstract class Base_Route {
 						$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
 						break;
 				}
-			} catch ( Data_Exception $e ) {
-				$result = $e->to_wp_error();
-			} catch ( \Exception $e ) {
-				if ( empty( $args['is_debug'] ) ) {
-					$result = ( new Error_500() )->to_wp_error();
-				} else {
-					// For frontend.
-					$exception_mapping = [
-						'trace' => $e->getTrace(),
-						'file' => $e->getFile(),
-						'line' => $e->getLine(),
-					];
+			}
+		} catch ( Data_Exception $e ) {
+			$result = $e->to_wp_error();
+		} catch ( \Exception $e ) {
+			if ( empty( $args['is_debug'] ) ) {
+				$result = ( new Error_500() )->to_wp_error();
+			} else {
+				// For frontend.
+				$exception_mapping = [
+					'trace' => $e->getTrace(),
+					'file' => $e->getFile(),
+					'line' => $e->getLine(),
+				];
 
-					$e->debug = $exception_mapping;
+				$e->debug = $exception_mapping;
 
-					$result = ( new Data_Exception( $e->getMessage(), $e->getCode(), $e ) )->to_wp_error();
-				}
+				$result = ( new Data_Exception( $e->getMessage(), $e->getCode(), $e ) )->to_wp_error();
 			}
 		}
 

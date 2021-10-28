@@ -31,4 +31,8 @@ class Controller extends Base_Controller {
 			'data' => $data->values(),
 		];
 	}
+
+	public function get_permission_callback( $request ) {
+		return current_user_can( 'administrator' );
+	}
 }

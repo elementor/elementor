@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\V2\Base;
 
+use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 use Elementor\Data\V2\Manager;
 use WP_REST_Controller;
 
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * TODO: Utilize 'WP_REST_Controller' as much as possible.
  */
 abstract class Controller extends WP_REST_Controller {
+
 	/**
 	 * Loaded endpoint(s).
 	 *
@@ -69,7 +71,7 @@ abstract class Controller extends WP_REST_Controller {
 		 * Re-add the actions.
 		 */
 		add_action( 'elementor_rest_api_before_init', function () {
-			add_action( 'rest_api_init', function() {
+			add_action( 'rest_api_init', function () {
 				$this->register();
 			} );
 		} );
@@ -90,7 +92,8 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Register endpoints.
 	 */
-	public function register_endpoints() {}
+	public function register_endpoints() {
+	}
 
 	/**
 	 * Get parent controller name.
@@ -202,25 +205,74 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * Default controller permission callback.
 	 * By default endpoint will inherit the permission callback from the controller.
-	 * By default permission is `current_user_can( 'administrator' );`.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return bool
 	 */
 	public function get_permission_callback( $request ) {
+		$is_multi = (bool) $request->get_param( 'is_multi' );
+
+		$result = false;
+
 		// The function is public since endpoint need to access it.
 		switch ( $request->get_method() ) {
 			case 'GET':
+				$result = $is_multi ? $this->get_items_permissions_check( $request ) : $this->get_item_permissions_check( $request );
+				break;
 			case 'POST':
+				$result = $is_multi ? $this->create_items_permissions_check( $request ) : $this->create_item_permissions_check( $request );
+				break;
 			case 'UPDATE':
 			case 'PUT':
-			case 'DELETE':
 			case 'PATCH':
-				return current_user_can( 'administrator' );
+				$result = $is_multi ? $this->update_items_permissions_check( $request ) : $this->update_item_permissions_check( $request );
+				break;
+
+			case 'DELETE':
+				$result = $is_multi ? $this->delete_items_permissions_check( $request ) : $this->delete_item_permissions_check( $request );
+				break;
 		}
 
-		return false;
+		if ( $result instanceof \WP_Error ) {
+			throw new WP_Error_Exception( $result );
+		}
+
+		return current_user_can( 'administrator' );
+	}
+
+	/**
+	 * Checks if a given request has access to create items.
+	 **
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to create items, WP_Error object otherwise.
+	 */
+	public function create_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+	}
+
+	/**
+	 * Checks if a given request has access to update items.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to update the item, WP_Error object otherwise.
+	 */
+	public function update_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+	}
+
+	/**
+	 * Checks if a given request has access to delete items.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to delete the item, WP_Error object otherwise.
+	 */
+	public function delete_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	public function get_items( $request ) {
@@ -307,6 +359,7 @@ abstract class Controller extends WP_REST_Controller {
 	protected function register_index_endpoint() {
 		if ( ! $this->parent ) {
 			$this->register_endpoint( new Endpoint\Index( $this ) );
+
 			return;
 		}
 
