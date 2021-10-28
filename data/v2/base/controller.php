@@ -239,7 +239,7 @@ abstract class Controller extends WP_REST_Controller {
 			throw new WP_Error_Exception( $result );
 		}
 
-		return current_user_can( 'administrator' );
+		return $result;
 	}
 
 	/**
