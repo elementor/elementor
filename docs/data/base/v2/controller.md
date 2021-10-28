@@ -15,7 +15,7 @@
 	| `Controller::get_controller_index()`    |                                | `WP_REST_Response` or `WP_Error`               | Retrieves rest route(s) index for current controller.
 	| `Controller::get_items_args()`          | `string` $methods              | `Array`                                        | Get items args of index endpoint to be registered, for `GET` by default will return `$this->get_collection_params()` 
 	| `Controller::get_item_args()`           | `string` $methods              | `Array`                                        | Get item args of index endpoint to be registered.
-	| `Controller::get_permission_callback()` |  `WP_REST_Request` $request    | `Boolean`                                      | Return args of of items route for each method, (Default args for `Base\Endpoint\Index`). 
+	| `Controller::get_permission_callback()` |  `WP_REST_Request` $request    | `Boolean`                                      | Retrieves the state of should this request allow to run.
 	| `Controller::get_items()`               |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to get all the items. By defaults returns `Controller::get_controller_index` (Extendable).
 	| `Controller::get_item()`                |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to get one item (Must be extended).
 	| `Controller::create_items()`            |  `WP_REST_Request` $request    | `WP_REST_Response` or `WP_Error`               | Method to create items (Must be extended).
