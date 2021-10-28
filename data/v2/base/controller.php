@@ -68,7 +68,7 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	public function register_routes() {
-		_doing_it_wrong( 'Elementor\Data\V2\Controller::register_routes', printf( "Method '%s' deprecated. use `register_endpoints()`.", __METHOD__ ), '3.5.0' );
+		_doing_it_wrong( 'Elementor\Data\V2\Controller::register_routes', sprintf( "Method '%s' deprecated. use `register_endpoints()`.", __METHOD__ ), '3.5.0' );
 	}
 
 	/**
