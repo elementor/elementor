@@ -1,4 +1,4 @@
-module.exports = class FooterSaver extends Marionette.Behavior {
+module.exports = class ResponsiveBarSaver extends Marionette.Behavior {
 	previewWindow = null;
 
 	ui() {
@@ -26,8 +26,8 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			this.setLastEdited( document.config.last_edited );
 		} );
 
-		// TODO: Temp, footerSaver should be removed.
-		$e.components.get( 'document/save' ).footerSaver = this;
+		// TODO: Temp, ResponsiveBarSaver should be removed.
+		$e.components.get( 'document/save' ).responsiveBarSaver = this;
 	}
 
 	activateSaveButtons( document, status ) {
@@ -106,7 +106,6 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			$button.tipsy( {
 				// `n` for down, `s` for up
 				gravity: 'n',
-				html: true,
 				offset: $button.data( 'tooltip-offset' ),
 				title() {
 					return this.getAttribute( 'data-tooltip' );

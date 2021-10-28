@@ -11,16 +11,6 @@ export default class View extends Marionette.ItemView {
 		const prefix = '#' + this.id();
 
 		return {
-			//actions
-			wpDashboard: '#elementor-panel-footer-sub-menu-item-wp-dashboard', //
-			themeBuilder: '#elementor-panel-footer-sub-menu-item-theme-builder',
-			addWidgets: '#elementor-panel-footer-add-widgets', //
-			pageSettings: '#elementor-panel-footer-sub-menu-item-page-settings', //
-			siteSettings: '#elementor-panel-footer-sub-menu-item-site-settings', //
-			preferences: '#elementor-panel-footer-sub-menu-item-preferences', //
-			keyboardShortcuts: '#elementor-panel-footer-sub-menu-item-keyboard-shortcuts', //
-			//view
-			menuButtons: '.elementor-panel-footer-tool',
 			switcherInput: '.e-responsive-bar-switcher__option input',
 			switcherLabel: '.e-responsive-bar-switcher__option',
 			switcher: prefix + '-switcher',
@@ -31,28 +21,11 @@ export default class View extends Marionette.ItemView {
 			scaleMinusButton: prefix + '-scale__minus',
 			scaleResetButton: prefix + '-scale__reset',
 			breakpointSettingsButton: prefix + '__settings-button',
-			//actions
-			buttonPreview: '#elementor-panel-footer-saver-preview',
-			settings: '#elementor-panel-footer-page-settings',
-			saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
-			history: '#elementor-panel-footer-history',
-			navigator: '#elementor-panel-footer-navigator',
-			finder: '#elementor-panel-footer-finder',
 		};
 	}
 
 	events() {
 		return {
-			//actions
-			'click @ui.themeBuilder': 'onThemeBuilderClick',
-			'click @ui.wpDashboard': 'onWpDashboardClick',
-			'click @ui.addWidgets': 'onAddWidgetsClick',
-			'click @ui.pageSettings': 'onPageSettingsClick',
-			'click @ui.siteSettings': 'onSiteSettingsClick',
-			'click @ui.preferences': 'onPreferencesClick',
-			'click @ui.keyboardShortcuts': 'onKeyboardShortcutsClick',
-			//view
-			'click @ui.menuButtons': 'onMenuButtonsClick',
 			'change @ui.switcherInput': 'onBreakpointSelected',
 			'input @ui.sizeInputWidth': 'onSizeInputChange',
 			'input @ui.sizeInputHeight': 'onSizeInputChange',
@@ -60,25 +33,7 @@ export default class View extends Marionette.ItemView {
 			'click @ui.scaleMinusButton': 'onScaleMinusButtonClick',
 			'click @ui.scaleResetButton': 'onScaleResetButtonClick',
 			'click @ui.breakpointSettingsButton': 'onBreakpointSettingsOpen',
-			//actions
-			'click @ui.buttonPreview': 'onClickButtonPreview',
-			'click @ui.settings': 'onSettingsClick',
-			'click @ui.saveTemplate': 'onSaveTemplateClick',
-			'click @ui.history': 'onHistoryClick',
-			'click @ui.navigator': 'onNavigatorClick',
-			'click @ui.finder': 'onFinderClick',
-
 		};
-	}
-
-	behaviors() {
-		var behaviors = {
-			saver: {
-				behaviorClass: elementor.modules.components.saver.behaviors.FooterSaver,
-			},
-		};
-
-		return elementor.hooks.applyFilters( 'panel/footer/behaviors', behaviors, this );
 	}
 
 	initialize() {
@@ -87,17 +42,17 @@ export default class View extends Marionette.ItemView {
 		this.listenTo( elementor.channels.deviceMode, 'close', this.resetScale );
 	}
 
-	// addTipsyToIconButtons() {
-	// 	this.ui.switcherLabel.add( this.ui.breakpointSettingsButton ).tipsy(
-	// 		{
-	// 			html: true,
-	// 			gravity: 'n',
-	// 			title() {
-	// 				return jQuery( this ).data( 'tooltip' );
-	// 			},
-	// 		}
-	// 	);
-	// }
+	addTipsyToIconButtons() {
+		this.ui.switcherLabel.add( this.ui.breakpointSettingsButton ).tipsy(
+			{
+				html: true,
+				gravity: 'n',
+				title() {
+					return jQuery( this ).data( 'tooltip' );
+				},
+			}
+		);
+	}
 
 	restoreLastValidPreviewSize() {
 		const lastSize = elementor.channels.responsivePreview.request( 'size' );
@@ -151,7 +106,7 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onRender() {
-		// this.addTipsyToIconButtons();
+		this.addTipsyToIconButtons();
 		this.setScalePercentage();
 	}
 
@@ -159,8 +114,8 @@ export default class View extends Marionette.ItemView {
 		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
 			$currentDeviceSwitcherInput = this.ui.switcherInput.filter( '[value=' + currentDeviceMode + ']' );
 
-		this.ui.switcherLabel.attr( 'aria-selected', false ).removeClass( 'active' );
-		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true ).addClass( 'active' );
+		this.ui.switcherLabel.attr( 'aria-selected', false );
+		$currentDeviceSwitcherInput.closest( 'label' ).attr( 'aria-selected', true );
 
 		if ( ! $currentDeviceSwitcherInput.prop( 'checked' ) ) {
 			$currentDeviceSwitcherInput.prop( 'checked', true );
@@ -260,76 +215,5 @@ export default class View extends Marionette.ItemView {
 
 	onScaleResetButtonClick() {
 		this.resetScale();
-	}
-
-	onMenuButtonsClick( event ) {
-		var $tool = jQuery( event.currentTarget );
-
-		// If the tool is not toggleable or the click is inside of a tool
-		if ( ! $tool.hasClass( 'elementor-toggle-state' ) || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) {
-			return;
-		}
-
-		var isOpen = $tool.hasClass( 'elementor-open' );
-
-		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
-
-		if ( ! isOpen ) {
-			$tool.addClass( 'elementor-open' );
-		}
-	}
-
-	onClickButtonPreview() {
-		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
-	}
-
-	onSettingsClick() {
-		$e.route( 'panel/page-settings/settings' );
-	}
-
-	onSaveTemplateClick() {
-		$e.route( 'library/save-template' );
-	}
-
-	onHistoryClick() {
-		$e.route( 'panel/history/actions' );
-	}
-
-	onNavigatorClick() {
-		$e.run( 'navigator/toggle' );
-	}
-
-	onFinderClick() {
-		$e.route( 'finder' );
-	}
-
-	onThemeBuilderClick() {
-		$e.run( 'app/open' );
-	}
-
-	onWpDashboardClick() {
-		window.location.href = elementor.config.document.urls.exit_to_dashboard;
-	}
-
-	onAddWidgetsClick() {
-		$e.route( 'panel/elements/categories' );
-	}
-
-	onPageSettingsClick() {
-		$e.route( 'panel/page-settings/settings' );
-	}
-
-	onSiteSettingsClick() {
-		$e.run( 'panel/global/open', {
-			route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
-		} );
-	}
-
-	onPreferencesClick() {
-		$e.route( 'panel/editor-preferences' );
-	}
-
-	onKeyboardShortcutsClick() {
-		$e.route( 'shortcuts' );
 	}
 }

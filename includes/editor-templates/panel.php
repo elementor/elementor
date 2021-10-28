@@ -74,18 +74,6 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<i class="eicon-history" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only">
-			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
-		</span>
-	</div>
-	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
-		<span id="elementor-panel-footer-saver-preview-label">
-			<i class="eicon-preview-medium" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Preview Changes', 'elementor' ); ?></span>
-		</span>
-	</div>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
 		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-disabled">
 			<span class="elementor-state-icon">

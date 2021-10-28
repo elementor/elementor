@@ -82,6 +82,13 @@ export default class EditorBase extends Marionette.Application {
 				$elementsToHide.removeClass( 'elementor-open' );
 			},
 		},
+		// ResponsiveBarActionsSubMenus: {
+		// 	element: '.elementor-panel-footer-tool.elementor-toggle-state',
+		// 	ignore: '.elementor-panel-footer-tool.elementor-toggle-state, #elementor-panel-saver-button-publish-label',
+		// 	callback: ( $elementsToHide ) => {
+		// 		$elementsToHide.removeClass( 'elementor-open' );
+		// 	},
+		// },
 		panelResponsiveSwitchers: {
 			element: '.elementor-control-responsive-switchers',
 			callback: ( $elementsToHide ) => {

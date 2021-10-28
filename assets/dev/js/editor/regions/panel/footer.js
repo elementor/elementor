@@ -8,18 +8,16 @@ module.exports = Marionette.ItemView.extend( {
 	possibleRotateModes: [ 'portrait', 'landscape' ],
 
 	ui: {
-		menuButtons: '.elementor-panel-footer-tool',
-		settings: '#elementor-panel-footer-settings',
-		deviceModeIcon: '#elementor-panel-footer-responsive > i',
+		// menuButtons: '.elementor-panel-footer-tool',
+		// settings: '#elementor-panel-footer-settings',
 		saveTemplate: '#elementor-panel-footer-sub-menu-item-save-template',
 		history: '#elementor-panel-footer-history',
 		navigator: '#elementor-panel-footer-navigator',
 	},
 
 	events: {
-		'click @ui.menuButtons': 'onMenuButtonsClick',
+		// 'click @ui.menuButtons': 'onMenuButtonsClick',
 		'click @ui.settings': 'onSettingsClick',
-		'click @ui.deviceModeIcon': 'onDeviceModeIconClick',
 		'click @ui.saveTemplate': 'onSaveTemplateClick',
 		'click @ui.history': 'onHistoryClick',
 		'click @ui.navigator': 'onNavigatorClick',
@@ -91,43 +89,26 @@ module.exports = Marionette.ItemView.extend( {
 		$e.route( 'panel/page-settings/settings' );
 	},
 
-	onMenuButtonsClick: function( event ) {
-		var $tool = jQuery( event.currentTarget );
+	// onMenuButtonsClick: function( event ) {
+	// 	var $tool = jQuery( event.currentTarget );
 
-		// If the tool is not toggleable or the click is inside of a tool
-		if ( ! $tool.hasClass( 'elementor-toggle-state' ) || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) {
-			return;
-		}
+	// 	// If the tool is not toggleable or the click is inside of a tool
+	// 	if ( ! $tool.hasClass( 'elementor-toggle-state' ) || jQuery( event.target ).closest( '.elementor-panel-footer-sub-menu-item' ).length ) {
+	// 		return;
+	// 	}
 
-		var isOpen = $tool.hasClass( 'elementor-open' );
+	// 	var isOpen = $tool.hasClass( 'elementor-open' );
 
-		this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
+	// 	this.ui.menuButtons.not( '.elementor-leave-open' ).removeClass( 'elementor-open' );
 
-		if ( ! isOpen ) {
-			$tool.addClass( 'elementor-open' );
-		}
-	},
+	// 	if ( ! isOpen ) {
+	// 		$tool.addClass( 'elementor-open' );
+	// 	}
+	// },
 
-	onSettingsClick: function() {
-		$e.route( 'panel/page-settings/settings' );
-	},
-
-	onDeviceModeIconClick: function() {
-		if ( elementor.isDeviceModeActive() ) {
-			elementor.changeDeviceMode( 'desktop' );
-
-			// Force exit if device mode is already desktop
-			elementor.exitDeviceMode();
-		} else {
-			const deviceView = 'default' === elementor.getPreferences( 'default_device_view' ) ? 'desktop' : elementor.getPreferences( 'default_device_view' );
-
-			elementor.changeDeviceMode( deviceView );
-
-			if ( 'desktop' === deviceView ) {
-				elementor.enterDeviceMode();
-			}
-		}
-	},
+	// onSettingsClick: function() {
+	// 	$e.route( 'panel/page-settings/settings' );
+	// },
 
 	onSaveTemplateClick: function() {
 		$e.route( 'library/save-template' );
