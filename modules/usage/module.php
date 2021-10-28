@@ -35,7 +35,7 @@ class Module extends BaseModule {
 	private $is_document_saving = false;
 
 	/**
-	 * @var \Elementor\Modules\Usage\G
+	 * @var \Elementor\Modules\Usage\Global_Settings_Page_Usage
 	 */
 	private $global_settings_page;
 
