@@ -219,10 +219,11 @@ abstract class Base_Route {
 		];
 
 		/**
-		 * Determine behaviour of `base_callback()` and `get_permission_callback()`
-		 * For calling the right method, case for each situation:
-		 * like `get_item()` or `get_items()` and such for `base_callback()`.
-		 * and `get_item_permission_callback()` or `get_items_permission_callback()` and such for `get_permission_callback()`.
+		 * Determine behaviour of `base_callback()` and `get_permission_callback()`:
+		 * For `base_callback()` which applying the action.
+		 * if it's a one item request will call 'get_item(),create_item(),update_item(), delete_item().).
+		 * if it's a multi item request will call 'get_items(),create_items(),update_items(), delete_items().).
+		 * The `get_permission_callback()` also effected in the same terms eg: `get_item_permission_callback()` or `get_items_permission_callback()`.
 		 */
 		$is_multi = ! empty( $args['is_multi'] );
 
