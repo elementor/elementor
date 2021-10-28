@@ -11,82 +11,52 @@ class TestDocumentSettingsUsage extends Elementor_Test_Base {
 		'hide_title' => 'yes',
 	];
 
-	/**
-	 * @param DocumentSettingsUsage $usage
-	 *
-	 * @return array new documents
-	 */
-	private function add_mock_documents( $usage ) {
-		$documents = [];
+	private function create_document() {
+		$document = $this->factory()->create_post();
+		$document->save( [
+			'settings' => self::DOCUMENT_TEST_SETTINGS,
+		] );
 
-		for ( $i = 0; $i < self::DOCUMENTS_TEST_COUNT; ++$i ) {
-			$document = $this->factory()->create_post();
-			$document->save( [
-				'settings' => self::DOCUMENT_TEST_SETTINGS,
-			] );
-
-			$documents [] = $document;
-
-			$usage->add( $document );
-		}
-
-		return $documents;
+		return $document;
 	}
 
 	public function test_add() {
 		// Arrange.
-		$usage = DocumentSettingsUsage::create();
+		$collection = new DocumentSettingsUsage( [] );
 
-		// Act.
-		$this->add_mock_documents( $usage );
-		$usage = $usage->get( 'wp-post' );
+		$document = $this->create_document();
 
-		// Assert.
-		$this->assertCount( self::DOCUMENTS_TEST_COUNT, $usage );
-
-		foreach ( $usage as $setting_key => $setting_count ) {
-			$this->arrayHasKey( $setting_key, self::DOCUMENT_TEST_SETTINGS );
-			$this->assertEquals( self::DOCUMENTS_TEST_COUNT, $setting_count );
+		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
+			$collection = $collection->add( $document );
 		}
+
+		// Ensure collection added.
+		$this->assertEquals( self::DOCUMENTS_TEST_COUNT, $collection->get( 'wp-post' )['background_background'] );
 	}
 
 	public function test_remove() {
 		// Arrange.
-		$usage = DocumentSettingsUsage::create();
+		$collection = new DocumentSettingsUsage( [] );
 
-		$documents = $this->add_mock_documents( $usage );
+		$document = $this->create_document();
+
+		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
+			$collection = $collection->add( $document );
+		}
 
 		$differ_count = 0;
 
-		// Act.
-		foreach ( $documents as $document ) {
+		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
+			++$differ_count;
+
+			// Act.
+			$collection = $collection->remove( $document );
 
 			// Assert.
-			foreach ( $usage->get( 'wp-post' ) as $setting_key => $setting_count ) {
-				$this->assertEquals( self::DOCUMENTS_TEST_COUNT - $differ_count, $setting_count );
-			}
-
-			$usage->remove( $document );
-
-			$differ_count++;
+			$this->assertEquals( self::DOCUMENTS_TEST_COUNT - $differ_count, $collection->get( 'wp-post' )['background_background'] );
 		}
 
 		// Assert - Validate nothing left.
-		$this->assertEmpty( $usage->get('wp-post') );
-	}
-
-	public function test_save() {
-		// Arrange.
-		$usage = DocumentSettingsUsage::create();
-
-		$this->add_mock_documents( $usage );
-
-		// Act.
-		$usage->save();
-
-		// Assert.
-		$this->assertCount( self::DOCUMENTS_TEST_COUNT,
-			DocumentSettingsUsage::create()->get( 'wp-post' )
-		);
+		$this->assertEmpty( $collection->get('wp-post' ) );
 	}
 }

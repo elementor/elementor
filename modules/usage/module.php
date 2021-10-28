@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Modules\System_Info\Module as System_Info;
+use Elementor\Modules\Usage\Global_Settings_Page_Usage;
 use Elementor\Modules\Usage\Collection\DocumentSettingsUsage;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -32,6 +33,11 @@ class Module extends BaseModule {
 	 * @var bool
 	 */
 	private $is_document_saving = false;
+
+	/**
+	 * @var \Elementor\Modules\Usage\G
+	 */
+	private $global_settings_page;
 
 	/**
 	 * Get module name.
@@ -257,7 +263,7 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
-		$params['usages']['documents'] = DocumentSettingsUsage::create()->all();
+		$params['usages']['documents'] = $this->global_settings_page->create_from_global()->get_collection()->all();
 
 		return $params;
 	}
@@ -588,7 +594,7 @@ class Module extends BaseModule {
 			$this->add_document_elements_to_global( $document->get_name(), $elements_usage );
 		}
 
-		DocumentSettingsUsage::create()->add( $document )->save();
+		$this->global_settings_page->add( $document )->save_global();
 	}
 
 	private function remove_document_usage( $document ) {
@@ -598,7 +604,7 @@ class Module extends BaseModule {
 
 		$this->remove_document_elements_from_global( $document );
 
-		DocumentSettingsUsage::create()->remove( $document )->save();
+		$this->global_settings_page->remove( $document )->save_global();
 	}
 
 	private function should_skip_document( $document ) {
@@ -635,6 +641,8 @@ class Module extends BaseModule {
 		if ( ! Tracker::is_allow_track() ) {
 			return;
 		}
+
+		$this->global_settings_page = new Global_Settings_Page_Usage();
 
 		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
 		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );

@@ -60,33 +60,9 @@ class DocumentSettingsUsage extends Collection {
 			}
 
 			$this->clear_empty_recursive();
-
-			$document->delete_meta( Module::DOCUMENT_META_KEY );
 		}
 
 		return new static( $this->all() );
-	}
-
-	/**
-	 * Save, saves the current collection using `update_option`.
-	 *
-	 * @return $this
-	 */
-	public function save() {
-		update_option( Module::DOCUMENT_OPTION_NAME, $this->all(), false );
-
-		return new static( $this->all() );
-	}
-
-	/**
-	 * Create new collection from 'get_option' of global document settings usage.
-	 *
-	 * Cannot be called 'instance' since its create new instance and not singleton.
-	 *
-	 * @return $this
-	 */
-	public static function create() {
-		return new static( get_option( Module::DOCUMENT_OPTION_NAME, [] ) );
 	}
 
 	/**
