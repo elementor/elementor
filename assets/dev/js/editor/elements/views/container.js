@@ -3,13 +3,45 @@ import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	ColumnEmptyView = require( 'elementor-elements/views/column-empty' );
+import ContainerEmpty from './container-empty';
 
+const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 
-	emptyView: ColumnEmptyView,
+	getEmptyView: function() {
+		const self = this;
+
+		return class ContainerItemEmptyView extends Marionette.ItemView {
+			template = '<div></div>';
+
+			className = 'elementor-empty-view';
+
+			renderReactDefaultElement( container ) {
+				const DefaultElement = <ContainerEmpty container={container} />;
+
+				ReactDOM.render( elementor.hooks.applyFilters( 'elementor/editor/container/empty/render', DefaultElement, container ), this.el );
+			}
+
+			attachElContent( html ) {
+				const result = super.attachElContent( html );
+
+				result.$el.addClass( this.className );
+
+				if ( self.container?.isEmptyRender ) {
+					return this.renderReactDefaultElement( self.container );
+				}
+
+				self.once( 'container:created', () => {
+					this.renderReactDefaultElement( self.container );
+
+					self.container.isEmptyRender = true;
+				} );
+
+				return result;
+			}
+		};
+	},
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',

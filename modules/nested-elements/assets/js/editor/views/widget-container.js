@@ -1,6 +1,5 @@
 const BaseElementView = require( 'elementor-elements/views/base' ),
 	WidgetView = require( 'elementor-elements/views/widget' );
-
 /**
  * @extends {BaseElementView}
  */

@@ -36,23 +36,9 @@ class NestedTabs extends Widget_Container_Base {
 		return [
 			[
 				'elType' => 'container',
-				'elements' => [
-					'elType' => 'widget',
-					'widgetType' => 'heading',
-					'settings' => [
-						'title' => esc_html__( 'Tab 1.', 'elementor' ),
-					],
-				],
 			],
 			[
 				'elType' => 'container',
-				'elements' => [
-					'elType' => 'widget',
-					'widgetType' => 'heading',
-					'settings' => [
-						'title' => esc_html__( 'Tab 2.', 'elementor' ),
-					],
-				],
 			],
 		];
 	}

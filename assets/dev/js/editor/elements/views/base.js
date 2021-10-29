@@ -644,7 +644,7 @@ BaseElementView = BaseContainer.extend( {
 	 * 'data-link-index': tabCount,            // Index is required for repeater items.
 	 *
 	 * Current Limitation:
-	 * Not working with dynamics or globals, those will required full re-render.
+	 * Not working with dynamics, will required full re-render.
 	 * Working only with repeater items.
 	 */
 	linksData() {
