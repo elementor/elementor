@@ -23,7 +23,7 @@ trait Button_Trait {
 	 *
 	 * Retrieve an array of button sizes for the button widget.
 	 *
-	 * @since 1.0.0
+	 * @since 3.4.0
 	 * @access public
 	 * @static
 	 *
@@ -246,6 +246,7 @@ trait Button_Trait {
 					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
 				],
 				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -254,15 +255,19 @@ trait Button_Trait {
 			[
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
 			]
 		);
 
-		$this->start_controls_tabs( 'tabs_button_style' );
+		$this->start_controls_tabs( 'tabs_button_style', [
+			'condition' => $args['section_condition'],
+		] );
 
 		$this->start_controls_tab(
 			'tab_button_normal',
 			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -275,6 +280,7 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -296,6 +302,7 @@ trait Button_Trait {
 						],
 					],
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -305,6 +312,7 @@ trait Button_Trait {
 			'tab_button_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -317,6 +325,7 @@ trait Button_Trait {
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -333,6 +342,7 @@ trait Button_Trait {
 						'default' => 'classic',
 					],
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -347,6 +357,7 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -355,6 +366,7 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -368,6 +380,7 @@ trait Button_Trait {
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'separator' => 'before',
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -380,6 +393,7 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -388,6 +402,7 @@ trait Button_Trait {
 			[
 				'name' => 'button_box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -401,6 +416,7 @@ trait Button_Trait {
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 				'separator' => 'before',
+				'condition' => $args['section_condition'],
 			]
 		);
 	}
