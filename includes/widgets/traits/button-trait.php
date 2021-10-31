@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Button_Trait {
-
 	/**
 	 * Get button sizes.
 	 *
