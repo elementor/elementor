@@ -11,5 +11,5 @@
 		skewX( var( --e-transform-skewX, 0 ) )
 		skewY( var( --e-transform-skewY, 0 ) );
 	transform-origin: var( --e-transform-origin-y )  var( --e-transform-origin-x );
-	transition: transform var( --e-transform-transition-duration, 1500ms );
+	transition: transform var( --e-transform-transition-duration, 400ms );
 }
