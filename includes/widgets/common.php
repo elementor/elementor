@@ -46,6 +46,65 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * Get Responsive Device Args
+	 *
+	 * Receives an array of device args, and duplicates it for each active breakpoint.
+	 * Returns an array of device args.
+	 *
+	 * @since 3.4.7
+	 * @access protected
+	 *
+	 * @param array $args arguments to duplicate per breakpoint
+	 * @param array $devices_to_exclude
+	 *
+	 * @return array responsive device args
+	 */
+	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+		$device_args = [];
+		$breakpoints = Breakpoints_Manager::get_default_config();
+
+		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+			// If the device is not excluded, add it to the device args array.
+			if ( ! in_array( $breakpoint_key, $devices_to_exclude, true ) ) {
+				$parsed_device_args = $this->parse_device_args_placeholders( $args, $breakpoint_key );
+
+				$device_args[ $breakpoint_key ] = $parsed_device_args;
+			}
+		}
+
+		return $device_args;
+	}
+
+	/**
+	 * Parse Device Args Placeholders
+	 *
+	 * Receives an array of args. Iterates over the args, and replaces the {{DEVICE}} placeholder, if exists, with the
+	 * passed breakpoint key.
+	 *
+	 * @since 3.4.7
+	 * @access private
+	 *
+	 * @param array $args
+	 * @param string $breakpoint_key
+	 * @return array parsed device args
+	 */
+	private function parse_device_args_placeholders( array $args, $breakpoint_key ) {
+		$parsed_args = [];
+
+		foreach ( $args as $arg_key => $arg_value ) {
+			$arg_key = str_replace( '{{DEVICE}}', $breakpoint_key, $arg_key );
+
+			if ( is_array( $arg_value ) ) {
+				$arg_value = $this->parse_device_args_placeholders( $arg_value, $breakpoint_key );
+			}
+
+			$parsed_args[ $arg_key ] = $arg_value;
+		}
+
+		return $parsed_args;
+	}
+
+	/**
 	 * @param $shape String Shape name.
 	 *
 	 * @return string The shape path in the assets folder.
@@ -716,18 +775,11 @@ class Widget_Common extends Widget_Base {
 				'condition' => [
 					'_element_width' => 'initial',
 				],
-				'device_args' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => [
-						'condition' => [
-							'_element_width_tablet' => [ 'initial' ],
-						],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}' => [ 'initial' ],
 					],
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [
-						'condition' => [
-							'_element_width_mobile' => [ 'initial' ],
-						],
-					],
-				],
+				] ),
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
