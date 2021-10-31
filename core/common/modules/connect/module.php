@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect;
 
+use Elementor\Utils;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
@@ -12,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+	const ACCESS_LEVEL_CORE = 0;
+	const ACCESS_LEVEL_PRO = 1;
+	const ACCESS_LEVEL_EXPERT = 20;
 
 	/**
 	 * @since 2.3.0
@@ -62,8 +66,14 @@ class Module extends BaseModule {
 			'library' => Library::get_class_name(),
 		];
 
-		// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-		add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		// When using REST API the parent module is construct after the action 'elementor/init'
+		// so this part of code make sure to register the module "apps".
+		if ( did_action( 'elementor/init' ) ) {
+			$this->init();
+		} else {
+			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
+			add_action( 'elementor/init', [ $this, 'init' ], 11 );
+		}
 	}
 
 	/**
@@ -167,6 +177,43 @@ class Module extends BaseModule {
 	 */
 	public function get_categories() {
 		return $this->categories;
+	}
+
+	/**
+	 * @param $context
+	 *
+	 * @return array
+	 */
+	public function get_subscription_plans( $context ) {
+		return [
+			static::ACCESS_LEVEL_CORE => [
+				'label' => null,
+				'promotion_url' => null,
+				'color' => null,
+			],
+			static::ACCESS_LEVEL_PRO => [
+				'label' => 'Pro',
+				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=gopro" ),
+				'color' => '#92003B',
+			],
+			static::ACCESS_LEVEL_EXPERT => [
+				'label' => 'Expert',
+				'promotion_url' => Utils::get_pro_link( "https://elementor.com/pro/?utm_source={$context}&utm_medium=wp-dash&utm_campaign=goexpert" ),
+				'color' => '#010051',
+			],
+		];
+	}
+
+	protected function get_init_settings() {
+		/** @var Connect $connect */
+		$connect = $this->get_app( 'library' );
+		if ( ! $connect ) {
+			return [];
+		}
+		return [
+			'is_user_connected' => $connect->is_connected(),
+			'connect_url' => $connect->get_admin_url( 'authorize' ),
+		];
 	}
 
 }

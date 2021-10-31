@@ -7,13 +7,13 @@ const getScenarios = () => {
 	config.templates.forEach( ( pathname ) => {
 		scenarios.push( {
 			label: pathname,
-			url: `${ origin }/${ pathname }`,
+			url: `${ origin }/${ pathname }/`,
 			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
 			delay: 2000,
+			selectors: [ 'document' ], // With the `document` selector it takes a full page shot.
 			onBeforeScript: `${ __dirname }/scripts/on-before-ready.js`,
-			onReadyScript: `${ __dirname }/scripts/on-ready.js`,
 			misMatchThreshold: 0,
 			requireSameDimensions: true,
 		} );
@@ -53,11 +53,11 @@ module.exports = {
 	},
 	engine: 'puppeteer',
 	engineOptions: {
-		slowMo: 500,
 		args: [ '--no-sandbox' ],
+		slowMo: 500,
 	},
-	asyncCaptureLimit: 10,
-	asyncCompareLimit: 10,
+	asyncCaptureLimit: 30,
+	asyncCompareLimit: 30,
 	debug: false,
 	debugWindow: false,
 	fileNameTemplate: '{scenarioLabel}_{viewportLabel}',

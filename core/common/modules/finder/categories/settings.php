@@ -25,7 +25,7 @@ class Settings extends Base_Category {
 	 * @return string
 	 */
 	public function get_title() {
-		return __( 'Settings', 'elementor' );
+		return esc_html__( 'Settings', 'elementor' );
 	}
 
 	/**
@@ -43,17 +43,17 @@ class Settings extends Base_Category {
 
 		return [
 			'general-settings' => [
-				'title' => __( 'General Settings', 'elementor' ),
+				'title' => esc_html__( 'General Settings', 'elementor' ),
 				'url' => $settings_url,
 				'keywords' => [ 'general', 'settings', 'elementor' ],
 			],
 			'advanced' => [
-				'title' => __( 'Advanced', 'elementor' ),
+				'title' => esc_html__( 'Advanced', 'elementor' ),
 				'url' => $settings_url . '#tab-advanced',
 				'keywords' => [ 'advanced', 'settings', 'elementor' ],
 			],
 			'experiments' => [
-				'title' => __( 'Experiments', 'elementor' ),
+				'title' => esc_html__( 'Experiments', 'elementor' ),
 				'url' => $settings_url . '#tab-experiments',
 				'keywords' => [ 'settings', 'elementor', 'experiments' ],
 			],

@@ -71,7 +71,9 @@ class Revisions_Manager {
 	public static function avoid_delete_auto_save( $post_content, $post_id ) {
 		// Add a temporary string in order the $post will not be equal to the $autosave
 		// in edit-form-advanced.php:210
-		if ( $post_id && Plugin::$instance->db->is_built_with_elementor( $post_id ) ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( $document && $document->is_built_with_elementor() ) {
 			$post_content .= '<!-- Created with Elementor -->';
 		}
 
@@ -86,9 +88,13 @@ class Revisions_Manager {
 	public static function remove_temp_post_content() {
 		global $post;
 
-		if ( Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
-			$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return;
 		}
+
+		$post->post_content = str_replace( '<!-- Created with Elementor -->', '', $post->post_content );
 	}
 
 	/**
@@ -148,13 +154,13 @@ class Revisions_Manager {
 
 			if ( $revision->ID === $post->ID ) {
 				$type = 'current';
-				$type_label = __( 'Current Version', 'elementor' );
+				$type_label = esc_html__( 'Current Version', 'elementor' );
 			} elseif ( false !== strpos( $revision->post_name, 'autosave' ) ) {
 				$type = 'autosave';
-				$type_label = __( 'Autosave', 'elementor' );
+				$type_label = esc_html__( 'Autosave', 'elementor' );
 			} else {
 				$type = 'revision';
-				$type_label = __( 'Revision', 'elementor' );
+				$type_label = esc_html__( 'Revision', 'elementor' );
 			}
 
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
@@ -255,7 +261,7 @@ class Revisions_Manager {
 		}
 
 		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
-			throw new \Exception( __( 'Access denied.', 'elementor' ) );
+			throw new \Exception( esc_html__( 'Access denied.', 'elementor' ) );
 		}
 
 		$revision_data = [

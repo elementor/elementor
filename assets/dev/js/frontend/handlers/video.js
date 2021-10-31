@@ -19,10 +19,6 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		};
 	}
 
-	getLightBox() {
-		return elementorFrontend.utils.lightbox;
-	}
-
 	handleVideo() {
 		if ( this.getElementSettings( 'lightbox' ) ) {
 			return;
@@ -60,25 +56,25 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		const newSourceUrl = $videoIframe[ 0 ].src.replace( '&autoplay=0', '' );
-
-		$videoIframe[ 0 ].src = newSourceUrl + '&autoplay=1';
-
-		if ( $videoIframe[ 0 ].src.includes( 'vimeo.com' ) ) {
-			const videoSrc = $videoIframe[ 0 ].src,
-				timeMatch = /#t=[^&]*/.exec( videoSrc );
-
-			// Param '#t=' must be last in the URL
-			$videoIframe[ 0 ].src = videoSrc.slice( 0, timeMatch.index ) + videoSrc.slice( timeMatch.index + timeMatch[ 0 ].length ) + timeMatch[ 0 ];
-		}
+		$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
 	}
 
-	animateVideo() {
-		this.getLightBox().setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
+	async animateVideo() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setEntranceAnimation( this.getCurrentDeviceSetting( 'lightbox_content_animation' ) );
 	}
 
-	handleAspectRatio() {
-		this.getLightBox().setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	async handleAspectRatio() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.setVideoAspectRatio( this.getElementSettings( 'aspect_ratio' ) );
+	}
+
+	async hideLightbox() {
+		const lightbox = await elementorFrontend.utils.lightbox;
+
+		lightbox.getModal().hide();
 	}
 
 	prepareYTVideo( YT, onOverlayClick ) {
@@ -130,12 +126,16 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 		const elementSettings = this.getElementSettings();
 
+		if ( elementorFrontend.utils[ elementSettings.video_type ] ) {
+			this.apiProvider = elementorFrontend.utils[ elementSettings.video_type ];
+		} else {
+			this.apiProvider = elementorFrontend.utils.baseVideoLoader;
+		}
+
 		if ( 'youtube' !== elementSettings.video_type ) {
 			// Currently the only API integration in the Video widget is for the YT API
 			return;
 		}
-
-		this.apiProvider = elementorFrontend.utils.youtube;
 
 		this.videoID = this.apiProvider.getVideoIDFromURL( elementSettings.youtube_url );
 
@@ -188,7 +188,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		const isLightBoxEnabled = this.getElementSettings( 'lightbox' );
 
 		if ( 'lightbox' === propertyName && ! isLightBoxEnabled ) {
-			this.getLightBox().getModal().hide();
+			this.hideLightbox();
 
 			return;
 		}

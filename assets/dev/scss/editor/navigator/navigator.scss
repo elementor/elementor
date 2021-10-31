@@ -1,14 +1,18 @@
+body {
+	--e-editor-navigator-width: 240px;
+}
+
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 240px;
-	height: 339px;
+	width: var( --e-editor-navigator-width );
+	height: 50vh;
 	@include end(30px);
 	background-color: #fff;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
-	z-index: 2;
+	z-index: 100; // Above the Responsive Bar
 	display: none;
 
 	body.elementor-navigator-docked & {

@@ -5,19 +5,43 @@ import Select2 from 'elementor-editor-utils/select2.js';
 
 ControlSelect2ItemView = ControlBaseDataView.extend( {
 	getSelect2Placeholder: function() {
-		return this.ui.select.children( 'option:first[value=""]' ).text();
+		return this.ui.select.find( `[value="${ this.getControlPlaceholder() }"]` ).text() ||
+			this.ui.select.children( 'option:first[value=""]' ).text();
 	},
 
 	getSelect2DefaultOptions: function() {
-		return {
+		const defaultOptions = {
 			allowClear: true,
 			placeholder: this.getSelect2Placeholder(),
 			dir: elementorCommon.config.isRTL ? 'rtl' : 'ltr',
-		};
+		},
+			lockedOptions = this.model.get( 'lockedOptions' );
+
+		// If any non-deletable options are passed, remove the 'x' element from the template for selected items.
+		if ( lockedOptions ) {
+			defaultOptions.templateSelection = ( data, container ) => {
+				if ( lockedOptions.includes( data.id ) ) {
+					jQuery( container )
+						.addClass( 'e-non-deletable' )
+						.find( '.select2-selection__choice__remove' ).remove();
+				}
+
+				return data.text;
+			};
+		}
+
+		return defaultOptions;
 	},
 
 	getSelect2Options: function() {
 		return jQuery.extend( this.getSelect2DefaultOptions(), this.model.get( 'select2options' ) );
+	},
+
+	updatePlaceholder: function() {
+		if ( this.getControlPlaceholder() ) {
+			this.select2Instance.elements.$container.find( '.select2-selection__placeholder' )
+				.addClass( 'e-select2-placeholder' );
+		}
 	},
 
 	applySavedValue: function() {
@@ -31,13 +55,34 @@ ControlSelect2ItemView = ControlBaseDataView.extend( {
 				$element: this.ui.select,
 				options: this.getSelect2Options(),
 			} );
+
+			this.updatePlaceholder();
+			this.handleLockedOptions();
 		} else {
 			this.ui.select.trigger( 'change' );
 		}
 	},
 
+	handleLockedOptions() {
+		const lockedOptions = this.model.get( 'lockedOptions' );
+
+		if ( lockedOptions ) {
+			this.ui.select.on( 'select2:unselecting', ( event ) => {
+				if ( lockedOptions.includes( event.params.args.data.id ) ) {
+					event.preventDefault();
+				}
+			} );
+		}
+	},
+
 	onReady: function() {
 		elementorCommon.helpers.softDeprecated( 'onReady', '3.0.0' );
+	},
+
+	onBaseInputChange: function() {
+		ControlBaseDataView.prototype.onBaseInputChange.apply( this, arguments );
+
+		this.updatePlaceholder();
 	},
 
 	onBeforeDestroy: function() {
