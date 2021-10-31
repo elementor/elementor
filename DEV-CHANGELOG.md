@@ -1,5 +1,19 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev46 - 2021-10-31
+* Fix: Hamburger button didn't open on mobile in Nav menu widget [ED-5215] (#16686)
+* Tweak: Added Safe mode for Experiments [ED-741] (#16659)
+* Fix: Private Vimeo videos not loading in Video widget, Section Background Video, Media Carousel and Lightbox [ED-5128] (#16663)
+* Tweak: Deprecate old const (#16687)
+* Fix: Activate and Deactivate experiments buttons didn't work in Safari [ED-5115] (#16635)
+* Tweak: Delete deprecated 'Core\Ajax' class alias [ED-5291] (#16697)
+* Fix: Version control tab is visible to users without right capabilities [ED-5232] (#16699)
+* Fix: Nav menu not scrolling to the appropriate CSS ID if Scroll Snap enabled [ED-5287] (#16711)
+* Fix: Wrong HTML escaping in Pro features promotion (#16698)
+* Fix: Custom width controls disappear in cascaded devices if Additional Breakpoints experiment is active [ED-5146] (#16633)
+* Tweak: Internal - Moved Files Upload Handlers functionality to the Uploads Manager [ED-2585] (#16154)
+* Tweak: The default values of Transition duration and Rotate 3d changed in CSS Transform [ED-5240] (#16696)
+
 #### 3.5.0-dev45 - 2021-10-25
 * Fix: PayPal button is unclickable [ED-5228] (#16656)
 * Fix: Drag and Drop of multiple elements shouldn't be allowed in Navigator [ED-5266] (#16693)
