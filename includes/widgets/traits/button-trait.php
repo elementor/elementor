@@ -204,6 +204,7 @@ trait Button_Trait {
 				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -224,7 +225,7 @@ trait Button_Trait {
 					'</code>'
 				),
 				'separator' => 'before',
-
+				'condition' => $args['section_condition'],
 			]
 		);
 	}
