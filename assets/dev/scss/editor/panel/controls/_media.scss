@@ -35,7 +35,6 @@
 		height: 100%;
 		background-size: cover;
 		background-position: center;
-		background-color: $editor-lightest;
 	}
 
 	&-area {
@@ -239,10 +238,10 @@
 		}
 	}
 }
-.elementor-control-type-icons {
+.elementor-control:not( .elementor-control-type-icons ) {
 	.elementor-control-media {
 		&__preview {
-			background-color: transparent;
+			background-color: $editor-lightest;
 		}
 	}
 }
