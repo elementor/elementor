@@ -10,7 +10,6 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
-use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -205,7 +204,6 @@ trait Button_Trait {
 				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::HIDDEN,
 				'default' => 'traditional',
-				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -226,7 +224,7 @@ trait Button_Trait {
 					'</code>'
 				),
 				'separator' => 'before',
-				'condition' => $args['section_condition'],
+
 			]
 		);
 	}
@@ -492,13 +490,11 @@ trait Button_Trait {
 	 *
 	 * Render button widget text.
 	 *
-	 * @param \Elementor\Widget_Base $instance
-	 *
-	 * @since  3.4.0
+	 * @since 1.5.0
 	 * @access protected
 	 */
-	protected function render_text( Widget_Base $instance ) {
-		$settings = $instance->get_settings();
+	protected function render_text() {
+		$settings = $this->get_settings_for_display();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
@@ -525,11 +521,11 @@ trait Button_Trait {
 			],
 		] );
 
-		$instance->add_inline_editing_attributes( 'text', 'none' );
+		$this->add_inline_editing_attributes( 'text', 'none' );
 		?>
-		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
+		<span <?php $this->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-				<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
+				<span <?php $this->print_render_attribute_string( 'icon-align' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -537,7 +533,7 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $instance->print_unescaped_setting( 'text' ); ?></span>
+			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
 		</span>
 		<?php
 	}
