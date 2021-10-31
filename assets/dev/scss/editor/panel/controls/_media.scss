@@ -35,6 +35,7 @@
 		height: 100%;
 		background-size: cover;
 		background-position: center;
+		background-color: $editor-lightest;
 	}
 
 	&-area {
@@ -235,6 +236,13 @@
 
 		.elementor-control-input-wrapper {
 			border: none;
+		}
+	}
+}
+.elementor-control-type-icons {
+	.elementor-control-media {
+		&__preview {
+			background-color: transparent;
 		}
 	}
 }
