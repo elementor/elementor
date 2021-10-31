@@ -10,6 +10,7 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
+use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -494,8 +495,8 @@ trait Button_Trait {
 	 * @since 1.5.0
 	 * @access protected
 	 */
-	protected function render_text() {
-		$settings = $this->get_settings_for_display();
+	protected function render_text( Widget_Base $instance ) {
+		$settings = $instance->get_settings();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
@@ -522,11 +523,11 @@ trait Button_Trait {
 			],
 		] );
 
-		$this->add_inline_editing_attributes( 'text', 'none' );
+		$instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
-		<span <?php $this->print_render_attribute_string( 'content-wrapper' ); ?>>
+		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-				<span <?php $this->print_render_attribute_string( 'icon-align' ); ?>>
+				<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -534,7 +535,7 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $instance->print_unescaped_setting( 'text' ); ?></span>
 		</span>
 		<?php
 	}
