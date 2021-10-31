@@ -224,12 +224,6 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, $current_option_state );
 	}
 
-	public function test_file_sanitizer_can_run() {
-		$classes_exist = class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
-
-		$this->assertEquals( $classes_exist, Uploads_Manager::file_sanitizer_can_run() );
-	}
-
 	public function test_handle_elementor_wp_media_upload() {
 		$file = [
 			'tmp_name' => self::$temp_directory . self::$template_json_file_name,

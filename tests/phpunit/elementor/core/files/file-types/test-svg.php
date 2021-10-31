@@ -30,6 +30,12 @@ class Test_Svg extends Elementor_Test_Base {
 		$this->assertEquals( 'image/svg+xml', $svg_handler->get_mime_type() );
 	}
 
+	public function test_file_sanitizer_can_run() {
+		$classes_exist = class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+
+		$this->assertEquals( $classes_exist, Svg::file_sanitizer_can_run() );
+	}
+
 	public function test_sanitizer() {
 		/** @var Svg $svg_handler */
 		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg');
