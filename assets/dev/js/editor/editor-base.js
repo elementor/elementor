@@ -15,6 +15,7 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Selection from './components/selection/manager';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
@@ -333,6 +334,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.hooks = new EventManager();
 
+		this.selection = new Selection();
+
 		this.settings = new Settings();
 
 		this.dynamicTags = new DynamicTags();
@@ -367,6 +370,26 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
+	}
+
+	/**
+	 * Toggle sortable state globally.
+	 *
+	 * @param state
+	 */
+	toggleSortableState( state = true ) {
+		const elements = [
+			jQuery( '#elementor-navigator' ),
+			elementor.documents.getCurrent()?.$element,
+		];
+
+		for ( const $element of elements ) {
+			if ( $element ) {
+				$element.find( '.ui-sortable' ).sortable(
+					state ? 'enable' : 'disable'
+				);
+			}
+		}
 	}
 
 	// TODO: BC method since 2.3.0
@@ -722,7 +745,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.internal( 'panel/open-default' );
+				$e.run( 'document/elements/deselect-all' );
 			}
 		} );
 	}

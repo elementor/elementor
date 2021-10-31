@@ -6,6 +6,7 @@ use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
 use Elementor\Core\Responsive\Files\Frontend;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -127,16 +128,32 @@ class Manager {
 		do_action( 'elementor/core/files/clear_cache' );
 	}
 
+	/**
+	 * Register Ajax Actions
+	 *
+	 * Deprecated - use the Uploads Manager instead.
+	 *
+	 * @deprecated 3.5.0
+	 *
+	 * @param Ajax $ajax
+	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'ajax_unfiltered_files_upload' ] );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
+		Plugin::$instance->uploads_manager->register_ajax_actions( $ajax );
 	}
 
+	/**
+	 * Ajax Unfiltered Files Upload
+	 *
+	 * Deprecated - use the Uploads Manager instead.
+	 *
+	 * @deprecated 3.5.0
+	 */
 	public function ajax_unfiltered_files_upload() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
 
-		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, 1 );
+		Plugin::$instance->uploads_manager->enable_unfiltered_files_upload();
 	}
 
 	/**
@@ -149,9 +166,6 @@ class Manager {
 	 */
 	private function register_actions() {
 		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
-
-		// Ajax.
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
 	}

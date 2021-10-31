@@ -10,10 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Json Handler
  *
- * Deprecated, use Elementor\Core\Files\File_Types\Svg instead, accessed by calling:
- * `Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );`
- *
- * @deprecated 3.5.0
+ * @deprecated 3.5.0 - use Elementor\Core\Files\File_Types\Svg instead, accessed by calling `Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );`
  */
 class Json_Handler extends Files_Upload_Handler {
 	public static function get_name() {

@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Files\File_Types\Svg;
-use Elementor\Core\Page_Assets\Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {

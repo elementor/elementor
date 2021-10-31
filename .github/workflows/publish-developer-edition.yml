@@ -43,7 +43,7 @@ jobs:
       - name: Compare last tag to developer-edition head
         id: step_compare
         if: github.event_name != 'repository_dispatch'
-        shell: bash +e {0}
+        shell: bash +e {0} # Don't exit on error, because the `compare-tag-to-branch.js` should catch the exit code
         env:
           TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           REPOSITORY: ${{ github.repository }}
@@ -53,7 +53,7 @@ jobs:
           LAST_DEV_TAG_NAME=$(node -p "require('./package.json').last_dev_version")
           export BASE_TAG_NAME="v${LAST_DEV_TAG_NAME}"
           node ./.github/scripts/compare-tag-to-branch.js
-          if [ $? -eq 0 ]; then
+          if [ $? -eq 0 ]; then 
             echo "::set-output name=cancel_workflow::1"
             echo "CANCEL_WORKFLOW=1" >> $GITHUB_ENV
           fi

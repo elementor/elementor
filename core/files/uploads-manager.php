@@ -2,6 +2,7 @@
 namespace Elementor\Core\Files;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\File_Types\Base as File_Type_Base;
 use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
@@ -131,7 +132,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && self::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && Svg::file_sanitizer_can_run();
 
 		/**
 		 * Allow Unfiltered Files Upload.
@@ -145,19 +146,6 @@ class Uploads_Manager extends Base_Object {
 		$enabled = apply_filters( 'elementor/files/allow_unfiltered_upload', $enabled );
 
 		return $enabled;
-	}
-
-	/**
-	 * File Sanitizer Can Run
-	 *
-	 * Checks if the classes required for the file sanitizer are in memory.
-	 *
-	 * @since 3.5.0
-	 *
-	 * @return bool
-	 */
-	public static function file_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
 	}
 
 	/**
@@ -198,6 +186,59 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function get_file_type_handlers( $file_extension = null ) {
 		return self::get_items( $this->file_type_handlers, $file_extension );
+	}
+
+	/**
+	 * Check filetype and ext
+	 *
+	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
+	 * with inconsistent reporting behaviour.
+	 * ref: https://core.trac.wordpress.org/ticket/39550
+	 * ref: https://core.trac.wordpress.org/ticket/40175
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param $data
+	 * @param $file
+	 * @param $filename
+	 * @param $mimes
+	 *
+	 * @return mixed
+	 */
+	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
+		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
+			return $data;
+		}
+
+		$wp_file_type = wp_check_filetype( $filename, $mimes );
+
+		$file_type_handlers = $this->get_file_type_handlers();
+
+		if ( isset( $file_type_handlers[ $wp_file_type['ext'] ] ) ) {
+			$file_type_handler = $file_type_handlers[ $wp_file_type['ext'] ];
+
+			$data['ext'] = $file_type_handler->get_file_extension();
+			$data['type'] = $file_type_handler->get_mime_type();
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Remove File Or Directory
+	 *
+	 * Directory is deleted recursively with all of its contents (subdirectories and files).
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param string $path
+	 */
+	public function remove_file_or_dir( $path ) {
+		if ( is_dir( $path ) ) {
+			$this->remove_directory_with_files( $path );
+		} else {
+			unlink( $path );
+		}
 	}
 
 	/**
@@ -257,6 +298,35 @@ class Uploads_Manager extends Base_Object {
 		wp_mkdir_p( $unique_dir_path );
 
 		return $unique_dir_path;
+	}
+
+	/**
+	 * Register Ajax Actions
+	 *
+	 * Runs on the 'elementor/ajax/register_actions' hook. Receives the AJAX module as a parameter and registers
+	 * callbacks for specified action IDs.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param Ajax $ajax
+	 */
+	public function register_ajax_actions( Ajax $ajax ) {
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'enable_unfiltered_files_upload' ] );
+	}
+
+	/**
+	 * Set Unfiltered Files Upload
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function enable_unfiltered_files_upload() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		update_option( self::UNFILTERED_FILE_UPLOADS_KEY, 1 );
 	}
 
 	/**
@@ -395,59 +465,6 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
-	 * Check filetype and ext
-	 *
-	 * A workaround for upload validation which relies on a PHP extension (fileinfo)
-	 * with inconsistent reporting behaviour.
-	 * ref: https://core.trac.wordpress.org/ticket/39550
-	 * ref: https://core.trac.wordpress.org/ticket/40175
-	 *
-	 * @since 3.5.0
-	 *
-	 * @param $data
-	 * @param $file
-	 * @param $filename
-	 * @param $mimes
-	 *
-	 * @return mixed
-	 */
-	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
-			return $data;
-		}
-
-		$wp_file_type = wp_check_filetype( $filename, $mimes );
-
-		$file_type_handlers = $this->get_file_type_handlers();
-
-		if ( isset( $file_type_handlers[ $wp_file_type['ext'] ] ) ) {
-			$file_type_handler = $file_type_handlers[ $wp_file_type['ext'] ];
-
-			$data['ext'] = $file_type_handler->get_file_extension();
-			$data['type'] = $file_type_handler->get_mime_type();
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Remove File Or Directory
-	 *
-	 * Directory is deleted recursively with all of its contents (subdirectories and files).
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param string $path
-	 */
-	public function remove_file_or_dir( $path ) {
-		if ( is_dir( $path ) ) {
-			$this->remove_directory_with_files( $path );
-		} else {
-			unlink( $path );
-		}
-	}
-
-	/**
 	 * Remove Directory with Files
 	 *
 	 * @since 3.3.0
@@ -499,5 +516,8 @@ class Uploads_Manager extends Base_Object {
 		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_elementor_file_uploads' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_elementor_wp_media_upload' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
+
+		// Ajax.
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 }

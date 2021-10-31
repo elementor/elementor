@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Files\Assets;
 
+use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 
@@ -36,7 +37,7 @@ abstract class Files_Upload_Handler {
 	 * @return bool
 	 */
 	final public static function is_enabled() {
-		$enabled = ! ! get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::OPTION_KEY ) && Svg::file_sanitizer_can_run();
 
 		/**
 		 * @deprecated 3.0.0 Use `elementor/files/allow_unfiltered_upload` filter instead.
@@ -103,9 +104,9 @@ abstract class Files_Upload_Handler {
 	 * @return bool
 	 */
 	public static function file_sanitizer_can_run() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Core\Files\Uploads_Manager::file_sanitizer_can_run()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run()' );
 
-		return Uploads_Manager::file_sanitizer_can_run();
+		return Svg::file_sanitizer_can_run();
 	}
 
 	/**
