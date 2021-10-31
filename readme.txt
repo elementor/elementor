@@ -190,7 +190,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 
 = 3.4.7 - 2021-10-31 =
 * Tweak: Added role restriction to Version control feature
-* Fix: Private Vimeo videos are not loading in Video widget ([#12355](https://github.com/elementor/elementor/issues/16741))
+* Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
 * Fix: Custom width responsive control disappeared until section init in the common Positioning section 
 * Fix: PayPal button widget is not functioning in future Pro versions
 * Fix: Unwanted HTML escaping in Pro features promotion
