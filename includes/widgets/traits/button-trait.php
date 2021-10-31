@@ -78,6 +78,7 @@ trait Button_Trait {
 					'danger' => esc_html__( 'Danger', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-button-',
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -89,8 +90,9 @@ trait Button_Trait {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => esc_html__( 'Click here', 'elementor' ),
-				'placeholder' => esc_html__( 'Click here', 'elementor' ),
+				'default' => $args['button_default_text'],
+				'placeholder' => $args['button_default_text'],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -106,6 +108,7 @@ trait Button_Trait {
 				'default' => [
 					'url' => '#',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -132,8 +135,9 @@ trait Button_Trait {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
-				'prefix_class' => 'elementor%s-align-',
-				'default' => '',
+				'prefix_class' => $args['alignment_control_prefix_class'],
+				'default' => $args['alignment_default'],
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -145,6 +149,7 @@ trait Button_Trait {
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 				'style_transfer' => true,
+				'condition' => $args['section_condition'],
 			]
 		);
 
@@ -156,6 +161,8 @@ trait Button_Trait {
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
 				'label_block' => false,
+				'condition' => $args['section_condition'],
+				'icon_exclude_inline_options' => $args['icon_exclude_inline_options'],
 			]
 		);
 
@@ -169,9 +176,7 @@ trait Button_Trait {
 					'left' => esc_html__( 'Before', 'elementor' ),
 					'right' => esc_html__( 'After', 'elementor' ),
 				],
-				'condition' => [
-					'selected_icon[value]!' => '',
-				],
+				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
 			]
 		);
 
@@ -189,6 +194,7 @@ trait Button_Trait {
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 				],
+				'condition' => $args['section_condition'],
 			]
 		);
 
