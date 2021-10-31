@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
+use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,7 +40,7 @@ class Import_Images {
 	 * @since 3.5.0
 	 * @access private
 	 *
-	 * @var Svg_Handler
+	 * @var Svg
 	 */
 	private static $svg_handler;
 
@@ -128,7 +130,14 @@ class Import_Images {
 		// Extract the file name and extension from the url.
 		$filename = basename( $attachment['url'] );
 
-		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
+		$request = wp_safe_remote_get( $attachment['url'] );
+
+		// Make sure the request returns a valid result.
+		if ( is_wp_error( $request ) || ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['response']['code'] ) ) {
+			return false;
+		}
+
+		$file_content = wp_remote_retrieve_body( $request );
 
 		if ( empty( $file_content ) ) {
 			return false;
@@ -138,11 +147,11 @@ class Import_Images {
 
 		if ( 'svg' === $filetype['ext'] ) {
 			if ( ! self::$svg_handler ) {
-				self::$svg_handler = new Svg_Handler();
+				self::$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 			}
 
 			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
-			if ( ! self::$svg_handler->is_enabled() ) {
+			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				return false;
 			}
 
