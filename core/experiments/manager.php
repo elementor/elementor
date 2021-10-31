@@ -309,7 +309,7 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
-			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
+			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” section at the bottom of the panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'new_site' => [
 				'default_active' => true,
@@ -407,7 +407,7 @@ class Manager extends Base_Object {
 				];
 			}
 
-			if ( ! Tracker::is_allow_track() ) {
+			if ( ! Tracker::is_allow_track() && 'stable' === $section ) {
 				$fields[ $section ] += $settings->get_usage_fields();
 			}
 		}
