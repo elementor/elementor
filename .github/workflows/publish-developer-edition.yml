@@ -9,7 +9,7 @@ on:
 
 jobs:
   bump-version:
-    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
+    if: (github.event_name == 'schedule' || github.event_name == 'repository_dispatch' || github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     outputs:
       cancel_workflow: ${{ steps.step_compare.outputs.cancel_workflow }}
@@ -53,7 +53,7 @@ jobs:
           LAST_DEV_TAG_NAME=$(node -p "require('./package.json').last_dev_version")
           export BASE_TAG_NAME="v${LAST_DEV_TAG_NAME}"
           node ./.github/scripts/compare-tag-to-branch.js
-          if [ $? -eq 0 ]; then 
+          if [ $? -eq 0 ]; then
             echo "::set-output name=cancel_workflow::1"
             echo "CANCEL_WORKFLOW=1" >> $GITHUB_ENV
           fi
