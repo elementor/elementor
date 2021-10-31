@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
+use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,7 +40,7 @@ class Import_Images {
 	 * @since 3.5.0
 	 * @access private
 	 *
-	 * @var Svg_Handler
+	 * @var Svg
 	 */
 	private static $svg_handler;
 
@@ -145,11 +147,11 @@ class Import_Images {
 
 		if ( 'svg' === $filetype['ext'] ) {
 			if ( ! self::$svg_handler ) {
-				self::$svg_handler = new Svg_Handler();
+				self::$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 			}
 
 			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
-			if ( ! self::$svg_handler->is_enabled() ) {
+			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				return false;
 			}
 
