@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev47 - 2021-10-31
+* Tweak: Updated changelog to v3.4.7 (#16762)
+* Fix: UI Glitch in the new Experiments page [ED-5311] (#16763)
+
 #### 3.5.0-dev46 - 2021-10-31
 * Fix: Hamburger button didn't open on mobile in Nav menu widget [ED-5215] (#16686)
 * Tweak: Added Safe mode for Experiments [ED-741] (#16659)
