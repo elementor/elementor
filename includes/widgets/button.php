@@ -82,7 +82,8 @@ class Widget_Button extends Widget_Base {
 			'section_button',
 			[
 				'label' => esc_html__( 'Button', 'elementor' ),
-			] );
+			]
+		);
 
 		$this->register_button_content_controls();
 
