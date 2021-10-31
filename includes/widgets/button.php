@@ -102,6 +102,14 @@ class Widget_Button extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render button widget output on the frontend.
+	 *
+	 * Written in PHP and used to generate the final HTML.
+	 *
+	 * @since 1.0.0
+	 * @access protected
+	 */
 	protected function render() {
 		$this->render_button();
 	}
