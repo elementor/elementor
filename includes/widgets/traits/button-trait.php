@@ -13,10 +13,11 @@ use Elementor\Icons_Manager;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit; // Exit if accessed directly
 }
 
 trait Button_Trait {
+	
 	/**
 	 * Get button sizes.
 	 *
@@ -85,7 +86,7 @@ trait Button_Trait {
 		$this->add_control(
 			'text',
 			[
-				'label' => $args( 'text_control_label' ),
+				'label' => $args['text_control_label'],
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
@@ -118,7 +119,7 @@ trait Button_Trait {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left'    => [
+					'start'    => [
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
@@ -218,12 +219,8 @@ trait Button_Trait {
 				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
-				'description' => sprintf(
-				/* translators: 1: Code open tag, 2: Code close tag. */
-					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
-					'<code>',
-					'</code>'
-				),
+				/* translators: %1$s Code open tag, %2$s: Code close tag. */
+				'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'elementor' ),
 				'separator' => 'before',
 				'condition' => $args['section_condition'],
 			]
@@ -435,8 +432,7 @@ trait Button_Trait {
 			$instance = $this;
 		}
 
-		$settings = $instance->get_settings_for_display();
-
+		$settings = $instance->get_settings();
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
@@ -455,48 +451,13 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
 		}
 
-		if ( $settings['hover_animation'] ) {
+		if ( ! empty( $settings['hover_animation'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>
-		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
-			<a <?php $instance->print_render_attribute_string( 'button' ); ?>>
-				<?php $instance->render_text(); ?>
-			</a>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Render button widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
-		?>
-		<#
-		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
-		view.addInlineEditingAttributes( 'text', 'none' );
-		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
-		#>
-		<div class="elementor-button-wrapper">
-			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
-				<span class="elementor-button-content-wrapper">
-					<# if ( settings.icon || settings.selected_icon ) { #>
-					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
-						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
-							{{{ iconHTML.value }}}
-						<# } else { #>
-							<i class="{{ settings.icon }}" aria-hidden="true"></i>
-						<# } #>
-					</span>
-					<# } #>
-					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
-				</span>
+		<div <?php $instance->print_render_attribute_string( 'wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+			<a <?php $instance->print_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+				<?php $this->render_text( $instance ); ?>
 			</a>
 		</div>
 		<?php
@@ -507,11 +468,13 @@ trait Button_Trait {
 	 *
 	 * Render button widget text.
 	 *
-	 * @since 1.5.0
+	 * @param \Elementor\Widget_Base $instance
+	 *
+	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_text() {
-		$settings = $this->get_settings_for_display();
+	protected function render_text( Widget_Base $instance ) {
+		$settings = $instance->get_settings();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
@@ -520,10 +483,10 @@ trait Button_Trait {
 			// @todo: remove when deprecated
 			// added as bc in 2.6
 			//old default
-			$settings['icon_align'] = $this->get_settings( 'icon_align' );
+			$settings['icon_align'] = $instance->get_settings( 'icon_align' );
 		}
 
-		$this->add_render_attribute( [
+		$instance->add_render_attribute( [
 			'content-wrapper' => [
 				'class' => 'elementor-button-content-wrapper',
 			],
@@ -538,11 +501,12 @@ trait Button_Trait {
 			],
 		] );
 
-		$this->add_inline_editing_attributes( 'text', 'none' );
+		// TODO: replace the protected with public
+		//$instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
-		<span <?php $this->print_render_attribute_string( 'content-wrapper' ); ?>>
+		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-				<span <?php $this->print_render_attribute_string( 'icon-align' ); ?>>
+				<span <?php $instance->print_render_attribute_string( 'icon-align' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -550,7 +514,7 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php $this->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php echo $settings['text']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</span>
 		<?php
 	}
@@ -559,3 +523,4 @@ trait Button_Trait {
 		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }
+
