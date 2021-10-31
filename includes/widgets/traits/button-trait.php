@@ -495,8 +495,8 @@ trait Button_Trait {
 	 * @since 1.5.0
 	 * @access protected
 	 */
-	protected function render_text( Widget_Base $instance ) {
-		$settings = $instance->get_settings();
+	protected function render_text() {
+		$settings = $this->get_settings_for_display();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
