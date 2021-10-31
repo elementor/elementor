@@ -86,7 +86,7 @@ trait Button_Trait {
 		$this->add_control(
 			'text',
 			[
-				'label' => esc_html__( 'Text', 'elementor' ),
+				'label' => $args( 'text_control_label' ),
 				'type' => Controls_Manager::TEXT,
 				'dynamic' => [
 					'active' => true,
