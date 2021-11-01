@@ -463,6 +463,41 @@ trait Button_Trait {
 	}
 
 	/**
+	 * Render button widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since  3.4.0
+	 * @access protected
+	 */
+	protected function content_template() {
+		?>
+		<#
+		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
+		view.addInlineEditingAttributes( 'text', 'none' );
+		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
+		#>
+		<div class="elementor-button-wrapper">
+			<a id="{{ settings.button_css_id }}" class="elementor-button elementor-size-{{ settings.size }} elementor-animation-{{ settings.hover_animation }}" href="{{ settings.link.url }}" role="button">
+				<span class="elementor-button-content-wrapper">
+					<# if ( settings.icon || settings.selected_icon ) { #>
+					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
+						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
+							{{{ iconHTML.value }}}
+						<# } else { #>
+							<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<# } #>
+					</span>
+					<# } #>
+					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+				</span>
+			</a>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Render button text.
 	 *
 	 * Render button widget text.
