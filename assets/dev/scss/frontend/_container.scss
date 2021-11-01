@@ -66,19 +66,22 @@
 		flex-shrink: 0;
 		align-self: stretch;
 		z-index: $first-layer;
+		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
 	&.e-container--placeholder-row > .elementor-widget-placeholder {
+		position: relative;
 		width: var( --size );
-		margin: 0 calc( -1 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
+		margin-inline-start: calc( -1 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
 		height: auto;
 		min-height: 100%;
 		animation-name: dnd-placeholder-widget-vertical;
 	}
 
 	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
+		position: absolute;
 		height: var( --size );
-		margin: calc( -1 * var( --size ) ) 0; // To make sure that it doesn't push & break the layout when appearing.
+		margin-block-start: calc( -2 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
 		animation-name: dnd-placeholder-widget-horizontal;
 	}
 

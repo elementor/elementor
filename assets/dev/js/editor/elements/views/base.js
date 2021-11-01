@@ -405,6 +405,9 @@ BaseElementView = BaseContainer.extend( {
 			jQuery.extend( model, customData );
 		}
 
+		// Reset the selected element cache.
+		elementor.channels.panelElements.reply( 'element:selected', null );
+
 		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
 			model,
