@@ -12,7 +12,7 @@ import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
 	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ isError, setIsError ] = useState( false ),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
@@ -83,7 +83,7 @@ export default function ImportProcess() {
 					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 					break;
 				case KIT_STATUS_MAP.ERROR:
-					setIsError( true );
+					setErrorType( kitState.data );
 					break;
 			}
 		}
@@ -112,11 +112,7 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
-				<FileProcess
-					isError={ isError }
-					onDialogApprove={ () => {} }
-					onDialogDismiss={ onCancelProcess }
-				/>
+				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
 
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
