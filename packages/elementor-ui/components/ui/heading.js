@@ -2,9 +2,9 @@ import styled from 'styled-components';
 import { getStyle } from 'e-utils';
 import styles from 'e-styles/heading';
 
-const HeadingBase = styled.h1.attrs( ( props ) => ( { as: props.tag } ) )`${ ( props ) => getStyle( styles, props, 'shared' ) }`;
+const SharedHeading = styled.h1.attrs( ( props ) => ( { as: props.tag } ) )`${ ( props ) => getStyle( styles, props, 'shared' ) }`;
 
-const Heading = styled( HeadingBase )`${ ( props ) => getStyle( styles, props, 'unique' ) }`;
+const Heading = styled( SharedHeading )`${ ( props ) => getStyle( styles, props, 'unique' ) }`;
 
 Heading.propTypes = {
 	className: PropTypes.string,
