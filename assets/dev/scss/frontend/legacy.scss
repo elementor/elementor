@@ -1,5 +1,5 @@
 @import "../helpers/variables";
-@import "./breakpoints/breakpoints";
+@import "./breakpoints/proxy";
 
 // Legacy SCSS for markup removed in Elementor v3.0.0
 
@@ -84,7 +84,7 @@
 	}
 }
 
-@mixin reverse-columns($device) {
+@mixin legacy-reverse-columns($device) {
 
 	.elementor-reverse#{$device} > .elementor-container > .elementor-row {
 		@for $i from 1 through 10 {
@@ -95,12 +95,28 @@
 	}
 }
 
-@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-	@include reverse-columns(-tablet);
+@media (min-width:$screen-widescreen-min) {
+	@include legacy-reverse-columns(-widescreen);
 }
 
-@media (max-width: $screen-sm-max) {
-	@include reverse-columns(-mobile);
+@media (min-width:$screen-tablet-extra-next) and (max-width: $screen-laptop-max) {
+	@include legacy-reverse-columns(-laptop);
+}
+
+@media (min-width:$screen-tablet-next) and (max-width: $screen-tablet-extra-max) {
+	@include legacy-reverse-columns(-tablet_extra);
+}
+
+@media (min-width:$screen-mobile-extra-next) and (max-width: $screen-tablet-max) {
+	@include legacy-reverse-columns(-tablet);
+}
+
+@media (min-width:$screen-mobile-next) and (max-width: $screen-mobile-extra-max) {
+	@include legacy-reverse-columns(-mobile_extra);
+}
+
+@media (max-width: $screen-mobile-max) {
+	@include legacy-reverse-columns(-mobile);
 
 	.elementor-column {
 		width: 100%; //Default width for mobile

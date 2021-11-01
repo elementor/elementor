@@ -14,6 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onRender: function() {
 		this.ui.connect.elementorConnect( {
+			parseUrl: ( url ) => url.replace( '%%template_type%%', this.model.get( 'type' ) ),
 			success: () => {
 				elementor.config.library_connect.is_connected = true;
 

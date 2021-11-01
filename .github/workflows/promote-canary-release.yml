@@ -1,12 +1,12 @@
 name: Promote Canary Release
-
+# Update WP repo with the final release version
 on:
   workflow_dispatch:
 
 jobs:
   update-readme-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes') && startsWith(github.repository, 'elementor/')
-    runs-on: ubuntu-16.04
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/commit-push-bump.sh"
   promote:
     needs: update-readme-develop
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v2

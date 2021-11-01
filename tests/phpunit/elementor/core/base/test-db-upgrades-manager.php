@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Core\Base;
 
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 require_once 'mock/mock-upgrades-manager.php';
 

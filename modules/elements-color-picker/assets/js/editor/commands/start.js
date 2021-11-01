@@ -1,15 +1,18 @@
 import CommandBase from 'elementor-api/modules/command-base';
-import { addNamespaceHandler } from 'elementor/modules/elements-color-picker/assets/js/editor/utils';
+import { addNamespaceHandler } from '../utils';
+import { COLOR_PICKING_ON } from '../ui-states/color-picking';
 
 /**
  * Start the color picking process.
  */
 export class Start extends CommandBase {
 	apply( args ) {
-		// Prevent elements from triggering edit mode on click.
-		elementor.changeEditMode( 'picker' );
+		// Activate the component since the default behavior will activate it only on route change,
+		// but this component doesn't have any routes.
+		this.component.activate();
 
-		elementor.$previewContents[ 0 ].querySelector( 'body' ).classList.add( 'elementor-editor__ui-state__color-picker', 'elementor-edit-area-active' );
+		// Enter color picking mode.
+		$e.uiStates.set( 'elements-color-picker/color-picking', COLOR_PICKING_ON );
 
 		this.component.currentPicker = {
 			...args,

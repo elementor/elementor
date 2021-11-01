@@ -4,7 +4,7 @@ on: [ push, pull_request ]
 
 jobs:
   run:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     timeout-minutes: 20
     env:
       screenshotter_config_path: ${{ github.workspace }}/tests/screenshotter/config.js

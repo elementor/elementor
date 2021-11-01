@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.3.0
+Stable tag: 3.4.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,7 +12,7 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 == Description ==
 
-https://www.youtube.com/watch?v=kB4U67tiQLA
+https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
@@ -96,53 +96,21 @@ There are many other [features](https://elementor.com/features/?utm_source=wp-re
 
 Join the elite web professionals who enjoy [Elementor Pro](https://elementor.com/pro/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)!
 
-= Translated to 56+ Languages & RTL supported. =
-We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (56+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
+= Translated to 59+ Languages & RTL supported. =
+We’ve integrated RTL and multi language support within the framework of Elementor, so you get a [translated panel (59+ languages)](https://translate.wordpress.org/projects/wp-plugins/elementor/) out of the box, as well as RTL typography support, and developer options to add even more languages.
 
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
 To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
-= Translations =
-- [English (Australia)](https://translate.wordpress.org/locale/en-au/default/wp-plugins/elementor) - (en_AU)
-- [English (UK)](https://translate.wordpress.org/locale/en-gb/default/wp-plugins/elementor) - (en_GB)
-- [English (Canada)](https://translate.wordpress.org/locale/en-ca/default/wp-plugins/elementor) - (en_CA)
-- [French](https://translate.wordpress.org/locale/fr/default/wp-plugins/elementor) - (fr_FR)
-- [French (Belgium)](https://translate.wordpress.org/locale/fr-be/default/wp-plugins/elementor) - (fr_BE)
-- [German](https://translate.wordpress.org/locale/de/default/wp-plugins/elementor) - (de_DE)
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
-- [Spanish (Spain)](https://translate.wordpress.org/locale/es/default/wp-plugins/elementor) - (es_ES)
-- [Spanish (Mexico)](https://translate.wordpress.org/locale/es-mx/default/wp-plugins/elementor) - (es_MX)
-- [Japanese](https://translate.wordpress.org/locale/ja/default/wp-plugins/elementor) - (ja)
-- [Portuguese (Portugal)](https://translate.wordpress.org/locale/pt/default/wp-plugins/elementor) - (pt_PT)
-- [Portuguese (Brazil)](https://translate.wordpress.org/locale/pt-br/default/wp-plugins/elementor) - (pt_BR)
-- [Swedish](https://translate.wordpress.org/locale/sv/default/wp-plugins/elementor) - (sv_SE)
-- [Dutch](https://translate.wordpress.org/locale/nl/default/wp-plugins/elementor) - (nl_NL)
-- [Danish](https://translate.wordpress.org/locale/da/default/wp-plugins/elementor) - (da_DK)
-- [Polish](https://translate.wordpress.org/locale/pl/default/wp-plugins/elementor) - (pl_PL)
-- [Italian](https://translate.wordpress.org/locale/it/default/wp-plugins/elementor) - (it_IT)
-- [Chinese (China)](https://translate.wordpress.org/locale/zh-cn/default/wp-plugins/elementor) - (zh_CN)
-- [Chinese (Taiwan)](https://translate.wordpress.org/locale/zh-tw/default/wp-plugins/elementor) - (zh_TW)
-- [Persian](https://translate.wordpress.org/locale/fa/default/wp-plugins/elementor) - (fa_IR)
-- [Hebrew](https://translate.wordpress.org/locale/he/default/wp-plugins/elementor) - (he_IL)
-- [Russian](https://translate.wordpress.org/locale/ru/default/wp-plugins/elementor) - (ru_RU)
-- [Romanian](https://translate.wordpress.org/locale/ro/default/wp-plugins/elementor) - (ro_RO)
-- [Bulgarian](https://translate.wordpress.org/locale/bg/default/wp-plugins/elementor) - (bg_BG)
-- [Greek](https://translate.wordpress.org/locale/el/default/wp-plugins/elementor) - (el)
-- [Catalan](https://translate.wordpress.org/locale/ca/default/wp-plugins/elementor) - (ca)
-- [Czech](https://translate.wordpress.org/locale/cs/default/wp-plugins/elementor) - (cs_CZ)
-- [Hungarian](https://translate.wordpress.org/locale/hu/default/wp-plugins/elementor) - (hu_HU)
-- [Croatian](https://translate.wordpress.org/locale/hr/default/wp-plugins/elementor) - (hr)
-- [Finnish](https://translate.wordpress.org/locale/fi/default/wp-plugins/elementor) - (fi)
-- [Arabic](https://translate.wordpress.org/locale/ar/default/wp-plugins/elementor) - (ar)
-- [Afrikaans](https://translate.wordpress.org/locale/af/default/wp-plugins/elementor) - (af)
-- [Ukrainian](https://translate.wordpress.org/locale/uk/default/wp-plugins/elementor) - (uk)
-
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
 
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
+
+= Security Report =
+We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection. 
 
 = Documentation and Support =
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -217,6 +185,126 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.7 - 2021-10-31 =
+* Tweak: Added role restriction to Version control feature
+* Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
+* Fix: Custom width responsive control disappeared until section init in the common Positioning section 
+* Fix: PayPal button widget is not functioning in future Pro versions
+* Fix: Unwanted HTML escaping in Pro features promotion
+
+= 3.4.6 - 2021-10-19 =
+* Tweak: Updated `eicons` library to 5.13.0
+* Fix: Custom SVG is not supported in some servers environments in Text Path widget
+* Fix: Lottie animations are not imported in Template import process
+* Fix: Can't connect to Library via CLI
+* Fix: Scroll event listener is not optimized in Counter widget
+
+= 3.4.5 - 2021-10-12 =
+* Tweak: Updated featured video in the WordPress repository plugin page
+* Tweak: Added support for future features compatibility
+* Fix: Additional breakpoints responsive CSS classes clash when Optimized DOM Output experiment is inactive [#16322](https://github.com/elementor/elementor/issues/16322)
+* Fix: Escaped several translation strings for better security (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Fix: Slides per view and slides to scroll controls disappeared when using multiple breakpoints in Testimonial Carousel widget
+* Fix: Padding not applied properly with absolute positioned widgets when the Optimized DOM Output experiment is active
+* Fix: Missing padding in the widgets panel layout
+
+= 3.4.4 - 2021-09-13 =
+* Fix: Custom popover responsive controls breaks when used in responsive breakpoints view when Additional Breakpoints experiment is active ([#16312](https://github.com/elementor/elementor/issues/16312))
+* Fix: Data Updater causes fatal error due to DB corruption ([#16100](https://github.com/elementor/elementor/issues/16100))
+* Fix: Page settings layout description strings were inaccurate
+* Fix: Specific image sizes causes the first image to load in large dimensions on load in Image Carousel widget
+
+= 3.4.3 - 2021-08-29 =
+* Tweak: Added "Justified" option in Typography text alignment in Column & Section elements ([#11480](https://github.com/elementor/elementor/issues/11480))
+* Tweak: Enlarged cards view in the Kit Library for better visibility
+* Tweak: Changed Kit Library tab title
+* Fix: Landing pages experiment causes 404 errors with attachment pages ([#15943](https://github.com/elementor/elementor/issues/15943))
+* Fix: Can't upload SVG files using Elementor ([#16084](https://github.com/elementor/elementor/issues/16084), [#16119](https://github.com/elementor/elementor/issues/16119), [#16088](https://github.com/elementor/elementor/issues/16088))
+* Fix: `wp_kses_post` strips `srcset` attribute from images ([#16111](https://github.com/elementor/elementor/issues/16111))
+* Fix: Inline CSS is parsed to an invalid characters ([#16140](https://github.com/elementor/elementor/issues/16140))
+* Fix: Animated elements disappear before entering the viewport ([#2806](https://github.com/elementor/elementor/issues/2806))
+* Fix: Autoplay not working for Vimeo videos in Lightbox ([#16068](https://github.com/elementor/elementor/issues/16068))
+* Fix: HTML captions are stripped in Image carousel widget ([#16073](https://github.com/elementor/elementor/issues/16073))
+* Fix: Carousels are not working properly in the Editor when Additional Custom Breakpoints experiment is active
+* Fix: Responsive values are not being reflected in Slider controls
+* Fix: Elementor Top Admin Bar loads in WordPress dashboard when the experiment is active
+* Fix: Prevent Admin Top Bar to conflict with WordPress customizer
+* Fix: Can't change alignment of icons when Font Awesome Inline experiment is active in Icon List widget
+* Fix: Import deeplink redirect loses target screen parameters when user needs to log in
+* Deprecated: Removed all usages of `Elementor\Utils::get_create_new_post_url()`
+
+= 3.4.2 - 2021-08-19 =
+* Fix: Responsive Site settings are not being applied on frontend when Additional Custom Breakpoints is active ([#16055](https://github.com/elementor/elementor/issues/16055), [#16033](https://github.com/elementor/elementor/issues/16033))
+* Fix: Global colors are applied even when they are disabled on Frontend ([#16037](https://github.com/elementor/elementor/issues/16037))
+* Fix: Conditional controls missing when using Dynamic tags ([#16050](https://github.com/elementor/elementor/issues/16050))
+* Fix: Motion Effects popover is not visible ([#16044](https://github.com/elementor/elementor/issues/16044))
+* Fix: Control conditions are not being executed when has capital letter in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+
+= 3.4.1 - 2021-08-18 =
+* Tweak: Missing post types in Site Parts overview screen in Kit Library ([#15249](https://github.com/elementor/elementor/issues/15249))
+* Tweak: Added source=generic parameter when connecting through the top bar
+* Tweak: Added Inline SVG support to the generic video Play icon
+* Fix: Control conditions are not being executed when has dash in the control slug ([#16003](https://github.com/elementor/elementor/issues/16003))
+* Fix: Gradient control doesn't work on frontend when using Global Colors ([#13288](https://github.com/elementor/elementor/issues/13288))
+* Fix: Placeholder values of Column width control shouldn't cascade to Mobile device
+* Fix: Alignment control doesn't work in responsive view in Testimonial widget
+* Fix: Certain responsive controls pass the desktop default to other devices accidentally
+* Fix: Alignment control doesn't work with Additional Custom Breakpoints in Button widget
+* Fix: SVG Icon is not being displayed in the Basic Gallery widget
+* Fix: Activation bug for IDN domains
+
+= 3.4.0 - 2021-08-17 =
+* New: Introducing Additional Custom Breakpoints - Pixel Perfect Design for up to 7 Devices ([#2043](https://github.com/elementor/elementor/issues/2043), [#15488](https://github.com/elementor/elementor/issues/15488), [#15782](https://github.com/elementor/elementor/issues/15782))
+* Experiment: Font Awesome Inline SVG for Optimized performance ([#11772](https://github.com/elementor/elementor/issues/11772))
+* Tweak: Responsive values visibility in Elementor controls ([#3356](https://github.com/elementor/elementor/issues/3356))
+* Tweak: Improved asset loading performance by serving lighter JS files ([#8572](https://github.com/elementor/elementor/issues/8572))
+* Tweak: Scale controls were added to responsive mode UI ([#15485](https://github.com/elementor/elementor/issues/15485))
+* Tweak: Responsive devices order was changed ([#14662](https://github.com/elementor/elementor/issues/14662), [#2043](https://github.com/elementor/elementor/issues/2043))
+* Tweak: Excluded Elementor Templates from WordPress default sitemap ([#14578](https://github.com/elementor/elementor/issues/14578), [Topic](https://wordpress.org/support/topic/how-to-stop-elementor-templates-appearing-in-wp-sitemap/))
+* Tweak: Responsive capability was added to Alignment control in Testimonial widget ([#11542](https://github.com/elementor/elementor/issues/11542))
+* Tweak: Added translation function to several locations (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Tweak: Allow extending Section elements using Elementor API (props [@Oxibug](https://github.com/oxibug))
+* Tweak: Converted responsive controls generation in the Editor to JS ([Developers Blog Post](https://developers.elementor.com/additional-custom-breakpoints-technical-details-and-gotchas/))
+* Tweak: Updated Webpack library to v5.40.0
+* Tweak: Added an option to deep-link into Revisions panel screen
+* Tweak: Changed the Kit Library back button text to "Back to Library"
+* Tweak: Added additional information to usage data
+* Tweak: Added compatibility for future feature in Site Settings
+* Tweak: Added CLI support for Import Kit by ID
+* Tweak: Added informative tooltip for Finder element in Elementor admin top bar
+* Tweak: Use template literals in Elementor filter names
+* Tweak: Updated "Getting Started" video playlist
+* Tweak: Enforced better security policies
+* Fix: Dynamic content disappeared if chosen in Code Highlight widget ([#14766](https://github.com/elementor/elementor/issues/14766))
+* Fix: Text size increased on Icon list widget with size set to `em` and a link ([#14829](https://github.com/elementor/elementor/issues/14829))
+* Fix: Undefined `"pro_widgets"` array key message in edge cases (props [@jahir07](https://github.com/jahir07), [@codersaiful](https://github.com/codersaiful), [#15542](https://github.com/elementor/elementor/issues/15542))
+* Fix: UI glitch in Select2 control in Dark mode ([#15473](https://github.com/elementor/elementor/issues/15473))
+* Fix: Re-migrate globals are not working properly in edge cases ([#15477](https://github.com/elementor/elementor/issues/15477), props [@jvernooy](https://github.com/jvernooy))
+* Fix: Gallery widget with Dynamic gallery applied can't be edited or deleted ([#15529](https://github.com/elementor/elementor/issues/15529))
+* Fix: Improved Responsive bar compatibility to RTL sites
+* Fix: Dynamic tags UI glitch in Code Highlight widget
+* Fix: Default Mobile width changed to 360px in Responsive mode
+* Fix: Viewport meta tag was escaped in Canvas page layout
+* Fix: Setting zero offset to Sticky elements is not working properly
+* Fix: Icons are not vertically aligned in Icon List widget
+* Fix: WordPress Audio widget only shows correct styling in live preview but not in the actual site
+* Fix: New tabs do not appear instantly if alignment is not set to Default or Start in Tabs widget
+* Fix: Edit popover was trimmed by the template card in Theme Builder
+* Fix: Duplicate `<style>` tags were printed in several cases
+* Fix: Theme Builder is not working if Import/Export experiment is inactive
+* Fix: UI glitch in Responsive bar in RTL sites
+* Fix: "Edit with Elementor" isn’t working on static Homepages
+* Fix: UI glitches in Kit Library 
+* Fix: Library connect issues after URL change in Kit and template Library
+* Fix: Kit Library not showing all categories
+* Fix: Pro widget promotions flickers after clicking on "See it in action" button
+* Fix: Incorrect hover default color in Text Path widget
+* Fix: Text decoration is not working in Text Path widget
+* Fix: Browser's autocomplete is taking over the results in the Finder
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-4-planned-deprecations/)
 
 = 3.3.1 - 2021-07-20 =
 * Tweak: Added a back to Kit Library button to the Import Kit screen

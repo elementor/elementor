@@ -1,93 +1,132 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
+import UnfilteredFilesDialog from './components/unfiltered-files-dialog/unfiltered-files-dialog';
 
 import { Context } from '../../../context/context-provider';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
-	const { ajaxState, setAjax } = useAjax(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		fileURL = location.hash.match( 'file_url=([^&]+)' ),
-		onLoad = () => {
-			const ajaxConfig = {
-				data: {
-					action: 'elementor_import_kit',
-				},
-			};
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		isApplyAllForced = 'apply-all' === actionType,
+		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
+		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
+		[ startImport, setStartImport ] = useState( false ),
+		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
+		uploadKit = () => {
+			const decodedFileURL = decodeURIComponent( fileURL );
 
-			if ( fileURL || context.data.fileResponse ) {
-				if ( fileURL ) {
-					fileURL[ 1 ] = decodeURIComponent( fileURL[ 1 ] );
-
-					context.dispatch( { type: 'SET_FILE', payload: fileURL } );
-
-					ajaxConfig.data.e_import_file = fileURL[ 1 ];
-					ajaxConfig.data.data = JSON.stringify( {
-						stage: 1,
-					} );
-
-					const referrer = location.hash.match( 'referrer=([^&]+)' );
-
-					if ( referrer ) {
-						context.dispatch( { type: 'SET_REFERRER', payload: referrer[ 1 ] } );
-					}
-				} else {
-					ajaxConfig.data.data = {
-						stage: 2,
-						session: context.data.fileResponse.stage1.session,
-						include: context.data.includes,
-						overrideConditions: context.data.overrideConditions,
-					};
-
-					if ( context.data.referrer ) {
-						ajaxConfig.data.data.referrer = context.data.referrer;
-					}
-
-					ajaxConfig.data.data = JSON.stringify( ajaxConfig.data.data );
-				}
-
-				setAjax( ajaxConfig );
+			if ( referrer ) {
+				context.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 			}
-		},
-		onSuccess = () => {
-			if ( context.data.fileResponse?.stage1 ) {
-				const previousFileResponse = context.data.fileResponse,
-					fileResponse = { ...previousFileResponse, stage2: ajaxState.response };
 
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: fileResponse } );
+			context.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+
+			kitActions.upload( { file: decodedFileURL } );
+		},
+		importKit = () => {
+			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
+				setStartImport( true );
 			} else {
-				context.dispatch( { type: 'SET_FILE_RESPONSE', payload: { stage1: ajaxState.response } } );
+				setShowUnfilteredFilesDialog( true );
 			}
 		},
-		onDialogDismiss = () => {
+		onCancelProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
-			navigate( '/import' );
+
+			if ( 'kit-library' === referrer ) {
+				navigate( '/kit-library' );
+			} else {
+				navigate( '/import' );
+			}
 		};
 
+	// on load.
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			if ( context.data.fileResponse.hasOwnProperty( 'stage2' ) ) {
+		if ( fileURL && ! context.data.file ) {
+			// When the starting point of the app is the import/process screen and importing via file_url.
+			uploadKit();
+		} else if ( context.data.uploadedData ) {
+			// When the import/process is the second step of the kit import process, after selecting the kit content.
+			importKit();
+		}
+	}, [] );
+
+	// Starting the import process.
+	useEffect( () => {
+		if ( startImport ) {
+			kitActions.import( {
+				session: context.data.uploadedData.session,
+				include: context.data.includes,
+				overrideConditions: context.data.overrideConditions,
+				referrer: context.data.referrer,
+			} );
+		}
+	}, [ startImport ] );
+
+	// Updating the kit data after upload/import.
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			switch ( kitState.status ) {
+				case KIT_STATUS_MAP.IMPORTED:
+					context.dispatch( { type: 'SET_IMPORTED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.UPLOADED:
+					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+					break;
+				case KIT_STATUS_MAP.ERROR:
+					setErrorType( kitState.data );
+					break;
+			}
+		}
+	}, [ kitState.status ] );
+
+	// Actions after the kit upload/import data was updated.
+	useEffect( () => {
+		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
+			if ( context.data.importedData ) { // After kit upload.
 				navigate( '/import/complete' );
+			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
+				if ( context.data.uploadedData.conflicts ) {
+					navigate( '/import/resolver' );
+				} else {
+					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
+					kitActions.reset();
+
+					importKit();
+				}
 			} else {
 				navigate( '/import/content' );
 			}
 		}
-	}, [ context.data.fileResponse ] );
+	}, [ context.data.uploadedData, context.data.importedData ] );
 
 	return (
 		<Layout type="import">
-			<FileProcess
-				status={ ajaxState.status }
-				onLoad={ onLoad }
-				onSuccess={ onSuccess }
-				onDialogApprove={ () => {} }
-				onDialogDismiss={ onDialogDismiss }
-			/>
+			<section>
+				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
+
+				<UnfilteredFilesDialog
+					show={ showUnfilteredFilesDialog }
+					setShow={ setShowUnfilteredFilesDialog }
+					onReady={ () => {
+						setShowUnfilteredFilesDialog( false );
+						setStartImport( true );
+					} }
+					onCancel={ () => {
+						setShowUnfilteredFilesDialog( false );
+						onCancelProcess();
+					} }
+				/>
+			</section>
 		</Layout>
 	);
 }

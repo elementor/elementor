@@ -30,7 +30,7 @@ class Module extends BaseModule {
 			'name' => 'elements-color-picker',
 			'title' => esc_html__( 'Color Sampler', 'elementor' ),
 			'default' => Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'description' => esc_html__( 'Adds a new color picker functionality that allows choose a color from other elements settings.', 'elementor' ),
 		];
 	}

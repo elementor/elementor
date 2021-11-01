@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Library extends Common_App {
+
 	public function get_title() {
 		return esc_html__( 'Library', 'elementor' );
 	}
@@ -48,6 +49,11 @@ class Library extends Common_App {
 		$body_args = apply_filters( 'elementor/api/get_templates/body_args', $body_args );
 
 		$template_content = $this->request( 'get_template_content', $body_args, true );
+
+		if ( is_wp_error( $template_content ) && 401 === $template_content->get_error_code() ) {
+			// Normalize 401 message
+			return new \WP_Error( 401, __( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
+		}
 
 		return $template_content;
 	}
@@ -89,7 +95,7 @@ class Library extends Common_App {
 			],
 			'connect_site_key' => [
 				'label' => 'Site Key',
-				'value' => get_option( 'elementor_connect_site_key' ),
+				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
 			],
 			'remote_info_library' => [
 				'label' => 'Remote Library Info',

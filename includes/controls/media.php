@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -77,6 +78,23 @@ class Control_Media extends Control_Base_Multiple {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Support SVG and JSON Import
+	 *
+	 * Called by the 'upload_mimes' filter. Adds SVG and JSON mime types to the list of WordPress' allowed mime types.
+	 *
+	 * @since 3.4.6
+	 * @deprecated 3.5.0
+	 *
+	 * @param $mimes
+	 * @return mixed
+	 */
+	public function support_svg_and_json_import( $mimes ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
+		return $mimes;
 	}
 
 	/**
@@ -192,9 +210,6 @@ class Control_Media extends Control_Base_Multiple {
 			#>
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area elementor-fit-aspect-ratio">
-						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button elementor-fit-aspect-ratio">
-							<i class="eicon-plus-circle" aria-hidden="true"></i>
-						</div>
 						<div class="elementor-control-media-area elementor-fit-aspect-ratio">
 							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_html__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o"></i>
@@ -215,6 +230,9 @@ class Control_Media extends Control_Base_Multiple {
 										break;
 								}
 							#>
+						</div>
+						<div class="elementor-control-media-upload-button elementor-control-media__content__upload-button">
+							<i class="eicon-plus-circle" aria-hidden="true"></i>
 						</div>
 						<div class="elementor-control-media__tools elementor-control-dynamic-switcher-wrapper">
 							<#

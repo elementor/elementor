@@ -1,10 +1,11 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Core\Utils\Http;
-use Elementor\Core\Utils\Collection;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Http;
+use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -15,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base_App {
 
 	const OPTION_NAME_PREFIX = 'elementor_connect_';
+
+	const OPTION_CONNECT_SITE_KEY = self::OPTION_NAME_PREFIX . 'site_key';
 
 	const SITE_URL = 'https://my.elementor.com/connect/v1';
 
@@ -75,6 +78,7 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
+			/* translators: %s: Remote user. */
 			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
@@ -162,10 +166,8 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		delete_user_option( get_current_user_id(), 'elementor_connect_common_data' );
-
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_connect_site_key' );
+			delete_option( static::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -248,9 +250,7 @@ abstract class Base_App {
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
 		] + $params;
 
-		// Encode base url, the encode is limited to 64 chars.
-		$admin_url = \Requests_IDNAEncoder::encode( get_admin_url() );
-
+		$admin_url = Str::encode_idn_url( get_admin_url() );
 		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
 
 		return add_query_arg( $params, $admin_url );
@@ -351,8 +351,6 @@ abstract class Base_App {
 	}
 
 	/**
-	 * @deprecated Please use `http_request` method instead of this method.
-	 *
 	 * @param       $action
 	 * @param array $request_body
 	 * @param false $as_array
@@ -379,24 +377,34 @@ abstract class Base_App {
 	}
 
 	/**
-	 * Get all the connect info
+	 * Get all the connect information
 	 *
 	 * @return array
 	 */
 	protected function get_connect_info() {
-		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', [], $this );
+		$connect_info = [
+			'app' => $this->get_slug(),
+			'access_token' => $this->get( 'access_token' ),
+			'client_id' => $this->get( 'client_id' ),
+			'local_id' => get_current_user_id(),
+			'site_key' => $this->get_site_key(),
+			'home_url' => trailingslashit( home_url() ),
+		];
 
-		return array_merge(
-			[
-				'app' => $this->get_slug(),
-				'access_token' => $this->get( 'access_token' ),
-				'client_id' => $this->get( 'client_id' ),
-				'local_id' => get_current_user_id(),
-				'site_key' => $this->get_site_key(),
-				'home_url' => trailingslashit( home_url() ),
-			],
-			$additional_info
-		);
+		$additional_info = [];
+
+		/**
+		 * Additional connect info.
+		 *
+		 * Filters the connection information when connecting to Elementor servers.
+		 * This hook can be used to add more information or add more data.
+		 *
+		 * @param array    $additional_info Additional connecting information array.
+		 * @param Base_App $this            The base app instance.
+		 */
+		$additional_info = apply_filters( 'elementor/connect/additional-connect-info', $additional_info, $this );
+
+		return array_merge( $connect_info, $additional_info );
 	}
 
 	/**
@@ -477,7 +485,10 @@ abstract class Base_App {
 
 			if ( 401 === $code ) {
 				$this->delete();
-				$this->action_authorize();
+
+				if ( 'xhr' !== $this->auth_mode ) {
+					$this->action_authorize();
+				}
 			}
 
 			return new \WP_Error( $code, $message );
@@ -508,7 +519,6 @@ abstract class Base_App {
 	protected function get_api_url() {
 		return static::API_URL . '/' . $this->get_slug();
 	}
-
 	/**
 	 * @since 2.3.0
 	 * @access protected
@@ -524,18 +534,28 @@ abstract class Base_App {
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_auth_redirect_uri();
 
-		$url = add_query_arg( [
-			'action' => 'authorize',
-			'response_type' => 'code',
-			'client_id' => $this->get( 'client_id' ),
-			'auth_secret' => $this->get( 'auth_secret' ),
-			'state' => $this->get( 'state' ),
-			'redirect_uri' => rawurlencode( $redirect_uri ),
-			'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
-			'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
-		], $this->get_remote_site_url() );
+		$allowed_query_params_to_propagate = [
+			'utm_source',
+			'utm_medium',
+			'utm_campaign',
+			'utm_term',
+			'utm_content',
+		];
 
-		return $url;
+		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore
+			->only( $allowed_query_params_to_propagate )
+			->merge( [
+				'action' => 'authorize',
+				'response_type' => 'code',
+				'client_id' => $this->get( 'client_id' ),
+				'auth_secret' => $this->get( 'auth_secret' ),
+				'state' => $this->get( 'state' ),
+				'redirect_uri' => rawurlencode( $redirect_uri ),
+				'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
+				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
+			] );
+
+		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}
 
 	/**
@@ -571,7 +591,13 @@ abstract class Base_App {
 			return;
 		}
 
-		$response = $this->request( 'get_client_id' );
+		$response = $this->request(
+			'get_client_id',
+			[
+				// phpcs:ignore WordPress.Security.NonceVerification
+				'source' => isset( $_REQUEST['source'] ) ? esc_attr( $_REQUEST['source'] ) : '',
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
@@ -637,11 +663,11 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	public function get_site_key() {
-		$site_key = get_option( 'elementor_connect_site_key' );
+		$site_key = get_option( static::OPTION_CONNECT_SITE_KEY );
 
 		if ( ! $site_key ) {
 			$site_key = md5( uniqid( wp_generate_password() ) );
-			update_option( 'elementor_connect_site_key', $site_key );
+			update_option( static::OPTION_CONNECT_SITE_KEY, $site_key );
 		}
 
 		return $site_key;
@@ -733,12 +759,14 @@ abstract class Base_App {
 		}, $base_urls );
 	}
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+	private function init_auth_mode() {
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		$is_ajax = wp_doing_ajax();
+
+		if ( $is_rest || $is_ajax ) {
+			// Set default to 'xhr' if rest or ajax request.
+			$this->set_auth_mode( 'xhr' );
+		}
 
 		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$allowed_auth_modes = [
@@ -752,9 +780,23 @@ abstract class Base_App {
 			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
-				$this->auth_mode = $mode;
+				$this->set_auth_mode( $mode );
 			}
 		}
+	}
+
+	public function set_auth_mode( $mode ) {
+		$this->auth_mode = $mode;
+	}
+
+	/**
+	 * @since 2.3.0
+	 * @access public
+	 */
+	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+
+		$this->init_auth_mode();
 
 		$this->http = new Http();
 

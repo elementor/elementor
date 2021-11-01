@@ -433,11 +433,15 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--e-icon-list-icon-size: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
+
+		$e_icon_list_icon_css_var = 'var(--e-icon-list-icon-size, 1em)';
+		$e_icon_list_icon_align_left = sprintf( '0 calc(%s * 0.25) 0 0', $e_icon_list_icon_css_var );
+		$e_icon_list_icon_align_center = sprintf( '0 calc(%s * 0.125)', $e_icon_list_icon_css_var );
+		$e_icon_list_icon_align_right = sprintf( '0 0 0 calc(%s * 0.25)', $e_icon_list_icon_css_var );
 
 		$this->add_responsive_control(
 			'icon_self_align',
@@ -459,8 +463,13 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'default' => '',
+				'selectors_dictionary' => [
+					'left' => sprintf( '--e-icon-list-icon-align: left; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_left ),
+					'center' => sprintf( '--e-icon-list-icon-align: center; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_center ),
+					'right' => sprintf( '--e-icon-list-icon-align: right; --e-icon-list-icon-margin: %s;', $e_icon_list_icon_align_right ),
+				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}}' => '{{VALUE}}',
 				],
 			]
 		);

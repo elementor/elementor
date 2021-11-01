@@ -26,6 +26,7 @@ class Utils {
 		'a',
 		'article',
 		'aside',
+		'button',
 		'div',
 		'footer',
 		'h1',
@@ -79,25 +80,13 @@ class Utils {
 				'fill' => true,
 			],
 		],
+		'image' => [
+			'img' => [
+				'srcset' => true,
+				'sizes' => true,
+			],
+		],
 	];
-
-	/**
-	 * Is ajax.
-	 *
-	 * Whether the current request is a WordPress ajax request.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `wp_doing_ajax()` instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True if it's a WordPress ajax request, false otherwise.
-	 */
-	public static function is_ajax() {
-		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
-
-		return wp_doing_ajax();
-	}
 
 	/**
 	 * Is WP CLI.
@@ -202,7 +191,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-			/* translators: %d: Number of rows */
+			/* translators: %d: Number of rows. */
 			_n( '%d row affected.', '%d rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
@@ -393,6 +382,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 3.3.0
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
@@ -509,16 +499,23 @@ class Utils {
 
 	public static function get_meta_viewport( $context = '' ) {
 		$meta_tag = '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />';
+
 		/**
 		 * Viewport meta tag.
 		 *
-		 * Filters the Elementor preview URL.
+		 * Filters the meta tag containing the viewport information.
+		 *
+		 * This hook can be used to change the intial viewport meta tag set by Elementor
+		 * and replace it with a different viewport tag.
 		 *
 		 * @since 2.5.0
 		 *
 		 * @param string $meta_tag Viewport meta tag.
+		 * @param string $context  Page context.
 		 */
-		return apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
+		$meta_tag = apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
+
+		return $meta_tag;
 	}
 
 	/**
@@ -732,6 +729,7 @@ class Utils {
 	 */
 	public static function get_recently_edited_posts_query( $args = [] ) {
 		$args = wp_parse_args( $args, [
+			'no_found_rows' => true,
 			'post_type' => 'any',
 			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '3',
@@ -743,7 +741,7 @@ class Utils {
 		return new \WP_Query( $args );
 	}
 
-	public static function print_wp_kses_extended( string $string, array $tags ) {
+	public static function print_wp_kses_extended( $string, array $tags ) {
 		$allowed_html = wp_kses_allowed_html( 'post' );
 		// Since PHP 5.6 cannot use isset() on the result of an expression.
 		$extended_allowed_html_tags = self::EXTENDED_ALLOWED_HTML_TAGS;
@@ -751,7 +749,7 @@ class Utils {
 		foreach ( $tags as $tag ) {
 			if ( isset( $extended_allowed_html_tags[ $tag ] ) ) {
 				$extended_tags = apply_filters( "elementor/extended_allowed_html_tags/{$tag}", self::EXTENDED_ALLOWED_HTML_TAGS[ $tag ] );
-				$allowed_html = array_merge( $allowed_html, $extended_tags );
+				$allowed_html = array_replace_recursive( $allowed_html, $extended_tags );
 			}
 		}
 

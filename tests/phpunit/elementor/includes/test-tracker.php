@@ -2,10 +2,10 @@
 namespace Elementor\Testing\Includes;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tracker;
 use Elementor\Utils;
 
@@ -44,7 +44,7 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
 
-		update_option( Files_Upload_Handler::OPTION_KEY, '1' );
+		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
 
 		update_option( 'elementor_font_display', 'block' );
 
@@ -147,5 +147,32 @@ class Test_Tracker extends Elementor_Test_Base {
 			'maintenance_mode_exclude_roles' => 'admin',
 			'maintenance_mode_template_id' => '1',
 		], $actual );
+	}
+
+	public function test_get_library_usage_extend() {
+		// Arrange.
+		$post_types = [ 'section', 'page' ];
+		$post_statuses = [ 'draft', 'private', 'publish' ];
+		$posts_per_status = 2;
+
+		foreach ( $post_types as $post_type ) {
+			foreach ( $post_statuses as $post_status ) {
+				for ( $i = 0; $i < $posts_per_status; ++$i ) {
+					$template = $this->factory()->documents->create_and_get_template( $post_type );
+
+					$this->factory()->documents->update_object( $template->get_id(), [ 'post_status' => $post_status ] );
+				}
+			}
+		}
+
+		// Act.
+		$library_usage = Tracker::get_library_usage_extend();
+
+		// Assert.
+		foreach ( $post_types as $post_type ) {
+			foreach ( $post_statuses as $post_status ) {
+				$this->assertEquals( $posts_per_status, $library_usage[ $post_type ][ $post_status ] );
+			}
+		}
 	}
 }

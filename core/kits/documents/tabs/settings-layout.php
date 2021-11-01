@@ -163,11 +163,17 @@ class Settings_Layout extends Tab_Base {
 			$options[ $prefix . $breakpoint_key ] = $breakpoint['label'];
 		}
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
+			$active_breakpoints_control_type = Controls_Manager::SELECT2;
+		} else {
+			$active_breakpoints_control_type = Controls_Manager::HIDDEN;
+		}
+
 		$this->add_control(
 			self::ACTIVE_BREAKPOINTS_CONTROL_ID,
 			[
 				'label' => esc_html__( 'Active Breakpoints', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
+				'type' => $active_breakpoints_control_type,
 				'description' => esc_html__( 'Mobile and Tablet options cannot be deleted.', 'elementor' ),
 				'options' => $options,
 				'default' => [
@@ -263,6 +269,11 @@ class Settings_Layout extends Tab_Base {
 		$default_breakpoints_config = Breakpoints_Manager::get_default_config();
 		$prefix = Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX;
 
+		// If the ACB experiment is inactive, only add the mobile and tablet controls.
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
+			$default_breakpoints_config = array_intersect_key( $default_breakpoints_config, array_flip( [ Breakpoints_Manager::BREAKPOINT_KEY_MOBILE, Breakpoints_Manager::BREAKPOINT_KEY_TABLET ] ) );
+		}
+
 		// Add a control for each of the **default** breakpoints.
 		foreach ( $default_breakpoints_config as $breakpoint_key => $default_breakpoint_config ) {
 			$this->add_control(
@@ -302,6 +313,13 @@ class Settings_Layout extends Tab_Base {
 					],
 				],
 			];
+
+			if ( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $breakpoint_key ) {
+				$control_config['description'] = esc_html__(
+					'Widescreen breakpoint settings will apply from the selected value and up.',
+					'elementor'
+				);
+			}
 
 			// Add the breakpoint Control itself.
 			$this->add_control( $prefix . $breakpoint_key, $control_config );

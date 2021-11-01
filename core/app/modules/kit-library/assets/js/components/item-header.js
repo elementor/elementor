@@ -1,3 +1,4 @@
+import ApplyKitDialog from './apply-kit-dialog';
 import ConnectDialog from './connect-dialog';
 import Header from './layout/header';
 import HeaderBackButton from './layout/header-back-button';
@@ -6,7 +7,6 @@ import useDownloadLinkMutation from '../hooks/use-download-link-mutation';
 import useKitCallToAction, { TYPE_PROMOTION, TYPE_CONNECT } from '../hooks/use-kit-call-to-action';
 import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
-import { useNavigate } from '@reach/router';
 import { useSettingsContext } from '../context/settings-context';
 
 import './item-header.scss';
@@ -67,18 +67,32 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect } )
 
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
-	const navigate = useNavigate();
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
+	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
 	const [ error, setError ] = useState( false );
 
 	const { mutate: apply, isLoading: isApplyLoading } = useDownloadLinkMutation(
 		props.model,
 		{
-			onSuccess: ( { data } ) => navigate(
-				`/import/process?file_url=${ encodeURIComponent( data.data.download_link ) }&nonce=${ data.meta.nonce }&referrer=kit-library`
-			),
-			onError: () => setError( __( 'Something went wrong.', 'elementor' ) ),
+			onSuccess: ( { data } ) => setDownloadLinkData( data ),
+			onError: ( errorResponse ) => {
+				if ( 401 === errorResponse.code ) {
+					updateSettings( {
+						is_library_connected: false,
+						access_level: 0,
+					} );
+
+					setIsConnectDialogOpen( true );
+
+					return;
+				}
+
+				setError( {
+					code: errorResponse.code,
+					message: __( 'Something went wrong.', 'elementor' ),
+				} );
+			},
 		}
 	);
 
@@ -93,20 +107,30 @@ export default function ItemHeader( props ) {
 	return (
 		<>
 			{
-				error && <Dialog
-					title={ error }
-					text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
-					approveButtonText={ __( 'Learn More', 'elementor' ) }
-					approveButtonColor="link"
-					approveButtonUrl="http://go.elementor.com/app-kit-library-error"
-					approveButtonOnClick={ () => setError( false ) }
-					dismissButtonText={ __( 'Got it', 'elementor' ) }
-					dismissButtonOnClick={ () => setError( false ) }
-					onClose={ () => setError( false ) }
+				error && (
+					<Dialog
+						title={ error.message }
+						text={ __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+						approveButtonText={ __( 'Learn More', 'elementor' ) }
+						approveButtonColor="link"
+						approveButtonUrl="http://go.elementor.com/app-kit-library-error"
+						approveButtonOnClick={ () => setError( false ) }
+						dismissButtonText={ __( 'Got it', 'elementor' ) }
+						dismissButtonOnClick={ () => setError( false ) }
+						onClose={ () => setError( false ) }
+					/>
+				)
+			}
+			{
+				downloadLinkData && <ApplyKitDialog
+					downloadLink={ downloadLinkData.data.download_link }
+					nonce={ downloadLinkData.meta.nonce }
+					onClose={ () => setDownloadLinkData( null ) }
 				/>
 			}
 			{
 				isConnectDialogOpen && <ConnectDialog
+					pageId={ props.pageId }
 					onClose={ () => setIsConnectDialogOpen( false ) }
 					onSuccess={ ( data ) => {
 						updateSettings( {
@@ -120,7 +144,7 @@ export default function ItemHeader( props ) {
 
 						apply();
 					} }
-					onError={ ( message ) => setError( message ) }
+					onError={ ( message ) => setError( { message } ) }
 				/>
 			}
 			<Header
@@ -136,4 +160,5 @@ ItemHeader.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	centerColumn: PropTypes.node,
 	buttons: PropTypes.arrayOf( PropTypes.object ),
+	pageId: PropTypes.string,
 };
