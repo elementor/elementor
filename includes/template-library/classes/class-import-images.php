@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
-use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 
@@ -31,18 +30,6 @@ class Import_Images {
 	 * @var array
 	 */
 	private $_replace_image_ids = [];
-
-	/**
-	 * SVG Handler.
-	 *
-	 * Holding the SVG Handler instance.
-	 *
-	 * @since 3.5.0
-	 * @access private
-	 *
-	 * @var Svg
-	 */
-	private static $svg_handler;
 
 	/**
 	 * Get image hash.
@@ -146,16 +133,14 @@ class Import_Images {
 		$filetype = wp_check_filetype( $filename );
 
 		if ( 'svg' === $filetype['ext'] ) {
-			if ( ! self::$svg_handler ) {
-				self::$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
-			}
-
 			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
 			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 				return false;
 			}
 
-			$file_content = self::$svg_handler->sanitizer( $file_content );
+			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+			$file_content = $svg_handler->sanitizer( $file_content );
 		};
 
 		$upload = wp_upload_bits(
