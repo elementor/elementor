@@ -4,7 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
@@ -56,12 +56,10 @@ class Module extends BaseModule {
 
 		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
-		$svg_handler = new Svg_Handler();
-
 		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
-			'isUnfilteredFilesEnabled' => $svg_handler->is_enabled(),
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 		];
 	}
 
