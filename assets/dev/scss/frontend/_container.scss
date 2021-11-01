@@ -62,6 +62,8 @@
 
 	.elementor-widget-placeholder {
 		--size: 10px;
+		--margin-start: calc( -1 * var( --size ) );
+		--margin-end: calc( -2 * var( --size ) );
 
 		flex-shrink: 0;
 		align-self: stretch;
@@ -72,16 +74,18 @@
 	&.e-container--placeholder-row > .elementor-widget-placeholder {
 		position: relative;
 		width: var( --size );
-		margin-inline-start: calc( -1 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
+		// To make sure that it doesn't push & break the layout when appearing.
+		margin-inline-start: var( --margin-start );
 		height: auto;
 		min-height: 100%;
 		animation-name: dnd-placeholder-widget-vertical;
 	}
 
 	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
-		position: absolute;
 		height: var( --size );
-		margin-block-start: calc( -2 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
+		// To make sure that it doesn't push & break the layout when appearing.
+		margin-block-start: var( --margin-start );
+		margin-block-end: var( --margin-end );
 		animation-name: dnd-placeholder-widget-horizontal;
 	}
 
