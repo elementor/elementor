@@ -356,7 +356,7 @@ abstract class Widget_Base extends Element_Base {
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
-		return array_merge( parent::get_initial_config(), $config );
+		return array_replace_recursive( parent::get_initial_config(), $config );
 	}
 
 	/**
