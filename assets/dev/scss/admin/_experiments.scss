@@ -24,6 +24,10 @@
 		}
 	}
 
+	&__table-title {
+		margin:30px 0;
+	}
+
 	&__description {
 		max-width: 820px;
 	}
@@ -36,6 +40,6 @@
 	}
 
 	&__button.button {
-		@include margin(20px, 5px, 18px, 0);
+		@include margin(18px, 14px, 22px, 0);
 	}
 }

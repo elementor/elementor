@@ -10,7 +10,7 @@ import useAjax from 'elementor-app/hooks/use-ajax';
 
 export default function ExportProcess() {
 	const { ajaxState, setAjax } = useAjax(),
-		[ isError, setIsError ] = useState( false ),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		onDialogDismiss = () => {
@@ -26,6 +26,8 @@ export default function ExportProcess() {
 					'Content-Type': 'application/json',
 				},
 			} );
+		} else {
+			navigate( '/export' );
 		}
 	}, [] );
 
@@ -33,7 +35,7 @@ export default function ExportProcess() {
 		if ( 'success' === ajaxState.status ) {
 			context.dispatch( { type: 'SET_EXPORTED_DATA', payload: ajaxState.response } );
 		} else if ( 'error' === ajaxState.status ) {
-			setIsError( true );
+			setErrorType( ajaxState.response );
 		}
 	}, [ ajaxState.status ] );
 
@@ -46,7 +48,7 @@ export default function ExportProcess() {
 	return (
 		<Layout type="export">
 			<FileProcess
-				isError={ isError }
+				errorType={ errorType }
 				onDialogApprove={ () => window.open( 'https://elementor.com/help/export-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
 				onDialogDismiss={ onDialogDismiss }
 			/>

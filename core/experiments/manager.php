@@ -404,7 +404,7 @@ class Manager extends Base_Object {
 				];
 			}
 
-			if ( ! Tracker::is_allow_track() ) {
+			if ( ! Tracker::is_allow_track() && 'stable' === $section ) {
 				$fields[ $section ] += $settings->get_usage_fields();
 			}
 		}
@@ -478,7 +478,7 @@ class Manager extends Base_Object {
 		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
 		<?php } ?>
 		<hr>
-		<h2>
+		<h2 class="e-experiment__table-title">
 			<?php echo esc_html__( 'Ongoing Experiments', 'elementor' ); ?>
 		</h2>
 		<?php

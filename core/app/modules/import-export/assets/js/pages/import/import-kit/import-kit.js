@@ -18,14 +18,14 @@ import './import-kit.scss';
 
 export default function ImportKit() {
 	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ isImportFailed, setIsImportFailed ] = useState( false ),
+		[ errorType, setErrorType ] = useState( '' ),
 		[ isLoading, setIsLoading ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
-			setIsImportFailed( false );
+			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
 		},
@@ -35,29 +35,33 @@ export default function ImportKit() {
 			</InlineLink>
 		);
 
+	// On load.
+	useEffect( () => {
+		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+	}, [] );
+
+	// Uploading the kit after file is selected.
 	useEffect( () => {
 		if ( context.data.file ) {
 			kitActions.upload( { file: context.data.file } );
 		}
 	}, [ context.data.file ] );
 
+	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
-			setIsImportFailed( true );
+			setErrorType( kitState.data );
 		}
 	}, [ kitState.status ] );
 
+	// After kit was uploaded.
 	useEffect( () => {
 		if ( context.data.uploadedData && context.data.file ) {
 			navigate( '/import/content' );
 		}
 	}, [ context.data.uploadedData ] );
-
-	useEffect( () => {
-		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
-	}, [] );
 
 	return (
 		<Layout type="import">
@@ -94,18 +98,12 @@ export default function ImportKit() {
 						setIsLoading( true );
 						context.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
-					onError={ () => setIsImportFailed( true ) }
+					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
 				/>
 
-				{ isImportFailed &&
-					<ImportFailedDialog
-						onApprove={ () => window.open( 'https://elementor.com/help/import-kit?utm_source=import-export&utm_medium=wp-dash&utm_campaign=learn', '_blank' ) }
-						onDismiss={ resetImportProcess }
-					/>
-				}
+				{ errorType && <ImportFailedDialog errorType={ errorType } onApprove={ resetImportProcess } />	}
 			</section>
 		</Layout>
 	);
 }
-
