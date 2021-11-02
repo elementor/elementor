@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev48 - 2021-11-02
+* Tweak: Adding new error handling scenarios to the import-export process [ED-4294] (#16720)
+* Tweak: Renaming shared components names. (#16771)
+* New: CLI - Added a command to import all templates in a directory [ED-5247] (#16666)
+
 #### 3.5.0-dev47 - 2021-10-31
 * Tweak: Updated changelog to v3.4.7 (#16762)
 * Fix: UI Glitch in the new Experiments page [ED-5311] (#16763)
