@@ -87,10 +87,12 @@ class App extends BaseApp {
 	}
 
 	protected function get_init_settings() {
+		$referer = wp_get_referer();
+
 		return [
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
-			'return_url' => isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : admin_url(),
+			'return_url' => $referer ? $referer : admin_url(),
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
@@ -148,7 +150,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.12.0'
+			'5.13.0'
 		);
 
 		wp_register_style(
