@@ -5,6 +5,7 @@ var ContextMenu = require( 'elementor-editor-utils/context-menu' );
 module.exports = Marionette.Behavior.extend( {
 
 	defaults: {
+		context: 'preview',
 		groups: [],
 		eventTargets: [ 'el' ],
 	},
@@ -38,22 +39,25 @@ module.exports = Marionette.Behavior.extend( {
 			afterGroupIndex = contextMenuGroups.length;
 		}
 
-		contextMenuGroups.splice( afterGroupIndex, 0, {
-			name: 'tools',
-			actions: [
-				{
-					name: 'navigator',
-					title: __( 'Navigator', 'elementor' ),
-					callback: () => $e.route( 'navigator', {
-						reOpen: true,
-						model: this.view.model,
-					} ),
-				},
-			],
-		} );
+		if ( 'preview' === this.getOption( 'context' ) ) {
+			contextMenuGroups.splice( afterGroupIndex, 0, {
+				name: 'tools',
+				actions: [
+					{
+						name: 'navigator',
+						title: __( 'Navigator', 'elementor' ),
+						callback: () => $e.route( 'navigator', {
+							reOpen: true,
+							model: this.view.model,
+						} ),
+					},
+				],
+			} );
+		}
 
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
+			context: this.getOption( 'context' ),
 		} );
 
 		this.contextMenu.getModal().on( 'hide', () => this.onContextMenuHide() );
@@ -64,7 +68,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.initContextMenu();
 		}
 
-		if ( ! elementor.selection.has( this.view.getContainer() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) && ! elementor.selection.has( this.view.getContainer() ) ) {
 			$e.run( 'document/elements/deselect-all' );
 		}
 
@@ -76,9 +80,11 @@ module.exports = Marionette.Behavior.extend( {
 			return;
 		}
 
-		const isAddSectionView = this.view instanceof AddSectionBase;
-		if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) ) {
+			const isAddSectionView = this.view instanceof AddSectionBase;
+			if ( ! isAddSectionView && ( ! this.view.container || ! this.view.container.isDesignable() ) ) {
 				return;
+			}
 		}
 
 		event.preventDefault();
