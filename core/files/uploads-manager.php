@@ -85,7 +85,7 @@ class Uploads_Manager extends Base_Object {
 
 		foreach ( $extracted['files'] as $extracted_file_path ) {
 			// Each file is an array with a 'name' (file path) property.
-			if ( ! is_wp_error( $this->validate_file( $extracted_file_path ) ) ) {
+			if ( ! is_wp_error( $this->validate_file( [ 'tmp_name' => $extracted_file_path ] ) ) ) {
 				$result['files'][] = $extracted_file_path;
 			}
 		}
@@ -115,7 +115,7 @@ class Uploads_Manager extends Base_Object {
 			$file = $this->save_base64_to_tmp_file( $file );
 		}
 
-		$validation_result = $this->validate_file( $file['tmp_name'], $allowed_file_extensions );
+		$validation_result = $this->validate_file( $file, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
@@ -164,7 +164,7 @@ class Uploads_Manager extends Base_Object {
 			return $file;
 		}
 
-		$result = $this->validate_file( $file['tmp_name'] );
+		$result = $this->validate_file( $file );
 
 		if ( is_wp_error( $result ) ) {
 			$file['error'] = $result->get_error_message();
@@ -400,14 +400,12 @@ class Uploads_Manager extends Base_Object {
 			return $temp_filename;
 		}
 
-		$new_file_array = [
+		return [
 			// the original uploaded file name
 			'name' => $file['fileName'],
 			// The path to the temporary file
 			'tmp_name' => $temp_filename,
 		];
-
-		return $new_file_array;
 	}
 
 	/**
@@ -425,14 +423,16 @@ class Uploads_Manager extends Base_Object {
 	 * Validate File
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
-	 * @param string $file_path
+	 * @param array $file_path
 	 * @param array $file_extensions Optional
 	 * @return bool|\WP_Error
-	 *
 	 */
-	private function validate_file( $file_path, $file_extensions = [] ) {
-		$file_extension = pathinfo( $file_path, PATHINFO_EXTENSION );
+	private function validate_file( array $file, $file_extensions = [] ) {
+		$uploaded_file_name = isset( $file['name'] ) ? $file['name'] : $file['tmp_name'];
+
+		$file_extension = pathinfo( $uploaded_file_name, PATHINFO_EXTENSION );
 
 		$allowed_file_extensions = $this->get_allowed_file_extensions();
 
@@ -461,7 +461,7 @@ class Uploads_Manager extends Base_Object {
 		}
 
 		// Here is each file type handler's chance to run its own specific validations
-		return $file_type_handler->validate_file( $file_path );
+		return $file_type_handler->validate_file( $file );
 	}
 
 	/**
