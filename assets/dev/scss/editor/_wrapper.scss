@@ -6,11 +6,11 @@
 
 body,
 html {
-    height: 100%;
+	height: 100%;
 }
 
 html {
-    background-color: #F1F1F1;
+	background-color: #F1F1F1;
 }
 
 iframe,
@@ -27,14 +27,14 @@ a {
 }
 
 body {
-    color: $editor-dark;
-    font-family: $admin-font-family;
-    font-size: 13px;
-    font-weight: normal;
-    line-height: 1;
-    text-decoration: none;
-    text-transform: none;
-    overflow: hidden;
+	color: $editor-dark;
+	font-family: $admin-font-family;
+	font-size: 13px;
+	font-weight: normal;
+	line-height: 1;
+	text-decoration: none;
+	text-transform: none;
+	overflow: hidden;
 
 	&:after {
 		content: '';
@@ -86,9 +86,14 @@ body {
 }
 
 #elementor-editor-wrapper {
-	display: flex;
+	display: grid;
 	width: 100%;
 	height: 100vh;
+	grid-template-columns: var(--e-editor-panel-width) auto var(--e-editor-navigator-width);
+	grid-template-rows: 50px auto;
+	// grid-template-rows: calc(40px * var(--e-is-device-mode)) auto;
+	grid-template-areas: "responsive-bar responsive-bar responsive-bar"
+		"panel preview navigator";
 }
 
 #elementor-panel,
