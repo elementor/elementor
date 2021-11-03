@@ -59,7 +59,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			},
 		};
 
-		elementorCommon.ajax.addRequestConstant( 'uploadTypeCaller', 'elementor-wp-media-upload' );
+		elementorCommon.ajax.addRequestConstant( 'uploadTypeCaller', 'elementor-media-upload' );
 
 		elementorCommon.ajax.addRequest( 'import_template', options );
 
