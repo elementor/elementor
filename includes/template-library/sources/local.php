@@ -822,8 +822,6 @@ class Source_Local extends Source_Base {
 			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
 
 			if ( is_wp_error( $extracted_files ) ) {
-				// Remove the temporary zip file, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 
@@ -834,8 +832,6 @@ class Source_Local extends Source_Base {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 					return $import_result;
 				}
 
@@ -849,8 +845,6 @@ class Source_Local extends Source_Base {
 			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 				return $import_result;
 			}
 
