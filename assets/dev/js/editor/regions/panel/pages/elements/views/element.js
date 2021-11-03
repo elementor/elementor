@@ -1,3 +1,5 @@
+import ContextMenu from 'elementor-behaviors/context-menu';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
@@ -25,6 +27,21 @@ module.exports = Marionette.ItemView.extend( {
 		element: '.elementor-element',
 	},
 
+	behaviors: function() {
+		const groups = elementor.hooks.applyFilters( 'panel/element/contextMenuGroups', [], this ),
+			behaviors = {};
+
+		if ( groups.length ) {
+			behaviors.contextMenu = {
+				behaviorClass: ContextMenu,
+				context: 'panel',
+				groups,
+			};
+		}
+
+		return elementor.hooks.applyFilters( 'panel/element/behaviors', behaviors, this );
+	},
+
 	isEditable: function() {
 		return false !== this.model.get( 'editable' );
 	},
@@ -40,8 +57,8 @@ module.exports = Marionette.ItemView.extend( {
 				elementor.channels.editor.reply( 'element:dragged', null );
 
 				elementor.channels.panelElements
-						.reply( 'element:selected', this )
-						.trigger( 'element:drag:start' );
+					.reply( 'element:selected', this )
+					.trigger( 'element:drag:start' );
 			},
 
 			onDragEnd: () => {

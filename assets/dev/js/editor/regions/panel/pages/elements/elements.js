@@ -61,28 +61,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
 	},
 
-	getInnerSectionData: function() {
-		const sectionConfig = elementor.config.elements.section;
-
-		return {
-			title: __( 'Inner Section', 'elementor' ),
-			elType: 'section',
-			categories: [ 'basic' ],
-			keywords: [ 'row', 'columns', 'nested' ],
-			icon: sectionConfig.icon,
-		};
-	},
-
 	initElementsCollection: function() {
 		var elementsCollection = new PanelElementsElementsCollection();
 
 		const self = this,
 			isContainerActive = elementorCommon.config.experimentalFeatures.container;
-
-		// Register the `Inner Section` only if the Container experiment is disabled.
-		if ( ! isContainerActive ) {
-			elementsCollection.add( self.getInnerSectionData() );
-		}
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, function( widget ) {
@@ -91,6 +74,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			}
 
 			if ( ! widget.show_in_panel ) {
+				return;
+			}
+
+			// Don't register the `Inner Section` if the Container experiment is enabled.
+			if ( 'inner-section' === widget.name && isContainerActive ) {
 				return;
 			}
 
@@ -135,10 +123,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
 		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			if ( ! categories[ categoryName ] ) {
-				return;
-			}
-
 			// Set defaults.
 			if ( 'undefined' === typeof categoryConfig.active ) {
 				categoryConfig.active = true;
@@ -153,6 +137,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
 				defaultActive: categoryConfig.active,
+				sort: categoryConfig.sort,
+				hideIfEmpty: undefined !== categoryConfig.hideIfEmpty ?
+					categoryConfig.hideIfEmpty :
+					true,
 				items: categories[ categoryName ],
 			} );
 		} );
