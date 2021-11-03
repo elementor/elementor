@@ -186,6 +186,7 @@ export default class EditorBase extends Marionette.Application {
 				Element: require( 'elementor-elements/models/element' ),
 			},
 			views: {
+				BaseElement: require( 'elementor-elements/views/base' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 		},

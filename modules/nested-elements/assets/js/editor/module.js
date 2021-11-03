@@ -1,6 +1,6 @@
 import Component from './component';
 import WidgetContainer from './views/widget-container';
-import ContainerEmpty from './views/widget-container-empty';
+import WidgetContainerEmpty from './views/widget-container/empty';
 import WidgetContainerModel from './models/widget-container-model';
 
 export default class NestedElementsModule extends elementorModules.editor.utils.Module {
@@ -39,8 +39,8 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 		} );
 
 		elementor.hooks.addFilter( 'elementor/editor/container/empty/render', ( DefaultElement, /* Container */container ) => {
-			if ( this.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) ) {
-				return <ContainerEmpty container={container} />;
+			if ( this.isWidgetSupportNesting( container.parent?.model?.get( 'widgetType' ) ) ) {
+				return <WidgetContainerEmpty container={container} />;
 			}
 
 			return DefaultElement;

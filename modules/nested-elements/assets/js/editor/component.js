@@ -1,7 +1,6 @@
-import ComponentBase from 'elementor-api/modules/component-base';
 import * as hooks from './hooks/';
 
-export default class Component extends ComponentBase {
+export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
 		return 'nested-elements';
 	}

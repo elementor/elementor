@@ -6,6 +6,7 @@ import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/di
 import ContainerEmpty from './container-empty';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
+
 const ContainerView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-container-content' ),
 

@@ -172,56 +172,16 @@ class AddSectionBase extends Marionette.ItemView {
 	 *
 	 * @param {MouseEvent} e - Click event.
 	 *
-	 * @return void
+	 * @return {Container}
 	 */
 	onContainerPresetSelected( e ) {
 		this.closeSelectPresets();
 
-		const selectedPreset = e.currentTarget.dataset.preset;
-		let newContainer;
-
-		switch ( selectedPreset ) {
-			// Single Container without sub Containers.
-			case '100':
-				newContainer = ContainerHelper.createContainer( {}, elementor.getPreviewContainer(), this.options );
-				break;
-
-			// Exceptional preset.
-			case 'c100-c50-50':
-				newContainer = ContainerHelper.createContainer( {
-					flex_direction: ContainerHelper.DIRECTION_ROW,
-					flex_wrap: 'wrap',
-				}, elementor.getPreviewContainer(), this.options );
-
-				const settings = {
-					width: {
-						unit: '%',
-						size: '50',
-					},
-					width_mobile: {
-						unit: '%',
-						size: '100',
-					},
-				};
-
-				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
-
-				// Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
-				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
-
-				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
-
-				break;
-
-			// Containers by preset.
-			default:
-				newContainer = ContainerHelper.createContainerFromPreset(
-					selectedPreset,
-					elementor.getPreviewContainer(),
-					this.options
-				);
-				break;
-		}
+		return ContainerHelper.createContainerFromPresetEx(
+			e.currentTarget.dataset.preset,
+			elementor.getPreviewContainer(),
+			this.options
+		);
 	}
 
 	onDropping() {

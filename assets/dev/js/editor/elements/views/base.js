@@ -12,6 +12,7 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
  */
 
 /**
+ * @name BaseElementView
  * @extends {BaseContainer}
  */
 BaseElementView = BaseContainer.extend( {
@@ -786,6 +787,8 @@ BaseElementView = BaseContainer.extend( {
 				}, { timeout: 500 } );
 			}
 		}
+
+		this.triggerMethod( 'render:after' );
 	},
 
 	onEditSettingsChanged( changedModel ) {

@@ -1,9 +1,9 @@
-const BaseElementView = require( 'elementor-elements/views/base' ),
-	WidgetView = require( 'elementor-elements/views/widget' );
+const WidgetView = elementor.modules.elements.views.Widget;
+
 /**
  * @extends {BaseElementView}
  */
-class WidgetContainer extends BaseElementView {
+class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 	initialize() {
 		this.config = elementor.widgetsCache[ this.options.model.attributes.widgetType ];
 
@@ -16,6 +16,11 @@ class WidgetContainer extends BaseElementView {
 		const events = super.events();
 
 		events.click = ( e ) => {
+			// TODO: Find better solution.
+			if ( this.$el.find( '.elementor-empty-view' ).find( e.target ).length ) {
+				return true;
+			}
+
 			e.stopPropagation();
 
 			$e.run( 'panel/editor/open', {
@@ -51,6 +56,8 @@ class WidgetContainer extends BaseElementView {
 			.removeClass( 'elementor-widget-empty' )
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
+
+		// this.container.children.forEach( ( container ) => container.view.$el.addClass( 'elementor-hidden' ) );
 	}
 
 	onContainerCreatedOnce() {

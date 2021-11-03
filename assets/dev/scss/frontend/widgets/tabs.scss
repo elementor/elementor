@@ -11,12 +11,12 @@
 	--tabs-background-color: transparent;
 
 	/* TODO Find better solution for all global defaults. */
-	--tabs-title-color: var( --e-global-color-primary );
-	--tabs-title-active-color: var( --e-global-color-accent );
+	--tabs-title-color: var(--e-global-color-primary);
+	--tabs-title-active-color: var(--e-global-color-accent);
 
-	--tabs-title-typography-font-family: var( --e-global-typography-primary-font-family );
+	--tabs-title-typography-font-family: var(--e-global-typography-primary-font-family);
 	--tabs-title-typography-font-size: initial;
-	--tabs-title-typography-font-weight: var( --e-global-typography-primary-font-weight );
+	--tabs-title-typography-font-weight: var(--e-global-typography-primary-font-weight);
 	--tabs-title-typography-text-transform: initial;
 	--tabs-title-typography-font-style: initial;
 	--tabs-title-typography-text-decoration: initial;
@@ -27,7 +27,7 @@
 	--tabs-title-shadow: none;
 
 	.elementor-tabs-content-wrapper {
-		background-color: var( --tabs-background-color );
+		background-color: var(--tabs-background-color);
 	}
 
 	&.elementor-tabs-view-vertical {
@@ -40,7 +40,7 @@
 		.elementor-tab-desktop-title {
 
 			&.elementor-active {
-				background-color: var( --tabs-background-color );
+				background-color: var(--tabs-background-color);
 
 				@include border-end-property(style, none);
 
@@ -97,38 +97,38 @@
 	.elementor-tab-content,
 	.e-container,
 	.elementor-tabs-content-wrapper {
-		border: 1px none var( --tabs-border-color );
+		border: 1px none var(--tabs-border-color);
 	}
 
 	.elementor-tabs {
 		text-align: $start;
 
 		& .elementor-tab-title {
-			color: var( --tabs-title-color );
+			color: var(--tabs-title-color);
 			cursor: pointer;
 			outline: var(--focus-outline, none);
 
-			font-family: var( --tabs-title-typography-font-family );
-			font-size: var( --tabs-title-typography-font-size );
-			font-weight: var( --tabs-title-typography-font-weight );
-			text-transform: var( --tabs-title-typography-text-transform );
-			font-style: var( --tabs-title-typography-font-style );
-			text-decoration: var( --tabs-title-typography-text-decoration );
-			line-height: var( --tabs-title-typography-line-height );
-			letter-spacing: var( --tabs-title-typography-letter-spacing );
-			word-spacing: var( --tabs-title-typography-word-spacing );
+			font-family: var(--tabs-title-typography-font-family);
+			font-size: var(--tabs-title-typography-font-size);
+			font-weight: var(--tabs-title-typography-font-weight);
+			text-transform: var(--tabs-title-typography-text-transform);
+			font-style: var(--tabs-title-typography-font-style);
+			text-decoration: var(--tabs-title-typography-text-decoration);
+			line-height: var(--tabs-title-typography-line-height);
+			letter-spacing: var(--tabs-title-typography-letter-spacing);
+			word-spacing: var(--tabs-title-typography-word-spacing);
 
-			text-shadow: var( --tabs-title-shadow );
+			text-shadow: var(--tabs-title-shadow);
 
 			& a {
-				color: var( --tabs-title-color );
+				color: var(--tabs-title-color);
 			}
 
 			&.elementor-active {
-				color: var( --tabs-title-active-color );
+				color: var(--tabs-title-active-color);
 
 				& a {
-					color: var( --tabs-title-active-color );
+					color: var(--tabs-title-active-color);
 				}
 			}
 		}
@@ -137,8 +137,8 @@
 	.elementor-tabs-wrapper {
 		overflow: hidden;
 
-		display: var( --tabs-wrapper-display );
-		justify-content: var( --tabs-wrapper-justify-content );
+		display: var(--tabs-wrapper-display);
+		justify-content: var(--tabs-wrapper-justify-content);
 	}
 
 	.elementor-tab-desktop-title {
@@ -149,7 +149,7 @@
 		border: solid transparent;
 
 		&.elementor-active {
-			border-color: var( --tabs-border-color );
+			border-color: var(--tabs-border-color);
 
 			&:before,
 			&:after {
@@ -165,9 +165,16 @@
 		cursor: pointer;
 	}
 
+	.elementor-tab-content {
+		display: none;
+	}
+
 	.elementor-tab-content, .e-container {
-	    padding: 20px;
-	    display: none;
+		padding: 20px;
+	}
+
+	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
+		display: none;
 	}
 
 	.elementor-tab-title,
@@ -237,7 +244,7 @@
 			}
 
 			.elementor-tab-title {
-				width: var( --tabs-wrapper-title-size );
+				width: var(--tabs-wrapper-title-size);
 			}
 		}
 
@@ -248,7 +255,7 @@
 		}
 
 		&.elementor-tabs-alignment- {
-			&stretch.elementor-tabs-view-horizontal  {
+			&stretch.elementor-tabs-view-horizontal {
 
 				.elementor-tab-title {
 					--tabs-wrapper-title-size: 100%;
