@@ -815,6 +815,8 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
 
+		// test ci
+
 		$items = [];
 
 		// If the import file is a Zip file with potentially multiple JSON files
