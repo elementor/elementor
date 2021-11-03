@@ -106,7 +106,9 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		this.listenTo( settings, 'change', this.onAfterChange );
 
-		elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		if ( this.model.attributes.responsive ) {
+			elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		}
 	},
 
 	onDeviceModeChange: function() {
