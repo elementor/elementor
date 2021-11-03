@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev49 - 2021-11-03
+* New: Added favorite widgets section to the editor panel [ED-1501] (#16630)
+* Fix: Can't upload images via WP media library (#16786)
+
 #### 3.5.0-dev48 - 2021-11-02
 * Tweak: Adding new error handling scenarios to the import-export process [ED-4294] (#16720)
 * Tweak: Renaming shared components names. (#16771)
