@@ -3,6 +3,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	ui() {
 		return {
+			buttonPreview: '#elementor-panel-footer-saver-preview',
 			buttonPublish: '#elementor-panel-saver-button-publish',
 			buttonSaveOptions: '#elementor-panel-saver-button-save-options',
 			buttonPublishLabel: '#elementor-panel-saver-button-publish-label',
@@ -13,6 +14,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 	events() {
 		return {
+			'click @ui.buttonPreview': 'onClickButtonPreview',
 			'click @ui.buttonPublish': 'onClickButtonPublish',
 			'click @ui.menuSaveDraft': 'onClickMenuSaveDraft',
 		};
@@ -46,6 +48,10 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 			.removeClass( 'elementor-button-state' )
 			.find( '.elementor-last-edited' )
 			.html( lastEdited );
+	}
+
+	onClickButtonPreview() {
+		$e.run( 'editor/documents/preview', { id: elementor.documents.getCurrent().id } );
 	}
 
 	onClickButtonPublish() {
@@ -105,8 +111,7 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 
 			$button.tipsy( {
 				// `n` for down, `s` for up
-				gravity: 'n',
-				html: true,
+				gravity: 's',
 				offset: $button.data( 'tooltip-offset' ),
 				title() {
 					return this.getAttribute( 'data-tooltip' );

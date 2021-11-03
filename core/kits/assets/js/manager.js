@@ -57,25 +57,25 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	addPanelMenuItem() {
 		const menu = elementor.modules.layouts.panel.pages.menu.Menu;
 
-		// menu.addItem( {
-		// 	name: 'global-settings',
-		// 	icon: 'eicon-global-settings',
-		// 	title: __( 'Site Settings', 'elementor' ),
-		// 	type: 'page',
-		// 	callback: () => {
-		// 		$e.run( 'panel/global/open', {
-		// 			route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
-		// 		} );
-		// 	},
-		// }, 'style', 'editor-preferences' );
+		menu.addItem( {
+			name: 'global-settings',
+			icon: 'eicon-global-settings',
+			title: __( 'Site Settings', 'elementor' ),
+			type: 'page',
+			callback: () => {
+				$e.run( 'panel/global/open', {
+					route: $e.routes.getHistory( 'panel' ).reverse()[ 0 ].route,
+				} );
+			},
+		}, 'style', 'editor-preferences' );
 
-		// menu.addItem( {
-		// 	name: 'site-editor',
-		// 	icon: 'eicon-theme-builder',
-		// 	title: __( 'Theme Builder', 'elementor' ),
-		// 	type: 'page',
-		// 	callback: () => $e.run( 'app/open' ),
-		// }, 'style', 'editor-preferences' );
+		menu.addItem( {
+			name: 'site-editor',
+			icon: 'eicon-theme-builder',
+			title: __( 'Theme Builder', 'elementor' ),
+			type: 'page',
+			callback: () => $e.run( 'app/open' ),
+		}, 'style', 'editor-preferences' );
 	}
 
 	addHeaderBehavior( behaviors ) {

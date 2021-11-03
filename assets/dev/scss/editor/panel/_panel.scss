@@ -15,18 +15,14 @@
 }
 
 #elementor-editor-wrapper {
-	.elementor-editor-preview & {
-		--e-is-preview-mode: 1;
-	}
 }
 
 
 .elementor-panel {
-	grid-area: panel;
 	position: relative;
-	// height: 100%;
-	// margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
-	// width: var(--e-editor-panel-width);
+	height: 100%;
+	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
+	width: var(--e-editor-panel-width);
 	overflow: visible;
 	background-color: $editor-background;
 	z-index: $first-layer;
@@ -66,14 +62,14 @@
 	// Global
 	@import "global";
 
-	// Header
-	@import "header";
+    // Header
+    @import "header";
 
-	// Categories
-	@import "categories";
+    // Categories
+    @import "categories";
 
-	// Schemes
-	@import "schemes";
+    // Schemes
+    @import "schemes";
 
 	// Menu
 	@import "menu";
@@ -82,10 +78,10 @@
 	@import "document-settings";
 
 	// Element Edit
-	@import "element-settings";
+    @import "element-settings";
 
-	//Footer
-	@import "footer";
+    //Footer
+    @import "footer";
 }
 
 // Panel Elements
@@ -100,7 +96,7 @@
 // Main Panel
 #elementor-panel-content-wrapper {
 	position: absolute;
-	bottom: 0;
+	bottom: 40px;
 	top: 40px;
 	left: 0;
 	width: 100%;
@@ -138,7 +134,7 @@
 	// Hack to remove unwanted elements from the modal
 	.e-wp-media-elements-removed {
 		.embed-link-settings,
-		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ):not( #alt-text-description ) {
+		.embed-media-settings > :not( .wp-clearfix ):not( .alt-text ):not( #alt-text-description ){
 			display: none;
 		}
 
