@@ -56,8 +56,6 @@ class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 			.removeClass( 'elementor-widget-empty' )
 			.children( '.elementor-widget-empty-icon' )
 			.remove();
-
-		// this.container.children.forEach( ( container ) => container.view.$el.addClass( 'elementor-hidden' ) );
 	}
 
 	onContainerCreatedOnce() {
