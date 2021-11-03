@@ -565,7 +565,7 @@ class Manager extends Base_Object {
 	private function on_feature_state_change( array $old_feature_data, $new_state, $feature_option_key ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
 
-		if ( ! empty( $new_feature_data['dependency'] ) || $new_state === 'inactive' ) {
+		if ( ! empty( $new_feature_data['dependency'] ) || 'inactive' === $new_state ) {
 			$this->validate_dependency( $new_feature_data, $new_state, $feature_option_key );
 		}
 
@@ -601,10 +601,10 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception( "To turn on '{$feature_data['name']}', Experiment: '{$dependency_feature['name']}' activity is required!" );
 				}
 			}
-		} elseif( self::STATE_INACTIVE === $new_state ) {
+		} elseif ( self::STATE_INACTIVE === $new_state ) {
 			// Validate if current feature that goes 'inactive' is not an dependency of current active feature.
 			foreach ( $this->get_features() as $feature ) {
-				if ( $feature['state'] === self::STATE_ACTIVE && ! empty( $feature['dependency'] ) && in_array( $feature_data['name'] , $feature['dependency'] ) ) {
+				if ( self::STATE_ACTIVE === $feature['state'] && ! empty( $feature['dependency'] ) && in_array( $feature_data['name'], $feature['dependency'], true ) ) {
 					// Rollback.
 					update_option( $feature_option_key, self::STATE_ACTIVE );
 
