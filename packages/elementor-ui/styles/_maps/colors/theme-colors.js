@@ -1,7 +1,7 @@
 import palette from '../../_data/colors/palette.json';
 
 export default {
-	'text-muted': palette[ 'gray-hidden-creek' ],
+	textMuted: palette[ 'gray-hidden-creek' ],
 	disabled: palette[ 'gray-stone-golem' ],
 	light: palette.white,
 	dark: palette.black,

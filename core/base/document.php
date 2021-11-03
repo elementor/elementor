@@ -541,6 +541,8 @@ abstract class Document extends Controls_Stack {
 			],
 		];
 
+		do_action( 'elementor/document/before_get_config', $this );
+
 		if ( static::get_property( 'has_elements' ) ) {
 			$container = [];
 			$experiments_manager = Plugin::$instance->experiments;
