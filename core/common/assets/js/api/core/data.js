@@ -335,9 +335,9 @@ export default class Data extends Commands {
 	 * the main problem is with plain permalink mode + command with query params that creates a weird url,
 	 * the current method should fix it.
 	 *
-	 * @param {string} endpoint
+	 * @param {RequestData} requestData
 	 *
-	 * @returns {string} endpoint
+	 * @returns {string} Endpoint URL
 	 */
 	prepareEndpoint( requestData ) {
 		const splitEndpoint = requestData.endpoint.split( '?' ),

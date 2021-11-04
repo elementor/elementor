@@ -1181,6 +1181,7 @@ class Widget_Video extends Widget_Base {
 		}
 
 		$video_params = $this->get_hosted_params();
+		/* Sometimes the video url is base64, therefore we use `esc_attr` in `src`. */
 		?>
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
