@@ -1,7 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
 import * as commandsInternal from './commands-internal/';
-import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 export default class Component extends ComponentBase {
 	getNamespace() {
@@ -18,8 +17,6 @@ export default class Component extends ComponentBase {
 
 	defaultUtils() {
 		return {
-			container: ContainerHelper,
-
 			isValidChild: ( childModel, parentModel ) => {
 				const parentElType = parentModel.get( 'elType' ),
 					draggedElType = childModel.get( 'elType' ),
