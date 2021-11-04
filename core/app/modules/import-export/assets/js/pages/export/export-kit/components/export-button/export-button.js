@@ -27,7 +27,7 @@ export default function ExportButton() {
 
 	useEffect( () => {
 		if ( context.data.downloadUrl ) {
-			navigate( '/export/process' );
+			navigate( '/export/plugins' );
 		}
 	}, [ context.data.downloadUrl ] );
 

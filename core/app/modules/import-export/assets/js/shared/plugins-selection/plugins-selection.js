@@ -6,7 +6,7 @@ export default function PluginsSelection( props ) {
 		data = {
 		onChange: setSelectedData,
 		selection: true,
-		headers: [ 'Head1', 'Head3' ],
+		headers: [ 'Plugin Name', 'Version' ],
 		rows: [
 			{
 				id: 'settings',
@@ -22,6 +22,10 @@ export default function PluginsSelection( props ) {
 			},
 		],
 	};
+
+	useEffect( () => {
+		console.log( 'props.plugins', props.plugins );
+	}, [ props.plugins ] );
 
 	useEffect( () => {
 		if ( selectedData ) {
@@ -47,17 +51,15 @@ export default function PluginsSelection( props ) {
 
 			<Table.Body>
 				{
-					data.rows.map( ( row, index ) => (
+					props.plugins.map( ( plugin, index ) => (
 						<Table.Row key={ index }>
 							<Table.Cell tag="td">
 								<Table.Checkbox index={ index } />
 							</Table.Cell>
 
-							{
-								row.columns.map( ( cell, cellIndex ) => (
-									<Table.Cell tag="td" key={ cellIndex }>{ cell }</Table.Cell>
-								) )
-							}
+							<Table.Cell tag="td">{ plugin.name }</Table.Cell>
+
+							<Table.Cell tag="td">Version { plugin.version }</Table.Cell>
 						</Table.Row>
 					) )
 				}
@@ -67,9 +69,11 @@ export default function PluginsSelection( props ) {
 }
 
 PluginsSelection.propTypes = {
+	plugins: PropTypes.array,
 	selection: PropTypes.bool,
 };
 
 PluginsSelection.defaultProps = {
+	plugins: [],
 	selection: true,
 };

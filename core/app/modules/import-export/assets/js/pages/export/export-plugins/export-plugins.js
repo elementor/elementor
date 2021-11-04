@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -7,12 +7,19 @@ import PluginsSelection from '../../../shared/plugins-selection/plugins-selectio
 import Button from 'elementor-app/ui/molecules/button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
+import usePlugins from '../../../hooks/use-plugins';
+
 export default function ExportPlugins() {
-	const getFooter = () => (
+	const { pluginsState, pluginsActions } = usePlugins(),
+		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button text="Action" />
 			</WizardFooter>
 		);
+
+	useEffect( () => {
+		console.log( 'plugins: ', pluginsState );
+	}, [ pluginsState ] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -27,7 +34,7 @@ export default function ExportPlugins() {
 					] }
 				/>
 
-				<PluginsSelection />
+				<PluginsSelection plugins={ pluginsState.active } />
 			</section>
 		</Layout>
 	);

@@ -12,7 +12,9 @@ import TableCheckbox from './table-checkbox';
 import './table.scss';
 
 export default function Table( props ) {
-	const [ selected, setSelected ] = useState( {} );
+	const [ selected, setSelected ] = useState( {} ),
+		classNameBase = 'e-app-import-export-table',
+		classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
 
 	useEffect( () => {
 		props.onSelect( Object.values( selected ) );
@@ -20,7 +22,7 @@ export default function Table( props ) {
 
 	return (
 		<Context.Provider value={ { selected, setSelected } }>
-			<table className={ arrayToClassName( [ 'e-app-import-export-table', props.className ] ) }>
+			<table className={ arrayToClassName( classes ) }>
 				{
 					props.selection &&
 					<colgroup>
