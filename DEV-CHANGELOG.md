@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev50 - 2021-11-04
+* Fix: Can't upload JPG/JPEG files via Elementor Editor's WP media control (#16786) [ED-5406] (#16801)
+
 #### 3.5.0-dev49 - 2021-11-03
 * New: Added favorite widgets section to the editor panel [ED-1501] (#16630)
 * Fix: Can't upload images via WP media library (#16786)
