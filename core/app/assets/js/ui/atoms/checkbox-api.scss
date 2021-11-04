@@ -12,6 +12,7 @@ $eps-checkbox-indicator-color: theme-colors(light);
 $eps-checkbox-indicator-border-width: 1px;
 $eps-checkbox-indicator-scale-unit: 1/4;
 $eps-checkbox-indicator-size-unit: ceil($eps-checkbox-indicator-scale-unit * $eps-checkbox-size) - $eps-checkbox-indicator-border-width;
+$eps-checkbox-some-selected-indicator-size-unit: 7px;
 
 :root {
   --checkbox-border-color: #{$eps-checkbox-border-color};

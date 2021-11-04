@@ -30,32 +30,37 @@ export default function PluginsSelection( props ) {
 	}, [ selectedData ] );
 
 	return (
-		<Table selection onChange={ setSelectedData }>
+		<Table selection onSelect={ setSelectedData }>
 			<Table.Head>
 				<Table.Row>
 					<Table.Cell tag="th">
-						<Table.Checkbox total={2} />
+						<Table.Checkbox allSelectedCount={ data.rows.length } />
 					</Table.Cell>
-					<Table.Cell tag="th">Head1</Table.Cell>
-					<Table.Cell tag="th">Head2</Table.Cell>
+
+					{
+						data.headers.map( ( header, index ) => (
+							<Table.Cell tag="th" key={ index }>{ header }</Table.Cell>
+						) )
+					}
 				</Table.Row>
 			</Table.Head>
 
 			<Table.Body>
-				<Table.Row>
-					<Table.Cell tag="td">
-						<Table.Checkbox index={ 0 } />
-					</Table.Cell>
-					<Table.Cell tag="td">Cell 1</Table.Cell>
-					<Table.Cell tag="td">Cell 2</Table.Cell>
-				</Table.Row>
-				<Table.Row>
-					<Table.Cell tag="td">
-						<Table.Checkbox index={ 1 } />
-					</Table.Cell>
-					<Table.Cell tag="td">Cell 1</Table.Cell>
-					<Table.Cell tag="td">Cell 2</Table.Cell>
-				</Table.Row>
+				{
+					data.rows.map( ( row, index ) => (
+						<Table.Row key={ index }>
+							<Table.Cell tag="td">
+								<Table.Checkbox index={ index } />
+							</Table.Cell>
+
+							{
+								row.columns.map( ( cell, cellIndex ) => (
+									<Table.Cell tag="td" key={ cellIndex }>{ cell }</Table.Cell>
+								) )
+							}
+						</Table.Row>
+					) )
+				}
 			</Table.Body>
 		</Table>
 	);

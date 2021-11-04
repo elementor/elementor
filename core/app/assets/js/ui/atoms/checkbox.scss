@@ -54,4 +54,19 @@
 	&--rounded {
 		border-radius: 50%;
 	}
+
+	&--some-selected {
+		&::after {
+			display: inline-block;
+			margin-bottom: 0;
+			content: " ";
+			width: $eps-checkbox-some-selected-indicator-size-unit;
+			height: 0;
+			transform: rotate(0deg);
+			border-top: $eps-checkbox-indicator-border-width solid $eps-checkbox-indicator-color;
+		}
+
+		--checkbox-background-color: var(--checkbox-checked-background-color);
+		--checkbox-border-color: var(--checkbox-checked-background-color);
+	}
 }

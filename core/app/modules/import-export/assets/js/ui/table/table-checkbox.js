@@ -7,17 +7,20 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function TableCheckbox( props ) {
 	const context = useContext( Context ),
-		isAllSelected = () => Object.keys( context.selected ).length === props.total,
-		getIsSelected = () => props.total ? isAllSelected() : ( props.index in context.selected ),
+		attrs = { ...props },
+		isSelectAllCheckbox = () => props.hasOwnProperty( 'allSelectedCount' ),
+		isAllSelected = () => Object.keys( context.selected ).length === props.allSelectedCount,
+		isSomeSelected = () => isSelectAllCheckbox() ? ! ! ( Object.keys( context.selected ).length && ! isAllSelected() ) : false,
+		getIsSelected = () => isSelectAllCheckbox() ? isAllSelected() : ( props.index in context.selected ),
 		onSelectAll = () => {
 			context.setSelected( () => {
-				if ( isAllSelected() ) {
+				if ( isAllSelected() || isSomeSelected() ) {
 					return {};
 				}
 
 				const allItems = {};
 
-				Array( props.total )
+				Array( props.allSelectedCount )
 					.fill( true )
 					.map( ( value, index ) => allItems[ index ] = index );
 
@@ -37,13 +40,18 @@ export default function TableCheckbox( props ) {
 				return currentSelections;
 			} );
 		},
-		onChange = () => props.total ? onSelectAll() : onSelectRow();
+		onChange = () => isSelectAllCheckbox() ? onSelectAll() : onSelectRow();
+
+	// Removing non-native attributes before passing it to the Checkbox component.
+	delete attrs.allSelectedCount;
 
 	return (
 		<Checkbox
-			className={ arrayToClassName( [ 'e-app-import-export-table__checkbox', props.className ] ) }
 			checked={ getIsSelected() }
+			isSomeSelected={ isSomeSelected() }
 			onChange={ onChange }
+			{ ...attrs }
+			className={ arrayToClassName( [ 'e-app-import-export-table__checkbox', props.className ] ) }
 		/>
 	);
 }
@@ -51,5 +59,5 @@ export default function TableCheckbox( props ) {
 TableCheckbox.propTypes = {
 	className: PropTypes.string,
 	index: PropTypes.number,
-	total: PropTypes.number,
+	allSelectedCount: PropTypes.number,
 };

@@ -15,7 +15,7 @@ export default function Table( props ) {
 	const [ selected, setSelected ] = useState( {} );
 
 	useEffect( () => {
-		props.onChange( Object.values( selected ) );
+		props.onSelect( Object.values( selected ) );
 	}, [ selected ] );
 
 	return (
@@ -46,7 +46,7 @@ Table.propTypes = {
 	headers: PropTypes.array,
 	rows: PropTypes.array,
 	selection: PropTypes.bool,
-	onChange: PropTypes.func,
+	onSelect: PropTypes.func,
 };
 
 Table.defaultProps = {
