@@ -8,6 +8,7 @@ $eps-checkbox-background-color: theme-colors(light);
 $eps-checkbox-checked-background-color: theme-colors(success);
 $eps-checkbox-checked-hover-background-color: darken($eps-checkbox-checked-background-color, $eps-hover-state-operator);
 $eps-checkbox-checked-active-background-color: lighten($eps-checkbox-checked-background-color, $eps-active-state-operator);
+$eps-checkbox-checked-disabled-background-color: theme-colors(disabled);
 $eps-checkbox-indicator-color: theme-colors(light);
 $eps-checkbox-indicator-border-width: 1px;
 $eps-checkbox-indicator-scale-unit: 1/4;
@@ -22,6 +23,7 @@ $eps-checkbox-some-selected-indicator-size-unit: 7px;
   --checkbox-checked-background-color: #{$eps-checkbox-checked-background-color};
   --checkbox-checked-hover-background-color: #{$eps-checkbox-checked-hover-background-color};
   --checkbox-checked-active-background-color: #{$eps-checkbox-checked-active-background-color};
+  --checkbox-checked-disabled-background-color: #{$eps-checkbox-checked-disabled-background-color};
   --checkbox-indicator-color: #{$eps-checkbox-indicator-color};
 }
 

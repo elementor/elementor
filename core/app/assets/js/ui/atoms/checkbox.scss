@@ -49,6 +49,11 @@
 		  --checkbox-background-color: var(--checkbox-checked-active-background-color);
 		  --checkbox-border-color: var(--checkbox-checked-active-background-color);
 		}
+
+		&:disabled {
+			--checkbox-background-color: var(--checkbox-checked-disabled-background-color);
+			--checkbox-border-color: var(--checkbox-checked-disabled-background-color);
+		}
 	}
 
 	&--rounded {
