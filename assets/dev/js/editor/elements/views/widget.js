@@ -56,14 +56,14 @@ WidgetView = BaseElementView.extend( {
 			editTools = {};
 
 		editTools.edit = {
-			/* translators: %s: Element Name. */
+			/* translators: %s: Element name. */
 			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
 			icon: 'edit',
 		};
 
 		if ( elementor.getPreferences( 'edit_buttons' ) ) {
 			editTools.duplicate = {
-				/* translators: %s: Element Name. */
+				/* translators: %s: Element name. */
 				title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
 				icon: 'clone',
 			};
@@ -107,7 +107,8 @@ WidgetView = BaseElementView.extend( {
 					name: 'save',
 					title: __( 'Save as a Global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
-					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ),
+					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
+						! elementor.selection.isMultiple(),
 				},
 			],
 		} );
@@ -230,9 +231,9 @@ WidgetView = BaseElementView.extend( {
 		} );
 	},
 
-	onClickEdit: function() {
+	onClickEdit: function( event ) {
 		if ( this.container.isEditable() ) {
-			this.model.trigger( 'request:edit' );
+			this.onEditButtonClick( event );
 		}
 	},
 } );

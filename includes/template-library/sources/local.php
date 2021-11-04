@@ -477,7 +477,6 @@ class Source_Local extends Source_Base {
 			[
 				'post_title' => $template_data['title'],
 				'post_status' => $template_data['status'],
-				'post_type' => self::CPT,
 			]
 		);
 
@@ -912,6 +911,7 @@ class Source_Local extends Source_Base {
 				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
+					<input type="hidden" name="uploadTypeCaller" value="elementor-media-upload">
 					<input type="hidden" name="library_action" value="direct_import_template">
 					<input type="hidden" name="_nonce" value="<?php Utils::print_unescaped_internal_string( $ajax->create_nonce() ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
@@ -1306,7 +1306,7 @@ class Source_Local extends Source_Base {
 					printf( esc_html__( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
 				</h2>
-				<p><?php echo esc_html( $description ); ?></p>
+				<p><?php echo wp_kses_post( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
