@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Elementor Web Components Demo</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<script type="module" src="../packages/flex/flex.js"></script>
+	<script type="module" src="../packages/box/box.js"></script>
+	<script type="module" src="../packages/button/button.js"></script>
+	<script type="module" src="../packages/splide/splide.js"></script>
+	<script type="module" src="../packages/icon/icon.js"></script>
+	<script type="module" src="../packages/heading/heading.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap"
+		  rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap"
+		  rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../dev/reset.css">
+	<link rel="stylesheet" type="text/css" href="../dev/variables.css">
+	<link rel="stylesheet" type="text/css" href="../dev/base.css">
+</head>
+<body>
+<e-box margin="1000">
+
+	<e-flex padding="500" justifyContent="center" gap="l" alignItems="center">
+		<e-box padding="200" style="max-width: 50%" background="gray-100" radius="xl">
+
+
+			<e-splide autoplay perPage="3">
+				<e-box padding="200" background="gray-50" elevation="card">Slide #1</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #2</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #3</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #4</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #5</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #6</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #7</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #8</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #9</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #10</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #11</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #12</e-box>
+			</e-splide>
+
+
+			<e-splide autoplay perPage="3">
+				<e-box padding="200" background="gray-50" elevation="card">Slide #1</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #2</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #3</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #4</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #5</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #6</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #7</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #8</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #9</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #10</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #11</e-box>
+				<e-box padding="200" background="gray-50" elevation="card">Slide #12</e-box>
+			</e-splide>
+
+
+		</e-box>
+	</e-flex>
+
+
+	<e-flex padding="500" justifyContent="center" gap="l" alignItems="center">
+		<e-box padding="200" radius="s" style="max-width: 33%" elevation="card">
+			<e-heading level="2">
+				<e-icon size="l" label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+				Hello World
+			</e-heading>
+
+			<e-heading level="4">Hello Josh</e-heading>
+			<p>Yes, it is possible to exterminate the things that can destroy us, but yippiyo neque ornare mofo. Da bomb
+				euismod erizzle. Shiz yo mamma check it out velit. Not without coherence on our side. energistically
+				synergize elastic process improvements</p>
+			<br>
+			<e-button size="big">
+				<e-icon label="Previous" slot="icon">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+				<a href="https://google.com/" slot="title">Start</a>
+			</e-button>
+
+			<e-flex gap="m" marginTop="200" alignItems="center" justifyContent="space-between">
+				<e-icon size="s" label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+
+				<e-icon color="error" size="m" circular label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+
+				<e-icon color="success" bordered circular size="l" label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+
+				<e-icon color="primary" size="xl" stacked label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+
+				<e-icon size="xxl" bordered label="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" role="img" fill="currentColor"
+						 height="18" width="18" aria-hidden="true">
+						<path d="M19.75,10.04h-15l5.97-5.97a.483.483,0,0,0,0-.7l-.35-.36a.513.513,0,0,0-.71,0L2.24,10.44a.513.513,0,0,0,0,.71l7.39,7.84a.513.513,0,0,0,.71,0l.35-.35a.513.513,0,0,0,0-.71L4.76,11.5H19.75a.25.25,0,0,0,.25-.25v-.96A.25.25,0,0,0,19.75,10.04Z"></path>
+					</svg>
+				</e-icon>
+			</e-flex>
+		</e-box>
+
+		<e-box padding="200" background="gray-200" borderColor="primary" borderwidth="medium" radius="xl">
+			<e-heading color="primary" level="1">Hello World</e-heading>
+			<e-heading level="3">Hello Josh</e-heading>
+			You may be ruled by yearning without realizing it. Do not let it confront the richness of your path. Bondage
+			is born in the gap where empathy has been excluded. Yes, it is possible to exterminate the things that can
+			destroy us, but not without coherence on our side.
+		</e-box>
+
+		<e-box width="4000">
+			<e-flex wrap="reverse" gap="l">
+
+				<e-box padding="200" background="gray-100" radius="xl">
+					<p>Vestibulizzle fizzle cool primis izzle shiz orci pot et fo shizzle posuere bizzle You son of a
+						bizzle; Sed vitae nulla yippiyo neque ornare mofo. Da bomb euismod erizzle. Shiz yo mamma check
+						it out velit. Praesent dizzle shut the shizzle up, adipiscing vitae, check out this sed, i saw
+						beyonces tizzles and my pizzle went crizzle crunk, ante. Dizzle malesuada sheezy mauris.</p>
+					<e-heading level="2">Hello World</e-heading>
+					<e-heading color="red" level="4">Hello Josh</e-heading>
+				</e-box>
+
+				<e-box padding="200" background="gray-100" radius="xl">
+					<e-heading color="purple" level="2">Hello World</e-heading>
+					<p>Vestibulizzle fizzle cool primis izzle shiz orci pot et fo shizzle posuere bizzle You son of a
+						bizzle; Sed vitae nulla yippiyo neque ornare mofo. Da bomb euismod erizzle. Shiz yo mamma check
+						it out velit. Praesent dizzle shut the shizzle up, adipiscing vitae, check out this sed, i saw
+						beyonces tizzles and my pizzle went crizzle crunk, ante. Dizzle malesuada sheezy mauris.</p>
+					<br><br>
+					<e-flex gap="m" alignItems="center">
+						<e-button outline color="purple" size="medium"><span slot="title">Learn More</span></e-button>
+						<e-button color="purple" size="medium"><span slot="title">Join</span></e-button>
+					</e-flex>
+				</e-box>
+
+			</e-flex>
+		</e-box>
+	</e-flex>
+</e-box>
+
+<e-box background="gray-100" margin="1000" paddingTop="500" padding="200" borderwidth="thin" radius="s">
+	<e-heading>What's New?</e-heading>
+	<e-box padding="300" maxWidth="8000" wrap background="gray-200" radius="l">
+
+		<e-splide autoplay perPage="4" type="loop" focus="center">
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/01.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Hello Splide</e-heading>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur ducimus id. Bondage is born
+						empathy has been excluded. Yes, it is possible to exterminate the things that can destroy us, but not
+						without coherence.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/02.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">That's Nice!</e-heading>
+					<p>You may be ruled by yearning without realizing it. Elit. Consequatur ducimus id quo ratione. Yes,
+						it is possible to exterminate the things that can destroy us, but not without coherence on our side.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/03.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Cool!</e-heading>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur ducimus id quo ratione,
+						repellat tempore ullam! Ad aperiam ducimus eaque excepturi laudantium nihil quidem saepe totam
+						ut voluptatibus. Et, reiciendis.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/04.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Last Splide</e-heading>
+					<p>You may be ruled by yearning without realizing it. Elit. Consequatur ducimus id quo ratione. Yes,
+						it is possible to exterminate the things that can destroy us, but not without coherence on our side.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/05.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Hello Splide</e-heading>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur ducimus id. Bondage is born
+						empathy has been excluded. Yes, it is possible to exterminate the things that can destroy us,
+						but not without coherence.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/06.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">That's Nice!</e-heading>
+					<p>You may be ruled by yearning without realizing it. Elit. Consequatur ducimus id quo ratione. Yes,
+						it is possible to exterminate the things that can destroy us, but not without coherence on our side.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/09.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Cool!</e-heading>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur ducimus id quo ratione,
+						repellat tempore ullam! Ad aperiam ducimus eaque excepturi laudantium nihil quidem saepe totam
+						ut voluptatibus. Et, reiciendis.</p>
+				</e-box>
+			</e-box>
+			<e-box background="gray-50" padding="0" elevation="card" radius="xl">
+				<img src="./img/08.jpeg" style="max-width: 100%;" alt="">
+				<e-box padding="200">
+					<e-heading level="3">Last Splide</e-heading>
+					<p>You may be ruled by yearning without realizing it. Elit. Consequatur ducimus id quo ratione. Yes,
+						it is possible to exterminate the things that can destroy us, but not without coherence on our side.</p>
+				</e-box>
+			</e-box>
+		</e-splide>
+	</e-box>
+</e-box>
+
+<e-box background="gray-100" margin="1000" paddingTop="500" padding="200" borderwidth="thin" radius="s">
+	<e-heading>Buttons</e-heading>
+	<e-flex padding="300" gap="l" wrap background="gray-75" elevation="paper" radius="l">
+		<e-flex gap="m" alignItems="end">
+			<e-button color="primary" size="massive">Click Here</e-button>
+			<e-button color="primary" size="huge">Click Here</e-button>
+			<e-button color="primary" size="big">Click Here</e-button>
+			<e-button color="primary" size="large">Click Here</e-button>
+			<e-button color="primary" size="medium"><span slot="title">Click Here</span></e-button>
+			<e-button color="primary" size="small">Click Here</e-button>
+			<e-button color="primary" size="mini">Click Here</e-button>
+			<e-button color="primary" size="tiny">Click Here</e-button>
+		</e-flex>
+		<e-flex gap="m" alignItems="start">
+			<e-button size="massive">Click Here</e-button>
+			<e-button size="huge">Click Here</e-button>
+			<e-button size="big">Click Here</e-button>
+			<e-button size="large">Click Here</e-button>
+			<e-button size="medium"><span slot="title">Click Here</span></e-button>
+			<e-button size="small">Click Here</e-button>
+			<e-button size="mini">Click Here</e-button>
+			<e-button size="tiny">Click Here</e-button>
+		</e-flex>
+		<e-flex gap="m" alignItems="end">
+			<e-button color="default" size="medium"><span slot="title">Documentation</span></e-button>
+			<e-button color="primary" size="medium"><span slot="title">Explore</span></e-button>
+			<e-button color="secondary" size="medium"><span slot="title">Learn More</span></e-button>
+			<e-box padding="200"></e-box>
+			<e-button color="danger" size="medium"><span slot="title">Delete User</span></e-button>
+			<e-button color="warning" size="medium"><span slot="title">Update</span></e-button>
+			<e-button color="success" size="medium"><span slot="title">Agree</span></e-button>
+			<e-button color="info" size="big">👋 Need Help?</e-button>
+			<e-button size="medium"><span slot="title">Show More</span></e-button>
+		</e-flex>
+		<e-flex gap="m" alignItems="center">
+			<e-button outline color="default" size="medium"><span slot="title">Documentation</span></e-button>
+			<e-button outline color="primary" size="medium"><span slot="title">Explore</span></e-button>
+			<e-button outline color="secondary" size="medium"><span slot="title">Learn More</span></e-button>
+			<e-box padding="200"></e-box>
+			<e-button outline color="danger" size="medium"><span slot="title">Delete User</span></e-button>
+			<e-button outline color="warning" size="medium"><span slot="title">Update</span></e-button>
+			<e-button outline color="success" size="medium"><span slot="title">Agree</span></e-button>
+			<e-button outline color="info" size="big">👋 Need Help?</e-button>
+			<e-button outline size="medium"><span slot="title">Show More</span></e-button>
+		</e-flex>
+		<e-flex gap="m" alignItems="start">
+			<e-button quiet color="default" size="medium"><span slot="title">Documentation</span></e-button>
+			<e-button quiet color="primary" size="medium"><span slot="title">Explore</span></e-button>
+			<e-button quiet color="secondary" size="medium"><span slot="title">Learn More</span></e-button>
+			<e-box padding="200"></e-box>
+			<e-button quiet color="danger" size="medium"><span slot="title">Delete User</span></e-button>
+			<e-button quiet color="warning" size="medium"><span slot="title">Update</span></e-button>
+			<e-button quiet color="success" size="medium"><span slot="title">Agree</span></e-button>
+			<e-button quiet color="info" size="big">👋 Need Help?</e-button>
+			<e-button quiet size="medium"><span slot="title">Show More</span></e-button>
+		</e-flex>
+
+		<e-flex padding="200" gap="m" direction="column" background="gray-50" elevation="card" radius="l">
+			<e-flex gap="m" alignItems="center">
+				<e-button color="magenta">Magenta</e-button>
+				<e-button color="fuchsia">Fuchsia</e-button>
+				<e-button color="purple">Purple</e-button>
+				<e-button color="indigo">Indigo</e-button>
+				<e-button color="blue">Blue</e-button>
+				<e-button color="Teal">Teal</e-button>
+				<e-button color="green">Green</e-button>
+				<e-button color="celery">Celery</e-button>
+				<e-button color="Lime">Lime</e-button>
+				<e-button color="yellow">Yellow</e-button>
+				<e-button color="orange">Orange</e-button>
+				<e-button color="red">Red</e-button>
+			</e-flex>
+
+			<e-flex gap="m" alignItems="baseline">
+				<e-button outline color="magenta">Magenta</e-button>
+				<e-button outline color="fuchsia">Fuchsia</e-button>
+				<e-button outline color="purple">Purple</e-button>
+				<e-button outline color="indigo">Indigo</e-button>
+				<e-button outline color="blue">Blue</e-button>
+				<e-button outline color="Teal">Teal</e-button>
+				<e-button outline color="green">Green</e-button>
+				<e-button outline color="celery">Celery</e-button>
+				<e-button outline color="Lime">Lime</e-button>
+				<e-button outline color="yellow">Yellow</e-button>
+				<e-button outline color="orange">Orange</e-button>
+				<e-button outline color="red">Red</e-button>
+			</e-flex>
+
+			<e-flex gap="m" alignItems="baseline">
+				<e-button quiet color="magenta">Magenta</e-button>
+				<e-button quiet color="fuchsia">Fuchsia</e-button>
+				<e-button quiet color="purple">Purple</e-button>
+				<e-button quiet color="indigo">Indigo</e-button>
+				<e-button quiet color="blue">Blue</e-button>
+				<e-button quiet color="teal">Teal</e-button>
+				<e-button quiet color="green">Green</e-button>
+				<e-button quiet color="celery">Celery</e-button>
+				<e-button quiet color="lime">Lime</e-button>
+				<e-button quiet color="yellow">Yellow</e-button>
+				<e-button quiet color="orange">Orange</e-button>
+				<e-button quiet color="red">Red</e-button>
+			</e-flex>
+		</e-flex>
+
+		<e-flex padding="200" gap="m" direction="column" wrap background="gray-50" elevation="card" radius="l">
+			<e-flex gap="m" alignItems="center">
+				<e-button pill color="magenta">Magenta</e-button>
+				<e-button pill color="fuchsia">Fuchsia</e-button>
+				<e-button pill color="purple">Purple</e-button>
+				<e-button pill color="indigo">Indigo</e-button>
+				<e-button pill color="blue">Blue</e-button>
+				<e-button pill color="Teal">Teal</e-button>
+				<e-button pill color="green">Green</e-button>
+				<e-button pill color="celery">Celery</e-button>
+				<e-button pill color="Lime">Lime</e-button>
+				<e-button pill color="yellow">Yellow</e-button>
+				<e-button pill color="orange">Orange</e-button>
+				<e-button pill color="red">Red</e-button>
+			</e-flex>
+
+			<e-flex gap="m" alignItems="baseline">
+				<e-button outline pill color="magenta">Magenta</e-button>
+				<e-button outline pill color="fuchsia">Fuchsia</e-button>
+				<e-button outline pill color="purple">Purple</e-button>
+				<e-button outline pill color="indigo">Indigo</e-button>
+				<e-button outline pill color="blue">Blue</e-button>
+				<e-button outline pill color="Teal">Teal</e-button>
+				<e-button outline pill color="green">Green</e-button>
+				<e-button outline pill color="celery">Celery</e-button>
+				<e-button outline pill color="Lime">Lime</e-button>
+				<e-button outline pill color="yellow">Yellow</e-button>
+				<e-button outline pill color="orange">Orange</e-button>
+				<e-button outline pill color="red">Red</e-button>
+			</e-flex>
+
+			<e-flex gap="m" alignItems="baseline">
+				<e-button quiet pill color="magenta">Magenta</e-button>
+				<e-button quiet pill color="fuchsia">Fuchsia</e-button>
+				<e-button quiet pill color="purple">Purple</e-button>
+				<e-button quiet pill color="indigo">Indigo</e-button>
+				<e-button quiet pill color="blue">Blue</e-button>
+				<e-button quiet pill color="teal">Teal</e-button>
+				<e-button quiet pill color="green">Green</e-button>
+				<e-button quiet pill color="celery">Celery</e-button>
+				<e-button quiet pill color="lime">Lime</e-button>
+				<e-button quiet pill color="yellow">Yellow</e-button>
+				<e-button quiet pill color="orange">Orange</e-button>
+				<e-button quiet pill color="red">Red</e-button>
+			</e-flex>
+		</e-flex>
+	</e-flex>
+
+	<e-box paddingTop="300">Yes, it is possible to exterminate the things that can destroy us, but yippiyo neque ornare
+		mofo. Da bomb euismod erizzle. Shiz yo mamma check it out velit. Not without coherence on our side.
+		energistically synergize elastic process improvements
+	</e-box>
+</e-box>
+</body>
+</html>

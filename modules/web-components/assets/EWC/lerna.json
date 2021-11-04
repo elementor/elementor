@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "independent",
+  "command": {
+      "publish": {
+          "conventionalCommits": true,
+          "ignoreChanges": [
+              "packages/*/test/**",
+              "packages/*/stories/**",
+              "**/*.md",
+              "**/tsconfig.json" ]
+        }
+    }
+}

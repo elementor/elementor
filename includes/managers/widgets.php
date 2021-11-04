@@ -45,6 +45,7 @@ class Widgets_Manager {
 			'heading',
 			'e-heading',
 			'e-button',
+			'e-splide',
 			//'e-icon',
 			'image',
 			'text-editor',

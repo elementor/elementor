@@ -1,0 +1,60 @@
+/* PrismJS 1.25.0
+https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript+markup-templating+php&plugins=line-numbers */
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+pre[class*=language-].line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}pre[class*=language-].line-numbers>code{position:relative;white-space:inherit}.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:0;font-size:100%;left:-3.8em;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.line-numbers-rows>span{display:block;counter-increment:linenumber}.line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}
+
+.code-editor:is(pre, *) {
+	resize: none;
+	--selection-background: hsl(320, 80%, 25%);
+	--selection-color: hsla(0, 0%, 100%, .8);
+	box-sizing: border-box;
+	margin: 0;
+	border-radius: var(--ewc-size-radius-m);
+	height: fit-content;
+	max-height: 40vh;
+	white-space: pre !important;
+}
+
+.code-editor::-webkit-scrollbar {
+	color: #2d2d2d;
+	opacity: 0;
+	width: 20px;
+	height: 20px;
+}
+
+.code-editor::-webkit-scrollbar-corner,
+.code-editor::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+.code-editor::-webkit-scrollbar-thumb {
+	border-radius: 100px;
+	background-color: rgba(255,255,255, var(--scroll-thumb-opacity,0));
+	border: 6px solid transparent;
+	background-clip: content-box;
+}
+
+.code-editor:hover {
+	--scroll-thumb-opacity: .4;
+}
+
+.code-editor::-webkit-scrollbar-thumb:hover {
+	--scroll-thumb-opacity: .6;
+}
+
+@supports (not (caret-color: black)) and (-webkit-text-fill-color: black) {
+	.code-editor {
+		color: inherit;
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+.code-editor::selection {
+	background: var(--selection-background);
+	color: var(--selection-color);
+}
+
+.code-editor {
+	overflow: auto;
+	max-height: 100%;
+}

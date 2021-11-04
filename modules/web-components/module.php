@@ -75,6 +75,14 @@ class Module extends BaseModule {
 		);
 
 		wp_register_script(
+			'ewc-splide',
+			$this->get_assets_path() . '/splide.bundled.js',
+			[],
+			'0.0.1',
+			false
+		);
+
+		wp_register_script(
 			'ewc-icon',
 			$this->get_assets_path() . '/icon.js',
 			[],

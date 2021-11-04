@@ -1,0 +1,198 @@
+/**
+ * Do not edit directly
+ * Generated on Sun, 11 Jul 2021 11:47:57 GMT
+ */
+
+:root {
+	--ewc-color-blue-ribbon: #0066ff;
+	--ewc-color-razzmatazz: #dd0a73;
+	--ewc-color-resolution-blue: #01327d;
+	--ewc-color-catskill-white: #f5f7fa;
+	--ewc-color-pine-green: #017d73;
+	--ewc-color-web-orange: #f5a700;
+	--ewc-color-thunderbird: #bd271e;
+	--ewc-color-eastern-blue: #1d8ab5;
+	--ewc-color-magenta-400: #d83790;
+	--ewc-color-magenta-500: #ce2783;
+	--ewc-color-magenta-600: #bc1c74;
+	--ewc-color-magenta-700: #ae0e66;
+	--ewc-color-fuchsia-400: #c038cc;
+	--ewc-color-fuchsia-500: #b130bd;
+	--ewc-color-fuchsia-600: #a228ad;
+	--ewc-color-fuchsia-700: #93219e;
+	--ewc-color-purple-400: #9256d9;
+	--ewc-color-purple-500: #864ccc;
+	--ewc-color-purple-600: #7a42bf;
+	--ewc-color-purple-700: #6f38b1;
+	--ewc-color-indigo-400: #6767ec;
+	--ewc-color-indigo-500: #5c5ce0;
+	--ewc-color-indigo-600: #5151d3;
+	--ewc-color-indigo-700: #4646c6;
+	--ewc-color-blue-400: #2680eb;
+	--ewc-color-blue-500: #1473e6;
+	--ewc-color-blue-600: #0d66d0;
+	--ewc-color-blue-700: #095aba;
+	--ewc-color-teal-400: #1b959a;
+	--ewc-color-teal-500: #16878c;
+	--ewc-color-teal-600: #0f797d;
+	--ewc-color-teal-700: #096c6f;
+	--ewc-color-green-400: #2d9d78;
+	--ewc-color-green-500: #268e6c;
+	--ewc-color-green-600: #12805c;
+	--ewc-color-green-700: #107154;
+	--ewc-color-celery-400: #44b556;
+	--ewc-color-celery-500: #3da74e;
+	--ewc-color-celery-600: #379947;
+	--ewc-color-celery-700: #318b40;
+	--ewc-color-lime-400: #85d044;
+	--ewc-color-lime-500: #7cc33f;
+	--ewc-color-lime-600: #73b53a;
+	--ewc-color-lime-700: #6aa834;
+	--ewc-color-yellow-400: #dfbf00;
+	--ewc-color-yellow-500: #d2b200;
+	--ewc-color-yellow-600: #c4a600;
+	--ewc-color-yellow-700: #b79900;
+	--ewc-color-orange-400: #e68619;
+	--ewc-color-orange-500: #da7b11;
+	--ewc-color-orange-600: #cb6f10;
+	--ewc-color-orange-700: #bd640d;
+	--ewc-color-red-400: #e34850;
+	--ewc-color-red-500: #d7373f;
+	--ewc-color-red-600: #c9252d;
+	--ewc-color-red-700: #bb121a;
+	--ewc-color-gray-50: #ffffff;
+	--ewc-color-gray-75: #fafafa;
+	--ewc-color-gray-100: #f5f5f5;
+	--ewc-color-gray-200: #eaeaea;
+	--ewc-color-gray-300: #e1e1e1;
+	--ewc-color-gray-400: #cacaca;
+	--ewc-color-gray-500: #b3b3b3;
+	--ewc-color-gray-600: #8e8e8e;
+	--ewc-color-gray-700: #6e6e6e;
+	--ewc-color-gray-800: #4b4b4b;
+	--ewc-color-gray-900: #2c2c2c;
+	--ewc-color-primary: var(--ewc-color-blue-500, #1473e6);
+	--ewc-color-secondary: var(--ewc-color-resolution-blue, #01327d);
+	--ewc-color-cta: var(--ewc-color-magenta-500, #ce2783);
+	--ewc-color-success: var(--ewc-color-green-500, #268e6c);
+	--ewc-color-warning: var(--ewc-color-orange-500, #da7b11);
+	--ewc-color-danger: var(--ewc-color-red-500, #d7373f);
+	--ewc-color-error: var(--ewc-color-danger, var(--ewc-color-red-500, #d7373f));
+	--ewc-color-info: var(--ewc-color-eastern-blue, #1d8ab5);
+
+	/**
+	 * Size scale
+	 * Applied to sizing properties
+	 * Eg: margin, padding, width, height
+	 */
+	--ewc-size-0: 0px;
+	--ewc-size-px: 1px;
+	--ewc-size-1: 0.25rem;
+	--ewc-size-2: 0.5rem;
+	--ewc-size-3: 0.75rem;
+	--ewc-size-4: 1rem;
+	--ewc-size-5: 1.25rem;
+	--ewc-size-6: 1.5rem;
+	--ewc-size-7: 1.75rem;
+	--ewc-size-8: 2rem;
+	--ewc-size-9: 2.25rem;
+	--ewc-size-10: 2.5rem;
+	--ewc-size-11: 2.75rem;
+	--ewc-size-12: 3rem;
+	--ewc-size-14: 3.5rem;
+	--ewc-size-16: 4rem;
+	--ewc-size-20: 5rem;
+	--ewc-size-24: 6rem;
+	--ewc-size-28: 7rem;
+	--ewc-size-32: 8rem;
+	--ewc-size-36: 9rem;
+	--ewc-size-40: 10rem;
+	--ewc-size-44: 11rem;
+	--ewc-size-48: 12rem;
+	--ewc-size-52: 13rem;
+	--ewc-size-56: 14rem;
+	--ewc-size-60: 15rem;
+	--ewc-size-64: 16rem;
+	--ewc-size-72: 18rem;
+	--ewc-size-80: 20rem;
+	--ewc-size-96: 24rem;
+	--ewc-size-full: 100%;
+	--ewc-size-auto: auto;
+	--ewc-size-screen: 100vw;
+	--ewc-size-min: min-content;
+	--ewc-size-max: max-content;
+
+	/**
+	 * Widths
+	 * Applied as max-width
+	 */
+	--ewc-width-col1: 8.3333%;
+	--ewc-width-col2: 16.6666%;
+	--ewc-width-col3: 25%;
+	--ewc-width-col4: 33.3333%;
+	--ewc-width-col5: 41.6666;
+	--ewc-width-col6: 50%;
+	--ewc-width-col7: 58.3333%;
+	--ewc-width-col8: 66.6666%;
+	--ewc-width-col9: 75%;
+	--ewc-width-col10: 83.3333%;
+	--ewc-width-col11: 91.6666%;
+	--ewc-width-col12: 100%;
+
+	--ewc-width-xs: 20rem;
+	--ewc-width-sm: 24rem;
+	--ewc-width-md: 28rem;
+	--ewc-width-lg: 32rem;
+	--ewc-width-xl: 36rem;
+	--ewc-width-2xl: 42rem;
+	--ewc-width-3xl: 48rem;
+	--ewc-width-4xl: 56rem;
+	--ewc-width-5xl: 64rem;
+	--ewc-width-6xl: 72rem;
+	--ewc-width-7xl: 80rem;
+	--ewc-width-auto: auto;
+	--ewc-width-full: var(--ewc-size-full);
+	--ewc-width-screen: var(--ewc-size-screen);
+	--ewc-width-min: var(--ewc-size-min);
+	--ewc-width-max: var(--ewc-size-max);
+
+	--ewc-height-auto: auto;
+	--ewc-height-full: var(--ewc-size-full);
+	--ewc-height-screen: 100vh;
+
+	--ewc-size-radius-base: 0.25rem;
+	--ewc-size-radius-none: 0;
+	--ewc-size-radius-xxs: calc( var(--ewc-size-radius-base) * .5 );
+	--ewc-size-radius-xs: calc( var(--ewc-size-radius-base) * .75 );
+	--ewc-size-radius-s: calc( var(--ewc-size-radius-base) * 1 );
+	--ewc-size-radius-m: calc( var(--ewc-size-radius-base) * 1.5 );
+	--ewc-size-radius-l: calc( var(--ewc-size-radius-base) * 2 );
+	--ewc-size-radius-xl: calc( var(--ewc-size-radius-base) * 3 );
+	--ewc-size-radius-xxl: calc( var(--ewc-size-radius-base) * 4 );
+	--ewc-size-radius-round-100: 1rem;
+	--ewc-size-radius-round-200: 2rem;
+	--ewc-size-radius-round-300: 3rem;
+	--ewc-size-radius-round-400: 4rem;
+	--ewc-size-radius-round-600: 6rem;
+
+	--ewc-size-border-thin: 1px;
+	--ewc-size-border-medium: 2px;
+	--ewc-size-border-thick: 3px;
+	--ewc-size-border-wide: 4px;
+
+	--ewc-size-font-heading-xs: 0.8rem;
+	--ewc-size-font-heading-s: 0.9375rem;
+	--ewc-size-font-heading-m: 1.25rem;
+	--ewc-size-font-heading-l: 1.5rem;
+	--ewc-size-font-heading-xl: 2.25rem;
+	--ewc-size-font-heading-xxl: 3rem;
+	--ewc-size-font-heading-xxxl: 3.8rem;
+	--ewc-size-font-body-xs: 0.75rem;
+	--ewc-size-font-body-s: 0.875rem;
+	--ewc-size-font-body-m: 1rem;
+	--ewc-size-font-body-l: 1.125rem;
+	--ewc-size-font-body-xl: 1.25rem;
+	--ewc-size-font-body-xxl: 1.375rem;
+	--ewc-size-font-body-xxxl: 1.55rem;
+	--ewc-typography-font-family: 'Source Sans Pro', sans-serif;
+}

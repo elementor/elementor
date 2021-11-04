@@ -78,27 +78,88 @@
 	--ewc-color-warning: var(--ewc-color-orange-500, #da7b11);
 	--ewc-color-error: var(--ewc-color-red-500, #d7373f);
 	--ewc-color-info: var(--ewc-color-eastern-blue, #1d8ab5);
-	--ewc-size-12: 0.125rem;
-	--ewc-size-25: 0.25rem;
-	--ewc-size-50: 0.5rem;
-	--ewc-size-100: 1rem;
-	--ewc-size-120: 1.25rem;
-	--ewc-size-200: 1.5rem;
-	--ewc-size-300: 2rem;
-	--ewc-size-400: 3rem;
-	--ewc-size-500: 4.5rem;
-	--ewc-size-600: 6rem;
-	--ewc-size-800: 8rem;
-	--ewc-size-1000: 10rem;
-	--ewc-size-1200: 12.5rem;
-	--ewc-size-2000: 15rem;
-	--ewc-size-3000: 20rem;
-	--ewc-size-4000: 30rem;
-	--ewc-size-5000: 45rem;
-	--ewc-size-6000: 60rem;
-	--ewc-size-8000: 80rem;
-	--ewc-size-10000: 100rem;
-	--ewc-size-radius-none: 0rem;
+
+	/**
+	 * Size scale
+	 * Applied to sizing properties
+	 * Eg: margin, padding, width, height
+	 */
+	--ewc-size-0: 0px;
+	--ewc-size-px: 1px;
+	--ewc-size-1: 0.25rem;
+	--ewc-size-2: 0.5rem;
+	--ewc-size-3: 0.75rem;
+	--ewc-size-4: 1rem;
+	--ewc-size-5: 1.25rem;
+	--ewc-size-6: 1.5rem;
+	--ewc-size-7: 1.75rem;
+	--ewc-size-8: 2rem;
+	--ewc-size-9: 2.25rem;
+	--ewc-size-10: 2.5rem;
+	--ewc-size-11: 2.75rem;
+	--ewc-size-12: 3rem;
+	--ewc-size-14: 3.5rem;
+	--ewc-size-16: 4rem;
+	--ewc-size-20: 5rem;
+	--ewc-size-24: 6rem;
+	--ewc-size-28: 7rem;
+	--ewc-size-32: 8rem;
+	--ewc-size-36: 9rem;
+	--ewc-size-40: 10rem;
+	--ewc-size-44: 11rem;
+	--ewc-size-48: 12rem;
+	--ewc-size-52: 13rem;
+	--ewc-size-56: 14rem;
+	--ewc-size-60: 15rem;
+	--ewc-size-64: 16rem;
+	--ewc-size-72: 18rem;
+	--ewc-size-80: 20rem;
+	--ewc-size-96: 24rem;
+	--ewc-size-full: 100%;
+	--ewc-size-auto: auto;
+	--ewc-size-screen: 100vw;
+	--ewc-size-min: min-content;
+	--ewc-size-max: max-content;
+
+	/**
+	 * Widths
+	 * Applied as max-width
+	 */
+	--ewc-width-col1: 8.3333%;
+	--ewc-width-col2: 16.6666%;
+	--ewc-width-col3: 25%;
+	--ewc-width-col4: 33.3333%;
+	--ewc-width-col5: 41.6666;
+	--ewc-width-col6: 50%;
+	--ewc-width-col7: 58.3333%;
+	--ewc-width-col8: 66.6666%;
+	--ewc-width-col9: 75%;
+	--ewc-width-col10: 83.3333%;
+	--ewc-width-col11: 91.6666%;
+	--ewc-width-col12: 100%;
+
+	--ewc-width-xs: 20rem;
+	--ewc-width-sm: 24rem;
+	--ewc-width-md: 28rem;
+	--ewc-width-lg: 32rem;
+	--ewc-width-xl: 36rem;
+	--ewc-width-2xl: 42rem;
+	--ewc-width-3xl: 48rem;
+	--ewc-width-4xl: 56rem;
+	--ewc-width-5xl: 64rem;
+	--ewc-width-6xl: 72rem;
+	--ewc-width-7xl: 80rem;
+	--ewc-width-auto: auto;
+	--ewc-width-full: var(--ewc-size-full);
+	--ewc-width-screen: var(--ewc-size-screen);
+	--ewc-width-min: var(--ewc-size-min);
+	--ewc-width-max: var(--ewc-size-max);
+
+	--ewc-height-auto: auto;
+	--ewc-height-full: var(--ewc-size-full);
+	--ewc-height-screen: 100vh;
+
+	--ewc-size-radius-none: 0;
 	--ewc-size-radius-xxs: 0.125rem;
 	--ewc-size-radius-xs: 0.1875rem;
 	--ewc-size-radius-s: 0.25rem;
@@ -111,10 +172,12 @@
 	--ewc-size-radius-round-300: 3rem;
 	--ewc-size-radius-round-400: 4rem;
 	--ewc-size-radius-round-600: 6rem;
+
 	--ewc-size-border-thin: 1px;
 	--ewc-size-border-medium: 2px;
 	--ewc-size-border-thick: 3px;
 	--ewc-size-border-wide: 4px;
+
 	--ewc-size-font-heading-xs: 0.8rem;
 	--ewc-size-font-heading-s: 0.9375rem;
 	--ewc-size-font-heading-m: 1.25rem;
