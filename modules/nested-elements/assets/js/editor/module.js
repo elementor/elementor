@@ -39,7 +39,7 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 		} );
 
 		elementor.hooks.addFilter( 'elementor/editor/container/empty/render', ( DefaultElement, /* Container */container ) => {
-			if ( this.isWidgetSupportNesting( container.parent?.model?.get( 'widgetType' ) ) ) {
+			if ( container?.parent && this.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) ) {
 				return <WidgetContainerEmpty container={container} />;
 			}
 

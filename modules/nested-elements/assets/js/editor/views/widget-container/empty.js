@@ -38,22 +38,6 @@ export default class Empty extends React.Component {
 	}
 
 	renderSelectPreset() {
-		// TODO: Find better place for presets.
-		const presets = [
-			'100',
-			'50-50',
-			'33-33-33',
-			'33-66',
-			'25-25-25-25',
-			'25-50-25',
-			'50-50-50-50',
-			'50-50-100',
-			'c100-c50-50',
-			'33-33-33-33-33-33',
-			'33-33-33-33-66',
-			'66-33-33-66',
-		];
-
 		return (
 			<>
 				<div className="elementor-add-section-close">
@@ -64,8 +48,8 @@ export default class Empty extends React.Component {
 					<div className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
 					<div className="e-container-select-preset__list">
 						{
-							presets.map( ( preset ) => (
-								<div onClick={( e ) => this.onPresetSelected( preset, this.props.container )}
+							elementor.presetsFactory.getDefaultPresets().map( ( preset ) => (
+								<div onClick={() => this.onPresetSelected( preset, this.props.container )}
 									key={preset} className="e-container-preset" data-preset={preset}
 									dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.getContainerPreset( preset ) }}/>
 							) )

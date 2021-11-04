@@ -116,7 +116,7 @@ export class ContainerHelper {
 	}
 
 	/**
-	 * TODO Find better name & normalize.
+	 * Create a Container element based on a preset, extend version to cover edge cases.
 	 *
 	 * @param {string} preset
 	 * @param {Container} [container=elementor.getPreviewContainer()]

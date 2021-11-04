@@ -52,22 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
 			<div class="e-container-select-preset__list">
 				<#
-				const presets = [
-					'100',
-					'50-50',
-					'33-33-33',
-					'33-66',
-					'25-25-25-25',
-					'25-50-25',
-					'50-50-50-50',
-					'50-50-100',
-					'c100-c50-50',
-					'33-33-33-33-33-33',
-					'33-33-33-33-66',
-					'66-33-33-66',
-				];
-
-				presets.forEach( ( preset ) => {
+				elementor.presetsFactory.getDefaultPresets().forEach( ( preset ) => {
 					#>
 					<div class="e-container-preset" data-preset="{{ preset }}">
 						{{{ elementor.presetsFactory.getContainerPreset( preset ) }}}
