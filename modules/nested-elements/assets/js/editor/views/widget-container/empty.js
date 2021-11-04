@@ -1,7 +1,3 @@
-// TODO: Avoid import this to the module, the helper should exported on the component level.
-// Why? if i got the component then probably i'll be required for the utils.
-import ContainerHelper from 'elementor-editor-utils/container-helper';
-
 export default class Empty extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -20,13 +16,15 @@ export default class Empty extends React.Component {
 	}
 
 	onPresetSelected( preset, container ) {
+		const options = {
+			createForTarget: true,
+		};
+
 		// Create new one by selected preset.
-		ContainerHelper.createContainerFromPresetEx(
+		$e.components.get( 'editor' ).defaultUtils().container.createContainerFromPresetEx(
 			preset,
 			container,
-			{
-				createForTarget: true,
-			}
+			options,
 		);
 	}
 

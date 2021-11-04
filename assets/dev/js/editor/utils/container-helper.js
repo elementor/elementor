@@ -147,7 +147,7 @@ export class ContainerHelper {
 					flex_wrap: 'wrap',
 				};
 
-				if ( createForTarget ) {
+				if ( ! createForTarget ) {
 					newContainer = ContainerHelper.createContainer( settings, container, options );
 				} else {
 					$e.run( 'document/elements/settings', { container, settings } );
