@@ -14,8 +14,8 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultUtils() {
-        return {
-            container: ContainerHelper,
-        };
+		return {
+			container: ContainerHelper,
+		};
 	}
 }
