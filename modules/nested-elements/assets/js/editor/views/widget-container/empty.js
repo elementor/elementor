@@ -31,10 +31,12 @@ export default class Empty extends React.Component {
 	}
 
 	renderEmpty() {
-		return ( <div className="elementor-first-add">
-			<div className="elementor-icon eicon-plus" onClick={() => this.onClickItemPlus()}/>
-			<div className="elementor-icon eicon-folder"/>
-		</div> );
+		return (
+			<div className="elementor-first-add">
+				<div className="elementor-icon eicon-plus" onClick={() => this.onClickItemPlus()}/>
+				<div className="elementor-icon eicon-folder"/>
+			</div>
+		);
 	}
 
 	renderSelectPreset() {
