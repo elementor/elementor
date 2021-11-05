@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.5.0-dev51 - 2021-11-05
+* Tweak: Delete deprecated 'Editor' class alias [ED-5429] (#16797)
+* New: Drag files from desktop [ED-3817] (#16809)
+
 #### 3.5.0-dev50 - 2021-11-04
 * Fix: Can't upload JPG/JPEG files via Elementor Editor's WP media control (#16786) [ED-5406] (#16801)
 
