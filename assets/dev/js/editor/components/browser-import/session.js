@@ -1,5 +1,3 @@
-import Container from '../../../editor/container/container';
-
 export default class Session {
 	/**
 	 * The Manager instance.
