@@ -82,6 +82,7 @@
 			animation-name: dnd-placeholder-widget-vertical;
 		}
 
+		// Fix nested Containers DnD issues (ED-5424).
 		&[data-nesting-level]:not( [data-nesting-level = "0"] ) > .elementor-widget-placeholder {
 			margin-inline-end: var( --margin-end );
 		}
