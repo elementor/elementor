@@ -1,5 +1,20 @@
-
 const config = require( './config' );
+
+const runCmd = ( cmd ) => {
+	const { execSync } = require( 'child_process' ),
+		results = execSync( cmd ).toString();
+	// eslint-disable-next-line no-console
+	console.log( cmd + ' ' + results );
+};
+
+const enableSVGImport = () => {
+	const path = require( 'path' ),
+		coreDir = path.resolve( __dirname + '/../../' );
+
+	runCmd( `cd ${ coreDir } && wp options update elementor_unfiltered_files_upload 1 --force` );
+};
+
+enableSVGImport();
 
 const getDelay = ( pathname ) => {
 	switch ( pathname ) {
