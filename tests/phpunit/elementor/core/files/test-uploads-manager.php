@@ -79,7 +79,9 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		// In case tests get interrupted and the tearDown method doesn't run, we reset the files.
 		self::$temp_directory = getcwd() . '/temp/';
 
-		self::tearDownAfterClass();
+		if ( file_exists( self::$temp_directory ) ) {
+			self::tearDownAfterClass();
+		}
 
 		wp_mkdir_p( self::$temp_directory );
 
