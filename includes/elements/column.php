@@ -1022,6 +1022,7 @@ class Element_Column extends Element_Base {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
 		}
 
+		// If the element doesn't exists (disabled element, experiment, etc.), return false to prevent errors.
 		if ( empty( $element_data['widgetType'] ) ) {
 			return false;
 		}
