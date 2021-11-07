@@ -34,6 +34,11 @@ const ContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
+			// TODO: Remove. It's a temporary solution for the Navigator sortable.
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'widget',
+			},
 			Resizable: {
 				behaviorClass: WidgetResizable,
 			},
@@ -46,6 +51,15 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+	},
+
+	/**
+	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
+	 *
+	 * @return {{}}
+	 */
+	getSortableOptions: function() {
+		return {};
 	},
 
 	/**
@@ -71,7 +85,13 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions: function() {
+		// Determine the axis based on the flex direction.
+		const axis = this.getContainer().settings.get( 'flex_direction' ).includes( 'column' ) ?
+			[ 'vertical' ] :
+			[ 'horizontal' ];
+
 		return {
+			axis,
 			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
@@ -94,9 +114,14 @@ const ContainerView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' );
 
-				// Sort.
+				// User is sorting inside a Container.
 				if ( draggedView ) {
+					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
+
+					if ( draggedView.parent === this ) {
+						newIndex++;
+					}
 
 					$e.run( 'document/elements/move', {
 						container: draggedView.getContainer(),
@@ -109,7 +134,7 @@ const ContainerView = BaseElementView.extend( {
 					return;
 				}
 
-				// Element from panel.
+				// User is dragging an element from the panel.
 				this.addElementFromPanel( { at: newIndex } );
 			},
 		};
@@ -256,13 +281,13 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 
 		this.changeContainerClasses();
-		this.$el.html5Droppable( this.getDroppableOptions() );
 
-		// Defer to wait for other Containers to render.
+		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.nestingLevel = this.getNestingLevel();
 
 			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+			this.$el.html5Droppable( this.getDroppableOptions() );
 		} );
 	},
 

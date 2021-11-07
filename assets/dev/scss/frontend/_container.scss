@@ -62,24 +62,45 @@
 
 	.elementor-widget-placeholder {
 		--size: 10px;
+		--margin-start: calc( -1 * var( --size ) );
+		--margin-end: calc( -2 * var( --size ) );
 
 		flex-shrink: 0;
 		align-self: stretch;
 		z-index: $first-layer;
+		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	&.e-container--placeholder-row > .elementor-widget-placeholder {
-		width: var( --size );
-		margin: 0 calc( -1 * var( --size ) ); // To make sure that it doesn't push & break the layout when appearing.
-		height: auto;
-		min-height: 100%;
-		animation-name: dnd-placeholder-widget-vertical;
+	&.e-container--placeholder-row {
+		& > .elementor-widget-placeholder {
+			position: relative;
+			width: var( --size );
+			// To make sure that it doesn't push & break the layout when appearing.
+			margin-inline-start: var( --margin-start );
+			height: auto;
+			min-height: 100%;
+			animation-name: dnd-placeholder-widget-vertical;
+		}
+
+		// Fix nested Containers DnD issues (ED-5424).
+		&[data-nesting-level]:not( [data-nesting-level = "0"] ) > .elementor-widget-placeholder {
+			margin-inline-end: var( --margin-end );
+		}
 	}
 
 	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
 		height: var( --size );
-		margin: calc( -1 * var( --size ) ) 0; // To make sure that it doesn't push & break the layout when appearing.
+		// To make sure that it doesn't push & break the layout when appearing.
+		margin-block-start: var( --margin-start );
+		margin-block-end: var( --margin-end );
 		animation-name: dnd-placeholder-widget-horizontal;
+	}
+
+	// Extracted from the inline CSS of `behaviors/sortable.js`.
+	.elementor-sortable-helper {
+		height: 84px;
+		width: 125px;
+		z-index: -1;
 	}
 
 	// Hack to increase specificity and avoid using `!important`.
@@ -104,6 +125,15 @@
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition );
 		border-radius: var( --border-radius );
+	}
+
+	// Fix iframe-based widgets (ED-5338).
+	// TODO: Find a better solution.
+	.elementor-widget {
+		&-video,
+		&-google_maps {
+			flex-basis: 100%;
+		}
 	}
 
 	// Inner Container handle.
