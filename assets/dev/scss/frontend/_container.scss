@@ -113,6 +113,15 @@
 		border-radius: var( --border-radius );
 	}
 
+	// Fix iframe-based widgets (ED-5338).
+	// TODO: Find a better solution.
+	.elementor-widget {
+		&-video,
+		&-google_maps {
+			flex-basis: 100%;
+		}
+	}
+
 	// Inner Container handle.
 	// TODO: Find a better solution.
 	& > & {
