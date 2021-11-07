@@ -68,7 +68,7 @@ module.exports = Marionette.Behavior.extend( {
 			this.initContextMenu();
 		}
 
-		if ( 'preview' === this.getOption( 'context' ) && ! elementor.selection.has( this.view.getContainer() ) ) {
+		if ( 'preview' === this.getOption( 'context' ) && ! elementor.selection.has( this.view.getContainer?.() ) ) {
 			$e.run( 'document/elements/deselect-all' );
 		}
 

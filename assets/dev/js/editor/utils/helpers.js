@@ -370,13 +370,13 @@ module.exports = {
 		} );
 	},
 
-	maybeDisableWidget() {
+	maybeDisableWidget( givenWidgetType = null ) {
 		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			widgetType = elementView.model.get( 'widgetType' ),
+			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
