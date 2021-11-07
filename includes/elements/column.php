@@ -1015,11 +1015,15 @@ class Element_Column extends Element_Base {
 	 *
 	 * @param array $element_data Element ID.
 	 *
-	 * @return Element_Base Column default child type.
+	 * @return Element_Base|false Column default child type.
 	 */
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
+		}
+
+		if ( empty( $element_data['widgetType'] ) ) {
+			return false;
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
