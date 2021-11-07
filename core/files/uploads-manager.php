@@ -33,6 +33,11 @@ class Uploads_Manager extends Base_Object {
 	private $allowed_file_extensions;
 
 	/**
+	 * @var bool
+	 */
+	private $is_elementor_upload = false;
+
+	/**
 	 * @var string
 	 */
 	private $temp_dir;
@@ -341,13 +346,37 @@ class Uploads_Manager extends Base_Object {
 	 * @return string the new directory path
 	 */
 	final public function support_unfiltered_elementor_file_uploads( $existing_mimes ) {
-		if ( ( $this->is_elementor_media_upload() || $this->is_elementor_wp_media_upload() ) && $this->are_unfiltered_uploads_enabled() ) {
+		if ( $this->is_elementor_upload() && $this->are_unfiltered_uploads_enabled() ) {
 			foreach ( $this->file_type_handlers as $file_type_handler ) {
 				$existing_mimes[ $file_type_handler->get_file_extension() ] = $file_type_handler->get_mime_type();
 			}
 		}
 
 		return $existing_mimes;
+	}
+
+	/**
+	 * Set Elementor Upload State
+	 *
+	 * @since 3.5.0
+	 * @param $state
+	 * @return mixed
+	 */
+	public function set_elementor_upload_state( $state ) {
+		$this->is_elementor_upload = $state;
+	}
+
+	/**
+	 * Is Elementor Upload
+	 *
+	 * This method checks if the current session includes a request to upload files made via Elementor.
+	 *
+	 * @since 3.5.0
+	 * @param $state
+	 * @return mixed
+	 */
+	private function is_elementor_upload() {
+		return $this->is_elementor_upload || $this->is_elementor_media_upload() || $this->is_elementor_wp_media_upload();
 	}
 
 	/**
