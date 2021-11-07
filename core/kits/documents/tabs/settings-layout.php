@@ -110,7 +110,7 @@ class Settings_Layout extends Tab_Base {
 				'label_block' => true,
 				'selectors' => [
 					// Hack to convert the value into a CSS selector.
-					'' => '}{{VALUE}}{display: var(--page-title-display)',
+					'.elementor-dummy' => '}{{VALUE}}{display: var(--page-title-display)',
 				],
 			]
 		);
