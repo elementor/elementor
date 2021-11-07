@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.5
+Stable tag: 3.4.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -187,6 +187,20 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.7 - 2021-10-31 =
+* Tweak: Added role restriction to Version control feature
+* Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
+* Fix: Custom width responsive control disappeared until section init in the common Positioning section 
+* Fix: PayPal button widget is not functioning in future Pro versions
+* Fix: Unwanted HTML escaping in Pro features promotion
+
+= 3.4.6 - 2021-10-19 =
+* Tweak: Updated `eicons` library to 5.13.0
+* Fix: Custom SVG is not supported in some servers environments in Text Path widget
+* Fix: Lottie animations are not imported in Template import process
+* Fix: Can't connect to Library via CLI
+* Fix: Scroll event listener is not optimized in Counter widget
 
 = 3.4.5 - 2021-10-12 =
 * Tweak: Updated featured video in the WordPress repository plugin page

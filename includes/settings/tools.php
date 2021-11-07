@@ -130,6 +130,10 @@ class Tools extends Settings_Page {
 	public function post_elementor_rollback() {
 		check_admin_referer( 'elementor_rollback' );
 
+		if ( ! static::can_user_rollback_versions() ) {
+			wp_die( esc_html__( 'Not allowed to rollback versions', 'elementor' ) );
+		}
+
 		$rollback_versions = $this->get_rollback_versions();
 		if ( empty( $_GET['version'] ) || ! in_array( $_GET['version'], $rollback_versions ) ) {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor' ) );
@@ -309,6 +313,7 @@ class Tools extends Settings_Page {
 				],
 			],
 			'versions' => [
+				'show_if' => static::can_user_rollback_versions(),
 				'label' => esc_html__( 'Version Control', 'elementor' ),
 				'sections' => [
 					'rollback' => [
@@ -395,5 +400,14 @@ class Tools extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return __( 'Tools', 'elementor' );
+	}
+
+	/**
+	 * Check if the current user can access the version control tab and rollback versions.
+	 *
+	 * @return bool
+	 */
+	public static function can_user_rollback_versions() {
+		return current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
 	}
 }
