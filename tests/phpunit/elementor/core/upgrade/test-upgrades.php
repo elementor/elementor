@@ -555,7 +555,7 @@ class Test_Upgrades extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_v_3_4_0_fix_font_awesome_default_value_from_1_to_yes() {
+	public function test_v_3_4_7_fix_font_awesome_default_value_from_1_to_yes() {
 		// Test if 'Upgrades::fix_font_awesome_default_value_from_1_to_yes' sets `Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY` value to 'yes'.
 		// Arrange - Set value to '1' in DB.
 		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, '1' );
