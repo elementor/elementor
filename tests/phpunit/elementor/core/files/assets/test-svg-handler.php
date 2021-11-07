@@ -14,7 +14,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$_POST['uploadTypeCaller'] = 'elementor-wp-media-upload';
+		$_POST['uploadTypeCaller'] = 'elementor-media-upload';
 	}
 
 	/**

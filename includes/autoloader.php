@@ -195,10 +195,6 @@ class Autoloader {
 
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'Editor' => [
-				'replacement' => 'Core\Editor\Editor',
-				'version' => '2.6.0',
-			],
 			'Scheme_Base' => [
 				'replacement' => 'Core\Schemes\Base',
 				'version' => '2.8.0',
