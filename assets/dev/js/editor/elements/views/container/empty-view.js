@@ -22,14 +22,12 @@ export default class EmptyView extends Marionette.ItemView {
 
 		result.$el.addClass( this.className );
 
-		if ( this.ownerView.container?.isEmptyRender ) {
+		if ( this.ownerView.container ) {
 			return this.renderReactDefaultElement( self.container );
 		}
 
 		this.ownerView.once( 'container:created', () => {
 			this.renderReactDefaultElement( this.ownerView.container );
-
-			this.ownerView.container.isEmptyRender = true;
 		} );
 
 		return result;

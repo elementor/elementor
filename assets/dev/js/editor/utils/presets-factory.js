@@ -2,23 +2,6 @@ var presetsFactory;
 
 presetsFactory = {
 
-	getDefaultPresets: function() {
-		return [
-			'100',
-			'50-50',
-			'33-33-33',
-			'33-66',
-			'25-25-25-25',
-			'25-50-25',
-			'50-50-50-50',
-			'50-50-100',
-			'c100-c50-50',
-			'33-33-33-33-33-33',
-			'33-33-33-33-66',
-			'66-33-33-66',
-		];
-	},
-
 	getPresetsDictionary: function() {
 		return {
 			11: 100 / 9,
@@ -239,6 +222,23 @@ presetsFactory = {
 		};
 
 		return presets[ presetId ] || presets.default;
+	},
+
+	getContainerPresets: function() {
+		return [
+			'100',
+			'50-50',
+			'33-33-33',
+			'33-66',
+			'25-25-25-25',
+			'25-50-25',
+			'50-50-50-50',
+			'50-50-100',
+			'c100-c50-50',
+			'33-33-33-33-33-33',
+			'33-33-33-33-66',
+			'66-33-33-66',
+		];
 	},
 };
 

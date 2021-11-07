@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="e-container-select-preset__title"><?php echo esc_html__( 'Select your Structure', 'elementor' ); ?></div>
 			<div class="e-container-select-preset__list">
 				<#
-				elementor.presetsFactory.getDefaultPresets().forEach( ( preset ) => {
+				elementor.presetsFactory.getContainerPresets().forEach( ( preset ) => {
 					#>
 					<div class="e-container-preset" data-preset="{{ preset }}">
 						{{{ elementor.presetsFactory.getContainerPreset( preset ) }}}

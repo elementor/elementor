@@ -48,7 +48,7 @@ export default class Empty extends React.Component {
 					<div className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
 					<div className="e-container-select-preset__list">
 						{
-							elementor.presetsFactory.getDefaultPresets().map( ( preset ) => (
+							elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
 								<div onClick={() => this.onPresetSelected( preset, this.props.container )}
 									key={preset} className="e-container-preset" data-preset={preset}
 									dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.getContainerPreset( preset ) }}/>
