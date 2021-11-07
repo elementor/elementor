@@ -7,14 +7,9 @@ const runCmd = ( cmd ) => {
 	console.log( cmd + ' ' + results );
 };
 
-const enableSVGImport = () => {
-	const path = require( 'path' ),
-		coreDir = path.resolve( __dirname + '/../../' );
-
-	runCmd( `cd ${ coreDir } && wp options update elementor_unfiltered_files_upload 1 --force` );
-};
-
-enableSVGImport();
+// Enable SVG Import
+runCmd( 'cd /tmp/wordpress' );
+runCmd( 'wp option update elementor_unfiltered_files_upload 1' );
 
 const getDelay = ( pathname ) => {
 	switch ( pathname ) {
