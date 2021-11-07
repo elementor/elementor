@@ -824,6 +824,30 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	/**
+	 * Create a drag helper element.
+	 * Copied from `behaviors/sortable.js` with some refactor.
+	 *
+	 * @return {HTMLDivElement}
+	 */
+	getDraggableHelper: function() {
+		const model = this.getEditModel();
+
+		const helper = document.createElement( 'div' );
+		helper.classList.add( 'elementor-sortable-helper', `elementor-sortable-helper-${ model.get( 'elType' ) }` );
+
+		helper.innerHTML = `
+			<div class="icon">
+				<i class="${ model.getIcon() }"></i>
+			</div>
+			<div class="elementor-element-title-wrapper">
+				<div class="title">${ model.getTitle() }</div>
+			</div>
+		`;
+
+		return helper;
+	},
+
+	/**
 	 * Initialize the Droppable instance.
 	 *
 	 * @return void
@@ -837,6 +861,18 @@ BaseElementView = BaseContainer.extend( {
 		this.$el.html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
+
+				const helper = this.getDraggableHelper();
+				this.$el[ 0 ].appendChild( helper );
+
+				// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+
+				// Remove the helper element as soon as it's set as a drag image, since the element must be
+				// rendered for at least a fraction of a second in order to set it as a drag image.
+				setTimeout( () => {
+					helper.remove();
+				} );
 
 				this.onDragStart( e );
 

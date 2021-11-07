@@ -95,6 +95,13 @@
 		animation-name: dnd-placeholder-widget-horizontal;
 	}
 
+	// Extracted from the inline CSS of `behaviors/sortable.js`.
+	.elementor-sortable-helper {
+		height: 84px;
+		width: 125px;
+		z-index: -1;
+	}
+
 	// Hack to increase specificity and avoid using `!important`.
 	.elementor-widget.elementor-widget {
 		// Override the default margin-bottom of widgets.
