@@ -34,6 +34,10 @@ const ContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
+			Sortable: {
+				behaviorClass: require( 'elementor-behaviors/sortable' ),
+				elChildType: 'widget',
+			},
 			Resizable: {
 				behaviorClass: WidgetResizable,
 			},
@@ -46,6 +50,15 @@ const ContainerView = BaseElementView.extend( {
 		BaseElementView.prototype.initialize.apply( this, arguments );
 
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
+	},
+
+	/**
+	 * TODO: Remove. It's a temporary solution for the Navigator sortable (also remove the behavior).
+	 *
+	 * @return {{}}
+	 */
+	getSortableOptions: function() {
+		return {};
 	},
 
 	/**
