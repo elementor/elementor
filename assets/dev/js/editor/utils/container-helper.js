@@ -127,7 +127,11 @@ export class ContainerHelper {
 	static createContainerFromPresetEx( preset, container = elementor.getPreviewContainer(), options ) {
 		let newContainer;
 
-		const { createForTarget = false } = options;
+		const { createForTarget = false } = options,
+			historyId = $e.internal( 'document/history/start-log', {
+				type: 'add',
+				title: 'Container',
+			} );
 
 		// Clear prev style.
 		if ( createForTarget ) {
@@ -183,6 +187,8 @@ export class ContainerHelper {
 				);
 				break;
 		}
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		return newContainer;
 	}
