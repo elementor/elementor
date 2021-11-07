@@ -928,7 +928,7 @@ class Upgrades {
 		return self::move_settings_to_kit( $callback, $updater, $include_revisions );
 	}
 
-	public static function _v_3_4_7_fix_font_awesome_default_value_from_1_to_yes() {
+	public static function _v_3_4_8_fix_font_awesome_default_value_from_1_to_yes() {
 		// if `Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY` value is '1', then set it to `yes`.
 		$load_fa4_shim_option = get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY );
 
