@@ -536,7 +536,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => 'internal',
+									'std' => 'external',
 									'options' => [
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
