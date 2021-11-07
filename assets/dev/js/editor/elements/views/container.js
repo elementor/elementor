@@ -34,6 +34,7 @@ const ContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
+			// TODO: Remove. It's a temporary solution for the Navigator sortable.
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget',
@@ -53,7 +54,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * TODO: Remove. It's a temporary solution for the Navigator sortable (also remove the behavior).
+	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
 	 *
 	 * @return {{}}
 	 */
