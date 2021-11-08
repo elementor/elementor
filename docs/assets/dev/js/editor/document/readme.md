@@ -59,4 +59,4 @@
    | _id_         | {String}              | **required**  | Id of the element.
 
 
-### [Back](../../../../../core/common/assets/js/api/core/commands-methods/getall.md) 
+### [Back](../readme.md) 
