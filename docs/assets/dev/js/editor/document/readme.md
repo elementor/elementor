@@ -42,7 +42,7 @@
 ## _Util_ -- `$e.components.get('document').utils.findViewById()`
 *  **Name**: findViewById.
 *  **Description**: Find view by id.
-*  **Returns**: `{ View | Array.<View> }`
+*  **Returns**: `{ View | View[] }`
 
    | Property     | Type                  | Requirement   | Description |
        |---           |---                    |---            |---|
