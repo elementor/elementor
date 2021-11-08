@@ -22,11 +22,11 @@
 | [UI](ui/readme.md)             | `$e.components.get('document/ui')`       | Irregular component for handling UI shortcuts.
 
 ## Component `document` -- Utils
-| Util Name                                     | Access Util                                               | Description
-|-----------------------------------------------|-----------------------------------------------------------|-----------------------
-| [findViewRecursive](#)                        | `$e.components.get('document').utils.findViewRecursive()` |
-| [findViewById](#)                             | `$e.components.get('document').utils.findViewById()`      |
-| [findContainerById](#)                        | `$e.components.get('document').utils.findContainerById()` |
+| Util Name                                     							| Access Util                                               
+|---------------------------------------------------------------------------|-----------------------------------------------------------|
+| [findViewRecursive](#util----ecomponentsgetdocumentutilsfindviewrecursive)| `$e.components.get('document').utils.findViewRecursive()` |
+| [findViewById](#util----ecomponentsgetdocumentutilsfindviewbyid)          | `$e.components.get('document').utils.findViewById()`      |
+| [findContainerById](#util----ecomponentsgetdocumentutilsfindviewbyid)     | `$e.components.get('document').utils.findContainerById()` |
 
 ## _Util_ -- `$e.components.get('document').utils.findViewRecursive()`
 * **Name**: findViewRecursive.
@@ -52,7 +52,7 @@
 ## _Util_ -- `$e.components.get('document').utils.findContainerById()`
 *  **Name**: findContainerById.
 *  **Description**: Find container by id.
-*  **Returns**: `{ Container | Array.<Container> }`
+*  **Returns**: `{ Container | Container[] }`
 
    | Property     | Type                  | Requirement   | Description |
    |---           |---                    |---            |---         |
