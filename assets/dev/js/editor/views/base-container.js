@@ -126,7 +126,12 @@ module.exports = Marionette.CompositeView.extend( {
 						afterAdd: 'section:after:drop',
 					},
 				},
-			} ).view.children.findByIndex( 0 ).getContainer();
+			} );
+
+			if ( ! containerExperiment ) {
+				container = container.view.children.findByIndex( 0 )
+					.getContainer();
+			}
 		}
 
 		// Create the element in column.
