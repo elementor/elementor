@@ -1,16 +1,5 @@
 const config = require( './config' );
 
-const runCmd = ( cmd ) => {
-	const { execSync } = require( 'child_process' ),
-		results = execSync( cmd ).toString();
-	// eslint-disable-next-line no-console
-	console.log( cmd + ' ' + results );
-};
-
-// Enable SVG Import
-runCmd( 'cd /tmp/wordpress' );
-runCmd( 'wp option update elementor_unfiltered_files_upload 1' );
-
 const getDelay = ( pathname ) => {
 	switch ( pathname ) {
 		case 'audio':

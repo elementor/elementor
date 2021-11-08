@@ -25,8 +25,9 @@ jobs:
           sudo chown -R $USER /usr/local/bin/
           npm i -g @elementor/screenshotter
       - name: Install Dependencies
-        run: |
+        run: | # Also, enable import SVG
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
+          cd /tmp/wordpress && wp option update elementor_unfiltered_files_upload 1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
