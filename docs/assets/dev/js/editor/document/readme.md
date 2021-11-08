@@ -17,7 +17,7 @@
 | [Elements](elements/readme.md) | `$e.components.get('document/elements')` | Elements manipulation (create, edit, remove, etc.).
 | [History](history/readme.md)   | `$e.components.get('document/history')`  | Provides a way to record/manipulate the commands history.
 | [Repeater](repeater/readme.md) | `$e.components.get('document/repeater')` | Provides a way to communicate with repeaters.
-| [Save](save/readme.md)         | `$e.components.get('document/save')`     | Responsible for saving, publish, draft, of the document.
+| [Save](save/readme.md)         | `$e.components.get('document/save')`     | Responsible for saving the document (either publish/draft).
 | [UI](ui/readme.md)             | `$e.components.get('document/ui')`       | Irregular component for handling UI shortcuts.
 
 ## Component `document/` -- Utils
