@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Empty() {
+export default function Empty( props ) {
 	const [ isRenderPresets, setIsRenderPresets ] = useState( false );
 
 	const onPresetSelected = ( preset, container ) => {
@@ -36,7 +36,7 @@ export default function Empty() {
 						<div className="e-container-select-preset__list">
 							{
 								elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
-									<div onClick={() => onPresetSelected( preset, this.props.container )}
+									<div onClick={() => onPresetSelected( preset, props.container )}
 										key={preset} className="e-container-preset" data-preset={preset}
 										dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.getContainerPreset( preset ) }}/>
 								) )
