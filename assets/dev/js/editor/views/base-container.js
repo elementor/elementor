@@ -99,6 +99,10 @@ module.exports = Marionette.CompositeView.extend( {
 
 		model = Object.assign( model, model.custom );
 
+		if ( 'section' === model.elType ) {
+			model.isInner = true;
+		}
+
 		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
 			return;
 		}
@@ -126,7 +130,13 @@ module.exports = Marionette.CompositeView.extend( {
 						afterAdd: 'section:after:drop',
 					},
 				},
-			} ).view.children.findByIndex( 0 ).getContainer();
+			} );
+
+			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+			if ( ! containerExperiment ) {
+				container = container.view.children.findByIndex( 0 )
+					.getContainer();
+			}
 		}
 
 		// Create the element in column.
