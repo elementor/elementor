@@ -1,7 +1,7 @@
 ## API -- `$e.commands` -- [`$e.commands.getAll()`](../commands.full.md#getAll)
 *  **Description**: `$e.commands.getAll()` returns all available commands.
 
-*  **Returns**: `{array.<string>}` Array of commands.
+*  **Returns**: `{string[]}` Array of commands.
 
 ## All commands
 | Component Name                                                                        | Access Component                 | Description
