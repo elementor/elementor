@@ -126,7 +126,13 @@ module.exports = Marionette.CompositeView.extend( {
 						afterAdd: 'section:after:drop',
 					},
 				},
-			} ).view.children.findByIndex( 0 ).getContainer();
+			} );
+
+			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+			if ( ! containerExperiment ) {
+				container = container.view.children.findByIndex( 0 )
+					.getContainer();
+			}
 		}
 
 		// Create the element in column.
