@@ -1427,7 +1427,7 @@ class Source_Local extends Source_Base {
 			'content' => $template_data['content'],
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
-			'title' => get_the_title( $template_id ),
+			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
 
