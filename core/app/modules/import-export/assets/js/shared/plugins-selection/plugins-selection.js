@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import Table from '../../ui/table/table';
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
+import { useState, useEffect, useContext, useCallback, useMemo } from 'react';
+
+import { Context } from '../../context/context-provider';
+
+import PluginsTable from './components/plugins-table';
 
 import './plugins-selection.scss';
 
@@ -9,10 +10,10 @@ const ELEMENTOR_PLUGIN_NAME = 'Elementor',
 	ELEMENTOR_PRO_PLUGIN_NAME = 'Elementor Pro';
 
 export default function PluginsSelection( props ) {
-	const hasPro = false;
-
 	const [ selectedData, setSelectedData ] = useState( null ),
+		context = useContext( Context ),
 		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
+		initialSelections = [],
 		elementorPluginsData = {},
 		plugins = [ ...props.plugins ].filter( ( data ) => {
 			const isElementorPlugin = elementorPluginsNames.includes( data.name );
@@ -22,27 +23,30 @@ export default function PluginsSelection( props ) {
 			}
 
 			return ! isElementorPlugin;
-		} ),
-		data = {
-			headers: [ 'Plugin Name', 'Version' ],
-		};
+		} );
 
+	// In case that Pro exist, registering it as the first selected plugin.
 	if ( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] ) {
+		// Adding the Pro as the first plugin to appears on the plugins list.
 		plugins.unshift( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] );
+
+		// Adding the Pro index to the initialSelections to be selected by default.
+		initialSelections.push( 0 );
 	}
 
-	useEffect( () => {
-		console.log( 'props.plugins', props.plugins );
-	}, [ props.plugins ] );
+	const cachedPlugins = useMemo( () => plugins, [ props.plugins ] ),
+		cachedInitialSelections = useMemo( () => initialSelections, [ props.plugins ] );
 
+	// Updating the selected plugins list in the global context.
 	useEffect( () => {
 		if ( selectedData ) {
+			// Adding Elementor-Core as the first plugin of the selected plugins list.
 			const corePluginData = elementorPluginsData[ ELEMENTOR_PLUGIN_NAME ],
-				selectedPluginsData = [ corePluginData ];
+				selectedPluginsList = [ corePluginData ];
 
-			selectedData.map( ( pluginIndex ) => selectedPluginsData.push( plugins[ pluginIndex ] ) );
+			selectedData.map( ( pluginIndex ) => selectedPluginsList.push( plugins[ pluginIndex ] ) );
 
-			console.log( selectedPluginsData );
+			context.dispatch( { type: 'SET_PLUGINS', payload: selectedPluginsList } );
 		}
 	}, [ selectedData ] );
 
@@ -51,57 +55,11 @@ export default function PluginsSelection( props ) {
 	}
 
 	return (
-		<Table selection onSelect={ setSelectedData }>
-			<Table.Head>
-				<Table.Row>
-					<Table.Cell tag="th">
-						<Table.Checkbox allSelectedCount={ plugins.length } />
-					</Table.Cell>
-
-					{
-						data.headers.map( ( header, index ) => (
-							<Table.Cell tag="th" key={ index }>{ header }</Table.Cell>
-						) )
-					}
-				</Table.Row>
-			</Table.Head>
-
-			<Table.Body>
-				{
-					hasPro &&
-					<Table.Row key={ index }>
-						<Table.Cell tag="td">
-							<Table.Checkbox index={ index } />
-						</Table.Cell>
-
-						<Table.Cell tag="td">
-							<Text className="e-app-import-export-plugins-selection__cell-content">
-								{ ELEMENTOR_PRO_PLUGIN_NAME }
-							</Text>
-						</Table.Cell>
-
-						<Table.Cell tag="td">Version { plugin.version }</Table.Cell>
-					</Table.Row>
-				}
-				{
-					plugins.map( ( plugin, index ) => (
-						<Table.Row key={ index }>
-							<Table.Cell tag="td">
-								<Table.Checkbox index={ index } />
-							</Table.Cell>
-
-							<Table.Cell tag="td">
-								<Text className="e-app-import-export-plugins-selection__cell-content">
-									{ plugin.name }
-								</Text>
-							</Table.Cell>
-
-							<Table.Cell tag="td">Version { plugin.version }</Table.Cell>
-						</Table.Row>
-					) )
-				}
-			</Table.Body>
-		</Table>
+		<PluginsTable
+			plugins={ cachedPlugins }
+			onSelect={ setSelectedData }
+			initialSelections={ cachedInitialSelections }
+		/>
 	);
 }
 

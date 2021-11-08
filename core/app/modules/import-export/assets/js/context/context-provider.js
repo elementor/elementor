@@ -20,6 +20,7 @@ export default function ContextProvider( props ) {
 		uploadedData: null,
 		importedData: null,
 		exportedData: null,
+		plugins: [],
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

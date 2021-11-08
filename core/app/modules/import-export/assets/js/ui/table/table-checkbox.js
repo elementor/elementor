@@ -59,5 +59,6 @@ export default function TableCheckbox( props ) {
 TableCheckbox.propTypes = {
 	className: PropTypes.string,
 	index: PropTypes.number,
+	initialChecked: PropTypes.bool,
 	allSelectedCount: PropTypes.number,
 };

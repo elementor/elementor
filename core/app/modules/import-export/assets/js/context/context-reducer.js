@@ -43,6 +43,8 @@ export const reducer = ( state, action ) => {
 			return { ...state, importedData: action.payload };
 		case 'SET_EXPORTED_DATA':
 			return { ...state, exportedData: action.payload };
+		case 'SET_PLUGINS':
+			return { ...state, plugins: action.payload };
 		default:
 			return state;
 	}

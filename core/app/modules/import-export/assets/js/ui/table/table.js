@@ -12,9 +12,16 @@ import TableCheckbox from './table-checkbox';
 import './table.scss';
 
 export default function Table( props ) {
-	const [ selected, setSelected ] = useState( {} ),
-		classNameBase = 'e-app-import-export-table',
-		classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
+	const getInitialSelections = () => {
+		const initialSelections = {};
+
+		props.initialSelections.forEach( ( value ) => initialSelections[ value ] = value );
+
+		return initialSelections;
+	},
+	[ selected, setSelected ] = useState( getInitialSelections() ),
+	classNameBase = 'e-app-import-export-table',
+	classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
 
 	useEffect( () => {
 		props.onSelect( Object.values( selected ) );
@@ -46,6 +53,7 @@ Table.propTypes = {
 	children: PropTypes.any.isRequired,
 	className: PropTypes.string,
 	headers: PropTypes.array,
+	initialSelections: PropTypes.array,
 	rows: PropTypes.array,
 	selection: PropTypes.bool,
 	onSelect: PropTypes.func,
@@ -53,4 +61,5 @@ Table.propTypes = {
 
 Table.defaultProps = {
 	selection: false,
+	initialSelections: [],
 };
