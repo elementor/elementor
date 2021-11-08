@@ -358,6 +358,12 @@
 
 			event.preventDefault();
 
+			// Override the onDrop callback with a user-provided one if present.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
+				return;
+			}
+
 			if ( input.length ) {
 				$e.run( 'editor/browser-import/import', {
 					input,

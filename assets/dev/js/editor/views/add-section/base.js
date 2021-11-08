@@ -129,7 +129,6 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this ),
 		} );
 	}
 
