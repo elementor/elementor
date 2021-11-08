@@ -173,6 +173,10 @@
 		padding: 20px;
 	}
 
+	.elementor-tabs-content-wrapper > .e-container .elementor-editor-element-settings.elementor-editor-container-settings {
+		display: none;
+	}
+
 	.elementor-tabs-content-wrapper > .e-container:not(.elementor-active) {
 		display: none;
 	}
