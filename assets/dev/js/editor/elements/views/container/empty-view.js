@@ -17,13 +17,13 @@ export default class EmptyView extends Marionette.ItemView {
 		ReactDOM.render( elementor.hooks.applyFilters( 'elementor/editor/container/empty/render', DefaultElement, container ), this.el );
 	}
 
-	attachElContent( html ) {
-		const result = super.attachElContent( html );
+	attachElContent() {
+		const result = super.attachElContent( '' );
 
 		result.$el.addClass( this.className );
 
 		if ( this.ownerView.container ) {
-			return this.renderReactDefaultElement( self.container );
+			return this.renderReactDefaultElement( this.ownerView.container );
 		}
 
 		this.ownerView.once( 'container:created', () => {
