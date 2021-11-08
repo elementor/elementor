@@ -13,6 +13,6 @@
 | [Panel](#component---epanel.md)                                                       | `$e.components.get('panel')`     |
 | [Shortcuts](#component---eshortcuts.md)                                               | `$e.components.get('shortcuts')` |
 
-> **Note:** Each command has it own component, to find the commands please navigate by components.
+> **Note:** Each command has its own component. To find the commands please navigate by components.
 
 ### [Back](../commands.md) 
