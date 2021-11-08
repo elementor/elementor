@@ -1,5 +1,5 @@
 ## API -- `$e.commands` -- [`$e.commands.getAll()`](../commands.full.md#getAll)
-*  **Description**: `$e.commands.getAll()` returns all available commands
+*  **Description**: `$e.commands.getAll()` returns all available commands.
 
 *  **Returns**: `{array.<string>}` Array of commands.
 
