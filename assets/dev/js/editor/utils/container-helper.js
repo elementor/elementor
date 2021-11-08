@@ -133,11 +133,6 @@ export class ContainerHelper {
 				title: 'Container',
 			} );
 
-		// Clear prev style.
-		if ( createForTarget ) {
-			$e.run( 'document/elements/reset-style', { container } );
-		}
-
 		switch ( preset ) {
 			// Single Container without sub Containers.
 			case '100':

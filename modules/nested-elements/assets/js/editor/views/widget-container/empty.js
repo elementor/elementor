@@ -66,3 +66,7 @@ export default class Empty extends React.Component {
 	}
 }
 
+Empty.propTypes = {
+    container: PropTypes.object.isRequired,
+};
+
