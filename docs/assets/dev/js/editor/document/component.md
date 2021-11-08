@@ -22,11 +22,11 @@
 | [UI](ui/readme.md)             | `$e.components.get('document/ui')`       | Irregular component for handling UI shortcuts.
 
 ## Component `document` -- Utils
-| Util Name                                     							| Access Util                                               
+| Util Name                                                                 | Access Util                                               
 |---------------------------------------------------------------------------|-----------------------------------------------------------|
 | [findViewRecursive](#util----ecomponentsgetdocumentutilsfindviewrecursive)| `$e.components.get('document').utils.findViewRecursive()` |
 | [findViewById](#util----ecomponentsgetdocumentutilsfindviewbyid)          | `$e.components.get('document').utils.findViewById()`      |
-| [findContainerById](#util----ecomponentsgetdocumentutilsfindviewbyid)     | `$e.components.get('document').utils.findContainerById()` |
+| [findContainerById](#util----ecomponentsgetdocumentutilsfindcontainerbyid)| `$e.components.get('document').utils.findContainerById()` |
 
 ## _Util_ -- `$e.components.get('document').utils.findViewRecursive()`
 * **Name**: findViewRecursive.

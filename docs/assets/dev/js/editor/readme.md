@@ -4,7 +4,7 @@
 | Component Name                                                    													  |  Access component                     		  | Loading owner                		    | Description
 |-------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|-----------------------------------------|-----------------------
 | [App](#)                                                     															  | `$e.components.get('app')`		 			  | Core app       					     	| Elementor main app.
-| [Document](document/readme.md)              																			  | `$e.components.get('document')` 			  | Editor									| Document manipulations, available only in editor.
+| [Document](document/component.md)              						    											  | `$e.components.get('document')` 			  | Editor									| Document manipulations, available only in editor.
 | [Editor Documents](#)                                                     											  | `$e.components.get('editor/documents')`       | Editor 									| Documents manager.
 | [Elements Color Picker](../../../../modules/elements-color-picker/assets/js/editor/component.md)						  | `$e.components.get('elements-color-picker')`  | Module  			 			    	| Elements color picker, available only in editor.
 | [Finder](#)                                                     														  | `$e.components.get('finder')`    		  	  | Core common module 						| Interaction with finder.
