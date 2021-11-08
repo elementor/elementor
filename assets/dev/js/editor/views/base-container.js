@@ -99,6 +99,10 @@ module.exports = Marionette.CompositeView.extend( {
 
 		model = Object.assign( model, model.custom );
 
+		if ( 'section' === model.elType ) {
+			model.isInner = true;
+		}
+
 		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
 			return;
 		}
