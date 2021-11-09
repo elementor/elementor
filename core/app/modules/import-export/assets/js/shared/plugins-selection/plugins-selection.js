@@ -13,7 +13,7 @@ export default function PluginsSelection( props ) {
 	const [ selectedData, setSelectedData ] = useState( null ),
 		context = useContext( Context ),
 		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
-		initialSelections = [],
+		initialSelections = [ ...props.initialSelections ],
 		elementorPluginsData = {},
 		plugins = [ ...props.plugins ].filter( ( data ) => {
 			const isElementorPlugin = elementorPluginsNames.includes( data.name );
@@ -30,12 +30,17 @@ export default function PluginsSelection( props ) {
 		// Adding the Pro as the first plugin to appears on the plugins list.
 		plugins.unshift( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] );
 
-		// Adding the Pro index to the initialSelections to be selected by default.
-		initialSelections.push( 0 );
+		if ( ! initialSelections.length ) {
+			// Adding the Pro index to the initialSelections to be selected by default.
+			initialSelections.push( 0 );
+		}
 	}
 
 	const cachedPlugins = useMemo( () => plugins, [ props.plugins ] ),
-		cachedInitialSelections = useMemo( () => initialSelections, [ props.plugins ] );
+		cachedInitialSelections = useMemo( () => initialSelections, [ props.plugins ] ),
+		cachedInitialDisabled = useMemo( () => props.initialDisabled, [ props.plugins ] );
+
+	console.log( 'cachedInitialDisabled', cachedInitialDisabled );
 
 	// Updating the selected plugins list in the global context.
 	useEffect( () => {
@@ -56,19 +61,27 @@ export default function PluginsSelection( props ) {
 
 	return (
 		<PluginsTable
+			initialDisabled={ cachedInitialDisabled }
 			plugins={ cachedPlugins }
 			onSelect={ setSelectedData }
 			initialSelections={ cachedInitialSelections }
+			withHeader={ props.withHeader }
 		/>
 	);
 }
 
 PluginsSelection.propTypes = {
+	initialDisabled: PropTypes.array,
+	initialSelections: PropTypes.array,
 	plugins: PropTypes.array,
 	selection: PropTypes.bool,
+	withHeader: PropTypes.bool,
 };
 
 PluginsSelection.defaultProps = {
+	initialDisabled: [],
+	initialSelections: [],
 	plugins: [],
 	selection: true,
+	withHeader: true,
 };

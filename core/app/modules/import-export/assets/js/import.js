@@ -7,6 +7,7 @@ import ImportContent from './pages/import/import-content/import-content';
 import ImportResolver from './pages/import/import-resolver/import-resolver';
 import ImportProcess from './pages/import/import-process/import-process';
 import ImportComplete from './pages/import/import-complete/import-complete';
+import ImportPlugins from './pages/import/import-plugins/import-plugins';
 
 export default function Import() {
 	return (
@@ -17,6 +18,7 @@ export default function Import() {
 					<ImportProcess path="process" />
 					<ImportResolver path="resolver" />
 					<ImportContent path="content" />
+					<ImportPlugins path="plugins" />
 					<ImportKit default />
 				</Router>
 			</LocationProvider>

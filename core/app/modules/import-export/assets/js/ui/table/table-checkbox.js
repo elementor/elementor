@@ -12,6 +12,7 @@ export default function TableCheckbox( props ) {
 		isAllSelected = () => Object.keys( context.selected ).length === props.allSelectedCount,
 		isSomeSelected = () => isSelectAllCheckbox() ? ! ! ( Object.keys( context.selected ).length && ! isAllSelected() ) : false,
 		getIsSelected = () => isSelectAllCheckbox() ? isAllSelected() : ( props.index in context.selected ),
+		getIsDisabled = () => ! isSelectAllCheckbox() ? context.disabled.includes( props.index ) : null,
 		onSelectAll = () => {
 			context.setSelected( () => {
 				if ( isAllSelected() || isSomeSelected() ) {
@@ -50,6 +51,7 @@ export default function TableCheckbox( props ) {
 			checked={ getIsSelected() }
 			isSomeSelected={ isSomeSelected() }
 			onChange={ onChange }
+			disabled={ getIsDisabled() }
 			{ ...attrs }
 			className={ arrayToClassName( [ 'e-app-import-export-table__checkbox', props.className ] ) }
 		/>

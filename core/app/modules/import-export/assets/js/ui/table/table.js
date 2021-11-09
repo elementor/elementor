@@ -20,6 +20,7 @@ export default function Table( props ) {
 		return initialSelections;
 	},
 	[ selected, setSelected ] = useState( getInitialSelections() ),
+	[ disabled, setDisabled ] = useState( props.initialDisabled ),
 	classNameBase = 'e-app-import-export-table',
 	classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
 
@@ -28,7 +29,7 @@ export default function Table( props ) {
 	}, [ selected ] );
 
 	return (
-		<Context.Provider value={ { selected, setSelected } }>
+		<Context.Provider value={ { selected, setSelected, disabled, setDisabled } }>
 			<table className={ arrayToClassName( classes ) }>
 				{
 					props.selection &&
@@ -53,6 +54,7 @@ Table.propTypes = {
 	children: PropTypes.any.isRequired,
 	className: PropTypes.string,
 	headers: PropTypes.array,
+	initialDisabled: PropTypes.array,
 	initialSelections: PropTypes.array,
 	rows: PropTypes.array,
 	selection: PropTypes.bool,
@@ -61,5 +63,6 @@ Table.propTypes = {
 
 Table.defaultProps = {
 	selection: false,
+	initialDisabled: [],
 	initialSelections: [],
 };
