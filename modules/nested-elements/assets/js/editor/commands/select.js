@@ -13,7 +13,7 @@ export class Select extends CommandHistory {
 		} else {
             $e.run( 'nested-elements/select', {
 				container,
-                index: data.prev || 1,
+                index: data.prev,
             } );
 		}
 	}
@@ -31,8 +31,13 @@ export class Select extends CommandHistory {
 	}
 
 	getHistory( args ) {
-		const { container, index } = args,
-			editSettings = container.model.get( 'editSettings' );
+		const { options = { useHistory: true }, container, index } = args;
+
+		if ( ! options.useHistory ) {
+			return false;
+		}
+
+		const editSettings = container.model.get( 'editSettings' );
 
 		return {
 			container,
