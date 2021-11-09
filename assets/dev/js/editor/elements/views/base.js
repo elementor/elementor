@@ -706,7 +706,7 @@ BaseElementView = BaseContainer.extend( {
 						( i ) => i.id === settings.attributes._id
 					);
 
-					if ( ( container.parent.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
+					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
 						const change = settings.changed[ link.dataset.linkSetting ];
 
 						if ( change ) {
