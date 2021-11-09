@@ -177,6 +177,9 @@ class Module extends BaseModule {
 
 		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
 
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		try {
 			$this->import = new Import( $import_settings );
 
