@@ -57,7 +57,6 @@ class Module extends BaseApp {
 			'elementor-common',
 			'react',
 			'react-dom',
-			'tipsy',
 		], ELEMENTOR_VERSION, true );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
