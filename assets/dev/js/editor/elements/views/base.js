@@ -657,6 +657,12 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+		const $dataLink = this.$el.find( '[data-link-type]' );
+
+		if ( ! $dataLink.length ) {
+			return;
+		}
+
 		const self = this;
 
 		/**
@@ -664,12 +670,12 @@ BaseElementView = BaseContainer.extend( {
 		 */
 		self.links = [];
 
-		this.$el.find( '[data-link-type]' ).filter( function() {
+		$dataLink.filter( function() {
 			const $current = jQuery( this );
 
 			// To support nested links bypass nested links that are not part of the current.
 			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
-				if ( this.dataset.link ) {
+				if ( this.dataset.linkType ) {
 					self.links.push( {
 						el: this,
 						dataset: this.dataset,
@@ -696,9 +702,11 @@ BaseElementView = BaseContainer.extend( {
 		links.forEach( ( link ) => {
 			switch ( link.dataset.linkType ) {
 				case 'repeater-item': {
-					const index = this.container.parent.children.indexOf( this.container );
+					const container = Object.values( this.container.repeaters )[ 0 ].children.find(
+						( i ) => i.id === settings.attributes._id
+					);
 
-					if ( index === parseInt( link.dataset.linkIndex - 1 ) ) {
+					if ( ( container.parent.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
 						const change = settings.changed[ link.dataset.linkSetting ];
 
 						if ( change ) {
