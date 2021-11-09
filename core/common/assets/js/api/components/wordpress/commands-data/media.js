@@ -50,6 +50,12 @@ export class Media extends CommandData {
 
 		if ( this.file.size > parseInt( window._wpPluploadSettings.defaults.filters.max_file_size, 10 ) ) {
 			throw new Error( __( 'The file exceeds the maximum upload size for this site.', 'elementor' ) );
+		} else if (
+			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
+				this.file.name.split( '.' ).pop()
+			)
+		) {
+			throw new Error( __( 'Sorry, this file type is not permitted for security reasons.', 'elementor' ) );
 		}
 
 		return await super.run();
