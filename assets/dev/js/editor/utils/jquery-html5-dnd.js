@@ -192,12 +192,13 @@
 			}
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
-			const isRowContainer = $( currentElement ).parents( '.e-container--placeholder-row' ).length,
-				isFirstInsert = $( currentElement ).hasClass( 'elementor-first-add' );
+			const $currentElement = $( currentElement ),
+				isRowContainer = $currentElement.parents( '.e-container--placeholder-row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$( currentElement )[ insertMethod ]( elementsCache.$placeholder );
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
 
 				return;
 			}
