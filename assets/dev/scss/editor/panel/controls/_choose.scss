@@ -67,7 +67,8 @@
 
 	.elementor-control-text_align,
 	.elementor-control-align,
-	.elementor-control-position {
+	.elementor-control-position,
+	[class*="elementor-control-responsive-"] {
 
 		.elementor-choices {
 			flex-direction: row-reverse; // Force ltr also in RTL languages
