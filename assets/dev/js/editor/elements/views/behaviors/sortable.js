@@ -126,6 +126,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 			sortableOptions = _.extend( sortableOptions, this.getSwappableOptions() );
 		}
 
+		// TODO: Temporary hack for Container.
+		//  Will be removed in the future when the Navigator will use React.
+		if ( sortableOptions.preventInit ) {
+			return;
+		}
+
 		$childViewContainer.sortable( sortableOptions );
 	},
 
