@@ -59,7 +59,10 @@ const ContainerView = BaseElementView.extend( {
 	 * @return {{}}
 	 */
 	getSortableOptions: function() {
-		return {};
+		// TODO: Temporary hack.
+		return {
+			preventInit: true,
+		};
 	},
 
 	/**
@@ -98,6 +101,7 @@ const ContainerView = BaseElementView.extend( {
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'e-dragging-over',
+			getDropContainer: () => this.getContainer(),
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
