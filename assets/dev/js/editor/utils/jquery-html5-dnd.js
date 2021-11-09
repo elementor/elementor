@@ -192,14 +192,19 @@
 			}
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
-			if ( ! $( currentElement ).hasClass( 'elementor-first-add' ) && $( currentElement ).parents( '.e-container--placeholder-row' ).length ) {
+			const $currentElement = $( currentElement ),
+				isRowContainer = $currentElement.parents( '.e-container--placeholder-row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+
+			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$( currentElement )[ insertMethod ]( elementsCache.$placeholder );
-				elementsCache.$placeholder.css( 'order', $( currentElement ).css( 'order' ) );
-			} else {
-				const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-				elementsCache.$placeholder[ insertMethod ]( currentElement );
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+
+				return;
 			}
+
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
 		var isDroppingAllowed = function( event ) {

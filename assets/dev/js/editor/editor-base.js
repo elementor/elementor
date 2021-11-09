@@ -1388,7 +1388,8 @@ export default class EditorBase extends Marionette.Application {
 						controlArgs.default = controlArgs[ device + '_default' ];
 					}
 				} else if ( deleteControlDefault ) {
-					delete controlArgs.default;
+					// In the Editor, controls without default values should have an empty string as the default value.
+					controlArgs.default = '';
 				}
 
 				// If the control is the first inside a popover, only the first device starts the popover,
