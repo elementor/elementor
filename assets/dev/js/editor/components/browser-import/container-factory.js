@@ -8,10 +8,11 @@ export default class ContainerFactory {
 	 * @returns {Container}
 	 */
 	static createElementContainer( element ) {
-		const model = new ElementModel( Object.assign( {
-			id: elementorCommon.helpers.getUniqueId().toString(),
-			elType: element?.elType || 'widget',
-		}, element ) );
+		const model = new ElementModel(
+			this.regenerateIds( [ Object.assign( {
+				elType: element?.elType || 'widget',
+			}, element ) ] )[ 0 ]
+		);
 
 		return new elementorModules.editor.Container( {
 			id: model.get( 'id' ),
@@ -19,5 +20,17 @@ export default class ContainerFactory {
 			settings: model.get( 'settings' ),
 			model,
 		} );
+	}
+
+	static regenerateIds( elements ) {
+		for ( const element of elements ) {
+			element.id = elementorCommon.helpers.getUniqueId().toString();
+
+			if ( element.elements ) {
+				this.regenerateIds( element.elements );
+			}
+		}
+
+		return elements;
 	}
 }
