@@ -314,7 +314,7 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
-	onItemClick() {
+	onItemClick( e ) {
 		this.model.trigger( 'request:edit', { scrollIntoView: true } );
 	}
 

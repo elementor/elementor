@@ -828,6 +828,7 @@ BaseElementView = BaseContainer.extend( {
 		$e.run( 'panel/editor/open', {
 			model: model,
 			view: this,
+			options,
 		} );
 	},
 
