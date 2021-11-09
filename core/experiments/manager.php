@@ -9,6 +9,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\Modules\SafeMode\Module as Safe_Mode;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -205,13 +206,13 @@ class Manager extends Base_Object {
 	 * Get Feature Option Key
 	 *
 	 * @since 3.1.0
-	 * @access private
+	 * @access public
 	 *
 	 * @param string $feature_name
 	 *
 	 * @return string
 	 */
-	private function get_feature_option_key( $feature_name ) {
+	public function get_feature_option_key( $feature_name ) {
 		return 'elementor_experiment-' . $feature_name;
 	}
 
@@ -312,6 +313,19 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'container',
+			'title' => esc_html__( 'Container', 'elementor' ),
+			'description' => esc_html__(
+				'Create advanced layouts and responsive designs using the new Container element.
+				When this experiment is active, Containers will be the default building block.
+				Existing Sections, Inner Sections and Columns will not be affected.',
+				'elementor'
+			),
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
@@ -649,6 +663,11 @@ class Manager extends Base_Object {
 			add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
 				$this->register_settings_fields( $settings );
 			}, 11 );
+		}
+
+		// Register CLI commands.
+		if ( Utils::is_wp_cli() ) {
+			\WP_CLI::add_command( 'elementor experiments', WP_CLI::class );
 		}
 	}
 }

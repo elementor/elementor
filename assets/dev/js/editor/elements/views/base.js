@@ -88,12 +88,22 @@ BaseElementView = BaseContainer.extend( {
 		let ChildView;
 		const elType = model.get( 'elType' );
 
-		if ( 'section' === elType ) {
-			ChildView = require( 'elementor-elements/views/section' );
-		} else if ( 'column' === elType ) {
-			ChildView = require( 'elementor-elements/views/column' );
-		} else {
-			ChildView = elementor.modules.elements.views.Widget;
+		switch ( elType ) {
+			case 'section':
+				ChildView = require( 'elementor-elements/views/section' );
+				break;
+
+			case 'column':
+				ChildView = require( 'elementor-elements/views/column' );
+				break;
+
+			case 'container':
+				ChildView = require( 'elementor-elements/views/container' );
+				break;
+
+			default:
+				ChildView = elementor.modules.elements.views.Widget;
+				break;
 		}
 
 		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
@@ -384,7 +394,8 @@ BaseElementView = BaseContainer.extend( {
 			model.widgetType = elementView.model.get( 'widgetType' );
 		} else if ( 'section' === model.elType ) {
 			model.isInner = true;
-		} else {
+		} else if ( 'container' !== model.elType ) {
+			// Don't allow adding anything other than widget, inner-section or a container.
 			return;
 		}
 
@@ -393,6 +404,9 @@ BaseElementView = BaseContainer.extend( {
 		if ( customData ) {
 			jQuery.extend( model, customData );
 		}
+
+		// Reset the selected element cache.
+		elementor.channels.panelElements.reply( 'element:selected', null );
 
 		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
@@ -710,6 +724,9 @@ BaseElementView = BaseContainer.extend( {
 			}
 		}
 
+		// Defer to wait for all of the children to render.
+		setTimeout( () => this.initDraggable(), 0 );
+
 		this.triggerMethod( 'render:after' );
 	},
 
@@ -786,6 +803,93 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+	},
+
+	/**
+	 * On `$el` drag start event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragStart() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * On `$el` drag end event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragEnd() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * Create a drag helper element.
+	 * Copied from `behaviors/sortable.js` with some refactor.
+	 *
+	 * @return {HTMLDivElement}
+	 */
+	getDraggableHelper: function() {
+		const model = this.getEditModel();
+
+		const helper = document.createElement( 'div' );
+		helper.classList.add( 'elementor-sortable-helper', `elementor-sortable-helper-${ model.get( 'elType' ) }` );
+
+		helper.innerHTML = `
+			<div class="icon">
+				<i class="${ model.getIcon() }"></i>
+			</div>
+			<div class="elementor-element-title-wrapper">
+				<div class="title">${ model.getTitle() }</div>
+			</div>
+		`;
+
+		return helper;
+	},
+
+	/**
+	 * Initialize the Droppable instance.
+	 *
+	 * @return void
+	 */
+	initDraggable: function() {
+		// Init the draggable only for Containers and their children.
+		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
+			return;
+		}
+
+		this.$el.html5Draggable( {
+			onDragStart: ( e ) => {
+				e.stopPropagation();
+
+				const helper = this.getDraggableHelper();
+				this.$el[ 0 ].appendChild( helper );
+
+				// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+
+				// Remove the helper element as soon as it's set as a drag image, since the element must be
+				// rendered for at least a fraction of a second in order to set it as a drag image.
+				setTimeout( () => {
+					helper.remove();
+				} );
+
+				this.onDragStart( e );
+
+				const container = this.getContainer();
+
+				elementor.channels.editor.reply( 'element:dragged', container.view );
+			},
+			onDragEnd: ( e ) => {
+				e.stopPropagation();
+
+				this.onDragEnd( e );
+			},
+
+			groups: [ 'elementor-element' ],
+		} );
 	},
 } );
 

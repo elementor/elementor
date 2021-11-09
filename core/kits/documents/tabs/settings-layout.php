@@ -73,6 +73,7 @@ class Settings_Layout extends Tab_Base {
 				'description' => esc_html__( 'Sets the default width of the content area (Default: 1140)', 'elementor' ),
 				'selectors' => [
 					'.elementor-section.elementor-section-boxed > .elementor-container' => 'max-width: {{SIZE}}{{UNIT}}',
+					'.e-container' => '--container-max-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -95,6 +96,7 @@ class Settings_Layout extends Tab_Base {
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'.elementor-element' => '--widgets-spacing: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
