@@ -17,7 +17,7 @@ class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 
 		events.click = ( e ) => {
 			// TODO: Find better solution.
-			if ( this.$el.find( '.elementor-empty-view' ).find( e.target ).length ) {
+			if ( ! e.target.classList.contains( 'elementor-tabs-wrapper' ) ) {
 				return true;
 			}
 

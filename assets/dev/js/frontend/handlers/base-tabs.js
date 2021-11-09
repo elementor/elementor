@@ -211,12 +211,6 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		this.activateDefaultTab();
 	}
 
-	onEditSettingsChange( propertyName ) {
-		if ( 'activeItemIndex' === propertyName ) {
-			this.activateDefaultTab();
-		}
-	}
-
 	changeActiveTab( tabIndex, fromBindings = false ) {
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();

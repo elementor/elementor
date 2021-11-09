@@ -1,23 +1,26 @@
 import { useState } from 'react';
 
 export default function Empty( props ) {
-	const [ isRenderPresets, setIsRenderPresets ] = useState( false );
-
-	const onPresetSelected = ( preset, container ) => {
+	const editorComponent = $e.components.get( 'editor' ),
+		[ isRenderPresets, setIsRenderPresets ] = useState( false ),
+		onPresetSelected = ( preset, container ) => {
 			const options = {
 				createForTarget: true,
 			};
 
 			// Create new one by selected preset.
-			$e.components.get( 'editor' ).defaultUtils().container.createContainerFromPresetEx(
+			editorComponent.defaultUtils().container.createContainerFromPresetEx(
 				preset,
 				container,
 				options,
 			);
 		},
+		editContainer = () => {
+			editorComponent.defaultUtils().container.openEditMode( props.container );
+		},
 		renderEmpty = () => {
 			return (
-				<div className="elementor-first-add">
+				<div className="elementor-first-add" onClick={() => editContainer()}>
 					<div className="elementor-icon eicon-plus" onClick={() => setIsRenderPresets( true )}/>
 					<div className="elementor-icon eicon-folder"/>
 				</div>
