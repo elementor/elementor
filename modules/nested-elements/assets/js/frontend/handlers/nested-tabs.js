@@ -34,4 +34,21 @@ export default class NestedTabs extends BaseTabs {
 
 		super.onInit( ...args );
 	}
+
+	onEditSettingsChange( propertyName, value ) {
+		if ( 'activeItemIndex' === propertyName ) {
+			this.changeActiveTab( value, false );
+		}
+	}
+
+	changeActiveTab( tabIndex, fromBindings = false ) {
+		if ( fromBindings && this.isEdit ) {
+			return window.top.$e.run( 'nested-elements/select', {
+				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
+				index: parseInt( tabIndex ),
+			} );
+		}
+
+		super.changeActiveTab( tabIndex, fromBindings );
+	}
 }

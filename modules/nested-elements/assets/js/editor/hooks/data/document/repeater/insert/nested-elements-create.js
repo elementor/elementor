@@ -13,11 +13,22 @@ export class NestedElementsCreate extends Base {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			$e.run( 'document/elements/create', {
+			const newContainer = $e.run( 'document/elements/create', {
 				container,
 				model: {
 					elType: 'container',
 				},
+				options: {
+					edit: false, // Not losing focus.
+				},
+			} );
+
+			// Select new created nested container
+			newContainer.view.once( 'ready', () => {
+				$e.run( 'nested-elements/select', {
+					index: newContainer.parent.children.indexOf( newContainer ) + 1,
+					container: container,
+				} );
 			} );
 		} );
 	}

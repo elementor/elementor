@@ -550,6 +550,8 @@ BaseElementView = BaseContainer.extend( {
 		self.linksData();
 
 		_.defer( function() {
+			self.trigger( 'ready' );
+
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {

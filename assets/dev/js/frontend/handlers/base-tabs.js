@@ -194,13 +194,13 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 					case 'Enter':
 					case 'Space':
 						event.preventDefault();
-						this.changeActiveTab( this.getTabIndex( event.currentTarget ) );
+						this.changeActiveTab( this.getTabIndex( event.currentTarget ), true );
 						break;
 				}
 			},
 			click: ( event ) => {
 				event.preventDefault();
-				this.changeActiveTab( this.getTabIndex( event.currentTarget ) );
+				this.changeActiveTab( this.getTabIndex( event.currentTarget ), true );
 			},
 		} );
 	}
@@ -217,7 +217,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 		}
 	}
 
-	changeActiveTab( tabIndex ) {
+	changeActiveTab( tabIndex, fromBindings = false ) {
 		const isActiveTab = this.isActiveTab( tabIndex ),
 			settings = this.getSettings();
 
