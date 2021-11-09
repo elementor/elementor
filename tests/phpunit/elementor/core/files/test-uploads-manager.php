@@ -79,7 +79,9 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		// In case tests get interrupted and the tearDown method doesn't run, we reset the files.
 		self::$temp_directory = getcwd() . '/temp/';
 
-		self::tearDownAfterClass();
+		if ( file_exists( self::$temp_directory ) ) {
+			self::tearDownAfterClass();
+		}
 
 		wp_mkdir_p( self::$temp_directory );
 
@@ -179,19 +181,27 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file );
 
-		$this->assertTrue( ! is_wp_error( $validation_result ) );
+		$result = ! is_wp_error( $validation_result );
 
-		/**
-		 * Test Base64 file
-		 */
+		$this->assertTrue( $result );
+	}
+
+	public function test_handle_elementor_upload_base64() {
 		$file = [
 			'fileName' => self::$base64_file_name,
 			'fileData' => 'ew0KICAiY29udGVudCI6IFsNCiAgICB7DQogICAgICAiaWQiOiAiMjA0MTU4YzEiLA0KICAgICAgInNldHRpbmdzIjogew0KICAgICAgICAic2VjdGlvbl9sYXlvdXQiOiAiIiwNCiAgICAgICAgIl90aXRsZSI6ICJoZXJvIHNlY3Rpb24iDQogICAgICB9LA0KICAgICAgImVsZW1lbnRzIjogWw0KICAgICAgICB7DQogICAgICAgICAgImlkIjogIjdhOTY2OWQ5IiwNCiAgICAgICAgICAic2V0dGluZ3MiOiB7DQogICAgICAgICAgICAic3BhY2VfYmV0d2Vlbl93aWRnZXRzIjogIjIwIg0KICAgICAgICAgIH0sDQogICAgICAgICAgImVsZW1lbnRzIjogWw0KICAgICAgICAgICAgew0KICAgICAgICAgICAgICAiaWQiOiAiM2IyYWJmYWUiLA0KICAgICAgICAgICAgICAic2V0dGluZ3MiOiB7DQogICAgICAgICAgICAgICAgInNlY3Rpb25fdGl0bGUiOiAiIiwNCiAgICAgICAgICAgICAgICAidGl0bGUiOiAid29ya2Zsb3cgb3B0aW1pemF0aW9uIG1hZGUgZWFzeSINCiAgICAgICAgICAgICAgfSwNCiAgICAgICAgICAgICAgImVsZW1lbnRzIjogW10sDQogICAgICAgICAgICAgICJpc0lubmVyIjogZmFsc2UsDQogICAgICAgICAgICAgICJ3aWRnZXRUeXBlIjogImhlYWRpbmciLA0KICAgICAgICAgICAgICAiZWxUeXBlIjogIndpZGdldCINCiAgICAgICAgICAgIH0sDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICJpZCI6ICI0NWVlZGZkNyIsDQogICAgICAgICAgICAgICJzZXR0aW5ncyI6IHsNCiAgICAgICAgICAgICAgICAic2VjdGlvbl9idXR0b24iOiAiIiwNCiAgICAgICAgICAgICAgICAidGV4dCI6ICJHZXQgU3RhcnRlZCINCiAgICAgICAgICAgICAgfSwNCiAgICAgICAgICAgICAgImVsZW1lbnRzIjogW10sDQogICAgICAgICAgICAgICJpc0lubmVyIjogZmFsc2UsDQogICAgICAgICAgICAgICJ3aWRnZXRUeXBlIjogImJ1dHRvbiIsDQogICAgICAgICAgICAgICJlbFR5cGUiOiAid2lkZ2V0Ig0KICAgICAgICAgICAgfQ0KICAgICAgICAgIF0sDQogICAgICAgICAgImlzSW5uZXIiOiAiIiwNCiAgICAgICAgICAiZWxUeXBlIjogImNvbHVtbiINCiAgICAgICAgfQ0KICAgICAgXSwNCiAgICAgICJpc0lubmVyIjogIiIsDQogICAgICAiZWxUeXBlIjogInNlY3Rpb24iDQogICAgfQ0KICBdLA0KICAicGFnZV9zZXR0aW5ncyI6IHsNCiAgICAiYmFja2dyb3VuZF9iYWNrZ3JvdW5kIjogImNsYXNzaWMiLA0KICAgICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNGRkZGRkYiDQogIH0sDQogICJ2ZXJzaW9uIjogIjAuNCIsDQogICJ0aXRsZSI6ICJ0ZW1wbGF0ZSBtb2NrIiwNCiAgInR5cGUiOiAicGFnZSINCn0=',
 		];
 
+		// Make sure unfiltered uploads are allowed for this test.
+		add_filter( 'elementor/files/allow_unfiltered_upload', function( $enabled ) {
+			return true;
+		} );
+
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $file );
 
-		$this->assertTrue( ! is_wp_error( $validation_result ) );
+		$result = ! is_wp_error( $validation_result );
+
+		$this->assertTrue( $result );
 
 		if ( ! is_wp_error( $validation_result ) ) {
 			// If validation passed, files were created. Remove the files and directories generated in this test.
