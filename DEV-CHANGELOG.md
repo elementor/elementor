@@ -1,5 +1,22 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev2 - 2021-11-09
+* Fix: Only one JSON browser-import is possible [ED-5443] (#16844)
+* Fix: CSS Print method has wrong default value [ED-5883] (#16833)
+* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16839)
+* Fix: Additional Breakpoints - Conditional respon. controls disappear if exper. is active [ED-5362] (#16775)
+* Fix: Template name changed if a dash mark was used in the import process [ED-4923] (#16788)
+* Fix: The Top bar is disappearing from some pages [ED-5314] (#16835)
+* Fix: data attributes are being printed to DOM when not needed in CSS Transform [ED-5419] (#16850)
+* Fix: Activate and Deactivate all experiments buttons didn't work (#16802)
+* Fix: Inner section cannot be added to the page [ED-5460] (#16863)
+* Fix: 3.5.0 Core Beta - Skip SVG in Import Kit flow doesn't work properly [ED-5437] (#16837)
+* Fix: CLI `library import` deletes the original imported file [ED-5203] (#16799)
+* Fix: Drag from Desktop doesn’t work with SVG and JSON [ED-5454] (#16849)
+* Fix: Nav menu not scrolling to the appropriate CSS ID if Scroll Snap is enabled [ED-5439] (#16808)
+* Fix: Missing typography control in Text Path widget [ED-5455] (#16838)
+* New: Added Container element [ED-2609] (#16105)
+
 #### 3.6.0-dev1 - 2021-11-08
 * Fix: Cannot open context menu in the 'Add New Section' area in the preview [ED-5453] (#16836)
 * Fix: JSON browser-imports appear to be inserted at the top of the document [ED-5442] (#16845)
@@ -568,20 +585,3 @@
 * Tweak: Kit-Library - Clicking a page in the kit overview opens live preview [ED-3134] (#15006)
 * Tweak: Auto merge next release branch into feature branch [ARCH-30] (#14998)
 * Fix: Auto merge next release into feature branch (#15016)
-
-#### 3.3.0-dev5 - 2021-05-18
-* Fix: Elementor CI Tests will be triggered only on the master repository [ED-3122] (#14820)
-* Tweak: Schedule developer-edition release nightly [ARCH-7] (#14860)
-* Tweak: Change developer-edition schedule release to 10AM UTC [ARCH-7] (#14866)
-* Tweak: Add PR name linter [ARCH-7] (#14867)
-* FontAwesome Library: Update thw FontAwesome Library to version 5.15.3 (#14861)
-* New: Kit-Library - Favorites [ED-2598] (#14650)
-* Fix: Kit-Library - Taxonomies new API scheme [ED-3143] (#14864)
-* Icon library update text: Fix - The CTA text in the New Icon Library popup didn't matched the buttons (#14903)
-* Fix: Page elements iteration breaks when a template element is missing. (#14921)
-* Fix: Mark files for publish to WordPress.org SVN [ARCH-7] (#14916)
-* I/E: Change - Added site settings summary titles (#14929)
-* Fix: An extra space in the assets iteration action [ED-3215]. (#14939)
-* Fix: Eyedropper not working on Chromium based browsers [ED-2960] (#14762)
-* Tweak: Kit-Library - Sorting [ED-2597] (#14737)
-* Fix: Add/delete from SVN command when nothing changed [ARCH-7] (#14943)
