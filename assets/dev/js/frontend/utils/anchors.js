@@ -7,7 +7,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
-				scrollable: 'html, body',
+				scrollable: isScrollSnapActive() ? 'body' : 'html, body',
 			},
 		};
 	},
@@ -84,7 +84,5 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	onInit: function() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-
-		this.bindEvents();
 	},
 } );
