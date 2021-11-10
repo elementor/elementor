@@ -6,13 +6,13 @@
  */
 const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
-export class NestedModulesSelectRationalContainer extends ( $e.modules.hookData.After ) {
+export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData.After ) {
 	getCommand() {
 		return 'panel/editor/open';
 	}
 
 	getId() {
-		return 'nested-modules-select-rational-container';
+		return 'nested-elements-select-rational-container';
 	}
 
 	getConditions( args ) {
@@ -81,5 +81,5 @@ export class NestedModulesSelectRationalContainer extends ( $e.modules.hookData.
 	}
 }
 
-export default NestedModulesSelectRationalContainer;
+export default NestedElementsSelectRationalContainer;
 
