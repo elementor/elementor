@@ -1,5 +1,5 @@
 # Legend
-* For all the examples in the __Document__ component and his subcomponents, the following legend is used, to determine which type of element is being used:
+* For all the examples in the __Document__ component and its subcomponents, the following legend is used, to determine which type of element is being used:
 - ![#ffd29b](https://via.placeholder.com/15/ffd29b/000000?text=+)  `Section ID` - `98c3441`
 - ![#93ff8b](https://via.placeholder.com/15/93ff8b/000000?text=+) `Column ID` &nbsp;&nbsp;- `18f2ab4`, `4b957d9`
 - ![#43f7ff](https://via.placeholder.com/15/43f7ff/000000?text=+)  `Widget ID` &nbsp;&nbsp;- `5412776`
