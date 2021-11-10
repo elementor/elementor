@@ -282,11 +282,11 @@ export default class Container extends ArgsObject {
 
 		while ( parent ) {
 			result.push( parent );
-            parent = parent.parent;
+			parent = parent.parent;
 		}
 
 		return result;
-    }
+	}
 
 	handleChildrenRecursive() {
 		if ( this.view.children?.length ) {
