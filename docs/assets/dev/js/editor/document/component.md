@@ -35,10 +35,10 @@
 
    | Property     | Type                  | Requirement   | Description |
    |---           |---                    |---            |---          |
-   | _parent_     |
-   | _key_        |
-   | _value_      |
-   | _multiple_   | `{Boolean}`           | **optional**  | default: `{false}`.
+   | _parent_     | {Marionette.View}     | _required_    | Parent view.
+   | _key_        | {String}              | _required_    | Key of the view used to  find the view. e.g: id.
+   | _value_      | {String}              | _required_    | Value of the view used to find the view. e.g: `98c3441`.
+   | _multiple_   | `{Boolean}`           | **optional**  | default: `{false}`. allow multiple results.
 
 ## _Util_ -- `$e.components.get('document').utils.findViewById()`
 * **Name**: findViewById.
