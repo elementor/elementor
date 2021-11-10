@@ -1005,14 +1005,19 @@ abstract class Widget_Base extends Element_Base {
 	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
-		$css_file_path = 'css/widget-' . $widget_name . $direction . '.min.css';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		$file_name = 'widget-' . $widget_name . $direction . '.min.css';
+
+		$file_url = Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
+		$file_path = Plugin::$instance->frontend->get_frontend_file_path( $file_name, $has_custom_breakpoints );
 
 		return [
 			'key' => $widget_name,
 			'version' => ELEMENTOR_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . $css_file_path,
+			'file_path' => $file_path,
 			'data' => [
-				'file_url' => ELEMENTOR_ASSETS_URL . $css_file_path,
+				'file_url' => $file_url,
 			],
 		];
 	}
