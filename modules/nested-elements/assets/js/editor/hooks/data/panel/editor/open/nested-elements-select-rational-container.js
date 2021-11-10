@@ -23,8 +23,10 @@ export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData
 		}
 
 		// If some of the parents are supporting nested elements, then return true.
-		const allParents = this.getAllContainerParentsRecursively( args.view.container ),
-			result = allParents.some( ( parent ) => elementor.modules.nestedElements.isWidgetSupportNesting( parent.model.get( 'widgetType' ) ) );
+		const allParents = args.view.container.getParentAncestry(),
+			result = allParents.some( ( parent ) =>
+				elementor.modules.nestedElements.isWidgetSupportNesting( parent.model.get( 'widgetType' ) )
+			);
 
 		if ( result ) {
 			this.allParents = allParents;
@@ -64,20 +66,6 @@ export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData
 				index: container.parent.children.indexOf( container ) + 1,
 			};
 		} ).reverse();
-	}
-
-	getAllContainerParentsRecursively( container ) {
-		const parents = [];
-
-		let currentContainer = container;
-
-		while ( currentContainer.parent ) {
-			parents.push( currentContainer );
-
-			currentContainer = currentContainer.parent;
-		}
-
-		return parents;
 	}
 }
 

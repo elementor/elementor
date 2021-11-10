@@ -19,10 +19,16 @@ export default function Empty( props ) {
 			editorComponent.defaultUtils().container.openEditMode( props.container );
 		},
 		renderEmpty = () => {
+			const args = {
+				importOptions: {
+					target: props.container,
+				},
+			};
+
 			return (
 				<div className="elementor-first-add" onClick={() => editContainer()}>
 					<div className="elementor-icon eicon-plus" onClick={() => setIsRenderPresets( true )}/>
-					<div className="elementor-icon eicon-folder"/>
+					<div className="elementor-icon eicon-folder" onClick={() => $e.run( 'library/open', args ) }/>
 				</div>
 			);
 		},

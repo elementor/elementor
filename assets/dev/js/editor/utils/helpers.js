@@ -43,6 +43,7 @@ module.exports = {
 				},
 			},
 			container: {
+				section: null, // Support import library.
 				widget: null,
 				container: null,
 			},
