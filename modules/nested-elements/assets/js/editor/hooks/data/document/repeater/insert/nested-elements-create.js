@@ -22,13 +22,6 @@ export class NestedElementsCreate extends Base {
 					edit: false, // Not losing focus.
 				},
 			} );
-
-			// TODO Move to nested-tabs.
-			// Select new created nested container
-			$e.run( 'nested-elements/nested-tabs/select', {
-				index: container.repeaters[ args.name ].children.length,
-				container: container,
-			} );
 		} );
 	}
 }
