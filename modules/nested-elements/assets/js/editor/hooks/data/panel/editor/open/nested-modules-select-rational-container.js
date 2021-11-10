@@ -4,7 +4,7 @@
  * using `nested-elements/select` command for each level in the selected [path].
  * path = filtered navigation map.
  */
-const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 300;
+const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
 export class NestedModulesSelectRationalContainer extends ( $e.modules.hookData.After ) {
 	getCommand() {
@@ -22,22 +22,26 @@ export class NestedModulesSelectRationalContainer extends ( $e.modules.hookData.
 			return false;
 		}
 
-		const { container } = args.view;
+		// If some of the parents are supporting nested elements, then return true.
+		const allParents = this.getAllContainerParentsRecursively( args.view.container ),
+			result = allParents.some( ( parent ) => elementor.modules.nestedElements.isWidgetSupportNesting( parent.model.get( 'widgetType' ) ) );
 
-		if ( elementor.modules.nestedElements.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) ) {
-			return true;
+		if ( result ) {
+			this.allParents = allParents;
 		}
+
+		return result;
 	}
 
-	apply( args ) {
-		const navigateMap = this.getNavigationMapForContainers(
-			this.getAllContainerParentsRecursively( args.view.container ).filter(
+	apply() {
+		const navigateMap = this.getNavigationMapForContainers( this.allParents.filter(
 				( container ) => 'container' === container.type && 'widget' === container.parent.type
-			)
-		).filter( ( map ) => {
+			) ).filter( ( map ) => {
 			// Filter out paths that are the same as current.
 			return map.index !== map.current;
 		} );
+
+		let depth = 1;
 
 		// For each `navigateMap` run `$e.run( 'nested-modules/select' )`.
 		navigateMap.forEach( ( { container, index } ) => {
@@ -46,7 +50,9 @@ export class NestedModulesSelectRationalContainer extends ( $e.modules.hookData.
 					container,
 					index: index++,
 				} );
-			}, NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT * navigateMap.length );
+			}, NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT * depth );
+
+			++depth;
         } );
 	}
 
