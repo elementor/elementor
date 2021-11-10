@@ -6,12 +6,12 @@ export class Select extends CommandHistory {
 			data = historyItem.get( 'data' );
 
 		if ( isRedo ) {
-			$e.run( 'nested-elements/select', {
+			$e.run( 'nested-elements/nested-tabs/select', {
 				container,
 				index: data.current,
 			} );
 		} else {
-            $e.run( 'nested-elements/select', {
+            $e.run( 'nested-elements/nested-tabs/select', {
 				container,
                 index: data.prev,
             } );

@@ -272,6 +272,8 @@ export default class Container extends ArgsObject {
 	 * Function getParentAncestry().
 	 *
 	 * Recursively run over all parents from current container till the top, and return them as flat array.
+	 *
+	 * @return {Array.<Container>}
 	 */
 	getParentAncestry() {
 		const result = [];

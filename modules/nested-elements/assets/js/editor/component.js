@@ -1,16 +1,18 @@
+import NestedTabsComponent from './nested-tabs/component';
 import * as hooks from './hooks/';
-import * as commands from './commands/';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
 		return 'nested-elements';
 	}
 
-	defaultHooks() {
-		return this.importHooks( hooks );
+	registerAPI() {
+		super.registerAPI();
+
+		$e.components.register( new NestedTabsComponent() );
 	}
 
-	defaultCommands() {
-		return this.importCommands( commands );
+	defaultHooks() {
+		return this.importHooks( hooks );
 	}
 }

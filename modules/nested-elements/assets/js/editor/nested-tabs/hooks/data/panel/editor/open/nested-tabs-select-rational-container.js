@@ -1,12 +1,12 @@
 /**
  * Used to open the current container that are selected via navigator,
  * including selected [path] of the nested elements tree.
- * using `nested-elements/select` command for each level in the selected [path].
+ * using `nested-elements/nested-tabs/select` command for each level in the selected [path].
  * path = filtered navigation map.
  */
 const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
-export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData.After ) {
+export class NestedTabsSelectRationalContainer extends ( $e.modules.hookData.After ) {
 	getCommand() {
 		return 'panel/editor/open';
 	}
@@ -48,7 +48,7 @@ export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData
 		// For each `navigateMap` run `$e.run( 'nested-modules/select' )`.
 		navigateMap.forEach( ( { container, index } ) => {
 			setTimeout( () => {
-				$e.run( 'nested-elements/select', {
+				$e.run( 'nested-elements/nested-tabs/select', {
 					container,
 					index: index++,
 				} );
@@ -69,5 +69,5 @@ export class NestedElementsSelectRationalContainer extends ( $e.modules.hookData
 	}
 }
 
-export default NestedElementsSelectRationalContainer;
+export default NestedTabsSelectRationalContainer;
 
