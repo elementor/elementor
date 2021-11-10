@@ -6,7 +6,7 @@
  */
 const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
-export class NestedTabsSelectRationalContainer extends ( $e.modules.hookData.After ) {
+export class NestedTabsSelectRationalContainer extends ( $e.modules.hookUI.After ) {
 	getCommand() {
 		return 'panel/editor/open';
 	}
