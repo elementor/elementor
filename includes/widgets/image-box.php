@@ -370,7 +370,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'caption_align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Caption Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -400,7 +400,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'caption_text_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Caption Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
@@ -666,7 +666,7 @@ class Widget_Image_Box extends Widget_Base {
 		$image_caption = $this->get_image_caption( $attachment );
 
 		if ( ! empty( $image_caption ) ) {
-				$image_html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
+				$html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
 		}
 
 		if ( $has_content ) {
