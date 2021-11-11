@@ -369,9 +369,49 @@ class Widget_Image_Box extends Widget_Base {
 
 		$this->end_controls_tab();
 
-		$this->start_controls_tab( 'caption',
+		$this->start_controls_tab( 'hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-image-box-img img',
+			]
+		);
+
+		$this->add_control(
+			'image_opacity_hover',
+			[
+				'label' => esc_html__( 'Opacity', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'range' => [
+					'px' => [
+						'max' => 1,
+						'min' => 0.10,
+						'step' => 0.01,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}:hover .elementor-image-box-img img' => 'opacity: {{SIZE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_caption',
 			[
 				'label' => esc_html__( 'Caption', 'elementor' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);
 
@@ -435,44 +475,6 @@ class Widget_Image_Box extends Widget_Base {
 				'selector' => '{{WRAPPER}} .elementor-image-box-caption',
 			]
 		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab( 'hover',
-			[
-				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover .elementor-image-box-img img',
-			]
-		);
-
-		$this->add_control(
-			'image_opacity_hover',
-			[
-				'label' => esc_html__( 'Opacity', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 1,
-						'min' => 0.10,
-						'step' => 0.01,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}:hover .elementor-image-box-img img' => 'opacity: {{SIZE}};',
-				],
-			]
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 
