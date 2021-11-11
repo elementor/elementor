@@ -7,9 +7,9 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	registerAPI() {
-		super.registerAPI();
-
 		$e.components.register( new NestedTabsComponent() );
+
+		super.registerAPI();
 	}
 
 	defaultHooks() {

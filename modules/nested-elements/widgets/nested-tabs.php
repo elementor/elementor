@@ -36,9 +36,15 @@ class NestedTabs extends Widget_Container_Base {
 		return [
 			[
 				'elType' => 'container',
+				'settings' => [
+					'_title' => __( 'Tab #1', 'elementor' ),
+				],
 			],
 			[
 				'elType' => 'container',
+				'settings' => [
+					'_title' => __( 'Tab #2', 'elementor' ),
+				],
 			],
 		];
 	}

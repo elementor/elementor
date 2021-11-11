@@ -62,8 +62,18 @@ class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 		const { defaultChildren = [] } = this.container.model;
 
 		if ( defaultChildren.length ) {
-			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel ) );
+			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel, { internal: true } ) );
 		}
+	}
+
+	addElement( data, options = {} ) {
+		const container = this.container;
+
+		options.onAfterAdd = ( /* Backbone.Model */ eContainerModel ) => {
+			container.view.trigger( 'nested-modules:add-element:after', { model: eContainerModel, options } );
+		};
+
+		return super.addElement( data, options );
 	}
 }
 
