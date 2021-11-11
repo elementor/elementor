@@ -555,7 +555,16 @@ class Uploads_Manager extends Base_Object {
 			$is_allowed = new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
 		}
 
-		return $is_allowed;
+		/**
+		 * Elementor File Type Allowed
+		 *
+		 * Allows setting file types
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param bool|\WP_Error $is_allowed
+		 */
+		return apply_filters( 'elementor/allow-file-type/' . $file_extension, $is_allowed );
 	}
 
 	/**
