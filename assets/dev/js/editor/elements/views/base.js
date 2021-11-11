@@ -550,8 +550,6 @@ BaseElementView = BaseContainer.extend( {
 		self.linksData();
 
 		_.defer( function() {
-			self.trigger( 'ready' );
-
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {
@@ -797,8 +795,6 @@ BaseElementView = BaseContainer.extend( {
 				}, { timeout: 500 } );
 			}
 		}
-
-		this.triggerMethod( 'render:after' );
 	},
 
 	onEditSettingsChanged( changedModel ) {
