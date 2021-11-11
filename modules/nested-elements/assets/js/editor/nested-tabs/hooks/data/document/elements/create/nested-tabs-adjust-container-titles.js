@@ -1,6 +1,6 @@
-export class NestedTabsAdjustContainerTittles extends ( $e.modules.hookData.After ) {
+export class NestedTabsAdjustContainerTitles extends ( $e.modules.hookData.After ) {
 	getId() {
-		return 'nested-tabs-adjust-container-tittles';
+		return 'nested-tabs-adjust-container-titles';
 	}
 
 	getCommand() {
