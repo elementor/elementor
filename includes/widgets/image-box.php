@@ -367,7 +367,6 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'caption',
@@ -375,7 +374,7 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Caption', 'elementor' ),
 			]
 		);
-	
+
 		$this->add_control(
 			'caption_align',
 			[
