@@ -39,7 +39,7 @@ export class NestedTabsAdjustNewContainerTitle extends Base {
 					index = repeater.children.indexOf( linkedRepeaterContainer );
 
 				// When children exist.
-				container.view.on( 'nested-modules:add-element:after', ( result ) => {
+				container.view.once( 'nested-modules:add-element:after', ( result ) => {
 					// Update title of current tab according to its repeater item index.
 					result.model.get( 'settings' ).set( '_title', __( 'Tab #' + ( index + 1 ) ) );
 				} );
