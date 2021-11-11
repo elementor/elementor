@@ -19,6 +19,10 @@ export default class extends elementorModules.ViewModule {
 				if ( settings.id ) {
 					lightbox.openSlideshow( settings.id, settings.url );
 				} else {
+					if ( settings.html ) {
+						delete settings.html;
+					}
+
 					lightbox.showModal( settings );
 				}
 			},
