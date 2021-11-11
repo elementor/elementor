@@ -666,7 +666,7 @@ class Widget_Image_Box extends Widget_Base {
 		$image_caption = $this->get_image_caption( $attachment );
 
 		if ( ! empty( $image_caption ) ) {
-				$slide_html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
+				$image_html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
 		}
 
 		if ( $has_content ) {
