@@ -181,6 +181,21 @@ class Widget_Image_Box extends Widget_Base {
 		);
 
 		$this->add_control(
+			'caption_type',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '',
+				'options' => [
+					'' => esc_html__( 'None', 'elementor' ),
+					'title' => esc_html__( 'Title', 'elementor' ),
+					'caption' => esc_html__( 'Caption', 'elementor' ),
+					'description' => esc_html__( 'Description', 'elementor' ),
+				],
+			]
+		);
+
+		$this->add_control(
 			'title_size',
 			[
 				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
@@ -648,6 +663,12 @@ class Widget_Image_Box extends Widget_Base {
 			$html .= '<figure class="elementor-image-box-img">' . $image_html . '</figure>';
 		}
 
+		$image_caption = $this->get_image_caption( $attachment );
+
+			if ( ! empty( $image_caption ) ) {
+				$slide_html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
+			}
+
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
@@ -750,5 +771,25 @@ class Widget_Image_Box extends Widget_Base {
 		print( html );
 		#>
 		<?php
+	}
+
+		private function get_image_caption( $attachment ) {
+		$caption_type = $this->get_settings_for_display( 'caption_type' );
+
+		if ( empty( $caption_type ) ) {
+			return '';
+		}
+
+		$attachment_post = get_post( $attachment['id'] );
+
+		if ( 'caption' === $caption_type ) {
+			return $attachment_post->post_excerpt;
+		}
+
+		if ( 'title' === $caption_type ) {
+			return $attachment_post->post_title;
+		}
+
+		return $attachment_post->post_content;
 	}
 }
