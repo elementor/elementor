@@ -367,10 +367,19 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'caption',
+			[
+				'label' => esc_html__( 'Caption', 'elementor' ),
+			]
+		);
+	
 		$this->add_control(
 			'caption_align',
 			[
-				'label' => esc_html__( 'Caption Alignment', 'elementor' ),
+				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left' => [
@@ -400,7 +409,7 @@ class Widget_Image_Box extends Widget_Base {
 		$this->add_control(
 			'caption_text_color',
 			[
-				'label' => esc_html__( 'Caption Text Color', 'elementor' ),
+				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
