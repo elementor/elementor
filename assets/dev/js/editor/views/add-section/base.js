@@ -177,7 +177,7 @@ class AddSectionBase extends Marionette.ItemView {
 	onContainerPresetSelected( e ) {
 		this.closeSelectPresets();
 
-		return ContainerHelper.createContainerFromPresetEx(
+		return ContainerHelper.createContainerFromPreset(
 			e.currentTarget.dataset.preset,
 			elementor.getPreviewContainer(),
 			this.options

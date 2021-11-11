@@ -9,11 +9,7 @@ export default function Empty( props ) {
 			};
 
 			// Create new one by selected preset.
-			editorComponent.defaultUtils().container.createContainerFromPresetEx(
-				preset,
-				container,
-				options,
-			);
+			editorComponent.defaultUtils().container.createContainerFromPreset( preset, container, options );
 		},
 		editContainer = () => {
 			editorComponent.defaultUtils().container.openEditMode( props.container );

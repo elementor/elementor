@@ -69,63 +69,15 @@ export class ContainerHelper {
 	/**
 	 * Create a Container element based on a preset.
 	 *
-	 * @param {string} preset - Preset structure of the sub containers (e.g. `33-66-66-33`).
-	 * @param {Container} target - The target container of the newly created Container.
-	 * @param {Object} options - Additional command options.
-	 *
-	 * @return {Container}
-	 */
-	static createContainerFromPreset( preset, target, options = {} ) {
-		const sizes = preset.split( '-' ),
-			settings = {
-				flex_direction: ContainerHelper.DIRECTION_ROW,
-				flex_wrap: 'wrap',
-			};
-
-		// Create a parent container to contain all of the sub containers.
-		let parentContainer;
-
-		if ( options.createForTarget ) {
-			$e.run( 'document/elements/settings', {
-				container: target,
-				settings,
-			} );
-
-			parentContainer = target;
-		} else {
-			parentContainer = this.createContainer( settings, target, options );
-		}
-
-		// Create all sub containers using the sizes array.
-		// Use flex basis to make the sizes explicit.
-		sizes.forEach( ( size ) => {
-			this.createContainer( {
-				flex_direction: this.DIRECTION_COLUMN,
-				width: {
-					unit: '%',
-					size,
-				},
-				width_mobile: { // For out-of-the-box responsiveness.
-					unit: '%',
-					size: '100',
-				},
-			}, parentContainer, { edit: false } );
-		} );
-
-		return parentContainer;
-	}
-
-	/**
-	 * Create a Container element based on a preset, extend version to cover edge cases.
-	 *
 	 * @param {string} preset
 	 * @param {Container} [container=elementor.getPreviewContainer()]
 	 * @param {Object} [options={}]
 	 *
 	 * @returns {Container} - Container created on.
 	 */
-	static createContainerFromPresetEx( preset, container = elementor.getPreviewContainer(), options ) {
-		let newContainer;
+	static createContainerFromPreset( preset, container = elementor.getPreviewContainer(), options ) {
+		let newContainer,
+			settings;
 
 		const { createForTarget = false } = options,
 			historyId = $e.internal( 'document/history/start-log', {
@@ -141,16 +93,16 @@ export class ContainerHelper {
 
 			// Exceptional preset.
 			case 'c100-c50-50':
-				let settings = {
+				settings = {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
 				};
 
-				if ( ! createForTarget ) {
-					newContainer = ContainerHelper.createContainer( settings, container, options );
-				} else {
+				if ( createForTarget ) {
 					$e.run( 'document/elements/settings', { container, settings } );
 					newContainer = container;
+				} else {
+					newContainer = ContainerHelper.createContainer( settings, container, options );
 				}
 
 				settings = {
@@ -175,12 +127,44 @@ export class ContainerHelper {
 
 			// Containers by preset.
 			default:
-				newContainer = ContainerHelper.createContainerFromPreset(
-					preset,
-					container,
-					options
-				);
-				break;
+				const sizes = preset.split( '-' );
+
+				settings = {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+						flex_wrap: 'wrap',
+					};
+
+				// Create a parent container to contain all of the sub containers.
+				let parentContainer;
+
+				if ( createForTarget ) {
+					$e.run( 'document/elements/settings', {
+						container,
+						settings,
+					} );
+
+					parentContainer = container;
+				} else {
+					parentContainer = this.createContainer( settings, container, options );
+				}
+
+				// Create all sub containers using the sizes array.
+				// Use flex basis to make the sizes explicit.
+				sizes.forEach( ( size ) => {
+					this.createContainer( {
+						flex_direction: this.DIRECTION_COLUMN,
+						width: {
+							unit: '%',
+							size,
+						},
+						width_mobile: { // For out-of-the-box responsiveness.
+							unit: '%',
+							size: '100',
+						},
+					}, parentContainer, { edit: false } );
+				} );
+
+				newContainer = parentContainer;
 		}
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
