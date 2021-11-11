@@ -217,8 +217,8 @@ export default class Component extends ComponentModalBase {
 			initDialog: function( model ) {
 				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'elementor-insert-template-settings-dialog',
-					headerMessage: __( 'Apply the settings of this %s too?', 'elementor' ).replace( '%s', model.attributes.type ),
-					message: __( 'This will override the design, layout, and other settings of the %s you’re working on.', 'elementor' ).replace( '%s', elementor.documents.getCurrent().config.type ),
+					headerMessage: __( 'Apply the settings of this %s too?', 'elementor' ).replace( '%s', elementor.translate( model.attributes.type ) ),
+					message: __( 'This will override the design, layout, and other settings of the %s you’re working on.', 'elementor' ).replace( '%s', elementor.documents.getCurrent().container.label ),
 					strings: {
 						confirm: __( 'Apply', 'elementor' ),
 						cancel: __( 'Don’t apply', 'elementor' ),
