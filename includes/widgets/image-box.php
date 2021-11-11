@@ -296,7 +296,7 @@ class Widget_Image_Box extends Widget_Base {
 				],
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
 			[
@@ -366,7 +366,7 @@ class Widget_Image_Box extends Widget_Base {
 				],
 			]
 		);
-		
+
 		$this->add_control(
 			'caption_align',
 			[
@@ -665,9 +665,9 @@ class Widget_Image_Box extends Widget_Base {
 
 		$image_caption = $this->get_image_caption( $attachment );
 
-			if ( ! empty( $image_caption ) ) {
+		if ( ! empty( $image_caption ) ) {
 				$slide_html .= '<figcaption class="elementor-image-box-caption">' . wp_kses_post( $image_caption ) . '</figcaption>';
-			}
+		}
 
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
@@ -773,7 +773,7 @@ class Widget_Image_Box extends Widget_Base {
 		<?php
 	}
 
-		private function get_image_caption( $attachment ) {
+	private function get_image_caption( $attachment ) {
 		$caption_type = $this->get_settings_for_display( 'caption_type' );
 
 		if ( empty( $caption_type ) ) {
