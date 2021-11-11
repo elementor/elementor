@@ -454,8 +454,8 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>
-		<div <?php $instance->print_render_attribute_string( 'wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-			<a <?php $instance->print_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
+			<a <?php $instance->print_render_attribute_string( 'button' ); ?>>
 				<?php $this->render_text( $instance ); ?>
 			</a>
 		</div>
