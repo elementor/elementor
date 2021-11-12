@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev3 - 2021-11-12
+* Fix: Lightbox tweaks [ED-5532] (#16906)
+* Fix: Empty state background is missing in Media controls [ED-5312] (#16768)
+
 #### 3.6.0-dev2 - 2021-11-09
 * Fix: Only one JSON browser-import is possible [ED-5443] (#16844)
 * Fix: CSS Print method has wrong default value [ED-5883] (#16833)
@@ -571,17 +575,3 @@
 * Fix: Move 'schemas' to test folder [ED-3229] (#14930)
 * Fix: QUnit - Rearrange parents/modules/tests names [ED-2262] (#14331)
 * Tweak: Moving the widgets-CSS reset-action from the assets-loader to the widgets-manager [ED-3084] (#14926)
-
-#### 3.3.0-dev7 - 2021-05-21
-* Fix: JIRA deployment info missing pipeline-id and broken run url [ARCH-31] (#15022)
-* Tweak: Compatibility-Tag - Changed "Missing Header" text [ED-2804] (#15019)
-* Deprecations: Removed deprecated methods. (#14986)
-* New: Document - A new filter before save data [ED-3102] (#14824)
-
-#### 3.3.0-dev6 - 2021-05-20
-* Tweak: Run lighthouse tests on WordPress master branch instead of version 5.6 (#14997)
-* Fix: Finder incorrectly identifies pages created [ED-1269] (#12550)
-* Tweak: Report to JIRA deployment info on release/patch/beta/dev flows (#15007)
-* Tweak: Kit-Library - Clicking a page in the kit overview opens live preview [ED-3134] (#15006)
-* Tweak: Auto merge next release branch into feature branch [ARCH-30] (#14998)
-* Fix: Auto merge next release into feature branch (#15016)
