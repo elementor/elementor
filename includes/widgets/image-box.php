@@ -413,7 +413,7 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Caption', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'caption_type' => '!none',
+					'caption_type!' => '',
 				],
 			]
 		);
