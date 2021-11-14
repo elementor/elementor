@@ -184,10 +184,6 @@ class AddSectionBase extends Marionette.ItemView {
 						unit: '%',
 						size: '50',
 					},
-					width_mobile: {
-						unit: '%',
-						size: '100',
-					},
 				};
 
 				ContainerHelper.createContainer( settings, newContainer, { edit: false } );

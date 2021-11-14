@@ -8,7 +8,7 @@
 	--height: auto;
 	--text-align: initial;
 	--margin: 0;
-	--padding: 0;
+	--padding: 10px;
 	--position: relative;
 	--z-index: auto;
 	--overflow: visible;
@@ -71,7 +71,7 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	&.e-container--placeholder-row {
+	&.e-container--row {
 		& > .elementor-widget-placeholder {
 			position: relative;
 			width: var( --size );
@@ -88,7 +88,7 @@
 		}
 	}
 
-	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
+	&.e-container--column > .elementor-widget-placeholder {
 		height: var( --size );
 		// To make sure that it doesn't push & break the layout when appearing.
 		margin-block-start: var( --margin-start );
@@ -179,6 +179,12 @@
 				}
 			}
 		}
+	}
+}
+
+@media ( max-width: $editor-screen-sm-max ) {
+	.e-container {
+		--width: 100%;
 	}
 }
 

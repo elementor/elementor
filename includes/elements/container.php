@@ -2,6 +2,7 @@
 namespace Elementor\Includes\Elements;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Element_Base;
 use Elementor\Embed;
 use Elementor\Group_Control_Background;
@@ -254,6 +255,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
 		$this->add_responsive_control(
 			'width',
 			[
@@ -279,6 +282,13 @@ class Container extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
+				],
+				'min_affected_device' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 				],
 				'separator' => 'none',
 				// Use the default width from the kit as a placeholder.
@@ -889,13 +899,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
-				'default' => [
-					'unit' => 'px',
-					'top' => 10,
-					'right' => 10,
-					'bottom' => 10,
-					'left' => 10,
-				],
+				'placeholder' => '10',
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
