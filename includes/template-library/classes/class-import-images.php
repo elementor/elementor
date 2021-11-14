@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -114,11 +117,31 @@ class Import_Images {
 		// Extract the file name and extension from the url.
 		$filename = basename( $attachment['url'] );
 
-		$file_content = wp_remote_retrieve_body( wp_safe_remote_get( $attachment['url'] ) );
+		$request = wp_safe_remote_get( $attachment['url'] );
+
+		// Make sure the request returns a valid result.
+		if ( is_wp_error( $request ) || ( ! empty( $request['response']['code'] ) && 200 !== (int) $request['response']['code'] ) ) {
+			return false;
+		}
+
+		$file_content = wp_remote_retrieve_body( $request );
 
 		if ( empty( $file_content ) ) {
 			return false;
 		}
+
+		$filetype = wp_check_filetype( $filename );
+
+		if ( 'svg' === $filetype['ext'] ) {
+			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
+			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+				return false;
+			}
+
+			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+			$file_content = $svg_handler->sanitizer( $file_content );
+		};
 
 		$upload = wp_upload_bits(
 			$filename,
@@ -132,6 +155,7 @@ class Import_Images {
 		];
 
 		$info = wp_check_filetype( $upload['file'] );
+
 		if ( $info ) {
 			$post['post_mime_type'] = $info['type'];
 		} else {

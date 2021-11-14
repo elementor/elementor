@@ -2,18 +2,23 @@
 
 namespace Elementor\Core\Files\Assets;
 
+use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Files Upload Handler
+ *
+ * Deprecated, use Elementor\Core\Files\Uploads_Manager instead.
+ *
+ * @deprecated 3.5.0
+ */
 abstract class Files_Upload_Handler {
 	const OPTION_KEY = 'elementor_unfiltered_files_upload';
-
-	public function __construct() {
-		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_files_upload' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_upload_prefilter' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
-	}
 
 	abstract public function get_mime_type();
 
@@ -21,6 +26,7 @@ abstract class Files_Upload_Handler {
 
 	/**
 	 * is_elementor_media_upload
+	 * @deprecated 3.5.0
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
@@ -31,10 +37,10 @@ abstract class Files_Upload_Handler {
 	 * @return bool
 	 */
 	final public static function is_enabled() {
-		$enabled = ! ! get_option( self::OPTION_KEY ) && self::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::OPTION_KEY ) && Svg::file_sanitizer_can_run();
 
 		/**
-		 * @deprecated 3.0.0 Use `elementor/document/urls/edit` filter instead.
+		 * @deprecated 3.0.0 Use `elementor/files/allow_unfiltered_upload` filter instead.
 		 */
 		$enabled = apply_filters( 'elementor/files/svg/enabled', $enabled );
 
@@ -53,44 +59,38 @@ abstract class Files_Upload_Handler {
 	}
 
 	final public function support_unfiltered_files_upload( $existing_mimes ) {
-		if ( $this->is_elementor_media_upload() && $this->is_enabled() ) {
-			$existing_mimes[ $this->get_file_type() ] = $this->get_mime_type();
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->support_unfiltered_file_uploads()' );
 
-		return $existing_mimes;
+		return Plugin::$instance->uploads_manager->support_unfiltered_elementor_file_uploads( $existing_mimes );
 	}
 
 	/**
 	 * handle_upload_prefilter
+	 *
+	 * @deprcated 3.5.0
+	 *
 	 * @param $file
 	 *
 	 * @return mixed
 	 */
 	public function handle_upload_prefilter( $file ) {
-		if ( ! $this->is_file_should_handled( $file ) ) {
-			return $file;
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload()' );
 
-		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
-		$file_type = $this->get_file_type();
-		$display_type = strtoupper( $file_type );
-
-		if ( $file_type !== $ext ) {
-			/* translators: 1: File extension, 2: File type. */
-			$file['error'] = sprintf( esc_html__( 'The uploaded %1$s file is not supported. Please upload a valid %2$s file', 'elementor' ), $ext, $display_type );
-			return $file;
-		}
-
-		if ( ! self::is_enabled() ) {
-			/* translators: %s: File type. */
-			$file['error'] = sprintf( esc_html__( '%1$s file is not allowed for security reasons', 'elementor' ), $display_type );
-			return $file;
-		}
-
-		return $file;
+		return Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload( $file );
 	}
 
+	/**
+	 * is_file_should_handled
+	 *
+	 * @deprcated 3.5.0
+	 *
+	 * @param $file
+	 *
+	 * @return bool
+	 */
 	protected function is_file_should_handled( $file ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		$ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
 
 		return $this->is_elementor_media_upload() && $this->get_file_type() === $ext;
@@ -98,10 +98,15 @@ abstract class Files_Upload_Handler {
 
 	/**
 	 * file_sanitizer_can_run
+	 *
+	 * @deprcated 3.5.0
+	 *
 	 * @return bool
 	 */
 	public static function file_sanitizer_can_run() {
-		return class_exists( 'DOMDocument' ) && class_exists( 'SimpleXMLElement' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run()' );
+
+		return Svg::file_sanitizer_can_run();
 	}
 
 	/**
@@ -112,6 +117,8 @@ abstract class Files_Upload_Handler {
 	 * ref: https://core.trac.wordpress.org/ticket/39550
 	 * ref: https://core.trac.wordpress.org/ticket/40175
 	 *
+	 * @deprcated 3.5.0
+	 *
 	 * @param $data
 	 * @param $file
 	 * @param $filename
@@ -120,18 +127,8 @@ abstract class Files_Upload_Handler {
 	 * @return mixed
 	 */
 	public function check_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		if ( ! empty( $data['ext'] ) && ! empty( $data['type'] ) ) {
-			return $data;
-		}
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0', 'Elementor\Plugin::$instance->uploads_manager->check_filetype_and_ext()' );
 
-		$wp_file_type = wp_check_filetype( $filename, $mimes );
-		$file_type = strtolower( $this->get_file_type() );
-
-		if ( $file_type === $wp_file_type['ext'] ) {
-			$data['ext'] = $file_type;
-			$data['type'] = $this->get_mime_type();
-		}
-
-		return $data;
+		Plugin::$instance->uploads_manager->check_filetype_and_ext( $data, $file, $filename, $mimes );
 	}
 }

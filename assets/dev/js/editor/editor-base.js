@@ -4,9 +4,11 @@ import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocumentsComponent from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -362,11 +364,17 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
+		if ( elementorCommon.config.experimentalFeatures[ 'favorite-widgets' ] ) {
+			this.favorites = new Favorites();
+		}
+
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
 
 		this.devTools = new DevTools();
+
+		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocumentsComponent() );
 
@@ -388,12 +396,17 @@ export default class EditorBase extends Marionette.Application {
 	 * @param state
 	 */
 	toggleSortableState( state = true ) {
-		const $element = elementor.documents.getCurrent()?.$element;
+		const elements = [
+			jQuery( '#elementor-navigator' ),
+			elementor.documents.getCurrent()?.$element,
+		];
 
-		if ( $element ) {
-			$element.find( '.ui-sortable' ).sortable(
-				state ? 'enable' : 'disable'
-			);
+		for ( const $element of elements ) {
+			if ( $element ) {
+				$element.find( '.ui-sortable' ).sortable(
+					state ? 'enable' : 'disable'
+				);
+			}
 		}
 	}
 

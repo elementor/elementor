@@ -378,6 +378,12 @@ class Documents_Manager {
 
 		$post_data['meta_input'] = $meta_data;
 
+		$post_types = $class::get_property( 'cpt' );
+
+		if ( ! empty( $post_types[0] ) && empty( $post_data['post_type'] ) ) {
+			$post_data['post_type'] = $post_types[0];
+		}
+
 		$post_id = wp_insert_post( $post_data );
 
 		if ( ! empty( $update_title ) ) {
