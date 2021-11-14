@@ -3,7 +3,7 @@ import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
-import UnfilteredFilesDialog from './components/unfiltered-files-dialog/unfiltered-files-dialog';
+import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
 
 import { Context } from '../../../context/context-provider';
 
