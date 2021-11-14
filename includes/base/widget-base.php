@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Page_Assets\Data_Managers\Responsive_Widgets as Responsive_Widgets_Data_Manager;
 use Elementor\Core\Page_Assets\Data_Managers\Widgets_Css as Widgets_Css_Data_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,9 +51,7 @@ abstract class Widget_Base extends Element_Base {
 
 	private static $widgets_css_data_manager;
 
-	private static $has_custom_breakpoints;
-
-	private static $custom_breakpoints_widgets;
+	private static $responsive_widgets_data_manager;
 
 	/**
 	 * Get element type.
@@ -1039,6 +1038,22 @@ abstract class Widget_Base extends Element_Base {
 		return $this->get_widget_css_config( $this->get_group_name() );
 	}
 
+	public function get_responsive_widgets_config() {
+		return [
+			'key' => 'responsive-widgets',
+			'version' => ELEMENTOR_VERSION,
+			'file_path' => ELEMENTOR_ASSETS_PATH . 'data/responsive-widgets.json',
+		];
+	}
+
+	public function get_custom_breakpoints_widgets() {
+		$responsive_widgets_data_manager = $this->get_responsive_widgets_data_manager();
+
+		$config = $this->get_responsive_widgets_config();
+
+		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
+	}
+
 	private function get_widget_css() {
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
@@ -1104,23 +1119,21 @@ abstract class Widget_Base extends Element_Base {
 		return self::$widgets_css_data_manager;
 	}
 
-	private function get_has_custom_breakpoints() {
-		if ( ! isset( self::$has_custom_breakpoints ) ) {
-			self::$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+	private function get_responsive_widgets_data_manager() {
+		if ( ! self::$responsive_widgets_data_manager ) {
+			self::$responsive_widgets_data_manager = new Responsive_Widgets_Data_Manager();
 		}
 
-		return self::$has_custom_breakpoints;
+		return self::$responsive_widgets_data_manager;
 	}
 
-	private function get_custom_breakpoints_widgets() {
-		if ( ! isset( self::$custom_breakpoints_widgets ) ) {
-			self::$custom_breakpoints_widgets = file_get_contents( ELEMENTOR_ASSETS_PATH . 'data/custom-breakpoints-widgets.json' );
+	private function get_has_custom_breakpoints() {
+		static $has_custom_breakpoints;
 
-			if ( self::$custom_breakpoints_widgets ) {
-				self::$custom_breakpoints_widgets = json_decode( self::$custom_breakpoints_widgets, true );
-			}
+		if ( ! isset( $has_custom_breakpoints ) ) {
+			$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 		}
 
-		return self::$custom_breakpoints_widgets;
+		return $has_custom_breakpoints;
 	}
 }

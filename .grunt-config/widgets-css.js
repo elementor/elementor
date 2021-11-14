@@ -124,7 +124,7 @@ class WidgetsCss {
 
 	createResponsiveWidgetsJson( responsiveWidgets ) {
 		const responsiveWidgetsJsonFolder = path.resolve( __dirname, '../assets/data' ),
-			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'custom-breakpoints-widgets.json' ),
+			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'responsive-widgets.json' ),
 			responsiveWidgetsObject = responsiveWidgets.reduce( ( obj, val ) => {
 				// No need to save also the -rtl key.
 				if ( val.indexOf( '-rtl' ) > -1 ) {
