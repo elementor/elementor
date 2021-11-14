@@ -136,7 +136,9 @@ class WidgetsCss {
 				return { ...obj, [ val ]: true };
 			}, {} );
 
-		write.sync( responsiveWidgetsJsonPath, JSON.stringify( responsiveWidgetsObject ) );
+		// Breaking the line for the linter that trows a warning.
+		write.sync( responsiveWidgetsJsonPath, JSON.stringify( responsiveWidgetsObject ) + `
+		` );
 	}
 }
 
