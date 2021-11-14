@@ -30,7 +30,7 @@
 
 ## _Util_ -- `$e.components.get('document').utils.findViewRecursive()`
 * **Name**: findViewRecursive.
-* **Description**: Find view recursively.
+* **Description**: Find view recursively, the method will run recursively until it finds the view with given key & value.
 * **Returns**: `{Array}`
 
    | Property     | Type                  | Requirement   | Description |
@@ -41,7 +41,7 @@
    | _multiple_   | `{Boolean}`           | **optional**  | default: `{false}`. allow multiple results.
 
 ## _Util_ -- `$e.components.get('document').utils.findViewById()`
-* **Name**: findViewById.
+* **Name**: findViewById, the method will run recursively until it finds the view with given id.
 * **Description**: Find view by id.
 * **Returns**: `{ View | View[] }`
 
@@ -51,7 +51,7 @@
 
 ## _Util_ -- `$e.components.get('document').utils.findContainerById()`
 *  **Name**: findContainerById.
-*  **Description**: Find container by id.
+*  **Description**: Find container by id, the method will run recursively until it finds the `{elementorModules.editor.Container}` with given id.
 *  **Returns**: `{ Container | Container[] }`
 
    | Property     | Type                  | Requirement   | Description |
