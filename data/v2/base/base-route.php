@@ -240,8 +240,8 @@ abstract class Base_Route {
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
-				'permission_callback' => function () {
-					return true;
+				'permission_callback' => function ( $request ) {
+					return $this->get_permission_callback( $request );
 				},
 			],
 		] );
@@ -321,29 +321,27 @@ abstract class Base_Route {
 			'is_debug' => defined( 'WP_DEBUG' ),
 		] );
 
-		$result = new \WP_Error( 'invalid_permission_callback', 'Invalid permission.' );
+		$result = new \WP_Error( 'invalid_methods', 'route not supported.' );
 
 		$request->set_param( 'is_multi', $is_multi );
 
 		try {
-			if ( $this->get_permission_callback( $request ) ) {
-				switch ( $methods ) {
-					case WP_REST_Server::READABLE:
-						$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
-						break;
+			switch ( $methods ) {
+				case WP_REST_Server::READABLE:
+					$result = $is_multi ? $this->get_items( $request ) : $this->get_item( $request->get_param( 'id' ), $request );
+					break;
 
-					case WP_REST_Server::CREATABLE:
-						$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
-						break;
+				case WP_REST_Server::CREATABLE:
+					$result = $is_multi ? $this->create_items( $request ) : $this->create_item( $request->get_param( 'id' ), $request );
+					break;
 
-					case WP_REST_Server::EDITABLE:
-						$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
-						break;
+				case WP_REST_Server::EDITABLE:
+					$result = $is_multi ? $this->update_items( $request ) : $this->update_item( $request->get_param( 'id' ), $request );
+					break;
 
-					case WP_REST_Server::DELETABLE:
-						$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
-						break;
-				}
+				case WP_REST_Server::DELETABLE:
+					$result = $is_multi ? $this->delete_items( $request ) : $this->delete_item( $request->get_param( 'id' ), $request );
+					break;
 			}
 		} catch ( Data_Exception $e ) {
 			$result = $e->to_wp_error();

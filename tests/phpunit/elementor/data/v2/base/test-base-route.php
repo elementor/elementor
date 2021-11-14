@@ -90,7 +90,29 @@ class Test_Base_Route extends Data_Test_Base {
 		] ), $actual );
 	}
 
-	// TODO: get_permission_callback
+	public function test_get_permission_callback() {
+		// Arrange.
+        $controller = new ControllerWithEndpoint();
+        $this->manager->run_server();
+
+		// Register new endpoint.
+		$endpoint = new Mock\Template\Endpoint\Bypass_Permission( $controller );
+		$endpoint->do_register();
+
+		// Set some data for not having empty data in cases its fails.
+		$endpoint->set_test_data( 'get_items', 'valid' );
+
+		// By pass original permission callback.
+		$endpoint->bypass_original_permission( true );
+		$endpoint->bypass_set_value( false );
+
+		// Act.
+		$data = $this->manager->run_endpoint( $endpoint->get_base_route() );
+
+		// Assert.
+		$this->assertEquals( 'rest_forbidden', $data['code'] );
+
+	}
 
 	public function test_get_items() {
 		// Arrange.

@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Data\V2;
 use Elementor\Data\V2\Base\Processor;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Data_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Controller as ControllerTemplate;
+use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Template\Endpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller as ControllerWithEndpoint;
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Processor\Controller as ControllerWithProcessor;
 
@@ -241,6 +242,31 @@ class Test_Manager extends Data_Test_Base {
 		$data = $this->manager->run_endpoint( $endpoint );
 
 		$this->assertEquals( 'valid', $data );
+	}
+
+	public function test_run__ensure_get_permission_callback_honored() {
+		// Arrange.
+		$controller = $this->manager->register_controller( new ControllerTemplate );
+		$this->get_manager()->run_server();
+
+		// Register new endpoint.
+		$endpoint = new Endpoint\Bypass_Permission( $controller );
+		$endpoint->do_register();
+
+		// Set some data for not having empty data in cases its fails.
+		$endpoint->set_test_data( 'get_items', 'valid' );
+
+		// Bypass permission check.
+		$endpoint->bypass_original_permission( true );
+		$endpoint->bypass_set_value( false );
+
+		$command = $controller->get_name() . '/' . $endpoint->get_name();
+
+		// Act.
+		$data = $this->manager->run( $command );
+
+		// Assert.
+		$this->assertEmpty( $data );
 	}
 
 	public function test_run() {
