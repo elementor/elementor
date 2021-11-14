@@ -8,6 +8,7 @@ use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithEndpoint\Controller 
 use Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\WithSubEndpoint\Controller as ControllerWithSubEndpoint;
 
 class Test_Base_Route extends Data_Test_Base {
+
 	public function test_get_base_route() {
 		// Arrange.
 		$controller = new ControllerWithEndpoint();
@@ -23,7 +24,7 @@ class Test_Base_Route extends Data_Test_Base {
 			'',
 			$controller->get_name(),
 			$endpoint->get_name(),
-		] ),  $actual );
+		] ), $actual );
 	}
 
 	public function test_get_base_route__from_parent_index_endpoint() {
@@ -45,7 +46,7 @@ class Test_Base_Route extends Data_Test_Base {
 			'',
 			$controller->get_name(),
 			$sub_endpoint->get_name(),
-		] ),  $actual );
+		] ), $actual );
 	}
 
 	public function test_get_base_route__from_sub_endpoint() {
@@ -54,7 +55,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$controller->bypass_original_register();
 
 		$endpoint = new Mock\Template\Endpoint( $controller );
-		$sub_endpoint = new Mock\Template\Endpoint(  $endpoint );
+		$sub_endpoint = new Mock\Template\Endpoint( $endpoint );
 
 		// Act.
 		$actual = $sub_endpoint->get_base_route();
@@ -86,14 +87,14 @@ class Test_Base_Route extends Data_Test_Base {
 			$controller->get_name(),
 			$endpoint->get_name(),
 			$sub_endpoint->get_name(),
-			$descendant_endpoint->get_name()
+			$descendant_endpoint->get_name(),
 		] ), $actual );
 	}
 
 	public function test_get_permission_callback() {
 		// Arrange.
-        $controller = new ControllerWithEndpoint();
-        $this->manager->run_server();
+		$controller = new ControllerWithEndpoint();
+		$this->manager->run_server();
 
 		// Register new endpoint.
 		$endpoint = new Mock\Template\Endpoint\Bypass_Permission( $controller );
@@ -111,7 +112,6 @@ class Test_Base_Route extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
-
 	}
 
 	public function test_get_items() {
@@ -153,7 +153,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint->set_test_data( 'get_item', 'valid' );
 
 		// Act.
-		$actual = $endpoint->get_item( null,null );
+		$actual = $endpoint->get_item( null, null );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -206,7 +206,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint = trim( $endpoint->get_base_route(), '/' );
 
 		// Act.
-		$actual =  $this->manager->run_endpoint( $endpoint, [], 'POST' );
+		$actual = $this->manager->run_endpoint( $endpoint, [], 'POST' );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -221,7 +221,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint->set_test_data( 'create_item', 'valid' );
 
 		// Act.
-		$actual = $endpoint->create_item( null,null );
+		$actual = $endpoint->create_item( null, null );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -233,7 +233,7 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route(  \WP_REST_Server::CREATABLE, [
+		$endpoint->register_item_route( \WP_REST_Server::CREATABLE, [
 			'id_arg_type_regex' => '[\w]+',
 		] );
 
@@ -288,7 +288,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint->set_test_data( 'update_item', 'valid' );
 
 		// Actual.
-		$actual = $endpoint->update_item( null,null );
+		$actual = $endpoint->update_item( null, null );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -300,7 +300,7 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route(  \WP_REST_Server::EDITABLE, [
+		$endpoint->register_item_route( \WP_REST_Server::EDITABLE, [
 			'id_arg_type_regex' => '[\w]+',
 		] );
 
@@ -341,7 +341,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint = trim( $endpoint->get_base_route(), '/' );
 
 		// Actual.
-		$actual =  $this->manager->run_endpoint( $endpoint, [], 'DELETE' );
+		$actual = $this->manager->run_endpoint( $endpoint, [], 'DELETE' );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -356,7 +356,7 @@ class Test_Base_Route extends Data_Test_Base {
 		$endpoint->set_test_data( 'delete_item', 'valid' );
 
 		// Actual.
-		$actual = $endpoint->delete_item( null,null );
+		$actual = $endpoint->delete_item( null, null );
 
 		// Assert.
 		$this->assertEquals( 'valid', $actual );
@@ -368,7 +368,7 @@ class Test_Base_Route extends Data_Test_Base {
 
 		$controller = new ControllerTemplate();
 		$endpoint = $controller->do_register_endpoint( new EndpointTemplate( $controller ) );
-		$endpoint->register_item_route(  \WP_REST_Server::DELETABLE, [
+		$endpoint->register_item_route( \WP_REST_Server::DELETABLE, [
 			'id_arg_type_regex' => '[\w]+',
 		] );
 
@@ -574,6 +574,6 @@ class Test_Base_Route extends Data_Test_Base {
 
 		// Assert.
 		$this->assertTrue( $result instanceof \WP_Error );
-		$this->assertEquals( 500, reset($result->error_data )['status'] );
+		$this->assertEquals( 500, reset( $result->error_data )['status'] );
 	}
 }
