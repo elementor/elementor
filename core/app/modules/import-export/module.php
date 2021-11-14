@@ -105,7 +105,7 @@ class Module extends BaseModule {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED ) || 0 !== strpos( $file_url, 'http' ) ) {
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
 				throw new \Error( __( 'Invalid URL', 'elementor' ) );
 			}
 
