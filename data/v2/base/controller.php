@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Data\V2\Base;
 
 use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
