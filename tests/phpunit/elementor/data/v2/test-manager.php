@@ -228,16 +228,14 @@ class Test_Manager extends Data_Test_Base {
 	}
 
 	public function test_run_endpoint() {
-		$controller = $this->manager->register_controller( new ControllerTemplate() );
+		$controller = new ControllerTemplate();
+
+		$this->manager->register_controller( $controller );
 
 		$this->manager->run_server();
-		$endpoint = array_values( $controller->endpoints )[ 0 ];
+		$endpoint = $controller->get_endpoint_index();
 
-		$command = $controller->get_name() . '/' . $endpoint->get_name();
-
-		$endpoint = $this->manager->command_to_endpoint( $command, false, [] );
-
-		$data = $this->manager->run_endpoint( $endpoint );
+		$data = $this->manager->run_endpoint( $endpoint->get_base_route() );
 		$data_controller_name = str_replace( $data['namespace'] . '/', '', $data['controller'] );
 
 		$this->assertEquals( $controller->get_name(), $data_controller_name );
