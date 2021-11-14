@@ -55,6 +55,27 @@ module.exports = Marionette.Behavior.extend( {
 			} );
 		}
 
+		// Adding custom groups will only be possible for elements' context menus (Section, Column, Widget).
+		if ( this.view.options.model?.get( 'elType' ) ) {
+			let customGroups = [];
+
+			/**
+			 * Filter Additional Context Menu Groups.
+			 *
+			 * This filter allows adding new context menu groups to elements.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param array customGroups - An array of group objects.
+			 * @param string elementType - The current element type.
+			 */
+			customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.view.options.model.get( 'elType' ) );
+
+			if ( customGroups.length ) {
+				contextMenuGroups.splice( afterGroupIndex + 1, 0, ...customGroups );
+			}
+		}
+
 		this.contextMenu = new ContextMenu( {
 			groups: contextMenuGroups,
 			context: this.getOption( 'context' ),
