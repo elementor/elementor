@@ -547,8 +547,6 @@ BaseElementView = BaseContainer.extend( {
 	runReadyTrigger: function() {
 		const self = this;
 
-		self.linksData();
-
 		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
@@ -644,11 +642,21 @@ BaseElementView = BaseContainer.extend( {
 	 * 'data-link-setting': 'tab_title',       // Setting key that effect the link.
 	 * 'data-link-index': tabCount,            // Index is required for repeater items.
 	 *
+	 * Example for content:
+	 * 'data-link-type': 'content',
+	 * 'data-link-setting': 'testimonial_content',
+	 * By adding the following example attributes inside the widget,
+	 * to element that contains the attributes, it will effect his innerHTML and it will be linked to the 'testimonial_content'  setting value.
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
-	 * Working only with repeater items.
 	 */
 	linksData() {
+		/**
+		 * @type {Array.<DataLink>}
+		 */
+		this.links = [];
+
 		const id = this.$el.data( 'id' );
 
 		if ( ! id ) {
@@ -662,11 +670,6 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		const self = this;
-
-		/**
-		 * @type {Array.<DataLink>}
-		 */
-		self.links = [];
 
 		$dataLink.filter( function() {
 			const $current = jQuery( this );
@@ -688,8 +691,6 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * Render linked data.
 	 *
-	 * TODO: Add links to non repeater items.
-	 *
 	 * @param {Object} settings
 	 * @param {Array.<DataLink>} links
 	 * @returns {boolean} - false on fail.
@@ -697,7 +698,9 @@ BaseElementView = BaseContainer.extend( {
 	renderLinks( settings, links ) {
 		let changed = false;
 
-		links.forEach( ( link ) => {
+		for ( const link of links ) {
+			let leave = false;
+
 			switch ( link.dataset.linkType ) {
 				case 'repeater-item': {
 					const container = Object.values( this.container.repeaters )[ 0 ].children.find(
@@ -710,11 +713,28 @@ BaseElementView = BaseContainer.extend( {
 						if ( change ) {
 							changed = true;
 							jQuery( link.el ).html( change );
+							leave = true;
 						}
 					}
 				}
+				break;
+
+				case 'content': {
+					if ( undefined !== settings.changed[ link.dataset.linkSetting ] ) {
+						const change = settings.changed[ link.dataset.linkSetting ];
+
+						changed = true;
+
+						link.el.innerHTML = change;
+					}
+				}
+				break;
 			}
-		} );
+
+			if ( leave ) {
+				break;
+			}
+		}
 
 		if ( changed ) {
 			this.applyChanges( settings, false );
@@ -735,7 +755,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( ! settings.__dynamic__ && this.links && this.renderLinks( settings, this.links ) ) {
+		if ( ! settings.__dynamic__ && this.links.length && this.renderLinks( settings, this.links ) ) {
 			return;
 		}
 
@@ -779,6 +799,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender() {
+		this.linksData();
+
 		this.renderUI();
 
 		this.runReadyTrigger();
