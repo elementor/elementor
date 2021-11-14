@@ -50,6 +50,10 @@ abstract class Widget_Base extends Element_Base {
 
 	private static $widgets_css_data_manager;
 
+	private static $has_custom_breakpoints;
+
+	private static $custom_breakpoints_widgets;
+
 	/**
 	 * Get element type.
 	 *
@@ -1005,7 +1009,16 @@ abstract class Widget_Base extends Element_Base {
 	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+		$has_custom_breakpoints = $this->get_has_custom_breakpoints();
+
+		if ( $has_custom_breakpoints ) {
+			$custom_breakpoints_widgets = $this->get_custom_breakpoints_widgets();
+
+			// If the widget is not implementing custom-breakpoints media queries then it has no custom- css file.
+			if ( ! isset( $custom_breakpoints_widgets[ $widget_name ] ) ) {
+				$has_custom_breakpoints = false;
+			}
+		}
 
 		$file_name = 'widget-' . $widget_name . $direction . '.min.css';
 
@@ -1089,5 +1102,25 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return self::$widgets_css_data_manager;
+	}
+
+	private function get_has_custom_breakpoints() {
+		if ( ! isset( self::$has_custom_breakpoints ) ) {
+			self::$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+		}
+
+		return self::$has_custom_breakpoints;
+	}
+
+	private function get_custom_breakpoints_widgets() {
+		if ( ! isset( self::$custom_breakpoints_widgets ) ) {
+			self::$custom_breakpoints_widgets = file_get_contents( ELEMENTOR_ASSETS_PATH . 'data/custom-breakpoints-widgets.json' );
+
+			if ( self::$custom_breakpoints_widgets ) {
+				self::$custom_breakpoints_widgets = json_decode( self::$custom_breakpoints_widgets, true );
+			}
+		}
+
+		return self::$custom_breakpoints_widgets;
 	}
 }

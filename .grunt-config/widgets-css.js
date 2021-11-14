@@ -117,7 +117,26 @@ class WidgetsCss {
 			}
 		} );
 
+		this.createResponsiveWidgetsJson( this.responsiveWidgets );
+
 		return this.responsiveWidgets;
+	}
+
+	createResponsiveWidgetsJson( responsiveWidgets ) {
+		const responsiveWidgetsJsonFolder = path.resolve( __dirname, '../assets/data' ),
+			responsiveWidgetsJsonPath = path.join( responsiveWidgetsJsonFolder, 'custom-breakpoints-widgets.json' ),
+			responsiveWidgetsObject = responsiveWidgets.reduce( ( obj, val ) => {
+				// No need to save also the -rtl key.
+				if ( val.indexOf( '-rtl' ) > -1 ) {
+					return obj;
+				}
+
+				val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
+
+				return { ...obj, [ val ]: true };
+			}, {} );
+
+		write.sync( responsiveWidgetsJsonPath, JSON.stringify( responsiveWidgetsObject ) );
 	}
 }
 
