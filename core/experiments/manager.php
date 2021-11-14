@@ -235,7 +235,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
@@ -248,7 +248,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -257,8 +257,8 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
-			'title' => esc_html__( 'Font-Awesome Inline', 'elementor' ),
-			'description' => esc_html__( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
+			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
+			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awsome and the eicons libraries and its related CSS files and fonts. Learn More.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
@@ -310,11 +310,8 @@ class Manager extends Base_Object {
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.5.0',
-			],
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_ACTIVE,
 		] );
 	}
 
@@ -407,7 +404,7 @@ class Manager extends Base_Object {
 				];
 			}
 
-			if ( ! Tracker::is_allow_track() ) {
+			if ( ! Tracker::is_allow_track() && 'stable' === $section ) {
 				$fields[ $section ] += $settings->get_usage_fields();
 			}
 		}
@@ -481,7 +478,7 @@ class Manager extends Base_Object {
 		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
 		<?php } ?>
 		<hr>
-		<h2>
+		<h2 class="e-experiment__table-title">
 			<?php echo esc_html__( 'Ongoing Experiments', 'elementor' ); ?>
 		</h2>
 		<?php

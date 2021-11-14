@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Experiments\Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -288,6 +290,18 @@ class Elements_Manager {
 				'active' => false,
 			],
 		];
+
+		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
+		if ( Plugin::instance()->experiments->is_feature_active( 'favorite-widgets' ) ) {
+			$this->categories = array_merge_recursive( [
+				'favorites' => [
+					'title' => esc_html__( 'Favorites', 'elementor' ),
+					'icon' => 'eicon-heart',
+					'sort' => 'a-z',
+					'hideIfEmpty' => false,
+				],
+			], $this->categories );
+		}
 
 		/**
 		 * When categories are registered.
