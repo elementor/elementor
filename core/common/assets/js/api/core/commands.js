@@ -263,14 +263,14 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-     * Function validateRun().
-     *
-     * Responsible to validate if the run is even possible.
+	 * Function validateRun().
+	 *
+	 * Responsible to validate if the run is even possible.
 	 * Runs immediately after entering `run()`.
-     *
-     * @param {string} command
-     * @param {{}} args
-     */
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 */
 	validateRun( command, args = {} ) {
 		if ( ! this.commands[ command ] ) {
 			this.error( `\`${ command }\` not found.` );
