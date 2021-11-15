@@ -50,12 +50,12 @@ export default function ImportComplete() {
 			return kitWPContent;
 		},
 		getKitData = () => {
-			if ( ! context.data.fileResponse ) {
+			if ( ! context.data.uploadedData || ! context.data.importedData ) {
 				return {};
 			}
 
-			const manifest = context.data.fileResponse.stage1.manifest,
-				importedData = context.data.fileResponse.stage2;
+			const manifest = context.data.uploadedData.manifest,
+				importedData = context.data.importedData;
 
 			return {
 				templates: getTemplates( manifest.templates, importedData ),

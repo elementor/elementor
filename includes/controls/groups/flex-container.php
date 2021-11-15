@@ -61,15 +61,15 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => '',
 						],
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => 'row',
 						],
 						[
-							'name' => 'flex_direction',
+							'name' => 'direction',
 							'value' => 'row-reverse',
 						],
 					],
@@ -84,19 +84,19 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'options' => [
 				'flex-start' => [
 					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-start',
+					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-center',
+					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
 					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-end',
+					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-align-stretch',
+					'icon' => 'eicon-flex eicon-align-stretch-v',
 				],
 			],
 			'selectors' => [
@@ -113,27 +113,27 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'options' => [
 				'flex-start' => [
 					'title' => esc_html_x( 'Flex Start', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-start',
+					'icon' => 'eicon-flex eicon-justify-start-h',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-center',
+					'icon' => 'eicon-flex eicon-justify-center-h',
 				],
 				'flex-end' => [
 					'title' => esc_html_x( 'Flex End', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-end',
+					'icon' => 'eicon-flex eicon-justify-end-h',
 				],
 				'space-between' => [
 					'title' => esc_html_x( 'Space Between', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-space-between',
+					'icon' => 'eicon-flex eicon-justify-space-between-h',
 				],
 				'space-around' => [
 					'title' => esc_html_x( 'Space Around', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-space-around',
+					'icon' => 'eicon-flex eicon-justify-space-around-h',
 				],
 				'space-evenly' => [
 					'title' => esc_html_x( 'Space Evenly', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-justify-space-evenly',
+					'icon' => 'eicon-flex eicon-justify-space-evenly-h',
 				],
 			],
 			'selectors' => [
@@ -172,13 +172,18 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'options' => [
 				'nowrap' => [
 					'title' => esc_html_x( 'No Wrap', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-no-wrap',
+					'icon' => 'eicon-flex eicon-nowrap',
 				],
 				'wrap' => [
 					'title' => esc_html_x( 'Wrap', 'Flex Container Control', 'elementor' ),
-					'icon' => 'eicon-flex-wrap',
+					'icon' => 'eicon-flex eicon-wrap',
 				],
 			],
+			'description' => esc_html_x(
+				'Define whether the items are forced in a single line (No Wrap) or can be flowed into multiple lines (Wrap)',
+				'Flex Container Control',
+				'elementor'
+			),
 			'default' => '',
 			'selectors' => [
 				'{{SELECTOR}}' => '--flex-wrap: {{VALUE}};',
@@ -203,7 +208,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 				'{{SELECTOR}}' => '--align-content: {{VALUE}};',
 			],
 			'condition' => [
-				'flex_wrap' => 'wrap',
+				'wrap' => 'wrap',
 			],
 			'responsive' => true,
 		];

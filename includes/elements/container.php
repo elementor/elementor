@@ -20,6 +20,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Container extends Element_Base {
 
 	/**
+	 * @var \Elementor\Core\Kits\Documents\Kit
+	 */
+	private $active_kit;
+
+	/**
+	 * Container constructor.
+	 *
+	 * @param array      $data
+	 * @param array|null $args
+	 *
+	 * @return void
+	 */
+	public function __construct( array $data = [], array $args = null ) {
+		parent::__construct( $data, $args );
+
+		$this->active_kit = Plugin::$instance->kits_manager->get_active_kit();
+	}
+
+	/**
 	 * Get the element type.
 	 *
 	 * @return string
@@ -139,8 +158,7 @@ class Container extends Element_Base {
 			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
 		}
 
-		?>
-		<div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
+		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
 			<?php if ( $video_properties ) : ?>
 				<div class="elementor-background-video-embed"></div>
 				<?php
@@ -153,8 +171,7 @@ class Container extends Element_Base {
 				?>
 				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
-		</div>
-		<?php
+		</div><?php
 	}
 
 	/**
@@ -184,9 +201,7 @@ class Container extends Element_Base {
 			$this->add_link_attributes( '_wrapper', $link );
 		}
 
-		?>
-		<<?php $this->print_html_tag(); ?>  <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-		<?php
+		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
 		$this->render_video_background();
 	}
 
@@ -196,9 +211,7 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function after_render() {
-		?>
-		</<?php $this->print_html_tag(); ?> >
-		<?php
+		?></<?php $this->print_html_tag(); ?>><?php
 	}
 
 	/**
@@ -268,6 +281,8 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
 				'separator' => 'none',
+				// Use the default width from the kit as a placeholder.
+				'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 			]
 		);
 
@@ -276,15 +291,11 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Min Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vh' ],
+				'size_units' => [ 'px', 'vh' ],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 1440,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
 					],
 					'vh' => [
 						'min' => 0,
@@ -309,6 +320,7 @@ class Container extends Element_Base {
 				'fields_options' => [
 					'gap' => [
 						'label' => esc_html_x( 'Spacing', 'Flex Item Control', 'elementor' ),
+						'placeholder' => '20',
 					],
 					'direction' => [
 						'default' => 'column',
@@ -900,6 +912,7 @@ class Container extends Element_Base {
 					'order_custom',
 				],
 				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
+				'separator' => 'before',
 			]
 		);
 
@@ -932,6 +945,7 @@ class Container extends Element_Base {
 					'{{WRAPPER}}' => '--position: {{VALUE}};',
 				],
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 

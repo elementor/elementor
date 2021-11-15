@@ -146,7 +146,6 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this ),
 		} );
 	}
 
@@ -191,6 +190,10 @@ class AddSectionBase extends Marionette.ItemView {
 				newContainer = ContainerHelper.createContainer( {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
 				}, elementor.getPreviewContainer(), this.options );
 
 				const settings = {
@@ -206,8 +209,14 @@ class AddSectionBase extends Marionette.ItemView {
 
 				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
 
-				// Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
-				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
+				const rightContainer = ContainerHelper.createContainer( {
+					...settings,
+					padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
+				}, newContainer, { edit: false } );
 
 				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 

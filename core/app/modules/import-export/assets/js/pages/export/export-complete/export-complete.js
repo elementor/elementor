@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef } from 'react';
+import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
 
@@ -13,6 +14,7 @@ import './export-complete.scss';
 
 export default function ExportComplete() {
 	const context = useContext( Context ),
+		navigate = useNavigate(),
 		downloadLink = useRef( null ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
@@ -23,7 +25,7 @@ export default function ExportComplete() {
 			if ( ! downloadLink.current ) {
 				const link = document.createElement( 'a' );
 
-				link.href = 'data:text/plain;base64,' + context.data.fileResponse.file;
+				link.href = 'data:text/plain;base64,' + context.data.exportedData.file;
 				link.download = 'elementor-kit.zip';
 
 				downloadLink.current = link;
@@ -40,6 +42,8 @@ export default function ExportComplete() {
 	useEffect( () => {
 		if ( context.data.downloadUrl ) {
 			downloadFile();
+		} else {
+			navigate( '/export' );
 		}
 	}, [ context.data.downloadUrl ] );
 
@@ -55,7 +59,7 @@ export default function ExportComplete() {
 					</>
 				) }
 			>
-				<KitData data={ context.data.fileResponse?.manifest } />
+				<KitData data={ context.data.exportedData?.manifest } />
 			</WizardStep>
 		</Layout>
 	);

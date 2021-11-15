@@ -13,6 +13,7 @@
 	--z-index: auto;
 	--overflow: visible;
 	--transition: 0;
+	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
 
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
@@ -46,7 +47,7 @@
 	}
 
 	.elementor-empty-view {
-		position: relative;
+		position: static;
 		width: 100%;
 		height: 100%;
 		// Use the Container's `min-height` or default to 100px.
@@ -55,17 +56,51 @@
 		.elementor-first-add {
 			width: auto;
 			height: auto;
-			inset: 0;
+			inset: 10px;
 		}
 	}
 
-	&.e-container--placeholder-row > .elementor-widget-placeholder {
-		width: 10px;
-		align-self: stretch;
-		height: auto;
-		min-height: 100%;
+	.elementor-widget-placeholder {
+		--size: 10px;
+		--margin-start: calc( -1 * var( --size ) );
+		--margin-end: calc( -2 * var( --size ) );
+
 		flex-shrink: 0;
-		animation-name: dnd-placeholder-widget-vertical;
+		align-self: stretch;
+		z-index: $first-layer;
+		pointer-events: none; // Prevent the placeholder from blocking the drop area.
+	}
+
+	&.e-container--placeholder-row {
+		& > .elementor-widget-placeholder {
+			position: relative;
+			width: var( --size );
+			// To make sure that it doesn't push & break the layout when appearing.
+			margin-inline-start: var( --margin-start );
+			height: auto;
+			min-height: 100%;
+			animation-name: dnd-placeholder-widget-vertical;
+		}
+
+		// Fix nested Containers DnD issues (ED-5424).
+		&[data-nesting-level]:not( [data-nesting-level = "0"] ) > .elementor-widget-placeholder {
+			margin-inline-end: var( --margin-end );
+		}
+	}
+
+	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
+		height: var( --size );
+		// To make sure that it doesn't push & break the layout when appearing.
+		margin-block-start: var( --margin-start );
+		margin-block-end: var( --margin-end );
+		animation-name: dnd-placeholder-widget-horizontal;
+	}
+
+	// Extracted from the inline CSS of `behaviors/sortable.js`.
+	.elementor-sortable-helper {
+		height: 84px;
+		width: 125px;
+		z-index: -1;
 	}
 
 	// Hack to increase specificity and avoid using `!important`.
@@ -90,6 +125,15 @@
 		opacity: var( --overlay-opacity );
 		transition: var( --overlay-transition );
 		border-radius: var( --border-radius );
+	}
+
+	// Fix iframe-based widgets (ED-5338).
+	// TODO: Find a better solution.
+	.elementor-widget {
+		&-video,
+		&-google_maps {
+			flex-basis: 100%;
+		}
 	}
 
 	// Inner Container handle.
@@ -140,11 +184,28 @@
 
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
-		width: 0;
+		transform-origin: 0 50%;
+		transform: scaleX( 0 );
 		opacity: 0;
 	}
+
 	100% {
-		width: 10px;
+		transform-origin: 0 50%;
+		transform: scaleX( 1 );
+		opacity: .9;
+	}
+}
+
+@keyframes dnd-placeholder-widget-horizontal {
+	0% {
+		transform-origin: 50% 0;
+		transform: scaleY( 0 );
+		opacity: 0;
+	}
+
+	100% {
+		transform-origin: 50% 0;
+		transform: scaleY( 1 );
 		opacity: .9;
 	}
 }
