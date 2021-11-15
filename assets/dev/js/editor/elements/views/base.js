@@ -708,7 +708,7 @@ BaseElementView = BaseContainer.extend( {
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
 						const change = settings.changed[ link.dataset.linkSetting ];
 
-						if ( change ) {
+						if ( change !== undefined ) {
 							changed = true;
 							jQuery( link.el ).html( change );
 						}
