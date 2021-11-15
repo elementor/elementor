@@ -192,14 +192,19 @@
 			}
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
-			if ( ! $( currentElement ).hasClass( 'elementor-first-add' ) && $( currentElement ).parents( '.e-container--placeholder-row' ).length ) {
+			const $currentElement = $( currentElement ),
+				isRowContainer = $currentElement.parents( '.e-container--placeholder-row' ).length,
+				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
+
+			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-				$( currentElement )[ insertMethod ]( elementsCache.$placeholder );
-				elementsCache.$placeholder.css( 'order', $( currentElement ).css( 'order' ) );
-			} else {
-				const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-				elementsCache.$placeholder[ insertMethod ]( currentElement );
+				$currentElement[ insertMethod ]( elementsCache.$placeholder );
+
+				return;
 			}
+
+			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
 		var isDroppingAllowed = function( event ) {
@@ -259,7 +264,17 @@
 
 			currentElement = this;
 
-			elementsCache.$element.parents().each( function() {
+			// Get both parents and children and do a drag-leave on them in order to prevent UI glitches
+			// of the placeholder that happen when the user drags from parent to child and vice versa.
+			const $parents = elementsCache.$element.parents(),
+				$children = elementsCache.$element.children();
+
+			// Remove all current element classes to take in account nested Droppable instances.
+			// TODO #1: Move to `doDragLeave()`?
+			// TODO #2: Find a better solution.
+			$children.find( '.' + settings.currentElementClass ).removeClass( settings.currentElementClass );
+
+			$parents.add( $children ).each( function() {
 				var droppableInstance = $( this ).data( 'html5Droppable' );
 
 				if ( ! droppableInstance ) {
@@ -359,14 +374,22 @@
 						},
 					},
 				} );
-			} else {
-				settings.getDropContainer().view.createElementFromModel(
-					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
-					{
-						at: settings.getDropIndex( currentSide, event ),
-					}
-				);
+
+				return;
 			}
+
+			// Override the onDrop callback with a user-provided one if present.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
+				return;
+			}
+
+			settings.getDropContainer().view.createElementFromModel(
+				elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
+				{
+					at: settings.getDropIndex( currentSide, event ),
+				}
+			);
 		};
 
 		var attachEvents = function() {

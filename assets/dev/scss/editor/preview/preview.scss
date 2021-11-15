@@ -41,10 +41,16 @@ html.elementor-html {
 	--outline-color: var( --primary-color );
 
 	.e-container {
-		// TODO: Use variable when available - waiting for final color from the Design.
-		--primary-color: #0098C7;
-		--secondary-color: #{ darken(#0098C7, 10%) };
+		--primary-color: #{ $editor-container-primary };
+		--secondary-color: #{ darken( $editor-container-primary, 10% ) };
 		--outline-color: var( --primary-color );
+
+		// Add an outline to the currently dragged over Container, so the user will be able to differentiate
+		// between Containers.
+		&.e-dragging-over,
+		&.elementor-dragging-on-child {
+			outline: 1px solid var( --outline-color );
+		}
 	}
 
 	.elementor-inner-section {
@@ -126,6 +132,11 @@ html.elementor-html {
 
 	&:empty {
 		min-height: 25px;
+	}
+
+	// Make the first child's overlay higher than the others to fix bug ED-5010 where the overlays overlap each other.
+	> :first-child > .elementor-element-overlay {
+		z-index: $editor-layer;
 	}
 }
 
@@ -857,7 +868,7 @@ html.elementor-html {
 
 			&::before {
 				content: var( --text );
-				font-family: Roboto, Arial, Helvetica, sans-serif;
+				font-family: $admin-font-family;
 				font-size: 13px;
 				font-weight: 500;
 				position: absolute;
@@ -1021,7 +1032,7 @@ html.elementor-html {
 	}
 
 	&__title {
-		font-family: Roboto, Arial, Helvetica, sans-serif;
+		font-family: $admin-font-family;
 		font-size: 13px;
 		font-weight: 500;
 		text-transform: uppercase;

@@ -239,6 +239,9 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
+				'default' => [
+					'unit' => '%',
+				],
 				'range' => [
 					'px' => [
 						'max' => 1000,
@@ -253,32 +256,7 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_height',
-			[
-				'label' => esc_html__( 'Height', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
-						'max' => 1000,
-						'step' => 1,
-					],
-					'%' => [
-						'max' => 100,
-						'step' => 1,
-					],
-					'vh' => [
-						'max' => 100,
-						'step' => 1,
-					],
-				],
-				'size_units' => [ 'px', '%', 'vh' ],
-				'selectors' => [
-					'{{WRAPPER}}' => 'height: {{SIZE}}{{UNIT}}; max-height: {{SIZE}}{{UNIT}}',
-				],
+				'separator' => 'after',
 			]
 		);
 
@@ -354,6 +332,7 @@ class Widget_Common extends Widget_Base {
 				],
 				'prefix_class' => 'elementor-',
 				'frontend_available' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -572,7 +551,6 @@ class Widget_Common extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -666,7 +644,9 @@ class Widget_Common extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+	}
 
+	private function register_transform_section() {
 		$this->start_controls_section(
 			'_section_transform',
 			[
@@ -1680,6 +1660,8 @@ class Widget_Common extends Widget_Base {
 		$this->register_layout_section();
 
 		$this->register_effects_section();
+
+		$this->register_transform_section();
 
 		$this->register_background_section();
 
