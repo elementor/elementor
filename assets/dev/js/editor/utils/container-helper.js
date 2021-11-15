@@ -82,7 +82,7 @@ export class ContainerHelper {
 		const { createForTarget = false } = options,
 			historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
-				title: 'Container',
+				title: __( 'Container', 'elementor' ),
 			} );
 
 		switch ( preset ) {
@@ -130,9 +130,9 @@ export class ContainerHelper {
 				const sizes = preset.split( '-' );
 
 				settings = {
-						flex_direction: ContainerHelper.DIRECTION_ROW,
-						flex_wrap: 'wrap',
-					};
+					flex_direction: ContainerHelper.DIRECTION_ROW,
+					flex_wrap: 'wrap',
+				};
 
 				// Create a parent container to contain all of the sub containers.
 				let parentContainer;

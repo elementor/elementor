@@ -70,8 +70,8 @@ class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 	addElement( data, options = {} ) {
 		const container = this.container;
 
-		options.onAfterAdd = ( /* Backbone.Model */ eContainerModel ) => {
-			container.view.trigger( 'nested-modules:add-element:after', { model: eContainerModel, options } );
+		options.onAfterAdd = ( model ) => {
+			container.view.trigger( 'nested-modules:add-element:after', { model, options } );
 		};
 
 		return super.addElement( data, options );

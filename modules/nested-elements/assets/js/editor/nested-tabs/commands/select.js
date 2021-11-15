@@ -11,10 +11,10 @@ export class Select extends CommandHistory {
 				index: data.current,
 			} );
 		} else {
-            $e.run( 'nested-elements/nested-tabs/select', {
+			$e.run( 'nested-elements/nested-tabs/select', {
 				container,
-                index: data.prev,
-            } );
+				index: data.prev,
+			} );
 		}
 	}
 
@@ -63,4 +63,5 @@ export class Select extends CommandHistory {
 		editSettings.set( 'activeItemIndex', index );
 	}
 }
+
 export default Select;

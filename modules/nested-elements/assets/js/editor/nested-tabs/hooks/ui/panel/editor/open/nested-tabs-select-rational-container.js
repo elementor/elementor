@@ -12,7 +12,7 @@ export class NestedTabsSelectRationalContainer extends ( $e.modules.hookUI.After
 	}
 
 	getId() {
-		return 'nested-elements-select-rational-container';
+		return 'nested-tabs-select-rational-container';
 	}
 
 	getConditions( args ) {
@@ -45,7 +45,7 @@ export class NestedTabsSelectRationalContainer extends ( $e.modules.hookUI.After
 
 		let depth = 1;
 
-		// For each `navigateMap` run `$e.run( 'nested-modules/select' )`.
+		// For each `navigateMap` run `$e.run( 'nested-modules/nested-tabs/select' )`.
 		navigateMap.forEach( ( { container, index } ) => {
 			setTimeout( () => {
 				$e.run( 'nested-elements/nested-tabs/select', {
