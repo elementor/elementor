@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux';
 
 export default class Store {
 	/**
@@ -10,7 +9,6 @@ export default class Store {
 	constructor() {
 		this.slices = {};
 		this.reduxStore = this.createStore();
-		this.provider = <Provider store={ this.reduxStore } />;
 	}
 
 	/**
