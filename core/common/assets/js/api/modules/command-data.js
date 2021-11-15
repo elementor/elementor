@@ -84,8 +84,6 @@ export default class CommandData extends CommandBase {
 	 */
 	getRequestData() {
 		return {
-			component: this.component,
-			command: this.currentCommand,
 			type: this.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
