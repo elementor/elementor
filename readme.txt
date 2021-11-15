@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.4
+Stable tag: 3.4.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,7 +12,7 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 == Description ==
 
-https://www.youtube.com/watch?v=vJDjp8bKchw
+https://www.youtube.com/watch?v=lBu9TKg7dFM
 
 Introducing a WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.
 
@@ -187,6 +187,29 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.7 - 2021-10-31 =
+* Tweak: Added role restriction to Version control feature
+* Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
+* Fix: Custom width responsive control disappeared until section init in the common Positioning section 
+* Fix: PayPal button widget is not functioning in future Pro versions
+* Fix: Unwanted HTML escaping in Pro features promotion
+
+= 3.4.6 - 2021-10-19 =
+* Tweak: Updated `eicons` library to 5.13.0
+* Fix: Custom SVG is not supported in some servers environments in Text Path widget
+* Fix: Lottie animations are not imported in Template import process
+* Fix: Can't connect to Library via CLI
+* Fix: Scroll event listener is not optimized in Counter widget
+
+= 3.4.5 - 2021-10-12 =
+* Tweak: Updated featured video in the WordPress repository plugin page
+* Tweak: Added support for future features compatibility
+* Fix: Additional breakpoints responsive CSS classes clash when Optimized DOM Output experiment is inactive [#16322](https://github.com/elementor/elementor/issues/16322)
+* Fix: Escaped several translation strings for better security (props [@rodolphebertozzo](https://github.com/rodolphebertozzo))
+* Fix: Slides per view and slides to scroll controls disappeared when using multiple breakpoints in Testimonial Carousel widget
+* Fix: Padding not applied properly with absolute positioned widgets when the Optimized DOM Output experiment is active
+* Fix: Missing padding in the widgets panel layout
 
 = 3.4.4 - 2021-09-13 =
 * Fix: Custom popover responsive controls breaks when used in responsive breakpoints view when Additional Breakpoints experiment is active ([#16312](https://github.com/elementor/elementor/issues/16312))

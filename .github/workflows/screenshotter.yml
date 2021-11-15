@@ -25,18 +25,23 @@ jobs:
           sudo chown -R $USER /usr/local/bin/
           npm i -g @elementor/screenshotter
       - name: Install Dependencies
-        run: |
+        run: | # Also, enable import SVG
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
       - name: Prepare Test
         run: |
           cd /tmp/wordpress
           wp elementor experiments activate container
+          wp option update elementor_unfiltered_files_upload 1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
       - name: Build Package & Run Test
         run: |
-          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true --deepDebug=true
+          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true
+      - name: Clean up report data
+        if: failure()
+        run: |
+          node ./.github/scripts/screenshotter-cleanup.js
       - uses: actions/upload-artifact@master
         if: failure()
         with:

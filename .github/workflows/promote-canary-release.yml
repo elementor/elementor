@@ -1,11 +1,11 @@
 name: Promote Canary Release
-
+# Update WP repo with the final release version
 on:
   workflow_dispatch:
 
 jobs:
   update-readme-develop:
-    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey') && startsWith(github.repository, 'elementor/')
+    if: (github.actor == 'ronkelementor' || github.actor == 'KingYes' || github.actor == 'shilo-ey' || github.actor == 'matipojo') && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout develop branch

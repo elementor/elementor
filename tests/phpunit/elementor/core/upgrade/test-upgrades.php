@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as Settings_Manager;
 use Elementor\Core\Upgrade\Upgrades;
+use Elementor\Icons_Manager;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use Elementor\Testing\Core\Base\Mock\Mock_Upgrades_Manager;
@@ -552,6 +553,18 @@ class Test_Upgrades extends Elementor_Test_Base {
 
 			$this->run_breakpoint_assertions( $revision_settings );
 		}
+	}
+
+	public function test_v_3_4_8_fix_font_awesome_default_value_from_1_to_yes() {
+		// Test if 'Upgrades::fix_font_awesome_default_value_from_1_to_yes' sets `Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY` value to 'yes'.
+		// Arrange - Set value to '1' in DB.
+		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, '1' );
+
+		// Act.
+		Upgrades::_v_3_4_8_fix_font_awesome_default_value_from_1_to_yes();
+
+		// Assert.
+		$this->assertEquals( 'yes', get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY ) );
 	}
 
 	private function run_breakpoint_assertions( $settings ) {
