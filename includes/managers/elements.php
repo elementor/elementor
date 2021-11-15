@@ -1,9 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
-use Elementor\Includes\Elements\Container;
-
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {

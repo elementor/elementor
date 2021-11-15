@@ -98,60 +98,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	/**
-	 * Create an item placeholder in order to avoid UI jumps due to flex.
-	 *
-	 * @param {Object} $element - jQuery element instance to create placeholder for.
-	 * @param {string} className - Placeholder class.
-	 * @param {boolean} hide - Whether to hide the original element.
-	 *
-	 * @returns {void}
-	 */
-	createPlaceholder: function( $element, className = '', hide = true ) {
-		// Get the actual item size.
-		$element.css( 'display', '' );
-		const { clientWidth: width, clientHeight: height } = $element[ 0 ];
-
-		if ( hide ) {
-			$element.css( 'display', 'none' );
-		}
-
-		jQuery( '<div />' ).css( {
-			...$element.css( [
-				'flex-basis',
-				'flex-grow',
-				'flex-shrink',
-				'position',
-			] ),
-			width,
-			height,
-		} ).addClass( className ).insertAfter( $element );
-	},
-
-	/**
-	 * Return a settings object for jQuery UI sortable to make it swappable.
-	 *
-	 * @returns {{stop: stop, start: start}}
-	 */
-	getSwappableOptions() {
-		const $childViewContainer = this.getChildViewContainer(),
-			placeholderClass = 'e-swappable--item-placeholder';
-
-		return {
-			start: ( event, ui ) => {
-				$childViewContainer.sortable( 'refreshPositions' );
-
-				// TODO: Find a better solution than this hack.
-				// Used in order to prevent dragging a container into itself.
-				this.createPlaceholder( ui.item, placeholderClass );
-			},
-			stop: () => {
-				// Cleanup.
-				$childViewContainer.find( `.${ placeholderClass }` ).remove();
-			},
-		};
-	},
-
 	applySortable() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
