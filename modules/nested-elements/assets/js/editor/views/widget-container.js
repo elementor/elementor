@@ -16,8 +16,9 @@ class WidgetContainer extends elementor.modules.elements.views.BaseElement {
 		const events = super.events();
 
 		events.click = ( e ) => {
-			// TODO: Find better solution.
-			if ( ! e.target.classList.contains( 'elementor-tabs-wrapper' ) ) {
+			const $parentsUntil = jQuery( e.target ).parentsUntil( '.elementor-widget-container' );
+
+			if ( 3 <= $parentsUntil.length ) {
 				return true;
 			}
 
