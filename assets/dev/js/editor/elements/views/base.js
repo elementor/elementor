@@ -643,10 +643,9 @@ BaseElementView = BaseContainer.extend( {
 	 * 'data-link-index': tabCount,            // Index is required for repeater items.
 	 *
 	 * Example for content:
-	 * 'data-link-type': 'content',
-	 * 'data-link-setting': 'testimonial_content',
-	 * By adding the following example attributes inside the widget,
-	 * to element that contains the attributes, it will effect his innerHTML and it will be linked to the 'testimonial_content'  setting value.
+	 * 'data-link-type': 'content',                     // Type of link
+	 * 'data-link-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
+	 * By adding the following example attributes inside the widge the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
