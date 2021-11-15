@@ -240,16 +240,11 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		return this.currentTrace[ 0 ];
 	}
 
-	validateRun( command, args = {} ) {
-		if ( ! this.commands[ command ] ) {
-			this.error( `\`${ command }\` not found.` );
-		}
-
-		return this.getComponent( command ).dependency( command, args );
-	}
-
 	/**
 	 * Function beforeRun().
+	 *
+	 * Responsible to add current command to trace and trigger 'run:before' event.
+	 * Run before command.
 	 *
 	 * @param {string} command
 	 * @param {{}} args
@@ -265,6 +260,23 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		this.trigger( 'run:before', component, command, args );
+	}
+
+	/**
+     * Function validateRun().
+     *
+     * Responsible to validate if the run is even possible.
+	 * Runs immediately after entering `run()`.
+     *
+     * @param {string} command
+     * @param {{}} args
+     */
+	validateRun( command, args = {} ) {
+		if ( ! this.commands[ command ] ) {
+			this.error( `\`${ command }\` not found.` );
+		}
+
+		return this.getComponent( command ).dependency( command, args );
 	}
 
 	/**
@@ -337,18 +349,21 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			}
 		}
 
-		return this.runAfter( instance, results );
+		return this.getRunAfter( instance, results );
 	}
 
 	/**
-	 * Function runAfter().
+	 * Function getRunAfter().
+	 *
+	 * Responsible to run everything that need to run after each command run.
+	 * Called on run() after runInstance(), to manipulate results & apply 'after' hooks.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 *
 	 * @returns {Promise<*>|*}
 	 */
-	runAfter( instance, result ) {
+	getRunAfter( instance, result ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			const handleJQueryDeferred = ( _result ) => {
@@ -357,7 +372,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 					this.afterRun( instance.command, instance.args, e );
 				} );
 				_result.done( ( __result ) => {
-					this.handleOnAfter( instance, __result );
+					this.handleGetRunAfterSimple( instance, __result );
 				} );
 
 				return _result;
@@ -365,21 +380,24 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 			return handleJQueryDeferred( result );
 		} else if ( result instanceof Promise ) {
-			return this.handlePromiseResult( instance, result );
+			return this.handleGetRunAfterPromiseResult( instance, result );
 		}
 
-		this.handleOnAfter( instance, result );
+		this.handleGetRunAfterSimple( instance, result );
 
 		return result;
 	}
 
 	/**
-	 * Function handleOnAfter().
+	 * Function handleGetRunAfterSimple().
+	 *
+	 * Responsible to handle simple run after behavior.
+	 * Called on getRunAfter() after runInstance(), to handle simple results.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 */
-	handleOnAfter( instance, result ) {
+	handleGetRunAfterSimple( instance, result ) {
 		// Run Data hooks.
 		instance.onAfterApply( instance.args, result );
 
@@ -390,12 +408,39 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * Function handleOnAfter().
+	 * Function handleGetRunAfterPromiseResult().
+	 *
+	 * Responsible to to await for promise result.
+	 * Called on getRunAfter() after runInstance(), to handle promise result.
+	 * awaits the promise, before going to next.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 */
-	async handleOnAfterAsync( instance, result ) {
+	handleGetRunAfterPromiseResult( instance, result ) {
+		// Override initial result ( promise ) to await onAfter promises, first!.
+		return ( async () => {
+			await result.catch( ( e ) => {
+				this.catchApply( e, instance );
+				this.afterRun( instance.command, instance.args, e );
+			} );
+			await result.then( ( _result ) => this.handleGetRunAfterPromiseResultAsync( instance, _result ) );
+
+			return result;
+		} )();
+	}
+
+	/**
+	 * Function handleGetRunAfterPromiseResultAsync().
+	 *
+	 * Responsible to await all promises results.
+	 * Called on getRunAfter() after runInstance(), to handle promise results.
+	 * Awaits all the promises, before releasing the command.
+	 *
+	 * @param {CommandBase} instance
+	 * @param {*} result
+	 */
+	async handleGetRunAfterPromiseResultAsync( instance, result ) {
 		// Run Data hooks.
 		const results = instance.onAfterApply( instance.args, result ),
 			promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];
@@ -412,22 +457,25 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * Function handlePromiseResult().
+	 * Function afterRun().
 	 *
-	 * @param {CommandBase} instance
-	 * @param {*} result
+	 * Responsible to to clear command from trace, and run 'run:after' event.
+	 * Method fired after the command runs.
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} results
 	 */
-	handlePromiseResult( instance, result ) {
-		// Override initial result ( promise ) to await onAfter promises, first!.
-		return ( async () => {
-			await result.catch( ( e ) => {
-				this.catchApply( e, instance );
-				this.afterRun( instance.command, instance.args, e );
-			} );
-			await result.then( ( _result ) => this.handleOnAfterAsync( instance, _result ) );
+	afterRun( command, args, results = undefined ) {
+		const component = this.getComponent( command );
 
-			return result;
-		} )();
+		if ( args.onAfter ) {
+			args.onAfter.apply( component, [ args, results ] );
+		}
+
+		this.trigger( 'run:after', component, command, args, results );
+
+		this.removeCurrentTrace( component );
 	}
 
 	/**
@@ -455,27 +503,6 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 */
 	runShortcut( command, event ) {
 		return this.run( command, event );
-	}
-
-	/**
-	 * Function afterRun().
-	 *
-	 * Method fired after the command runs.
-	 *
-	 * @param {string} command
-	 * @param {{}} args
-	 * @param {*} results
-	 */
-	afterRun( command, args, results = undefined ) {
-		const component = this.getComponent( command );
-
-		if ( args.onAfter ) {
-			args.onAfter.apply( component, [ args, results ] );
-		}
-
-		this.trigger( 'run:after', component, command, args, results );
-
-		this.removeCurrentTrace( component );
 	}
 
 	validateInstanceScope( instance, currentComponent, command ) {
