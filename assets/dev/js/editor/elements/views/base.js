@@ -699,8 +699,6 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		for ( const link of links ) {
-			let leave = false;
-
 			switch ( link.dataset.linkType ) {
 				case 'repeater-item': {
 					const container = Object.values( this.container.repeaters )[ 0 ].children.find(
@@ -713,7 +711,6 @@ BaseElementView = BaseContainer.extend( {
 						if ( change ) {
 							changed = true;
 							jQuery( link.el ).html( change );
-							leave = true;
 						}
 					}
 				}
@@ -724,14 +721,13 @@ BaseElementView = BaseContainer.extend( {
 						const change = settings.changed[ link.dataset.linkSetting ];
 
 						changed = true;
-
 						link.el.innerHTML = change;
 					}
 				}
 				break;
 			}
 
-			if ( leave ) {
+			if ( changed ) {
 				break;
 			}
 		}
