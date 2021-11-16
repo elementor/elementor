@@ -1011,10 +1011,10 @@ abstract class Widget_Base extends Element_Base {
 		$has_custom_breakpoints = $this->get_has_custom_breakpoints();
 
 		if ( $has_custom_breakpoints ) {
-			$custom_breakpoints_widgets = $this->get_custom_breakpoints_widgets();
+			$responsive_widgets = $this->get_responsive_widgets();
 
 			// If the widget is not implementing custom-breakpoints media queries then it has no custom- css file.
-			if ( ! isset( $custom_breakpoints_widgets[ $widget_name ] ) ) {
+			if ( ! isset( $responsive_widgets[ $widget_name ] ) ) {
 				$has_custom_breakpoints = false;
 			}
 		}
@@ -1046,7 +1046,7 @@ abstract class Widget_Base extends Element_Base {
 		];
 	}
 
-	public function get_custom_breakpoints_widgets() {
+	public function get_responsive_widgets() {
 		$responsive_widgets_data_manager = $this->get_responsive_widgets_data_manager();
 
 		$config = $this->get_responsive_widgets_config();
