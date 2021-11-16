@@ -221,7 +221,7 @@ abstract class Base_Route {
 		/**
 		 * Determine behaviour of `base_callback()` and `get_permission_callback()`:
 		 * For `base_callback()` which applying the action.
-		 * Iif it's a one item request and should call `get_item_permission_callback()` or it's mutil items request and should call `get_items_permission_callback()`.
+		 * Whether it's a one item request and should call `get_item_permission_callback()` or it's mutil items request and should call `get_items_permission_callback()`.
 		 */
 		$is_multi = ! empty( $args['is_multi'] );
 
