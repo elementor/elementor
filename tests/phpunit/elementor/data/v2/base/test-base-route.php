@@ -112,6 +112,7 @@ class Test_Base_Route extends Data_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 'rest_forbidden', $data['code'] );
+		$this->assertEquals( 401, $data['data']['status'] );
 	}
 
 	public function test_get_items() {
