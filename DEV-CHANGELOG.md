@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev4 - 2021-11-16
+* Fix: Sticky option throws an error and cause the editor not to work [ED-5539] (#16933)
+* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16941)
+* Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16944)
+* Fix: Some fields don't show placeholder values properly (closes #16608) [ED-4677] (#16948)
+
 #### 3.6.0-dev3 - 2021-11-12
 * Fix: Lightbox tweaks [ED-5532] (#16906)
 * Fix: Empty state background is missing in Media controls [ED-5312] (#16768)
@@ -556,22 +562,3 @@
 * Tweak: Google Maps Widget - Added support for the new Google Maps Embed API (ED-3394) (#15090) (#15099)
 * Tweak: Merge Conflict (#15104)
 * Fix: Missing Connect & Activate button on the bottom bar. (#15067)
-
-#### 3.3.0-dev8 - 2021-05-25
-* Tweak: Kit-Library - Text Fixes [ED-3130] (#15024)
-* Compatibility: Added basic 3rd parties compatibility mechanism + Envato templates kits import compatibility (#15029)
-* New: I/E WP CLI Commands [ED-3119] (#14941)
-* Fix: Kit-library - Re add react-query (#15030)
-* New: Media Control - Attach media from URL [ED-1733] (#13612)
-* Revert: Auto merge next release into feature branch (#15051)
-* Tweak: Kit-Library - sort by featured [ED-3251] (#15057)
-* Fix: widget search accepts non-english strings -fixes [ED-3145] (#15056)
-* Submissions: New - Promotion [ED-2153] (#14416)
-* Fix: Required checks for build dev edition version [ARCH-30] (#15060)
-* Tweak: Kit-Library - Add additional connect info to the api [ED-3360] (#15070)
-* New: Eslint - Check translations in JSX files [ED-3235] (#15055)
-* Fix: Template-Library - Error when cannot import template [ED-3072] (#15023)
-* New: Upgrades - Recalculate elements usage each upgrade [ED-2512] (#14632)
-* Fix: Move 'schemas' to test folder [ED-3229] (#14930)
-* Fix: QUnit - Rearrange parents/modules/tests names [ED-2262] (#14331)
-* Tweak: Moving the widgets-CSS reset-action from the assets-loader to the widgets-manager [ED-3084] (#14926)
