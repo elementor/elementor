@@ -33,39 +33,14 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
-	 * Read SVG contents.
+	 * Get an SVG Path URL from the pre-defined ones.
 	 *
-	 * @param $path - The SVG file path.
+	 * @param string $path - Path name.
 	 *
-	 * @return false|string
+	 * @return string
 	 */
-	public static function read_svg( $path ) {
-		if ( ! $path || ! is_file( $path ) || ! is_readable( $path ) ) {
-			return '';
-		}
-
-		// Get the file contents only if it's svg.
-		if ( 'svg' !== pathinfo( $path, PATHINFO_EXTENSION ) ) {
-			return '';
-		}
-
-		$svg = file_get_contents( $path );
-
-		return $svg ? $svg : '';
-	}
-
-	/**
-	 * Gets an SVG path name as a parameter and returns its SVG markup from the `svg-paths`
-	 * folder under the assets directory.
-	 *
-	 * @param $path string Path name.
-	 *
-	 * @return string The path SVG markup.
-	 */
-	public static function get_path_svg( $path ) {
-		$file_name = ELEMENTOR_ASSETS_PATH . 'svg-paths/' . $path . '.svg';
-
-		return static::read_svg( $file_name );
+	public static function get_path_url( $path ) {
+		return ELEMENTOR_ASSETS_URL . 'svg-paths/' . $path . '.svg';
 	}
 
 	/**

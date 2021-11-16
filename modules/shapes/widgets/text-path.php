@@ -673,16 +673,20 @@ class TextPath extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		// Get the shape SVG markup.
-		if ( 'custom' !== $settings['path'] ) {
-			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
-		} else {
-			$path = get_attached_file( $settings['custom_path']['id'] );
-			$path_svg = Shapes_Module::read_svg( $path );
-		}
+		// Get the path URL.
+		$path_url = ( 'custom' === $settings['path'] )
+			? $settings['custom_path']['url']
+			: Shapes_Module::get_path_url( $settings['path'] );
 
-		// Add Text Path text.
-		$this->add_render_attribute( 'text_path', 'class', 'e-text-path' );
+		// Remove the HTTP protocol to prevent Mixed Content error.
+		$path_url = preg_replace( '/^https?:/i', '', $path_url );
+
+		// Add Text Path attributes.
+		$this->add_render_attribute( 'text_path', [
+			'class' => 'e-text-path',
+			'data-text' => esc_attr( $settings['text'] ),
+			'data-url' => esc_url( $path_url ),
+		] );
 
 		// Add hover animation.
 		if ( ! empty( $settings['hover_animation'] ) ) {
@@ -691,9 +695,7 @@ class TextPath extends Widget_Base {
 
 		// Render.
 		?>
-		<div <?php $this->print_render_attribute_string( 'text_path' ); ?> data-text="<?php echo esc_attr( $settings['text'] ); ?>">
-			<?php Utils::print_wp_kses_extended( $path_svg, [ 'svg' ] ); ?>
-		</div>
+		<div <?php $this->print_render_attribute_string( 'text_path' ); ?>></div>
 		<?php
 	}
 }
