@@ -16,12 +16,6 @@ export class NestedTabsSelectRationalContainer extends ( $e.modules.hookUI.After
 	}
 
 	getConditions( args ) {
-		const { options = {} } = args;
-
-		if ( ! options.scrollIntoView ) {
-			return false;
-		}
-
 		// If some of the parents are supporting nested elements, then return true.
 		const allParents = args.view.container.getParentAncestry(),
 			result = allParents.some( ( parent ) =>

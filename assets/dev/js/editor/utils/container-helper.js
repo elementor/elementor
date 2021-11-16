@@ -96,6 +96,10 @@ export class ContainerHelper {
 				settings = {
 					flex_direction: ContainerHelper.DIRECTION_ROW,
 					flex_wrap: 'wrap',
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
 				};
 
 				if ( createForTarget ) {
@@ -118,8 +122,14 @@ export class ContainerHelper {
 
 				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
 
-				// Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
-				const rightContainer = ContainerHelper.createContainer( { ...settings, padding: { size: '' } }, newContainer, { edit: false } );
+				const rightContainer = ContainerHelper.createContainer( {
+					...settings,
+					padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
+				}, newContainer, { edit: false } );
 
 				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
 
@@ -127,11 +137,20 @@ export class ContainerHelper {
 
 			// Containers by preset.
 			default:
-				const sizes = preset.split( '-' );
+				const sizes = preset.split( '-' ),
+					// Map rounded, user-readable sizes to actual percentages.
+					sizesMap = {
+						33: '33.3333',
+						66: '66.6666',
+					};
 
 				settings = {
-					flex_direction: ContainerHelper.DIRECTION_ROW,
+					flex_direction: this.DIRECTION_ROW,
 					flex_wrap: 'wrap',
+					flex_gap: {
+						unit: 'px',
+						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+					},
 				};
 
 				// Create a parent container to contain all of the sub containers.
@@ -151,6 +170,8 @@ export class ContainerHelper {
 				// Create all sub containers using the sizes array.
 				// Use flex basis to make the sizes explicit.
 				sizes.forEach( ( size ) => {
+					size = sizesMap[ size ] || size;
+
 					this.createContainer( {
 						flex_direction: this.DIRECTION_COLUMN,
 						width: {
