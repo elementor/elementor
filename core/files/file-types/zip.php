@@ -33,6 +33,19 @@ class Zip extends Base {
 	}
 
 	/**
+	 * Get Mime Type
+	 *
+	 * Returns the file type's mime type
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string mime type
+	 */
+	public function get_mime_type() {
+		return 'application/zip';
+	}
+
+	/**
 	 * Get File Property Name
 	 *
 	 * Get the property name to look for in the $_FILES superglobal

@@ -93,6 +93,7 @@ class Modules_Manager {
 			'compatibility-tag',
 			'elements-color-picker',
 			'shapes',
+			'favorites',
 			'admin-top-bar',
 		];
 	}

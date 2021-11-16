@@ -7,7 +7,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Files\Assets\Files_Upload_Handler;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Schemes\Manager as Schemes_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -33,12 +33,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Editor {
-
-	/**
-	 * The nonce key for Elementor editor.
-	 * @deprecated 2.3.0
-	 */
-	const EDITING_NONCE_KEY = 'elementor-editing';
 
 	/**
 	 * User capability required to access Elementor editor.
@@ -549,7 +543,7 @@ class Editor {
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
 			'filesUpload' => [
-				'unfilteredFiles' => Files_Upload_Handler::is_enabled(),
+				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
@@ -872,7 +866,7 @@ class Editor {
 	 * @access public
 	 */
 	public function __construct() {
-		Plugin::$instance->data_manager->register_controller( Data\Globals\Controller::class );
+		Plugin::$instance->data_manager_v2->register_controller( new Data\Globals\Controller() );
 
 		$this->notice_bar = new Notice_Bar();
 

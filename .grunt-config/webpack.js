@@ -114,6 +114,8 @@ const externals = {
 	react: 'React',
 	'react-dom': 'ReactDOM',
 	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/components': 'elementorAppPackages.components',
+	'@elementor/hooks': 'elementorAppPackages.hooks',
 	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
 	'@elementor/router': 'elementorAppPackages.router',
 };

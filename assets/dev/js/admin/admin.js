@@ -1,6 +1,7 @@
 import LandingPagesModule from 'elementor/modules/landing-pages/assets/js/admin/module';
 import ExperimentsModule from 'elementor/core/experiments/assets/js/admin/module';
 import environment from '../../../../core/common/assets/js/utils/environment';
+import Events from 'elementor-utils/events';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -481,6 +482,6 @@ import environment from '../../../../core/common/assets/js/utils/environment';
 	$( function() {
 		window.elementorAdmin = new ElementorAdmin();
 
-		elementorCommon.elements.$window.trigger( 'elementor/admin/init' );
+		Events.dispatch( elementorCommon.elements.$window, 'elementor/admin/init' );
 	} );
 }( jQuery ) );

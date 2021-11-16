@@ -114,23 +114,6 @@ class AddSectionBase extends Marionette.ItemView {
 		];
 	}
 
-	/**
-	 * Create a Container element.
-	 *
-	 * @param {Object} options - command options.
-	 *
-	 * @return {void}
-	 */
-	createContainer( options = {} ) {
-		$e.run( 'document/elements/create', {
-			model: {
-				elType: 'container',
-			},
-			container: elementor.getPreviewContainer(),
-			options,
-		} );
-	}
-
 	onAddSectionButtonClick() {
 		this.showSelectPresets();
 	}
@@ -146,7 +129,6 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this ),
 		} );
 	}
 

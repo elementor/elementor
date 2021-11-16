@@ -150,7 +150,7 @@ BaseElementView = BaseContainer.extend( {
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
-		return [
+		let groups = [
 			{
 				name: 'general',
 				actions: [
@@ -158,18 +158,20 @@ BaseElementView = BaseContainer.extend( {
 						name: 'edit',
 						icon: 'eicon-edit',
 						/* translators: %s: Element Name. */
-						title: sprintf( __( 'Edit %s', 'elementor' ), this.options.model.getTitle() ),
+						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
+						isEnabled: () => ! elementor.selection.isMultiple(),
 						callback: () => $e.run( 'panel/editor/open', {
-								model: this.options.model, // Todo: remove on merge router
-								view: this, // Todo: remove on merge router
-								container: this.getContainer(),
-							} ),
+							model: this.options.model, // Todo: remove on merge router
+							view: this, // Todo: remove on merge router
+							container: this.getContainer(),
+						} ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
 						title: __( 'Duplicate', 'elementor' ),
 						shortcut: controlSign + '+D',
-						callback: () => $e.run( 'document/elements/duplicate', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/duplicate', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			}, {
@@ -179,12 +181,14 @@ BaseElementView = BaseContainer.extend( {
 						name: 'copy',
 						title: __( 'Copy', 'elementor' ),
 						shortcut: controlSign + '+C',
-						callback: () => $e.run( 'document/elements/copy', { container: this.getContainer() } ),
+						isEnabled: () => elementor.selection.isSameType(),
+						callback: () => $e.run( 'document/elements/copy', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'paste',
 						title: __( 'Paste', 'elementor' ),
 						shortcut: controlSign + '+V',
-						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this.getContainer() ) &&
+							elementor.selection.isSameType(),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this.getContainer(),
 						} ),
@@ -193,26 +197,48 @@ BaseElementView = BaseContainer.extend( {
 						title: __( 'Paste Style', 'elementor' ),
 						shortcut: controlSign + '+⇧+V',
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
-						callback: () => $e.run( 'document/elements/paste-style', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
 						name: 'resetStyle',
 						title: __( 'Reset Style', 'elementor' ),
-						callback: () => $e.run( 'document/elements/reset-style', { container: this.getContainer() } ),
-					},
-				],
-			}, {
-				name: 'delete',
-				actions: [
-					{
-						name: 'delete',
-						icon: 'eicon-trash',
-						title: __( 'Delete', 'elementor' ),
-						shortcut: '⌦',
-						callback: () => $e.run( 'document/elements/delete', { container: this.getContainer() } ),
+						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
 			},
 		];
+
+		let customGroups = [];
+
+		/**
+		 * Filter Additional Context Menu Groups.
+		 *
+		 * This filter allows adding new context menu groups to elements.
+		 *
+		 * @param array customGroups - An array of group objects.
+		 * @param string elementType - The current element type.
+		 */
+		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
+
+		if ( customGroups.length ) {
+			groups = [ ...groups, ...customGroups ];
+		}
+
+		groups.push( {
+			name: 'delete',
+			actions: [
+				{
+					name: 'delete',
+					icon: 'eicon-trash',
+					title: () => elementor.selection.isMultiple() ?
+							sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length ) :
+							__( 'Delete', 'elementor' ),
+					shortcut: '⌦',
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+				},
+			],
+		} );
+
+		return groups;
 	},
 
 	getEditButtons: function() {
@@ -247,10 +273,32 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay: function() {
-		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ this.getElementType() }-settings` } );
+		const elementType = this.getElementType(),
+			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
+			elementData = elementor.getElementData( this.model );
 
-		jQuery.each( this.getEditButtons(), ( toolName, tool ) => {
+		let editButtons = this.getEditButtons();
+
+		// We should only allow external modification to edit buttons if the user enabled edit buttons.
+		if ( editButtonsEnabled ) {
+			// A filter for adding edit buttons to all element types.
+			editButtons = elementor.hooks.applyFilters( `elements/base/edit-buttons`, editButtons );
+			// A filter for adding edit buttons only to a specific element type.
+			editButtons = elementor.hooks.applyFilters( `elements/${ elementType }/edit-buttons`, editButtons );
+		}
+
+		// Only sections always have the remove button, even if the Editing Handles preference is off.
+		if ( 'section' === elementType || editButtonsEnabled ) {
+			editButtons.remove = {
+				/* translators: %s: Element Name. */
+				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				icon: 'close',
+			};
+		}
+
+		jQuery.each( editButtons, ( toolName, tool ) => {
 			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
 				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
 				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
@@ -368,6 +416,9 @@ BaseElementView = BaseContainer.extend( {
 		if ( customData ) {
 			jQuery.extend( model, customData );
 		}
+
+		// Reset the selected element cache.
+		elementor.channels.panelElements.reply( 'element:selected', null );
 
 		return $e.run( 'document/elements/create', {
 			container: this.getContainer(),
@@ -812,14 +863,17 @@ BaseElementView = BaseContainer.extend( {
 				}, { timeout: 500 } );
 			}
 		}
+
+		// Defer to wait for all of the children to render.
+		setTimeout( () => this.initDraggable(), 0 );
 	},
 
 	onEditSettingsChanged( changedModel ) {
 		elementor.channels.editor.trigger( 'change:editSettings', changedModel, this );
 	},
 
-	onEditButtonClick() {
-		this.model.trigger( 'request:edit' );
+	onEditButtonClick( event ) {
+		this.model.trigger( 'request:edit', { append: event.ctrlKey || event.metaKey } );
 	},
 
 	onEditRequest( options = {} ) {
@@ -838,11 +892,24 @@ BaseElementView = BaseContainer.extend( {
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 
-		$e.run( 'panel/editor/open', {
-			model: model,
-			view: this,
-			options,
+		$e.run( 'document/elements/toggle-selection', {
+			container: this.getContainer(),
+			append: options.append,
 		} );
+	},
+
+	/**
+	 * Select current element.
+	 */
+	select() {
+		this.$el.addClass( 'elementor-element-editable' );
+	},
+
+	/**
+	 * Deselect current element.
+	 */
+	deselect() {
+		this.$el.removeClass( 'elementor-element-editable' );
 	},
 
 	onDuplicateButtonClick( event ) {
@@ -878,6 +945,93 @@ BaseElementView = BaseContainer.extend( {
 		this.getEditModel().get( 'settings' ).validators = {};
 
 		elementor.channels.data.trigger( 'element:destroy', this.model );
+	},
+
+	/**
+	 * On `$el` drag start event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragStart() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * On `$el` drag end event.
+	 * Used inside `Draggable` and can be overridden by the extending views.
+	 *
+	 * @return void
+	 */
+	onDragEnd() {
+		// TODO: Override if needed.
+	},
+
+	/**
+	 * Create a drag helper element.
+	 * Copied from `behaviors/sortable.js` with some refactor.
+	 *
+	 * @return {HTMLDivElement}
+	 */
+	getDraggableHelper: function() {
+		const model = this.getEditModel();
+
+		const helper = document.createElement( 'div' );
+		helper.classList.add( 'elementor-sortable-helper', `elementor-sortable-helper-${ model.get( 'elType' ) }` );
+
+		helper.innerHTML = `
+			<div class="icon">
+				<i class="${ model.getIcon() }"></i>
+			</div>
+			<div class="elementor-element-title-wrapper">
+				<div class="title">${ model.getTitle() }</div>
+			</div>
+		`;
+
+		return helper;
+	},
+
+	/**
+	 * Initialize the Droppable instance.
+	 *
+	 * @return void
+	 */
+	initDraggable: function() {
+		// Init the draggable only for Containers and their children.
+		if ( ! this.$el.hasClass( '.e-container' ) && ! this.$el.parents( '.e-container' ).length ) {
+			return;
+		}
+
+		this.$el.html5Draggable( {
+			onDragStart: ( e ) => {
+				e.stopPropagation();
+
+				const helper = this.getDraggableHelper();
+				this.$el[ 0 ].appendChild( helper );
+
+				// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+
+				// Remove the helper element as soon as it's set as a drag image, since the element must be
+				// rendered for at least a fraction of a second in order to set it as a drag image.
+				setTimeout( () => {
+					helper.remove();
+				} );
+
+				this.onDragStart( e );
+
+				const container = this.getContainer();
+
+				elementor.channels.editor.reply( 'element:dragged', container.view );
+			},
+			onDragEnd: ( e ) => {
+				e.stopPropagation();
+
+				this.onDragEnd( e );
+			},
+
+			groups: [ 'elementor-element' ],
+		} );
 	},
 } );
 

@@ -1,8 +1,8 @@
 // Most of the code has been copied from `section.js`.
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
-import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 import EmptyView from './container/empty-view';
+import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 
@@ -29,8 +29,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getCurrentUiStates() {
+		const currentDirection = this.container.settings.get( 'flex_direction' );
+
 		return {
-			directionMode: this.container.settings.get( 'flex_direction' ).includes( 'column' ) ? DIRECTION_COLUMN : DIRECTION_ROW,
+			directionMode: currentDirection || DIRECTION_ROW,
 		};
 	},
 
@@ -38,6 +40,7 @@ const ContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
+			// TODO: Remove. It's a temporary solution for the Navigator sortable.
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget',
@@ -56,23 +59,55 @@ const ContainerView = BaseElementView.extend( {
 		this.model.get( 'editSettings' ).set( 'defaultEditRoute', 'layout' );
 	},
 
+	/**
+	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
+	 *
+	 * @return {{}}
+	 */
 	getSortableOptions: function() {
+		// TODO: Temporary hack.
 		return {
-			connectWith: '.e-container, .elementor-widget-wrap',
-			items: '> .elementor-element',
-			tolerance: 'intersect', // Use a lower tolerance option since the other one makes the DnD fragile (See https://api.jqueryui.com/sortable/#option-tolerance).
-			swappable: true,
+			preventInit: true,
 		};
 	},
 
+	/**
+	 * Get the Container nesting level recursively.
+	 * The farthest parent Container is level 0.
+	 *
+	 * @return {number}
+	 */
+	getNestingLevel: function() {
+		// Use the memoized value if present, to prevent too many calculations.
+		if ( this.nestingLevel ) {
+			return this.nestingLevel;
+		}
+
+		const parent = this.container.parent;
+
+		// Start counting nesting level only from the closest Container parent.
+		if ( 'container' !== parent.type ) {
+			return 0;
+		}
+
+		return parent.view.getNestingLevel() + 1;
+	},
+
 	getDroppableOptions: function() {
+		// Determine the axis based on the flex direction.
+		const axis = this.getContainer().settings.get( 'flex_direction' ).includes( 'column' ) ?
+			[ 'vertical' ] :
+			[ 'horizontal' ];
+
 		return {
+			axis,
 			items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
 			groups: [ 'elementor-element' ],
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
 			hasDraggingOnChildClass: 'e-dragging-over',
+			getDropContainer: () => this.getContainer(),
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
@@ -87,6 +122,29 @@ const ContainerView = BaseElementView.extend( {
 					newIndex++;
 				}
 
+				const draggedView = elementor.channels.editor.request( 'element:dragged' );
+
+				// User is sorting inside a Container.
+				if ( draggedView ) {
+					// Reset the dragged element cache.
+					elementor.channels.editor.reply( 'element:dragged', null );
+
+					if ( draggedView.parent === this ) {
+						newIndex++;
+					}
+
+					$e.run( 'document/elements/move', {
+						container: draggedView.getContainer(),
+						target: this.getContainer(),
+						options: {
+							at: newIndex,
+						},
+					} );
+
+					return;
+				}
+
+				// User is dragging an element from the panel.
 				this.addElementFromPanel( { at: newIndex } );
 			},
 		};
@@ -142,7 +200,9 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		const elementView = elementor.channels.panelElements.request( 'element:selected' );
+		const elementView =
+			elementor.channels.panelElements.request( 'element:selected' ) ||
+			elementor.channels.editor.request( 'element:dragged' );
 
 		if ( ! elementView ) {
 			return false;
@@ -232,6 +292,20 @@ const ContainerView = BaseElementView.extend( {
 
 		this.changeContainerClasses();
 
+		// Defer to wait for everything to render.
+		setTimeout( () => {
+			this.nestingLevel = this.getNestingLevel();
+
+			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+			this.$el.html5Droppable( this.getDroppableOptions() );
+		} );
+	},
+
+	onDragStart: function() {
+		this.$el.html5Droppable( 'destroy' );
+	},
+
+	onDragEnd: function() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 } );
