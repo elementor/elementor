@@ -41,8 +41,7 @@
    | _multiple_   | `{Boolean}`           | **optional**  | default: `{false}`. allow multiple results.
 
 ## _Util_ -- `$e.components.get('document').utils.findViewById()`
-* **Name**: findViewById, the method will run recursively until it finds the view with given id.
-* **Description**: Find view by id.
+* **Description**: Find view by id, the method will run recursively until it finds the view with the given id.
 * **Returns**: `{ View | View[] }`
 
   | Property     | Type                  | Requirement   | Description |
