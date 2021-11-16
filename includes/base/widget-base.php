@@ -1054,6 +1054,16 @@ abstract class Widget_Base extends Element_Base {
 		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
 	}
 
+	public function get_has_custom_breakpoints() {
+		static $has_custom_breakpoints;
+
+		if ( ! isset( $has_custom_breakpoints ) ) {
+			$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+		}
+
+		return $has_custom_breakpoints;
+	}
+
 	private function get_widget_css() {
 		$widgets_css_data_manager = $this->get_widgets_css_data_manager();
 
@@ -1125,15 +1135,5 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return self::$responsive_widgets_data_manager;
-	}
-
-	public function get_has_custom_breakpoints() {
-		static $has_custom_breakpoints;
-
-		if ( ! isset( $has_custom_breakpoints ) ) {
-			$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-		}
-
-		return $has_custom_breakpoints;
 	}
 }
