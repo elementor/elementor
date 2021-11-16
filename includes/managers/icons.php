@@ -475,7 +475,7 @@ class Icons_Manager {
 				'label' => esc_html__( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 'yes',
+					'std' => '',
 					'options' => [
 						'' => esc_html__( 'No', 'elementor' ),
 						'yes' => esc_html__( 'Yes', 'elementor' ),
