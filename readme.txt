@@ -188,6 +188,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.4.8 - 2021-11-16 =
+* Fix: Font Awesome 4 support option is set to Yes in new websites
+* Fix: CSS Printing method option is set to Internal Embedding in new websites
+* Fix: Hardened Lightbox capabilities to enforce better security policies
+* Fix: After downgrading from a version with Container experiment active a PHP error is thrown
+
 = 3.4.7 - 2021-10-31 =
 * Tweak: Added role restriction to Version control feature
 * Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
