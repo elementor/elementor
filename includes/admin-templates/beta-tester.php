@@ -40,15 +40,15 @@ $beta_tester_email = $user->user_email;
 		<div id="elementor-beta-tester-form__terms">
 			<?php
 			echo sprintf(
-				/* translators: %1$s is the "Terms of service" link, %2$s is the "Privacy policy" link */
+				/* translators: 1. "Terms of service" link, 2. "Privacy policy" link */
 				esc_html__( 'By clicking Sign Up, you agree to Elementor\'s %1$s and %2$s', 'elementor' ),
 				sprintf(
-					'<a href="%1$s" target="_blank" rel="nofollow">%2$s</a>',
+					'<a href="%1$s" target="_blank">%2$s</a>',
 					esc_url( Beta_Testers::NEWSLETTER_TERMS_URL ),
 					esc_html__( 'Terms of Service', 'elementor' )
 				),
 				sprintf(
-					'<a href="%1$s" target="_blank" rel="nofollow">%2$s</a>',
+					'<a href="%1$s" target="_blank">%2$s</a>',
 					esc_url( Beta_Testers::NEWSLETTER_PRIVACY_URL ),
 					esc_html__( 'Privacy Policy', 'elementor' )
 				)
