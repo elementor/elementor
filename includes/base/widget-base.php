@@ -1127,7 +1127,7 @@ abstract class Widget_Base extends Element_Base {
 		return self::$responsive_widgets_data_manager;
 	}
 
-	private function get_has_custom_breakpoints() {
+	public function get_has_custom_breakpoints() {
 		static $has_custom_breakpoints;
 
 		if ( ! isset( $has_custom_breakpoints ) ) {
