@@ -2,6 +2,16 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 export default class Store {
 	/**
+	 * @type {Object}
+	 */
+	slices = {};
+
+	/**
+	 * @type {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
+	 */
+	reduxStore;
+
+	/**
 	 * Initialize the Store.
 	 *
 	 * @return {void}
@@ -17,22 +27,32 @@ export default class Store {
 	 * @return {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
 	 */
 	createStore() {
-		const store = configureStore( {
+		return configureStore( {
 			// Use an empty function instead of empty object since an empty object
 			// isn't a valid reducer value.
 			reducer: () => {},
 		} );
+	}
 
-		// See: https://redux.js.org/usage/code-splitting#defining-an-injectreducer-function
-		store.asyncReducers = {};
+	/**
+	 * Inject a new reducer.
+	 *
+	 * See: https://redux.js.org/usage/code-splitting#defining-an-injectreducer-function
+	 *
+	 * @param {string} id - Reducer unique ID.
+	 * @param {function} newReducer - New reducer to inject.
+	 *
+	 * @return {void}
+	 */
+	injectReducer( id, newReducer ) {
+		const prevReducers = this.getReducers();
 
-		store.injectReducer = ( key, newReducer ) => {
-			store.asyncReducers[ key ] = newReducer;
-
-			store.replaceReducer( combineReducers( { ...store.asyncReducers } ) );
-		};
-
-		return store;
+		this.reduxStore.replaceReducer(
+			combineReducers( {
+				...prevReducers,
+				[ id ]: newReducer,
+			} )
+		);
 	}
 
 	/**
@@ -50,17 +70,17 @@ export default class Store {
 
 		this.slices[ sliceId ] = instance;
 
-		this.reduxStore.injectReducer( sliceId, instance.reducer );
+		this.injectReducer( sliceId, instance.reducer );
 	}
 
 	/**
 	 * Get a specific slice.
 	 *
-	 * @param {string} sliceId - Slice ID to get.
+	 * @param {string|null} sliceId - Slice ID to get.
 	 *
 	 * @return {Slice|Object}
 	 */
-	get( sliceId ) {
+	get( sliceId = null ) {
 		if ( sliceId ) {
 			return this.slices[ sliceId ];
 		}
@@ -75,6 +95,19 @@ export default class Store {
 	 */
 	getAll() {
 		return Object.keys( this.slices );
+	}
+
+	/**
+	 * Return the current reducers.
+	 *
+	 * @return {Object}
+	 */
+	getReducers() {
+		return Object.entries( this.slices )
+			.reduce( ( reducers, [ key, slice ] ) => ( {
+				...reducers,
+				[ key ]: slice.reducer,
+			} ), {} );
 	}
 
 	/**
