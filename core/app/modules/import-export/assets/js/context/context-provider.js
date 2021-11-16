@@ -2,13 +2,14 @@ import { useReducer } from 'react';
 
 import { reducer } from './context-reducer';
 
+import kitContentData from '../shared/kit-content-data/kit-content-data';
+
 export const Context = React.createContext();
 
 export default function ContextProvider( props ) {
 	const initialState = {
-		includes: [],
+		includes: kitContentData.map( ( item ) => item.type ),
 		downloadUrl: '',
-		fileResponse: null,
 		file: null,
 		overrideConditions: [],
 		referrer: null,
@@ -16,6 +17,9 @@ export default function ContextProvider( props ) {
 			title: null,
 			description: null,
 		},
+		uploadedData: null,
+		importedData: null,
+		exportedData: null,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

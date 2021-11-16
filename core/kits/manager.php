@@ -287,7 +287,7 @@ class Manager {
 	public function register_controls() {
 		$controls_manager = Plugin::$instance->controls_manager;
 
-		$controls_manager->register_control( Repeater::CONTROL_TYPE, new Repeater() );
+		$controls_manager->register( new Repeater() );
 	}
 
 	public function is_custom_colors_enabled() {
@@ -380,7 +380,7 @@ class Manager {
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
-		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
+		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
 
 		add_action( 'wp_trash_post', function ( $post_id ) {
 			$this->before_delete_kit( $post_id );

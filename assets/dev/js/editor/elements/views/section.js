@@ -102,13 +102,6 @@ const SectionView = BaseElementView.extend( {
 				icon: 'clone',
 			};
 		}
-
-		editTools.remove = {
-			/* translators: %s: Element name. */
-			title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
-			icon: 'close',
-		};
-
 		return editTools;
 	},
 
@@ -122,6 +115,7 @@ const SectionView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
+					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),
 				},
 			],

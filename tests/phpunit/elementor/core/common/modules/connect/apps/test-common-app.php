@@ -1,8 +1,9 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Core\Utils\Http;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
+use Elementor\Core\Utils\Http;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App;
 use Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Apps\Mock\Mock_App_Multiple_Urls;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -474,6 +475,32 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( (object) [ 'status' => 'success' ], $result );
 	}
 
+	public function test_get_remote_authorize_url(  ) {
+		// Arrange
+		$_GET['utm_source'] = 'test-source';
+		$_GET['utm_medium'] = 'test-medium';
+		$_GET['utm_campaign'] = 'test-campaign';
+		$_GET['utm_not_allowed_param'] = 'test-test';
+
+		// Act
+		$url = $this->app_stub->proxy_get_remote_authorize_url();
+
+		// Assert
+		$parsed_url = parse_url( $url );
+		$parsed_query_params = [];
+		parse_str( $parsed_url['query'], $parsed_query_params );
+
+		$this->assertEquals(  'my.elementor.com', $parsed_url['host'] );
+		$this->assertEquals(  '/connect/v1/mock-app', $parsed_url['path'] );
+		$this->assertEquals( 'authorize', $parsed_query_params['action'] );
+		$this->assertEquals( 'test-source', $parsed_query_params['utm_source'] );
+		$this->assertEquals( 'test-medium', $parsed_query_params['utm_medium'] );
+		$this->assertEquals( 'test-campaign', $parsed_query_params['utm_campaign'] );
+		$this->assertArrayNotHasKey( 'utm_not_allowed_param', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_term', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_content', $parsed_query_params );
+	}
+
 	private function get_connected_user() {
 		global $wpdb;
 
@@ -486,7 +513,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		$user = get_user_by( 'id', $user_test_id );
 		wp_set_current_user( $user_test_id );
 
-		update_user_option( $user_test_id, 'elementor_connect_common_data', [
+		update_user_option( $user_test_id, Common_App::OPTION_CONNECT_COMMON_DATA_KEY, [
 			'client_id' => 'client_id_test',
 			'auth_secret' => 'auth_secret_test',
 			'access_token' => 'access_token_test',
@@ -497,7 +524,7 @@ class Test_Common_App extends Elementor_Test_Base {
 			]
 		] );
 
-		update_option( 'elementor_connect_site_key', 'site_key_test' );
+		update_option( Base_App::OPTION_CONNECT_SITE_KEY, 'site_key_test' );
 
 		return $user;
 	}

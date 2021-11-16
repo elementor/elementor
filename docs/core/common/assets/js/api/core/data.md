@@ -4,7 +4,7 @@ The new data API (since 3.0.0), provides a simple and convenient way to communic
 The full list of data commands, ( including custom & 3rd party commands ) are available via: `$e.data.getAll();`
 
 *  **Description**: `$e.data` API is a manager of _data_ _commands_, allow you to create custom _commands_ that runs by `$e.data.get()`, `$e.data.create()`, `$e.data.delete()`, `$e.data.update()` - depends on what you want to do with the data, each component have its own unique data commands, and all the data commands managed by this **API**.
-`$e.data` is inherent from `$e.commands` it was created in order to have the same abilities/options as `$e.commands` but unlike it, each command will represent a final endpoint, and by running it will give the option to *access/manipulate* the [Restful backend]() data or local cache.
+`$e.data` is inherent from `$e.commands` it was created in order to have the same abilities/options as `$e.commands` but unlike it, each command will represent a final endpoint, and by running it will give the option to *access/manipulate* the [Restful backend](../../../../../../data/base/v2) data or local cache.
 *  **Location**: */core/common/assets/js/components/data.js*
 *  **Parent**: `$e.commands`
 * **Available commands:** for further information about **all** data commands, please visit [`{$e.data.getAll()}`](#)**method**.

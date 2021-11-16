@@ -167,6 +167,10 @@ abstract class Document extends Controls_Stack {
 		return static::get_title();
 	}
 
+	public static function get_add_new_title() {
+		return sprintf( esc_html__( 'Add New %s', 'elementor' ), static::get_title() );
+	}
+
 	/**
 	 * Get property.
 	 *
@@ -200,9 +204,9 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public static function get_create_url() {
-		$base_create_url = Plugin::$instance->documents->get_create_new_post_url( Source_Local::CPT );
+		$properties = static::get_properties();
 
-		return add_query_arg( [ 'template_type' => static::get_type() ], $base_create_url );
+		return Plugin::$instance->documents->get_create_new_post_url( $properties['cpt'][0], static::get_type() );
 	}
 
 	public function get_name() {
@@ -535,6 +539,8 @@ abstract class Document extends Controls_Stack {
 				'have_a_look' => $this->get_have_a_look_url(),
 			],
 		];
+
+		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
 			$config['elements'] = $this->get_elements_raw_data( null, true );

@@ -356,7 +356,7 @@ abstract class Widget_Base extends Element_Base {
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
-		return array_merge( parent::get_initial_config(), $config );
+		return array_replace_recursive( parent::get_initial_config(), $config );
 	}
 
 	/**
@@ -1046,7 +1046,7 @@ abstract class Widget_Base extends Element_Base {
 					$config = $is_core_dependency ? self::get_widget_css_config( $widget_name ) : $this->get_widget_css_config( $widget_name );
 				}
 
-				$widget_css .= $widgets_css_data_manager->get_asset_data( $config );
+				$widget_css .= $widgets_css_data_manager->get_asset_data_from_config( $config );
 
 				self::$registered_inline_css_widgets[] = $widget_name;
 			}
