@@ -1,5 +1,5 @@
 import CommandData from 'elementor-api/modules/command-data';
-import FilesUploadHandler from "../../../../../../../../assets/dev/js/editor/utils/files-upload-handler";
+import FilesUploadHandler from 'elementor-editor/utils/files-upload-handler';
 
 export class Media extends CommandData {
 	static getEndpointFormat() {
@@ -57,7 +57,12 @@ export class Media extends CommandData {
 			throw new Error( __( 'The file exceeds the maximum upload size for this site.', 'elementor' ) );
 		}
 
-		if ( ! elementor.config.filesUpload.unfilteredFiles ) {
+		if (
+			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
+				this.file.name.split( '.' ).pop()
+			) &&
+			! elementor.config.filesUpload.unfilteredFiles
+		) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
 			return;
 		}

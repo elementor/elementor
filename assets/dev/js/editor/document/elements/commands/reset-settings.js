@@ -8,7 +8,7 @@ export class ResetSettings extends CommandHistory {
 	getHistory( args ) {
 		const { containers = [ args.container ], silent = false } = args;
 
-		return silent && {
+		return ! silent && {
 			containers,
 			type: 'reset_settings',
 		};
