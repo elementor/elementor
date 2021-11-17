@@ -5,7 +5,7 @@ trait Mock_Random_Name_Type {
 	public $random = null;
 
 	public function get_name() {
-		if ( ! $this->random ) {
+  		if ( ! $this->random ) {
 			$this->random = rand_long_str( 5 );
 		}
 
