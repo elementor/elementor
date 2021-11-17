@@ -7,8 +7,8 @@ export default function ItemList( { elements, level, indicateEmpty } ) {
 		<div className="elementor-navigator__elements">
 			{ elements.length ?
 				elements.map(
-					( element, index ) => (
-						<Item key={ element.id } elementId={ element.id } index={ index } level={ level } />
+					( element ) => (
+						<Item key={ element.id } elementId={ element.id } level={ level } />
 					)
 				) :
 				( indicateEmpty && <ItemListEmpty /> )

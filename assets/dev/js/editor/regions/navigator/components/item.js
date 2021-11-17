@@ -7,18 +7,15 @@ import ItemList from './item-list';
 import ItemTitle from './item-title';
 import { useListStateContext } from '../context/list-state-context';
 import useElement from '../hooks/use-element';
-import { arrayToClassName, mergeRefs } from 'elementor-app/utils/utils';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { arrayToClassName } from 'elementor-app/utils/utils';
 
-export default function Item( { elementId, index, level } ) {
+export default function Item( { elementId, level } ) {
 	const { element, toggleVisibility, titleEdit, hasChildren, selected, showContextMenu, toggleSelection } = useElement( elementId ),
 		[ listState, setListState ] = useListStateContext( elementId ),
 		baseClassName = 'elementor-navigator__element';
 
 	useEffect( () => {
-		if ( 0 === level ) {
-			setListState( true );
-		}
+		setListState( 0 === level );
 	}, [ level ] );
 
 	const handleClick = ( e ) => {
@@ -36,28 +33,16 @@ export default function Item( { elementId, index, level } ) {
 		setListState( ! listState );
 	};
 
-	const ItemBody = ( { draggable, droppable } ) => {
-		useEffect( () => {
-			if ( droppable.snapshot.isDraggingOver ) {
-				setListState( droppable.snapshot.isDraggingOver );
-			}
-		}, [ droppable.snapshot.isDraggingOver ] );
-
-		return (
-			<div
-				ref={ mergeRefs( draggable.provided.innerRef, droppable.provided.innerRef ) }
-				className={ arrayToClassName( [
-					{ [ baseClassName ]: true },
-					{ [ `${ baseClassName }-${ element.elType }` ]: element.elType },
-					{ [ `${ baseClassName }--has-children` ]: hasChildren },
-					{ [ `${ baseClassName }-hidden` ]: element.hidden },
-					{ [ `ui-sortable-helper` ]: draggable.snapshot.isDragging },
-					{ [ `elementor-dragging-on-child` ]: droppable.snapshot.isDraggingOver },
-				] ) }
-				onContextMenu={ handleContextMenu }
-				{ ...draggable.provided.draggableProps }
-				{ ...draggable.provided.dragHandleProps }>
-				{ 'document' === element.elType ||
+	return (
+		<div
+			className={ arrayToClassName( [
+				{ [ baseClassName ]: true },
+				{ [ `${ baseClassName }-${ element.elType }` ]: element.elType },
+				{ [ `${ baseClassName }--has-children` ]: hasChildren },
+				{ [ `${ baseClassName }-hidden` ]: element.hidden },
+			] ) }
+			onContextMenu={ handleContextMenu }>
+			{ 'document' === element.elType ||
 				<div
 					className={ arrayToClassName( [
 						{ 'elementor-navigator__item': true },
@@ -76,44 +61,16 @@ export default function Item( { elementId, index, level } ) {
 					</div>
 					<ItemIndicatorList settings={ element.settings } />
 				</div>
-				}
-				<div style={ { display: listState ? 'block' : 'none' } }>
-					<ItemList elements={ element.elements } level={ level + 1 } indicateEmpty={ hasChildren } />
-					{ droppable.provided.placeholder }
-				</div>
+			}
+			<div style={ { display: listState ? 'block' : 'none' } }>
+				<ItemList elements={ element.elements } level={ level + 1 } indicateEmpty={ hasChildren } />
 			</div>
-		);
-	};
-
-	ItemBody.propTypes = {
-		draggable: PropTypes.shape( {
-			provided: PropTypes.object,
-			snapshot: PropTypes.object,
-		} ),
-		droppable: PropTypes.shape( {
-			provided: PropTypes.object,
-			snapshot: PropTypes.object,
-		} ),
-	};
-
-	return (
-		<Draggable index={ index } draggableId={ elementId }>
-			{ ( provided, snapshot ) => (
-				<Droppable droppableId={ elementId } type={ element.elType }>
-					{ ( _provided, _snapshot ) => (
-						<ItemBody
-							draggable={ { provided: provided, snapshot: snapshot } }
-							droppable={ { provided: _provided, snapshot: _snapshot } } />
-					) }
-				</Droppable>
-			) }
-		</Draggable>
+		</div>
 	);
 }
 
 Item.propTypes = {
 	elementId: PropTypes.string,
-	index: PropTypes.number,
 	level: PropTypes.number,
 };
 

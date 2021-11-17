@@ -26,10 +26,7 @@ export function useListStateContext( elementId ) {
 		);
 
 	useEffect( () => {
-		// Sometimes `react-beautiful-dnd` re-renders the item, so if it already has a value, we don't initialize it.
-		if ( undefined === listState ) {
-			setListState( false );
-		}
+		setListState( false );
 	}, [ elementId ] );
 
 	return [
