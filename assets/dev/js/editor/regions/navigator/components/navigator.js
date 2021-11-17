@@ -22,7 +22,7 @@ export default function Navigator( { documents } ) {
 				<Header onClose={ handleClose } />
 					<div id="elementor-navigator__elements">
 						{ element.elements.length ?
-							<ItemList elements={documents}/> :
+							<ItemList elements={ documents } /> :
 							<Empty/> }
 					</div>
 				<div id="elementor-navigator__footer">
