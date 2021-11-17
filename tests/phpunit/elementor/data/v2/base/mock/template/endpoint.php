@@ -24,7 +24,7 @@ class Endpoint extends \Elementor\Data\V2\Base\Endpoint {
 		return $this->sub_endpoints;
 	}
 
-	public function do_register_route($route = '', $methods = \WP_REST_Server::READABLE, $callback = null, $args = []) {
-		return $this->register_route( $route, $methods, $callback, $args );
+	public function do_register_route($route = '', $methods = \WP_REST_Server::READABLE, $args = []) {
+		return $this->register_route( $route, $methods, $args );
 	}
 }
