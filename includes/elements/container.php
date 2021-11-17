@@ -240,6 +240,8 @@ class Container extends Element_Base {
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
 		$this->render_video_background();
+?>
+		<?php
 
 		if ( $settings['shape_divider_top'] ) {
 			$this->render_shape_divider( 'top' );
