@@ -33,20 +33,20 @@ export class Widget extends MediaParser {
 				},
 			} );
 
-		this.upload( file ).then( ( result ) => {
+		this.upload( file ).then( ( { data } ) => {
 			$e.internal( 'document/elements/set-settings', {
 				// The reason we use the container id and not the container instance itself is that the container
 				// created above is just a placeholder, which later recreated using the same id.
 				container: elementor.getContainer( container.id ),
 				settings: {
 					hosted_url: {
-						url: result.data.source_url,
-						id: result.data.id,
+						url: data.source_url,
+						id: data.id,
 					},
 				},
 			} );
 		} ).catch( () => {
-			$e.run( 'document/elements/delete', {
+			$e.internal( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
 			} );
 		} );
