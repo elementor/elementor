@@ -1,4 +1,5 @@
 import InstanceType from './instance-type';
+import isInstanceof from '../../editor/utils/is-instanceof';
 
 export default class ArgsObject extends InstanceType {
 	static getInstanceType() {
@@ -70,7 +71,7 @@ export default class ArgsObject extends InstanceType {
 	requireArgumentInstance( property, instance, args = this.args ) {
 		this.requireArgument( property, args );
 
-		if ( ! ( args[ property ] instanceof instance ) ) {
+		if ( ! ( args[ property ] instanceof instance ) && ! isInstanceof( args[ property ], instance ) ) {
 			throw Error( `${ property } invalid instance.` );
 		}
 	}

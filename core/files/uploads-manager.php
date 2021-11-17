@@ -33,6 +33,11 @@ class Uploads_Manager extends Base_Object {
 	private $allowed_file_extensions;
 
 	/**
+	 * @var bool
+	 */
+	private $is_elementor_upload = false;
+
+	/**
 	 * @var string
 	 */
 	private $temp_dir;
@@ -43,6 +48,7 @@ class Uploads_Manager extends Base_Object {
 	 * To Add a new file type to Elementor, with its own handling logic, you need to add it to the $file_types array here.
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 */
 	public function register_file_types() {
 		// All file types that have handlers should be included here.
@@ -61,6 +67,9 @@ class Uploads_Manager extends Base_Object {
 	 * Extract and Validate Zip
 	 *
 	 * This method accepts a $file array (which minimally should include a 'tmp_name')
+	 *
+	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @param string $file_path
 	 * @param array $allowed_file_types
@@ -85,7 +94,7 @@ class Uploads_Manager extends Base_Object {
 
 		foreach ( $extracted['files'] as $extracted_file_path ) {
 			// Each file is an array with a 'name' (file path) property.
-			if ( ! is_wp_error( $this->validate_file( $extracted_file_path ) ) ) {
+			if ( ! is_wp_error( $this->validate_file( [ 'tmp_name' => $extracted_file_path ] ) ) ) {
 				$result['files'][] = $extracted_file_path;
 			}
 		}
@@ -103,6 +112,9 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * The file goes through validation; if it passes validation, the file is returned. Otherwise, an error is returned.
 	 *
+	 * @since 3.3.0
+	 * @access public
+	 *
 	 * @param array $file
 	 * @param array $allowed_file_extensions Optional. an array of file types that are allowed to pass validation for each
 	 * upload.
@@ -115,7 +127,7 @@ class Uploads_Manager extends Base_Object {
 			$file = $this->save_base64_to_tmp_file( $file );
 		}
 
-		$validation_result = $this->validate_file( $file['tmp_name'], $allowed_file_extensions );
+		$validation_result = $this->validate_file( $file, $allowed_file_extensions );
 
 		if ( is_wp_error( $validation_result ) ) {
 			return $validation_result;
@@ -128,6 +140,7 @@ class Uploads_Manager extends Base_Object {
 	 * are Unfiltered Uploads Enabled
 	 *
 	 * @since 3.5.0
+	 * @access public
 	 *
 	 * @return bool
 	 */
@@ -154,6 +167,7 @@ class Uploads_Manager extends Base_Object {
 	 * Runs on the 'wp_handle_upload_prefilter' filter.
 	 *
 	 * @since 3.2.0
+	 * @access public
 	 *
 	 * @param $file
 	 * @return mixed
@@ -164,7 +178,7 @@ class Uploads_Manager extends Base_Object {
 			return $file;
 		}
 
-		$result = $this->validate_file( $file['tmp_name'] );
+		$result = $this->validate_file( $file );
 
 		if ( is_wp_error( $result ) ) {
 			$file['error'] = $result->get_error_message();
@@ -180,6 +194,7 @@ class Uploads_Manager extends Base_Object {
 	 * and assign it to the file type handlers array.
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @param string|null $file_extension - file extension
 	 * @return File_Type_Base[]|File_Type_Base
@@ -197,6 +212,7 @@ class Uploads_Manager extends Base_Object {
 	 * ref: https://core.trac.wordpress.org/ticket/40175
 	 *
 	 * @since 3.5.0
+	 * @access public
 	 *
 	 * @param $data
 	 * @param $file
@@ -230,6 +246,7 @@ class Uploads_Manager extends Base_Object {
 	 * Directory is deleted recursively with all of its contents (subdirectories and files).
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @param string $path
 	 */
@@ -247,6 +264,7 @@ class Uploads_Manager extends Base_Object {
 	 * Create a random temporary file.
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @param string $file_content
 	 * @param string $file_name
@@ -266,6 +284,7 @@ class Uploads_Manager extends Base_Object {
 	 * Get the temporary files directory path. If the directory does not exist, this method creates it.
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @return string $temp_dir
 	 */
@@ -289,6 +308,7 @@ class Uploads_Manager extends Base_Object {
 	 * Create a unique temporary directory
 	 *
 	 * @since 3.3.0
+	 * @access public
 	 *
 	 * @return string the new directory path
 	 */
@@ -337,24 +357,73 @@ class Uploads_Manager extends Base_Object {
 	 * in Elementor's settings in the admin dashboard.
 	 *
 	 * @since 3.5.0
+	 * @access public
 	 *
-	 * @return string the new directory path
+	 * @param array $allowed_mimes
+	 * @return array allowed mime types
 	 */
-	final public function support_unfiltered_elementor_file_uploads( $existing_mimes ) {
-		if ( $this->is_elementor_media_upload() && $this->are_unfiltered_uploads_enabled() ) {
+	final public function support_unfiltered_elementor_file_uploads( $allowed_mimes ) {
+		if ( $this->is_elementor_upload() && $this->are_unfiltered_uploads_enabled() ) {
 			foreach ( $this->file_type_handlers as $file_type_handler ) {
-				$existing_mimes[ $file_type_handler->get_file_extension() ] = $file_type_handler->get_mime_type();
+				$allowed_mimes[ $file_type_handler->get_file_extension() ] = $file_type_handler->get_mime_type();
 			}
 		}
 
-		return $existing_mimes;
+		return $allowed_mimes;
 	}
 
 	/**
-	 * is_elementor_media_upload
+	 * Set Elementor Upload State
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param $state
+	 */
+	public function set_elementor_upload_state( $state ) {
+		$this->is_elementor_upload = $state;
+	}
+
+	/**
+	 * Is Elementor Upload
+	 *
+	 * This method checks if the current session includes a request to upload files made via Elementor.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
 	 * @return bool
 	 */
-	private function is_elementor_media_upload() {
+	private function is_elementor_upload() {
+		return $this->is_elementor_upload || $this->is_elementor_media_upload() || $this->is_elementor_wp_media_upload();
+	}
+
+	/**
+	 * Is Elementor Media Upload
+	 *
+	 * Checks whether the current request includes uploading files via Elementor which are not destined for the Media
+	 * Library.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @return bool
+	 */
+	public function is_elementor_media_upload() {
+		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+	}
+
+	/**
+	 * Is Elementor WP Media Upload
+	 *
+	 * Checks whether the current request is a request to upload files into the WP Media Library via Elementor.
+	 *
+	 * @since 3.3.0
+	 * @access private
+	 *
+	 * @return bool
+	 */
+	private function is_elementor_wp_media_upload() {
 		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
@@ -362,6 +431,7 @@ class Uploads_Manager extends Base_Object {
 	 * Add File Extension To Allowed Extensions List
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
 	 * @param string $file_type
 	 */
@@ -382,6 +452,7 @@ class Uploads_Manager extends Base_Object {
 	 * Saves a Base64 string as a .tmp file in Elementor's temporary files directory.
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
 	 * @param $file
 	 * @return array|\WP_Error
@@ -400,51 +471,35 @@ class Uploads_Manager extends Base_Object {
 			return $temp_filename;
 		}
 
-		$new_file_array = [
+		return [
 			// the original uploaded file name
 			'name' => $file['fileName'],
 			// The path to the temporary file
 			'tmp_name' => $temp_filename,
 		];
-
-		return $new_file_array;
-	}
-
-	/**
-	 * is_elementor_wp_media_upload
-	 *
-	 * @since 3.3.0
-	 *
-	 * @return bool
-	 */
-	private function is_elementor_wp_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**
 	 * Validate File
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
-	 * @param string $file_path
+	 * @param array $file
 	 * @param array $file_extensions Optional
 	 * @return bool|\WP_Error
-	 *
 	 */
-	private function validate_file( $file_path, $file_extensions = [] ) {
-		$file_extension = pathinfo( $file_path, PATHINFO_EXTENSION );
+	private function validate_file( array $file, $file_extensions = [] ) {
+		$uploaded_file_name = isset( $file['name'] ) ? $file['name'] : $file['tmp_name'];
 
-		$allowed_file_extensions = $this->get_allowed_file_extensions();
+		$file_extension = pathinfo( $uploaded_file_name, PATHINFO_EXTENSION );
 
-		if ( $file_extensions ) {
-			$allowed_file_extensions = array_intersect( $allowed_file_extensions, $file_extensions );
-		}
+		if ( ! $this->is_elementor_wp_media_upload() ) {
+			$is_file_type_allowed = $this->is_file_type_allowed( $file_extension, $file_extensions );
 
-		// Check if the file type (extension) is in the allowed extensions list. If it is a non-standard file type (not
-		// enabled by default in WordPress) and unfiltered file uploads are not enabled, it will not be in the allowed
-		// file extensions list.
-		if ( ! in_array( $file_extension, $allowed_file_extensions, true ) ) {
-			return new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
+			if ( is_wp_error( $is_file_type_allowed ) ) {
+				return $is_file_type_allowed;
+			}
 		}
 
 		$file_type_handler = $this->get_file_type_handlers( $file_extension );
@@ -461,13 +516,62 @@ class Uploads_Manager extends Base_Object {
 		}
 
 		// Here is each file type handler's chance to run its own specific validations
-		return $file_type_handler->validate_file( $file_path );
+		return $file_type_handler->validate_file( $file );
+	}
+
+	/**
+	 * Is File Type Allowed
+	 *
+	 * Checks whether the passed file extension is allowed for upload.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @param $file_extension
+	 * @param $filtered_file_extensions
+	 * @return bool|\WP_Error
+	 */
+	private function is_file_type_allowed( $file_extension, $filtered_file_extensions ) {
+		$allowed_file_extensions = $this->get_allowed_file_extensions();
+
+		if ( $filtered_file_extensions ) {
+			$allowed_file_extensions = array_intersect( $allowed_file_extensions, $filtered_file_extensions );
+		}
+
+		$is_allowed = false;
+
+		// Check if the file type (extension) is in the allowed extensions list. If it is a non-standard file type (not
+		// enabled by default in WordPress) and unfiltered file uploads are not enabled, it will not be in the allowed
+		// file extensions list.
+		foreach ( $allowed_file_extensions as $allowed_extension ) {
+			if ( preg_match( '/' . $allowed_extension . '/', $file_extension ) ) {
+				$is_allowed = true;
+
+				break;
+			}
+		}
+
+		if ( ! $is_allowed ) {
+			$is_allowed = new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
+		}
+
+		/**
+		 * Elementor File Type Allowed
+		 *
+		 * Allows setting file types
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param bool|\WP_Error $is_allowed
+		 */
+		return apply_filters( 'elementor/files/allow-file-type/' . $file_extension, $is_allowed );
 	}
 
 	/**
 	 * Remove Directory with Files
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
 	 * @param string $dir
 	 * @return bool
@@ -492,6 +596,7 @@ class Uploads_Manager extends Base_Object {
 	 * Retrieve an array containing the list of file extensions allowed for upload.
 	 *
 	 * @since 3.3.0
+	 * @access private
 	 *
 	 * @return array file extension/s
 	 */

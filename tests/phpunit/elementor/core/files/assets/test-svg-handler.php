@@ -14,7 +14,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 	public function setUp() {
 		parent::setUp();
 
-		$_POST['uploadTypeCaller'] = 'elementor-wp-media-upload';
+		$_POST['uploadTypeCaller'] = 'elementor-media-upload';
 	}
 
 	/**
@@ -28,7 +28,7 @@ class Test_Svg_Handler extends Elementor_Test_Base {
 		$value = 'image/svg+xml';
 
 		// Act.
-		$mimes = apply_filters( 'upload_mimes', [] );
+		$mimes = apply_filters( 'upload_mimes', wp_get_mime_types() );
 
 		// Assert.
 		$this->assertArrayHasKey( $key, $mimes );

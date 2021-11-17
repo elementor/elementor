@@ -3,6 +3,8 @@
 namespace Elementor\Modules\Shapes\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
 use Elementor\Utils;
 use Elementor\Group_Control_Text_Stroke;
@@ -290,6 +292,41 @@ class TextPath extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--rotate: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_heading',
+			[
+				'label' => esc_html__( 'Text', 'elementor' ),
+				'type' => Controls_Manager::HEADING,
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'text_typography',
+				'selector' => '{{WRAPPER}}',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
+				'fields_options' => [
+					'font_size' => [
+						'default' => [
+							'size' => '20',
+							'unit' => 'px',
+						],
+						'size_units' => [ 'px' ],
+					],
+					// Text decoration isn't an inherited property, so it's required to explicitly
+					// target the specific `textPath` element.
+					'text_decoration' => [
+						'selectors' => [
+							'{{WRAPPER}} textPath' => 'text-decoration: {{VALUE}};',
+						],
+					],
 				],
 			]
 		);

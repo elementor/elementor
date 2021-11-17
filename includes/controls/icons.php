@@ -160,7 +160,17 @@ class Control_Icons extends Control_Base_Multiple {
 		];
 	}
 
+	/**
+	 * Support SVG Import
+	 *
+	 * @deprecated 3.5.0
+	 *
+	 * @param $mimes
+	 * @return mixed
+	 */
 	public function support_svg_import( $mimes ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		$mimes['svg'] = 'image/svg+xml';
 		return $mimes;
 	}
@@ -170,11 +180,7 @@ class Control_Icons extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		add_filter( 'upload_mimes', [ $this, 'support_svg_import' ], 100 );
-
 		$imported = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings['value'] );
-
-		remove_filter( 'upload_mimes', [ $this, 'support_svg_import' ], 100 );
 
 		if ( ! $imported ) {
 			$settings['value'] = '';

@@ -3,6 +3,7 @@ import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
+import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
 
 import { Context } from '../../../context/context-provider';
 
@@ -11,11 +12,15 @@ import useKit from '../../../hooks/use-kit';
 
 export default function ImportProcess() {
 	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ isError, setIsError ] = useState( false ),
+		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		isApplyAllForced = 'apply-all' === actionType,
+		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
+		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
+		[ startImport, setStartImport ] = useState( false ),
+		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -28,18 +33,23 @@ export default function ImportProcess() {
 			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			kitActions.import( {
-				session: context.data.uploadedData.session,
-				include: context.data.includes,
-				overrideConditions: context.data.overrideConditions,
-				referrer: context.data.referrer,
-			} );
+			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
+				setStartImport( true );
+			} else {
+				setShowUnfilteredFilesDialog( true );
+			}
 		},
-		onDialogDismiss = () => {
+		onCancelProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
-			navigate( '/import' );
+
+			if ( 'kit-library' === referrer ) {
+				navigate( '/kit-library' );
+			} else {
+				navigate( '/import' );
+			}
 		};
 
+	// on load.
 	useEffect( () => {
 		if ( fileURL && ! context.data.file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
@@ -50,6 +60,19 @@ export default function ImportProcess() {
 		}
 	}, [] );
 
+	// Starting the import process.
+	useEffect( () => {
+		if ( startImport ) {
+			kitActions.import( {
+				session: context.data.uploadedData.session,
+				include: context.data.includes,
+				overrideConditions: context.data.overrideConditions,
+				referrer: context.data.referrer,
+			} );
+		}
+	}, [ startImport ] );
+
+	// Updating the kit data after upload/import.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			switch ( kitState.status ) {
@@ -60,12 +83,13 @@ export default function ImportProcess() {
 					context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 					break;
 				case KIT_STATUS_MAP.ERROR:
-					setIsError( true );
+					setErrorType( kitState.data );
 					break;
 			}
 		}
 	}, [ kitState.status ] );
 
+	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			if ( context.data.importedData ) { // After kit upload.
@@ -87,11 +111,22 @@ export default function ImportProcess() {
 
 	return (
 		<Layout type="import">
-			<FileProcess
-				isError={ isError }
-				onDialogApprove={ () => {} }
-				onDialogDismiss={ onDialogDismiss }
-			/>
+			<section>
+				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
+
+				<UnfilteredFilesDialog
+					show={ showUnfilteredFilesDialog }
+					setShow={ setShowUnfilteredFilesDialog }
+					onReady={ () => {
+						setShowUnfilteredFilesDialog( false );
+						setStartImport( true );
+					} }
+					onCancel={ () => {
+						setShowUnfilteredFilesDialog( false );
+						onCancelProcess();
+					} }
+				/>
+			</section>
 		</Layout>
 	);
 }

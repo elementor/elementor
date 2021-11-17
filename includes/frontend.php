@@ -405,19 +405,6 @@ class Frontend extends App {
 			true
 		);
 
-		/**
-		 * @deprecated since 2.7.0 Use Swiper instead
-		 */
-		wp_register_script(
-			'jquery-slick',
-			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
-			[
-				'jquery',
-			],
-			'1.8.1',
-			true
-		);
-
 		wp_register_script(
 			'elementor-dialog',
 			$this->get_js_assets_url( 'dialog', 'assets/lib/dialog/' ),
@@ -625,8 +612,6 @@ class Frontend extends App {
 			 * @since 1.0.0
 			 */
 			do_action( 'elementor/frontend/before_enqueue_styles' );
-
-			$this->add_elementor_icons_inline_css();
 
 			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
 			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) || Plugin::$instance->preview->is_preview_mode() ) {
@@ -1441,19 +1426,5 @@ class Frontend extends App {
 		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
 		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
-	}
-
-	private function add_elementor_icons_inline_css() {
-		$elementor_icons_library_version = '5.10.0';
-
-		/**
-		 * The e-icons font-face must be printed inline due to custom breakpoints.
-		 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
-		 * The custom frontend file is located in a different path ('uploads' folder).
-		 * Therefore, it cannot be called from a CSS file that its relative path can vary.
-		 */
-		$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$slib/eicons/fonts/eicons.eot?%2$s);src:url(%1$slib/eicons/fonts/eicons.eot?%2$s#iefix) format("embedded-opentype"),url(%1$slib/eicons/fonts/eicons.woff2?%2$s) format("woff2"),url(%1$slib/eicons/fonts/eicons.woff?%2$s) format("woff"),url(%1$slib/eicons/fonts/eicons.ttf?%2$s) format("truetype"),url(%1$slib/eicons/fonts/eicons.svg?%2$s#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL, $elementor_icons_library_version );
-
-		wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
 	}
 }

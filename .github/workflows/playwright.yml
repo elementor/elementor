@@ -2,6 +2,7 @@ name: Playwright
 
 on:
   push:
+  pull_request:
 
 jobs:
   build-plugin:
@@ -71,7 +72,7 @@ jobs:
           npx wp-env start
           # change wp-env folder owner to www-data
           sudo chown 33:33 -R ~/wp-env/
-          npx wp-env run tests-cli "bash -c 'bash elementor-config/import-temapltes.sh'"
+          npx wp-env run tests-cli "bash -c 'bash elementor-config/setup.sh'"
       - name: WordPress debug information
         run: |
           npx wp-env run tests-cli "wp core version"
@@ -84,3 +85,9 @@ jobs:
       - name: Run Playwright tests
         run: |
           npm run test:playwright
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 14

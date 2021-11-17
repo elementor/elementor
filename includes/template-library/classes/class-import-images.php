@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\TemplateLibrary\Classes;
 
+use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -127,6 +130,24 @@ class Import_Images {
 			return false;
 		}
 
+		$filetype = wp_check_filetype( $filename );
+
+		// If the file type is not recognized by WordPress, exit here to avoid creation of an empty attachment document.
+		if ( ! $filetype['ext'] ) {
+			return false;
+		}
+
+		if ( 'svg' === $filetype['ext'] ) {
+			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
+			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
+				return false;
+			}
+
+			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+			$file_content = $svg_handler->sanitizer( $file_content );
+		};
+
 		$upload = wp_upload_bits(
 			$filename,
 			null,
@@ -139,6 +160,7 @@ class Import_Images {
 		];
 
 		$info = wp_check_filetype( $upload['file'] );
+
 		if ( $info ) {
 			$post['post_mime_type'] = $info['type'];
 		} else {

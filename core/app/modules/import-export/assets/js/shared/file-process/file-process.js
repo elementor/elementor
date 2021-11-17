@@ -17,11 +17,12 @@ export default function FileProcess( props ) {
 				</>
 			}
 		>
-			{ props.isError &&
-			<ImportFailedDialog
-				onApprove={ props.onDialogApprove }
-				onDismiss={ props.onDialogDismiss }
-			/>
+			{ ! ! props.errorType &&
+				<ImportFailedDialog
+					onApprove={ props.onDialogApprove }
+					onDismiss={ props.onDialogDismiss }
+					errorType={ props.errorType }
+				/>
 			}
 		</WizardStep>
 	);
@@ -29,12 +30,11 @@ export default function FileProcess( props ) {
 
 FileProcess.propTypes = {
 	className: PropTypes.string,
-	onDialogApprove: PropTypes.func.isRequired,
-	onDialogDismiss: PropTypes.func.isRequired,
-	isError: PropTypes.bool,
+	onDialogApprove: PropTypes.func,
+	onDialogDismiss: PropTypes.func,
+	errorType: PropTypes.string,
 };
 
 FileProcess.defaultProps = {
 	className: '',
-	isError: false,
 };

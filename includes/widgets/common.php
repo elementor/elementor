@@ -744,7 +744,6 @@ class Widget_Common extends Widget_Base {
 						'selectors' => [
 							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
 						],
-						'frontend_available' => true,
 					]
 				);
 			}
@@ -1338,6 +1337,12 @@ class Widget_Common extends Widget_Base {
 					'_element_width!' => '',
 					'_position' => '',
 				],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}!' => '',
+						'_position' => '',
+					],
+				] ),
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],

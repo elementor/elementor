@@ -477,7 +477,6 @@ class Source_Local extends Source_Base {
 			[
 				'post_title' => $template_data['title'],
 				'post_status' => $template_data['status'],
-				'post_type' => self::CPT,
 			]
 		);
 
@@ -816,6 +815,9 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
 
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		$items = [];
 
 		// If the import file is a Zip file with potentially multiple JSON files
@@ -823,8 +825,6 @@ class Source_Local extends Source_Base {
 			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
 
 			if ( is_wp_error( $extracted_files ) ) {
-				// Remove the temporary zip file, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 
@@ -835,8 +835,6 @@ class Source_Local extends Source_Base {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 					return $import_result;
 				}
 
@@ -850,8 +848,6 @@ class Source_Local extends Source_Base {
 			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 				return $import_result;
 			}
 
@@ -912,12 +908,11 @@ class Source_Local extends Source_Base {
 				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="elementor_library_direct_actions">
-					<input type="hidden" name="uploadTypeCaller" value="elementor-wp-media-upload">
 					<input type="hidden" name="library_action" value="direct_import_template">
 					<input type="hidden" name="_nonce" value="<?php Utils::print_unescaped_internal_string( $ajax->create_nonce() ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
+						<input id="e-import-template-action" type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -1426,7 +1421,7 @@ class Source_Local extends Source_Base {
 			'content' => $template_data['content'],
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
-			'title' => get_the_title( $template_id ),
+			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
 

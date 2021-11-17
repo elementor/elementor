@@ -238,3 +238,10 @@
 		}
 	}
 }
+.elementor-control:not( .elementor-control-type-icons ) {
+	.elementor-control-media {
+		&__preview {
+			background-color: $editor-lightest;
+		}
+	}
+}
