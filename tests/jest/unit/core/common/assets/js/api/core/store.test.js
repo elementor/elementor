@@ -63,6 +63,6 @@ describe( '$e.store', () => {
 		store.register( 'slice-1', slice1 );
 
 		// Assert.
-		expect( () => store.register( 'slice-2', slice2 ) ).toThrowError();
+		expect( () => store.register( 'slice-1', slice2 ) ).toThrowError();
 	} );
 } );
