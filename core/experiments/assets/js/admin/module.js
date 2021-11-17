@@ -3,7 +3,7 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 		return {
 			selectors: {
 				experimentIndicators: '.e-experiment__title__indicator',
-				experimentForm: '#elementor-settings-form[action="options.php#tab-experiments"]',
+				experimentForm: '#elementor-settings-form',
 				experimentSelects: '.e-experiment__select',
 				experimentsButtons: '.e-experiment__button',
 			},

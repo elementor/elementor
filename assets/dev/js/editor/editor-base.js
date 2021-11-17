@@ -8,6 +8,7 @@ import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -363,6 +364,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.devTools = new DevTools();
 
+		this.browserImport = new BrowserImport();
+
 		this.documents = $e.components.register( new EditorDocuments() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
@@ -383,16 +386,20 @@ export default class EditorBase extends Marionette.Application {
 	 * @param state
 	 */
 	toggleSortableState( state = true ) {
-		const elements = [
+		const sections = [
 			jQuery( '#elementor-navigator' ),
 			elementor.documents.getCurrent()?.$element,
 		];
 
-		for ( const $element of elements ) {
-			if ( $element ) {
-				$element.find( '.ui-sortable' ).sortable(
-					state ? 'enable' : 'disable'
-				);
+		for ( const $section of sections ) {
+			if ( $section ) {
+				$section.find( '.ui-sortable' ).each( () => {
+					const $element = jQuery( this );
+
+					if ( $element.sortable( 'instance' ) ) {
+						$element.sortable( state ? 'enable' : 'disable' );
+					}
+				} );
 			}
 		}
 	}

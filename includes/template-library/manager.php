@@ -454,13 +454,20 @@ class Manager {
 		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
 			return $upload_result;
 		}
 
 		/** @var Source_Local $source_local */
 		$source_local = $this->get_source( 'local' );
 
-		return $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+
+		// Remove the temporary directory generated for the stream-uploaded file.
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
+		return $import_result;
 	}
 
 	/**

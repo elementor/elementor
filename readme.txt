@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.7
+Stable tag: 3.4.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -187,6 +187,12 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.4.8 - 2021-11-16 =
+* Fix: Font Awesome 4 support option is set to Yes in new websites
+* Fix: CSS Printing method option is set to Internal Embedding in new websites
+* Fix: Hardened Lightbox capabilities to enforce better security policies
+* Fix: After downgrading from a version with Container experiment active a PHP error is thrown
 
 = 3.4.7 - 2021-10-31 =
 * Tweak: Added role restriction to Version control feature
