@@ -9,31 +9,31 @@ jest.mock( '@reduxjs/toolkit', () => ( {
 	} ) ),
 } ) );
 
-// Arrange.
-let store, slice1, slice2;
-
-beforeEach( () => {
-	store = new Store();
-
-	slice1 = createSlice( {
-		initialState: {},
-		reducers: {},
-		name: 'slice-1',
-	} );
-
-	slice2 = createSlice( {
-		initialState: {},
-		reducers: {},
-		name: 'slice-2',
-	} );
-} );
-
-afterEach( () => {
-	jest.clearAllMocks();
-} );
-
 // Test `$e.store()`.
 describe( '$e.store', () => {
+	// Arrange.
+	let store, slice1, slice2;
+
+	beforeEach( () => {
+		store = new Store();
+
+		slice1 = createSlice( {
+			initialState: {},
+			reducers: {},
+			name: 'slice-1',
+		} );
+
+		slice2 = createSlice( {
+			initialState: {},
+			reducers: {},
+			name: 'slice-2',
+		} );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'register() -- Registers one slice', () => {
 		// Act.
 		store.register( 'slice-1', slice1 );
