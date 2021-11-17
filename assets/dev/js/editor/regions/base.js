@@ -1,4 +1,4 @@
-import StoragePortion from 'elementor-editor-utils/storage-portion';
+import StoragePartition from 'elementor-editor-utils/storage-partition';
 
 module.exports = Marionette.Region.extend( {
 
@@ -9,7 +9,7 @@ module.exports = Marionette.Region.extend( {
 	constructor: function() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
-		this.storage = new StoragePortion( this.getStorageKey(), this.getDefaultStorage() );
+		this.storage = new StoragePartition( this.getStorageKey(), this.getDefaultStorage() );
 
 		this.storageSizeKeys = Object.keys( this.storage.size );
 	},

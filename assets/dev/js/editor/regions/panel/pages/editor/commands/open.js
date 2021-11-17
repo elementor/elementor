@@ -24,6 +24,10 @@ export class Open extends CommandBase {
 			args.model,
 			args.view
 		);
+
+		if ( args.section ) {
+			elementor.activateElementSection( section );
+		}
 	}
 }
 

@@ -1,4 +1,4 @@
-export default class StoragePortion {
+export default class StoragePartition {
 	/**
 	 * The key for this portion.
 	 */

@@ -94,9 +94,13 @@ export default class extends BaseRegion {
 	}
 
 	initLayout() {
+		const documents = [
+			{ id: elementor.getPreviewContainer().document.container.model.id },
+		];
+
 		this.initialModel = new ElementModel( { elements: [] } );
 
-		ReactDOM.render( <Navigator />, this.$el[ 0 ] );
+		ReactDOM.render( <Navigator documents={ documents } />, this.$el[ 0 ] );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

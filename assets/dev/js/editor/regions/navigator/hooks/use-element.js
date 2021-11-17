@@ -6,16 +6,14 @@ export default function useElement( elementId ) {
 		[ , forceUpdate ] = useReducer( () => ( {} ) );
 
 	useEffect( () => {
-		setModel( elementId ?
-			elementor.getContainer( elementId ).model :
-			elementor.elementsModel );
+		setModel( elementor.getContainer( elementId ).model );
 	}, [ elementId ] );
 
 	useEffect( () => {
 		model.on( 'change', forceUpdate );
 		model.get( 'elements' ).bind( 'add remove reset', forceUpdate );
 
-		if ( elementId ) {
+		if ( 'document' !== model.get( 'elType' ) ) {
 			model.get( 'settings' ).on( 'change', forceUpdate );
 
 			elementor.selection.on( 'change', ( { container, state } ) => {
@@ -30,10 +28,6 @@ export default function useElement( elementId ) {
 		};
 	}, [ model ] );
 
-	const toggleVisibility = () => {
-		model.trigger( 'request:toggleVisibility' );
-	};
-
 	const titleEdit = useCallback( ( title ) => {
 		const settings = model.get( 'settings' );
 
@@ -47,6 +41,18 @@ export default function useElement( elementId ) {
 	const hasChildren = 'widget' !== model.get( 'elType' ) ||
 		Boolean( model.get( 'elements' ).length );
 
+	const toggleVisibility = () => model.trigger( 'request:toggleVisibility' );
+
+	const showContextMenu = ( e ) => model.trigger( 'request:contextmenu', e );
+
+	const toggleSelection = ( { append = false } ) => {
+		elementor.getContainer( elementId ).model
+			.trigger( 'request:edit', {
+				append,
+				scrollIntoView: true,
+			} );
+	};
+
 	return {
 		model,
 		element: serializeModel( model ),
@@ -54,21 +60,17 @@ export default function useElement( elementId ) {
 		titleEdit,
 		hasChildren,
 		selected,
-		toggleSelection: ( { append = false } ) => {
-			elementor.getContainer( elementId ).model
-				.trigger( 'request:edit', {
-					append,
-					scrollIntoView: true,
-				} );
-		},
+		showContextMenu,
+		toggleSelection,
 	};
 }
 
 const serializeModel = ( model ) => ( {
-	...model.toJSON(),
-	elements: ( model.elements || model.get( 'elements' ) ).map(
-		( element ) => serializeModel( element )
-	),
+	id: model.get( 'id' ),
+	elType: model.get( 'elType' ),
+	elements: model.get( 'elements' ).models || model.get( 'elements' ),
+	settings: model.get( 'settings' ),
 	title: model.getTitle?.(),
 	icon: model.getIcon?.(),
+	hidden: model.get( 'hidden' ),
 } );

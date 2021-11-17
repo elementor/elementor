@@ -19,13 +19,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	type = false;
 
 	/**
-	 * List of event subscribers.
-	 *
-	 * @type {{}}
-	 */
-	subscribers = {};
-
-	/**
 	 * Manager constructor.
 	 *
 	 * @returns {Manager}

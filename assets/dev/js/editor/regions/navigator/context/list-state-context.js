@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { createContext, useContextSelector } from 'use-context-selector';
+import { createContext, useContext, useContextSelector } from 'use-context-selector';
 
 const ListStateContext = createContext( {} );
 
 export function useListStateContext( elementId ) {
+	// Instead of listening to changes of the entire context, we can select a specific portion to listen to of it using
+	// `useContextSelector` package.
 	const listState = useContextSelector(
 		ListStateContext,
-		( [ v ] ) => v[ elementId ]
+		( [ get ] ) => get[ elementId ]
 	);
 
 	const setListStateOriginal = useContextSelector(
 		ListStateContext,
-		( [ , v ] ) => v
+		( [ , set ] ) => set
 	);
 
 	const setListState =
@@ -23,27 +25,25 @@ export function useListStateContext( elementId ) {
 			} )
 		);
 
-	useEffect( () => setListState( false ), [ elementId ] );
+	useEffect( () => {
+		// Sometimes `react-beautiful-dnd` re-renders the item, so if it already has a value, we don't initialize it.
+		if ( undefined === listState ) {
+			setListState( false );
+		}
+	}, [ elementId ] );
 
 	return [
 		listState,
 		setListState,
 	];
-}
+};
 
 export function useGlobalListState() {
-	const listState = useContextSelector(
-		ListStateContext,
-		( [ v ] ) => v
-	);
-
-	const setListState = useContextSelector(
-		ListStateContext,
-		( [ , v ] ) => v
-	);
+	const [ listState, setListState ] = useContext( ListStateContext );
 
 	const isAllOpen = useMemo(
-		() => Object.entries( listState ).every( ( [ , v ] ) => v ),
+		() => Object.entries( listState )
+			.every( ( [ , value ] ) => value ),
 		[ listState ]
 	);
 
