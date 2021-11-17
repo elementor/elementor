@@ -94,6 +94,12 @@
 		margin-block-start: var( --margin-start );
 		margin-block-end: var( --margin-end );
 		animation-name: dnd-placeholder-widget-horizontal;
+
+		// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+		&:nth-last-child( 2 ) {
+			margin-block-start: calc( 2 * var( --margin-start ) );
+			--margin-end: 0;
+		}
 	}
 
 	// Extracted from the inline CSS of `behaviors/sortable.js`.
