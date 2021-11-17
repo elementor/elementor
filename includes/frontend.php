@@ -678,7 +678,6 @@ class Frontend extends App {
 	 * file is generated based on a passed template file name. Otherwise, the path for the default CSS file is returned.
 	 *
 	 * @since 3.5.0
-	 *
 	 * @access public
 	 *
 	 * @param string $frontend_file_name
@@ -705,20 +704,28 @@ class Frontend extends App {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @access private
+	 * @access public
 	 *
 	 * @param string $frontend_file_name
+	 * @param string $file_prefix
+	 * @param string $template_file_path
 	 *
 	 * @return FrontendFile
 	 */
-	private function get_frontend_file( $frontend_file_name ) {
+	public function get_frontend_file( $frontend_file_name, $file_prefix = 'custom-', $template_file_path = '' ) {
 		static $cached_frontend_files = [];
 
-		if ( isset( $cached_frontend_files[ $frontend_file_name ] ) ) {
-			return $cached_frontend_files[ $frontend_file_name ];
+		$file_name = $file_prefix . $frontend_file_name;
+
+		if ( isset( $cached_frontend_files[ $file_name ] ) ) {
+			return $cached_frontend_files[ $file_name ];
 		}
 
-		$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+		if ( ! $template_file_path ) {
+			$template_file_path = Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name;
+		}
+
+		$frontend_file = new FrontendFile( $file_name, $template_file_path );
 
 		$time = $frontend_file->get_meta( 'time' );
 
@@ -726,7 +733,7 @@ class Frontend extends App {
 			$frontend_file->update();
 		}
 
-		$cached_frontend_files[ $frontend_file_name ] = $frontend_file;
+		$cached_frontend_files[ $file_name ] = $frontend_file;
 
 		return $frontend_file;
 	}

@@ -133,8 +133,14 @@ abstract class Base {
 	}
 
 	/**
+	 * Get Path
+	 *
+	 * Returns the local path of the generated file.
+	 *
 	 * @since 3.5.0
 	 * @access public
+	 *
+	 * @return string
 	 */
 	public function get_path() {
 		return set_url_scheme( self::get_base_uploads_dir() . $this->files_dir . $this->file_name );

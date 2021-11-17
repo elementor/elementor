@@ -1008,7 +1008,7 @@ abstract class Widget_Base extends Element_Base {
 	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
-		$has_custom_breakpoints = $this->get_has_custom_breakpoints();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		if ( $has_custom_breakpoints ) {
 			$responsive_widgets = $this->get_responsive_widgets();
@@ -1021,7 +1021,10 @@ abstract class Widget_Base extends Element_Base {
 
 		$file_name = 'widget-' . $widget_name . $direction . '.min.css';
 
+		// The URL of the widget's external CSS file that is loaded in case that the CSS content is too large to be printed inline.
 		$file_url = Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
+
+		// The local path of the widget's CSS file that is being read and saved in the DB when the CSS content should be printed inline.
 		$file_path = Plugin::$instance->frontend->get_frontend_file_path( $file_name, $has_custom_breakpoints );
 
 		return [
@@ -1039,10 +1042,12 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	public function get_responsive_widgets_config() {
+		$responsive_widgets_data_manager = $this->get_responsive_widgets_data_manager();
+
 		return [
-			'key' => 'responsive-widgets',
+			'key' => $responsive_widgets_data_manager::RESPONSIVE_WIDGETS_DATABASE_KEY,
 			'version' => ELEMENTOR_VERSION,
-			'file_path' => ELEMENTOR_ASSETS_PATH . 'data/responsive-widgets.json',
+			'file_path' => ELEMENTOR_ASSETS_PATH . $responsive_widgets_data_manager::RESPONSIVE_WIDGETS_FILE_PATH,
 		];
 	}
 
@@ -1054,14 +1059,22 @@ abstract class Widget_Base extends Element_Base {
 		return $responsive_widgets_data_manager->get_asset_data_from_config( $config );
 	}
 
-	public function get_has_custom_breakpoints() {
-		static $has_custom_breakpoints;
-
-		if ( ! isset( $has_custom_breakpoints ) ) {
-			$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+	/**
+	 * Get Responsive Widgets Data Manager.
+	 *
+	 * Retrieve the data manager that handles widgets that are using media queries for custom-breakpoints values.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @return Responsive_Widgets_Data_Manager
+	 */
+	protected function get_responsive_widgets_data_manager() {
+		if ( ! self::$responsive_widgets_data_manager ) {
+			self::$responsive_widgets_data_manager = new Responsive_Widgets_Data_Manager();
 		}
 
-		return $has_custom_breakpoints;
+		return self::$responsive_widgets_data_manager;
 	}
 
 	private function get_widget_css() {
@@ -1127,13 +1140,5 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return self::$widgets_css_data_manager;
-	}
-
-	private function get_responsive_widgets_data_manager() {
-		if ( ! self::$responsive_widgets_data_manager ) {
-			self::$responsive_widgets_data_manager = new Responsive_Widgets_Data_Manager();
-		}
-
-		return self::$responsive_widgets_data_manager;
 	}
 }
