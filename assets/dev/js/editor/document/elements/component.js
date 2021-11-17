@@ -18,32 +18,9 @@ export default class Component extends ComponentBase {
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => {
-				const parentElType = parentModel.get( 'elType' ),
-					draggedElType = childModel.get( 'elType' ),
-					parentIsInner = parentModel.get( 'isInner' ),
-					draggedIsInner = childModel.get( 'isInner' );
+				elementorCommon.helpers.softDeprecated( 'isValidChild( childModel, parentModel )', '3.6.0', 'parentModel.isValidChild( childModel )' );
 
-				if ( elementor.hooks.applyFilters( 'elementor/editor/element/is-valid-child', false, childModel, parentModel ) ) {
-					return true;
-				}
-
-				// Block's inner-section at inner-section column.
-				if ( draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType ) {
-					return false;
-				}
-
-				// Allow only nested containers.
-				if ( draggedElType === parentElType && 'container' !== draggedElType ) {
-					return false;
-				}
-
-				if ( 'section' === draggedElType && ! draggedIsInner && 'column' === parentElType ) {
-					return false;
-				}
-
-				const childTypes = elementor.helpers.getElementChildType( parentElType );
-
-				return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
+				return parentModel.isValidChild( childModel );
 			},
 			isValidGrandChild: ( childModel, targetContainer ) => {
 				let result;
@@ -82,7 +59,7 @@ export default class Component extends ComponentBase {
 			getPasteOptions: ( sourceModel, targetContainer ) => {
 				const result = {};
 
-				result.isValidChild = this.utils.isValidChild( sourceModel, targetContainer.model );
+				result.isValidChild = targetContainer.model.isValidChild( sourceModel );
 				result.isSameElement = this.utils.isSameElement( sourceModel, targetContainer );
 				result.isValidGrandChild = this.utils.isValidGrandChild( sourceModel, targetContainer );
 

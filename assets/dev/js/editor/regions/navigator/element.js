@@ -197,7 +197,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	dragShouldBeIgnored( draggedModel ) {
-		return ! $e.components.get( 'document/elements' ).utils.isValidChild( draggedModel, this.model );
+		return ! this.model.isValidChild( draggedModel );
 	}
 
 	addEditingClass() {

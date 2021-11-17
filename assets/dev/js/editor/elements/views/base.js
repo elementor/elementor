@@ -801,7 +801,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( ! settings.__dynamic__ && this.links.length && this.renderLinks( settings, this.links ) ) {
+		if ( ! settings.__dynamic__ && this.links?.length && this.renderLinks( settings, this.links ) ) {
 			return;
 		}
 

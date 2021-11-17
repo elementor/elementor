@@ -1,4 +1,5 @@
 import Component from './component';
+import BaseModel from 'elementor-elements/models/base-model';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -28,7 +29,7 @@ module.exports = BaseSettings.extend( {
 		}
 
 		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
+			editModel = new BaseModel( {
 				id,
 				elType: id,
 				settings: this.model,

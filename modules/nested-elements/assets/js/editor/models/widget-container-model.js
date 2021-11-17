@@ -32,4 +32,18 @@ export default class WidgetContainerModel extends ElementModel {
 			this.addDefaultChildren( default_children );
 		}
 	}
+
+	isValidChild( childModel ) {
+		const parentElType = this.get( 'elType' ),
+			draggedElType = childModel.get( 'elType' );
+
+		// Support import library.
+		if ( 'section' === draggedElType && 'container' === parentElType ) {
+			return true;
+		}
+
+		return 'container' === draggedElType &&
+			'widget' === parentElType &&
+			this.isWidgetSupportNesting( parentModel.get( 'widgetType' ) );
+	}
 }

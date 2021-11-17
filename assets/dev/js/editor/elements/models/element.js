@@ -1,7 +1,9 @@
+import BaseModel from './base-model';
+
 var ColumnSettingsModel = require( 'elementor-elements/models/column-settings' ),
 	ElementModel;
 
-ElementModel = Backbone.Model.extend( {
+ElementModel = BaseModel.extend( {
 	defaults: {
 		id: '',
 		elType: '',

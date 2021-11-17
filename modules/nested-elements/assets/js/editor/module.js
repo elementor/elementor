@@ -21,20 +21,6 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 			return DefaultModel;
 		} );
 
-		elementor.hooks.addFilter( 'elementor/editor/element/is-valid-child', ( defaultReturn, childModel, parentModel ) => {
-			const parentElType = parentModel.get( 'elType' ),
-				draggedElType = childModel.get( 'elType' );
-
-			// Support import library.
-			if ( 'section' === draggedElType && 'container' === parentElType ) {
-                return true;
-            }
-
-			return 'container' === draggedElType &&
-				'widget' === parentElType &&
-				this.isWidgetSupportNesting( parentModel.get( 'widgetType' ) );
-		} );
-
 		elementor.hooks.addFilter( 'elementor/editor/navigator/element/has-children', ( defaultReturn, model ) => {
 			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
 				return true;

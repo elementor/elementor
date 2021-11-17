@@ -18,7 +18,7 @@ export default class BackwardsCompatibility {
 	}
 
 	static isValidChild( childModel, parentModel ) {
-		elementorCommon.helpers.softDeprecated( 'isValidChild', '3.4.0', "$e.components.get( 'document/elements' ).utils.isValidChild( childModel, parentModel )" );
+		elementorCommon.helpers.softDeprecated( 'isValidChild', '3.4.0', 'parentModel.isValidChild( childModel )' );
 
 		return $e.components.get( 'document/elements' ).utils.isValidChild( childModel, parentModel );
 	}
