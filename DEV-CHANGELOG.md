@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev5 - 2021-11-17
+* Tweak: Updated changelog to v3.4.8 (#16951)
+* Revert "Tweak: Added shortkey to panel tooltips [ED-4220] (#16478)" (#16889)
+* Fix: Column padding affects absolute positioned elements [ED-5428] (#16930)
+* Fix: Kit Library - Apply Kit throws an error with PHP 8 [ED-4974] (#16928)
+* Fix: Text in beta users "Get beta updates" modal [ED-5446] (#16929)
+
 #### 3.6.0-dev4 - 2021-11-16
 * Fix: Sticky option throws an error and cause the editor not to work [ED-5539] (#16933)
 * Fix: Font Awesome 4 support are wrong default value [ED-5404] (#16941)
@@ -539,26 +546,3 @@
 * Fix: UI glitch in the empty state of Global tab in the Editor Panel [ED-2821] (#14984)
 * Tweak: Took change-log from readme.txt for patch and stable versions [ARCH-35] (#15160)
 * Tweak: Stop run actions on forks and run PHP 8 + WordPress master only weekly [ARCH-29] (#15157)
-
-#### 3.3.0-dev10 - 2021-05-28
-* Tweak: Kit-Library - Send nonce and referrer to the import process [ED-3252] (#15110)
-* Tweak: Adding an import-export info popups and kit information [ED-2881] (#15112)
-* Fix: Kit info was not updated correctly [ED-3408] (#15117)
-* Fix: Can't fetch colors from most widgets using Eye Dropper [ED-3179] (#14979)
-* Tweak: Widgets search accepts non-english strings [ED-3145] (#15050)
-
-#### 3.3.0-dev9 - 2021-05-27
-* Tweak: Adding summary screens and allowing import content selection [ED-2580] (#14915)
-* Fix - Lightbox is not working in the frontend. (#15087)
-* Responsive Behavior: Tweak - Made `elementorFrontend.getDeviceSetting()` method dynamic. (#14992)
-* Tweak: Responsive Preview Add default height to Tablet and Mobile devices [ED-2425] (#14995)
-* Tweak: Responsive Bar - UI modifications for Responsive bar [ED-2721] (#15010)
-* Fix: Kit-Library - Sort authentication headers a-z [ED-3380] (#15084)
-* Fix: Kit-Library - Rejects from spec [ED-3357] (#15081)
-* Lightbox: Check for valid URL [ED-3326] (#15052)
-* Tweak: Adding an resolver screen for templates conflicts when importing a kit [ED-3120] (#15066)
-* Tweak: Lightbox tweak (ED-3326) (#15096)
-* Tweak: Merged release 3.3.0 into feature/responsive-bar (#15102)
-* Tweak: Google Maps Widget - Added support for the new Google Maps Embed API (ED-3394) (#15090) (#15099)
-* Tweak: Merge Conflict (#15104)
-* Fix: Missing Connect & Activate button on the bottom bar. (#15067)
