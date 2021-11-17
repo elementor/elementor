@@ -675,7 +675,7 @@ class TextPath extends Widget_Base {
 
 		// Get the path URL.
 		$path_url = ( 'custom' === $settings['path'] )
-			? $settings['custom_path']['url']
+			? wp_get_attachment_url( $settings['custom_path']['id'] )
 			: Shapes_Module::get_path_url( $settings['path'] );
 
 		// Remove the HTTP protocol to prevent Mixed Content error.
