@@ -4,6 +4,10 @@ export default class BaseHideShow extends Base {
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
-		containers.forEach( ( container ) => container.view.toggleVisibilityClass() );
+		containers.forEach( ( container ) => container.model.set( 'hidden', this.shouldHide() ) );
+	}
+
+	shouldHide() {
+		elementorModules.ForceMethodImplementation();
 	}
 }

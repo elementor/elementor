@@ -8,6 +8,10 @@ export class NavigatorElementsHide extends BaseHideShow {
 	getId() {
 		return 'navigator-elements-hide';
 	}
+
+	shouldHide() {
+		return true;
+	}
 }
 
 export default NavigatorElementsHide;

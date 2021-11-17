@@ -1,6 +1,6 @@
-import CommandBase from 'elementor-api/modules/command-base';
+import CommandNavigator from 'elementor-regions/navigator/elements/commands/base/command-navigator';
 
-export class ToggleFoldingAll extends CommandBase {
+export class ToggleFoldingAll extends CommandNavigator {
 	apply( args ) {
 		const layout = this.component.manager.region.getLayout(),
 			state = args.hasOwnProperty( 'state' ) ? args.state : 'expand' === layout.ui.toggleAll.data( 'elementor-action' );
@@ -16,6 +16,10 @@ export class ToggleFoldingAll extends CommandBase {
 			.data( 'elementor-action', state ? 'collapse' : 'expand' )
 			.toggleClass( 'eicon-collapse', state )
 			.toggleClass( 'eicon-expand', ! state );
+	}
+
+	shouldRequireContainer() {
+		return false;
 	}
 }
 
