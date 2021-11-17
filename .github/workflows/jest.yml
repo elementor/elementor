@@ -40,7 +40,5 @@ jobs:
             ${{ runner.os }}-
       - name: Install Dependencies
         run: npm ci
-      - name: "Grunt Scripts"
-        run: npx grunt scripts
       - name: "Run Jest"
         run: npm run test:jest
