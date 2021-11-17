@@ -1,4 +1,5 @@
 import CommandData from 'elementor-api/modules/command-data';
+import FilesUploadHandler from "../../../../../../../../assets/dev/js/editor/utils/files-upload-handler";
 
 export class Media extends CommandData {
 	static getEndpointFormat() {
@@ -23,6 +24,10 @@ export class Media extends CommandData {
 		args.headers = {
 			'Content-Disposition': `attachment; filename=${ this.file.name }`,
 			'Content-Type': this.file.type,
+		};
+
+		args.query = {
+			uploadTypeCaller: 'elementor-wp-media-upload',
 		};
 
 		args.data = this.file;
@@ -50,12 +55,11 @@ export class Media extends CommandData {
 
 		if ( this.file.size > parseInt( window._wpPluploadSettings.defaults.filters.max_file_size, 10 ) ) {
 			throw new Error( __( 'The file exceeds the maximum upload size for this site.', 'elementor' ) );
-		} else if (
-			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
-				this.file.name.split( '.' ).pop()
-			)
-		) {
-			throw new Error( __( 'Sorry, this file type is not permitted for security reasons.', 'elementor' ) );
+		}
+
+		if ( ! elementor.config.filesUpload.unfilteredFiles ) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
+			return;
 		}
 
 		return await super.run();

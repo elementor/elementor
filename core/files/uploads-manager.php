@@ -410,7 +410,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		return isset( $_REQUEST['uploadTypeCaller'] ) && 'elementor-media-upload' === $_REQUEST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**
@@ -424,7 +424,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_wp_media_upload() {
-		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
+		return isset( $_REQUEST['uploadTypeCaller'] ) && 'elementor-wp-media-upload' === $_REQUEST['uploadTypeCaller']; // phpcs:ignore
 	}
 
 	/**

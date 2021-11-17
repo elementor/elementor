@@ -93,25 +93,26 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
+		let container = this.getContainer();
+
 		if ( model instanceof Backbone.Model ) {
 			model = model.toJSON();
-		}
-
-		model = Object.assign( model, model.custom );
-
-		if ( 'section' === model.elType ) {
-			model.isInner = true;
 		}
 
 		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
 			return;
 		}
 
+		model = Object.assign( model, model.custom );
+
+		if ( 'document' !== container.type && 'section' === model.elType ) {
+			model.isInner = true;
+		}
+
 		const historyId = $e.internal( 'document/history/start-log', {
 			type: this.getHistoryType( options.event ),
 			title: elementor.helpers.getModelLabel( model ),
 		} );
-		let container = this.getContainer();
 
 		if ( options.shouldWrap ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;

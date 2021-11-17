@@ -1,5 +1,5 @@
 import ContainerFactory from '../../../container-factory';
-import { MediaParser } from 'elementor-editor/components/browser-import/files/parsers/base';
+import { MediaParser } from '../base';
 
 export class Widget extends MediaParser {
 	/**
