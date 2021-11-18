@@ -263,6 +263,8 @@ class Manager extends Module {
 	}
 
 	public function refresh() {
+		unset( $this->has_custom_breakpoints );
+
 		$this->init_breakpoints();
 		$this->init_active_breakpoints();
 	}
