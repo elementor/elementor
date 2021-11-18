@@ -2,4 +2,3 @@
 
 export { ColumnIsEmpty } from './column-is-empty';
 export { DeleteSectionIsFull } from './section-is-full';
-export { MoveResizeableHandle } from './move-resizeable-handle';
