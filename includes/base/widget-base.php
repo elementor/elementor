@@ -1008,16 +1008,7 @@ abstract class Widget_Base extends Element_Base {
 	public function get_widget_css_config( $widget_name ) {
 		$direction = is_rtl() ? '-rtl' : '';
 
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( $has_custom_breakpoints ) {
-			$responsive_widgets = $this->get_responsive_widgets();
-
-			// If the widget is not implementing custom-breakpoints media queries then it has no custom- css file.
-			if ( ! isset( $responsive_widgets[ $widget_name ] ) ) {
-				$has_custom_breakpoints = false;
-			}
-		}
+		$has_custom_breakpoints = $this->is_custom_breakpoints_widget();
 
 		$file_name = 'widget-' . $widget_name . $direction . '.min.css';
 
@@ -1065,7 +1056,7 @@ abstract class Widget_Base extends Element_Base {
 	 * Retrieve the data manager that handles widgets that are using media queries for custom-breakpoints values.
 	 *
 	 * @since 3.5.0
-	 * @access private
+	 * @access protected
 	 *
 	 * @return Responsive_Widgets_Data_Manager
 	 */
@@ -1075,6 +1066,34 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return self::$responsive_widgets_data_manager;
+	}
+
+	/**
+	 * Is Custom Breakpoints Widget.
+	 *
+	 * Checking if there are active custom-breakpoints and if the widget use them.
+	 *
+	 * @since 3.5.0
+	 * @access protected
+	 *
+	 * @return boolean
+	 */
+	protected function is_custom_breakpoints_widget() {
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		if ( $has_custom_breakpoints ) {
+			$responsive_widgets = $this->get_responsive_widgets();
+
+			// The $widget_name can also represents a widgets group name, therefore we need to use the current widget name to check if it's responsive widget.
+			$current_widget_name = $this->get_name();
+
+			// If the widget is not implementing custom-breakpoints media queries then it has no custom- css file.
+			if ( ! isset( $responsive_widgets[ $current_widget_name ] ) ) {
+				$has_custom_breakpoints = false;
+			}
+		}
+
+		return $has_custom_breakpoints;
 	}
 
 	private function get_widget_css() {
