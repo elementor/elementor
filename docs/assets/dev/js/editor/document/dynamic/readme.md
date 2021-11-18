@@ -1,7 +1,7 @@
 ## Component -- `$e.components.get('document/dynamic')`
 
 *  **Name**: Dynamic.
-*  **Description**: Provide a way to _enable_, _change_, _disable_ dynamic settings, associated with [Dynamic Tags](https://developers.elementor.com/dynamic-tags/),
+*  **Description**: Provide a way to _enable_, _change_ or _disable_ dynamic settings, associated with [Dynamic Tags](https://developers.elementor.com/dynamic-tags/),
 
 ## Component `document/dynamic/` -- Commands
 | Command                                                         | Access                                  | Description
