@@ -1,7 +1,7 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
 
 exports.EditorPage = class EditorPage {
-	panelLoaded = false;
+	isPanelLoaded = false;
 
 	/**
 	 * @param {import('@playwright/test').Page} page
@@ -17,7 +17,7 @@ exports.EditorPage = class EditorPage {
 	 * @return {Promise<void>}
 	 */
 	async ensurePanelLoaded() {
-		if ( this.panelLoaded ) {
+		if ( this.isPanelLoaded ) {
 			return;
 		}
 
@@ -25,7 +25,7 @@ exports.EditorPage = class EditorPage {
 		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
 		await this.page.waitForTimeout( 5000 );
 
-		this.panelLoaded = true;
+		this.isPanelLoaded = true;
 	}
 
 	/**
