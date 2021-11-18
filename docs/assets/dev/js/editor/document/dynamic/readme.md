@@ -91,7 +91,7 @@
    | _settings_   | `{Object}`            | **required**  | Dynamic settings to change.
 
 * **Examples**:
-  Example change dynamic settings for title with dynamic tag *post-date*.
+  Change dynamic settings for title with dynamic tag *post-date*.
   Assuming you have a heading with 'post-date' dynamic tag for title.
 
   ![widget-heading-with-dynamic-title-date](./_images/widget-heading-with-dynamic-title-date.png)
