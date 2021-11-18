@@ -136,7 +136,7 @@ class WidgetsCss {
 				return { ...obj, [ val ]: true };
 			}, {} );
 
-		// Breaking the line for the linter that trows a warning.
+		// Breaking the line for the linter that throws a warning.
 		write.sync( responsiveWidgetsJsonPath, JSON.stringify( responsiveWidgetsObject ) + `
 ` );
 	}

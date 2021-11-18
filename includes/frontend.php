@@ -703,7 +703,6 @@ class Frontend extends App {
 	 * Returns a frontend file instance.
 	 *
 	 * @since 3.5.0
-	 *
 	 * @access public
 	 *
 	 * @param string $frontend_file_name
