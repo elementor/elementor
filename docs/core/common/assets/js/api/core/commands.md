@@ -9,13 +9,12 @@ The full list of commands, including custom & 3rd commands, is available via: `$
 
 *  **Parent**: `elementorModules.Module`
 
-* **Available commands:** for further information about **all** the commands, please visit [`{$e.commands.getAll()}`](commands-methods/getall.md)**method**.
 
 *  **Methods**:
 
     | Method                               | Params                                                                                | Returns                            | Description                                                                         |
     |--------------------------------------|---------------------------------------------------------------------------------------|------------------------------------|-------------------------------------------------------------------------------------|
-    | `$e.commands.getAll()`               |                                                                                       |                                    | Receive all loaded commands.
+    | `$e.commands.getAll()`               |                                                                                       |  `{String[]}`                      | Receive all loaded commands.
     | `$e.commands.register()`             | `{(BaseComponent⎮string)}` *component*, `{String}` command, `{function()}` *callback* | `{Commands}` *$e.commands*         | Register new command.
     | `$e.commands.getComponent()`         | `{String}` *command*                                                                  | `{BaseComponent)`                  | Receive Component of the command.
     | `$e.commands.is()`                   | `{String}` *command*                                                                  | `{Boolean}`                        | Checks if current running command is the same parameter command.
