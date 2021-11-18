@@ -59,7 +59,7 @@
 
 	> .elementor-column {
 
-		> .elementor-element-populated {
+		> .elementor-element-populated > .elementor-widget-wrap {
 
 			.elementor-column-gap-narrow  > & {
 				padding: 5px;

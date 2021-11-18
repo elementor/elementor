@@ -53,7 +53,7 @@ Conditions = function() {
 					conditionSubKey = parsedName[ 2 ],
 					// We use null-safe operator since we're trying to get the current element, which is not always
 					// exists, since it's only created when the specific element appears in the panel.
-					placeholder = elementor.getCurrentElement()?.container
+					placeholder = elementor.selection.getElements()[ 0 ]
 						?.placeholders[ conditionRealName ];
 
 				// If a placeholder exists for the examined control, we check against it. In any other case, we
