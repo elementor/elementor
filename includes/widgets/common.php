@@ -693,9 +693,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
@@ -716,6 +713,9 @@ class Widget_Common extends Widget_Base {
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
 					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+					],
 				]
 			);
 
@@ -729,9 +729,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -754,9 +751,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -821,9 +815,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 3000,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
 					],
@@ -852,9 +843,6 @@ class Widget_Common extends Widget_Base {
 					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
@@ -900,9 +888,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}!" => '',
@@ -926,9 +911,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}" => '',
@@ -951,9 +933,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 2,
 							'step' => 0.1,
 						],
-					],
-					'default' => [
-						'size' => 1,
 					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
@@ -991,9 +970,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
@@ -1014,9 +990,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
