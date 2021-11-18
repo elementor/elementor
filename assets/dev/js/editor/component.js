@@ -6,7 +6,7 @@ export default class Component extends ComponentBase {
 	__construct( args = {} ) {
 		super.__construct( args );
 
-		elementor.documents = $e.components.register( new EditorDocumentsComponent() );
+		$e.components.register( new EditorDocumentsComponent() );
 	}
 
 	getNamespace() {

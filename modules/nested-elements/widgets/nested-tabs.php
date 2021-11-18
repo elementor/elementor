@@ -419,6 +419,7 @@ class NestedTabs extends Widget_Container_Base {
 				'aria-controls': 'elementor-tab-content-' + tabUid,
 				'aria-expanded': 'false',
 				'data-link-type': 'repeater-item',
+				'data-link-repeater-name': 'nested-tabs',
 				'data-link-setting': 'tab_title',
 				'data-link-index': tabCount,
 				} );

@@ -633,7 +633,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	applyChanges( settings, render = true ) {
+	renderChanges( settings, shouldRenderUI = true ) {
 		// Make sure is correct model
 		if ( settings instanceof elementorModules.editor.elements.models.BaseSettings ) {
 			const hasChanged = settings.hasChanged();
@@ -671,41 +671,42 @@ BaseElementView = BaseContainer.extend( {
 				return true;
 			}
 
-			if ( render && ! isContentChanged ) {
+			if ( shouldRenderUI && ! isContentChanged ) {
 				this.renderUI();
 
 				return true;
 			}
 		}
 
-		return false;
+		this.renderHTML();
 	},
 
 	/**
-	 * Function linksData().
+	 * Function linkDataBindings().
 	 *
 	 * Link data to allow partial render, instead of full re-render
 	 *
 	 * How to use?
 	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
 	 *  Example for repeater item:
-	 * 'data-link-type': 'repeater-item',      // Type of link (to know how to behave)
-	 * 'data-link-setting': 'tab_title',       // Setting key that effect the link.
-	 * 'data-link-index': tabCount,            // Index is required for repeater items.
+	 * 'data-link-type': 'repeater-item',               // Type of link (to know how to behave)
+	 * 'data-link-setting': 'tab_title',                // Setting key that effect the link.
+	 * 'data-link-index': tabCount,                     // Index is required for repeater items.
 	 *
 	 * Example for content:
 	 * 'data-link-type': 'content',                     // Type of link
 	 * 'data-link-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
-	 * By adding the following example attributes inside the widge the element innerHTML will be linked to the 'testimonial_content' setting value.
+	 *
+	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
 	 */
-	linksData() {
+	linkDataBindings() {
 		/**
 		 * @type {Array.<DataLink>}
 		 */
-		this.links = [];
+		this.dataBindings = [];
 
 		const id = this.$el.data( 'id' );
 
@@ -727,7 +728,7 @@ BaseElementView = BaseContainer.extend( {
 			// To support nested links bypass nested links that are not part of the current.
 			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
 				if ( this.dataset.linkType ) {
-					self.links.push( {
+					self.dataBindings.push( {
 						el: this,
 						dataset: this.dataset,
 					} );
@@ -737,30 +738,39 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	/**
-	 * Function renderLinks().
+	 * Function renderDataBindings().
 	 *
 	 * Render linked data.
 	 *
 	 * @param {Object} settings
 	 * @param {Array.<DataLink>} links
+	 *
 	 * @returns {boolean} - false on fail.
 	 */
-	renderLinks( settings, links ) {
+	renderDataBindings( settings, links ) {
+		if ( ! this.dataBindings?.length ) {
+			return false;
+		}
+
 		let changed = false;
 
 		for ( const link of links ) {
 			switch ( link.dataset.linkType ) {
 				case 'repeater-item': {
-					const container = Object.values( this.container.repeaters )[ 0 ].children.find(
-						( i ) => i.id === settings.attributes._id
-					);
+					const repeater = this.container.repeaters[ link.dataset.linkRepeaterName ];
+
+					if ( ! repeater ) {
+						break;
+					}
+
+					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
 						const change = settings.changed[ link.dataset.linkSetting ];
 
 						if ( change !== undefined ) {
 							changed = true;
-							jQuery( link.el ).html( change );
+							link.el.innerHTML = change;
 						}
 					}
 				}
@@ -782,10 +792,6 @@ BaseElementView = BaseContainer.extend( {
 			}
 		}
 
-		if ( changed ) {
-			this.applyChanges( settings, false );
-		}
-
 		return changed;
 	},
 
@@ -801,14 +807,11 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( ! settings.__dynamic__ && this.links?.length && this.renderLinks( settings, this.links ) ) {
+		if ( ! settings.__dynamic__ && this.renderDataBindings( settings, this.dataBindings ) ) {
 			return;
 		}
 
-		if ( ! this.applyChanges( settings ) ) {
-			// Re-render the template
-			this.renderHTML();
-		}
+		this.renderChanges( settings );
 	},
 
 	getDynamicParsingSettings() {
@@ -845,7 +848,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onRender() {
-		this.linksData();
+		this.linkDataBindings();
 
 		this.renderUI();
 
@@ -936,8 +939,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	onDestroy() {
-		if ( this.links ) {
-			delete this.links;
+		if ( this.dataBindings ) {
+			delete this.dataBindings;
 		}
 
 		this.controlsCSSParser.removeStyleFromDocument();

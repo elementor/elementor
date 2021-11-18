@@ -17,11 +17,7 @@ export default class Component extends ComponentBase {
 
 	defaultUtils() {
 		return {
-			isValidChild: ( childModel, parentModel ) => {
-				elementorCommon.helpers.softDeprecated( 'isValidChild( childModel, parentModel )', '3.6.0', 'parentModel.isValidChild( childModel )' );
-
-				return parentModel.isValidChild( childModel );
-			},
+			isValidChild: ( childModel, parentModel ) => parentModel.isValidChild( childModel ),
 			isValidGrandChild: ( childModel, targetContainer ) => {
 				let result;
 
