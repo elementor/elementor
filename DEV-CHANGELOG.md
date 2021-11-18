@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev6 - 2021-11-18
+* Tweak: Removing redundant code that was needed in the past for the eicons and no longer needed due to the new inline-font experiment. (#16957)
+* Fix: Widget > Advanced > Positioning Vertical align control isn't responsive [ED-5528] (#16927)
+
 #### 3.6.0-dev5 - 2021-11-17
 * Tweak: Updated changelog to v3.4.8 (#16951)
 * Revert "Tweak: Added shortkey to panel tooltips [ED-4220] (#16478)" (#16889)
