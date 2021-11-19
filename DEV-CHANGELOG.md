@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev7 - 2021-11-19
+* Fix: Default values in rotate 3D weren't apply in CSS Transfrom [ED-5568] (#16978)
+* Tweak: Adjusting the widgets inline-CSS experiment to support custom-breakpoints [ED-5536] (#16922)
+
 #### 3.6.0-dev6 - 2021-11-18
 * Tweak: Removing redundant code that was needed in the past for the eicons and no longer needed due to the new inline-font experiment. (#16957)
 * Fix: Widget > Advanced > Positioning Vertical align control isn't responsive [ED-5528] (#16927)
@@ -529,24 +533,3 @@
 * Tweak: Preferences - Add "Responsive preview" title in Preferences for responsive control [ED-3433] (#15150)
 * Sortable: Fix - Unable to drag and drop sections one above other [ED-2374] (#15178)
 * Tweak: Added `elementor-widget-wrap` to DOM optimization experiment [ED-2259] (#14442)
-
-#### 3.3.0-dev11 - 2021-06-01
-* Tweak: Kit-library - Made the filter tags clickable [ED-2904] (#14923)
-* Tweak: Kit-Library - favorite kits empty state screen [ED-3131] (#14980)
-* Tweak: Kit-Library - not loaded if import-export experiment is off [ED-3335] (#15058)
-* Fix: Kit-Library - Move components from app to kit-library [ED-3410] (#15115)
-* New: Import Export Phase 2 [ED-2672] (#15124)
-* Tweak: Assets Loading Improvements [ED-2511] (#15123)
-* Tweak: Hidden Elements Behavior - Add the ability to select hidden elements behavior [ED-2963] (#14901)
-* Fix: Kit-Library - Pages section not exists [ED-3416] (#15145)
-* Fix: Fetching colors from links using eyedropper opens the link [ED-3178]  (#15143)
-* Tweak: Added gradient button capabilities to all button instances [ED-2902] (#14779)
-* Tweak: Eyedropper displays explanation tooltip when no colors found [ED-3330] (#15144)
-* Tweak: System Info Reporters - Can't mock `get_plugins()` for testing [ED-3439] (#15148)
-* Fix: Clicking the eyedropper no longer hides the navigator [ED-2653] (#15142)
-* Fix: Panel search bar appeared above the loader [ED-2787] (#14776)
-* Tweak: Add Internal and ignore Internal PR from change-log (#15156)
-* Fix: Eye Dropper not working on certain panel areas [ED-3411] (#15119)
-* Fix: UI glitch in the empty state of Global tab in the Editor Panel [ED-2821] (#14984)
-* Tweak: Took change-log from readme.txt for patch and stable versions [ARCH-35] (#15160)
-* Tweak: Stop run actions on forks and run PHP 8 + WordPress master only weekly [ARCH-29] (#15157)
