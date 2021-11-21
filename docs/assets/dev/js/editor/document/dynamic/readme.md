@@ -56,7 +56,7 @@
    | _containers_ | `{Container[]}`  | Targets.
    | _settings_   | `{Object}`       | Dynamic settings to enable.
 
-* **Examples**:
+* **Example**:
   Enable dynamic title for heading, assuming you have simple widget like this:
 
   ![widget-heading](../_images/widget-heading.png)
