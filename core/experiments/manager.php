@@ -2,13 +2,12 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Modules\SafeMode\Module as Safe_Mode;
 use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
-use Elementor\Modules\SafeMode\Module as Safe_Mode;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -675,9 +674,7 @@ class Manager extends Base_Object {
 					// Rollback.
 					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
 
-					throw new Exceptions\Dependency_Exception(
-						__( sprintf( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', $feature_data['name'], $dependency_feature['name'] ), 'elementor' )
-					);
+					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ), $feature_data['name'], $dependency_feature['name'] ) );
 				}
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
@@ -687,9 +684,7 @@ class Manager extends Base_Object {
 					// Rollback.
 					update_option( $feature_option_key, self::STATE_ACTIVE );
 
-					throw new Exceptions\Dependency_Exception(
-						__( sprintf( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', $feature_data['name'], $feature['name'] ), 'elementor' )
-					);
+					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ), $feature_data['name'], $feature['name'] ) );
 				}
 			}
 		}
