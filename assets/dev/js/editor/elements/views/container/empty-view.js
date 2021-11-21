@@ -30,9 +30,7 @@ export default class EmptyView extends Marionette.ItemView {
 	}
 
 	attachElContent() {
-		const result = super.attachElContent( '' );
-
-		result.$el.addClass( this.className );
+		this.$el.addClass( this.className );
 
 		if ( this.ownerView.container ) {
 			return this.renderReactDefaultElement( this.ownerView.container );
@@ -41,7 +39,5 @@ export default class EmptyView extends Marionette.ItemView {
 		this.ownerView.once( 'container:created', () => {
 			this.renderReactDefaultElement( this.ownerView.container );
 		} );
-
-		return result;
 	}
 }

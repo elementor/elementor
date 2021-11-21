@@ -15,11 +15,7 @@ var ElementsCollection = Backbone.Collection.extend( {
 		if ( attrs.elType ) {
 			const registeredWidgetArgs = elementor.getRegisteredElementType( attrs.elType, attrs.widgetType );
 
-			if ( registeredWidgetArgs?.Model ) {
-				ElementModel = registeredWidgetArgs.Model;
-			}
-
-			ModelClass = elementor.hooks.applyFilters( 'element/model', ElementModel, attrs );
+			ModelClass = elementor.hooks.applyFilters( 'element/model', registeredWidgetArgs?.Model ? registeredWidgetArgs.Model : ElementModel, attrs );
 		}
 
 		return new ModelClass( attrs, options );

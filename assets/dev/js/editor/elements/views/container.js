@@ -2,7 +2,7 @@
 import AddSectionView from 'elementor-views/add-section/inline';
 import WidgetResizable from './behaviors/widget-resizeable';
 import EmptyView from './container/empty-view';
-import { DIRECTION_COLUMN, DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
+import { DIRECTION_ROW } from 'elementor-document/ui-states/direction-mode';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 
@@ -12,10 +12,10 @@ const ContainerView = BaseElementView.extend( {
 	emptyView: EmptyView,
 
 	emptyViewOptions: function() {
-        return {
-            emptyViewOwner: this,
-        };
-    },
+		return {
+			emptyViewOwner: this,
+		};
+	},
 
 	// Child view is empty in order to use the parent element.
 	childViewContainer: '',
