@@ -267,6 +267,8 @@ BaseElementView = BaseContainer.extend( {
 			 *
 			 * This filter allows adding edit buttons to all element types.
 			 *
+			 * @since 3.5.0
+			 *
 			 * @param array editButtons An array of buttons.
 			 */
 			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
@@ -277,6 +279,8 @@ BaseElementView = BaseContainer.extend( {
 			 * This filter allows adding edit buttons only to a specific element type.
 			 *
 			 * The dynamic portion of the hook name, `elementType`, refers to element type (widget, column, section).
+			 *
+			 * @since 3.5.0
 			 *
 			 * @param array editButtons An array of buttons.
 			 */
