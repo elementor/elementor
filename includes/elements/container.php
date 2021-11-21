@@ -243,11 +243,11 @@ class Container extends Element_Base {
 ?>
 		<?php
 
-		if ( $settings['shape_divider_top'] ) {
+		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
 		}
 
-		if ( $settings['shape_divider_bottom'] ) {
+		if ( ! empty( $settings['shape_divider_bottom'] ) ) {
 			$this->render_shape_divider( 'bottom' );
 		}
 	}
