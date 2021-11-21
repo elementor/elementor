@@ -6,6 +6,21 @@
 
   ![legend-section-widget-tabs](_images/legend-section-widget-tabs.png)
 
+Every element in the document has a unique ID, which is used to identify it in the editor, every element has Unique [Container](#) Object, the container object
+can be found by using the following code:
+```javascript
+elementor.getContainer( ID );
+```
+The next example/documents will describe the following parameters:
+
+| Property     | Type                  | Description |
+|---           |---                    |---|
+| _container_  | `{Container}`         | Target.
+| _containers_ | `{Container[]}`       | Targets.
+
+The command(s) can accept container or containers not both.
+
+
 ## Component -- `$e.components.get('document')`
 
 * **Name**: Document.

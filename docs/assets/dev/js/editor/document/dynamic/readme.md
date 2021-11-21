@@ -12,16 +12,16 @@
 
 
 ## Disable _Command_ -- `$e.run('document/dynamic/disable')`
-*  **Name**: Disable.
-*  **Description**: Disable dynamic settings.
-*  **Returns**: `{void}`
-*  **Arguments**:
+* **Name**: Disable.
+* **Description**: Disable dynamic settings.
+* **Returns**: `{void}`
+* **Arguments**:
 
-   | Property     | Type                  | Requirement   | Description |
-   |---           |---                    |---            |---|
-   | _container_  | `{Container}`         | **required** (if `containers` isn't supplied)  | Container to disable.
-   | _containers_ | `{Array.<Container>}` | **required** (if `container` isn't supplied)  | Containers to disable.
-   | _settings_   | `{Object}`             | **required**  | Dynamic settings to disable <TODO EXPLAIN WHY>
+   | Property     | Type                  | Description |
+   |---           |---                    |---|
+   | _container_  | `{Container}`         | Target.
+   | _containers_ | `{Container[]}`       | Targets.
+   | _settings_   | `{Object}`            | Dynamic settings to disable.
 
 * **Example**:
   Assuming we have a widget with dynamic tag for *title*, and want to disable it.
@@ -45,16 +45,16 @@
   Will disable dynamic tag for title.
 
 ## Enable _Command_ -- `$e.run('document/dynamic/enable')`
-*  **Name**: Enable.
-*  **Description**: Enable dynamic settings.
-*  **Returns**: `{void}`
-*  **Arguments**:
+* **Name**: Enable.
+* **Description**: Enable dynamic settings.
+* **Returns**: `{void}`
+* **Arguments**:
 
-   | Property     | Type                  | Requirement   | Description |
-   |---           |---                    |---            |---|
-   | _container_  | `{Container}`         | **required**  | Container to enable.
-   | _containers_ | `{Array.<Container>}` | **required**  | Containers to enable.
-   | _settings_   | `{Object}`            | **required**  | Dynamic settings to enable
+   | Property     | Type             | Description |
+   |---           |---               |---|
+   | _container_  | `{Container}`    | Target.
+   | _containers_ | `{Container[]}`  | Targets.
+   | _settings_   | `{Object}`       | Dynamic settings to enable.
 
 * **Examples**:
   Enable dynamic title for heading, assuming you have simple widget like this:
@@ -84,11 +84,11 @@
 * **Returns**: `{void}`
 * **Arguments**:
 
-   | Property     | Type                  | Requirement   | Description | 
-   |---           |---                    |---            |---|
-   | _container_  | `{Container}`         | **required**  | Container target.
-   | _containers_ | `{Array.<Container>}` | **required**  | Containers target.
-   | _settings_   | `{Object}`            | **required**  | Dynamic settings to change.
+   | Property     | Type             | Description | 
+   |---           |---               |---|
+   | _container_  | `{Container}`    | Target.
+   | _containers_ | `{Container[]}`  | Targets.
+   | _settings_   | `{Object}`       | Dynamic settings to change.
 
 * **Examples**:
   Change dynamic settings for title with dynamic tag *post-date*.
@@ -96,7 +96,7 @@
 
   ![widget-heading-with-dynamic-title-date](./_images/widget-heading-with-dynamic-title-date.png)
 
-  And you want to change the format to human readable format. use next example:
+  And you want to change the format to human-readable format. use next example:
 
     ```javascript
     // Get heading container.
