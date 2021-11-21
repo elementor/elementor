@@ -10,14 +10,14 @@ Every element in the document has a unique ID which is used to identify it in th
 ```javascript
 elementor.getContainer( ID );
 ```
-The next example/documents will describe the following parameters:
+Every command under document uses `container` or `containers` as parameters to define the target.
+
+The commands can accept `container` or `containers` but not both.
 
 | Property     | Type                  | Description |
 |---           |---                    |---|
 | _container_  | `{Container}`         | Target.
 | _containers_ | `{Container[]}`       | Targets.
-
-The command(s) can accept container or containers not both.
 
 
 ## Component -- `$e.components.get('document')`
