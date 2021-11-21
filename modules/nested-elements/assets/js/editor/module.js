@@ -5,20 +5,12 @@ import WidgetContainerModel from './models/widget-container-model';
 
 export default class NestedElementsModule extends elementorModules.editor.utils.Module {
 	onElementorInitComponents() {
-		elementor.hooks.addFilter( 'element/view', ( DefaultView, model ) => {
-			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
-				return WidgetContainer;
-			}
-
-			return DefaultView;
-		} );
-
-		elementor.hooks.addFilter( 'element/model', ( DefaultModel, attrs ) => {
-			if ( this.isWidgetSupportNesting( attrs.widgetType ) ) {
-				return WidgetContainerModel;
-			}
-
-			return DefaultModel;
+		elementor.registerElementType( {
+			elType: 'widget',
+			widgetType: 'nested-tabs',
+            View: WidgetContainer,
+			Model: WidgetContainerModel,
+			EmptyView: WidgetContainerEmpty,
 		} );
 
 		elementor.hooks.addFilter( 'elementor/editor/navigator/element/has-children', ( defaultReturn, model ) => {
@@ -27,14 +19,6 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 			}
 
 			return defaultReturn;
-		} );
-
-		elementor.hooks.addFilter( 'elementor/editor/container/empty/render', ( DefaultElement, /* Container */container ) => {
-			if ( container?.parent?.model?.get && this.isWidgetSupportNesting( container.parent.model.get( 'widgetType' ) ) ) {
-				return <WidgetContainerEmpty container={container} />;
-			}
-
-			return DefaultElement;
 		} );
 
 		this.component = $e.components.register( new Component() );

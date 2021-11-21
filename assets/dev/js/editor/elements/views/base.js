@@ -112,7 +112,14 @@ BaseElementView = BaseContainer.extend( {
 				break;
 
 			default:
-				ChildView = elementor.modules.elements.views.Widget;
+				const registeredWidgetArgs = elementor.getRegisteredElementType( elType, model.get( 'widgetType' ) );
+
+				if ( registeredWidgetArgs?.View ) {
+					ChildView = registeredWidgetArgs.View;
+				} else {
+					ChildView = elementor.modules.elements.views.Widget;
+				}
+
 				break;
 		}
 

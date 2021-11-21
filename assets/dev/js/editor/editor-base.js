@@ -23,6 +23,7 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import ArgsObject from 'elementor-assets-js/modules/imports/args-object';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -218,6 +219,8 @@ export default class EditorBase extends Marionette.Application {
 			},
 		},
 	};
+
+	registeredElements = {};
 
 	userCan( capability ) {
 		return -1 === this.config.user.restrictions.indexOf( capability );
@@ -1532,5 +1535,35 @@ export default class EditorBase extends Marionette.Application {
 			type = state ? 'text/css' : 'elementor/disabled-css';
 
 		$files.attr( { type } );
+	}
+
+	registerElementType( args = {} ) {
+		const argsObject = new ArgsObject( args );
+
+		argsObject.requireArgumentType( 'elType', 'string' );
+
+		let index = args.elType;
+
+		if ( 'widget' === args.elType ) {
+			argsObject.requireArgumentType( 'widgetType', 'string' );
+
+			index += '-' + args.widgetType;
+		}
+
+		if ( this.registeredElements[ index ] ) {
+			throw new Error( 'Element type already registered' );
+		}
+
+		this.registeredElements[ index ] = args;
+	}
+
+	getRegisteredElementType( elType, widgetType = false ) {
+		let index = elType;
+
+        if ( 'widget' === elType ) {
+            index += '-' + widgetType;
+        }
+
+        return this.registeredElements[ index ];
 	}
 }

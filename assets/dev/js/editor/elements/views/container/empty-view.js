@@ -12,9 +12,21 @@ export default class EmptyView extends Marionette.ItemView {
 	}
 
 	renderReactDefaultElement( container ) {
-		const DefaultElement = <EmptyComponent container={container} />;
+		let defaultElement;
 
-		ReactDOM.render( elementor.hooks.applyFilters( 'elementor/editor/container/empty/render', DefaultElement, container ), this.el );
+		const parent = container.parent,
+			registeredElementArgs = elementor.getRegisteredElementType(
+				parent.model.get( 'elType' ),
+				parent.model.get( 'widgetType' )
+			);
+
+		if ( registeredElementArgs?.EmptyView ) {
+			defaultElement = <registeredElementArgs.EmptyView container={container} />;
+		} else {
+			defaultElement = <EmptyComponent container={container} />;
+		}
+
+		ReactDOM.render( defaultElement, this.el );
 	}
 
 	attachElContent() {
