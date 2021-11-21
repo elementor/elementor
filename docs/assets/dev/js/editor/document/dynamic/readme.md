@@ -90,7 +90,7 @@
    | _containers_ | `{Container[]}`  | Targets.
    | _settings_   | `{Object}`       | Dynamic settings to change.
 
-* **Examples**:
+* **Example**:
   Change dynamic settings for title with dynamic tag *post-date*.
   Assuming you have a heading with 'post-date' dynamic tag for title.
 
