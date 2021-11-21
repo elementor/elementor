@@ -54,6 +54,9 @@ const kitContentData = [
 			},
 		},
 	},
+	{
+		type: 'plugins',
+	},
 ];
 
 export default kitContentData;

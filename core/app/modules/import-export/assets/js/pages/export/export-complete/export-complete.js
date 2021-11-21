@@ -40,7 +40,7 @@ export default function ExportComplete() {
 		);
 
 	useEffect( () => {
-		if ( context.data.downloadUrl ) {
+		if ( context.data.exportedData ) {
 			downloadFile();
 		} else {
 			navigate( '/export' );

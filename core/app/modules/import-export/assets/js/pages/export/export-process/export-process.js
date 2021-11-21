@@ -16,19 +16,39 @@ export default function ExportProcess() {
 		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
+		},
+		getExportedPluginsData = ( plugins ) => {
+			const pluginsData = [];
+
+			console.log( 'plugins', plugins );
+
+			plugins.forEach( ( pluginData ) => {
+				const { name, plugin, plugin_uri, version } = pluginData;
+
+				pluginsData.push( {
+					name,
+					plugin,
+					plugin_uri,
+					version,
+				} );
+			} );
+
+			return pluginsData;
 		};
 
 	useEffect( () => {
-		if ( context.data.downloadUrl ) {
-			setAjax( {
-				url: context.data.downloadUrl,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			} );
-		} else {
-			navigate( '/export' );
-		}
+		const { includes, kitInfo, plugins } = context.data;
+
+		setAjax( {
+			data: {
+				action: 'elementor_export_kit',
+				data: JSON.stringify( {
+					include: includes,
+					kitInfo,
+					plugins: getExportedPluginsData( plugins ),
+				} ),
+			},
+		} );
 	}, [] );
 
 	useEffect( () => {

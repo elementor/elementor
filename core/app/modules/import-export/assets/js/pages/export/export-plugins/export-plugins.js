@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-
-import { Context } from '../../../context/context-provider';
+import React from 'react';
+import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -12,16 +11,24 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import usePlugins from '../../../hooks/use-plugins';
 
 export default function ExportPlugins() {
-	const { pluginsState, pluginsActions } = usePlugins(),
+	const { pluginsState } = usePlugins(),
+		navigate = useNavigate(),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<Button text="Action" />
+				<Button
+					text={ __( 'Back', 'elementor' ) }
+					variant="contained"
+					onClick={ () => navigate( '/export' ) }
+				/>
+
+				<Button
+					text={ __( 'Create Kit', 'elementor' ) }
+					variant="contained"
+					color="primary"
+					onClick={ () => navigate( '/export/process' ) }
+				/>
 			</WizardFooter>
 		);
-
-	useEffect( () => {
-		console.log( 'plugins: ', pluginsState );
-	}, [ pluginsState ] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>

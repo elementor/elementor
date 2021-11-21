@@ -196,14 +196,14 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['_nonce'], 'elementor_export' ) ) {
+		if ( ! isset( $_POST['action'] ) || self::EXPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
-		$export_settings = $_GET[ self::EXPORT_TRIGGER_KEY ];
+		$export_settings = json_decode( stripslashes( $_POST['data'] ), true );
 
 		try {
-			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo' ] ) );
+			$this->export = new Export( self::merge_properties( [], $export_settings, [ 'include', 'kitInfo', 'plugins' ] ) );
 
 			$export_result = $this->export->run();
 

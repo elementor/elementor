@@ -44,6 +44,10 @@ export default function KitContent( props ) {
 			<List separated className="e-app-export-kit-content">
 				{
 					kitContentData.map( ( item, index ) => {
+						if ( ! item.data ) {
+							return;
+						}
+
 						const isLockedFeaturesNoPro = item.data.features?.locked && ! hasPro;
 
 						if ( props.manifest ) {

@@ -40,8 +40,6 @@ export default function PluginsSelection( props ) {
 		cachedInitialSelections = useMemo( () => initialSelections, [ props.plugins ] ),
 		cachedInitialDisabled = useMemo( () => props.initialDisabled, [ props.plugins ] );
 
-	console.log( 'cachedInitialDisabled', cachedInitialDisabled );
-
 	// Updating the selected plugins list in the global context.
 	useEffect( () => {
 		if ( selectedData ) {

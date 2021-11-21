@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ExportButton from './components/export-button/export-button';
 import KitContent from '../../../shared/kit-content/kit-content';
 import Panel from '../../../ui/panel/panel';
 import KitName from './components/kit-name/kit-name';
@@ -18,10 +18,16 @@ import './export-kit.scss';
 
 export default function ExportKit() {
 	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
+		navigate = useNavigate(),
 		kitInfoTitle = __( 'Kit Information', 'elementor' ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<ExportButton />
+				<Button
+					variant="contained"
+					text={ __( 'Next', 'elementor' ) }
+					color="primary"
+					onClick={ () => navigate( '/export/plugins' ) }
+				/>
 			</WizardFooter>
 		),
 		getLearnMoreLink = () => (
