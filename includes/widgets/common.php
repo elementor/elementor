@@ -474,12 +474,12 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'default' => [
@@ -503,12 +503,12 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'condition' => [
