@@ -6,8 +6,7 @@
 
   ![legend-section-widget-tabs](_images/legend-section-widget-tabs.png)
 
-Every element in the document has a unique ID, which is used to identify it in the editor, every element has Unique [Container](#) Object, the container object
-can be found by using the following code:
+Every element in the document has a unique ID which is used to identify it in the editor, and is resolved to a unique [Container](#) object that can be accessed using the following method:
 ```javascript
 elementor.getContainer( ID );
 ```
