@@ -261,10 +261,26 @@ BaseElementView = BaseContainer.extend( {
 
 		// We should only allow external modification to edit buttons if the user enabled edit buttons.
 		if ( editButtonsEnabled ) {
-			// A filter for adding edit buttons to all element types.
-			editButtons = elementor.hooks.applyFilters( `elements/base/edit-buttons`, editButtons );
-			// A filter for adding edit buttons only to a specific element type.
-			editButtons = elementor.hooks.applyFilters( `elements/${ elementType }/edit-buttons`, editButtons );
+
+			/**
+			 * Filter edit buttons.
+			 *
+			 * This filter allows adding edit buttons to all element types.
+			 *
+			 * @param array editButtons An array of buttons.
+			 */
+			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons`, editButtons );
+
+			/**
+			 * Filter edit buttons.
+			 *
+			 * This filter allows adding edit buttons only to a specific element type.
+			 *
+			 * The dynamic portion of the hook name, `elementType`, refers to element type (widget, column, section).
+			 *
+			 * @param array editButtons An array of buttons.
+			 */
+			editButtons = elementor.hooks.applyFilters( `elements/edit-buttons/${ elementType }`, editButtons );
 		}
 
 		// Only sections always have the remove button, even if the Editing Handles preference is off.
