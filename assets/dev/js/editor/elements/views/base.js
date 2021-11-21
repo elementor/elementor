@@ -6,7 +6,7 @@ var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	BaseElementView;
 
 /**
- * @typedef {{}} DataLink
+ * @typedef {{}} DataBinding
  * @property {DOMStringMap} dataset
  * @property {HTMLElement} el
  */
@@ -689,13 +689,13 @@ BaseElementView = BaseContainer.extend( {
 	 * How to use?
 	 *  If the element which should be rendered for a setting key is known in advance, it's possible to add the following attributes to the element to avoid full re-render:
 	 *  Example for repeater item:
-	 * 'data-link-type': 'repeater-item',               // Type of link (to know how to behave)
-	 * 'data-link-setting': 'tab_title',                // Setting key that effect the link.
-	 * 'data-link-index': tabCount,                     // Index is required for repeater items.
+	 * 'data-binding-type': 'repeater-item',               // Type of binding (to know how to behave).
+	 * 'data-binding-setting': 'tab_title',                // Setting key that effect the binding.
+	 * 'data-binding-index': tabCount,                     // Index is required for repeater items.
 	 *
 	 * Example for content:
-	 * 'data-link-type': 'content',                     // Type of link
-	 * 'data-link-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
+	 * 'data-binding-type': 'content',                     // Type of binding.
+	 * 'data-binding-setting': 'testimonial_content',      // Setting change to capture, the value will replace the link.
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
@@ -704,7 +704,7 @@ BaseElementView = BaseContainer.extend( {
 	 */
 	linkDataBindings() {
 		/**
-		 * @type {Array.<DataLink>}
+		 * @type {Array.<DataBinding>}
 		 */
 		this.dataBindings = [];
 
@@ -714,20 +714,20 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		const $dataLink = this.$el.find( '[data-link-type]' );
+		const $dataBinding = this.$el.find( '[data-binding-type]' );
 
-		if ( ! $dataLink.length ) {
+		if ( ! $dataBinding.length ) {
 			return;
 		}
 
 		const self = this;
 
-		$dataLink.filter( function() {
+		$dataBinding.filter( function() {
 			const $current = jQuery( this );
 
-			// To support nested links bypass nested links that are not part of the current.
+			// To support nested data-binding bypass nested data-binding that are not part of the current.
 			if ( $current.closest( '.elementor-element' ).data( 'id' ) === id ) {
-				if ( this.dataset.linkType ) {
+				if ( this.dataset.bindingType ) {
 					self.dataBindings.push( {
 						el: this,
 						dataset: this.dataset,
@@ -743,21 +743,21 @@ BaseElementView = BaseContainer.extend( {
 	 * Render linked data.
 	 *
 	 * @param {Object} settings
-	 * @param {Array.<DataLink>} links
+	 * @param {Array.<DataBinding>} dataBindings
 	 *
 	 * @returns {boolean} - false on fail.
 	 */
-	renderDataBindings( settings, links ) {
+	renderDataBindings( settings, dataBindings ) {
 		if ( ! this.dataBindings?.length ) {
 			return false;
 		}
 
 		let changed = false;
 
-		for ( const link of links ) {
-			switch ( link.dataset.linkType ) {
+		for ( const dataBinding of dataBindings ) {
+			switch ( dataBinding.dataset.bindingType ) {
 				case 'repeater-item': {
-					const repeater = this.container.repeaters[ link.dataset.linkRepeaterName ];
+					const repeater = this.container.repeaters[ dataBinding.dataset.bindingRepeaterName ];
 
 					if ( ! repeater ) {
 						break;
@@ -765,23 +765,23 @@ BaseElementView = BaseContainer.extend( {
 
 					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
 
-					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( link.dataset.linkIndex ) ) {
-						const change = settings.changed[ link.dataset.linkSetting ];
+					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
+						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
 
 						if ( change !== undefined ) {
 							changed = true;
-							link.el.innerHTML = change;
+							dataBinding.el.innerHTML = change;
 						}
 					}
 				}
 				break;
 
 				case 'content': {
-					if ( undefined !== settings.changed[ link.dataset.linkSetting ] ) {
-						const change = settings.changed[ link.dataset.linkSetting ];
+					if ( undefined !== settings.changed[ dataBinding.dataset.bindingSetting ] ) {
+						const change = settings.changed[ dataBinding.dataset.bindingSetting ];
 
 						changed = true;
-						link.el.innerHTML = change;
+						dataBinding.el.innerHTML = change;
 					}
 				}
 				break;

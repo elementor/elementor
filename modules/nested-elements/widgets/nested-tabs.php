@@ -418,10 +418,10 @@ class NestedTabs extends Widget_Container_Base {
 				'tabindex': 1 === tabCount ? '0' : '-1',
 				'aria-controls': 'elementor-tab-content-' + tabUid,
 				'aria-expanded': 'false',
-				'data-link-type': 'repeater-item',
-				'data-link-repeater-name': 'nested-tabs',
-				'data-link-setting': 'tab_title',
-				'data-link-index': tabCount,
+				'data-binding-type': 'repeater-item',
+				'data-binding-repeater-name': 'nested-tabs',
+				'data-binding-setting': 'tab_title',
+				'data-binding-index': tabCount,
 				} );
 				#>
 				<div {{{ view.getRenderAttributeString( tabTitleKey ) }}}>{{{ item.tab_title }}}</div>
