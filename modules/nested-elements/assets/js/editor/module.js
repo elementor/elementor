@@ -13,14 +13,6 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 			EmptyView: WidgetContainerEmpty,
 		} );
 
-		elementor.hooks.addFilter( 'elementor/editor/navigator/element/has-children', ( defaultReturn, model ) => {
-			if ( this.isWidgetSupportNesting( model.get( 'widgetType' ) ) ) {
-				return true;
-			}
-
-			return defaultReturn;
-		} );
-
 		this.component = $e.components.register( new Component() );
 	}
 

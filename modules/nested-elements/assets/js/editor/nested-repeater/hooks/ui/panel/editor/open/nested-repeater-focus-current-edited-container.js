@@ -44,12 +44,14 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 
 		let depth = 1;
 
-		// For each `navigateMap` run `$e.run( 'nested-modules/nested-tabs/select' )`.
 		navigateMap.forEach( ( { container, index } ) => {
 			setTimeout( () => {
 				$e.run( 'nested-elements/nested-repeater/select', {
 					container,
 					index: index++,
+					options: {
+						useHistory: false,
+					},
 				} );
 			}, NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT * depth );
 

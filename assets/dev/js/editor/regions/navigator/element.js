@@ -108,7 +108,9 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		if ( elementor.hooks.applyFilters( 'elementor/editor/navigator/element/has-children', false, this.model ) ) {
+		const elements = this.model.get( 'elements' );
+
+		if ( elements && elements.length ) {
 			return true;
 		}
 
@@ -268,7 +270,10 @@ export default class extends Marionette.CompositeView {
 				return;
 			}
 
-			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } )
+			const $indicator = jQuery( '<div>', {
+				class: 'elementor-navigator__element__indicator',
+				title: indicatorSettings.title,
+			} )
 				.attr( 'data-section', indicatorSettings.section )
 				.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
 
