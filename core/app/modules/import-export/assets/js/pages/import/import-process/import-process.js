@@ -39,6 +39,7 @@ export default function ImportProcess() {
 				setShowUnfilteredFilesDialog( true );
 			}
 		},
+		exportKit = () => kitActions.export( { file: decodedFileURL } ),
 		onCancelProcess = () => {
 			context.dispatch( { type: 'SET_FILE', payload: null } );
 

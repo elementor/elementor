@@ -6,10 +6,10 @@ import FileProcess from '../../../shared/file-process/file-process';
 
 import { Context } from '../../../context/context-provider';
 
-import useAjax from 'elementor-app/hooks/use-ajax';
+import useKit from '../../../hooks/use-kit';
 
 export default function ExportProcess() {
-	const { ajaxState, setAjax } = useAjax(),
+	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
@@ -19,8 +19,6 @@ export default function ExportProcess() {
 		},
 		getExportedPluginsData = ( plugins ) => {
 			const pluginsData = [];
-
-			console.log( 'plugins', plugins );
 
 			plugins.forEach( ( pluginData ) => {
 				const { name, plugin, plugin_uri, version } = pluginData;
@@ -39,25 +37,23 @@ export default function ExportProcess() {
 	useEffect( () => {
 		const { includes, kitInfo, plugins } = context.data;
 
-		setAjax( {
-			data: {
-				action: 'elementor_export_kit',
-				data: JSON.stringify( {
-					include: includes,
-					kitInfo,
-					plugins: getExportedPluginsData( plugins ),
-				} ),
-			},
+		kitActions.export( {
+			include: includes,
+			kitInfo,
+			plugins: getExportedPluginsData( plugins ),
 		} );
 	}, [] );
 
 	useEffect( () => {
-		if ( 'success' === ajaxState.status ) {
-			context.dispatch( { type: 'SET_EXPORTED_DATA', payload: ajaxState.response } );
-		} else if ( 'error' === ajaxState.status ) {
-			setErrorType( ajaxState.response );
+		switch ( kitState.status ) {
+			case KIT_STATUS_MAP.EXPORTED:
+				context.dispatch( { type: 'SET_EXPORTED_DATA', payload: kitState.data } );
+				break;
+			case KIT_STATUS_MAP.ERROR:
+				setErrorType( kitState.data );
+				break;
 		}
-	}, [ ajaxState.status ] );
+	}, [ kitState.status ] );
 
 	useEffect( () => {
 		if ( context.data.exportedData ) {
