@@ -409,7 +409,7 @@ class Uploads_Manager extends Base_Object {
 	 *
 	 * @return bool
 	 */
-	private function is_elementor_media_upload() {
+	public function is_elementor_media_upload() {
 		return isset( $_POST['uploadTypeCaller'] ) && 'elementor-media-upload' === $_POST['uploadTypeCaller']; // phpcs:ignore
 	}
 
@@ -555,7 +555,16 @@ class Uploads_Manager extends Base_Object {
 			$is_allowed = new \WP_Error( Exceptions::FORBIDDEN, 'Uploading this file type is not allowed.' );
 		}
 
-		return $is_allowed;
+		/**
+		 * Elementor File Type Allowed
+		 *
+		 * Allows setting file types
+		 *
+		 * @since 3.5.0
+		 *
+		 * @param bool|\WP_Error $is_allowed
+		 */
+		return apply_filters( 'elementor/files/allow-file-type/' . $file_extension, $is_allowed );
 	}
 
 	/**
