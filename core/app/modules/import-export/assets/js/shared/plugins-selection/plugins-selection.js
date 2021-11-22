@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 
 import { Context } from '../../context/context-provider';
 
@@ -10,11 +10,11 @@ const ELEMENTOR_PLUGIN_NAME = 'Elementor',
 	ELEMENTOR_PRO_PLUGIN_NAME = 'Elementor Pro';
 
 export default function PluginsSelection( props ) {
-	const [ selectedData, setSelectedData ] = useState( null ),
-		context = useContext( Context ),
-		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
+	const context = useContext( Context ),
+		[ selectedData, setSelectedData ] = useState( null ),
 		initialSelected = [ ...props.initialSelected ],
 		elementorPluginsData = {},
+		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
 		plugins = [ ...props.plugins ].filter( ( data ) => {
 			const isElementorPlugin = elementorPluginsNames.includes( data.name );
 
@@ -23,7 +23,8 @@ export default function PluginsSelection( props ) {
 			}
 
 			return ! isElementorPlugin;
-		} );
+		} ),
+		corePluginData = elementorPluginsData[ ELEMENTOR_PLUGIN_NAME ];
 
 	// In case that Pro exist, registering it as the first selected plugin.
 	if ( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] ) {
@@ -43,13 +44,28 @@ export default function PluginsSelection( props ) {
 	// Updating the selected plugins list in the global context.
 	useEffect( () => {
 		if ( selectedData ) {
-			// Adding Elementor-Core as the first plugin of the selected plugins list.
-			const corePluginData = elementorPluginsData[ ELEMENTOR_PLUGIN_NAME ],
-				selectedPluginsList = [ corePluginData ];
+			const selectedPluginsList = [];
 
-			selectedData.map( ( pluginIndex ) => selectedPluginsList.push( plugins[ pluginIndex ] ) );
+			/*
+			* If exist, adding the Elementor-Core as the first plugin of the selected plugins list.
+			* Because there is no scenario that it should be displayed in the table, but it should be selected by default if exist.
+			*/
+			if ( corePluginData ) {
+				selectedPluginsList.push( corePluginData );
+			}
 
-			context.dispatch( { type: 'SET_PLUGINS', payload: selectedPluginsList } );
+			selectedData.forEach( ( pluginIndex ) => {
+				// Adding the plugin index to the selected plugins list as long as it's not excluded.
+				if ( ! props.excludeSelections.includes( pluginIndex ) ) {
+					selectedPluginsList.push( plugins[ pluginIndex ] );
+				}
+
+				selectedPluginsList.push( plugins[ pluginIndex ] );
+			} );
+
+			if ( selectedPluginsList.length ) {
+				context.dispatch( { type: 'SET_PLUGINS', payload: selectedPluginsList } );
+			}
 		}
 	}, [ selectedData ] );
 
@@ -71,16 +87,18 @@ export default function PluginsSelection( props ) {
 }
 
 PluginsSelection.propTypes = {
+	excludeSelections: PropTypes.array,
 	initialDisabled: PropTypes.array,
 	initialSelected: PropTypes.array,
+	layout: PropTypes.array,
 	plugins: PropTypes.array,
 	selection: PropTypes.bool,
 	withHeader: PropTypes.bool,
 	withStatus: PropTypes.bool,
-	layout: PropTypes.array,
 };
 
 PluginsSelection.defaultProps = {
+	excludeSelections: [],
 	initialDisabled: [],
 	initialSelected: [],
 	plugins: [],

@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-
-import { Context } from '../../../context/context-provider';
+import React from 'react';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -17,16 +15,17 @@ import './import-plugins.scss';
 export default function ImportPlugins() {
 	const { pluginsState } = usePlugins(),
 		pluginsToAdd = pluginsState.installed.filter( ( plugin ) => 'active' !== plugin.status ),
-		activePluginsIndexes = pluginsState.active.map( ( plugin, index ) => index ),
+		existingPlugins = pluginsState.active.filter( ( plugin ) => 'Elementor' !== plugin.name ),
+		existingPluginsIndexes = existingPlugins.map( ( plugin, index ) => index ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button text="Action" />
 			</WizardFooter>
 		);
 
-	useEffect( () => {
-		console.log( 'plugins: ', pluginsState );
-	}, [ pluginsState ] );
+	// useEffect( () => {
+	// 	console.log( 'plugins: ', pluginsState );
+	// }, [ pluginsState ] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -52,10 +51,12 @@ export default function ImportPlugins() {
 					<PluginsSelection
 						withHeader={ false }
 						withStatus={ false }
-						plugins={ pluginsState.active }
-						initialSelected={ activePluginsIndexes }
-						initialDisabled={ activePluginsIndexes }
+						plugins={ existingPlugins }
+						initialSelected={ existingPluginsIndexes }
+						initialDisabled={ existingPluginsIndexes }
+						excludeSelections={ existingPluginsIndexes }
 						layout={ [ 4, 1 ] }
+						onSelect={ () => {} }
 					/>
 				</div>
 			</section>
