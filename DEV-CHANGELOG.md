@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev8 - 2021-11-22
+* Tweak: The maximum Offest values changes to 1000px in Advanced > Transform [ED-5600] (#17002)
+* Fix: D&D issues with right and left positioned elements [ED-5494] (#16959)
+
 #### 3.6.0-dev7 - 2021-11-19
 * Fix: Default values in rotate 3D weren't apply in CSS Transfrom [ED-5568] (#16978)
 * Tweak: Adjusting the widgets inline-CSS experiment to support custom-breakpoints [ED-5536] (#16922)
@@ -522,14 +526,3 @@
 * Fix: Import-Export - Import only site-settings + previous button in import-content screen [ED-3513] (#15188)
 * Tweak: Making the animations CSS library to be loaded conditionally only when needed [ED-2749] (#15125)
 * Experiment: PHPCS via Composer [ED-3182] (#14898)
-
-#### 3.3.0-dev12 - 2021-06-02
-* Tweak: Added responsive capabilities to Content width in Section and Inner Section [ED-2504] (#14933)
-* Tweak: If the user is coming from kit library, some featured image will not imported (#15173)
-* Tweak: Usage - Include non elementor pages [ED-3023] (#15005)
-* New: Container.js Infra - Find children recursive [ED-2595] (#14500)
-* Tweak: Color Picker - Added a tooltip to the eye-dropper icon [ED-2652] (#15154)
-* Tweak: Added alt text field when adding an image via URL [ED-3458] (#15167)
-* Tweak: Preferences - Add "Responsive preview" title in Preferences for responsive control [ED-3433] (#15150)
-* Sortable: Fix - Unable to drag and drop sections one above other [ED-2374] (#15178)
-* Tweak: Added `elementor-widget-wrap` to DOM optimization experiment [ED-2259] (#14442)
