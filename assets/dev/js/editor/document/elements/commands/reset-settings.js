@@ -6,20 +6,24 @@ export class ResetSettings extends CommandHistory {
 	}
 
 	getHistory( args ) {
-		const { containers = [ args.container ], silent = false } = args;
+		const { containers = [ args.container ], options: { useHistory = true } } = args;
 
-		return ! silent && {
+		return useHistory && {
 			containers,
 			type: 'reset_settings',
 		};
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], settings = [] } = args;
+		const { containers = [ args.container ], settings = [], options: { useHistory = true } } = args;
 
 		containers.forEach( ( container ) => {
 			const controls = Object.entries( container.settings.controls ),
-				defaultValues = {};
+				defaultValues = {},
+				settingsCommandBody = {
+					container,
+					settings: defaultValues,
+				};
 
 			controls.forEach( ( [ controlName, control ] ) => {
 				// If settings were specific, restore only them.
@@ -32,10 +36,11 @@ export class ResetSettings extends CommandHistory {
 				defaultValues[ controlName ] = control.default;
 			} );
 
-			$e.run( 'document/elements/settings', {
-				container,
-				settings: defaultValues,
-			} );
+			if ( useHistory ) {
+				$e.run( 'document/elements/settings', settingsCommandBody );
+			} else {
+				$e.internal( 'document/elements/set-settings', settingsCommandBody );
+			}
 
 			container.render();
 		} );

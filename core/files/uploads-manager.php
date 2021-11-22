@@ -410,6 +410,8 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	private function is_elementor_media_upload() {
+		// We use also use `uploadTypeCaller` as GET parameter when using the WP Media Library REST API, where the whole
+		// request body is occupied by the uploaded file.
 		return isset( $_REQUEST['uploadTypeCaller'] ) && 'elementor-media-upload' === $_REQUEST['uploadTypeCaller']; // phpcs:ignore
 	}
 

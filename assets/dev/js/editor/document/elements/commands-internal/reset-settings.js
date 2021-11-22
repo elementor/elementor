@@ -6,7 +6,7 @@ export class ResetSettings extends CommandBase {
 	}
 
 	apply( args ) {
-		$e.run( 'document/elements/reset-settings', { ...args, silent: true } );
+		$e.run( 'document/elements/reset-settings', { ...args, options: { useHistory: false } } );
 	}
 }
 
