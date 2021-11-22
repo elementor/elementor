@@ -11,7 +11,7 @@ import './panel.scss';
 export default function Panel( props ) {
 	return (
 		<Collapse isOpened={ props.isOpened }>
-			<Card className={ arrayToClassName( [ 'e-app-import-export-panel', props.className ] ) }>
+			<Card className={ arrayToClassName( [ 'eps-panel', props.className ] ) }>
 				{ props.children }
 			</Card>
 		</Collapse>
