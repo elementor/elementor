@@ -18,6 +18,7 @@ class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
 		events.click = ( e ) => {
 			const $parentsUntil = jQuery( e.target ).parentsUntil( '.elementor-widget-container' );
 
+			// Clicks higher then 3, are nested, should not be handled by current.
 			if ( 3 <= $parentsUntil.length ) {
 				return true;
 			}
