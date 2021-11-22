@@ -6,7 +6,7 @@ export class ResetSettings extends CommandHistory {
 	}
 
 	getHistory( args ) {
-		const { containers = [ args.container ], options: { useHistory = true } } = args;
+		const { containers = [ args.container ], options: { useHistory = true } = {} } = args;
 
 		return useHistory && {
 			containers,
@@ -15,7 +15,7 @@ export class ResetSettings extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], settings = [], options: { useHistory = true } } = args;
+		const { containers = [ args.container ], settings = [], options: { useHistory = true } = {} } = args;
 
 		containers.forEach( ( container ) => {
 			const controls = Object.entries( container.settings.controls ),
