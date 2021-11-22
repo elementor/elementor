@@ -431,7 +431,8 @@ trait Button_Trait {
 			$instance = $this;
 		}
 
-		$settings = $instance->get_settings();
+		$settings = $instance->get_settings_for_display();
+
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
