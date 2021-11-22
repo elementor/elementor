@@ -64,6 +64,8 @@ export default function PluginsSelection( props ) {
 			onSelect={ setSelectedData }
 			initialSelections={ cachedInitialSelections }
 			withHeader={ props.withHeader }
+			withStatus={ props.withStatus }
+			layout={ props.layout }
 		/>
 	);
 }
@@ -74,6 +76,8 @@ PluginsSelection.propTypes = {
 	plugins: PropTypes.array,
 	selection: PropTypes.bool,
 	withHeader: PropTypes.bool,
+	withStatus: PropTypes.bool,
+	layout: PropTypes.array,
 };
 
 PluginsSelection.defaultProps = {
@@ -82,4 +86,5 @@ PluginsSelection.defaultProps = {
 	plugins: [],
 	selection: true,
 	withHeader: true,
+	withStatus: true,
 };

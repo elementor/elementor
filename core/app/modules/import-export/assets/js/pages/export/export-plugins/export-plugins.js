@@ -43,7 +43,7 @@ export default function ExportPlugins() {
 					] }
 				/>
 
-				<PluginsSelection plugins={ pluginsState.active } />
+				<PluginsSelection plugins={ pluginsState.active } withStatus={ false } />
 			</section>
 		</Layout>
 	);

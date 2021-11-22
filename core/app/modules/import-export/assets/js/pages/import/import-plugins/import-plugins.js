@@ -38,16 +38,18 @@ export default function ImportPlugins() {
 
 				<div className="e-app-import-plugins__selection-section">
 					<Heading variant="h5" tag="h3" className="e-app-import-plugins__selection-section-heading">{ __( 'Plugins to add:', 'elementor' ) }</Heading>
-					<PluginsSelection plugins={ pluginsToAdd } />
+					<PluginsSelection plugins={ pluginsToAdd } layout={ [ 3, 1, 1 ] } />
 				</div>
 
 				<div className="e-app-import-plugins__selection-section">
 					<Heading variant="h5" tag="h3" className="e-app-import-plugins__selection-section-heading">{ __( 'Plugins you already have:', 'elementor' ) }</Heading>
 					<PluginsSelection
-						withHeader={ false }
+						withHeader={ true }
+						withStatus={ false }
 						plugins={ pluginsState.active }
 						initialSelections={ activePluginsIndexes }
 						initialDisabled={ activePluginsIndexes }
+						layout={ [ 4, 1 ] }
 					/>
 				</div>
 			</section>

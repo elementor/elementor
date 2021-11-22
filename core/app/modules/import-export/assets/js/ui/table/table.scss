@@ -12,10 +12,11 @@ $root: e-app-import-export-table;
 	--e-app-import-export-table-body-background-color: #{$e-app-import-export-table-body-background-color};
 
 	border-spacing: 0 2px;
+	table-layout: fixed;
 	width: 100%;
 
 	&__checkboxes-column {
-		width: spacing(16);
+		width: spacing(30);
 	}
 
 	&__checkbox {
