@@ -1,7 +1,8 @@
 import { memo } from 'react';
 
+import DataTable from 'elementor-app/molecules/data-table';
+
 import Table from 'elementor-app/ui/table/table';
-import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -12,22 +13,60 @@ function PluginsTable( {
 		withHeader,
 		withStatus,
 		onSelect,
-		initialSelections,
+		initialSelected,
 		initialDisabled,
 	} ) {
-	const tableHeaders = [ 'Plugin Name', 'Version' ];
+	const CellText = ( cellTextProps ) => (
+			<Text className="e-app-import-export-plugins-selection__cell-content">
+				{ cellTextProps.text }
+			</Text>
+		),
+		CellLink = ( cellLinkProps ) => (
+			<InlineLink url={ cellLinkProps.url } underline="none">
+				Version { cellLinkProps.text } <Icon className="eicon-editor-external-link" />
+			</InlineLink>
+		),
+		getHeaders = () => {
+			const headers = [ 'Plugin Name', 'Version' ];
 
-	if ( withStatus ) {
-		tableHeaders.splice( 1, 0, 'Status' );
-	}
+			if ( withStatus ) {
+				headers.splice( 1, 0, 'Status' );
+			}
 
-	console.log( '### RE-RENDER!!!!!!!! of PluginsTable - layout', plugins );
+			return headers;
+		},
+		rows = plugins.map( ( { name, status, version, plugin_uri: pluginUrl } ) => {
+			const row = [
+				<CellText text={ name } key={ name } />,
+				<CellLink text={ version } url={ pluginUrl } key={ name } />,
+			];
+
+			if ( withStatus ) {
+				row.splice( 1, 0, <CellText text={ status } key={ name } /> );
+			}
+
+			return row;
+		} );
+
+	return (
+		<DataTable
+			selection
+			headers={ getHeaders() }
+			rows={ rows }
+			onSelect={ onSelect }
+			initialSelected={ initialSelected }
+			initialDisabled={ initialDisabled }
+			layout={ layout }
+			withHeader={ withHeader }
+			className="e-app-import-export-plugins-table"
+		/>
+	);
 
 	return (
 		<Table
 			selection
 			onSelect={ onSelect }
-			initialSelections={ initialSelections }
+			initialSelected={ initialSelected }
 			initialDisabled={ initialDisabled }
 			className="e-app-import-export-plugins-table"
 		>
@@ -87,7 +126,7 @@ function PluginsTable( {
 PluginsTable.propTypes = {
 	onSelect: PropTypes.func,
 	initialDisabled: PropTypes.array,
-	initialSelections: PropTypes.array,
+	initialSelected: PropTypes.array,
 	plugins: PropTypes.array,
 	withHeader: PropTypes.bool,
 	withStatus: PropTypes.bool,
@@ -96,7 +135,7 @@ PluginsTable.propTypes = {
 
 PluginsTable.defaultProps = {
 	initialDisabled: [],
-	initialSelections: [],
+	initialSelected: [],
 	plugins: [],
 	withHeader: true,
 	withStatus: true,

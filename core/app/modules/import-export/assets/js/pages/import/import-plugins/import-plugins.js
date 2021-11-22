@@ -15,7 +15,7 @@ import usePlugins from '../../../hooks/use-plugins';
 import './import-plugins.scss';
 
 export default function ImportPlugins() {
-	const { pluginsState, pluginsActions } = usePlugins(),
+	const { pluginsState } = usePlugins(),
 		pluginsToAdd = pluginsState.installed.filter( ( plugin ) => 'active' !== plugin.status ),
 		activePluginsIndexes = pluginsState.active.map( ( plugin, index ) => index ),
 		getFooter = () => (
@@ -38,16 +38,22 @@ export default function ImportPlugins() {
 
 				<div className="e-app-import-plugins__selection-section">
 					<Heading variant="h5" tag="h3" className="e-app-import-plugins__selection-section-heading">{ __( 'Plugins to add:', 'elementor' ) }</Heading>
-					<PluginsSelection plugins={ pluginsToAdd } layout={ [ 3, 1, 1 ] } />
+
+					<PluginsSelection
+						plugins={ pluginsToAdd }
+						initialSelected={ pluginsToAdd.map( ( plugin, index ) => index ) }
+						layout={ [ 3, 1, 1 ] }
+					/>
 				</div>
 
 				<div className="e-app-import-plugins__selection-section">
 					<Heading variant="h5" tag="h3" className="e-app-import-plugins__selection-section-heading">{ __( 'Plugins you already have:', 'elementor' ) }</Heading>
+
 					<PluginsSelection
-						withHeader={ true }
+						withHeader={ false }
 						withStatus={ false }
 						plugins={ pluginsState.active }
-						initialSelections={ activePluginsIndexes }
+						initialSelected={ activePluginsIndexes }
 						initialDisabled={ activePluginsIndexes }
 						layout={ [ 4, 1 ] }
 					/>

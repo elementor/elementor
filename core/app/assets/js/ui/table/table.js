@@ -13,11 +13,11 @@ import './table.scss';
 
 export default function Table( props ) {
 	const getInitialSelections = () => {
-		const initialSelections = {};
+		const initialSelected = {};
 
-		props.initialSelections.forEach( ( value ) => initialSelections[ value ] = value );
+		props.initialSelected.forEach( ( value ) => initialSelected[ value ] = value );
 
-		return initialSelections;
+		return initialSelected;
 	},
 	[ selected, setSelected ] = useState( getInitialSelections() ),
 	[ disabled, setDisabled ] = useState( props.initialDisabled ),
@@ -55,7 +55,7 @@ Table.propTypes = {
 	className: PropTypes.string,
 	headers: PropTypes.array,
 	initialDisabled: PropTypes.array,
-	initialSelections: PropTypes.array,
+	initialSelected: PropTypes.array,
 	rows: PropTypes.array,
 	selection: PropTypes.bool,
 	onSelect: PropTypes.func,
@@ -64,5 +64,5 @@ Table.propTypes = {
 Table.defaultProps = {
 	selection: false,
 	initialDisabled: [],
-	initialSelections: [],
+	initialSelected: [],
 };

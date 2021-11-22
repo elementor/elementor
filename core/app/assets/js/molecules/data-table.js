@@ -5,16 +5,19 @@ import Table from 'elementor-app/ui/table/table';
 export default function DataTable( {
 	className,
 	onSelect,
-	initialSelections,
+	initialSelected,
 	initialDisabled,
 	headers,
+	layout,
 	rows,
+	selection,
+	withHeader,
 } ) {
 	return (
 		<Table
-			selection
+			selection={ selection }
 			onSelect={ onSelect }
-			initialSelections={ initialSelections }
+			initialSelected={ initialSelected }
 			initialDisabled={ initialDisabled }
 			className={ arrayToClassName( [ 'e-app-data-table', className ] ) }
 		>
@@ -25,13 +28,15 @@ export default function DataTable( {
 						{
 							selection &&
 							<Table.Cell tag="th">
-								<Table.Checkbox allSelectedCount={ plugins.length } />
+								<Table.Checkbox allSelectedCount={ rows.length } />
 							</Table.Cell>
 						}
 
 						{
 							headers.map( ( header, index ) => (
-								<Table.Cell tag="th" colSpan={ layout && layout[ index ] } key={ index }>{ header }</Table.Cell>
+								<Table.Cell tag="th" colSpan={ layout && layout[ index ] } key={ index }>
+									{ header }
+								</Table.Cell>
 							) )
 						}
 					</Table.Row>
@@ -69,9 +74,10 @@ DataTable.propTypes = {
 	headers: PropTypes.array,
 	rows: PropTypes.array,
 	initialDisabled: PropTypes.array,
-	initialSelections: PropTypes.array,
+	initialSelected: PropTypes.array,
 	layout: PropTypes.array,
 	onSelect: PropTypes.func,
+	selection: PropTypes.bool,
 	withHeader: PropTypes.bool,
 };
 
@@ -80,7 +86,8 @@ DataTable.defaultProps = {
 	headers: [],
 	rows: [],
 	initialDisabled: [],
-	initialSelections: [],
+	initialSelected: [],
+	selection: false,
 	withHeader: true,
 };
 

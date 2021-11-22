@@ -13,7 +13,7 @@ export default function PluginsSelection( props ) {
 	const [ selectedData, setSelectedData ] = useState( null ),
 		context = useContext( Context ),
 		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
-		initialSelections = [ ...props.initialSelections ],
+		initialSelected = [ ...props.initialSelected ],
 		elementorPluginsData = {},
 		plugins = [ ...props.plugins ].filter( ( data ) => {
 			const isElementorPlugin = elementorPluginsNames.includes( data.name );
@@ -30,14 +30,14 @@ export default function PluginsSelection( props ) {
 		// Adding the Pro as the first plugin to appears on the plugins list.
 		plugins.unshift( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] );
 
-		if ( ! initialSelections.length ) {
-			// Adding the Pro index to the initialSelections to be selected by default.
-			initialSelections.push( 0 );
+		if ( ! initialSelected.length ) {
+			// Adding the Pro index to the initialSelected to be selected by default.
+			initialSelected.push( 0 );
 		}
 	}
 
 	const cachedPlugins = useMemo( () => plugins, [ props.plugins ] ),
-		cachedInitialSelections = useMemo( () => initialSelections, [ props.plugins ] ),
+		cachedInitialSelected = useMemo( () => initialSelected, [ props.plugins ] ),
 		cachedInitialDisabled = useMemo( () => props.initialDisabled, [ props.plugins ] );
 
 	// Updating the selected plugins list in the global context.
@@ -62,7 +62,7 @@ export default function PluginsSelection( props ) {
 			initialDisabled={ cachedInitialDisabled }
 			plugins={ cachedPlugins }
 			onSelect={ setSelectedData }
-			initialSelections={ cachedInitialSelections }
+			initialSelected={ cachedInitialSelected }
 			withHeader={ props.withHeader }
 			withStatus={ props.withStatus }
 			layout={ props.layout }
@@ -72,7 +72,7 @@ export default function PluginsSelection( props ) {
 
 PluginsSelection.propTypes = {
 	initialDisabled: PropTypes.array,
-	initialSelections: PropTypes.array,
+	initialSelected: PropTypes.array,
 	plugins: PropTypes.array,
 	selection: PropTypes.bool,
 	withHeader: PropTypes.bool,
@@ -82,7 +82,7 @@ PluginsSelection.propTypes = {
 
 PluginsSelection.defaultProps = {
 	initialDisabled: [],
-	initialSelections: [],
+	initialSelected: [],
 	plugins: [],
 	selection: true,
 	withHeader: true,
