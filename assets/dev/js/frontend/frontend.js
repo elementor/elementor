@@ -320,8 +320,8 @@ export default class Frontend extends elementorModules.ViewModule {
 	 */
 	initModules() {
 		const handlers = {
-			shapes: Shapes,
 			'nested-elements': NestedElements,
+			shapes: Shapes,
 		};
 
 		// TODO: BC - Deprecated since 3.5.0

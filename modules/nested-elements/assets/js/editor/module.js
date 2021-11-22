@@ -8,7 +8,7 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 		elementor.registerElementType( {
 			elType: 'widget',
 			widgetType: 'nested-tabs',
-            View: WidgetContainer,
+			View: WidgetContainer,
 			Model: WidgetRepeaterModel,
 			EmptyView: WidgetContainerEmpty,
 		} );

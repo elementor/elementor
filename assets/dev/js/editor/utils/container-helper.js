@@ -70,125 +70,129 @@ export class ContainerHelper {
 	 * Create a Container element based on a preset.
 	 *
 	 * @param {string} preset
-	 * @param {Container} [container=elementor.getPreviewContainer()]
+	 * @param {Container} [target=elementor.getPreviewContainer()]
 	 * @param {Object} [options={}]
 	 *
 	 * @returns {Container} - Container created on.
 	 */
-	static createContainerFromPreset( preset, container = elementor.getPreviewContainer(), options ) {
+	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
 		let newContainer,
 			settings;
 
-		const { createForTarget = false } = options,
-			historyId = $e.internal( 'document/history/start-log', {
+		const historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: __( 'Container', 'elementor' ),
-			} );
+			} ),
+			{ createWrapper = false } = options;
 
-		switch ( preset ) {
-			// Single Container without sub Containers.
-			case '100':
-				newContainer = ContainerHelper.createContainer( {}, container, options );
-				break;
+		try {
+			switch ( preset ) {
+				// Single Container without sub Containers.
+				case '100':
+					newContainer = ContainerHelper.createContainer( {}, target, options );
+					break;
 
-			// Exceptional preset.
-			case 'c100-c50-50':
-				settings = {
-					flex_direction: ContainerHelper.DIRECTION_ROW,
-					flex_wrap: 'wrap',
-					flex_gap: {
-						unit: 'px',
-						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
-					},
-				};
-
-				if ( createForTarget ) {
-					$e.run( 'document/elements/settings', { container, settings } );
-					newContainer = container;
-				} else {
-					newContainer = ContainerHelper.createContainer( settings, container, options );
-				}
-
-				settings = {
-					width: {
-						unit: '%',
-						size: '50',
-					},
-					width_mobile: {
-						unit: '%',
-						size: '100',
-					},
-				};
-
-				ContainerHelper.createContainer( settings, newContainer, { edit: false } );
-
-				const rightContainer = ContainerHelper.createContainer( {
-					...settings,
-					padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
-					flex_gap: {
-						unit: 'px',
-						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
-					},
-				}, newContainer, { edit: false } );
-
-				ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
-
-				break;
-
-			// Containers by preset.
-			default:
-				const sizes = preset.split( '-' ),
-					// Map rounded, user-readable sizes to actual percentages.
-					sizesMap = {
-						33: '33.3333',
-						66: '66.6666',
+				// Exceptional preset.
+				case 'c100-c50-50':
+					settings = {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+						flex_wrap: 'wrap',
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
 					};
 
-				settings = {
-					flex_direction: this.DIRECTION_ROW,
-					flex_wrap: 'wrap',
-					flex_gap: {
-						unit: 'px',
-						size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
-					},
-				};
+					if ( createWrapper ) {
+						$e.run( 'document/elements/settings', { container: target, settings } );
+						newContainer = target;
+					} else {
+						newContainer = ContainerHelper.createContainer( settings, target, options );
+					}
 
-				// Create a parent container to contain all of the sub containers.
-				let parentContainer;
-
-				if ( createForTarget ) {
-					$e.run( 'document/elements/settings', {
-						container,
-						settings,
-					} );
-
-					parentContainer = container;
-				} else {
-					parentContainer = this.createContainer( settings, container, options );
-				}
-
-				// Create all sub containers using the sizes array.
-				// Use flex basis to make the sizes explicit.
-				sizes.forEach( ( size ) => {
-					size = sizesMap[ size ] || size;
-
-					this.createContainer( {
-						flex_direction: this.DIRECTION_COLUMN,
+					settings = {
 						width: {
 							unit: '%',
-							size,
+							size: '50',
 						},
-						width_mobile: { // For out-of-the-box responsiveness.
+						width_mobile: {
 							unit: '%',
 							size: '100',
 						},
-					}, parentContainer, { edit: false } );
-				} );
+					};
 
-				newContainer = parentContainer;
+					ContainerHelper.createContainer( settings, newContainer, { edit: false } );
+
+					const rightContainer = ContainerHelper.createContainer( {
+						...settings,
+						padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+					}, newContainer, { edit: false } );
+
+					ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
+
+					break;
+
+				// Containers by preset.
+				default:
+					const sizes = preset.split( '-' ),
+						// Map rounded, user-readable sizes to actual percentages.
+						sizesMap = {
+							33: '33.3333',
+							66: '66.6666',
+						};
+
+					settings = {
+						flex_direction: this.DIRECTION_ROW,
+						flex_wrap: 'wrap',
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+					};
+
+					// Create a parent container to contain all of the sub containers.
+					let parentContainer;
+
+					if ( createWrapper ) {
+						$e.run( 'document/elements/settings', {
+							container: target,
+							settings,
+						} );
+
+						parentContainer = target;
+					} else {
+						parentContainer = this.createContainer( settings, target, options );
+					}
+
+					// Create all sub containers using the sizes array.
+					// Use flex basis to make the sizes explicit.
+					sizes.forEach( ( size ) => {
+						size = sizesMap[ size ] || size;
+
+						this.createContainer( {
+							flex_direction: this.DIRECTION_COLUMN,
+							width: {
+								unit: '%',
+								size,
+							},
+							width_mobile: { // For out-of-the-box responsiveness.
+								unit: '%',
+								size: '100',
+							},
+						}, parentContainer, { edit: false } );
+					} );
+
+					newContainer = parentContainer;
+			}
+
+			$e.internal( 'document/history/end-log', { id: historyId } );
+		} catch ( e ) {
+			$e.internal( 'document/history/delete-log', { id: historyId } );
 		}
-
-		$e.internal( 'document/history/end-log', { id: historyId } );
 
 		return newContainer;
 	}
