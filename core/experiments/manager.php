@@ -523,7 +523,7 @@ class Manager extends Base_Object {
 				<div class="e-experiment__status"><?php echo sprintf( esc_html__( 'Status: %s', 'elementor' ), $this->release_statuses[ $feature['release_status'] ] );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 			<?php } ?>
 		</div>
-        <?php $this->render_feature_dependency( $feature );
+		<?php $this->render_feature_dependency( $feature );
 	}
 
 	private function render_feature_dependency( $feature ) {
