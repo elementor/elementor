@@ -261,7 +261,6 @@ BaseElementView = BaseContainer.extend( {
 
 		// We should only allow external modification to edit buttons if the user enabled edit buttons.
 		if ( editButtonsEnabled ) {
-
 			/**
 			 * Filter edit buttons.
 			 *
