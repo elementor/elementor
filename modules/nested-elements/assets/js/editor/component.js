@@ -1,5 +1,4 @@
-import NestedTabsComponent from './nested-tabs/component';
-import * as hooks from './hooks/';
+import NestedRepeaterComponent from './nested-repeater/component';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
@@ -7,12 +6,8 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	registerAPI() {
-		$e.components.register( new NestedTabsComponent() );
+		$e.components.register( new NestedRepeaterComponent() );
 
 		super.registerAPI();
-	}
-
-	defaultHooks() {
-		return this.importHooks( hooks );
 	}
 }

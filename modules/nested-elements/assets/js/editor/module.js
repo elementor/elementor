@@ -1,7 +1,7 @@
 import Component from './component';
-import WidgetContainer from './views/widget-container';
-import WidgetContainerEmpty from './views/widget-container/empty';
-import WidgetContainerModel from './models/widget-container-model';
+import WidgetContainer from './views/widget-repeater';
+import WidgetContainerEmpty from './views/widget-repeater/empty';
+import WidgetRepeaterModel from './models/widget-repeater-model';
 
 export default class NestedElementsModule extends elementorModules.editor.utils.Module {
 	onElementorInitComponents() {
@@ -9,7 +9,7 @@ export default class NestedElementsModule extends elementorModules.editor.utils.
 			elType: 'widget',
 			widgetType: 'nested-tabs',
             View: WidgetContainer,
-			Model: WidgetContainerModel,
+			Model: WidgetRepeaterModel,
 			EmptyView: WidgetContainerEmpty,
 		} );
 

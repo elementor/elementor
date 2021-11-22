@@ -43,7 +43,7 @@ export default class NestedTabs extends BaseTabs {
 
 	changeActiveTab( tabIndex, fromBindings = false ) {
 		if ( fromBindings && this.isEdit ) {
-			return window.top.$e.run( 'nested-elements/nested-tabs/select', {
+			return window.top.$e.run( 'nested-elements/nested-repeater/select', {
 				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
 				index: parseInt( tabIndex ),
 				options: {
