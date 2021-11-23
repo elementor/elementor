@@ -8,8 +8,8 @@ export default class Column extends Element {
 		const childElType = childModel.get( 'elType' );
 
 		if ( 'section' === childElType && childModel.get( 'isInner' ) ) {
-            return true;
-        }
+			return true;
+		}
 
 		return 'widget' === childElType || 'container' === childElType;
 	}
