@@ -101,7 +101,7 @@ BaseElementView = BaseContainer.extend( {
 			throw new Error( 'Element type not found: ' + model.get( 'elType' ) );
 		}
 
-		return elementor.hooks.applyFilters( 'element/view', elementType?.getView(), model, this );
+		return elementor.hooks.applyFilters( 'element/view', elementType.getView(), model, this );
 	},
 
 	getTemplateType() {
