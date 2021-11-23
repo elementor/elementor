@@ -650,28 +650,89 @@ class Frontend extends App {
 	 *
 	 * @since 3.4.5
 	 *
-	 * @access private
+	 * @access public
 	 *
 	 * @param string $frontend_file_name
 	 * @param boolean $custom_file
 	 *
 	 * @return string frontend file URL
 	 */
-	private function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
 		if ( $custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
 
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
 
 		return $frontend_file_url;
+	}
+
+	/**
+	 * Get Frontend File Path
+	 *
+	 * Returns the path for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the path for the default CSS file is returned.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file path
+	 */
+	public function get_frontend_file_path( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+
+			$frontend_file_path = $frontend_file->get_path();
+		} else {
+			$frontend_file_path = ELEMENTOR_ASSETS_PATH . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_path;
+	}
+
+	/**
+	 * Get Frontend File
+	 *
+	 * Returns a frontend file instance.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param string $file_prefix
+	 * @param string $template_file_path
+	 *
+	 * @return FrontendFile
+	 */
+	public function get_frontend_file( $frontend_file_name, $file_prefix = 'custom-', $template_file_path = '' ) {
+		static $cached_frontend_files = [];
+
+		$file_name = $file_prefix . $frontend_file_name;
+
+		if ( isset( $cached_frontend_files[ $file_name ] ) ) {
+			return $cached_frontend_files[ $file_name ];
+		}
+
+		if ( ! $template_file_path ) {
+			$template_file_path = Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name;
+		}
+
+		$frontend_file = new FrontendFile( $file_name, $template_file_path );
+
+		$time = $frontend_file->get_meta( 'time' );
+
+		if ( ! $time ) {
+			$frontend_file->update();
+		}
+
+		$cached_frontend_files[ $file_name ] = $frontend_file;
+
+		return $frontend_file;
 	}
 
 	/**
