@@ -179,7 +179,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['order_custom'] = [
-			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Custom Order', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
 				'{{SELECTOR}}' => '--order: {{VALUE}};',
