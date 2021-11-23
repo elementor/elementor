@@ -513,7 +513,7 @@ trait Button_Trait {
 			$instance = $this;
 		}
 
-		$settings = $instance->get_settings();
+		$settings = $instance->get_settings_for_display();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
