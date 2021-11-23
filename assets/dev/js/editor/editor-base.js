@@ -229,7 +229,7 @@ export default class EditorBase extends Marionette.Application {
 	};
 
 	/**
-	 * @type {Object.<ElementBase>}
+	 * @type {(Object.<ElementBase>||Object.<WidgetBase>)} 
 	 */
 	registeredElements = {};
 
