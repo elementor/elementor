@@ -1,5 +1,16 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev9 - 2021-11-23
+* Tweak: Contextual texts in the prompts - Document settings [ED-5324] (#16834)
+* Tweak: Prompt the user permission to allow unfiltered file uploads in Import Template flow [ED-5279] (#16910)
+* Fix: Broken button shortcodes and internal URLs (#16971) [ED-5566] (#17005)
+* Fix: The data updater notice removed from update plugin page [ED-5381] (#17004)
+* Fix: Choose control was in reversed order in RTL sites [ED-5461] (#16893)
+* Fix: Scroll snap throw undefined error on Archive pages [ED-5544] (#17015)
+* Fix: Z-index control override negative values (#17016)
+* Fix: Text path widget is not optimized and makes redundant file system calls [ED-5420] (#16952)
+* Fix: Conflict with JetEngine plugin in v3.5.0 [ED-5603] (#17021)
+
 #### 3.6.0-dev8 - 2021-11-22
 * Tweak: The maximum Offest values changes to 1000px in Advanced > Transform [ED-5600] (#17002)
 * Fix: D&D issues with right and left positioned elements [ED-5494] (#16959)
@@ -520,9 +531,3 @@
 * Tweak: Kit-Library - production url [ED-3440] (#15147)
 * Tweak: Update lhci to 0.8.0 (#15220)
 * Tweak: Kit-Library - Styling dark mode [ED-3479] (#15179)
-
-#### 3.3.0-dev13 - 2021-06-04
-* Fix: Gradient control doesn't work in Editor when using Global Colors [ED-2292] (#15193)
-* Fix: Import-Export - Import only site-settings + previous button in import-content screen [ED-3513] (#15188)
-* Tweak: Making the animations CSS library to be loaded conditionally only when needed [ED-2749] (#15125)
-* Experiment: PHPCS via Composer [ED-3182] (#14898)
