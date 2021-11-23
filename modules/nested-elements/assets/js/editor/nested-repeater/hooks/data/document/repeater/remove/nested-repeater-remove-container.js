@@ -2,7 +2,7 @@ import Base from '../base';
 
 export class NestedRepeaterRemoveContainer extends Base {
 	getId() {
-		return 'nested-elements-remove';
+		return 'nested-elements-remove-container';
 	}
 
 	getCommand() {
