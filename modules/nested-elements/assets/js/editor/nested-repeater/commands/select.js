@@ -1,21 +1,12 @@
-import CommandHistory from 'elementor-document/commands/base/command-history';
-
-export class Select extends CommandHistory {
+export class Select extends ( $e.modules.document.CommandHistory ) {
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' ),
 			data = historyItem.get( 'data' );
 
-		if ( isRedo ) {
-			$e.run( 'nested-elements/nested-repeater/select', {
-				container,
-				index: data.current,
-			} );
-		} else {
-			$e.run( 'nested-elements/nested-repeater/select', {
-				container,
-				index: data.prev,
-			} );
-		}
+		$e.run( 'nested-elements/nested-repeater/select', {
+			container,
+			index: isRedo ? data.current : data.prev,
+		} );
 	}
 
 	validateArgs( args ) {

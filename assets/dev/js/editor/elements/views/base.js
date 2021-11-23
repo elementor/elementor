@@ -95,35 +95,13 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
-		let ChildView;
-		const elType = model.get( 'elType' );
+		const elementType = elementor.getElementType( model.get( 'elType' ), model.get( 'widgetType' ) );
 
-		switch ( elType ) {
-			case 'section':
-				ChildView = require( 'elementor-elements/views/section' );
-				break;
-
-			case 'column':
-				ChildView = require( 'elementor-elements/views/column' );
-				break;
-
-			case 'container':
-				ChildView = require( 'elementor-elements/views/container' );
-				break;
-
-			default:
-				const registeredWidgetArgs = elementor.getRegisteredElementType( elType, model.get( 'widgetType' ) );
-
-				if ( registeredWidgetArgs?.View ) {
-					ChildView = registeredWidgetArgs.View;
-				} else {
-					ChildView = elementor.modules.elements.views.Widget;
-				}
-
-				break;
+		if ( ! elementType ) {
+			throw new Error( 'Element type not found: ' + model.get( 'elType' ) );
 		}
 
-		return elementor.hooks.applyFilters( 'element/view', ChildView, model, this );
+		return elementor.hooks.applyFilters( 'element/view', elementType?.getView(), model, this );
 	},
 
 	getTemplateType() {

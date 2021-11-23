@@ -30,6 +30,10 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 		}
 
 		containers.forEach( ( container ) => {
+			if ( ! container?.children ) {
+				return;
+			}
+
 			container.children.forEach( ( childContainer ) => {
 				// Set container tab title according to its repeater item name.
 				const index = childContainer.parent.children.indexOf( childContainer ),

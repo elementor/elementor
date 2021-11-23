@@ -1,4 +1,4 @@
-import EmptyComponent from './empty-component';
+import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
 export default class EmptyView extends Marionette.ItemView {
 	template = '<div></div>';
@@ -12,18 +12,24 @@ export default class EmptyView extends Marionette.ItemView {
 	}
 
 	renderReactDefaultElement( container ) {
+		const parent = container.parent;
+
 		let defaultElement;
 
-		const parent = container.parent,
-			registeredElementArgs = elementor.getRegisteredElementType(
-				parent.model.get( 'elType' ),
-				parent.model.get( 'widgetType' )
-			);
+		// If parent widget, the empty child-view should be depend on the parent.
+		if ( 'widget' === parent.model.get( 'elType' ) ) {
+			const elementType = elementor.getElementType(
+					parent.model.get( 'elType' ),
+					parent.model.get( 'widgetType' )
+				);
 
-		if ( registeredElementArgs?.EmptyView ) {
-			defaultElement = <registeredElementArgs.EmptyView container={container} />;
+			if ( elementType ) {
+				const Type = elementType.getEmptyView();
+
+				defaultElement = <Type container={ container } />;
+			}
 		} else {
-			defaultElement = <EmptyComponent container={container} />;
+			defaultElement = <EmptyComponent container={ container } />;
 		}
 
 		ReactDOM.render( defaultElement, this.el );

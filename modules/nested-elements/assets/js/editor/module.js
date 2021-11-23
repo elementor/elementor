@@ -1,17 +1,9 @@
 import Component from './component';
-import WidgetContainer from './views/widget-repeater';
-import WidgetContainerEmpty from './views/widget-repeater/empty';
-import WidgetRepeaterModel from './models/widget-repeater-model';
+import NestedTabs from './widgets/nested-tabs';
 
 export default class NestedElementsModule extends elementorModules.editor.utils.Module {
 	onElementorInitComponents() {
-		elementor.registerElementType( {
-			elType: 'widget',
-			widgetType: 'nested-tabs',
-			View: WidgetContainer,
-			Model: WidgetRepeaterModel,
-			EmptyView: WidgetContainerEmpty,
-		} );
+		elementor.registerElementType( new NestedTabs() );
 
 		this.component = $e.components.register( new Component() );
 	}

@@ -1,6 +1,9 @@
 const ElementModel = require( 'elementor-elements/models/element' );
 
-export default class WidgetRepeaterModel extends ElementModel {
+/**
+ * @extends {ElementModel}
+ */
+export default class WidgetRepeaterModel extends elementor.modules.elements.models.Element {
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
 

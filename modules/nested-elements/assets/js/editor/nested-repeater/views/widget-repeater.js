@@ -3,7 +3,7 @@ const WidgetView = elementor.modules.elements.views.Widget;
 /**
  * @extends {BaseElementView}
  */
-class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
+export class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
 	initialize() {
 		this.config = elementor.widgetsCache[ this.options.model.attributes.widgetType ];
 

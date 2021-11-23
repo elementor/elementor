@@ -1,5 +1,4 @@
 import Component from './component';
-import BaseModel from 'elementor-elements/models/base-model';
 
 var BaseSettings = require( 'elementor-editor/components/settings/base/manager' );
 
@@ -28,31 +27,32 @@ module.exports = BaseSettings.extend( {
 			return this.editedView;
 		}
 
-		const id = this.getContainerId(),
-			editModel = new BaseModel( {
+		const documentElementType = elementor.getElementType( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			id = this.getContainerId(),
+			editModel = new ModelClass( {
 				id,
 				elType: id,
 				settings: this.model,
 				elements: elementor.elements,
-			} );
-
-		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
-			model: editModel,
-			settings: editModel.get( 'settings' ),
-			label: elementor.config.document.panel.title,
-			controls: this.model.controls,
-			children: elementor.elements,
-			// Emulate a view that can render the style.
-			renderer: {
-				view: {
-					lookup: () => container,
-					renderOnChange: () => this.updateStylesheet(),
-					renderUI: () => this.updateStylesheet(),
+			} ),
+			container = new elementorModules.editor.Container( {
+				type: id,
+				id: editModel.id,
+				model: editModel,
+				settings: editModel.get( 'settings' ),
+				label: elementor.config.document.panel.title,
+				controls: this.model.controls,
+				children: elementor.elements,
+				// Emulate a view that can render the style.
+				renderer: {
+					view: {
+						lookup: () => container,
+						renderOnChange: () => this.updateStylesheet(),
+						renderUI: () => this.updateStylesheet(),
+					},
 				},
-			},
-		} );
+			} );
 
 		this.editedView = {
 			getContainer: () => container,
