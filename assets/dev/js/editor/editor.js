@@ -18,7 +18,8 @@ export class Editor extends EditorBase {
 	 * Function loadModules().
 	 *
 	 * Dynamically inject modules.
-	 * Some of the modules can be injected as promise of their import
+	 * Some of the modules can be injected as promise of their import by manipluating
+	 * `elementor.modules`, the editor will wait for the module to be fully loaded and only then will start().
 	 *
 	 * @returns {Promise<void>}
 	 */
