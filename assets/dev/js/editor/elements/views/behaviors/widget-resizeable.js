@@ -113,7 +113,11 @@ export default class extends Marionette.Behavior {
 			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
 			settingToChange = {};
 
-		settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
+		// TODO: For BC controls.
+		if ( ! elementorCommon.config.experimentalFeatures.container ) {
+			settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
+		}
+
 		settingToChange[ widthKey + deviceSuffix ] = { unit, size: width };
 
 		$e.run( 'document/elements/settings', {

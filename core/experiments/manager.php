@@ -324,7 +324,7 @@ class Manager extends Base_Object {
 				Existing Sections, Inner Sections and Columns will not be affected.',
 				'elementor'
 			),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
 	}
