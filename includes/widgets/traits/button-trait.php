@@ -503,12 +503,16 @@ trait Button_Trait {
 	 *
 	 * Render button widget text.
 	 *
-	 * @param \Elementor\Widget_Base $instance
+	 * @param \Elementor\Widget_Base|null $instance
 	 *
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_text( Widget_Base $instance ) {
+	protected function render_text( Widget_Base $instance = null ) {
+		if ( ! $instance ) {
+			$instance = $this;
+		}
+
 		$settings = $instance->get_settings();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
