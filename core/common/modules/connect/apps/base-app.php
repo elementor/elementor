@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
 use Elementor\Core\Utils\Collection;
@@ -551,7 +552,7 @@ abstract class Base_App {
 				'auth_secret' => $this->get( 'auth_secret' ),
 				'state' => $this->get( 'state' ),
 				'redirect_uri' => rawurlencode( $redirect_uri ),
-				'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
+				'may_share_data' => current_user_can( 'manage_options' ) && ! Site_Usage_Opt_In::is_on(),
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 			] );
 

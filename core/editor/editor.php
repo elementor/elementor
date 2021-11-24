@@ -2,6 +2,7 @@
 namespace Elementor\Core\Editor;
 
 use Elementor\Api;
+use Elementor\Core\Admin\Options\User_Introduction;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
@@ -562,7 +563,7 @@ class Editor {
 			'user' => [
 				'restrictions' => $plugin->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-				'introduction' => User::get_introduction_meta(),
+				'introduction' => User_Introduction::get(),
 			],
 			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',

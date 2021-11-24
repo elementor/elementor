@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Admin\Notices;
 
+use Elementor\Core\Admin\Options\Site_Beta;
+use Elementor\Core\Options\Site_Option;
 use Elementor\User;
 use Elementor\Plugin;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -50,7 +52,7 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 * @var string[]
 	 */
 	private $promotion_options = [
-		'elementor_beta',
+		Site_Beta::class,
 	];
 
 	/**
@@ -150,12 +152,13 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 * @return bool
 	 */
 	private function is_promotion_options_enabled() {
-		return array_reduce( $this->promotion_options, function ( $should_show_notice, $option ) {
+		return array_reduce( $this->promotion_options, function ( $should_show_notice, $option_class ) {
 			if ( $should_show_notice ) {
 				return true;
 			}
 
-			return 'yes' === get_option( $option, 'no' );
+			/** @var Site_Option $option_class */
+			return $option_class::is_on();
 		}, false );
 	}
 

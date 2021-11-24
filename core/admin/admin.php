@@ -2,7 +2,13 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
-use Elementor\Beta_Testers;
+use Elementor\Core\Admin\Options\Site_Beta;
+use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
+use Elementor\Core\Admin\Options\Site_Usage_Last_Send;
+use Elementor\Core\Admin\Options\Site_Usage_Notice;
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
+use Elementor\Core\Admin\Options\User_Beta_Tester;
+use Elementor\Core\Admin\Options\User_Introduction;
 use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -677,6 +683,14 @@ class Admin extends App {
 	public function __construct() {
 		Plugin::$instance->init_common();
 
+		Plugin::$instance->options->register( Site_Beta::class );
+		Plugin::$instance->options->register( Site_CSS_Print_Method::class );
+		Plugin::$instance->options->register( Site_Usage_Last_Send::class );
+		Plugin::$instance->options->register( Site_Usage_Notice::class );
+		Plugin::$instance->options->register( Site_Usage_Opt_In::class );
+		Plugin::$instance->options->register( User_Beta_Tester::class );
+		Plugin::$instance->options->register( User_Introduction::class );
+
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
@@ -716,22 +730,17 @@ class Admin extends App {
 	 * @access protected
 	 */
 	protected function get_init_settings() {
-		$beta_tester_email = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
-		$elementor_beta = get_option( 'elementor_beta', 'no' );
-		$all_introductions = User::get_introduction_meta();
-		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
-
 		$settings = [
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
 			'user' => [
-				'introduction' => User::get_introduction_meta(),
+				'introduction' => User_Introduction::get(),
 			],
 			'beta_tester' => [
-				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
-				'has_email' => $beta_tester_email,
-				'option_enabled' => 'no' !== $elementor_beta,
-				'signup_dismissed' => $beta_tester_signup_dismissed,
+				'beta_tester_signup' => User_Beta_Tester::SIGNUP,
+				'has_email' => ! ! User_Beta_Tester::get(),
+				'option_enabled' => Site_Beta::is_on(),
+				'signup_dismissed' => ! ! User_Introduction::get_sub_option( User_Beta_Tester::SIGNUP ),
 			],
 		];
 

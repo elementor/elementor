@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Admin\Options\Site_Beta;
+use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
@@ -40,7 +42,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Load font_awesome_support settings.
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
 
-		update_option( 'elementor_css_print_method', 'internal' );
+		Site_CSS_Print_Method::set( 'internal' );
 
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
 
@@ -117,7 +119,7 @@ class Test_Tracker extends Elementor_Test_Base {
 
 	public function test_get_tools_version_control_usage() {
 		// Arrange.
-		update_option( 'elementor_beta', 'yes' );
+		Site_Beta::set_on();
 
 		// Act.
 		$actual = Tracker::get_tools_version_control_usage();

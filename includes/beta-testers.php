@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Options\Site_Beta;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -19,6 +21,9 @@ class Beta_Testers {
 
 	const NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
 
+	/**
+	 * @deprcated Use User_Beta_Tester::SIGNUP
+	 */
 	const BETA_TESTER_SIGNUP = 'beta_tester_signup';
 
 	/**
@@ -113,7 +118,7 @@ class Beta_Testers {
 	 * @access public
 	 */
 	public function __construct() {
-		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) ) {
+		if ( ! Site_Beta::is_on() ) {
 			return;
 		}
 

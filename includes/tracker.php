@@ -1,6 +1,9 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Options\Site_Usage_Last_Send;
+use Elementor\Core\Admin\Options\Site_Usage_Notice;
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Experiments\Experiments_Reporter;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
 
@@ -60,7 +63,7 @@ class Tracker {
 	 * @return string Return `yes` if tracking allowed, `no` otherwise.
 	 */
 	public static function check_for_settings_optin( $new_value ) {
-		$old_value = get_option( 'elementor_allow_tracking', 'no' );
+		$old_value = Site_Usage_Opt_In::get();
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
 			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
 				'opt_in_recalculate_usage',
@@ -92,7 +95,7 @@ class Tracker {
 			return;
 		}
 
-		if ( ! self::is_allow_track() ) {
+		if ( ! Site_Usage_Opt_In::is_on() ) {
 			return;
 		}
 
@@ -135,7 +138,7 @@ class Tracker {
 		}
 
 		// Update time first before sending to ensure it is set.
-		update_option( 'elementor_tracker_last_send', time() );
+		Site_Usage_Last_Send::set( time() );
 
 		$params = self::get_tracking_data( empty( $last_send ) );
 
@@ -162,9 +165,11 @@ class Tracker {
 	 * @since 1.0.0
 	 * @access public
 	 * @static
+	 * @deprcated since 3.6.0
 	 */
 	public static function is_allow_track() {
-		return 'yes' === get_option( 'elementor_allow_tracking', 'no' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( 'Tracker::is_allow_track', '3.6.0', 'Site_Usage_Opt_In::is_on()' );
+		return Site_Usage_Opt_In::is_on();
 	}
 
 	/**
@@ -210,11 +215,11 @@ class Tracker {
 
 	public static function set_opt_in( $value ) {
 		if ( $value ) {
-			update_option( 'elementor_allow_tracking', 'yes' );
+			Site_Usage_Opt_In::set_on();
 			self::send_tracking_data( true );
 		} else {
-			update_option( 'elementor_allow_tracking', 'no' );
-			update_option( 'elementor_tracker_notice', '1' );
+			Site_Usage_Opt_In::set_off();
+			Site_Usage_Notice::set_off();
 		}
 	}
 
@@ -255,7 +260,7 @@ class Tracker {
 	 *                   tracking data never sent.
 	 */
 	private static function get_last_send_time() {
-		$last_send_time = get_option( 'elementor_tracker_last_send', false );
+		$last_send_time = Site_Usage_Last_Send::get();
 
 		/**
 		 * Tracker last send time.

@@ -8,6 +8,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\App as CommonApp;
 use Elementor\Core\Debug\Inspector;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Options\Manager as Options_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Core\Editor\Editor;
@@ -565,6 +566,11 @@ class Plugin {
 	public $assets_loader;
 
 	/**
+	 * @var Core\Options\Manager
+	 */
+	public $options;
+
+	/**
 	 * Clone.
 	 *
 	 * Disable class cloning and throw an error on object clone.
@@ -692,6 +698,7 @@ class Plugin {
 	 * @access private
 	 */
 	private function init_components() {
+		$this->options = new Options_Manager();
 		$this->experiments = new Experiments_Manager();
 		$this->breakpoints = new Breakpoints_Manager();
 		$this->inspector = new Inspector();

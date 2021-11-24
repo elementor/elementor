@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Experiments;
 
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
@@ -404,7 +405,7 @@ class Manager extends Base_Object {
 				];
 			}
 
-			if ( ! Tracker::is_allow_track() && 'stable' === $section ) {
+			if ( ! Site_Usage_Opt_In::is_on() && 'stable' === $section ) {
 				$fields[ $section ] += $settings->get_usage_fields();
 			}
 		}

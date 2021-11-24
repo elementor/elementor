@@ -2,6 +2,8 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Admin\Options\Site_Usage_Notice;
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
@@ -200,11 +202,11 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( '1' === get_option( 'elementor_tracker_notice' ) ) {
+		if ( Site_Usage_Notice::is_off() ) {
 			return false;
 		}
 
-		if ( Tracker::is_allow_track() ) {
+		if ( Site_Usage_Opt_In::is_on() ) {
 			return false;
 		}
 

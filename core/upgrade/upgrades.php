@@ -2,6 +2,7 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Api;
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Schemes\Base;
@@ -644,7 +645,7 @@ class Upgrades {
 	 * @return bool
 	 */
 	public static function recalc_usage_data( $updater ) {
-		if ( ! Tracker::is_allow_track() ) {
+		if ( ! Site_Usage_Opt_In::is_on() ) {
 			return false;
 		}
 

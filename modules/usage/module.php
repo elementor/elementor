@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Usage;
 
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\DynamicTags\Manager;
@@ -600,7 +601,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		if ( ! Tracker::is_allow_track() ) {
+		if ( ! Site_Usage_Opt_In::is_on() ) {
 			return;
 		}
 

@@ -2,6 +2,7 @@
 namespace Elementor\Core\Admin;
 
 use Elementor\Api;
+use Elementor\Core\Admin\Options\Site_Usage_Opt_In;
 use Elementor\Core\Base\Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -191,7 +192,7 @@ class Feedback extends Module {
 			return [];
 		}
 
-		return [ 'is_tracker_opted_in' => Tracker::is_allow_track() ];
+		return [ 'is_tracker_opted_in' => Site_Usage_Opt_In::is_on() ];
 	}
 
 	/**

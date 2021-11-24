@@ -5,6 +5,7 @@ use Elementor\Base_Data_Control;
 use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
+use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
@@ -114,7 +115,7 @@ abstract class Base extends Base_File {
 	 * @return bool True if the CSS requires an update, False otherwise.
 	 */
 	protected function use_external_file() {
-		return 'internal' !== get_option( 'elementor_css_print_method' );
+		return Site_CSS_Print_Method::is_external();
 	}
 
 	/**

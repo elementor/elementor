@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Options\User_Beta_Tester;
+use Elementor\Core\Admin\Options\User_Introduction;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,8 +24,14 @@ class User {
 	 */
 	const ADMIN_NOTICES_KEY = 'elementor_admin_notices';
 
+	/**
+	 * @deprcated use User_Introduction
+	 */
 	const INTRODUCTION_KEY = 'elementor_introduction';
 
+	/**
+	 * @deprcated use Site_Beta
+	 */
 	const BETA_TESTER_META_KEY = 'elementor_beta_tester';
 
 	/**
@@ -240,15 +248,12 @@ class User {
 	 * @static
 	 */
 	public static function set_introduction_viewed( array $data ) {
-		$user_introduction_meta = self::get_introduction_meta();
-
-		$user_introduction_meta[ $data['introductionKey'] ] = true;
-
-		update_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, $user_introduction_meta );
+		User_Introduction::set_sub_option( $data['introductionKey'], true );
 	}
 
 	public static function register_as_beta_tester( array $data ) {
-		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
+		User_Beta_Tester::set_on();
+
 		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
 			[
@@ -265,7 +270,7 @@ class User {
 
 		if ( 200 === $response_code ) {
 			self::set_introduction_viewed( [
-				'introductionKey' => Beta_Testers::BETA_TESTER_SIGNUP,
+				'introductionKey' => User_Beta_Tester::SIGNUP,
 			] );
 		}
 	}
@@ -279,7 +284,7 @@ class User {
 	 * @static
 	 */
 	public static function get_introduction_meta( $key = '' ) {
-		$user_introduction_meta = get_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, true );
+		$user_introduction_meta = User_Introduction::get();
 
 		if ( ! $user_introduction_meta ) {
 			$user_introduction_meta = [];
