@@ -1,12 +1,17 @@
 <?php
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
+use Elementor\Core\Admin\Options\Site_CSS_Print_Method;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Global_CSS;
 
 class Test_Settings extends Elementor_Test_Base {
 
 	public function test_clear_css_cache_on_update_css_settings() {
+		// Register the option in order to listen to the changes.
+		Plugin::$instance->options->register( Site_CSS_Print_Method::class );
+
 		$css_settings = [
 			'elementor_disable_color_schemes',
 			'elementor_disable_typography_schemes',
