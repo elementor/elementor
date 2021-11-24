@@ -105,10 +105,6 @@ export class ContainerHelper {
 					unit: '%',
 					size,
 				},
-				width_mobile: { // For out-of-the-box responsiveness.
-					unit: '%',
-					size: '100',
-				},
 			}, parentContainer, { edit: false } );
 		} );
 
