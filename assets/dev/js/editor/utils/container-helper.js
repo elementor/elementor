@@ -72,7 +72,7 @@ export class ContainerHelper {
 	 * @param {string} preset
 	 * @param {Container} [target=elementor.getPreviewContainer()]
 	 * @param {Object} [options={}]
-	 * @param {Boolean} [options.createWrapper=false] - Create a wrapper container for the preset.
+	 * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
 	 *
 	 * @returns {Container} - Container created on.
 	 */
