@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev10 - 2021-11-24
+* Fix: Templates Library is unreachable [ED-5613] (#17019)
+* Fix: PayPal Button widget doesn't work with Core 3.5.0 beta3 [ED-5664] (#17022)
+
 #### 3.6.0-dev9 - 2021-11-23
 * Tweak: Contextual texts in the prompts - Document settings [ED-5324] (#16834)
 * Tweak: Prompt the user permission to allow unfiltered file uploads in Import Template flow [ED-5279] (#16910)
@@ -512,22 +516,3 @@
 * Tweak: Improved PHP Lint enforcement [ED-2901] (#15334)
 * Revert "Merge pull request #13912 from iNewLegend/ED-1334-custom-fonts-file-urls-are-stati" (#15331)
 * Fix: Utils - Return back the `replace-urls` filter [ED-3659] (#15338)
-
-#### 3.3.0-dev15 - 2021-06-08
-* Fix: Kit-Library - Using function that not exists in WP 5.6 [ED-3564] (#15235)
-* Fix: Kit-Library - Separate kit access level from template access level [ED-3565] (#15238)
-* New: Kit-Library - Tests [ED-3135] (#15113)
-* Fix: Problems with columns in DOM experiment [ED-3539] (#15232)
-* Experiment: Install local testing env [ED-2735] (#14862)
-* Fix: Kit-Library - Taxonomies disappear [ED-3574] (#15246)
-
-#### 3.3.0-dev14 - 2021-06-07
-* Tweak: Made Landing Pages module active by default (#15221)
-* Tweak: Made Landing Pages module active by default (#15221)
-* New: Added Elementor top bar to WP-Admin Elementor screens [ED-2797] (#14863)
-* Tweak: Changed the status of the eyedropper experiment to "Beta" [ED-3535] (#15223)
-* Tweak: Removing Elementor temp uploads folder on each upgrade (#15226)
-* Fix: Reversed animations flicker sometimes (#15225)
-* Tweak: Kit-Library - production url [ED-3440] (#15147)
-* Tweak: Update lhci to 0.8.0 (#15220)
-* Tweak: Kit-Library - Styling dark mode [ED-3479] (#15179)
