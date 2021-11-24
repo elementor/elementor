@@ -72,6 +72,7 @@ export class ContainerHelper {
 	 * @param {string} preset
 	 * @param {Container} [target=elementor.getPreviewContainer()]
 	 * @param {Object} [options={}]
+	 * @param {Boolean} [options.createWrapper=false] - Create a wrapper container for the preset.
 	 *
 	 * @returns {Container} - Container created on.
 	 */
@@ -83,7 +84,7 @@ export class ContainerHelper {
 				type: 'add',
 				title: __( 'Container', 'elementor' ),
 			} ),
-			{ createWrapper = false } = options;
+			{ createWrapper = true } = options;
 
 		try {
 			switch ( preset ) {
@@ -103,7 +104,7 @@ export class ContainerHelper {
 						},
 					};
 
-					if ( createWrapper ) {
+					if ( ! createWrapper ) {
 						$e.run( 'document/elements/settings', { container: target, settings } );
 						newContainer = target;
 					} else {
@@ -157,7 +158,7 @@ export class ContainerHelper {
 					// Create a parent container to contain all of the sub containers.
 					let parentContainer;
 
-					if ( createWrapper ) {
+					if ( ! createWrapper ) {
 						$e.run( 'document/elements/settings', {
 							container: target,
 							settings,

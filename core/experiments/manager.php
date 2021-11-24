@@ -674,6 +674,7 @@ class Manager extends Base_Object {
 					// Rollback.
 					update_option( $feature_option_key, wp_json_encode( $feature_data ) );
 
+					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'To turn on "%1$s", Experiment: "%2$s" activity is required!', 'elementor' ), $feature_data['name'], $dependency_feature['name'] ) );
 				}
 			}
@@ -684,6 +685,7 @@ class Manager extends Base_Object {
 					// Rollback.
 					update_option( $feature_option_key, self::STATE_ACTIVE );
 
+					/* translators: 1: feature_name_that_change_state, 2: dependency_feature_name. */
 					throw new Exceptions\Dependency_Exception( sprintf( esc_html__( 'Cannot turn off "%1$s", Experiment: "%2$s" is still active!', 'elementor' ), $feature_data['name'], $feature['name'] ) );
 				}
 			}

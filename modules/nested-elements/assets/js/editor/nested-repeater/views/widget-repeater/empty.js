@@ -5,7 +5,7 @@ export default function Empty( props ) {
 		[ isRenderPresets, setIsRenderPresets ] = useState( false ),
 		onPresetSelected = ( preset, container ) => {
 			const options = {
-				createWrapper: true,
+				createWrapper: false,
 			};
 
 			// Create new one by selected preset.

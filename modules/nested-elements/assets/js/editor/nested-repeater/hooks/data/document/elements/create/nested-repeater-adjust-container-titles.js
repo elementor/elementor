@@ -13,7 +13,7 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 	getConditions( args = {} ) {
 		const { model } = args;
 
-		return 'widget' === model.elType && 'nested-tabs' === model.widgetType;
+		return 'widget' === model.elType && elementor.modules.nestedElements.isWidgetSupportNesting( model.widgetType );
 	}
 
 	/**
