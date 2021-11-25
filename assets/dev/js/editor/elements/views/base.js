@@ -247,9 +247,6 @@ BaseElementView = BaseContainer.extend( {
 		_.defer( () => {
 			// Init container. Defer - in order to init the container after the element is fully initialized, and properties like `_parent` are available.
 			this.getContainer();
-
-			// Since the global colors were not ready, the styles are rendered again for the gradiant background color control.
-			this.renderStyles();
 		} );
 	},
 
@@ -585,10 +582,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderUI: function() {
-		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
+
+		_.defer( () => {
+			// Since the global colors were not ready, the styles are rendered again for the gradiant background color control.
+			this.renderStyles();
+		} );
 	},
 
 	runReadyTrigger: function() {
