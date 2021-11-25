@@ -587,7 +587,7 @@ BaseElementView = BaseContainer.extend( {
 		this.enqueueFonts();
 
 		_.defer( () => {
-			// Since the global colors were not ready, the styles are rendered again for the gradiant background color control.
+			// Defer the styles render to make sure that the global colors are ready.
 			this.renderStyles();
 		} );
 	},
