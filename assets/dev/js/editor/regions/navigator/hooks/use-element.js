@@ -1,30 +1,34 @@
 import { useCallback, useEffect, useState, useReducer } from 'react';
 
 export default function useElement( elementId ) {
-	const [ model, setModel ] = useState( elementor.navigator.initialModel ),
+	const model = elementor.getContainer( elementId ).model,
 		[ selected, setSelected ] = useState( false ),
-		[ , forceUpdate ] = useReducer( () => ( {} ) );
+		[ , forceUpdate ] = useReducer( () => ( {} ) ),
+		element = serializeModel( model );
 
 	useEffect( () => {
-		setModel( elementor.getContainer( elementId ).model );
-	}, [ elementId ] );
+		const updateSelection = ( { container, state } ) => {
+			if ( elementId === container.model.get( 'id' ) ) {
+				setSelected( state );
+			}
+		};
 
-	useEffect( () => {
 		model.on( 'change', forceUpdate );
-		model.get( 'elements' ).bind( 'add remove reset', forceUpdate );
+		model.get( 'elements' ).on( 'add remove reset', forceUpdate );
 
 		if ( 'document' !== model.get( 'elType' ) ) {
 			model.get( 'settings' ).on( 'change', forceUpdate );
-
-			elementor.selection.on( 'change', ( { container, state } ) => {
-				if ( elementId === container.model.get( 'id' ) ) {
-					setSelected( state );
-				}
-			} );
+			elementor.selection.on( 'change', updateSelection );
 		}
 
 		return () => {
-			// Should I remove the event listeners on unmount?
+			model.off( 'change', forceUpdate );
+			model.get( 'elements' ).off( 'add remove reset', forceUpdate );
+
+			if ( 'document' !== model.get( 'elType' ) ) {
+				model.get( 'settings' ).off( 'change', forceUpdate );
+				elementor.selection.off( 'change', updateSelection );
+			}
 		};
 	}, [ model ] );
 
@@ -38,8 +42,8 @@ export default function useElement( elementId ) {
 		} );
 	}, [ model ] );
 
-	const hasChildren = 'widget' !== model.get( 'elType' ) ||
-		Boolean( model.get( 'elements' ).length );
+	const hasChildren = 'widget' !== element.elType ||
+			Boolean( element.elements.length );
 
 	const toggleVisibility = () => model.trigger( 'request:toggleVisibility' );
 
@@ -55,7 +59,7 @@ export default function useElement( elementId ) {
 
 	return {
 		model,
-		element: serializeModel( model ),
+		element,
 		toggleVisibility,
 		titleEdit,
 		hasChildren,

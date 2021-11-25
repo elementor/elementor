@@ -20,11 +20,11 @@ export default function Navigator( { documents } ) {
 		<div id="elementor-navigator__inner">
 			<ListStateProvider>
 				<Header onClose={ handleClose } />
-					<div id="elementor-navigator__elements">
-						{ element.elements.length ?
-							<ItemList elements={ documents } /> :
-							<Empty/> }
-					</div>
+				<div id="elementor-navigator__elements">
+					{ element.elements.length ?
+						<ItemList elements={ documents } /> :
+						<Empty/> }
+				</div>
 				<div id="elementor-navigator__footer">
 					<Icon className="eicon-ellipsis-h" />
 				</div>
