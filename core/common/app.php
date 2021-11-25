@@ -5,6 +5,7 @@ use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -162,7 +163,7 @@ class App extends BaseApp {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.12.0'
+			'5.13.0'
 		);
 
 		wp_enqueue_style(
@@ -237,6 +238,9 @@ class App extends BaseApp {
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 				'rest' => get_rest_url(),
+			],
+			'filesUpload' => [
+				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
 		];
 	}

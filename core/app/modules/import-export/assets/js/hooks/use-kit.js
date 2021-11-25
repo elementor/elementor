@@ -58,13 +58,13 @@ export default function useKit() {
 			const newState = {};
 
 			if ( 'success' === ajaxState.status ) {
-				// When importing only the site-settings the response is empty.
-				newState.data = ajaxState.response || {};
-
 				newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;
 			} else if ( 'error' === ajaxState.status ) {
 				newState.status = KIT_STATUS_MAP.ERROR;
 			}
+
+			// The response is required even if an error occurred, in order to detect the error type.
+			newState.data = ajaxState.response || {};
 
 			setKitState( ( prevState ) => ( { ...prevState, ...newState } ) );
 		}

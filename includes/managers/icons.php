@@ -1,8 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
-use Elementor\Core\Files\Assets\Svg\Svg_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -297,7 +297,7 @@ class Icons_Manager {
 			return '';
 		}
 
-		return Svg_Handler::get_inline_svg( $value['id'] );
+		return Svg::get_inline_svg( $value['id'] );
 	}
 
 	public static function render_font_icon( $icon, $attributes = [], $tag = 'i' ) {
@@ -471,7 +471,7 @@ class Icons_Manager {
 				'label' => esc_html__( 'Load Font Awesome 4 Support', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => 'yes',
+					'std' => '',
 					'options' => [
 						'' => esc_html__( 'No', 'elementor' ),
 						'yes' => esc_html__( 'Yes', 'elementor' ),

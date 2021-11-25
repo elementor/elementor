@@ -450,17 +450,45 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function import_template( array $data ) {
+		// If the template is a JSON file, allow uploading it.
+		add_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		add_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
+
 		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
 		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
+		remove_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
+
 		if ( is_wp_error( $upload_result ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
 			return $upload_result;
 		}
 
 		/** @var Source_Local $source_local */
 		$source_local = $this->get_source( 'local' );
 
-		return $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+
+		// Remove the temporary directory generated for the stream-uploaded file.
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
+
+		return $import_result;
+	}
+
+	/**
+	 * Enable JSON Template Upload
+	 *
+	 * Runs on the 'elementor/files/allow-file-type/json' Uploads Manager filter.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * return bool
+	 */
+	public function enable_json_template_upload() {
+		return true;
 	}
 
 	/**

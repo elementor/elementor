@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Library extends Common_App {
+
 	public function get_title() {
 		return esc_html__( 'Library', 'elementor' );
 	}
@@ -94,7 +95,7 @@ class Library extends Common_App {
 			],
 			'connect_site_key' => [
 				'label' => 'Site Key',
-				'value' => get_option( 'elementor_connect_site_key' ),
+				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
 			],
 			'remote_info_library' => [
 				'label' => 'Remote Library Info',

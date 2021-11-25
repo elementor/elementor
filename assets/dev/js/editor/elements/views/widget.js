@@ -107,7 +107,8 @@ WidgetView = BaseElementView.extend( {
 					name: 'save',
 					title: __( 'Save as a Global', 'elementor' ),
 					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
-					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ),
+					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
+						! elementor.selection.isMultiple(),
 				},
 			],
 		} );
@@ -230,9 +231,9 @@ WidgetView = BaseElementView.extend( {
 		} );
 	},
 
-	onClickEdit: function() {
+	onClickEdit: function( event ) {
 		if ( this.container.isEditable() ) {
-			this.model.trigger( 'request:edit' );
+			this.onEditButtonClick( event );
 		}
 	},
 } );

@@ -1002,6 +1002,24 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * Set a config property.
+	 *
+	 * Set a specific property of the config list for this controls-stack.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 */
+	public function set_config( $key, $value ) {
+		$this->config = $this->get_config();
+
+		if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
+			$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
+		} else {
+			$this->config[ $key ] = $value;
+		}
+	}
+
+	/**
 	 * Get frontend settings keys.
 	 *
 	 * Retrieve settings keys for all frontend controls.

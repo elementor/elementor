@@ -4,9 +4,11 @@ import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
 import EditorDocuments from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
+import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
 import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
+import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -15,6 +17,7 @@ import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
 import ResponsiveBar from './regions/responsive-bar/responsive-bar';
+import Selection from './components/selection/manager';
 import DevTools from 'elementor/modules/dev-tools/assets/js/editor/dev-tools';
 import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/editor/module';
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
@@ -333,6 +336,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.hooks = new EventManager();
 
+		this.selection = new Selection();
+
 		this.settings = new Settings();
 
 		this.dynamicTags = new DynamicTags();
@@ -349,11 +354,17 @@ export default class EditorBase extends Marionette.Application {
 
 		this.noticeBar = new NoticeBar();
 
+		if ( elementorCommon.config.experimentalFeatures[ 'favorite-widgets' ] ) {
+			this.favorites = new Favorites();
+		}
+
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
 
 		this.devTools = new DevTools();
+
+		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -367,6 +378,30 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
+	}
+
+	/**
+	 * Toggle sortable state globally.
+	 *
+	 * @param state
+	 */
+	toggleSortableState( state = true ) {
+		const sections = [
+			jQuery( '#elementor-navigator' ),
+			elementor.documents.getCurrent()?.$element,
+		];
+
+		for ( const $section of sections ) {
+			if ( $section ) {
+				$section.find( '.ui-sortable' ).each( () => {
+					const $element = jQuery( this );
+
+					if ( $element.sortable( 'instance' ) ) {
+						$element.sortable( state ? 'enable' : 'disable' );
+					}
+				} );
+			}
+		}
 	}
 
 	// TODO: BC method since 2.3.0
@@ -722,7 +757,7 @@ export default class EditorBase extends Marionette.Application {
 			// It's a click on the preview area, not in the edit area,
 			// and a document is open and has an edit area.
 			if ( ! isClickInsideElementor && elementor.documents.getCurrent()?.$element ) {
-				$e.internal( 'panel/open-default' );
+				$e.run( 'document/elements/deselect-all' );
 			}
 		} );
 	}
