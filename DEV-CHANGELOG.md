@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev11 - 2021-11-26
+* Fix: Saving a template with a condition throws an error [ED-5661] (#17040)
+
 #### 3.6.0-dev10 - 2021-11-24
 * Fix: Templates Library is unreachable [ED-5613] (#17019)
 * Fix: PayPal Button widget doesn't work with Core 3.5.0 beta3 [ED-5664] (#17022)
