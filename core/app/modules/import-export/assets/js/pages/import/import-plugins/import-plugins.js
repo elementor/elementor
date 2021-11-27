@@ -16,17 +16,12 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import usePlugins from '../../../hooks/use-plugins';
 
 import './import-plugins.scss';
-
 export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
-		pluginsInitialState = {
-			toImport: [],
-			existing: [],
-			isProExist: false,
-		},
-		[ plugins, setPlugins ] = useState( pluginsInitialState ),
+		getPluginsInitialData = () => ( { toImport: [], existing: [], proPluginData: null } ),
+		[ plugins, setPlugins ] = useState( getPluginsInitialData() ),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins,
 		getInitialSelectAll = ( pluginsList ) => pluginsList.map( ( plugin, index ) => index ),
 		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
@@ -38,33 +33,45 @@ export default function ImportPlugins() {
 			return finalObject;
 		},
 		getClassifiedPlugins = () => {
-			const pluginsForActions = { ...pluginsInitialState },
+			const pluginsForActions = getPluginsInitialData(),
 				installedPluginsMap = arrayToObjectByKey( pluginsState.data.installed, 'name' );
 
 			kitPlugins.forEach( ( plugin ) => {
-				if ( 'Elementor Pro' === plugin.name ) {
-					pluginsForActions.isProExist = true;
+				const installedPluginData = installedPluginsMap[ plugin.name ],
+					actionType = 'active' === installedPluginData?.status ? 'existing' : 'toImport',
+					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
+
+				// In case that the Pro is inactive or not installed, it should be displayed separately.
+				if ( 'Elementor Pro' === pluginData.name && 'toImport' === actionType ) {
+					pluginsForActions.proPluginData = pluginData;
 
 					return;
 				}
 
-				const installedPluginData = installedPluginsMap[ plugin.name ];
-
-				if ( ! installedPluginData ) {
-					return;
-				}
-
-				const type = 'active' === installedPluginData?.status ? 'existing' : 'toImport';
-
-				pluginsForActions[ type ].push( installedPluginData );
+				pluginsForActions[ actionType ].push( pluginData );
 			} );
 
 			return pluginsForActions;
 		},
-		existingPluginsIndexed = getInitialSelectAll( plugins.existing ),
+		existingPluginsIndexes = getInitialSelectAll( plugins.existing ),
+		saveRequiredPlugins = ( currentPlugins ) => {
+			const { toImport, proPluginData } = currentPlugins,
+				requiredPlugins = [ ...toImport ];
+
+			if ( proPluginData ) {
+				requiredPlugins.unshift( proPluginData );
+			}
+
+			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
+		},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<Button text="Action" />
+				<Button
+					variant="contained"
+					text={ __( 'Next', 'elementor' ) }
+					color="primary"
+					onClick={ () => navigate( 'import/content' ) }
+				/>
 			</WizardFooter>
 		);
 
@@ -80,7 +87,9 @@ export default function ImportPlugins() {
 		if ( PLUGINS_STATUS_MAP.FETCHED === pluginsState.status ) {
 			const currentPlugins = getClassifiedPlugins();
 
-			if ( currentPlugins.toImport.length || currentPlugins.isProExist ) {
+			if ( currentPlugins.toImport.length || currentPlugins.proPluginData ) {
+				saveRequiredPlugins( currentPlugins );
+
 				setPlugins( currentPlugins );
 			} else {
 				// In case that are not plugins to import, navigating to the next screen.
@@ -88,12 +97,6 @@ export default function ImportPlugins() {
 			}
 		}
 	}, [ pluginsState.status ] );
-
-	useEffect( () => {
-		console.log( '### plugins', plugins );
-	}, [ plugins ] );
-
-	console.log( '************************ plugins', plugins );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
@@ -103,7 +106,7 @@ export default function ImportPlugins() {
 					description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
 				/>
 
-				{ plugins.isProExist && <ProBanner />	}
+				<ProBanner status={ plugins.proPluginData?.status } />
 
 				{
 					! ! plugins.toImport.length &&
@@ -128,9 +131,9 @@ export default function ImportPlugins() {
 							withHeader={ false }
 							withStatus={ false }
 							plugins={ plugins.existing }
-							initialSelected={ existingPluginsIndexed }
-							initialDisabled={ existingPluginsIndexed }
-							excludeSelections={ existingPluginsIndexed }
+							initialSelected={ existingPluginsIndexes }
+							initialDisabled={ existingPluginsIndexes }
+							excludeSelections={ existingPluginsIndexes }
 							layout={ [ 4, 1 ] }
 						/>
 					</div>

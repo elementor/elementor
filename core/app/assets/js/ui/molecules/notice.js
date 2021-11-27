@@ -15,7 +15,7 @@ export default function Notice( props ) {
 	return (
 		<div className={ arrayToClassName( classes ) }>
 			<Text variant="xs" className="eps-notice__text">
-				{ props.label && <strong>{ props.label + ': ' }</strong> } { props.children }
+				{ props.label && <strong>{ props.label + ' ' }</strong> } { props.children }
 			</Text>
 		</div>
 	);
@@ -25,11 +25,7 @@ Notice.propTypes = {
 	className: PropTypes.string,
 	color: PropTypes.string,
 	label: PropTypes.string,
-	children: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.object,
-		PropTypes.arrayOf( PropTypes.object ),
-	] ).isRequired,
+	children: PropTypes.any.isRequired,
 };
 
 Notice.defaultProps = {

@@ -86,7 +86,7 @@ export default function ImportKit() {
 					] }
 				/>
 
-				<Notice label={ __( 'Important', 'elementor' ) } color="warning" className="e-app-import__notice">
+				<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
 					{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
 				</Notice>
 

@@ -66,7 +66,7 @@ export default function ImportResolver() {
 
 				{
 					isHomePageOverride() &&
-					<Notice className="e-app-import-resolver__notice" label={ __( 'Note', 'elementor' ) } color="warning">
+					<Notice className="e-app-import-resolver__notice" label={ __( 'Note:', 'elementor' ) } color="warning">
 						{ __( "Your site's homepage will be determined by the kit. You can change this later.", 'elementor' ) }
 					</Notice>
 				}

@@ -6,24 +6,59 @@ import GoProButton from 'elementor-app/molecules/go-pro-button';
 
 import './pro-banner.scss';
 
-export default function ProBanner() {
+export default function ProBanner( { status } ) {
+	if ( ! status ) {
+		return null;
+	}
+
+	const data = {};
+
+	if ( 'active' === status ) {
+		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
+	} else if ( 'inactive' === status ) {
+		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
+		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
+		data.button = <GoProButton text={ __( 'Connect & Activate', 'elementor' ) } />;
+	} else {
+		data.heading = __( 'Install Elementor Pro', 'elementor' );
+		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
+		data.button = <GoProButton />;
+	}
+
 	return (
 		<Box className="e-app-import-plugins-pro-banner" padding="20">
 			<Grid container alignItems="center" justify="space-between">
 				<Grid item>
-					<Heading className="e-app-import-plugins-pro-banner__heading" variant="h3" tag="h3">
-						{ __( 'Install Elementor Pro', 'elementor' ) }
-					</Heading>
+					{
+						data.heading &&
+						<Heading className="e-app-import-plugins-pro-banner__heading" variant="h3" tag="h3">
+							{ data.heading }
+						</Heading>
+					}
 
-					<Text className="e-app-import-plugins-pro-banner__description">
-						{ __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' ) }
-					</Text>
+					{
+						data.description &&
+						<Text className="e-app-import-plugins-pro-banner__description">
+							{ data.description }
+						</Text>
+					}
 				</Grid>
 
-				<Grid item>
-					<GoProButton />
-				</Grid>
+				{
+					data.button &&
+					<Grid item>
+						{ data.button }
+					</Grid>
+				}
 			</Grid>
 		</Box>
 	);
 }
+
+ProBanner.propTypes = {
+	status: PropTypes.string,
+};
+
+ProBanner.defaultProps = {
+	status: '',
+};

@@ -66,7 +66,7 @@ export default function KitContent( props ) {
 												{ item.data.title }
 											</Heading>
 
-											<Grid item>
+											<Grid item container>
 												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
 													{ item.data.description || getTemplateFeatures( item.data.features, index ) }
 												</Text>
