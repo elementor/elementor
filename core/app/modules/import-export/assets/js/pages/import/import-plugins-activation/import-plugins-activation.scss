@@ -1,0 +1,14 @@
+.e-app-import-plugins-activation {
+	&__installing-plugins {
+		max-width: 600px;
+		padding: spacing(20) 0;
+	}
+
+	&__heading {
+		margin-bottom: spacing(20);
+	}
+
+	&__plugin-name {
+		margin-inline-start: spacing(8);
+	}
+}

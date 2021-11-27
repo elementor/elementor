@@ -17,6 +17,7 @@ export default function Checkbox( props ) {
 
 	// Removing non-native attributes before passing it to the Checkbox component.
 	delete attrs.isSomeSelected;
+	delete attrs.rounded;
 
 	return (
 		<input
