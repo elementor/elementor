@@ -1,6 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
-
-import { Context } from '../../context/context-provider';
+import { useState, useEffect, useMemo, memo } from 'react';
 
 import PluginsTable from './components/plugins-table';
 
@@ -9,17 +7,16 @@ import './plugins-selection.scss';
 const ELEMENTOR_PLUGIN_NAME = 'Elementor',
 	ELEMENTOR_PRO_PLUGIN_NAME = 'Elementor Pro';
 
-export default function PluginsSelection( props ) {
-	const context = useContext( Context ),
-		[ selectedData, setSelectedData ] = useState( null ),
+function PluginsSelection( props ) {
+	const [ selectedData, setSelectedData ] = useState( null ),
 		initialSelected = [ ...props.initialSelected ],
 		elementorPluginsData = {},
 		elementorPluginsNames = [ ELEMENTOR_PLUGIN_NAME, ELEMENTOR_PRO_PLUGIN_NAME ],
-		plugins = [ ...props.plugins ].filter( ( data ) => {
-			const isElementorPlugin = elementorPluginsNames.includes( data.name );
+		plugins = [ ...props.plugins ].filter( ( plugin ) => {
+			const isElementorPlugin = elementorPluginsNames.includes( plugin.name );
 
 			if ( isElementorPlugin ) {
-				elementorPluginsData[ data.name ] = data;
+				elementorPluginsData[ plugin.name ] = plugin;
 			}
 
 			return ! isElementorPlugin;
@@ -43,7 +40,7 @@ export default function PluginsSelection( props ) {
 
 	// Updating the selected plugins list in the global context.
 	useEffect( () => {
-		if ( selectedData ) {
+		if ( props.onSelect && selectedData ) {
 			const selectedPluginsList = [];
 
 			/*
@@ -54,18 +51,9 @@ export default function PluginsSelection( props ) {
 				selectedPluginsList.push( corePluginData );
 			}
 
-			selectedData.forEach( ( pluginIndex ) => {
-				// Adding the plugin index to the selected plugins list as long as it's not excluded.
-				if ( ! props.excludeSelections.includes( pluginIndex ) ) {
-					selectedPluginsList.push( plugins[ pluginIndex ] );
-				}
+			selectedData.forEach( ( pluginIndex ) => selectedPluginsList.push( plugins[ pluginIndex ] ) );
 
-				selectedPluginsList.push( plugins[ pluginIndex ] );
-			} );
-
-			if ( selectedPluginsList.length ) {
-				context.dispatch( { type: 'SET_PLUGINS', payload: selectedPluginsList } );
-			}
+			props.onSelect( selectedPluginsList );
 		}
 	}, [ selectedData ] );
 
@@ -87,10 +75,10 @@ export default function PluginsSelection( props ) {
 }
 
 PluginsSelection.propTypes = {
-	excludeSelections: PropTypes.array,
 	initialDisabled: PropTypes.array,
 	initialSelected: PropTypes.array,
 	layout: PropTypes.array,
+	onSelect: PropTypes.func,
 	plugins: PropTypes.array,
 	selection: PropTypes.bool,
 	withHeader: PropTypes.bool,
@@ -98,7 +86,6 @@ PluginsSelection.propTypes = {
 };
 
 PluginsSelection.defaultProps = {
-	excludeSelections: [],
 	initialDisabled: [],
 	initialSelected: [],
 	plugins: [],
@@ -106,3 +93,5 @@ PluginsSelection.defaultProps = {
 	withHeader: true,
 	withStatus: true,
 };
+
+export default memo( PluginsSelection );

@@ -1,12 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+
+const PLUGINS_STATUS_MAP = Object.freeze( {
+	INITIAL: 'initial',
+	FETCHED: 'fetched',
+	ERROR: 'error',
+} );
 
 const initialState = {
-	installed: [],
-	active: [],
+	status: PLUGINS_STATUS_MAP.INITIAL,
+	data: {
+		installed: [],
+		active: [],
+	},
 };
 
 export default function usePlugins() {
-	const [ plugins, setPlugins ] = useState( initialState ),
+	const [ pluginsState, setPluginsState ] = useState( initialState ),
 		get = () => {
 			fetch( elementorCommon.config.urls.rest + 'wp/v2/plugins', {
 				headers: {
@@ -15,22 +24,24 @@ export default function usePlugins() {
 				method: 'get',
 			} ).then( ( response ) => {
 				response.json().then( ( pluginsResponse ) => {
-					setPlugins( {
-						installed: pluginsResponse,
-						active: pluginsResponse.filter( ( plugin ) => 'active' === plugin.status ),
+					setPluginsState( {
+						status: PLUGINS_STATUS_MAP.FETCHED,
+						data: {
+							installed: pluginsResponse,
+							active: pluginsResponse.filter( ( plugin ) => 'active' === plugin.status ),
+						},
 					} );
 				} );
 			} ).catch( ( error ) => {
-				console.log( error );
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.ERROR,
+					data: error,
+				} );
 			} );
 		},
 		install = () => {},
 		activate = () => {},
 		deactivate = () => {};
-
-	useEffect( () => {
-		get();
-	}, [] );
 
 	// setAjax( {
 	// 	type: 'get',
@@ -48,12 +59,13 @@ export default function usePlugins() {
 	// }, [ ajaxState.status ] );
 
 	return {
-		pluginsState: plugins,
+		pluginsState,
 		pluginsActions: {
 			get,
 			install,
 			activate,
 			deactivate,
 		},
+		PLUGINS_STATUS_MAP,
 	};
 }

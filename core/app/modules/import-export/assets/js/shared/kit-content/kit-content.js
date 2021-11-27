@@ -29,12 +29,6 @@ export default function KitContent( props ) {
 				/>
 			);
 		},
-		getGoProButton = () => (
-			<GoProButton
-				className="e-app-export-kit-content__go-pro-button"
-				url="https://go.elementor.com/go-pro-import-export"
-			/>
-		),
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
 		};
@@ -77,7 +71,13 @@ export default function KitContent( props ) {
 													{ item.data.description || getTemplateFeatures( item.data.features, index ) }
 												</Text>
 
-												{ isLockedFeaturesNoPro && getGoProButton() }
+												{
+													isLockedFeaturesNoPro &&
+													<GoProButton
+														className="e-app-export-kit-content__go-pro-button"
+														url="https://go.elementor.com/go-pro-import-export"
+													/>
+												}
 											</Grid>
 										</Grid>
 									</Grid>

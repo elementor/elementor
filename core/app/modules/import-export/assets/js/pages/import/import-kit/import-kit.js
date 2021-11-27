@@ -59,7 +59,9 @@ export default function ImportKit() {
 	// After kit was uploaded.
 	useEffect( () => {
 		if ( context.data.uploadedData && context.data.file ) {
-			navigate( '/import/plugins' );
+			const url = context.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
+
+			navigate( url );
 		}
 	}, [ context.data.uploadedData ] );
 

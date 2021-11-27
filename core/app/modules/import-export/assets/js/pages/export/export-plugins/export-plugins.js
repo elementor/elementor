@@ -3,16 +3,16 @@ import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import PluginsSelection from '../../../shared/plugins-selection/plugins-selection';
+
+import ExportPluginsSelection from './components/export-plugins-selection/export-plugins-selection';
 
 import Button from 'elementor-app/ui/molecules/button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-import usePlugins from '../../../hooks/use-plugins';
+import './export-plugins.scss';
 
 export default function ExportPlugins() {
-	const { pluginsState } = usePlugins(),
-		navigate = useNavigate(),
+	const navigate = useNavigate(),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -32,7 +32,7 @@ export default function ExportPlugins() {
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
-			<section>
+			<section className="e-app-export-plugins">
 				<PageHeader
 					heading={ __( 'Export a Template Kit', 'elementor' ) }
 					description={ [
@@ -43,7 +43,7 @@ export default function ExportPlugins() {
 					] }
 				/>
 
-				<PluginsSelection plugins={ pluginsState.active } withStatus={ false } />
+				<ExportPluginsSelection />
 			</section>
 		</Layout>
 	);

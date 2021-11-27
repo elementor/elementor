@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
-const KIT_STATUS_MAP = {
+const KIT_STATUS_MAP = Object.freeze( {
 		INITIAL: 'initial',
 		UPLOADED: 'uploaded',
 		IMPORTED: 'imported',
 		EXPORTED: 'exported',
 		ERROR: 'error',
-	},
+	} ),
 	IMPORT_KIT_KEY = 'elementor_import_kit',
 	EXPORT_KIT_KEY = 'elementor_export_kit';
 
