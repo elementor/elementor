@@ -32,7 +32,11 @@ export default function ImportResolver() {
 					text={ __( 'Next', 'elementor' ) }
 					variant="contained"
 					color="primary"
-					onClick={ () => navigate( 'import/process' ) }
+					onClick={ () => {
+						const url = context.data.plugins.length ? 'import/plugins-activation' : 'import/process';
+
+						navigate( url );
+					} }
 				/>
 			</WizardFooter>
 		),

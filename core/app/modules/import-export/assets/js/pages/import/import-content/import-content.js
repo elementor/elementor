@@ -11,8 +11,6 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-import ImportButton from './components/import-button/import-button';
-
 import './import-content.scss';
 
 export default function ImportContent() {
@@ -34,7 +32,20 @@ export default function ImportContent() {
 					} }
 				/>
 
-				<ImportButton />
+				<Button
+					variant="contained"
+					text={ __( 'Next', 'elementor' ) }
+					color="primary"
+					onClick={ () => {
+						if ( context.data.includes.includes( 'templates' ) && context.data.uploadedData.conflicts ) {
+							navigate( 'import/resolver' );
+						} else {
+							const url = context.data.plugins.length ? 'import/plugins-activation' : 'import/process';
+
+							navigate( url );
+						}
+					} }
+				/>
 			</WizardFooter>
 		),
 		getLearnMoreLink = () => (
