@@ -50,6 +50,6 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 
 		return 'container' === draggedElType &&
 			'widget' === parentElType &&
-			this.isWidgetSupportNesting( parentModel.get( 'widgetType' ) );
+			this.isWidgetSupportNesting( this.get( 'widgetType' ) );
 	}
 }
