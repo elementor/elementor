@@ -6,6 +6,20 @@
 
   ![legend-section-widget-tabs](_images/legend-section-widget-tabs.png)
 
+Every element in the document has a unique ID which is used to identify it in the editor, and is resolved to a unique [Container](#) object that can be accessed using the following method:
+```javascript
+elementor.getContainer( ID );
+```
+Every command under document uses `container` or `containers` as parameters to define the target.
+
+The commands can accept `container` or `containers` but not both.
+
+| Property     | Type                  | Description |
+|---           |---                    |---|
+| _container_  | `{Container}`         | Target.
+| _containers_ | `{Container[]}`       | Targets.
+
+
 ## Component -- `$e.components.get('document')`
 
 * **Name**: Document.
