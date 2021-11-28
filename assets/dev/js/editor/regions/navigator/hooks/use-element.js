@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, useReducer } from 'react';
+import { useCallback, useEffect, useMemo, useState, useReducer } from 'react';
 
 export default function useElement( elementId ) {
-	const model = elementor.getContainer( elementId ).model,
+	const model = useMemo( () => elementor.getContainer( elementId ).model, [ elementId ] ),
 		[ selected, setSelected ] = useState( false ),
 		[ , forceUpdate ] = useReducer( () => ( {} ) ),
 		element = serializeModel( model );
@@ -49,12 +49,15 @@ export default function useElement( elementId ) {
 
 	const showContextMenu = ( e ) => model.trigger( 'request:contextmenu', e );
 
-	const toggleSelection = ( { append = false } ) => {
-		elementor.getContainer( elementId ).model
-			.trigger( 'request:edit', {
-				append,
+	const toggleSelection = ( { append = false, section } ) => {
+		$e.run( 'document/elements/toggle-selection', {
+			container: elementor.getContainer( elementId ),
+			append,
+			options: {
 				scrollIntoView: true,
-			} );
+				section,
+			},
+		} );
 	};
 
 	return {
@@ -73,7 +76,7 @@ const serializeModel = ( model ) => ( {
 	id: model.get( 'id' ),
 	elType: model.get( 'elType' ),
 	elements: model.get( 'elements' ).models || model.get( 'elements' ),
-	settings: model.get( 'settings' ),
+	settings: model.get( 'settings' ).toJSON(),
 	title: model.getTitle?.(),
 	icon: model.getIcon?.(),
 	hidden: model.get( 'hidden' ),

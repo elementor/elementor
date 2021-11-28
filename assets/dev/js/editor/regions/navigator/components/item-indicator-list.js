@@ -1,11 +1,11 @@
 import ItemIndicator from './item-indicator';
 import PropTypes from 'prop-types';
 
-export default function ItemIndicatorList( { settings } ) {
+export default function ItemIndicatorList( { settings, toggleSelection } ) {
 	const list = Object.entries( elementor.navigator.indicators ).map(
 		( [ key, indicator ] ) => {
 			return indicator.settingKeys.some( ( settingKey ) => settings[ settingKey ] ) &&
-				<ItemIndicator key={ key } indicator={ indicator } />;
+				<ItemIndicator key={ key } indicator={ indicator } toggleSelection={ toggleSelection } />;
 		}
 	);
 
@@ -18,4 +18,5 @@ export default function ItemIndicatorList( { settings } ) {
 
 ItemIndicatorList.propTypes = {
 	settings: PropTypes.object,
+	toggleSelection: PropTypes.func,
 };

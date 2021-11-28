@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
 
-export default function ItemIndicator( { indicator: { title, icon, section } } ) {
+export default function ItemIndicator( { indicator: { title, icon, section }, toggleSelection } ) {
 	const handleClick = () => {
-		setTimeout( () => {
-			elementor.activateElementSection( section );
-		} );
+		setTimeout( () => toggleSelection( { section } ) );
 	};
 
 	return (
@@ -21,4 +19,5 @@ ItemIndicator.propTypes = {
 		icon: PropTypes.string,
 		section: PropTypes.string,
 	} ),
+	toggleSelection: PropTypes.func,
 };

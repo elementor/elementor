@@ -15,6 +15,22 @@ export default class Component extends ComponentBase {
 		return this.importCommands( commandsInternal );
 	}
 
+	defaultStates() {
+		return {
+			'': {
+				initialState: {},
+				reducers: {
+					add: ( state, action ) => {
+						state.value.push( action.payload );
+					},
+					remove: ( state, action ) => {
+
+					},
+				},
+			},
+		};
+	}
+
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => {

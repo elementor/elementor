@@ -6,9 +6,9 @@ export class Select extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], append = false } = args;
+		const { containers = [ args.container ], options = {} } = args;
 
-		elementor.selection.add( containers, append );
+		elementor.selection.add( containers, options );
 	}
 }
 

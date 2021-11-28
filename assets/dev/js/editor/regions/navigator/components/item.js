@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
 import ItemIcon from './item-icon';
@@ -127,10 +127,12 @@ export default function Item( { elementId, level } ) {
 					<div className="elementor-navigator__element__toggle" onClick={ toggleVisibility }>
 						<Icon className="eicon-preview-medium" />
 					</div>
-					<ItemIndicatorList settings={ element.settings } />
+					<ItemIndicatorList settings={ element.settings } toggleSelection={ toggleSelection }/>
 				</div>
 			}
-			<ItemList listRef={ listRef } elements={ element.elements } level={ level + 1 } indicateEmpty={ hasChildren } />
+			<div style={ { display: listState ? 'block' : 'none' } }>
+				<ItemList listRef={ listRef } elements={ element.elements } level={ level + 1 } indicateEmpty={ hasChildren } />
+			</div>
 		</div>
 	);
 }

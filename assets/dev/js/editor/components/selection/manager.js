@@ -73,14 +73,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the new elements are just added to the current selection.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} append
+	 * @param {{}} options
 	 */
-	add( containers, append = false ) {
+	add( containers, options = { append: false } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		// If command/ctrl+click not clicked, clear selected elements.
-		if ( ! append ) {
-			this.remove( [], true );
+		if ( ! options.append ) {
+			this.remove( [], { all: true } );
 		}
 
 		for ( const container of containers ) {
@@ -89,6 +89,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			container.view.select();
 
 			this.trigger( 'change', { container, state: true } );
+		}
+
+		if ( options.scrollIntoView ) {
+			elementor.helpers.scrollToView( containers[ 0 ].view.$el, 200 );
+		}
+
+		if ( options.section ) {
+			elementor.activateElementSection( options.section );
 		}
 	}
 
@@ -99,12 +107,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * active, in which case the the whole selection is cleared.
 	 *
 	 * @param {Container[]|Container} containers
-	 * @param {bool} all
+	 * @param {{}} options
 	 */
-	remove( containers, all = false ) {
+	remove( containers, options = { all: false } ) {
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
-		if ( all ) {
+		if ( options.all ) {
 			containers = this.getElements();
 		}
 
