@@ -1,47 +1,118 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const PLUGINS_STATUS_MAP = Object.freeze( {
 	INITIAL: 'initial',
-	FETCHED: 'fetched',
+	SUCCESS: 'success',
 	ERROR: 'error',
 } );
 
-const initialState = {
-	status: PLUGINS_STATUS_MAP.INITIAL,
-	data: {
-		installed: [],
-		active: [],
-	},
-};
-
 export default function usePlugins() {
-	const [ pluginsState, setPluginsState ] = useState( initialState ),
-		get = () => {
-			fetch( elementorCommon.config.urls.rest + 'wp/v2/plugins', {
+	const getInitialState = () => ( {
+			status: PLUGINS_STATUS_MAP.INITIAL,
+			data: null,
+		} ),
+		[ pluginsState, setPluginsState ] = useState( getInitialState() ),
+		baseEndpoint = elementorCommon.config.urls.rest + 'wp/v2/plugins/',
+		fetchRest = ( { body, method, endpoint = '' } ) => {
+			const data = {
+				method,
 				headers: {
+					'Content-Type': 'application/json; charset=utf-8',
 					'X-WP-Nonce': wpApiSettings.nonce,
 				},
-				method: 'get',
-			} ).then( ( response ) => {
-				response.json().then( ( pluginsResponse ) => {
-					setPluginsState( {
-						status: PLUGINS_STATUS_MAP.FETCHED,
-						data: {
-							installed: pluginsResponse,
-							active: pluginsResponse.filter( ( plugin ) => 'active' === plugin.status ),
-						},
-					} );
+			};
+
+			if ( body ) {
+				data.body = JSON.stringify( body );
+			}
+
+			return fetch( baseEndpoint + endpoint, data ).then( ( response ) => response.json() );
+		},
+		get = () => {
+			fetchRest( {
+				method: 'GET',
+			} )
+			.then( ( res ) => {
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.SUCCESS,
+					data: {
+						installed: res,
+						active: res.filter( ( plugin ) => 'active' === plugin.status ),
+					},
 				} );
-			} ).catch( ( error ) => {
+			} )
+			.catch( ( error ) => {
 				setPluginsState( {
 					status: PLUGINS_STATUS_MAP.ERROR,
 					data: error,
 				} );
 			} );
 		},
-		install = () => {},
-		activate = () => {},
-		deactivate = () => {};
+		install = ( slug ) => {
+			slug = slug.split( '/' )[ 0 ];
+
+			fetchRest( {
+				method: 'POST',
+				body: {
+					slug,
+				},
+			} )
+			.then( ( res ) => {
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.SUCCESS,
+					data: res,
+				} );
+			} )
+			.catch( ( error ) => {
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.ERROR,
+					data: error,
+				} );
+			} );
+		},
+		activate = ( slug ) => {
+			fetchRest( {
+				endpoint: slug,
+				method: 'PUT',
+				body: {
+					status: 'active',
+				},
+			} )
+			.then( ( res ) => {
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.SUCCESS,
+					data: res,
+				} );
+			} )
+			.catch( ( error ) => {
+				setPluginsState( {
+					status: PLUGINS_STATUS_MAP.ERROR,
+					data: error,
+				} );
+			} );
+		},
+		deactivate = ( slug ) => {
+			fetchRest( {
+				endpoint: slug,
+				method: 'PUT',
+				body: {
+					status: 'inactive',
+				},
+			} )
+				.then( ( res ) => {
+					setPluginsState( {
+						status: PLUGINS_STATUS_MAP.SUCCESS,
+						data: res,
+					} );
+				} )
+				.catch( ( error ) => {
+					setPluginsState( {
+						status: PLUGINS_STATUS_MAP.ERROR,
+						data: error,
+					} );
+				} );
+		},
+		reset = () => setPluginsState( getInitialState() );
 
 	// setAjax( {
 	// 	type: 'get',
@@ -65,6 +136,7 @@ export default function usePlugins() {
 			install,
 			activate,
 			deactivate,
+			reset,
 		},
 		PLUGINS_STATUS_MAP,
 	};

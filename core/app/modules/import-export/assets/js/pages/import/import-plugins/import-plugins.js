@@ -25,7 +25,7 @@ export default function ImportPlugins() {
 		kitPlugins = context.data.uploadedData?.manifest?.plugins,
 		getInitialSelectAll = ( pluginsList ) => pluginsList.map( ( plugin, index ) => index ),
 		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
-		arrayToObjectByKey = ( array, key ) => {
+		arrayToObjectByKey = ( array = [], key ) => {
 			const finalObject = {};
 
 			array.forEach( ( item ) => finalObject[ item[ key ] ] = item );
@@ -34,7 +34,7 @@ export default function ImportPlugins() {
 		},
 		getClassifiedPlugins = () => {
 			const pluginsForActions = getPluginsInitialData(),
-				installedPluginsMap = arrayToObjectByKey( pluginsState.data.installed, 'name' );
+				installedPluginsMap = arrayToObjectByKey( pluginsState.data?.installed, 'name' );
 
 			kitPlugins.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
@@ -84,7 +84,7 @@ export default function ImportPlugins() {
 	}, [] );
 
 	useEffect( () => {
-		if ( PLUGINS_STATUS_MAP.FETCHED === pluginsState.status ) {
+		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
 			const currentPlugins = getClassifiedPlugins();
 
 			if ( currentPlugins.toImport.length || currentPlugins.proPluginData ) {

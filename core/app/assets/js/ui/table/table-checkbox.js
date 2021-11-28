@@ -10,12 +10,12 @@ export default function TableCheckbox( props ) {
 		attrs = { ...props },
 		isSelectAllCheckbox = () => props.hasOwnProperty( 'allSelectedCount' ),
 		isAllSelected = () => Object.keys( context.selected ).length === props.allSelectedCount,
-		isSomeSelected = () => isSelectAllCheckbox() ? ! ! ( Object.keys( context.selected ).length && ! isAllSelected() ) : false,
+		isIndeterminate = () => isSelectAllCheckbox() ? ! ! ( Object.keys( context.selected ).length && ! isAllSelected() ) : false,
 		getIsSelected = () => isSelectAllCheckbox() ? isAllSelected() : ( props.index in context.selected ),
 		getIsDisabled = () => ! isSelectAllCheckbox() ? context.disabled.includes( props.index ) : null,
 		onSelectAll = () => {
 			context.setSelected( () => {
-				if ( isAllSelected() || isSomeSelected() ) {
+				if ( isAllSelected() || isIndeterminate() ) {
 					return {};
 				}
 
@@ -49,7 +49,7 @@ export default function TableCheckbox( props ) {
 	return (
 		<Checkbox
 			checked={ getIsSelected() }
-			isSomeSelected={ isSomeSelected() }
+			indeterminate={ isIndeterminate() }
 			onChange={ onChange }
 			disabled={ getIsDisabled() }
 			{ ...attrs }

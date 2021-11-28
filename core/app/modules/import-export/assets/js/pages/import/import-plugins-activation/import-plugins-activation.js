@@ -1,20 +1,23 @@
 import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
+import PluginStatusItem from './components/plugin-status-item/plugin-status-item';
 
 import Grid from 'elementor-app/ui/grid/grid';
-import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
 import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
 
 export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
+		navigate = useNavigate(),
+		[ pluginsOnProcess, setPluginsOnProcess ] = useState( [] ),
+		[ readyPlugins, setReadyPlugins ] = useState( [] ),
 		[ errorType, setErrorType ] = useState( '' ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
@@ -27,8 +30,19 @@ export default function ImportPluginsActivation() {
 		};
 
 	useEffect( () => {
-		if ( context.data.plugins.length ) {
+		// When all plugins are activated/installed.
+		if ( context.data.plugins.length === readyPlugins.length ) {
+			console.log( 'ALL READY!' );
+		} else {
+			const nextPluginToInstallIndex = readyPlugins.length;
 
+			setPluginsOnProcess( ( prevState ) => [ ...prevState, context.data.plugins[ nextPluginToInstallIndex ] ] );
+		}
+	}, [ readyPlugins ] );
+
+	useEffect( () => {
+		if ( ! context.data.plugins.length ) {
+			navigate( '/import/' );
 		}
 	}, [ context.data.plugins ] );
 
@@ -44,14 +58,20 @@ export default function ImportPluginsActivation() {
 						</Heading>
 
 						<List>
-							<List.Item>
-								<Grid container alignItems="center">
-									<Checkbox rounded checked />
-									<Text tag="span" className="e-app-import-plugins-activation__plugin-name">
-										{ 'Woocommerce' + ' ' + 'installed' }
-									</Text>
-								</Grid>
-							</List.Item>
+							{
+								pluginsOnProcess.map( ( { name, plugin, status } ) => (
+									<List.Item key={ name }>
+										<Grid container alignItems="center">
+											<PluginStatusItem
+												name={ name }
+												slug={ plugin }
+												status={ status }
+												onReady={ ( pluginName ) => setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] ) }
+											/>
+										</Grid>
+									</List.Item>
+								) )
+							}
 						</List>
 					</Grid>
 				</Grid>

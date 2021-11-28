@@ -11,12 +11,12 @@ export default function Checkbox( props ) {
 		classes.push( baseClassName + '--rounded' );
 	}
 
-	if ( props.isSomeSelected ) {
+	if ( props.indeterminate ) {
 		classes.push( baseClassName + '--some-selected' );
 	}
 
 	// Removing non-native attributes before passing it to the Checkbox component.
-	delete attrs.isSomeSelected;
+	delete attrs.indeterminate;
 	delete attrs.rounded;
 
 	return (
@@ -32,12 +32,12 @@ export default function Checkbox( props ) {
 Checkbox.propTypes = {
 	className: PropTypes.string,
 	disabled: PropTypes.bool,
-	isSomeSelected: PropTypes.bool,
+	indeterminate: PropTypes.bool,
 	rounded: PropTypes.bool,
 };
 
 Checkbox.defaultProps = {
 	className: '',
 	disabled: false,
-	isSomeSelected: false,
+	indeterminate: false,
 };
