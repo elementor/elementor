@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Site_CSS_Print_Method extends Site_Option {
 	const OPTION_EXTERNAL = 'external';
-	const OPTION_INTERNAL = 'inline';
+	const OPTION_INTERNAL = 'internal';
 
 	public static function get_key() {
 		return 'css_print_method';
