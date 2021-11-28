@@ -284,7 +284,7 @@ abstract class Module extends Base_Object {
 		add_action( 'elementor/common/after_register_scripts', function () {
 			wp_enqueue_script(
 				$this->get_name(),
-				$this->get_js_assets_url( "elementor-modules/{$this->get_name()}" ),
+				$this->get_js_assets_url( "{$this->get_name()}" ),
 				[
 					'elementor-common',
 				],
