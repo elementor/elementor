@@ -16,7 +16,7 @@ class Site_Usage_Last_Send extends Site_Option {
 		return false;
 	}
 
-	public static function get_autoload() {
+	public static function should_autoload() {
 		return false;
 	}
 }

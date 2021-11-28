@@ -22,7 +22,7 @@ class Beta_Testers {
 	const NEWSLETTER_PRIVACY_URL = 'https://go.elementor.com/beta-testers-newsletter-privacy';
 
 	/**
-	 * @deprcated Use User_Beta_Tester::SIGNUP
+	 * @deprecated 3.6.0 Use `User_Beta_Tester::SIGNUP` instead.
 	 */
 	const BETA_TESTER_SIGNUP = 'beta_tester_signup';
 

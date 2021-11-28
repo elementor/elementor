@@ -16,7 +16,7 @@ class Site_Usage_Notice extends Site_Option {
 		return '';
 	}
 
-	public static function get_autoload() {
+	public static function should_autoload() {
 		return false;
 	}
 

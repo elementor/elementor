@@ -15,9 +15,11 @@ abstract class User_Option extends Option_Base {
 
 	public static function get() {
 		$value = get_user_option( static::get_full_key(), static::$user_id );
+
 		if ( false === $value ) {
 			$value = static::get_default();
 		}
+
 		return $value;
 	}
 

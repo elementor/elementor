@@ -64,6 +64,7 @@ class Tracker {
 	 */
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = Site_Usage_Opt_In::get();
+
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
 			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
 				'opt_in_recalculate_usage',

@@ -10,8 +10,8 @@ abstract class Site_Option extends Option_Base {
 	/**
 	 * @return bool
 	 */
-	public static function get_autoload() {
-		wp_die( __METHOD__ . ' must be implemented' );
+	public static function should_autoload() {
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
 
 	public static function get() {
@@ -19,7 +19,7 @@ abstract class Site_Option extends Option_Base {
 	}
 
 	public static function set( $value ) {
-		return update_option( static::get_full_key(), $value, static::get_autoload() );
+		return update_option( static::get_full_key(), $value, static::should_autoload() );
 	}
 
 	public static function delete() {

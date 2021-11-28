@@ -8,15 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Site_Beta extends Site_Option {
+
 	public static function get_key() {
 		return 'beta';
 	}
 
-	public static function get_autoload() {
+	public static function should_autoload() {
 		return false;
 	}
 
 	public static function get_default() {
-		return 'no';
+		return static::OPTION_NO;
 	}
 }

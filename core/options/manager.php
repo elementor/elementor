@@ -15,7 +15,7 @@ class Manager extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		do_action( 'elementor/options/register' );
+		do_action( 'elementor/options/register', $this );
 	}
 
 	public function get_name() {
@@ -45,12 +45,17 @@ class Manager extends BaseModule {
 	 * @param $key
 	 *
 	 * @return Option_Base
+	 * @throws \Exception
 	 */
 	public function get( $key ) {
 		if ( ! isset( $this->registered[ $key ] ) ) {
-			wp_die( esc_attr( $key ) . ' is not a valid option.' );
+			throw new \Exception( esc_attr( $key ) . ' is not a valid option.' );
 		}
 
 		return $this->registered[ $key ];
+	}
+
+	public function get_all() {
+		return $this->registered;
 	}
 }

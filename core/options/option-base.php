@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Option_Base {
+	const PREFIX = 'elementor_';
+
+	const OPTION_NO = 'no';
+	const OPTION_YES = 'yes';
+
 	/**
 	 * @var static
 	 */
@@ -17,41 +22,48 @@ abstract class Option_Base {
 
 	/**
 	 * @return mixed
+	 * @throws \Exception
 	 */
 	public static function get() {
-		wp_die( __METHOD__ . ' must be implemented' );
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
 	 * @return string
+	 * @throws \Exception
 	 */
 	public static function get_key() {
-		wp_die( __METHOD__ . ' must be implemented' );
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
 	 * @return string
+	 * @throws \Exception
 	 */
 	public static function get_default() {
-		wp_die( __METHOD__ . ' must be implemented' );
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
 	 * @param mixed $value
+	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	public static function set( $value ) {
-		wp_die( __METHOD__ . ' must be implemented' );
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
+
 	/**
 	 * @return bool
+	 * @throws \Exception
 	 */
 	public static function delete() {
-		wp_die( __METHOD__ . ' must be implemented' );
+		throw new \Exception( __METHOD__ . ' must be implemented' );
 	}
 
 	public static function get_prefix() {
-		return 'elementor_';
+		return static::PREFIX;
 	}
 
 	public static function get_full_key() {
@@ -81,7 +93,7 @@ abstract class Option_Base {
 	public static function on_change( $new_value, $old_value = null ) {}
 
 	public static function is_on() {
-		return 'yes' === static::get();
+		return static::OPTION_YES === static::get();
 	}
 
 	public static function is_off() {
@@ -89,7 +101,7 @@ abstract class Option_Base {
 	}
 
 	public static function set_on() {
-		return static::set( 'yes' );
+		return static::set( static::OPTION_YES );
 	}
 
 	public static function set_off() {

@@ -12,7 +12,7 @@ class Site_Usage_Opt_In extends Site_Option {
 		return 'allow_tracking';
 	}
 
-	public static function get_autoload() {
+	public static function should_autoload() {
 		return false;
 	}
 

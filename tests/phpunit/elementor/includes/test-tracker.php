@@ -42,7 +42,7 @@ class Test_Tracker extends Elementor_Test_Base {
 		// Load font_awesome_support settings.
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
 
-		Site_CSS_Print_Method::set( 'internal' );
+		Site_CSS_Print_Method::set_internal();
 
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
 
