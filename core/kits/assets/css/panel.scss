@@ -81,6 +81,10 @@
 			&-fields {
 				margin-bottom: 15px;
 				position: relative;
+
+				&.ui-sortable-helper {
+					background-color: $white;
+				}
 			}
 
 			&-row-controls {
@@ -126,9 +130,13 @@
 
 				&:not(:hover) {
 
-					.elementor-repeater-tool-remove,
-					.elementor-repeater-tool-remove--disabled {
-						display: none;
+				  	.elementor-repeater-tool {
+
+						&-remove,
+						&-remove--disabled,
+						&-sort {
+						  display: none;
+						}
 					}
 				}
 			}
@@ -174,6 +182,14 @@
 		.pickr,
 		.elementor-control-popover-toggle-toggle-label {
 			@include margin-start(5px);
+		}
+
+		.e-sortable-placeholder {
+			background-color: $editor-info;
+			opacity: .9;
+			width: 100%;
+			margin: 8px 0;
+			height: 2px;
 		}
 	}
 
