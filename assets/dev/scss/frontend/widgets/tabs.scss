@@ -26,6 +26,8 @@
 
 	--tabs-title-shadow: none;
 
+	max-width: 100%; /* Fix issue with new created nested-tabs inside nested-tabs with overflow */
+
 	.elementor-tabs-content-wrapper {
 		background-color: var(--tabs-background-color);
 	}
