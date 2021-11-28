@@ -105,8 +105,8 @@ module.exports = Marionette.CompositeView.extend( {
 
 		model = Object.assign( model, model.custom );
 
-		// When a section is about to be created inside an existing element, we want it to be an inner-section, unlike
-		// a section that should be placed in the document level (for example, from a JSON template).
+		// When a section is about to be created inside an existing element, it's converted to an inner-section, unless
+		// it's placed in the document level (for example, from a JSON template).
 		if ( 'document' !== container.type && 'section' === model.elType ) {
 			model.isInner = true;
 		}
