@@ -60,7 +60,7 @@ export default function ImportPluginsActivation() {
 						<List>
 							{
 								pluginsOnProcess.map( ( { name, plugin, status } ) => (
-									<List.Item key={ name }>
+									<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ name }>
 										<Grid container alignItems="center">
 											<PluginStatusItem
 												name={ name }

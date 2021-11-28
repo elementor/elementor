@@ -60,12 +60,12 @@
 		border-radius: 50%;
 	}
 
-	&--some-selected {
+	&--indeterminate {
 		&::after {
 			display: inline-block;
 			margin-bottom: 0;
 			content: " ";
-			width: $eps-checkbox-some-selected-indicator-size-unit;
+			width: $eps-checkbox-indeterminate-indicator-size-unit;
 			height: 0;
 			transform: rotate(0deg);
 			border-top: $eps-checkbox-indicator-border-width solid $eps-checkbox-indicator-color;
@@ -73,5 +73,34 @@
 
 		--checkbox-background-color: var(--checkbox-checked-background-color);
 		--checkbox-border-color: var(--checkbox-checked-background-color);
+	}
+
+	&--error,
+	&--error:checked {
+		&::before,
+		&::after {
+			display: inline-block;
+			margin-bottom: 0;
+			content: " ";
+			width: $eps-checkbox-indeterminate-indicator-size-unit;
+			height: 0;
+			border: solid $eps-checkbox-indicator-color;
+			border-width: $eps-checkbox-indicator-border-width 0 0 0;
+			position: absolute;
+		}
+
+		&::before {
+			transform: rotate(45deg);
+		}
+
+		&::after {
+			transform: rotate(-45deg);
+		}
+
+		&,
+		&:hover {
+			--checkbox-background-color: var(--checkbox-error-background-color);
+			--checkbox-border-color: var(--checkbox-error-background-color);
+		}
 	}
 }

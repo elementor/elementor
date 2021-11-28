@@ -18,7 +18,9 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 
 	useEffect( () => {
 		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
-			if ( 'active' === pluginsState.data.status ) {
+			if ( ! pluginsState.data.hasOwnProperty( 'plugin' ) ) {
+				setActionStatus( 'failed' );
+			} else if ( 'active' === pluginsState.data.status ) {
 				const finalStatus = 'inactive' === status ? 'activated' : 'installed';
 
 				setActionStatus( finalStatus );
@@ -46,7 +48,7 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 
 	return (
 		<Grid container alignItems="center" key={ name }>
-			<Checkbox rounded checked onChange={ () => {} } />
+			<Checkbox rounded checked error={ 'failed' === actionStatus || null } onChange={ () => {} } />
 
 			<Text tag="span" className="e-app-import-plugins-activation__plugin-name">
 				{ name + ' ' + actionStatus }

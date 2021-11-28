@@ -16,7 +16,7 @@ export default function ExportPluginsSelection() {
 
 	return (
 		<PluginsSelection
-			plugins={ pluginsState.data.active }
+			plugins={ pluginsState.data?.active }
 			withStatus={ false }
 			onSelect={ handleOnSelect }
 		/>
