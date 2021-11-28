@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Current_User_Option extends User_Option {
-	public function __construct() {
-		parent::__construct( wp_get_current_user()->ID );
+
+	public static function set_current_user() {
+		static::$user_id = get_current_user_id();
 	}
 }
