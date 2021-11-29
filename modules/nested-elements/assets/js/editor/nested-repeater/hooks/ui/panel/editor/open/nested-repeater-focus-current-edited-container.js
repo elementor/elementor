@@ -2,8 +2,8 @@ const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
 /**
  * Used to open current selected container.
- * Will run 'nested-elements/nested-repeater/select',  over nested elements tree.
- * Will select all repeater nested item(s) till the it reach current repeater of selected element.
+ * Will run 'nested-elements/nested-repeater/select', over nested elements tree.
+ * Will select all repeater nested item(s) till it reach current repeater of selected element.
  */
 export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hookUI.After ) {
 	getCommand() {
