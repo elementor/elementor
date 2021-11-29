@@ -42,6 +42,7 @@ export default class Helper {
 				container.view.resetLayout()
 			);
 
+			// On widget creation there is no need to call 'request:edit' for column(s).
 			if ( false !== options.edit ) {
 				// Focus on last container.
 				containers[ containers.length - 1 ].model.trigger( 'request:edit' );
