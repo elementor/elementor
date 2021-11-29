@@ -45,6 +45,7 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 
 		navigateMap.forEach( ( { container, index } ) => {
 			setTimeout( () => {
+				// No history, for focusing on current container.
 				$e.run( 'nested-elements/nested-repeater/select', {
 					container,
 					index: index++,

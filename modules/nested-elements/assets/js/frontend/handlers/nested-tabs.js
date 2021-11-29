@@ -46,9 +46,6 @@ export default class NestedTabs extends BaseTabs {
 			return window.top.$e.run( 'nested-elements/nested-repeater/select', {
 				container: elementor.getContainer( this.$element.attr( 'data-id' ) ),
 				index: parseInt( tabIndex ),
-				options: {
-					useHistory: false,
-				},
 			} );
 		}
 
