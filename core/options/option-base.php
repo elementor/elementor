@@ -16,11 +16,6 @@ abstract class Option_Base {
 	const OPTION_YES = 'yes';
 
 	/**
-	 * @var static
-	 */
-	public static $instance;
-
-	/**
 	 * @return mixed
 	 */
 	public static function get() {
