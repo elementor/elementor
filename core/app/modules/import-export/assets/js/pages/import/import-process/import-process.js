@@ -4,6 +4,7 @@ import { useNavigate } from '@reach/router';
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
+import Text from 'elementor-app/ui/atoms/text';
 
 import { Context } from '../../../context/context-provider';
 

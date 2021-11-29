@@ -9,6 +9,7 @@ import PluginStatusItem from './components/plugin-status-item/plugin-status-item
 
 import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
+import Text from 'elementor-app/ui/atoms/text';
 import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
@@ -18,6 +19,7 @@ export default function ImportPluginsActivation() {
 		navigate = useNavigate(),
 		[ pluginsOnProcess, setPluginsOnProcess ] = useState( [] ),
 		[ readyPlugins, setReadyPlugins ] = useState( [] ),
+		[ failedPlugins, setFailedPlugins ] = useState( [] ),
 		[ errorType, setErrorType ] = useState( '' ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
@@ -30,9 +32,11 @@ export default function ImportPluginsActivation() {
 		};
 
 	useEffect( () => {
-		// When all plugins are activated/installed.
 		if ( context.data.plugins.length === readyPlugins.length ) {
-			console.log( 'ALL READY!' );
+			// When all plugins are installed and activated.
+			context.dispatch( { action: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
+
+			navigate( '/import/process' );
 		} else {
 			const nextPluginToInstallIndex = readyPlugins.length;
 
@@ -53,22 +57,27 @@ export default function ImportPluginsActivation() {
 
 				<Grid container justify="center">
 					<Grid item className="e-app-import-plugins-activation__installing-plugins">
-						<Heading className="e-app-import-plugins-activation__heading" variant="h3" tag="h3">
+						<Text className="e-app-import-plugins-activation__heading" variant="lg">
 							{ __( 'Installing plugins:', 'elementor' ) }
-						</Heading>
+						</Text>
 
 						<List>
 							{
 								pluginsOnProcess.map( ( { name, plugin, status } ) => (
 									<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ name }>
-										<Grid container alignItems="center">
-											<PluginStatusItem
-												name={ name }
-												slug={ plugin }
-												status={ status }
-												onReady={ ( pluginName ) => setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] ) }
-											/>
-										</Grid>
+										<PluginStatusItem
+											name={ name }
+											slug={ plugin }
+											status={ status }
+											onReady={ ( pluginName, processStatus ) => {
+												// Saving the failed plugins on a separate list to display them at the end of the process.
+												if ( 'failed' === processStatus ) {
+													setFailedPlugins( ( prevState ) => [ ...prevState, pluginName ] );
+												}
+
+												setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] );
+											} }
+										/>
 									</List.Item>
 								) )
 							}

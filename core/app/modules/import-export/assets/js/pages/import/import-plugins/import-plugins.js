@@ -111,7 +111,13 @@ export default function ImportPlugins() {
 				{
 					! ! plugins.toImport.length &&
 					<div className="e-app-import-plugins__section">
-						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">{ __( 'Plugins to add:', 'elementor' ) }</Heading>
+						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
+							{
+								context.data.requiredPlugins.length === context.data.plugins.length ?
+								__( 'Plugins to add:', 'elementor' ) :
+								__( 'Missing Required Plugins:', 'elementor' )
+							}
+						</Heading>
 
 						<PluginsSelection
 							plugins={ plugins.toImport }
@@ -125,7 +131,9 @@ export default function ImportPlugins() {
 				{
 					! ! plugins.existing.length &&
 					<div className="e-app-import-plugins__section">
-						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">{ __( 'Plugins you already have:', 'elementor' ) }</Heading>
+						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
+							{ __( 'Plugins you already have:', 'elementor' ) }
+						</Heading>
 
 						<PluginsSelection
 							withHeader={ false }

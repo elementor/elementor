@@ -10,8 +10,15 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 	const [ actionStatus, setActionStatus ] = useState( '' ),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins();
 
+	console.log( '--- RE-RENDER OF: ', name );
+
+	// Activating or installing the plugin, depending on the current plugin status.
 	useEffect( () => {
 		const action = 'inactive' === status ? 'activate' : 'install';
+
+		if ( 'media-cleaner/media-cleaner' === slug ) {
+			slug = 'medsgfdsfd/dsfsdfsdf';
+		}
 
 		pluginsActions[ action ]( slug );
 	}, [] );
@@ -21,14 +28,14 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 			if ( ! pluginsState.data.hasOwnProperty( 'plugin' ) ) {
 				setActionStatus( 'failed' );
 			} else if ( 'active' === pluginsState.data.status ) {
-				const finalStatus = 'inactive' === status ? 'activated' : 'installed';
-
-				setActionStatus( finalStatus );
+				setActionStatus( 'activated' );
 			} else if ( 'inactive' === pluginsState.data.status ) {
 				/*
 					In case that the widget was installed it will be inactive after the installation.
 					Therefore, the actions should be reset and the plugin should be activated.
 				 */
+				setActionStatus( 'installed' );
+
 				pluginsActions.reset();
 
 				pluginsActions.activate( slug );
@@ -37,8 +44,8 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 	}, [ pluginsState.status ] );
 
 	useEffect( () => {
-		if ( actionStatus ) {
-			onReady( name );
+		if ( 'activated' === actionStatus || 'failed' === actionStatus ) {
+			onReady( name, actionStatus );
 		}
 	}, [ actionStatus ] );
 
@@ -50,7 +57,7 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 		<Grid container alignItems="center" key={ name }>
 			<Checkbox rounded checked error={ 'failed' === actionStatus || null } onChange={ () => {} } />
 
-			<Text tag="span" className="e-app-import-plugins-activation__plugin-name">
+			<Text tag="span" variant="sm" className="e-app-import-plugins-activation__plugin-name">
 				{ name + ' ' + actionStatus }
 			</Text>
 		</Grid>
