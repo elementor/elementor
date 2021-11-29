@@ -3,7 +3,7 @@ import CommandBase from 'elementor-api/modules/command-base';
 export class CommandNavigator extends CommandBase {
 	initialize() {
 		if ( ! elementor.navigator.isOpen ) {
-            $e.run( 'navigator/open' );
+			$e.run( 'navigator/open' );
 		}
 	}
 
