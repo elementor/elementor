@@ -625,6 +625,8 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
+			'e-form-submissions',
+			'elementor_custom_custom_code',
 			'popup_templates',
 		];
 
