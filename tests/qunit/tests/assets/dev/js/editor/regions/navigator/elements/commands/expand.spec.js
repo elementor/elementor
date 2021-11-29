@@ -9,20 +9,18 @@ export const Expand = () => {
 				eSection = eColumn.parent,
 				all = [ eSection, eColumn, eWidget ];
 
-			assert.expect( all.length );
-
 			$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
 
+			// Act.
 			all.forEach( ( container ) => {
-				// Act.
 				$e.run( 'navigator/elements/expand', { container } );
-
-				// Assert.
-				assert.equal(
-					elementor.navigator.elements.getElementView( container.id ).$el.children().hasClass( 'elementor-active' ),
-					true
-				);
 			} );
+
+			// Filter all active.
+			const actual = all.filter( ( container ) => elementor.navigator.elements.getElementView( container.id ).$el.children().hasClass( 'elementor-active' ) );
+
+			// Assert.
+			assert.equal( actual.length, all.length );
 		} );
 	} );
 };
