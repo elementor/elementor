@@ -16,10 +16,10 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		const events = super.events();
 
 		events.click = ( e ) => {
-			const $parentsUntil = jQuery( e.target ).parentsUntil( '.elementor-widget-container' );
+			const $parentsUntil = jQuery( e.target ).parentsUntil( '.elementor-element' );
 
-			// Clicks higher then 3, are nested, should not be handled by current.
-			if ( 3 <= $parentsUntil.length ) {
+			// Disable when click is nested.
+			if ( 1 === $parentsUntil.length ) {
 				return true;
 			}
 
@@ -34,6 +34,12 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		return events;
 	}
 
+	/**
+	 * @override
+	 *
+	 * Sometimes the children placement is not in the end of the element, but somewhere else, eg: deep inside the element template.
+	 * If `children_placeholder_selector` is set, it will be used to find the correct place to insert the children.
+	 */
 	getChildViewContainer( containerView, childView ) {
 		if ( this.config.children_placeholder_selector ) {
 			return containerView.$el.find( this.config.children_placeholder_selector );
@@ -71,6 +77,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	addElement( data, options = {} ) {
 		const container = this.container;
 
+		// Hook 'nested-repeater-adjust-new-container-title' have to ensure that nested element added.
 		options.onAfterAdd = ( model ) => {
 			container.view.trigger( 'nested-repeater:add-element:after', { model, options } );
 		};

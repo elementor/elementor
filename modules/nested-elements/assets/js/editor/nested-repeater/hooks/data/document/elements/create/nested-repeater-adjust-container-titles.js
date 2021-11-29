@@ -1,5 +1,7 @@
 /**
- * Hook responsible for adjustment navigator (_title) for new created nested repeater.
+ * For each nested repeater container item, adjust the container title,
+ * according to the nested repeater title, the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
+ * '_title' is used in navigator.
  */
 export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.After ) {
 	getId() {

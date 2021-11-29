@@ -1,5 +1,8 @@
 import Base from '../base';
 
+/**
+ * Hook responsible for creating container element for the new created repeater item.
+ */
 export class NestedRepeaterCreateContainer extends Base {
 	getId() {
 		return 'nested-repeater-create-container';

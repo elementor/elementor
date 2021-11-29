@@ -1,5 +1,8 @@
 import Base from '../base';
 
+/**
+ * Hook responsible for removing container element for the removed repeater item.
+ */
 export class NestedRepeaterRemoveContainer extends Base {
 	getId() {
 		return 'nested-elements-remove-container';
