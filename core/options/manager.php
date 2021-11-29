@@ -27,18 +27,6 @@ class Manager extends BaseModule {
 	 */
 	public function register( $classname ) {
 		$this->registered[ $classname::get_key() ] = $classname::get_key();
-
-		if ( method_exists( $classname, 'on_change' ) ) {
-			$option_name = $classname::get_full_key();
-
-			add_action( "add_option_{$option_name}", function( $option, $value ) use ( $classname ) {
-				$classname::on_change( $value );
-			}, 10, 2 );
-
-			add_action( "update_option_{$option_name}", function( $old_value, $value ) use ( $classname ) {
-				$classname::on_change( $value, $old_value );
-			}, 10, 2 );
-		}
 	}
 
 	/**

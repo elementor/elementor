@@ -18,7 +18,7 @@ abstract class Site_Option extends Option_Base {
 		return get_option( static::get_full_key(), static::get_default() );
 	}
 
-	public static function set( $value ) {
+	public static function setter( $value ) {
 		return update_option( static::get_full_key(), $value, static::should_autoload() );
 	}
 

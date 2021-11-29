@@ -18,7 +18,7 @@ abstract class User_Option extends Option_Base {
 		return $value;
 	}
 
-	public static function set( $value ) {
+	public static function setter( $value ) {
 		return update_user_option( get_current_user_id(), static::get_full_key(), $value );
 	}
 

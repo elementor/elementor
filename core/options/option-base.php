@@ -48,10 +48,28 @@ abstract class Option_Base {
 	 * @param mixed $value
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public static function set( $value ) {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		$old_value = static::get();
+
+		$success = static::setter( $value );
+
+		if ( $success && method_exists( static::class, 'on_change' ) ) {
+			$old_value = static::get_default() === $old_value ? null : $old_value;
+
+			static::on_change( $value, $old_value );
+		}
+
+		return $success;
+	}
+
+	/**
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 */
+	public static function setter( $value ) {
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
