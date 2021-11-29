@@ -5,15 +5,12 @@ export class ToggleFolding extends CommandNavigator {
 		const { containers = [ args.container ], callback, state } = args;
 
 		containers.forEach( ( container ) => {
-			const view = container.args.navigatorView,
-				model = view.model;
-
-			// If not have children or is root.
-			if ( 'widget' === model.get( 'elType' ) || ! model.get( 'elType' ) ) {
+			if ( ! container.children.length ) {
 				return;
 			}
 
-			const isActive = view.ui.item.hasClass( 'elementor-active' );
+			const view = container.args.navigatorView,
+				isActive = view.ui.item.hasClass( 'elementor-active' );
 
 			if ( isActive === state ) {
 				return;

@@ -3,10 +3,7 @@ import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/doc
 export const ToggleFoldingAll = () => {
 	QUnit.module( 'ToggleFoldingAll', () => {
 		QUnit.test( 'Simple', ( assert ) => {
-			// Arrange.
-			ElementsHelper.empty();
-
-			// Toggle possible states.
+			// Arrange - Toggle possible states.
 			const states = [ false, true ],
 				sectionsCount = 2,
 				eSections = [];

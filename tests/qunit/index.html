@@ -11,7 +11,7 @@
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
 		<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
-		<div id="elementor-navigator__header__title">Navigator</div>
+		<div id="elementor-navigator__header__title">{{{ elementor.translate( 'Navigator' ) }}}, </div>
 		<i id="elementor-navigator__close" class="eicon-close"></i>
 	</div>
 	<div id="elementor-navigator__elements"></div>
@@ -22,13 +22,13 @@
 
 
 <script type="text/template" id="tmpl-elementor-navigator__elements--empty">
-	<div class="elementor-empty-view__title">Empty column</div>
+	<div class="elementor-empty-view__title">{{{ elementor.translate( 'Empty column' ) }}}</div>
 </script>
 
 
 <script type="text/template" id="tmpl-elementor-navigator__root--empty">
 	<img class="elementor-nerd-box-icon" src="" alt="icon" />
-	<div class="elementor-nerd-box-title">Easy Navigation is Here!</div>
+	<div class="elementor-nerd-box-title">{{{ elementor.translate( 'Easy Navigation is Here!' ) }}}</div>
 	<div class="elementor-nerd-box-message"></div>
 </script>
 
@@ -78,7 +78,7 @@
 	<div id="elementor-navigator">
 		<div id="elementor-navigator__header">
 			<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
-			<div id="elementor-navigator__header__title">Navigator</div>
+			<div id="elementor-navigator__header__title">{{{ elementor.translate( 'Navigator' ) }}}</div>
 			<i id="elementor-navigator__close" class="eicon-close"></i>
 		</div>
 		<div id="elementor-navigator__elements"></div>
