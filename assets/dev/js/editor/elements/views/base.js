@@ -127,6 +127,7 @@ BaseElementView = BaseContainer.extend( {
 				controls: settingsModel.options.controls,
 			} );
 
+			// Since initial 'getContainer()' called defer, anyone who requires a container can be depended on this trigger.
 			this.container.view.triggerMethod( 'container:created' );
 		}
 		return this.container;

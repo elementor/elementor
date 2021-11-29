@@ -42,6 +42,8 @@ export default class EmptyView extends Marionette.ItemView {
 			return this.renderReactDefaultElement( this.ownerView.container );
 		}
 
+		// Since empty being rendered before the container created, the emptyView requires container.
+		// Its required to render only when container is available.
 		this.ownerView.once( 'container:created', () => {
 			this.renderReactDefaultElement( this.ownerView.container );
 		} );
