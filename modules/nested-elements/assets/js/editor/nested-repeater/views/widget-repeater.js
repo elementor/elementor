@@ -16,10 +16,10 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		const events = super.events();
 
 		events.click = ( e ) => {
-			const $parentsUntil = jQuery( e.target ).parentsUntil( '.elementor-element' );
+			// The aim is to skip only clicks on container elements.
+			const $parentsUntil = jQuery( e.target ).parentsUntil( '.e-container' );
 
-			// Disable when click is nested.
-			if ( 1 === $parentsUntil.length ) {
+			if ( 4 === $parentsUntil.length || 1 === $parentsUntil.length ) {
 				return true;
 			}
 
