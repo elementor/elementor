@@ -1,10 +1,11 @@
 // TODO: Wrong location used as `elementorModules.ForceMethodImplementation(); should be` `elementorUtils.forceMethodImplementation()`;
 
 export class ForceMethodImplementation extends Error {
-	constructor( info = {}, args = false ) {
+	constructor( info = {}, args = {} ) {
 		super( `${ info.isStatic ? 'static ' : '' }${ info.fullName }() should be implemented, please provide '${ info.functionName || info.fullName }' functionality.`, args );
 
-		if ( args ) {
+		if ( Object.keys( args ).length ) {
+			// eslint-disable-next-line no-console
 			console.error( args );
 		}
 
