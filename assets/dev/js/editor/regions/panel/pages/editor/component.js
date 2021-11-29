@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -87,16 +88,7 @@ export default class Component extends ComponentBase {
 	onRoute( route ) {
 		super.onRoute( route );
 
-		// Get the current element and set the direction mode.
-		const container = elementor.getCurrentElement().container,
-			direction = container?.view.getCurrentUiStates?.().directionMode;
-
-		if ( direction ) {
-			$e.uiStates.set( 'document/direction-mode', direction );
-			return;
-		}
-
-		$e.uiStates.remove( 'document/direction-mode' );
+		SetDirectionMode.set( elementor.getCurrentElement().getContainer() );
 	}
 
 	/**
