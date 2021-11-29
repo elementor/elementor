@@ -134,6 +134,13 @@ body {
 		.elementor-button-wrapper {
 			border-top-color: $theme-dark-gray-darkest;
 		}
+
+		.elementor-repeater-fields {
+
+			&.ui-sortable-helper {
+				background-color: $theme-dark-gray-dark;
+			}
+		}
 	}
 }
 
