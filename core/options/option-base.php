@@ -87,6 +87,10 @@ abstract class Option_Base {
 
 	public static function set_sub_option( $key, $value ) {
 		$parent_value = static::get();
+		if ( ! is_array( $parent_value ) ) {
+			throw new \Error( 'Parent option is not an array' );
+		}
+
 		$parent_value[ $key ] = $value;
 
 		return static::set( $parent_value );
