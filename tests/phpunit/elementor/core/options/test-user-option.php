@@ -4,10 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Options;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
 class User_Option_Test extends \Elementor\Core\Options\User_Option {
 
 	public static function get_key() {
@@ -45,20 +41,18 @@ class Test_User_Option extends Elementor_Test_Base {
 
 	public function test__get_default() {
 		// Assert
-		$this->assertEquals('default-value' , User_Option_Test::get_default() );
+		$this->assertEquals('default-value' , User_Option_Test::get() );
 	}
 
 	public function test_delete() {
 		// Arrange
-		$this->set_test_value();
-
-		$this->assertEquals('test' , User_Option_Test::get() );
+		$this->test__get();
 
 		// Act
 		User_Option_Test::delete();
 
 		// Assert
-		$this->assertEmpty( get_user_option( 'elementor_test' ) );
+		$this->assertEmpty( get_user_option( 'elementor_test', get_current_user_id() ) );
 	}
 
 	private function set_test_value() {
