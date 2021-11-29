@@ -1,11 +1,10 @@
-/**
- * Used to open the current container that are selected via navigator,
- * including selected [path] of the nested elements tree.
- * using `nested-elements/nested-repeater/select` command for each level in the selected [path].
- * path = filtered navigation map.
- */
 const NAVIGATION_DEPTH_SENSITIVITY_TIMEOUT = 250;
 
+/**
+ * Used to open current selected container.
+ * Will run 'nested-elements/nested-repeater/select',  over nested elements tree.
+ * Will select all repeater nested item(s) till the it reach current repeater of selected element.
+ */
 export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hookUI.After ) {
 	getCommand() {
 		return 'panel/editor/open';
