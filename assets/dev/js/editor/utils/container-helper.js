@@ -72,43 +72,130 @@ export class ContainerHelper {
 	 * @param {string} preset - Preset structure of the sub containers (e.g. `33-66-66-33`).
 	 * @param {Container} target - The target container of the newly created Container.
 	 * @param {Object} options - Additional command options.
+	 * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
 	 *
-	 * @return {Container}
+	 * @returns {Container} - Container created on.
 	 */
-	static createContainerFromPreset( preset, target, options = {} ) {
-		const sizes = preset.split( '-' );
+	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
+		let newContainer,
+			settings;
 
-		// Map rounded, user-readable sizes to actual percentages.
-		const sizesMap = {
-			33: '33.3333',
-			66: '66.6666',
-		};
+		const historyId = $e.internal( 'document/history/start-log', {
+				type: 'add',
+				title: __( 'Container', 'elementor' ),
+			} ),
+			{ createWrapper = true } = options;
 
-		// Create a parent container to contain all of the sub containers.
-		const parentContainer = this.createContainer( {
-				flex_direction: this.DIRECTION_ROW,
-				flex_wrap: 'wrap',
-				flex_gap: {
-					unit: 'px',
-					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
-				},
-			}, target, options );
+		try {
+			switch ( preset ) {
+				// Single Container without sub Containers.
+				case '100':
+					newContainer = ContainerHelper.createContainer( {}, target, options );
+					break;
 
-		// Create all sub containers using the sizes array.
-		// Use flex basis to make the sizes explicit.
-		sizes.forEach( ( size ) => {
-			size = sizesMap[ size ] || size;
+				// Exceptional preset.
+				case 'c100-c50-50':
+					settings = {
+						flex_direction: ContainerHelper.DIRECTION_ROW,
+						flex_wrap: 'wrap',
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+					};
 
-			this.createContainer( {
-				flex_direction: this.DIRECTION_COLUMN,
-				width: {
-					unit: '%',
-					size,
-				},
-			}, parentContainer, { edit: false } );
-		} );
+					if ( ! createWrapper ) {
+						$e.run( 'document/elements/settings', { container: target, settings } );
+						newContainer = target;
+					} else {
+						newContainer = ContainerHelper.createContainer( settings, target, options );
+					}
 
-		return parentContainer;
+					settings = {
+						width: {
+							unit: '%',
+							size: '50',
+						},
+						width_mobile: {
+							unit: '%',
+							size: '100',
+						},
+					};
+
+					ContainerHelper.createContainer( settings, newContainer, { edit: false } );
+
+					const rightContainer = ContainerHelper.createContainer( {
+						...settings,
+						padding: { size: '' }, // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+					}, newContainer, { edit: false } );
+
+					ContainerHelper.createContainers( 2, {}, rightContainer, { edit: false } );
+
+					break;
+
+				// Containers by preset.
+				default:
+					const sizes = preset.split( '-' ),
+						// Map rounded, user-readable sizes to actual percentages.
+						sizesMap = {
+							33: '33.3333',
+							66: '66.6666',
+						};
+
+					settings = {
+						flex_direction: this.DIRECTION_ROW,
+						flex_wrap: 'wrap',
+						flex_gap: {
+							unit: 'px',
+							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+						},
+					};
+
+					// Create a parent container to contain all of the sub containers.
+					let parentContainer;
+
+					if ( ! createWrapper ) {
+						$e.run( 'document/elements/settings', {
+							container: target,
+							settings,
+						} );
+
+						parentContainer = target;
+					} else {
+						parentContainer = this.createContainer( settings, target, options );
+					}
+
+					// Create all sub containers using the sizes array.
+					// Use flex basis to make the sizes explicit.
+					sizes.forEach( ( size ) => {
+						size = sizesMap[ size ] || size;
+
+						this.createContainer( {
+							flex_direction: this.DIRECTION_COLUMN,
+							width: {
+								unit: '%',
+								size,
+							},
+							width_mobile: { // For out-of-the-box responsiveness.
+								unit: '%',
+								size: '100',
+							},
+						}, parentContainer, { edit: false } );
+					} );
+
+					newContainer = parentContainer;
+			}
+
+			$e.internal( 'document/history/end-log', { id: historyId } );
+		} catch ( e ) {
+			$e.internal( 'document/history/delete-log', { id: historyId } );
+		}
+
+		return newContainer;
 	}
 
 	/**
