@@ -11,7 +11,7 @@ abstract class Site_Option extends Option_Base {
 	 * @return bool
 	 */
 	public static function should_autoload() {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	public static function get() {

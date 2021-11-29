@@ -22,26 +22,23 @@ abstract class Option_Base {
 
 	/**
 	 * @return mixed
-	 * @throws \Exception
 	 */
 	public static function get() {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
 	 * @return string
-	 * @throws \Exception
 	 */
 	public static function get_key() {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
 	 * @return string
-	 * @throws \Exception
 	 */
 	public static function get_default() {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	/**
@@ -74,10 +71,9 @@ abstract class Option_Base {
 
 	/**
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public static function delete() {
-		throw new \Exception( __METHOD__ . ' must be implemented' );
+		throw new \Error( __METHOD__ . ' must be implemented' );
 	}
 
 	public static function get_prefix() {

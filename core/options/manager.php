@@ -33,11 +33,10 @@ class Manager extends BaseModule {
 	 * @param $key
 	 *
 	 * @return Option_Base
-	 * @throws \Exception
 	 */
 	public function get( $key ) {
 		if ( ! isset( $this->registered[ $key ] ) ) {
-			throw new \Exception( esc_attr( $key ) . ' is not a valid option.' );
+			throw new \Error( esc_attr( $key ) . ' is not a valid option.' );
 		}
 
 		return $this->registered[ $key ];
