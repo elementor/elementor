@@ -2,7 +2,7 @@ export const Dock = () => {
 	QUnit.module( 'Dock', () => {
 		QUnit.test( 'Simple', ( assert ) => {
 			// Arrange.
-			if ( ! elementor.navigator.isDocked ) {
+			if ( elementor.navigator.isDocked ) {
 				$e.run( 'navigator/undock' );
 			}
 
