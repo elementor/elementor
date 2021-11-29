@@ -1,4 +1,7 @@
 import Base from './base';
+import EmptyComponent from 'elementor-elements/views/container/empty-component';
+import Model from 'elementor-elements/models/container';
+import { default as View } from 'elementor-elements/views/container';
 
 export default class Container extends Base {
 	getType() {
@@ -6,14 +9,14 @@ export default class Container extends Base {
 	}
 
 	getView() {
-		return require( 'elementor-elements/views/container' );
+		return View;
 	}
 
 	getEmptyView() {
-		return require( 'elementor-elements/views/container/empty-component' ).default;
+		return EmptyComponent;
 	}
 
 	getModel() {
-		return require( 'elementor-elements/models/container' ).default;
+		return Model;
 	}
 }

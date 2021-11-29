@@ -1,4 +1,6 @@
 import Base from './base';
+import Model from 'elementor-elements/models/section';
+import { default as View } from 'elementor-elements/views/section';
 
 export default class Section extends Base {
 	getType() {
@@ -6,10 +8,10 @@ export default class Section extends Base {
 	}
 
 	getView() {
-		return require( 'elementor-elements/views/section' );
+		return View;
 	}
 
 	getModel() {
-		return require( 'elementor-elements/models/section' ).default;
+		return Model;
 	}
 }

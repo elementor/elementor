@@ -1,4 +1,6 @@
 import Base from './base';
+import Model from 'elementor-elements/models/column';
+import { default as View } from 'elementor-elements/views/column';
 
 export default class Column extends Base {
 	getType() {
@@ -6,10 +8,10 @@ export default class Column extends Base {
 	}
 
 	getView() {
-		return require( 'elementor-elements/views/column' );
+		return View;
 	}
 
 	getModel() {
-		return require( 'elementor-elements/models/column' ).default;
+		return Model;
 	}
 }

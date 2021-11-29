@@ -1,4 +1,6 @@
 import Base from './base';
+import Model from 'elementor-elements/models/widget';
+import { default as View } from 'elementor-elements/views/widget';
 
 export default class Widget extends Base {
 	getType() {
@@ -6,10 +8,10 @@ export default class Widget extends Base {
 	}
 
 	getView() {
-		return require( 'elementor-elements/views/widget' );
+		return View;
 	}
 
 	getModel() {
-		return require( 'elementor-elements/models/widget' ).default;
+		return Model;
 	}
 }

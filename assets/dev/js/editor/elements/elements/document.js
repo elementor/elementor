@@ -1,4 +1,5 @@
 import Base from './base.js';
+import Model from 'elementor-elements/models/document';
 
 export default class Document extends Base {
 	getType() {
@@ -6,6 +7,6 @@ export default class Document extends Base {
 	}
 
 	getModel() {
-		return require( 'elementor-elements/models/document' ).default;
+		return Model;
 	}
 }
