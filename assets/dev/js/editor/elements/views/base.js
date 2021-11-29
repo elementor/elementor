@@ -730,13 +730,9 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( this.$el, 200 );
-		}
-
 		$e.run( 'document/elements/toggle-selection', {
 			container: this.getContainer(),
-			append: options.append,
+			options,
 		} );
 	},
 

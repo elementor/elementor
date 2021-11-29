@@ -39,7 +39,12 @@ export class NavigatorToggleList extends After {
 
 		view.addEditingClass();
 
-		elementor.helpers.scrollToView( view.$el, 400, layout.elements.$el );
+		// Scroll into navigator element view.
+		$e.internal( 'document/elements/scroll-to-view', {
+			$element: view.$el,
+			$parent: layout.elements.$el,
+			timeout: 400,
+		} );
 	}
 }
 

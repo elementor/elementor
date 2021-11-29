@@ -6,12 +6,13 @@ export class Select extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], append = false, options = {} } = args;
+		const { containers = [ args.container ], options = {} } = args,
+			{ append = false } = options;
 
 		elementor.selection.add( containers, append );
 
 		if ( options.scrollIntoView && ! append && 1 === containers.length ) {
-			elementor.helpers.scrollToView( containers[ 0 ].view.$el );
+			$e.internal( 'document/elements/scroll-to-view', { container: containers[ 0 ] } );
 		}
 	}
 }

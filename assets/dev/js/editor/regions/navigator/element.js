@@ -293,8 +293,6 @@ export default class Element extends Marionette.CompositeView {
 		this.recursiveParentInvoke( 'toggleList', true );
 
 		this.addEditingClass();
-
-		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.region.getLayout().elements.$el );
 	}
 
 	/**
