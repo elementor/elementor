@@ -17,6 +17,6 @@ class Site_Usage_Opt_In extends Site_Option {
 	}
 
 	public static function get_default() {
-		return 'no';
+		return static::OPTION_NO;
 	}
 }

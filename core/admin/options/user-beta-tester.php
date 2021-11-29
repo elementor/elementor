@@ -15,6 +15,6 @@ class User_Beta_Tester extends User_Option {
 	}
 
 	public static function get_default() {
-		return 'no';
+		return static::OPTION_NO;
 	}
 }
