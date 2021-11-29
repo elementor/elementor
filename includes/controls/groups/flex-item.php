@@ -124,19 +124,19 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'options' => [
 				'flex-start' => [
 					'title' => esc_html_x( 'Flex Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-align-start-v',
+					'icon' => 'eicon-flex eicon-align-start-v',
 				],
 				'center' => [
 					'title' => esc_html_x( 'Center', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-align-center-v',
+					'icon' => 'eicon-flex eicon-align-center-v',
 				],
 				'flex-end' => [
 					'title' => esc_html_x( 'Flex End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-align-end-v',
+					'icon' => 'eicon-flex eicon-align-end-v',
 				],
 				'stretch' => [
 					'title' => esc_html_x( 'Stretch', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-align-stretch-v',
+					'icon' => 'eicon-flex eicon-align-stretch-v',
 				],
 			],
 			'default' => '',
@@ -153,11 +153,11 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'options' => [
 				'start' => [
 					'title' => esc_html_x( 'Start', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-order-start',
+					'icon' => 'eicon-flex eicon-order-start',
 				],
 				'end' => [
 					'title' => esc_html_x( 'End', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-order-end',
+					'icon' => 'eicon-flex eicon-order-end',
 				],
 				'custom' => [
 					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
@@ -179,7 +179,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 		];
 
 		$fields['order_custom'] = [
-			'label' => esc_html_x( 'Order', 'Flex Item Control', 'elementor' ),
+			'label' => esc_html_x( 'Custom Order', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'selectors' => [
 				'{{SELECTOR}}' => '--order: {{VALUE}};',

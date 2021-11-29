@@ -207,7 +207,7 @@
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				isRowContainer = $currentElement.parents( '.e-container--placeholder-row' ).length,
+				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {

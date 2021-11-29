@@ -84,10 +84,16 @@ export class ContainerHelper {
 			66: '66.6666',
 		};
 
+		const sizesSum = sizes.reduce( ( sum, size ) => {
+			return sum + parseInt( size );
+		}, 0 );
+
+		const shouldWrap = ( sizesSum > 100 );
+
 		// Create a parent container to contain all of the sub containers.
 		const parentContainer = this.createContainer( {
 				flex_direction: this.DIRECTION_ROW,
-				flex_wrap: 'wrap',
+				...( shouldWrap ? { flex_wrap: 'wrap' } : {} ),
 				flex_gap: {
 					unit: 'px',
 					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
@@ -104,10 +110,6 @@ export class ContainerHelper {
 				width: {
 					unit: '%',
 					size,
-				},
-				width_mobile: { // For out-of-the-box responsiveness.
-					unit: '%',
-					size: '100',
 				},
 			}, parentContainer, { edit: false } );
 		} );
