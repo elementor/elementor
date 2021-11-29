@@ -14,6 +14,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		this.current = {};
 		this.currentArgs = {};
 		this.currentTrace = [];
+		this.currentTraceArgs = [];
 		this.commands = {};
 		this.components = {};
 
@@ -241,6 +242,17 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
+	 * Function getCurrentFirstTraceArgs().
+	 *
+	 * Receive the args object of the first command in trace that currently running
+	 *
+	 * @returns {{}}
+	 */
+	getCurrentFirstTraceArgs() {
+		return this.currentTraceArgs[ 0 ];
+	}
+
+	/**
 	 * Function beforeRun().
 	 *
 	 * @param {string} command
@@ -254,6 +266,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 		}
 
 		this.currentTrace.push( command );
+		this.currentTraceArgs.push( args );
 
 		return this.getComponent( command ).dependency( command, args );
 	}
@@ -331,6 +344,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			container = component.getRootContainer();
 
 		this.currentTrace.pop();
+		this.currentTraceArgs.pop();
 
 		delete this.current[ container ];
 		delete this.currentArgs[ container ];
