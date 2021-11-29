@@ -7,6 +7,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Site_Option extends Option_Base {
+
+	public static function on_register() {
+		if ( method_exists( static::class, 'on_wp_change' ) ) {
+			/** @var static $classname */
+			$classname = static::class;
+			$option_name = static::get_full_key();
+
+			add_action( "add_option_{$option_name}", function( $option, $value ) use ( $classname ) {
+				$classname::on_wp_change( $value );
+			}, 10, 2 );
+
+			add_action( "update_option_{$option_name}", function( $old_value, $value ) use ( $classname ) {
+				$classname::on_wp_change( $value, $old_value );
+			}, 10, 2 );
+		}
+	}
+
 	/**
 	 * @return bool
 	 */

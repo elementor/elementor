@@ -103,8 +103,6 @@ abstract class Option_Base {
 		return static::set( $parent_value );
 	}
 
-	public static function on_change( $new_value, $old_value = null ) {}
-
 	public static function is_on() {
 		return static::OPTION_YES === static::get();
 	}

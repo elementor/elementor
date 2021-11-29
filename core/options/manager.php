@@ -27,6 +27,10 @@ class Manager extends BaseModule {
 	 */
 	public function register( $classname ) {
 		$this->registered[ $classname::get_key() ] = $classname::get_key();
+
+		if ( method_exists( $classname, 'on_register' ) ) {
+			$classname::on_register();
+		}
 	}
 
 	/**
