@@ -5,7 +5,7 @@ export class ToggleVisibility extends CommandNavigator {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const { model } = container.navigator;
+			const model = container.args.navigatorView.model;
 
 			if ( model.get( 'hidden' ) ) {
 				$e.run( 'navigator/elements/show', { container } );

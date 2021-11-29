@@ -2,13 +2,13 @@ import CommandBase from 'elementor-api/modules/command-base';
 
 export class CommandNavigator extends CommandBase {
 	initialize() {
-		if ( ! $e.components.get( 'navigator' ).isOpen ) {
+		if ( ! elementor.navigator.isOpen ) {
             $e.run( 'navigator/open' );
 		}
 	}
 
 	validateArgs( args ) {
-		if ( ! $e.components.get( 'navigator' ).isOpen ) {
+		if ( ! elementor.navigator.isOpen ) {
 			throw Error( `Cannot use: '${ this.component.getNamespace() }' while navigator is closed.` );
 		}
 
@@ -18,9 +18,13 @@ export class CommandNavigator extends CommandBase {
 			const { containers = [ args.container ] } = args;
 
 			containers.forEach( ( container ) => {
-				if ( ! container.navigator ) {
-					throw Error( `'container.navigator' is required, container id: '${ container.id }' ` );
+				const navView = this.component.getElementView( container.id );
+
+				if ( ! navView ) {
+					throw Error( `$e.components.get( 'navigator/elements' ).getElementView( '${ container.id }' ); is required.` );
 				}
+
+				container.args.navigatorView = navView;
 			} );
 		}
 	}

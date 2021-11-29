@@ -562,6 +562,7 @@ export default class EditorBase extends Marionette.Application {
 		} );
 
 		this.navigator = $e.components.register( new NavigatorComponent( { manager: this.navigator } ) );
+		this.navigator.elements = $e.components.get( 'navigator/elements' );
 
 		this.trigger( 'navigator:init' );
 	}

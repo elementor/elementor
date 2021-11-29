@@ -42,8 +42,10 @@ export default class Helper {
 				container.view.resetLayout()
 			);
 
-			// Focus on last container.
-			containers[ containers.length - 1 ].model.trigger( 'request:edit' );
+			if ( false !== options.edit ) {
+				// Focus on last container.
+				containers[ containers.length - 1 ].model.trigger( 'request:edit' );
+			}
 		}
 	}
 }

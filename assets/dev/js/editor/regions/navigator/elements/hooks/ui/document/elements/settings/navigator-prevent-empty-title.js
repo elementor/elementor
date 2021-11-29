@@ -10,14 +10,15 @@ export class NavigatorPreventEmptyTitle extends Base {
 	}
 
 	getConditions( args ) {
-		return super.getConditions() && 0 === args.settings._title?.length;
+		return super.getConditions( args ) && 0 === args.settings._title?.length;
 	}
 
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const { view, model } = container.navigator;
+			const view = this.component.elements.getElementView( container.id ),
+				model = view.model;
 
 			view.ui.title.text( model.getTitle() );
 		} );

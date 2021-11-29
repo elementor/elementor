@@ -10,13 +10,12 @@ export class NavigatorRenderIndicators extends Base {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ] } = args,
-			component = $e.components.get( 'navigator' );
+		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const { view } = container.navigator;
+			const view = this.component.elements.getElementView( container.id );
 
-			jQuery.each( component.region.indicators, ( indicatorName, indicatorSettings ) => {
+			jQuery.each( this.component.region.indicators, ( indicatorName, indicatorSettings ) => {
 				if ( Object.keys( container.settings.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
 					view.renderIndicators();
 

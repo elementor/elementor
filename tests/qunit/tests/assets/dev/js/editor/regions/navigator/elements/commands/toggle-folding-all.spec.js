@@ -3,6 +3,7 @@ import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/doc
 export const ToggleFoldingAll = () => {
 	QUnit.module( 'ToggleFoldingAll', () => {
 		QUnit.test( 'Simple', ( assert ) => {
+			// Arrange.
 			ElementsHelper.empty();
 
 			// Toggle possible states.
@@ -14,23 +15,17 @@ export const ToggleFoldingAll = () => {
 				eSections.push( ElementsHelper.createSection() );
 			}
 
-			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
-			const done = assert.async();
+			states.forEach( ( state ) => {
+				assert.ok( true, `Testing with state = ${ state }` );
 
-			setTimeout( () => {
-				states.forEach( ( state ) => {
-					assert.ok( true, `Testing with state = ${ state }` );
+				// Act - Toggle.
+				$e.run( 'navigator/elements/toggle-folding-all', { state } );
 
-					// Toggle all.
-					$e.run( 'navigator/elements/toggle-folding-all', { state } );
-
-					eSections.forEach( ( eSection ) => {
-						assert.equal( eSection.navigator.view.$el.children().hasClass( 'elementor-active' ), state,
-							`section id: '${ eSection.id }' navigator element active state: '${ state }'` );
-					} );
+				// Assert.
+				eSections.forEach( ( eSection ) => {
+					assert.equal( elementor.navigator.elements.getElementView( eSection.id ).$el.children().hasClass( 'elementor-active' ), state,
+						`section id: '${ eSection.id }' navigator element active state: '${ state }'` );
 				} );
-
-				done();
 			} );
 		} );
 	} );

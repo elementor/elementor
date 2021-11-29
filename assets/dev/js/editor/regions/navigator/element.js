@@ -95,23 +95,17 @@ export default class Element extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		/**
-		 * Since the way elements are rendered.
-		 * On creating an element on an existing column, everything will work because the JS engine call stack is empty
-		 * and it will create the widget container, but if an element was dragged it will be 2 ticks.
-		 * 1. Create section & column.
-		 * 2. Create the widget in the column.
-		 * For this situation 'linkContainer' without `setTimeout` will fail because the widget container does not exist yet.
-		 */
-		setTimeout( this.linkContainer.bind( this ) );
+		if ( ! this.isRoot() ) {
+			this.shareView();
+		}
 	}
 
-	linkContainer() {
-		if ( ! this.isRoot() ) {
-			this.container = elementor.getContainer( this.model.id );
-			this.container.navigator.view = this;
-			this.container.navigator.model = this.model;
-		}
+	shareView() {
+		elementor.navigator.elements.sharedViews[ this.model.id ] = this;
+	}
+
+	removeSharedView() {
+		delete elementor.navigator.elements.sharedViews[ this.model.id ];
 	}
 
 	getIndent() {
@@ -127,19 +121,22 @@ export default class Element extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( this.container ) {
-			const args = {
-				container: this.container,
-			};
+		const modelId = this.model.get( 'id' );
 
-			args.state = state;
-
-			if ( callback ) {
-				args.callback = callback;
-			}
-
-			$e.run( 'navigator/elements/toggle-folding', args );
+		if ( ! modelId ) {
+			return;
 		}
+
+		const args = {
+			container: elementor.getContainer( modelId ),
+			state,
+		};
+
+		if ( callback ) {
+			args.callback = callback;
+		}
+
+		$e.run( 'navigator/elements/toggle-folding', args );
 	}
 
 	toggleHiddenClass() {
@@ -228,7 +225,7 @@ export default class Element extends Marionette.CompositeView {
 		this.ui.title.attr( 'contenteditable', false );
 
 		$e.run( 'document/elements/settings', {
-			container: this.container,
+			container: elementor.getContainer( this.model.get( 'id' ) ),
 			settings: {
 				_title: this.ui.title.text().trim(),
 			},
@@ -322,7 +319,7 @@ export default class Element extends Marionette.CompositeView {
 	}
 
 	onItemClick( event ) {
-		const container = this.container,
+		const container = elementor.getContainer( this.model.get( 'id' ) ),
 			append = event.ctrlKey || event.metaKey;
 
 		$e.run( 'document/elements/toggle-selection', {
@@ -337,7 +334,7 @@ export default class Element extends Marionette.CompositeView {
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		$e.run( 'navigator/elements/toggle-visibility', { container: this.container } );
+		$e.run( 'navigator/elements/toggle-visibility', { container: elementor.getContainer( this.model.get( 'id' ) ) } );
 	}
 
 	onTitleDoubleClick() {
@@ -449,5 +446,11 @@ export default class Element extends Marionette.CompositeView {
 
 			editor.render();
 		} );
+	}
+
+	onDestroy() {
+		if ( ! this.isRoot() ) {
+			this.removeSharedView();
+		}
 	}
 }

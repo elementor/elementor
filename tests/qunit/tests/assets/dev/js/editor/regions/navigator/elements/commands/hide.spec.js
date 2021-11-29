@@ -3,19 +3,16 @@ import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/doc
 export const Hide = () => {
 	QUnit.module( 'Hide', () => {
 		QUnit.test( 'Simple', ( assert ) => {
-			const eButton = ElementsHelper.createAutoButton(),
-				done = assert.async();
+			// Arrange.
+			const eButton = ElementsHelper.createAutoButton();
 
-			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
-			setTimeout( () => {
-				$e.run( 'navigator/elements/hide', {
-					container: eButton,
-				} );
-
-				assert.equal( eButton.model.get( 'hidden' ), true );
-
-				done();
+			// Act.
+			$e.run( 'navigator/elements/hide', {
+				container: eButton,
 			} );
+
+			// Assert.
+			assert.equal( eButton.model.get( 'hidden' ), true );
 		} );
 	} );
 };

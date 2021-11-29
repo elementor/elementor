@@ -3,30 +3,26 @@ import ElementsHelper from 'elementor-tests-qunit/tests/assets/dev/js/editor/doc
 export const Collapse = () => {
 	QUnit.module( 'Collapse', () => {
 		QUnit.test( 'Simple', async ( assert ) => {
+			// Arrange.
 			const eWidget = ElementsHelper.createAutoButton(),
 				eColumn = eWidget.parent,
 				eSection = eColumn.parent,
 				all = [ eSection, eColumn, eWidget ];
 
-			// TODO:  To find the source of the issue with `timeout` see navigator->element->initialize method.
-			setTimeout( () => {
-				// Expand all
-				$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
-			} );
-
 			assert.expect( all.length );
 
-			const promises = all.map( ( container ) => new Promise( ( resolve ) => {
-				setTimeout( () => {
-					$e.run( 'navigator/elements/collapse', { container } );
+			$e.run( 'navigator/elements/toggle-folding-all', { state: true } );
 
-					assert.equal( container.navigator.view.$el.children().hasClass( 'elementor-active' ), false );
+			all.forEach( ( container ) => {
+				// Act.
+				$e.run( 'navigator/elements/collapse', { container } );
 
-					resolve();
-				} );
-			} ) );
-
-			await Promise.all( promises );
+				// Assert.
+				assert.equal(
+					elementor.navigator.elements.getElementView( container.id ).$el.children().hasClass( 'elementor-active' ),
+					false
+				);
+			} );
 		} );
 	} );
 };

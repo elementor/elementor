@@ -1,5 +1,8 @@
 import CommandNavigator from './command-navigator';
 
+/**
+ * Responsible for showing/hiding navigator element.
+ */
 export class CommandNavigatorShowHide extends CommandNavigator {
 	/**
 	 * Function shouldHide().
@@ -14,7 +17,8 @@ export class CommandNavigatorShowHide extends CommandNavigator {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const { view, model } = container.navigator;
+			const view = container.args.navigatorView,
+				model = view.model;
 
 			model.set( 'hidden', this.shouldHide() );
 
