@@ -6,6 +6,7 @@ export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
+		// `BaseRegion` created before the component exist, in this case `setTimeout` handle it.
 		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
 
 		this.indicators = {
