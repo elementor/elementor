@@ -81,6 +81,16 @@ export default function ImportPlugins() {
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
+					text={ __( 'Previous', 'elementor' ) }
+					variant="contained"
+					onClick={ () => {
+						context.dispatch( { type: 'SET_FILE', payload: null } );
+
+						navigate( 'import/' );
+					} }
+				/>
+
+				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
 					color="primary"

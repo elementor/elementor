@@ -34,7 +34,7 @@ export default function Table( props ) {
 				{
 					props.selection &&
 					<colgroup>
-						<col className="e-app-import-export-table__checkboxes-column" />
+						<col className={ classNameBase + '__checkboxes-column' } />
 					</colgroup>
 				}
 

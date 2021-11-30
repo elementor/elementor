@@ -1,0 +1,19 @@
+$e-app-import-export-plugins-table-cell-content-color: tints(500);
+$e-app-import-export-plugins-table-cell-content-dark-color: dark-tints(400);
+
+$root: e-app-import-export-plugins-table;
+
+.#{$root} {
+	--e-app-import-export-plugins-table-cell-content-color: #{$e-app-import-export-plugins-table-cell-content-color};
+
+	&__cell-content {
+		color: var(--e-app-import-export-plugins-table-cell-content-color);
+		margin-bottom: 0;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-plugins-table-cell-content-color: #{$e-app-import-export-plugins-table-cell-content-dark-color};
+	}
+}

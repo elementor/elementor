@@ -115,6 +115,10 @@ export default function ImportProcess() {
 			<section>
 				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
 
+				<Text variant="xl">
+					{ __( 'Importing your content, templates and site settings', 'elementor' ) }
+				</Text>
+
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }
 					setShow={ setShowUnfilteredFilesDialog }

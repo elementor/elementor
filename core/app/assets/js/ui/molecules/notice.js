@@ -16,7 +16,7 @@ export default function Notice( props ) {
 
 	return (
 		<Grid className={ arrayToClassName( classes ) } container noWrap alignItems="center" justify="space-between">
-			<Grid item container alignItems="center" noWrap>
+			<Grid item container alignItems="start" noWrap>
 				{ props.color && <Icon className={ arrayToClassName( [ 'eicon-warning', 'eps-notice__icon' ] ) } /> }
 
 				<Text variant="xs" className="eps-notice__text">

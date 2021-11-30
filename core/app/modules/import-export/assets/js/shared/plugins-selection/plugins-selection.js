@@ -2,8 +2,6 @@ import { useState, useEffect, useMemo, memo } from 'react';
 
 import PluginsTable from './components/plugins-table';
 
-import './plugins-selection.scss';
-
 const ELEMENTOR_PLUGIN_NAME = 'Elementor',
 	ELEMENTOR_PRO_PLUGIN_NAME = 'Elementor Pro';
 

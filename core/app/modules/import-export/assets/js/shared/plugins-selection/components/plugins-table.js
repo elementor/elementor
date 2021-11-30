@@ -6,6 +6,8 @@ import Text from 'elementor-app/ui/atoms/text';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Icon from 'elementor-app/ui/atoms/icon';
 
+import './plugins-table.scss';
+
 function PluginsTable( {
 		plugins,
 		layout,
@@ -16,7 +18,7 @@ function PluginsTable( {
 		initialDisabled,
 	} ) {
 	const CellText = ( cellTextProps ) => (
-			<Text className="e-app-import-export-plugins-selection__cell-content">
+			<Text className="e-app-import-export-plugins-table__cell-content">
 				{ cellTextProps.text }
 			</Text>
 		),

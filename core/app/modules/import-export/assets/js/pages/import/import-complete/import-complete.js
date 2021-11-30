@@ -70,7 +70,7 @@ export default function ImportComplete() {
 			<Button
 				text={ __( 'Learn more', 'elementor' ) }
 				variant="outlined"
-				color="disabled"
+				color="secondary"
 			/>
 		);
 
