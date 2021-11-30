@@ -239,8 +239,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
-			.listenTo( this.model, 'request:edit', this.onEditRequest )
-			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
+			.listenTo( this.model, 'request:edit', this.onEditRequest );
 
 		this.initControlsCSSParser();
 
@@ -754,13 +753,9 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( this.$el, 200 );
-		}
-
 		$e.run( 'document/elements/toggle-selection', {
 			container: this.getContainer(),
-			append: options.append,
+			options,
 		} );
 	},
 

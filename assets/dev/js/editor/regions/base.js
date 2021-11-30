@@ -1,3 +1,6 @@
+/**
+ * @name BaseRegion
+ */
 module.exports = Marionette.Region.extend( {
 
 	storage: null,
