@@ -35,6 +35,8 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		$this->enqueue_module_assets();
+		$this->enqueue_module_assets( [
+			'elementor-common',
+		] );
 	}
 }
