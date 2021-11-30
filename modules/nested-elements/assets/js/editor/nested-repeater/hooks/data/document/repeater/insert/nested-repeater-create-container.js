@@ -1,7 +1,7 @@
 import Base from '../base';
 
 /**
- * Hook responsible for creating container element for the new created repeater item.
+ * Hook responsible for creating container element for the new created repeater item, and setting the `_title` setting.
  */
 export class NestedRepeaterCreateContainer extends Base {
 	getId() {
@@ -16,13 +16,22 @@ export class NestedRepeaterCreateContainer extends Base {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			$e.run( 'document/elements/create', {
-				container,
-				model: {
-					elType: 'container',
-				},
-				options: {
-					edit: false, // Not losing focus.
+			const newContainer = $e.run( 'document/elements/create', {
+					container,
+					model: {
+						elType: 'container',
+					},
+					options: {
+						edit: false, // Not losing focus.
+					},
+				} ),
+				repeater = container.repeaters[ args.name ];
+
+			$e.internal( 'document/elements/set-settings', {
+				container: newContainer,
+				settings: {
+					// TODO: Find better solution for dynamic `_title` handling.
+					_title: sprintf( __( 'Tab #%d', 'elementor' ), repeater.children.length ),
 				},
 			} );
 		} );

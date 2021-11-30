@@ -73,17 +73,6 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel, { internal: true } ) );
 		}
 	}
-
-	addElement( data, options = {} ) {
-		const container = this.container;
-
-		// Hook 'nested-repeater-adjust-new-container-title' have to ensure that nested element added.
-		options.onAfterAdd = ( model ) => {
-			container.view.trigger( 'nested-repeater:add-element:after', { model, options } );
-		};
-
-		return super.addElement( data, options );
-	}
 }
 
 WidgetRepeater.prototype.className = WidgetView.prototype.className;
