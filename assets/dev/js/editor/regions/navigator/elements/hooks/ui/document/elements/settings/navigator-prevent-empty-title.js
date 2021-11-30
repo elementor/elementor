@@ -1,5 +1,9 @@
 import Base from '../../../base/base';
 
+/**
+ * Hook responsible for prevent empty title in navigator.
+ * If empty title provided the hook will change it back to `model.getTitle()`.
+ */
 export class NavigatorPreventEmptyTitle extends Base {
 	getCommand() {
 		return 'document/elements/settings';
