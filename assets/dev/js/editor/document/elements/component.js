@@ -18,10 +18,17 @@ export default class Component extends ComponentBase {
 	defaultUtils() {
 		return {
 			isValidChild: ( childModel, parentModel ) => {
-				const parentElType = parentModel.get( 'elType' ),
-					draggedElType = childModel.get( 'elType' ),
-					parentIsInner = parentModel.get( 'isInner' ),
-					draggedIsInner = childModel.get( 'isInner' );
+				if ( childModel instanceof Backbone.Model ) {
+					childModel = childModel.attributes;
+				}
+				if ( parentModel instanceof Backbone.Model ) {
+					parentModel = parentModel.attributes;
+				}
+
+				const parentElType = parentModel.elType,
+					draggedElType = childModel.elType,
+					parentIsInner = parentModel.isInner,
+					draggedIsInner = childModel.isInner;
 
 				// Block's inner-section at inner-section column.
 				if ( draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType ) {
@@ -38,7 +45,7 @@ export default class Component extends ComponentBase {
 
 				const childTypes = elementor.helpers.getElementChildType( parentElType );
 
-				return childTypes && -1 !== childTypes.indexOf( childModel.get( 'elType' ) );
+				return childTypes && -1 !== childTypes.indexOf( draggedElType );
 			},
 			isValidGrandChild: ( childModel, targetContainer ) => {
 				let result;

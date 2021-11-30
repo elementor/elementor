@@ -1,3 +1,5 @@
+import ElementModel from 'elementor-elements/models/element';
+
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -107,7 +109,7 @@ module.exports = Marionette.CompositeView.extend( {
 
 		// Check whether the container cannot contain a section, in which case we should use an inner-section.
 		if (
-			$e.components.get( 'document/elements' ).utils.isValidChild( model, container.model ) &&
+			$e.components.get( 'document/elements' ).utils.isValidChild( new ElementModel( model ), container.model ) &&
 			'section' === model.elType
 		) {
 			model.isInner = true;
