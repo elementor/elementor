@@ -89,6 +89,7 @@ export class ContainerHelper {
 		// Create a parent container to contain all of the sub containers.
 		let parentContainer;
 
+		// The `createWrapper` false option is used in nested-modules for creating containers from preset for custom target(s).
 		if ( ! createWrapper ) {
 			$e.run( 'document/elements/settings', {
 				container: target,
@@ -110,10 +111,6 @@ export class ContainerHelper {
 				width: {
 					unit: '%',
 					size,
-				},
-				width_mobile: { // For out-of-the-box responsiveness.
-					unit: '%',
-					size: '100',
 				},
 			}, parentContainer, { edit: false } );
 		} );
@@ -161,6 +158,7 @@ export class ContainerHelper {
 
 					if ( ! createWrapper ) {
 						$e.run( 'document/elements/settings', { container: target, settings } );
+
 						newContainer = target;
 					} else {
 						newContainer = ContainerHelper.createContainer( settings, target, options );
@@ -170,10 +168,6 @@ export class ContainerHelper {
 						width: {
 							unit: '%',
 							size: '50',
-						},
-						width_mobile: {
-							unit: '%',
-							size: '100',
 						},
 					};
 
