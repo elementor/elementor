@@ -58,7 +58,7 @@ export class AttachPreview extends CommandInternalBaseBase {
 			document.container.view = elementor.getPreviewView();
 			document.container.model.attributes.elements = elementor.elements;
 
-			elementor.helpers.scrollToView( document.$element );
+			$e.internal( 'document/elements/scroll-to-view', { container: document.container } );
 
 			document.$element
 				.addClass( 'elementor-edit-area-active' )
