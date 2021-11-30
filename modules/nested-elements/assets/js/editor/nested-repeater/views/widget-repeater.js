@@ -16,10 +16,10 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		const events = super.events();
 
 		events.click = ( e ) => {
-			// The aim is to skip only clicks on container elements.
-			const $parentsUntil = jQuery( e.target ).parentsUntil( '.e-container' );
+			const closest = e.target.closest( '.elementor-element' );
 
-			if ( 4 === $parentsUntil.length || 1 === $parentsUntil.length ) {
+			// Click on container.
+			if ( 'container' === closest.dataset.element_type ) {
 				return true;
 			}
 
@@ -35,7 +35,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	}
 
 	/**
-	 * @override
+	 * @inheritDoc
 	 *
 	 * Sometimes the children placement is not in the end of the element, but somewhere else, eg: deep inside the element template.
 	 * If `children_placeholder_selector` is set, it will be used to find the correct place to insert the children.

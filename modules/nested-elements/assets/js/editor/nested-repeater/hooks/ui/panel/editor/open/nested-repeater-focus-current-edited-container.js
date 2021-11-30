@@ -27,23 +27,21 @@ export class NestedRepeaterFocusCurrentEditedContainer extends ( $e.modules.hook
 			);
 
 		if ( result ) {
-			this.allParents = allParents;
+			this.navigationMap = this.getNavigationMapForContainers( allParents.filter(
+				( container ) => 'container' === container.type && 'widget' === container.parent.type
+			) ).filter( ( map ) => {
+				// Filter out paths that are the same as current.
+				return map.index !== map.current;
+			} );
 		}
 
-		return result;
+		return this.navigationMap?.length;
 	}
 
 	apply() {
-		const navigateMap = this.getNavigationMapForContainers( this.allParents.filter(
-				( container ) => 'container' === container.type && 'widget' === container.parent.type
-			) ).filter( ( map ) => {
-			// Filter out paths that are the same as current.
-			return map.index !== map.current;
-		} );
-
 		let depth = 1;
 
-		navigateMap.forEach( ( { container, index } ) => {
+		this.navigationMap.forEach( ( { container, index } ) => {
 			setTimeout( () => {
 				// No history, for focusing on current container.
 				$e.run( 'nested-elements/nested-repeater/select', {
