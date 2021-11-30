@@ -74,12 +74,14 @@
 	&.e-container--row {
 		& > .elementor-widget-placeholder {
 			position: relative;
+			z-index: $editor-layer; // To put it above the element overlay.
 			width: var( --size );
 			// To make sure that it doesn't push & break the layout when appearing.
 			margin-inline-start: var( --margin-start );
 			height: auto;
 			min-height: 100%;
 			animation-name: dnd-placeholder-widget-vertical;
+			animation-fill-mode: both;
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
@@ -191,19 +193,20 @@
 @media ( max-width: $editor-screen-sm-max ) {
 	.e-container {
 		--width: 100%;
+		--flex-wrap: wrap;
 	}
 }
 
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
 		transform-origin: 0 50%;
-		transform: scaleX( 0 );
+		transform: translateX( 50% ) scaleX( 0 );
 		opacity: 0;
 	}
 
 	100% {
 		transform-origin: 0 50%;
-		transform: scaleX( 1 );
+		transform: translateX( 50% ) scaleX( 1 );
 		opacity: .9;
 	}
 }

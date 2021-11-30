@@ -208,6 +208,9 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$experiments_manager = Plugin::$instance->experiments;
+		$is_container_active = $experiments_manager->is_feature_active( 'container' );
+
 		// TODO: For BC - Remove in the future.
 		$this->add_responsive_control(
 			'_element_width',
@@ -224,9 +227,7 @@ class Widget_Common extends Widget_Base {
 				'selectors_dictionary' => [
 					'inherit' => '100%',
 				],
-				'condition' => [
-					'_element_width!' => '', // TODO: For BC.
-				],
+				'condition' => $is_container_active ? [ '_element_width!' => '' ] : [], // TODO: For BC.
 				'prefix_class' => 'elementor-widget%s__width-',
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}; max-width: {{VALUE}}',
@@ -257,23 +258,44 @@ class Widget_Common extends Widget_Base {
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
 				],
 				'separator' => 'after',
+				// TODO: BC settings:
+				'condition' => $is_container_active ? [] : [ '_element_width' => 'initial' ],
+				'device_args' => $is_container_active
+					? []
+					: $this->get_responsive_device_args( [
+						'condition' => [
+							'_element_width_{{DEVICE}}' => [ 'initial' ],
+						],
+					] ),
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Flex_Item::get_type(),
-			[
-				'name' => '_flex',
-				// Hack to increase specificity and make sure that the current widget overrides the
-				// parent flex settings.
-				'selector' => '{{WRAPPER}}.elementor-element',
-				'include' => [
-					'align_self',
-					'order',
-					'order_custom',
-				],
-			]
-		);
+		// Register Flex controls only if the Container experiment is active.
+		if ( $is_container_active ) {
+			$this->add_group_control(
+				Group_Control_Flex_Item::get_type(),
+				[
+					'name' => '_flex',
+					// Hack to increase specificity and make sure that the current widget overrides the
+					// parent flex settings.
+					'selector' => '{{WRAPPER}}.elementor-element',
+					'include' => [
+						'align_self',
+						'order',
+						'order_custom',
+					],
+				]
+			);
+		}
+
+		$vertical_align_conditions = [
+			'_element_width!' => '',
+			'_position' => '',
+		];
+
+		if ( $is_container_active ) {
+			$vertical_align_conditions['_element_vertical_align!'] = ''; // TODO: For BC.
+		}
 
 		// TODO: For BC - Remove in the future.
 		$this->add_responsive_control(
@@ -295,11 +317,7 @@ class Widget_Common extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
-				'condition' => [
-					'_element_width!' => '',
-					'_position' => '',
-					'_element_vertical_align!' => '', // TODO: For BC.
-				],
+				'condition' => $vertical_align_conditions,
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],
