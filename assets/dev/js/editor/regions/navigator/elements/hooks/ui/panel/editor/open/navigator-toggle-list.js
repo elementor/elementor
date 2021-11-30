@@ -13,11 +13,7 @@ export class NavigatorToggleList extends After {
 	}
 
 	getConditions( args ) {
-		if ( ! $e.components.get( 'navigator' ).isOpen ) {
-			return false;
-		}
-
-		return true;
+		return $e.components.get( 'navigator' ).isOpen;
 	}
 
 	apply( args ) {
