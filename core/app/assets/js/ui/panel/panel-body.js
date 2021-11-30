@@ -6,7 +6,7 @@ import Collapse from 'elementor-app/molecules/collapse';
 export default function PanelBody( props ) {
 	return (
 		<Collapse.Content>
-			<Card.Body padding={ props.padding } className={ arrayToClassName( [ 'e-app-import-export-panel__body', props.className ] ) }>
+			<Card.Body padding={ props.padding } className={ arrayToClassName( [ 'eps-panel__body', props.className ] ) }>
 				{ props.children }
 			</Card.Body>
 		</Collapse.Content>

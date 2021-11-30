@@ -2,6 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 import Text from 'elementor-app/ui/atoms/text';
 import Icon from 'elementor-app/ui/atoms/icon';
+import Grid from 'elementor-app/ui/grid/grid';
 
 import './notice.scss';
 
@@ -14,15 +15,24 @@ export default function Notice( props ) {
 	}
 
 	return (
-		<div className={ arrayToClassName( classes ) }>
-			<Text variant="xs" className="eps-notice__text">
+		<Grid className={ arrayToClassName( classes ) } container noWrap alignItems="center" justify="space-between">
+			<Grid item container alignItems="center" noWrap>
 				{ props.color && <Icon className={ arrayToClassName( [ 'eicon-warning', 'eps-notice__icon' ] ) } /> }
 
-				{ props.label && <strong>{ props.label + ' ' }</strong> }
+				<Text variant="xs" className="eps-notice__text">
+					{ props.label && <strong>{ props.label + ' ' }</strong> }
 
-				{ props.children }
-			</Text>
-		</div>
+					{ props.children }
+				</Text>
+			</Grid>
+
+			{
+				props.button &&
+				<Grid item container justify="end" className={ baseClassName + '__button-container' }>
+					{ props.button }
+				</Grid>
+			}
+		</Grid>
 	);
 }
 
@@ -33,9 +43,11 @@ Notice.propTypes = {
 	children: PropTypes.any.isRequired,
 	icon: PropTypes.string,
 	withIcon: PropTypes.bool,
+	button: PropTypes.object,
 };
 
 Notice.defaultProps = {
 	className: '',
 	withIcon: true,
+	button: null,
 };

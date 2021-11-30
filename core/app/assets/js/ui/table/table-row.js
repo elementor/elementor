@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function TableRow( props ) {
 	return (
-		<tr className={ arrayToClassName( [ 'e-app-import-export-table__row', props.className ] ) }>
+		<tr className={ arrayToClassName( [ 'eps-table__row', props.className ] ) }>
 			{ props.children }
 		</tr>
 	);

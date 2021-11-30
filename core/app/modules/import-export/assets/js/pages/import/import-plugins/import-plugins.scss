@@ -16,6 +16,10 @@ $root: e-app-import-plugins;
 			margin-bottom: spacing(16);
 		}
 	}
+
+	&__versions-notice {
+		margin-bottom: spacing(30);
+	}
 }
 
 .eps-theme-dark {

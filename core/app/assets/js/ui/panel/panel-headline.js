@@ -4,7 +4,7 @@ import Card from 'elementor-app/ui/card/card';
 
 export default function PanelHeadline( props ) {
 	return (
-		<Card.Headline className={ arrayToClassName( [ 'e-app-import-export-panel__headline', props.className ] ) }>
+		<Card.Headline className={ arrayToClassName( [ 'eps-panel__headline', props.className ] ) }>
 			{ props.children }
 		</Card.Headline>
 	);

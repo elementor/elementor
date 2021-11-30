@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function TableCell( props ) {
 	const Element = () => React.createElement( props.tag, {
-		className: arrayToClassName( [ 'e-app-import-export-table__cell', props.className ] ),
+		className: arrayToClassName( [ 'eps-table__cell', props.className ] ),
 		colSpan: props.colSpan || null,
 	}, props.children );
 

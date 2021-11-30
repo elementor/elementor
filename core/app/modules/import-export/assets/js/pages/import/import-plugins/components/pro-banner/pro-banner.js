@@ -7,10 +7,6 @@ import GoProButton from 'elementor-app/molecules/go-pro-button';
 import './pro-banner.scss';
 
 export default function ProBanner( { status } ) {
-	if ( ! status ) {
-		return null;
-	}
-
 	const data = {};
 
 	if ( 'active' === status ) {

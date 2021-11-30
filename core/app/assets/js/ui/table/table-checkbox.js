@@ -53,7 +53,7 @@ export default function TableCheckbox( props ) {
 			onChange={ onChange }
 			disabled={ getIsDisabled() }
 			{ ...attrs }
-			className={ arrayToClassName( [ 'e-app-import-export-table__checkbox', props.className ] ) }
+			className={ arrayToClassName( [ 'eps-table__checkbox', props.className ] ) }
 		/>
 	);
 }

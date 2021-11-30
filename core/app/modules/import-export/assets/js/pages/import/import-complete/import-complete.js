@@ -5,7 +5,9 @@ import { Context } from '../../../context/context-provider';
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
+import Button from 'elementor-app/ui/molecules/button';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import Notice from 'elementor-app/ui/molecules/notice';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
@@ -63,7 +65,16 @@ export default function ImportComplete() {
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
 			};
-		};
+		},
+		FailedPluginsNoticeButton = () => (
+			<Button
+				text={ __( 'Learn more', 'elementor' ) }
+				variant="outlined"
+				color="disabled"
+			/>
+		);
+
+	console.log( 'is failed plugins?: ', context.data );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -78,6 +89,16 @@ export default function ImportComplete() {
 					</>
 				) }
 			>
+				{
+					! ! context.data.failedPlugins.length &&
+					<Notice label={ __( 'Important:', 'elementor' ) } color="warning" button={ <FailedPluginsNoticeButton /> }>
+						{
+							__( 'There are few plugins that we couldn\'t install:', 'elementor' ) + ' ' +
+							context.data.failedPlugins.join( ' | ' )
+						}
+					</Notice>
+				}
+
 				<KitData data={ getKitData() } />
 			</WizardStep>
 		</Layout>

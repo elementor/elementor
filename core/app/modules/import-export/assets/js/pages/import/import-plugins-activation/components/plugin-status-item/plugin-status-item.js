@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 import usePlugins from '../../../../../hooks/use-plugins';
 
@@ -6,19 +6,19 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Text from 'elementor-app/ui/atoms/text';
 
-export default function PluginStatusItem( { name, slug, status, onReady } ) {
+function PluginStatusItem( { name, slug, status, onReady } ) {
 	const [ actionStatus, setActionStatus ] = useState( '' ),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins();
-
-	console.log( '--- RE-RENDER OF: ', name );
 
 	// Activating or installing the plugin, depending on the current plugin status.
 	useEffect( () => {
 		const action = 'inactive' === status ? 'activate' : 'install';
 
+		// TODO: temp - remove!
 		if ( 'media-cleaner/media-cleaner' === slug ) {
 			slug = 'medsgfdsfd/dsfsdfsdf';
 		}
+		slug = 'medsgfdsfd/dsfsdfsdf';
 
 		pluginsActions[ action ]( slug );
 	}, [] );
@@ -30,12 +30,12 @@ export default function PluginStatusItem( { name, slug, status, onReady } ) {
 			} else if ( 'active' === pluginsState.data.status ) {
 				setActionStatus( 'activated' );
 			} else if ( 'inactive' === pluginsState.data.status ) {
+				setActionStatus( 'installed' );
+
 				/*
 					In case that the widget was installed it will be inactive after the installation.
 					Therefore, the actions should be reset and the plugin should be activated.
 				 */
-				setActionStatus( 'installed' );
-
 				pluginsActions.reset();
 
 				pluginsActions.activate( slug );
@@ -70,3 +70,5 @@ PluginStatusItem.propTypes = {
 	status: PropTypes.string.isRequired,
 	onReady: PropTypes.func.isRequired,
 };
+
+export default memo( PluginStatusItem );

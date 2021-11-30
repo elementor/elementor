@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -8,7 +8,6 @@ import FileProcess from '../../../shared/file-process/file-process';
 import PluginStatusItem from './components/plugin-status-item/plugin-status-item';
 
 import Grid from 'elementor-app/ui/grid/grid';
-import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import List from 'elementor-app/ui/molecules/list';
 
@@ -21,6 +20,15 @@ export default function ImportPluginsActivation() {
 		[ readyPlugins, setReadyPlugins ] = useState( [] ),
 		[ failedPlugins, setFailedPlugins ] = useState( [] ),
 		[ errorType, setErrorType ] = useState( '' ),
+		onPluginStatusItemReady = useCallback( ( pluginName, processStatus ) => {
+			console.log( 'pluginName, processStatus', pluginName, processStatus );
+			// Saving the failed plugins on a separate list to display them at the end of the process.
+			if ( 'failed' === processStatus ) {
+				setFailedPlugins( ( prevState ) => [ ...prevState, pluginName ] );
+			}
+
+			setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] );
+		}, [] ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
 			//
@@ -34,7 +42,8 @@ export default function ImportPluginsActivation() {
 	useEffect( () => {
 		if ( context.data.plugins.length === readyPlugins.length ) {
 			// When all plugins are installed and activated.
-			context.dispatch( { action: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
+			console.log( 'saving failed plugins: ', failedPlugins );
+			context.dispatch( { type: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
 
 			navigate( '/import/process' );
 		} else {
@@ -69,14 +78,7 @@ export default function ImportPluginsActivation() {
 											name={ name }
 											slug={ plugin }
 											status={ status }
-											onReady={ ( pluginName, processStatus ) => {
-												// Saving the failed plugins on a separate list to display them at the end of the process.
-												if ( 'failed' === processStatus ) {
-													setFailedPlugins( ( prevState ) => [ ...prevState, pluginName ] );
-												}
-
-												setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] );
-											} }
+											onReady={ onPluginStatusItemReady }
 										/>
 									</List.Item>
 								) )

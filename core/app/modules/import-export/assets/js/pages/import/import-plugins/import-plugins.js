@@ -11,6 +11,8 @@ import ProBanner from './components/pro-banner/pro-banner';
 
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
+import Notice from 'elementor-app/ui/molecules/notice';
+import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import usePlugins from '../../../hooks/use-plugins';
@@ -20,7 +22,7 @@ export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
-		getPluginsInitialData = () => ( { toImport: [], existing: [], proPluginData: null } ),
+		getPluginsInitialData = () => ( { toImport: [], existing: [], proPluginData: null, isMinVersionMissing: false } ),
 		[ plugins, setPlugins ] = useState( getPluginsInitialData() ),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins,
 		getInitialSelectAll = ( pluginsList ) => pluginsList.map( ( plugin, index ) => index ),
@@ -32,8 +34,14 @@ export default function ImportPlugins() {
 
 			return finalObject;
 		},
+		getIsMinVersionMissing = ( kitPluginVersion, installedPluginVersion ) => {
+			const kitVersionValues = kitPluginVersion.split( '.' ),
+				installedVersionValues = installedPluginVersion.split( '.' );
+
+			return installedVersionValues.some( ( value, index ) => value < kitVersionValues[ index ] );
+		},
 		getClassifiedPlugins = () => {
-			const pluginsForActions = getPluginsInitialData(),
+			const pluginsDataForActions = getPluginsInitialData(),
 				installedPluginsMap = arrayToObjectByKey( pluginsState.data?.installed, 'name' );
 
 			kitPlugins.forEach( ( plugin ) => {
@@ -41,17 +49,22 @@ export default function ImportPlugins() {
 					actionType = 'active' === installedPluginData?.status ? 'existing' : 'toImport',
 					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
 
+				// Verifying that the current installed plugin version is not older than the kit plugin version.
+				if ( installedPluginData && getIsMinVersionMissing( plugin.version, installedPluginData.version ) ) {
+					pluginsDataForActions.isMinVersionMissing = true;
+				}
+
 				// In case that the Pro is inactive or not installed, it should be displayed separately.
 				if ( 'Elementor Pro' === pluginData.name && 'toImport' === actionType ) {
-					pluginsForActions.proPluginData = pluginData;
+					pluginsDataForActions.proPluginData = pluginData;
 
 					return;
 				}
 
-				pluginsForActions[ actionType ].push( pluginData );
+				pluginsDataForActions[ actionType ].push( pluginData );
 			} );
 
-			return pluginsForActions;
+			return pluginsDataForActions;
 		},
 		existingPluginsIndexes = getInitialSelectAll( plugins.existing ),
 		saveRequiredPlugins = ( currentPlugins ) => {
@@ -64,6 +77,7 @@ export default function ImportPlugins() {
 
 			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
 		},
+		isAllRequiredPluginsSelected = context.data.requiredPlugins.length === context.data.plugins.length,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -106,14 +120,24 @@ export default function ImportPlugins() {
 					description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
 				/>
 
-				<ProBanner status={ plugins.proPluginData?.status } />
+				{
+					plugins.isMinVersionMissing &&
+					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
+						{ __( 'Please update your plugins before you importing the kit.', 'elementor' ) } <InlineLink>{ __( 'Show me how', 'elementor' ) }</InlineLink>
+					</Notice>
+				}
+
+				{
+					plugins.proPluginData?.status &&
+					<ProBanner status={ plugins.proPluginData.status } />
+				}
 
 				{
 					! ! plugins.toImport.length &&
 					<div className="e-app-import-plugins__section">
 						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
 							{
-								context.data.requiredPlugins.length === context.data.plugins.length ?
+								isAllRequiredPluginsSelected ?
 								__( 'Plugins to add:', 'elementor' ) :
 								__( 'Missing Required Plugins:', 'elementor' )
 							}

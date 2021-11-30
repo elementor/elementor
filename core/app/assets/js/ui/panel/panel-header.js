@@ -6,7 +6,7 @@ import Collapse from 'elementor-app/molecules/collapse';
 export default function PanelHeader( props ) {
 	return (
 		<Collapse.Toggle active={ props.toggle } showIcon={ props.showIcon }>
-			<Card.Header padding="20" className={ arrayToClassName( [ 'e-app-import-export-panel__header', props.className ] ) }>
+			<Card.Header padding="20" className={ arrayToClassName( [ 'eps-panel__header', props.className ] ) }>
 				{ props.children }
 			</Card.Header>
 		</Collapse.Toggle>

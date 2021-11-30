@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils.js';
 
 export default function TableBody( props ) {
 	return (
-		<tbody className={ arrayToClassName( [ 'e-app-import-export-table__body', props.className ] ) }>
+		<tbody className={ arrayToClassName( [ 'eps-table__body', props.className ] ) }>
 			{ props.children }
 		</tbody>
 	);

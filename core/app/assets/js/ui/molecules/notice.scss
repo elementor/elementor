@@ -43,6 +43,12 @@ $root: eps-notice;
 		color: var(--eps-box-notice-color);
 		font-style: italic;
 	}
+
+	&__button-container {
+		flex-shrink: 0;
+		margin-left: spacing(20);
+		width: auto;
+	}
 }
 
 .eps-theme-dark {

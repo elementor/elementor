@@ -21,7 +21,7 @@ export default function Table( props ) {
 	},
 	[ selected, setSelected ] = useState( getInitialSelections() ),
 	[ disabled, setDisabled ] = useState( props.initialDisabled ),
-	classNameBase = 'e-app-import-export-table',
+	classNameBase = 'eps-table',
 	classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
 
 	useEffect( () => {
