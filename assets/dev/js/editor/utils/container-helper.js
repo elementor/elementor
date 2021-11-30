@@ -66,6 +66,61 @@ export class ContainerHelper {
 		} );
 	}
 
+	static createContainerFromSizes( sizes, target, options = {} ) {
+		// Map rounded, user-readable sizes to actual percentages.
+		const { createWrapper = true } = options,
+			sizesMap = {
+				33: '33.3333',
+				66: '66.6666',
+			},
+			sizesSum = sizes.reduce( ( sum, size ) => {
+				return sum + parseInt( size );
+			}, 0 ),
+			shouldWrap = ( sizesSum > 100 ),
+			settings = {
+				flex_direction: this.DIRECTION_ROW,
+				...( shouldWrap ? { flex_wrap: 'wrap' } : {} ),
+				flex_gap: {
+					unit: 'px',
+					size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
+				},
+			};
+
+		// Create a parent container to contain all of the sub containers.
+		let parentContainer;
+
+		if ( ! createWrapper ) {
+			$e.run( 'document/elements/settings', {
+				container: target,
+				settings,
+			} );
+
+			parentContainer = target;
+		} else {
+			parentContainer = this.createContainer( settings, target, options );
+		}
+
+		// Create all sub containers using the sizes array.
+		// Use flex basis to make the sizes explicit.
+		sizes.forEach( ( size ) => {
+			size = sizesMap[ size ] || size;
+
+			this.createContainer( {
+				flex_direction: this.DIRECTION_COLUMN,
+				width: {
+					unit: '%',
+					size,
+				},
+				width_mobile: { // For out-of-the-box responsiveness.
+					unit: '%',
+					size: '100',
+				},
+			}, parentContainer, { edit: false } );
+		} );
+
+		return parentContainer;
+	}
+
 	/**
 	 * Create a Container element based on a preset.
 	 *
@@ -77,14 +132,14 @@ export class ContainerHelper {
 	 * @returns {Container} - Container created on.
 	 */
 	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
-		let newContainer,
-			settings;
-
 		const historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: __( 'Container', 'elementor' ),
 			} ),
 			{ createWrapper = true } = options;
+
+		let newContainer,
+			settings;
 
 		try {
 			switch ( preset ) {
@@ -139,55 +194,9 @@ export class ContainerHelper {
 
 				// Containers by preset.
 				default:
-					const sizes = preset.split( '-' ),
-						// Map rounded, user-readable sizes to actual percentages.
-						sizesMap = {
-							33: '33.3333',
-							66: '66.6666',
-						};
+					const sizes = preset.split( '-' );
 
-					settings = {
-						flex_direction: this.DIRECTION_ROW,
-						flex_wrap: 'wrap',
-						flex_gap: {
-							unit: 'px',
-							size: 0, // Set the gap to 0 to override the default inherited from `Site Settings`.
-						},
-					};
-
-					// Create a parent container to contain all of the sub containers.
-					let parentContainer;
-
-					if ( ! createWrapper ) {
-						$e.run( 'document/elements/settings', {
-							container: target,
-							settings,
-						} );
-
-						parentContainer = target;
-					} else {
-						parentContainer = this.createContainer( settings, target, options );
-					}
-
-					// Create all sub containers using the sizes array.
-					// Use flex basis to make the sizes explicit.
-					sizes.forEach( ( size ) => {
-						size = sizesMap[ size ] || size;
-
-						this.createContainer( {
-							flex_direction: this.DIRECTION_COLUMN,
-							width: {
-								unit: '%',
-								size,
-							},
-							width_mobile: { // For out-of-the-box responsiveness.
-								unit: '%',
-								size: '100',
-							},
-						}, parentContainer, { edit: false } );
-					} );
-
-					newContainer = parentContainer;
+					newContainer = ContainerHelper.createContainerFromSizes( sizes, target, options );
 			}
 
 			$e.internal( 'document/history/end-log', { id: historyId } );
