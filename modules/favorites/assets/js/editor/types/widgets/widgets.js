@@ -145,7 +145,10 @@ export default class Widgets extends FavoriteType {
 								// happens and then show it again.
 								setTimeout( () => {
 									modal.show();
-									modal.updateActionTitle( { ...action, title: () => 'Added' } );
+									modal.updateActionTitle( {
+										...action,
+										title: () => __( 'Added', 'elementor' ),
+									} );
 									action.$item.on( 'click', () => modal.getModal().hide() );
 								} );
 							}
