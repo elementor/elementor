@@ -66,6 +66,16 @@ export class ContainerHelper {
 		} );
 	}
 
+	/**
+	 * Create a Container element based on a sizes.
+	 *
+	 * @param {array} sizes - Preset sizes.
+	 * @param {Container} target - The target of new created element.
+	 * @param {Object} options - Additional command options.
+	 * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
+	 *
+	 * @returns {Container} - Container created on.
+	 */
 	static createContainerFromSizes( sizes, target, options = {} ) {
 		const { createWrapper = true } = options,
 			// Map rounded, user-readable sizes to actual percentages.
