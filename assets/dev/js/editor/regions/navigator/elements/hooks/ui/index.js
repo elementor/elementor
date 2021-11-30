@@ -1,6 +1,5 @@
 // Alphabetical order.
 
-export { NavigatorPreventEmptyTitle } from './document/elements/settings/navigator-prevent-empty-title';
 export { NavigatorRenderIndicators } from './document/elements/settings/navigator-render-indicators';
 export { NavigatorElementsHide } from './navigator/elements/hide/navigator-elements-hide';
 export { NavigatorElementsShow } from './navigator/elements/show/navigator-elements-show';

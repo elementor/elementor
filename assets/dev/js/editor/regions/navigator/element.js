@@ -227,7 +227,7 @@ export default class Element extends Marionette.CompositeView {
 		$e.run( 'document/elements/settings', {
 			container: elementor.getContainer( this.model.get( 'id' ) ),
 			settings: {
-				_title: this.ui.title.text().trim(),
+				_title: this.ui.title.text().trim() || this.model.getTitle(),
 			},
 		} );
 
