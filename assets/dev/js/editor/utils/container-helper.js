@@ -68,7 +68,7 @@ export class ContainerHelper {
 
 	static createContainerFromSizes( sizes, target, options = {} ) {
 		const { createWrapper = true } = options,
-			// Map rounded, user-readable sizes to actual percentages.	
+			// Map rounded, user-readable sizes to actual percentages.
 			sizesMap = {
 				33: '33.3333',
 				66: '66.6666',
