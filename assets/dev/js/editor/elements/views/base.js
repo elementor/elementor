@@ -654,13 +654,13 @@ BaseElementView = BaseContainer.extend( {
 			} );
 
 			if ( ! isRenderRequired ) {
-				return true;
+				return;
 			}
 
 			if ( shouldRenderUI && ! isContentChanged ) {
 				this.renderUI();
 
-				return true;
+				return;
 			}
 		}
 
