@@ -24,16 +24,29 @@ export class NestedRepeaterCreateContainer extends Base {
 					options: {
 						edit: false, // Not losing focus.
 					},
-				} ),
-				repeater = container.repeaters[ args.name ];
+				} );
 
-			$e.internal( 'document/elements/set-settings', {
-				container: newContainer,
-				settings: {
-					// TODO: Find better solution for dynamic `_title` handling.
-					_title: sprintf( __( 'Tab #%d', 'elementor' ), repeater.children.length ),
-				},
-			} );
+			this.applySettings(
+				container.repeaters[ args.name ],
+				newContainer,
+				newContainer.parent.view.config.default_children_settings
+			);
+		} );
+	}
+
+	applySettings( repeater, container, settings ) {
+		// TODO: Temporary solution, for applying the default settings to the new container.
+		for ( const index in settings ) {
+			if ( '_title' === index ) {
+				settings[ index ] = sprintf( __( settings[ index ], 'elementor' ), repeater.children.length );
+			} else {
+				throw new Error( `Unknown default setting: '${ index }'` );
+			}
+		}
+
+		$e.internal( 'document/elements/set-settings', {
+			container,
+			settings,
 		} );
 	}
 }
