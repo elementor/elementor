@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
+import { arrayToObjectByKey } from 'elementor-app/utils/utils.js';
+
 import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 
-import PluginsSelection from '../../../shared/plugins-selection/plugins-selection';
+import PluginsToImport from './components/plugins-to-import/plugins-to-import';
+import ExistingPlugins from './components/existing-plugins/existing-plugins';
 import ProBanner from './components/pro-banner/pro-banner';
+import ImportPluginsFooter from './components/import-plugins-footer/import-plugins-footer';
 
-import Heading from 'elementor-app/ui/atoms/heading';
-import Button from 'elementor-app/ui/molecules/button';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import usePlugins from '../../../hooks/use-plugins';
 
@@ -22,18 +23,14 @@ export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
-		getPluginsInitialData = () => ( { toImport: [], existing: [], proPluginData: null, isMinVersionMissing: false } ),
+		getPluginsInitialData = () => ( {
+			toImport: [],
+			existing: [],
+			proPluginData: null,
+			isMinVersionMissing: false,
+		} ),
 		[ plugins, setPlugins ] = useState( getPluginsInitialData() ),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins,
-		getInitialSelectAll = ( pluginsList ) => pluginsList.map( ( plugin, index ) => index ),
-		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
-		arrayToObjectByKey = ( array = [], key ) => {
-			const finalObject = {};
-
-			array.forEach( ( item ) => finalObject[ item[ key ] ] = item );
-
-			return finalObject;
-		},
 		getIsMinVersionMissing = ( kitPluginVersion, installedPluginVersion ) => {
 			const kitVersionValues = kitPluginVersion.split( '.' ),
 				installedVersionValues = installedPluginVersion.split( '.' );
@@ -42,7 +39,7 @@ export default function ImportPlugins() {
 		},
 		getClassifiedPlugins = () => {
 			const pluginsDataForActions = getPluginsInitialData(),
-				installedPluginsMap = arrayToObjectByKey( pluginsState.data?.installed, 'name' );
+				installedPluginsMap = arrayToObjectByKey( pluginsState.data, 'name' );
 
 			kitPlugins.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
@@ -66,9 +63,8 @@ export default function ImportPlugins() {
 
 			return pluginsDataForActions;
 		},
-		existingPluginsIndexes = getInitialSelectAll( plugins.existing ),
-		saveRequiredPlugins = ( currentPlugins ) => {
-			const { toImport, proPluginData } = currentPlugins,
+		saveRequiredPlugins = ( classifiedPluginsData ) => {
+			const { toImport, proPluginData } = classifiedPluginsData,
 				requiredPlugins = [ ...toImport ];
 
 			if ( proPluginData ) {
@@ -76,29 +72,9 @@ export default function ImportPlugins() {
 			}
 
 			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
-		},
-		isAllRequiredPluginsSelected = context.data.requiredPlugins.length === context.data.plugins.length,
-		getFooter = () => (
-			<WizardFooter separator justify="end">
-				<Button
-					text={ __( 'Previous', 'elementor' ) }
-					variant="contained"
-					onClick={ () => {
-						context.dispatch( { type: 'SET_FILE', payload: null } );
+		};
 
-						navigate( 'import/' );
-					} }
-				/>
-
-				<Button
-					variant="contained"
-					text={ __( 'Next', 'elementor' ) }
-					color="primary"
-					onClick={ () => navigate( 'import/content' ) }
-				/>
-			</WizardFooter>
-		);
-
+	// On load.
 	useEffect( () => {
 		if ( kitPlugins ) {
 			pluginsActions.get();
@@ -107,14 +83,16 @@ export default function ImportPlugins() {
 		}
 	}, [] );
 
+	// On plugins data ready.
 	useEffect( () => {
 		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
-			const currentPlugins = getClassifiedPlugins();
+			const classifiedPluginsData = getClassifiedPlugins();
 
-			if ( currentPlugins.toImport.length || currentPlugins.proPluginData ) {
-				saveRequiredPlugins( currentPlugins );
+			if ( classifiedPluginsData.toImport.length || classifiedPluginsData.proPluginData ) {
+				// Saving the required plugins list for displaying it at the end of the process.
+				saveRequiredPlugins( classifiedPluginsData );
 
-				setPlugins( currentPlugins );
+				setPlugins( classifiedPluginsData );
 			} else {
 				// In case that are not plugins to import, navigating to the next screen.
 				navigate( 'import/content' );
@@ -123,7 +101,7 @@ export default function ImportPlugins() {
 	}, [ pluginsState.status ] );
 
 	return (
-		<Layout type="export" footer={ getFooter() }>
+		<Layout type="export" footer={ <ImportPluginsFooter /> }>
 			<section className="e-app-import-plugins">
 				<PageHeader
 					heading={ __( 'Select the plugins you want to import', 'elementor' ) }
@@ -137,49 +115,11 @@ export default function ImportPlugins() {
 					</Notice>
 				}
 
-				{
-					plugins.proPluginData?.status &&
-					<ProBanner status={ plugins.proPluginData.status } />
-				}
+				{ plugins.proPluginData?.status && <ProBanner status={ plugins.proPluginData.status } /> }
 
-				{
-					! ! plugins.toImport.length &&
-					<div className="e-app-import-plugins__section">
-						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
-							{
-								isAllRequiredPluginsSelected ?
-								__( 'Plugins to add:', 'elementor' ) :
-								__( 'Missing Required Plugins:', 'elementor' )
-							}
-						</Heading>
+				{ ! ! plugins.toImport.length && <PluginsToImport plugins={ plugins.toImport } /> }
 
-						<PluginsSelection
-							plugins={ plugins.toImport }
-							initialSelected={ getInitialSelectAll( plugins.toImport ) }
-							onSelect={ handleOnSelect }
-							layout={ [ 3, 1, 1 ] }
-						/>
-					</div>
-				}
-
-				{
-					! ! plugins.existing.length &&
-					<div className="e-app-import-plugins__section">
-						<Heading variant="h5" tag="h3" className="e-app-import-plugins__section-heading">
-							{ __( 'Plugins you already have:', 'elementor' ) }
-						</Heading>
-
-						<PluginsSelection
-							withHeader={ false }
-							withStatus={ false }
-							plugins={ plugins.existing }
-							initialSelected={ existingPluginsIndexes }
-							initialDisabled={ existingPluginsIndexes }
-							excludeSelections={ existingPluginsIndexes }
-							layout={ [ 4, 1 ] }
-						/>
-					</div>
-				}
+				{ ! ! plugins.existing.length && <ExistingPlugins plugins={ plugins.existing } /> }
 			</section>
 		</Layout>
 	);

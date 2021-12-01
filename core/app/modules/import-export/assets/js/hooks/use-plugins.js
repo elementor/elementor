@@ -26,26 +26,30 @@ export default function usePlugins() {
 				data.body = JSON.stringify( body );
 			}
 
-			return fetch( baseEndpoint + endpoint, data ).then( ( response ) => response.json() );
+			return new Promise( ( resolve, reject ) => {
+				fetch( baseEndpoint + endpoint, data )
+					.then( ( response ) => response.json() )
+					.then( ( response ) => {
+						setPluginsState( {
+							status: PLUGINS_STATUS_MAP.SUCCESS,
+							data: response,
+						} );
+
+						resolve( response );
+					} )
+					.catch( ( error ) => {
+						setPluginsState( {
+							status: PLUGINS_STATUS_MAP.ERROR,
+							data: error,
+						} );
+
+						reject( error );
+					} );
+			} );
 		},
 		get = () => {
 			fetchRest( {
 				method: 'GET',
-			} )
-			.then( ( res ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.SUCCESS,
-					data: {
-						installed: res,
-						active: res.filter( ( plugin ) => 'active' === plugin.status ),
-					},
-				} );
-			} )
-			.catch( ( error ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.ERROR,
-					data: error,
-				} );
 			} );
 		},
 		install = ( slug ) => {
@@ -56,18 +60,6 @@ export default function usePlugins() {
 				body: {
 					slug,
 				},
-			} )
-			.then( ( res ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.SUCCESS,
-					data: res,
-				} );
-			} )
-			.catch( ( error ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.ERROR,
-					data: error,
-				} );
 			} );
 		},
 		activate = ( slug ) => {
@@ -77,18 +69,6 @@ export default function usePlugins() {
 				body: {
 					status: 'active',
 				},
-			} )
-			.then( ( res ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.SUCCESS,
-					data: res,
-				} );
-			} )
-			.catch( ( error ) => {
-				setPluginsState( {
-					status: PLUGINS_STATUS_MAP.ERROR,
-					data: error,
-				} );
 			} );
 		},
 		deactivate = ( slug ) => {
@@ -98,36 +78,9 @@ export default function usePlugins() {
 				body: {
 					status: 'inactive',
 				},
-			} )
-				.then( ( res ) => {
-					setPluginsState( {
-						status: PLUGINS_STATUS_MAP.SUCCESS,
-						data: res,
-					} );
-				} )
-				.catch( ( error ) => {
-					setPluginsState( {
-						status: PLUGINS_STATUS_MAP.ERROR,
-						data: error,
-					} );
-				} );
+			} );
 		},
 		reset = () => setPluginsState( getInitialState() );
-
-	// setAjax( {
-	// 	type: 'get',
-	// 	url: elementorCommon.config.urls.rest + 'wp/v2/plugins',
-	// 	headers: {
-	// 		'X-WP-Nonce': wpApiSettings.nonce,
-	// 	},
-	// } );
-
-	// useEffect( () => {
-	// 	console.log( 'ajaxState', ajaxState );
-	// 	if ( 'success' === ajaxState.status ) {
-	// 		console.log( 'ajaxState', ajaxState );
-	// 	}
-	// }, [ ajaxState.status ] );
 
 	return {
 		pluginsState,
