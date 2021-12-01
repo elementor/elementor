@@ -306,6 +306,8 @@ export default class View extends Marionette.ItemView {
 	}
 
 	onAddWidgetsClick() {
+		// elementor.changeEditMode( 'edit' );
+		$e.run( 'panel/open' );
 		$e.route( 'panel/elements/categories' );
 	}
 

@@ -40,7 +40,9 @@ body {
 		content: '';
 		position: absolute;
 		top: 0;
-		@include end(0);
+		// @include end(0);
+		left: var( --dock-hint-left );
+		right: var( --dock-hint-right );
 		height: 100%;
 		width: 0;
 		background-color: $editor-info;
@@ -66,7 +68,7 @@ body {
 	}
 
 	&.elementor-editor-preview {
-		--e-preview-width: 100%;
+		// --e-preview-width: 100%;
 
 		#elementor-mode-switcher-preview {
 			.eicon {
@@ -77,7 +79,7 @@ body {
 		}
 	}
 
-	&.elementor-navigator--dock-hint {
+	&.elementor-navigator--dock-hint, &.elementor-panel--dock-hint {
 
 		&:after {
 			width: 30px;
@@ -86,20 +88,14 @@ body {
 }
 
 #elementor-editor-wrapper {
-	display: grid;
-	width: 100%;
 	height: 100vh;
-	grid-template-columns: var(--e-editor-panel-width) auto var(--e-editor-navigator-width);
-	grid-template-rows: 50px auto;
-	// grid-template-rows: calc(40px * var(--e-is-device-mode)) auto;
-	grid-template-areas: "responsive-bar responsive-bar responsive-bar"
-		"panel preview navigator";
 }
 
-#elementor-panel,
-#elementor-preview {
+#elementor-panel:not(.ui-draggable-dragging),
+#elementor-preview,
+#elementor-navigator:not(.ui-draggable-dragging) {
 
 	&:not(.ui-resizable-resizing) {
-		transition: margin .5s ease-in-out, width .5s ease-in-out;
+		transition: margin .5s ease-in-out, width .5s ease-in-out, left .5s ease-in-out, right .5s ease-in-out;
 	}
 }

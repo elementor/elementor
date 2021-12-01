@@ -52,7 +52,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		var pages = {
 			elements: {
 				view: require( 'elementor-panel/pages/elements/elements' ),
-				title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
+				// title: '<img src="' + elementorCommon.config.urls.assets + 'images/logo-panel.svg">',
+				title: 'Add Widget',
 			},
 			editor: {
 				view: require( 'elementor-panel/pages/editor' ),

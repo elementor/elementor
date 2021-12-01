@@ -13,6 +13,7 @@ export default class extends Marionette.LayoutView {
 		return {
 			toggleAll: '#elementor-navigator__toggle-all',
 			close: '#elementor-navigator__close',
+			float: '#elementor-navigator__float',
 		};
 	}
 
@@ -20,6 +21,7 @@ export default class extends Marionette.LayoutView {
 		return {
 			'click @ui.toggleAll': 'toggleAll',
 			'click @ui.close': 'onCloseClick',
+			'click @ui.float': 'onFloatClick',
 		};
 	}
 
@@ -57,5 +59,11 @@ export default class extends Marionette.LayoutView {
 
 	onCloseClick() {
 		$e.components.get( 'navigator' ).close();
+	}
+
+	onFloatClick() {
+		//TODO: use commands instead
+		elementorCommon.elements.$body.addClass( 'elementor-navigator--float' );
+		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked elementor-navigator-docked--left elementor-navigator-docked--right' );
 	}
 }

@@ -3,28 +3,63 @@ body {
 }
 
 #elementor-navigator {
-	grid-area: navigator;
-	// position: fixed;
-	// top: 100px;
-	// width: var( --e-editor-navigator-width );
-	// height: 50vh;
-	@include end(30px);
+	position: fixed;
+	top: var(--responsive-bar-height);
+	width: var( --e-editor-navigator-width );
+	height: 100%;
+	//@include end(0);
+	right: 0;
 	background-color: #fff;
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
-	// z-index: 100; // Above the Responsive Bar
 	display: none;
 
-	body.elementor-navigator-docked & {
-		top: 0;
-		@include end(0);
-		height: 100%;
+	&.e-navigator--open {
+		display: block;
 	}
+
+	// &.ui-draggable-dragging {
+	// 	transition: none;
+	// }
 
 	body:not(.elementor-navigator-docked) & {
 		border-radius: 5px;
+		z-index: 100; // Above the Responsive Bar
+		height: 50vh;
+
+		&__float {
+			display: none;
+		}
 	}
+
+	.elementor-navigator-docked--left & {
+		left: 0;
+	}
+
+	.elementor-navigator-docked--right & {
+		right: 0;
+	}
+
+	body:not(.elementor-navigator-docked).elementor-navigator--float & {
+		height: calc(100% - 40px);
+		z-index: 1;
+	}
+
+	// body.elementor-navigator-docked & {
+	// 	display: block;
+	// 	@include end(100%);
+
+	// 	&.elementor-navigator--open {
+	// 		@include end(0);
+	// 	}
+	// }
+
+	// body:not(.elementor-navigator-docked) & {
+	// 	border-radius: 5px;
+	// 	z-index: 100; // Above the Responsive Bar
+	// 	height: 50vh;
+	// }
 
 	&__inner {
 		height: 100%;
@@ -41,6 +76,7 @@ body {
 		cursor: move;
 	}
 
+	&__float,
 	&__close,
 	&__toggle-all {
 		transition: color .5s;
@@ -301,5 +337,37 @@ body {
 		&-section {
 			background-color: #fff;
 		}
+	}
+}
+
+// .elementor-editor-preview.elementor-navigator-docked & {
+// 	&:not(.e-navigator--open) { //TODO slide on dock, hide on floating
+// 		display: block;
+// 		z-index: 0;
+// 		height: 100%;
+// 	}
+// }
+
+// .elementor-editor-preview.elementor-navigator-docked--left &:not(.e-navigator--open) {
+// 	left: calc(-1 * var(--e-editor-navigator-width));
+// }
+
+// .elementor-editor-preview.elementor-navigator-docked--right &:not(.e-navigator--open) {
+// 	right: calc(-1 * var(--e-editor-navigator-width));
+// }
+
+.elementor-editor-preview.elementor-navigator-docked {
+	#elementor-navigator:not(.e-navigator--open) {
+		display: block;
+		z-index: 0;
+		height: 100%;
+	}
+
+	&--left #elementor-navigator {
+		left: calc(-1 * var(--e-editor-navigator-width));
+	}
+
+	&--right #elementor-navigator {
+		right: calc(-1 * var(--e-editor-navigator-width));
 	}
 }

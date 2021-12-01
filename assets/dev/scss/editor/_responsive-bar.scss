@@ -1,5 +1,6 @@
 :root {
 	--e-is-device-mode: 0;
+	--responsive-bar-height: 43px;
 }
 
 .e-is-device-mode {
@@ -7,16 +8,12 @@
 }
 
 #elementor-responsive-bar {
-	grid-area: responsive-bar;
 	position: sticky;
-	// height: calc(40px * var(--e-is-device-mode));
-	// align-self: stretch;
-	// flex-shrink: 0;
+	height: var(--responsive-bar-height);
 	transition: height .2s ease-in-out, opacity .1s ;
 	left: 0; // Fix position:sticky for RTL [ _devices.scss -> #elementor-preview ] ( browser bug )
 	top: 0;
 	z-index: 100;
-	// opacity: var(--e-is-device-mode);
 	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
 
 	&:before {

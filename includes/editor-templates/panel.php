@@ -50,14 +50,18 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-header">
-	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
+	<!-- <div id="elementor-panel-header-menu-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
-	</div>
+	</div> -->
 	<div id="elementor-panel-header-title"></div>
-	<div id="elementor-panel-header-add-button" class="elementor-header-button">
+	<!-- <div id="elementor-panel-header-add-button" class="elementor-header-button">
 		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
+	</div> -->
+	<div id="elementor-panel__header-buttons">
+		<i id="elementor-panel__header-float" class="demo-icon eicon-editor-external-link"></i>
+		<i id="elementor-panel__header-close" class="eicon-close"></i>
 	</div>
 </script>
 

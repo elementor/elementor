@@ -150,6 +150,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	showView: function( viewName ) {
+		// alert( 'sadfdsaf' );
 		var viewDetails = this.regionViews[ viewName ],
 			options = viewDetails.options || {};
 

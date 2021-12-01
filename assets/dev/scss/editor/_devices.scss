@@ -3,11 +3,11 @@
 //
 
 body {
-	--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
+	// --e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
 
-	&.elementor-navigator-docked {
-		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px));
-	}
+	// &.elementor-navigator-docked {
+		// --e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px));
+	// }
 
 	&.elementor-device-desktop {
 
@@ -23,17 +23,18 @@ body {
 }
 
 #elementor-preview {
-	grid-area: preview;
 	overflow: auto;
 	background-color: #333;
-	// height: 100%;
-	border: 0;
+	height: calc(100% - var(--responsive-bar-height));
+	// border: 0;
 	// width: var(--e-preview-width);
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
 	position: relative;
+	// margin-inline-start: var(--e-editor-panel-width);
+    // margin-inline-end: 0;
 
 	// Fix child position:sticky for RTL ( browser bug )
 	@if 'rtl' == $direction {
@@ -42,6 +43,26 @@ body {
 			direction: rtl;
 		}
 	}
+
+	.elementor-navigator-docked--left & {
+		margin-left: var(--e-editor-navigator-width);
+	}
+
+	.elementor-navigator-docked--right & {
+		margin-right: var(--e-editor-navigator-width);
+	}
+
+	.elementor-panel-docked--left & {
+		margin-left: var(--e-editor-panel-width);
+	}
+
+	.elementor-panel-docked--right & {
+		margin-right: var(--e-editor-panel-width);
+	}
+
+	.elementor-editor-preview & {
+		margin: 0;
+	}	
 }
 
 #elementor-preview-responsive-wrapper {

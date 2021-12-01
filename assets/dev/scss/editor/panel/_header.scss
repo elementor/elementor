@@ -2,17 +2,17 @@
 // Panel Header
 //
 
-#elementor-panel-header-wrapper {
-	overflow: hidden;
-}
-
-#elementor-panel-header {
+#elementor-panel__header {
 	display: table;
 	height: 40px;
 	width: 100%;
-	background-color: $editor-accent;
-	color: #fff;
+	// background-color: $editor-accent;
+	// color: #fff;
 
+	body:not(.elementor-panel-docked) & {
+		border-radius: 5px 5px 0 0;
+	}
+	
 	> * {
 		display: table-cell;
 		vertical-align: middle;
@@ -43,6 +43,7 @@
 
 #elementor-panel-header-title {
 	font-size: 15px;
+	cursor: move;
 
 	img {
 		width: 90px;

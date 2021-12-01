@@ -13,6 +13,7 @@
 	font-size: 15px;
 	@include direction-box-shadow(3px, 1px 5px rgba(0, 0, 0, 0.1));
 	cursor: pointer;
+	display: none;
 
 	&:hover {
 		background-color: $editor-accent;
@@ -39,3 +40,11 @@
 #elementor-mode-switcher-preview-input {
 	display: none;
 }
+
+// .elementor-panel-docked {
+
+// 	#elementor-mode-switcher {
+// 		display: block;
+// 	}
+
+// }

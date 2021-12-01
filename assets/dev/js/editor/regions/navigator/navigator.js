@@ -10,8 +10,8 @@ export default class extends BaseRegion {
 
 		this.component = $e.components.register( new Component( { manager: this } ) );
 
-		this.isDocked = false;
-		this.setSize();
+		// this.isDocked = false;
+		// this.setSize();
 
 		this.indicators = {
 			customPosition: {
@@ -24,6 +24,7 @@ export default class extends BaseRegion {
 
 		this.ensurePosition = this.ensurePosition.bind( this );
 
+		// When this callback activated?
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 
 		// TODO: Move to hook on 'editor/documents/load'.
@@ -35,74 +36,75 @@ export default class extends BaseRegion {
 		return 'navigator';
 	}
 
-	getDefaultStorage() {
-		return {
-			visible: false,
-			size: {
-				width: '',
-				height: '',
-				top: '',
-				bottom: '',
-				right: '',
-				left: '',
-			},
-		};
-	}
+	// getDefaultStorage() {
+	// 	return {
+	// 		visible: false,
+	// 		size: {
+	// 			width: '',
+	// 			height: '',
+	// 			top: '',
+	// 			bottom: '',
+	// 			right: '',
+	// 			left: '',
+	// 		},
+	// 	};
+	// }
 
+	// Why do we need this?
 	getLayout() {
 		return this.currentView;
 	}
 
-	getDraggableOptions() {
-		return {
-			iframeFix: true,
-			handle: '#elementor-navigator__header',
-			drag: this.onDrag.bind( this ),
-			stop: this.onDragStop.bind( this ),
-		};
-	}
+	// getDraggableOptions() {
+	// 	return {
+	// 		iframeFix: true,
+	// 		handle: '#elementor-navigator__header',
+	// 		drag: this.onDrag.bind( this ),
+	// 		stop: this.onDragStop.bind( this ),
+	// 	};
+	// }
 
-	getResizableOptions() {
-		return {
-			handles: 'all',
-			containment: 'document',
-			minWidth: 150,
-			maxWidth: 500,
-			minHeight: 240,
-			start: () => {
-				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
-			},
-			stop: () => {
-				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
+	// getResizableOptions() {
+	// 	return {
+	// 		handles: 'all',
+	// 		containment: 'document',
+	// 		minWidth: 150,
+	// 		maxWidth: 500,
+	// 		minHeight: 240,
+	// 		start: () => {
+	// 			elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
+	// 		},
+	// 		stop: () => {
+	// 			elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
-				if ( this.isDocked ) {
-					this.storage.size.width = elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ).width;
+	// 			if ( this.isDocked ) {
+	// 				this.storage.size.width = elementor.helpers.getElementInlineStyle( this.$el, [ 'width' ] ).width;
 
-					elementorCommon.storage.set( 'navigator', this.storage );
-				} else {
-					this.saveSize();
-				}
-			},
-			resize: ( event, ui ) => {
-				this.setSize( ui.size.width + 'px' );
-			},
-		};
-	}
+	// 				elementorCommon.storage.set( 'navigator', this.storage );
+	// 			} else {
+	// 				this.saveSize();
+	// 			}
+	// 		},
+	// 		resize: ( event, ui ) => {
+	// 			this.setSize( ui.size.width + 'px' );
+	// 		},
+	// 	};
+	// }
 
-	initLayout() {
-		this.show( new NavigatorLayout() );
-
-		this.$el.draggable( this.getDraggableOptions() );
-		this.$el.resizable( this.getResizableOptions() );
-	}
+	// initBehavior() {
+	// 	this.$el.draggable( this.getDraggableOptions() );
+	// 	this.$el.resizable( this.getResizableOptions() );
+	// }
 
 	open( model ) {
-		this.$el.show();
+		// this.$el.show();
+
+		this.$el.addClass( 'e-navigator--open' );
 
 		this.setSize();
 
-		if ( this.storage.docked ) {
-			this.dock();
+		if ( this.storage.dockedPosition ) {
+			this.dock( this.storage.dockedPosition );
 		}
 
 		if ( model ) {
@@ -117,7 +119,9 @@ export default class extends BaseRegion {
 	}
 
 	close( silent ) {
-		this.$el.hide();
+		// this.$el.hide();
+
+		this.$el.removeClass( 'e-navigator--open' );
 
 		if ( this.isDocked ) {
 			this.undock( true );
@@ -138,68 +142,68 @@ export default class extends BaseRegion {
 		return this.$el.is( ':visible' );
 	}
 
-	dock() {
-		elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
-		this.setSize();
+	// dock() {
+	// 	elementorCommon.elements.$body.addClass( 'elementor-navigator-docked' );
+	// 	this.setSize();
 
-		const resizableOptions = this.getResizableOptions();
+	// 	const resizableOptions = this.getResizableOptions();
 
-		this.$el.css( {
-			height: '',
-			top: '',
-			bottom: '',
-			left: '',
-			right: '',
-		} );
+	// 	this.$el.css( {
+	// 		height: '',
+	// 		top: '',
+	// 		bottom: '',
+	// 		left: '',
+	// 		right: '',
+	// 	} );
 
-		if ( this.$el.resizable( 'instance' ) ) {
-			this.$el.resizable( 'destroy' );
-		}
+	// 	if ( this.$el.resizable( 'instance' ) ) {
+	// 		this.$el.resizable( 'destroy' );
+	// 	}
 
-		resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
+	// 	resizableOptions.handles = elementorCommon.config.isRTL ? 'e' : 'w';
 
-		this.$el.resizable( resizableOptions );
+	// 	this.$el.resizable( resizableOptions );
 
-		this.isDocked = true;
+	// 	this.isDocked = true;
 
-		this.saveStorage( 'docked', true );
-	}
+	// 	this.saveStorage( 'docked', true );
+	// }
 
-	undock( silent ) {
-		elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
-		this.setSize();
+	// undock( silent ) {
+	// 	elementorCommon.elements.$body.removeClass( 'elementor-navigator-docked' );
+	// 	this.setSize();
 
-		elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
+	// 	elementor.$previewWrapper.css( elementorCommon.config.isRTL ? 'left' : 'right', '' );
 
-		if ( this.$el.resizable( 'instance' ) ) {
-			this.$el.resizable( 'destroy' );
+	// 	if ( this.$el.resizable( 'instance' ) ) {
+	// 		this.$el.resizable( 'destroy' );
 
-			this.$el.resizable( this.getResizableOptions() );
-		}
+	// 		this.$el.resizable( this.getResizableOptions() );
+	// 	}
 
-		this.isDocked = false;
+	// 	this.isDocked = false;
 
-		if ( ! silent ) {
-			this.saveStorage( 'docked', false );
-		}
-	}
+	// 	if ( ! silent ) {
+	// 		this.saveStorage( 'docked', false );
+	// 	}
+	// }
 
-	/**
-	 * Set the navigator size to a specific value or default to the storage-saved value.
-	 *
-	 * @param {String} size A specific new size.
-	 */
-	setSize( size = null ) {
-		if ( size ) {
-			this.storage.size.width = size;
-		} else {
-			this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
-		}
+	// /**
+	//  * Set the navigator size to a specific value or default to the storage-saved value.
+	//  *
+	//  * @param {String} size A specific new size.
+	//  */
+	// setSize( size = null ) {
+	// 	if ( size ) {
+	// 		this.storage.size.width = size;
+	// 	} else {
+	// 		this.storage.size.width = this.storage.size.width || elementorCommon.elements.$body.css( '--e-editor-navigator-width' );
+	// 	}
 
-		// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
-		elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
-		this.$el.css( 'width', '' );
-	}
+	// 	// Set the navigator size using a CSS variable, and remove the inline CSS that was set by jQuery Resizeable.
+	// 	elementorCommon.elements.$body.css( '--e-editor-navigator-width', this.storage.size.width );
+	// 	this.$el.css( 'width', '' );
+	// }
 
 	ensurePosition() {
 		if ( this.isDocked ) {
@@ -223,53 +227,54 @@ export default class extends BaseRegion {
 		}
 	}
 
-	onDrag( event, ui ) {
-		if ( this.isDocked ) {
-			if ( ui.position.left === ui.originalPosition.left ) {
-				if ( ui.position.top !== ui.originalPosition.top ) {
-					return false;
-				}
-			} else {
-				this.undock();
-			}
+	// onDrag( event, ui ) {
+	// 	if ( this.isDocked ) {
+	// 		if ( ui.position.left === ui.originalPosition.left ) {
+	// 			if ( ui.position.top !== ui.originalPosition.top ) {
+	// 				return false;
+	// 			}
+	// 		} else {
+	// 			this.undock();
+	// 		}
 
-			return;
-		}
+	// 		return;
+	// 	}
 
-		if ( 0 > ui.position.top ) {
-			ui.position.top = 0;
-		}
+	// 	if ( 0 > ui.position.top ) {
+	// 		ui.position.top = 0;
+	// 	}
 
-		const isOutOfLeft = 0 > ui.position.left,
-			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
+	// 	const isOutOfLeft = 0 > ui.position.left,
+	// 		isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
 
-		if ( elementorCommon.config.isRTL ) {
-			if ( isOutOfRight ) {
-				ui.position.left = innerWidth - this.el.offsetWidth;
-			}
-		} else if ( isOutOfLeft ) {
-			ui.position.left = 0;
-		}
+	// 	if ( elementorCommon.config.isRTL ) {
+	// 		if ( isOutOfRight ) {
+	// 			ui.position.left = innerWidth - this.el.offsetWidth;
+	// 		}
+	// 	} else if ( isOutOfLeft ) {
+	// 		ui.position.left = 0;
+	// 	}
 
-		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
-	}
+	// 	elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
+	// }
 
-	onDragStop( event, ui ) {
-		if ( this.isDocked ) {
-			return;
-		}
+	// onDragStop( event, ui ) {
+	// 	if ( this.isDocked ) {
+	// 		return;
+	// 	}
 
-		this.saveSize();
+	// 	this.saveSize();
 
-		const elementRight = ui.position.left + this.el.offsetWidth;
+	// 	const elementRight = ui.position.left + this.el.offsetWidth;
 
-		if ( 0 > ui.position.left || elementRight > innerWidth ) {
-			this.dock();
-		}
+	// 	if ( 0 > ui.position.left || elementRight > innerWidth ) {
+	// 		this.dock();
+	// 	}
 
-		elementorCommon.elements.$body.removeClass( 'elementor-navigator--dock-hint' );
-	}
+	// 	elementorCommon.elements.$body.removeClass( 'elementor-navigator--dock-hint' );
+	// }
 
+	// When this method activated?
 	onEditModeSwitched( activeMode ) {
 		// Determine when the navigator should be visible.
 		const visibleModes = [
@@ -286,7 +291,8 @@ export default class extends BaseRegion {
 
 	onDocumentLoaded( document ) {
 		if ( document.config.panel.has_elements ) {
-			this.initLayout();
+			this.show( new NavigatorLayout() );
+			this.initBehavior();
 
 			if ( this.storage.visible ) {
 				$e.route( 'navigator' );
