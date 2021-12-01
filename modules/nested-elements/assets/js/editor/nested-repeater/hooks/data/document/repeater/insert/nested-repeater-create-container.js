@@ -26,27 +26,10 @@ export class NestedRepeaterCreateContainer extends Base {
 					},
 				} );
 
-			this.applySettings(
-				container.repeaters[ args.name ],
+			$e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
 				newContainer,
-				newContainer.parent.view.config.default_children_settings
+				container.repeaters[ args.name ].children.length,
 			);
-		} );
-	}
-
-	applySettings( repeater, container, settings ) {
-		// TODO: Temporary solution, for applying the default settings to the new container.
-		for ( const index in settings ) {
-			if ( '_title' === index ) {
-				settings[ index ] = sprintf( __( settings[ index ], 'elementor' ), repeater.children.length );
-			} else {
-				throw new Error( `Unknown default setting: '${ index }'` );
-			}
-		}
-
-		$e.internal( 'document/elements/set-settings', {
-			container,
-			settings,
 		} );
 	}
 }

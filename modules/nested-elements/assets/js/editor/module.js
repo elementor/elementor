@@ -13,4 +13,3 @@ export default class NestedElementsModule {
 		return elementor.widgetsCache[ widgetType ]?.support_nesting;
 	}
 }
-

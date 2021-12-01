@@ -12,8 +12,6 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 
 	abstract protected function get_default_children();
 
-	abstract protected function get_default_children_settings();
-
 	protected function get_children_placeholder() {
 		// Empty string, means will be added at the end.
 		return '';
@@ -32,7 +30,7 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 
 		$result['support_nesting'] = true;
 		$result['default_children'] = $this->get_default_children();
-		$result['default_children_settings'] = $this->get_default_children_settings();
+		$result['default_children_title'] = $this->get_default_children_title();
 		$result['children_placeholder_selector'] = $this->get_children_placeholder();
 
 		return $result;

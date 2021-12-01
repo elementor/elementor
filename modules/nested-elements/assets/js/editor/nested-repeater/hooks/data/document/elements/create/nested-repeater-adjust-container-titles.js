@@ -38,12 +38,12 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 
 			container.children.forEach( ( childContainer ) => {
 				// Set container tab title according to its repeater item name.
-				const index = childContainer.parent.children.indexOf( childContainer ),
-					repeaterItem = childContainer.parent.repeaters[ args.model.widgetType ].children[ index ],
-					title = repeaterItem.settings.get( 'tab_title' ),
-					eContainer = childContainer.parent.children[ index ];
+				const index = childContainer.parent.children.indexOf( childContainer ) + 1;
 
-				eContainer.settings.set( '_title', title );
+				$e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
+					childContainer,
+					index,
+				);
 			} );
 		} );
 	}
