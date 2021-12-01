@@ -20,8 +20,8 @@ export class Paste extends CommandHistory {
 
 	apply( args ) {
 		const { at, rebuild = false, storageKey = 'clipboard', containers = [ args.container ], options = {} } = args,
-			storageData = elementorCommon.storage.get( storageKey );
-
+			storageData = $e.internal( 'document/elements/get-paste-data', { storageKey } );
+debugger;
 		let result = [];
 
 		// Paste on "Add Section" area.

@@ -22,10 +22,7 @@ export class Copy extends CommandBase {
 			return false;
 		}
 
-		elementorCommon.storage.set(
-			storageKey,
-			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
-		);
+		$e.internal( 'document/elements/set-copy-data', { storageKey, containers } );
 	}
 }
 

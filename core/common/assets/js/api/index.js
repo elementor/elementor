@@ -11,6 +11,7 @@ import Components from './core/components';
 import Data from './core/data.js';
 import HashCommands from './extras/hash-commands';
 import HookBreak from './modules/hook-break';
+import HookAgreement from './modules/hook-disable-default-agreement';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
@@ -51,6 +52,7 @@ export default class API {
 			ComponentModalBase,
 
 			HookBreak,
+			HookAgreement,
 
 			hookData,
 			hookUI,

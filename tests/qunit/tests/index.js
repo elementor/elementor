@@ -2,6 +2,7 @@ export const tests = () => {
 	require( './core/common/assets/js/api/modules/command-base.spec.js' );
 	require( './core/common/assets/js/api/modules/command-data.spec.js' );
 
+	require( './core/common/assets/js/api/core/agreements.spec.js' );
 	require( './core/common/assets/js/api/core/commands.spec.js' );
 	require( './core/common/assets/js/api/core/components.spec.js' );
 	require( './core/common/assets/js/api/core/data.spec.js' );

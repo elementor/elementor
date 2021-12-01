@@ -136,13 +136,23 @@ export default class CommandBase extends ArgsObject {
 
 			result = this.apply( this.args );
 		} catch ( e ) {
-			this.onCatchApply( e );
+			const isHookBreak = e instanceof $e.modules.HookBreak,
+				haveAgreements = e.args?.agreements;
+
+			if ( isHookBreak && ! haveAgreements ) {
+				this.onCatchApply( e );
+			}
 
 			// Catch 'Hook-Break' that comes from hooks base.
-			if ( e instanceof $e.modules.HookBreak ) {
-				// Bypass.
-				return false;
+			if ( isHookBreak ) {
+				// If have agreements, the initial command should be bypassed, and instead there new agreements.
+				if ( haveAgreements ) {
+					return this.runAfter( result );
+				}
 			}
+
+			// Bypass.
+			return false;
 		}
 
 		return this.runAfter( result );
@@ -240,7 +250,7 @@ export default class CommandBase extends ArgsObject {
 	 * @param [args={}]
 	 */
 	onBeforeApply( args = {} ) {
-		$e.hooks.runDataDependency( this.currentCommand, args );
+		return $e.hooks.runDataDependency( this.currentCommand, args );
 	}
 
 	/**

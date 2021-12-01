@@ -1,12 +1,15 @@
 import HooksBase from './base.js';
+import { Agreement } from 'elementor-api/modules/hooks/data';
 
 export default class Data extends HooksBase {
 	constructor( ... args ) {
 		super( ... args );
 
 		this.callbacks.dependency = {};
+		this.callbacks.agreement = {};
 
 		this.depth.dependency = {};
+		this.depth.agreement = {};
 	}
 
 	getType() {
@@ -15,6 +18,16 @@ export default class Data extends HooksBase {
 
 	runCallback( event, callback, args, result ) {
 		switch ( event ) {
+			case 'agreement': {
+				const agreement = callback.callback( args, result );
+
+				if ( agreement?.newAgreement ) {
+					args.agreementResult = agreement.newAgreement( args );
+				}
+
+				return agreement;
+			}
+
 			case 'dependency': {
 				// If callback returns false and its dependency, then 'Hook-Break'.
 				if ( ! callback.callback( args ) ) {

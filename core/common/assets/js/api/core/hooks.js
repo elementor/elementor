@@ -62,6 +62,18 @@ export default class Hooks {
 	 * @returns {{}} Created callback
 	 */
 	register( type, event, instance ) {
+		if ( 'agreement' === event ) {
+			const id = instance.getId();
+
+			if ( ! $e.commandsInternal.agreements().some( ( agreement ) => {
+				if ( agreement === id ) {
+					return true;
+				}
+			} ) ) {
+				throw new Error( `The agreement hook is forbidden for hook id: '${ id }'` );
+			}
+		}
+
 		return this.getType( type ).register( event, instance );
 	}
 
@@ -79,7 +91,7 @@ export default class Hooks {
 	 * @returns {boolean}
 	 */
 	run( type, event, command, args, result = undefined ) {
-		return this.getType( type ).run( event, command, args, result );
+		return this.getType( type )?.run( event, command, args, result );
 	}
 
 	/**
@@ -119,6 +131,17 @@ export default class Hooks {
 	 */
 	registerDataDependency( instance ) {
 		return this.register( 'data', 'dependency', instance );
+	}
+
+	/**
+	 * Function registerDataAgreement().
+	 *
+	 * @param {HookBase} instance
+	 *
+	 * @returns {{}}
+	 */
+	registerDataAgreement( instance ) {
+		return this.register( 'data', 'agreement', instance );
 	}
 
 	/**
@@ -202,6 +225,19 @@ export default class Hooks {
 	 */
 	runDataDependency( command, args ) {
 		return this.run( 'data', 'dependency', command, args );
+	}
+
+	/**
+	 * Function runDataAgreement().
+	 *
+	 * @param {string} command
+	 * @param {{}} args
+	 * @param {*} result
+	 *
+	 * @returns {boolean}
+	 */
+	runDataAgreement( command, args, result ) {
+		return this.run( 'data', 'agreement', command, args, result );
 	}
 
 	/**
