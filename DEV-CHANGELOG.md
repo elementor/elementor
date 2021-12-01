@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev14 - 2021-12-01
+* Fix: Dev Edition notice appears inside the Form Submission window [ED-4913] (#17067)
+
 #### 3.6.0-dev11 - 2021-11-26
 * Fix: Saving a template with a condition throws an error [ED-5661] (#17040)
 
@@ -487,35 +490,3 @@
 * Tweak - Updating the frontend eicons. (#15256)
 * Tweak: Kit-Library - button gray color [ED-3728] (#15356)
 * Tweak: Admin top bar experiment  turned on only on new sites [ED-3745] (#15360)
-
-#### 3.4.0-dev2 - 2021-06-15
-* Fix: Check runs in developer-edition branch [ARCH-7] (#15339)
-* Tweak: Kit-Library - Create fallback url [ED-3544] (#15340)
-* Fix: Kit-Library - Clear query params removes all the kits [ED-3723] (#15341)
-* Tweak: Kit-Library - Updated content and colors on Envato promotion [ED-3722] (#15343)
-
-#### 3.4.0-dev1 - 2021-06-14
-* Fix: Share button widget - The mobile alignment doesn't work on safari [ED-3609] (#15272)
-* Tweak: Change the admin top bar experiment status to Beta [ED-3606] (#15265)
-* Fix: Kit-Library - import not working [ED-3436] (#15280)
-* I/E: Change - Kit info is no longer related to default kit data (#15241)
-* Fix: Kit-Library - Page doc type [ED-3572] (#15239)
-* New: PHP Lint Util functions [ED-3622] (#15277)
-* Tweak:  Add "Recreate Kit" button in Elementor settings [ED-3074]  (#15004)
-* Tweak: Kit-Library - Add Spinner to apply button [ED-3611] (#15299)
-* Fix: Admin top bar doesn't work without Elementor Pro [ED-3661] (#15303)
-* Fix: search field in templates categories in wrong location [ED-3592] (#15301)
-* Fix: Admin Top Bar - Cancel the loading time of admin top bar [ED-3594] (#15285)
-* Fix: Kits - Prevent recreate kit when kit not exists [ED-2394] (#15224)
-* Fix: top bar experiment breaks location of elementor notices [ED-3605] (#15273)
-* Fix: My Elementor should open in a new tab [ED-3595] (#15269)
-* Tweak: Recreate Kit - Catch errors and show them [ED-3652] (#15305)
-* Tweak: Kit-Library - Changed back button behavior [ED-3618] (#15318)
-* Fix: Inline editing not working when the Optimized DOM experiment is on [ED-3081] (#15261)
-* Tweak: Kit-Library - Added Envato promotion [ED-3608] (#15326)
-* Tweak: Github - Update whitelist (#15323)
-* New: Introducing Kits Library - Create Entire Websites Faster Than Ever [ED-1807] (#15332)
-*  Fix: Publish beta workflow [ARCH-34] (#15333)
-* Tweak: Improved PHP Lint enforcement [ED-2901] (#15334)
-* Revert "Merge pull request #13912 from iNewLegend/ED-1334-custom-fonts-file-urls-are-stati" (#15331)
-* Fix: Utils - Return back the `replace-urls` filter [ED-3659] (#15338)
