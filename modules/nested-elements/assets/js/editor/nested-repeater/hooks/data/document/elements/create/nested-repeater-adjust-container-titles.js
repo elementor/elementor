@@ -1,5 +1,5 @@
 /**
- * For each nested repeater container item, adjust the container title,
+ * On each nested widget creation, for each nested repeater container item, adjust the container title,
  * according to the nested repeater title, the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
  * '_title' is used in navigator.
  */
