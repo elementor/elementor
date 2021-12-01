@@ -67,6 +67,18 @@ class Manager extends Module {
 
 	private $icons_map;
 
+	/**
+	 * Has Custom Breakpoints
+	 *
+	 * A flag that holds a cached value that indicates if there are active custom-breakpoints.
+	 *
+	 * @since 3.5.0
+	 * @access private
+	 *
+	 * @var boolean
+	 */
+	private $has_custom_breakpoints;
+
 	public function get_name() {
 		return 'breakpoints';
 	}
@@ -157,6 +169,10 @@ class Manager extends Module {
 	 * @return boolean
 	 */
 	public function has_custom_breakpoints() {
+		if ( isset( $this->has_custom_breakpoints ) ) {
+			return $this->has_custom_breakpoints;
+		}
+
 		$breakpoints = $this->get_active_breakpoints();
 
 		$additional_breakpoints = [
@@ -168,14 +184,20 @@ class Manager extends Module {
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
 			if ( in_array( $breakpoint_name, $additional_breakpoints, true ) ) {
+				$this->has_custom_breakpoints = true;
+
 				return true;
 			}
 
 			/** @var Breakpoint $breakpoint */
 			if ( $breakpoint->is_custom() ) {
+				$this->has_custom_breakpoints = true;
+
 				return true;
 			}
 		}
+
+		$this->has_custom_breakpoints = false;
 
 		return false;
 	}
@@ -241,6 +263,8 @@ class Manager extends Module {
 	}
 
 	public function refresh() {
+		unset( $this->has_custom_breakpoints );
+
 		$this->init_breakpoints();
 		$this->init_active_breakpoints();
 	}

@@ -93,6 +93,7 @@
 			defaultSettings = {
 				element: '',
 				items: '>',
+				horizontalThreshold: 0,
 				horizontalSensitivity: '10%',
 				axis: [ 'vertical', 'horizontal' ],
 				placeholder: true,
@@ -127,7 +128,7 @@
 			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
-		var checkHorizontal = function( offsetX, elementWidth ) {
+		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
 			var isPercentValue,
 				sensitivity;
 
@@ -136,6 +137,19 @@
 			}
 
 			if ( ! hasVerticalDetection() ) {
+				const threshold = settings.horizontalThreshold,
+					{ left, right } = currentElement.getBoundingClientRect();
+
+				// For cases when the event is actually dispatched on the parent element, but
+				// `currentElement` is the actual element that the offset should be calculated by.
+				if ( clientX - threshold <= left ) {
+					return 'left';
+				}
+
+				if ( clientX + threshold >= right ) {
+					return 'right';
+				}
+
 				return offsetX > elementWidth / 2 ? 'right' : 'left';
 			}
 
@@ -169,7 +183,7 @@
 
 			event = event.originalEvent;
 
-			currentSide = checkHorizontal( event.offsetX, elementWidth );
+			currentSide = checkHorizontal( event.offsetX, event.clientX, elementWidth );
 
 			if ( currentSide ) {
 				return;
@@ -193,7 +207,7 @@
 
 			// Fix placeholder placement for Container with `flex-direction: row`.
 			const $currentElement = $( currentElement ),
-				isRowContainer = $currentElement.parents( '.e-container--placeholder-row' ).length,
+				isRowContainer = $currentElement.parents( '.e-container--row' ).length,
 				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' );
 
 			if ( isRowContainer && ! isFirstInsert ) {

@@ -132,6 +132,11 @@ class Import_Images {
 
 		$filetype = wp_check_filetype( $filename );
 
+		// If the file type is not recognized by WordPress, exit here to avoid creation of an empty attachment document.
+		if ( ! $filetype['ext'] ) {
+			return false;
+		}
+
 		if ( 'svg' === $filetype['ext'] ) {
 			// In case that unfiltered-files upload is not enabled, SVG images should not be imported.
 			if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {

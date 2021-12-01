@@ -8,7 +8,7 @@
 	--height: auto;
 	--text-align: initial;
 	--margin: 0;
-	--padding: 0;
+	--padding: 10px;
 	--position: relative;
 	--z-index: auto;
 	--overflow: visible;
@@ -71,15 +71,17 @@
 		pointer-events: none; // Prevent the placeholder from blocking the drop area.
 	}
 
-	&.e-container--placeholder-row {
+	&.e-container--row {
 		& > .elementor-widget-placeholder {
 			position: relative;
+			z-index: $editor-layer; // To put it above the element overlay.
 			width: var( --size );
 			// To make sure that it doesn't push & break the layout when appearing.
 			margin-inline-start: var( --margin-start );
 			height: auto;
 			min-height: 100%;
 			animation-name: dnd-placeholder-widget-vertical;
+			animation-fill-mode: both;
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
@@ -88,12 +90,18 @@
 		}
 	}
 
-	&:not( .e-container--placeholder-row ) > .elementor-widget-placeholder {
+	&.e-container--column > .elementor-widget-placeholder {
 		height: var( --size );
 		// To make sure that it doesn't push & break the layout when appearing.
 		margin-block-start: var( --margin-start );
 		margin-block-end: var( --margin-end );
 		animation-name: dnd-placeholder-widget-horizontal;
+
+		// Hack to fix placeholder placement in Chrome when it's last (ED-5486).
+		&:nth-last-child( 2 ) {
+			margin-block-start: calc( 2 * var( --margin-start ) );
+			--margin-end: 0;
+		}
 	}
 
 	// Extracted from the inline CSS of `behaviors/sortable.js`.
@@ -182,16 +190,23 @@
 	}
 }
 
+@media ( max-width: $editor-screen-sm-max ) {
+	.e-container {
+		--width: 100%;
+		--flex-wrap: wrap;
+	}
+}
+
 @keyframes dnd-placeholder-widget-vertical {
 	0% {
 		transform-origin: 0 50%;
-		transform: scaleX( 0 );
+		transform: translateX( 50% ) scaleX( 0 );
 		opacity: 0;
 	}
 
 	100% {
 		transform-origin: 0 50%;
-		transform: scaleX( 1 );
+		transform: translateX( 50% ) scaleX( 1 );
 		opacity: .9;
 	}
 }

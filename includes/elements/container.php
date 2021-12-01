@@ -2,6 +2,7 @@
 namespace Elementor\Includes\Elements;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Element_Base;
 use Elementor\Embed;
 use Elementor\Group_Control_Background;
@@ -11,6 +12,7 @@ use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Flex_Container;
 use Elementor\Group_Control_Flex_Item;
 use Elementor\Plugin;
+use Elementor\Shapes;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -131,6 +133,8 @@ class Container extends Element_Base {
 				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
+		<div class="elementor-shape elementor-shape-top"></div>
+		<div class="elementor-shape elementor-shape-bottom"></div>
 		<?php
 	}
 
@@ -175,6 +179,38 @@ class Container extends Element_Base {
 	}
 
 	/**
+	 * Render the Container's shape divider.
+	 * TODO: Copied from `section.php`.
+	 *
+	 * Used to generate the shape dividers HTML.
+	 *
+	 * @param string $side - Shape divider side, used to set the shape key.
+	 *
+	 * @return void
+	 */
+	private function render_shape_divider( $side ) {
+		$settings = $this->get_active_settings();
+		$base_setting_key = "shape_divider_$side";
+		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
+		$shape_path = Shapes::get_shape_path( $settings[ $base_setting_key ], $negative );
+
+		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
+			return;
+		}
+		?>
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
+		// PHPCS - the variable $negative is getting a setting value with a strict structure.
+		echo var_export( $negative ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>">
+			<?php
+			// PHPCS - The file content is being read from a strict file path structure.
+			echo file_get_contents( $shape_path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			?>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Print safe HTML tag for the element based on the element settings.
 	 *
 	 * @return void
@@ -195,7 +231,8 @@ class Container extends Element_Base {
 	 * @return void
 	 */
 	public function before_render() {
-		$link = $this->get_settings( 'link' );
+		$settings = $this->get_settings_for_display();
+		$link = $settings['link'];
 
 		if ( ! empty( $link['url'] ) ) {
 			$this->add_link_attributes( '_wrapper', $link );
@@ -203,6 +240,16 @@ class Container extends Element_Base {
 
 		?><<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>><?php
 		$this->render_video_background();
+?>
+		<?php
+
+		if ( ! empty( $settings['shape_divider_top'] ) ) {
+			$this->render_shape_divider( 'top' );
+		}
+
+		if ( ! empty( $settings['shape_divider_bottom'] ) ) {
+			$this->render_shape_divider( 'bottom' );
+		}
 	}
 
 	/**
@@ -254,6 +301,8 @@ class Container extends Element_Base {
 			]
 		);
 
+		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
+
 		$this->add_responsive_control(
 			'width',
 			[
@@ -279,6 +328,13 @@ class Container extends Element_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
+				],
+				'min_affected_device' => [
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
 				],
 				'separator' => 'none',
 				// Use the default width from the kit as a placeholder.
@@ -838,6 +894,165 @@ class Container extends Element_Base {
 	}
 
 	/**
+	 * Register the Container's shape dividers controls.
+	 * TODO: Copied from `section.php`.
+	 *
+	 * @return void
+	 */
+	protected function register_shape_dividers_controls() {
+		$this->start_controls_section(
+			'section_shape_divider',
+			[
+				'label' => esc_html__( 'Shape Divider', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->start_controls_tabs( 'tabs_shape_dividers' );
+
+		$shapes_options = [
+			'' => esc_html__( 'None', 'elementor' ),
+		];
+
+		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
+			$shapes_options[ $shape_name ] = $shape_props['title'];
+		}
+
+		foreach ( [
+			'top' => esc_html__( 'Top', 'elementor' ),
+			'bottom' => esc_html__( 'Bottom', 'elementor' ),
+		] as $side => $side_label ) {
+			$base_control_key = "shape_divider_$side";
+
+			$this->start_controls_tab(
+				"tab_$base_control_key",
+				[
+					'label' => $side_label,
+				]
+			);
+
+			$this->add_control(
+				$base_control_key,
+				[
+					'label' => esc_html__( 'Type', 'elementor' ),
+					'type' => Controls_Manager::SELECT,
+					'options' => $shapes_options,
+					'render_type' => 'none',
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_color',
+				[
+					'label' => esc_html__( 'Color', 'elementor' ),
+					'type' => Controls_Manager::COLOR,
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side .elementor-shape-fill" => 'fill: {{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_width',
+				[
+					'label' => esc_html__( 'Width', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'default' => [
+						'unit' => '%',
+					],
+					'tablet_default' => [
+						'unit' => '%',
+					],
+					'mobile_default' => [
+						'unit' => '%',
+					],
+					'range' => [
+						'%' => [
+							'min' => 100,
+							'max' => 300,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'height_only', Shapes::FILTER_EXCLUDE ) ),
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'width: calc({{SIZE}}{{UNIT}} + 1.3px)',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				$base_control_key . '_height',
+				[
+					'label' => esc_html__( 'Height', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'max' => 500,
+						],
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'height: {{SIZE}}{{UNIT}};',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_flip',
+				[
+					'label' => esc_html__( 'Flip', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_flip' ) ),
+					],
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side svg" => 'transform: translateX(-50%) rotateY(180deg)',
+					],
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_negative',
+				[
+					'label' => esc_html__( 'Invert', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'frontend_available' => true,
+					'condition' => [
+						"shape_divider_$side" => array_keys( Shapes::filter_shapes( 'has_negative' ) ),
+					],
+					'render_type' => 'none',
+				]
+			);
+
+			$this->add_control(
+				$base_control_key . '_above_content',
+				[
+					'label' => esc_html__( 'Bring to Front', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-shape-$side" => 'z-index: 2; pointer-events: none',
+					],
+					'condition' => [
+						"shape_divider_$side!" => '',
+					],
+				]
+			);
+
+			$this->end_controls_tab();
+		}
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+	}
+	/**
 	 * Register the Container's style tab.
 	 *
 	 * @return void
@@ -848,6 +1063,8 @@ class Container extends Element_Base {
 		$this->register_background_overlay_controls();
 
 		$this->register_border_controls();
+
+		$this->register_shape_dividers_controls();
 	}
 
 	/**
@@ -889,13 +1106,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
-				'default' => [
-					'unit' => 'px',
-					'top' => 10,
-					'right' => 10,
-					'bottom' => 10,
-					'left' => 10,
-				],
+				'placeholder' => '10',
 				'selectors' => [
 					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],

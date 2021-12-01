@@ -17,8 +17,24 @@ export class SetDirectionMode extends After {
 	}
 
 	apply( args ) {
-		// Get the direction mode from the view & set the state accordingly.
-		const direction = args.container?.view?.getCurrentUiStates?.().directionMode;
+		SetDirectionMode.set( args.container );
+	}
+
+	/**
+	 * Get the direction mode from the Container's view & set the UI state accordingly.
+	 *
+	 * @param {Container} container
+	 *
+	 * @return {void}
+	 */
+	static set( container ) {
+		// Determine if the direction mode should be set by the parent.
+		const useParent = ( 'panel/editor/advanced' === $e.routes.getCurrent( 'panel' ) );
+
+		container = ( useParent ) ? container.parent : container;
+
+		const { view } = container.renderer,
+			direction = view.getCurrentUiStates?.().directionMode;
 
 		if ( direction ) {
 			$e.uiStates.set( 'document/direction-mode', direction );

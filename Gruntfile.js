@@ -88,6 +88,8 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'css_templates', () => {
 		grunt.task.run( 'css_templates_proxy:templates' );
 
+		const responsiveWidgetsList = widgetsCss.getResponsiveWidgetsList();
+
 		grunt.config( 'sass.dist', {
 			files: [ {
 				expand: true,
@@ -99,6 +101,7 @@ module.exports = function( grunt ) {
 					'frontend-lite-rtl.scss',
 					'frontend-legacy.scss',
 					'frontend-legacy-rtl.scss',
+					...responsiveWidgetsList,
 				],
 				dest: 'assets/css/templates',
 				ext: '.css',
