@@ -76,8 +76,6 @@ export default function ImportComplete() {
 			/>
 		);
 
-	console.log( 'is failed plugins?: ', context.data );
-
 	return (
 		<Layout type="import" footer={ getFooter() }>
 			<WizardStep

@@ -13,6 +13,8 @@ import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
 
+const PLUGINS_INSTALLATION_LIST_MAX_ITEMS = 4;
+
 export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
@@ -47,7 +49,15 @@ export default function ImportPluginsActivation() {
 		} else {
 			const nextPluginToInstallIndex = readyPlugins.length;
 
-			setPluginsOnProcess( ( prevState ) => [ ...prevState, context.data.plugins[ nextPluginToInstallIndex ] ] );
+			setPluginsOnProcess( ( prevState ) => {
+				const currentPluginsOnProcess = [ ...prevState, context.data.plugins[ nextPluginToInstallIndex ] ];
+
+				if ( currentPluginsOnProcess.length > PLUGINS_INSTALLATION_LIST_MAX_ITEMS ) {
+					currentPluginsOnProcess.shift();
+				}
+
+				return currentPluginsOnProcess;
+			} );
 		}
 	}, [ readyPlugins ] );
 

@@ -7,12 +7,20 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Text from 'elementor-app/ui/atoms/text';
 
 function PluginStatusItem( { name, slug, status, onReady } ) {
+	console.log( 'status', status );
 	const [ actionStatus, setActionStatus ] = useState( '' ),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins();
 
 	// Activating or installing the plugin, depending on the current plugin status.
 	useEffect( () => {
 		const action = 'inactive' === status ? 'activate' : 'install';
+
+		// TODO: temp - remove!
+		if ( 'media-cleaner/media-cleaner' === slug ) {
+			//slug = 'medsgfdsfd/dsfsdfsdf';
+		}
+
+		//slug = 'medsgfdsfd/dsfsdfsdf';
 
 		pluginsActions[ action ]( slug );
 	}, [] );

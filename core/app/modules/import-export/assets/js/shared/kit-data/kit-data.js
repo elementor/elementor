@@ -114,8 +114,6 @@ export default function KitData( props ) {
 				.filter( ( row ) => row );
 		};
 
-	console.log( 'getContent', getContent() );
-
 	return (
 		<DataTable
 			className="e-app-export-complete-kit-data"
