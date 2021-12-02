@@ -1,6 +1,8 @@
-import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
-import List from 'elementor-app/ui/molecules/list';
+import Icon from 'elementor-app/ui/atoms/icon';
+import InlineLink from 'elementor-app/ui/molecules/inline-link';
+
+import DataTable from 'elementor-app/molecules/data-table';
 
 import './kit-data.scss';
 
@@ -62,43 +64,65 @@ export default function KitData( props ) {
 				.entries( mergedContent )
 				.map( ( item ) => getSummaryTitle( 'content', item[ 0 ], item[ 1 ].length ) );
 		},
-		kitContent = [
-			{
-				title: __( 'Templates:', 'elementor' ),
-				data: getTemplates(),
-			},
-			{
-				title: __( 'Site Settings:', 'elementor' ),
-				data: getSiteSettings(),
-			},
-			{
-				title: __( 'Content:', 'elementor' ),
-				data: getContent(),
-			},
-		];
+		getRequiredPlugins = () => {
+			return kitData.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
+		},
+		headers = [
+			__( 'Site Area', 'elementor' ),
+			__( 'Included', 'elementor' ),
+		],
+		getRowsData = () => {
+			const rowsData = [
+				{
+					siteArea: __( 'Elementor Templates', 'elementor' ),
+					link: '',
+					included: getTemplates(),
+				},
+				{
+					siteArea: __( 'Site Settings', 'elementor' ),
+					link: '',
+					included: getSiteSettings(),
+				},
+				{
+					siteArea: __( 'Content', 'elementor' ),
+					link: '',
+					included: getContent(),
+				},
+				{
+					siteArea: __( 'Required Plugins', 'elementor' ),
+					link: '',
+					included: getRequiredPlugins(),
+				},
+			];
+
+			return rowsData
+				.map( ( { siteArea, included } ) => {
+					if ( ! included.length ) {
+						return;
+					}
+
+					const SiteArea = () => (
+						<InlineLink url="" color="secondary" underline="none">
+							<Text className="e-app-export-complete-kit-data__site-area">
+								{ siteArea } <Icon className="eicon-editor-external-link" />
+							</Text>
+						</InlineLink>
+					);
+
+					return [ <SiteArea key={ siteArea } />, included.filter( ( value ) => value ).join( ' | ' ) ];
+				} )
+				.filter( ( row ) => row );
+		};
+
+	console.log( 'getContent', getContent() );
 
 	return (
-		<>
-			<Heading variant="h6" tag="h3" className="e-app-export-complete__kit-content-title">
-				{ __( 'This Template Kit includes:', 'elementor' ) }
-			</Heading>
-
-			<List className="e-app-export-complete-kit-data-list">
-				{
-					kitContent.map( ( item, index ) => {
-						if ( ! item.data.length ) {
-							return;
-						}
-
-						return (
-							<List.Item key={ index } className="e-app-export-complete-kit-data-list__item">
-								<Text tag="strong" variant="sm"><strong>{ item.title }</strong></Text> <Text tag="span" variant="sm">{ item.data.filter( ( value ) => value ).join( ' | ' ) }</Text>
-							</List.Item>
-						);
-					} )
-				}
-			</List>
-		</>
+		<DataTable
+			className="e-app-export-complete-kit-data"
+			headers={ headers }
+			rows={ getRowsData() }
+			layout={ [ 1, 3 ] }
+		/>
 	);
 }
 

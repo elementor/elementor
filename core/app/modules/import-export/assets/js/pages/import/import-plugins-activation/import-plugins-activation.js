@@ -21,7 +21,6 @@ export default function ImportPluginsActivation() {
 		[ failedPlugins, setFailedPlugins ] = useState( [] ),
 		[ errorType, setErrorType ] = useState( '' ),
 		onPluginStatusItemReady = useCallback( ( pluginName, processStatus ) => {
-			console.log( 'pluginName, processStatus', pluginName, processStatus );
 			// Saving the failed plugins on a separate list to display them at the end of the process.
 			if ( 'failed' === processStatus ) {
 				setFailedPlugins( ( prevState ) => [ ...prevState, pluginName ] );
@@ -42,7 +41,6 @@ export default function ImportPluginsActivation() {
 	useEffect( () => {
 		if ( context.data.plugins.length === readyPlugins.length ) {
 			// When all plugins are installed and activated.
-			console.log( 'saving failed plugins: ', failedPlugins );
 			context.dispatch( { type: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
 
 			navigate( '/import/process' );

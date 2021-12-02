@@ -25,7 +25,9 @@ export default function Table( props ) {
 	classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
 
 	useEffect( () => {
-		props.onSelect( Object.values( selected ) );
+		if ( props.onSelect ) {
+			props.onSelect( Object.values( selected ) );
+		}
 	}, [ selected ] );
 
 	return (

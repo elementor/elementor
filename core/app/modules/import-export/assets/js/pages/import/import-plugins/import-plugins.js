@@ -19,18 +19,23 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import usePlugins from '../../../hooks/use-plugins';
 
 import './import-plugins.scss';
+
+const PLUGINS_TO_IMPORT_KEY = 'toImport',
+	EXISTING_PLUGINS_KEY = 'existing',
+	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
+
 export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
+		kitPlugins = context.data.uploadedData?.manifest?.plugins,
 		getPluginsInitialData = () => ( {
 			toImport: [],
 			existing: [],
+			minVersionMissing: [],
 			proPluginData: null,
-			isMinVersionMissing: false,
 		} ),
 		[ plugins, setPlugins ] = useState( getPluginsInitialData() ),
-		kitPlugins = context.data.uploadedData?.manifest?.plugins,
 		getIsMinVersionMissing = ( kitPluginVersion, installedPluginVersion ) => {
 			const kitVersionValues = kitPluginVersion.split( '.' ),
 				installedVersionValues = installedPluginVersion.split( '.' );
@@ -38,30 +43,30 @@ export default function ImportPlugins() {
 			return installedVersionValues.some( ( value, index ) => value < kitVersionValues[ index ] );
 		},
 		getClassifiedPlugins = () => {
-			const pluginsDataForActions = getPluginsInitialData(),
+			const pluginsData = getPluginsInitialData(),
 				installedPluginsMap = arrayToObjectByKey( pluginsState.data, 'name' );
 
 			kitPlugins.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
-					actionType = 'active' === installedPluginData?.status ? 'existing' : 'toImport',
+					actionType = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : PLUGINS_TO_IMPORT_KEY,
 					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
 
 				// Verifying that the current installed plugin version is not older than the kit plugin version.
 				if ( installedPluginData && getIsMinVersionMissing( plugin.version, installedPluginData.version ) ) {
-					pluginsDataForActions.isMinVersionMissing = true;
+					pluginsData.minVersionMissing.push( plugin );
 				}
 
-				// In case that the Pro is inactive or not installed, it should be displayed separately.
-				if ( 'Elementor Pro' === pluginData.name && 'toImport' === actionType ) {
-					pluginsDataForActions.proPluginData = pluginData;
+				// In case that the Pro is inactive or not installed, it should be displayed separately and therefore not included.
+				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && PLUGINS_TO_IMPORT_KEY === actionType ) {
+					pluginsData.proPluginData = pluginData;
 
 					return;
 				}
 
-				pluginsDataForActions[ actionType ].push( pluginData );
+				pluginsData[ actionType ].push( pluginData );
 			} );
 
-			return pluginsDataForActions;
+			return pluginsData;
 		},
 		saveRequiredPlugins = ( classifiedPluginsData ) => {
 			const { toImport, proPluginData } = classifiedPluginsData,
@@ -109,7 +114,7 @@ export default function ImportPlugins() {
 				/>
 
 				{
-					plugins.isMinVersionMissing &&
+					! ! plugins.minVersionMissing.length &&
 					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
 						{ __( 'Please update your plugins before you importing the kit.', 'elementor' ) } <InlineLink>{ __( 'Show me how', 'elementor' ) }</InlineLink>
 					</Notice>

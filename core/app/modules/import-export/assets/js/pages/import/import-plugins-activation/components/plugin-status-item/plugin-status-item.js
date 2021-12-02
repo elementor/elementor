@@ -14,12 +14,6 @@ function PluginStatusItem( { name, slug, status, onReady } ) {
 	useEffect( () => {
 		const action = 'inactive' === status ? 'activate' : 'install';
 
-		// TODO: temp - remove!
-		if ( 'media-cleaner/media-cleaner' === slug ) {
-			slug = 'medsgfdsfd/dsfsdfsdf';
-		}
-		slug = 'medsgfdsfd/dsfsdfsdf';
-
 		pluginsActions[ action ]( slug );
 	}, [] );
 
