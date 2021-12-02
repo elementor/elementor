@@ -134,22 +134,12 @@ export default class Widgets extends FavoriteType {
 						title: this.isFavorite( widget ) ?
 							__( 'Remove from Favorites', 'elementor' ) :
 							__( 'Add to Favorites', 'elementor' ),
-						callback: ( modal, action ) => {
-							// Toggle favorite state
+						callback: () => {
 							this.toggle( widget );
 
-							// Replace context-menu button with "Added" after the widget became a favorite
 							if ( this.isFavorite( widget ) ) {
-								// `setTimeout` is used because for some reason when a context-menu button is clicked,
-								// the modal `hide` method is invoked by other dialog usages. Therefore, we wait till it
-								// happens and then show it again.
-								setTimeout( () => {
-									modal.show();
-									modal.updateActionTitle( {
-										...action,
-										title: () => __( 'Added', 'elementor' ),
-									} );
-									action.$item.on( 'click', () => modal.getModal().hide() );
+								elementor.notifications.showToast( {
+									message: __( 'Added', 'elementor' ),
 								} );
 							}
 						},

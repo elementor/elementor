@@ -7,7 +7,7 @@ exports.WpAdminPage = class wpAdminPage {
 	}
 
 	async goto() {
-		await this.page.goto( '/wp-admin' );
+		await this.page.goto( `/wp-admin` );
 	}
 
 	async login() {
@@ -21,6 +21,7 @@ exports.WpAdminPage = class wpAdminPage {
 
 		await this.page.waitForSelector( 'text=Log In' );
 		await this.page.fill( 'input[name="log"]', 'admin' );
+		await this.page.waitForTimeout( 500 );
 		await this.page.fill( 'input[name="pwd"]', 'password' );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
