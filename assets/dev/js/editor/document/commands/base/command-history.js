@@ -42,7 +42,8 @@ export default class CommandHistory extends CommandBase {
 	 * @returns {boolean}
 	 */
 	isHistoryActive() {
-		return elementor.documents.getCurrent().history.getActive();
+		return elementor.documents.getCurrent().history.getActive() &&
+			false !== $e.commands.getCurrentFirstTraceArgs().options?.useHistory;
 	}
 
 	onBeforeRun( args ) {
