@@ -6,21 +6,20 @@ exports.Widgets = class Widgets {
 	}
 
 	async add( widgetTitle ) {
-		const openPanelElementContextMenu = async () => {
-			await this.page.click( `.elementor-element >> :text("${ widgetTitle }")`, { button: 'right' } );
-			await this.page.waitForSelector( '.elementor-context-menu' );
-		};
+		const contextMenuElement = '.elementor-context-menu',
+			openPanelElementContextMenu = async () => {
+				await this.page.click( `.elementor-element >> :text("${ widgetTitle }")`, { button: 'right' } );
+				await this.page.waitForSelector( '.elementor-context-menu' );
+			};
 		await openPanelElementContextMenu();
-
-		if ( await this.page.$( ':text("Remove from Favorites")' ) ) {
-			await this.page.click( ':text("Remove from Favorites")' );
-			await openPanelElementContextMenu();
-		}
-
-		this.page.click( ':text("Add to Favorites")' );
+		await this.page.click( `${ contextMenuElement } >> :text("Add to Favorites")` );
 
 		// Validate that an indication toast appears
 		const notifications = new Notifications( this.page );
 		await notifications.waitForToast( 'Added' );
+
+		// Cleanup
+		await openPanelElementContextMenu();
+		await this.page.click( `${ contextMenuElement } >> :text("Remove from Favorites")` );
 	}
 };
