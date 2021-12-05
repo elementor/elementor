@@ -1050,9 +1050,6 @@ export default class EditorBase extends Marionette.Application {
 						} );
 					}
 
-					this.cacheLoaded = true;
-					this.trigger( 'widget:cache:load' );
-
 					resolve();
 				},
 			} );
@@ -1073,7 +1070,7 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
-	onStart() {
+	async onStart() {
 		this.config = this.getConfig();
 
 		Backbone.Radio.DEBUG = false;
@@ -1090,6 +1087,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.registerElements();
 
+		await this.requestWidgetsConfig();
+
 		this.initComponents();
 
 		if ( ! this.checkEnvCompatibility() ) {
@@ -1097,8 +1096,6 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		this.initPreview();
-
-		this.requestWidgetsConfig();
 
 		this.channels.dataEditMode.reply( 'activeMode', 'edit' );
 
