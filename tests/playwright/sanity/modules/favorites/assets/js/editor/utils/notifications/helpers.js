@@ -1,4 +1,4 @@
-exports.Notifications = class Notifications {
+module.exports = class {
 	constructor( page ) {
 		this.page = page;
 	}

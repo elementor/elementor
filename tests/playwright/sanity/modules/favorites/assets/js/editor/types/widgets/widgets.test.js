@@ -1,10 +1,10 @@
-const { test, expect, chromium } = require( '@playwright/test' );
+const { test, expect } = require( '@playwright/test' );
 const { WpAdminPage } = require( '../../../../../../../../pages/wp-admin-page' );
 const { EditorPage } = require( '../../../../../../../../pages/editor-page' );
-const { Widgets } = require( '../../../../../../../../assets/modules/favorites/widgets' );
+const FavoriteWidgetsHelper = require( './helpers' );
+const NotificationsHelpers = require( '../../utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
-
 	test.only( 'Add favorite', async ( { page } ) => {
 		const wpAdmin = new WpAdminPage( page );
 
@@ -17,7 +17,18 @@ test.describe( 'Favorite widgets', () => {
 		const editor = new EditorPage( page );
 		await editor.ensurePanelLoaded();
 
-		const favoriteWidgets = new Widgets( page );
-		await favoriteWidgets.add( 'Button' );
+		const favoriteToAdd = 'Button';
+
+		const favoriteWidgets = new FavoriteWidgetsHelper( page );
+		await favoriteWidgets.add( favoriteToAdd );
+
+		// Validate that an indication toast appears
+		const notifications = new NotificationsHelpers( page );
+		await notifications.waitForToast( 'Added' );
+
+		await expect( page.locator( `#elementor-panel-category-favorites >> text=${ favoriteToAdd }` ) )
+			.toBeVisible();
+
+		await favoriteWidgets.remove( favoriteToAdd );
 	} );
 } );
