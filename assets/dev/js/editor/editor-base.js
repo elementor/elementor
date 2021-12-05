@@ -1572,7 +1572,7 @@ export default class EditorBase extends Marionette.Application {
 	registerElementType( element ) {
 		// Validate instanceOf `element`.
 		if ( ! ( element instanceof ElementBase ) ) {
-				throw new TypeError( 'Elementor: The first argument must be an instance of ElementBase.' );
+			throw new TypeError( 'Elementor: The first argument must be an instance of ElementBase.' );
 		}
 
 		const index = element.getTypeIndex();
