@@ -110,7 +110,7 @@ module.exports = elementorModules.Module.extend( {
 			return;
 		}
 
-		action.callback( this, action );
+		action.callback();
 
 		this.getModal().hide();
 	},

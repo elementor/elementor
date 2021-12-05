@@ -7,7 +7,7 @@ exports.WpAdminPage = class wpAdminPage {
 	}
 
 	async goto() {
-		await this.page.goto( `/wp-admin` );
+		await this.page.goto( '/wp-admin' );
 	}
 
 	async login() {

@@ -36,7 +36,7 @@ class Controller extends Controller_Base {
 	}
 
 	public function create_item_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );;
+		return current_user_can( 'edit_posts' );
 	}
 
 	public function delete_item_permissions_check( $request ) {
