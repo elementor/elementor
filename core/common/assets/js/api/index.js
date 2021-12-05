@@ -14,6 +14,7 @@ import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
+import Store from './core/store';
 import UiStates from './core/ui-states';
 
 import * as hookData from './modules/hooks/data/';
@@ -37,6 +38,7 @@ export default class API {
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 		this.data = new Data();
+		this.store = new Store();
 		this.uiStates = new UiStates();
 
 		this.modules = {

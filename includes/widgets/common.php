@@ -216,7 +216,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -354,9 +353,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
@@ -377,6 +373,9 @@ class Widget_Common extends Widget_Base {
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
 					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+					],
 				]
 			);
 
@@ -390,9 +389,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -415,9 +411,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -474,16 +467,13 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
@@ -503,19 +493,16 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
@@ -561,9 +548,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}!" => '',
@@ -587,9 +571,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}" => '',
@@ -612,9 +593,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 2,
 							'step' => 0.1,
 						],
-					],
-					'default' => [
-						'size' => 1,
 					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
@@ -652,9 +630,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
@@ -675,9 +650,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
@@ -1337,6 +1309,12 @@ class Widget_Common extends Widget_Base {
 					'_element_width!' => '',
 					'_position' => '',
 				],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}!' => '',
+						'_position' => '',
+					],
+				] ),
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],

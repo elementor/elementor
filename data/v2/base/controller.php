@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Data\V2\Base;
 
+use Elementor\Data\V2\Base\Exceptions\WP_Error_Exception;
 use Elementor\Data\V2\Manager;
 use WP_REST_Controller;
 
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * TODO: Utilize 'WP_REST_Controller' as much as possible.
  */
 abstract class Controller extends WP_REST_Controller {
+
 	/**
 	 * Loaded endpoint(s).
 	 *
@@ -52,35 +54,6 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Controller constructor.
-	 *
-	 * Register endpoints on 'rest_api_init'.
-	 */
-	public function __construct() {
-		$this->namespace = static::get_default_namespace() . '/v' . static::get_default_version();
-		$this->rest_base = $this->get_name();
-
-		add_action( 'rest_api_init', function () {
-			$this->register(); // Because 'register' is protected.
-		} );
-
-		/**
-		 * Since all actions were removed for custom internal REST server.
-		 * Re-add the actions.
-		 */
-		add_action( 'elementor_rest_api_before_init', function () {
-			add_action( 'rest_api_init', function() {
-				$this->register();
-			} );
-		} );
-
-		$parent_name = $this->get_parent_name();
-		if ( $parent_name ) {
-			$this->act_as_sub_controller( $parent_name );
-		}
-	}
-
-	/**
 	 * Get controller name.
 	 *
 	 * @return string
@@ -90,7 +63,12 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * Register endpoints.
 	 */
-	public function register_endpoints() {}
+	public function register_endpoints() {
+	}
+
+	public function register_routes() {
+		_doing_it_wrong( 'Elementor\Data\V2\Controller::register_routes', sprintf( "Method '%s' deprecated. use `register_endpoints()`.", __METHOD__ ), '3.5.0' );
+	}
 
 	/**
 	 * Get parent controller name.
@@ -183,7 +161,9 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get items args for specific endpoint.
+	 * Get items args of index endpoint.
+	 *
+	 * Is method is used when `get_collection_params()` is not enough, and need of knowing the methods is required.
 	 *
 	 * @param string $methods
 	 *
@@ -198,29 +178,90 @@ abstract class Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get item args of index endpoint.
+	 *
+	 * @param string $methods
+	 *
+	 * @return array
+	 */
+	public function get_item_args( $methods ) {
+		return [];
+	}
+
+	/**
 	 * Get permission callback.
 	 *
 	 * Default controller permission callback.
 	 * By default endpoint will inherit the permission callback from the controller.
-	 * By default permission is `current_user_can( 'administrator' );`.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return bool
 	 */
 	public function get_permission_callback( $request ) {
+		$is_multi = (bool) $request->get_param( 'is_multi' );
+
+		$result = false;
+
 		// The function is public since endpoint need to access it.
+		// Utilize 'WP_REST_Controller' get_permission_check methods.
 		switch ( $request->get_method() ) {
 			case 'GET':
+				$result = $is_multi ? $this->get_items_permissions_check( $request ) : $this->get_item_permissions_check( $request );
+				break;
 			case 'POST':
+				$result = $is_multi ? $this->create_items_permissions_check( $request ) : $this->create_item_permissions_check( $request );
+				break;
 			case 'UPDATE':
 			case 'PUT':
-			case 'DELETE':
 			case 'PATCH':
-				return current_user_can( 'administrator' );
+				$result = $is_multi ? $this->update_items_permissions_check( $request ) : $this->update_item_permissions_check( $request );
+				break;
+
+			case 'DELETE':
+				$result = $is_multi ? $this->delete_items_permissions_check( $request ) : $this->delete_item_permissions_check( $request );
+				break;
 		}
 
-		return false;
+		if ( $result instanceof \WP_Error ) {
+			throw new WP_Error_Exception( $result );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Checks if a given request has access to create items.
+	 **
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to create items, WP_Error object otherwise.
+	 */
+	public function create_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+	}
+
+	/**
+	 * Checks if a given request has access to update items.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to update the item, WP_Error object otherwise.
+	 */
+	public function update_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+	}
+
+	/**
+	 * Checks if a given request has access to delete items.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|\WP_Error True if the request has access to delete the item, WP_Error object otherwise.
+	 */
+	public function delete_items_permissions_check( $request ) {
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	public function get_items( $request ) {
@@ -307,6 +348,7 @@ abstract class Controller extends WP_REST_Controller {
 	protected function register_index_endpoint() {
 		if ( ! $this->parent ) {
 			$this->register_endpoint( new Endpoint\Index( $this ) );
+
 			return;
 		}
 
@@ -405,5 +447,34 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		$this->parent->sub_controllers [] = $this;
+	}
+
+	/**
+	 * Controller constructor.
+	 *
+	 * Register endpoints on 'rest_api_init'.
+	 */
+	public function __construct() {
+		$this->namespace = static::get_default_namespace() . '/v' . static::get_default_version();
+		$this->rest_base = $this->get_name();
+
+		add_action( 'rest_api_init', function () {
+			$this->register(); // Because 'register' is protected.
+		} );
+
+		/**
+		 * Since all actions were removed for custom internal REST server.
+		 * Re-add the actions.
+		 */
+		add_action( 'elementor_rest_api_before_init', function () {
+			add_action( 'rest_api_init', function () {
+				$this->register();
+			} );
+		} );
+
+		$parent_name = $this->get_parent_name();
+		if ( $parent_name ) {
+			$this->act_as_sub_controller( $parent_name );
+		}
 	}
 }

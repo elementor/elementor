@@ -13,8 +13,8 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Te
 	public $endpoints;
 
 	public function register_endpoints() {
-		$this->register_endpoint( new Endpoint( $this ) );
-		$this->register_endpoint( new Endpoint( $this ) );
+		$this->register_endpoint( $this->get_new_wrapped_endpoint() );
+		$this->register_endpoint( $this->get_new_wrapped_endpoint() );
 	}
 
 	public function get_items( $request ) {
@@ -27,5 +27,11 @@ class Controller extends \Elementor\Tests\Phpunit\Elementor\Data\V2\Base\Mock\Te
 
 	protected function register_index_endpoint() {
 		$this->register_endpoint( new Index\AllChildren( $this ) );
+	}
+
+	private function get_new_wrapped_endpoint() {
+		$endpoint = new Endpoint( $this );
+		$endpoint->set_test_data( 'get_items', rand_long_str( 5 ) );
+		return $endpoint;
 	}
 }
