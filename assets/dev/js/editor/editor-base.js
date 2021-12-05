@@ -1087,9 +1087,9 @@ export default class EditorBase extends Marionette.Application {
 
 		this.registerElements();
 
-		await this.requestWidgetsConfig();
-
 		this.initComponents();
+
+		await this.requestWidgetsConfig();
 
 		if ( ! this.checkEnvCompatibility() ) {
 			this.onEnvNotCompatible();
