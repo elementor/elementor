@@ -1,4 +1,5 @@
 import CommandHistory from 'elementor-document/commands/base/command-history';
+import ElementsHelper from '../../elements/helper';
 
 jQuery( () => {
 	QUnit.module( 'File: assets/dev/js/editor/document/commands/base/command-history.js', () => {
@@ -12,6 +13,32 @@ jQuery( () => {
 					},
 					new Error( 'CommandHistory.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
 				);
+			} );
+
+			QUnit.only( 'isHistoryActive(): `useHistory` is `false`', async ( assert ) => {
+				await $e.run( 'document/elements/create', {
+					container: ElementsHelper.createSection(),
+					model: {
+						elType: 'widget',
+						widgetType: 'button',
+					},
+					options: {
+						useHistory: false,
+					},
+					onBefore: () => {
+						const fakeHistory = class extends CommandHistory {
+								// eslint-disable-next-line no-unused-vars
+								getHistory( args ) {
+									return true;
+								}
+							},
+							instance = new fakeHistory( {} );
+
+						assert.false(
+							instance.isHistoryActive()
+						);
+					},
+				} );
 			} );
 		} );
 
