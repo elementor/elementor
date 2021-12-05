@@ -1024,31 +1024,38 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	requestWidgetsConfig() {
-		const excludeWidgets = {};
+		return new Promise( ( resolve ) => {
+			const excludeWidgets = {};
 
-		jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
-			if ( widgetConfig.controls ) {
-				excludeWidgets[ widgetName ] = true;
-			}
-		} );
-
-		elementorCommon.ajax.addRequest( 'get_widgets_config', {
-			data: {
-				exclude: excludeWidgets,
-			},
-			success: ( data ) => {
-				this.addWidgetsCache( data );
-
-				if ( this.loaded ) {
-					this.kitManager.renderGlobalsDefaultCSS();
-
-					$e.internal( 'panel/state-ready' );
-				} else {
-					this.once( 'panel:init', () => {
-						$e.internal( 'panel/state-ready' );
-					} );
+			jQuery.each( this.widgetsCache, ( widgetName, widgetConfig ) => {
+				if ( widgetConfig.controls ) {
+					excludeWidgets[ widgetName ] = true;
 				}
-			},
+			} );
+
+			elementorCommon.ajax.addRequest( 'get_widgets_config', {
+				data: {
+					exclude: excludeWidgets,
+				},
+				success: ( data ) => {
+					this.addWidgetsCache( data );
+
+					if ( this.loaded ) {
+						this.kitManager.renderGlobalsDefaultCSS();
+
+						$e.internal( 'panel/state-ready' );
+					} else {
+						this.once( 'panel:init', () => {
+							$e.internal( 'panel/state-ready' );
+						} );
+					}
+
+					this.cacheLoaded = true;
+					this.trigger( 'widget:cache:load' );
+
+					resolve();
+				},
+			} );
 		} );
 	}
 

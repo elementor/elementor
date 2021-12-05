@@ -1,8 +1,19 @@
 import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
 
 export class AttachPreview extends CommandInternalBaseBase {
-	apply() {
+	async apply() {
 		const document = elementor.documents.getCurrent();
+
+		if ( ! elementor.cacheLoaded ) {
+			// Handles issue with nested repeaters controls empty, wait for cache to load before loading the preview.
+			const waitForCache = () => {
+				return new Promise( ( resolve ) => {
+					elementor.once( 'widget:cache:load', () => resolve() );
+				} );
+			};
+
+			await waitForCache();
+		}
 
 		return $e.data.get( 'globals/index' )
 			.then( () => {
