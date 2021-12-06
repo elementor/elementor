@@ -173,4 +173,3 @@ jobs:
           SLACK_CHANNELS: ${{ secrets.SLACK_CHANNELS }}
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/slack-notify.sh"
-
