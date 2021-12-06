@@ -1,7 +1,7 @@
 import CommandInternalBaseBase from 'elementor-api/modules/command-internal-base';
 
 export class AttachPreview extends CommandInternalBaseBase {
-	async apply() {
+	apply() {
 		const document = elementor.documents.getCurrent();
 
 		return $e.data.get( 'globals/index' )
