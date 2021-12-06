@@ -3,7 +3,7 @@ import Base from '../base';
 /**
  * Hook responsible for:
  * a. Create container element for each created repeater item.
- * b. Set setting  `_title` for the new container. 
+ * b. Set setting `_title` for the new container. 
  * c. Update`title` for new created repeater item.
  */
 export class NestedRepeaterCreateContainer extends Base {
