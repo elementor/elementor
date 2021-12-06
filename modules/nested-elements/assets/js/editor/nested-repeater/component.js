@@ -1,7 +1,14 @@
 import * as hooks from './hooks/';
 import * as commands from './commands/';
+import RepeaterControl from './controls/repeater';
 
 export default class Component extends $e.modules.ComponentBase {
+	registerAPI() {
+		super.registerAPI();
+
+		elementor.addControlView( 'nested-elements-repeater', RepeaterControl );
+	}
+
 	getNamespace() {
 		return 'nested-elements/nested-repeater';
 	}
