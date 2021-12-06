@@ -16,6 +16,9 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Sync developer-edition branch
         env:
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}
