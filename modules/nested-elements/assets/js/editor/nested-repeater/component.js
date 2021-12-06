@@ -23,6 +23,11 @@ export default class Component extends $e.modules.ComponentBase {
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			settings,
+			options: {
+				external: true,
+			},
 		} );
+
+		return settings._title;
 	}
 }

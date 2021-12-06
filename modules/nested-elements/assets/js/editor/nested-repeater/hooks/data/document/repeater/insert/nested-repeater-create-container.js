@@ -12,7 +12,7 @@ export class NestedRepeaterCreateContainer extends Base {
 		return 'document/repeater/insert';
 	}
 
-	apply( args ) {
+	apply( args, createdRepeaterItemModel ) {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
@@ -24,12 +24,26 @@ export class NestedRepeaterCreateContainer extends Base {
 					options: {
 						edit: false, // Not losing focus.
 					},
-				} );
+				} ),
+				// Update the `_title` setting.
+				newTitle = $e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
+					newContainer,
+					container.repeaters[ args.name ].children.length,
+				),
+				newRepeaterItemContainer = newContainer.parent.repeaters[ args.name ].children.find(
+					( item ) => item.id === createdRepeaterItemModel.get( '_id' )
+				);
 
-			$e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
-				newContainer,
-				container.repeaters[ args.name ].children.length,
-			);
+			// Update repeater item title.
+			$e.internal( 'document/elements/set-settings', {
+				container: newRepeaterItemContainer,
+				settings: {
+					tab_title: newTitle,
+				},
+				options: {
+					external: true,
+				},
+			} );
 		} );
 	}
 }
