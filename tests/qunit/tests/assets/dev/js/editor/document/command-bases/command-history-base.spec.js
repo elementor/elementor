@@ -1,4 +1,4 @@
-import CommandHistoryBase from '../../../../../../../../../assets/dev/js/editor/document/command-bases/command-history-base';
+import CommandHistoryBase from 'elementor-editor/document/command-bases/command-history-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInternalBase from 'elementor-api/modules/command-internal-base';
@@ -23,11 +23,11 @@ jQuery( () => {
 
 			QUnit.test( 'onCatchApply()`', ( assert ) => {
 				const fakeHistory = class extends CommandHistoryBase {
-					// eslint-disable-next-line no-unused-vars
-					getHistory( args ) {
-						return true;
-					}
-				},
+						// eslint-disable-next-line no-unused-vars
+						getHistory( args ) {
+							return true;
+						}
+					},
 					instance = new fakeHistory( { __manualConstructorHandling: true } );
 
 				instance.historyId = Math.random();
@@ -35,15 +35,19 @@ jQuery( () => {
 				let tempCommand = '',
 					tempArgs = '';
 
-				$e.commandsInternal.on( 'run:before', ( component, command, args ) => {
+				const callback = ( component, command, args ) => {
 					tempCommand = command;
 					tempArgs = args;
-				} );
+				};
+
+				$e.commandsInternal.on( 'run:before', callback );
 
 				instance.onCatchApply( new $e.modules.HookBreak() );
 
 				assert.equal( tempCommand, 'document/history/delete-log' );
 				assert.equal( tempArgs.id, instance.historyId );
+
+				$e.commandsInternal.off( 'run:before', callback );
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
