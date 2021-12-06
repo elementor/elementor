@@ -61,8 +61,7 @@ export default function Empty( props ) {
 						<span className="elementor-screen-only">{__( 'Close', 'elementor' )}</span>
 					</div>
 					<div className="e-view e-container-select-preset">
-						<div
-							className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
+						<div className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
 						<div className="e-container-select-preset__list">
 							{
 								elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
