@@ -228,6 +228,11 @@ export default class EditorBase extends Marionette.Application {
 		},
 	};
 
+	/**
+	 * Registered elements types.
+	 *
+	 * @type {Object.<ElementBase>}
+	 */
 	registeredElements = {};
 
 	userCan( capability ) {
@@ -1089,6 +1094,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.initComponents();
 
+		// `initPreview` is depends on widgets config with available controls.
 		await this.requestWidgetsConfig();
 
 		if ( ! this.checkEnvCompatibility() ) {
