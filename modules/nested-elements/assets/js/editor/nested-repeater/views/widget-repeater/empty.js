@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 export default function Empty( props ) {
-	const editorComponent = $e.components.get( 'editor' ),
+	const containerHelper = $e.components.get( 'editor' ).defaultUtils().container,
 		addAreaElementRef = useRef(),
 		[ isRenderPresets, setIsRenderPresets ] = useState( false ),
 		onPresetSelected = ( preset, container ) => {
@@ -10,10 +10,7 @@ export default function Empty( props ) {
 			};
 
 			// Create new one by selected preset.
-			editorComponent.defaultUtils().container.createContainerFromPreset( preset, container, options );
-		},
-		editContainer = () => {
-			editorComponent.defaultUtils().container.openEditMode( props.container );
+			containerHelper.createContainerFromPreset( preset, container, options );
 		},
 		renderEmpty = () => {
 			const args = {
@@ -37,7 +34,7 @@ export default function Empty( props ) {
 			} );
 
 			return (
-				<div className="elementor-add-section" onClick={editContainer} ref={addAreaElementRef}>
+				<div className="elementor-add-section" onClick={() => containerHelper.openEditMode( props.container )} ref={addAreaElementRef}>
 					<div className="elementor-add-section-inner" >
 						<div className="e-view elementor-add-new-section">
 							<div className="elementor-add-section-area-button elementor-add-section-button"
