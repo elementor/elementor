@@ -19,7 +19,7 @@ export default function Empty( props ) {
 				},
 			};
 
-			// Make droppable area., timeout means after the element is rendered, other React hooks causes errors.
+			// Make droppable area. timeout means after the element is rendered, other React hooks causes errors.
 			setTimeout( () => {
 				const $addAreaElementRef = jQuery( addAreaElementRef.current ),
 					defaultDroppableOptions = props.container.view.getDroppableOptions();
