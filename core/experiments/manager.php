@@ -308,6 +308,11 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_ACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'admin_menu_rearrangement',
+			'mutable' => false,
+		] );
 	}
 
 	/**
