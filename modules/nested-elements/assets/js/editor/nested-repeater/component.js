@@ -1,6 +1,7 @@
+import RepeaterControl from './controls/repeater';
+
 import * as hooks from './hooks/';
 import * as commands from './commands/';
-import RepeaterControl from './controls/repeater';
 
 export default class Component extends $e.modules.ComponentBase {
 	registerAPI() {
