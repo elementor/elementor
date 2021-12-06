@@ -18,6 +18,10 @@ jobs:
         run:  sudo /etc/init.d/mysql start
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Install Elementor-ScreenShotter
         run: | ##### TO DO: Remove all sudo
           sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
