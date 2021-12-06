@@ -28,6 +28,7 @@ jobs:
           sudo chown -R $USER /usr/local/lib/node_modules
           sudo chown -R $USER /usr/local/bin/
           npm i -g @elementor/screenshotter
+          npm i -g grunt-cli
       - name: Install Dependencies
         run: |
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
