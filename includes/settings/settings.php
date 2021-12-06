@@ -219,10 +219,12 @@ class Settings extends Settings_Page {
 			[ $this, 'elementor_getting_started' ]
 		);
 
+		$help_title = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ? esc_html__( 'Help', 'elementor' ) : esc_html__( 'Get Help', 'elementor' );
+
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			esc_html__( 'Get Help', 'elementor' ),
+			$help_title,
 			'manage_options',
 			'go_knowledge_base_site',
 			[ $this, 'handle_external_redirects' ]
