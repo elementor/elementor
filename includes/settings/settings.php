@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,6 +81,22 @@ class Settings extends Settings_Page {
 			'',
 			'58.5'
 		);
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_submenu_page(
+				self::PAGE_ID,
+				_x( 'Templates', 'Template Library', 'elementor' ),
+				_x( 'Templates', 'Template Library', 'elementor' ),
+				Editor::EDITING_CAPABILITY,
+				Source_Local::ADMIN_MENU_SLUG,
+				null,
+				0
+			);
+
+			global $submenu;
+
+			$submenu[ self::PAGE_ID ][1][0] = esc_html__( 'Settings', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
 	}
 
 	/**
@@ -410,7 +427,9 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
+		}
 	}
 
 	/**
@@ -612,6 +631,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			return __( 'Settings', 'elementor' );
+		}
+
 		return __( 'Elementor', 'elementor' );
 	}
 
