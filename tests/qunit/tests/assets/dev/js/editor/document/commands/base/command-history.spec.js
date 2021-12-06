@@ -15,7 +15,7 @@ jQuery( () => {
 				);
 			} );
 
-			QUnit.only( 'isHistoryActive(): `useHistory` is `false`', async ( assert ) => {
+			QUnit.test( 'isHistoryActive(): `useHistory` is `false`', async ( assert ) => {
 				await $e.run( 'document/elements/create', {
 					container: ElementsHelper.createSection(),
 					model: {
