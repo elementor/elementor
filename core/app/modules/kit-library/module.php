@@ -2,6 +2,7 @@
 namespace Elementor\Core\App\Modules\KitLibrary;
 
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
@@ -29,10 +30,20 @@ class Module extends BaseModule {
 	 * Register the admin menu.
 	 */
 	private function register_admin_menu() {
+		$admin_menu_rearrangement_active = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' );
+
+		$menu_target = $admin_menu_rearrangement_active ? Settings::PAGE_ID : Source_Local::ADMIN_MENU_SLUG;
+
+		if ( $admin_menu_rearrangement_active ) {
+			$kit_library_menu_title = '<span id="e-admin-menu__kit-library">' . __( 'Kit Library', 'elementor' ) . '</span>';
+		} else {
+			$kit_library_menu_title = __( 'Kit Library', 'elementor' );
+		}
+
 		add_submenu_page(
-			Source_Local::ADMIN_MENU_SLUG,
+			$menu_target,
 			__( 'Kit Library', 'elementor' ),
-			__( 'Kit Library', 'elementor' ),
+			$kit_library_menu_title,
 			'manage_options',
 			Plugin::$instance->app->get_base_url() . '#/kit-library'
 		);
