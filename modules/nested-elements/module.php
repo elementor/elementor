@@ -46,7 +46,6 @@ class Module extends \Elementor\Core\Base\Module {
 			$this->register_controls();
 		} );
 
-
 		$this->enqueue_module_assets( [
 			'elementor-common',
 		] );
