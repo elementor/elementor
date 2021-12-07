@@ -3,7 +3,7 @@ import Base from '../base';
 /**
  * Hook responsible for:
  * a. Create container element for each created repeater item.
- * b. Set setting `_title` for the new container. 
+ * b. Set setting `_title` for the new container.
  * c. Update`title` for new created repeater item.
  */
 export class NestedRepeaterCreateContainer extends Base {
@@ -16,7 +16,8 @@ export class NestedRepeaterCreateContainer extends Base {
 	}
 
 	apply( args, createdRepeaterItemModel ) {
-		const { containers = [ args.container ] } = args;
+		const { containers = [ args.container ] } = args,
+			component = $e.components.get( 'nested-elements/nested-repeater' );
 
 		containers.forEach( ( container ) => {
 			const newContainer = $e.run( 'document/elements/create', {
@@ -28,25 +29,15 @@ export class NestedRepeaterCreateContainer extends Base {
 						edit: false, // Not losing focus.
 					},
 				} ),
-				// Update the `_title` setting.
-				newTitle = $e.components.get( 'nested-elements/nested-repeater' ).setChildrenTitle(
-					newContainer,
-					container.repeaters[ args.name ].children.length,
-				),
 				newRepeaterItemContainer = newContainer.parent.repeaters[ args.name ].children.find(
 					( item ) => item.id === createdRepeaterItemModel.get( '_id' )
-				);
+				),
+				index = container.repeaters[ args.name ].children.length;
 
+			// Update the `_title` setting.
+			component.setChildrenTitle( newContainer, index );
 			// Update repeater item title.
-			$e.internal( 'document/elements/set-settings', {
-				container: newRepeaterItemContainer,
-				settings: {
-					tab_title: newTitle,
-				},
-				options: {
-					external: true,
-				},
-			} );
+			component.setRepeaterItemTitle( newRepeaterItemContainer, index );
 		} );
 	}
 }

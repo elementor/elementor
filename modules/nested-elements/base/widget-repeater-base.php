@@ -12,6 +12,10 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 
 	abstract protected function get_default_children();
 
+	protected function get_default_children_title() {
+		return __( 'Item #%d', 'elementor' );
+	}
+
 	protected function get_children_placeholder() {
 		// Empty string, means will be added at the end.
 		return '';

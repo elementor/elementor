@@ -51,7 +51,7 @@ class NestedTabs extends Widget_Repeater_Base {
 	}
 
 	protected function get_default_children_title() {
-		return __( 'Tab #%s', 'elementor' );
+		return __( 'Tab #%d', 'elementor' );
 	}
 
 	protected function get_children_placeholder() {

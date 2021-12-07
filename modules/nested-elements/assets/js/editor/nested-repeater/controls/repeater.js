@@ -3,10 +3,16 @@
  */
 export default class Repeater extends elementor.modules.controls.Repeater {
 	className() {
-		// To not break panel view CSS.
+		// Repeater Panel CSS, depends on 'elementor-control-type-repeater` control.
+		// `elementor-control-repeater elementor-control-type-nested-elements-repeater` to elementor-control-repeater `elementor-control-type-repeater`
 		return super.className().replace( 'nested-elements-repeater', 'repeater' );
 	}
 
+	/**
+	 * @inheritDoc
+	 * Since the default is controlled via silent setSettings, override this method to avoid the default behavior.
+	 * Use command 'nested-elements/nested-repeater/select' instead.
+	 */
 	updateActiveRow() {
 		let activeItemIndex = 1;
 

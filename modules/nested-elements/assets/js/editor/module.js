@@ -1,10 +1,7 @@
 import Component from './component';
-import NestedTabs from './widgets/nested-tabs';
 
 export default class NestedElementsModule {
 	constructor() {
-		elementor.registerElementType( new NestedTabs() );
-
 		this.component = $e.components.register( new Component() );
 	}
 

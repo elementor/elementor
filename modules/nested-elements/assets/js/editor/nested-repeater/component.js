@@ -2,12 +2,17 @@ import RepeaterControl from './controls/repeater';
 
 import * as hooks from './hooks/';
 import * as commands from './commands/';
+import * as widgets from './widgets/';
 
 export default class Component extends $e.modules.ComponentBase {
 	registerAPI() {
 		super.registerAPI();
 
 		elementor.addControlView( 'nested-elements-repeater', RepeaterControl );
+
+		Object.values( widgets ).forEach(
+			( WidgetClass ) => elementor.registerElementType( new WidgetClass )
+		);
 	}
 
 	getNamespace() {
@@ -22,10 +27,15 @@ export default class Component extends $e.modules.ComponentBase {
 		return this.importCommands( commands );
 	}
 
+	getChildrenTitle( container, index ) {
+		const title = container.parent.view.config.default_children_title;
+
+		return sprintf( __( title, 'elementor' ), index );
+	}
+
 	setChildrenTitle( container, index ) {
-		const title = container.parent.view.config.default_children_title,
-			settings = {
-				_title: sprintf( __( title, 'elementor' ), index ),
+		const settings = {
+				_title: this.getChildrenTitle( container, index ),
 			};
 
 		$e.internal( 'document/elements/set-settings', {
@@ -35,7 +45,17 @@ export default class Component extends $e.modules.ComponentBase {
 				external: true,
 			},
 		} );
+	}
 
-		return settings._title;
+	setRepeaterItemTitle( container, index ) {
+		$e.internal( 'document/elements/set-settings', {
+			container,
+			settings: {
+				tab_title: this.getChildrenTitle( container, index ),
+			},
+			options: {
+				external: true,
+			},
+		} );
 	}
 }
