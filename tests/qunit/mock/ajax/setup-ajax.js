@@ -11,7 +11,7 @@ const mockActions = {
 	save_builder: Ajax.saveBuilder,
 	discard_changes: Ajax.discardChanges,
 
-	get_widgets_config: fakeActionFailed,
+	get_widgets_config: Ajax.getWidgetsConfig,
 	get_revisions: fakeActionFailed,
 
 	get_document_config: Ajax.getDocumentConfig,

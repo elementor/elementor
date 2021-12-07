@@ -7,7 +7,7 @@ export default class EditorBootstrap {
 		jQuery( this.initialize.bind( this ) );
 	}
 
-	initialize() {
+	async initialize() {
 		// Since JS API catch errors that occurs while running commands, the tests should expect it.
 		console.error = ( ... args ) => {
 			throw new Error( args );
@@ -23,6 +23,7 @@ export default class EditorBootstrap {
 		$elementorTest.append( window.__html__[ 'tests/qunit/index.html' ] );
 
 		window.elementor = new EditorTest();
+		// this.bypassRemoteBehavior();
 
 		// Mock document for `initDocument`;
 		const request = {
@@ -32,7 +33,7 @@ export default class EditorBootstrap {
 			cacheKey = elementorCommon.ajax.getCacheKey( request );
 		elementorCommon.ajax.cache[ cacheKey ] = elementor.getConfig().document;
 
-		ajax.silence();
+		ajax.mock();
 		eData.emptyFetch();
 
 		elementor.on( 'preview:loaded', () => {
@@ -42,9 +43,13 @@ export default class EditorBootstrap {
 			this.runTests();
 		} );
 
-		elementor.start();
+		QUnit.test( 'Elementor started', async ( assert ) => {
+			await elementor.start();
 
-		elementor.$preview.trigger( 'load' );
+			elementor.$preview.trigger( 'load' );
+
+			assert.ok( elementor.loaded, 'Elementor started' );
+		} );
 	}
 
 	runTests() {

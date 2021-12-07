@@ -1075,6 +1075,16 @@ export default class EditorBase extends Marionette.Application {
 		return ElementorConfig;
 	}
 
+	/**
+	 * @inheritDoc
+	 * Modify original start to pass the 'Promise' from 'onStart'.
+	 */
+	start( options ) {
+		this.triggerMethod( 'before:start', options );
+		this._initCallbacks.run( options, this );
+		return this.triggerMethod( 'start', options );
+	}
+
 	async onStart() {
 		this.config = this.getConfig();
 
