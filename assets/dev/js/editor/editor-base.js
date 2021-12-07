@@ -1077,7 +1077,10 @@ export default class EditorBase extends Marionette.Application {
 
 	/**
 	 * @inheritDoc
+	 *
 	 * Modify original start to pass the 'Promise' from 'onStart'.
+	 *
+	 * @returns {Promise}
 	 */
 	start( options ) {
 		this.triggerMethod( 'before:start', options );

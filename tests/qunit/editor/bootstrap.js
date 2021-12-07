@@ -1,13 +1,13 @@
 import tests from '../tests';
+import ajax from '../mock/ajax';
 
 /* global require */
-
 export default class EditorBootstrap {
 	constructor() {
 		jQuery( this.initialize.bind( this ) );
 	}
 
-	async initialize() {
+	initialize() {
 		// Since JS API catch errors that occurs while running commands, the tests should expect it.
 		console.error = ( ... args ) => {
 			throw new Error( args );
@@ -36,20 +36,18 @@ export default class EditorBootstrap {
 		eData.emptyFetch();
 
 		elementor.on( 'preview:loaded', () => {
+			QUnit.start();
+
 			// Disable UI Hooks.
 			$e.hooks.ui.deactivate();
 
 			this.runTests();
 		} );
 
-		QUnit.test( 'Elementor started', async ( assert ) => {
-			await elementor.start();
-
-			elementor.$preview.trigger( 'load' );
-
+		elementor.start().then( () => {
 			ajax.silence();
 
-			assert.ok( elementor.loaded, 'Elementor started' );
+			elementor.$preview.trigger( 'load' );
 		} );
 	}
 

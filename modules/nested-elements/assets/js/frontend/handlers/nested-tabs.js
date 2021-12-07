@@ -16,11 +16,13 @@ export default class NestedTabs extends BaseTabs {
 	}
 
 	onInit( ...args ) {
+		// TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
 		if ( elementorFrontend.isEditMode() ) {
-			const $widget = this.$element;
+			const $widget = this.$element,
+				$removed = this.findElement( '.elementor-tab-mobile-title' ).remove();
+
 			let index = 1;
 
-			// TODO: Find better solution, Manually adding 'elementor-tab-mobile-title' for each container.
 			this.findElement( '.e-container' ).each( function() {
 				const $current = jQuery( this ),
 					$desktopTabTitle = $widget.find( `.elementor-tabs-wrapper > *:nth-child(${ index })` ),
@@ -30,6 +32,11 @@ export default class NestedTabs extends BaseTabs {
 
 				++index;
 			} );
+
+			// On refresh since indexes are rearranged, do not call `activateDefaultTab` let editor control handle it.
+			if ( $removed.length ) {
+				return elementorModules.ViewModule.prototype.onInit.apply( this, args );
+			}
 		}
 
 		super.onInit( ...args );

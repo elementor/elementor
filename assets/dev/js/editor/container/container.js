@@ -183,6 +183,11 @@ export default class Container extends ArgsObject {
 
 		this.requireArgumentInstance( 'settings', Backbone.Model, args );
 		this.requireArgumentInstance( 'model', Backbone.Model, args );
+
+		// Require it, unless it's forced to be `false`.
+		if ( false !== args.parent ) {
+			this.requireArgumentInstance( 'parent', elementorModules.editor.Container, args );
+		}
 	}
 
 	/**

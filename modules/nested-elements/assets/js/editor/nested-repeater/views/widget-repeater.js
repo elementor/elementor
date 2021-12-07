@@ -7,7 +7,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	initialize() {
 		this.config = elementor.widgetsCache[ this.options.model.attributes.widgetType ];
 
-		this.once( 'container:created', this.onContainerCreatedOnce.bind( this ) );
+		this.once( 'render', this.createDefaultChildren.bind( this ) );
 
 		WidgetView.prototype.initialize.apply( this, arguments );
 	}
@@ -66,7 +66,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 			.remove();
 	}
 
-	onContainerCreatedOnce() {
+	createDefaultChildren() {
 		const { defaultChildren = [] } = this.container.model;
 
 		if ( defaultChildren.length ) {

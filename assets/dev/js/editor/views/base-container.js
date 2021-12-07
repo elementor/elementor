@@ -222,3 +222,15 @@ module.exports = Marionette.CompositeView.extend( {
 		return false;
 	},
 } );
+
+Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewClass, childViewOptions ) {
+	const options = _.extend( { model: child }, childViewOptions ),
+		childView = new ChildViewClass( options );
+
+	// `ELEMENTOR EDITING`: Fix `_parent` not available on render.
+	childView._parent = this;
+
+	Marionette.MonitorDOMRefresh( childView );
+
+	return childView;
+};

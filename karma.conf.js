@@ -104,6 +104,7 @@ module.exports = function( config ) {
 		client: {
 			clearContext: true,
 			qunit: {
+				autostart: false,
 				isDebug,
 				showUI: false,
 				validateContainersAlive: true, // Validate all containers are alive recursively after each test done.

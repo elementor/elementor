@@ -83,10 +83,10 @@ const ContainerView = BaseElementView.extend( {
 			return this.nestingLevel;
 		}
 
-		const parent = this.container.parent;
+		const parent = this.container?.parent;
 
 		// Start counting nesting level only from the closest Container parent.
-		if ( 'container' !== parent.type ) {
+		if ( ! parent || 'container' !== parent.type ) {
 			return 0;
 		}
 
@@ -293,13 +293,10 @@ const ContainerView = BaseElementView.extend( {
 
 		this.changeContainerClasses();
 
-		// Defer to wait for everything to render.
-		setTimeout( () => {
-			this.nestingLevel = this.getNestingLevel();
+		this.nestingLevel = this.getNestingLevel();
 
-			this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
-			this.$el.html5Droppable( this.getDroppableOptions() );
-		} );
+		this.$el[ 0 ].dataset.nestingLevel = this.nestingLevel;
+		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
 	onDragStart: function() {

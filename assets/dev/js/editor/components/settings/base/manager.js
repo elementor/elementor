@@ -57,6 +57,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,
+			parent: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
 			document: this.getDocument(),

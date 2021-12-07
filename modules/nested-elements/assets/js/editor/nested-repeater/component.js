@@ -40,6 +40,7 @@ export default class Component extends $e.modules.ComponentBase {
 				_title: this.getChildrenTitle( container, index ),
 			},
 			options: {
+				render: false,
 				external: true,
 			},
 		} );
@@ -52,6 +53,7 @@ export default class Component extends $e.modules.ComponentBase {
 				tab_title: this.getChildrenTitle( container, index ),
 			},
 			options: {
+				render: false,
 				external: true,
 			},
 		} );

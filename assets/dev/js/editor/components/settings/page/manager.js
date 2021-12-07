@@ -44,6 +44,7 @@ module.exports = BaseSettings.extend( {
 				label: elementor.config.document.panel.title,
 				controls: this.model.controls,
 				children: elementor.elements,
+				parent: false,
 				// Emulate a view that can render the style.
 				renderer: {
 					view: {
