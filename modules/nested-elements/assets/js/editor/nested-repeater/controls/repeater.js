@@ -4,7 +4,7 @@
 export default class Repeater extends elementor.modules.controls.Repeater {
 	className() {
 		// Repeater Panel CSS, depends on 'elementor-control-type-repeater` control.
-		// `elementor-control-repeater elementor-control-type-nested-elements-repeater` to elementor-control-repeater `elementor-control-type-repeater`
+		// `elementor-control-type-nested-elements-repeater` to `elementor-control-type-repeater`
 		return super.className().replace( 'nested-elements-repeater', 'repeater' );
 	}
 
