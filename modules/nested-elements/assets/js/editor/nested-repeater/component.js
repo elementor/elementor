@@ -37,7 +37,7 @@ export default class Component extends $e.modules.ComponentBase {
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			settings: {
-				_title: this.getChildrenTitle( container, index )
+				_title: this.getChildrenTitle( container, index ),
 			},
 			options: {
 				external: true,

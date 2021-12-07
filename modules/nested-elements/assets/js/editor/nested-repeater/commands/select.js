@@ -33,7 +33,7 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 		return {
 			container,
 			type: 'selected',
-			subTitle: __( 'Item #', 'elementor' ) + index,
+			subTitle: this.component.getChildrenTitle( container.repeaters[ container.model.get( 'widgetType' ) ], index ),
 			restore: this.constructor.restore,
 			data: {
 				current: index,
