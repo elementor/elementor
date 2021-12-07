@@ -102,21 +102,26 @@ export default function KitData( props ) {
 					}
 
 					const SiteArea = () => (
-						<InlineLink url="" color="secondary" underline="none">
-							<Text className="e-app-export-complete-kit-data__site-area">
-								{ siteArea } <Icon className="eicon-editor-external-link" />
+							<InlineLink url="" color="secondary" underline="none">
+								<Text className="e-app-import-export-kit-data__site-area">
+									{ siteArea } <Icon className="eicon-editor-external-link" />
+								</Text>
+							</InlineLink>
+						),
+						Included = () => (
+							<Text className="e-app-import-export-kit-data__included">
+								{ included.filter( ( value ) => value ).join( ' | ' ) }
 							</Text>
-						</InlineLink>
-					);
+						);
 
-					return [ <SiteArea key={ siteArea } />, included.filter( ( value ) => value ).join( ' | ' ) ];
+					return [ <SiteArea key={ siteArea } />, <Included key={ included } /> ];
 				} )
 				.filter( ( row ) => row );
 		};
 
 	return (
 		<DataTable
-			className="e-app-export-complete-kit-data"
+			className="e-app-import-export-kit-data"
 			headers={ headers }
 			rows={ getRowsData() }
 			layout={ [ 1, 3 ] }

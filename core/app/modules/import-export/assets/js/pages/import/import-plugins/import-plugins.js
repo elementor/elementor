@@ -20,90 +20,98 @@ import usePlugins from '../../../hooks/use-plugins';
 
 import './import-plugins.scss';
 
-const PLUGINS_TO_IMPORT_KEY = 'toImport',
+const MISSING_PLUGINS_KEY = 'missing',
 	EXISTING_PLUGINS_KEY = 'existing',
 	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
 
 export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
-		kitPlugins = context.data.uploadedData?.manifest?.plugins,
-		getPluginsInitialData = () => ( {
-			toImport: [],
-			existing: [],
-			minVersionMissing: [],
-			proPluginData: null,
-		} ),
-		[ plugins, setPlugins ] = useState( getPluginsInitialData() ),
-		getIsMinVersionMissing = ( kitPluginVersion, installedPluginVersion ) => {
-			const kitVersionValues = kitPluginVersion.split( '.' ),
-				installedVersionValues = installedPluginVersion.split( '.' );
-
-			return installedVersionValues.some( ( value, index ) => value < kitVersionValues[ index ] );
-		},
+		{ pluginsData, pluginsStatus, pluginsActions } = usePlugins(),
+		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
+		getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
 		getClassifiedPlugins = () => {
-			const pluginsData = getPluginsInitialData(),
-				installedPluginsMap = arrayToObjectByKey( pluginsState.data, 'name' );
+			const data = {
+					missing: [],
+					existing: [],
+					minVersionMissing: [],
+					proData: null,
+				},
+				installedPluginsMap = arrayToObjectByKey( pluginsData, 'name' );
+
+			console.log( '' );
+			console.log( 'kitPlugins', kitPlugins );
+			console.log( 'installedPluginsMap', installedPluginsMap );
+			console.log( '' );
 
 			kitPlugins.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
-					actionType = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : PLUGINS_TO_IMPORT_KEY,
+					group = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : MISSING_PLUGINS_KEY,
 					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
 
 				// Verifying that the current installed plugin version is not older than the kit plugin version.
-				if ( installedPluginData && getIsMinVersionMissing( plugin.version, installedPluginData.version ) ) {
-					pluginsData.minVersionMissing.push( plugin );
+				if ( installedPluginData && ! getIsMinVersionExist( installedPluginData.version, plugin.version ) ) {
+					data.minVersionMissing.push( plugin );
 				}
 
 				// In case that the Pro is inactive or not installed, it should be displayed separately and therefore not included.
-				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && PLUGINS_TO_IMPORT_KEY === actionType ) {
-					pluginsData.proPluginData = pluginData;
+				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && ( MISSING_PLUGINS_KEY === group || ! elementorAppConfig.is_license_connected ) ) {
+					data.proData = pluginData;
 
 					return;
 				}
 
-				pluginsData[ actionType ].push( pluginData );
+				data[ group ].push( pluginData );
 			} );
 
-			return pluginsData;
+			return data;
 		},
+		plugins = getClassifiedPlugins(),
 		saveRequiredPlugins = ( classifiedPluginsData ) => {
-			const { toImport, proPluginData } = classifiedPluginsData,
-				requiredPlugins = [ ...toImport ];
-
-			if ( proPluginData ) {
-				requiredPlugins.unshift( proPluginData );
-			}
-
-			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
+			// const { toImport, proData } = classifiedPluginsData,
+			// 	requiredPlugins = [ ...toImport ];
+			//
+			// if ( proData ) {
+			// 	requiredPlugins.unshift( proData );
+			// }
+			//
+			// context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
 		};
 
 	// On load.
 	useEffect( () => {
-		if ( kitPlugins ) {
-			pluginsActions.get();
-		} else {
+		// TODO: uncomment
+		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
 	}, [] );
 
 	// On plugins data ready.
 	useEffect( () => {
-		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
-			const classifiedPluginsData = getClassifiedPlugins();
+		// if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsStatus ) {
+		// 	const classifiedPluginsData = getClassifiedPlugins();
+		//
+		// 	if ( classifiedPluginsData.toImport.length || classifiedPluginsData.proData ) {
+		// 		// Saving the required plugins list for displaying it at the end of the process.
+		// 		saveRequiredPlugins( classifiedPluginsData );
+		//
+		// 		setPlugins( classifiedPluginsData );
+		// 	} else {
+		// 		// In case that are not plugins to import, navigating to the next screen.
+		// 		navigate( 'import/content' );
+		// 	}
+		// }
+	}, [ pluginsStatus ] );
 
-			if ( classifiedPluginsData.toImport.length || classifiedPluginsData.proPluginData ) {
-				// Saving the required plugins list for displaying it at the end of the process.
-				saveRequiredPlugins( classifiedPluginsData );
+	if ( pluginsData ) {
+		pluginsData.forEach( ( plugin ) => {
+			const group = 'active' === plugin.status ? 'existing' : 'missing';
 
-				setPlugins( classifiedPluginsData );
-			} else {
-				// In case that are not plugins to import, navigating to the next screen.
-				navigate( 'import/content' );
-			}
-		}
-	}, [ pluginsState.status ] );
+			plugins[ group ].push( plugin );
+		} );
+	}
+
+	console.log( 'final plugins: ', plugins );
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter /> }>
@@ -114,15 +122,15 @@ export default function ImportPlugins() {
 				/>
 
 				{
-					! ! plugins.minVersionMissing.length &&
+					false && ! ! plugins.minVersionMissing.length &&
 					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
 						{ __( 'Please update your plugins before you importing the kit.', 'elementor' ) } <InlineLink>{ __( 'Show me how', 'elementor' ) }</InlineLink>
 					</Notice>
 				}
 
-				{ plugins.proPluginData?.status && <ProBanner status={ plugins.proPluginData.status } /> }
+				{ false && plugins.proData?.status && <ProBanner status={ plugins.proData.status } /> }
 
-				{ ! ! plugins.toImport.length && <PluginsToImport plugins={ plugins.toImport } /> }
+				{ ! ! plugins.missing.length && <PluginsToImport plugins={ plugins.missing } /> }
 
 				{ ! ! plugins.existing.length && <ExistingPlugins plugins={ plugins.existing } /> }
 			</section>

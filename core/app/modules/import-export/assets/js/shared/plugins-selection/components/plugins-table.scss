@@ -9,6 +9,7 @@ $root: e-app-import-export-plugins-table;
 	&__cell-content {
 		color: var(--e-app-import-export-plugins-table-cell-content-color);
 		margin-bottom: 0;
+		text-transform: capitalize;
 	}
 }
 

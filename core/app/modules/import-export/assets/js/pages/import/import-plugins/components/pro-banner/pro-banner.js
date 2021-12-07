@@ -9,12 +9,14 @@ import './pro-banner.scss';
 export default function ProBanner( { status } ) {
 	const data = {};
 
+	console.log( 'status', status );
+
 	if ( 'active' === status ) {
 		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
 	} else if ( 'inactive' === status ) {
 		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton text={ __( 'Connect & Activate', 'elementor' ) } />;
+		data.button = <GoProButton url={ elementorAppConfig.connect_url } text={ __( 'Connect & Activate', 'elementor' ) } />;
 	} else {
 		data.heading = __( 'Install Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );

@@ -1,18 +1,32 @@
-$e-app-export-complete-kit-data-border-color: tints(300);
-$e-app-export-complete-kit-data-border-dark-color: dark-tints(500);
+$e-app-import-export-kit-data-site-area-color: tints(700);
+$e-app-import-export-kit-data-site-area-dark-color: dark-tints(500);
+$e-app-import-export-kit-data-included-color: tints(500);
+$e-app-import-export-kit-data-included-dark-color: dark-tints(500);
 
-$root: e-app-export-complete-kit-data;
+$root: e-app-import-export-kit-data;
 
 .#{$root} {
-	--e-app-export-complete-kit-data-border-color: #{$e-app-export-complete-kit-data-border-color};
+	--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-color};
+	--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-color};
+
+	&__site-area,
+	&__included {
+		margin-bottom: 0;
+	}
 
 	&__site-area {
-		margin-bottom: 0;
+		color: var(--e-app-import-export-kit-data-site-area-color);
+		font-weight: bold;
+	}
+
+	&__included {
+		color: var(--e-app-import-export-kit-data-included-color);
 	}
 }
 
 .eps-theme-dark {
 	.#{$root} {
-		--e-app-export-complete-kit-data-border-color: #{$e-app-export-complete-kit-data-border-dark-color};
+		--e-app-import-export-kit-data-site-area-color: #{$e-app-import-export-kit-data-site-area-dark-color};
+		--e-app-import-export-kit-data-included-color: #{$e-app-import-export-kit-data-included-dark-color};
 	}
 }
