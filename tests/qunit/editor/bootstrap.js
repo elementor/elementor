@@ -23,7 +23,6 @@ export default class EditorBootstrap {
 		$elementorTest.append( window.__html__[ 'tests/qunit/index.html' ] );
 
 		window.elementor = new EditorTest();
-		// this.bypassRemoteBehavior();
 
 		// Mock document for `initDocument`;
 		const request = {
@@ -47,6 +46,8 @@ export default class EditorBootstrap {
 			await elementor.start();
 
 			elementor.$preview.trigger( 'load' );
+
+			ajax.silence();
 
 			assert.ok( elementor.loaded, 'Elementor started' );
 		} );
