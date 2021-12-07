@@ -10,7 +10,8 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 
 	/**
 	 * @inheritDoc
-	 * Since the default is controlled via silent setSettings, override this method to avoid the default behavior.
+	 * Override to avoid the default behavior which applied via `editSettings.set( 'activeItemIndex', index )`.
+	 * Since default behavior does not save history.
 	 * Use command 'nested-elements/nested-repeater/select' instead.
 	 */
 	updateActiveRow() {
