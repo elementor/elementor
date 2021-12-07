@@ -1,5 +1,4 @@
 import tests from '../tests';
-import ajax from '../mock/ajax';
 
 /* global require */
 export default class EditorBootstrap {
