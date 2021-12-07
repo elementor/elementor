@@ -34,13 +34,11 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	setChildrenTitle( container, index ) {
-		const settings = {
-				_title: this.getChildrenTitle( container, index ),
-			};
-
 		$e.internal( 'document/elements/set-settings', {
 			container,
-			settings,
+			settings: {
+				_title: this.getChildrenTitle( container, index )
+			},
 			options: {
 				external: true,
 			},
