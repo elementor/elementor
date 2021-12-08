@@ -29,7 +29,7 @@ export const Create = () => {
 
 			QUnit.test( 'Widget', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					isButtonCreated = !! elementor.getPreviewContainer().children[ 0 ].children[ 0 ].children.find(
 						( widget ) => widget.id === eButton.id
 					);

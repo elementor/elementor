@@ -6,7 +6,7 @@ export const Duplicate = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn ),
+					eButton = ElementsHelper.createWidgetButton( eColumn ),
 					eButtonDuplicateCount = 2;
 
 				for ( let i = 0; i < eButtonDuplicateCount; ++i ) {

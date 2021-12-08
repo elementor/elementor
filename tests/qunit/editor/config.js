@@ -3,14 +3,15 @@ import settings from '../mock/config/settings';
 import document from '../mock/documents/document-1';
 import postCustomField from '../mock/dynamic-tags/post-custom-field';
 import postDate from '../mock/dynamic-tags/post-date';
-import button from '../mock/elments/button';
-import column from '../mock/elments/column';
-import container from '../mock/elments/container';
-import form from '../mock/elments/form';
-import heading from '../mock/elments/heading';
-import section from '../mock/elments/section';
-import tabs from '../mock/elments/tabs';
-import video from '../mock/elments/video';
+import button from '../mock/widgets/button';
+import column from '../mock/elements/column';
+import container from '../mock/elements/container';
+import form from '../mock/widgets/form';
+import heading from '../mock/widgets/heading';
+import section from '../mock/widgets/section';
+import tabs from '../mock/widgets/tabs';
+import testimonial from '../mock/widgets/testimonial';
+import video from '../mock/widgets/video';
 import SchemeItems from '../mock/schemes/items';
 
 // Document.
@@ -24,6 +25,7 @@ config.document.widgets = {
 	tabs,
 	form,
 	video,
+	testimonial,
 };
 
 // Settings.

@@ -7,7 +7,7 @@ export const Paste = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eButton = ElementsHelper.createButton( eColumn );
+					eButton = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eButton );
 
@@ -25,7 +25,7 @@ export const Paste = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
+					eWidget = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eWidget );
 
@@ -71,7 +71,7 @@ export const Paste = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
-					eWidget = ElementsHelper.createButton( eColumn );
+					eWidget = ElementsHelper.createWidgetButton( eColumn );
 
 				ElementsHelper.copy( eWidget );
 

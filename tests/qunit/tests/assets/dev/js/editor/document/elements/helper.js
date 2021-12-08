@@ -1,4 +1,110 @@
 export default class ElementsHelper {
+	static UICopyPaste( source, target ) {
+		ElementsHelper.copy( source );
+
+		elementor.channels.editor.reply( 'contextMenu:targetView', target.view );
+
+		return $e.commands.runShortcut( 'document/ui/paste',
+			jQuery.Event( 'keydown', { which: 86, ctrlKey: true, metaKey: true } )
+		);
+	}
+
+	static createAuto( elType, widgetType = 'button' ) {
+		let result = null;
+
+		switch ( elType ) {
+			case 'document':
+				result = elementor.getPreviewContainer();
+				break;
+
+			case 'section':
+				result = ElementsHelper.createSection( 1 );
+				break;
+
+			case 'container':
+				result = ElementsHelper.createContainer();
+				break;
+
+			case 'column':
+				result = ElementsHelper.createSection( 1, true );
+				break;
+
+			case 'widget':
+				result = ElementsHelper.createSection( 1, true );
+				result = ElementsHelper.createWidget( result, widgetType );
+				break;
+
+			case 'innerSection':
+				result = ElementsHelper.createInnerSection(
+					ElementsHelper.createSection( 1, true )
+				);
+				break;
+		}
+
+		return result;
+	}
+
+	// TODO: Remove.
+	static createAutoColumnStyled( eContainer = null ) {
+		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
+
+		this.settings( eContainer, {
+			background_background: 'gradient',
+			background_color: '#D51D1D',
+		}, {
+			debounce: false,
+		} );
+
+		return eContainer;
+	}
+
+	/**
+	 * @return {Container}
+	 */
+	static createAutoButton( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createWidgetButton( eContainer );
+	}
+
+	static multiCreateAutoButton( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eContainers );
+	}
+
+	// TODO: Remove.
+	static createAutoButtonStyled( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createWidgetButton( eContainer, {
+			text: 'createAutoButtonStyled',
+			background_color: '#000000',
+		} );
+	}
+
+	// TODO: Remove.
+	static multiCreateAutoButtonStyled( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eContainers, {
+			text: 'createAutoButtonStyled',
+			background_color: '#000000',
+		} );
+	}
+
 	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
@@ -62,51 +168,6 @@ export default class ElementsHelper {
 		} );
 	}
 
-	static resizeColumn( eContainer, width ) {
-		$e.run( 'document/elements/settings', {
-			container: eContainer,
-			settings: {
-				_inline_size: width,
-			},
-			options: {
-				debounce: false,
-			},
-		} );
-	}
-
-	static createButton( eContainer, settings = {} ) {
-		return $e.run( 'document/elements/create', {
-			container: eContainer,
-			model: {
-				elType: 'widget',
-				widgetType: 'button',
-				settings,
-			},
-		} );
-	}
-
-	static multiCreateButton( eContainers, settings = {} ) {
-		return $e.run( 'document/elements/create', {
-			containers: eContainers,
-			model: {
-				elType: 'widget',
-				widgetType: 'button',
-				settings,
-			},
-		} );
-	}
-
-	static createVideo( eContainer, settings = {} ) {
-		return $e.run( 'document/elements/create', {
-			container: eContainer,
-			model: {
-				elType: 'widget',
-				widgetType: 'video',
-				settings,
-			},
-		} );
-	}
-
 	static createInnerSection( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
@@ -127,24 +188,52 @@ export default class ElementsHelper {
 		} );
 	}
 
-	static createTabs( eContainer ) {
-		return $e.run( 'document/elements/create', {
+	static resizeColumn( eContainer, width ) {
+		$e.run( 'document/elements/settings', {
 			container: eContainer,
-			model: {
-				elType: 'widget',
-				widgetType: 'tabs',
+			settings: {
+				_inline_size: width,
+			},
+			options: {
+				debounce: false,
 			},
 		} );
 	}
 
-	static createForm( eContainer ) {
+	static createWidget( eContainer, widgetType, settings = {}, options = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
 				elType: 'widget',
-				widgetType: 'form',
+				widgetType,
+				settings,
 			},
+			options,
 		} );
+	}
+
+	static createWidgetMulti( eContainers, widgetType, settings = {}, options = {} ) {
+		return $e.run( 'document/elements/create', {
+			containers: eContainers,
+			model: {
+				elType: 'widget',
+				widgetType,
+				settings,
+			},
+			options,
+		} );
+	}
+
+	static createWidgetButton( eContainer, settings = {} ) {
+		return this.createWidget( eContainer, 'button', settings );
+	}
+
+	static multiCreateButton( eContainers, settings = {} ) {
+		return this.createWidgetMulti( eContainers, 'button', settings );
+	}
+
+	static createWidgetTabs( eContainer ) {
+		return this.createWidget( eContainer, 'tabs' );
 	}
 
 	static copy( eContainer ) {
@@ -275,79 +364,5 @@ export default class ElementsHelper {
 
 	static import( data, model, options = {} ) {
 		return $e.run( 'document/elements/import', { data, model, options } );
-	}
-
-	static createAutoColumn( eContainer = null ) {
-		if ( ! eContainer ) {
-			return this.createSection( 1, true );
-		}
-
-		return this.createColumn( eContainer );
-	}
-
-	static createAutoColumnStyled( eContainer = null ) {
-		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
-
-		this.settings( eContainer, {
-			background_background: 'gradient',
-			background_color: '#D51D1D',
-		}, {
-			debounce: false,
-		} );
-
-		return eContainer;
-	}
-
-	static createAutoForm( eContainer = null ) {
-		if ( ! eContainer ) {
-			eContainer = this.createSection( 1, true );
-		}
-
-		return this.createForm( eContainer );
-	}
-
-	/**
-	 * @return {Container}
-	 */
-	static createAutoButton( eContainer = null ) {
-		if ( ! eContainer ) {
-			eContainer = this.createSection( 1, true );
-		}
-
-		return this.createButton( eContainer );
-	}
-
-	static multiCreateAutoButton( eContainers = null ) {
-		if ( ! eContainers ) {
-			eContainers = [];
-			eContainers.push( this.createSection( 1, true ) );
-			eContainers.push( this.createSection( 1, true ) );
-		}
-
-		return this.multiCreateButton( eContainers );
-	}
-
-	static createAutoButtonStyled( eContainer = null ) {
-		if ( ! eContainer ) {
-			eContainer = this.createSection( 1, true );
-		}
-
-		return this.createButton( eContainer, {
-			text: 'createAutoButtonStyled',
-			background_color: '#000000',
-		} );
-	}
-
-	static multiCreateAutoButtonStyled( eContainers = null ) {
-		if ( ! eContainers ) {
-			eContainers = [];
-			eContainers.push( this.createSection( 1, true ) );
-			eContainers.push( this.createSection( 1, true ) );
-		}
-
-		return this.multiCreateButton( eContainers, {
-			text: 'createAutoButtonStyled',
-			background_color: '#000000',
-		} );
 	}
 }

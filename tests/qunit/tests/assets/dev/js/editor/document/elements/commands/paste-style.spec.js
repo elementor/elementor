@@ -25,7 +25,7 @@ export const PasteStyle = () => {
 			} );
 
 			QUnit.test( 'On column', ( assert ) => {
-				const eColumnSimple = ElementsHelper.createAutoColumn(),
+				const eColumnSimple = ElementsHelper.createAuto( 'column' ),
 					eColumnStyled = ElementsHelper.createAutoColumnStyled(),
 					eStyledButtonBackground = eColumnStyled.settings.attributes.background_color;
 
