@@ -454,7 +454,7 @@ class Editor {
 			'nouislider',
 			ELEMENTOR_ASSETS_URL . 'lib/nouislider/nouislider' . $suffix . '.js',
 			[],
-			'13.0.0',
+			'15.5.0',
 			true
 		);
 
