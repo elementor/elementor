@@ -1,6 +1,11 @@
 import { useRef, useState } from 'react';
 
 export default function Empty( props ) {
+	// On container remove.
+	if ( props.container.view.isDisconnected() ) {
+		return null;
+	}
+
 	const containerHelper = $e.components.get( 'editor' ).defaultUtils().container,
 		addAreaElementRef = useRef(),
 		[ isRenderPresets, setIsRenderPresets ] = useState( false ),

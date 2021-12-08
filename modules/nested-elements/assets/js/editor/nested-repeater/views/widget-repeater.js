@@ -5,8 +5,6 @@ const WidgetView = elementor.modules.elements.views.Widget;
  */
 export class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
 	initialize() {
-		this.config = elementor.widgetsCache[ this.options.model.attributes.widgetType ];
-
 		this.once( 'render', this.createDefaultChildren.bind( this ) );
 
 		WidgetView.prototype.initialize.apply( this, arguments );
@@ -41,8 +39,8 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	 * If `children_placeholder_selector` is set, it will be used to find the correct place to insert the children.
 	 */
 	getChildViewContainer( containerView, childView ) {
-		if ( this.config.children_placeholder_selector ) {
-			return containerView.$el.find( this.config.children_placeholder_selector );
+		if ( this.model.config.children_placeholder_selector ) {
+			return containerView.$el.find( this.model.config.children_placeholder_selector );
 		}
 
 		return super.getChildViewContainer( containerView, childView );

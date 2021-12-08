@@ -1,5 +1,3 @@
-const ElementModel = require( 'elementor-elements/models/element' );
-
 /**
  * @extends {ElementModel}
  */

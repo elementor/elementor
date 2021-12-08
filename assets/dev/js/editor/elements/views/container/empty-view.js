@@ -38,6 +38,8 @@ export default class EmptyView extends Marionette.ItemView {
 	attachElContent() {
 		this.$el.addClass( this.className );
 
-		return this.renderReactDefaultElement( this.ownerView.container );
+		setTimeout( () => {
+			this.renderReactDefaultElement( this.ownerView.container );
+		} );
 	}
 }

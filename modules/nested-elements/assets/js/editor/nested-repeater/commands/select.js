@@ -28,12 +28,13 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 			return false;
 		}
 
-		const editSettings = container.model.get( 'editSettings' );
+		const editSettings = container.model.get( 'editSettings' ),
+			tabTitle = container.repeaters[ container.model.config.name ].children[ index - 1 ].settings.get( 'tab_title' );
 
 		return {
 			container,
 			type: 'selected',
-			subTitle: this.component.getChildrenTitle( container.repeaters[ container.model.get( 'widgetType' ) ], index ),
+			subTitle: tabTitle,
 			restore: this.constructor.restore,
 			data: {
 				current: index,
