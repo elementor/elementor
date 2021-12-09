@@ -74,7 +74,7 @@ export default function ImportKit() {
 						className="e-app-import__back-to-library"
 						icon="eicon-chevron-left"
 						text={ __( 'Back to Kit Library', 'elementor' ) }
-						onClick={ () => navigate( '/kit-library' ) }
+						url="/kit-library"
 					/>
 				}
 

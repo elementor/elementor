@@ -12,16 +12,16 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 		[ readyPlugins, setReadyPlugins ] = useState( [] ),
 		[ actionStatus, setActionStatus ] = useState( '' ),
 		[ currentPlugin, setCurrentPlugin ] = useState( null ),
+		[ succeeded, setSucceeded ] = useState( [] ),
 		[ failedPlugins, setFailedPlugins ] = useState( [] );
 
 	useEffect( () => {
-		//console.log( '************************************************************************************* ONCE!' );
-		//pluginsActions.get();
-	}, [] );
-
-	useEffect( () => {
+		console.log( 'succeeded', succeeded );
+		console.log( 'failedPlugins', failedPlugins );
+		console.log( 'readyPlugins', readyPlugins );
 		if ( plugins.length && ( plugins.length === readyPlugins.length ) ) {
 			console.log( 'ALL READY!!!' );
+			setIsDone( true );
 			// When all plugins are installed and activated.
 			//context.dispatch( { type: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
 
@@ -72,15 +72,12 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 	}, [ currentPlugin ] );
 
 	useEffect( () => {
-		console.log( 'NEW STATUS UPDATE:', { ...pluginsState.data } );
 		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
-			console.log( 'before status change: ', pluginsState.data.status );
 			if ( Array.isArray( pluginsState.data ) ) {
 				setIsPluginsFetched( true );
 			} else if ( ! pluginsState.data.hasOwnProperty( 'plugin' ) ) {
 				setActionStatus( 'failed' );
 			} else if ( 'active' === pluginsState.data.status ) {
-				console.log( 'making activated!!!' );
 				setActionStatus( 'activated' );
 			} else if ( 'inactive' === pluginsState.data.status ) {
 				setActionStatus( 'installed' );
@@ -97,12 +94,16 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 	useEffect( () => {
 		console.log( '### actionStatus: ', actionStatus );
 		if ( 'failed' === actionStatus ) {
-			setFailedPlugins( ( prevState ) => [ ...prevState, currentPlugin ] );
+			setFailedPlugins( ( prevState ) => [ ...prevState, pluginsState.data ] );
+		}
+
+		if ( 'activated' === actionStatus ) {
+			setSucceeded( ( prevState ) => [ ...prevState, pluginsState.data ] );
 		}
 
 		if ( 'activated' === actionStatus || 'failed' === actionStatus ) {
-			console.log( 'adding to ready plugins: ', { ...currentPlugin } );
-			setReadyPlugins( ( prevState ) => [ ...prevState, currentPlugin ] );
+			console.log( 'adding to ready plugins: ', { ...pluginsState.data } );
+			setReadyPlugins( ( prevState ) => [ ...prevState, pluginsState.data ] );
 		}
 		console.log( '' );
 	}, [ actionStatus ] );
@@ -111,5 +112,9 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 		isDone,
 		pluginsOnProcess,
 		readyPlugins,
+		installedPlugins: {
+			succeeded,
+			failed: failedPlugins,
+		},
 	};
 }

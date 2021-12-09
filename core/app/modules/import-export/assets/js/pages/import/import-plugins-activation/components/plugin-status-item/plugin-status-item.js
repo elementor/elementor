@@ -3,11 +3,11 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Text from 'elementor-app/ui/atoms/text';
 
 export default function PluginStatusItem( { name, status } ) {
-	// if ( 'Not Installed' === status ) {
-	// 	return null;
-	// } else if ( 'inactive' === status ) {
-	// 	status = 'installed';
-	// }
+	if ( 'Not Installed' === status ) {
+		status = 'installed';
+	} else if ( 'installed' === status ) {
+		status = 'activated';
+	}
 
 	return (
 		<Grid container alignItems="center" key={ name }>

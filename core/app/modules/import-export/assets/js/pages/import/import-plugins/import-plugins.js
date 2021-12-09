@@ -22,30 +22,40 @@ import './import-plugins.scss';
 export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		{ pluginsState, pluginsActions } = usePlugins(),
+		{ pluginsState } = usePlugins(),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
 		{ plugins } = useImportPluginsData( kitPlugins, pluginsState.data ),
-		saveRequiredPlugins = ( classifiedPluginsData ) => {
-			// const { toImport, proData } = classifiedPluginsData,
-			// 	requiredPlugins = [ ...toImport ];
-			//
-			// if ( proData ) {
-			// 	requiredPlugins.unshift( proData );
-			// }
-			//
-			// context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
-		};
+		saveRequiredPlugins = () => {
+			const { missing, proData } = plugins,
+				requiredPlugins = [ ...missing ];
 
-	console.log( 'pluginsState', pluginsState );
+			if ( proData ) {
+				requiredPlugins.unshift( proData );
+			}
+
+			console.log( 'updating global state with required plugins: ', requiredPlugins );
+
+			if ( requiredPlugins.length ) {
+				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
+			} else {
+				// In case there are not required plugins just skipping to the next screen.
+				navigate( 'import/content' );
+			}
+		};
 
 	// On load.
 	useEffect( () => {
-		if ( kitPlugins.length ) {
-			//pluginsActions.get();
-		} else {
+		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
 	}, [] );
+
+	useEffect( () => {
+		console.log( 'checking...' );
+		if ( plugins && ! context.data.requiredPlugins.length ) {
+			saveRequiredPlugins();
+		}
+	}, [ plugins ] );
 
 	// On plugins data ready.
 	// useEffect( () => {
@@ -64,8 +74,6 @@ export default function ImportPlugins() {
 	// 	}
 	// }, [ pluginsStatus ] );
 
-	console.log( 'final plugins: ', plugins );
-
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter /> }>
 			<section className="e-app-import-plugins">
@@ -75,13 +83,13 @@ export default function ImportPlugins() {
 				/>
 
 				{
-					false && ! ! plugins.minVersionMissing.length &&
+					! ! plugins?.minVersionMissing.length &&
 					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
 						{ __( 'Please update your plugins before you importing the kit.', 'elementor' ) } <InlineLink>{ __( 'Show me how', 'elementor' ) }</InlineLink>
 					</Notice>
 				}
 
-				{ false && plugins.proData?.status && <ProBanner status={ plugins.proData.status } /> }
+				{ plugins?.proData?.status && <ProBanner status={ plugins.proData.status } /> }
 
 				<PluginsToImport plugins={ plugins?.missing } />
 

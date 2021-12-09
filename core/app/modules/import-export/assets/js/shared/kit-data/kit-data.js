@@ -65,7 +65,7 @@ export default function KitData( props ) {
 				.map( ( item ) => getSummaryTitle( 'content', item[ 0 ], item[ 1 ].length ) );
 		},
 		getRequiredPlugins = () => {
-			return kitData.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
+			return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
 		},
 		headers = [
 			__( 'Site Area', 'elementor' ),

@@ -19,7 +19,7 @@ export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ pluginsOnProcess, readyPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ pluginsOnProcess, isDone, installedPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
 		onPluginStatusItemReady = useCallback( ( pluginName, processStatus ) => {
 			// Saving the failed plugins on a separate list to display them at the end of the process.
 			if ( 'failed' === processStatus ) {
@@ -37,6 +37,13 @@ export default function ImportPluginsActivation() {
 			// 	navigate( '/import' );
 			// }
 		};
+
+	useEffect( () => {
+		if ( isDone ) {
+			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: installedPlugins } );
+			console.log( 'READY!!!!!!!!!!!!!!!! installedPlugins', installedPlugins );
+		}
+	}, [ isDone ] );
 
 	useEffect( () => {
 		if ( ! context.data.plugins.length ) {

@@ -47,8 +47,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, plugins: payload };
 		case 'SET_REQUIRED_PLUGINS':
 			return { ...state, requiredPlugins: payload };
-		case 'SET_FAILED_PLUGINS':
-			return { ...state, failedPlugins: payload };
+		case 'SET_IMPORTED_PLUGINS':
+			return { ...state, importedPlugins: payload };
 		default:
 			return state;
 	}

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from '@reach/router';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -18,7 +17,6 @@ import './export-kit.scss';
 
 export default function ExportKit() {
 	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
-		navigate = useNavigate(),
 		kitInfoTitle = __( 'Kit Information', 'elementor' ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
@@ -26,7 +24,7 @@ export default function ExportKit() {
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
 					color="primary"
-					onClick={ () => navigate( '/export/plugins' ) }
+					url="/export/plugins"
 				/>
 			</WizardFooter>
 		),

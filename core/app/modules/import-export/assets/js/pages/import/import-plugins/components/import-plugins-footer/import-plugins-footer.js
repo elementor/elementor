@@ -18,7 +18,7 @@ export default function ImportPluginsFooter() {
 				onClick={ () => {
 					context.dispatch( { type: 'SET_FILE', payload: null } );
 
-					navigate( 'import/' );
+					navigate( '/import/' );
 				} }
 			/>
 
@@ -26,7 +26,7 @@ export default function ImportPluginsFooter() {
 				variant="contained"
 				text={ __( 'Next', 'elementor' ) }
 				color="primary"
-				onClick={ () => navigate( 'import/content' ) }
+				url="/import/content"
 			/>
 		</WizardFooter>
 	);
