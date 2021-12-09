@@ -40,8 +40,9 @@ export default function ImportPlugins() {
 
 	// On load.
 	useEffect( () => {
-		// TODO: uncomment
-		if ( ! kitPlugins.length ) {
+		if ( kitPlugins.length ) {
+			//pluginsActions.get();
+		} else {
 			navigate( 'import/content' );
 		}
 	}, [] );

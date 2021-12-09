@@ -57,18 +57,21 @@ export default function ImportPluginsActivation() {
 							{ __( 'Installing plugins:', 'elementor' ) }
 						</Text>
 
-						<List>
-							{
-								pluginsOnProcess.map( ( plugin ) => (
-									<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ name }>
-										<PluginStatusItem
-											name={ plugin.name }
-											status={ plugin.status }
-										/>
-									</List.Item>
-								) )
-							}
-						</List>
+						{
+							! ! pluginsOnProcess?.length &&
+							<List>
+								{
+									pluginsOnProcess.map( ( plugin ) => (
+										<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ plugin.name }>
+											<PluginStatusItem
+												name={ plugin.name }
+												status={ plugin.status }
+											/>
+										</List.Item>
+									) )
+								}
+							</List>
+						}
 					</Grid>
 				</Grid>
 			</section>

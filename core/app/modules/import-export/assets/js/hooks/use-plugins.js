@@ -26,10 +26,16 @@ export default function usePlugins() {
 				data.body = JSON.stringify( body );
 			}
 
+			console.log( '----------------------------------------- current data: ', pluginsState.data );
+			if ( pluginsState.data ) {
+				reset();
+			}
+
 			return new Promise( ( resolve, reject ) => {
 				fetch( baseEndpoint + endpoint, data )
 					.then( ( response ) => response.json() )
 					.then( ( response ) => {
+						console.log( 'new response: ', response );
 						setPluginsState( {
 							status: PLUGINS_STATUS_MAP.SUCCESS,
 							data: response,
@@ -85,6 +91,9 @@ export default function usePlugins() {
 		reset = () => setPluginsState( getInitialState() );
 
 	useEffect( () => {
+		console.log( '################## once from usePlugins' );
+		console.log( '################## once from usePlugins' );
+		console.log( '################## once from usePlugins' );
 		get();
 	}, [] );
 
