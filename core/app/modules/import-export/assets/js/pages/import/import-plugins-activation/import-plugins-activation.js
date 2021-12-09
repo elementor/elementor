@@ -19,7 +19,7 @@ export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ pluginsOnProcess, isDone, installedPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ pluginsOnProcess, isDone, installedPlugins, readyPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
 			//

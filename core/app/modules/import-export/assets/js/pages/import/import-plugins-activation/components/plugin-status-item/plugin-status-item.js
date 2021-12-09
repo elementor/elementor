@@ -4,16 +4,16 @@ import Text from 'elementor-app/ui/atoms/text';
 
 export default function PluginStatusItem( { name, status } ) {
 	if ( 'Not Installed' === status ) {
-		status = 'installed';
+		return null;
 	} else if ( 'installed' === status ) {
-		status = 'activated';
+		//status = 'activated';
 	}
 
 	return (
 		<Grid container alignItems="center" key={ name }>
 			<Checkbox rounded checked error={ 'failed' === status || null } onChange={ () => {} } />
 
-			<Text tag="span" variant="sm" className="e-app-import-plugins-activation__plugin-name">
+			<Text tag="span" variant="xs" className="e-app-import-plugins-activation__plugin-name">
 				{ name + ' ' + status }
 			</Text>
 		</Grid>
