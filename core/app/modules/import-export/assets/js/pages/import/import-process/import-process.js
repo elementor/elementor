@@ -113,11 +113,11 @@ export default function ImportProcess() {
 	return (
 		<Layout type="import">
 			<section>
-				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
-
-				<Text variant="xl">
-					{ __( 'Importing your content, templates and site settings', 'elementor' ) }
-				</Text>
+				<FileProcess
+					info={ __( 'Importing your content, templates and site settings', 'elementor' ) }
+					errorType={ errorType }
+					onDialogDismiss={ onCancelProcess }
+				/>
 
 				<UnfilteredFilesDialog
 					show={ showUnfilteredFilesDialog }

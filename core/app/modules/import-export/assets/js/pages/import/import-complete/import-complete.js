@@ -90,11 +90,11 @@ export default function ImportComplete() {
 				) }
 			>
 				{
-					! ! context.data.failedPlugins.length &&
+					! ! context.data.importedPlugins?.failed?.length &&
 					<Notice label={ __( 'Important:', 'elementor' ) } color="warning" button={ <FailedPluginsNoticeButton /> }>
 						{
 							__( 'There are few plugins that we couldn\'t install:', 'elementor' ) + ' ' +
-							context.data.failedPlugins.join( ' | ' )
+							context.data.importedPlugins.failed.join( ' | ' )
 						}
 					</Notice>
 				}

@@ -44,17 +44,26 @@ export default function ImportPluginsActivation() {
 		}
 	}, [ isDone ] );
 
+	// Once the imported plugins data was updated.
+	useEffect( () => {
+		const { succeeded, failed } = context.data.importedPlugins;
+
+		if ( succeeded?.length || failed?.length ) {
+			//navigate( '/import/complete' );
+		}
+	}, [ context.data.importedPlugins ] );
+
 	return (
 		<Layout type="import">
 			<section className="e-app-import-plugins-activation">
-				<FileProcess errorType={ errorType } onDialogDismiss={ onCancelProcess } />
+				<FileProcess
+					info={ __( 'Activating plugins:', 'elementor' ) }
+					errorType={ errorType }
+					onDialogDismiss={ onCancelProcess }
+				/>
 
 				<Grid container justify="center">
 					<Grid item className="e-app-import-plugins-activation__installing-plugins">
-						<Text className="e-app-import-plugins-activation__heading" variant="lg">
-							{ __( 'Installing plugins:', 'elementor' ) }
-						</Text>
-
 						{
 							! ! pluginsOnProcess?.length &&
 							<List>
