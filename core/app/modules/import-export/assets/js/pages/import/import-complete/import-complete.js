@@ -64,7 +64,7 @@ export default function ImportComplete() {
 				content: getContent( manifest.content, importedData ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
-				plugins: context.data.requiredPlugins,
+				plugins: context.data.importedPlugins?.succeeded,
 			};
 		},
 		FailedPluginsNoticeButton = () => (

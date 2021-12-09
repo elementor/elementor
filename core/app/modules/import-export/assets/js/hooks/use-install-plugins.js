@@ -13,25 +13,13 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 		[ actionStatus, setActionStatus ] = useState( '' ),
 		[ currentPlugin, setCurrentPlugin ] = useState( null ),
 		[ succeeded, setSucceeded ] = useState( [] ),
-		[ failedPlugins, setFailedPlugins ] = useState( [] );
+		[ failed, setFailedPlugins ] = useState( [] );
 
 	useEffect( () => {
-		console.log( 'succeeded', succeeded );
-		console.log( 'failedPlugins', failedPlugins );
-		console.log( 'readyPlugins', readyPlugins );
 		if ( plugins.length && ( plugins.length === readyPlugins.length ) ) {
-			console.log( 'ALL READY!!!' );
 			setIsDone( true );
-			// When all plugins are installed and activated.
-			//context.dispatch( { type: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
-
-			//navigate( '/import/process' );
 		} else if ( plugins.length && isPluginsFetched ) {
 			const nextPluginToInstallIndex = readyPlugins.length;
-
-			console.log( '' );
-			console.log( 'nextPluginToInstallIndex', nextPluginToInstallIndex );
-			console.log( 'readyPlugins', [ ...readyPlugins ] );
 
 			setPluginsOnProcess( ( prevState ) => {
 				const currentPluginsOnProcess = [ ...prevState, plugins[ nextPluginToInstallIndex ] ];
@@ -58,14 +46,11 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 	useEffect( () => {
 		if ( currentPlugin ) {
 			const action = 'inactive' === currentPlugin.status ? 'activate' : 'install';
-			console.log( 'going to process with action', action, { ...currentPlugin } );
 
 			// TODO: temp - remove!
 			if ( 'media-cleaner/media-cleaner' === currentPlugin.plugin ) {
 				//plugin = 'medsgfdsfd/dsfsdfsdf';
 			}
-
-			//plugin = 'medsgfdsfd/dsfsdfsdf';
 
 			pluginsActions[ action ]( currentPlugin.plugin );
 		}
@@ -82,39 +67,32 @@ export default function useInstallPlugins( { plugins = [], bulks = 5 } ) {
 			} else if ( 'inactive' === pluginsState.data.status ) {
 				setActionStatus( 'installed' );
 
-				/*
-					In case that the widget was installed it will be inactive after the installation.
-					Therefore, after installation it should be activated.
-				 */
+				// In case that the widget was installed it will be inactive after the installation and therefore should be activated manually.
 				pluginsActions.activate( pluginsState.data.plugin );
 			}
 		}
 	}, [ pluginsState.status ] );
 
 	useEffect( () => {
-		console.log( '### actionStatus: ', actionStatus );
-		if ( 'failed' === actionStatus ) {
-			setFailedPlugins( ( prevState ) => [ ...prevState, pluginsState.data ] );
-		}
-
-		if ( 'activated' === actionStatus ) {
-			setSucceeded( ( prevState ) => [ ...prevState, pluginsState.data ] );
-		}
-
 		if ( 'activated' === actionStatus || 'failed' === actionStatus ) {
-			console.log( 'adding to ready plugins: ', { ...pluginsState.data } );
+			if ( 'failed' === actionStatus ) {
+				setFailedPlugins( ( prevState ) => [ ...prevState, pluginsState.data ] );
+			}
+
+			if ( 'activated' === actionStatus ) {
+				setSucceeded( ( prevState ) => [ ...prevState, pluginsState.data ] );
+			}
+
 			setReadyPlugins( ( prevState ) => [ ...prevState, pluginsState.data ] );
 		}
-		console.log( '' );
 	}, [ actionStatus ] );
 
 	return {
 		isDone,
 		pluginsOnProcess,
-		readyPlugins,
 		installedPlugins: {
 			succeeded,
-			failed: failedPlugins,
+			failed,
 		},
 	};
 }

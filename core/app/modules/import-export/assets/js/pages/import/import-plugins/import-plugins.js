@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -33,8 +33,6 @@ export default function ImportPlugins() {
 				requiredPlugins.unshift( proData );
 			}
 
-			console.log( 'updating global state with required plugins: ', requiredPlugins );
-
 			if ( requiredPlugins.length ) {
 				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
 			} else {
@@ -50,29 +48,13 @@ export default function ImportPlugins() {
 		}
 	}, [] );
 
+	// On plugins data ready.
 	useEffect( () => {
-		console.log( 'checking...' );
+		// Saving the required plugins to display them on the next screens.
 		if ( plugins && ! context.data.requiredPlugins.length ) {
 			saveRequiredPlugins();
 		}
 	}, [ plugins ] );
-
-	// On plugins data ready.
-	// useEffect( () => {
-	// 	if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsStatus ) {
-	// 		const classifiedPluginsData = getClassifiedPlugins();
-	//
-	// 		if ( classifiedPluginsData.toImport.length || classifiedPluginsData.proData ) {
-	// 			// Saving the required plugins list for displaying it at the end of the process.
-	// 			saveRequiredPlugins( classifiedPluginsData );
-	//
-	// 			setPlugins( classifiedPluginsData );
-	// 		} else {
-	// 			// In case that are not plugins to import, navigating to the next screen.
-	// 			navigate( 'import/content' );
-	// 		}
-	// 	}
-	// }, [ pluginsStatus ] );
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter /> }>

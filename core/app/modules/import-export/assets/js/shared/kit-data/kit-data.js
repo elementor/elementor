@@ -64,7 +64,7 @@ export default function KitData( props ) {
 				.entries( mergedContent )
 				.map( ( item ) => getSummaryTitle( 'content', item[ 0 ], item[ 1 ].length ) );
 		},
-		getRequiredPlugins = () => {
+		getActivatedPlugins = () => {
 			return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
 		},
 		headers = [
@@ -89,9 +89,9 @@ export default function KitData( props ) {
 					included: getContent(),
 				},
 				{
-					siteArea: __( 'Required Plugins', 'elementor' ),
+					siteArea: __( 'Activated Plugins', 'elementor' ),
 					link: '',
-					included: getRequiredPlugins(),
+					included: getActivatedPlugins(),
 				},
 			];
 

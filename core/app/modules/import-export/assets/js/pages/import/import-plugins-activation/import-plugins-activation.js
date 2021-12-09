@@ -20,14 +20,6 @@ export default function ImportPluginsActivation() {
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
 		{ pluginsOnProcess, isDone, installedPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
-		onPluginStatusItemReady = useCallback( ( pluginName, processStatus ) => {
-			// Saving the failed plugins on a separate list to display them at the end of the process.
-			if ( 'failed' === processStatus ) {
-				setFailedPlugins( ( prevState ) => [ ...prevState, pluginName ] );
-			}
-
-			setReadyPlugins( ( prevState ) => [ ...prevState, pluginName ] );
-		}, [] ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
 			//
@@ -38,20 +30,19 @@ export default function ImportPluginsActivation() {
 			// }
 		};
 
-	useEffect( () => {
-		if ( isDone ) {
-			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: installedPlugins } );
-			console.log( 'READY!!!!!!!!!!!!!!!! installedPlugins', installedPlugins );
-		}
-	}, [ isDone ] );
-
+	// In case there are no plugins to import.
 	useEffect( () => {
 		if ( ! context.data.plugins.length ) {
 			navigate( '/import/' );
 		}
 	}, [ context.data.plugins ] );
 
-	console.log( 'pluginsOnProcess', pluginsOnProcess );
+	// When import plugins process is done.
+	useEffect( () => {
+		if ( isDone ) {
+			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: installedPlugins } );
+		}
+	}, [ isDone ] );
 
 	return (
 		<Layout type="import">
