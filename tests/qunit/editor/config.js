@@ -10,7 +10,6 @@ import form from '../mock/widgets/form';
 import heading from '../mock/widgets/heading';
 import section from '../mock/widgets/section';
 import tabs from '../mock/widgets/tabs';
-import testimonial from '../mock/widgets/testimonial';
 import video from '../mock/widgets/video';
 import SchemeItems from '../mock/schemes/items';
 
@@ -25,7 +24,6 @@ config.document.widgets = {
 	tabs,
 	form,
 	video,
-	testimonial,
 };
 
 // Settings.
