@@ -2,6 +2,10 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function ExistingPlugins( { plugins } ) {
+	if ( ! plugins?.length ) {
+		return null;
+	}
+
 	const initialSelected = plugins.map( ( plugin, index ) => index );
 
 	return (

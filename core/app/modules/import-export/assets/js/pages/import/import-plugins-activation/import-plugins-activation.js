@@ -13,15 +13,13 @@ import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
 
-const PLUGINS_INSTALLATION_LIST_MAX_ITEMS = 4;
+import useInstallPlugins from '../../../hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		[ pluginsOnProcess, setPluginsOnProcess ] = useState( [] ),
-		[ readyPlugins, setReadyPlugins ] = useState( [] ),
-		[ failedPlugins, setFailedPlugins ] = useState( [] ),
 		[ errorType, setErrorType ] = useState( '' ),
+		{ pluginsOnProcess, readyPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
 		onPluginStatusItemReady = useCallback( ( pluginName, processStatus ) => {
 			// Saving the failed plugins on a separate list to display them at the end of the process.
 			if ( 'failed' === processStatus ) {
@@ -41,31 +39,12 @@ export default function ImportPluginsActivation() {
 		};
 
 	useEffect( () => {
-		if ( context.data.plugins.length === readyPlugins.length ) {
-			// When all plugins are installed and activated.
-			context.dispatch( { type: 'SET_FAILED_PLUGINS', payload: failedPlugins } );
-
-			navigate( '/import/process' );
-		} else {
-			const nextPluginToInstallIndex = readyPlugins.length;
-
-			setPluginsOnProcess( ( prevState ) => {
-				const currentPluginsOnProcess = [ ...prevState, context.data.plugins[ nextPluginToInstallIndex ] ];
-
-				if ( currentPluginsOnProcess.length > PLUGINS_INSTALLATION_LIST_MAX_ITEMS ) {
-					currentPluginsOnProcess.shift();
-				}
-
-				return currentPluginsOnProcess;
-			} );
-		}
-	}, [ readyPlugins ] );
-
-	useEffect( () => {
 		if ( ! context.data.plugins.length ) {
 			navigate( '/import/' );
 		}
 	}, [ context.data.plugins ] );
+
+	console.log( 'pluginsOnProcess', pluginsOnProcess );
 
 	return (
 		<Layout type="import">
@@ -80,13 +59,11 @@ export default function ImportPluginsActivation() {
 
 						<List>
 							{
-								pluginsOnProcess.map( ( { name, plugin, status } ) => (
+								pluginsOnProcess.map( ( plugin ) => (
 									<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ name }>
 										<PluginStatusItem
-											name={ name }
-											slug={ plugin }
-											status={ status }
-											onReady={ onPluginStatusItemReady }
+											name={ plugin.name }
+											status={ plugin.status }
 										/>
 									</List.Item>
 								) )

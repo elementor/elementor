@@ -7,16 +7,15 @@ import usePlugins from '../../../../../hooks/use-plugins';
 
 export default function ExportPluginsSelection() {
 	const context = useContext( Context ),
-		{ pluginsState, pluginsActions } = usePlugins(),
+		{ pluginsData, pluginsActions } = usePlugins(),
+		activePlugins = pluginsData ? pluginsData.filter( ( { status } ) => 'active' === status ) : [],
 		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
 
-	useEffect( () => {
-		pluginsActions.get();
-	}, [] );
+	console.log( 'pluginsData', pluginsData );
 
 	return (
 		<PluginsSelection
-			plugins={ pluginsState.data?.active }
+			plugins={ activePlugins }
 			withStatus={ false }
 			onSelect={ handleOnSelect }
 		/>

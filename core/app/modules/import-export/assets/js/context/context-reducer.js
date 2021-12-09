@@ -15,40 +15,40 @@ class ReducerActions {
 	}
 }
 
-export const reducer = ( state, action ) => {
-	switch ( action.type ) {
+export const reducer = ( state, { type, payload } ) => {
+	switch ( type ) {
 		case 'SET_DOWNLOAD_URL':
-			return { ...state, downloadUrl: action.payload };
+			return { ...state, downloadUrl: payload };
 		case 'ADD_INCLUDE':
-			return ReducerActions.updateArray( state, 'includes', action.payload, 'add' );
+			return ReducerActions.updateArray( state, 'includes', payload, 'add' );
 		case 'REMOVE_INCLUDE':
-			return ReducerActions.updateArray( state, 'includes', action.payload, 'remove' );
+			return ReducerActions.updateArray( state, 'includes', payload, 'remove' );
 		case 'SET_FILE':
-			return { ...state, file: action.payload };
+			return { ...state, file: payload };
 		case 'ADD_OVERRIDE_CONDITION':
-			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'add' );
+			return ReducerActions.updateArray( state, 'overrideConditions', payload, 'add' );
 		case 'REMOVE_OVERRIDE_CONDITION':
-			return ReducerActions.updateArray( state, 'overrideConditions', action.payload, 'remove' );
+			return ReducerActions.updateArray( state, 'overrideConditions', payload, 'remove' );
 		case 'SET_KIT_TITLE':
-			return { ...state, kitInfo: { ...state.kitInfo, title: action.payload } };
+			return { ...state, kitInfo: { ...state.kitInfo, title: payload } };
 		case 'SET_KIT_DESCRIPTION':
-			return { ...state, kitInfo: { ...state.kitInfo, description: action.payload } };
+			return { ...state, kitInfo: { ...state.kitInfo, description: payload } };
 		case 'SET_REFERRER':
-			return { ...state, referrer: action.payload };
+			return { ...state, referrer: payload };
 		case 'SET_INCLUDES':
-			return { ...state, includes: action.payload };
+			return { ...state, includes: payload };
 		case 'SET_UPLOADED_DATA':
-			return { ...state, uploadedData: action.payload };
+			return { ...state, uploadedData: payload };
 		case 'SET_IMPORTED_DATA':
-			return { ...state, importedData: action.payload };
+			return { ...state, importedData: payload };
 		case 'SET_EXPORTED_DATA':
-			return { ...state, exportedData: action.payload };
+			return { ...state, exportedData: payload };
 		case 'SET_PLUGINS':
-			return { ...state, plugins: action.payload };
+			return { ...state, plugins: payload };
 		case 'SET_REQUIRED_PLUGINS':
-			return { ...state, requiredPlugins: action.payload };
+			return { ...state, requiredPlugins: payload };
 		case 'SET_FAILED_PLUGINS':
-			return { ...state, failedPlugins: action.payload };
+			return { ...state, failedPlugins: payload };
 		default:
 			return state;
 	}

@@ -1,66 +1,20 @@
-import { useState, useEffect, memo } from 'react';
-
-import usePlugins from '../../../../../hooks/use-plugins';
-
 import Grid from 'elementor-app/ui/grid/grid';
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Text from 'elementor-app/ui/atoms/text';
 
-function PluginStatusItem( { name, slug, status, onReady } ) {
-	console.log( 'status', status );
-	const [ actionStatus, setActionStatus ] = useState( '' ),
-		{ pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins();
-
-	// Activating or installing the plugin, depending on the current plugin status.
-	useEffect( () => {
-		const action = 'inactive' === status ? 'activate' : 'install';
-
-		// TODO: temp - remove!
-		if ( 'media-cleaner/media-cleaner' === slug ) {
-			//slug = 'medsgfdsfd/dsfsdfsdf';
-		}
-
-		//slug = 'medsgfdsfd/dsfsdfsdf';
-
-		pluginsActions[ action ]( slug );
-	}, [] );
-
-	useEffect( () => {
-		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
-			if ( ! pluginsState.data.hasOwnProperty( 'plugin' ) ) {
-				setActionStatus( 'failed' );
-			} else if ( 'active' === pluginsState.data.status ) {
-				setActionStatus( 'activated' );
-			} else if ( 'inactive' === pluginsState.data.status ) {
-				setActionStatus( 'installed' );
-
-				/*
-					In case that the widget was installed it will be inactive after the installation.
-					Therefore, the actions should be reset and the plugin should be activated.
-				 */
-				pluginsActions.reset();
-
-				pluginsActions.activate( slug );
-			}
-		}
-	}, [ pluginsState.status ] );
-
-	useEffect( () => {
-		if ( 'activated' === actionStatus || 'failed' === actionStatus ) {
-			onReady( name, actionStatus );
-		}
-	}, [ actionStatus ] );
-
-	if ( ! actionStatus ) {
+export default function PluginStatusItem( { name, status } ) {
+	if ( 'Not Installed' === status ) {
 		return null;
+	} else if ( 'inactive' === status ) {
+		status = 'installed';
 	}
 
 	return (
 		<Grid container alignItems="center" key={ name }>
-			<Checkbox rounded checked error={ 'failed' === actionStatus || null } onChange={ () => {} } />
+			<Checkbox rounded checked error={ 'failed' === status || null } onChange={ () => {} } />
 
 			<Text tag="span" variant="sm" className="e-app-import-plugins-activation__plugin-name">
-				{ name + ' ' + actionStatus }
+				{ name + ' ' + status }
 			</Text>
 		</Grid>
 	);
@@ -68,9 +22,5 @@ function PluginStatusItem( { name, slug, status, onReady } ) {
 
 PluginStatusItem.propTypes = {
 	name: PropTypes.string.isRequired,
-	slug: PropTypes.string.isRequired,
 	status: PropTypes.string.isRequired,
-	onReady: PropTypes.func.isRequired,
 };
-
-export default memo( PluginStatusItem );
