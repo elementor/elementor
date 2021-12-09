@@ -11,10 +11,14 @@ const config = {
 	retries: 1,
 	use: {
 		headless: true,
-		storageState: './tests/playwright/config/storageState.json',
+		storageStatePath: '/tmp/elementor/playwright/storageState.json',
 		baseURL: 'http://localhost:8888/',
 		viewport: { width: 1440, height: 960 },
 		video: 'on-first-retry',
+		user: {
+			username: 'admin',
+			password: 'password',
+		},
 	},
 };
 

@@ -1,17 +1,8 @@
-exports.WpAdminPage = class wpAdminPage {
-	/**
-	 * @param {import('@playwright/test').Page} page
-	 */
-	constructor( page ) {
-		this.page = page;
-	}
+import BasePage from './base-page.mjs';
 
-	async goto() {
-		await this.page.goto( '/wp-admin' );
-	}
-
+export default class wpAdminPage extends BasePage {
 	async login() {
-		await this.goto();
+		await this.page.goto( '/wp-admin' );
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -20,8 +11,8 @@ exports.WpAdminPage = class wpAdminPage {
 		}
 
 		await this.page.waitForSelector( 'text=Log In' );
-		await this.page.fill( 'input[name="log"]', 'admin' );
-		await this.page.fill( 'input[name="pwd"]', 'password' );
+		await this.page.fill( 'input[name="log"]', this.config.user.username );
+		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
@@ -68,7 +59,7 @@ exports.WpAdminPage = class wpAdminPage {
 	 * @return {Promise<void>}
 	 */
 	async setExperiments( experiments = {} ) {
-		await this.page.goto( 'wp-admin/admin.php?page=elementor#tab-experiments' );
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 
 		const prefix = 'e-experiment';
 

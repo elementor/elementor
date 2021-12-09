@@ -1,12 +1,12 @@
-const { test, expect } = require( '@playwright/test' );
-const { EditorPage } = require( '../pages/editor-page' );
-const { WpAdminPage } = require( '../pages/wp-admin-page' );
+import { test, expect } from '@playwright/test';
+import EditorPage from '../pages/editor-page.mjs';
+import WpAdminPage from '../pages/wp-admin-page.mjs';
 
-test( 'Image widget sanity test', async ( { page } ) => {
-	const wpAdmin = new WpAdminPage( page );
+test( 'Image widget sanity test', async ( { page }, testInfo)  => {
+	const wpAdmin = new WpAdminPage( page, testInfo );
 	await wpAdmin.createNewPage();
 
-	const editor = new EditorPage( page );
+	const editor = new EditorPage( page, testInfo );
 	await editor.addWidget( 'image' );
 
 	await page.click( '.elementor-control-media__preview' );

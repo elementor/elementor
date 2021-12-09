@@ -6,7 +6,7 @@
  *
  * @return {Promise<*>}
  */
-const addElement = async ( { model, container = null } ) => {
+export const addElement = async ( { model, container = null } ) => {
 	let parent;
 
 	if ( container ) {
@@ -43,11 +43,6 @@ const addElement = async ( { model, container = null } ) => {
  *
  * @return {string}
  */
-const getElementSelector = ( id ) => {
+export const getElementSelector = ( id ) => {
 	return `[data-id = "${ id }"]`;
-};
-
-module.exports = {
-	addElement,
-	getElementSelector,
 };

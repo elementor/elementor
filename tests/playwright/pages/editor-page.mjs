@@ -1,14 +1,13 @@
-const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+import BasePage from './base-page.mjs';
+import { getElementSelector, addElement } from '../assets/elements-utils.mjs';
 
-exports.EditorPage = class EditorPage {
+export default class EditorPage extends BasePage {
 	isPanelLoaded = false;
 
-	/**
-	 * @param {import('@playwright/test').Page} page
-	 */
-	constructor( page ) {
-		this.page = page;
-		this.previewFrame = page.frame( { name: 'elementor-preview-iframe' } );
+	constructor( page, testInfo ) {
+		super( page, testInfo )
+
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
 	/**
@@ -44,8 +43,6 @@ exports.EditorPage = class EditorPage {
 
 	/**
 	 * Add a widget by `widgetType`.
-	 *
-	 * @shortcut `this.addElement()`
 	 */
 	async addWidget( widgetType, container = null ) {
 		return await this.addElement( { widgetType, elType: 'widget' }, container );
