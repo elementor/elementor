@@ -4,7 +4,6 @@ import { useNavigate } from '@reach/router';
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dialog';
-import Text from 'elementor-app/ui/atoms/text';
 
 import { Context } from '../../../context/context-provider';
 
@@ -22,6 +21,7 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		isKitHasSvgAssets = () => context.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
+		getFileProcessInfo = () => context.data.uploadedData ? __( 'Importing your content, templates and site settings', 'elementor' ) : null,
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -105,7 +105,7 @@ export default function ImportProcess() {
 					importKit();
 				}
 			} else {
-				navigate( '/import/content' );
+				navigate( '/import/plugins' );
 			}
 		}
 	}, [ context.data.uploadedData, context.data.importedData ] );
@@ -114,7 +114,7 @@ export default function ImportProcess() {
 		<Layout type="import">
 			<section>
 				<FileProcess
-					info={ __( 'Importing your content, templates and site settings', 'elementor' ) }
+					info={ getFileProcessInfo() }
 					errorType={ errorType }
 					onDialogDismiss={ onCancelProcess }
 				/>

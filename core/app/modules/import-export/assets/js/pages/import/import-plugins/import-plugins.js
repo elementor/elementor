@@ -71,7 +71,7 @@ export default function ImportPlugins() {
 					</Notice>
 				}
 
-				{ plugins?.proData?.status && <ProBanner status={ plugins.proData.status } /> }
+				{ plugins?.proData && <ProBanner status={ plugins.proData.status } /> }
 
 				<PluginsToImport plugins={ plugins?.missing } />
 

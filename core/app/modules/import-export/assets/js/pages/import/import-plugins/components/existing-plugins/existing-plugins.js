@@ -2,7 +2,7 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function ExistingPlugins( { plugins } ) {
-	if ( ! plugins?.length ) {
+	if ( ! plugins?.length || ( 1 === plugins.length && 'Elementor' === plugins[ 0 ].name ) ) {
 		return null;
 	}
 

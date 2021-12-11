@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -8,7 +8,6 @@ import FileProcess from '../../../shared/file-process/file-process';
 import PluginStatusItem from './components/plugin-status-item/plugin-status-item';
 
 import Grid from 'elementor-app/ui/grid/grid';
-import Text from 'elementor-app/ui/atoms/text';
 import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
@@ -46,10 +45,8 @@ export default function ImportPluginsActivation() {
 
 	// Once the imported plugins data was updated.
 	useEffect( () => {
-		console.log( 'context.data.importedPlugins', context.data.importedPlugins );
 		if ( context.data.importedPlugins.length ) {
-			console.log( 'NAVIGATING TO THE NEXT PAGE' );
-			//navigate( '/import/complete' );
+			navigate( '/import/process' );
 		}
 	}, [ context.data.importedPlugins ] );
 

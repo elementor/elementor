@@ -1,4 +1,5 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
 
@@ -12,7 +13,9 @@ import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ImportComplete() {
-	const context = useContext( Context ),
+	const context = useContext( Context );
+
+	const navigate = useNavigate(),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<DashboardButton />
@@ -64,9 +67,10 @@ export default function ImportComplete() {
 				content: getContent( manifest.content, importedData ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
-				plugins: context.data.importedPlugins?.succeeded,
+				plugins: context.data.importedPlugins,
 			};
 		},
+		failedPlugins = context.data.importedPlugins.filter( ( { status } ) => 'failed' === status ),
 		FailedPluginsNoticeButton = () => (
 			<Button
 				text={ __( 'Learn more', 'elementor' ) }
@@ -75,6 +79,12 @@ export default function ImportComplete() {
 				size="sm"
 			/>
 		);
+
+	useEffect( () => {
+		if ( ! context.data.uploadedData ) {
+			navigate( '/import' );
+		}
+	}, [] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -90,11 +100,11 @@ export default function ImportComplete() {
 				) }
 			>
 				{
-					! ! context.data.importedPlugins?.failed?.length &&
+					! ! failedPlugins.length &&
 					<Notice label={ __( 'Important:', 'elementor' ) } color="warning" button={ <FailedPluginsNoticeButton /> }>
 						{
 							__( 'There are few plugins that we couldn\'t install:', 'elementor' ) + ' ' +
-							context.data.importedPlugins.failed.join( ' | ' )
+							failedPlugins.map( ( { name } ) => name ).join( ' | ' )
 						}
 					</Notice>
 				}

@@ -17,7 +17,7 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins 
 
 			pluginsToInstall.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
-					group = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : MISSING_PLUGINS_KEY,
+					status = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : MISSING_PLUGINS_KEY,
 					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
 
 				// Verifying that the current installed plugin version is not older than the kit plugin version.
@@ -25,14 +25,14 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins 
 					data.minVersionMissing.push( plugin );
 				}
 
-				// In case that the Pro is inactive or not installed, it should be displayed separately and therefore not included.
-				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && ( MISSING_PLUGINS_KEY === group || ! elementorAppConfig.is_license_connected ) ) {
+				// In case that the Pro plugin exist, it should be displayed separately.
+				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name ) {
 					data.proData = pluginData;
 
-					return;
+					//return;
 				}
 
-				data[ group ].push( pluginData );
+				data[ status ].push( pluginData );
 			} );
 
 			return data;

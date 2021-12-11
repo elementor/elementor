@@ -9,18 +9,18 @@ import './pro-banner.scss';
 export default function ProBanner( { status } ) {
 	const data = {};
 
-	console.log( 'status', status );
-
-	if ( 'active' === status ) {
+	if ( 'inactive' === status ) {
+		return null;
+	} else if ( 'active' === status && elementorAppConfig.is_license_connected ) {
 		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
-	} else if ( 'inactive' === status ) {
+	} else if ( 'active' === status ) {
 		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton url={ elementorAppConfig.connect_url } text={ __( 'Connect & Activate', 'elementor' ) } />;
+		data.button = <GoProButton url={ elementorAppConfig.license_url } text={ __( 'Connect & Activate', 'elementor' ) } />;
 	} else {
 		data.heading = __( 'Install Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton />;
+		data.button = <GoProButton url="https://go.elementor.com/go-pro-import-export" />;
 	}
 
 	return (

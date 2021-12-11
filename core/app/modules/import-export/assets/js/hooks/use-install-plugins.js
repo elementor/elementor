@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import usePlugins from './use-plugins';
 
-export default function useInstallPlugins( { plugins = [], bulks = 3 } ) {
+export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) {
 	const { pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
 		[ isPluginsFetched, setIsPluginsFetched ] = useState( false ),
 		[ isDone, setIsDone ] = useState( false ),
@@ -11,9 +11,9 @@ export default function useInstallPlugins( { plugins = [], bulks = 3 } ) {
 		[ actionStatus, setActionStatus ] = useState( '' ),
 		[ currentPlugin, setCurrentPlugin ] = useState( null ),
 		getBulk = () => {
-			if ( bulk.length > bulks ) {
+			if ( bulk.length > bulkMaxItems ) {
 				// Getting a bulk for display, when needed to display only X plugins data that are in process.
-				return bulk.slice( bulk.length - bulks, bulk.length );
+				return bulk.slice( bulk.length - bulkMaxItems, bulk.length );
 			}
 
 			return bulk;
@@ -37,13 +37,7 @@ export default function useInstallPlugins( { plugins = [], bulks = 3 } ) {
 		if ( currentPlugin ) {
 			const action = 'inactive' === currentPlugin.status ? 'activate' : 'install';
 
-			let thePlugin = currentPlugin.plugin;
-			// TODO: temp - remove!
-			if ( 'media-cleaner/media-cleaner' === currentPlugin.plugin ) {
-				thePlugin = 'medsgfdsfd/dsfsdfsdf';
-			}
-
-			pluginsActions[ action ]( thePlugin );
+			pluginsActions[ action ]( currentPlugin.plugin );
 		}
 	}, [ currentPlugin ] );
 
