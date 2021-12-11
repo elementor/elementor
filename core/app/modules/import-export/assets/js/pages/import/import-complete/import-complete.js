@@ -54,6 +54,21 @@ export default function ImportComplete() {
 
 			return kitWPContent;
 		},
+		getImportedPlugins = () => {
+			const importedPlugins = {
+				activePlugins: [],
+				failedPlugins: [],
+			};
+
+			context.data.importedPlugins.forEach( ( plugin ) => {
+				const group = 'active' === plugin.status ? 'activePlugins' : 'failedPlugins';
+
+				importedPlugins[ group ].push( plugin );
+			} );
+
+			return importedPlugins;
+		},
+		{ activePlugins, failedPlugins } = getImportedPlugins(),
 		getKitData = () => {
 			if ( ! context.data.uploadedData || ! context.data.importedData ) {
 				return {};
@@ -67,10 +82,9 @@ export default function ImportComplete() {
 				content: getContent( manifest.content, importedData ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
-				plugins: context.data.importedPlugins,
+				plugins: activePlugins,
 			};
 		},
-		failedPlugins = context.data.importedPlugins.filter( ( { status } ) => 'failed' === status ),
 		FailedPluginsNoticeButton = () => (
 			<Button
 				text={ __( 'Learn more', 'elementor' ) }

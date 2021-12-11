@@ -22,16 +22,17 @@ import './import-plugins.scss';
 export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		{ pluginsState } = usePlugins(),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
-		{ plugins } = useImportPluginsData( kitPlugins, pluginsState.data ),
+		{ plugins } = useImportPluginsData( kitPlugins ),
 		saveRequiredPlugins = () => {
 			const { missing, proData } = plugins,
 				requiredPlugins = [ ...missing ];
 
-			if ( proData ) {
+			if ( proData && 'active' !== proData.status ) {
 				requiredPlugins.unshift( proData );
 			}
+
+			console.log( 'requiredPlugin', requiredPlugins );
 
 			if ( requiredPlugins.length ) {
 				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
