@@ -19,7 +19,7 @@ export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ pluginsOnProcess, isDone, installedPlugins, readyPlugins } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ bulk, ready, isDone } = useInstallPlugins( { plugins: context.data.plugins } ),
 		onCancelProcess = () => {
 			// context.dispatch( { type: 'SET_FILE', payload: null } );
 			//
@@ -40,15 +40,15 @@ export default function ImportPluginsActivation() {
 	// When import plugins process is done.
 	useEffect( () => {
 		if ( isDone ) {
-			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: installedPlugins } );
+			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
 		}
 	}, [ isDone ] );
 
 	// Once the imported plugins data was updated.
 	useEffect( () => {
-		const { succeeded, failed } = context.data.importedPlugins;
-
-		if ( succeeded?.length || failed?.length ) {
+		console.log( 'context.data.importedPlugins', context.data.importedPlugins );
+		if ( context.data.importedPlugins.length ) {
+			console.log( 'NAVIGATING TO THE NEXT PAGE' );
 			//navigate( '/import/complete' );
 		}
 	}, [ context.data.importedPlugins ] );
@@ -65,10 +65,10 @@ export default function ImportPluginsActivation() {
 				<Grid container justify="center">
 					<Grid item className="e-app-import-plugins-activation__installing-plugins">
 						{
-							! ! pluginsOnProcess?.length &&
+							! ! bulk?.length &&
 							<List>
 								{
-									pluginsOnProcess.map( ( plugin ) => (
+									bulk.map( ( plugin ) => (
 										<List.Item className="e-app-import-plugins-activation__plugin-status-item" key={ plugin.name }>
 											<PluginStatusItem
 												name={ plugin.name }
