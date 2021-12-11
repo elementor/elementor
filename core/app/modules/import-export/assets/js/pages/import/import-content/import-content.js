@@ -16,19 +16,20 @@ import './import-content.scss';
 export default function ImportContent() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
-		isAllRequiredPluginsSelected = () => {
-			const { plugins, requiredPlugins } = context.data;
-
-			return requiredPlugins.length === plugins.length;
-		},
+		{ plugins, requiredPlugins } = context.data,
+		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
 					onClick={ () => {
-						navigate( 'import/plugins/' );
-						// context.dispatch( { type: 'SET_FILE', payload: null } );
+						if ( requiredPlugins.length ) {
+							navigate( 'import/plugins/' );
+						} else {
+							context.dispatch( { type: 'SET_FILE', payload: null } );
+							navigate( 'import/' );
+						}
 					} }
 				/>
 
@@ -74,7 +75,7 @@ export default function ImportContent() {
 				/>
 
 				{
-					! isAllRequiredPluginsSelected() &&
+					! isAllRequiredPluginsSelected &&
 					<Notice color="warning" label={ __( 'Required plugins are still missing.', 'elementor' ) } className="e-app-import-content__plugins-notice">
 						{ __( 'If you don\'t include them, this kit may not work properly.', 'elementor' ) } <InlineLink url="/import/plugins">{ __( 'Go Back', 'elementor' ) }</InlineLink>
 					</Notice>

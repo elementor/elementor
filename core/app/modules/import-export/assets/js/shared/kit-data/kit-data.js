@@ -89,7 +89,7 @@ export default function KitData( props ) {
 					included: getContent(),
 				},
 				{
-					siteArea: __( 'Activated Plugins', 'elementor' ),
+					siteArea: __( 'Plugins', 'elementor' ),
 					link: '',
 					included: getActivatedPlugins(),
 				},

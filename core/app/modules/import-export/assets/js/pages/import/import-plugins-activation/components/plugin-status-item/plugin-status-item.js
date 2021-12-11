@@ -5,8 +5,10 @@ import Text from 'elementor-app/ui/atoms/text';
 export default function PluginStatusItem( { name, status } ) {
 	if ( 'Not Installed' === status ) {
 		return null;
-	} else if ( 'installed' === status ) {
-		//status = 'activated';
+	} else if ( 'inactive' === status ) {
+		status = 'installed';
+	} else if ( 'active' === status ) {
+		status = 'activated';
 	}
 
 	return (
