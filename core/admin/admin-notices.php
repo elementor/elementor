@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
+	const EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+
 	private $plain_notices = [
 		'api_notice',
 		'api_upgrade_plugin',
@@ -66,6 +68,7 @@ class Admin_Notices extends Module {
 	private function get_elementor_pages_count() {
 		if ( null === $this->elementor_pages_count ) {
 			$elementor_pages = new \WP_Query( [
+				'no_found_rows' => true,
 				'post_type' => 'any',
 				'post_status' => 'publish',
 				'fields' => 'ids',
@@ -503,6 +506,12 @@ class Admin_Notices extends Module {
 	}
 
 	public function print_admin_notice( array $options ) {
+		global $pagenow;
+
+		if ( in_array( $pagenow, self::EXCLUDE_PAGES ) ) {
+			return;
+		}
+
 		$default_options = [
 			'id' => null,
 			'title' => '',

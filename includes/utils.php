@@ -89,24 +89,6 @@ class Utils {
 	];
 
 	/**
-	 * Is ajax.
-	 *
-	 * Whether the current request is a WordPress ajax request.
-	 *
-	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `wp_doing_ajax()` instead.
-	 * @access public
-	 * @static
-	 *
-	 * @return bool True if it's a WordPress ajax request, false otherwise.
-	 */
-	public static function is_ajax() {
-		 _deprecated_function( __METHOD__, '2.6.0', 'wp_doing_ajax()' );
-
-		return wp_doing_ajax();
-	}
-
-	/**
 	 * Is WP CLI.
 	 *
 	 * @return bool
@@ -400,6 +382,7 @@ class Utils {
 	 *
 	 * @since 1.9.0
 	 * @access public
+	 * @deprecated 3.3.0
 	 * @static
 	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
@@ -746,6 +729,7 @@ class Utils {
 	 */
 	public static function get_recently_edited_posts_query( $args = [] ) {
 		$args = wp_parse_args( $args, [
+			'no_found_rows' => true,
 			'post_type' => 'any',
 			'post_status' => [ 'publish', 'draft' ],
 			'posts_per_page' => '3',

@@ -129,10 +129,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			'jquery-slick' => [
-				'version' => '2.7.0',
-				'replacement' => 'Swiper',
-			],
+			//Insert here when you have a deprecated script
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {

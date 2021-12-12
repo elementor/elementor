@@ -160,15 +160,6 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
-		// TODO: a temporary solution to a scenario that the elementor-icons.css file was de-registered and the e-icons font fonts should not be loaded.
-		add_action( 'wp_enqueue_scripts', function() {
-			if ( ! wp_style_is( 'elementor-icons', 'registered' ) ) {
-				$elementor_icons_css_reset = '[class^="eicon"], [class*=" eicon-"] { font-family: "initial"; } [class^="eicon"]:before, [class*=" eicon-"]:before { content: ""; }';
-
-				wp_add_inline_style( 'elementor-frontend', $elementor_icons_css_reset );
-			}
-		}, 30 );
-
 		$this->add_content_filter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
@@ -414,26 +405,13 @@ class Frontend extends App {
 			true
 		);
 
-		/**
-		 * @deprecated since 2.7.0 Use Swiper instead
-		 */
-		wp_register_script(
-			'jquery-slick',
-			$this->get_js_assets_url( 'slick', 'assets/lib/slick/' ),
-			[
-				'jquery',
-			],
-			'1.8.1',
-			true
-		);
-
 		wp_register_script(
 			'elementor-dialog',
 			$this->get_js_assets_url( 'dialog', 'assets/lib/dialog/' ),
 			[
 				'jquery-ui-position',
 			],
-			'4.8.1',
+			'4.9.0',
 			true
 		);
 
@@ -635,10 +613,8 @@ class Frontend extends App {
 			 */
 			do_action( 'elementor/frontend/before_enqueue_styles' );
 
-			$this->add_elementor_icons_inline_css();
-
 			// The e-icons are needed in preview mode for the editor icons (plus-icon for new section, folder-icon for the templates library etc.).
-			if ( ! $this->is_improved_assets_loading() || Plugin::$instance->preview->is_preview_mode() ) {
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) || Plugin::$instance->preview->is_preview_mode() ) {
 				wp_enqueue_style( 'elementor-icons' );
 			}
 
@@ -674,28 +650,89 @@ class Frontend extends App {
 	 *
 	 * @since 3.4.5
 	 *
-	 * @access private
+	 * @access public
 	 *
 	 * @param string $frontend_file_name
 	 * @param boolean $custom_file
 	 *
 	 * @return string frontend file URL
 	 */
-	private function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
 		if ( $custom_file ) {
-			$frontend_file = new FrontendFile( 'custom-' . $frontend_file_name, Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name );
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
 
-			$time = $frontend_file->get_meta( 'time' );
-
-			if ( ! $time ) {
-				$frontend_file->update();
-			}
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
 			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
 		}
 
 		return $frontend_file_url;
+	}
+
+	/**
+	 * Get Frontend File Path
+	 *
+	 * Returns the path for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the path for the default CSS file is returned.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param boolean $custom_file
+	 *
+	 * @return string frontend file path
+	 */
+	public function get_frontend_file_path( $frontend_file_name, $custom_file ) {
+		if ( $custom_file ) {
+			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+
+			$frontend_file_path = $frontend_file->get_path();
+		} else {
+			$frontend_file_path = ELEMENTOR_ASSETS_PATH . 'css/' . $frontend_file_name;
+		}
+
+		return $frontend_file_path;
+	}
+
+	/**
+	 * Get Frontend File
+	 *
+	 * Returns a frontend file instance.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $frontend_file_name
+	 * @param string $file_prefix
+	 * @param string $template_file_path
+	 *
+	 * @return FrontendFile
+	 */
+	public function get_frontend_file( $frontend_file_name, $file_prefix = 'custom-', $template_file_path = '' ) {
+		static $cached_frontend_files = [];
+
+		$file_name = $file_prefix . $frontend_file_name;
+
+		if ( isset( $cached_frontend_files[ $file_name ] ) ) {
+			return $cached_frontend_files[ $file_name ];
+		}
+
+		if ( ! $template_file_path ) {
+			$template_file_path = Breakpoints_Manager::get_stylesheet_templates_path() . $frontend_file_name;
+		}
+
+		$frontend_file = new FrontendFile( $file_name, $template_file_path );
+
+		$time = $frontend_file->get_meta( 'time' );
+
+		if ( ! $time ) {
+			$frontend_file->update();
+		}
+
+		$cached_frontend_files[ $file_name ] = $frontend_file;
+
+		return $frontend_file;
 	}
 
 	/**
@@ -1450,19 +1487,5 @@ class Frontend extends App {
 		$is_optimized_css_loading = Plugin::$instance->experiments->is_feature_active( 'e_optimized_css_loading' );
 
 		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! Plugin::$instance->preview->is_preview_mode();
-	}
-
-	private function add_elementor_icons_inline_css() {
-		$elementor_icons_library_version = '5.10.0';
-
-		/**
-		 * The e-icons font-face must be printed inline due to custom breakpoints.
-		 * When using custom breakpoints, the frontend CSS is loaded from the custom-frontend CSS file.
-		 * The custom frontend file is located in a different path ('uploads' folder).
-		 * Therefore, it cannot be called from a CSS file that its relative path can vary.
-		 */
-		$elementor_icons_inline_css = sprintf( '@font-face{font-family:eicons;src:url(%1$slib/eicons/fonts/eicons.eot?%2$s);src:url(%1$slib/eicons/fonts/eicons.eot?%2$s#iefix) format("embedded-opentype"),url(%1$slib/eicons/fonts/eicons.woff2?%2$s) format("woff2"),url(%1$slib/eicons/fonts/eicons.woff?%2$s) format("woff"),url(%1$slib/eicons/fonts/eicons.ttf?%2$s) format("truetype"),url(%1$slib/eicons/fonts/eicons.svg?%2$s#eicon) format("svg");font-weight:400;font-style:normal}', ELEMENTOR_ASSETS_URL, $elementor_icons_library_version );
-
-		wp_add_inline_style( 'elementor-frontend', $elementor_icons_inline_css );
 	}
 }

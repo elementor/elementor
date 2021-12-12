@@ -26,6 +26,10 @@ class Site extends Base_Category {
 		return esc_html__( 'Site', 'elementor' );
 	}
 
+	public function get_id() {
+		return 'site';
+	}
+
 	/**
 	 * Get category items.
 	 *

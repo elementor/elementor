@@ -7,10 +7,11 @@ import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper-bc';
+import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
+import Events from 'elementor-utils/events';
 
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import { escapeHTML } from 'elementor-frontend/utils/utils';
@@ -320,7 +321,11 @@ export default class Frontend extends elementorModules.ViewModule {
 			shapes: Shapes,
 		};
 
+		// TODO: BC - Deprecated since 3.5.0
 		elementorFrontend.trigger( 'elementor/modules/init:before' );
+
+		// TODO: Use this instead.
+		elementorFrontend.trigger( 'elementor/modules/init/before' );
 
 		Object.entries( handlers ).forEach( ( [ moduleName, ModuleClass ] ) => {
 			this.modulesHandlers[ moduleName ] = new ModuleClass();
@@ -359,7 +364,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		}
 
 		// Keep this line before `initOnReadyComponents` call
-		this.elements.$window.trigger( 'elementor/frontend/init' );
+		Events.dispatch( this.elements.$window, 'elementor/frontend/init' );
 
 		this.initModules();
 

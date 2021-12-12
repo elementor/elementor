@@ -222,10 +222,15 @@ class Kit extends PageBase {
 			'settings-background' => Tabs\Settings_Background::class,
 			'settings-layout' => Tabs\Settings_Layout::class,
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
-			// TODO: Revert when Page Transitions will be released.
-			//'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
-			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
 		];
+
+		// Add the Page Transitions tab only if the experiment exists.
+		if ( Plugin::instance()->experiments->get_features( 'page-transitions' ) ) {
+			$tabs['settings-page-transitions'] = Tabs\Settings_Page_Transitions::class;
+		}
+
+		// Add the Custom CSS tab at last.
+		$tabs['settings-custom-css'] = Tabs\Settings_Custom_CSS::class;
 
 		foreach ( $tabs as $id => $class ) {
 			$this->register_tab( $id, $class );

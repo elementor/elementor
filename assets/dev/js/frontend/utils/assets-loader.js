@@ -40,7 +40,7 @@ const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : 
 AssetsLoader.assets = {
 	script: {
 		dialog: {
-			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.8.1`,
+			src: `${ elementorFrontendConfig.urls.assets }lib/dialog/dialog${ fileSuffix }.js?ver=4.9.0`,
 		},
 		'share-link': {
 			src: `${ elementorFrontendConfig.urls.assets }lib/share-link/share-link${ fileSuffix }.js?ver=${ elementorFrontendConfig.version }`,

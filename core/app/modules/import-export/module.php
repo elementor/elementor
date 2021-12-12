@@ -4,6 +4,7 @@ namespace Elementor\Core\App\Modules\ImportExport;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
@@ -24,6 +25,8 @@ class Module extends BaseModule {
 	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
 
 	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
+
+	const MANIFEST_ERROR_KEY = 'manifest-error';
 
 	/**
 	 * @var Export
@@ -53,11 +56,12 @@ class Module extends BaseModule {
 
 		$export_nonce = wp_create_nonce( 'elementor_export' );
 
-		$export_url = add_query_arg( [ 'nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
 
 		return [
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 		];
 	}
 
@@ -101,7 +105,7 @@ class Module extends BaseModule {
 		// PHPCS - Already validated in caller function.
 		if ( ! empty( $_POST['e_import_file'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$file_url = $_POST['e_import_file']; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED ) || 0 !== strpos( $file_url, 'http' ) ) {
+			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
 				throw new \Error( __( 'Invalid URL', 'elementor' ) );
 			}
 
@@ -129,7 +133,18 @@ class Module extends BaseModule {
 
 		$session_dir = $extraction_result['extraction_directory'];
 
-		$manifest_data = json_decode( file_get_contents( $session_dir . 'manifest.json', true ), true );
+		$manifest_file_content = file_get_contents( $session_dir . 'manifest.json', true );
+
+		if ( ! $manifest_file_content ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
+
+		$manifest_data = json_decode( $manifest_file_content, true );
+
+		// In case that the manifest content is not a valid JSON or empty.
+		if ( ! $manifest_data ) {
+			throw new \Error( self::MANIFEST_ERROR_KEY );
+		}
 
 		$manifest_data = $this->import->adapt_manifest_structure( $manifest_data );
 
@@ -154,7 +169,7 @@ class Module extends BaseModule {
 	}
 
 	private function on_admin_init() {
-		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['nonce'], Ajax::NONCE_KEY ) ) {
+		if ( ! isset( $_POST['action'] ) || self::IMPORT_TRIGGER_KEY !== $_POST['action'] || ! wp_verify_nonce( $_POST['_nonce'], Ajax::NONCE_KEY ) ) {
 			return;
 		}
 
@@ -162,9 +177,12 @@ class Module extends BaseModule {
 
 		$import_settings['directory'] = Plugin::$instance->uploads_manager->get_temp_dir() . $import_settings['session'] . '/';
 
-		$this->import = new Import( $import_settings );
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
 		try {
+			$this->import = new Import( $import_settings );
+
 			if ( 1 === $import_settings['stage'] ) {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
@@ -178,7 +196,7 @@ class Module extends BaseModule {
 	}
 
 	private function on_init() {
-		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['nonce'], 'elementor_export' ) ) {
+		if ( ! isset( $_GET[ self::EXPORT_TRIGGER_KEY ] ) || ! wp_verify_nonce( $_GET['_nonce'], 'elementor_export' ) ) {
 			return;
 		}
 
@@ -200,7 +218,7 @@ class Module extends BaseModule {
 				'file' => base64_encode( $file ),
 			] );
 		} catch ( \Error $error ) {
-			wp_die( esc_html( $error->getMessage() ) );
+			wp_send_json_error( $error->getMessage() );
 		}
 	}
 
