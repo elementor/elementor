@@ -133,7 +133,7 @@ abstract class Base_Module extends BaseModule {
 			$this->on_plugin_update_message( $args );
 		}, 11 /* After the warning message for backup */ );
 
-		add_action( 'admin_init', function () {
+		add_action( 'elementor/system_info/get_allowed_reports', function () {
 			System_Info::add_report( $this->get_plugin_name() . '_compatibility', [
 				'file_name' => __DIR__ . '/compatibility-tag-report.php',
 				'class_name' => __NAMESPACE__ . '\Compatibility_Tag_Report',
