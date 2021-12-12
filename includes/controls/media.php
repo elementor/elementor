@@ -68,7 +68,11 @@ class Control_Media extends Control_Base_Multiple {
 			return $settings;
 		}
 
-		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
+		try {
+			$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
+		} catch ( \Error $e ) {
+			$settings = false;
+		}
 
 		if ( ! $settings ) {
 			$settings = [
