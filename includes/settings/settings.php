@@ -81,22 +81,6 @@ class Settings extends Settings_Page {
 			'',
 			'58.5'
 		);
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			add_submenu_page(
-				self::PAGE_ID,
-				_x( 'Templates', 'Template Library', 'elementor' ),
-				_x( 'Templates', 'Template Library', 'elementor' ),
-				Editor::EDITING_CAPABILITY,
-				Source_Local::ADMIN_MENU_SLUG,
-				null,
-				0
-			);
-
-			global $submenu;
-
-			$submenu[ self::PAGE_ID ][1][0] = esc_html__( 'Settings', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		}
 	}
 
 	/**
@@ -219,12 +203,10 @@ class Settings extends Settings_Page {
 			[ $this, 'elementor_getting_started' ]
 		);
 
-		$help_title = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ? esc_html__( 'Help', 'elementor' ) : esc_html__( 'Get Help', 'elementor' );
-
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			$help_title,
+			esc_html__( 'Get Help', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
 			[ $this, 'handle_external_redirects' ]
@@ -429,9 +411,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
-			Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
-		}
+		Utils::change_submenu_first_item_label( 'elementor', esc_html__( 'Settings', 'elementor' ) );
 	}
 
 	/**
@@ -690,10 +670,16 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+			add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+			add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+			add_filter( 'custom_menu_order', '__return_true' );
+			add_filter( 'menu_order', [ $this, 'menu_order' ] );
+		}
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
@@ -708,8 +694,5 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 	}
 }

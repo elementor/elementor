@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,17 +23,27 @@ class Tools extends Settings_Page {
 	 */
 	const PAGE_ID = 'elementor-tools';
 
+	private function register_admin_menu( MainMenu $menu ) {
+		$menu->add_submenu( [
+			'page_title' => __( 'Tools', 'elementor' ),
+			'menu_title' => __( 'Tools', 'elementor' ),
+			'menu_slug' => self::PAGE_ID,
+			'function' => [ $this, 'display_settings_page' ],
+			'index' => 50,
+		] );
+	}
+
 	/**
-	 * Register admin menu.
+	 * Register admin menu legacy.
 	 *
 	 * Add new Elementor Tools admin menu.
 	 *
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 1.0.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_admin_menu() {
+	private function register_admin_menu_legacy() {
 		add_submenu_page(
 			Settings::PAGE_ID,
 			__( 'Tools', 'elementor' ),
@@ -170,7 +181,15 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 205 );
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu_registered/elementor', function( MainMenu $menu ) {
+				$this->register_admin_menu( $menu );
+			} );
+		} else {
+			add_action( 'admin_menu', function() {
+				$this->register_admin_menu_legacy();
+			}, 205 );
+		}
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
