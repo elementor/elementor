@@ -56,6 +56,8 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 			} else if ( 'inactive' === data.status ) {
 				setActionStatus( 'installed' );
 			}
+		} else if ( PLUGINS_STATUS_MAP.ERROR === pluginsState.status ) {
+			setActionStatus( 'failed' );
 		}
 	}, [ pluginsState.status ] );
 
@@ -89,5 +91,6 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 		isDone,
 		ready,
 		bulk: getBulk(),
+		isError: PLUGINS_STATUS_MAP.ERROR === pluginsState.status,
 	};
 }

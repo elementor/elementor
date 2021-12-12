@@ -12,21 +12,27 @@ import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
 
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useInstallPlugins from '../../../hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ bulk, ready, isDone } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ bulk, ready, isDone, isError } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ referrer } = useQueryParams().getAll(),
 		onCancelProcess = () => {
-			// context.dispatch( { type: 'SET_FILE', payload: null } );
-			//
-			// if ( 'kit-library' === referrer ) {
-			// 	navigate( '/kit-library' );
-			// } else {
-			// 	navigate( '/import' );
-			// }
+			context.dispatch( { type: 'SET_FILE', payload: null } );
+
+			if ( 'kit-library' === referrer ) {
+				navigate( '/kit-library' );
+			} else {
+				navigate( '/import' );
+			}
+		},
+		onTryAgain = () => {
+			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
+			navigate( '/import/plugins' );
 		};
 
 	// In case there are no plugins to import.
@@ -57,6 +63,7 @@ export default function ImportPluginsActivation() {
 					info={ __( 'Activating plugins:', 'elementor' ) }
 					errorType={ errorType }
 					onDialogDismiss={ onCancelProcess }
+					onDialogApprove={ onTryAgain }
 				/>
 
 				<Grid container justify="center">
