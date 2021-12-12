@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from '../../history/helper';
 
 // TODO: Check code coverage and add required tests.

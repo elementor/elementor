@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/history/helper';
 
 export const Move = () => {

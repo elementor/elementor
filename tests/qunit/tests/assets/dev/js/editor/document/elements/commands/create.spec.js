@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from '../../history/helper';
 import { DEFAULT_INNER_SECTION_COLUMNS } from 'elementor-elements/views/section';
 

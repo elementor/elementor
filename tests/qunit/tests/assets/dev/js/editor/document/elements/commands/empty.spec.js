@@ -1,5 +1,5 @@
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import { Empty as _Empty } from 'elementor-document/elements/commands';
-import ElementsHelper from '../helper';
 
 export const Empty = () => {
 	QUnit.module( 'Empty', () => {

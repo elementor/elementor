@@ -1,5 +1,5 @@
 import CommonHelper from 'elementor/tests/qunit/tests/core/common/helper';
-import ElementsHelper from '../../elements/helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 
 export const Copy = () => {
 	QUnit.test( 'Copy', ( assert ) => {

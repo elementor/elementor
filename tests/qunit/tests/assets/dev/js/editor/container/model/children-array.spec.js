@@ -1,4 +1,4 @@
-import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 
 QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( hooks ) => {
 	hooks.beforeEach( () => {

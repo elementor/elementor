@@ -1,72 +1,5 @@
-// TODO: Set merge with QUnit helper.
-
-export default class DocumentElementsHelper {
-	static createAuto( elType, widgetType = 'button' ) {
-		let result = null;
-
-		switch ( elType ) {
-			case 'document':
-				result = elementor.getPreviewContainer();
-				break;
-
-			case 'section':
-				result = DocumentElementsHelper.createSection( 1 );
-				break;
-
-			case 'container':
-				result = DocumentElementsHelper.createContainer();
-				break;
-
-			case 'column':
-				result = DocumentElementsHelper.createSection( 1, true );
-				break;
-
-			case 'widget':
-				result = DocumentElementsHelper.createSection( 1, true );
-				result = DocumentElementsHelper.createWidget( result, widgetType );
-				break;
-
-			case 'innerSection':
-				result = DocumentElementsHelper.createInnerSection(
-					DocumentElementsHelper.createSection( 1, true )
-				);
-				break;
-		}
-
-		return result;
-	}
-
-	/**
-	 * @return {Container}
-	 */
-	static createAutoButton( eContainer = null, settings = {} ) {
-		if ( ! eContainer ) {
-			eContainer = this.createSection( 1, true );
-		}
-
-		return this.createWidgetButton( eContainer, settings );
-	}
-
-	static createAutoColumn( eContainer = null, settings = {} ) {
-		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
-
-		this.settings( eContainer, settings, {
-			debounce: false,
-		} );
-
-		return eContainer;
-	}
-
-	static multiCreateAutoButton( eContainers = null ) {
-		if ( ! eContainers ) {
-			eContainers = [];
-			eContainers.push( this.createSection( 1, true ) );
-			eContainers.push( this.createSection( 1, true ) );
-		}
-
-		return this.multiCreateButton( eContainers );
-	}
-
+// TODO: Merge with `utils/js/document-elements-helper.mjs`.
+export default class ElementsHelper {
 	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
@@ -82,16 +15,6 @@ export default class DocumentElementsHelper {
 		}
 
 		return eSection;
-	}
-
-	static createContainer( options = {} ) {
-		return $e.run( 'document/elements/create', {
-			model: {
-				elType: 'container',
-			},
-			container: elementor.getPreviewContainer(),
-			options,
-		} );
 	}
 
 	static createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
@@ -130,6 +53,51 @@ export default class DocumentElementsHelper {
 		} );
 	}
 
+	static resizeColumn( eContainer, width ) {
+		$e.run( 'document/elements/settings', {
+			container: eContainer,
+			settings: {
+				_inline_size: width,
+			},
+			options: {
+				debounce: false,
+			},
+		} );
+	}
+
+	static createButton( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'button',
+				settings,
+			},
+		} );
+	}
+
+	static multiCreateButton( eContainers, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			containers: eContainers,
+			model: {
+				elType: 'widget',
+				widgetType: 'button',
+				settings,
+			},
+		} );
+	}
+
+	static createVideo( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'video',
+				settings,
+			},
+		} );
+	}
+
 	static createInnerSection( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
@@ -150,52 +118,24 @@ export default class DocumentElementsHelper {
 		} );
 	}
 
-	static resizeColumn( eContainer, width ) {
-		$e.run( 'document/elements/settings', {
-			container: eContainer,
-			settings: {
-				_inline_size: width,
-			},
-			options: {
-				debounce: false,
-			},
-		} );
-	}
-
-	static createWidget( eContainer, widgetType, settings = {}, options = {} ) {
+	static createTabs( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
 				elType: 'widget',
-				widgetType,
-				settings,
+				widgetType: 'tabs',
 			},
-			options,
 		} );
 	}
 
-	static createWidgetMulti( eContainers, widgetType, settings = {}, options = {} ) {
+	static createForm( eContainer ) {
 		return $e.run( 'document/elements/create', {
-			containers: eContainers,
+			container: eContainer,
 			model: {
 				elType: 'widget',
-				widgetType,
-				settings,
+				widgetType: 'form',
 			},
-			options,
 		} );
-	}
-
-	static createWidgetButton( eContainer, settings = {} ) {
-		return this.createWidget( eContainer, 'button', settings );
-	}
-
-	static multiCreateButton( eContainers, settings = {} ) {
-		return this.createWidgetMulti( eContainers, 'button', settings );
-	}
-
-	static createWidgetTabs( eContainer ) {
-		return this.createWidget( eContainer, 'tabs' );
 	}
 
 	static copy( eContainer ) {
@@ -326,5 +266,81 @@ export default class DocumentElementsHelper {
 
 	static import( data, model, options = {} ) {
 		return $e.run( 'document/elements/import', { data, model, options } );
+	}
+
+	static createAutoColumn( eContainer = null, settings = {} ) {
+		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
+
+		this.settings( eContainer, settings, {
+			debounce: false,
+		} );
+
+		return eContainer;
+	}
+
+	static createAutoColumnStyled( eContainer = null ) {
+		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
+
+		this.settings( eContainer, {
+			background_background: 'gradient',
+			background_color: '#D51D1D',
+		}, {
+			debounce: false,
+		} );
+
+		return eContainer;
+	}
+
+	static createAutoForm( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createForm( eContainer );
+	}
+
+	/**
+	 * @return {Container}
+	 */
+	static createAutoButton( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createButton( eContainer );
+	}
+
+	static multiCreateAutoButton( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eContainers );
+	}
+
+	static createAutoButtonStyled( eContainer = null ) {
+		if ( ! eContainer ) {
+			eContainer = this.createSection( 1, true );
+		}
+
+		return this.createButton( eContainer, {
+			text: 'createAutoButtonStyled',
+			background_color: '#000000',
+		} );
+	}
+
+	static multiCreateAutoButtonStyled( eContainers = null ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eContainers, {
+			text: 'createAutoButtonStyled',
+			background_color: '#000000',
+		} );
 	}
 }

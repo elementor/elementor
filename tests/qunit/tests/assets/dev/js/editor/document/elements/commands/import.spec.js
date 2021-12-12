@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from '../../history/helper';
 import BlockFaq from 'elementor/tests/qunit/mock/library/blocks/faq.json';
 import PageLandingPageHotel from 'elementor/tests/qunit/mock/library/pages/landing-page-hotel.json';

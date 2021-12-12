@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from '../../history/helper';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
@@ -7,7 +7,10 @@ export const PasteStyle = () => {
 		QUnit.module( 'Single Selection', () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eButtonSimple = ElementsHelper.createAutoButton(),
-					eButtonStyled = ElementsHelper.createAutoButtonStyled(),
+					eButtonStyled = ElementsHelper.createAutoButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				ElementsHelper.copy( eButtonStyled );
@@ -26,7 +29,10 @@ export const PasteStyle = () => {
 
 			QUnit.test( 'On column', ( assert ) => {
 				const eColumnSimple = ElementsHelper.createAuto( 'column' ),
-					eColumnStyled = ElementsHelper.createAutoColumnStyled(),
+					eColumnStyled = ElementsHelper.createAutoButton( null, {
+						background_background: 'gradient',
+						background_color: '#D51D1D',
+					} ),
 					eStyledButtonBackground = eColumnStyled.settings.attributes.background_color;
 
 				ElementsHelper.copy( eColumnStyled );
@@ -39,7 +45,10 @@ export const PasteStyle = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetSimple = ElementsHelper.createAutoButton(),
-					eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
+					eWidgetStyled = ElementsHelper.createAutoButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					widgetSimpleBackground = eWidgetSimple.settings.get( 'background_color' );
 
 				//widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
@@ -106,7 +115,10 @@ export const PasteStyle = () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eButtonSimple1 = ElementsHelper.createAutoButton(),
 					eButtonSimple2 = ElementsHelper.createAutoButton(),
-					eButtonStyled = ElementsHelper.createAutoButtonStyled(),
+					eButtonStyled = ElementsHelper.createAutoButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					eStyledButtonBackground = eButtonStyled.settings.attributes.background_color;
 
 				ElementsHelper.copy( eButtonStyled );

@@ -1,4 +1,4 @@
-import ElementsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 
 export const CopyAll = () => {
 	QUnit.module( 'CopyAll', () => {
