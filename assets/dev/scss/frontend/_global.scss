@@ -128,13 +128,6 @@
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
-
-		// If the optimized DOM experiment is active, inherit the parent padding so the widget
-		// will take the parent padding in account when setting a position.
-		.elementor-column > & {
-			padding: inherit;
-			box-sizing: content-box; // To keep the width from the control, since the padding was added.
-		}
 	}
 
 	> .elementor-element.elementor-fixed {
@@ -245,11 +238,16 @@
 
 		i {
 			font-family: eicons;
-			animation: fa-spin 2s infinite linear;
 
 			&:before {
 				content: '\e8fb';
 			}
+		}
+
+		// Using the eicon-spin animation for not being dependent in any external library.
+		i,
+		svg {
+			animation: eicon-spin 2s infinite linear;
 		}
 	}
 }
@@ -370,3 +368,19 @@
 .elementor-page-title, h1.entry-title {
 	display: var(--page-title-display);
 }
+
+// Global animation that should be available even when the elementor-icons library is not loaded.
+@keyframes eicon-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+// Global animation class that should be available even when the elementor-icons library is not loaded.
+.eicon-animation-spin {
+	animation: eicon-spin 2s infinite linear;
+}
+

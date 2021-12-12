@@ -24,7 +24,7 @@ class Settings_Page_Transitions extends Tab_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-layout-settings';
+		return 'eicon-page-transition';
 	}
 
 	public function get_help_url() {

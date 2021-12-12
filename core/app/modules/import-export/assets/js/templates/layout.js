@@ -6,9 +6,11 @@ import { infoButtonProps } from '../shared/info-modal/info-modal';
 import ImportInfoModal from '../shared/info-modal/import-info-modal';
 import ExportInfoModal from '../shared/info-modal/export-info-modal';
 
+import useQueryParams from 'elementor-app/hooks/use-query-params';
+
 export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
-		referrer = location.hash.match( 'referrer=([^&]+)' ),
+		{ referrer } = useQueryParams().getAll(),
 		getContent = () => {
 			const infoModalProps = {
 				show: showInfoModal,
@@ -40,7 +42,7 @@ export default function Layout( props ) {
 		moduleAdminTab = '#tab-import-export-kit';
 
 	// Targeting the return_url value to the import-export dedicated admin tab (only when there is no specific referrer).
-	if ( ! referrer && -1 === elementorAppConfig.return_url.indexOf( moduleAdminTab ) ) {
+	if ( ! referrer && -1 === elementorAppConfig.return_url.indexOf( moduleAdminTab ) && elementorAppConfig.return_url.includes( 'page=elementor-tools' ) ) {
 		elementorAppConfig.return_url += moduleAdminTab;
 	}
 

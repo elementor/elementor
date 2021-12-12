@@ -439,6 +439,7 @@ class Widget_Image_Carousel extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev svg, {{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next svg' => 'fill: {{VALUE}};',
 				],
 				'condition' => [
 					'navigation' => [ 'arrows', 'both' ],
@@ -786,11 +787,11 @@ class Widget_Image_Carousel extends Widget_Base {
 				<?php endif; ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev">
-						<i class="eicon-chevron-left" aria-hidden="true"></i>
+						<?php $this->render_swiper_button( 'previous' ); ?>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Previous', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-swiper-button elementor-swiper-button-next">
-						<i class="eicon-chevron-right" aria-hidden="true"></i>
+						<?php $this->render_swiper_button( 'next' ); ?>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Next', 'elementor' ); ?></span>
 					</div>
 				<?php endif; ?>
@@ -856,5 +857,16 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		return $attachment_post->post_content;
+	}
+
+	private function render_swiper_button( $type ) {
+		$direction = 'next' === $type ? 'right' : 'left';
+
+		$icon_value = 'eicon-chevron-' . $direction;
+
+		Icons_Manager::render_icon( [
+			'library' => 'eicons',
+			'value' => $icon_value,
+		], [ 'aria-hidden' => 'true' ] );
 	}
 }
