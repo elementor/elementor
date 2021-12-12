@@ -128,7 +128,7 @@ BaseElementView = BaseContainer.extend( {
 	getContextMenuGroups() {
 		const controlSign = environment.mac ? '⌘' : '^';
 
-		let groups = [
+		return [
 			{
 				name: 'general',
 				actions: [
@@ -182,41 +182,21 @@ BaseElementView = BaseContainer.extend( {
 						callback: () => $e.run( 'document/elements/reset-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					},
 				],
-			},
-		];
-
-		let customGroups = [];
-
-		/**
-		 * Filter Additional Context Menu Groups.
-		 *
-		 * This filter allows adding new context menu groups to elements.
-		 *
-		 * @param array customGroups - An array of group objects.
-		 * @param string elementType - The current element type.
-		 */
-		customGroups = elementor.hooks.applyFilters( 'elements/context-menu/groups', customGroups, this.options.model.get( 'elType' ) );
-
-		if ( customGroups.length ) {
-			groups = [ ...groups, ...customGroups ];
-		}
-
-		groups.push( {
-			name: 'delete',
-			actions: [
-				{
-					name: 'delete',
-					icon: 'eicon-trash',
-					title: () => elementor.selection.isMultiple() ?
+			}, {
+				name: 'delete',
+				actions: [
+					{
+						name: 'delete',
+						icon: 'eicon-trash',
+						title: () => elementor.selection.isMultiple() ?
 							sprintf( __( 'Delete %d items', 'elementor' ), elementor.selection.getElements().length ) :
 							__( 'Delete', 'elementor' ),
-					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
-				},
-			],
-		} );
-
-		return groups;
+						shortcut: '⌦',
+						callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					},
+				],
+			},
+		];
 	},
 
 	getEditButtons: function() {
