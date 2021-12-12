@@ -45,6 +45,7 @@ export class Widget extends MediaParser {
 				},
 			} );
 		} ).catch( () => {
+
 			$e.run( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
 				options: {
