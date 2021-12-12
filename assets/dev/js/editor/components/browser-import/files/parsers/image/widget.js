@@ -45,13 +45,13 @@ export class Widget extends MediaParser {
 				},
 			} );
 		} ).catch( () => {
+			elementor.documents.getCurrent().history.setActive( false );
 
 			$e.run( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
-				options: {
-					useHistory: false,
-				},
 			} );
+
+			elementor.documents.getCurrent().history.setActive( true );
 		} );
 
 		return container;
