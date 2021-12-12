@@ -17,11 +17,11 @@ jQuery( () => {
 
 		QUnit.test( 'onCatchApply()`', ( assert ) => {
 			const fakeHistory = class extends CommandHistory {
-					// eslint-disable-next-line no-unused-vars
-					getHistory( args ) {
-						return true;
-					}
-				},
+				// eslint-disable-next-line no-unused-vars
+				getHistory( args ) {
+					return true;
+				}
+			},
 				instance = new fakeHistory( {} );
 
 			instance.historyId = Math.random();
