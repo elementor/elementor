@@ -206,7 +206,14 @@ abstract class Document extends Controls_Stack {
 	public static function get_create_url() {
 		$properties = static::get_properties();
 
-		return Plugin::$instance->documents->get_create_new_post_url( $properties['cpt'][0], static::get_type() );
+		// BC Support - Each document should define it own CPT this code is for BC support.
+		$cpt = Source_Local::CPT;
+
+		if ( isset( $properties['cpt'][0] ) ) {
+			$cpt = $properties['cpt'][0];
+		}
+
+		return Plugin::$instance->documents->get_create_new_post_url( $cpt, static::get_type() );
 	}
 
 	public function get_name() {
