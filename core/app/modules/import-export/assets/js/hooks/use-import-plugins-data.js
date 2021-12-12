@@ -7,10 +7,6 @@ const MISSING_PLUGINS_KEY = 'missing',
 	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
 
 export default function useImportPluginsData( pluginsToInstall ) {
-	if ( ! pluginsToInstall ) {
-		return;
-	}
-
 	const { pluginsState } = usePlugins(),
 		existingPlugins = pluginsState.data,
 		getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
@@ -25,7 +21,7 @@ export default function useImportPluginsData( pluginsToInstall ) {
 
 			pluginsToInstall.forEach( ( plugin ) => {
 				const installedPluginData = installedPluginsMap[ plugin.name ],
-					status = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : MISSING_PLUGINS_KEY,
+					group = 'active' === installedPluginData?.status ? EXISTING_PLUGINS_KEY : MISSING_PLUGINS_KEY,
 					pluginData = installedPluginData || { ...plugin, status: 'Not Installed' };
 
 				// Verifying that the current installed plugin version is not older than the kit plugin version.
@@ -34,11 +30,13 @@ export default function useImportPluginsData( pluginsToInstall ) {
 				}
 
 				// In case that the Pro plugin exist, it should be displayed separately.
-				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name ) {
+				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && 'inactive' !== pluginData.status ) {
 					data.proData = pluginData;
+
+					return;
 				}
 
-				data[ status ].push( pluginData );
+				data[ group ].push( pluginData );
 			} );
 
 			return data;

@@ -6,13 +6,10 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function PluginsToImport( { plugins } ) {
-	if ( ! plugins?.length ) {
-		return null;
-	}
-
 	const context = useContext( Context ),
-		isAllRequiredPluginsSelected = plugins.length === context.data.plugins.length,
-		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+		isAllRequiredPluginsSelected = plugins?.length === context.data.plugins.length,
+		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
+		initialSelected = plugins ? plugins.map( ( plugin, index ) => index ) : [];
 
 	return (
 		<div className="e-app-import-plugins__section">
@@ -26,7 +23,7 @@ export default function PluginsToImport( { plugins } ) {
 
 			<PluginsSelection
 				plugins={ plugins }
-				initialSelected={ plugins.map( ( plugin, index ) => index ) }
+				initialSelected={ initialSelected }
 				onSelect={ handleOnSelect }
 				layout={ [ 3, 1, 1 ] }
 			/>

@@ -25,15 +25,10 @@ export default function ImportPlugins() {
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
 		{ plugins } = useImportPluginsData( kitPlugins ),
 		handleRequiredPlugins = () => {
-			const { missing, proData } = plugins,
-				requiredPlugins = [ ...missing ];
+			const { missing } = plugins;
 
-			if ( proData && 'active' !== proData.status ) {
-				requiredPlugins.unshift( proData );
-			}
-
-			if ( requiredPlugins.length ) {
-				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: requiredPlugins } );
+			if ( missing.length ) {
+				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
 			} else {
 				// In case there are not required plugins just skipping to the next screen.
 				navigate( 'import/content' );
@@ -71,7 +66,7 @@ export default function ImportPlugins() {
 				{
 					! ! plugins?.minVersionMissing.length &&
 					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
-						{ __( 'Please update your plugins before you importing the kit.', 'elementor' ) } <InlineLink>{ __( 'Show me how', 'elementor' ) }</InlineLink>
+						{ __( 'Head over to Updates and make sure that your plugins are updated to the latest version.', 'elementor' ) } <InlineLink url={ elementorAppConfig.admin_url + 'update-core.php' }>{ __( 'Take me there', 'elementor' ) }</InlineLink>
 					</Notice>
 				}
 

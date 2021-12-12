@@ -91,6 +91,7 @@ export default function ImportComplete() {
 				variant="outlined"
 				color="secondary"
 				size="sm"
+				url="https://go.elementor.com/app-import-plugin-installation-failed"
 			/>
 		);
 

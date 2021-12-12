@@ -13,7 +13,7 @@ export default function ProBanner( { status } ) {
 		return null;
 	} else if ( 'active' === status && elementorAppConfig.is_license_connected ) {
 		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
-	} else if ( 'active' === status ) {
+	} else if ( 'active' === status && ! elementorAppConfig.is_license_connected ) {
 		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
 		data.button = <GoProButton url={ elementorAppConfig.license_url } text={ __( 'Connect & Activate', 'elementor' ) } />;
