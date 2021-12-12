@@ -12,9 +12,7 @@ test( 'Sort items in a Container using DnD', async ( { page }, testInfo) => {
 		container: true,
 	} );
 
-	await wpAdmin.createNewPage();
-
-	const editor = new EditorPage( page, testInfo ),
+	const editor = await wpAdmin.createNewPage(),
 		container = await editor.addElement( { elType: 'container' }, 'document' );
 
 	await page.selectOption( '[data-setting="flex_direction"]', 'row' );

@@ -1,4 +1,7 @@
 import BasePage from './base-page.mjs';
+import EditorPage from './editor-page.mjs';
+
+export const CLEAN_POST_ID = 1;
 
 export default class wpAdminPage extends BasePage {
 	async login() {
@@ -17,7 +20,11 @@ export default class wpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async openNewPage() {
+	async waitForPanel() {
+		await this.page.waitForSelector( '#elementor-panel-header-title' );
+	}
+
+	async createNewPage() {
 		try {
 			await this.page.click( 'text=Create New Page', { timeout: 5000 } );
 		} catch ( err ) {
@@ -37,7 +44,21 @@ export default class wpAdminPage extends BasePage {
 			] );
 		}
 
-		await this.page.waitForSelector( '#elementor-panel-header-title' );
+		await this.waitForPanel();
+
+		return new EditorPage( this.page, this.testInfo )
+	}
+
+	async useElementorCleanPost() {
+		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
+
+		await this.waitForPanel();
+
+		const editor = new EditorPage( this.page, this.testInfo )
+
+		await editor.helper.empty();
+
+		return editor;
 	}
 
 	async skipTutorial() {
@@ -59,6 +80,7 @@ export default class wpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setExperiments( experiments = {} ) {
+		// TODO Use client config, if experiments are set in the config, there no need to set them here.
 		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 
 		const prefix = 'e-experiment';
@@ -70,10 +92,5 @@ export default class wpAdminPage extends BasePage {
 		}
 
 		await this.page.click( '#submit' );
-	}
-
-	async createNewPage() {
-		await this.login();
-		await this.openNewPage();
 	}
 };

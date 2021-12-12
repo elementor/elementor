@@ -28,6 +28,10 @@ export default class BasePage {
 					}
 				} else if ( key === 'waitForNavigation' ) {
 					return ( args ) => {
+						if ( ! args ) {
+							return page.waitForNavigation();
+						}
+
 						return page.waitForNavigation( this.config.baseURL + args.url );
 					}
 				}

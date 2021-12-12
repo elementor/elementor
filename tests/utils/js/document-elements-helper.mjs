@@ -1,14 +1,6 @@
-export default class ElementsHelper {
-	static UICopyPaste( source, target ) {
-		ElementsHelper.copy( source );
+// TODO: Set merge with QUnit helper.
 
-		elementor.channels.editor.reply( 'contextMenu:targetView', target.view );
-
-		return $e.commands.runShortcut( 'document/ui/paste',
-			jQuery.Event( 'keydown', { which: 86, ctrlKey: true, metaKey: true } )
-		);
-	}
-
+export default class DocumentElementsHelper {
 	static createAuto( elType, widgetType = 'button' ) {
 		let result = null;
 
@@ -18,44 +10,30 @@ export default class ElementsHelper {
 				break;
 
 			case 'section':
-				result = ElementsHelper.createSection( 1 );
+				result = DocumentElementsHelper.createSection( 1 );
 				break;
 
 			case 'container':
-				result = ElementsHelper.createContainer();
+				result = DocumentElementsHelper.createContainer();
 				break;
 
 			case 'column':
-				result = ElementsHelper.createSection( 1, true );
+				result = DocumentElementsHelper.createSection( 1, true );
 				break;
 
 			case 'widget':
-				result = ElementsHelper.createSection( 1, true );
-				result = ElementsHelper.createWidget( result, widgetType );
+				result = DocumentElementsHelper.createSection( 1, true );
+				result = DocumentElementsHelper.createWidget( result, widgetType );
 				break;
 
 			case 'innerSection':
-				result = ElementsHelper.createInnerSection(
-					ElementsHelper.createSection( 1, true )
+				result = DocumentElementsHelper.createInnerSection(
+					DocumentElementsHelper.createSection( 1, true )
 				);
 				break;
 		}
 
 		return result;
-	}
-
-	// TODO: Remove.
-	static createAutoColumnStyled( eContainer = null ) {
-		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
-
-		this.settings( eContainer, {
-			background_background: 'gradient',
-			background_color: '#D51D1D',
-		}, {
-			debounce: false,
-		} );
-
-		return eContainer;
 	}
 
 	/**
@@ -77,32 +55,6 @@ export default class ElementsHelper {
 		}
 
 		return this.multiCreateButton( eContainers );
-	}
-
-	// TODO: Remove.
-	static createAutoButtonStyled( eContainer = null ) {
-		if ( ! eContainer ) {
-			eContainer = this.createSection( 1, true );
-		}
-
-		return this.createWidgetButton( eContainer, {
-			text: 'createAutoButtonStyled',
-			background_color: '#000000',
-		} );
-	}
-
-	// TODO: Remove.
-	static multiCreateAutoButtonStyled( eContainers = null ) {
-		if ( ! eContainers ) {
-			eContainers = [];
-			eContainers.push( this.createSection( 1, true ) );
-			eContainers.push( this.createSection( 1, true ) );
-		}
-
-		return this.multiCreateButton( eContainers, {
-			text: 'createAutoButtonStyled',
-			background_color: '#000000',
-		} );
 	}
 
 	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {

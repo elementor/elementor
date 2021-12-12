@@ -1,12 +1,13 @@
-import { test, expect } from '@playwright/test';
-import EditorPage from '../pages/editor-page.mjs';
+import { expect, test } from '@playwright/test';
 import WpAdminPage from '../pages/wp-admin-page.mjs';
 
 test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
-	await wpAdmin.createNewPage();
 
-	const editor = new EditorPage( page, testInfo );
+	await wpAdmin.login();
+
+	const editor = await wpAdmin.createNewPage();
+
 	await editor.addWidget( 'image' );
 
 	await page.click( '.elementor-control-media__preview' );
@@ -14,8 +15,9 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 	await page.waitForSelector( 'text=Insert Media' );
 	await page.waitForTimeout( 1000 );
 
-	// Check if previous image is already uploaded
+	// Check if previous image is already uploaded.
 	const previousImage = await page.$( '[aria-label="mountain-image"], li[tabindex="0"]' );
+
 	if ( previousImage ) {
 		await page.click( '[aria-label="mountain-image"], li[tabindex="0"]' );
 	} else {
@@ -24,7 +26,9 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 	}
 
 	await page.click( '.button.media-button' );
-	const img = await editor.previewFrame.waitForSelector( 'img' );
-	const src = await img.getAttribute( 'src' );
+
+	const img = await editor.previewFrame.waitForSelector( 'img' ),
+		src = await img.getAttribute( 'src' );
+
 	expect( src ).toContain( '.jpeg' );
 } );
