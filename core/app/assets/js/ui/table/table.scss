@@ -1,3 +1,5 @@
+$eps-table-body-color: tints(700);
+$eps-table-body-dark-color: dark-tints(200);
 $eps-table-body-background-color: theme-colors(light);
 $eps-table-body-dark-background-color: dark-tints(600);
 
@@ -9,6 +11,7 @@ $root: eps-table;
 .#{$root} {
 	$parent: &;
 
+	--eps-table-body-color: #{$eps-table-body-color};
 	--eps-table-body-background-color: #{$eps-table-body-background-color};
 
 	border-spacing: 0 2px;
@@ -57,7 +60,8 @@ $root: eps-table;
 
 .eps-theme-dark {
 	.#{$root} {
-		--eps-table-body-dark-background-color: #{$eps-table-body-background-color};
+		--eps-table-body-color: #{$eps-table-body-dark-color};
+		--eps-table-body-background-color: #{$eps-table-body-dark-background-color};
 	}
 }
 
