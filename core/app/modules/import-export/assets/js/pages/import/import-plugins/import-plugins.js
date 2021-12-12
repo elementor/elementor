@@ -23,7 +23,7 @@ export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
-		{ plugins } = useImportPluginsData( kitPlugins ),
+		{ plugins, pluginsActions } = useImportPluginsData( kitPlugins ),
 		handleRequiredPlugins = () => {
 			const { missing } = plugins;
 
@@ -33,7 +33,8 @@ export default function ImportPlugins() {
 				// In case there are not required plugins just skipping to the next screen.
 				navigate( 'import/content' );
 			}
-		};
+		},
+		handleRefresh = () => pluginsActions.get();
 
 	// On load.
 	useEffect( () => {
@@ -70,7 +71,7 @@ export default function ImportPlugins() {
 					</Notice>
 				}
 
-				{ plugins?.proData && <ProBanner status={ plugins.proData.status } /> }
+				{ plugins?.proData && <ProBanner status={ plugins.proData.status } onRefresh={ handleRefresh } /> }
 
 				<PluginsToImport plugins={ plugins?.missing } />
 

@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Box from 'elementor-app/ui/atoms/box';
@@ -6,11 +8,16 @@ import GoProButton from 'elementor-app/molecules/go-pro-button';
 
 import './pro-banner.scss';
 
-export default function ProBanner( { status } ) {
-	const data = {};
+export default function ProBanner( { status, onRefresh } ) {
+	const [ isPendingInstallation, setIsPendingInstallation ] = useState( false ),
+		data = {};
 
 	if ( 'inactive' === status ) {
 		return null;
+	} else if ( isPendingInstallation ) {
+		data.heading = __( 'Importing with Elementor Pro', 'elementor' );
+		data.description = __( 'In a moment you’ll be redirected to install and activate Elementor Pro.', 'elementor' ) + <br /> + __( 'When you’re done, come back here and refresh this page.', 'elementor' );
+		data.button = <GoProButton onClick={ onRefresh } text={ __( 'Refresh', 'elementor' ) } variant="outlined" color="cta" />;
 	} else if ( 'active' === status && elementorAppConfig.is_license_connected ) {
 		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
 	} else if ( 'active' === status && ! elementorAppConfig.is_license_connected ) {
@@ -20,8 +27,16 @@ export default function ProBanner( { status } ) {
 	} else {
 		data.heading = __( 'Install Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton url="https://go.elementor.com/go-pro-import-export" />;
+		data.button = <GoProButton onClick={ () => setIsPendingInstallation( true ) } />;
 	}
+
+	useEffect( () => {
+		if ( isPendingInstallation ) {
+			setTimeout( () => {
+				window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
+			}, 3000 );
+		}
+	}, [ isPendingInstallation ] );
 
 	return (
 		<Box className="e-app-import-plugins-pro-banner" padding="20">
@@ -55,6 +70,7 @@ export default function ProBanner( { status } ) {
 
 ProBanner.propTypes = {
 	status: PropTypes.string,
+	onRefresh: PropTypes.func,
 };
 
 ProBanner.defaultProps = {
