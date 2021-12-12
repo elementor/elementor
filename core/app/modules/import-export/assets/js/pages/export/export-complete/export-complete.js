@@ -18,7 +18,7 @@ export default function ExportComplete() {
 		downloadLink = useRef( null ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<DashboardButton />
+				<DashboardButton text={ __( 'Close', 'elementor' ) } />
 			</WizardFooter>
 		),
 		downloadFile = () => {

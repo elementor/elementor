@@ -18,7 +18,13 @@ export default function ImportComplete() {
 	const navigate = useNavigate(),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<DashboardButton />
+				<Button
+					text={ __( 'See it live', 'elementor' ) }
+					variant="contained"
+					onClick={ () => {} }
+				/>
+
+				<DashboardButton text={ __( 'Close', 'elementor' ) } />
 			</WizardFooter>
 		),
 		getTemplates = ( templates, importedData ) => {

@@ -75,7 +75,7 @@ export default function KitData( props ) {
 			const rowsData = [
 				{
 					siteArea: __( 'Elementor Templates', 'elementor' ),
-					link: '',
+					link: '/site-editor',
 					included: getTemplates(),
 				},
 				{
@@ -85,24 +85,24 @@ export default function KitData( props ) {
 				},
 				{
 					siteArea: __( 'Content', 'elementor' ),
-					link: '',
+					link: elementorAppConfig.admin_url + 'edit.php?post_type=page',
 					included: getContent(),
 				},
 				{
 					siteArea: __( 'Plugins', 'elementor' ),
-					link: '',
+					link: elementorAppConfig.admin_url + 'plugins.php',
 					included: getActivatedPlugins(),
 				},
 			];
 
 			return rowsData
-				.map( ( { siteArea, included } ) => {
+				.map( ( { siteArea, included, link } ) => {
 					if ( ! included.length ) {
 						return;
 					}
 
 					const SiteArea = () => (
-							<InlineLink url="" color="secondary" underline="none">
+							<InlineLink url={ link } color="secondary" underline="none">
 								<Text className="e-app-import-export-kit-data__site-area">
 									{ siteArea } <Icon className="eicon-editor-external-link" />
 								</Text>

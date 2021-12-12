@@ -6,6 +6,10 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function PluginsToImport( { plugins } ) {
+	if ( ! plugins?.length ) {
+		return null;
+	}
+
 	const context = useContext( Context ),
 		isAllRequiredPluginsSelected = plugins?.length === context.data.plugins.length,
 		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
