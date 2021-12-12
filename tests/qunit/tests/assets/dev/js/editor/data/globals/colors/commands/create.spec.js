@@ -1,4 +1,4 @@
-import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const Create = () => {

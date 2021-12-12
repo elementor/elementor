@@ -1,5 +1,5 @@
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import HistoryHelper from '../../history/helper';
-import ElementsHelper from '../../elements/helper';
 import DynamicHelper from '../helper';
 
 export const Settings = () => {

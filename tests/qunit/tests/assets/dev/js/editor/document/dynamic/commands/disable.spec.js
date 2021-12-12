@@ -1,4 +1,4 @@
-import ElementsHelper from '../../elements/helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import DynamicHelper from '../helper';
 
 export const Disable = () => {

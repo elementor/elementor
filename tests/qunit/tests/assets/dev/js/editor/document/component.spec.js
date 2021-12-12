@@ -1,5 +1,5 @@
 import DocumentHelper from './helper';
-import ElementsHelper from './elements/helper';
+import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
 import * as hooksData from './hooks/data/document/elements/index.spec';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
