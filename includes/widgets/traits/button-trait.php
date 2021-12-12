@@ -431,7 +431,8 @@ trait Button_Trait {
 			$instance = $this;
 		}
 
-		$settings = $instance->get_settings();
+		$settings = $instance->get_settings_for_display();
+
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
@@ -502,13 +503,18 @@ trait Button_Trait {
 	 *
 	 * Render button widget text.
 	 *
-	 * @param \Elementor\Widget_Base $instance
+	 * @param \Elementor\Widget_Base|null $instance
 	 *
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_text( Widget_Base $instance ) {
-		$settings = $instance->get_settings();
+	protected function render_text( Widget_Base $instance = null ) {
+		// The default instance should be `$this` (a Button widget), unless the Trait is being used from outside of a widget (e.g. `Skin_Base`) which should pass an `$instance`.
+		if ( empty( $instance ) ) {
+			$instance = $this;
+		}
+
+		$settings = $instance->get_settings_for_display();
 
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();

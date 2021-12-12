@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 export default class ComponentBase extends elementorModules.Module {
 	__construct( args = {} ) {
 		if ( args.manager ) {
@@ -13,6 +15,7 @@ export default class ComponentBase extends elementorModules.Module {
 		this.utils = this.defaultUtils();
 		this.data = this.defaultData();
 		this.uiStates = this.defaultUiStates();
+		this.states = this.defaultStates();
 
 		this.defaultRoute = '';
 		this.currentTab = '';
@@ -32,6 +35,8 @@ export default class ComponentBase extends elementorModules.Module {
 		Object.entries( this.getData() ).forEach( ( [ command, callback ] ) => this.registerData( command, callback ) );
 
 		Object.values( this.getUiStates() ).forEach( ( instance ) => this.registerUiState( instance ) );
+
+		Object.entries( this.getStates() ).forEach( ( [ id, state ] ) => this.registerState( id, state ) );
 	}
 
 	/**
@@ -75,6 +80,15 @@ export default class ComponentBase extends elementorModules.Module {
 		return {};
 	}
 
+	/**
+	 * Get the component's Redux slice settings.
+	 *
+	 * @return {Object}
+	 */
+	defaultStates() {
+		return {};
+	}
+
 	defaultShortcuts() {
 		return {};
 	}
@@ -106,6 +120,15 @@ export default class ComponentBase extends elementorModules.Module {
 	 */
 	getUiStates() {
 		return this.uiStates;
+	}
+
+	/**
+	 * Retrieve the component's Redux Slice.
+	 *
+	 * @return {Object}
+	 */
+	getStates() {
+		return this.states;
 	}
 
 	getRoutes() {
@@ -144,6 +167,25 @@ export default class ComponentBase extends elementorModules.Module {
 	 */
 	registerUiState( instance ) {
 		$e.uiStates.register( instance );
+	}
+
+	/**
+	 * Register a Redux Slice.
+	 *
+	 * @param {string} id - State id.
+	 * @param {Object} stateConfig - The state config.
+	 *
+	 * @return {void}
+	 */
+	registerState( id, stateConfig ) {
+		id = this.getNamespace() + ( id ? `/${ id }` : '' );
+
+		const slice = createSlice( {
+			...stateConfig,
+			name: id,
+		} );
+
+		$e.store.register( id, slice );
 	}
 
 	registerCommandInternal( command, callback ) {

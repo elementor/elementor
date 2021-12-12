@@ -216,7 +216,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -468,12 +467,12 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'condition' => [
@@ -494,12 +493,12 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'condition' => [
