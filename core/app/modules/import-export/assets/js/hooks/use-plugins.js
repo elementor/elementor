@@ -13,7 +13,7 @@ const PLUGIN_STATUS_MAP = Object.freeze( {
 } );
 
 export default function usePlugins( config = {} ) {
-	const { preventInitialFetch } = config,
+	const { preventFetchOnLoad } = config,
 		getInitialState = () => ( {
 			status: PLUGINS_RESPONSE_MAP.INITIAL,
 			data: null,
@@ -102,7 +102,7 @@ export default function usePlugins( config = {} ) {
 		reset = () => setPluginsState( getInitialState() );
 
 	useEffect( () => {
-		if ( ! preventInitialFetch ) {
+		if ( ! preventFetchOnLoad ) {
 			get();
 		}
 	}, [] );

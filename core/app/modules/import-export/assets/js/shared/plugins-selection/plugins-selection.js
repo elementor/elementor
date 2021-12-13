@@ -19,7 +19,19 @@ function PluginsSelection( props ) {
 
 			return ! isElementorPlugin;
 		} ),
-		corePluginData = elementorPluginsData[ ELEMENTOR_PLUGIN_NAME ];
+		corePluginData = elementorPluginsData[ ELEMENTOR_PLUGIN_NAME ],
+		onPluginsSelection = () => {
+			const selectedPluginsList = [];
+
+			// If exist, adding the Core as the first plugin of the selected plugins list because it should not be displayed in the table.
+			if ( corePluginData ) {
+				selectedPluginsList.push( corePluginData );
+			}
+
+			selectedData.forEach( ( pluginIndex ) => selectedPluginsList.push( plugins[ pluginIndex ] ) );
+
+			props.onSelect( selectedPluginsList );
+		};
 
 	// In case that Pro exist, registering it as the first selected plugin.
 	if ( elementorPluginsData[ ELEMENTOR_PRO_PLUGIN_NAME ] ) {
@@ -36,22 +48,9 @@ function PluginsSelection( props ) {
 		cachedInitialSelected = useMemo( () => initialSelected, [ props.plugins ] ),
 		cachedInitialDisabled = useMemo( () => props.initialDisabled, [ props.plugins ] );
 
-	// Updating the selected plugins list in the global context.
 	useEffect( () => {
 		if ( props.onSelect && selectedData ) {
-			const selectedPluginsList = [];
-
-			/*
-			* If exist, adding the Elementor-Core as the first plugin of the selected plugins list.
-			* Because there is no scenario that it should be displayed in the table, but it should be selected by default if exist.
-			*/
-			if ( corePluginData ) {
-				selectedPluginsList.push( corePluginData );
-			}
-
-			selectedData.forEach( ( pluginIndex ) => selectedPluginsList.push( plugins[ pluginIndex ] ) );
-
-			props.onSelect( selectedPluginsList );
+			onPluginsSelection();
 		}
 	}, [ selectedData ] );
 
