@@ -103,6 +103,7 @@ export default class Session {
 						element.model,
 						Object.assign( this.options.target, {
 							event: this.options.event,
+							scrollIntoView: 0 === containers.indexOf( element ),
 						} )
 					);
 			}

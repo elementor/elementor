@@ -49,6 +49,7 @@ export class Widget extends MediaParser {
 
 			$e.run( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
+				options: { external: true },
 			} );
 
 			elementor.documents.getCurrent().history.setActive( true );

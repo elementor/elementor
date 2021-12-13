@@ -47,12 +47,12 @@ export class Widget extends MediaParser {
 			} );
 		} ).catch( () => {
 			elementor.documents.getCurrent().history.setActive( false );
+
 			$e.run( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
-				options: {
-					useHistory: false,
-				},
+				options: { external: true },
 			} );
+
 			elementor.documents.getCurrent().history.setActive( true );
 		} );
 
