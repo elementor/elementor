@@ -1,5 +1,13 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev17 - 2021-12-13
+* Tweak: Added `Difference`, `Exclusion` and `Hue` to Column and Section blend mode options [ED-5733] (#17079)
+* New: Added a reusable button trait [ED-4597] (#17041) (#17092)
+* Tweak: Favorites Widgets - Added an indication that a widget was added [ED-5500] (#17058)
+* Tweak: Updated changelog release date (#17145)
+* Fix: Several functions are being executed when not supposed to in all WP Dashboard screens [ED-5795] (#17163)
+* Tweak: Added option to change the color of the navigation dots in carousel type widgets [ED-4970] (#16646)
+
 #### 3.6.0-dev14 - 2021-12-01
 * Fix: Dev Edition notice appears inside the Form Submission window [ED-4913] (#17067)
 
@@ -483,10 +491,3 @@
 * Tweak: PHPUNIT - Allow all features to stay registered along the tests lifecycle [ED-3908] (#15439)
 * Fix: The kit-library info-modal didn't work due to converting the ModalProvider and Modal components from class to function based. (#15440)
 * Tweak: Changing the content-filters to be accessed publicly [ED-3854] (#15434)
-
-#### 3.4.0-dev3 - 2021-06-16
-* I/E: Tweak: Force imported home page to be displayed as a front page (#15355)
-* Tweak: Throw an error when running import via CLI not as an admin user [ED-3689] (#15358)
-* Tweak - Updating the frontend eicons. (#15256)
-* Tweak: Kit-Library - button gray color [ED-3728] (#15356)
-* Tweak: Admin top bar experiment  turned on only on new sites [ED-3745] (#15360)
