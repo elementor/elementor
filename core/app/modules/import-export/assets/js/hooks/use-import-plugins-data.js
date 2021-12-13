@@ -7,7 +7,7 @@ const MISSING_PLUGINS_KEY = 'missing',
 	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
 
 export default function useImportPluginsData( pluginsToInstall ) {
-	const { pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
+	const { pluginsState, pluginsActions, PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } = usePlugins(),
 		existingPlugins = pluginsState.data,
 		getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
 		getClassifiedPlugins = () => {
@@ -45,5 +45,7 @@ export default function useImportPluginsData( pluginsToInstall ) {
 	return {
 		plugins: pluginsToInstall && existingPlugins ? getClassifiedPlugins() : null,
 		pluginsActions,
+		PLUGINS_RESPONSE_MAP,
+		PLUGIN_STATUS_MAP,
 	};
 }

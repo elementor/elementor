@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+
+import { Context } from '../../context/context-provider';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
@@ -14,7 +16,8 @@ import kitContentData from '../kit-content-data/kit-content-data';
 import './kit-content.scss';
 
 export default function KitContent( props ) {
-	const hasPro = elementorAppConfig.hasPro,
+	const context = useContext( Context ),
+		hasPro = context.data.isProInstalled,
 		[ containerHover, setContainerHover ] = useState( {} ),
 		getTemplateFeatures = ( features, index ) => {
 			if ( ! features ) {

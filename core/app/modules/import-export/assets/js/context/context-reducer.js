@@ -49,6 +49,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, requiredPlugins: payload };
 		case 'SET_IMPORTED_PLUGINS':
 			return { ...state, importedPlugins: payload };
+		case 'SET_IS_PRO_INSTALLED':
+			return { ...state, isProInstalled: payload };
 		default:
 			return state;
 	}

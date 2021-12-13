@@ -23,7 +23,7 @@ export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
-		{ plugins, pluginsActions } = useImportPluginsData( kitPlugins ),
+		{ plugins, pluginsActions, PLUGIN_STATUS_MAP } = useImportPluginsData( kitPlugins ),
 		handleRequiredPlugins = () => {
 			const { missing } = plugins;
 
@@ -34,7 +34,16 @@ export default function ImportPlugins() {
 				navigate( 'import/content' );
 			}
 		},
-		handleRefresh = () => pluginsActions.get();
+		handleRefresh = () => {
+			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
+
+			pluginsActions.get();
+		},
+		handleProInstallationStatus = () => {
+			if ( PLUGIN_STATUS_MAP.ACTIVE === plugins.proData?.status ) {
+				context.dispatch( { type: 'SET_IS_PRO_INSTALLED', payload: true } );
+			}
+		};
 
 	// On load.
 	useEffect( () => {
@@ -45,9 +54,12 @@ export default function ImportPlugins() {
 
 	// On plugins data ready.
 	useEffect( () => {
-		// Saving the required plugins to display them on the next screens.
 		if ( plugins && ! context.data.requiredPlugins.length ) {
+			// Saving the required plugins to display them on the next screens.
 			handleRequiredPlugins();
+
+			// In case that the pro was installed in the middle of the process, the global state should be updated with the current status.
+			handleProInstallationStatus();
 		}
 	}, [ plugins ] );
 
