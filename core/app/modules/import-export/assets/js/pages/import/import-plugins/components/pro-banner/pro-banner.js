@@ -1,78 +1,70 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import Heading from 'elementor-app/ui/atoms/heading';
-import Text from 'elementor-app/ui/atoms/text';
-import Box from 'elementor-app/ui/atoms/box';
-import Grid from 'elementor-app/ui/grid/grid';
+import MessageBanner from '../../../../../ui/message-banner/message-banner';
+import Button from 'elementor-app/ui/molecules/button';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
+import Dialog from 'elementor-app/ui/dialog/dialog';
+
+import usePlugins from '../../../../../hooks/use-plugins';
 
 import './pro-banner.scss';
 
 export default function ProBanner( { status, onRefresh } ) {
-	const [ isPendingInstallation, setIsPendingInstallation ] = useState( false ),
-		data = {};
+	const { PLUGIN_STATUS_MAP } = usePlugins( { preventInitialFetch: true } );
 
-	if ( 'inactive' === status ) {
+	if ( PLUGIN_STATUS_MAP.INACTIVE === status ) {
 		return null;
-	} else if ( isPendingInstallation ) {
-		data.heading = __( 'Importing with Elementor Pro', 'elementor' );
-		data.description = __( 'In a moment you’ll be redirected to install and activate Elementor Pro.', 'elementor' ) + <br /> + __( 'When you’re done, come back here and refresh this page.', 'elementor' );
-		data.button = {
-			text: __( 'Refresh', 'elementor' ),
-			onClick: onRefresh,
-		};
-	} else if ( 'active' === status && elementorAppConfig.is_license_connected ) {
-		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
-	} else if ( 'active' === status && ! elementorAppConfig.is_license_connected ) {
-		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
-		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = {
-			text: __( 'Connect & Activate', 'elementor' ),
-			url: elementorAppConfig.license_url,
-		};
-	} else {
-		data.heading = __( 'Install Elementor Pro', 'elementor' );
-		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = {
-			onClick: () => setIsPendingInstallation( true ),
-		};
 	}
 
-	useEffect( () => {
-		if ( isPendingInstallation ) {
-			setTimeout( () => {
-				window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
-			}, 3000 );
-		}
-	}, [ isPendingInstallation ] );
+	const [ isPendingInstallation, setIsPendingInstallation ] = useState( false ),
+		[ showInfoDialog, setShowInfoDialog ] = useState( false ),
+		isActiveNotConnected = PLUGIN_STATUS_MAP.ACTIVE === status && ! elementorAppConfig.is_license_connected,
+		isConnectedAndActivated = PLUGIN_STATUS_MAP.ACTIVE === status && elementorAppConfig.is_license_connected,
+		attrs = {},
+		onDialogDismiss = () => setShowInfoDialog( false ),
+		onDialogApprove = () => {
+			window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
+
+			setIsPendingInstallation( true );
+		};
+
+	if ( isPendingInstallation ) {
+		attrs.heading = __( 'Importing with Elementor Pro', 'elementor' );
+		attrs.description = [
+			__( 'In a moment you’ll be redirected to install and activate Elementor Pro.', 'elementor' ),
+			__( 'When you’re done, come back here and refresh this page.', 'elementor' ),
+		];
+		attrs.button = <Button text={ __( 'Refresh', 'elementor' ) } onClick={ onRefresh } variant="outlined" color="primary" />;
+	} else if ( isConnectedAndActivated ) {
+		attrs.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
+	} else if ( isActiveNotConnected ) {
+		attrs.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
+		attrs.description = __( "Without Elementor Pro, importing components like templates, widgets and popups won't work.", 'elementor' );
+		attrs.button = <GoProButton text={ __( 'Connect & Activate', 'elementor' ) } url={ elementorAppConfig.license_url } />;
+	} else {
+		attrs.heading = __( 'Install Elementor Pro', 'elementor' );
+		attrs.description = __( "Without Elementor Pro, importing components like templates, widgets and popups won't work.", 'elementor' );
+		attrs.button = <GoProButton onClick={ () => setShowInfoDialog( true ) } />;
+	}
 
 	return (
-		<Box className="e-app-import-plugins-pro-banner" padding="20">
-			<Grid container alignItems="center" justify="space-between">
-				<Grid item>
-					{
-						data.heading &&
-						<Heading className="e-app-import-plugins-pro-banner__heading" variant="h3" tag="h3">
-							{ data.heading }
-						</Heading>
-					}
+		<>
+			<MessageBanner { ...attrs } />
 
-					{
-						data.description &&
-						<Text className="e-app-import-plugins-pro-banner__description">
-							{ data.description }
-						</Text>
-					}
-				</Grid>
-
-				{
-					data.button &&
-					<Grid item>
-						<GoProButton { ...data.button } />
-					</Grid>
-				}
-			</Grid>
-		</Box>
+			{
+				showInfoDialog &&
+				<Dialog
+					title={ __( 'Importing with Elementor Pro', 'elementor' ) }
+					text={ __( 'In a moment you’ll be redirected to install and activate Elementor Pro. When you’re done, come back here and refresh this page.', 'elementor' ) }
+					approveButtonColor="primary"
+					approveButtonText={ __( 'Got it', 'elementor' ) }
+					approveButtonOnClick={ onDialogApprove }
+					dismissButtonText={ __( 'Close', 'elementor' ) }
+					dismissButtonOnClick={ onDialogDismiss }
+					onClose={ onDialogDismiss }
+				/>
+			}
+		</>
 	);
 }
 
