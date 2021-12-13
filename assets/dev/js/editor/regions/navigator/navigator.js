@@ -29,7 +29,7 @@ export default class Navigator extends BaseRegion {
 
 	getDefaultStorage() {
 		return {
-			visible: false,
+			visible: true,
 			size: {
 				width: '',
 				height: '',
