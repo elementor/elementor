@@ -86,6 +86,17 @@ export default class ElementsHelper {
 		} );
 	}
 
+	static createHeading( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'heading',
+				settings,
+			},
+		} );
+	}
+
 	static createVideo( eContainer, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
