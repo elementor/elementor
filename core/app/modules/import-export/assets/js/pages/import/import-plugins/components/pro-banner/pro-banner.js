@@ -17,17 +17,25 @@ export default function ProBanner( { status, onRefresh } ) {
 	} else if ( isPendingInstallation ) {
 		data.heading = __( 'Importing with Elementor Pro', 'elementor' );
 		data.description = __( 'In a moment you’ll be redirected to install and activate Elementor Pro.', 'elementor' ) + <br /> + __( 'When you’re done, come back here and refresh this page.', 'elementor' );
-		data.button = <GoProButton onClick={ onRefresh } text={ __( 'Refresh', 'elementor' ) } variant="outlined" color="cta" />;
+		data.button = {
+			text: __( 'Refresh', 'elementor' ),
+			onClick: onRefresh,
+		};
 	} else if ( 'active' === status && elementorAppConfig.is_license_connected ) {
 		data.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
 	} else if ( 'active' === status && ! elementorAppConfig.is_license_connected ) {
 		data.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton url={ elementorAppConfig.license_url } text={ __( 'Connect & Activate', 'elementor' ) } />;
+		data.button = {
+			text: __( 'Connect & Activate', 'elementor' ),
+			url: elementorAppConfig.license_url,
+		};
 	} else {
 		data.heading = __( 'Install Elementor Pro', 'elementor' );
 		data.description = __( 'Without Elementor Pro, importing components like templates, widgets and popups won\'t work.', 'elementor' );
-		data.button = <GoProButton onClick={ () => setIsPendingInstallation( true ) } />;
+		data.button = {
+			onClick: () => setIsPendingInstallation( true ),
+		};
 	}
 
 	useEffect( () => {
@@ -60,7 +68,7 @@ export default function ProBanner( { status, onRefresh } ) {
 				{
 					data.button &&
 					<Grid item>
-						{ data.button }
+						<GoProButton { ...data.button } />
 					</Grid>
 				}
 			</Grid>

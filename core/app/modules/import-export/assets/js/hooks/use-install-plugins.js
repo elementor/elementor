@@ -2,8 +2,14 @@ import { useState, useEffect } from 'react';
 
 import usePlugins from './use-plugins';
 
+const ACTION_STATUS_MAP = Object.freeze( {
+	ACTIVATED: 'activated',
+	INSTALLED: 'installed',
+	FAILED: 'failed',
+} );
+
 export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) {
-	const { pluginsState, pluginsActions, PLUGINS_STATUS_MAP } = usePlugins(),
+	const { pluginsState, pluginsActions, PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } = usePlugins(),
 		[ isPluginsFetched, setIsPluginsFetched ] = useState( false ),
 		[ isDone, setIsDone ] = useState( false ),
 		[ bulk, setBulk ] = useState( [] ),
@@ -35,36 +41,36 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 	// Activating/installing the current plugin.
 	useEffect( () => {
 		if ( currentPlugin ) {
-			const action = 'inactive' === currentPlugin.status ? 'activate' : 'install';
+			const runAction = PLUGIN_STATUS_MAP.INACTIVE === currentPlugin.status ? pluginsActions.activate : pluginsActions.install;
 
-			pluginsActions[ action ]( currentPlugin.plugin );
+			runAction( currentPlugin.plugin );
 		}
 	}, [ currentPlugin ] );
 
 	// Status Updater.
 	useEffect( () => {
-		if ( PLUGINS_STATUS_MAP.SUCCESS === pluginsState.status ) {
+		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {
 			const { data } = pluginsState;
 
 			if ( Array.isArray( data ) ) {
 				// When the data type is an Array it means that the plugins data was fetched.
 				setIsPluginsFetched( true );
 			} else if ( ! data.hasOwnProperty( 'plugin' ) ) {
-				setActionStatus( 'failed' );
-			} else if ( 'active' === data.status ) {
-				setActionStatus( 'activated' );
-			} else if ( 'inactive' === data.status ) {
-				setActionStatus( 'installed' );
+				setActionStatus( ACTION_STATUS_MAP.FAILED );
+			} else if ( PLUGIN_STATUS_MAP.ACTIVE === data.status ) {
+				setActionStatus( ACTION_STATUS_MAP.ACTIVATED );
+			} else if ( PLUGIN_STATUS_MAP.INACTIVE === data.status ) {
+				setActionStatus( ACTION_STATUS_MAP.INSTALLED );
 			}
-		} else if ( PLUGINS_STATUS_MAP.ERROR === pluginsState.status ) {
-			setActionStatus( 'failed' );
+		} else if ( PLUGINS_RESPONSE_MAP.ERROR === pluginsState.status ) {
+			setActionStatus( ACTION_STATUS_MAP.FAILED );
 		}
 	}, [ pluginsState.status ] );
 
 	// Actions after data response.
 	useEffect( () => {
 		if ( actionStatus ) {
-			const pluginData = 'failed' === actionStatus ? { ...currentPlugin, status: 'failed' } : pluginsState.data;
+			const pluginData = ACTION_STATUS_MAP.FAILED === actionStatus ? { ...currentPlugin, status: ACTION_STATUS_MAP.FAILED } : pluginsState.data;
 
 			// Updating the current plugin status in the bulk.
 			setBulk( ( prevState ) => {
@@ -75,9 +81,10 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 				return processedPlugins;
 			} );
 
-			if ( 'activated' === actionStatus || 'failed' === actionStatus ) {
+			if ( ACTION_STATUS_MAP.ACTIVATED === actionStatus || ACTION_STATUS_MAP.FAILED === actionStatus ) {
+				// After the plugin process was finished.
 				setReady( ( prevState ) => [ ...prevState, pluginData ] );
-			} else if ( 'installed' === actionStatus ) {
+			} else if ( ACTION_STATUS_MAP.INSTALLED === actionStatus ) {
 				// In case that the widget was installed it will be inactive after the installation and therefore should be activated manually.
 				setCurrentPlugin( pluginData );
 			}
@@ -91,6 +98,6 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 		isDone,
 		ready,
 		bulk: getBulk(),
-		isError: PLUGINS_STATUS_MAP.ERROR === pluginsState.status,
+		isError: PLUGINS_RESPONSE_MAP.ERROR === pluginsState.status,
 	};
 }

@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react';
 
-const PLUGINS_STATUS_MAP = Object.freeze( {
+const PLUGINS_RESPONSE_MAP = Object.freeze( {
 	INITIAL: 'initial',
 	SUCCESS: 'success',
 	ERROR: 'error',
 } );
 
+const PLUGIN_STATUS_MAP = Object.freeze( {
+	ACTIVE: 'active',
+	INACTIVE: 'inactive',
+	NOT_INSTALLED: 'Not Installed',
+} );
+
 export default function usePlugins() {
 	const getInitialState = () => ( {
-			status: PLUGINS_STATUS_MAP.INITIAL,
+			status: PLUGINS_RESPONSE_MAP.INITIAL,
 			data: null,
 		} ),
 		[ pluginsState, setPluginsState ] = useState( getInitialState() ),
@@ -35,7 +41,7 @@ export default function usePlugins() {
 					.then( ( response ) => response.json() )
 					.then( ( response ) => {
 						setPluginsState( {
-							status: PLUGINS_STATUS_MAP.SUCCESS,
+							status: PLUGINS_RESPONSE_MAP.SUCCESS,
 							data: response,
 						} );
 
@@ -43,7 +49,7 @@ export default function usePlugins() {
 					} )
 					.catch( ( error ) => {
 						setPluginsState( {
-							status: PLUGINS_STATUS_MAP.ERROR,
+							status: PLUGINS_RESPONSE_MAP.ERROR,
 							data: error,
 						} );
 
@@ -73,7 +79,7 @@ export default function usePlugins() {
 				endpoint: slug,
 				method: 'PUT',
 				body: {
-					status: 'active',
+					status: PLUGIN_STATUS_MAP.ACTIVE,
 				},
 			} );
 		},
@@ -82,8 +88,14 @@ export default function usePlugins() {
 				endpoint: slug,
 				method: 'PUT',
 				body: {
-					status: 'inactive',
+					status: PLUGIN_STATUS_MAP.INACTIVE,
 				},
+			} );
+		},
+		remove = ( slug ) => {
+			return fetchRest( {
+				endpoint: slug,
+				method: 'DELETE',
 			} );
 		},
 		reset = () => setPluginsState( getInitialState() );
@@ -99,8 +111,10 @@ export default function usePlugins() {
 			install,
 			activate,
 			deactivate,
+			remove,
 			reset,
 		},
-		PLUGINS_STATUS_MAP,
+		PLUGINS_RESPONSE_MAP,
+		PLUGIN_STATUS_MAP,
 	};
 }
