@@ -96,6 +96,7 @@ class App extends BaseApp {
 			'hasPro' => Utils::has_pro(),
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
+			'edit_home_page_url' => $this->get_edit_home_page_url(),
 		];
 	}
 
@@ -220,6 +221,14 @@ class App extends BaseApp {
 		wp_set_script_translations( 'elementor-app', 'elementor' );
 
 		$this->print_config();
+	}
+
+	private function get_edit_home_page_url() {
+		$frontpage_id = get_option('page_on_front');
+
+		$document = Plugin::$instance->documents->get( $frontpage_id );
+
+		return $document->get_edit_url();
 	}
 
 	public function enqueue_app_loader() {

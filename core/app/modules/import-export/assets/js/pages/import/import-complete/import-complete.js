@@ -12,69 +12,24 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-export default function ImportComplete() {
-	const context = useContext( Context );
+import useImportedKitData from '../../../hooks/use-imported-kit-data';
 
-	const navigate = useNavigate(),
+export default function ImportComplete() {
+	const context = useContext( Context ),
+		navigate = useNavigate(),
+		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
+		{ activePlugins, failedPlugins } = getPlugins( context.data.importedPlugins ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
 					text={ __( 'See it live', 'elementor' ) }
 					variant="contained"
-					onClick={ () => {} }
+					onClick={ () => window.open( elementorAppConfig.edit_home_page_url, '_blank' ) }
 				/>
 
 				<DashboardButton text={ __( 'Close', 'elementor' ) } />
 			</WizardFooter>
 		),
-		getTemplates = ( templates, importedData ) => {
-			const kitTemplates = {};
-
-			for ( const key in importedData?.templates?.succeed ) {
-				kitTemplates[ key ] = templates[ key ];
-			}
-
-			return kitTemplates;
-		},
-		getContent = ( content, importedData ) => {
-			const kitContent = {};
-
-			for ( const contentType in importedData?.content ) {
-				kitContent[ contentType ] = {};
-
-				for ( const key in importedData.content[ contentType ]?.succeed ) {
-					kitContent[ contentType ][ key ] = content[ contentType ][ key ];
-				}
-			}
-
-			return kitContent;
-		},
-		getWPContent = ( content, importedData ) => {
-			const kitWPContent = {};
-
-			for ( const contentType in importedData?.[ 'wp-content' ] ) {
-				const succeededItems = importedData[ 'wp-content' ][ contentType ]?.succeed;
-
-				kitWPContent[ contentType ] = succeededItems ? Object.keys( succeededItems ) : [];
-			}
-
-			return kitWPContent;
-		},
-		getImportedPlugins = () => {
-			const importedPlugins = {
-				activePlugins: [],
-				failedPlugins: [],
-			};
-
-			context.data.importedPlugins.forEach( ( plugin ) => {
-				const group = 'active' === plugin.status ? 'activePlugins' : 'failedPlugins';
-
-				importedPlugins[ group ].push( plugin );
-			} );
-
-			return importedPlugins;
-		},
-		{ activePlugins, failedPlugins } = getImportedPlugins(),
 		getKitData = () => {
 			if ( ! context.data.uploadedData || ! context.data.importedData ) {
 				return {};
@@ -124,7 +79,7 @@ export default function ImportComplete() {
 					! ! failedPlugins.length &&
 					<Notice label={ __( 'Important:', 'elementor' ) } color="warning" button={ <FailedPluginsNoticeButton /> }>
 						{
-							__( 'There are few plugins that we couldn\'t install:', 'elementor' ) + ' ' +
+							__( "There are few plugins that we couldn't install:", 'elementor' ) + ' ' +
 							failedPlugins.map( ( { name } ) => name ).join( ' | ' )
 						}
 					</Notice>

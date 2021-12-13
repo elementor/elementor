@@ -23,7 +23,7 @@ export default function KitData( props ) {
 				},
 				{
 					siteArea: __( 'Site Settings', 'elementor' ),
-					link: '',
+					link: elementorAppConfig.edit_home_page_url + '#e:run:panel/global/open',
 					included: siteSettings,
 				},
 				{
