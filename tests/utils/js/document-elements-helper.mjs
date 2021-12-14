@@ -47,6 +47,19 @@ export default class DocumentElementsHelper {
 		return this.createWidgetButton( eContainer, settings );
 	}
 
+	static  multiCreateAutoButton( eContainers = null, settings = {} ) {
+		if ( ! eContainers ) {
+			eContainers = [];
+			eContainers.push( this.createSection( 1, true ) );
+			eContainers.push( this.createSection( 1, true ) );
+		}
+
+		return this.multiCreateButton( eContainers, {
+			text: 'createAutoButtonStyled',
+			background_color: '#000000',
+		} );
+	}
+
 	static createAutoColumn( eContainer = null, settings = {} ) {
 		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
 
@@ -55,16 +68,6 @@ export default class DocumentElementsHelper {
 		} );
 
 		return eContainer;
-	}
-
-	static multiCreateAutoButton( eContainers = null ) {
-		if ( ! eContainers ) {
-			eContainers = [];
-			eContainers.push( this.createSection( 1, true ) );
-			eContainers.push( this.createSection( 1, true ) );
-		}
-
-		return this.multiCreateButton( eContainers );
 	}
 
 	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {

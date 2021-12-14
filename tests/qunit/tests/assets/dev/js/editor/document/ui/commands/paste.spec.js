@@ -1,4 +1,5 @@
 import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
+import UIHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/ui/helper';
 
 /**
  * TODO: Refactor whole file.
@@ -94,7 +95,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 		sourceIsInner = source.model.get( 'isInner' );
 
 	let isForce = false,
-		copiedContainer = ElementsHelper.UICopyPaste( source, target ),
+		copiedContainer = UIHelper.copyPaste( source, target ),
 		message = `Copy: "${ sourceIsInner ? 'InnerSection::' : '' }${ sourceElType }"
 		 And Paste to: "${ targetIsInner ? 'InnerSection::' : '' }${ targetElType }" "${ isAllowed ? 'ALLOW' : 'BLOCK' }"`;
 
@@ -122,7 +123,7 @@ const validateRule = ( assert, target, targetElType, source, sourceElType, isAll
 
 	// When target or source is inner-section column, re-paste to the right depth.
 	if ( isForce ) {
-		copiedContainer = ElementsHelper.UICopyPaste( source, target );
+		copiedContainer = UIHelper.copyPaste( source, target );
 	}
 
 	// There is no point in checking what was not successful copied.
@@ -217,7 +218,7 @@ export const Paste = () => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createWidgetButton( eColumn );
 
-				ElementsHelper.UICopyPaste( eButton, eColumn );
+				UIHelper.copyPaste( eButton, eColumn );
 
 				// Check.
 				assert.equal( eColumn.children.length, 2,
@@ -259,7 +260,7 @@ export const Paste = () => {
 					ElementsHelper.createAuto( 'section' );
 
 					const target = ElementsHelper.createAuto( 'section' ),
-						copiedSuccess = !! ElementsHelper.UICopyPaste( source, target );
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -278,7 +279,7 @@ export const Paste = () => {
 					ElementsHelper.createAuto( 'section' );
 
 					const target = ElementsHelper.createAuto( 'column' ),
-						copiedSuccess = !! ElementsHelper.UICopyPaste( source, target );
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 
@@ -297,7 +298,7 @@ export const Paste = () => {
 					ElementsHelper.createAuto( 'section' );
 
 					const target = ElementsHelper.createAuto( 'widget' ),
-						copiedSuccess = !! ElementsHelper.UICopyPaste( source, target );
+						copiedSuccess = !! UIHelper.copyPaste( source, target );
 
 					assert.equal( copiedSuccess, true, 'Element were pasted.' );
 

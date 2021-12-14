@@ -43,7 +43,10 @@ jQuery( () => {
 
 		QUnit.test( 'getAffectingControls(): Simple', ( assert ) => {
 			const eButtonSimple = ElementsHelper.createAutoButton(),
-				eButtonStyled = ElementsHelper.createAutoButtonStyled();
+				eButtonStyled = ElementsHelper.createAutoButton( null, {
+					text: 'createAutoButtonStyled',
+					background_color: '#000000',
+				} );
 
 			assert.deepEqual( eButtonSimple.getAffectingControls(), {} );
 			assert.deepEqual( Object.keys( eButtonStyled.getAffectingControls() ), [ 'text', 'background_color' ] );

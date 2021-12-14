@@ -134,7 +134,10 @@ export const PasteStyle = () => {
 
 			QUnit.test( 'History', ( assert ) => {
 				const eWidgetsSimple = ElementsHelper.multiCreateAutoButton(),
-					eWidgetStyled = ElementsHelper.createAutoButtonStyled(),
+					eWidgetStyled = ElementsHelper.createAutoButton( null, {
+						text: 'createAutoButtonStyled',
+						background_color: '#000000',
+					} ),
 					widgetSimpleBackground = eWidgetsSimple[ 0 ].settings.get( 'background_color' ),
 					widgetStyledBackground = eWidgetStyled.settings.get( 'background_color' );
 
