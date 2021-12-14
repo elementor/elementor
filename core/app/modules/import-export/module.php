@@ -62,6 +62,7 @@ class Module extends BaseModule {
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'editHomePageUrl' => $this->get_edit_home_page_url(),
 		];
 	}
 
@@ -283,6 +284,23 @@ class Module extends BaseModule {
 			<p class="tab-import-export-kit__info"><?php Utils::print_unescaped_internal_string( $info_text ); ?></p>
 		</div>
 		<?php
+	}
+
+	private function get_edit_home_page_url() {
+		if ( 'page' !== get_option( 'show_on_front' ) ) {
+			return '';
+		}
+
+		$frontpage_id = get_option( 'page_on_front' );
+
+		$document = Plugin::$instance->documents->get( $frontpage_id );
+
+		// In case that the page was not built with elementor the page should not be opened in edit mode.
+		if ( ! $document->is_built_with_elementor() ) {
+			return '';
+		}
+
+		return $document->get_edit_url();
 	}
 
 	public function register_settings_tab( Tools $tools ) {

@@ -13,7 +13,7 @@ import List from 'elementor-app/ui/molecules/list';
 import './import-plugins-activation.scss';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import useInstallPlugins from '../../../hooks/use-install-plugins';
+import useInstallPlugins from './hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
 	const context = useContext( Context ),

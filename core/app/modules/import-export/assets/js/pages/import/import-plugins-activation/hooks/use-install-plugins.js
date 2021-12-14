@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import usePlugins from './use-plugins';
+import usePlugins from '../../../../hooks/use-plugins';
 
 const ACTION_STATUS_MAP = Object.freeze( {
 	ACTIVATED: 'activated',

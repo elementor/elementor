@@ -12,20 +12,24 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
-import useImportedKitData from '../../../hooks/use-imported-kit-data';
+import useImportedKitData from './hooks/use-imported-kit-data';
 
 export default function ImportComplete() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
 		{ activePlugins, failedPlugins } = getPlugins( context.data.importedPlugins ),
+		editHomePageUrl = elementorAppConfig[ 'import-export' ].editHomePageUrl || null,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
-				<Button
-					text={ __( 'See it live', 'elementor' ) }
-					variant="contained"
-					onClick={ () => window.open( elementorAppConfig.edit_home_page_url, '_blank' ) }
-				/>
+				{
+					editHomePageUrl &&
+					<Button
+						text={ __( 'See it live', 'elementor' ) }
+						variant="contained"
+						onClick={ () => window.open( editHomePageUrl, '_blank' ) }
+					/>
+				}
 
 				<DashboardButton text={ __( 'Close', 'elementor' ) } />
 			</WizardFooter>

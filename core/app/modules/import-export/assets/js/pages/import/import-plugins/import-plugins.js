@@ -15,7 +15,7 @@ import Loader from '../../../ui/loader/loader';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
-import useImportPluginsData from '../../../hooks/use-import-plugins-data';
+import useImportPluginsData from './hooks/use-import-plugins-data';
 
 import './import-plugins.scss';
 

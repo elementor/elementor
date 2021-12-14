@@ -4,7 +4,7 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
 import DataTable from 'elementor-app/molecules/data-table';
 
-import useKitData from '../../hooks/use-kit-data';
+import useKitData from './hooks/use-kit-data';
 
 import './kit-data.scss';
 

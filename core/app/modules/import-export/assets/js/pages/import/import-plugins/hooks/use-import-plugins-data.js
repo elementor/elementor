@@ -1,6 +1,6 @@
 import { arrayToObjectByKey } from 'elementor-app/utils/utils.js';
 
-import usePlugins from './use-plugins';
+import usePlugins from '../../../../hooks/use-plugins';
 
 const MISSING_PLUGINS_KEY = 'missing',
 	EXISTING_PLUGINS_KEY = 'existing',
