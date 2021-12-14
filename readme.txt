@@ -188,6 +188,11 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.5.1 - 2021-12-15 =
+* Fix: Several functions are being executed when not supposed to in all WordPress Dashboard screens
+* Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements
+* Fix: SVG and JSON files were not being uploaded when Dragged from Desktop
+
 = 3.5.0 - 2021-12-14 =
 * New: Introducing CSS Transform - rotate, scale, skew, offset and flip any element ([#12451](https://github.com/elementor/elementor/issues/12451))
 * New: Meet Multi-Select for page elements - improve your workflow process by making bulk actions ([#8006](https://github.com/elementor/elementor/issues/8006), [#879](https://github.com/elementor/elementor/issues/879))
