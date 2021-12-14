@@ -89,16 +89,21 @@ export default class Session {
 	 * @returns {*}
 	 */
 	resolve( containers ) {
+		if ( Object.values( containers ).some( ( element ) => 'section' === element.model.get( 'elType' ) ) ) {
+			this.target = elementor.getPreviewContainer();
+		}
+
 		return containers.map( ( element ) => {
 			switch ( element.type ) {
 				case 'container':
 				case 'section':
 				case 'column':
 				case 'widget':
-					return this.target.view.createElementFromContainer(
-						element,
+					return this.target.view.createElementFromModel(
+						element.model,
 						Object.assign( this.options.target, {
 							event: this.options.event,
+							scrollIntoView: 0 === containers.indexOf( element ),
 						} )
 					);
 			}
