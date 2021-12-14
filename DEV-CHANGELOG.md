@@ -1,5 +1,11 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev18 - 2021-12-14
+* Tweak: Navigator appears by default when loading the editor [ED-5742] (#17146)
+* Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17148)
+* Revert "Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17148)" (#17171)
+* Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17172)
+
 #### 3.6.0-dev17 - 2021-12-13
 * Tweak: Added `Difference`, `Exclusion` and `Hue` to Column and Section blend mode options [ED-5733] (#17079)
 * New: Added a reusable button trait [ED-4597] (#17041) (#17092)
