@@ -20,7 +20,7 @@ export class MediaParser extends FileParserBase {
 			},
 		} ).catch( ( result ) => {
 			elementor.notifications.showToast( {
-				message: result,
+				message: result.message,
 			} );
 
 			return Promise.reject( result );

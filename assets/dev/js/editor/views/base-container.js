@@ -1,3 +1,5 @@
+import ElementModel from 'elementor-elements/models/element';
+
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -82,7 +84,7 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
-			newModel.trigger( 'request:edit' );
+			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 		}
 
 		return newView;
@@ -93,25 +95,30 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
+		let container = this.getContainer();
+
 		if ( model instanceof Backbone.Model ) {
 			model = model.toJSON();
-		}
-
-		model = Object.assign( model, model.custom );
-
-		if ( 'section' === model.elType ) {
-			model.isInner = true;
 		}
 
 		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
 			return;
 		}
 
+		model = Object.assign( model, model.custom );
+
+		// Check whether the container cannot contain a section, in which case we should use an inner-section.
+		if (
+			$e.components.get( 'document/elements' ).utils.isValidChild( new ElementModel( model ), container.model ) &&
+			'section' === model.elType
+		) {
+			model.isInner = true;
+		}
+
 		const historyId = $e.internal( 'document/history/start-log', {
 			type: this.getHistoryType( options.event ),
 			title: elementor.helpers.getModelLabel( model ),
 		} );
-		let container = this.getContainer();
 
 		if ( options.shouldWrap ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
