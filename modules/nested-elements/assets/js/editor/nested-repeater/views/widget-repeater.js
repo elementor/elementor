@@ -5,8 +5,6 @@ const WidgetView = elementor.modules.elements.views.Widget;
  */
 export class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
 	initialize() {
-		this.once( 'render', this.createDefaultChildren.bind( this ) );
-
 		WidgetView.prototype.initialize.apply( this, arguments );
 	}
 
