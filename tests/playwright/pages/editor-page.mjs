@@ -1,6 +1,5 @@
 import BasePage from './base-page.mjs';
 import { getElementSelector, addElement } from '../assets/elements-utils.mjs';
-import DocumentElementsHelper from '../../utils/js/document-elements-helper.mjs';
 
 export default class EditorPage extends BasePage {
 	isPanelLoaded = false;
@@ -8,18 +7,17 @@ export default class EditorPage extends BasePage {
 	constructor( page, testInfo ) {
 		super( page, testInfo )
 
-		/**
-		 * @type {(typeof DocumentElementsHelper)}
-		 */
-		this.helper = new Proxy( DocumentElementsHelper , {
-			get: ( target, name ) => {
-				return ( ...args ) => {
-					return this.page.evaluate( target[name], args );
-				};
-			},
-		} );
-
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	async openNavigator() {
+		const isOpen = await this.previewFrame.evaluate( () =>
+			elementor.navigator.isOpen()
+		)
+
+		if ( ! isOpen ) {
+			await this.page.click('#elementor-panel-footer-navigator');
+		}
 	}
 
 	/**
@@ -40,8 +38,6 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Add element to the page using a model.
-	 *
-	 * TODO use 'DocumentElementsHelper'.
 	 *
 	 * @param {Object} model - Model definition.
 	 * @param {string} container - Optional Container to create the element in.

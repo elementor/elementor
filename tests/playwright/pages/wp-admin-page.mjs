@@ -56,7 +56,7 @@ export default class wpAdminPage extends BasePage {
 
 		const editor = new EditorPage( this.page, this.testInfo )
 
-		await editor.helper.empty();
+		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 
 		return editor;
 	}
