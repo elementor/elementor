@@ -23,7 +23,7 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 			const elementType = elementor.getElementType( element.elType, element.widgetType ),
 				ModelClass = elementType.getModel();
 
-			this.result.push( new ModelClass( element ) );
+			result.push( new ModelClass( element ) );
 		} );
 
 		return result;
