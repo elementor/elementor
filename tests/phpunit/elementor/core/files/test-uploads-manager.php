@@ -285,7 +285,7 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 	public function test_support_unfiltered_elementor_file_uploads() {
 		// support_unfiltered_elementor_file_uploads only runs if the upload is an Elementor Media upload.
 		// This check is determined by the 'uploadTypeCaller' POST property.
-		$_POST['uploadTypeCaller'] = 'elementor-media-upload';
+		$_REQUEST['uploadTypeCaller'] = 'elementor-media-upload';
 
 		// Make sure unfiltered uploads are allowed for this test.
 		add_filter( 'elementor/files/allow_unfiltered_upload', function( $enabled ) {
