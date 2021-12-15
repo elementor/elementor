@@ -1,4 +1,4 @@
-import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs';
+import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
 
 QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( hooks ) => {
 	hooks.beforeEach( () => {
@@ -23,7 +23,7 @@ QUnit.module( 'File: assets/dev/js/editor/container/model/children-array.js', ( 
 
 	QUnit.test( 'findRecursive(): Ensure children found', ( assert ) => {
 		// Arrange.
-		const eColumn = ElementsHelper.createSection( 1, 1 ),
+		const eColumn = ElementsHelper.createSection( 1, true ),
 			eWidgets = [
 				ElementsHelper.createWidgetButton( eColumn ),
 				ElementsHelper.createWidgetButton( eColumn ),

@@ -1,4 +1,5 @@
-import ElementsHelper from 'elementor/tests/utils/js/document-elements-helper.mjs'; import GlobalsHelper from '../helper';
+import ElementsHelper from 'elementor/tests/qunit/tests/assets/dev/js/editor/document/elements/helper';
+import GlobalsHelper from '../helper';
 import * as eData from 'elementor/tests/qunit/mock/e-data';
 
 export const Enable = () => {

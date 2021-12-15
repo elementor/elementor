@@ -1,5 +1,5 @@
 export default class ElementsHelper {
-	createAuto( elType, widgetType = 'button' ) {
+	static createAuto( elType, widgetType = 'button' ) {
 		let result = null;
 
 		switch ( elType ) {
@@ -37,7 +37,7 @@ export default class ElementsHelper {
 	/**
 	 * @return {Container}
 	 */
-	createAutoButton( eContainer = null, settings = {} ) {
+	static createAutoButton( eContainer = null, settings = {} ) {
 		if ( ! eContainer ) {
 			eContainer = this.createSection( 1, true );
 		}
@@ -45,7 +45,7 @@ export default class ElementsHelper {
 		return this.createWidgetButton( eContainer, settings );
 	}
 
-	multiCreateAutoButton( eContainers = null, settings = {} ) {
+	static multiCreateAutoButton( eContainers = null, settings = {} ) {
 		if ( ! eContainers ) {
 			eContainers = [];
 			eContainers.push( this.createSection( 1, true ) );
@@ -55,7 +55,7 @@ export default class ElementsHelper {
 		return this.multiCreateButton( eContainers, settings );
 	}
 
-	createAutoColumn( eContainer = null, settings = {} ) {
+	static createAutoColumn( eContainer = null, settings = {} ) {
 		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
 
 		this.settings( eContainer, settings, {
@@ -65,7 +65,7 @@ export default class ElementsHelper {
 		return eContainer;
 	}
 
-	createSection( columns = 1, returnFirstColumn = false, options = {} ) {
+	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
 				elType: 'section',
@@ -82,7 +82,7 @@ export default class ElementsHelper {
 		return eSection;
 	}
 
-	createContainer( options = {} ) {
+	static createContainer( options = {} ) {
 		return $e.run( 'document/elements/create', {
 			model: {
 				elType: 'container',
@@ -92,7 +92,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
+	static createSectionStructure( columns = 1, structure, returnFirstColumn = false, options = {} ) {
 		const eSection = $e.run( 'document/elements/create', {
 			model: {
 				elType: 'section',
@@ -110,7 +110,7 @@ export default class ElementsHelper {
 		return eSection;
 	}
 
-	createColumn( eContainer ) {
+	static createColumn( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
@@ -119,7 +119,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	multiCreateColumn( eContainers ) {
+	static multiCreateColumn( eContainers ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
 			model: {
@@ -128,7 +128,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createInnerSection( eContainer ) {
+	static createInnerSection( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
@@ -138,7 +138,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	multiCreateInnerSection( eContainers ) {
+	static multiCreateInnerSection( eContainers ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
 			model: {
@@ -148,7 +148,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	resizeColumn( eContainer, width ) {
+	static resizeColumn( eContainer, width ) {
 		$e.run( 'document/elements/settings', {
 			container: eContainer,
 			settings: {
@@ -160,7 +160,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createWidget( eContainer, widgetType, settings = {}, options = {} ) {
+	static createWidget( eContainer, widgetType, settings = {}, options = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
@@ -172,7 +172,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createWidgetMulti( eContainers, widgetType, settings = {}, options = {} ) {
+	static createWidgetMulti( eContainers, widgetType, settings = {}, options = {} ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
 			model: {
@@ -184,7 +184,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createWidgetButton( eContainer, settings = {} ) {
+	static createWidgetButton( eContainer, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
@@ -195,7 +195,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	multiCreateButton( eContainers, settings = {} ) {
+	static multiCreateButton( eContainers, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
 			model: {
@@ -206,7 +206,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	createWidgetTabs( eContainer ) {
+	static createWidgetTabs( eContainer ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
 			model: {
@@ -216,86 +216,86 @@ export default class ElementsHelper {
 		} );
 	}
 
-	copy( eContainer ) {
+	static copy( eContainer ) {
 		$e.run( 'document/elements/copy', {
 			container: eContainer,
 		} );
 	}
 
-	multiCopy( eContainers ) {
+	static multiCopy( eContainers ) {
 		$e.run( 'document/elements/copy', {
 			containers: eContainers,
 		} );
 	}
 
-	copyAll() {
+	static copyAll() {
 		$e.run( 'document/elements/copy-all' );
 	}
 
-	paste( eContainer, rebuild = false ) {
+	static paste( eContainer, rebuild = false ) {
 		return $e.run( 'document/elements/paste', {
 			container: eContainer,
 			rebuild,
 		} );
 	}
 
-	multiPaste( eContainers ) {
+	static multiPaste( eContainers ) {
 		return $e.run( 'document/elements/paste', {
 			containers: eContainers,
 		} );
 	}
 
-	pasteStyle( eContainer ) {
+	static pasteStyle( eContainer ) {
 		$e.run( 'document/elements/paste-style', {
 			container: eContainer,
 		} );
 	}
 
-	multiPasteStyle( eContainers ) {
+	static multiPasteStyle( eContainers ) {
 		$e.run( 'document/elements/paste-style', {
 			containers: eContainers,
 		} );
 	}
 
-	resetSettings( eContainer, settings = null ) {
+	static resetSettings( eContainer, settings = null ) {
 		$e.run( 'document/elements/reset-settings', {
 			container: eContainer,
 			settings,
 		} );
 	}
 
-	resetStyle( eContainer ) {
+	static resetStyle( eContainer ) {
 		$e.run( 'document/elements/reset-style', {
 			container: eContainer,
 		} );
 	}
 
-	multiResetStyle( eContainers ) {
+	static multiResetStyle( eContainers ) {
 		$e.run( 'document/elements/reset-style', {
 			containers: eContainers,
 		} );
 	}
 
-	multiResetSettings( eContainers, settings = null ) {
+	static multiResetSettings( eContainers, settings = null ) {
 		$e.run( 'document/elements/reset-settings', {
 			containers: eContainers,
 			settings,
 		} );
 	}
 
-	duplicate( eContainer ) {
+	static duplicate( eContainer ) {
 		return $e.run( 'document/elements/duplicate', {
 			container: eContainer,
 		} );
 	}
 
-	multiDuplicate( eContainers ) {
+	static multiDuplicate( eContainers ) {
 		return $e.run( 'document/elements/duplicate', {
 			containers: eContainers,
 		} );
 	}
 
-	settings( eContainer, settings, options = {} ) {
+	static settings( eContainer, settings, options = {} ) {
 		$e.run( 'document/elements/settings', {
 			container: eContainer,
 			settings,
@@ -303,14 +303,14 @@ export default class ElementsHelper {
 		} );
 	}
 
-	multiSettings( eContainers, settings ) {
+	static multiSettings( eContainers, settings ) {
 		$e.run( 'document/elements/settings', {
 			containers: eContainers,
 			settings,
 		} );
 	}
 
-	move( eContainer, eTarget, options = {} ) {
+	static move( eContainer, eTarget, options = {} ) {
 		$e.run( 'document/elements/move', {
 			container: eContainer,
 			target: eTarget,
@@ -318,7 +318,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	multiMove( eContainers, eTarget, options = {} ) {
+	static multiMove( eContainers, eTarget, options = {} ) {
 		$e.run( 'document/elements/move', {
 			containers: eContainers,
 			target: eTarget,
@@ -326,23 +326,23 @@ export default class ElementsHelper {
 		} );
 	}
 
-	delete( eContainer ) {
+	static delete( eContainer ) {
 		$e.run( 'document/elements/delete', {
 			container: eContainer,
 		} );
 	}
 
-	multiDelete( eContainers ) {
+	static multiDelete( eContainers ) {
 		$e.run( 'document/elements/delete', {
 			containers: eContainers,
 		} );
 	}
 
-	empty() {
+	static empty() {
 		$e.run( 'document/elements/empty', { force: true } );
 	}
 
-	import( data, model, options = {} ) {
+	static import( data, model, options = {} ) {
 		return $e.run( 'document/elements/import', { data, model, options } );
 	}
 }
