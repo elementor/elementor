@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import MessageBanner from '../../../../../ui/message-banner/message-banner';
-import Button from 'elementor-app/ui/molecules/button';
 import GoProButton from 'elementor-app/molecules/go-pro-button';
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
@@ -16,36 +15,27 @@ export default function ProBanner( { status, onRefresh } ) {
 		return null;
 	}
 
-	const [ isPendingInstallation, setIsPendingInstallation ] = useState( false ),
-		[ showInfoDialog, setShowInfoDialog ] = useState( false ),
-		isActiveNotConnected = PLUGIN_STATUS_MAP.ACTIVE === status && elementorAppConfig.hasOwnProperty( 'is_license_connected' ) && ! elementorAppConfig.is_license_connected,
+	const [ showInfoDialog, setShowInfoDialog ] = useState( false ),
 		isActive = PLUGIN_STATUS_MAP.ACTIVE === status,
 		attrs = {},
+		openGoProExternalPage = () => window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' ),
 		onDialogDismiss = () => setShowInfoDialog( false ),
 		onDialogApprove = () => {
-			window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
-
 			setShowInfoDialog( false );
-			setIsPendingInstallation( true );
+
+			onRefresh();
 		};
 
-	if ( isPendingInstallation ) {
-		attrs.heading = __( 'Importing with Elementor Pro', 'elementor' );
-		attrs.description = [
-			__( 'In a moment you’ll be redirected to install and activate Elementor Pro.', 'elementor' ),
-			__( 'When you’re done, come back here and refresh this page.', 'elementor' ),
-		];
-		attrs.button = <Button text={ __( 'Refresh', 'elementor' ) } onClick={ onRefresh } variant="outlined" color="primary" />;
-	} else if ( isActiveNotConnected ) {
-		attrs.heading = __( 'Connect & Activate Elementor Pro', 'elementor' );
-		attrs.description = __( "Without Elementor Pro, importing components like templates, widgets and popups won't work.", 'elementor' );
-		attrs.button = <GoProButton text={ __( 'Connect & Activate', 'elementor' ) } url={ elementorAppConfig.license_url } />;
-	} else if ( isActive ) {
+	if ( isActive ) {
 		attrs.description = __( 'Elementor Pro is installed & Activated', 'elementor' );
 	} else {
 		attrs.heading = __( 'Install Elementor Pro', 'elementor' );
 		attrs.description = __( "Without Elementor Pro, importing components like templates, widgets and popups won't work.", 'elementor' );
-		attrs.button = <GoProButton onClick={ () => setShowInfoDialog( true ) } />;
+		attrs.button = <GoProButton onClick={ () => {
+			setShowInfoDialog( true );
+
+			openGoProExternalPage();
+		} } />;
 	}
 
 	return (

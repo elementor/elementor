@@ -63,6 +63,7 @@ class Module extends BaseModule {
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'editHomePageUrl' => $this->get_edit_home_page_url(),
+			'randomElementorPageUrl' => $this->get_random_elementor_page_url(),
 		];
 	}
 
@@ -293,9 +294,24 @@ class Module extends BaseModule {
 
 		$frontpage_id = get_option( 'page_on_front' );
 
-		$document = Plugin::$instance->documents->get( $frontpage_id );
+		return $this->get_elementor_page_url( $frontpage_id );
+	}
 
-		// In case that the page was not built with elementor the page should not be opened in edit mode.
+	private function get_random_elementor_page_url() {
+		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+
+		if ( ! isset( $query->post ) ) {
+			return '';
+		}
+
+		$random_elementor_page_id = $query->post->ID;
+
+		return $this->get_elementor_page_url( $random_elementor_page_id );
+	}
+
+	private function get_elementor_page_url( $page_id ) {
+		$document = Plugin::$instance->documents->get( $page_id );
+
 		if ( ! $document->is_built_with_elementor() ) {
 			return '';
 		}
