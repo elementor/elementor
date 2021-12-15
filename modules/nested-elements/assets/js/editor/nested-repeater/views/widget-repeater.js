@@ -54,7 +54,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		const editModel = this.getEditModel(),
 			skinType = editModel.getSetting( '_skin' ) || 'default';
 
-		// To support handlers.
+		// To support handlers - Copied from widget-base.
 		this.$el
 			.attr( 'data-widget_type', editModel.get( 'widgetType' ) + '.' + skinType )
 			.removeClass( 'elementor-widget-empty' )
