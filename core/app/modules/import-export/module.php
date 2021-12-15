@@ -189,6 +189,9 @@ class Module extends BaseModule {
 				$result = $this->import_stage_1();
 			} elseif ( 2 === $import_settings['stage'] ) {
 				$result = $this->import_stage_2( $import_settings['directory'] );
+
+				// Adding the most updated data of the summaryTitles, in case that the data was changed during the process by new installed plugins.
+				$result['summaryTitles'] = $this->get_summary_titles();
 			}
 
 			wp_send_json_success( $result );

@@ -1,6 +1,7 @@
-export default function useKitData( kitData, assetsLabels ) {
+export default function useKitData( kitData ) {
+	console.log( '--- kitData', kitData );
 	const getLabel = ( type, key, amount ) => {
-		const label = assetsLabels[ type ][ key ];
+		const label = kitData.summaryTitles[ type ][ key ];
 
 		if ( label?.single ) {
 			if ( ! amount ) {
@@ -29,7 +30,7 @@ export default function useKitData( kitData, assetsLabels ) {
 
 		return Object
 			.entries( templates )
-			.map( ( item ) => getLabel( 'templates', item[ 0 ], item[ 1 ] ) );
+			.map( ( [ key, amount ] ) => getLabel( 'templates', key, amount ) );
 	},
 	getSiteSettings = () => {
 		const siteSettings = kitData?.[ 'site-settings' ] || {};
@@ -53,7 +54,7 @@ export default function useKitData( kitData, assetsLabels ) {
 
 		return Object
 			.entries( mergedContent )
-			.map( ( item ) => getLabel( 'content', item[ 0 ], item[ 1 ].length ) );
+			.map( ( [ key, amount ] ) => getLabel( 'content', key, amount.length ) );
 	},
 	getPlugins = () => {
 		return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];

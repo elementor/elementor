@@ -9,7 +9,7 @@ import useKitData from './hooks/use-kit-data';
 import './kit-data.scss';
 
 export default function KitData( props ) {
-	const { templates, siteSettings, content, plugins } = useKitData( props.data, elementorAppConfig[ 'import-export' ].summaryTitles ),
+	const { templates, siteSettings, content, plugins } = useKitData( props.data ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = elementorAppConfig[ 'import-export' ],
 		siteSettingsUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl,
 		headers = [

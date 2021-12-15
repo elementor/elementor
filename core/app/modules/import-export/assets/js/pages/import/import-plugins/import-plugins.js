@@ -41,6 +41,7 @@ export default function ImportPlugins() {
 		},
 		handleProInstallationStatus = () => {
 			if ( PLUGIN_STATUS_MAP.ACTIVE === plugins.proData?.status ) {
+				// Saving a global flag that the Pro is now installed.
 				context.dispatch( { type: 'SET_IS_PRO_INSTALLED', payload: true } );
 			}
 		};

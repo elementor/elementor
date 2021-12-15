@@ -49,6 +49,7 @@ export default function ImportComplete() {
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
 				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
 				plugins: activePlugins,
+				summaryTitles: importedData.summaryTitles,
 			};
 		},
 		FailedPluginsNoticeButton = () => (
