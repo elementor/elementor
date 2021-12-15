@@ -65,7 +65,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	}
 
 	createDefaultChildren() {
-		const { defaultChildren = [] } = this.container.model;
+		const defaultChildren = this.container.model.getDefaultChildren();
 
 		if ( defaultChildren.length ) {
 			defaultChildren.forEach( ( elementModel ) => this.addElement( elementModel, { internal: true } ) );

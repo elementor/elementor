@@ -2,20 +2,20 @@
  * @extends {ElementModel}
  */
 export default class WidgetRepeaterModel extends elementor.modules.elements.models.Element {
+	defaultChildren = [];
+
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
-
-		if ( $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
-			this.onElementCreate();
-		}
 
 		super.initialize( options );
 	}
 
-	addDefaultChildren( data ) {
-		this.defaultChildren = [];
+	getDefaultChildren() {
+		// eslint-disable-next-line camelcase
+		const { default_children } = this.config,
+			result = [];
 
-		data.forEach( ( element ) => {
+		default_children.forEach( ( element ) => {
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = new Backbone.Model( element.settings || {} );
 			element.elements = element.elements || [];
@@ -23,18 +23,10 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 			const elementType = elementor.getElementType( element.elType, element.widgetType ),
 				ModelClass = elementType.getModel();
 
-			this.defaultChildren.push( new ModelClass( element ) );
+			this.result.push( new ModelClass( element ) );
 		} );
-	}
 
-	onElementCreate() {
-		// eslint-disable-next-line camelcase
-		const { default_children } = this.config;
-
-		// eslint-disable-next-line camelcase
-		if ( default_children ) {
-			this.addDefaultChildren( default_children );
-		}
+		return result;
 	}
 
 	isValidChild( childModel ) {

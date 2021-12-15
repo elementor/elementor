@@ -30,8 +30,8 @@ export default class Component extends $e.modules.ComponentBase {
 	getChildrenTitle( container, index ) {
 		const title = container.parent.view.model.config.default_children_title;
 
-		// eslint-disable-next-line no-restricted-syntax
-		return sprintf( __( title, 'elementor' ), index );
+		// Translations comes from server side.
+		return sprintf( title, index );
 	}
 
 	setChildrenTitle( container, index ) {

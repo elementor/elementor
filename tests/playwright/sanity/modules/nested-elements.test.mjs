@@ -62,7 +62,7 @@ test.describe( 'NestedElementsModule', () => {
 			test.describe( 'Hooks', () => {
 
 				test.describe( 'Data', () => {
-					test( 'Hook: `nested-repeater-adjust-container-titles`', async () => {
+					test( 'Hook: `nested-repeater-create-default-children`', async () => {
 						// Arrange, Open navigator.
 						await editor.openNavigator();
 

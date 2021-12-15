@@ -1,18 +1,21 @@
 /**
- * On each nested widget creation, for each nested repeater container item, adjust the container title,
+ * On each nested widget creation.
+ *
+ * a. Create default children from model config.
+ * b. For each nested repeater container set the container title,
  * according to the nested repeater title, the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
- * '_title' is used in navigator.
+ * '_title' is used by the navigator.
  */
-export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.After ) {
+export class NestedRepeaterCreateDefaultChildren extends ( $e.modules.hookData.After ) {
 	getId() {
-		return 'nested-repeater-adjust-container-titles';
+		return 'nested-repeater-create-default-children';
 	}
 
 	getCommand() {
 		return 'document/elements/create';
 	}
 
-	getConditions( args = {} ) {
+	getConditions( args ) {
 		const { model } = args;
 
 		return 'widget' === model.elType && elementor.modules.nestedElements.isWidgetSupportNesting( model.widgetType );
@@ -22,7 +25,7 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 	 * @inheritDoc
 	 *
 	 * @param {{}} args
-	 * @param {Container[]} containers
+	 * @param {Container[]|Container} containers
 	 *
 	 * @returns {boolean}
 	 */
@@ -31,6 +34,17 @@ export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.A
 			containers = [ containers ];
 		}
 
+		this.createDefaultChildren( containers );
+		this.setChildrenTitles( containers );
+	}
+
+	createDefaultChildren( containers ) {
+		containers.forEach( ( container ) => {
+			container.view.createDefaultChildren();
+		} );
+	}
+
+	setChildrenTitles( containers ) {
 		containers.forEach( ( container ) => {
 			if ( ! container?.children ) {
 				return;
