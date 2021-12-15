@@ -17,7 +17,7 @@ import './kit-content.scss';
 
 export default function KitContent( props ) {
 	const context = useContext( Context ),
-		hasPro = context.data.isProInstalled,
+		hasPro = context.data.isProInstalledDuringProcess || elementorAppConfig.hasPro,
 		[ containerHover, setContainerHover ] = useState( {} ),
 		getTemplateFeatures = ( features, index ) => {
 			if ( ! features ) {

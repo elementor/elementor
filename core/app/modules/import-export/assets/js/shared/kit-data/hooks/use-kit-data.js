@@ -1,5 +1,4 @@
 export default function useKitData( kitData ) {
-	console.log( '--- kitData', kitData );
 	const getLabel = ( type, key, amount ) => {
 		const label = kitData.summaryTitles[ type ][ key ];
 

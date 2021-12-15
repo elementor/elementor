@@ -23,7 +23,7 @@ export default function ContextProvider( props ) {
 		plugins: [],
 		requiredPlugins: [],
 		importedPlugins: [],
-		isProInstalled: elementorAppConfig.hasPro,
+		isProInstalledDuringProcess: false,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

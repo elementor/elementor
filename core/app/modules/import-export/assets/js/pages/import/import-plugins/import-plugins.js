@@ -40,9 +40,9 @@ export default function ImportPlugins() {
 			pluginsActions.get();
 		},
 		handleProInstallationStatus = () => {
-			if ( PLUGIN_STATUS_MAP.ACTIVE === plugins.proData?.status ) {
-				// Saving a global flag that the Pro is now installed.
-				context.dispatch( { type: 'SET_IS_PRO_INSTALLED', payload: true } );
+			// In case that the Pro is now active but initially in the config was false, it means that the pro was added during the process.
+			if ( PLUGIN_STATUS_MAP.ACTIVE === plugins.proData?.status && ! elementorAppConfig.hasPro ) {
+				context.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
 		};
 
