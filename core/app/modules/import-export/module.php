@@ -62,8 +62,8 @@ class Module extends BaseModule {
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'editHomePageUrl' => $this->get_edit_home_page_url(),
-			'randomElementorPageUrl' => $this->get_random_elementor_page_url(),
+			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
 		];
 	}
 
@@ -287,7 +287,7 @@ class Module extends BaseModule {
 		<?php
 	}
 
-	private function get_edit_home_page_url() {
+	private function get_edit_elementor_home_page_url() {
 		if ( 'page' !== get_option( 'show_on_front' ) ) {
 			return '';
 		}
@@ -297,16 +297,14 @@ class Module extends BaseModule {
 		return $this->get_elementor_page_url( $frontpage_id );
 	}
 
-	private function get_random_elementor_page_url() {
+	private function get_recently_edited_elementor_page_url() {
 		$query = Utils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
 
 		if ( ! isset( $query->post ) ) {
 			return '';
 		}
 
-		$random_elementor_page_id = $query->post->ID;
-
-		return $this->get_elementor_page_url( $random_elementor_page_id );
+		return $this->get_elementor_page_url( $query->post->ID );
 	}
 
 	private function get_elementor_page_url( $page_id ) {

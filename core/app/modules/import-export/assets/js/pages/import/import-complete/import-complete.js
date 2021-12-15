@@ -19,15 +19,16 @@ export default function ImportComplete() {
 		navigate = useNavigate(),
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
 		{ activePlugins, failedPlugins } = getPlugins( context.data.importedPlugins ),
-		editHomePageUrl = elementorAppConfig[ 'import-export' ].editHomePageUrl || null,
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = elementorAppConfig[ 'import-export' ],
+		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				{
-					editHomePageUrl &&
+					seeItLiveUrl &&
 					<Button
 						text={ __( 'See it live', 'elementor' ) }
 						variant="contained"
-						onClick={ () => window.open( editHomePageUrl, '_blank' ) }
+						onClick={ () => window.open( seeItLiveUrl, '_blank' ) }
 					/>
 				}
 
@@ -56,6 +57,7 @@ export default function ImportComplete() {
 				variant="outlined"
 				color="secondary"
 				size="sm"
+				target="_blank"
 				url="https://go.elementor.com/app-import-plugin-installation-failed"
 			/>
 		);

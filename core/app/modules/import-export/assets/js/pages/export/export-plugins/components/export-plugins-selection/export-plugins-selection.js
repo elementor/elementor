@@ -21,6 +21,7 @@ export default function ExportPluginsSelection() {
 			plugins={ activePlugins }
 			withStatus={ false }
 			onSelect={ handleOnSelect }
+			layout={ [ 3, 1 ] }
 		/>
 	);
 }

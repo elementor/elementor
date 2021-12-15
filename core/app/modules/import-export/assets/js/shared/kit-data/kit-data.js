@@ -10,6 +10,8 @@ import './kit-data.scss';
 
 export default function KitData( props ) {
 	const { templates, siteSettings, content, plugins } = useKitData( props.data, elementorAppConfig[ 'import-export' ].summaryTitles ),
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = elementorAppConfig[ 'import-export' ],
+		siteSettingsUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl,
 		headers = [
 			__( 'Site Area', 'elementor' ),
 			__( 'Included', 'elementor' ),
@@ -23,7 +25,7 @@ export default function KitData( props ) {
 				},
 				{
 					siteArea: __( 'Site Settings', 'elementor' ),
-					link: elementorAppConfig.edit_home_page_url + '#e:run:panel/global/open',
+					link: siteSettingsUrl ? siteSettingsUrl + '#e:run:panel/global/open' : '',
 					included: siteSettings,
 				},
 				{
@@ -47,7 +49,7 @@ export default function KitData( props ) {
 					const SiteArea = () => (
 							<InlineLink url={ link } color="secondary" underline="none">
 								<Text className="e-app-import-export-kit-data__site-area">
-									{ siteArea } <Icon className="eicon-editor-external-link" />
+									{ siteArea } { link && <Icon className="eicon-editor-external-link" /> }
 								</Text>
 							</InlineLink>
 						),
