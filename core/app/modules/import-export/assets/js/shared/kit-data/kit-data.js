@@ -10,7 +10,7 @@ import './kit-data.scss';
 
 export default function KitData( { data } ) {
 	const { templates, siteSettings, content, plugins } = useKitData( data ),
-		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || {},
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || elementorAppConfig[ 'import-export' ],
 		siteSettingsUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl,
 		headers = [
 			__( 'Site Area', 'elementor' ),

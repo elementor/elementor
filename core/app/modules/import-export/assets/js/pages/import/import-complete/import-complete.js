@@ -45,8 +45,6 @@ export default function ImportComplete() {
 			const manifest = context.data.uploadedData.manifest,
 				importedData = context.data.importedData;
 
-			console.log( 'importedData', importedData );
-
 			return {
 				templates: getTemplates( manifest.templates, importedData ),
 				content: getContent( manifest.content, importedData ),
@@ -56,8 +54,6 @@ export default function ImportComplete() {
 				configData: importedData.configData,
 			};
 		};
-
-	console.log( 'context.data.isProInstalledDuringProcess', context.data.isProInstalledDuringProcess );
 
 	useEffect( () => {
 		if ( ! context.data.uploadedData ) {

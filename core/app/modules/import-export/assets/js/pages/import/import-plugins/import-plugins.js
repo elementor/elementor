@@ -23,7 +23,7 @@ export default function ImportPlugins() {
 	const context = useContext( Context ),
 		navigate = useNavigate(),
 		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
-		{ plugins, pluginsActions, PLUGIN_STATUS_MAP } = useImportPluginsData( kitPlugins ),
+		{ plugins, pluginsActions } = useImportPluginsData( kitPlugins ),
 		handleRequiredPlugins = () => {
 			const { missing } = plugins;
 
@@ -40,8 +40,8 @@ export default function ImportPlugins() {
 			pluginsActions.get();
 		},
 		handleProInstallationStatus = () => {
-			// In case that the Pro is now active but initially in the config was false, it means that the pro was added during the process.
-			if ( PLUGIN_STATUS_MAP.ACTIVE === plugins.proData?.status && ! elementorAppConfig.hasPro ) {
+			// In case that the Pro data is now exist but initially in the elementorAppConfig the value was false, it means that the pro was added during the process.
+			if ( plugins.proData && ! elementorAppConfig.hasPro ) {
 				context.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
 		};

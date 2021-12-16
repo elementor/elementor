@@ -1,6 +1,8 @@
 export default function useKitData( kitData ) {
 	const getLabel = ( type, key, amount ) => {
-		const label = kitData?.configData?.summaryTitles[ type ][ key ] || elementorAppConfig[ 'import-export' ].summaryTitles;
+		// The summary-titles data will not exist in the kitData as part of the export process, and therefore should be taken from the elementorAppConfig.
+		const summaryTitlesData = kitData?.configData?.summaryTitles || elementorAppConfig[ 'import-export' ].summaryTitles,
+			label = summaryTitlesData[ type ][ key ];
 
 		if ( label?.single ) {
 			if ( ! amount ) {
