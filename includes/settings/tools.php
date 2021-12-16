@@ -340,7 +340,7 @@ class Tools extends Settings_Page {
 						'callback' => function() {
 							$intro_text = sprintf(
 								/* translators: %s: Elementor version. */
-								__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
+								esc_html__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
 								ELEMENTOR_VERSION
 							);
 							$intro_text = '<p>' . $intro_text . '</p>';
@@ -355,7 +355,7 @@ class Tools extends Settings_Page {
 									'html' => sprintf(
 										$rollback_html . '<a data-placeholder-text="' . esc_html__( 'Reinstall', 'elementor' ) . ' v{VERSION}" href="#" data-placeholder-url="%s" class="button elementor-button-spinner elementor-rollback-button">%s</a>',
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' ),
-										__( 'Reinstall', 'elementor' )
+										esc_html__( 'Reinstall', 'elementor' )
 									),
 									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
 								],
@@ -400,7 +400,7 @@ class Tools extends Settings_Page {
 				'field_args' => [
 					'type' => 'raw_html',
 					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), __( 'Recreate Kit', 'elementor' ) ),
-					'desc' => __( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
+					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
 				],
 			];
 		}
@@ -418,7 +418,7 @@ class Tools extends Settings_Page {
 	 * @return string Tools page title.
 	 */
 	protected function get_page_title() {
-		return __( 'Tools', 'elementor' );
+		return esc_html__( 'Tools', 'elementor' );
 	}
 
 	/**
