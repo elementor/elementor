@@ -1,15 +1,25 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Empty( props ) {
-	// On container remove.
-	if ( props.container.view.isDisconnected() ) {
-		return null;
-	}
-
 	const containerHelper = $e.components.get( 'editor' ).defaultUtils().container,
 		addAreaElementRef = useRef(),
-		[ isRenderPresets, setIsRenderPresets ] = useState( false ),
-		onPresetSelected = ( preset, container ) => {
+		[ isRenderPresets, setIsRenderPresets ] = useState( false );
+
+	// Make droppable area.
+	useEffect( () => {
+		const $addAreaElementRef = jQuery( addAreaElementRef.current ),
+			defaultDroppableOptions = props.container.view.getDroppableOptions();
+
+		// Make some adjustments to behave like 'AddSectionArea', use default droppable options from container element.
+		defaultDroppableOptions.placeholder = false;
+		defaultDroppableOptions.items = '> .elementor-add-section-inner';
+		defaultDroppableOptions.hasDraggingOnChildClass = 'elementor-dragging-on-child';
+
+		// Make element drop-able.
+		$addAreaElementRef.html5Droppable( defaultDroppableOptions );
+	}, [ ! isRenderPresets, ! props.container.view.isDisconnected() ] );
+
+	const onPresetSelected = ( preset, container ) => {
 			const options = {
 				createWrapper: false,
 			};
@@ -24,30 +34,19 @@ export default function Empty( props ) {
 				},
 			};
 
-			// Make droppable area. timeout means after the element is rendered, other React hooks causes errors.
-			setTimeout( () => {
-				const $addAreaElementRef = jQuery( addAreaElementRef.current ),
-					defaultDroppableOptions = props.container.view.getDroppableOptions();
-
-				// Make some adjustments to behave like 'AddSectionArea', use default droppable options from container element.
-				defaultDroppableOptions.placeholder = false;
-				defaultDroppableOptions.items = '> .elementor-add-section-inner';
-				defaultDroppableOptions.hasDraggingOnChildClass = 'elementor-dragging-on-child';
-
-				// Make element drop-able.
-				$addAreaElementRef.html5Droppable( defaultDroppableOptions );
-			} );
-
 			return (
-				<div className="elementor-add-section" onClick={() => containerHelper.openEditMode( props.container )} ref={addAreaElementRef}>
-					<div className="elementor-add-section-inner" >
+				<div className="elementor-add-section" onClick={() => containerHelper.openEditMode( props.container )}
+						ref={addAreaElementRef}>
+					<div className="elementor-add-section-inner">
 						<div className="e-view elementor-add-new-section">
 							<div className="elementor-add-section-area-button elementor-add-section-button"
-									onClick={() => setIsRenderPresets( true )} title={__( 'Add new container', 'elementor' )}>
+									onClick={() => setIsRenderPresets( true )}
+									title={__( 'Add new container', 'elementor' )}>
 								<i className="eicon-plus"/>
 							</div>
 							<div className="elementor-add-section-area-button elementor-add-template-button"
-									onClick={() => $e.run( 'library/open', args )} title={__( 'Add Template', 'elementor' )}>
+									onClick={() => $e.run( 'library/open', args )}
+									title={__( 'Add Template', 'elementor' )}>
 								<i className="eicon-folder"/>
 							</div>
 							<div className="elementor-add-section-drag-title">
@@ -66,7 +65,8 @@ export default function Empty( props ) {
 						<span className="elementor-screen-only">{__( 'Close', 'elementor' )}</span>
 					</div>
 					<div className="e-view e-container-select-preset">
-						<div className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
+						<div
+							className="e-container-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
 						<div className="e-container-select-preset__list">
 							{
 								elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
