@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.8
+Stable tag: 3.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -110,7 +110,7 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
 = Security Report =
-We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection. 
+We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
 
 = Documentation and Support =
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -265,7 +265,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 = 3.4.7 - 2021-10-31 =
 * Tweak: Added role restriction to Version control feature
 * Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
-* Fix: Custom width responsive control disappeared until section init in the common Positioning section 
+* Fix: Custom width responsive control disappeared until section init in the common Positioning section
 * Fix: PayPal button widget is not functioning in future Pro versions
 * Fix: Unwanted HTML escaping in Pro features promotion
 
@@ -371,7 +371,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Theme Builder is not working if Import/Export experiment is inactive
 * Fix: UI glitch in Responsive bar in RTL sites
 * Fix: "Edit with Elementor" isn’t working on static Homepages
-* Fix: UI glitches in Kit Library 
+* Fix: UI glitches in Kit Library
 * Fix: Library connect issues after URL change in Kit and template Library
 * Fix: Kit Library not showing all categories
 * Fix: Pro widget promotions flickers after clicking on "See it in action" button
