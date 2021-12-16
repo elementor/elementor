@@ -14,16 +14,26 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 		events.click = ( e ) => {
 			const closest = e.target.closest( '.elementor-element' );
 
-			// Click on container.
+			let model = this.options.model,
+				view = this;
+
+			// For clicks on container, let the other handles handle it, in case the container empty:
+			// the click on the container should be handled by the EmptyView.
 			if ( 'container' === closest.dataset.element_type ) {
-				return true;
+				if ( this.isEmpty() ) {
+					return true;
+				}
+				const container = elementor.getContainer( closest.dataset.id );
+
+				model = container.model;
+				view = container.view;
 			}
 
 			e.stopPropagation();
 
 			$e.run( 'panel/editor/open', {
-				model: this.options.model,
-				view: this,
+				model,
+				view,
 			} );
 		};
 
