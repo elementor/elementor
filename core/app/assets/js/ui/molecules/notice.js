@@ -11,7 +11,7 @@ export default function Notice( props ) {
 		classes = [ baseClassName, props.className ];
 
 	if ( props.color ) {
-		classes.push( baseClassName + '--' + props.color );
+		classes.push( baseClassName + '-semantic', baseClassName + '--' + props.color );
 	}
 
 	return (

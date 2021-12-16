@@ -5,6 +5,7 @@ $eps-box-notice-dark-background-color: dark-tints(600);
 
 $eps-notice-semantic-warning-color: theme-colors(warning);
 $eps-notice-semantic-danger-color: theme-colors(danger);
+$eps-notice-semantic-info-color: theme-colors(info);
 
 $root: eps-notice;
 
@@ -18,8 +19,7 @@ $root: eps-notice;
 	box-shadow: $eps-box-shadow-1;
 	background-color: var(--eps-box-notice-background-color);
 
-	&--warning,
-	&--danger {
+	&-semantic {
 		border-inline-start: $eps-border-width-lg $border-style-solid var(--eps-notice-semantic-color);
 
 		#{$parent}__icon {
@@ -35,6 +35,10 @@ $root: eps-notice;
 
 	&--danger {
 		--eps-notice-semantic-color: #{$eps-notice-semantic-danger-color};
+	}
+
+	&--info {
+		--eps-notice-semantic-color: #{$eps-notice-semantic-info-color};
 	}
 
 	&__text {

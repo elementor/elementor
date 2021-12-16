@@ -1,6 +1,6 @@
 export default function useKitData( kitData ) {
 	const getLabel = ( type, key, amount ) => {
-		const label = kitData.summaryTitles[ type ][ key ];
+		const label = kitData?.configData?.summaryTitles[ type ][ key ] || elementorAppConfig[ 'import-export' ].summaryTitles;
 
 		if ( label?.single ) {
 			if ( ! amount ) {

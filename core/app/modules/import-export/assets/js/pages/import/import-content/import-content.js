@@ -18,6 +18,7 @@ export default function ImportContent() {
 		navigate = useNavigate(),
 		{ plugins, requiredPlugins } = context.data,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
+		isKitContainContentToImport = plugins.length || context.data.includes.length,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -36,12 +37,16 @@ export default function ImportContent() {
 				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
-					color="primary"
+					color={ isKitContainContentToImport ? 'primary' : 'disabled' }
 					onClick={ () => {
+						if ( ! isKitContainContentToImport ) {
+							return;
+						}
+
 						if ( context.data.includes.includes( 'templates' ) && context.data.uploadedData.conflicts ) {
 							navigate( 'import/resolver' );
 						} else {
-							const url = context.data.plugins.length ? 'import/plugins-activation' : 'import/process';
+							const url = plugins.length ? 'import/plugins-activation' : 'import/process';
 
 							navigate( url );
 						}

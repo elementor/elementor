@@ -54,17 +54,7 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$export_nonce = wp_create_nonce( 'elementor_export' );
-
-		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
-
-		return [
-			'exportURL' => $export_url,
-			'summaryTitles' => $this->get_summary_titles(),
-			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
-			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
-		];
+		return $this->get_config_data();
 	}
 
 	public function get_summary_titles() {
@@ -191,7 +181,7 @@ class Module extends BaseModule {
 				$result = $this->import_stage_2( $import_settings['directory'] );
 
 				// Adding the most updated data of the summaryTitles, in case that the data was changed during the process by new installed plugins.
-				$result['summaryTitles'] = $this->get_summary_titles();
+				$result['configData'] = $this->get_config_data();
 			}
 
 			wp_send_json_success( $result );
@@ -318,6 +308,20 @@ class Module extends BaseModule {
 		}
 
 		return $document->get_edit_url();
+	}
+
+	private function get_config_data() {
+		$export_nonce = wp_create_nonce( 'elementor_export' );
+
+		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+
+		return [
+			'exportURL' => $export_url,
+			'summaryTitles' => $this->get_summary_titles(),
+			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'editElementorHomePageUrl' => $this->get_edit_elementor_home_page_url(),
+			'recentlyEditedElementorPageUrl' => $this->get_recently_edited_elementor_page_url(),
+		];
 	}
 
 	public function register_settings_tab( Tools $tools ) {
