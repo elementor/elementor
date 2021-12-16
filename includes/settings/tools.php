@@ -25,8 +25,8 @@ class Tools extends Settings_Page {
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$menu->add_submenu( [
-			'page_title' => __( 'Tools', 'elementor' ),
-			'menu_title' => __( 'Tools', 'elementor' ),
+			'page_title' => esc_html__( 'Tools', 'elementor' ),
+			'menu_title' => esc_html__( 'Tools', 'elementor' ),
 			'menu_slug' => self::PAGE_ID,
 			'function' => [ $this, 'display_settings_page' ],
 			'index' => 50,
@@ -46,8 +46,8 @@ class Tools extends Settings_Page {
 	private function register_admin_menu_legacy() {
 		add_submenu_page(
 			Settings::PAGE_ID,
-			__( 'Tools', 'elementor' ),
-			__( 'Tools', 'elementor' ),
+			esc_html__( 'Tools', 'elementor' ),
+			esc_html__( 'Tools', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ]
@@ -89,18 +89,18 @@ class Tools extends Settings_Page {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit->get_id() ) {
-			wp_send_json_error( [ 'message' => __( 'There\'s already an active kit.', 'elementor' ) ], 400 );
+			wp_send_json_error( [ 'message' => esc_html__( 'There\'s already an active kit.', 'elementor' ) ], 400 );
 		}
 
 		$created_default_kit = Plugin::$instance->kits_manager->create_default();
 
 		if ( ! $created_default_kit ) {
-			wp_send_json_error( [ 'message' => __( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
+			wp_send_json_error( [ 'message' => esc_html__( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
 		}
 
 		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
 
-		wp_send_json_success( __( 'New kit have been created successfully', 'elementor' ) );
+		wp_send_json_success( esc_html__( 'New kit have been created successfully', 'elementor' ) );
 	}
 
 	/**
