@@ -120,7 +120,7 @@ module.exports = Marionette.CompositeView.extend( {
 			title: elementor.helpers.getModelLabel( model ),
 		} );
 
-		if ( options.shouldWrap ) {
+		if ( options.shouldWrap || model.isInner ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
 
 			container = $e.run( 'document/elements/create', {
