@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev19 - 2021-12-16
+* Fix: SVG and JSON files caused errors in Drag from Desktop [ED-5529] (#16966)
+
 #### 3.6.0-dev18 - 2021-12-14
 * Tweak: Navigator appears by default when loading the editor [ED-5742] (#17146)
 * Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17148)
@@ -478,22 +481,3 @@
 * Tweak: Updating the kit file process text [ED-3938] (#15459)
 * Tweak: Additional Breakpoints - Fixes, Widgets and Config adjustments (ED-3894, ED-3935, ED-3934) (#15446)
 * Changed "Show Hidden Elements" label (#15461)
-
-#### 3.4.0-dev5 - 2021-06-23
-* Fix: Import-Export Dark Mode UI Fixes And Adding Info-Modal Links [ED-3589, ED-3607] (#15382)
-* Tweak: Revert the removal of `elementor-widget-wrap` [ED-3746] (#15381)
-* Tweak: Allow unlimited export of elementor content (#15397)
-* Tweak: Assets Loader Unit Testing [ED-960] (#15300)
-* Fix: PHP Lint - Security Linter [ED-3168, ED-2901] (#14948)
-* Tweak: Docs - Eye-Dropper [ED-3520] (#15197)
-* Tweak: Text-Path & Mask Option documentation [ED-2848] (#14793)
-* Tweak: Collapsible Kit Information Section With A Dedicated Info Modal [ED-3620] (#15414)
-* Fix: Release and Patch workflows - change log file name (#15412)
-* Fix: PHP Lint [ED-3813] (#15422)
-*  Select 2: Fix - Control UI glitches in dark mode (#15415)
-* Fix: Inline editing not working when the Optimized DOM experiment is on [ED-3081] (#15429)
-* Tweak: Controls System Optimization (ED-3378, ED-3643, ED-3744, ED-3814, ED-3839, ED-3855) (#15247)
-* Fix: Recreate kit button is not showing when deleting default kit [ED-3843] (#15420)
-* Tweak: PHPUNIT - Allow all features to stay registered along the tests lifecycle [ED-3908] (#15439)
-* Fix: The kit-library info-modal didn't work due to converting the ModalProvider and Modal components from class to function based. (#15440)
-* Tweak: Changing the content-filters to be accessed publicly [ED-3854] (#15434)
