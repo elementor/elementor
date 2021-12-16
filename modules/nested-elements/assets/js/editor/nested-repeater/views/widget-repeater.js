@@ -17,14 +17,16 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 			let model = this.options.model,
 				view = this;
 
-			// For clicks on container, let the other handles handle it, in case the container empty:
-			// the click on the container should be handled by the EmptyView.
+			// For clicks on container.
 			if ( 'container' === closest.dataset.element_type ) {
-				if ( this.isEmpty() ) {
-					return true;
-				}
+				// In case the container empty, click should be handled by the EmptyView.
 				const container = elementor.getContainer( closest.dataset.id );
 
+				if ( container.view.isEmpty() ) {
+					return true;
+				}
+
+				// If not empty, open it.
 				model = container.model;
 				view = container.view;
 			}
