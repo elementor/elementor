@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { Context } from '../../../../../context/context-provider';
+import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Heading from 'elementor-app/ui/atoms/heading';
@@ -10,9 +10,9 @@ export default function PluginsToImport( { plugins } ) {
 		return null;
 	}
 
-	const context = useContext( Context ),
-		isAllRequiredPluginsSelected = plugins?.length === context.data.plugins.length,
-		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
+	const importContext = useContext( ImportContext ),
+		isAllRequiredPluginsSelected = plugins?.length === importContext.data.plugins.length,
+		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		initialSelected = plugins ? plugins.map( ( plugin, index ) => index ) : [];
 
 	return (

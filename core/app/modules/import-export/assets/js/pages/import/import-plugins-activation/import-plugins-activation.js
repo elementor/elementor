@@ -1,7 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
@@ -16,13 +17,14 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useInstallPlugins from './hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
-	const context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ bulk, ready, isDone, isError } = useInstallPlugins( { plugins: context.data.plugins } ),
+		{ bulk, ready, isDone } = useInstallPlugins( { plugins: importContext.data.plugins } ),
 		{ referrer } = useQueryParams().getAll(),
 		onCancelProcess = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
+			sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 			if ( 'kit-library' === referrer ) {
 				navigate( '/kit-library' );
@@ -31,30 +33,30 @@ export default function ImportPluginsActivation() {
 			}
 		},
 		onTryAgain = () => {
-			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
+			importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
 			navigate( '/import/plugins' );
 		};
 
 	// In case there are no plugins to import.
 	useEffect( () => {
-		if ( ! context.data.plugins.length ) {
+		if ( ! importContext.data.plugins.length ) {
 			navigate( '/import/' );
 		}
-	}, [ context.data.plugins ] );
+	}, [ importContext.data.plugins ] );
 
 	// When import plugins process is done.
 	useEffect( () => {
 		if ( isDone ) {
-			context.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
+			importContext.dispatch( { type: 'SET_IMPORTED_PLUGINS', payload: ready } );
 		}
 	}, [ isDone ] );
 
 	// Once the imported plugins data was updated.
 	useEffect( () => {
-		if ( context.data.importedPlugins.length ) {
+		if ( importContext.data.importedPlugins.length ) {
 			navigate( '/import/process' );
 		}
-	}, [ context.data.importedPlugins ] );
+	}, [ importContext.data.importedPlugins ] );
 
 	return (
 		<Layout type="import">

@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 
-import { Context } from '../../../../../context/context-provider';
+import { ExportContext } from '../../../../../context/export-context/export-context-provider';
 
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Loader from '../../../../../ui/loader/loader';
@@ -8,10 +8,10 @@ import Loader from '../../../../../ui/loader/loader';
 import usePlugins from '../../../../../hooks/use-plugins';
 
 export default function ExportPluginsSelection( { onPluginsReady } ) {
-	const context = useContext( Context ),
+	const exportContext = useContext( ExportContext ),
 		{ pluginsState, PLUGINS_RESPONSE_MAP } = usePlugins(),
 		activePlugins = pluginsState.data ? pluginsState.data.filter( ( { status } ) => 'active' === status ) : [],
-		handleOnSelect = ( selectedPlugins ) => context.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
 
 	useEffect( () => {
 		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {

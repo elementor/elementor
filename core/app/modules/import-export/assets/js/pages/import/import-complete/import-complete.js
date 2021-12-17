@@ -1,7 +1,8 @@
 import { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
@@ -17,11 +18,12 @@ import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice
 import useImportedKitData from './hooks/use-imported-kit-data';
 
 export default function ImportComplete() {
-	const context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
-		{ activePlugins, failedPlugins } = getPlugins( context.data.importedPlugins ),
-		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = context.data.importedData?.configData || {},
+		{ activePlugins, failedPlugins } = getPlugins( importContext.data.importedPlugins ),
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importContext.data.importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
@@ -38,25 +40,25 @@ export default function ImportComplete() {
 			</WizardFooter>
 		),
 		getKitData = () => {
-			if ( ! context.data.uploadedData || ! context.data.importedData ) {
+			if ( ! importContext.data.uploadedData || ! importContext.data.importedData ) {
 				return {};
 			}
 
-			const manifest = context.data.uploadedData.manifest,
-				importedData = context.data.importedData;
+			const manifest = importContext.data.uploadedData.manifest,
+				importedData = importContext.data.importedData;
 
 			return {
 				templates: getTemplates( manifest.templates, importedData ),
 				content: getContent( manifest.content, importedData ),
 				'wp-content': getWPContent( manifest[ 'wp-content' ], importedData ),
-				'site-settings': context.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
+				'site-settings': sharedContext.data.includes.includes( 'settings' ) ? manifest[ 'site-settings' ] : {},
 				plugins: activePlugins,
 				configData: importedData.configData,
 			};
 		};
 
 	useEffect( () => {
-		if ( ! context.data.uploadedData ) {
+		if ( ! importContext.data.uploadedData ) {
 			navigate( '/import' );
 		}
 	}, [] );
@@ -77,7 +79,7 @@ export default function ImportComplete() {
 			>
 				{ ! ! failedPlugins.length && <FailedPluginsNotice failedPlugins={ failedPlugins } /> }
 
-				{ context.data.isProInstalledDuringProcess && <ConnectProNotice /> }
+				{ importContext.data.isProInstalledDuringProcess && <ConnectProNotice /> }
 
 				<KitData data={ getKitData() } />
 			</WizardStep>

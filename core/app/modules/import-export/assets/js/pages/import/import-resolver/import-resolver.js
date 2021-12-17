@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -17,9 +18,10 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import './import-resolver.scss';
 
 export default function ImportResolver() {
-	const context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		conflicts = context.data?.uploadedData?.conflicts || {},
+		conflicts = importContext.data?.uploadedData?.conflicts || {},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -33,7 +35,7 @@ export default function ImportResolver() {
 					variant="contained"
 					color="primary"
 					onClick={ () => {
-						const url = context.data.plugins.length ? 'import/plugins-activation' : 'import/process';
+						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
 
 						navigate( url );
 					} }
@@ -46,8 +48,8 @@ export default function ImportResolver() {
 			</InlineLink>
 		),
 		isHomePageOverride = () => {
-			if ( context.data.includes.includes( 'content' ) ) {
-				const pages = context.data?.uploadedData?.manifest.content?.page || {};
+			if ( sharedContext.data.includes.includes( 'content' ) ) {
+				const pages = importContext.data?.uploadedData?.manifest.content?.page || {};
 
 				return Object.entries( pages ).find( ( pageData ) => pageData[ 1 ].show_on_front );
 			}

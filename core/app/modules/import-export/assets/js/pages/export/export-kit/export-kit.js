@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 
-import { Context } from '../../../context/context-provider';
+import { ExportContext } from '../../../context/export-context/export-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -14,7 +14,7 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import './export-kit.scss';
 
 export default function ExportKit() {
-	const context = useContext( Context ),
+	const exportContext = useContext( ExportContext ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -32,7 +32,7 @@ export default function ExportKit() {
 		);
 
 	useEffect( () => {
-		context.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		exportContext.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
 	}, [] );
 
 	return (

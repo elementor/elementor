@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ExportContext } from '../../../context/export-context/export-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -16,9 +17,10 @@ import './export-plugins.scss';
 const ELEMENTOR_PLUGIN_KEY = 'Elementor';
 
 export default function ExportPlugins() {
-	const [ isKitReady, setIsKitReady ] = useState( false ),
-		context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		exportContext = useContext( ExportContext ),
 		navigate = useNavigate(),
+		[ isKitReady, setIsKitReady ] = useState( false ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -46,7 +48,7 @@ export default function ExportPlugins() {
 		},
 		onPluginsReady = ( plugins ) => {
 			// In case there are no kit-content items or plugins to export, going back to the main screen.
-			if ( ! context.data.includes.length && ! hasPluginsToExport( plugins ) ) {
+			if ( ! sharedContext.data.includes.length && ! hasPluginsToExport( plugins ) ) {
 				navigate( '/export' );
 			} else if ( ! hasPluginsToExport( plugins ) ) {
 				navigate( '/export/process' );
@@ -57,7 +59,7 @@ export default function ExportPlugins() {
 
 	useEffect( () => {
 		// When not starting from the main screen.
-		if ( ! context.data.isExportProcessStarted ) {
+		if ( ! exportContext.data.isExportProcessStarted ) {
 			navigate( '/export' );
 		}
 	}, [] );

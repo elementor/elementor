@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -14,11 +15,12 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import './import-content.scss';
 
 export default function ImportContent() {
-	const context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		{ plugins, requiredPlugins } = context.data,
+		{ plugins, requiredPlugins } = importContext.data,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
-		isKitContainContentToImport = plugins.length || context.data.includes.length,
+		isKitContainContentToImport = plugins.length || sharedContext.data.includes.length,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -28,7 +30,7 @@ export default function ImportContent() {
 						if ( requiredPlugins.length ) {
 							navigate( 'import/plugins/' );
 						} else {
-							context.dispatch( { type: 'SET_FILE', payload: null } );
+							sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
 							navigate( 'import/' );
 						}
 					} }
@@ -43,7 +45,7 @@ export default function ImportContent() {
 							return;
 						}
 
-						if ( context.data.includes.includes( 'templates' ) && context.data.uploadedData.conflicts ) {
+						if ( sharedContext.data.includes.includes( 'templates' ) && importContext.data.uploadedData.conflicts ) {
 							navigate( 'import/resolver' );
 						} else {
 							const url = plugins.length ? 'import/plugins-activation' : 'import/process';
@@ -61,10 +63,10 @@ export default function ImportContent() {
 		);
 
 	useEffect( () => {
-		if ( ! context.data.file ) {
+		if ( ! sharedContext.data.file ) {
 			navigate( 'import' );
 		}
-	}, [ context.data.file ] );
+	}, [ sharedContext.data.file ] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -86,7 +88,7 @@ export default function ImportContent() {
 					</Notice>
 				}
 
-				<KitContent manifest={ context.data.uploadedData?.manifest } />
+				<KitContent manifest={ importContext.data.uploadedData?.manifest } hasPro={ importContext.data.isProInstalledDuringProcess } />
 			</section>
 		</Layout>
 	);

@@ -1,20 +1,22 @@
 import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from '@reach/router';
 
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ExportContext } from '../../../context/export-context/export-context-provider';
+
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
-
-import { Context } from '../../../context/context-provider';
 
 import useKit from '../../../hooks/use-kit';
 
 export default function ExportProcess() {
-	const context = useContext( Context ),
+	const sharedContext = useContext( SharedContext ),
+		exportContext = useContext( ExportContext ),
 		navigate = useNavigate(),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
 		onDialogDismiss = () => {
-			context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
+			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
 		getExportedPluginsData = ( plugins ) => {
@@ -34,7 +36,7 @@ export default function ExportProcess() {
 			return pluginsData;
 		},
 		exportKit = () => {
-			const { includes, kitInfo, plugins } = context.data;
+			const { includes, kitInfo } = sharedContext.data;
 
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
@@ -46,12 +48,12 @@ export default function ExportProcess() {
 			kitActions.export( {
 				include: includes,
 				kitInfo,
-				plugins: getExportedPluginsData( plugins ),
+				plugins: getExportedPluginsData( exportContext.data.plugins ),
 			} );
 		};
 
 	useEffect( () => {
-		if ( context.data.isExportProcessStarted ) {
+		if ( exportContext.data.isExportProcessStarted ) {
 			exportKit();
 		} else {
 			// When not starting from the main screen.
@@ -62,7 +64,7 @@ export default function ExportProcess() {
 	useEffect( () => {
 		switch ( kitState.status ) {
 			case KIT_STATUS_MAP.EXPORTED:
-				context.dispatch( { type: 'SET_EXPORTED_DATA', payload: kitState.data } );
+				exportContext.dispatch( { type: 'SET_EXPORTED_DATA', payload: kitState.data } );
 				break;
 			case KIT_STATUS_MAP.ERROR:
 				setErrorType( kitState.data );
@@ -71,10 +73,10 @@ export default function ExportProcess() {
 	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( context.data.exportedData ) {
+		if ( exportContext.data.exportedData ) {
 			navigate( 'export/complete' );
 		}
-	}, [ context.data.exportedData ] );
+	}, [ exportContext.data.exportedData ] );
 
 	return (
 		<Layout type="export">

@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -20,29 +20,29 @@ import useImportPluginsData from './hooks/use-import-plugins-data';
 import './import-plugins.scss';
 
 export default function ImportPlugins() {
-	const context = useContext( Context ),
+	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		kitPlugins = context.data.uploadedData?.manifest?.plugins || [],
+		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
 		{ plugins, pluginsActions } = useImportPluginsData( kitPlugins ),
 		handleRequiredPlugins = () => {
 			const { missing } = plugins;
 
 			if ( missing.length ) {
-				context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
+				importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
 			} else {
 				// In case there are not required plugins just skipping to the next screen.
 				navigate( 'import/content' );
 			}
 		},
 		handleRefresh = () => {
-			context.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
+			importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
 
 			pluginsActions.get();
 		},
 		handleProInstallationStatus = () => {
 			// In case that the Pro data is now exist but initially in the elementorAppConfig the value was false, it means that the pro was added during the process.
 			if ( plugins.proData && ! elementorAppConfig.hasPro ) {
-				context.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
+				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
 		};
 
@@ -55,7 +55,7 @@ export default function ImportPlugins() {
 
 	// On plugins data ready.
 	useEffect( () => {
-		if ( plugins && ! context.data.requiredPlugins.length ) {
+		if ( plugins && ! importContext.data.requiredPlugins.length ) {
 			// Saving the required plugins to display them on the next screens.
 			handleRequiredPlugins();
 

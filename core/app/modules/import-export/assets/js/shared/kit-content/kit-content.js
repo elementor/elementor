@@ -1,6 +1,4 @@
-import { useContext, useState } from 'react';
-
-import { Context } from '../../context/context-provider';
+import { useState } from 'react';
 
 import TemplatesFeatures from './components/templates-features/templates-features';
 import KitContentCheckbox from './components/kit-content-checkbox/kit-content-checkbox';
@@ -16,9 +14,9 @@ import kitContentData from '../kit-content-data/kit-content-data';
 import './kit-content.scss';
 
 export default function KitContent( props ) {
-	const context = useContext( Context ),
-		hasPro = context.data.isProInstalledDuringProcess || elementorAppConfig.hasPro,
-		[ containerHover, setContainerHover ] = useState( {} ),
+	const [ containerHover, setContainerHover ] = useState( {} ),
+		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
+		hasPro = props.hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
 			if ( ! features ) {
 				return;
@@ -97,6 +95,7 @@ export default function KitContent( props ) {
 KitContent.propTypes = {
 	className: PropTypes.string,
 	manifest: PropTypes.object,
+	hasPro: PropTypes.bool,
 };
 
 KitContent.defaultProps = {

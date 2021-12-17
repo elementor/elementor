@@ -28,6 +28,7 @@ export default function KitInformation() {
 							text={ kitInfoTitle }
 							onClick={ ( event ) => {
 								event.stopPropagation();
+
 								setShowKitInfoModal( ( prevState ) => ! prevState );
 							} }
 						/>

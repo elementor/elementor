@@ -1,4 +1,6 @@
-import ContextProvider from './context/context-provider';
+import SharedContextProvider from './context/shared-context/shared-context-provider';
+import ImportContextProvider from './context/import-context/import-context-provider';
+
 import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
 
@@ -12,18 +14,20 @@ import ImportPlugins from './pages/import/import-plugins/import-plugins';
 
 export default function Import() {
 	return (
-		<ContextProvider>
-			<LocationProvider history={ router.appHistory }>
-				<Router>
-					<ImportComplete path="complete" />
-					<ImportProcess path="process" />
-					<ImportResolver path="resolver" />
-					<ImportContent path="content" />
-					<ImportPlugins path="plugins" />
-					<ImportPluginsActivation path="plugins-activation" />
-					<ImportKit default />
-				</Router>
-			</LocationProvider>
-		</ContextProvider>
+		<SharedContextProvider>
+			<ImportContextProvider>
+				<LocationProvider history={ router.appHistory }>
+					<Router>
+						<ImportComplete path="complete" />
+						<ImportProcess path="process" />
+						<ImportResolver path="resolver" />
+						<ImportContent path="content" />
+						<ImportPlugins path="plugins" />
+						<ImportPluginsActivation path="plugins-activation" />
+						<ImportKit default />
+					</Router>
+				</LocationProvider>
+			</ImportContextProvider>
+		</SharedContextProvider>
 	);
 }

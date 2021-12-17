@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 
-import { Context } from '../../../../../../../context/context-provider';
+import { ExportContext } from '../../../../../../../context/export-context/export-context-provider';
 
 import TextField from 'elementor-app/ui/atoms/text-field';
 
 export default function KitDescription() {
-	const context = useContext( Context );
+	const exportContext = useContext( ExportContext );
 
 	return (
 		<TextField
@@ -14,7 +14,7 @@ export default function KitDescription() {
 			multiline
 			rows={5}
 			onChange={ ( event ) => {
-				context.dispatch( { type: 'SET_KIT_DESCRIPTION', payload: event.target.value } );
+				exportContext.dispatch( { type: 'SET_KIT_DESCRIPTION', payload: event.target.value } );
 			} }
 		/>
 	);

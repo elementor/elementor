@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { Context } from '../../../context/context-provider';
+import { SharedContext } from '../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -17,14 +18,15 @@ import useKit from '../../../hooks/use-kit';
 import './import-kit.scss';
 
 export default function ImportKit() {
-	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+	const sharedContext = useContext( SharedContext ),
+		importContext = useContext( ImportContext ),
+		navigate = useNavigate(),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
 		[ isLoading, setIsLoading ] = useState( false ),
-		context = useContext( Context ),
-		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
-			context.dispatch( { type: 'SET_FILE', payload: null } );
+			sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
 			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
@@ -37,20 +39,20 @@ export default function ImportKit() {
 
 	// On load.
 	useEffect( () => {
-		context.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
 	}, [] );
 
 	// Uploading the kit after file is selected.
 	useEffect( () => {
-		if ( context.data.file ) {
-			kitActions.upload( { file: context.data.file } );
+		if ( sharedContext.data.file ) {
+			kitActions.upload( { file: sharedContext.data.file } );
 		}
-	}, [ context.data.file ] );
+	}, [ sharedContext.data.file ] );
 
 	// Listening to kit upload state.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
-			context.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
 		}
@@ -58,12 +60,12 @@ export default function ImportKit() {
 
 	// After kit was uploaded.
 	useEffect( () => {
-		if ( context.data.uploadedData && context.data.file ) {
-			const url = context.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
+		if ( importContext.data.uploadedData && sharedContext.data.file ) {
+			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
 			navigate( url );
 		}
-	}, [ context.data.uploadedData ] );
+	}, [ importContext.data.uploadedData ] );
 
 	return (
 		<Layout type="import">
@@ -98,7 +100,7 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
 						setIsLoading( true );
-						context.dispatch( { type: 'SET_FILE', payload: file } );
+						sharedContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }
