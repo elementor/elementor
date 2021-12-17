@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { Context } from '../../../context/context-provider';
@@ -19,15 +19,6 @@ export default function ExportPlugins() {
 	const [ isKitReady, setIsKitReady ] = useState( false ),
 		context = useContext( Context ),
 		navigate = useNavigate(),
-		hasPluginsToExport = ( plugins ) => {
-			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
-			if ( plugins.length > 1 ) {
-				return true;
-			}
-
-			// Making sure that Elementor is not the only plugin to export.
-			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
-		},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -44,14 +35,32 @@ export default function ExportPlugins() {
 				/>
 			</WizardFooter>
 		),
+		hasPluginsToExport = ( plugins ) => {
+			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
+			if ( plugins.length > 1 ) {
+				return true;
+			}
+
+			// Making sure that Elementor is not the only plugin to export.
+			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
+		},
 		onPluginsReady = ( plugins ) => {
 			// In case there are no kit-content items or plugins to export, going back to the main screen.
 			if ( ! context.data.includes.length && ! hasPluginsToExport( plugins ) ) {
-				navigate( '/export' );
+				//navigate( '/export' );
+			} else if ( ! hasPluginsToExport( plugins ) ) {
+				//navigate( '/export/process' );
 			} else {
 				setIsKitReady( true );
 			}
 		};
+
+	useEffect( () => {
+		// When not starting from the main screen.
+		if ( ! context.data.isExportProcessStarted ) {
+			navigate( '/export' );
+		}
+	}, [] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>

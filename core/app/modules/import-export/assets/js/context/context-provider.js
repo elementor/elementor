@@ -24,6 +24,7 @@ export default function ContextProvider( props ) {
 		requiredPlugins: [],
 		importedPlugins: [],
 		isProInstalledDuringProcess: false,
+		isExportProcessStarted: false,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

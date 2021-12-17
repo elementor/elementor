@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+
+import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -16,7 +18,8 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import './export-kit.scss';
 
 export default function ExportKit() {
-	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
+	const context = useContext( Context ),
+		[ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
 		kitInfoTitle = __( 'Kit Information', 'elementor' ),
 		getFooter = () => (
 			<WizardFooter separator justify="end">
@@ -33,6 +36,10 @@ export default function ExportKit() {
 				{ __( 'Learn More', 'elementor' ) }
 			</InlineLink>
 		);
+
+	useEffect( () => {
+		context.dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+	}, [] );
 
 	return (
 		<Layout type="export" footer={ getFooter() }>

@@ -9,10 +9,10 @@ import { Context } from '../../../context/context-provider';
 import useKit from '../../../hooks/use-kit';
 
 export default function ExportProcess() {
-	const { kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		[ errorType, setErrorType ] = useState( '' ),
-		context = useContext( Context ),
+	const context = useContext( Context ),
 		navigate = useNavigate(),
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		[ errorType, setErrorType ] = useState( '' ),
 		onDialogDismiss = () => {
 			context.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
@@ -32,16 +32,24 @@ export default function ExportProcess() {
 			} );
 
 			return pluginsData;
+		},
+		exportKit = () => {
+			const { includes, kitInfo, plugins } = context.data;
+
+			kitActions.export( {
+				include: includes,
+				kitInfo,
+				plugins: getExportedPluginsData( plugins ),
+			} );
 		};
 
 	useEffect( () => {
-		const { includes, kitInfo, plugins } = context.data;
-
-		kitActions.export( {
-			include: includes,
-			kitInfo,
-			plugins: getExportedPluginsData( plugins ),
-		} );
+		if ( context.data.isExportProcessStarted ) {
+			exportKit();
+		} else {
+			// When not starting from the main screen.
+			navigate( '/export' );
+		}
 	}, [] );
 
 	useEffect( () => {
