@@ -30,7 +30,7 @@ export default function ImportContent() {
 						if ( requiredPlugins.length ) {
 							navigate( 'import/plugins/' );
 						} else {
-							sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
+							importContext.dispatch( { type: 'SET_FILE', payload: null } );
 							navigate( 'import/' );
 						}
 					} }
@@ -63,10 +63,10 @@ export default function ImportContent() {
 		);
 
 	useEffect( () => {
-		if ( ! sharedContext.data.file ) {
+		if ( ! importContext.data.file ) {
 			navigate( 'import' );
 		}
-	}, [ sharedContext.data.file ] );
+	}, [ importContext.data.file ] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>

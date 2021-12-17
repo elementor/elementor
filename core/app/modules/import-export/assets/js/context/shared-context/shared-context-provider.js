@@ -9,12 +9,7 @@ export const SharedContext = React.createContext();
 export default function SharedContextProvider( props ) {
 	const initialState = {
 		includes: kitContentData.map( ( item ) => item.type ),
-		file: null,
 		referrer: null,
-		kitInfo: {
-			title: null,
-			description: null,
-		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

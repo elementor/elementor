@@ -31,7 +31,7 @@ export default function ImportProcess() {
 				sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 			}
 
-			sharedContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
+			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
 			kitActions.upload( { file: decodedFileURL } );
 		},
@@ -54,7 +54,7 @@ export default function ImportProcess() {
 
 	// on load.
 	useEffect( () => {
-		if ( fileURL && ! sharedContext.data.file ) {
+		if ( fileURL && ! importContext.data.file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
 		} else if ( importContext.data.uploadedData ) {

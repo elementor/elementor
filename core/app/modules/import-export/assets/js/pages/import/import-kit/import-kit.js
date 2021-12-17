@@ -26,7 +26,7 @@ export default function ImportKit() {
 		[ isLoading, setIsLoading ] = useState( false ),
 		{ referrer } = useQueryParams().getAll(),
 		resetImportProcess = () => {
-			sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 			setErrorType( null );
 			setIsLoading( false );
 			kitActions.reset();
@@ -44,10 +44,10 @@ export default function ImportKit() {
 
 	// Uploading the kit after file is selected.
 	useEffect( () => {
-		if ( sharedContext.data.file ) {
-			kitActions.upload( { file: sharedContext.data.file } );
+		if ( importContext.data.file ) {
+			kitActions.upload( { file: importContext.data.file } );
 		}
-	}, [ sharedContext.data.file ] );
+	}, [ importContext.data.file ] );
 
 	// Listening to kit upload state.
 	useEffect( () => {
@@ -60,7 +60,7 @@ export default function ImportKit() {
 
 	// After kit was uploaded.
 	useEffect( () => {
-		if ( importContext.data.uploadedData && sharedContext.data.file ) {
+		if ( importContext.data.uploadedData && importContext.data.file ) {
 			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
 			navigate( url );
@@ -100,7 +100,7 @@ export default function ImportKit() {
 					filetypes={ [ 'zip' ] }
 					onFileSelect={ ( file ) => {
 						setIsLoading( true );
-						sharedContext.dispatch( { type: 'SET_FILE', payload: file } );
+						importContext.dispatch( { type: 'SET_FILE', payload: file } );
 					} }
 					onError={ () => setErrorType( 'general' ) }
 					isLoading={ isLoading }

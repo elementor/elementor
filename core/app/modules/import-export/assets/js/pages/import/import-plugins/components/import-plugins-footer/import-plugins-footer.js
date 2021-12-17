@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext } from '../../../../../context/shared-context/shared-context-provider';
+import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
 import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ImportPluginsFooter() {
-	const sharedContext = useContext( SharedContext ),
+	const importContext = useContext( ImportContext ),
 		navigate = useNavigate();
 
 	return (
@@ -16,7 +16,7 @@ export default function ImportPluginsFooter() {
 				text={ __( 'Previous', 'elementor' ) }
 				variant="contained"
 				onClick={ () => {
-					sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
+					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 					navigate( '/import/' );
 				} }

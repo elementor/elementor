@@ -10,6 +10,10 @@ export default function ExportContextProvider( props ) {
 		exportedData: null,
 		isExportProcessStarted: false,
 		plugins: [],
+		kitInfo: {
+			title: null,
+			description: null,
+		},
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
 

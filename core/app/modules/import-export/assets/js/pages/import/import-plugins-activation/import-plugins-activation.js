@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
-import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
 
 import Layout from '../../../templates/layout';
@@ -17,14 +16,13 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useInstallPlugins from './hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
-	const sharedContext = useContext( SharedContext ),
-		importContext = useContext( ImportContext ),
+	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		[ errorType, setErrorType ] = useState( '' ),
 		{ bulk, ready, isDone } = useInstallPlugins( { plugins: importContext.data.plugins } ),
 		{ referrer } = useQueryParams().getAll(),
 		onCancelProcess = () => {
-			sharedContext.dispatch( { type: 'SET_FILE', payload: null } );
+			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
 			if ( 'kit-library' === referrer ) {
 				navigate( '/kit-library' );

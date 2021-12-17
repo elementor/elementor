@@ -6,12 +6,13 @@ export const ImportContext = React.createContext();
 
 export default function ImportContextProvider( props ) {
 	const initialState = {
-		overrideConditions: [],
+		file: null,
 		uploadedData: null,
 		importedData: null,
 		plugins: [],
 		requiredPlugins: [],
 		importedPlugins: [],
+		overrideConditions: [],
 		isProInstalledDuringProcess: false,
 	},
 	[ data, dispatch ] = useReducer( reducer, initialState );
