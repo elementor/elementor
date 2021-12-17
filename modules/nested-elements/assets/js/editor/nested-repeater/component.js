@@ -28,7 +28,7 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	getChildrenTitle( container, index ) {
-		const title = container.parent.view.model.config.default_children_title;
+		const title = container.parent.view.model.config.default_children.elements_title;
 
 		// Translations comes from server side.
 		return sprintf( title, index );

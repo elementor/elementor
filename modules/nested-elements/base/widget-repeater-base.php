@@ -12,11 +12,13 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 
 	abstract protected function get_default_children();
 
+	abstract protected function get_default_repeater_title_setting();
+
 	protected function get_default_children_title() {
 		return __( 'Item #%d', 'elementor' );
 	}
 
-	protected function get_children_placeholder() {
+	protected function get_default_children_placeholder() {
 		// Empty string, means will be added at the end.
 		return '';
 	}
@@ -32,10 +34,14 @@ abstract class Widget_Repeater_Base extends Widget_Base {
 	protected function get_initial_config() {
 		$result = parent::get_initial_config();
 
+		$default_children = [];
+		$default_children['elements'] = $this->get_default_children();
+		$default_children['elements_title'] = $this->get_default_children_title();
+		$default_children['elements_placeholder_selector'] = $this->get_default_children_placeholder();
+		$default_children['repeater_title_setting'] = $this->get_default_repeater_title_setting();
+
 		$result['support_nesting'] = true;
-		$result['default_children'] = $this->get_default_children();
-		$result['default_children_title'] = $this->get_default_children_title();
-		$result['children_placeholder_selector'] = $this->get_children_placeholder();
+		$result['default_children'] = $default_children;
 
 		return $result;
 	}

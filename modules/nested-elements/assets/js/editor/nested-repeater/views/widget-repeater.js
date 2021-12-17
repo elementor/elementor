@@ -46,11 +46,13 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	 * @inheritDoc
 	 *
 	 * Sometimes the children placement is not in the end of the element, but somewhere else, eg: deep inside the element template.
-	 * If `children_placeholder_selector` is set, it will be used to find the correct place to insert the children.
+	 * If `default_children_placeholder_selector` is set, it will be used to find the correct place to insert the children.
 	 */
 	getChildViewContainer( containerView, childView ) {
-		if ( this.model.config.children_placeholder_selector ) {
-			return containerView.$el.find( this.model.config.children_placeholder_selector );
+		const customSelector = this.model.config.default_children.elements_placeholder_selector;
+
+		if ( customSelector ) {
+			return containerView.$el.find( this.model.config.default_children.elements_placeholder_selector );
 		}
 
 		return super.getChildViewContainer( containerView, childView );

@@ -50,11 +50,15 @@ class NestedTabs extends Widget_Repeater_Base {
 		];
 	}
 
+	protected function get_default_repeater_title_setting() {
+		return 'tab_title';
+	}
+
 	protected function get_default_children_title() {
 		return __( 'Tab #%d', 'elementor' );
 	}
 
-	protected function get_children_placeholder() {
+	protected function get_default_children_placeholder() {
 		return '.elementor-tabs-content-wrapper';
 	}
 

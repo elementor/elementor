@@ -15,7 +15,7 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 		const { default_children } = this.config,
 			result = [];
 
-		default_children.forEach( ( element ) => {
+		default_children.elements.forEach( ( element ) => {
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = new Backbone.Model( element.settings || {} );
 			element.elements = element.elements || [];

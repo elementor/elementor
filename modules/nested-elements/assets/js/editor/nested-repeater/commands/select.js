@@ -29,7 +29,9 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 		}
 
 		const editSettings = container.model.get( 'editSettings' ),
-			tabTitle = container.repeaters[ container.model.config.name ].children[ index - 1 ].settings.get( 'tab_title' );
+			repeater = container.repeaters[ container.model.config.name ],
+			tabTitleSetting = container.model.config.default_children.repeater_title_setting,
+			tabTitle = repeater.children[ index - 1 ].settings.get( tabTitleSetting );
 
 		return {
 			container,
