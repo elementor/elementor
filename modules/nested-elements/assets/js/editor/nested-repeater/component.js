@@ -48,10 +48,12 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	setRepeaterItemTitle( container, index ) {
+		const titleSetting = container.model.config.default_children.repeater_title_setting;
+
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			settings: {
-				tab_title: this.getChildrenTitle( container, index ),
+				[ titleSetting ]: this.getChildrenTitle( container, index ),
 			},
 			options: {
 				external: true,
