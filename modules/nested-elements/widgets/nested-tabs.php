@@ -33,7 +33,7 @@ class NestedTabs extends Widget_Repeater_Base {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
 	}
 
-	protected function get_default_children() {
+	protected function get_default_children_elements() {
 		return [
 			[
 				'elType' => 'container',
@@ -50,11 +50,15 @@ class NestedTabs extends Widget_Repeater_Base {
 		];
 	}
 
+	protected function get_default_repeater_name() {
+		return 'tabs';
+	}
+
 	protected function get_default_repeater_title_setting() {
 		return 'tab_title';
 	}
 
-	protected function get_default_children_title() {
+	protected function get_defaults_children_title() {
 		return __( 'Tab #%d', 'elementor' );
 	}
 
@@ -84,7 +88,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			],
 		] );
 
-		$this->add_control( $this->get_name(), [
+		$this->add_control( 'tabs', [
 			'label' => esc_html__( 'Tabs Items', 'elementor' ),
 			'type' => Nested_Repeater::CONTROL_TYPE,
 			'fields' => $repeater->get_controls(),
@@ -337,7 +341,8 @@ class NestedTabs extends Widget_Repeater_Base {
 	}
 
 	protected function render() {
-		$tabs = $this->get_settings_for_display( $this->get_name() );
+		// Copied from tabs.php
+		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
 
@@ -411,10 +416,10 @@ class NestedTabs extends Widget_Repeater_Base {
 	protected function content_template() {
 		?>
 		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">
-			<# if ( settings['nested-tabs'] ) {
+			<# if ( settings['tabs'] ) {
 			var elementUid = view.getIDInt().toString().substr( 0, 3 ); #>
 			<div class="elementor-tabs-wrapper" role="tablist">
-				<# _.each( settings['nested-tabs'], function( item, index ) {
+				<# _.each( settings['tabs'], function( item, index ) {
 				var tabCount = index + 1,
 				tabUid = elementUid + tabCount,
 				tabTitleKey = 'tab-title-' + tabUid;
@@ -428,7 +433,7 @@ class NestedTabs extends Widget_Repeater_Base {
 				'aria-controls': 'elementor-tab-content-' + tabUid,
 				'aria-expanded': 'false',
 				'data-binding-type': 'repeater-item',
-				'data-binding-repeater-name': 'nested-tabs',
+				'data-binding-repeater-name': 'tabs',
 				'data-binding-setting': 'tab_title',
 				'data-binding-index': tabCount,
 				} );

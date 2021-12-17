@@ -12,10 +12,10 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 
 	getDefaultChildren() {
 		// eslint-disable-next-line camelcase
-		const { default_children } = this.config,
+		const { defaults } = this.config,
 			result = [];
 
-		default_children.elements.forEach( ( element ) => {
+		defaults.elements.forEach( ( element ) => {
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = new Backbone.Model( element.settings || {} );
 			element.elements = element.elements || [];

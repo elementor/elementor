@@ -33,17 +33,11 @@ class Module extends \Elementor\Core\Base\Module {
 		];
 	}
 
-	private function register_controls() {
-		$controls_manager = Plugin::$instance->controls_manager;
-
-		$controls_manager->register_control( Controls\Nested_Repeater::CONTROL_TYPE, new Controls\Nested_Repeater() );
-	}
-
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/controls/controls_registered', function () {
-			$this->register_controls();
+		add_action( 'elementor/controls/controls_registered', function ( $controls_manager ) {
+			$controls_manager->register_control( Controls\Nested_Repeater::CONTROL_TYPE, new Controls\Nested_Repeater() );
 		} );
 
 		$this->enqueue_module_assets( [
