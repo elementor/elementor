@@ -36,6 +36,13 @@ export default function ExportProcess() {
 		exportKit = () => {
 			const { includes, kitInfo, plugins } = context.data;
 
+			/*
+				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
+				The plugins must be added to the includes items, otherwise they will not be exported.
+				The plugins should always be added in order to include the Core plugin data in the kit.
+			 */
+			includes.push( 'plugins' );
+
 			kitActions.export( {
 				include: includes,
 				kitInfo,

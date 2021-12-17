@@ -47,9 +47,9 @@ export default function ExportPlugins() {
 		onPluginsReady = ( plugins ) => {
 			// In case there are no kit-content items or plugins to export, going back to the main screen.
 			if ( ! context.data.includes.length && ! hasPluginsToExport( plugins ) ) {
-				//navigate( '/export' );
+				navigate( '/export' );
 			} else if ( ! hasPluginsToExport( plugins ) ) {
-				//navigate( '/export/process' );
+				navigate( '/export/process' );
 			} else {
 				setIsKitReady( true );
 			}
