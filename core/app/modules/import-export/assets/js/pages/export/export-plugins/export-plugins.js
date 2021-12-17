@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from '@reach/router';
+
+import { Context } from '../../../context/context-provider';
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
@@ -10,8 +13,22 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-plugins.scss';
 
+const ELEMENTOR_PLUGIN_KEY = 'Elementor';
+
 export default function ExportPlugins() {
-	const getFooter = () => (
+	const [ isKitReady, setIsKitReady ] = useState( false ),
+		context = useContext( Context ),
+		navigate = useNavigate(),
+		hasPluginsToExport = ( plugins ) => {
+			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
+			if ( plugins.length > 1 ) {
+				return true;
+			}
+
+			// Making sure that Elementor is not the only plugin to export.
+			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
+		},
+		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
 					text={ __( 'Back', 'elementor' ) }
@@ -22,26 +39,29 @@ export default function ExportPlugins() {
 				<Button
 					text={ __( 'Create Kit', 'elementor' ) }
 					variant="contained"
-					color="primary"
-					url="/export/process"
+					color={ isKitReady ? 'primary' : 'disabled' }
+					onClick={ () => isKitReady ? navigate( '/export/process' ) : null }
 				/>
 			</WizardFooter>
-		);
+		),
+		onPluginsReady = ( plugins ) => {
+			// In case there are no kit-content items or plugins to export, going back to the main screen.
+			if ( ! context.data.includes.length && ! hasPluginsToExport( plugins ) ) {
+				navigate( '/export' );
+			} else {
+				setIsKitReady( true );
+			}
+		};
 
 	return (
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-plugins">
 				<PageHeader
-					heading={ __( 'Export a Template Kit', 'elementor' ) }
-					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit file.', 'elementor' ),
-						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be exported.', 'elementor' ) }
-						</React.Fragment>,
-					] }
+					heading={ __( 'Export your site as a Template Kit', 'elementor' ) }
+					description={ __( 'Select which of these plugins are required for this kit work.', 'elementor' ) }
 				/>
 
-				<ExportPluginsSelection />
+				<ExportPluginsSelection onPluginsReady={ onPluginsReady } />
 			</section>
 		</Layout>
 	);

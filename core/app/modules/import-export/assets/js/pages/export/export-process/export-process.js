@@ -21,12 +21,12 @@ export default function ExportProcess() {
 			const pluginsData = [];
 
 			plugins.forEach( ( pluginData ) => {
-				const { name, plugin, plugin_uri, version } = pluginData;
+				const { name, plugin, plugin_uri: pluginUri, version } = pluginData;
 
 				pluginsData.push( {
 					name,
 					plugin,
-					plugin_uri,
+					pluginUri,
 					version,
 				} );
 			} );
