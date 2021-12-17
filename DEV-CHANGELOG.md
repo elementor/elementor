@@ -1,5 +1,10 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev20 - 2021-12-17
+* Tweak: New Admin Menu Rearrangement Experiment (#17208)
+* Fix: Missing a wrapper when the Inner Section widget is in use (#17187) [ED-5875] (#17209)
+* Fix: Missing escaping native WP translations (#17210)
+
 #### 3.6.0-dev19 - 2021-12-16
 * Fix: SVG and JSON files caused errors in Drag from Desktop [ED-5529] (#16966)
 
@@ -476,8 +481,3 @@
 * Fix: Kit-library - UI fixes [ED-3840] (#15501)
 * Fix: Site Identity data was transferred on the Import-Export process [ED-3967] (#15509)
 * Fix: Post Excerpt is not imported when applying a kit in Kit Library [ED-3919] (#15510)
-
-#### 3.4.0-dev6 - 2021-06-24
-* Tweak: Updating the kit file process text [ED-3938] (#15459)
-* Tweak: Additional Breakpoints - Fixes, Widgets and Config adjustments (ED-3894, ED-3935, ED-3934) (#15446)
-* Changed "Show Hidden Elements" label (#15461)
