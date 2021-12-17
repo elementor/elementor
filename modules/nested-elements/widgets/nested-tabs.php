@@ -103,12 +103,6 @@ class NestedTabs extends Widget_Repeater_Base {
 			'title_field' => '{{{ tab_title }}}',
 		] );
 
-		$this->add_control( 'view', [
-			'label' => esc_html__( 'View', 'elementor' ),
-			'type' => Controls_Manager::HIDDEN,
-			'default' => 'traditional',
-		] );
-
 		$this->add_control( 'type', [
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
