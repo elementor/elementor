@@ -14,8 +14,6 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-plugins.scss';
 
-const ELEMENTOR_PLUGIN_KEY = 'Elementor';
-
 export default function ExportPlugins() {
 	const sharedContext = useContext( SharedContext ),
 		exportContext = useContext( ExportContext ),
@@ -37,23 +35,14 @@ export default function ExportPlugins() {
 				/>
 			</WizardFooter>
 		),
-		hasPluginsToExport = ( plugins ) => {
-			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
-			if ( plugins.length > 1 ) {
-				return true;
-			}
-
-			// Making sure that Elementor is not the only plugin to export.
-			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
-		},
-		onPluginsReady = ( plugins ) => {
-			// In case there are no kit-content items or plugins to export, going back to the main screen.
-			if ( ! sharedContext.data.includes.length && ! hasPluginsToExport( plugins ) ) {
+		handlePluginsSelection = () => setIsKitReady( true ),
+		handleNoSelection = () => {
+			if ( ! sharedContext.data.includes.length ) {
+				// In case there are no kit-content items or plugins to export, going back to the main screen.
 				navigate( '/export' );
-			} else if ( ! hasPluginsToExport( plugins ) ) {
-				navigate( '/export/process' );
 			} else {
-				setIsKitReady( true );
+				// In case there are no plugins to export, moving on to the next screen.
+				navigate( '/export/process' );
 			}
 		};
 
@@ -72,7 +61,10 @@ export default function ExportPlugins() {
 					description={ __( 'Select which of these plugins are required for this kit work.', 'elementor' ) }
 				/>
 
-				<ExportPluginsSelection onPluginsReady={ onPluginsReady } />
+				<ExportPluginsSelection
+					onPluginsSelection={ handlePluginsSelection }
+					onNoSelection={ handleNoSelection }
+				/>
 			</section>
 		</Layout>
 	);

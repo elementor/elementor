@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { ExportContext } from '../../../../../context/export-context/export-context-provider';
 
@@ -7,17 +7,31 @@ import Loader from '../../../../../ui/loader/loader';
 
 import usePlugins from '../../../../../hooks/use-plugins';
 
-export default function ExportPluginsSelection( { onPluginsReady } ) {
-	const exportContext = useContext( ExportContext ),
-		{ pluginsState, PLUGINS_RESPONSE_MAP } = usePlugins(),
-		activePlugins = pluginsState.data ? pluginsState.data.filter( ( { status } ) => 'active' === status ) : [],
-		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+const ELEMENTOR_PLUGIN_KEY = 'Elementor';
 
-	useEffect( () => {
-		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {
-			onPluginsReady( activePlugins );
-		}
-	}, [ pluginsState ] );
+export default function ExportPluginsSelection( { onPluginsSelection, onNoSelection } ) {
+	const exportContext = useContext( ExportContext ),
+		{ pluginsState } = usePlugins(),
+		activePlugins = pluginsState.data ? pluginsState.data.filter( ( { status } ) => 'active' === status ) : [],
+		getIsPluginsSelectionNeeded = ( plugins ) => {
+			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
+			if ( plugins.length > 1 ) {
+				return true;
+			}
+
+			// Making sure that Elementor is not the only plugin to export.
+			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
+		},
+		handleOnSelect = ( selectedPlugins ) => {
+			exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+
+			// In case Elementor core is the only plugin to export, no selection is needed and the plugin should be exported by default.
+			if ( getIsPluginsSelectionNeeded( selectedPlugins ) ) {
+				onPluginsSelection();
+			} else {
+				onNoSelection();
+			}
+		};
 
 	if ( ! pluginsState.data ) {
 		return <Loader absoluteCenter />;
@@ -34,5 +48,6 @@ export default function ExportPluginsSelection( { onPluginsReady } ) {
 }
 
 ExportPluginsSelection.propTypes = {
-	onPluginsReady: PropTypes.func,
+	onPluginsSelection: PropTypes.func.isRequired,
+	onNoSelection: PropTypes.func.isRequired,
 };

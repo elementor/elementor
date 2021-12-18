@@ -55,11 +55,6 @@ export default function ImportContent() {
 					} }
 				/>
 			</WizardFooter>
-		),
-		getLearnMoreLink = () => (
-			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
-				{ __( 'Learn More', 'elementor' ) }
-			</InlineLink>
 		);
 
 	useEffect( () => {
@@ -82,7 +77,7 @@ export default function ImportContent() {
 				{
 					! isAllRequiredPluginsSelected &&
 					<Notice color="warning" label={ __( 'Required plugins are still missing.', 'elementor' ) } className="e-app-import-content__plugins-notice">
-						{ __( 'If you don\'t include them, this kit may not work properly.', 'elementor' ) } <InlineLink url="/import/plugins">{ __( 'Go Back', 'elementor' ) }</InlineLink>
+						{ __( "If you don't include them, this kit may not work properly.", 'elementor' ) } <InlineLink url="/import/plugins">{ __( 'Go Back', 'elementor' ) }</InlineLink>
 					</Notice>
 				}
 
