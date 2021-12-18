@@ -72,12 +72,10 @@ export default function ImportContent() {
 		<Layout type="import" footer={ getFooter() }>
 			<section className="e-app-import-content">
 				<PageHeader
-					heading={ __( 'Import a Template Kit', 'elementor' ) }
+					heading={ __( 'Select which parts you want to apply', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit.', 'elementor' ),
-						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be imported.', 'elementor' ) } { getLearnMoreLink() }
-						</React.Fragment>,
+						__( 'These are the templates, content and site settings that come with your kit.', 'elementor' ),
+						__( "All items are already selected by default. Uncheck the ones you don't want.", 'elementor' ),
 					] }
 				/>
 

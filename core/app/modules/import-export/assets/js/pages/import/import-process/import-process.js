@@ -60,6 +60,8 @@ export default function ImportProcess() {
 		} else if ( importContext.data.uploadedData ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
 			importKit();
+		} else {
+			navigate( 'import' );
 		}
 	}, [] );
 

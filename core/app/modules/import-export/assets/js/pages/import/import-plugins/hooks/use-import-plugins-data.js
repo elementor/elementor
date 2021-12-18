@@ -1,15 +1,11 @@
 import { arrayToObjectByKey } from 'elementor-app/utils/utils.js';
 
-import usePlugins from '../../../../hooks/use-plugins';
-
 const MISSING_PLUGINS_KEY = 'missing',
 	EXISTING_PLUGINS_KEY = 'existing',
 	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
 
-export default function useImportPluginsData( pluginsToInstall ) {
-	const { pluginsState, pluginsActions, PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } = usePlugins(),
-		existingPlugins = pluginsState.data,
-		getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
+export default function useImportPluginsData( pluginsToInstall, existingPlugins, PLUGIN_STATUS_MAP ) {
+	const getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
 		getClassifiedPlugins = () => {
 			const data = {
 					missing: [],
@@ -43,9 +39,6 @@ export default function useImportPluginsData( pluginsToInstall ) {
 		};
 
 	return {
-		plugins: pluginsToInstall && existingPlugins ? getClassifiedPlugins() : null,
-		pluginsActions,
-		PLUGINS_RESPONSE_MAP,
-		PLUGIN_STATUS_MAP,
+		pluginsData: pluginsToInstall && existingPlugins ? getClassifiedPlugins() : null,
 	};
 }

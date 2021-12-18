@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -56,6 +56,12 @@ export default function ImportResolver() {
 
 			return false;
 		};
+
+	useEffect( () => {
+		if ( ! importContext.data.uploadedData ) {
+			navigate( 'import' );
+		}
+	}, [] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
