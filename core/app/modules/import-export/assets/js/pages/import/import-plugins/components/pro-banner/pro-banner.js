@@ -45,12 +45,12 @@ export default function ProBanner( { status, onRefresh } ) {
 			{
 				showInfoDialog &&
 				<Dialog
-					title={ __( 'Importing with Elementor Pro', 'elementor' ) }
-					text={ __( 'In a moment you’ll be redirected to install and activate Elementor Pro. When you’re done, come back here and refresh this page.', 'elementor' ) }
+					title={ __( 'Is your Elementor Pro ready?', 'elementor' ) }
+					text={ __( 'If you’ve purchased, installed & activated Elementor Pro, we can continue importing all the parts of this site.', 'elementor' ) }
 					approveButtonColor="primary"
-					approveButtonText={ __( 'Got it', 'elementor' ) }
+					approveButtonText={ __( 'Yes', 'elementor' ) }
 					approveButtonOnClick={ onDialogApprove }
-					dismissButtonText={ __( 'Close', 'elementor' ) }
+					dismissButtonText={ __( 'Not yet', 'elementor' ) }
 					dismissButtonOnClick={ onDialogDismiss }
 					onClose={ onDialogDismiss }
 				/>
