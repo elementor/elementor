@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../context/import-context/import-context-provider';
@@ -12,28 +12,12 @@ import List from 'elementor-app/ui/molecules/list';
 
 import './import-plugins-activation.scss';
 
-import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useInstallPlugins from './hooks/use-install-plugins';
 
 export default function ImportPluginsActivation() {
 	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		[ errorType, setErrorType ] = useState( '' ),
-		{ bulk, ready, isDone } = useInstallPlugins( { plugins: importContext.data.plugins } ),
-		{ referrer } = useQueryParams().getAll(),
-		onCancelProcess = () => {
-			importContext.dispatch( { type: 'SET_FILE', payload: null } );
-
-			if ( 'kit-library' === referrer ) {
-				navigate( '/kit-library' );
-			} else {
-				navigate( '/import' );
-			}
-		},
-		onTryAgain = () => {
-			importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
-			navigate( '/import/plugins' );
-		};
+		{ bulk, ready, isDone } = useInstallPlugins( { plugins: importContext.data.plugins } );
 
 	// In case there are no plugins to import.
 	useEffect( () => {
@@ -59,12 +43,7 @@ export default function ImportPluginsActivation() {
 	return (
 		<Layout type="import">
 			<section className="e-app-import-plugins-activation">
-				<FileProcess
-					info={ __( 'Activating plugins:', 'elementor' ) }
-					errorType={ errorType }
-					onDialogDismiss={ onCancelProcess }
-					onDialogApprove={ onTryAgain }
-				/>
+				<FileProcess info={ __( 'Activating plugins:', 'elementor' ) } />
 
 				<Grid container justify="center">
 					<Grid item className="e-app-import-plugins-activation__installing-plugins">

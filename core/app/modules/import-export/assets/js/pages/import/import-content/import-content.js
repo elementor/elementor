@@ -81,7 +81,10 @@ export default function ImportContent() {
 					</Notice>
 				}
 
-				<KitContent manifest={ importContext.data.uploadedData?.manifest } hasPro={ importContext.data.isProInstalledDuringProcess } />
+				<KitContent
+					manifest={ importContext.data.uploadedData?.manifest }
+					hasPro={ importContext.data.isProInstalledDuringProcess }
+				/>
 			</section>
 		</Layout>
 	);
