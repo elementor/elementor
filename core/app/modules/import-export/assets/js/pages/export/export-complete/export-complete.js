@@ -37,7 +37,23 @@ export default function ExportComplete() {
 			<InlineLink onClick={ downloadFile } italic>
 				{ __( 'Click Here', 'elementor' ) }
 			</InlineLink>
-		);
+		),
+		getKitData = () => {
+			const { manifest = {} } = exportContext.data?.exportedData || {};
+
+			if ( ! manifest.plugins ) {
+				return manifest;
+			}
+
+			const kitData = { ...manifest };
+
+			// In case that Elementor is the only plugin that was exported it shouldn't be displayed in the kit-data summary.
+			if ( kitData.plugins.length && 'Elementor' === kitData.plugins[ 0 ].name ) {
+				kitData.plugins.shift();
+			}
+
+			return kitData;
+		};
 
 	useEffect( () => {
 		if ( exportContext.data.exportedData ) {
@@ -59,7 +75,7 @@ export default function ExportComplete() {
 					</>
 				) }
 			>
-				<KitData data={ exportContext.data.exportedData?.manifest } />
+				<KitData data={ getKitData() } />
 			</WizardStep>
 		</Layout>
 	);

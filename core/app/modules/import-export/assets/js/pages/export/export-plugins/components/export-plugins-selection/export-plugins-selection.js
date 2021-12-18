@@ -7,8 +7,6 @@ import Loader from '../../../../../ui/loader/loader';
 
 import usePlugins from '../../../../../hooks/use-plugins';
 
-const ELEMENTOR_PLUGIN_KEY = 'Elementor';
-
 export default function ExportPluginsSelection( { onPluginsSelection, onNoSelection } ) {
 	const exportContext = useContext( ExportContext ),
 		{ pluginsState } = usePlugins(),
@@ -20,7 +18,7 @@ export default function ExportPluginsSelection( { onPluginsSelection, onNoSelect
 			}
 
 			// Making sure that Elementor is not the only plugin to export.
-			return 1 === plugins.length && ELEMENTOR_PLUGIN_KEY !== plugins[ 0 ].name;
+			return 1 === plugins.length && 'Elementor' !== plugins[ 0 ].name;
 		},
 		handleOnSelect = ( selectedPlugins ) => {
 			exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );

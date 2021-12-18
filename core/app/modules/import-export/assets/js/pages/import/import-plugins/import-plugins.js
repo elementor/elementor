@@ -46,6 +46,22 @@ export default function ImportPlugins() {
 			if ( pluginsData.proData && ! elementorAppConfig.hasPro ) {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
+		},
+		getPluginsToImport = () => {
+			const { missing } = pluginsData || {};
+
+			if ( ! missing || ! missing.length ) {
+				return [];
+			}
+
+			const { name, status } = missing[ 0 ];
+
+			// In case that Elementor Pro exist and is not inactive, it should be displayed separately.
+			if ( 'Elementor Pro' === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) {
+				return missing.splice( 1 );
+			}
+
+			return missing;
 		};
 
 	// On load.
@@ -88,7 +104,7 @@ export default function ImportPlugins() {
 
 				{ pluginsData?.proData && <ProBanner status={ pluginsData.proData.status } onRefresh={ handleRefresh } /> }
 
-				<PluginsToImport plugins={ pluginsData?.missing } />
+				<PluginsToImport plugins={ getPluginsToImport() } />
 
 				<ExistingPlugins plugins={ pluginsData?.existing } />
 			</section>

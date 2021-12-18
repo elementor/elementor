@@ -12,8 +12,8 @@ export default function PluginsToImport( { plugins } ) {
 
 	const importContext = useContext( ImportContext ),
 		isAllRequiredPluginsSelected = plugins?.length === importContext.data.plugins.length,
-		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
-		initialSelected = plugins ? plugins.map( ( plugin, index ) => index ) : [];
+		initialSelected = plugins ? plugins.map( ( plugin, index ) => index ) : [],
+		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
 
 	return (
 		<div className="e-app-import-plugins__section">

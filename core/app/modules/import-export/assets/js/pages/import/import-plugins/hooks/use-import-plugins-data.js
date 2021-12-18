@@ -26,10 +26,8 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins,
 				}
 
 				// In case that the Pro plugin exist, it should be displayed separately.
-				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name && PLUGIN_STATUS_MAP.INACTIVE !== pluginData.status ) {
+				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name ) {
 					data.proData = pluginData;
-
-					return;
 				}
 
 				data[ group ].push( pluginData );
