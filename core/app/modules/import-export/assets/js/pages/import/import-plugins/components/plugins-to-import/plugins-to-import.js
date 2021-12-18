@@ -10,9 +10,17 @@ export default function PluginsToImport( { plugins } ) {
 		return null;
 	}
 
+	const { name, status } = plugins[ 0 ],
+		// The Elementor Pro plugin should be displayed only if its status is inactive.
+		pluginsToImport = ( 'Elementor Pro' === name && 'inactive' !== status ) ? plugins.splice( 1 ) : plugins;
+
+	if ( ! pluginsToImport.length ) {
+		return null;
+	}
+
 	const importContext = useContext( ImportContext ),
-		isAllRequiredPluginsSelected = plugins?.length === importContext.data.plugins.length,
-		initialSelected = plugins ? plugins.map( ( plugin, index ) => index ) : [],
+		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
+		initialSelected = pluginsToImport.map( ( plugin, index ) => index ),
 		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
 
 	return (
@@ -26,7 +34,7 @@ export default function PluginsToImport( { plugins } ) {
 			</Heading>
 
 			<PluginsSelection
-				plugins={ plugins }
+				plugins={ pluginsToImport }
 				initialSelected={ initialSelected }
 				onSelect={ handleOnSelect }
 				layout={ [ 3, 1, 1 ] }

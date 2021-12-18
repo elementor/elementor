@@ -26,9 +26,8 @@ export default function ImportPlugins() {
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
 		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
 		{ pluginsData } = useImportPluginsData( kitPlugins, pluginsState.data, PLUGIN_STATUS_MAP ),
+		{ missing, existing, minVersionMissing, proData } = pluginsData || {},
 		handleRequiredPlugins = () => {
-			const { missing } = pluginsData;
-
 			if ( missing.length ) {
 				importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
 			} else {
@@ -43,25 +42,9 @@ export default function ImportPlugins() {
 		},
 		handleProInstallationStatus = () => {
 			// In case that the Pro data is now exist but initially in the elementorAppConfig the value was false, it means that the pro was added during the process.
-			if ( pluginsData.proData && ! elementorAppConfig.hasPro ) {
+			if ( proData && ! elementorAppConfig.hasPro ) {
 				importContext.dispatch( { type: 'SET_IS_PRO_INSTALLED_DURING_PROCESS', payload: true } );
 			}
-		},
-		getPluginsToImport = () => {
-			const { missing } = pluginsData || {};
-
-			if ( ! missing || ! missing.length ) {
-				return [];
-			}
-
-			const { name, status } = missing[ 0 ];
-
-			// In case that Elementor Pro exist and is not inactive, it should be displayed separately.
-			if ( 'Elementor Pro' === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) {
-				return missing.splice( 1 );
-			}
-
-			return missing;
 		};
 
 	// On load.
@@ -88,7 +71,7 @@ export default function ImportPlugins() {
 				{ ! pluginsData && <Loader absoluteCenter />	}
 
 				{
-					! ! pluginsData?.missing.length &&
+					! ! missing?.length &&
 					<PageHeader
 						heading={ __( 'Select the plugins you want to import', 'elementor' ) }
 						description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
@@ -96,17 +79,17 @@ export default function ImportPlugins() {
 				}
 
 				{
-					! ! pluginsData?.minVersionMissing.length &&
+					! ! minVersionMissing?.length &&
 					<Notice label={ __( ' Recommended:', 'elementor' ) } className="e-app-import-plugins__versions-notice" color="warning">
 						{ __( 'Head over to Updates and make sure that your plugins are updated to the latest version.', 'elementor' ) } <InlineLink url={ elementorAppConfig.admin_url + 'update-core.php' }>{ __( 'Take me there', 'elementor' ) }</InlineLink>
 					</Notice>
 				}
 
-				{ pluginsData?.proData && <ProBanner status={ pluginsData.proData.status } onRefresh={ handleRefresh } /> }
+				<ProBanner status={ proData?.status } onRefresh={ handleRefresh } />
 
-				<PluginsToImport plugins={ getPluginsToImport() } />
+				<PluginsToImport plugins={ missing } />
 
-				<ExistingPlugins plugins={ pluginsData?.existing } />
+				<ExistingPlugins plugins={ existing } />
 			</section>
 		</Layout>
 	);

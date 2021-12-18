@@ -2,11 +2,17 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 export default function ExistingPlugins( { plugins } ) {
-	if ( ! plugins?.length || ( 1 === plugins.length && 'Elementor' === plugins[ 0 ].name ) ) {
+	if ( ! plugins?.length ) {
 		return null;
 	}
 
-	const initialSelected = plugins.map( ( plugin, index ) => index );
+	const existingPlugins = plugins.filter( ( plugin ) => ! [ 'Elementor', 'Elementor Pro' ].includes( plugin.name ) );
+
+	if ( ! existingPlugins.length ) {
+		return null;
+	}
+
+	const initialSelected = existingPlugins.map( ( plugin, index ) => index );
 
 	return (
 		<div className="e-app-import-plugins__section">
@@ -17,7 +23,7 @@ export default function ExistingPlugins( { plugins } ) {
 			<PluginsSelection
 				withHeader={ false }
 				withStatus={ false }
-				plugins={ plugins }
+				plugins={ existingPlugins }
 				initialSelected={ initialSelected }
 				initialDisabled={ initialSelected }
 				excludeSelections={ initialSelected }

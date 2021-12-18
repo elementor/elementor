@@ -9,6 +9,10 @@ import usePlugins from '../../../../../hooks/use-plugins';
 import './pro-banner.scss';
 
 export default function ProBanner( { status, onRefresh } ) {
+	if ( ! status ) {
+		return null;
+	}
+
 	const { PLUGIN_STATUS_MAP } = usePlugins( { preventFetchOnLoad: true } );
 
 	if ( PLUGIN_STATUS_MAP.INACTIVE === status ) {
