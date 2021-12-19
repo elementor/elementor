@@ -6,7 +6,8 @@ export class ToggleSelection extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], options = {} } = args;
+		const { containers = [ args.container ], options = {} } = args,
+			{ append = false } = options;
 
 		containers.forEach( ( container ) => {
 			$e.run(

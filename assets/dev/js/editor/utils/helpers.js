@@ -512,38 +512,13 @@ module.exports = {
 	},
 
 	scrollToView( $element, timeout, $parent ) {
-		if ( undefined === timeout ) {
-			timeout = 500;
-		}
+		elementorCommon.helpers.softDeprecated( 'elementor.helpers.scrollToView()', '3.6.0', `$e.internal( 'document/elements/scroll-to-view' );` );
 
-		let $scrolled = $parent;
-		const $elementorFrontendWindow = elementorFrontend.elements.$window;
-
-		if ( ! $parent ) {
-			$parent = $elementorFrontendWindow;
-
-			$scrolled = elementor.$previewContents.find( 'html, body' );
-		}
-
-		setTimeout( function() {
-			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
-				return;
-			}
-
-			const parentHeight = $parent.height(),
-				parentScrollTop = $parent.scrollTop(),
-				elementTop = $parent === $elementorFrontendWindow ? $element.offset().top : $element[ 0 ].offsetTop,
-				topToCheck = elementTop - parentScrollTop;
-
-			if ( topToCheck > 0 && topToCheck < parentHeight ) {
-				return;
-			}
-
-			const scrolling = elementTop - ( parentHeight / 2 );
-
-			$scrolled.stop( true ).animate( { scrollTop: scrolling }, 1000 );
-		}, timeout );
+		$e.internal( 'document/elements/scroll-to-view', {
+			$element,
+			$parent,
+			timeout,
+		} );
 	},
 
 	getElementInlineStyle( $element, properties ) {

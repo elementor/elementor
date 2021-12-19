@@ -1,5 +1,8 @@
 import StoragePartition from 'elementor-editor-utils/storage-partition';
 
+/**
+ * @name BaseRegion
+ */
 module.exports = Marionette.Region.extend( {
 
 	storage: null,

@@ -239,8 +239,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		this.listenTo( editModel.get( 'editSettings' ), 'change', this.onEditSettingsChanged )
-			.listenTo( this.model, 'request:edit', this.onEditRequest )
-			.listenTo( this.model, 'request:toggleVisibility', this.toggleVisibility );
+			.listenTo( this.model, 'request:edit', this.onEditRequest );
 
 		this.initControlsCSSParser();
 
@@ -582,10 +581,14 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderUI: function() {
-		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
 		this.enqueueFonts();
+
+		_.defer( () => {
+			// Defer the styles render to make sure that the global colors are ready.
+			this.renderStyles();
+		} );
 	},
 
 	runReadyTrigger: function() {
