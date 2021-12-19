@@ -25,7 +25,8 @@ export class Copy extends CommandBase {
 		elementorCommon.storage.set(
 			storageKey,
 			containers.sort( ( first, second ) => {
-				return first.view._index - second.view._index;
+				const elements = elementor.getPreviewView().$el.find( '.elementor-element' );
+				return elements.index( first.view.el ) - elements.index( second.view.el );
 			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
 		);
 	}
