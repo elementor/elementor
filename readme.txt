@@ -188,6 +188,14 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.5.1 - 2021-12-20 =
+* Tweak: Reverted Experiments auto deactivation in Safe Mode ([#17195](https://github.com/elementor/elementor/issues/17195))
+* Fix: Experiments are not working when Safe mode is enabled ([#17195](https://github.com/elementor/elementor/issues/17195))
+* Fix: Editing handles `z-index` issue ([#17187](https://github.com/elementor/elementor/issues/17187))
+* Fix: Missing wrapper section when Inner Section widget is dragged directly to the drag area ([#17187](https://github.com/elementor/elementor/issues/17187))
+* Fix: SVG and JSON files were not being uploaded when Dragged from Desktop ([#17194](https://github.com/elementor/elementor/issues/17194))
+* Fix: Several functions are being executed when not supposed to in all WordPress Dashboard screens
+
 = 3.5.0 - 2021-12-14 =
 * New: Introducing CSS Transform - rotate, scale, skew, offset and flip any element ([#12451](https://github.com/elementor/elementor/issues/12451))
 * New: Meet Multi-Select for page elements - improve your workflow process by making bulk actions ([#8006](https://github.com/elementor/elementor/issues/8006), [#879](https://github.com/elementor/elementor/issues/879))
