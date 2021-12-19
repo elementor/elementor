@@ -14,12 +14,6 @@ const createTabsWidget = async( editor, targetID = null ) => {
 	return await editor.addWidget( 'nested-tabs', targetID );
 }
 
-const getChildrenId = async ( editor, parentId, index = 0 ) => {
-	return await editor.previewFrame.evaluate( ( [ id, index ] ) => {
-		return elementor.getContainer( id ).children[ index ].id;
-	}, [ parentId, index ] );
-}
-
 test.describe( 'NestedElementsModule', () => {
 	test.beforeEach( async ( { page }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo );
@@ -60,7 +54,6 @@ test.describe( 'NestedElementsModule', () => {
 			} );
 
 			test.describe( 'Hooks', () => {
-
 				test.describe( 'Data', () => {
 					test( 'Hook: `nested-repeater-create-default-children`', async () => {
 						// Arrange, Open navigator.
@@ -113,37 +106,6 @@ test.describe( 'NestedElementsModule', () => {
 
 						// Assert.
 						await expect( await editor.previewFrame.locator( 'text=Tab #2' ) ).not.toBeVisible()
-					} );
-				} );
-
-				test.describe( 'UI', () => {
-					test.skip( 'Hook `nested-repeater-focus-current-edited-container`', async () => {
-						// TODO: WIP.
-						// Arrange.
-						const rootId = await createTabsWidget( editor ),
-							rootTab1Id = await getChildrenId( editor, rootId ),
-							rootTab2Id = await getChildrenId( editor, rootId, 1 ),
-							secondId = await createTabsWidget( editor, rootTab1Id ),
-							secondTab1Id = await getChildrenId( editor, secondId ),
-							thirdId = await createTabsWidget( editor, secondTab1Id ),
-							thirdTab1Id = await getChildrenId( editor, thirdId );
-
-						await editor.openNavigator();
-
-						// Navigator toggle all.
-						await editor.page.click('#elementor-navigator__toggle-all');
-
-						// Act - Select tab#2 in zero nesting level via navigator.
-						await editor.page.click(':nth-match(:text("Tab #2"), 4)');
-
-						// Assert ensure tab#2 in zero nesting is visible.
-						const activeTab = await editor.previewFrame.locator( ':nth-match(.e-container .elementor-active:not(.elementor-tab-title), 1)' );
-
-						await expect( activeTab ).toBeVisible();
-						await expect( await activeTab.getAttribute('data-id') ).toBe( rootTab2Id );
-
-						// Act - Select tab#2 in third nesting level via navigator.
-						await editor.page.click();
 					} );
 				} );
 			} );

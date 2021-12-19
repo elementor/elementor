@@ -5,8 +5,10 @@
  * b. For each nested repeater container set the container title,
  * according to the nested repeater title, the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
  * '_title' is used by the navigator.
+ *
+ * TODO: Hook actually data changing hook, but since its required to be executed on history change, hookUI is used.
  */
-export class NestedRepeaterCreateDefaultChildren extends ( $e.modules.hookData.After ) {
+export class NestedRepeaterCreateDefaultChildren extends ( $e.modules.hookUI.After ) {
 	getId() {
 		return 'nested-repeater-create-default-children';
 	}
