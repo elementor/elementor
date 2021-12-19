@@ -2,12 +2,17 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Text from 'elementor-app/ui/atoms/text';
 
+import usePlugins from '../../../../../hooks/use-plugins';
+
 export default function PluginStatusItem( { name, status } ) {
-	if ( 'Not Installed' === status ) {
+	const { PLUGIN_STATUS_MAP } = usePlugins(),
+		{ ACTIVE, INACTIVE, NOT_INSTALLED } = PLUGIN_STATUS_MAP;
+
+	if ( NOT_INSTALLED === status ) {
 		return null;
-	} else if ( 'inactive' === status ) {
+	} else if ( INACTIVE === status ) {
 		status = 'installed';
-	} else if ( 'active' === status ) {
+	} else if ( ACTIVE === status ) {
 		status = 'activated';
 	}
 

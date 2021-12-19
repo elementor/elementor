@@ -13,7 +13,7 @@ export default function ProBanner( { status, onRefresh } ) {
 		return null;
 	}
 
-	const { PLUGIN_STATUS_MAP } = usePlugins( { preventFetchOnLoad: true } );
+	const { PLUGIN_STATUS_MAP } = usePlugins();
 
 	if ( PLUGIN_STATUS_MAP.INACTIVE === status ) {
 		return null;

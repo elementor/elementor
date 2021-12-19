@@ -5,14 +5,17 @@ import { ImportContext } from '../../../../../context/import-context/import-cont
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Heading from 'elementor-app/ui/atoms/heading';
 
+import usePlugins from '../../../../../hooks/use-plugins';
+
 export default function PluginsToImport( { plugins } ) {
 	if ( ! plugins?.length ) {
 		return null;
 	}
 
 	const { name, status } = plugins[ 0 ],
+		{ PLUGIN_STATUS_MAP } = usePlugins(),
 		// The Elementor Pro plugin should be displayed only if its status is inactive.
-		pluginsToImport = ( 'Elementor Pro' === name && 'inactive' !== status ) ? plugins.splice( 1 ) : plugins;
+		pluginsToImport = ( 'Elementor Pro' === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) ? plugins.splice( 1 ) : plugins;
 
 	if ( ! pluginsToImport.length ) {
 		return null;

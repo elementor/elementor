@@ -12,9 +12,8 @@ const PLUGIN_STATUS_MAP = Object.freeze( {
 	NOT_INSTALLED: 'Not Installed',
 } );
 
-export default function usePlugins( config = {} ) {
-	const { preventFetchOnLoad } = config,
-		getInitialState = () => ( {
+export default function usePlugins() {
+	const getInitialState = () => ( {
 			status: PLUGINS_RESPONSE_MAP.INITIAL,
 			data: null,
 		} ),
@@ -100,12 +99,6 @@ export default function usePlugins( config = {} ) {
 			} );
 		},
 		reset = () => setPluginsState( getInitialState() );
-
-	useEffect( () => {
-		if ( ! preventFetchOnLoad ) {
-			get();
-		}
-	}, [] );
 
 	return {
 		pluginsState,

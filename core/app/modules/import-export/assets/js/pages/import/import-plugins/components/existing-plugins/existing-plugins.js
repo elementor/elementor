@@ -6,7 +6,8 @@ export default function ExistingPlugins( { plugins } ) {
 		return null;
 	}
 
-	const existingPlugins = plugins.filter( ( plugin ) => ! [ 'Elementor', 'Elementor Pro' ].includes( plugin.name ) );
+	const excludedPlugins = [ 'Elementor', 'Elementor Pro' ],
+		existingPlugins = plugins.filter( ( plugin ) => ! excludedPlugins.includes( plugin.name ) );
 
 	if ( ! existingPlugins.length ) {
 		return null;

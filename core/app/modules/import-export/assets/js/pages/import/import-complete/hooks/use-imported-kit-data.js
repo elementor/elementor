@@ -1,5 +1,8 @@
+import usePlugins from '../../../../hooks/use-plugins';
+
 export default function useImportedKitData() {
-	const getTemplates = ( templates, importedData ) => {
+	const { PLUGIN_STATUS_MAP } = usePlugins(),
+		getTemplates = ( templates, importedData ) => {
 			const kitTemplates = {};
 
 			for ( const key in importedData?.templates?.succeed ) {
@@ -39,7 +42,7 @@ export default function useImportedKitData() {
 			};
 
 			importedPlugins.forEach( ( plugin ) => {
-				const group = 'active' === plugin.status ? 'activePlugins' : 'failedPlugins';
+				const group = PLUGIN_STATUS_MAP.ACTIVE === plugin.status ? 'activePlugins' : 'failedPlugins';
 
 				plugins[ group ].push( plugin );
 			} );
