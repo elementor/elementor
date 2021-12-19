@@ -50,7 +50,7 @@ export const Paste = () => {
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
-			QUnit.only( 'Simple', ( assert ) => {
+			QUnit.test( 'Simple', ( assert ) => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
@@ -58,12 +58,12 @@ export const Paste = () => {
 					eHeading = ElementsHelper.createHeading( eColumns[ 0 ] ),
 					toCopy = [ eButton, eHeading ];
 
-				ElementsHelper.multiCopy( toCopy );
+				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
 				ElementsHelper.paste( eColumns[ 1 ] );
 
 				// Check pasted elements existence.
-				assert.equal( eColumns[ 1 ].children.length, 2, `Both elements copied.` );
+				assert.equal( eColumns[ 1 ].children.length, 2, `Both elements pasted.` );
 
 				// Check whether they preserved their order.
 				for ( let i = 0; i < toCopy.length; i++ ) {
@@ -75,7 +75,62 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.only( 'On preview container', ( assert ) => {
+			QUnit.test( 'Columns', ( assert ) => {
+				const eSection1 = ElementsHelper.createSection( 2 ),
+					eSection2 = ElementsHelper.createSection(),
+					eColumn1 = eSection1.children[ 0 ],
+					eColumn2 = eSection1.children[ 1 ],
+					toCopy = [ eColumn1, eColumn2 ];
+
+				ElementsHelper.createButton( eColumn1 );
+
+				ElementsHelper.createHeading( eColumn2 );
+
+				ElementsHelper.multiCopy( toCopy.slice().reverse() );
+
+				ElementsHelper.paste( eSection2 );
+
+				// Check pasted elements existence.
+				assert.equal( eSection2.children.length, 3, `Both elements pasted.` );
+
+				// Check whether they preserved their order.
+				for ( let i = 0; i < toCopy.length; i++ ) {
+					assert.equal(
+						toCopy[ i ].children[ 0 ].model.get( 'widgetType' ),
+						eSection2.children[ i + 1 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
+						`Column ${ i + 1 } preserved its order.`
+					);
+				}
+			} );
+
+			QUnit.only( 'Sections', ( assert ) => {
+				const eSection1 = ElementsHelper.createSection(),
+					eSection2 = ElementsHelper.createSection(),
+					toCopy = [ eSection1, eSection2 ],
+					initialElementsCount = elementor.elements.length;
+
+				ElementsHelper.createButton( eSection1.children[ 0 ] );
+
+				ElementsHelper.createHeading( eSection2.children[ 0 ] );
+
+				ElementsHelper.multiCopy( toCopy.slice().reverse() );
+
+				const pasted = ElementsHelper.paste( elementor.getPreviewContainer(), true );
+
+				// Check pasted elements existence.
+				assert.equal( initialElementsCount + 2, elementor.elements.length, `Both elements pasted.` );
+
+				// Check whether they preserved their order.
+				for ( let i = 0; i < toCopy.length; i++ ) {
+					assert.equal(
+						toCopy[ i ].children[ 0 ].model.get( 'elements' ).models[ 0 ].get( 'widgetType' ),
+						pasted[ i ].model.get( 'elements' ).models[ 0 ].get( 'elements' ).models[ 0 ].get( 'widgetType' ),
+						`Column ${ i + 1 } preserved its order.`
+					);
+				}
+			} );
+
+			QUnit.test( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createButton( eColumn ),
 					eHeading = ElementsHelper.createHeading( eColumn ),
@@ -87,7 +142,7 @@ export const Paste = () => {
 					parents = pasted.map( ( container ) => container.parent.parent );
 
 				// Check pasted elements existence.
-				assert.ok( parents.every( ( parent ) => parent ), `Both elements copied.` );
+				assert.ok( parents.every( ( parent ) => parent ), `Both elements pasted.` );
 
 				// Check whether they preserved their order.
 				assert.equal(

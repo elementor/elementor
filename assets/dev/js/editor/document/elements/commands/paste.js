@@ -92,7 +92,7 @@ export class Paste extends CommandHistory {
 							},
 							columns: 0, // section with no columns.
 							options: {
-								at: index,
+								at: ++index,
 								edit: false,
 							},
 						} );
