@@ -103,7 +103,7 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.only( 'Sections', ( assert ) => {
+			QUnit.test( 'Sections', ( assert ) => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					toCopy = [ eSection1, eSection2 ],
