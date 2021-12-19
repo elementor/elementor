@@ -76,9 +76,10 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 					'step' => 0.01,
 				],
 			],
+			'responsive' => true,
 			'selector' => '{{WRAPPER}}',
 			'selectors' => [
-				'{{SELECTOR}}' => '-webkit-text-stroke: {{SIZE}}{{UNIT}}; stroke-width: {{SIZE}}{{UNIT}}',
+				'{{SELECTOR}}' => '-webkit-text-stroke-width: {{SIZE}}{{UNIT}};',
 			],
 		];
 
@@ -88,7 +89,7 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 			'default' => '#000',
 			'selector' => '{{WRAPPER}}',
 			'selectors' => [
-				'{{SELECTOR}}' => '-webkit-text-stroke-color: {{VALUE}}; stroke: {{VALUE}};',
+				'{{SELECTOR}}' => '-webkit-text-stroke-color: {{VALUE}};',
 			],
 		];
 
