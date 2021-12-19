@@ -46,9 +46,11 @@ export default function KitContent( props ) {
 						const isLockedFeaturesNoPro = item.data.features?.locked && ! hasPro;
 
 						if ( props.manifest ) {
-							const contentType = 'settings' === item.type ? 'site-settings' : item.type;
+							const contentType = 'settings' === item.type ? 'site-settings' : item.type,
+								data = props.manifest[ contentType ],
+								hasData = Array.isArray( data ) ? data.length : data;
 
-							if ( ! props.manifest[ contentType ] ) {
+							if ( ! hasData ) {
 								return;
 							}
 						}
