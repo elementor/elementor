@@ -8,7 +8,6 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
-use Elementor\Modules\SafeMode\Module as Safe_Mode;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -601,10 +600,6 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	private function get_feature_actual_state( array $feature ) {
-		if ( get_option( Safe_Mode::OPTION_ENABLED, '' ) ) {
-			return self::STATE_INACTIVE;
-		}
-
 		if ( self::STATE_DEFAULT !== $feature['state'] ) {
 			return $feature['state'];
 		}
