@@ -378,22 +378,14 @@ class NestedTabs extends Widget_Repeater_Base {
 			$title_render_attributes = $this->get_render_attribute_string( $tab_title_setting_key );
 			$mobile_title_attributes = $this->get_render_attribute_string( $tab_title_mobile_setting_key );
 
-			$tabs_title_html .= "
-			<div $title_render_attributes >
-			$tab_title
-			</div>";
+			$tabs_title_html .= "<div $title_render_attributes>$tab_title</div>";
 
 			// Tabs content.
 			ob_start();
 			$this->print_children( $index );
 			$tab_content = ob_get_clean();
 
-			$tabs_content_html .= "
-			<div $mobile_title_attributes >
-				$tab_title
-			</div>
-			$tab_content
-			";
+			$tabs_content_html .= "<div $mobile_title_attributes>$tab_title</div>$tab_content";
 		}
 		?>
 		<div <?php $this->print_render_attribute_string( 'elementor-tabs' ); ?>>
