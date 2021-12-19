@@ -24,8 +24,8 @@ export default function ImportPlugins() {
 	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
-		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
-		{ pluginsData } = useImportPluginsData( kitPlugins, pluginsState.data, PLUGIN_STATUS_MAP ),
+		{ pluginsState, pluginsActions } = usePlugins(),
+		{ pluginsData } = useImportPluginsData( kitPlugins, pluginsState.data ),
 		{ missing, existing, minVersionMissing, proData } = pluginsData || {},
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
