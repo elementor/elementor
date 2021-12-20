@@ -17,14 +17,19 @@ function PluginsSelection( {
 
 	const cachedPlugins = useMemo( () => plugins, [ plugins ] ),
 		cachedInitialSelected = useMemo( () => initialSelected, [ plugins ] ),
-		cachedInitialDisabled = useMemo( () => initialDisabled, [ plugins ] );
+		cachedInitialDisabled = useMemo( () => initialDisabled, [ plugins ] ),
+		handleOnSelect = ( selectedIndexes ) => {
+			const selectedPlugins = selectedIndexes.map( ( pluginIndex ) => plugins[ pluginIndex ] );
+
+			onSelect( selectedPlugins );
+		};
 
 	return (
 		<PluginsTable
 			plugins={ cachedPlugins }
 			initialDisabled={ cachedInitialDisabled }
 			initialSelected={ cachedInitialSelected }
-			onSelect={ onSelect }
+			onSelect={ handleOnSelect }
 			withHeader={ withHeader }
 			withStatus={ withStatus }
 			layout={ layout }
