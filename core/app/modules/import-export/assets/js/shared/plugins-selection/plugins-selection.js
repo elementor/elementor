@@ -19,6 +19,10 @@ function PluginsSelection( {
 		cachedInitialSelected = useMemo( () => initialSelected, [ plugins ] ),
 		cachedInitialDisabled = useMemo( () => initialDisabled, [ plugins ] ),
 		handleOnSelect = ( selectedIndexes ) => {
+			if ( ! onSelect ) {
+				return;
+			}
+
 			const selectedPlugins = selectedIndexes.map( ( pluginIndex ) => plugins[ pluginIndex ] );
 
 			onSelect( selectedPlugins );

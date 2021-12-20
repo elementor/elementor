@@ -6,14 +6,7 @@ export default function ExistingPlugins( { plugins } ) {
 		return null;
 	}
 
-	const excludedPlugins = [ 'Elementor Pro' ],
-		existingPlugins = plugins.filter( ( plugin ) => ! excludedPlugins.includes( plugin.name ) );
-
-	if ( ! existingPlugins.length ) {
-		return null;
-	}
-
-	const initialSelected = existingPlugins.map( ( plugin, index ) => index );
+	const initialSelected = plugins.map( ( plugin, index ) => index );
 
 	return (
 		<div className="e-app-import-plugins__section">
@@ -24,7 +17,7 @@ export default function ExistingPlugins( { plugins } ) {
 			<PluginsSelection
 				withHeader={ false }
 				withStatus={ false }
-				plugins={ existingPlugins }
+				plugins={ plugins }
 				initialSelected={ initialSelected }
 				initialDisabled={ initialSelected }
 				excludeSelections={ initialSelected }
