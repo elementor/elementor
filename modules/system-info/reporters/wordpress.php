@@ -74,7 +74,7 @@ class WordPress extends Base {
 	 */
 	public function get_memory_limit() {
 		$result = [
-			'value' => WP_MAX_MEMORY_LIMIT, // Use WordPress max memory limit, since its dynamic.
+			'value' => (string) WP_MAX_MEMORY_LIMIT, // Use WordPress max memory limit, since its dynamic.
 		];
 
 		$min_recommended_memory = '64M';
