@@ -412,7 +412,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * Responsible to to await for promise result.
 	 * Called on getRunAfter() after runInstance(), to handle promise result.
-	 * awaits the promise, before going to next.
+	 * awaits the promise, before going next.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
