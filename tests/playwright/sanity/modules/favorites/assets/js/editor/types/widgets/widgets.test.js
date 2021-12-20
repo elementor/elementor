@@ -5,7 +5,7 @@ const FavoriteWidgetsHelper = require( './helpers' );
 const NotificationsHelpers = require( '../../../../../../../assets/js/editor/utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
-	test( 'Add favorite', async ( { page } ) => {
+	test.only( 'Add favorite', async ( { page } ) => {
 		const wpAdmin = new WpAdminPage( page );
 
 		await wpAdmin.login();
@@ -37,5 +37,9 @@ test.describe( 'Favorite widgets', () => {
 		await expectFavoriteVisible();
 
 		await favoriteWidgets.remove( favoriteToAdd );
+
+		await wpAdmin.setExperiments( {
+			'favorite-widgets': true,
+		} );
 	} );
 } );
