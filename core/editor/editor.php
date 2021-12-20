@@ -542,9 +542,6 @@ class Editor {
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=icon-library&utm_campaign=gopro&utm_medium=wp-dash' ),
 			],
-			'filesUpload' => [
-				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'default_schemes' => $plugin->schemes_manager->get_schemes_defaults(),
 			'settings' => $settings,
