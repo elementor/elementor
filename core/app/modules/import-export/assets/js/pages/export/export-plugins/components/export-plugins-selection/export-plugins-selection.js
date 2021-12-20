@@ -38,3 +38,7 @@ export default function ExportPluginsSelection( { onPluginsReady } ) {
 		/>
 	);
 }
+
+ExportPluginsSelection.propTypes = {
+	onPluginsReady: PropTypes.func.isRequired,
+};
