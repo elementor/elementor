@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,7 +102,7 @@ We’ve integrated RTL and multi language support within the framework of Elemen
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
-To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+To help you get started and learn just how to integrate with Elementor, we have created the official [Elementor Developers Center](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme). Check the [Developers Blog](https://developers.elementor.com/blog/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to discover the latest information from the programmers working on the newest Elementor versions, or visit the [Developers Docs](https://developers.elementor.com/docs/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to learn how to extend Elementor core and create your own addons.
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
