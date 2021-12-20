@@ -136,6 +136,7 @@ module.exports = Marionette.CompositeView.extend( {
 						beforeAdd: 'section:before:drop',
 						afterAdd: 'section:after:drop',
 					},
+					edit: false, // Avoid useless element selection.
 				},
 			} );
 

@@ -1,7 +1,7 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
-export default class extends Marionette.CompositeView {
+export default class Element extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -95,8 +95,17 @@ export default class extends Marionette.CompositeView {
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
-		this.listenTo( this.model, 'change', this.onModelChange )
-			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+		if ( ! this.isRoot() ) {
+			this.shareView();
+		}
+	}
+
+	shareView() {
+		elementor.navigator.elements.sharedViews[ this.model.id ] = this;
+	}
+
+	removeSharedView() {
+		delete elementor.navigator.elements.sharedViews[ this.model.id ];
 	}
 
 	getIndent() {
@@ -112,25 +121,22 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( ! this.hasChildren() || this.isRoot() ) {
+		const modelId = this.model.get( 'id' );
+
+		if ( ! modelId ) {
 			return;
 		}
 
-		const isActive = this.ui.item.hasClass( 'elementor-active' );
+		const args = {
+			container: elementor.getContainer( modelId ),
+			state,
+		};
 
-		if ( isActive === state ) {
-			return;
+		if ( callback ) {
+			args.callback = callback;
 		}
 
-		this.ui.item.toggleClass( 'elementor-active', state );
-
-		let slideMethod = 'slideToggle';
-
-		if ( undefined !== state ) {
-			slideMethod = 'slide' + ( state ? 'Down' : 'Up' );
-		}
-
-		this.ui.elements[ slideMethod ]( 300, callback );
+		$e.run( 'navigator/elements/toggle-folding', args );
 	}
 
 	toggleHiddenClass() {
@@ -218,20 +224,11 @@ export default class extends Marionette.CompositeView {
 	exitTitleEditing() {
 		this.ui.title.attr( 'contenteditable', false );
 
-		const settingsModel = this.model.get( 'settings' ),
-			oldTitle = settingsModel.get( '_title' ),
-			newTitle = this.ui.title.text().trim();
-
-		// When there isn't an old title and a new title, allow backbone to recognize the `set` as a change
-		if ( ! oldTitle ) {
-			settingsModel.unset( '_title', { silent: true } );
-		}
-
-		settingsModel.set( '_title', newTitle );
-
-		// TODO: Remove - After merge pull request #13605.
-		$e.internal( 'document/save/set-is-modified', {
-			status: true,
+		$e.run( 'document/elements/settings', {
+			container: elementor.getContainer( this.model.get( 'id' ) ),
+			settings: {
+				_title: this.ui.title.text().trim() || this.model.getTitle(),
+			},
 		} );
 
 		elementor.removeBackgroundClickListener( 'navigator' );
@@ -257,7 +254,7 @@ export default class extends Marionette.CompositeView {
 
 		this.ui.indicators.empty();
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+		jQuery.each( elementor.navigator.region.indicators, ( indicatorName, indicatorSettings ) => {
 			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
 
 			if ( ! isShouldBeIndicated ) {
@@ -296,8 +293,6 @@ export default class extends Marionette.CompositeView {
 		this.recursiveParentInvoke( 'toggleList', true );
 
 		this.addEditingClass();
-
-		elementor.helpers.scrollToView( this.$el, 400, elementor.navigator.getLayout().elements.$el );
 	}
 
 	/**
@@ -321,37 +316,23 @@ export default class extends Marionette.CompositeView {
 		this.renderIndicators();
 	}
 
-	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
-			this.toggleHiddenClass();
-		}
-	}
-
-	onModelSettingsChange( settingsModel ) {
-		if ( undefined !== settingsModel.changed._title ) {
-			this.ui.title.text( this.model.getTitle() );
-		}
-
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
-			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
-				this.renderIndicators();
-
-				return false;
-			}
-		} );
-	}
-
 	onItemClick( event ) {
-		this.model.trigger( 'request:edit', {
-			append: event.ctrlKey || event.metaKey,
-			scrollIntoView: true,
+		const container = elementor.getContainer( this.model.get( 'id' ) ),
+			append = event.ctrlKey || event.metaKey;
+
+		$e.run( 'document/elements/toggle-selection', {
+			append,
+			container,
+			options: {
+				scrollIntoView: true,
+			},
 		} );
 	}
 
 	onToggleClick( event ) {
 		event.stopPropagation();
 
-		this.model.trigger( 'request:toggleVisibility' );
+		$e.run( 'navigator/elements/toggle-visibility', { container: elementor.getContainer( this.model.get( 'id' ) ) } );
 	}
 
 	onTitleDoubleClick() {
@@ -385,11 +366,11 @@ export default class extends Marionette.CompositeView {
 
 		jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 
-		elementor.navigator.getLayout().activateElementsMouseInteraction();
+		elementor.navigator.region.getLayout().activateElementsMouseInteraction();
 	}
 
 	onSortStop() {
-		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
+		elementor.navigator.region.getLayout().deactivateElementsMouseInteraction();
 	}
 
 	onSortOver( event ) {
@@ -445,7 +426,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onEditRequest() {
-		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
+		elementor.navigator.region.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
 		this.select( true );
 	}
@@ -463,5 +444,11 @@ export default class extends Marionette.CompositeView {
 
 			editor.render();
 		} );
+	}
+
+	onDestroy() {
+		if ( ! this.isRoot() ) {
+			this.removeSharedView();
+		}
 	}
 }

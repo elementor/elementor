@@ -2,7 +2,7 @@
 
 import ColorControl from './controls/color';
 import DateTimeControl from 'elementor-controls/date-time';
-import EditorDocuments from './components/documents/component';
+import EditorDocumentsComponent from './components/documents/component';
 import environment from 'elementor-common/utils/environment';
 import Favorites from 'elementor/modules/favorites/assets/js/editor/module';
 import HistoryManager from 'elementor/modules/history/assets/js/module';
@@ -12,7 +12,8 @@ import BrowserImport from './components/browser-import/manager';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
-import Navigator from './regions/navigator/navigator';
+import NavigatorComponent from './regions/navigator/component';
+import NavigatorRegion from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
 import Preview from 'elementor-views/preview';
 import PopoverToggleControl from 'elementor-controls/popover-toggle';
@@ -320,6 +321,15 @@ export default class EditorBase extends Marionette.Application {
 		return this.getPreviewView().getContainer();
 	}
 
+	/**
+	 * Function getContainer().
+	 *
+	 * Get container object by element id.
+	 *
+	 * @param {string} id
+	 *
+	 * @returns {Container|false}
+	 */
 	getContainer( id ) {
 		if ( 'document' === id ) {
 			return this.getPreviewContainer();
@@ -366,7 +376,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.browserImport = new BrowserImport();
 
-		this.documents = $e.components.register( new EditorDocuments() );
+		this.documents = $e.components.register( new EditorDocumentsComponent() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {
@@ -551,9 +561,12 @@ export default class EditorBase extends Marionette.Application {
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
-				regionClass: Navigator,
+				regionClass: NavigatorRegion,
 			},
 		} );
+
+		this.navigator = $e.components.register( new NavigatorComponent( { manager: this.navigator } ) );
+		this.navigator.elements = $e.components.get( 'navigator/elements' );
 
 		this.trigger( 'navigator:init' );
 	}
