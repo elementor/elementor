@@ -7,33 +7,23 @@ import Loader from '../../../../../ui/loader/loader';
 
 import usePlugins from '../../../../../hooks/use-plugins';
 
-export default function ExportPluginsSelection( { onPluginsSelection, onNoSelection } ) {
+export default function ExportPluginsSelection( { onPluginsReady } ) {
 	const exportContext = useContext( ExportContext ),
-		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
+		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP, PLUGINS_RESPONSE_MAP } = usePlugins(),
 		activePlugins = pluginsState.data ? pluginsState.data.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ) : [],
-		getIsPluginsSelectionNeeded = ( plugins ) => {
-			// In case that there are at least two plugins it means that Elementor is not the only plugin to export.
-			if ( plugins.length > 1 ) {
-				return true;
-			}
+		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
 
-			// Making sure that Elementor is not the only plugin to export.
-			return 1 === plugins.length && 'Elementor' !== plugins[ 0 ].name;
-		},
-		handleOnSelect = ( selectedPlugins ) => {
-			exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
-
-			// In case Elementor core is the only plugin to export, no selection is needed and the plugin should be exported by default.
-			if ( getIsPluginsSelectionNeeded( selectedPlugins ) ) {
-				onPluginsSelection();
-			} else {
-				onNoSelection();
-			}
-		};
-
+	// On load.
 	useEffect( () => {
 		pluginsActions.get();
 	}, [] );
+
+	// On plugins ready.
+	useEffect( () => {
+		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {
+			onPluginsReady( activePlugins );
+		}
+	}, [ pluginsState.status ] );
 
 	if ( ! pluginsState.data ) {
 		return <Loader absoluteCenter />;
@@ -48,8 +38,3 @@ export default function ExportPluginsSelection( { onPluginsSelection, onNoSelect
 		/>
 	);
 }
-
-ExportPluginsSelection.propTypes = {
-	onPluginsSelection: PropTypes.func.isRequired,
-	onNoSelection: PropTypes.func.isRequired,
-};
