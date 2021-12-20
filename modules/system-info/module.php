@@ -328,6 +328,8 @@ class Module extends BaseModule {
 	 * @return array Available reports in Elementor system info page.
 	 */
 	public static function get_allowed_reports() {
+		do_action( 'elementor/system_info/get_allowed_reports' );
+
 		return self::$reports;
 	}
 
