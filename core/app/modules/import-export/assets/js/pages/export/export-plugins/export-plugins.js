@@ -20,7 +20,7 @@ export default function ExportPlugins() {
 		navigate = useNavigate(),
 		[ isKitReady, setIsKitReady ] = useState( false ),
 		{ plugins, isExportProcessStarted } = exportContext.data || [],
-		hasIncludes = sharedContext.data.includes.length,
+		hasIncludes = ! ! sharedContext.data.includes.length,
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -36,42 +36,25 @@ export default function ExportPlugins() {
 					onClick={ () => isKitReady ? navigate( '/export/process' ) : null }
 				/>
 			</WizardFooter>
-		),
-		getPluginsForSelection = ( currentPlugins ) => {
-			if ( currentPlugins.length && 'Elementor' === currentPlugins[ 0 ].name ) {
-				return currentPlugins.splice( 1 );
-			}
-
-			return currentPlugins;
-		},
-		handlePluginsReady = ( activePlugins ) => {
-			const pluginsForSelection = getPluginsForSelection( activePlugins );
-
-			if ( ! hasIncludes && ! pluginsForSelection.length ) {
-				// In case there are no kit-content items or plugins to export, going back to the main screen.
-				navigate( '/export' );
-			} else if ( ! pluginsForSelection.length ) {
-				// In case there are no plugins to export, moving on to the next screen.
-				navigate( '/export/process' );
-			}
-		};
+		);
 
 	useEffect( () => {
 		if ( ! isExportProcessStarted ) {
 			// When not starting from the main screen.
 			navigate( '/export' );
-		} else if ( hasIncludes ) {
-			// In case that the kit has content then the kit can be exported.
-			setIsKitReady( true );
 		}
 	}, [] );
 
 	useEffect( () => {
-		// In case that the kit has no content, it can only be exported if there is at least one selected plugin.
-		if ( ! hasIncludes ) {
-			const selectedPlugins = getPluginsForSelection( plugins );
+		if ( hasIncludes ) {
+			// In case that the kit has content then the kit can be exported.
+			setIsKitReady( true );
+		} else {
+			// There should be at least one more plugin select in addition to Elementor Core.
+			const isExportKitAllowed = plugins.length > 1;
 
-			setIsKitReady( ! ! selectedPlugins.length );
+			// In case that the kit has no content, it can only be exported if there is at least one selected plugin.
+			setIsKitReady( isExportKitAllowed );
 		}
 	}, [ plugins ] );
 
@@ -83,7 +66,7 @@ export default function ExportPlugins() {
 					description={ __( 'Select which of these plugins are required for this kit work.', 'elementor' ) }
 				/>
 
-				<ExportPluginsSelection onPluginsReady={ handlePluginsReady } />
+				<ExportPluginsSelection />
 			</section>
 		</Layout>
 	);

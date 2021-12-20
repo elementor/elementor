@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const PLUGINS_RESPONSE_MAP = Object.freeze( {
-	INITIAL: 'initial',
-	SUCCESS: 'success',
-	ERROR: 'error',
-} );
-
-const PLUGIN_STATUS_MAP = Object.freeze( {
-	ACTIVE: 'active',
-	INACTIVE: 'inactive',
-	NOT_INSTALLED: 'Not Installed',
-} );
+		INITIAL: 'initial',
+		SUCCESS: 'success',
+		ERROR: 'error',
+	} ),
+	PLUGIN_STATUS_MAP = Object.freeze( {
+		ACTIVE: 'active',
+		INACTIVE: 'inactive',
+		NOT_INSTALLED: 'Not Installed',
+	} );
 
 export default function usePlugins() {
 	const getInitialState = () => ( {

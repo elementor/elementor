@@ -6,24 +6,30 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Loader from '../../../../../ui/loader/loader';
 
 import usePlugins from '../../../../../hooks/use-plugins';
+import usePluginsData from '../../../../../hooks/use-plugins-data';
 
-export default function ExportPluginsSelection( { onPluginsReady } ) {
+export default function ExportPluginsSelection() {
 	const exportContext = useContext( ExportContext ),
 		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP, PLUGINS_RESPONSE_MAP } = usePlugins(),
-		activePlugins = pluginsState.data ? pluginsState.data.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ) : [],
-		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+		{ pluginsData } = usePluginsData( pluginsState.data ),
+		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
+		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
+		getInitialSelected = () => {
+			// Elementor Core will always be th
+			const initialSelected = [ 0 ];
+
+			// In case that Elementor Pro appears in the list it will always be second and should always be selected by default.
+			if ( activePlugins.length > 1 && 'Elementor Pro' === activePlugins[ 1 ].name ) {
+				initialSelected.push( 1 );
+			}
+
+			return initialSelected;
+		};
 
 	// On load.
 	useEffect( () => {
 		pluginsActions.get();
 	}, [] );
-
-	// On plugins ready.
-	useEffect( () => {
-		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {
-			onPluginsReady( activePlugins );
-		}
-	}, [ pluginsState.status ] );
 
 	if ( ! pluginsState.data ) {
 		return <Loader absoluteCenter />;
@@ -32,13 +38,11 @@ export default function ExportPluginsSelection( { onPluginsReady } ) {
 	return (
 		<PluginsSelection
 			plugins={ activePlugins }
+			initialSelected={ getInitialSelected() }
+			initialDisabled={ [ 0 ] /* Elementor Core will always be first and should always be disabled */ }
+			layout={ [ 3, 1 ] }
 			withStatus={ false }
 			onSelect={ handleOnSelect }
-			layout={ [ 3, 1 ] }
 		/>
 	);
 }
-
-ExportPluginsSelection.propTypes = {
-	onPluginsReady: PropTypes.func.isRequired,
-};

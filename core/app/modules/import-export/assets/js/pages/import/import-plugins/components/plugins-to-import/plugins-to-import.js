@@ -15,7 +15,7 @@ export default function PluginsToImport( { plugins } ) {
 	const importContext = useContext( ImportContext ),
 		{ PLUGIN_STATUS_MAP } = usePlugins(),
 		{ name, status } = plugins[ 0 ],
-		// The Elementor Pro plugin should be displayed only if its status is inactive.
+		// The Elementor Pro plugin should be displayed in the list only if its status is inactive.
 		pluginsToImport = ( 'Elementor Pro' === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) ? plugins.splice( 1 ) : plugins,
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
 		initialSelected = pluginsToImport.map( ( plugin, index ) => index ),
