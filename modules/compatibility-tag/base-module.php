@@ -133,19 +133,24 @@ abstract class Base_Module extends BaseModule {
 			$this->on_plugin_update_message( $args );
 		}, 11 /* After the warning message for backup */ );
 
-		add_action( 'admin_init', function () {
-			System_Info::add_report( $this->get_plugin_name() . '_compatibility', [
-				'file_name' => __DIR__ . '/compatibility-tag-report.php',
-				'class_name' => __NAMESPACE__ . '\Compatibility_Tag_Report',
-				'fields' => [
-					'compatibility_tag_service' => $this->get_compatibility_tag_service(),
-					'plugin_label' => $this->get_plugin_label(),
-					'plugin_version' => Version::create_from_string( $this->get_plugin_version() ),
-					'plugins_to_check' => $this->get_plugins_to_check()
-						->only( get_option( 'active_plugins' ) )
-						->keys(),
-				],
-			] );
+		add_action( 'elementor/system_info/get_allowed_reports', function () {
+			$plugin_short_name = basename( $this->get_plugin_name(), '.php' );
+
+			System_Info::add_report(
+				"{$plugin_short_name}_compatibility",
+				[
+					'file_name' => __DIR__ . '/compatibility-tag-report.php',
+					'class_name' => __NAMESPACE__ . '\Compatibility_Tag_Report',
+					'fields' => [
+						'compatibility_tag_service' => $this->get_compatibility_tag_service(),
+						'plugin_label' => $this->get_plugin_label(),
+						'plugin_version' => Version::create_from_string( $this->get_plugin_version() ),
+						'plugins_to_check' => $this->get_plugins_to_check()
+							->only( get_option( 'active_plugins' ) )
+							->keys(),
+					],
+				]
+			);
 		} );
 	}
 }

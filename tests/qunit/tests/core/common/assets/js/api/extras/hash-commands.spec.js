@@ -1,8 +1,18 @@
 import Component from './mock/component.spec';
 
 QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks ) => {
+	let originalWarnFunction;
+
 	hooks.before( () => {
 		$e.components.register( new Component() );
+
+		// Make sure the original warn function will not be triggered to avoid printing on the console.
+		originalWarnFunction = elementorCommon.helpers.consoleWarn;
+		elementorCommon.helpers.consoleWarn = () => {};
+	} );
+
+	hooks.after( () => {
+		elementorCommon.helpers.consoleWarn = originalWarnFunction;
 	} );
 
 	QUnit.test( 'get(): Ensure valid return format', ( assert ) => {
@@ -11,11 +21,38 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 
 		// Assert.
 		assert.deepEqual( actual, [ {
+			args: {},
 			command: 'test-command',
 			method: 'e:run',
 		}, {
+			args: {},
 			command: 'test-route',
 			method: 'e:route',
+		} ] );
+	} );
+
+	QUnit.test( 'get(): Ensure valid return format - Command with args', ( assert ) => {
+		// Act.
+		const actual = $e.extras.hashCommands.get(
+			'#e:run:test/command?{"number":1,"string":"test-string"}&e:run:test/command2&e:run:test/command3?{invalid-json}'
+		);
+
+		// Assert.
+		assert.deepEqual( actual, [ {
+			args: {
+				number: 1,
+				string: 'test-string',
+			},
+			command: 'test/command',
+			method: 'e:run',
+		}, {
+			args: {},
+			command: 'test/command2',
+			method: 'e:run',
+		}, {
+			args: {},
+			command: 'test/command3',
+			method: 'e:run',
 		} ] );
 	} );
 
@@ -25,6 +62,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 
 		// Assert.
 		assert.deepEqual( actual, [ {
+			args: {},
 			command: 'my-component/command',
 			method: 'e:run',
 		} ] );
@@ -35,20 +73,31 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 		const dispatcherOrig = $e.extras.hashCommands.dispatchersList[ 'e:run' ],
 			dispatcherRunnerOrig = dispatcherOrig.runner;
 
-		let ensureCallbackPerformed = '';
+		const ensureCallbackPerformed = [];
 
-		dispatcherOrig.runner = ( command ) => {
-			ensureCallbackPerformed = command;
+		dispatcherOrig.runner = ( command, args ) => {
+			ensureCallbackPerformed.push( {
+				command,
+				args,
+			} );
 		};
 
 		// Act.
 		await $e.extras.hashCommands.run( [ {
+			args: {},
+			command: 'test-hash-commands/safe-command',
+			method: 'e:run',
+		}, {
+			args: { number: 1, string: 'test-string' },
 			command: 'test-hash-commands/safe-command',
 			method: 'e:run',
 		} ] );
 
 		// Assert.
-		assert.equal( ensureCallbackPerformed, 'test-hash-commands/safe-command' );
+		assert.equal( ensureCallbackPerformed[ 0 ].command, 'test-hash-commands/safe-command' );
+		assert.deepEqual( ensureCallbackPerformed[ 0 ].args, {} );
+		assert.equal( ensureCallbackPerformed[ 1 ].command, 'test-hash-commands/safe-command' );
+		assert.deepEqual( ensureCallbackPerformed[ 1 ].args, { number: 1, string: 'test-string' } );
 
 		// Cleanup.
 		dispatcherOrig.runner = dispatcherRunnerOrig;
@@ -57,6 +106,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 	QUnit.test( 'run(): Ensure insecure command fails', ( assert ) => {
 		assert.rejects(
 			$e.extras.hashCommands.run( [ {
+				args: {},
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:run',
 			} ] ),
@@ -67,6 +117,7 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 	QUnit.test( 'run(): Ensure exception when no dispatcher found', ( assert ) => {
 		assert.rejects(
 			$e.extras.hashCommands.run( [ {
+				args: {},
 				command: 'test-hash-commands/insecure-command',
 				method: 'e:non-exist-method',
 			} ] ),
@@ -84,12 +135,15 @@ QUnit.module( 'File: core/common/assets/js/api/extras/hash-commands.js', ( hooks
 
 		// Act.
 		$e.extras.hashCommands.run( [ {
+			args: {},
 			command: 'test-hash-commands/safe-command',
 			method: 'e:run',
 		}, {
+			args: {},
 			command: 'test-hash-commands/async-command',
 			method: 'e:run',
 		}, {
+			args: {},
 			command: 'test-hash-commands/safe-command',
 			method: 'e:run',
 		} ] );
