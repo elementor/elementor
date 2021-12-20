@@ -18,9 +18,26 @@ export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		{ plugins, requiredPlugins } = importContext.data,
+		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
+		{ includes } = sharedContext.data,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
-		isKitContainContentToImport = plugins.length || sharedContext.data.includes.length,
+		isKitContainContentToImport = plugins.length || includes.length,
+		getNextPageUrl = () => {
+			if ( includes.includes( 'templates' ) && uploadedData.conflicts ) {
+				return 'import/resolver';
+			} else if ( plugins.length ) {
+				return 'import/plugins-activation';
+			}
+
+			return 'import/process';
+		},
+		handleNextPage = () => {
+			if ( ! isKitContainContentToImport ) {
+				return;
+			}
+
+			navigate( getNextPageUrl() );
+		},
 		getFooter = () => (
 			<WizardFooter separator justify="end">
 				<Button
@@ -40,28 +57,16 @@ export default function ImportContent() {
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
 					color={ isKitContainContentToImport ? 'primary' : 'disabled' }
-					onClick={ () => {
-						if ( ! isKitContainContentToImport ) {
-							return;
-						}
-
-						if ( sharedContext.data.includes.includes( 'templates' ) && importContext.data.uploadedData.conflicts ) {
-							navigate( 'import/resolver' );
-						} else {
-							const url = plugins.length ? 'import/plugins-activation' : 'import/process';
-
-							navigate( url );
-						}
-					} }
+					onClick={ handleNextPage }
 				/>
 			</WizardFooter>
 		);
 
 	useEffect( () => {
-		if ( ! importContext.data.file ) {
+		if ( ! file ) {
 			navigate( 'import' );
 		}
-	}, [ importContext.data.file ] );
+	}, [ file ] );
 
 	return (
 		<Layout type="import" footer={ getFooter() }>
@@ -82,8 +87,8 @@ export default function ImportContent() {
 				}
 
 				<KitContent
-					manifest={ importContext.data.uploadedData?.manifest }
-					hasPro={ importContext.data.isProInstalledDuringProcess }
+					manifest={ uploadedData?.manifest }
+					hasPro={ isProInstalledDuringProcess }
 				/>
 			</section>
 		</Layout>

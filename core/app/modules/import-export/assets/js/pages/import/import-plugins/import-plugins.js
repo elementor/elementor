@@ -30,9 +30,6 @@ export default function ImportPlugins() {
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
 				importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
-			} else {
-				// In case there are not required plugins just skipping to the next screen.
-				navigate( 'import/content' );
 			}
 		},
 		handleRefresh = () => {
@@ -72,13 +69,10 @@ export default function ImportPlugins() {
 			<section className="e-app-import-plugins">
 				{ ! pluginsData && <Loader absoluteCenter />	}
 
-				{
-					! ! missing?.length &&
-					<PageHeader
-						heading={ __( 'Select the plugins you want to import', 'elementor' ) }
-						description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
-					/>
-				}
+				<PageHeader
+					heading={ __( 'Select the plugins you want to import', 'elementor' ) }
+					description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
+				/>
 
 				{
 					! ! minVersionMissing?.length &&
