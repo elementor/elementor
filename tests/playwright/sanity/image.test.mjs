@@ -6,7 +6,7 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 
 	await wpAdmin.login();
 
-	const editor = await wpAdmin.createNewPage();
+	const editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.addWidget( 'image' );
 
