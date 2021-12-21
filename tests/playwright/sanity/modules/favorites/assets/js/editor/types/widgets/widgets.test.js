@@ -2,10 +2,10 @@ const { test, expect } = require( '@playwright/test' );
 const { WpAdminPage } = require( '../../../../../../../../pages/wp-admin-page' );
 const { EditorPage } = require( '../../../../../../../../pages/editor-page' );
 const FavoriteWidgetsHelper = require( './helpers' );
-const NotificationsHelpers = require( '../../utils/notifications/helpers' );
+const NotificationsHelpers = require( '../../../../../../../assets/js/editor/utils/notifications/helpers' );
 
 test.describe( 'Favorite widgets', () => {
-	test.only( 'Add favorite', async ( { page } ) => {
+	test( 'Add favorite', async ( { page } ) => {
 		const wpAdmin = new WpAdminPage( page );
 
 		await wpAdmin.login();
