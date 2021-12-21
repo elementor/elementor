@@ -1,15 +1,16 @@
 import { useState } from 'react';
 
-const PLUGINS_RESPONSE_MAP = Object.freeze( {
+export const PLUGINS_RESPONSE_MAP = Object.freeze( {
 		INITIAL: 'initial',
 		SUCCESS: 'success',
 		ERROR: 'error',
-	} ),
-	PLUGIN_STATUS_MAP = Object.freeze( {
-		ACTIVE: 'active',
-		INACTIVE: 'inactive',
-		NOT_INSTALLED: 'Not Installed',
 	} );
+
+export const PLUGIN_STATUS_MAP = Object.freeze( {
+	ACTIVE: 'active',
+	INACTIVE: 'inactive',
+	NOT_INSTALLED: 'Not Installed',
+} );
 
 export default function usePlugins() {
 	const getInitialState = () => ( {
@@ -63,9 +64,7 @@ export default function usePlugins() {
 			} );
 		},
 		install = ( slug ) => {
-			if ( slug.indexOf( '/' ) > -1 ) {
-				slug = slug.split( '/' )[ 0 ];
-			}
+			slug = slug.split( '/' )[ 0 ];
 
 			return fetchRest( {
 				method: 'POST',

@@ -5,8 +5,8 @@ import { ImportContext } from '../../../../../context/import-context/import-cont
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Heading from 'elementor-app/ui/atoms/heading';
 
-import usePlugins from '../../../../../hooks/use-plugins';
-import usePluginsData from '../../../../../hooks/use-plugins-data';
+import { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
+import { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-data';
 
 export default function PluginsToImport( { plugins } ) {
 	if ( ! plugins?.length ) {
@@ -14,8 +14,6 @@ export default function PluginsToImport( { plugins } ) {
 	}
 
 	const importContext = useContext( ImportContext ),
-		{ PLUGIN_STATUS_MAP } = usePlugins(),
-		{ PLUGINS_KEYS } = usePluginsData(),
 		getPluginsToImport = () => {
 			const { name, status } = plugins[ 0 ];
 

@@ -1,8 +1,7 @@
-import usePlugins from '../../../../hooks/use-plugins';
+import { PLUGIN_STATUS_MAP } from '../../../../hooks/use-plugins';
 
 export default function useImportedKitData() {
-	const { PLUGIN_STATUS_MAP } = usePlugins(),
-		getTemplates = ( templates, importedData ) => {
+	const getTemplates = ( templates, importedData ) => {
 			const kitTemplates = {};
 
 			for ( const key in importedData?.templates?.succeed ) {

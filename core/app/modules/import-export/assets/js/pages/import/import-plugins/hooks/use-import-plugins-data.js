@@ -1,14 +1,13 @@
 import { arrayToObjectByKey } from 'elementor-app/utils/utils.js';
 
-import usePlugins from '../../../../hooks/use-plugins';
+import { PLUGIN_STATUS_MAP } from '../../../../hooks/use-plugins';
 
 const MISSING_PLUGINS_KEY = 'missing',
 	EXISTING_PLUGINS_KEY = 'existing',
 	ELEMENTOR_PRO_PLUGIN_KEY = 'Elementor Pro';
 
 export default function useImportPluginsData( pluginsToInstall, existingPlugins ) {
-	const { PLUGIN_STATUS_MAP } = usePlugins(),
-		getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
+	const getIsMinVersionExist = ( installedPluginVersion, kitPluginVersion ) => installedPluginVersion.localeCompare( kitPluginVersion ) > -1,
 		getClassifiedPlugins = () => {
 			const data = {
 					missing: [],
@@ -28,7 +27,7 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins 
 					data.minVersionMissing.push( plugin );
 				}
 
-				// In case that the Pro plugin exist, it should be displayed separately.
+				// In case that the Pro plugin exist saving the data separately for easily knowing if the pro exist or not.
 				if ( ELEMENTOR_PRO_PLUGIN_KEY === pluginData.name ) {
 					data.proData = pluginData;
 				}

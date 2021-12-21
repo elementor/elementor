@@ -15,7 +15,7 @@ import Loader from '../../../ui/loader/loader';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
-import usePlugins from '../../../hooks/use-plugins';
+import usePlugins, { PLUGIN_STATUS_MAP } from '../../../hooks/use-plugins';
 import usePluginsData from '../../../hooks/use-plugins-data';
 import useImportPluginsData from './hooks/use-import-plugins-data';
 
@@ -25,7 +25,7 @@ export default function ImportPlugins() {
 	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
-		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
+		{ pluginsState, pluginsActions } = usePlugins(),
 		{ pluginsData } = usePluginsData( pluginsState.data ),
 		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},

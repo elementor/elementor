@@ -33,11 +33,12 @@ export default function ExportPlugins() {
 					text={ __( 'Create Kit', 'elementor' ) }
 					variant="contained"
 					color={ isKitReady ? 'primary' : 'disabled' }
-					onClick={ () => isKitReady ? navigate( '/export/process' ) : null }
+					onClick={ () => isKitReady && navigate( '/export/process' ) }
 				/>
 			</WizardFooter>
 		);
 
+	// On load.
 	useEffect( () => {
 		if ( ! isExportProcessStarted ) {
 			// When not starting from the main screen.
@@ -45,6 +46,7 @@ export default function ExportPlugins() {
 		}
 	}, [] );
 
+	// On plugins change.
 	useEffect( () => {
 		if ( hasIncludes ) {
 			// In case that the kit has content then the kit can be exported.

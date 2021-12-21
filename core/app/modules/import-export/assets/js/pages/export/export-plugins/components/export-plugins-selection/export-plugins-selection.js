@@ -5,13 +5,13 @@ import { ExportContext } from '../../../../../context/export-context/export-cont
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Loader from '../../../../../ui/loader/loader';
 
-import usePlugins from '../../../../../hooks/use-plugins';
-import usePluginsData from '../../../../../hooks/use-plugins-data';
+import usePlugins, { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
+import usePluginsData, { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-data';
 
 export default function ExportPluginsSelection() {
 	const exportContext = useContext( ExportContext ),
-		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
-		{ pluginsData, PLUGINS_KEYS } = usePluginsData( pluginsState.data ),
+		{ pluginsState, pluginsActions } = usePlugins(),
+		{ pluginsData } = usePluginsData( pluginsState.data ),
 		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
 		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		getInitialSelected = () => {

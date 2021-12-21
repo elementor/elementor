@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 
-import usePlugins from '../../../../hooks/use-plugins';
+import usePlugins, { PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } from '../../../../hooks/use-plugins';
 
-const ACTION_STATUS_MAP = Object.freeze( {
+export const ACTION_STATUS_MAP = Object.freeze( {
 	ACTIVATED: 'activated',
 	INSTALLED: 'installed',
 	FAILED: 'failed',
 } );
 
 export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) {
-	const { pluginsState, pluginsActions, PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } = usePlugins(),
+	const { pluginsState, pluginsActions } = usePlugins(),
 		[ isPluginsFetched, setIsPluginsFetched ] = useState( false ),
 		[ isDone, setIsDone ] = useState( false ),
 		[ bulk, setBulk ] = useState( [] ),
