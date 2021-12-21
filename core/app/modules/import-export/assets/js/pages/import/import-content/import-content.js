@@ -20,10 +20,12 @@ export default function ImportContent() {
 		navigate = useNavigate(),
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ includes } = sharedContext.data,
+		{ templates, content, 'site-settings': siteSettings } = uploadedData?.manifest || {},
+		isKitHasContent = templates || content || siteSettings,
+		isImportAllowed = plugins.length || includes.length,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
-		isKitContainContentToImport = plugins.length || includes.length,
 		getNextPageUrl = () => {
-			if ( includes.includes( 'templates' ) && uploadedData.conflicts ) {
+			if ( includes.includes( 'templates' ) && uploadedData?.conflicts ) {
 				return 'import/resolver';
 			} else if ( plugins.length ) {
 				return 'import/plugins-activation';
@@ -32,7 +34,7 @@ export default function ImportContent() {
 			return 'import/process';
 		},
 		handleNextPage = () => {
-			if ( ! isKitContainContentToImport ) {
+			if ( ! isImportAllowed ) {
 				return;
 			}
 
@@ -56,12 +58,20 @@ export default function ImportContent() {
 				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
-					color={ isKitContainContentToImport ? 'primary' : 'disabled' }
+					color={ isImportAllowed ? 'primary' : 'disabled' }
 					onClick={ handleNextPage }
 				/>
 			</WizardFooter>
 		);
 
+	// On load.
+	useEffect( () => {
+		if ( ! isKitHasContent ) {
+			handleNextPage();
+		}
+	}, [] );
+
+	// On file change.
 	useEffect( () => {
 		if ( ! file ) {
 			navigate( 'import' );
