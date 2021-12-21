@@ -16,9 +16,22 @@ export default function PluginsToImport( { plugins } ) {
 	const importContext = useContext( ImportContext ),
 		{ PLUGIN_STATUS_MAP } = usePlugins(),
 		{ PLUGINS_KEYS } = usePluginsData(),
-		{ name, status } = plugins[ 1 ], // In case that Elementor Pro exist it will always be the second item.
-		// The Elementor Pro plugin should be displayed in the list only if its status is inactive.
-		pluginsToImport = ( PLUGINS_KEYS.ELEMENTOR_PRO === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) ? plugins.splice( 1 ) : plugins,
+		getPluginsToImport = () => {
+			let startPluginsCutPosition = 0;
+
+			// If Elementor Core is the first plugins it should not be displayed.
+			if ( PLUGINS_KEYS.ELEMENTOR === plugins[ 0 ].name ) {
+				startPluginsCutPosition++;
+			}
+
+			// If Elementor Pro is the second plugin and is not inactive, it should not be displayed.
+			if ( plugins.length > 1 && PLUGINS_KEYS.ELEMENTOR_PRO === plugins[ 1 ].name && PLUGIN_STATUS_MAP.INACTIVE !== plugins[ 1 ].status ) {
+				startPluginsCutPosition++;
+			}
+
+			return plugins.splice( startPluginsCutPosition );
+		},
+		pluginsToImport = getPluginsToImport(),
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
 		initialSelected = pluginsToImport.map( ( plugin, index ) => index ),
 		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
