@@ -29,6 +29,10 @@ export default function PluginsToImport( { plugins } ) {
 				startPluginsCutPosition++;
 			}
 
+			if ( ! startPluginsCutPosition ) {
+				return plugins;
+			}
+
 			return plugins.splice( startPluginsCutPosition );
 		},
 		pluginsToImport = getPluginsToImport(),
