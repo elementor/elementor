@@ -19,7 +19,7 @@ export default function Header( { onClose } ) {
 	/**
 	 * Toggle all elements folding state.
 	 *
-	 * @type {(function(): void)|*}
+	 * @void
 	 */
 	const toggleAll = useCallback( () => {
 		$e.run( 'navigator/elements/toggle-folding-all', {
