@@ -1,12 +1,10 @@
-import NavigatorLayout from './layout';
-
 const BaseRegion = require( 'elementor-regions/base' );
 
 import ReactDOM from 'react-dom';
 import Navigator from './components/navigator';
 import ElementModel from 'elementor-elements/models/element';
 
-export default class Navigator extends BaseRegion {
+export default class extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
@@ -14,9 +12,6 @@ export default class Navigator extends BaseRegion {
 		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
 
 		this.el = this.$el[ 0 ];
-
-		this.isDocked = false;
-		this.setSize();
 
 		this.indicators = {
 			customPosition: {
