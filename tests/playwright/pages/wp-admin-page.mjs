@@ -5,13 +5,13 @@ export const CLEAN_POST_ID = 1;
 
 export default class wpAdminPage extends BasePage {
 	async login() {
-		await this.page.goto( '/wp-admin' );
-
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
 		if ( loggedIn ) {
 			return;
 		}
+
+		await this.page.goto( '/wp-admin' );
 
 		await this.page.waitForSelector( 'text=Log In' );
 		await this.page.fill( 'input[name="log"]', this.config.user.username );
