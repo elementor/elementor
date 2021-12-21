@@ -24,6 +24,7 @@ import LandingPageLibraryModule from 'elementor/modules/landing-pages/assets/js/
 import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/js/editor/module';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
+import ElementModel from 'elementor-elements/models/element';
 
 export default class EditorBase extends Marionette.Application {
 	widgetsCache = {};
@@ -434,6 +435,17 @@ export default class EditorBase extends Marionette.Application {
 		this.elementsModel = new Backbone.Model( {
 			elements: this.elements,
 		} );
+
+		const flatten = ( new ElementModel( { elements: elementor.elementsModel.get( 'elements' ).models } ) )
+			.flatten();
+
+		for ( const element of flatten ) {
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.add( {
+					model: element,
+				} )
+			);
+		}
 	}
 
 	initPreview() {

@@ -1,38 +1,43 @@
+import { useCallback } from 'react';
 import Header from './header';
 import Icon from 'elementor-app/ui/atoms/icon';
 import ItemList from './item-list';
-import { ListStateProvider } from '../context/list-state-context';
-import PropTypes from 'prop-types';
-import useElement from 'elementor-regions/navigator/hooks/use-element';
-import Empty from 'elementor-regions/navigator/components/empty';
+import { Provider, useSelector } from 'react-redux';
 
-export default function Navigator( { documents } ) {
-	// We should get the document element in order to check further whether it has children, if not - empty state will
-	// be displayed. When header and footer documents will be added to the navigator, it won't be necessary, sine the
-	// navigator will never be empty.
-	const { element } = useElement( documents[ 0 ].id );
+export default function Navigator() {
+	const NavigatorBody = () => {
+		// The document element used to check whether it has children, if not - empty state will be displayed. When header
+		// and footer documents will be added to the navigator, it won't be necessary, sine the navigator will never be
+		// empty.
+		const elements = useSelector(
+			( state ) => Object.values( state[ 'document/elements' ] )
+		).map( ( element ) => element.id );
 
-	const handleClose = () => {
-		$e.run( 'navigator/close' );
-	};
+		/**
+		 * Close the navigator view.
+		 *
+		 * @void
+		 */
+		const handleClose = useCallback( () => {
+			$e.run( 'navigator/close' );
+		}, [] );
 
-	return (
-		<div id="elementor-navigator__inner">
-			<ListStateProvider>
+		return (
+			<div id="elementor-navigator__inner">
 				<Header onClose={ handleClose } />
 				<div id="elementor-navigator__elements">
-					{ element.elements.length ?
-						<ItemList elements={ documents } /> :
-						<Empty/> }
+					<ItemList elements={ elements } />
 				</div>
 				<div id="elementor-navigator__footer">
 					<Icon className="eicon-ellipsis-h" />
 				</div>
-			</ListStateProvider>
-		</div>
+			</div>
+		);
+	};
+
+	return (
+		<Provider store={ $e.store.getReduxStore() }>
+			<NavigatorBody />
+		</Provider>
 	);
 }
-
-Navigator.propTypes = {
-	documents: PropTypes.array,
-};

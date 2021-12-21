@@ -20,11 +20,87 @@ export default class Component extends ComponentBase {
 			'': {
 				initialState: {},
 				reducers: {
-					add: ( state, action ) => {
-						state.value.push( action.payload );
-					},
-					remove: ( state, action ) => {
+					add: ( state, { payload } ) => {
+						// Prepare
+						const { containerId, models = [ payload.model ], index = 0 } = payload,
+							parent = state[ containerId ];
 
+						// Act
+						for ( const model of models.reverse() ) {
+							// Store the newly created element
+							state[ model.id ] = model;
+
+							// Create reference on parent element
+							if ( parent ) {
+								parent.elements.splice( index, 0, model.id );
+							}
+						}
+					},
+					remove: ( state, { payload } ) => {
+						// Prepare
+						const { containerIds = [ payload.containerId ], parentId } = payload,
+							parent = state[ parentId ];
+
+						// Act
+						for ( const containerId of containerIds ) {
+							// Remove current element
+							delete state[ containerId ];
+
+							// Remove reference from parent element
+							if ( parent ) {
+								parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
+							}
+						}
+
+						return state;
+					},
+					settings: ( state, { payload } ) => {
+						// Prepare
+						const { containerIds = [ payload.containerId ], settings } = payload;
+
+						// Act
+						for ( const containerId of containerIds ) {
+							// Set settings of the current element
+							state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
+						}
+					},
+				},
+			},
+			folding: {
+				initialState: {},
+				reducers: {
+					toggle: ( state, { payload } ) => {
+						// Prepare
+						const { containerIds = [ payload.containerId ], state: foldingState, all = false } = payload;
+
+						// Act
+						for ( const containerId of all ? Object.keys( state ) : containerIds ) {
+							state[ containerId ] = undefined === foldingState ?
+								! state[ containerId ] :
+								foldingState;
+						}
+					},
+				},
+			},
+			selection: {
+				initialState: {},
+				reducers: {
+					toggle: ( state, { payload } ) => {
+						// Prepare
+						const { containerIds = [ payload.containerId ], state: selectionState, all = false } = payload;
+
+						// Act
+						for ( const containerId of all ? Object.keys( state ) : containerIds ) {
+							const newState = undefined === selectionState ?
+								! state[ containerId ] :
+								selectionState;
+
+							if ( newState ) {
+								state[ containerId ] = newState;
+							} else {
+								delete state[ containerId ];
+							}
+						}
 					},
 				},
 			},

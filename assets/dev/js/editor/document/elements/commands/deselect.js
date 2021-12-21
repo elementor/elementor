@@ -8,9 +8,9 @@ export class Deselect extends CommandBase {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], all = false } = args;
+		const { containers = [ args.container ], options = {} } = args;
 
-		elementor.selection.remove( containers, { all } );
+		elementor.selection.remove( containers, options );
 	}
 }
 

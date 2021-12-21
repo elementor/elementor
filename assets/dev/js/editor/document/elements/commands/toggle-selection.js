@@ -11,7 +11,7 @@ export class ToggleSelection extends CommandBase {
 
 		containers.forEach( ( container ) => {
 			$e.run(
-				elementor.selection.has( container ) && append ?
+				elementor.selection.has( container ) && options.append ?
 					'document/elements/deselect' :
 					'document/elements/select',
 				args

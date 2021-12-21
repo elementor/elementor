@@ -26,6 +26,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	constructor() {
 		super();
 
+		// Subscribe to the selection state kept in redux.
+		$e.store.subscribe( () => {
+			const selectionSelector = ( state ) => state[ 'document/elements/selection' ];
+			this.elements = selectionSelector( $e.store.getState() );
+		} );
+
 		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
 		// `remove` methods may be executed many times, when update methods will be used only once.
 		return new Proxy( this, {
@@ -84,11 +90,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		}
 
 		for ( const container of containers ) {
-			this.elements[ container.id ] = container;
+			$e.store.dispatch(
+				$e.store.get( 'document/elements/selection' ).actions.toggle( {
+					container: container.id,
+					state: true,
+				} )
+			);
 
 			container.view.select();
-
-			this.trigger( 'change', { container, state: true } );
 		}
 
 		if ( options.scrollIntoView ) {
@@ -117,11 +126,14 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		}
 
 		for ( const container of containers ) {
-			delete this.elements[ container.id ];
+			$e.store.dispatch(
+				$e.store.get( 'document/elements/selection' ).actions.toggle( {
+					container: container.id,
+					state: false,
+				} )
+			);
 
 			container.view.deselect();
-
-			this.trigger( 'change', { container, state: false } );
 		}
 	}
 

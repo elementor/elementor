@@ -5,12 +5,14 @@ export class Collapse extends CommandNavigator {
 		const { containers = [ args.container ], callback } = args;
 
 		containers.forEach( ( container ) => {
-			const view = container.args.navigatorView;
+			$e.store.dispatch(
+				$e.store.get( 'document/elements/folding' ).actions.toggle( {
+					containerId: container.id,
+					state: false,
+				} )
+			);
 
-			// TODO: Hook UI or Use the new uiState manager.
-			view.ui.item.toggleClass( 'elementor-active', false );
-
-			view.ui.elements.slideUp( 300, callback );
+			callback.apply( this );
 		} );
 	}
 }

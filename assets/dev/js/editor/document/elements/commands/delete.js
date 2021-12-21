@@ -55,6 +55,15 @@ export class Delete extends CommandHistory {
 
 			container.model.destroy();
 
+			const containerIds = container.model.flatten().map( ( element ) => element.id ).concat( [ container.id ] );
+
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.remove( {
+					containerIds,
+					parentId: container.parent.id,
+				} )
+			);
+
 			// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 			elementor.channels.data.trigger( 'element:after:remove', container.model );
 

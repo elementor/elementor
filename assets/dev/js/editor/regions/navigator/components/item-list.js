@@ -8,7 +8,7 @@ export default function ItemList( { listRef, elements, level, indicateEmpty } ) 
 			{ elements.length ?
 				elements.map(
 					( element ) => (
-						<Item key={ element.id } elementId={ element.id } level={ level } />
+						<Item key={ element } elementId={ element } level={ level } />
 					)
 				) :
 				( indicateEmpty && <ItemListEmpty /> )

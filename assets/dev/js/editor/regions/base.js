@@ -1,5 +1,3 @@
-import StoragePartition from 'elementor-editor-utils/storage-partition';
-
 /**
  * @name BaseRegion
  */
@@ -12,13 +10,17 @@ module.exports = Marionette.Region.extend( {
 	constructor: function() {
 		Marionette.Region.prototype.constructor.apply( this, arguments );
 
-		this.storage = new StoragePartition( this.getStorageKey(), this.getDefaultStorage() );
+		var savedStorage = elementorCommon.storage.get( this.getStorageKey() );
+
+		this.storage = savedStorage ? savedStorage : this.getDefaultStorage();
 
 		this.storageSizeKeys = Object.keys( this.storage.size );
 	},
 
 	saveStorage: function( key, value ) {
-		this.storage.set( key, value );
+		this.storage[ key ] = value;
+
+		elementorCommon.storage.set( this.getStorageKey(), this.storage );
 	},
 
 	saveSize: function( size ) {

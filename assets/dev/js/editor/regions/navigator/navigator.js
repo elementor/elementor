@@ -1,15 +1,14 @@
+import ReactDOM from 'react-dom';
+import NavigatorComponent from './components/navigator';
+
 const BaseRegion = require( 'elementor-regions/base' );
 
-import ReactDOM from 'react-dom';
-import Navigator from './components/navigator';
-import ElementModel from 'elementor-elements/models/element';
-
-export default class extends BaseRegion {
+export default class Navigator extends BaseRegion {
 	constructor( options ) {
 		super( options );
 
 		// `BaseRegion` created before the component exist, in this case `setTimeout` handle it.
-		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
+		//setTimeout( () => this.component = $e.components.get( 'navigator' ) );
 
 		this.el = this.$el[ 0 ];
 
@@ -88,13 +87,7 @@ export default class extends BaseRegion {
 	}
 
 	initLayout() {
-		const documents = [
-			{ id: elementor.getPreviewContainer().document.container.model.id },
-		];
-
-		this.initialModel = new ElementModel( { elements: [] } );
-
-		ReactDOM.render( <Navigator documents={ documents } />, this.$el[ 0 ] );
+		ReactDOM.render( <NavigatorComponent />, this.$el[ 0 ] );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

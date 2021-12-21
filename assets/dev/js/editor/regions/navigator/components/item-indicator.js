@@ -1,13 +1,21 @@
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
 
 export default function ItemIndicator( { indicator: { title, icon, section }, toggleSelection } ) {
-	const handleClick = () => {
-		setTimeout( () => toggleSelection( { section } ) );
+	const indicatorRef = useRef( null );
+
+	useEffect( () => {
+		jQuery( indicatorRef.current ).tipsy( { delayIn: 300, gravity: 's' } );
+	} );
+
+	const handleClick = ( e ) => {
+		e.stopPropagation();
+		toggleSelection( { section } );
 	};
 
 	return (
-		<div className="elementor-navigator__element__indicator" title={ title } onClick={ handleClick }>
+		<div ref={ indicatorRef } className="elementor-navigator__element__indicator" title={ title } onClick={ handleClick }>
 			<Icon className={ `eicon-${ icon }` } />
 		</div>
 	);

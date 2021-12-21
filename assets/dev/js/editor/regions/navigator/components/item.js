@@ -1,137 +1,129 @@
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
 import ItemIcon from './item-icon';
 import ItemIndicatorList from './item-indicator-list';
 import ItemList from './item-list';
 import ItemTitle from './item-title';
-import { useListStateContext } from '../context/list-state-context';
-import useElement from '../hooks/use-element';
+import { useElement, useElementSelection, useElementFolding, useNavigatorJquerySortable } from '../hooks';
 import { arrayToClassName } from 'elementor-app/utils/utils';
 
 export default function Item( { elementId, level } ) {
-	const { model, element, toggleVisibility, titleEdit, hasChildren, selected, showContextMenu, toggleSelection } = useElement( elementId ),
-		[ listState, setListState ] = useListStateContext( elementId ),
-		baseClassName = 'elementor-navigator__element',
-		listRef = useRef( null ),
-		autoExpandTimerRef = useRef( null );
+	const { container, element } = useElement( elementId ),
+		[ elementSelection, elementFolding ] = [ useElementSelection( elementId ), useElementFolding( elementId ) ],
+		baseClassName = 'elementor-navigator__element';
 
-	useEffect( () => {
-		setListState( 0 === level );
-	}, [ level ] );
+	/**
+	 * Toggle the selection state of the element.
+	 *
+	 * @void
+	 */
+	const handleToggleSelection = useCallback(
+		( { section, scrollIntoView = true } ) => ( e ) => {
+			e.stopPropagation();
+			$e.run( 'document/elements/toggle-selection', {
+				container,
+				append: e.ctrlKey || e.metaKey,
+				options: {
+					scrollIntoView,
+					section,
+				},
+			} );
+		},
+		[ container ]
+	);
 
-	useEffect( () => {
-		let draggedItemNewIndex;
-		jQuery( listRef.current ).sortable( {
-			items: '> *:not(.elementor-empty-view)',
-			placeholder: 'ui-sortable-placeholder',
-			axis: 'y',
-			forcePlaceholderSize: true,
-			connectWith: `.${ baseClassName }-${ element.elType } .elementor-navigator__elements`,
-			cancel: '[contenteditable="true"]',
-			start: ( event, ui ) => {
-				model.trigger( 'request:sort:start', event, ui );
-				jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
-				document.getElementById( 'elementor-navigator' ).dataset.over = 'true';
-			},
-			stop: ( e, ui ) => {
-				draggedItemNewIndex = ui.item.index();
-				jQuery( ui.sender ).sortable( 'cancel' );
-				jQuery( listRef.current ).sortable( 'cancel' );
-				document.getElementById( 'elementor-navigator' ).dataset.over = 'false';
-			},
-			over: ( e ) => {
-				e.stopPropagation();
-				jQuery( listRef.current ).closest( `.${ baseClassName }` ).addClass( 'elementor-dragging-on-child' );
-			},
-			out: ( e ) => {
-				e.stopPropagation();
-				if ( ! listRef.current ) {
-					return;
-				}
+	/**
+	 * Toggle the folding status of the children elements list.
+	 *
+	 * @void
+	 */
+	const handleToggleFolding = ( e ) => {
+		e.stopPropagation();
 
-				jQuery( listRef.current ).closest( `.${ baseClassName }` ).removeClass( 'elementor-dragging-on-child' );
-			},
-			update: ( e, ui ) => {
-				e.stopPropagation();
-				if ( ! jQuery( listRef.current ).is( ui.item.parent() ) ) {
-					return;
-				}
-
-				setTimeout( () => model.trigger( 'request:sort:update', ui, draggedItemNewIndex ) );
-			},
-			receive: ( event, ui ) => {
-				setTimeout( () => model.trigger( 'request:sort:receive', event, ui, draggedItemNewIndex ) );
-			},
+		$e.run( 'navigator/elements/toggle-folding', {
+			container,
 		} );
-	}, [ element.elType, elementId ] );
-
-	const handleMouseEnter = ( e ) => {
-		if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
-			return;
-		}
-
-		autoExpandTimerRef.current = setTimeout( () => {
-			setListState( true );
-			jQuery( listRef.current ).sortable( 'refreshPositions' );
-		}, 500 );
 	};
 
-	const handleMouseLeave = ( e ) => {
-		if ( autoExpandTimerRef.current ) {
-			clearTimeout( autoExpandTimerRef.current );
-		}
+	/**
+	 * Toggle the visibility of the element in the document.
+	 *
+	 * @void
+	 */
+	const handleToggleVisibility = () => {
+		$e.run( 'navigator/elements/toggle-visibility', {
+			container,
+		} );
 	};
 
-	const handleMouseDown = ( e ) => {
-		e.stopPropagation();
-		toggleSelection( { append: e.ctrlKey || e.metaKey } );
-	};
+	/**
+	 * Set the element descriptive title.
+	 *
+	 * @void
+	 */
+	const handleTitleEdit = useCallback(
+		( newTitle ) => {
+			$e.run( 'document/elements/set-title', { container, title: newTitle } );
+		},
+		[ elementId ]
+	);
 
-	const handleContextMenu = ( e ) => {
-		showContextMenu( e );
-		return false;
-	};
+	/**
+	 * Show a context menu with actions regarding the element.
+	 *
+	 * @void
+	 */
+	const handleContextMenu = () => useCallback(
+		( e ) => {
+			container.model.trigger( 'request:contextmenu', e );
+			return false;
+		},
+		[ container ]
+	);
 
-	const handleListToggle = ( e ) => {
-		e.stopPropagation();
-		setListState( ! listState );
-	};
+	/**
+	 * Use the navigator jQuery sortable helper. This is temporary, till the development of a new reacy-way sortable
+	 * package.
+	 */
+	const { itemRef, handleRef, listRef } = useNavigatorJquerySortable(
+		container,
+		{ baseClassName, handleToggleFolding }
+	);
 
 	return (
 		<div
+			ref={ itemRef }
 			className={ arrayToClassName( [
 				{ [ baseClassName ]: true },
 				{ [ `${ baseClassName }-${ element.elType }` ]: element.elType },
-				{ [ `${ baseClassName }--has-children` ]: hasChildren },
+				{ [ `${ baseClassName }--has-children` ]: true },
 				{ [ `${ baseClassName }-hidden` ]: element.hidden },
 			] ) }
 			onContextMenu={ handleContextMenu }
-			onMouseEnter={ handleMouseEnter }
-			onMouseLeave={ handleMouseLeave }
 			data-id={ elementId }>
 			{ 'document' === element.elType ||
 				<div
+					ref={ handleRef }
 					className={ arrayToClassName( [
 						{ 'elementor-navigator__item': true },
-						{ 'elementor-active': listState },
-						{ 'elementor-editing': selected },
+						{ 'elementor-active': elementFolding },
+						{ 'elementor-editing': elementSelection },
 					] ) }
-					onMouseDown={ handleMouseDown }
 					style={ { [ `padding${ elementorCommon.config.isRTL ? 'Right' : 'Left' }` ]: level * 10 } }>
-					<div className="elementor-navigator__element__list-toggle" onMouseDown={ handleListToggle }>
+					<div className="elementor-navigator__element__list-toggle" onMouseDown={ handleToggleFolding }>
 						<Icon className="eicon-sort-down" />
 					</div>
 					<ItemIcon icon={ element.icon } />
-					<ItemTitle title={ element.title } onTitleEdit={ titleEdit } />
-					<div className="elementor-navigator__element__toggle" onClick={ toggleVisibility }>
+					<ItemTitle title={ element.title } onTitleEdit={ handleTitleEdit } />
+					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
 						<Icon className="eicon-preview-medium" />
 					</div>
-					<ItemIndicatorList settings={ element.settings } toggleSelection={ toggleSelection }/>
+					<ItemIndicatorList settings={ element.settings } toggleSelection={ handleToggleSelection }/>
 				</div>
 			}
-			<div style={ { display: listState ? 'block' : 'none' } }>
-				<ItemList listRef={ listRef } elements={ element.elements } level={ level + 1 } indicateEmpty={ hasChildren } />
+			<div style={ { display: elementFolding ? 'block' : 'none' } }>
+				<ItemList listRef={ listRef } elements={ element.elements } level={ level + 1 } indicateEmpty={ true } />
 			</div>
 		</div>
 	);
