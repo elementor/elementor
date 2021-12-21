@@ -35,10 +35,10 @@ export default function PluginsToImport( { plugins } ) {
 
 			return plugins.splice( startPluginsCutPosition );
 		},
+		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		pluginsToImport = getPluginsToImport(),
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
-		initialSelected = pluginsToImport.map( ( plugin, index ) => index ),
-		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );
+		initialSelected = pluginsToImport.map( ( plugin, index ) => index );
 
 	if ( ! pluginsToImport.length ) {
 		return null;
