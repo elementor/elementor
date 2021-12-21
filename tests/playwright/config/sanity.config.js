@@ -15,15 +15,18 @@ const config = {
 	retries: 1,
 	use: {
 		headless: true,
-		storageStatePath: '/tmp/elementor/playwright/storageState.json',
-		storageState: '/tmp/elementor/playwright/storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
-		baseURL: process.env.baseURL || 'http://localhost:8888/',
+		storageStatePath: 'storageState.json',
+		storageState: 'storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
+		baseURL: process.env.baseURL || 'http://localhost:8888',
 		viewport: { width: 1440, height: 960 },
 		video: 'on-first-retry',
 		user: {
-			username: process.env.username || 'admin',
-			password: process.env.password || 'password',
+			username: 'admin',
+			password: 'password',
 		},
+	},
+	workers: {
+		max: 4,
 	},
 };
 
