@@ -14,7 +14,7 @@ const config = {
 		storageState: './tests/playwright/config/storageState.json',
 		baseURL: process.env.URL || 'http://localhost:8888/',
 		viewport: { width: 1440, height: 960 },
-		video: 'on-first-retry',
+		video: 'on',
 	},
 };
 
