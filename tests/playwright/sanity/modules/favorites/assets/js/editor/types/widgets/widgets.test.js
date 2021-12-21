@@ -39,7 +39,7 @@ test.describe( 'Favorite widgets', () => {
 		await favoriteWidgets.remove( favoriteToAdd );
 
 		await wpAdmin.setExperiments( {
-			'favorite-widgets': true,
+			'favorite-widgets': false,
 		} );
 	} );
 } );
