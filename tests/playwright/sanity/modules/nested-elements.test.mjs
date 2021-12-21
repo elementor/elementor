@@ -83,7 +83,7 @@ test.describe( 'NestedElementsModule', () => {
 							return $e.run( 'document/repeater/insert', {
 								container: elementor.getContainer( id ),
 								model: {},
-								name: 'nested-tabs',
+								name: 'tabs',
 							} );
 						}, [ widgetId ] );
 
@@ -100,7 +100,7 @@ test.describe( 'NestedElementsModule', () => {
 							return $e.run( 'document/repeater/remove', {
 								container: elementor.getContainer( id ),
 								index: 1,
-								name: 'nested-tabs',
+								name: 'tabs',
 							} );
 						}, [ widgetId ] );
 
