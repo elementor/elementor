@@ -15,16 +15,17 @@ const config = {
 	retries: 1,
 	use: {
 		headless: true,
-		storageStatePath: './storageState.json',
-		storageState: './storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
+		storageStatePath: '/tmp/elementor-storageState.json',
+		storageState: '/tmp/elementor-storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
 		baseURL: process.env.baseURL || 'http://localhost:8888',
 		viewport: { width: 1440, height: 960 },
 		video: 'on-first-retry',
 		user: {
-			username: 'admin',
-			password: 'password',
+			username: process.env.username || 'admin',
+			password: process.env.password || 'password',
 		},
 	},
+	workers: 1,
 };
 
 module.exports = config;

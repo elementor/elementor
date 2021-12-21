@@ -6,6 +6,8 @@ import WpAdminPage from "../../pages/wp-admin-page.mjs";
  */
 let editor;
 
+let wpAdmin;
+
 const createTabsWidget = async( editor, targetID = null ) => {
 	if ( ! targetID ) {
 		targetID = await editor.addElement( { elType: 'container' }, 'document' );
@@ -16,7 +18,7 @@ const createTabsWidget = async( editor, targetID = null ) => {
 
 test.describe( 'NestedElementsModule', () => {
 	test.beforeEach( async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.login();
 
@@ -26,6 +28,14 @@ test.describe( 'NestedElementsModule', () => {
 		} );
 
 		editor = await wpAdmin.useElementorCleanPost();
+	} );
+
+
+	test.afterAll( async ( { page }, testInfo ) => {
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+		} );
 	} );
 
 	test.describe( 'Component: `nested-elements`', () => {
