@@ -50,7 +50,7 @@ export const Paste = () => {
 		} );
 
 		QUnit.module( 'Multiple Selection', () => {
-			QUnit.only( 'Simple', ( assert ) => {
+			QUnit.test( 'Simple', ( assert ) => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
@@ -75,7 +75,7 @@ export const Paste = () => {
 				}
 			} );
 
-			QUnit.only( 'On preview container', ( assert ) => {
+			QUnit.test( 'On preview container', ( assert ) => {
 				const eColumn = ElementsHelper.createSection( 1, true ),
 					eButton = ElementsHelper.createButton( eColumn ),
 					eHeading = ElementsHelper.createHeading( eColumn ),
