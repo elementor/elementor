@@ -17,23 +17,14 @@ export default function PluginsToImport( { plugins } ) {
 		{ PLUGIN_STATUS_MAP } = usePlugins(),
 		{ PLUGINS_KEYS } = usePluginsData(),
 		getPluginsToImport = () => {
-			let startPluginsCutPosition = 0;
+			const { name, status } = plugins[ 0 ];
 
-			// If Elementor Core is the first plugins it should not be displayed.
-			if ( PLUGINS_KEYS.ELEMENTOR === plugins[ 0 ].name ) {
-				startPluginsCutPosition++;
+			// If Elementor Pro is the first plugin and is not inactive, it should not be displayed.
+			if ( PLUGINS_KEYS.ELEMENTOR_PRO === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) {
+				return plugins.splice( 1 );
 			}
 
-			// If Elementor Pro is the second plugin and is not inactive, it should not be displayed.
-			if ( plugins.length > 1 && PLUGINS_KEYS.ELEMENTOR_PRO === plugins[ 1 ].name && PLUGIN_STATUS_MAP.INACTIVE !== plugins[ 1 ].status ) {
-				startPluginsCutPosition++;
-			}
-
-			if ( ! startPluginsCutPosition ) {
-				return plugins;
-			}
-
-			return plugins.splice( startPluginsCutPosition );
+			return plugins;
 		},
 		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		pluginsToImport = getPluginsToImport(),
