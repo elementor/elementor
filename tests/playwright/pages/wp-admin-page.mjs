@@ -17,6 +17,7 @@ export default class wpAdminPage extends BasePage {
 
 		await this.page.waitForSelector( 'text=Log In' );
 		await this.page.fill( 'input[name="log"]', this.config.user.username );
+		await this.page.waitForTimeout( 500 );
 		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
