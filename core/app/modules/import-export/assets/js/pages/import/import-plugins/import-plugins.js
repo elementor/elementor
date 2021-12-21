@@ -16,6 +16,7 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
 import usePlugins from '../../../hooks/use-plugins';
+import usePluginsData from '../../../hooks/use-plugins-data';
 import useImportPluginsData from './hooks/use-import-plugins-data';
 
 import './import-plugins.scss';
@@ -25,10 +26,12 @@ export default function ImportPlugins() {
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
 		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
-		{ pluginsData } = useImportPluginsData( kitPlugins, pluginsState.data ),
-		{ missing, existing, minVersionMissing, proData } = pluginsData || {},
+		{ pluginsData } = usePluginsData( pluginsState.data ),
+		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
+		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
 		handleRequiredPlugins = () => {
 			if ( missing.length ) {
+				// Saving globally the plugins data that the kit requires in order to work properly.
 				importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: missing } );
 			}
 		},
@@ -55,19 +58,19 @@ export default function ImportPlugins() {
 
 	// On plugins data ready.
 	useEffect( () => {
-		if ( pluginsData && ! importContext.data.requiredPlugins.length ) {
+		if ( importPluginsData && ! importContext.data.requiredPlugins.length ) {
 			// Saving the required plugins to display them on the next screens.
 			handleRequiredPlugins();
 
 			// In case that the pro was installed in the middle of the process, the global state should be updated with the current status.
 			handleProInstallationStatus();
 		}
-	}, [ pluginsData ] );
+	}, [ importPluginsData ] );
 
 	return (
 		<Layout type="export" footer={ <ImportPluginsFooter /> }>
 			<section className="e-app-import-plugins">
-				{ ! pluginsData && <Loader absoluteCenter />	}
+				{ ! importPluginsData && <Loader absoluteCenter />	}
 
 				<PageHeader
 					heading={ __( 'Select the plugins you want to import', 'elementor' ) }

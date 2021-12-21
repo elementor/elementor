@@ -6,6 +6,7 @@ import PluginsSelection from '../../../../../shared/plugins-selection/plugins-se
 import Heading from 'elementor-app/ui/atoms/heading';
 
 import usePlugins from '../../../../../hooks/use-plugins';
+import usePluginsData from '../../../../../hooks/use-plugins-data';
 
 export default function PluginsToImport( { plugins } ) {
 	if ( ! plugins?.length ) {
@@ -14,9 +15,10 @@ export default function PluginsToImport( { plugins } ) {
 
 	const importContext = useContext( ImportContext ),
 		{ PLUGIN_STATUS_MAP } = usePlugins(),
-		{ name, status } = plugins[ 0 ],
+		{ PLUGINS_KEYS } = usePluginsData(),
+		{ name, status } = plugins[ 1 ], // In case that Elementor Pro exist it will always be the second item.
 		// The Elementor Pro plugin should be displayed in the list only if its status is inactive.
-		pluginsToImport = ( 'Elementor Pro' === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) ? plugins.splice( 1 ) : plugins,
+		pluginsToImport = ( PLUGINS_KEYS.ELEMENTOR_PRO === name && PLUGIN_STATUS_MAP.INACTIVE !== status ) ? plugins.splice( 1 ) : plugins,
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
 		initialSelected = pluginsToImport.map( ( plugin, index ) => index ),
 		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } );

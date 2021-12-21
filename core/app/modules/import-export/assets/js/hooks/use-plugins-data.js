@@ -1,5 +1,7 @@
-const ELEMENTOR_PLUGIN_NAME = 'Elementor',
-	ELEMENTOR_PRO_PLUGIN_NAME = 'Elementor Pro';
+const PLUGINS_KEYS = Object.freeze( {
+	ELEMENTOR: 'Elementor',
+	ELEMENTOR_PRO: 'Elementor Pro',
+} );
 
 export default function usePluginsData( plugins ) {
 	const getPluginsData = () => {
@@ -11,10 +13,10 @@ export default function usePluginsData( plugins ) {
 			generalPlugins = [];
 
 		plugins.forEach( ( plugin ) => {
-			if ( ELEMENTOR_PLUGIN_NAME === plugin.name ) {
+			if ( PLUGINS_KEYS.ELEMENTOR === plugin.name ) {
 				// Making sure that the core plugin is always first.
 				elementorPlugins.unshift( plugin );
-			} else if ( ELEMENTOR_PRO_PLUGIN_NAME === plugin.name ) {
+			} else if ( PLUGINS_KEYS.ELEMENTOR_PRO === plugin.name ) {
 				// Making sure that the pro plugin is always second.
 				elementorPlugins.push( plugin );
 			} else {
@@ -23,10 +25,11 @@ export default function usePluginsData( plugins ) {
 		} );
 
 		// Making sure that the elementor plugins are always first.
-		return [ ...elementorPlugins, ...generalPlugins ];
+		return elementorPlugins.concat( generalPlugins );
 	};
 
 	return {
 		pluginsData: getPluginsData(),
+		PLUGINS_KEYS,
 	};
 }

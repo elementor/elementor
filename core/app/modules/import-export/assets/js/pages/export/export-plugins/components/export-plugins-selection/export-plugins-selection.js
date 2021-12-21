@@ -10,8 +10,8 @@ import usePluginsData from '../../../../../hooks/use-plugins-data';
 
 export default function ExportPluginsSelection() {
 	const exportContext = useContext( ExportContext ),
-		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP, PLUGINS_RESPONSE_MAP } = usePlugins(),
-		{ pluginsData } = usePluginsData( pluginsState.data ),
+		{ pluginsState, pluginsActions, PLUGIN_STATUS_MAP } = usePlugins(),
+		{ pluginsData, PLUGINS_KEYS } = usePluginsData( pluginsState.data ),
 		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
 		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		getInitialSelected = () => {
@@ -19,7 +19,7 @@ export default function ExportPluginsSelection() {
 			const initialSelected = [ 0 ];
 
 			// In case that Elementor Pro appears in the list it will always be second and should always be selected by default.
-			if ( activePlugins.length > 1 && 'Elementor Pro' === activePlugins[ 1 ].name ) {
+			if ( activePlugins.length > 1 && PLUGINS_KEYS.ELEMENTOR_PRO === activePlugins[ 1 ].name ) {
 				initialSelected.push( 1 );
 			}
 

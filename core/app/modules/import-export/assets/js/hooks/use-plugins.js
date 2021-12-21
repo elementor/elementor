@@ -56,9 +56,10 @@ export default function usePlugins() {
 					} );
 			} );
 		},
-		get = () => {
+		get = ( slug ) => {
 			return fetchRest( {
 				method: 'GET',
+				endpoint: slug,
 			} );
 		},
 		install = ( slug ) => {

@@ -40,6 +40,6 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins 
 		};
 
 	return {
-		pluginsData: pluginsToInstall && existingPlugins ? getClassifiedPlugins() : null,
+		importPluginsData: pluginsToInstall.length && existingPlugins.length ? getClassifiedPlugins() : null,
 	};
 }
