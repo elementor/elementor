@@ -5,7 +5,8 @@ test( 'Button widget sanity test', async ( { page }, testInfo) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.login();
-	const editor = await wpAdmin.createNewPage();
+
+	const editor = await wpAdmin.useElementorCleanPost();
 
 	await editor.addWidget( 'button' );
 
