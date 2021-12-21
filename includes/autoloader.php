@@ -195,26 +195,6 @@ class Autoloader {
 
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'Scheme_Base' => [
-				'replacement' => 'Core\Schemes\Base',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color' => [
-				'replacement' => 'Core\Schemes\Color',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color_Picker' => [
-				'replacement' => 'Core\Schemes\Color_Picker',
-				'version' => '2.8.0',
-			],
-			'Schemes_Manager' => [
-				'replacement' => 'Core\Schemes\Manager',
-				'version' => '2.8.0',
-			],
-			'Scheme_Typography' => [
-				'replacement' => 'Core\Schemes\Typography',
-				'version' => '2.8.0',
-			],
 			'System_Info\Main' => [
 				'replacement' => 'Modules\System_Info\Module',
 				'version' => '2.9.0',

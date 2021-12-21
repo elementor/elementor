@@ -16,7 +16,7 @@ There are many other [features](https://elementor.com/features/?utm_source=githu
 ## Developer API
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
-To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme).
+To help you get started and learn just how to integrate with Elementor, we have created the official [Elementor Developers Center](https://developers.elementor.com/?utm_source=github-repo&utm_medium=link&utm_campaign=readme). Check the [Developers Blog](https://developers.elementor.com/blog/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to discover the latest information from the programmers working on the newest Elementor versions, or visit the [Developers Docs](https://developers.elementor.com/docs/?utm_source=github-repo&utm_medium=link&utm_campaign=readme) to learn how to extend Elementor core and create your own addons.
 
 ## Be a contributor
 Community contributions are always welcome and help us remain the Number 1 WordPress Website Builder, feel free to answering questions on GitHub and within the various Elementor communities.

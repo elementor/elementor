@@ -31,8 +31,8 @@ class Main extends Base {
 
 	protected function register_default_submenus() {
 		$this->add_submenu( [
-			'page_title' => _x( 'Templates', 'Template Library', 'elementor' ),
-			'menu_title' => _x( 'Templates', 'Template Library', 'elementor' ),
+			'page_title' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
+			'menu_title' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 			'menu_slug' => Source_Local::ADMIN_MENU_SLUG,
 			'index' => 0,
 		] );
