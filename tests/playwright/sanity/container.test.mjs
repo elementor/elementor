@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import EditorPage from '../pages/editor-page.mjs';
 import WpAdminPage from '../pages/wp-admin-page.mjs';
 import { getElementSelector } from '../assets/elements-utils.mjs';
 

@@ -21,8 +21,6 @@ export default class wpAdminPage extends BasePage {
 	}
 
 	async waitForPanel() {
-		await this.page.waitForTimeout( 5000 );
-
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 	}
 

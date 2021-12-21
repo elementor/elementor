@@ -30,6 +30,14 @@ test.describe( 'NestedElementsModule', () => {
 		editor = await wpAdmin.useElementorCleanPost();
 	} );
 
+
+	test.afterAll( async () => {
+		await wpAdmin.setExperiments( {
+			container: false,
+			'nested-elements': false,
+		} );
+	} );
+
 	test.describe( 'Component: `nested-elements`', () => {
 		test.describe( 'Component: `nested-elements/nested-repeater`', () => {
 
