@@ -25,8 +25,8 @@ export default function ImportPlugins() {
 	const importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		kitPlugins = importContext.data.uploadedData?.manifest?.plugins || [],
-		{ pluginsState, pluginsActions } = usePlugins(),
-		{ pluginsData } = usePluginsData( pluginsState.data ),
+		{ response, pluginsActions } = usePlugins(),
+		{ pluginsData } = usePluginsData( response.data ),
 		{ importPluginsData } = useImportPluginsData( kitPlugins, pluginsData ),
 		{ missing, existing, minVersionMissing, proData } = importPluginsData || {},
 		handleRequiredPlugins = () => {
@@ -38,7 +38,7 @@ export default function ImportPlugins() {
 		handleRefresh = () => {
 			importContext.dispatch( { type: 'SET_REQUIRED_PLUGINS', payload: [] } );
 
-			pluginsActions.get();
+			pluginsActions.fetch();
 		},
 		handleProInstallationStatus = () => {
 			// In case that the Pro data is now exist but initially in the elementorAppConfig the value was false, it means that the pro was added during the process.
@@ -50,7 +50,7 @@ export default function ImportPlugins() {
 	// On load.
 	useEffect( () => {
 		if ( kitPlugins.length ) {
-			pluginsActions.get();
+			pluginsActions.fetch();
 		} else {
 			navigate( 'import/content' );
 		}

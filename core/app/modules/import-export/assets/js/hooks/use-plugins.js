@@ -17,7 +17,7 @@ export default function usePlugins() {
 			status: PLUGINS_RESPONSE_MAP.INITIAL,
 			data: null,
 		} ),
-		[ pluginsState, setPluginsState ] = useState( getInitialState() ),
+		[ response, setResponse ] = useState( getInitialState() ),
 		baseEndpoint = elementorCommon.config.urls.rest + 'wp/v2/plugins/',
 		fetchRest = ( { body, method, endpoint = '' } ) => {
 			const data = {
@@ -32,23 +32,23 @@ export default function usePlugins() {
 				data.body = JSON.stringify( body );
 			}
 
-			if ( pluginsState.data ) {
+			if ( response.data ) {
 				reset();
 			}
 
 			return new Promise( ( resolve, reject ) => {
 				fetch( baseEndpoint + endpoint, data )
-					.then( ( response ) => response.json() )
-					.then( ( response ) => {
-						setPluginsState( {
+					.then( ( res ) => res.json() )
+					.then( ( res ) => {
+						setResponse( {
 							status: PLUGINS_RESPONSE_MAP.SUCCESS,
-							data: response,
+							data: res,
 						} );
 
-						resolve( response );
+						resolve( res );
 					} )
 					.catch( ( error ) => {
-						setPluginsState( {
+						setResponse( {
 							status: PLUGINS_RESPONSE_MAP.ERROR,
 							data: error,
 						} );
@@ -57,7 +57,7 @@ export default function usePlugins() {
 					} );
 			} );
 		},
-		get = ( slug ) => {
+		fetch = ( slug ) => {
 			return fetchRest( {
 				method: 'GET',
 				endpoint: slug,
@@ -97,12 +97,12 @@ export default function usePlugins() {
 				method: 'DELETE',
 			} );
 		},
-		reset = () => setPluginsState( getInitialState() );
+		reset = () => setResponse( getInitialState() );
 
 	return {
-		pluginsState,
+		response,
 		pluginsActions: {
-			get,
+			fetch,
 			install,
 			activate,
 			deactivate,

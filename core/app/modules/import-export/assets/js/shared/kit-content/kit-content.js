@@ -13,10 +13,10 @@ import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content.scss';
 
-export default function KitContent( props ) {
+export default function KitContent( { manifest, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
-		hasPro = props.hasPro || elementorAppConfig.hasPro,
+		isProExist = hasPro || elementorAppConfig.hasPro,
 		getTemplateFeatures = ( features, index ) => {
 			if ( ! features ) {
 				return;
@@ -25,53 +25,48 @@ export default function KitContent( props ) {
 			return (
 				<TemplatesFeatures
 					features={ features }
-					isLocked={ ! hasPro }
+					isLocked={ ! isProExist }
 					showTooltip={ containerHover[ index ] }
 				/>
 			);
 		},
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
-		};
+		},
+		getManifestContent = () => {
+			return kitContentData.filter( ( { type } ) => {
+				const contentType = 'settings' === type ? 'site-settings' : type,
+					contentData = manifest[ contentType ];
+
+				return ! ! ( Array.isArray( contentData ) ? contentData.length : contentData );
+			} );
+		},
+		kitContent = manifest ? getManifestContent() : kitContentData;
 
 	return (
 		<Box>
 			<List separated className="e-app-export-kit-content">
 				{
-					kitContentData.map( ( item, index ) => {
-						if ( ! item.data ) {
-							return;
-						}
-
-						const isLockedFeaturesNoPro = item.data.features?.locked && ! hasPro;
-
-						if ( props.manifest ) {
-							const contentType = 'settings' === item.type ? 'site-settings' : item.type,
-								data = props.manifest[ contentType ],
-								hasData = Array.isArray( data ) ? data.length : data;
-
-							if ( ! hasData ) {
-								return;
-							}
-						}
+					kitContent.map( ( { type, data }, index ) => {
+						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
 
 						return (
-							<List.Item padding="20" key={ item.type } className="e-app-export-kit-content__item">
+							<List.Item padding="20" key={ type } className="e-app-export-kit-content__item">
 								<div
 									onMouseEnter={ () => isLockedFeaturesNoPro && setContainerHoverState( index, true ) }
 									onMouseLeave={ () => isLockedFeaturesNoPro && setContainerHoverState( index, false ) }
 								>
 									<Grid container noWrap>
-										<KitContentCheckbox type={ item.type } className="e-app-export-kit-content__checkbox" />
+										<KitContentCheckbox type={ type } className="e-app-export-kit-content__checkbox" />
 
 										<Grid item>
 											<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-												{ item.data.title }
+												{ data.title }
 											</Heading>
 
 											<Grid item container>
 												<Text variant="sm" tag="span" className="e-app-export-kit-content__description">
-													{ item.data.description || getTemplateFeatures( item.data.features, index ) }
+													{ data.description || getTemplateFeatures( data.features, index ) }
 												</Text>
 
 												{

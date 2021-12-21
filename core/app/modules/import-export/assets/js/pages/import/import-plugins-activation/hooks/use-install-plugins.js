@@ -9,7 +9,7 @@ export const ACTION_STATUS_MAP = Object.freeze( {
 } );
 
 export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) {
-	const { pluginsState, pluginsActions } = usePlugins(),
+	const { response, pluginsActions } = usePlugins(),
 		[ isPluginsFetched, setIsPluginsFetched ] = useState( false ),
 		[ isDone, setIsDone ] = useState( false ),
 		[ bulk, setBulk ] = useState( [] ),
@@ -27,7 +27,7 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 
 	// On load.
 	useEffect( () => {
-		pluginsActions.get();
+		pluginsActions.fetch();
 	}, [] );
 
 	// Setting the next plugin to activate/install and checking when all plugins ar ready.
@@ -54,8 +54,8 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 
 	// Status Updater.
 	useEffect( () => {
-		if ( PLUGINS_RESPONSE_MAP.SUCCESS === pluginsState.status ) {
-			const { data } = pluginsState;
+		if ( PLUGINS_RESPONSE_MAP.SUCCESS === response.status ) {
+			const { data } = response;
 
 			if ( Array.isArray( data ) ) {
 				// When the data type is an Array it means that the plugins data was fetched.
@@ -67,15 +67,15 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 			} else if ( PLUGIN_STATUS_MAP.INACTIVE === data.status ) {
 				setActionStatus( ACTION_STATUS_MAP.INSTALLED );
 			}
-		} else if ( PLUGINS_RESPONSE_MAP.ERROR === pluginsState.status ) {
+		} else if ( PLUGINS_RESPONSE_MAP.ERROR === response.status ) {
 			setActionStatus( ACTION_STATUS_MAP.FAILED );
 		}
-	}, [ pluginsState.status ] );
+	}, [ response.status ] );
 
 	// Actions after data response.
 	useEffect( () => {
 		if ( actionStatus ) {
-			const pluginData = ACTION_STATUS_MAP.FAILED === actionStatus ? { ...currentPlugin, status: ACTION_STATUS_MAP.FAILED } : pluginsState.data;
+			const pluginData = ACTION_STATUS_MAP.FAILED === actionStatus ? { ...currentPlugin, status: ACTION_STATUS_MAP.FAILED } : response.data;
 
 			// Updating the current plugin status in the bulk.
 			setBulk( ( prevState ) => {
@@ -103,6 +103,6 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 		isDone,
 		ready,
 		bulk: getBulk(),
-		isError: PLUGINS_RESPONSE_MAP.ERROR === pluginsState.status,
+		isError: PLUGINS_RESPONSE_MAP.ERROR === response.status,
 	};
 }

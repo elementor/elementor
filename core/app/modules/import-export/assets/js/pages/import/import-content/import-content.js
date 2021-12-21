@@ -20,8 +20,6 @@ export default function ImportContent() {
 		navigate = useNavigate(),
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ includes } = sharedContext.data,
-		{ templates, content, 'site-settings': siteSettings } = uploadedData?.manifest || {},
-		isKitHasContent = templates || content || siteSettings,
 		isImportAllowed = plugins.length || includes.length,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
 		getNextPageUrl = () => {
@@ -64,13 +62,6 @@ export default function ImportContent() {
 			</WizardFooter>
 		);
 
-	// On load.
-	useEffect( () => {
-		if ( ! isKitHasContent ) {
-			handleNextPage();
-		}
-	}, [] );
-
 	// On file change.
 	useEffect( () => {
 		if ( ! file ) {
@@ -96,10 +87,7 @@ export default function ImportContent() {
 					</Notice>
 				}
 
-				<KitContent
-					manifest={ uploadedData?.manifest }
-					hasPro={ isProInstalledDuringProcess }
-				/>
+				<KitContent manifest={ uploadedData?.manifest }	hasPro={ isProInstalledDuringProcess } />
 			</section>
 		</Layout>
 	);

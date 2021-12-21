@@ -10,8 +10,8 @@ import usePluginsData, { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-d
 
 export default function ExportPluginsSelection() {
 	const exportContext = useContext( ExportContext ),
-		{ pluginsState, pluginsActions } = usePlugins(),
-		{ pluginsData } = usePluginsData( pluginsState.data ),
+		{ response, pluginsActions } = usePlugins(),
+		{ pluginsData } = usePluginsData( response.data ),
 		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
 		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		getInitialSelected = () => {
@@ -28,10 +28,10 @@ export default function ExportPluginsSelection() {
 
 	// On load.
 	useEffect( () => {
-		pluginsActions.get();
+		pluginsActions.fetch();
 	}, [] );
 
-	if ( ! pluginsState.data ) {
+	if ( ! response.data ) {
 		return <Loader absoluteCenter />;
 	}
 
