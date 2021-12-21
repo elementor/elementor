@@ -71,8 +71,6 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel: function( model, options = {} ) {
-		delete options.at;
-
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
