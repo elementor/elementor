@@ -57,7 +57,7 @@ export default function usePlugins() {
 					} );
 			} );
 		},
-		fetch = ( slug ) => {
+		fetchData = ( slug ) => {
 			return fetchRest( {
 				method: 'GET',
 				endpoint: slug,
@@ -102,7 +102,7 @@ export default function usePlugins() {
 	return {
 		response,
 		pluginsActions: {
-			fetch,
+			fetch: fetchData,
 			install,
 			activate,
 			deactivate,
