@@ -31,7 +31,7 @@ test.describe( 'NestedElementsModule', () => {
 	} );
 
 
-	test.afterAll( async ( { page }, testInfo ) => {
+	test.afterAll( async () => {
 		await wpAdmin.setExperiments( {
 			container: false,
 			'nested-elements': false,

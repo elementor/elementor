@@ -28,11 +28,11 @@ export default class BasePage {
 					}
 				} else if ( key === 'waitForNavigation' ) {
 					return ( args ) => {
-						if ( ! args ) {
-							return page.waitForNavigation();
+						if ( args.url ) {
+							return page.waitForNavigation( { url: this.config.baseURL + args.url } );
 						}
 
-						return page.waitForNavigation( { url: this.config.baseURL + args.url } );
+						return page.waitForNavigation( args || {} );
 					}
 				}
 
