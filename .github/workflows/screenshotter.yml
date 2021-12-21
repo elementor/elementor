@@ -12,10 +12,14 @@ jobs:
       fail-fast: false
       matrix:
         wordpress_versions: [ 'latest' ]
-    name: WordPress ${{ matrix.wordpress_versions }}
+    name: ScreenShotter - WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Startup MySQL service
-        run:  sudo /etc/init.d/mysql start
+        run: sudo systemctl start mysql.service
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
       - name: Checkout source code
         uses: actions/checkout@master
       - name: Install Node.js 14.x
