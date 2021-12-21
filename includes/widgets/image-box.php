@@ -270,12 +270,22 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'image_border',
+				'selector' => '{{WRAPPER}} .elementor-image-box-wrapper img',
+				'separator' => 'before',
+			]
+		);
+
 		$this->add_responsive_control(
 			'image_border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%' ],
+				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper img' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
