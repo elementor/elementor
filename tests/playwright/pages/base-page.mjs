@@ -32,7 +32,7 @@ export default class BasePage {
 							return page.waitForNavigation();
 						}
 
-						return page.waitForNavigation( this.config.baseURL + args.url );
+						return page.waitForNavigation( { url: this.config.baseURL + args.url } );
 					}
 				}
 
