@@ -20,24 +20,24 @@ export default class BasePage {
 
 		this.config = this.testInfo.config.projects[ 0 ].use;
 
-		this.page = new Proxy( this.page, {
-			get: ( target, key ) => {
-				if ( key === 'goto' ) {
-					return ( path ) => {
-						return page.goto( this.config.baseURL + path );
-					}
-				} else if ( key === 'waitForNavigation' ) {
-					return ( args ) => {
-						if ( ! args ) {
-							return page.waitForNavigation();
-						}
-
-						return page.waitForNavigation( { url: this.config.baseURL + args.url } );
-					}
-				}
-
-				return target[ key ];
-			},
-		} );
+		// this.page = new Proxy( this.page, {
+		// 	get: ( target, key ) => {
+		// 		if ( key === 'goto' ) {
+		// 			return ( path ) => {
+		// 				return page.goto( this.config.baseURL + path );
+		// 			}
+		// 		} else if ( key === 'waitForNavigation' ) {
+		// 			return ( args ) => {
+		// 				if ( ! args ) {
+		// 					return page.waitForNavigation();
+		// 				}
+		//
+		// 				return page.waitForNavigation( { url: this.config.baseURL + args.url } );
+		// 			}
+		// 		}
+		//
+		// 		return target[ key ];
+		// 	},
+		// } );
 	}
 }

@@ -5,11 +5,9 @@ export const CLEAN_POST_ID = 1;
 
 export default class wpAdminPage extends BasePage {
 	async login() {
-		this.page.waitForTimeout( 1000 );
-
 		await this.page.goto( '/wp-admin' );
 
-		const loggedIn = await this.page.locator( 'text=Dashboard', { timeout: 2000 } );
+		const loggedIn = await this.page.$( 'text=Dashboard' );
 
 		if ( loggedIn ) {
 			return;
@@ -17,7 +15,6 @@ export default class wpAdminPage extends BasePage {
 
 		await this.page.waitForSelector( 'text=Log In' );
 		await this.page.fill( 'input[name="log"]', this.config.user.username );
-		await this.page.waitForTimeout( 500 );
 		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
