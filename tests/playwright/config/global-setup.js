@@ -15,7 +15,7 @@ module.exports = async ( config ) => {
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Save signed-in state to 'storageState.json'.
-	await page.context().storageState( { path: configCurrentUse.storageStatePath } );
+	await page.context().storageState( { path: configCurrentUse.storageState } );
 
 	await browser.close();
 };

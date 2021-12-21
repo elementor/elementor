@@ -15,7 +15,7 @@ const config = {
 	retries: 1,
 	use: {
 		headless: true,
-		// storageStatePath: '/tmp/elementor-storageState.json',
+		storageState: './tests/playwright/config/storageState.json',
 		// storageState: '/tmp/elementor-storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
 		baseURL: process.env.baseURL || 'http://localhost:8888',
 		viewport: { width: 1440, height: 960 },
