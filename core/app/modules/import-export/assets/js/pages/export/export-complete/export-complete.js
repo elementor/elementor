@@ -4,10 +4,10 @@ import { useNavigate } from '@reach/router';
 import { ExportContext } from '../../../context/export-context/export-context-provider';
 
 import Layout from '../../../templates/layout';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 import './export-complete.scss';
@@ -17,9 +17,9 @@ export default function ExportComplete() {
 		navigate = useNavigate(),
 		downloadLink = useRef( null ),
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				<DashboardButton text={ __( 'Close', 'elementor' ) } />
-			</WizardFooter>
+			</ActionsFooter>
 		),
 		downloadFile = () => {
 			if ( ! downloadLink.current ) {

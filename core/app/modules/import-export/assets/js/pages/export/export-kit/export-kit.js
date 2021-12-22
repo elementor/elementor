@@ -6,24 +6,24 @@ import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
 import KitInformation from './components/kit-information/kit-information';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-kit.scss';
 
 export default function ExportKit() {
 	const exportContext = useContext( ExportContext ),
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
 					color="primary"
 					url="/export/plugins"
 				/>
-			</WizardFooter>
+			</ActionsFooter>
 		),
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>

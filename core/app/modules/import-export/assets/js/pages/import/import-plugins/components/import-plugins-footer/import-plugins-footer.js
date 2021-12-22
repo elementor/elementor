@@ -3,7 +3,7 @@ import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
+import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ImportPluginsFooter() {
@@ -11,7 +11,7 @@ export default function ImportPluginsFooter() {
 		navigate = useNavigate();
 
 	return (
-		<WizardFooter separator justify="end">
+		<ActionsFooter>
 			<Button
 				text={ __( 'Previous', 'elementor' ) }
 				variant="contained"
@@ -28,6 +28,6 @@ export default function ImportPluginsFooter() {
 				color="primary"
 				url="/import/content"
 			/>
-		</WizardFooter>
+		</ActionsFooter>
 	);
 }

@@ -7,10 +7,10 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './import-content.scss';
 
@@ -39,7 +39,7 @@ export default function ImportContent() {
 			navigate( getNextPageUrl() );
 		},
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
@@ -59,7 +59,7 @@ export default function ImportContent() {
 					color={ isImportAllowed ? 'primary' : 'disabled' }
 					onClick={ handleNextPage }
 				/>
-			</WizardFooter>
+			</ActionsFooter>
 		);
 
 	// On file change.

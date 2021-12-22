@@ -7,13 +7,13 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
 import Conflict from './components/conflict/conflict';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import Panel from 'elementor-app/ui/panel/panel';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './import-resolver.scss';
 
@@ -23,7 +23,7 @@ export default function ImportResolver() {
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				<Button
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
@@ -40,7 +40,7 @@ export default function ImportResolver() {
 						navigate( url );
 					} }
 				/>
-			</WizardFooter>
+			</ActionsFooter>
 		),
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>

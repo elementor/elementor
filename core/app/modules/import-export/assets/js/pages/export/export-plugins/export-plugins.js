@@ -6,11 +6,11 @@ import { ExportContext } from '../../../context/export-context/export-context-pr
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 
 import ExportPluginsSelection from './components/export-plugins-selection/export-plugins-selection';
 
 import Button from 'elementor-app/ui/molecules/button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import './export-plugins.scss';
 
@@ -22,7 +22,7 @@ export default function ExportPlugins() {
 		{ plugins, isExportProcessStarted } = exportContext.data || [],
 		hasIncludes = ! ! sharedContext.data.includes.length,
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				<Button
 					text={ __( 'Back', 'elementor' ) }
 					variant="contained"
@@ -35,7 +35,7 @@ export default function ExportPlugins() {
 					color={ isKitReady ? 'primary' : 'disabled' }
 					onClick={ () => isKitReady && navigate( '/export/process' ) }
 				/>
-			</WizardFooter>
+			</ActionsFooter>
 		);
 
 	// On load.

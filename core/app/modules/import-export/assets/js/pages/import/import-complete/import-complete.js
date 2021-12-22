@@ -7,10 +7,10 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
+import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import DashboardButton from 'elementor-app/molecules/dashboard-button';
-import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 import FailedPluginsNotice from './components/failed-plugins-notice/failed-plugins-notice';
 import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice';
@@ -26,7 +26,7 @@ export default function ImportComplete() {
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importContext.data.importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getFooter = () => (
-			<WizardFooter separator justify="end">
+			<ActionsFooter>
 				{
 					seeItLiveUrl &&
 					<Button
@@ -37,7 +37,7 @@ export default function ImportComplete() {
 				}
 
 				<DashboardButton text={ __( 'Close', 'elementor' ) } />
-			</WizardFooter>
+			</ActionsFooter>
 		),
 		getKitData = () => {
 			if ( ! importContext.data.uploadedData || ! importContext.data.importedData ) {

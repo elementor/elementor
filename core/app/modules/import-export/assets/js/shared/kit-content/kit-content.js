@@ -9,6 +9,8 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 
+import MessageBanner from '../../ui/message-banner/message-banner';
+
 import kitContentData from '../kit-content-data/kit-content-data';
 
 import './kit-content.scss';
@@ -42,6 +44,10 @@ export default function KitContent( { manifest, hasPro } ) {
 			} );
 		},
 		kitContent = manifest ? getManifestContent() : kitContentData;
+
+	if ( ! kitContent.length ) {
+		return <MessageBanner description={ __( 'This kit has no content.', 'elementor' ) } />;
+	}
 
 	return (
 		<Box>
