@@ -52,13 +52,13 @@ jobs:
   test-result:
     if: ${{ always() }}
     runs-on: ubuntu-18.04
-    name: Test results
+    name: Test Results
     needs: test
     steps:
       - name: Test status
         run: echo ${{ needs.test.result }}
       - name: Check test matrix status
-        if: ${{ needs.test.result != 'success' }}
+        if: ${{ needs.test.result != 'success' || needs.test.result != 'skipped' }}
         run: exit 1
 
 
