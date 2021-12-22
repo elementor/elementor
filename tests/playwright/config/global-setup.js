@@ -7,9 +7,10 @@ module.exports = async ( config ) => {
 	await page.goto( `${ config.projects[ 0 ].use.baseURL }/wp-admin` );
 
 	await page.waitForSelector( 'text=Log In' );
-	await page.fill( 'input[name="log"]', 'admin' );
-	await page.fill( 'input[name="pwd"]', 'password' );
-	await page.click( 'text=Log In' );
+	await page.fill( 'input[name="log"]', process.env.UNAME || 'admin' );
+	await page.waitForTimeout( 500 );
+	await page.fill( 'input[name="pwd"]', process.env.PASSWD || 'password' );
+	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Save signed-in state to 'storageState.json'.
