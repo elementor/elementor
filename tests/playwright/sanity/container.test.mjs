@@ -40,4 +40,8 @@ test( 'Sort items in a Container using DnD', async ( { page }, testInfo) => {
 	// Assert.
 	// Test that the image is between the heading & button.
 	expect( elBeforeButton ).toBe( elAfterHeading );
+
+	await wpAdmin.setExperiments( {
+		container: false,
+	} );
 } );
