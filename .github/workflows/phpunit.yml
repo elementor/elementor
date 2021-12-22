@@ -48,3 +48,15 @@ jobs:
         run: composer run test
       - name: Run Test - Multisite
         run: WP_MULTISITE=1 composer run test
+
+  test-result:
+    if: ${{ always() }}
+    runs-on: ubuntu-18.04
+    name: Test results
+    needs: test
+    steps:
+      - name: Check test matrix status
+        if: ${{ needs.test.result != 'success' }}
+        run: exit 1
+
+
