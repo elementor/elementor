@@ -15,15 +15,13 @@ export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
-		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
-		isApplyAllForced = 'apply-all' === actionType,
-		isUnfilteredFilesEnabled = elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled,
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
-		isKitHasSvgAssets = () => sharedContext.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
-		getFileProcessInfo = () => importContext.data.uploadedData ? __( 'Importing your content, templates and site settings', 'elementor' ) : null,
+		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
+		isKitHasSvgAssets = sharedContext.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
+		fileProcessInfo = importContext.data.uploadedData ? __( 'Importing your content, templates and site settings', 'elementor' ) : null,
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -36,7 +34,7 @@ export default function ImportProcess() {
 			kitActions.upload( { file: decodedFileURL } );
 		},
 		importKit = () => {
-			if ( isUnfilteredFilesEnabled || ! isKitHasSvgAssets() ) {
+			if ( elementorAppConfig[ 'import-export' ].isUnfilteredFilesEnabled || ! isKitHasSvgAssets ) {
 				setStartImport( true );
 			} else {
 				setShowUnfilteredFilesDialog( true );
@@ -99,7 +97,7 @@ export default function ImportProcess() {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
 			if ( importContext.data.importedData ) { // After kit upload.
 				navigate( '/import/complete' );
-			} else if ( isApplyAllForced ) { // Forcing apply-all kit content.
+			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
 				if ( importContext.data.uploadedData.conflicts ) {
 					navigate( '/import/resolver' );
 				} else {
@@ -118,7 +116,7 @@ export default function ImportProcess() {
 		<Layout type="import">
 			<section>
 				<FileProcess
-					info={ getFileProcessInfo() }
+					info={ fileProcessInfo }
 					errorType={ errorType }
 					onDialogDismiss={ onCancelProcess }
 				/>

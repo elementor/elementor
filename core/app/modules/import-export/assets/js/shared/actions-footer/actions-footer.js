@@ -1,4 +1,4 @@
-import WizardFooter from '../../ui/wizard-step/wizard-step';
+import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ActionsFooter( props ) {
 	return (

@@ -6,6 +6,11 @@ import Grid from 'elementor-app/ui/grid/grid';
 
 import './notice.scss';
 
+const iconsClassesMap = {
+	warning: 'eicon-warning',
+	info: 'eicon-info-circle-o',
+};
+
 export default function Notice( props ) {
 	const baseClassName = 'eps-notice',
 		classes = [ baseClassName, props.className ];
@@ -17,7 +22,11 @@ export default function Notice( props ) {
 	return (
 		<Grid className={ arrayToClassName( classes ) } container noWrap alignItems="center" justify="space-between">
 			<Grid item container alignItems="start" noWrap>
-				{ props.color && <Icon className={ arrayToClassName( [ 'eicon-warning', 'eps-notice__icon' ] ) } /> }
+				{
+					props.withIcon &&
+					props.color &&
+					<Icon className={ arrayToClassName( [ 'eps-notice__icon', iconsClassesMap[ props.color ] ] ) } />
+				}
 
 				<Text variant="xs" className="eps-notice__text">
 					{ props.label && <strong>{ props.label + ' ' }</strong> }
