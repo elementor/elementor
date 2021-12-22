@@ -10,18 +10,19 @@ import KitData from '../../../shared/kit-data/kit-data';
 import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 import FailedPluginsNotice from './components/failed-plugins-notice/failed-plugins-notice';
 import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice';
 
 import useImportedKitData from './hooks/use-imported-kit-data';
+import useImportActions from '../hooks/use-import-actions';
 
 export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
+		{ closeApp } = useImportActions(),
 		{ activePlugins, failedPlugins } = getPlugins( importContext.data.importedPlugins ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importContext.data.importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
@@ -36,7 +37,12 @@ export default function ImportComplete() {
 					/>
 				}
 
-				<DashboardButton text={ __( 'Close', 'elementor' ) } />
+				<Button
+					text={ __( 'Close', 'elementor' ) }
+					variant="contained"
+					color="primary"
+					onClick={ closeApp }
+				/>
 			</ActionsFooter>
 		),
 		getKitData = () => {
