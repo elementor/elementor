@@ -6,6 +6,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Elementor_Test_Bootstrap extends Elementor_Test_Base {
 	public function test_plugin_activated() {
 		$this->assertTrue( is_plugin_active( PLUGIN_PATH ) );
+		$this->assertIsArray([]);
 	}
 
 	public function test_getInstance() {
