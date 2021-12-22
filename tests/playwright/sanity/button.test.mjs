@@ -5,6 +5,9 @@ test( 'Button widget sanity test', async ( { page }, testInfo) => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.login();
+	await wpAdmin.setExperiments( {
+		container: true,
+	} );
 
 	const editor = await wpAdmin.useElementorCleanPost();
 
