@@ -19,5 +19,12 @@ export default class BasePage {
 		this.testInfo = testInfo;
 
 		this.config = this.testInfo.config.projects[ 0 ].use;
+
+		page.on( "pageerror", ( err ) => {
+			console.error( JSON.stringify( err ) )
+		} )
+
+		// Listen for all console logs
+		page.on( 'console', msg => console.log( msg.text() ) )
 	}
 }
