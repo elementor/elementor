@@ -941,7 +941,7 @@ class Widget_Video extends Widget_Base {
 						<?php Group_Control_Image_Size::print_attachment_image_html( $settings, 'image_overlay' ); ?>
 					<?php endif; ?>
 					<?php if ( 'yes' === $settings['show_play_icon'] ) : ?>
-						<div class="elementor-custom-embed-play" role="button">
+						<div class="elementor-custom-embed-play" role="button" aria-label="<?php echo esc_html__( 'Play Video', 'elementor' ); ?>" tabindex="0">
 							<?php
 								Icons_Manager::render_icon( [
 									'library' => 'eicons',
