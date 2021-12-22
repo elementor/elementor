@@ -46,7 +46,7 @@ export default function ImportContent() {
 					text={ __( 'Previous', 'elementor' ) }
 					variant="contained"
 					onClick={ () => {
-						if ( requiredPlugins.length ) {
+						if ( uploadedData?.manifest.plugins?.length ) {
 							navigate( 'import/plugins/' );
 						} else {
 							handleResetProcess();

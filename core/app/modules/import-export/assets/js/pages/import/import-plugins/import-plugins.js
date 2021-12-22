@@ -49,9 +49,7 @@ export default function ImportPlugins() {
 
 	// On load.
 	useEffect( () => {
-		if ( kitPlugins.length ) {
-			pluginsActions.fetch();
-		} else {
+		if ( ! kitPlugins.length ) {
 			navigate( 'import/content' );
 		}
 	}, [] );

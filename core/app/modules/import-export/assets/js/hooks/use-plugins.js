@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const PLUGINS_RESPONSE_MAP = Object.freeze( {
 		INITIAL: 'initial',
@@ -18,6 +18,7 @@ export default function usePlugins() {
 			data: null,
 		} ),
 		[ response, setResponse ] = useState( getInitialState() ),
+		allowResponseUpdate = useRef( true ),
 		baseEndpoint = elementorCommon.config.urls.rest + 'wp/v2/plugins/',
 		fetchRest = ( { body, method, endpoint = '' } ) => {
 			const data = {
@@ -40,10 +41,12 @@ export default function usePlugins() {
 				fetch( baseEndpoint + endpoint, data )
 					.then( ( res ) => res.json() )
 					.then( ( res ) => {
-						setResponse( {
-							status: PLUGINS_RESPONSE_MAP.SUCCESS,
-							data: res,
-						} );
+						if ( allowResponseUpdate.current ) {
+							setResponse( {
+								status: PLUGINS_RESPONSE_MAP.SUCCESS,
+								data: res,
+							} );
+						}
 
 						resolve( res );
 					} )
@@ -98,6 +101,16 @@ export default function usePlugins() {
 			} );
 		},
 		reset = () => setResponse( getInitialState() );
+
+	// On load.
+	useEffect( () => {
+		fetchData();
+
+		// Cleanup on destroy.
+		return () => {
+			allowResponseUpdate.current = false;
+		};
+	}, [] );
 
 	return {
 		response,

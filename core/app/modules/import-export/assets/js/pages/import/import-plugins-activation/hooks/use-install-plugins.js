@@ -25,11 +25,6 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 			return bulk;
 		};
 
-	// On load.
-	useEffect( () => {
-		pluginsActions.fetch();
-	}, [] );
-
 	// Setting the next plugin to activate/install and checking when all plugins ar ready.
 	useEffect( () => {
 		if ( plugins.length ) {

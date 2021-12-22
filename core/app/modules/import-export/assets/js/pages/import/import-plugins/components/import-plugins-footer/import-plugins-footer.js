@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useNavigate } from '@reach/router';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
@@ -10,7 +9,6 @@ import useImportActions from '../../../hooks/use-import-actions';
 
 export default function ImportPluginsFooter() {
 	const importContext = useContext( ImportContext ),
-		navigate = useNavigate(),
 		{ navigateToMainScreen } = useImportActions();
 
 	return (

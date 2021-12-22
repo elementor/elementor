@@ -1,7 +1,5 @@
-import Text from 'elementor-app/ui/atoms/text';
-import Icon from 'elementor-app/ui/atoms/icon';
-import InlineLink from 'elementor-app/ui/molecules/inline-link';
-
+import SiteArea from './components/site-area/site-area';
+import Included from './components/included/included';
 import DataTable from 'elementor-app/molecules/data-table';
 
 import useKitData from './hooks/use-kit-data';
@@ -16,59 +14,50 @@ export default function KitData( { data } ) {
 			__( 'Site Area', 'elementor' ),
 			__( 'Included', 'elementor' ),
 		],
-		getRowsData = () => {
-			const rowsData = [
-				{
-					siteArea: __( 'Elementor Templates', 'elementor' ),
-					link: '/site-editor',
-					included: templates,
-				},
-				{
-					siteArea: __( 'Site Settings', 'elementor' ),
-					link: siteSettingsUrl ? siteSettingsUrl + '#e:run:panel/global/open' : '',
-					included: siteSettings,
-				},
-				{
-					siteArea: __( 'Content', 'elementor' ),
-					link: elementorAppConfig.admin_url + 'edit.php?post_type=page',
-					included: content,
-				},
-				{
-					siteArea: __( 'Plugins', 'elementor' ),
-					link: elementorAppConfig.admin_url + 'plugins.php',
-					included: plugins,
-				},
-			];
+		rowsData = [
+			{
+				siteArea: __( 'Elementor Templates', 'elementor' ),
+				link: '/site-editor',
+				included: templates,
+			},
+			{
+				siteArea: __( 'Site Settings', 'elementor' ),
+				link: siteSettingsUrl ? siteSettingsUrl + '#e:run:panel/global/open' : '',
+				included: siteSettings,
+			},
+			{
+				siteArea: __( 'Content', 'elementor' ),
+				link: elementorAppConfig.admin_url + 'edit.php?post_type=page',
+				included: content,
+			},
+			{
+				siteArea: __( 'Plugins', 'elementor' ),
+				link: elementorAppConfig.admin_url + 'plugins.php',
+				included: plugins,
+			},
+		],
+		rows = rowsData
+			.map( ( { siteArea, included, link } ) => {
+				if ( ! included.length ) {
+					return;
+				}
 
-			return rowsData
-				.map( ( { siteArea, included, link } ) => {
-					if ( ! included.length ) {
-						return;
-					}
+				return [
+					<SiteArea key={ siteArea } text={ siteArea } link={ link } />,
+					<Included key={ included } data={ included } />,
+				];
+			} )
+			.filter( ( row ) => row );
 
-					const SiteArea = () => (
-							<InlineLink url={ link } color="secondary" underline="none">
-								<Text className="e-app-import-export-kit-data__site-area">
-									{ siteArea } { link && <Icon className="eicon-editor-external-link" /> }
-								</Text>
-							</InlineLink>
-						),
-						Included = () => (
-							<Text className="e-app-import-export-kit-data__included">
-								{ included.filter( ( value ) => value ).join( ' | ' ) }
-							</Text>
-						);
-
-					return [ <SiteArea key={ siteArea } />, <Included key={ included } /> ];
-				} )
-				.filter( ( row ) => row );
-		};
+	if ( ! rows.length ) {
+		return null;
+	}
 
 	return (
 		<DataTable
 			className="e-app-import-export-kit-data"
 			headers={ headers }
-			rows={ getRowsData() }
+			rows={ rows }
 			layout={ [ 1, 3 ] }
 		/>
 	);
