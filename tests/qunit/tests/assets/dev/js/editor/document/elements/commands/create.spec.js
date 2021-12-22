@@ -321,7 +321,7 @@ export const Create = () => {
 					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
 			} );
 
-			QUnit.only( 'Widget: Inner Section into Preview', ( assert ) => {
+			QUnit.test( 'Widget: Inner Section into Preview', ( assert ) => {
 				const eInnerSection = elementor.getPreviewContainer().view.createElementFromModel( {
 						elType: 'section',
 						isInner: true,
