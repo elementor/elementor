@@ -19,5 +19,9 @@ export default class BasePage {
 		this.testInfo = testInfo;
 
 		this.config = this.testInfo.config.projects[ 0 ].use;
+
+		page.on( "pageerror", ( err ) => {
+			console.error( err )
+		} )
 	}
 }
