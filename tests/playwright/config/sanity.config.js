@@ -16,10 +16,9 @@ const config = {
 	use: {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		// storageState: '/tmp/elementor-storageState.json', // Save the login state, reduce the requirements to login after 'globalSetup' runs.
 		baseURL: process.env.baseURL || 'http://localhost:8888',
 		viewport: { width: 1440, height: 960 },
-		video: 'on-first-retry',
+		video: 'on',
 		user: {
 			username: process.env.username || 'admin',
 			password: process.env.password || 'password',
