@@ -7,9 +7,10 @@ import PageHeader from '../../../ui/page-header/page-header';
 import KitContent from '../../../shared/kit-content/kit-content';
 import KitInformation from './components/kit-information/kit-information';
 import ActionsFooter from '../../../shared/actions-footer/actions-footer';
-
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
+
+import kitContentData from '../../../shared/kit-content-data/kit-content-data';
 
 import './export-kit.scss';
 
@@ -48,7 +49,7 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent />
+				<KitContent contentData={ kitContentData } />
 
 				<KitInformation />
 			</section>

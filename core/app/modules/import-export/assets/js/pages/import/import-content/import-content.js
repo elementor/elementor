@@ -6,11 +6,11 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import KitContent from '../../../shared/kit-content/kit-content';
 import ActionsFooter from '../../../shared/actions-footer/actions-footer';
-import Notice from 'elementor-app/ui/molecules/notice';
-import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import ImportContentDisplay from './components/import-content-display/import-content-display';
 import Button from 'elementor-app/ui/molecules/button';
+
+import useImportActions from '../hooks/use-import-actions';
 
 import './import-content.scss';
 
@@ -18,10 +18,12 @@ export default function ImportContent() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
+		{ navigateToMainScreen } = useImportActions(),
 		{ plugins, requiredPlugins, uploadedData, file, isProInstalledDuringProcess } = importContext.data,
 		{ includes } = sharedContext.data,
 		isImportAllowed = plugins.length || includes.length,
 		isAllRequiredPluginsSelected = requiredPlugins.length === plugins.length,
+		handleResetProcess = () => importContext.dispatch( { type: 'SET_FILE', payload: null } ),
 		getNextPageUrl = () => {
 			if ( includes.includes( 'templates' ) && uploadedData?.conflicts ) {
 				return 'import/resolver';
@@ -47,15 +49,14 @@ export default function ImportContent() {
 						if ( requiredPlugins.length ) {
 							navigate( 'import/plugins/' );
 						} else {
-							importContext.dispatch( { type: 'SET_FILE', payload: null } );
-							navigate( 'import/' );
+							handleResetProcess();
 						}
 					} }
 				/>
 
 				<Button
 					variant="contained"
-					text={ __( 'Next', 'elementor' ) }
+					text={ __( 'Import', 'elementor' ) }
 					color={ isImportAllowed ? 'primary' : 'disabled' }
 					onClick={ handleNextPage }
 				/>
@@ -65,7 +66,7 @@ export default function ImportContent() {
 	// On file change.
 	useEffect( () => {
 		if ( ! file ) {
-			navigate( 'import' );
+			navigateToMainScreen();
 		}
 	}, [ file ] );
 
@@ -80,14 +81,13 @@ export default function ImportContent() {
 					] }
 				/>
 
-				{
-					! isAllRequiredPluginsSelected &&
-					<Notice color="warning" label={ __( 'Required plugins are still missing.', 'elementor' ) } className="e-app-import-content__plugins-notice">
-						{ __( "If you don't include them, this kit may not work properly.", 'elementor' ) } <InlineLink url="/import/plugins">{ __( 'Go Back', 'elementor' ) }</InlineLink>
-					</Notice>
-				}
-
-				<KitContent manifest={ uploadedData?.manifest }	hasPro={ isProInstalledDuringProcess } />
+				<ImportContentDisplay
+					manifest={ uploadedData?.manifest }
+					hasPro={ isProInstalledDuringProcess }
+					hasPlugins={ ! ! requiredPlugins.length }
+					isAllRequiredPluginsSelected={ isAllRequiredPluginsSelected }
+					onResetProcess={ handleResetProcess }
+				/>
 			</section>
 		</Layout>
 	);

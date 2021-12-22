@@ -7,8 +7,9 @@ import Grid from 'elementor-app/ui/grid/grid';
 import './notice.scss';
 
 const iconsClassesMap = {
-	warning: 'eicon-warning',
+	danger: 'eicon-warning',
 	info: 'eicon-info-circle-o',
+	warning: 'eicon-warning',
 };
 
 export default function Notice( props ) {

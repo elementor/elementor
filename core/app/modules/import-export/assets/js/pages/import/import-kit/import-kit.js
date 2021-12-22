@@ -24,7 +24,7 @@ export default function ImportKit() {
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
 		[ isLoading, setIsLoading ] = useState( false ),
-		{ referrer } = useQueryParams().getAll(),
+		{ referrer } = sharedContext.data,
 		resetImportProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 			setErrorType( null );

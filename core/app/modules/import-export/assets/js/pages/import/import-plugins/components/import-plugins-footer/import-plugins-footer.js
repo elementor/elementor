@@ -6,9 +6,12 @@ import { ImportContext } from '../../../../../context/import-context/import-cont
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
+import useImportActions from '../../../hooks/use-import-actions';
+
 export default function ImportPluginsFooter() {
 	const importContext = useContext( ImportContext ),
-		navigate = useNavigate();
+		navigate = useNavigate(),
+		{ navigateToMainScreen } = useImportActions();
 
 	return (
 		<ActionsFooter>
@@ -18,7 +21,7 @@ export default function ImportPluginsFooter() {
 				onClick={ () => {
 					importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
-					navigate( '/import/' );
+					navigateToMainScreen();
 				} }
 			/>
 

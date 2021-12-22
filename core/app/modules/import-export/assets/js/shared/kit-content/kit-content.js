@@ -11,11 +11,9 @@ import Grid from 'elementor-app/ui/grid/grid';
 
 import MessageBanner from '../../ui/message-banner/message-banner';
 
-import kitContentData from '../kit-content-data/kit-content-data';
-
 import './kit-content.scss';
 
-export default function KitContent( { manifest, hasPro } ) {
+export default function KitContent( { contentData, hasPro } ) {
 	const [ containerHover, setContainerHover ] = useState( {} ),
 		// Need to read the hasPro value first from the props because the plugin might be installed during the process.
 		isProExist = hasPro || elementorAppConfig.hasPro,
@@ -34,26 +32,17 @@ export default function KitContent( { manifest, hasPro } ) {
 		},
 		setContainerHoverState = ( index, state ) => {
 			setContainerHover( ( prevState ) => ( { ...prevState, [ index ]: state } ) );
-		},
-		getManifestContent = () => {
-			return kitContentData.filter( ( { type } ) => {
-				const contentType = 'settings' === type ? 'site-settings' : type,
-					contentData = manifest[ contentType ];
+		};
 
-				return ! ! ( Array.isArray( contentData ) ? contentData.length : contentData );
-			} );
-		},
-		kitContent = manifest ? getManifestContent() : kitContentData;
-
-	if ( ! kitContent.length ) {
-		return <MessageBanner description={ __( 'This kit has no content.', 'elementor' ) } />;
+	if ( ! contentData.length ) {
+		return null;
 	}
 
 	return (
 		<Box>
 			<List separated className="e-app-export-kit-content">
 				{
-					kitContent.map( ( { type, data }, index ) => {
+					contentData.map( ( { type, data }, index ) => {
 						const isLockedFeaturesNoPro = data.features?.locked && ! isProExist;
 
 						return (
@@ -97,7 +86,7 @@ export default function KitContent( { manifest, hasPro } ) {
 
 KitContent.propTypes = {
 	className: PropTypes.string,
-	manifest: PropTypes.object,
+	contentData: PropTypes.array.isRequired,
 	hasPro: PropTypes.bool,
 };
 

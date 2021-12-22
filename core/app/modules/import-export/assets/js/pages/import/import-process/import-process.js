@@ -10,6 +10,7 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
+import useImportActions from '../hooks/use-import-actions';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -19,15 +20,11 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
+		{ navigateToMainScreen } = useImportActions(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
 		isKitHasSvgAssets = sharedContext.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
-		fileProcessInfo = importContext.data.uploadedData ? __( 'Importing your content, templates and site settings', 'elementor' ) : null,
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
-
-			if ( referrer ) {
-				sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
-			}
 
 			importContext.dispatch( { type: 'SET_FILE', payload: decodedFileURL } );
 
@@ -43,15 +40,16 @@ export default function ImportProcess() {
 		onCancelProcess = () => {
 			importContext.dispatch( { type: 'SET_FILE', payload: null } );
 
-			if ( 'kit-library' === referrer ) {
-				navigate( '/kit-library' );
-			} else {
-				navigate( '/import' );
-			}
+			navigateToMainScreen();
 		};
 
 	// on load.
 	useEffect( () => {
+		// Saving the referrer value globally.
+		if ( referrer ) {
+			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
+		}
+
 		if ( fileURL && ! importContext.data.file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
@@ -116,7 +114,7 @@ export default function ImportProcess() {
 		<Layout type="import">
 			<section>
 				<FileProcess
-					info={ fileProcessInfo }
+					info={ importContext.data.uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
 					onDialogDismiss={ onCancelProcess }
 				/>
