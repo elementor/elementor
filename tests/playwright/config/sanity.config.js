@@ -1,4 +1,4 @@
-// playwright.config.js
+// sanity.config.js
 // @ts-check
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
@@ -12,9 +12,9 @@ const config = {
 	use: {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: 'http://localhost:8888/',
+		baseURL: process.env.URL || 'http://localhost:8888/',
 		viewport: { width: 1440, height: 960 },
-		video: 'on-first-retry',
+		video: 'on',
 	},
 };
 
