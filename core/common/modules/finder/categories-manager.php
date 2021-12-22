@@ -76,6 +76,19 @@ class Categories_Manager {
 	}
 
 	/**
+	 * Unregister a finder category.
+	 *
+	 * @param string $finder_category_name - Category to unregister.
+	 *
+	 * @return void
+	 * @since 3.6.0
+	 * @access public
+	 */
+	public function unregister( $finder_category_name ) {
+		unset( $this->categories[ $finder_category_name ] );
+	}
+
+	/**
 	 * Get categories.
 	 *
 	 * Retrieve the registered categories, or a specific category if the category name
