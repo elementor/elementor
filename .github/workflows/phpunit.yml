@@ -55,6 +55,8 @@ jobs:
     name: Test results
     needs: test
     steps:
+      - name: Test status
+        run: echo ${{ needs.test.result }}
       - name: Check test matrix status
         if: ${{ needs.test.result != 'success' }}
         run: exit 1
