@@ -298,6 +298,43 @@ export const Create = () => {
 				} );
 			} );
 		} );
+
+		QUnit.module( 'Drag and Drop', () => {
+			QUnit.test( 'Widget: Inner Section into Column', ( assert ) => {
+				const eSection = ElementsHelper.createSection( 1 ),
+					eColumn = eSection.children[ 0 ],
+					eInnerSection = ( () => {
+						try {
+							return eColumn.view.createElementFromModel( {
+								elType: 'section',
+								isInner: true,
+							} );
+						} catch ( e ) {
+							return false;
+						}
+					} )();
+
+				const isInnerSectionCreated = !! eColumn.children.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children?.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+			} );
+
+			QUnit.only( 'Widget: Inner Section into Preview', ( assert ) => {
+				const eInnerSection = elementor.getPreviewContainer().view.createElementFromModel( {
+						elType: 'section',
+						isInner: true,
+					} ),
+					ePreviewChildren = elementor.getPreviewContainer().children,
+					isInnerSectionCreated = !! ePreviewChildren[ ePreviewChildren.length - 1 ].children[ 0 ].children
+						.find( ( widget ) => eInnerSection.id === widget.id );
+
+				assert.equal( isInnerSectionCreated, true, 'inner section were created.' );
+				assert.equal( eInnerSection.children.length, DEFAULT_INNER_SECTION_COLUMNS,
+					`'${ DEFAULT_INNER_SECTION_COLUMNS }' columns were created in the inner section.` );
+			} );
+		} );
 	} );
 };
 
