@@ -300,6 +300,8 @@ export const Create = () => {
 		} );
 
 		QUnit.module( 'Drag and Drop', () => {
+			// This module is about simulating the creation of elements by the dnd mechanism, which uses the `create`
+			// command indirectly. This is done by the `createElementFromModel` method.
 			QUnit.test( 'Widget: Inner Section into Column', ( assert ) => {
 				const eSection = ElementsHelper.createSection( 1 ),
 					eColumn = eSection.children[ 0 ],
