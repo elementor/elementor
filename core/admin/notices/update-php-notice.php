@@ -27,10 +27,10 @@ class Update_Php_Notice extends Base_Notice {
 	public function get_config() {
 		return [
 			'id' => static::ID,
-			'title' => esc_html__( 'Update your PHP to keep getting Elementor updates', 'elementor-pro' ),
-			'description' => esc_html__( 'Elementor\'s upcoming v3.7 will include a deprecation of PHP v5.6 that prevents you from receiving future updates. Make sure you update now - either manually or with your hosting provider.', 'elementor-pro' ),
+			'title' => esc_html__( 'Update your PHP to keep getting Elementor updates', 'elementor' ),
+			'description' => esc_html__( 'Elementor\'s upcoming v3.7 will include a deprecation of PHP v5.6 that prevents you from receiving future updates. Make sure you update now - either manually or with your hosting provider.', 'elementor' ),
 			'button' => [
-				'text' => '<i class="dashicons dashicons-update" aria-hidden="true"></i>' . esc_html__( 'Show me how', 'elementor-pro' ),
+				'text' => '<i class="dashicons dashicons-update" aria-hidden="true"></i>' . esc_html__( 'Show me how', 'elementor' ),
 				'url' => 'https://wordpress.org/support/update-php/',
 				'new_tab' => true,
 				'type' => 'cta',
