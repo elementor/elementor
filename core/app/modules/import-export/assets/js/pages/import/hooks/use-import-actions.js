@@ -9,16 +9,16 @@ export default function useImportActions() {
 	const sharedContext = useContext( SharedContext ),
 		navigate = useNavigate(),
 		{ backToDashboard } = useAction(),
-		isCameFromKitLibrary = 'kit-library' === sharedContext.data.referrer,
+		isStartedFromKitLibrary = 'kit-library' === sharedContext.data.referrer,
 		navigateToMainScreen = () => {
-			if ( isCameFromKitLibrary ) {
+			if ( isStartedFromKitLibrary ) {
 				navigate( '/kit-library' );
 			} else {
 				navigate( '/import' );
 			}
 		},
 		closeApp = () => {
-			if ( isCameFromKitLibrary ) {
+			if ( isStartedFromKitLibrary ) {
 				navigate( '/kit-library' );
 			} else {
 				backToDashboard();
