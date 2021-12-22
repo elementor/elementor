@@ -110,7 +110,6 @@ export const Paste = () => {
 					eSection2 = ElementsHelper.createSection(),
 					toCopy = [ eSection1, eSection2 ],
 					initialElementsCount = elementor.elements.length;
-				
 				// We want to create different widgets in different sections in order to check later whether the paste
 				// order is preserved using the `widgetType`.
 				ElementsHelper.createButton( eSection1.children[ 0 ] );
