@@ -17,7 +17,7 @@ exports.EditorPage = class EditorPage {
 	 * @returns {Promise<void>}
 	 */
 	async reload() {
-		this.page.reload();
+		await this.page.reload();
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
