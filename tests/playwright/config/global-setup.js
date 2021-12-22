@@ -11,7 +11,7 @@ module.exports = async ( config ) => {
 	await page.waitForSelector( 'text=Log In' );
 	await page.fill( 'input[name="log"]', configCurrentUse.user.username );
 	await page.fill( 'input[name="pwd"]', configCurrentUse.user.password );
-	await page.click( 'text=Log In' );
+	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Save signed-in state to 'storageState.json'.

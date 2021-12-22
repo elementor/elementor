@@ -21,6 +21,16 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Reload the editor page.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async reload() {
+		this.page.reload();
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	/**
 	 * Make sure that the elements panel is loaded.
 	 *
 	 * @return {Promise<void>}

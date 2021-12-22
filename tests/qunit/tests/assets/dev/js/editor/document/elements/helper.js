@@ -195,6 +195,17 @@ export default class ElementsHelper {
 		} );
 	}
 
+	static createWidgetHeading( eContainer, settings = {} ) {
+		return $e.run( 'document/elements/create', {
+			container: eContainer,
+			model: {
+				elType: 'widget',
+				widgetType: 'heading',
+				settings,
+			},
+		} );
+	}
+
 	static multiCreateButton( eContainers, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
