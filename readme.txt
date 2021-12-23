@@ -189,7 +189,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
 = 3.5.2 - 2021-12-22 =
-* Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/1717))
+* Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/17174))
 * Fix: Favorite widgets are being reset after page reload ([#17219](https://github.com/elementor/elementor/issues/17219))
 * Fix: Inner Section can’t be dragged into a column ([#17249](https://github.com/elementor/elementor/issues/17249))
 * Fix: Elements are pasted in reverse order when copying and pasting multiple elements
