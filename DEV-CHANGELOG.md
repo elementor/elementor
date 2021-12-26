@@ -1,5 +1,15 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev22 - 2021-12-26
+* Fix: Responsive reverse columns control inoperative []ED-5877 (#17246)
+* Tweak: Remove `elementor-section-wrap` by adding it to the DOM experiment [ED-5865] (#17192)
+* Fix: Favorites are not kept after page reload [ED-5903] (#17242)
+* Tweak: Promoted some experiments status to Stable (#16986)
+* Fix: Elements are pasted in reverse order when copying and pasting multi-selected elements [ED-5723] (#17231)
+* Fix: Inner Section can’t be dragged into a column [ED-5910] (#17258)
+* Tweak: Updated changelog v3.5.2 (#17281)
+* Fix: Changelog links (#17285)
+
 #### 3.6.0-dev21 - 2021-12-20
 * Tweak: Delete deprecated 'Scheme' classes alias [ED-5894] (#17217)
 * Fix: Revert task ED-1628 - document handle below the header with z-index above 99 (#17205)
@@ -478,12 +488,3 @@
 
 #### 3.4.0-dev10 - 2021-07-05
 * Fix: Update lighthouse baseline according to WordPress 5.8 and hello-theme 2.4.0 (#15554)
-
-#### 3.4.0-dev9 - 2021-06-29
-* Tweak: The Regenerate-Files admin button should reset all page-assets data [ED-3789] (#15457)
-* Tweak: Kit-Library - Errors and Loading UI [ED-3648] (#15460)
-* Tweak: Eye Dropper - Changed name to "Color Sampler" [ED-3959] (#15505)
-* Tweak: PHP Lint [ED-3960] (#15506)
-* Fix: Kit-library - UI fixes [ED-3840] (#15501)
-* Fix: Site Identity data was transferred on the Import-Export process [ED-3967] (#15509)
-* Fix: Post Excerpt is not imported when applying a kit in Kit Library [ED-3919] (#15510)
