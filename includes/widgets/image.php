@@ -476,8 +476,20 @@ class Widget_Image extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} .elementor-image img',
+				'selector' => '{{WRAPPER}} .elementor-image:hover img',
 				'separator' => 'before',
+			]
+		);
+		
+		$this->add_responsive_control(
+			'image_border_radius',
+			[
+				'label' => __( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image:hover img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			]
 		);
 
