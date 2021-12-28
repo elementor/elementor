@@ -314,7 +314,7 @@ class Widget_Counter extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'counter_border',
-				'selector' => '{{WRAPPER}} .elementor-counter-wrapper',
+				'selector' => '{{WRAPPER}} .elementor-counter',
 				'separator' => 'before',
 			]
 		);
@@ -326,7 +326,7 @@ class Widget_Counter extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-counter-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-counter' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
