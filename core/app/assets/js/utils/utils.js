@@ -23,29 +23,29 @@ export const arrayToClassName = ( array, action ) => {
 };
 
 /**
- * @see https://www.davedrinks.coffee/how-do-i-use-two-react-refs/
- * @param refs
+ * Return the first element of an iterable (object/array) if it has only one value.
+ *
+ * @param iterable The values iterable (the first value is retrieved from it)
+ * @param context The iterable that its length is being checked (defaults to the `iterable` argument)
+ * @param fallback The value that will be returned if the context is empty
+ * @returns {{}|[]|*}
  */
-export const mergeRefs = ( ...refs ) => {
-	const filteredRefs = refs.filter( Boolean );
+export const firstIfSingle = ( iterable, { context = iterable, fallback } ) => {
+	iterable = 'object' === typeof iterable ?
+		Object.values( iterable ) :
+		iterable;
 
-	if ( ! filteredRefs.length ) {
-		return null;
+	context = 'object' === typeof context ?
+		Object.values( context ) :
+		context;
+
+	if ( ! context.length && undefined !== fallback ) {
+		return fallback;
+	} else if ( 1 === context.length ) {
+		return iterable[ 0 ];
 	}
 
-	if ( 0 === filteredRefs.length ) {
-		return filteredRefs[ 0 ];
-	}
-
-	return ( inst ) => {
-		for ( const ref of filteredRefs ) {
-			if ( typeof ref === 'function' ) {
-				ref( inst );
-			} else if ( ref ) {
-				ref.current = inst;
-			}
-		}
-	};
+	return iterable;
 };
 
 export const stringToRemValues = ( string ) => {

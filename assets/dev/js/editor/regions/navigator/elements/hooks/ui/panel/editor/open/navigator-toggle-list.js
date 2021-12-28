@@ -17,30 +17,25 @@ export class NavigatorToggleList extends After {
 	}
 
 	apply( args ) {
-		const view = elementor.navigator.elements.getElementView( args.view.model.attributes.id );
-
-		this.toggleList( view );
+		this.toggleList( args.view.container.parent.model.attributes.id );
 	}
 
 	/**
-	 * @param {Element} view
+	 * @param {string} elementId
 	 */
-	toggleList( view ) {
-		view.recursiveParentInvoke( 'toggleList', true );
+	toggleList( elementId ) {
+		if ( 'document' === elementId ) {
+			return;
+		}
 
-		const { region } = $e.components.get( 'navigator' ),
-			layout = region.getLayout();
+		const container = elementor.getContainer( elementId );
 
-		layout.elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
-
-		view.addEditingClass();
-
-		// Scroll into navigator element view.
-		$e.internal( 'document/elements/scroll-to-view', {
-			$element: view.$el,
-			$parent: layout.elements.$el,
-			timeout: 400,
+		$e.run( 'navigator/elements/toggle-folding', {
+			container,
+			state: true,
 		} );
+
+		return this.toggleList( container.parent.id );
 	}
 }
 

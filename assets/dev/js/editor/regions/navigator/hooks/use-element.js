@@ -5,10 +5,10 @@ export function useElement( elementId ) {
 	/**
 	 * The element's Container instance.
 	 *
-	 * @var {Container}
+	 * @var {Container|false}
 	 */
 	const container = useMemo(
-		() => elementor.getContainer( elementId ),
+		() => elementor.getContainer( elementId || 'document' ),
 		[ elementId ]
 	);
 
@@ -20,25 +20,15 @@ export function useElement( elementId ) {
 	const element = useSelector(
 		( state ) => state[ 'document/elements' ][ elementId ]
 	);
-	/**
-	 * Whether the element usually contain children.
-	 *
-	 * @var {boolean}
-	 */
-	const hasChildrenByDefault = useMemo(
-		() => {
-			return element.elType &&
-				( 'widget' !== element.elType || Boolean( element.elements.length ) );
-		},
-		[ elementId, element.elements ]
-	);
 
 	return {
 		container,
 		element: {
-			...element,
+			settings: {},
+			element: [],
 			title: container.model.getTitle(),
 			icon: container.model.getIcon(),
+			...element,
 		},
 	};
 }

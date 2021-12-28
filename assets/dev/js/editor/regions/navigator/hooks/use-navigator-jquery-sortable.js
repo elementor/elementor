@@ -1,10 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import Item from '../components/item';
 
-export function useNavigatorJquerySortable( container, { baseClassName, handleToggleFolding } ) {
+export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 	const itemRef = useRef( null ),
 		handleRef = useRef( null ),
 		listRef = useRef( null ),
 		autoExpandTimerRef = useRef( null );
+
+	/**
+	 * The element's Container instance.
+	 *
+	 * @var {Container|false}
+	 */
+	const container = useMemo( () => {
+		return elementor.getContainer( elementId );
+	}, [ elementId ] );
 
 	useEffect( () => {
 		let draggedItemNewIndex;
@@ -14,10 +24,10 @@ export function useNavigatorJquerySortable( container, { baseClassName, handleTo
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: `.${ baseClassName }-${ element.elType } .elementor-navigator__elements`,
+			connectWith: `.${ Item.baseClassName }-${ container.model.attributes.elType } .elementor-navigator__elements`,
 			cancel: '[contenteditable="true"]',
-			start: ( event, ui ) => {
-				container.model.trigger( 'request:sort:start', event, ui );
+			start: ( e, ui ) => {
+				container.model.trigger( 'request:sort:start', e, ui );
 				jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
 				document.getElementById( 'elementor-navigator' ).dataset.over = 'true';
 			},
@@ -29,7 +39,7 @@ export function useNavigatorJquerySortable( container, { baseClassName, handleTo
 			},
 			over: ( e ) => {
 				e.stopPropagation();
-				jQuery( listRef.current ).closest( `.${ baseClassName }` ).addClass( 'elementor-dragging-on-child' );
+				jQuery( listRef.current ).closest( `.${ Item.baseClassName }` ).addClass( 'elementor-dragging-on-child' );
 			},
 			out: ( e ) => {
 				e.stopPropagation();
@@ -37,7 +47,7 @@ export function useNavigatorJquerySortable( container, { baseClassName, handleTo
 					return;
 				}
 
-				jQuery( listRef.current ).closest( `.${ baseClassName }` ).removeClass( 'elementor-dragging-on-child' );
+				jQuery( listRef.current ).closest( `.${ Item.baseClassName }` ).removeClass( 'elementor-dragging-on-child' );
 			},
 			update: ( e, ui ) => {
 				e.stopPropagation();
@@ -47,31 +57,33 @@ export function useNavigatorJquerySortable( container, { baseClassName, handleTo
 
 				setTimeout( () => container.model.trigger( 'request:sort:update', ui, draggedItemNewIndex ) );
 			},
-			receive: ( event, ui ) => {
-				setTimeout( () => container.model.trigger( 'request:sort:receive', event, ui, draggedItemNewIndex ) );
+		} );
+	}, [ container ] );
+
+	useEffect( () => {
+		const onItemMouseEnter = () => {
+				if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
+					return;
+				}
+
+				autoExpandTimerRef.current = setTimeout( () => {
+					setElementFolding( true );
+					jQuery( listRef.current ).sortable( 'refreshPositions' );
+				}, 500 );
 			},
-		} );
+			onItemMouseLeave = () => {
+				if ( autoExpandTimerRef.current ) {
+					clearTimeout( autoExpandTimerRef.current );
+				}
+			};
 
-		itemRef.current.addEventListener( 'mouseenter', () => {
-			if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
-				return;
-			}
+		itemRef.current.addEventListener( 'mouseenter', onItemMouseEnter );
+		itemRef.current.addEventListener( 'mouseleave', onItemMouseLeave );
 
-			autoExpandTimerRef.current = setTimeout( () => {
-				handleToggleFolding( true );
-				jQuery( listRef.current ).sortable( 'refreshPositions' );
-			}, 500 );
-		} );
-
-		itemRef.current.addEventListener( 'mouseleave', () => {
-			if ( autoExpandTimerRef.current ) {
-				clearTimeout( autoExpandTimerRef.current );
-			}
-		} );
-
-		handleRef.current.addEventListener( 'mousedown', ( e ) => {
-			e.stopPropagation();
-		} );
+		return () => {
+			itemRef.current.removeEventListener( 'mouseenter', onItemMouseEnter );
+			itemRef.current.removeEventListener( 'mouseleave', onItemMouseLeave );
+		};
 	}, [ container ] );
 
 	return {

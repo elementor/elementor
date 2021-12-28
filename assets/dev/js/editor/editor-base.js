@@ -436,16 +436,11 @@ export default class EditorBase extends Marionette.Application {
 			elements: this.elements,
 		} );
 
-		const flatten = ( new ElementModel( { elements: elementor.elementsModel.get( 'elements' ).models } ) )
-			.flatten();
-
-		for ( const element of flatten ) {
-			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.add( {
-					model: element,
-				} )
-			);
-		}
+		$e.store.dispatch(
+			$e.store.get( 'document/elements' ).actions.add( {
+				models: elementor.elementsModel.get( 'elements' ).toJSON(),
+			} )
+		);
 	}
 
 	initPreview() {

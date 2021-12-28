@@ -2,7 +2,7 @@ import ComponentBase from 'elementor-api/modules/component-base';
 import ElementsComponent from './elements/component';
 
 import * as commands from './commands/';
-import * as hooks from './hooks/index';
+import * as hooks from './commands-hooks';
 import * as commandsInternal from './commands-internal/';
 
 export default class Component extends ComponentBase {
@@ -39,6 +39,27 @@ export default class Component extends ComponentBase {
 
 	defaultCommandsInternal() {
 		return this.importCommands( commandsInternal );
+	}
+
+	defaultStates() {
+		return {
+			folding: {
+				initialState: {},
+				reducers: {
+					toggle: ( state, { payload } ) => {
+						// Prepare
+						const { elementIds = [ payload.elementId ], state: foldingState, all = false } = payload;
+
+						// Act
+						for ( const elementId of all ? Object.keys( state ) : elementIds ) {
+							state[ elementId ] = undefined === foldingState ?
+								! state[ elementId ] :
+								foldingState;
+						}
+					},
+				},
+			},
+		};
 	}
 
 	defaultShortcuts() {

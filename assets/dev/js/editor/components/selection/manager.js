@@ -29,7 +29,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		// Subscribe to the selection state kept in redux.
 		$e.store.subscribe( () => {
 			const selectionSelector = ( state ) => state[ 'document/elements/selection' ];
-			this.elements = selectionSelector( $e.store.getState() );
+			this.elements = Object.fromEntries(
+				Object.keys( selectionSelector( $e.store.getState() ) || {} )
+					.map( ( elementId ) => [ elementId, elementor.getContainer( elementId ) ] )
+			);
 		} );
 
 		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
@@ -92,20 +95,12 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		for ( const container of containers ) {
 			$e.store.dispatch(
 				$e.store.get( 'document/elements/selection' ).actions.toggle( {
-					container: container.id,
+					containerId: container.id,
 					state: true,
 				} )
 			);
 
 			container.view.select();
-		}
-
-		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( containers[ 0 ].view.$el, 200 );
-		}
-
-		if ( options.section ) {
-			elementor.activateElementSection( options.section );
 		}
 	}
 
@@ -128,7 +123,7 @@ export default class Manager extends elementorModules.editor.utils.Module {
 		for ( const container of containers ) {
 			$e.store.dispatch(
 				$e.store.get( 'document/elements/selection' ).actions.toggle( {
-					container: container.id,
+					containerId: container.id,
 					state: false,
 				} )
 			);

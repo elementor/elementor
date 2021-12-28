@@ -6,13 +6,15 @@ export class Collapse extends CommandNavigator {
 
 		containers.forEach( ( container ) => {
 			$e.store.dispatch(
-				$e.store.get( 'document/elements/folding' ).actions.toggle( {
-					containerId: container.id,
+				$e.store.get( 'navigator/folding' ).actions.toggle( {
+					elementId: container.id,
 					state: false,
 				} )
 			);
 
-			callback.apply( this );
+			if ( callback ) {
+				callback.apply( this );
+			}
 		} );
 	}
 }

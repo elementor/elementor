@@ -8,7 +8,7 @@ export default class Navigator extends BaseRegion {
 		super( options );
 
 		// `BaseRegion` created before the component exist, in this case `setTimeout` handle it.
-		//setTimeout( () => this.component = $e.components.get( 'navigator' ) );
+		setTimeout( () => this.component = $e.components.get( 'navigator' ) );
 
 		this.el = this.$el[ 0 ];
 
@@ -87,7 +87,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	initLayout() {
-		ReactDOM.render( <NavigatorComponent />, this.$el[ 0 ] );
+		ReactDOM.render( <NavigatorComponent documentId={ elementor.documents.getCurrentId() } />, this.$el[ 0 ] );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

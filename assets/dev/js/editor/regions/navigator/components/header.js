@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import Icon from 'elementor-app/ui/atoms/icon';
 import PropTypes from 'prop-types';
-import { useElementFolding } from 'elementor-regions/navigator/hooks';
+import { useElementFolding } from '../hooks';
 
 export default function Header( { onClose } ) {
-	const elementsFolding = useElementFolding();
+	const [ elementsFolding, setElementsFolding ] = useElementFolding();
 
 	/**
 	 * Whether all elements folding state is open.
@@ -22,10 +22,8 @@ export default function Header( { onClose } ) {
 	 * @void
 	 */
 	const toggleAll = useCallback( () => {
-		$e.run( 'navigator/elements/toggle-folding-all', {
-			state: ! isAllOpen,
-		} );
-	} );
+		setElementsFolding( ! isAllOpen );
+	}, [ isAllOpen ] );
 
 	return (
 		<div id="elementor-navigator__header">

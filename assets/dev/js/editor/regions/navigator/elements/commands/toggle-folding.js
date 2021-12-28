@@ -5,11 +5,7 @@ export class ToggleFolding extends CommandNavigator {
 		const { containers = [ args.container ], callback, state } = args;
 
 		containers.forEach( ( container ) => {
-			if ( ! container.children.length ) {
-				return;
-			}
-
-			const isActive = ( ( _state ) => _state[ 'document/elements/folding' ][ container.id ] )(
+			const isActive = ( ( _state ) => _state[ 'navigator/folding' ][ container.id ] )(
 				$e.store.getState()
 			);
 

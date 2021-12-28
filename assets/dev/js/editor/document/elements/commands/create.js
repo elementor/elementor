@@ -41,7 +41,7 @@ export class Create extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { model = { elements: [], ...args.model }, options = {}, containers = [ args.container ] } = args;
+		const { model, options = {}, containers = [ args.container ] } = args;
 
 		let result = [];
 
@@ -57,14 +57,6 @@ export class Create extends CommandHistory {
 			container = container.lookup();
 
 			const createdContainer = container.view.addElement( model, options ).getContainer();
-
-			$e.store.dispatch(
-				$e.store.get( 'document/elements' ).actions.add( {
-					containerId: 'document' === container.id ? undefined : container.id,
-					model: { id: createdContainer.id, ...createdContainer.model.toJSON() },
-					index: options.at,
-				} )
-			);
 
 			result.push( createdContainer );
 
@@ -84,6 +76,14 @@ export class Create extends CommandHistory {
 					},
 				} );
 			}
+
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.add( {
+					containerId: 'document' === container.id ? undefined : container.id,
+					model: { id: createdContainer.id, ...createdContainer.model.toJSON() },
+					index: options.at,
+				} )
+			);
 		} );
 
 		if ( 1 === result.length ) {

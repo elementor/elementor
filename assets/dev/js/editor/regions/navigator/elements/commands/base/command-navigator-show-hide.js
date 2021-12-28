@@ -17,12 +17,7 @@ export class CommandNavigatorShowHide extends CommandNavigator {
 		const { containers = [ args.container ] } = args;
 
 		containers.forEach( ( container ) => {
-			const view = container.args.navigatorView,
-				model = view.model;
-
-			model.set( 'hidden', this.shouldHide() );
-
-			view.toggleHiddenClass();
+			container.model.set( 'hidden', this.shouldHide() );
 		} );
 	}
 }

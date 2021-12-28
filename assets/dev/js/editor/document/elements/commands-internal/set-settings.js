@@ -31,7 +31,7 @@ export class SetSettings extends CommandInternal {
 		$e.store.dispatch(
 			$e.store.get( 'document/elements' ).actions.settings( {
 				containerIds: containers.map( ( container ) => container.id ),
-				settings,
+				settings: { ...settings },
 			} )
 		);
 	}

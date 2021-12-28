@@ -9,7 +9,7 @@ export class Select extends CommandBase {
 		const { containers = [ args.container ], options = {} } = args,
 			{ append = false } = options;
 
-		elementor.selection.add( containers, append );
+		elementor.selection.add( containers, options );
 
 		if ( options.scrollIntoView && ! append && 1 === containers.length ) {
 			$e.internal( 'document/elements/scroll-to-view', { container: containers[ 0 ] } );

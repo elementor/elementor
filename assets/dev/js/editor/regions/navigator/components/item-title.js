@@ -6,6 +6,10 @@ const ItemTitle = React.memo( function ItemTitle( { title, onTitleEdit } ) {
 		[ editMode, setEditMode ] = useState( false );
 
 	const handleDoubleClick = () => {
+		if ( ! onTitleEdit ) {
+			return;
+		}
+
 		setEditMode( true );
 		setTimeout( () => titleRef.current.focus() );
 	};

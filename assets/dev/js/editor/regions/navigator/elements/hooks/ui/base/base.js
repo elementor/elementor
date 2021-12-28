@@ -6,11 +6,7 @@ export default class Base extends After {
 	}
 
 	getConditions( args ) {
-		const { containers = [ args.container ] } = args;
-
-		// Ensuring the component is open and every container has valid navigator element view.
-		return this.component.isOpen && containers.every(
-			( container ) => this.component.elements.getElementView( container.id )
-		);
+		// Ensuring the component is open.
+		return this.component.isOpen;
 	}
 }
