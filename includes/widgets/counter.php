@@ -315,7 +315,6 @@ class Widget_Counter extends Widget_Base {
 			[
 				'name' => 'counter_border',
 				'selector' => '{{WRAPPER}} .elementor-counter',
-				'separator' => 'before',
 			]
 		);
 
