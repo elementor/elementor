@@ -309,7 +309,7 @@ class Widget_Counter extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
-			
+		
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
@@ -320,7 +320,7 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'image_border_radius',
+			'counter_border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
