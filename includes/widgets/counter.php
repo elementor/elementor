@@ -301,6 +301,38 @@ class Widget_Counter extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_border',
+			[
+				'label' => esc_html__( 'Border', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+			
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			[
+				'name' => 'counter_border',
+				'selector' => '{{WRAPPER}} .elementor-counter-wrapper',
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-counter-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
 	}
 
 	/**
