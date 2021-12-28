@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
 
-export default function ItemIndicator( { indicator: { title, icon, section }, onToggleSelection } ) {
+export default function ItemIndicator( { indicator: { title, icon, section }, onActivateSection } ) {
 	const indicatorRef = useRef( null );
 
 	useEffect( () => {
@@ -11,7 +11,7 @@ export default function ItemIndicator( { indicator: { title, icon, section }, on
 
 	const handleClick = ( e ) => {
 		e.stopPropagation();
-		onToggleSelection( { section } );
+		onActivateSection( section );
 	};
 
 	return (
@@ -27,5 +27,5 @@ ItemIndicator.propTypes = {
 		icon: PropTypes.string,
 		section: PropTypes.string,
 	} ),
-	onToggleSelection: PropTypes.func,
+	onActivateSection: PropTypes.func,
 };

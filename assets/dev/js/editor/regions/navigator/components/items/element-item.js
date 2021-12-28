@@ -16,7 +16,12 @@ export default function ElementItem( { itemId: elementId, level } ) {
 		[ elementSelection, setElementSelection ] = useElementSelection( elementId ),
 		[ elementFolding, setElementFolding ] = useElementFolding( elementId );
 
-	const handleClick = useCallback(
+	/**
+	 * Set the element selection state in the store.
+	 *
+	 * @void
+	 */
+	const handleToggleSelection = useCallback(
 		( e ) => {
 			e.stopPropagation();
 			setElementSelection( { append: e.ctrlKey || e.metaKey } );
@@ -48,6 +53,18 @@ export default function ElementItem( { itemId: elementId, level } ) {
 			$e.run( 'document/elements/set-title', { container, title: newTitle } );
 		},
 		[ elementId ]
+	);
+
+	/**
+	 * Activate a specific section in the panel regarding the element.
+	 *
+	 * @void
+	 */
+	const handleActivateSection = useCallback(
+		( section ) => {
+			setElementSelection( { section } );
+		},
+		[ setElementSelection ]
 	);
 
 	/**
@@ -95,7 +112,7 @@ export default function ElementItem( { itemId: elementId, level } ) {
 				{ [ `${ Item.baseClassName }--has-children` ]: hasChildrenByDefault || element.elements.length },
 				{ [ `${ Item.baseClassName }-hidden` ]: element.hidden },
 			] ) }
-			onClick={ handleClick }
+			onClick={ handleToggleSelection }
 			onContextMenu={ handleContextMenu }
 			data-id={ elementId }>
 			<ItemHandle
@@ -109,7 +126,7 @@ export default function ElementItem( { itemId: elementId, level } ) {
 				<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
 					<Icon className="eicon-preview-medium" />
 				</div>
-				<ItemIndicatorList settings={ element.settings } onToggleSelection={ setElementSelection } />
+				<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection } />
 			</ItemHandle>
 			<div style={ { display: elementFolding ? 'block' : 'none' } }>
 				<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ hasChildrenByDefault } />
