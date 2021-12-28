@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.5.2
+Stable tag: 3.5.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -188,8 +188,11 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
+= 3.5.3 - 2021-12-28 =
+Fix: Global Widgets appears with the default widget style and not with the styling of the Global widget([#17296](https://github.com/elementor/elementor/issues/17296))
+
 = 3.5.2 - 2021-12-22 =
-* Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/1717))
+* Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/17174))
 * Fix: Favorite widgets are being reset after page reload ([#17219](https://github.com/elementor/elementor/issues/17219))
 * Fix: Inner Section can’t be dragged into a column ([#17249](https://github.com/elementor/elementor/issues/17249))
 * Fix: Elements are pasted in reverse order when copying and pasting multiple elements
