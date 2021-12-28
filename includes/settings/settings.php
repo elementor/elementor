@@ -72,8 +72,8 @@ class Settings extends Settings_Page {
 		}
 
 		add_menu_page(
-			__( 'Elementor', 'elementor' ),
-			__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
 			'manage_options',
 			self::PAGE_ID,
 			[ $this, 'display_settings_page' ],
@@ -132,8 +132,8 @@ class Settings extends Settings_Page {
 	public function register_pro_menu() {
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Submissions', 'elementor' ),
-			__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
 			'manage_options',
 			'e-form-submissions',
 			function() {
@@ -143,8 +143,8 @@ class Settings extends Settings_Page {
 
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Custom Fonts', 'elementor' ),
-			__( 'Custom Fonts', 'elementor' ),
+			esc_html__( 'Custom Fonts', 'elementor' ),
+			esc_html__( 'Custom Fonts', 'elementor' ),
 			'manage_options',
 			'elementor_custom_fonts',
 			[ $this, 'elementor_custom_fonts' ]
@@ -152,11 +152,22 @@ class Settings extends Settings_Page {
 
 		add_submenu_page(
 			self::PAGE_ID,
-			__( 'Custom Icons', 'elementor' ),
-			__( 'Custom Icons', 'elementor' ),
+			esc_html__( 'Custom Icons', 'elementor' ),
+			esc_html__( 'Custom Icons', 'elementor' ),
 			'manage_options',
 			'elementor_custom_icons',
 			[ $this, 'elementor_custom_icons' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
+			__( 'Custom Code', 'elementor' ),
+			__( 'Custom Code', 'elementor' ),
+			'manage_options',
+			'elementor_custom_custom_code',
+			function() {
+				$this->elementor_custom_code();
+			}
 		);
 
 		add_submenu_page(
@@ -194,7 +205,7 @@ class Settings extends Settings_Page {
 		add_submenu_page(
 			self::PAGE_ID,
 			'',
-			__( 'Get Help', 'elementor' ),
+			esc_html__( 'Get Help', 'elementor' ),
 			'manage_options',
 			'go_knowledge_base_site',
 			[ $this, 'handle_external_redirects' ]
@@ -536,7 +547,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => 'internal',
+									'std' => 'external',
 									'options' => [
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
@@ -622,6 +633,22 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		}
 
 		remove_all_actions( 'admin_notices' );
+	}
+
+	/**
+	 * Output the content for custom_code page.
+	 */
+	private function elementor_custom_code() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>images/go-pro-wp-dashboard.svg" />
+				<h2><?php echo esc_html__( 'Add Your Custom Code', 'elementor' ); ?></h2>
+				<p><?php echo esc_html__( 'Custom Code is a tool gives you one place where you can insert scripts, rather than dealing with dozens of different plugins and deal with code.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo esc_url( Utils::get_pro_link( 'http://go.elementor.com/go-pro-custom-code' ) ); ?>"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
 	}
 
 	/**

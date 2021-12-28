@@ -78,23 +78,9 @@ EditorView = ControlsStack.extend( {
 	},
 
 	onDestroy: function() {
-		var editedElementView = this.getOption( 'editedElementView' );
-
-		if ( editedElementView ) {
-			editedElementView.$el.removeClass( 'elementor-element-editable' );
-		}
-
 		this.model.trigger( 'editor:close' );
 
 		this.triggerMethod( 'editor:destroy' );
-	},
-
-	onRender: function() {
-		var editedElementView = this.getOption( 'editedElementView' );
-
-		if ( editedElementView ) {
-			editedElementView.$el.addClass( 'elementor-element-editable' );
-		}
 	},
 
 	onDeviceModeChange: function() {

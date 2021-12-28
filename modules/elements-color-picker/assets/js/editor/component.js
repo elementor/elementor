@@ -1,5 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
 import * as commands from './commands/';
+import * as uiStates from './ui-states/';
 
 export default class Component extends ComponentBase {
 	/**
@@ -82,6 +83,15 @@ export default class Component extends ComponentBase {
 	 */
 	defaultCommands() {
 		return this.importCommands( commands );
+	}
+
+	/**
+	 * Import the component UI states.
+	 *
+	 * @returns {object}
+	 */
+	defaultUiStates() {
+		return this.importUiStates( uiStates );
 	}
 
 	/**

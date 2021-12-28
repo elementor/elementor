@@ -21,7 +21,7 @@ class Notice_Bar extends Base_Object {
 			'muted_period' => 90,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
 			'message' => sprintf(
-				/* translators: %1$s Link open tag, %2$s: Link close tag. */
+				/* translators: 1: Link open tag, 2: Link close tag. */
 				esc_html__( 'Love using Elementor? %1$sLearn how you can build better sites with Elementor Pro.%2$s', 'elementor' ),
 				'<a href="%s">',
 				'</a>'

@@ -105,6 +105,14 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
 		this.listenTo( settings, 'change', this.onAfterChange );
+
+		if ( this.model.attributes.responsive ) {
+			elementor.listenTo( elementor.channels.deviceMode, 'change', () => this.onDeviceModeChange() );
+		}
+	},
+
+	onDeviceModeChange: function() {
+		this.toggleControlVisibility();
 	},
 
 	onAfterChange: function() {
