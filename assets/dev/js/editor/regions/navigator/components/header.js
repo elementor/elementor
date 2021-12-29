@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
+import { useElementFolding } from '../hooks';
 import Icon from 'elementor-app/ui/atoms/icon';
 import PropTypes from 'prop-types';
-import { useElementFolding } from '../hooks';
 
-export default function Header( { onClose } ) {
+export function Header( { onClose } ) {
 	const [ elementsFolding, setElementsFolding ] = useElementFolding();
 
 	/**
@@ -37,3 +37,5 @@ export default function Header( { onClose } ) {
 Header.propTypes = {
 	onClose: PropTypes.func,
 };
+
+export default Header;

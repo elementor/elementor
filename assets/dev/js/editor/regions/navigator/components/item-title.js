@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-const ItemTitle = React.memo( function ItemTitle( { title, onTitleEdit } ) {
+export function ItemTitle( { title, onTitleEdit } ) {
 	const titleRef = useRef(),
 		[ editMode, setEditMode ] = useState( false );
 
@@ -47,7 +47,7 @@ const ItemTitle = React.memo( function ItemTitle( { title, onTitleEdit } ) {
 				onKeyPress={ handleKeyPress }>{ title }</span>
 		</div>
 	);
-} );
+}
 
 ItemTitle.propTypes = {
 	title: PropTypes.string,

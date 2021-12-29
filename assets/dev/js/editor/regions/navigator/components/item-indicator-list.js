@@ -1,7 +1,7 @@
 import ItemIndicator from './item-indicator';
 import PropTypes from 'prop-types';
 
-export default function ItemIndicatorList( { settings, onActivateSection } ) {
+export function ItemIndicatorList( { settings, onActivateSection } ) {
 	/**
 	 * Generate a list of indicator elements by checking whether the element contains settings that are suppose to
 	 * result in an indicator on the navigator.
@@ -26,3 +26,5 @@ ItemIndicatorList.propTypes = {
 	settings: PropTypes.object,
 	onActivateSection: PropTypes.func,
 };
+
+export default ItemIndicatorList;

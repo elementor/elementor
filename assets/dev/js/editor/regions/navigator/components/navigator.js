@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import Header from './header';
-import Icon from 'elementor-app/ui/atoms/icon';
-import ItemList from './item-list';
 import { Provider } from 'react-redux';
-import Empty from './empty';
+import { useCallback, useEffect, useState } from 'react';
+import { Empty, ItemList, Header } from './';
+import Icon from 'elementor-app/ui/atoms/icon';
+import PropTypes from 'prop-types';
 
-export default function Navigator( { documentId } ) {
+export function Navigator( { documentId } ) {
 	const NavigatorBody = () => {
 		const [ root, setRoot ] = useState( [] );
 
@@ -62,3 +60,5 @@ export default function Navigator( { documentId } ) {
 Navigator.propTypes = {
 	documentId: PropTypes.number,
 };
+
+export default Navigator;
