@@ -18,7 +18,6 @@ export default class Helper {
 					container,
 					model,
 				} );
-				//container.view.addChildModel( model );
 
 				/**
 				 * Manual history & not using of `$e.run('document/elements/create')`
