@@ -1,17 +1,14 @@
-import PropTypes from 'prop-types';
-import ItemListEmpty from './item-list-empty';
-import { useItemContext } from '../context/item-context';
+import { ElementItem } from './items';
 import { forwardRef } from 'react';
-import ElementItem from 'elementor-regions/navigator/components/items/element-item';
+import { useItemContext } from '../context/item-context';
+import ItemListEmpty from './item-list-empty';
+import PropTypes from 'prop-types';
 
 function ItemList( { items, indicateEmpty, ...props }, ref ) {
 	const { level = 0 } = useItemContext();
 
 	return (
-		<div
-			{ ...props}
-			ref={ ref }
-			className="elementor-navigator__elements">
+		<div { ...props} ref={ ref } className="elementor-navigator__elements">
 			{ items?.length ?
 				items.map(
 					( itemId ) => <ElementItem key={ itemId } itemId={ itemId } level={ level + 1 } />
@@ -22,10 +19,13 @@ function ItemList( { items, indicateEmpty, ...props }, ref ) {
 	);
 }
 
-export default forwardRef( ItemList );
+ItemList = forwardRef( ItemList );
 
 ItemList.propTypes = {
 	listRef: PropTypes.object,
 	items: PropTypes.array,
 	indicateEmpty: PropTypes.bool,
 };
+
+export { ItemList };
+export default ItemList;

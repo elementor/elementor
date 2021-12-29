@@ -1,13 +1,12 @@
-import { forwardRef, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import Icon from 'elementor-app/ui/atoms/icon';
-import ItemIcon from 'elementor-regions/navigator/components/item-icon';
-import ItemTitle from 'elementor-regions/navigator/components/item-title';
 import { arrayToClassName } from 'elementor-app/utils/utils';
+import { forwardRef, useCallback } from 'react';
+import { ItemIcon, ItemTitle } from './';
 import { useItemContext } from '../context/item-context';
+import Icon from 'elementor-app/ui/atoms/icon';
+import PropTypes from 'prop-types';
 
 function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children, ...props }, ref ) {
-	const { data: item, level } = useItemContext();
+	const { item, level } = useItemContext();
 
 	/**
 	 * Toggle the element folding state in the store.
@@ -19,7 +18,7 @@ function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children,
 			e.stopPropagation();
 			onToggleFolding();
 		},
-		[ item.id ]
+		[ onToggleFolding ]
 	);
 
 	return (
@@ -46,7 +45,7 @@ function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children,
 	);
 }
 
-export default forwardRef( ItemHandle );
+ItemHandle = forwardRef( ItemHandle );
 
 ItemHandle.propTypes = {
 	className: PropTypes.string,
@@ -55,3 +54,6 @@ ItemHandle.propTypes = {
 	onTitleEdit: PropTypes.func,
 	children: PropTypes.node,
 };
+
+export { ItemHandle };
+export default ItemHandle;

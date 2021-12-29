@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
 import Icon from 'elementor-app/ui/atoms/icon';
+import PropTypes from 'prop-types';
 
-export default function ItemIndicator( { indicator: { title, icon, section }, onActivateSection } ) {
+export function ItemIndicator( { indicator: { title, icon, section }, onActivateSection } ) {
 	const indicatorRef = useRef( null );
 
 	useEffect( () => {
@@ -38,3 +38,5 @@ ItemIndicator.propTypes = {
 	} ),
 	onActivateSection: PropTypes.func,
 };
+
+export default ItemIndicator;

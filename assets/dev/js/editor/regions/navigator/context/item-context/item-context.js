@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
  *
  * @var {React.Context<{}>}
  */
-const ItemContext = createContext( {} );
+export const ItemContext = createContext( {} );
 
 /**
  * A wrapper function for using `ItemContext`.
@@ -20,20 +20,20 @@ export function useItemContext() {
 /**
  * A wrapper function for `ItemContext.Provider`.
  *
- * @param value
- * @param children
+ * @param props
  *
  * @returns {JSX.Element}
  */
-export function ItemProvider( { value, children } ) {
-	return (
-		<ItemContext.Provider value={ value }>
-			{ children }
-		</ItemContext.Provider>
-	);
+export function ItemProvider( props ) {
+	// The purpose of this wrapping is to allow the value validation using PropTypes.
+	return <ItemContext.Provider { ...props } />;
 }
 
 ItemProvider.propTypes = {
-	value: PropTypes.object,
-	children: PropTypes.node,
+	value: PropTypes.shape( {
+		item: PropTypes.object.isRequired,
+		level: PropTypes.number.isRequired,
+	} ).isRequired,
 };
+
+export default ItemContext;

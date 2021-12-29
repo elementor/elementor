@@ -1,4 +1,4 @@
-export default function Empty() {
+export function Empty() {
 	return (
 		<div className="elementor-nerd-box">
 			<img className="elementor-nerd-box-icon" src={ `${ elementorCommon.config.urls.assets }images/information.svg` } />
@@ -7,3 +7,5 @@ export default function Empty() {
 		</div>
 	);
 }
+
+export default Empty;

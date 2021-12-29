@@ -1,20 +1,13 @@
 import { useEffect, useMemo, useRef } from 'react';
-import Item from '../components/item';
+import { BASE_ITEM_CLASS } from '../components/items';
+import { useItemContext } from '../context/item-context';
 
 export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
-	const itemRef = useRef( null ),
+	const { container } = useItemContext(),
+		itemRef = useRef( null ),
 		handleRef = useRef( null ),
 		listRef = useRef( null ),
 		autoExpandTimerRef = useRef( null );
-
-	/**
-	 * The element's Container instance.
-	 *
-	 * @var {Container|false}
-	 */
-	const container = useMemo( () => {
-		return elementor.getContainer( elementId );
-	}, [ elementId ] );
 
 	useEffect( () => {
 		let draggedItemNewIndex;
@@ -24,7 +17,7 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: `.${ Item.baseClassName }-${ container.model.attributes.elType } .elementor-navigator__elements`,
+			connectWith: `.${ BASE_ITEM_CLASS }-${ container.model.attributes.elType } .elementor-navigator__elements`,
 			cancel: '[contenteditable="true"]',
 			start: ( e, ui ) => {
 				container.model.trigger( 'request:sort:start', e, ui );
@@ -39,7 +32,7 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 			},
 			over: ( e ) => {
 				e.stopPropagation();
-				jQuery( listRef.current ).closest( `.${ Item.baseClassName }` ).addClass( 'elementor-dragging-on-child' );
+				jQuery( listRef.current ).closest( `.${ BASE_ITEM_CLASS }` ).addClass( 'elementor-dragging-on-child' );
 			},
 			out: ( e ) => {
 				e.stopPropagation();
@@ -47,7 +40,7 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 					return;
 				}
 
-				jQuery( listRef.current ).closest( `.${ Item.baseClassName }` ).removeClass( 'elementor-dragging-on-child' );
+				jQuery( listRef.current ).closest( `.${ BASE_ITEM_CLASS }` ).removeClass( 'elementor-dragging-on-child' );
 			},
 			update: ( e, ui ) => {
 				e.stopPropagation();
