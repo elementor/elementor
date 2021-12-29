@@ -2,6 +2,12 @@ import ItemIndicator from './item-indicator';
 import PropTypes from 'prop-types';
 
 export default function ItemIndicatorList( { settings, onActivateSection } ) {
+	/**
+	 * Generate a list of indicator elements by checking whether the element contains settings that are suppose to
+	 * result in an indicator on the navigator.
+	 *
+	 * @type {ItemIndicator[]}
+	 */
 	const list = Object.entries( elementor.navigator.region.indicators ).map(
 		( [ key, indicator ] ) => {
 			return indicator.settingKeys.some( ( settingKey ) => settings[ settingKey ] ) &&

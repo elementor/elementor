@@ -5,6 +5,12 @@ const ItemTitle = React.memo( function ItemTitle( { title, onTitleEdit } ) {
 	const titleRef = useRef(),
 		[ editMode, setEditMode ] = useState( false );
 
+	/**
+	 * Trigger Edit-Mode (the span becomes content-editable) when the user double-clicks the element. Also focus the
+	 * span element so editing is immediately possible.
+	 *
+	 * @void
+	 */
 	const handleDoubleClick = () => {
 		if ( ! onTitleEdit ) {
 			return;
@@ -14,6 +20,13 @@ const ItemTitle = React.memo( function ItemTitle( { title, onTitleEdit } ) {
 		setTimeout( () => titleRef.current.focus() );
 	};
 
+	/**
+	 * Store the new title of the element when the user presses `Enter`. Also blur the span element to exit Edit-Mode.
+	 *
+	 * @param e Event
+	 *
+	 * @void
+	 */
 	const handleKeyPress = ( e ) => {
 		if ( 'Enter' === e.key ) {
 			titleRef.current.blur();
