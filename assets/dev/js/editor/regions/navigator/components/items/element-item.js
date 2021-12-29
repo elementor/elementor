@@ -107,7 +107,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 					{ [ BASE_ITEM_CLASS ]: true },
 					{ [ `${ BASE_ITEM_CLASS }-${ element.elType }` ]: element.elType },
 					{ [ `${ BASE_ITEM_CLASS }--has-children` ]: hasChildrenByDefault || element.elements.length },
-					{ [ `${ BASE_ITEM_CLASS }-hidden` ]: element.hidden },
+					{ [ `${ BASE_ITEM_CLASS }--hidden` ]: element.hidden },
 				] ) }
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }

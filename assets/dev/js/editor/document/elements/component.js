@@ -83,6 +83,16 @@ export default class Component extends ComponentBase {
 					state[ containerId ].settings = { ...state[ containerId ].settings, ...settings };
 				}
 			},
+			change: ( state, { payload } ) => {
+				// Prepare
+				const { containerIds = [ payload.containerId ], changes = {} } = payload;
+
+				// Act
+				for ( const containerId of containerIds ) {
+					// Set settings of the current element
+					state[ containerId ] = { ...state[ containerId ], ...changes };
+				}
+			},
 		};
 
 		return {
