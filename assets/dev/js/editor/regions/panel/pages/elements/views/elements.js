@@ -22,12 +22,15 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return false;
 		}
 
-		// Remove widgets from search results by 'widgets categories'.
-		const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
-			.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
+		// Filter Results only on widgets which are not global widget.
+		if ( ! childModel.get( 'custom' )?.templateID ) {
+			// Remove widgets from search results by 'widgets categories'.
+			const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
+				.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
 
-		if ( ! showInSearchResult ) {
-			return false;
+			if ( ! showInSearchResult ) {
+				return false;
+			}
 		}
 
 		if ( -1 !== childModel.get( 'title' ).toLowerCase().indexOf( filterValue.toLowerCase() ) ) {
