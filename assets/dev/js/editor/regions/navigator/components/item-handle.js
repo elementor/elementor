@@ -9,6 +9,11 @@ import { useItemContext } from '../context/item-context';
 function ItemHandle( { className, style, onToggleFolding, onTitleEdit, children, ...props }, ref ) {
 	const { data: item, level } = useItemContext();
 
+	/**
+	 * Toggle the element folding state in the store.
+	 *
+	 * @void
+	 */
 	const handleToggleFolding = useCallback(
 		( e ) => {
 			e.stopPropagation();
