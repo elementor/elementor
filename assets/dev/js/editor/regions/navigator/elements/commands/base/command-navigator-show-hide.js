@@ -18,6 +18,15 @@ export class CommandNavigatorShowHide extends CommandNavigator {
 
 		containers.forEach( ( container ) => {
 			container.model.set( 'hidden', this.shouldHide() );
+
+			$e.store.dispatch(
+				$e.store.get( 'document/elements' ).actions.change( {
+					containerId: container.id,
+					changes: {
+						hidden: container.model.get( 'hidden' ),
+					},
+				} )
+			);
 		} );
 	}
 }

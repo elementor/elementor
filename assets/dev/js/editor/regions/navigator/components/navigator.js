@@ -4,7 +4,7 @@ import { Empty, ItemList, Header } from './';
 import Icon from 'elementor-app/ui/atoms/icon';
 import PropTypes from 'prop-types';
 
-export function Navigator( { documentId } ) {
+export function Navigator() {
 	const NavigatorBody = () => {
 		const [ root, setRoot ] = useState( [] );
 
@@ -22,7 +22,7 @@ export function Navigator( { documentId } ) {
 			return () => {
 				elementor.elements.off( 'add remove reset', updateElements );
 			};
-		}, [ documentId ] );
+		}, [] );
 
 		/**
 		 * Close the navigator view.
@@ -41,7 +41,6 @@ export function Navigator( { documentId } ) {
 						<ItemList items={ root } /> :
 						<Empty />
 					}
-					<ItemList items={ root } />
 				</div>
 				<div id="elementor-navigator__footer">
 					<Icon className="eicon-ellipsis-h" />
@@ -58,7 +57,6 @@ export function Navigator( { documentId } ) {
 }
 
 Navigator.propTypes = {
-	documentId: PropTypes.number,
 };
 
 export default Navigator;
