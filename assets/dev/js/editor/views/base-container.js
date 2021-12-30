@@ -112,10 +112,7 @@ module.exports = Marionette.CompositeView.extend( {
 		model = Object.assign( model, model.custom );
 
 		// Check whether the container cannot contain a section, in which case we should use an inner-section.
-		if (
-			$e.components.get( 'document/elements' ).utils.isValidChild( new ElementModel( model ), container.model ) &&
-			'section' === model.elType
-		) {
+		if ( 'section' === model.elType ) {
 			model.isInner = true;
 		}
 
@@ -124,7 +121,7 @@ module.exports = Marionette.CompositeView.extend( {
 			title: elementor.helpers.getModelLabel( model ),
 		} );
 
-		if ( options.shouldWrap || model.isInner ) {
+		if ( options.shouldWrap ) {
 			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
 
 			container = $e.run( 'document/elements/create', {
