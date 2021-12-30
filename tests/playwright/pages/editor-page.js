@@ -1,4 +1,5 @@
 const { addElement, getElementSelector } = require( '../assets/elements-utils' );
+const { WpAdminPage } = require( './wp-admin-page' );
 
 exports.EditorPage = class EditorPage {
 	isPanelLoaded = false;
@@ -17,7 +18,7 @@ exports.EditorPage = class EditorPage {
 	 * @returns {Promise<void>}
 	 */
 	async reload() {
-		this.page.reload();
+		await this.page.reload();
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
@@ -70,5 +71,21 @@ exports.EditorPage = class EditorPage {
 	 */
 	async getElementHandle( id ) {
 		return this.previewFrame.$( getElementSelector( id ) );
+	}
+
+	async init( experiments ) {
+		const wpAdmin = new WpAdminPage( this.page );
+
+		if ( experiments ) {
+			await wpAdmin.setExperiments( experiments );
+		}
+
+		await wpAdmin.createNewPage();
+
+		await this.ensurePanelLoaded();
+
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+
+		await this.previewFrame.waitForTimeout( 4000 );
 	}
 };
