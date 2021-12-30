@@ -22,8 +22,9 @@ PanelElementsElementsView = Marionette.CollectionView.extend( {
 			return false;
 		}
 
-		// Filter Results only on widgets which are not global widget.
-		if ( ! childModel.get( 'custom' )?.templateID ) {
+		const isGlobalWidget = childModel.get( 'custom' )?.templateID;
+		
+		if ( ! isGlobalWidget ) {
 			// Remove widgets from search results by 'widgets categories'.
 			const showInSearchResult = Object.keys( elementor.documents.getCurrent().config.panel.elements_categories )
 				.some( ( categoryName ) => childModel.get( 'categories' ).includes( categoryName ) );
