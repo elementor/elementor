@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Mock_Category extends Base_Category {
 
-	public function get_title()	{
+	public function get_title() {
 		return 'Mock';
 	}
 
