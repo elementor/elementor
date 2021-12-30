@@ -94,7 +94,7 @@ export const Settings = () => {
 				const eSection1 = ElementsHelper.createSection(),
 					eSection2 = ElementsHelper.createSection(),
 					eColumns = ElementsHelper.multiCreateColumn( [ eSection1, eSection2 ] ),
-					eButtons = ElementsHelper.multiCreateButton( eColumns ),
+					eButtons = ElementsHelper.multiCreateWidgetButton( eColumns ),
 					text = 'i test it';
 
 				ElementsHelper.multiSettings( eButtons, { text } );

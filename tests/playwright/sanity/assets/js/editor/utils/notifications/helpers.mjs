@@ -1,4 +1,4 @@
-module.exports = class {
+export default class {
 	constructor( page ) {
 		this.page = page;
 	}
@@ -6,4 +6,4 @@ module.exports = class {
 	async waitForToast( text ) {
 		await this.page.waitForSelector( `#elementor-toast >> :text("${ text }")`, { timeout: 4000 } );
 	}
-};
+}

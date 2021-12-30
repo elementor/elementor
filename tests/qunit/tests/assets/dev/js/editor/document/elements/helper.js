@@ -52,17 +52,7 @@ export default class ElementsHelper {
 			eContainers.push( this.createSection( 1, true ) );
 		}
 
-		return this.multiCreateButton( eContainers, settings );
-	}
-
-	static createAutoColumn( eContainer = null, settings = {} ) {
-		eContainer = eContainer ? this.createColumn( eContainer ) : this.createSection( 1, true );
-
-		this.settings( eContainer, settings, {
-			debounce: false,
-		} );
-
-		return eContainer;
+		return this.multiCreateWidgetButton( eContainers, settings );
 	}
 
 	static createSection( columns = 1, returnFirstColumn = false, options = {} ) {
@@ -172,18 +162,6 @@ export default class ElementsHelper {
 		} );
 	}
 
-	static createWidgetMulti( eContainers, widgetType, settings = {}, options = {} ) {
-		return $e.run( 'document/elements/create', {
-			containers: eContainers,
-			model: {
-				elType: 'widget',
-				widgetType,
-				settings,
-			},
-			options,
-		} );
-	}
-
 	static createWidgetButton( eContainer, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			container: eContainer,
@@ -206,7 +184,7 @@ export default class ElementsHelper {
 		} );
 	}
 
-	static multiCreateButton( eContainers, settings = {} ) {
+	static multiCreateWidgetButton( eContainers, settings = {} ) {
 		return $e.run( 'document/elements/create', {
 			containers: eContainers,
 			model: {

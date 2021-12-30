@@ -48,7 +48,7 @@ export const Duplicate = () => {
 			QUnit.test( 'Simple', ( assert ) => {
 				const eColumn1 = ElementsHelper.createSection( 1, true ),
 					eColumn2 = ElementsHelper.createSection( 1, true ),
-					eButtons = ElementsHelper.multiCreateButton( [ eColumn1, eColumn2 ] );
+					eButtons = ElementsHelper.multiCreateWidgetButton( [ eColumn1, eColumn2 ] );
 
 				ElementsHelper.multiDuplicate( eButtons );
 

@@ -5,9 +5,6 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 	const wpAdmin = new WpAdminPage( page, testInfo );
 
 	await wpAdmin.login();
-	await wpAdmin.setExperiments( {
-		container: true,
-	} );
 
 	const editor = await wpAdmin.useElementorCleanPost();
 
@@ -34,8 +31,4 @@ test( 'Image widget sanity test', async ( { page }, testInfo)  => {
 		src = await img.getAttribute( 'src' );
 
 	expect( src ).toContain( '.jpeg' );
-
-	await wpAdmin.setExperiments( {
-		container: false,
-	} );
 } );

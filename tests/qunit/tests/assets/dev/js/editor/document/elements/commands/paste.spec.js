@@ -84,9 +84,9 @@ export const Paste = () => {
 
 				// We want to create different widgets in different columns in order to check later whether the paste
 				// order is preserved using the `widgetType`.
-				ElementsHelper.createButton( eColumn1 );
+				ElementsHelper.createWidgetButton( eColumn1 );
 
-				ElementsHelper.createHeading( eColumn2 );
+				ElementsHelper.createWidgetHeading( eColumn2 );
 
 				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
@@ -112,9 +112,9 @@ export const Paste = () => {
 					initialElementsCount = elementor.elements.length;
 				// We want to create different widgets in different sections in order to check later whether the paste
 				// order is preserved using the `widgetType`.
-				ElementsHelper.createButton( eSection1.children[ 0 ] );
+				ElementsHelper.createWidgetButton( eSection1.children[ 0 ] );
 
-				ElementsHelper.createHeading( eSection2.children[ 0 ] );
+				ElementsHelper.createWidgetHeading( eSection2.children[ 0 ] );
 
 				ElementsHelper.multiCopy( toCopy.slice().reverse() );
 
