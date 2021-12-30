@@ -20,8 +20,28 @@ export default class BasePage {
 
 		this.config = this.testInfo.config.projects[ 0 ].use;
 
-		page.on( "pageerror", ( ... err ) => {
-			console.error( 'error:' . JSON.stringify( err ) );
-		} )
+		// page.on( "pageerror", ( ... err ) => {
+		// 	console.error( 'error:' + JSON.stringify( err ) );
+		// } )
+
+		this.page = new Proxy( this.page, {
+			get: ( target, key ) => {
+				if ( key === 'goto' ) {
+					return ( path ) => {
+						return page.goto( this.config.baseURL + path );
+					}
+				} else if ( key === 'waitForNavigation' ) {
+					return ( args ) => {
+						if ( args.url ) {
+							return page.waitForNavigation( { url: this.config.baseURL + args.url } );
+						}
+
+						return page.waitForNavigation( args || {} );
+					}
+				}
+
+				return target[ key ];
+			},
+		} );
 	}
 }
