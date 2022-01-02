@@ -38,5 +38,7 @@
 	"breakpoints":  {},
 	"activeBreakpoints": {}
   },
-  "experimentalFeatures": {}
+  "experimentalFeatures": {
+	"container": true
+  }
 }
