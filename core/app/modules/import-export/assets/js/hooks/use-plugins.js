@@ -12,14 +12,15 @@ export const PLUGIN_STATUS_MAP = Object.freeze( {
 	NOT_INSTALLED: 'Not Installed',
 } );
 
+const baseEndpoint = elementorCommon.config.urls.rest + 'wp/v2/plugins/',
+	getInitialState = () => ( {
+		status: PLUGINS_RESPONSE_MAP.INITIAL,
+		data: null,
+	} );
+
 export default function usePlugins() {
-	const getInitialState = () => ( {
-			status: PLUGINS_RESPONSE_MAP.INITIAL,
-			data: null,
-		} ),
-		[ response, setResponse ] = useState( getInitialState() ),
+	const [ response, setResponse ] = useState( () => getInitialState() ),
 		allowResponseUpdate = useRef( true ),
-		baseEndpoint = elementorCommon.config.urls.rest + 'wp/v2/plugins/',
 		fetchRest = ( { body, method, endpoint = '' } ) => {
 			const data = {
 				method,

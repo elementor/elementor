@@ -24,7 +24,7 @@ export default function ImportContent() {
 				<ImportContentFooter
 					hasPlugins={ ! ! uploadedData?.manifest.plugins?.length }
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
-					isImportAllowed={ plugins.length || includes.length }
+					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
 				/>
 			);
 		};
