@@ -17,7 +17,7 @@ const createTabsWidget = async( editor, targetID = null ) => {
 }
 
 test.describe( 'NestedElementsModule', () => {
-	test.beforeEach( async ( { page }, testInfo ) => {
+	test.beforeAll( async ( { page }, testInfo ) => {
 		wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.login();
@@ -26,12 +26,21 @@ test.describe( 'NestedElementsModule', () => {
 			container: true,
 			'nested-elements': true,
 		} );
+	} );
+
+	test.beforeEach( async ( { page }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo );
+
+		await wpAdmin.login();
 
 		editor = await wpAdmin.useElementorCleanPost();
 	} );
 
+	test.afterAll( async ( { page }, testInfo ) => {
+		wpAdmin = new WpAdminPage( page, testInfo );
 
-	test.afterEach( async () => {
+		await wpAdmin.login();
+
 		await wpAdmin.setExperiments( {
 			container: false,
 			'nested-elements': false,
