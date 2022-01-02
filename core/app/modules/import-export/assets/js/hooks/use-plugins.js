@@ -122,7 +122,5 @@ export default function usePlugins() {
 			remove,
 			reset,
 		},
-		PLUGINS_RESPONSE_MAP,
-		PLUGIN_STATUS_MAP,
 	};
 }

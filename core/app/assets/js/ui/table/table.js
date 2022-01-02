@@ -11,22 +11,15 @@ import TableCheckbox from './table-checkbox';
 
 import './table.scss';
 
-export default function Table( props ) {
-	const getInitialSelections = () => {
-		const initialSelected = {};
-
-		props.initialSelected.forEach( ( value ) => initialSelected[ value ] = value );
-
-		return initialSelected;
-	},
-	[ selected, setSelected ] = useState( getInitialSelections() ),
-	[ disabled, setDisabled ] = useState( props.initialDisabled ),
+export default function Table( { className, initialSelected, initialDisabled, selection, children, onSelect } ) {
+	const [ selected, setSelected ] = useState( initialSelected ),
+	[ disabled, setDisabled ] = useState( initialDisabled ),
 	classNameBase = 'eps-table',
-	classes = [ classNameBase, { [ classNameBase + '--selection' ]: props.hasOwnProperty( 'selection' ) }, props.className ];
+	classes = [ classNameBase, { [ classNameBase + '--selection' ]: selection }, className ];
 
 	useEffect( () => {
-		if ( props.onSelect ) {
-			props.onSelect( Object.values( selected ) );
+		if ( onSelect ) {
+			onSelect( selected );
 		}
 	}, [ selected ] );
 
@@ -34,13 +27,13 @@ export default function Table( props ) {
 		<Context.Provider value={ { selected, setSelected, disabled, setDisabled } }>
 			<table className={ arrayToClassName( classes ) }>
 				{
-					props.selection &&
+					selection &&
 					<colgroup>
 						<col className={ classNameBase + '__checkboxes-column' } />
 					</colgroup>
 				}
 
-				{ props.children }
+				{ children }
 			</table>
 		</Context.Provider>
 	);

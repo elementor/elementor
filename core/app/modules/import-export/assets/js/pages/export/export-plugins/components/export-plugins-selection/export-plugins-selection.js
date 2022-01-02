@@ -1,6 +1,4 @@
-import { useContext, useEffect } from 'react';
-
-import { ExportContext } from '../../../../../context/export-context/export-context-provider';
+import { memo } from 'react';
 
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Loader from '../../../../../ui/loader/loader';
@@ -8,14 +6,12 @@ import Loader from '../../../../../ui/loader/loader';
 import usePlugins, { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
 import usePluginsData, { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-data';
 
-export default function ExportPluginsSelection() {
-	const exportContext = useContext( ExportContext ),
-		{ response } = usePlugins(),
+function ExportPluginsSelection( { onSelect } ) {
+	const { response } = usePlugins(),
 		{ pluginsData } = usePluginsData( response.data ),
 		activePlugins = pluginsData.filter( ( { status } ) => PLUGIN_STATUS_MAP.ACTIVE === status ),
-		handleOnSelect = ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
 		getInitialSelected = () => {
-			// Elementor Core will always be th
+			// Elementor Core will always be the first plugin on the list.
 			const initialSelected = [ 0 ];
 
 			// In case that Elementor Pro appears in the list it will always be second and should always be selected by default.
@@ -37,7 +33,13 @@ export default function ExportPluginsSelection() {
 			initialDisabled={ [ 0 ] /* Elementor Core will always be first and should always be disabled */ }
 			layout={ [ 3, 1 ] }
 			withStatus={ false }
-			onSelect={ handleOnSelect }
+			onSelect={ onSelect }
 		/>
 	);
 }
+
+ExportPluginsSelection.propTypes = {
+	onSelect: PropTypes.func.isRequired,
+};
+
+export default memo( ExportPluginsSelection );

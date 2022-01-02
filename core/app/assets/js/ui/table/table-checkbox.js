@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { Context } from './table-context';
 import { arrayToClassName } from 'elementor-app/utils/utils.js';
@@ -7,52 +7,44 @@ import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function TableCheckbox( props ) {
 	const context = useContext( Context ),
-		attrs = { ...props },
-		isSelectAllCheckbox = () => props.hasOwnProperty( 'allSelectedCount' ),
-		isAllSelected = () => Object.keys( context.selected ).length === props.allSelectedCount,
-		isIndeterminate = () => isSelectAllCheckbox() ? ! ! ( Object.keys( context.selected ).length && ! isAllSelected() ) : false,
-		getIsSelected = () => isSelectAllCheckbox() ? isAllSelected() : ( props.index in context.selected ),
-		getIsDisabled = () => ! isSelectAllCheckbox() ? context.disabled.includes( props.index ) : null,
+		isSelectAllCheckbox = props.hasOwnProperty( 'allSelectedCount' ),
+		isAllSelected = context.selected.length === props.allSelectedCount,
+		isIndeterminate = isSelectAllCheckbox ? ! ! ( context.selected.length && ! isAllSelected ) : false,
+		isSelected = isSelectAllCheckbox ? isAllSelected : context.selected.includes( props.index ),
+		isDisabled = ! isSelectAllCheckbox ? context.disabled.includes( props.index ) : null,
 		onSelectAll = () => {
 			context.setSelected( () => {
-				if ( isAllSelected() || isIndeterminate() ) {
-					return {};
+				if ( isAllSelected || isIndeterminate ) {
+					return [];
 				}
 
-				const allItems = {};
-
-				Array( props.allSelectedCount )
+				return Array( props.allSelectedCount )
 					.fill( true )
-					.map( ( value, index ) => allItems[ index ] = index );
-
-				return allItems;
+					.map( ( value, index ) => index );
 			} );
 		},
 		onSelectRow = () => {
 			context.setSelected( ( prevState ) => {
-				const currentSelections = { ...prevState };
+				const currentSelections = [ ...prevState ],
+					currentIndexPosition = currentSelections.indexOf( props.index );
 
-				if ( props.index in currentSelections ) {
-					delete currentSelections[ props.index ];
+				if ( currentIndexPosition > -1 ) {
+					currentSelections.splice( currentIndexPosition, 1 );
 				} else {
-					currentSelections[ props.index ] = props.index;
+					currentSelections.push( props.index );
 				}
 
 				return currentSelections;
 			} );
 		},
-		onChange = () => isSelectAllCheckbox() ? onSelectAll() : onSelectRow();
-
-	// Removing non-native attributes before passing it to the Checkbox component.
-	delete attrs.allSelectedCount;
+		onChange = () => isSelectAllCheckbox ? onSelectAll() : onSelectRow();
 
 	return (
 		<Checkbox
-			checked={ getIsSelected() }
-			indeterminate={ isIndeterminate() }
+			checked={ isSelected }
+			indeterminate={ isIndeterminate }
 			onChange={ onChange }
-			disabled={ getIsDisabled() }
-			{ ...attrs }
+			disabled={ isDisabled }
 			className={ arrayToClassName( [ 'eps-table__checkbox', props.className ] ) }
 		/>
 	);

@@ -2,7 +2,6 @@ import KitContent from '../../../../../shared/kit-content/kit-content';
 import kitContentData from '../../../../../shared/kit-content-data/kit-content-data';
 import Notice from 'elementor-app/ui/molecules/notice';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
-import Button from 'elementor-app/ui/molecules/button';
 
 export default function ImportContentDisplay( {
 	manifest,

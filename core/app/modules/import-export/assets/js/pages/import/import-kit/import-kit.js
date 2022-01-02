@@ -12,7 +12,6 @@ import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
 
-import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit from '../../../hooks/use-kit';
 
 import './import-kit.scss';

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 export const PLUGINS_KEYS = Object.freeze( {
 	ELEMENTOR: 'Elementor',
 	ELEMENTOR_PRO: 'Elementor Pro',
@@ -32,6 +34,6 @@ export default function usePluginsData( plugins ) {
 	};
 
 	return {
-		pluginsData: getPluginsData(),
+		pluginsData: useMemo( () => getPluginsData(), [ plugins ] ),
 	};
 }

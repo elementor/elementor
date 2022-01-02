@@ -7,44 +7,22 @@ import { ImportContext } from '../../../context/import-context/import-context-pr
 import Layout from '../../../templates/layout';
 import WizardStep from '../../../ui/wizard-step/wizard-step';
 import KitData from '../../../shared/kit-data/kit-data';
-import ActionsFooter from '../../../shared/actions-footer/actions-footer';
-import Button from 'elementor-app/ui/molecules/button';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 
 import FailedPluginsNotice from './components/failed-plugins-notice/failed-plugins-notice';
 import ConnectProNotice from './components/connect-pro-notice/connect-pro-notice';
+import ImportCompleteFooter from './components/import-complete-footer/import-complete-footer';
 
 import useImportedKitData from './hooks/use-imported-kit-data';
-import useImportActions from '../hooks/use-import-actions';
 
 export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
-		{ closeApp } = useImportActions(),
 		{ activePlugins, failedPlugins } = getPlugins( importContext.data.importedPlugins ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importContext.data.importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
-		getFooter = () => (
-			<ActionsFooter>
-				{
-					seeItLiveUrl &&
-					<Button
-						text={ __( 'See it live', 'elementor' ) }
-						variant="contained"
-						onClick={ () => window.open( seeItLiveUrl, '_blank' ) }
-					/>
-				}
-
-				<Button
-					text={ __( 'Close', 'elementor' ) }
-					variant="contained"
-					color="primary"
-					onClick={ closeApp }
-				/>
-			</ActionsFooter>
-		),
 		getKitData = () => {
 			if ( ! importContext.data.uploadedData || ! importContext.data.importedData ) {
 				return {};
@@ -70,7 +48,7 @@ export default function ImportComplete() {
 	}, [] );
 
 	return (
-		<Layout type="import" footer={ getFooter() }>
+		<Layout type="import" footer={ <ImportCompleteFooter seeItLiveUrl={ seeItLiveUrl } /> }>
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
 				heading={ __( 'Your kit is now live on your site!', 'elementor' ) }

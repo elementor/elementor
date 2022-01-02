@@ -11,7 +11,6 @@ export default function DataTable( {
 	layout,
 	rows,
 	selection,
-	withHeader,
 } ) {
 	return (
 		<Table
@@ -22,7 +21,7 @@ export default function DataTable( {
 			className={ arrayToClassName( [ 'e-app-data-table', className ] ) }
 		>
 			{
-				withHeader &&
+				! ! headers.length &&
 				<Table.Head>
 					<Table.Row>
 						{
@@ -88,6 +87,5 @@ DataTable.defaultProps = {
 	initialDisabled: [],
 	initialSelected: [],
 	selection: false,
-	withHeader: true,
 };
 

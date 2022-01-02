@@ -38,7 +38,7 @@ export const isOneOf = ( filetype, filetypeOptions ) => {
 	return filetypeOptions.some( ( type ) => filetype.includes( type ) );
 };
 
-export const arrayToObjectByKey = ( array = [], key ) => {
+export const arrayToObjectByKey = ( array, key ) => {
 	const finalObject = {};
 
 	array.forEach( ( item ) => finalObject[ item[ key ] ] = item );

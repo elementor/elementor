@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -6,11 +6,9 @@ import { ExportContext } from '../../../context/export-context/export-context-pr
 
 import Layout from '../../../templates/layout';
 import PageHeader from '../../../ui/page-header/page-header';
-import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 
 import ExportPluginsSelection from './components/export-plugins-selection/export-plugins-selection';
-
-import Button from 'elementor-app/ui/molecules/button';
+import ExportPluginsFooter from './components/export-plugins-footer/export-plugins-footer';
 
 import './export-plugins.scss';
 
@@ -21,22 +19,7 @@ export default function ExportPlugins() {
 		[ isKitReady, setIsKitReady ] = useState( false ),
 		{ plugins, isExportProcessStarted } = exportContext.data || [],
 		hasIncludes = ! ! sharedContext.data.includes.length,
-		getFooter = () => (
-			<ActionsFooter>
-				<Button
-					text={ __( 'Back', 'elementor' ) }
-					variant="contained"
-					url="/export"
-				/>
-
-				<Button
-					text={ __( 'Create Kit', 'elementor' ) }
-					variant="contained"
-					color={ isKitReady ? 'primary' : 'disabled' }
-					onClick={ () => isKitReady && navigate( '/export/process' ) }
-				/>
-			</ActionsFooter>
-		);
+		handleOnSelect = useCallback( ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] );
 
 	// On load.
 	useEffect( () => {
@@ -61,14 +44,14 @@ export default function ExportPlugins() {
 	}, [ plugins ] );
 
 	return (
-		<Layout type="export" footer={ getFooter() }>
+		<Layout type="export" footer={ <ExportPluginsFooter isKitReady={ isKitReady } /> }>
 			<section className="e-app-export-plugins">
 				<PageHeader
 					heading={ __( 'Export your site as a Template Kit', 'elementor' ) }
 					description={ __( 'Select which of these plugins are required for this kit work.', 'elementor' ) }
 				/>
 
-				<ExportPluginsSelection />
+				<ExportPluginsSelection onSelect={ handleOnSelect } />
 			</section>
 		</Layout>
 	);

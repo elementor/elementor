@@ -11,11 +11,9 @@ export default function useImportActions() {
 		{ backToDashboard } = useAction(),
 		isStartedFromKitLibrary = 'kit-library' === sharedContext.data.referrer,
 		navigateToMainScreen = () => {
-			if ( isStartedFromKitLibrary ) {
-				navigate( '/kit-library' );
-			} else {
-				navigate( '/import' );
-			}
+			const url = isStartedFromKitLibrary ? '/kit-library' : '/import';
+
+			navigate( url );
 		},
 		closeApp = () => {
 			if ( isStartedFromKitLibrary ) {

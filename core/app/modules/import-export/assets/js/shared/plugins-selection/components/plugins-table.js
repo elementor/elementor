@@ -28,6 +28,10 @@ function PluginsTable( {
 			</InlineLink>
 		),
 		getHeaders = () => {
+			if ( ! withHeader ) {
+				return [];
+			}
+
 			const headers = [ 'Plugin Name', 'Version' ];
 
 			if ( withStatus ) {
@@ -58,7 +62,6 @@ function PluginsTable( {
 			initialSelected={ initialSelected }
 			initialDisabled={ initialDisabled }
 			layout={ layout }
-			withHeader={ withHeader }
 			className="e-app-import-export-plugins-table"
 		/>
 	);
