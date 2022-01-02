@@ -309,7 +309,7 @@ class Widget_Counter extends Widget_Base {
 				'tab' => Controls_Manager::TAB_STYLE,
 			]
 		);
-		
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
