@@ -1,12 +1,10 @@
 import { expect, test } from '@playwright/test'
 import WpAdminPage from "../../pages/wp-admin-page.mjs";
 
-/**
- * @type {EditorPage}
- */
-let editor;
 
-let wpAdmin;
+let page,
+	editor,
+	wpAdmin;
 
 const createTabsWidget = async( editor, targetID = null ) => {
 	if ( ! targetID ) {
@@ -16,8 +14,10 @@ const createTabsWidget = async( editor, targetID = null ) => {
 	return await editor.addWidget( 'nested-tabs', targetID );
 }
 
-test.describe( 'NestedElementsModule', () => {
-	test.beforeAll( async ( { page }, testInfo ) => {
+test.describe.serial( 'NestedElementsModule', () => {
+	test.beforeAll( async ( { browser }, testInfo ) => {
+		page = await browser.newPage();
+
 		wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.login();
@@ -28,7 +28,7 @@ test.describe( 'NestedElementsModule', () => {
 		} );
 	} );
 
-	test.beforeEach( async ( { page }, testInfo ) => {
+	test.beforeEach( async ( {}, testInfo ) => {
 		wpAdmin = new WpAdminPage( page, testInfo );
 
 		await wpAdmin.login();
@@ -36,10 +36,8 @@ test.describe( 'NestedElementsModule', () => {
 		editor = await wpAdmin.useElementorCleanPost();
 	} );
 
-	test.afterAll( async ( { page }, testInfo ) => {
+	test.afterAll( async ( {}, testInfo ) => {
 		wpAdmin = new WpAdminPage( page, testInfo );
-
-		await wpAdmin.login();
 
 		await wpAdmin.setExperiments( {
 			container: false,
