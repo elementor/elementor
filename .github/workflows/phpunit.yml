@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   file-diff:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -20,7 +20,7 @@ jobs:
             **/*.php
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-18.04 # It is ubuntu 18 because there are some issues with the mysql version and php 7 and 5.6.
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.php_diff || github.ref == 'refs/heads/developer-edition' }}
     strategy:
@@ -50,15 +50,13 @@ jobs:
         run: WP_MULTISITE=1 composer run test
 
   test-result:
-    if: ${{ always() }}
-    runs-on: ubuntu-18.04
-    name: Test Results
     needs: test
+    if: ${{ always() }} # Will be run even if 'test' matrix will be skipped
+    runs-on: ubuntu-20.04
+    name: PHPUnit - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.test.result }}"
       - name: Check test matrix status
         if: ${{ needs.test.result != 'success' && needs.test.result != 'skipped' }}
         run: exit 1
-
-
