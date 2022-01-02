@@ -54,7 +54,9 @@ export default class wpAdminPage extends BasePage {
 
 		await this.waitForPanel();
 
-		const editor = new EditorPage( this.page, this.testInfo )
+		const editor = new EditorPage( this.page, this.testInfo );
+
+		await editor.ensurePanelLoaded();
 
 		await this.page.evaluate( () => $e.run( 'document/elements/empty', { force: true } ) );
 
