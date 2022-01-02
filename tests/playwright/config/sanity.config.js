@@ -15,7 +15,7 @@ const config = {
 		baseURL: process.env.URL || 'http://localhost:8888/',
 		viewport: { width: 1440, height: 960 },
 		video: 'on',
-		trace: 'on',
+		trace: 'on-first-retry',
 	},
 };
 
