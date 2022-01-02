@@ -18,6 +18,8 @@ export default class wpAdminPage extends BasePage {
 		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
+
+		await this.page.waitForTimeout( 1000 );
 	}
 
 	async waitForPanel() {
