@@ -18,8 +18,6 @@ export default class wpAdminPage extends BasePage {
 		await this.page.fill( 'input[name="pwd"]', this.config.user.password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
-
-		await this.page.waitForTimeout( 1000 );
 	}
 
 	async waitForPanel() {
@@ -52,6 +50,7 @@ export default class wpAdminPage extends BasePage {
 	}
 
 	async useElementorCleanPost() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' ); // TMP
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();
