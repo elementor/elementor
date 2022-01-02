@@ -50,7 +50,6 @@ export default class wpAdminPage extends BasePage {
 	}
 
 	async useElementorCleanPost() {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' ); // TMP
 		await this.page.goto( `/wp-admin/post.php?post=${ CLEAN_POST_ID }&action=elementor` );
 
 		await this.waitForPanel();

@@ -1609,5 +1609,11 @@ export default class EditorBase extends Marionette.Application {
 
 			this.registerElementType( element );
 		} );
+
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			const ContainerClass = require( './elements/elements/container' ).default;
+
+			this.registerElementType( new ContainerClass() );
+		}
 	}
 }
