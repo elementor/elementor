@@ -274,7 +274,7 @@ class Widget_Image_Box extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => 'image_border',
-				'selector' => '{{WRAPPER}} .elementor-image-box-wrapper img',
+				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
 				'separator' => 'before',
 			]
 		);
@@ -287,7 +287,7 @@ class Widget_Image_Box extends Widget_Base {
 				'size_units' => [ 'px', '%' ],
 				'separator' => 'after',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper img' => 'border-radius: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
