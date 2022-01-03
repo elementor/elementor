@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { arrayToObjectByKey } from 'elementor-app/utils/utils.js';
 
 import { PLUGIN_STATUS_MAP } from '../../../../hooks/use-plugins';
@@ -36,9 +38,10 @@ export default function useImportPluginsData( pluginsToInstall, existingPlugins 
 			} );
 
 			return data;
-		};
+		},
+		classifiedPlugins = useMemo( () => getClassifiedPlugins(), [ pluginsToInstall, existingPlugins ] );
 
 	return {
-		importPluginsData: pluginsToInstall.length && existingPlugins.length ? getClassifiedPlugins() : null,
+		importPluginsData: pluginsToInstall.length && existingPlugins.length ? classifiedPlugins : null,
 	};
 }
