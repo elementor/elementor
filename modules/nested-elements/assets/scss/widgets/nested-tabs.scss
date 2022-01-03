@@ -64,6 +64,10 @@
 				}
 			}
 		}
+
+		.e-container {
+			width: 100%;
+		}
 	}
 
 	&.elementor-tabs-view-horizontal {
@@ -247,8 +251,7 @@
 				border-top-style: none;
 			}
 
-
-			.elementor-tab-title {	
+			.elementor-tab-title {
 				width: var(--tabs-v2-wrapper-title-size);
 			}
 		}
