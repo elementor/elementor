@@ -86,6 +86,6 @@ exports.EditorPage = class EditorPage {
 
 		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
 
-		await this.previewFrame.waitForTimeout( 4000 );
+		await this.page.waitForTimeout( 4000 );
 	}
 };
