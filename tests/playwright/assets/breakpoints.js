@@ -16,6 +16,7 @@ module.exports = class {
     async addAllBreakpoints() {
         await this.page.click( '#elementor-panel-footer-responsive' );
         await this.page.click( '#e-responsive-bar__settings-button' );
+        await this.page.waitForSelector( 'text=Breakpoints' );
 
         const devices = [ 'Mobile Extra', 'Tablet Extra', 'Laptop', 'Widescreen' ];
 
