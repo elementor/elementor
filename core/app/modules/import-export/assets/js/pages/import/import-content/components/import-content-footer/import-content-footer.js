@@ -6,7 +6,6 @@ import Button from 'elementor-app/ui/molecules/button';
 export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess } ) {
 	const navigate = useNavigate(),
 		getNextPageUrl = () => {
-			console.log( 'getNextPageUrl', hasConflicts, hasPlugins );
 			if ( hasConflicts ) {
 				return 'import/resolver';
 			} else if ( hasPlugins ) {
