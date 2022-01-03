@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev25 - 2022-01-03
+* Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)
+
 #### 3.6.0-dev22 - 2021-12-26
 * Fix: Responsive reverse columns control inoperative []ED-5877 (#17246)
 * Tweak: Remove `elementor-section-wrap` by adding it to the DOM experiment [ED-5865] (#17192)
@@ -485,6 +488,3 @@
 * Fix: Closing the import-export wizard was not leading back to the dedicated admin tab [ED-4015] (#15549)
 * Tweak - Webpack update preparation. (#15536)
 * Fix: Kit-Library - Learn more url [ED-4059] (#15574)
-
-#### 3.4.0-dev10 - 2021-07-05
-* Fix: Update lighthouse baseline according to WordPress 5.8 and hello-theme 2.4.0 (#15554)
