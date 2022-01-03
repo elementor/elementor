@@ -13,7 +13,7 @@ module.exports = class {
     }
 
     async getFirstColumn() {
-        return await this.editor.previewFrame.locator( '.page-content [data-element_type="column"]:nth-child(1)' );
+        return await this.editor.previewFrame.locator( '[data-element_type="column"]:nth-child(1)' );
     }
 
     async toggle( device ) {
