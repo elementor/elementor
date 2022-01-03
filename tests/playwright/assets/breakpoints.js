@@ -28,7 +28,7 @@ module.exports = class {
         }
 
         await this.page.click( 'text=Update' );
-        await this.page.waitForSelector( 'text=BACK TO EDITOR' );
+        await this.page.waitForSelector( '#elementor-toast' );
         await this.editor.reload();
         await this.page.waitForTimeout( 6000 );
     }
