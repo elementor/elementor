@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo, useCallback } from 'react';
 
 import { ImportContext } from '../../../../../context/import-context/import-context-provider';
 
@@ -24,10 +24,11 @@ export default function PluginsToImport( { plugins } ) {
 
 			return plugins;
 		},
-		handleOnSelect = ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ),
-		pluginsToImport = getPluginsToImport(),
-		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length,
-		initialSelected = pluginsToImport.map( ( plugin, index ) => index );
+		handleOnSelect = useCallback( ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] ),
+		pluginsToImport = useMemo( () => getPluginsToImport(), [] ),
+		initialSelected = useMemo( () => pluginsToImport.map( ( plugin, index ) => index ), [] ),
+		layout = useMemo( () => [ 3, 1, 1 ], [] ),
+		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length;
 
 	if ( ! pluginsToImport.length ) {
 		return null;
@@ -47,7 +48,7 @@ export default function PluginsToImport( { plugins } ) {
 				plugins={ pluginsToImport }
 				initialSelected={ initialSelected }
 				onSelect={ handleOnSelect }
-				layout={ [ 3, 1, 1 ] }
+				layout={ layout }
 			/>
 		</div>
 	);

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Heading from 'elementor-app/ui/atoms/heading';
 
@@ -6,7 +8,9 @@ export default function ExistingPlugins( { plugins } ) {
 		return null;
 	}
 
-	const initialSelected = plugins.map( ( plugin, index ) => index );
+	const existingPlugins = useMemo( () => plugins, [] ),
+		initialSelected = useMemo( () => plugins.map( ( plugin, index ) => index ), [] ),
+		layout = useMemo( () => [ 4, 1 ], [] );
 
 	return (
 		<div className="e-app-import-plugins__section">
@@ -17,11 +21,11 @@ export default function ExistingPlugins( { plugins } ) {
 			<PluginsSelection
 				withHeader={ false }
 				withStatus={ false }
-				plugins={ plugins }
+				plugins={ existingPlugins }
 				initialSelected={ initialSelected }
 				initialDisabled={ initialSelected }
 				excludeSelections={ initialSelected }
-				layout={ [ 4, 1 ] }
+				layout={ layout }
 			/>
 		</div>
 	);
