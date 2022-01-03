@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import SiteArea from './components/site-area/site-area';
 import Included from './components/included/included';
 import DataTable from 'elementor-app/molecules/data-table';
@@ -6,7 +8,7 @@ import useKitData from './hooks/use-kit-data';
 
 import './kit-data.scss';
 
-export default function KitData( { data } ) {
+function KitData( { data } ) {
 	const { templates, siteSettings, content, plugins } = useKitData( data ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = data?.configData || elementorAppConfig[ 'import-export' ],
 		siteSettingsUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl,
@@ -66,3 +68,5 @@ export default function KitData( { data } ) {
 KitData.propTypes = {
 	data: PropTypes.object,
 };
+
+export default memo( KitData );

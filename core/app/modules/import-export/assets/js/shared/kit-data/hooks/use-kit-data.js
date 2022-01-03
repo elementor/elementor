@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 export default function useKitData( kitData ) {
 	const getLabel = ( type, key, amount ) => {
 		// The summary-titles data will not exist in the kitData as part of the export process, and therefore should be taken from the elementorAppConfig.
@@ -61,10 +63,10 @@ export default function useKitData( kitData ) {
 		return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
 	};
 
-	return {
+	return useMemo( () => ( {
 		templates: getTemplates(),
 		siteSettings: getSiteSettings(),
 		content: getContent(),
 		plugins: getPlugins(),
-	};
+	} ), [ kitData ] );
 }
