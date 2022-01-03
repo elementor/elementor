@@ -31,7 +31,7 @@ exports.WpAdminPage = class wpAdminPage {
 		try {
 			await this.page.click( 'text=Create New Page', { timeout: 5000 } );
 		} catch ( err ) {
-			console.error( "Click on Elementor 'Create New Page' button failed" );
+			// console.error( "Click on Elementor 'Create New Page' button failed" );
 			await this.page.waitForSelector( 'text=Dashboard' );
 			await this.page.click( 'text=Pages' );
 
