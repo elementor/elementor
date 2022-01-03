@@ -79,6 +79,10 @@ ControlBaseDataView = ControlBaseView.extend( {
 			this.setPlaceholderFromParent();
 		}
 
+		if ( undefined === this.model.get( 'inherit_placeholders' ) ) {
+			this.model.set( 'inherit_placeholders', true );
+		}
+
 		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
 		const settings = this.container ? this.container.settings : this.elementSettingsModel;
 
@@ -179,7 +183,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * @returns {*}
 	 */
 	getControlPlaceholder() {
-		return this.container.placeholders[ this.model.get( 'name' ) ];
+		let placeholder = this.model.get( 'placeholder' );
+
+		if ( this.model.get( 'responsive' ) && this.model.get( 'inherit_placeholders' ) ) {
+			placeholder = placeholder || this.container.placeholders[ this.model.get( 'name' ) ];
+		}
+
+		return placeholder;
 	},
 
 	/**
@@ -196,16 +206,21 @@ ControlBaseDataView = ControlBaseView.extend( {
 	},
 
 	/**
-	 * Get the responsive child view if exists.
+	 * Get the responsive children views if exists.
 	 *
 	 * @returns {ControlBaseDataView|null}
 	 */
-	getResponsiveChildView: function() {
-		const child = this.model.get( 'child' );
+	getResponsiveChildrenViews: function() {
+		const children = this.model.get( 'inheritors' ),
+			views = [];
 
 		try {
-			return child && this.container.panel.getControlView( child );
+			for ( const child of children ) {
+				views.push( this.container.panel.getControlView( child ) );
+			}
 		} catch ( e ) {}
+
+		return views;
 	},
 
 	/**
@@ -216,10 +231,7 @@ ControlBaseDataView = ControlBaseView.extend( {
 		const parent = this.getResponsiveParentView();
 
 		if ( parent ) {
-			const placeholder = parent.preparePlaceholderForChildren();
-
-			this.container.placeholders[ this.model.get( 'name' ) ] = placeholder;
-			this.model.set( 'placeholder', placeholder );
+			this.container.placeholders[ this.model.get( 'name' ) ] = parent.preparePlaceholderForChildren();
 		}
 	},
 
@@ -237,14 +249,13 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 */
 	preparePlaceholderForChildren: function() {
 		const cleanValue = this.getCleanControlValue(),
-			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren(),
-			placeholder = this.model.get( 'placeholder' );
+			parentValue = this.getResponsiveParentView()?.preparePlaceholderForChildren();
 
 		if ( cleanValue instanceof Object ) {
-			return Object.assign( {}, placeholder, parentValue, cleanValue );
+			return Object.assign( {}, parentValue, cleanValue );
 		}
 
-		return cleanValue || parentValue || placeholder;
+		return cleanValue || parentValue;
 	},
 
 	/**
@@ -254,9 +265,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * to be applied only from the responsive child of this control and on.
 	 */
 	propagatePlaceholder: function() {
-		const child = this.getResponsiveChildView();
+		const children = this.getResponsiveChildrenViews();
 
-		if ( child ) {
+		for ( const child of children ) {
 			child.renderWithChildren();
 		}
 	},
@@ -267,13 +278,9 @@ ControlBaseDataView = ControlBaseView.extend( {
 	 * children.
 	 */
 	renderWithChildren: function() {
-		const child = this.getResponsiveChildView();
-
 		this.render();
 
-		if ( child ) {
-			child.renderWithChildren();
-		}
+		this.propagatePlaceholder();
 	},
 
 	/**

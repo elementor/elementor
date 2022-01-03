@@ -142,10 +142,24 @@ class Kit extends PageBase {
 	 * @access protected
 	 */
 	protected function register_controls() {
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+
+		if ( ! $is_edit_mode ) {
+			// In the Front End, the Kit is initialized before CSS is generated, so we always duplicate controls in
+			// the kit.
+			$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
+
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( 'on' );
+		}
+
 		$this->register_document_controls();
 
 		foreach ( $this->tabs as $tab ) {
 			$tab->register_controls();
+		}
+
+		if ( ! $is_edit_mode ) {
+			Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
 		}
 	}
 
@@ -208,10 +222,15 @@ class Kit extends PageBase {
 			'settings-background' => Tabs\Settings_Background::class,
 			'settings-layout' => Tabs\Settings_Layout::class,
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
-			// TODO: Revert when Page Transitions will be released.
-			//'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
-			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
 		];
+
+		// Add the Page Transitions tab only if the experiment exists.
+		if ( Plugin::instance()->experiments->get_features( 'page-transitions' ) ) {
+			$tabs['settings-page-transitions'] = Tabs\Settings_Page_Transitions::class;
+		}
+
+		// Add the Custom CSS tab at last.
+		$tabs['settings-custom-css'] = Tabs\Settings_Custom_CSS::class;
 
 		foreach ( $tabs as $id => $class ) {
 			$this->register_tab( $id, $class );

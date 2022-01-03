@@ -301,6 +301,7 @@ class WP_Import extends \WP_Importer {
 				$login = sanitize_user( $post['post_author'], true );
 
 				if ( empty( $login ) ) {
+					/* translators: %s: Post author. */
 					$this->output['errors'][] = sprintf( esc_html__( 'Failed to import author %s. Their posts will be attributed to the current user.', 'elementor' ), $post['post_author'] );
 					continue;
 				}
@@ -362,6 +363,7 @@ class WP_Import extends \WP_Importer {
 					}
 					$this->author_mapping[ $santized_old_login ] = $user_id;
 				} else {
+					/* translators: %s: Author display name. */
 					$error = sprintf( esc_html__( 'Failed to create new user for %s. Their posts will be attributed to the current user.', 'elementor' ), $this->authors[ $old_login ]['author_display_name'] );
 
 					if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -428,6 +430,7 @@ class WP_Import extends \WP_Importer {
 				}
 				$result++;
 			} else {
+				/* translators: %s: Category name. */
 				$error = sprintf( esc_html__( 'Failed to import category %s', 'elementor' ), $cat['category_nicename'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -488,6 +491,7 @@ class WP_Import extends \WP_Importer {
 				}
 				$result++;
 			} else {
+				/* translators: %s: Tag name. */
 				$error = sprintf( esc_html__( 'Failed to import post tag %s', 'elementor' ), $tag['tag_name'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -558,6 +562,7 @@ class WP_Import extends \WP_Importer {
 				}
 				$result++;
 			} else {
+				/* translators: 1: Term taxonomy, 2: Term name. */
 				$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $term['term_taxonomy'], $term['term_name'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -655,6 +660,7 @@ class WP_Import extends \WP_Importer {
 			$post = apply_filters( 'wp_import_post_data_raw', $post );
 
 			if ( ! post_type_exists( $post['post_type'] ) ) {
+				/* translators: 1: Post title, 2: Post type. */
 				$this->output['errors'][] = sprintf( esc_html__( 'Failed to import %1$s: Invalid post type %2$s', 'elementor' ), $post['post_title'], $post['post_type'] );
 				do_action( 'wp_import_post_exists', $post );
 				continue;
@@ -743,6 +749,7 @@ class WP_Import extends \WP_Importer {
 			}
 
 			if ( is_wp_error( $post_id ) ) {
+				/* translators: 1: Post type singular label, 2: Post title. */
 				$error = sprintf( __( 'Failed to import %1$s %2$s', 'elementor' ), $post_type_object->labels->singular_name, $post['post_title'] );
 
 				if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -789,6 +796,7 @@ class WP_Import extends \WP_Importer {
 							$term_id = $t['term_id'];
 							do_action( 'wp_import_insert_term', $t, $term, $post_id, $post );
 						} else {
+							/* translators: 1: Taxonomy name, 2: Term name. */
 							$error = sprintf( esc_html__( 'Failed to import %1$s %2$s', 'elementor' ), $taxonomy, $term['name'] );
 
 							if ( defined( 'IMPORT_DEBUG' ) && IMPORT_DEBUG ) {
@@ -946,6 +954,7 @@ class WP_Import extends \WP_Importer {
 
 		$menu_id = term_exists( $menu_slug, 'nav_menu' );
 		if ( ! $menu_id ) {
+			/* translators: %s: Menu slug. */
 			$this->output['errors'][] = sprintf( esc_html__( 'Menu item skipped due to invalid menu slug: %s', 'elementor' ), $menu_slug );
 
 			return;
@@ -1090,7 +1099,7 @@ class WP_Import extends \WP_Importer {
 		if ( is_wp_error( $remote_response ) ) {
 			@unlink( $tmp_file_name );
 
-			return new WP_Error( 'import_file_error', sprintf( /* translators: 1: The WordPress error message. 2: The WordPress error code. */ esc_html__( 'Request failed due to an error: %1$s (%2$s)', 'elementor' ), esc_html( $remote_response->get_error_message() ), esc_html( $remote_response->get_error_code() ) ) );
+			return new WP_Error( 'import_file_error', sprintf( /* translators: 1: WordPress error message, 2: WordPress error code. */ esc_html__( 'Request failed due to an error: %1$s (%2$s)', 'elementor' ), esc_html( $remote_response->get_error_message() ), esc_html( $remote_response->get_error_code() ) ) );
 		}
 
 		$remote_response_code = (int) wp_remote_retrieve_response_code( $remote_response );
@@ -1099,7 +1108,7 @@ class WP_Import extends \WP_Importer {
 		if ( 200 !== $remote_response_code ) {
 			@unlink( $tmp_file_name );
 
-			return new WP_Error( 'import_file_error', sprintf( /* translators: 1: The HTTP error message. 2: The HTTP error code. */ esc_html__( 'Remote server returned the following unexpected result: %1$s (%2$s)', 'elementor' ), get_status_header_desc( $remote_response_code ), esc_html( $remote_response_code ) ) );
+			return new WP_Error( 'import_file_error', sprintf( /* translators: 1: HTTP error message, 2: HTTP error code. */ esc_html__( 'Remote server returned the following unexpected result: %1$s (%2$s)', 'elementor' ), get_status_header_desc( $remote_response_code ), esc_html( $remote_response_code ) ) );
 		}
 
 		$headers = wp_remote_retrieve_headers( $remote_response );
@@ -1129,6 +1138,7 @@ class WP_Import extends \WP_Importer {
 		if ( ! empty( $max_size ) && $filesize > $max_size ) {
 			@unlink( $tmp_file_name );
 
+			/* translators: %s: Max file size. */
 			return new WP_Error( 'import_file_error', sprintf( esc_html__( 'Remote file is too large, limit is %s', 'elementor' ), size_format( $max_size ) ) );
 		}
 

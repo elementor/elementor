@@ -33,21 +33,14 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
-	 * Gets an SVG path name as a parameter and returns its SVG markup from the `svg-paths`
-	 * folder under the assets directory.
+	 * Get an SVG Path URL from the pre-defined ones.
 	 *
-	 * @param $path string Path name.
+	 * @param string $path - Path name.
 	 *
-	 * @return string The path SVG markup.
+	 * @return string
 	 */
-	public static function get_path_svg( $path ) {
-		$file_name = ELEMENTOR_ASSETS_PATH . 'svg-paths/' . $path . '.svg';
-
-		if ( ! is_file( $file_name ) ) {
-			return '';
-		}
-
-		return file_get_contents( $file_name );
+	public static function get_path_url( $path ) {
+		return ELEMENTOR_ASSETS_URL . 'svg-paths/' . $path . '.svg';
 	}
 
 	/**

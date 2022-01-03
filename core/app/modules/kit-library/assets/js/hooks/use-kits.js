@@ -55,7 +55,7 @@ const kitsPipeFunctions = {
 		}
 
 		return data.filter( ( item ) => {
-			const keywords = [ ...item.keywords, item.title ];
+			const keywords = [ ...item.keywords, ...item.taxonomies, item.title ];
 			const searchTerm = queryParams.search.toLowerCase();
 
 			return keywords.some( ( keyword ) => keyword.toLowerCase().includes( searchTerm ) );

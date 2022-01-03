@@ -362,13 +362,13 @@ module.exports = {
 		} );
 	},
 
-	maybeDisableWidget() {
+	maybeDisableWidget( givenWidgetType = null ) {
 		if ( ! elementor.config[ 'icons_update_needed' ] ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			widgetType = elementView.model.get( 'widgetType' ),
+			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
@@ -429,7 +429,7 @@ module.exports = {
 				// Here we want to convert the 'condition' format to a 'conditions' format. The first step is to
 				// isolate the term from the negative operator if exists. For example, a condition format can look
 				// like 'selected_icon[value]!', so we examine this term with a negative connotation.
-				const conditionNameParts = conditionName.match( /(\w+(?:\[\w+])?)?(!?)$/i ),
+				const conditionNameParts = conditionName.match( /([\w-]+(?:\[[\w-]+])?)?(!?)$/i ),
 					conditionRealName = conditionNameParts[ 1 ],
 					isNegativeCondition = !! conditionNameParts[ 2 ],
 					controlValue = values[ conditionRealName ];

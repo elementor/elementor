@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - name: Checkout master branch
@@ -16,6 +16,10 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           ref: master
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Sync developer-edition branch
         env:
           MAINTAIN_EMAIL: ${{ secrets.MAINTAIN_EMAIL }}

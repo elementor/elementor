@@ -2,12 +2,13 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\KitLibrary\Data\Kits;
 
 use Elementor\Plugin;
-use Elementor\Testing\Traits\Rest_Trait;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Modules\Library\User_Favorites;
 use Elementor\Core\Common\Modules\Connect\Module;
+use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Kits\Controller;
+use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Rest_Trait;
 
 class Test_Controller extends Elementor_Test_Base {
 	use Rest_Trait {
@@ -43,12 +44,14 @@ class Test_Controller extends Elementor_Test_Base {
 		$favorites = new User_Favorites( $user->ID );
 		$favorites->add( 'elementor', 'kits', 'id_2' );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller() );
 
 		// Act
 		$result = $this->http_get( 'kits', [ 'force' => true ] );
 
 		// Assert
+		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
+
 		$this->assertArrayHasKey( 'data', $result );
 		$this->assertEqualSets( [
 			[
@@ -57,7 +60,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'thumbnail_url' => 'https://localhost/image.png',
 				'access_level' => 0,
 				'keywords' => [ 'word', 'word2' ],
-				'taxonomies' => ['a', 'b', 'c', 'd', 'e'],
+				'taxonomies' => ['a', 'b', 'c', 'd', 'e', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 				'is_favorite' => false,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -71,7 +74,7 @@ class Test_Controller extends Elementor_Test_Base {
 				'thumbnail_url' => 'https://localhost/image2.png',
 				'access_level' => 1,
 				'keywords' => [],
-				'taxonomies' => ['1', '2', '3', '4', '5'],
+				'taxonomies' => ['1', '2', '3', '4', '5', $subscription_plans[Module::ACCESS_LEVEL_PRO]['label']], // Subscription plan also added as taxonomy
 				'is_favorite' => true,
 				'trend_index' => 20,
 				'featured_index' => 30,
@@ -88,7 +91,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->app_mock->method( 'get_all' )->willReturn( $this->get_kits_api_mock() );
 		$this->app_mock->method( 'get_manifest' )->willReturn( $this->get_manifest_api_mock() );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller() );
 
 		// Act
 		$result = $this->http_get( "kits/id_1", [ 'force' => true ] );
@@ -101,7 +104,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'thumbnail_url' => 'https://localhost/image.png',
 			'access_level' => 0,
 			'keywords' => [ 'word', 'word2' ],
-			'taxonomies' => ['a', 'b', 'c', 'd', 'e'],
+			'taxonomies' => ['a', 'b', 'c', 'd', 'e', Repository::SUBSCRIPTION_PLAN_FREE_TAG], // Subscription plan also added as taxonomy
 			'is_favorite' => false,
 			'trend_index' => 20,
 			'featured_index' => 30,

@@ -1,9 +1,9 @@
 import BarButton from '../bar-button/bar-button';
 import { useRef, useEffect } from 'react';
 
-export default function ConnectionButton( props ) {
+export default function ConnectionButton() {
 	const buttonRef = useRef();
-	const isUserConnected = elementorCommonConfig.connect.is_user_connected;
+	const isUserConnected = elementorAdminTopBarConfig.is_user_connected;
 
 	useEffect( () => {
 		if ( ! buttonRef.current || isUserConnected ) {
@@ -11,12 +11,12 @@ export default function ConnectionButton( props ) {
 		}
 
 		jQuery( buttonRef.current ).elementorConnect( {
-			UTM: () => '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar',
+			UTM: () => '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar&source=generic',
 		} );
 	}, [] );
 
 	let tooltipText = __( 'Connect your account to get access to Elementor\'s Template Library & more.', 'elementor' ),
-		connectUrl = elementorCommonConfig.connect.connect_url,
+		connectUrl = elementorAdminTopBarConfig.connect_url,
 		buttonText = __( 'Connect Account', 'elementor' ),
 		targetUrl = '_self';
 

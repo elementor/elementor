@@ -3,6 +3,7 @@ namespace Elementor\Core\Admin;
 
 use Elementor\Api;
 use Elementor\Beta_Testers;
+use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\App;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -14,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends App {
+
+	private $menus = [];
 
 	/**
 	 * Get module name.
@@ -681,6 +684,10 @@ class Admin extends App {
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			$this->register_menu();
+		}
+
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
@@ -735,6 +742,26 @@ class Admin extends App {
 			],
 		];
 
-		return apply_filters( 'elementor/admin/localize_settings', $settings );
+		/**
+		 * Localize settings.
+		 *
+		 * Filters the initial localize settings in the admin.
+		 *
+		 * WordPress has it's own way to pass localized data from PHP (backend) to
+		 * JS (frontend). Elementor uses this method to pass localize data in the
+		 * admin. This hook can be used to add more localized settings in addition
+		 * to the initial Elementor settings.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param array $settings Initial localize settings.
+		 */
+		$settings = apply_filters( 'elementor/admin/localize_settings', $settings );
+
+		return $settings;
+	}
+
+	private function register_menu() {
+		$this->menus['main'] = new MainMenu();
 	}
 }

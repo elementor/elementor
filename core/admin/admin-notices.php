@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
+	const EXCLUDE_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+
 	private $plain_notices = [
 		'api_notice',
 		'api_upgrade_plugin',
@@ -40,7 +42,19 @@ class Admin_Notices extends Module {
 			new Elementor_Dev_Notice(),
 		];
 
-		return apply_filters( 'elementor/core/admin/notices', $notices );
+		/**
+		 * Admin notices.
+		 *
+		 * Filters Elementor admin notices.
+		 *
+		 * This hook can be used by external developers to manage existing
+		 * admin notice or to add new notices for Elementor addons.
+		 *
+		 * @param array $notices A list of notice classes.
+		 */
+		$notices = apply_filters( 'elementor/core/admin/notices', $notices );
+
+		return $notices;
 	}
 
 	private function get_install_time() {
@@ -54,6 +68,7 @@ class Admin_Notices extends Module {
 	private function get_elementor_pages_count() {
 		if ( null === $this->elementor_pages_count ) {
 			$elementor_pages = new \WP_Query( [
+				'no_found_rows' => true,
 				'post_type' => 'any',
 				'post_status' => 'publish',
 				'fields' => 'ids',
@@ -116,11 +131,11 @@ class Admin_Notices extends Module {
 		}
 
 		$message = sprintf(
-			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
+			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
 			esc_attr( sprintf(
-				/* translators: %s: Elementor version */
+				/* translators: %s: Elementor version. */
 				__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
 			) ),
@@ -491,6 +506,12 @@ class Admin_Notices extends Module {
 	}
 
 	public function print_admin_notice( array $options ) {
+		global $pagenow;
+
+		if ( in_array( $pagenow, self::EXCLUDE_PAGES ) ) {
+			return;
+		}
+
 		$default_options = [
 			'id' => null,
 			'title' => '',

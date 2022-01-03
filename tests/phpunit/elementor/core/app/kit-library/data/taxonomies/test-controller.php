@@ -2,11 +2,12 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\App\KitLibrary\Data\Taxonomies;
 
 use Elementor\Plugin;
-use Elementor\Testing\Traits\Rest_Trait;
-use Elementor\Testing\Elementor_Test_Base;
 use Elementor\Core\Common\Modules\Connect\Module;
+use Elementor\Core\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\App\Modules\KitLibrary\Data\Taxonomies\Controller;
+use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Rest_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -53,14 +54,16 @@ class Test_Controller extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->data_manager->register_controller( Controller::class );
+		$this->data_manager->register_controller( new Controller( $this ) );
 
 		// Act
 		$result = $this->http_get( 'kit-taxonomies', [ 'force' => true ] );
 
 		// Assert
+		$subscription_plans = Plugin::$instance->common->get_component( 'connect' )->get_subscription_plans();
+
 		$this->assertArrayHasKey( 'data', $result );
-		$this->assertCount( 5, $result['data'] );
+		$this->assertCount( 8, $result['data'] );
 		$this->assertEqualSets( [
 			[
 				'text' => 'Creative',
@@ -81,6 +84,20 @@ class Test_Controller extends Elementor_Test_Base {
 			[
 				'text' => 'Creative',
 				'type' => 'tags',
+			],
+
+			// Subscription plans added as taxonomies locally and not from server
+			[
+				'text' => Repository::SUBSCRIPTION_PLAN_FREE_TAG,
+				'type' => 'subscription_plans'
+			],
+			[
+				'text' => $subscription_plans[Module::ACCESS_LEVEL_PRO]['label'],
+				'type' => 'subscription_plans'
+			],
+			[
+				'text' => $subscription_plans[Module::ACCESS_LEVEL_EXPERT]['label'],
+				'type' => 'subscription_plans'
 			],
 		], $result['data'] );
 	}

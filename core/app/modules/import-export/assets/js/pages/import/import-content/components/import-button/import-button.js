@@ -21,7 +21,7 @@ export default function ImportButton() {
 			color={ isImportAllowed ? 'primary' : 'disabled' }
 			onClick={ () => {
 				if ( isImportAllowed ) {
-					if ( context.data.includes.includes( 'templates' ) && context.data.fileResponse.stage1.conflicts ) {
+					if ( context.data.includes.includes( 'templates' ) && context.data.uploadedData.conflicts ) {
 						navigate( 'import/resolver' );
 					} else {
 						navigate( 'import/process' );

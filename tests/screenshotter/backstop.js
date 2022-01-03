@@ -1,5 +1,16 @@
 const config = require( './config' );
 
+const getDelay = ( pathname ) => {
+	switch ( pathname ) {
+		case 'audio':
+		case 'video':
+		case 'image-gallery':
+			return 3000;
+		default:
+			return 1000;
+	}
+};
+
 const getScenarios = () => {
 	const scenarios = [];
 	const origin = config.url_origin;
@@ -7,11 +18,11 @@ const getScenarios = () => {
 	config.templates.forEach( ( pathname ) => {
 		scenarios.push( {
 			label: pathname,
-			url: `${ origin }/${ pathname }`,
+			url: `${ origin }/${ pathname }/`,
 			referenceUrl: `${ origin }/${ pathname }`,
 			readyEvent: '',
 			readySelector: '',
-			delay: 2000,
+			delay: getDelay( pathname ),
 			selectors: [ 'document' ], // With the `document` selector it takes a full page shot.
 			onBeforeScript: `${ __dirname }/scripts/on-before-ready.js`,
 			misMatchThreshold: 0,
@@ -55,9 +66,8 @@ module.exports = {
 	engineOptions: {
 		args: [ '--no-sandbox' ],
 		slowMo: 500,
-		waitTimeout: 240000,
 	},
-	asyncCaptureLimit: 20,
+	asyncCaptureLimit: 30,
 	asyncCompareLimit: 30,
 	debug: false,
 	debugWindow: false,

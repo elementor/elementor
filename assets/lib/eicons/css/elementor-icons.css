@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'eicons';
-  src: url("../fonts/eicons.eot?5.12.0");
-  src: url("../fonts/eicons.eot?5.12.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.12.0") format("woff2"), url("../fonts/eicons.woff?5.12.0") format("woff"), url("../fonts/eicons.ttf?5.12.0") format("truetype"), url("../fonts/eicons.svg?5.12.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.13.0");
+  src: url("../fonts/eicons.eot?5.13.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.13.0") format("woff2"), url("../fonts/eicons.woff?5.13.0") format("woff"), url("../fonts/eicons.ttf?5.13.0") format("truetype"), url("../fonts/eicons.svg?5.13.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -1247,6 +1247,87 @@
 
 .eicon-woo-cart:before {
   content: '\e996'; }
+
+.eicon-grow:before {
+  content: '\e997'; }
+
+.eicon-order-end:before {
+  content: '\e998'; }
+
+.eicon-nowrap:before {
+  content: '\e999'; }
+
+.eicon-order-start:before {
+  content: '\e99a'; }
+
+.eicon-progress-tracker:before {
+  content: '\e99b'; }
+
+.eicon-shrink:before {
+  content: '\e99c'; }
+
+.eicon-wrap:before {
+  content: '\e99d'; }
+
+.eicon-align-center-h:before {
+  content: '\e99e'; }
+
+.eicon-align-center-v:before {
+  content: '\e99f'; }
+
+.eicon-align-end-h:before {
+  content: '\e9a0'; }
+
+.eicon-align-end-v:before {
+  content: '\e9a1'; }
+
+.eicon-align-start-h:before {
+  content: '\e9a2'; }
+
+.eicon-align-start-v:before {
+  content: '\e9a3'; }
+
+.eicon-align-stretch-h:before {
+  content: '\e9a4'; }
+
+.eicon-align-stretch-v:before {
+  content: '\e9a5'; }
+
+.eicon-justify-center-h:before {
+  content: '\e9a6'; }
+
+.eicon-justify-center-v:before {
+  content: '\e9a7'; }
+
+.eicon-justify-end-h:before {
+  content: '\e9a8'; }
+
+.eicon-justify-end-v:before {
+  content: '\e9a9'; }
+
+.eicon-justify-space-around-h:before {
+  content: '\e9aa'; }
+
+.eicon-justify-space-around-v:before {
+  content: '\e9ab'; }
+
+.eicon-justify-space-between-h:before {
+  content: '\e9ac'; }
+
+.eicon-justify-space-between-v:before {
+  content: '\e9ad'; }
+
+.eicon-justify-space-evenly-h:before {
+  content: '\e9ae'; }
+
+.eicon-justify-space-evenly-v:before {
+  content: '\e9af'; }
+
+.eicon-justify-start-h:before {
+  content: '\e9b0'; }
+
+.eicon-justify-start-v:before {
+  content: '\e9b1'; }
 
 .eicon-eye:before {
   content: '\e8ac'; }

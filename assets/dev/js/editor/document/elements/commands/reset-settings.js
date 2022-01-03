@@ -15,7 +15,7 @@ export class ResetSettings extends CommandHistory {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], settings = [] } = args;
+		const { containers = [ args.container ], options = {}, settings = [] } = args;
 
 		containers.forEach( ( container ) => {
 			const controls = Object.entries( container.settings.controls ),
@@ -34,6 +34,7 @@ export class ResetSettings extends CommandHistory {
 
 			$e.run( 'document/elements/settings', {
 				container,
+				options,
 				settings: defaultValues,
 			} );
 

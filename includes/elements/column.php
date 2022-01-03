@@ -126,13 +126,28 @@ class Element_Column extends Element_Base {
 		);
 
 		$active_breakpoint_keys = array_reverse( array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() ) );
-		$inline_size_device_args = [];
+		$inline_size_device_args = [
+			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE => [ 'placeholder' => 100 ],
+		];
 
 		foreach ( $active_breakpoint_keys as $breakpoint_key ) {
-			$inline_size_device_args[ $breakpoint_key ] = [
-				'max' => 100,
-				'required' => false,
-			];
+			if ( ! isset( $inline_size_device_args[ $breakpoint_key ] ) ) {
+				$inline_size_device_args[ $breakpoint_key ] = [];
+			}
+
+			$inline_size_device_args[ $breakpoint_key ] = array_merge_recursive(
+				$inline_size_device_args[ $breakpoint_key ],
+				[
+					'max' => 100,
+					'required' => false,
+				]
+			);
+		}
+
+		if ( in_array( Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA, $active_breakpoint_keys, true ) ) {
+			$min_affected_device_value = Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA;
+		} else {
+			$min_affected_device_value = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 		}
 
 		$this->add_responsive_control(
@@ -145,10 +160,11 @@ class Element_Column extends Element_Base {
 				'required' => true,
 				'device_args' => $inline_size_device_args,
 				'min_affected_device' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
+					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device_value,
+					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device_value,
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{VALUE}}%',
@@ -399,6 +415,9 @@ class Element_Column extends Element_Base {
 					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
 					'saturation' => esc_html__( 'Saturation', 'elementor' ),
 					'color' => esc_html__( 'Color', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
@@ -682,6 +701,10 @@ class Element_Column extends Element_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+					'justify' => [
+						'title' => __( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
@@ -708,10 +731,17 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};
+					--e-column-margin-right: {{RIGHT}}{{UNIT}}; --e-column-margin-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
+
+		$padding_selector = '{{WRAPPER}} > .elementor-element-populated';
+
+		if ( ! $is_dome_optimization_active ) {
+			$padding_selector .= ' > .elementor-widget-wrap';
+		}
 
 		$this->add_responsive_control(
 			'padding',
@@ -720,7 +750,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$padding_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -995,11 +1025,16 @@ class Element_Column extends Element_Base {
 	 *
 	 * @param array $element_data Element ID.
 	 *
-	 * @return Element_Base Column default child type.
+	 * @return Element_Base|false Column default child type.
 	 */
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'section' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'section' );
+		}
+
+		// If the element doesn't exists (disabled element, experiment, etc.), return false to prevent errors.
+		if ( empty( $element_data['widgetType'] ) ) {
+			return false;
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );

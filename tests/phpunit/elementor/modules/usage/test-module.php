@@ -3,10 +3,10 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
-use Elementor\Testing\Factories\Documents;
+use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Link;
 use Elementor\Tests\Phpunit\Elementor\Modules\Usage\DynamicTags\Title;
+use ElementorEditorTesting\Factories\Documents;
 
 class Test_Module extends Elementor_Test_Base {
 	/**
@@ -354,8 +354,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	private function ensure_dynamic_tags() {
 		if ( ! $this->isDynamicTags ) {
-			Plugin::$instance->dynamic_tags->register_tag( new Title() );
-			Plugin::$instance->dynamic_tags->register_tag( new Link() );
+			Plugin::$instance->dynamic_tags->register( new Title() );
+			Plugin::$instance->dynamic_tags->register( new Link() );
 
 			$this->isDynamicTags = true;
 		}

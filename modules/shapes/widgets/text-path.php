@@ -7,6 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
 use Elementor\Utils;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -127,7 +128,7 @@ class TextPath extends Widget_Base {
 					'active' => true,
 				],
 				'description' => sprintf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
+					/* translators: 1: Link open tag, 2: Link close tag. */
 					esc_html__( 'Want to create custom text paths with SVG? %1$sLearn More%2$s', 'elementor' ),
 					'<a target="_blank" href="https://go.elementor.com/text-path-create-paths/">',
 					'</a>'
@@ -327,6 +328,14 @@ class TextPath extends Widget_Base {
 						],
 					],
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Stroke::get_type(),
+			[
+				'name' => 'text_stroke',
+				'selector' => '{{WRAPPER}} textPath',
 			]
 		);
 
@@ -664,17 +673,20 @@ class TextPath extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		// Get the shape SVG markup.
-		if ( 'custom' !== $settings['path'] ) {
-			$path_svg = Shapes_Module::get_path_svg( $settings['path'] );
-		} else {
-			$url = esc_url( $settings['custom_path']['url'] );
-			// Get the file contents only if it's svg.
-			$path_svg = ( 'svg' === pathinfo( $url, PATHINFO_EXTENSION ) ) ? file_get_contents( $url ) : '';
-		}
+		// Get the path URL.
+		$path_url = ( 'custom' === $settings['path'] )
+			? wp_get_attachment_url( $settings['custom_path']['id'] )
+			: Shapes_Module::get_path_url( $settings['path'] );
 
-		// Add Text Path text.
-		$this->add_render_attribute( 'text_path', 'class', 'e-text-path' );
+		// Remove the HTTP protocol to prevent Mixed Content error.
+		$path_url = preg_replace( '/^https?:/i', '', $path_url );
+
+		// Add Text Path attributes.
+		$this->add_render_attribute( 'text_path', [
+			'class' => 'e-text-path',
+			'data-text' => esc_attr( $settings['text'] ),
+			'data-url' => esc_url( $path_url ),
+		] );
 
 		// Add hover animation.
 		if ( ! empty( $settings['hover_animation'] ) ) {
@@ -683,9 +695,7 @@ class TextPath extends Widget_Base {
 
 		// Render.
 		?>
-		<div <?php $this->print_render_attribute_string( 'text_path' ); ?> data-text="<?php echo esc_attr( $settings['text'] ); ?>">
-			<?php Utils::print_wp_kses_extended( $path_svg, [ 'svg' ] ); ?>
-		</div>
+		<div <?php $this->print_render_attribute_string( 'text_path' ); ?>></div>
 		<?php
 	}
 }
