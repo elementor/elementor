@@ -22,9 +22,10 @@ export default function ImportContent() {
 		getFooter = () => {
 			return (
 				<ImportContentFooter
-					hasPlugins={ ! ! uploadedData?.manifest.plugins?.length }
+					hasPlugins={ ! ! plugins.length }
 					hasConflicts={ ! ! ( includes.includes( 'templates' ) && uploadedData?.conflicts ) }
 					isImportAllowed={ ! ! ( plugins.length || includes.length ) }
+					onResetProcess={ handleResetProcess }
 				/>
 			);
 		};

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -19,17 +19,17 @@ export default function ImportComplete() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
+		{ importedPlugins, uploadedData, importedData, isProInstalledDuringProcess } = importContext.data || {},
 		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
-		{ activePlugins, failedPlugins } = getPlugins( importContext.data.importedPlugins ),
-		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importContext.data.importedData?.configData || {},
+		{ activePlugins, failedPlugins } = getPlugins( importedPlugins ),
+		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
 		getKitData = () => {
-			if ( ! importContext.data.uploadedData || ! importContext.data.importedData ) {
+			if ( ! uploadedData || ! importedData ) {
 				return {};
 			}
 
-			const manifest = importContext.data.uploadedData.manifest,
-				importedData = importContext.data.importedData;
+			const manifest = uploadedData.manifest;
 
 			return {
 				templates: getTemplates( manifest.templates, importedData ),
@@ -39,10 +39,11 @@ export default function ImportComplete() {
 				plugins: activePlugins,
 				configData: importedData.configData,
 			};
-		};
+		},
+		kitData = useMemo( () => getKitData(), [] );
 
 	useEffect( () => {
-		if ( ! importContext.data.uploadedData ) {
+		if ( ! uploadedData ) {
 			navigate( '/import' );
 		}
 	}, [] );
@@ -63,9 +64,9 @@ export default function ImportComplete() {
 			>
 				{ ! ! failedPlugins.length && <FailedPluginsNotice failedPlugins={ failedPlugins } /> }
 
-				{ importContext.data.isProInstalledDuringProcess && <ConnectProNotice /> }
+				{ isProInstalledDuringProcess && <ConnectProNotice /> }
 
-				<KitData data={ getKitData() } />
+				<KitData data={ kitData } />
 			</WizardStep>
 		</Layout>
 	);

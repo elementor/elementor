@@ -3,10 +3,11 @@ import { useNavigate } from '@reach/router';
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
-export default function ImportContentFooter( { hasPlugins, isImportAllowed } ) {
+export default function ImportContentFooter( { hasPlugins, hasConflicts, isImportAllowed, onResetProcess } ) {
 	const navigate = useNavigate(),
 		getNextPageUrl = () => {
-			if ( includes.includes( 'templates' ) && uploadedData?.conflicts ) {
+			console.log( 'getNextPageUrl', hasConflicts, hasPlugins );
+			if ( hasConflicts ) {
 				return 'import/resolver';
 			} else if ( hasPlugins ) {
 				return 'import/plugins-activation';
@@ -24,7 +25,7 @@ export default function ImportContentFooter( { hasPlugins, isImportAllowed } ) {
 					if ( hasPlugins ) {
 						navigate( 'import/plugins/' );
 					} else {
-						handleResetProcess();
+						onResetProcess();
 					}
 				} }
 			/>
@@ -41,5 +42,7 @@ export default function ImportContentFooter( { hasPlugins, isImportAllowed } ) {
 
 ImportContentFooter.propTypes = {
 	hasPlugins: PropTypes.bool,
+	hasConflicts: PropTypes.bool,
 	isImportAllowed: PropTypes.bool,
+	onResetProcess: PropTypes.func.isRequired,
 };
