@@ -67,7 +67,7 @@ class NestedTabs extends Widget_Repeater_Base {
 	}
 
 	protected function get_html_wrapper_class() {
-		return 'elementor-widget-tabs';
+		return 'elementor-widget-tabs-v2';
 	}
 
 	protected function register_controls() {
