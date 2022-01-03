@@ -76,11 +76,13 @@ exports.EditorPage = class EditorPage {
 	async init( experiments ) {
 		const wpAdmin = new WpAdminPage( this.page );
 
+		await wpAdmin.login();
+
 		if ( experiments ) {
 			await wpAdmin.setExperiments( experiments );
 		}
 
-		await wpAdmin.createNewPage();
+		await wpAdmin.openNewPage();
 
 		await this.ensurePanelLoaded();
 
