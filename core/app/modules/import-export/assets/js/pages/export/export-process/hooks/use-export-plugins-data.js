@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 export default function useExportPluginsData( plugins ) {
 	const getData = () => {
 			const pluginsData = [];
@@ -17,6 +19,6 @@ export default function useExportPluginsData( plugins ) {
 		};
 
 	return {
-		pluginsData: getData(),
+		pluginsData: useMemo( () => getData(), [ plugins ] ),
 	};
 }
