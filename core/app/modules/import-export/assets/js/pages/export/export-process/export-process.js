@@ -39,6 +39,7 @@ export default function ExportProcess() {
 			} );
 		};
 
+	// On load.
 	useEffect( () => {
 		if ( isExportProcessStarted ) {
 			exportKit();
@@ -48,6 +49,7 @@ export default function ExportProcess() {
 		}
 	}, [] );
 
+	// On kit status change.
 	useEffect( () => {
 		switch ( kitState.status ) {
 			case KIT_STATUS_MAP.EXPORTED:
@@ -59,6 +61,7 @@ export default function ExportProcess() {
 		}
 	}, [ kitState.status ] );
 
+	// On process finished.
 	useEffect( () => {
 		if ( exportedData ) {
 			navigate( 'export/complete' );
