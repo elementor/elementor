@@ -27,8 +27,8 @@ export default function PluginsToImport( { plugins } ) {
 			return plugins;
 		},
 		handleOnSelect = useCallback( ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] ),
-		pluginsToImport = useMemo( () => getPluginsToImport(), [] ),
-		initialSelected = useMemo( () => pluginsToImport.map( ( plugin, index ) => index ), [] ),
+		pluginsToImport = useMemo( () => getPluginsToImport(), [ plugins ] ),
+		initialSelected = useMemo( () => pluginsToImport.map( ( plugin, index ) => index ), [ plugins ] ),
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length;
 
 	if ( ! pluginsToImport.length ) {

@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useMemo } from 'react';
 import { useNavigate } from '@reach/router';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -20,9 +20,11 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ navigateToMainScreen } = useImportActions(),
 		{ referrer, file_url: fileURL, action_type: actionType } = useQueryParams().getAll(),
-		isKitHasSvgAssets = sharedContext.data.includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ),
+		{ includes } = sharedContext.data || {},
+		{ file, uploadedData, importedData, overrideConditions } = importContext.data || {},
+		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
+		{ navigateToMainScreen } = useImportActions(),
 		uploadKit = () => {
 			const decodedFileURL = decodeURIComponent( fileURL );
 
@@ -50,10 +52,10 @@ export default function ImportProcess() {
 			sharedContext.dispatch( { type: 'SET_REFERRER', payload: referrer } );
 		}
 
-		if ( fileURL && ! importContext.data.file ) {
+		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
-		} else if ( importContext.data.uploadedData ) {
+		} else if ( uploadedData ) {
 			// When the import/process is the second step of the kit import process, after selecting the kit content.
 			importKit();
 		} else {
@@ -65,10 +67,10 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( startImport ) {
 			kitActions.import( {
-				session: importContext.data.uploadedData.session,
-				include: sharedContext.data.includes,
-				overrideConditions: importContext.data.overrideConditions,
-				referrer: sharedContext.data.referrer,
+				session: uploadedData.session,
+				include: includes,
+				overrideConditions: overrideConditions,
+				referrer,
 			} );
 		}
 	}, [ startImport ] );
@@ -93,10 +95,10 @@ export default function ImportProcess() {
 	// Actions after the kit upload/import data was updated.
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status ) {
-			if ( importContext.data.importedData ) { // After kit upload.
+			if ( importedData ) { // After kit upload.
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === actionType ) { // Forcing apply-all kit content.
-				if ( importContext.data.uploadedData.conflicts ) {
+				if ( uploadedData.conflicts ) {
 					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
@@ -108,13 +110,13 @@ export default function ImportProcess() {
 				navigate( '/import/plugins' );
 			}
 		}
-	}, [ importContext.data.uploadedData, importContext.data.importedData ] );
+	}, [ uploadedData, importedData ] );
 
 	return (
 		<Layout type="import">
 			<section>
 				<FileProcess
-					info={ importContext.data.uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
+					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
 					onDialogDismiss={ onCancelProcess }
 				/>
