@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import usePlugins, { PLUGINS_RESPONSE_MAP, PLUGIN_STATUS_MAP } from '../../../../hooks/use-plugins';
 
@@ -16,6 +16,7 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 		[ ready, setReady ] = useState( [] ),
 		[ actionStatus, setActionStatus ] = useState( '' ),
 		[ currentPlugin, setCurrentPlugin ] = useState( null ),
+		isError = PLUGINS_RESPONSE_MAP.ERROR === response.status,
 		getBulk = () => {
 			if ( bulk.length > bulkMaxItems ) {
 				// Getting a bulk for display, when needed to display only X plugins data that are in process.
@@ -97,7 +98,7 @@ export default function useInstallPlugins( { plugins = [], bulkMaxItems = 5 } ) 
 	return {
 		isDone,
 		ready,
-		bulk: getBulk(),
-		isError: PLUGINS_RESPONSE_MAP.ERROR === response.status,
+		bulk: useMemo( () => getBulk(), [ bulk ] ),
+		isError,
 	};
 }
