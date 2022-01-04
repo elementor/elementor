@@ -20,7 +20,7 @@ export default function ImportComplete() {
 		importContext = useContext( ImportContext ),
 		navigate = useNavigate(),
 		{ importedPlugins, uploadedData, importedData, isProInstalledDuringProcess } = importContext.data || {},
-		{ getTemplates, getContent,	getWPContent, getPlugins } = useImportedKitData(),
+		{ getTemplates, getContent, getWPContent, getPlugins } = useImportedKitData(),
 		{ activePlugins, failedPlugins } = getPlugins( importedPlugins ),
 		{ editElementorHomePageUrl, recentlyEditedElementorPageUrl } = importedData?.configData || {},
 		seeItLiveUrl = editElementorHomePageUrl || recentlyEditedElementorPageUrl || null,
