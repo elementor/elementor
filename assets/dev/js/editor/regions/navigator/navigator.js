@@ -29,7 +29,7 @@ export default class Navigator extends BaseRegion {
 
 	getDefaultStorage() {
 		return {
-			visible: false,
+			visible: true,
 			size: {
 				width: '',
 				height: '',
@@ -212,6 +212,22 @@ export default class Navigator extends BaseRegion {
 			this.open();
 		} else {
 			this.close( true );
+		}
+	}
+
+	onDocumentLoaded( document ) {
+		if ( document.config.panel.has_elements ) {
+			this.initLayout();
+
+			if ( false !== this.storage.visible ) {
+				$e.route( 'navigator' );
+			}
+		}
+	}
+
+	onDocumentUnloaded() {
+		if ( this.component.isOpen ) {
+			this.component.close( true );
 		}
 	}
 }

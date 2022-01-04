@@ -71,16 +71,10 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel: function( model, options = {} ) {
-		const shouldWrap = ! [ 'container', 'section' ].includes( model.elType || model?.get( 'elType' ) );
-
-		if ( ! shouldWrap ) {
-			delete options.at;
-		}
-
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap },
+			{ ...options, shouldWrap: 'container' !== model.elType },
 		);
 	},
 

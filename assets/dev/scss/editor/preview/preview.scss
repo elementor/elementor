@@ -108,9 +108,6 @@ html.elementor-html {
 }
 
 .elementor-section-wrap {
-	position: relative;
-	z-index: 1; // Fix: When the Header has a hight z-index, the handle-Setting disappear on mouse hover the handle-setting in a section beneath the header.
-
 	&:empty {
 		min-height: 25px;
 	}
