@@ -4,9 +4,9 @@ import Text from 'elementor-app/ui/atoms/text';
 
 import { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
 
-export default function PluginStatusItem( { name, status } ) {
-	const { ACTIVE, INACTIVE, NOT_INSTALLED } = PLUGIN_STATUS_MAP;
+const { ACTIVE, INACTIVE, NOT_INSTALLED } = PLUGIN_STATUS_MAP;
 
+export default function PluginStatusItem( { name, status } ) {
 	if ( NOT_INSTALLED === status ) {
 		return null;
 	} else if ( INACTIVE === status ) {
