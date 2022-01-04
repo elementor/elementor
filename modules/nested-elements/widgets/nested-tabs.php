@@ -138,9 +138,9 @@ class NestedTabs extends Widget_Repeater_Base {
 			],
 			'selectors_dictionary' => [
 				'' => '',
-				'center' => '--tabs-wrapper-display: flex; --tabs-wrapper-justify-content: center',
-				'end' => '--tabs-wrapper-display: flex; --tabs-wrapper-justify-content: flex-end',
-				'stretch' => '--tabs-wrapper-display: flex; --tabs-wrapper-justify-content: stretch; --tabs-wrapper-title-size: 100%;',
+				'center' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: center',
+				'end' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: flex-end',
+				'stretch' => '--tabs-v2-wrapper-display: flex; --tabs-v2-wrapper-justify-content: stretch; --tabs-v2-wrapper-title-size: 100%;',
 			],
 			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
@@ -218,7 +218,7 @@ class NestedTabs extends Widget_Repeater_Base {
 				],
 			],
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-border-width: {{SIZE}}{{UNIT}};',
+				'{{WRAPPER}}' => '--tabs-v2-border-width: {{SIZE}}{{UNIT}};',
 			],
 		] );
 
@@ -226,7 +226,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-border-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--tabs-v2-border-color: {{VALUE}};',
 			],
 		] );
 
@@ -234,7 +234,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			'label' => esc_html__( 'Background Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-background-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--tabs-v2-background-color: {{VALUE}};',
 			],
 		] );
 
@@ -248,7 +248,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-title-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--tabs-v2-title-color: {{VALUE}};',
 			],
 			'global' => [
 				'default' => Global_Colors::COLOR_PRIMARY,
@@ -259,7 +259,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			'label' => esc_html__( 'Active Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'selectors' => [
-				'{{WRAPPER}}' => '--tabs-title-active-color: {{VALUE}};',
+				'{{WRAPPER}}' => '--tabs-v2-title-active-color: {{VALUE}};',
 			],
 			'global' => [
 				'default' => Global_Colors::COLOR_ACCENT,
@@ -274,47 +274,47 @@ class NestedTabs extends Widget_Repeater_Base {
 			'fields_options' => [
 				'font_family' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-font-family: "{{VALUE}}";',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-family: "{{VALUE}}";',
 					],
 				],
 				'font_size' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-font-size: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-size: {{SIZE}}{{UNIT}};',
 					],
 				],
 				'font_weight' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-font-weight: {{VALUE}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-weight: {{VALUE}};',
 					],
 				],
 				'text_transform' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-text-transform: {{VALUE}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-transform: {{VALUE}};',
 					],
 				],
 				'font_style' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-font-style: {{VALUE}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-font-style: {{VALUE}};',
 					],
 				],
 				'text_decoration' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-text-decoration: {{VALUE}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-text-decoration: {{VALUE}};',
 					],
 				],
 				'line_height' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-line-height: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-line-height: {{SIZE}}{{UNIT}};',
 					],
 				],
 				'letter_spacing' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-letter-spacing: {{SIZE}}{{UNIT}};',
 					],
 				],
 				'word_spacing' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-typography-word-spacing: {{SIZE}}{{UNIT}};',
 					],
 				],
 			],
@@ -325,7 +325,7 @@ class NestedTabs extends Widget_Repeater_Base {
 			'fields_options' => [
 				'text_shadow' => [
 					'selectors' => [
-						'{{WRAPPER}}' => '--tabs-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
+						'{{WRAPPER}}' => '--tabs-v2-title-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
 					],
 				],
 			],
