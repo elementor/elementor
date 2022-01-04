@@ -19,6 +19,24 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 				elementor.trigger( 'document:loaded', document );
 
+				$e.store.dispatch(
+					$e.store.get( 'document/elements' ).actions.reset()
+				);
+
+				$e.store.dispatch(
+					$e.store.get( 'document/elements/selection' ).actions.reset()
+				);
+
+				$e.store.dispatch(
+					$e.store.get( 'navigator/folding' ).actions.reset()
+				);
+
+				$e.store.dispatch(
+					$e.store.get( 'document/elements' ).actions.add( {
+						models: elementor.elementsModel.get( 'elements' ).toJSON(),
+					} )
+				);
+
 				return $e.internal( 'panel/open-default', {
 					refresh: true,
 				} );

@@ -93,6 +93,11 @@ export default class Component extends ComponentBase {
 					state[ containerId ] = { ...state[ containerId ], ...changes };
 				}
 			},
+			reset: ( state, { payload } ) => {
+				// Prepare
+				// Act
+				return {};
+			},
 		};
 
 		return {
@@ -119,6 +124,11 @@ export default class Component extends ComponentBase {
 								delete state[ containerId ];
 							}
 						}
+					},
+					reset: ( state, { payload } ) => {
+						// Prepare
+						// Act
+						return {};
 					},
 				},
 			},

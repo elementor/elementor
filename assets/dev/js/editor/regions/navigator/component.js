@@ -57,6 +57,11 @@ export default class Component extends ComponentBase {
 								foldingState;
 						}
 					},
+					reset: ( state, { payload } ) => {
+						// Prepare
+						// Act
+						return {};
+					},
 				},
 			},
 		};

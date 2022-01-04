@@ -149,6 +149,24 @@ body {
 
 	&__element {
 
+		&__switch {
+			position: absolute;
+			@include end(15px);
+			height: 100%;
+			z-index: 0;
+			color: $editor-light;
+
+			&:hover {
+				color: $editor-info;
+			}
+		}
+
+		&:not(:hover) {
+			.elementor-navigator__element__switch {
+				visibility: hidden;
+			}
+		}
+
 		&.elementor-dragging-on-child {
 
 			> .elementor-navigator__elements {
@@ -299,6 +317,10 @@ body {
 
 		&-section {
 			background-color: #fff;
+		}
+
+		&-document {
+			background-color: $editor-background-light;
 		}
 	}
 }

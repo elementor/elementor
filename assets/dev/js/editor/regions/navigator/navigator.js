@@ -86,8 +86,31 @@ export default class Navigator extends BaseRegion {
 		};
 	}
 
+	/**
+	 * Get the list of documents to display in the navigator.
+	 *
+	 * @returns {string[]}
+	 */
+	documents() {
+		const documents = Object.values( elementorFrontend.documentsManager.documents );
+
+		for ( const document of documents ) {
+			// Header&Footer should only be included when the user initially chose to edit a page/post.
+			if ( [ 'wp-page', 'wp-post' ].includes( document.$element.data( 'elementor-type' ) ) ) {
+				documents.splice( 1, 0, documents.splice( documents.indexOf( document ), 1 )[ 0 ] );
+				return documents.map( ( _document ) => _document.$element.data( 'elementor-id' ).toString() );
+			}
+		}
+
+		// When the edited document is not a page, only the current document should be included.
+		return [ elementor.documents.getCurrentId().toString() ];
+	}
+
 	initLayout() {
-		ReactDOM.render( <NavigatorComponent />, this.$el[ 0 ] );
+		ReactDOM.render(
+			<NavigatorComponent documents={ this.documents() } />,
+			this.$el[ 0 ]
+		);
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );
