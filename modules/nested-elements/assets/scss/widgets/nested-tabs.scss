@@ -9,6 +9,7 @@
 	--tabs-v2-border-width: 1px;
 	--tabs-v2-border-color: #{$gray-light};
 	--tabs-v2-background-color: transparent;
+	--tabs-v2-vertical-navigation-width: 25%;
 
 	/* TODO Find better solution for all global defaults. */
 	--tabs-v2-title-color: var(--e-global-color-primary);
@@ -33,65 +34,74 @@
 	}
 
 	&.elementor-tabs-view-vertical {
+		> .elementor-widget-container {
+			> .elementor-tabs {
+				> .elementor-tabs-wrapper {
+					width: var(--tabs-v2-vertical-navigation-width);
+					flex-shrink: 0;
 
-		.elementor-tabs-wrapper {
-			width: 25%;
-			flex-shrink: 0;
-		}
+					> .elementor-tab-desktop-title {
+						&.elementor-active {
+							background-color: var(--tabs-v2-background-color);
 
-		.elementor-tab-desktop-title {
+							@include border-end-property(style, none);
 
-			&.elementor-active {
-				background-color: var(--tabs-v2-background-color);
+							&:before,
+							&:after {
+								height: 999em;
+								width: 0;
+								@include end(0);
+								@include border-end-property(style, solid);
+							}
 
-				@include border-end-property(style, none);
+							&:before {
+								top: 0;
+								transform: translateY(-100%);
+							}
 
-				&:before,
-				&:after {
-					height: 999em;
-					width: 0;
-					@include end(0);
-					@include border-end-property(style, solid);
+							&:after {
+								top: 100%;
+							}
+						}
+					}
 				}
 
-				&:before {
-					top: 0;
-					transform: translateY(-100%);
-				}
-
-				&:after {
-					top: 100%;
+				.elementor-tabs-content-wrapper {
+					.e-container {
+						width: 100%;
+					}
 				}
 			}
-		}
-
-		.e-container {
-			width: 100%;
 		}
 	}
 
 	&.elementor-tabs-view-horizontal {
+		> .elementor-widget-container {
+			> .elementor-tabs {
+				> .elementor-tabs-wrapper {
+					> .elementor-tab-desktop-title {
+						display: table-cell;
 
-		.elementor-tab-desktop-title {
-			display: table-cell;
+						&.elementor-active {
+							border-bottom-style: none;
 
-			&.elementor-active {
-				border-bottom-style: none;
+							&:before,
+							&:after {
+								bottom: 0;
+								height: 0;
+								width: 999em;
+								border-bottom-style: solid;
+							}
 
-				&:before,
-				&:after {
-					bottom: 0;
-					height: 0;
-					width: 999em;
-					border-bottom-style: solid;
-				}
+							&:before {
+								right: 100%;
+							}
 
-				&:before {
-					right: 100%;
-				}
-
-				&:after {
-					left: 100%;
+							&:after {
+								left: 100%;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -193,9 +203,7 @@
 
 // Responsive mode
 @media (max-width: $screen-mobile-max) {
-
 	.elementor-tabs {
-
 		.elementor-tab-title,
 		.e-container {
 			border-style: solid;
@@ -217,63 +225,80 @@
 }
 
 @media (min-width: $screen-mobile-next) {
-
 	.elementor-widget-tabs-v2 {
-
 		&.elementor-tabs-view-vertical {
+			> .elementor-widget-container {
+				> .elementor-tabs {
+					display: flex;
 
-			.elementor-tabs {
-				display: flex;
-			}
+					> .elementor-tabs-wrapper {
+						flex-direction: column;
+					}
 
-			.elementor-tabs-wrapper {
-				flex-direction: column;
-			}
-
-			.elementor-tabs-content-wrapper {
-				flex-grow: 1;
-				border-style: solid;
-				@include border-start-property(style, none);
+					> .elementor-tabs-content-wrapper {
+						flex-grow: 1;
+						border-style: solid;
+						@include border-start-property(style, none);
+					}
+				}
 			}
 		}
 	}
 
 	.elementor-widget-tabs-v2 {
-
 		&.elementor-tabs-view-horizontal {
+			> .elementor-widget-container {
+				> .elementor-tabs {
+					> .elementor-tabs-wrapper {
+						> .elementor-tab-title {
+							width: var(--tabs-v2-wrapper-title-size);
+						}
+					}
 
-			.e-container > .e-container {
-				border-style: none;
-			}
-
-			.e-container {
-				border-style: solid;
-				border-top-style: none;
-			}
-
-			.elementor-tab-title {
-				width: var(--tabs-v2-wrapper-title-size);
+					> .elementor-tabs-content-wrapper {
+						> .e-container {
+							border-style: solid;
+							border-top-style: none;
+						}
+					}
+				}
 			}
 		}
 
 		&.elementor-tabs-view-vertical {
-			.elementor-tab-title {
-				height: var(--tabs-v2-wrapper-title-size);
+			> .elementor-widget-container {
+				> .elementor-tabs {
+					> .elementor-tabs-wrapper {
+						> .elementor-tab-title {
+							height: var(--tabs-v2-wrapper-title-size);
+						}
+					}
+				}
 			}
 		}
 
 		&.elementor-tabs-alignment- {
 			&stretch.elementor-tabs-view-horizontal {
-
-				.elementor-tab-title {
-					--tabs-v2-wrapper-title-size: 100%;
+				> .elementor-widget-container {
+					> .elementor-tabs {
+						> .elementor-tabs-wrapper {
+							> .elementor-tab-title {
+								--tabs-v2-wrapper-title-size: 100%;
+							}
+						}
+					}
 				}
 			}
 
 			&stretch.elementor-tabs-view-vertical {
-
-				.elementor-tab-title {
-					--tabs-v2-wrapper-title-size: 100%;
+				> .elementor-widget-container {
+					> .elementor-tabs {
+						> .elementor-tabs-wrapper {
+							> .elementor-tab-title {
+								--tabs-v2-wrapper-title-size: 100%;
+							}
+						}
+					}
 				}
 			}
 		}

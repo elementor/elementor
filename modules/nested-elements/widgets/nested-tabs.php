@@ -198,7 +198,7 @@ class NestedTabs extends Widget_Repeater_Base {
 				],
 			],
 			'selectors' => [
-				'{{WRAPPER}} .elementor-tabs-wrapper' => 'width: {{SIZE}}{{UNIT}}',
+				'{{WRAPPER}}' => '--tabs-v2-vertical-navigation-width: {{SIZE}}{{UNIT}}',
 			],
 			'condition' => [
 				'type' => 'vertical',
