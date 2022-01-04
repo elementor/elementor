@@ -9,9 +9,10 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Heading from 'elementor-app/ui/atoms/heading';
 import Button from 'elementor-app/ui/molecules/button';
 
+const kitInfoTitle = __( 'Kit Information', 'elementor' );
+
 export default function KitInformation() {
-	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false ),
-		kitInfoTitle = __( 'Kit Information', 'elementor' );
+	const [ showKitInfoModal, setShowKitInfoModal ] = useState( false );
 
 	return (
 		<>

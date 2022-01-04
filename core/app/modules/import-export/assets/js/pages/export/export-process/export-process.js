@@ -8,6 +8,7 @@ import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
 import useKit from '../../../hooks/use-kit';
+import useExportPluginsData from './hooks/use-export-plugins-data';
 
 export default function ExportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -15,25 +16,11 @@ export default function ExportProcess() {
 		navigate = useNavigate(),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
+		{ plugins, exportedData, isExportProcessStarted } = exportContext.data || {},
+		{ pluginsData } = useExportPluginsData( plugins ),
 		onDialogDismiss = () => {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
-		},
-		getExportedPluginsData = ( plugins ) => {
-			const pluginsData = [];
-
-			plugins.forEach( ( pluginData ) => {
-				const { name, plugin, plugin_uri: pluginUri, version } = pluginData;
-
-				pluginsData.push( {
-					name,
-					plugin,
-					pluginUri,
-					version,
-				} );
-			} );
-
-			return pluginsData;
 		},
 		exportKit = () => {
 			const { includes, kitInfo } = sharedContext.data;
@@ -48,12 +35,12 @@ export default function ExportProcess() {
 			kitActions.export( {
 				include: includes,
 				kitInfo,
-				plugins: getExportedPluginsData( exportContext.data.plugins ),
+				plugins: pluginsData,
 			} );
 		};
 
 	useEffect( () => {
-		if ( exportContext.data.isExportProcessStarted ) {
+		if ( isExportProcessStarted ) {
 			exportKit();
 		} else {
 			// When not starting from the main screen.
@@ -73,10 +60,10 @@ export default function ExportProcess() {
 	}, [ kitState.status ] );
 
 	useEffect( () => {
-		if ( exportContext.data.exportedData ) {
+		if ( exportedData ) {
 			navigate( 'export/complete' );
 		}
-	}, [ exportContext.data.exportedData ] );
+	}, [ exportedData ] );
 
 	return (
 		<Layout type="export">

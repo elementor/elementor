@@ -31,8 +31,8 @@ export default function ExportPlugins() {
 
 	// On plugins change.
 	useEffect( () => {
-		if ( hasIncludes ) {
-			// In case that the kit has content then the kit can be exported.
+		if ( hasIncludes && plugins.length ) {
+			// In case that the kit has content and the plugins data exist, then the kit can be exported.
 			setIsKitReady( true );
 		} else {
 			// There should be at least one more plugin select in addition to Elementor Core.

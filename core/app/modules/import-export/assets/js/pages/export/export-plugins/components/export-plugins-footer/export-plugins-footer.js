@@ -1,11 +1,7 @@
-import { useNavigate } from '@reach/router';
-
 import ActionsFooter from '../../../../../shared/actions-footer/actions-footer';
 import Button from 'elementor-app/ui/molecules/button';
 
 export default function ExportPluginsFooter( { isKitReady } ) {
-	const navigate = useNavigate();
-
 	return (
 		<ActionsFooter>
 			<Button
@@ -18,7 +14,7 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 				text={ __( 'Create Kit', 'elementor' ) }
 				variant="contained"
 				color={ isKitReady ? 'primary' : 'disabled' }
-				onClick={ () => isKitReady && navigate( '/export/process' ) }
+				url={ isKitReady ? '/export/process' : '' }
 			/>
 		</ActionsFooter>
 	);

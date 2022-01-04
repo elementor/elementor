@@ -8,6 +8,8 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
 import { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-data';
 
+const layout = [ 3, 1, 1 ];
+
 export default function PluginsToImport( { plugins } ) {
 	if ( ! plugins?.length ) {
 		return null;
@@ -27,7 +29,6 @@ export default function PluginsToImport( { plugins } ) {
 		handleOnSelect = useCallback( ( selectedPlugins ) => importContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] ),
 		pluginsToImport = useMemo( () => getPluginsToImport(), [] ),
 		initialSelected = useMemo( () => pluginsToImport.map( ( plugin, index ) => index ), [] ),
-		layout = useMemo( () => [ 3, 1, 1 ], [] ),
 		isAllRequiredPluginsSelected = pluginsToImport.length === importContext.data.plugins.length;
 
 	if ( ! pluginsToImport.length ) {

@@ -6,6 +6,9 @@ import Loader from '../../../../../ui/loader/loader';
 import usePlugins, { PLUGIN_STATUS_MAP } from '../../../../../hooks/use-plugins';
 import usePluginsData, { PLUGINS_KEYS } from '../../../../../hooks/use-plugins-data';
 
+const layout = [ 3, 1 ],
+	initialDisabled = [ 0 ]; // Elementor Core will always be first and should always be disabled.
+
 function ExportPluginsSelection( { onSelect } ) {
 	const { response } = usePlugins(),
 		{ pluginsData } = usePluginsData( response.data ),
@@ -30,8 +33,8 @@ function ExportPluginsSelection( { onSelect } ) {
 		<PluginsSelection
 			plugins={ activePlugins }
 			initialSelected={ getInitialSelected() }
-			initialDisabled={ [ 0 ] /* Elementor Core will always be first and should always be disabled */ }
-			layout={ [ 3, 1 ] }
+			initialDisabled={ initialDisabled }
+			layout={ layout }
 			withStatus={ false }
 			onSelect={ onSelect }
 		/>

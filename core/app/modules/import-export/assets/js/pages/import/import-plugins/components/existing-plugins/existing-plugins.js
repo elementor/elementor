@@ -3,14 +3,15 @@ import { useMemo } from 'react';
 import PluginsSelection from '../../../../../shared/plugins-selection/plugins-selection';
 import Heading from 'elementor-app/ui/atoms/heading';
 
+const layout = [ 4, 1 ];
+
 export default function ExistingPlugins( { plugins } ) {
 	if ( ! plugins?.length ) {
 		return null;
 	}
 
 	const existingPlugins = useMemo( () => plugins, [] ),
-		initialSelected = useMemo( () => plugins.map( ( plugin, index ) => index ), [] ),
-		layout = useMemo( () => [ 4, 1 ], [] );
+		initialSelected = useMemo( () => plugins.map( ( plugin, index ) => index ), [] );
 
 	return (
 		<div className="e-app-import-plugins__section">
