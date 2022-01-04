@@ -12,7 +12,7 @@ const config = {
 	use: {
 		headless: true,
 		storageState: './tests/playwright/config/storageState.json',
-		baseURL: process.env.URL || 'http://localhost:8888/',
+		baseURL: process.env.URL || 'http://localhost/wordpress/',
 		viewport: { width: 1440, height: 960 },
 		video: 'on',
 	},
