@@ -593,6 +593,13 @@
 						}
 					},
 					"additionalProperties": false
+				},
+				"elementor_compatibility": {
+					"$comment": "Optional",
+					"$id": "#/system/elementor_compatibility",
+					"type": "object",
+					"title": "Compatibility status of plugins with elementor",
+					"description": "A list pf plugins and their compatibility with elementor."
 				}
 			},
 			"additionalProperties": false
