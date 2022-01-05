@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { BASE_ITEM_CLASS } from '../components/items';
 import { useItemContext } from '../context/item-context';
 
@@ -10,8 +10,6 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 		autoExpandTimerRef = useRef( null );
 
 	useEffect( () => {
-		let draggedItemNewIndex;
-
 		jQuery( listRef.current ).sortable( {
 			items: '> *:not(.elementor-empty-view)',
 			placeholder: 'ui-sortable-placeholder',
@@ -25,12 +23,10 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 				document.getElementById( 'elementor-navigator' ).dataset.over = 'true';
 			},
 			stop: ( e, ui ) => {
-				draggedItemNewIndex = ui.item.index();
-				jQuery( ui.sender ).sortable( 'cancel' );
 				jQuery( listRef.current ).sortable( 'cancel' );
 				document.getElementById( 'elementor-navigator' ).dataset.over = 'false';
 			},
-			over: ( e ) => {
+			over: ( e, ui ) => {
 				e.stopPropagation();
 				jQuery( listRef.current ).closest( `.${ BASE_ITEM_CLASS }` ).addClass( 'elementor-dragging-on-child' );
 			},
@@ -44,13 +40,22 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 			},
 			update: ( e, ui ) => {
 				e.stopPropagation();
+
 				if ( ! jQuery( listRef.current ).is( ui.item.parent() ) ) {
 					return;
 				}
 
-				setTimeout( () => container.model.trigger( 'request:sort:update', ui, draggedItemNewIndex ) );
+				const draggedItemIndex = ui.item.index();
+
+				setTimeout( () => {
+					container.model.trigger( 'request:sort:update', ui, draggedItemIndex );
+				} );
 			},
 		} );
+
+		return () => {
+			jQuery( listRef.current ).sortable( 'destroy' );
+		};
 	}, [ container ] );
 
 	useEffect( () => {
