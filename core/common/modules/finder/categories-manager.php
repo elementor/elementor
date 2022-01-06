@@ -41,12 +41,11 @@ class Categories_Manager {
 	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 */
 	public function add_category( $category_name, Base_Category $category ) {
-		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'register'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
 		$this->register( $category, $category_name );
 	}
