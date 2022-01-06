@@ -303,11 +303,11 @@
         $e.run('document/elements/settings', { 
           container: eWidget,
           settings: {
-              title_color: 'black',
+              title_color: 'black', 
           }
         } );
         ```
         Result:
         ![widget-heading](./_images/widget-heading-title-color-black.png)
 
-### [Back](../readme.md) 
+### [Back](../component.md) 
