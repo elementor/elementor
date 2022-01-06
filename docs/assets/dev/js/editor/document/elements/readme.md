@@ -74,7 +74,7 @@
     Result: ![empty-column](./_images/empty-column.png)
     Now to create widget, we need column, here is two examples how to reach column:
     ```javascript
-    const eColumn = eSection.view.children.findByIndex( 0 ).getContainer();
+    const eColumn = eSection.children[0];
     ```
     OR
     ```javascript
