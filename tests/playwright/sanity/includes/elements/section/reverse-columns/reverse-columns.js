@@ -16,7 +16,7 @@ module.exports = class {
     }
 
     async setFirstColumn() {
-        this.firstColumn = await this.editor.getFrame().locator( '.elementor-col-50' ).first();
+        this.firstColumn = await this.editor.getFrame().locator( '[data-element_type="column"][data-col="50"]:nth-child(1)' ).first();
     }
 
     async toggle( device ) {
