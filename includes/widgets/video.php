@@ -956,9 +956,7 @@ class Widget_Video extends Widget_Base {
 									'value' => 'eicon-play',
 								], [ 'aria-hidden' => 'true' ] );
 							?>
-							<span class="elementor-screen-only">
-								<?php $this->render_a11y_text( $settings['image_overlay'] ); ?>
-							</span>
+							<span class="elementor-screen-only"><?php $this->render_a11y_text( $settings['image_overlay'] ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>
