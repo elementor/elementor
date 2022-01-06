@@ -121,7 +121,13 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 
 	bindEvents() {
 		this.elements.$imageOverlay.on( 'click', this.handleVideo.bind( this ) );
-		this.elements.$playIcon.on( 'keydown', this.handleVideo.bind( this ) );
+		this.elements.$playIcon.on( 'keydown', ( event ) => {
+			const ENTER_KEY = 13;
+
+			if ( ENTER_KEY === event.keyCode ) {
+				this.handleVideo();
+			}
+		} );
 	}
 
 	onInit() {
