@@ -9,17 +9,10 @@ exports.EditorPage = class EditorPage {
 	 */
 	constructor( page ) {
 		this.page = page;
-		this.previewFrame = page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
-	/**
-	 * Reload the editor page.
-	 *
-	 * @returns {Promise<void>}
-	 */
-	async reload() {
-		await this.page.reload();
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+	getFrame() {
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
 	/**
@@ -34,7 +27,7 @@ exports.EditorPage = class EditorPage {
 
 		await this.page.waitForSelector( '#elementor-panel-header-title' );
 		await this.page.waitForSelector( 'iframe#elementor-preview-iframe' );
-		await this.page.waitForTimeout( 5000 );
+		await this.page.waitForTimeout( 5000 ); //TODO: Find a way to detect when Iframe is fully loaded.
 
 		this.isPanelLoaded = true;
 	}
@@ -70,7 +63,12 @@ exports.EditorPage = class EditorPage {
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>}
 	 */
 	async getElementHandle( id ) {
-		return this.previewFrame.$( getElementSelector( id ) );
+		return this.getFrame().$( getElementSelector( id ) );
+	}
+
+	async addTwoColumns() {
+		await this.getFrame().click( '.elementor-add-section-button' );
+        await this.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
 	}
 
 	async init( experiments ) {
@@ -86,8 +84,6 @@ exports.EditorPage = class EditorPage {
 
 		await this.ensurePanelLoaded();
 
-		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
-
-		await this.page.waitForTimeout( 4000 );
+		await this.page.waitForTimeout( 4000 );//TODO: Find a way to detect when Iframe is fully loaded.
 	}
 };
