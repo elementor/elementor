@@ -9,8 +9,6 @@ import Heading from 'elementor-app/ui/atoms/heading';
 import Text from 'elementor-app/ui/atoms/text';
 import Grid from 'elementor-app/ui/grid/grid';
 
-import MessageBanner from '../../ui/message-banner/message-banner';
-
 import './kit-content.scss';
 
 export default function KitContent( { contentData, hasPro } ) {

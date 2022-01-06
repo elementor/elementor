@@ -33,14 +33,14 @@ export default function useKitData( kitData ) {
 
 		return Object
 			.entries( templates )
-			.filter( ( [ key, amount ] ) => getLabel( 'templates', key, amount ) );
+			.map( ( [ key, amount ] ) => getLabel( 'templates', key, amount ) )
+			.filter( ( value ) => value );
 	},
 	getSiteSettings = () => {
-		const siteSettings = kitData?.[ 'site-settings' ] || {};
+		const siteSettings = kitData?.[ 'site-settings' ] || [];
 
-		return Object
-			.entries( siteSettings )
-			.filter( ( item ) => getLabel( 'site-settings', item[ 1 ] ) );
+		return siteSettings
+			.map( ( item ) => getLabel( 'site-settings', item ) );
 	},
 	getContent = () => {
 		const content = kitData?.content || {},
@@ -57,7 +57,8 @@ export default function useKitData( kitData ) {
 
 		return Object
 			.entries( mergedContent )
-			.filter( ( [ key, amount ] ) => getLabel( 'content', key, amount.length ) );
+			.map( ( [ key, data ] ) => getLabel( 'content', key, data.length ) )
+			.filter( ( value ) => value );
 	},
 	getPlugins = () => {
 		return kitData?.plugins ? kitData.plugins.map( ( { name } ) => name ) : [];
