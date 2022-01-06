@@ -204,6 +204,9 @@ class Source_Remote extends Source_Base {
 			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
 		}
 
+		// After the upload complete, set the elementor upload state back to false
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
+
 		return $data;
 	}
 
