@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev26 - 2022-01-06
+* Fix: Internal - Swiper Util accepts only jQuery instances as the container parameter [ED-6050] (#17319)
+
 #### 3.6.0-dev25 - 2022-01-03
 * Fix: Image size with a link shrunk in Image widget [ED-3397] (#17245)
 
@@ -478,13 +481,3 @@
 * Fix: Image Carousel - Not showing [ED-3640] (#15330)
 * Fix: Remote tests don't send back the status [ED-4076] (#15569)
 * Tweak: Try to merge all branches and failed only in the end (#15586)
-
-#### 3.4.0-dev11 - 2021-07-07
-* Fix: Kit Library - ThemeForest promotion text change [ED-4048] (#15559)
-* Fix: Kit file not being created in Multisite WordPress instances [ED-4029] (#15535)
-* Tweak: Added custom fields to I/E process [ED-3964] (#15545)
-* Fix: Import/Export - Featured images are not imported [ED-3706] (#15553)
-* Fix: Kit Library - Connect process not response [ED-4078] (#15561)
-* Fix: Closing the import-export wizard was not leading back to the dedicated admin tab [ED-4015] (#15549)
-* Tweak - Webpack update preparation. (#15536)
-* Fix: Kit-Library - Learn more url [ED-4059] (#15574)
