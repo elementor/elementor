@@ -2,12 +2,12 @@ import ElementModel from './element';
 
 export default class Container extends ElementModel {
 	/**
-	 * Do not allow section or column be placed in the container.
+	 * TODO Remove - Allow 'section; since library still uses section, blocks only column.
 	 */
 	isValidChild( childModel ) {
 		// Get elType.
 		const elType = childModel.get( 'elType' );
 
-		return 'section' !== elType && 'column' !== elType;
+		return 'column' !== elType;
 	}
 }
