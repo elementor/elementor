@@ -1,5 +1,12 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev27 - 2022-01-07
+* Fix: Core SVG icons from template library are imported empty [ED-5980] (#17373)
+* Tweak: Adding Import Export to the Finder [ED-3997] (#17259)
+* Tweak: Add border options in Image Box widget [ED-3927] (#17250)
+* Tweak: Adding Kit Library to the Finder [ED-3726] (#17330)
+* Tweak: "Library page" was replaced with "Page template" in Finder [ED-6138] (#17360)
+
 #### 3.6.0-dev26 - 2022-01-06
 * Fix: Internal - Swiper Util accepts only jQuery instances as the container parameter [ED-6050] (#17319)
 
