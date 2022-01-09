@@ -21,10 +21,16 @@ body:
         ==== Guidelines ====
 
         - Search this repository (top of the page) for the issue, and make sure it has not been fixed or reported before.
+
         - Make sure you are using the most updated versions of Elementor, WordPress & your theme.
+
         - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
+
         - Change your WordPress theme to WordPress TwentySixteen (or other default WordPress theme).
+
         - If you're requesting a new feature, explain why you'd like it to be added. Try to add as much detail as you can, and be specific.
+
+        ## The Issue
   - type: checkboxes
     id: prerequisites
     attributes:
@@ -59,6 +65,10 @@ body:
         - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
         - label: "This bug happens with a default WordPress theme active."
         - label: "I can reproduce this bug consistently using the steps above."
+  - type: markdown
+    attributes:
+      value: |
+        ## Environment
   - type: textarea
     id: system_info
     validations:
