@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 5.0
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 3.4.6
+Stable tag: 3.5.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -102,7 +102,7 @@ We’ve integrated RTL and multi language support within the framework of Elemen
 = Developer API. =
 Elementor website builder is free and open source. It’s the perfect plugin to be extended and integrated further. It was created and developed with the developer in mind, and we have already seen some truly remarkable addons being developed.
 
-To help you get started and learn just how to integrate with Elementor, we have created the [Official Elementor Developer Resources](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) and the [Code Reference](https://code.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+To help you get started and learn just how to integrate with Elementor, we have created the official [Elementor Developers Center](https://developers.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme). Check the [Developers Blog](https://developers.elementor.com/blog/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to discover the latest information from the programmers working on the newest Elementor versions, or visit the [Developers Docs](https://developers.elementor.com/docs/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to learn how to extend Elementor core and create your own addons.
 
 = Be a contributor =
 If you want to contribute, go to our [Elementor GitHub Repository](https://github.com/elementor/elementor) and see where you can help.
@@ -110,7 +110,7 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 You can also add a new language via [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/elementor). We've built a short guide explaining [how to translate and localize the plugin](https://go.elementor.com/translate/).
 
 = Security Report =
-We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection. 
+We run a [managed security Bug Bounty program](https://bugcrowd.com/elementor), utilizing the community power by enabling 24/7/365 crowdsourced vulnerability detection.
 
 = Documentation and Support =
 - For documentation and tutorials go to our [Documentation](https://docs.elementor.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -187,6 +187,104 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 == Changelog ==
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
+
+= 3.5.3 - 2021-12-28 =
+Fix: Global Widgets appears with the default widget style and not with the styling of the Global widget([#17296](https://github.com/elementor/elementor/issues/17296))
+
+= 3.5.2 - 2021-12-22 =
+* Fix: Responsive Reverse Columns control are not working properly ([#17240](https://github.com/elementor/elementor/issues/17240), [#17174](https://github.com/elementor/elementor/issues/17174))
+* Fix: Favorite widgets are being reset after page reload ([#17219](https://github.com/elementor/elementor/issues/17219))
+* Fix: Inner Section can’t be dragged into a column ([#17249](https://github.com/elementor/elementor/issues/17249))
+* Fix: Elements are pasted in reverse order when copying and pasting multiple elements
+
+= 3.5.1 - 2021-12-20 =
+* Tweak: Reverted Experiments auto deactivation in Safe Mode ([#17195](https://github.com/elementor/elementor/issues/17195))
+* Fix: Experiments are not working when Safe mode is enabled ([#17195](https://github.com/elementor/elementor/issues/17195))
+* Fix: Editing handles `z-index` issue ([#17187](https://github.com/elementor/elementor/issues/17187))
+* Fix: Missing wrapper section when Inner Section widget is dragged directly to the drag area ([#17187](https://github.com/elementor/elementor/issues/17187))
+* Fix: SVG and JSON files were not being uploaded when Dragged from Desktop ([#17194](https://github.com/elementor/elementor/issues/17194))
+* Fix: Several functions are being executed when not supposed to in all WordPress Dashboard screens
+
+= 3.5.0 - 2021-12-14 =
+* New: Introducing CSS Transform - rotate, scale, skew, offset and flip any element ([#12451](https://github.com/elementor/elementor/issues/12451))
+* New: Meet Multi-Select for page elements - improve your workflow process by making bulk actions ([#8006](https://github.com/elementor/elementor/issues/8006), [#879](https://github.com/elementor/elementor/issues/879))
+* New: Meet Favorite widgets section - save your most useful widgets for easier accessibility ([#2184](https://github.com/elementor/elementor/issues/2184), [#11443](https://github.com/elementor/elementor/issues/11443))
+* New: Added Text Stroke control - highlight titles with colorful outlines to in Heading, Icon Box, Tabs, Accordion, and Text path widgets ([#11158](https://github.com/elementor/elementor/issues/11158))
+* Experiment: Hide native WordPress widgets from panel search results - remove unwanted widgets from the widgets panel
+* Tweak: Adjusted Inline Font Icons experiment to work with `eicons` library and save up to 110KB of asset loading ([#8572](https://github.com/elementor/elementor/issues/8572), [#11361](https://github.com/elementor/elementor/issues/11361))
+* Tweak: Detect and present contextual errors messages in the Import/Export flow for better troubleshooting ([#15630](https://github.com/elementor/elementor/issues/15630), [#15715](https://github.com/elementor/elementor/issues/15715))
+* Tweak: Added Elementor license plan filter to Kit Library ([#16075](https://github.com/elementor/elementor/issues/16075))
+* Tweak: Added Reverse columns option to Additional Custom Breakpoints Experiment ([#16322](https://github.com/elementor/elementor/issues/16322), [#12925](https://github.com/elementor/elementor/issues/12925))
+* Tweak: Adjusted widgets to work with Inline-CSS Experiment and Additional Custom Breakpoints experiment ([#16126](https://github.com/elementor/elementor/issues/16126))
+* Tweak: Added the option to search by tag names in the Kit Library ([#16075](https://github.com/elementor/elementor/issues/16075))
+* Tweak: Added a quick Apply Kit modal option in the Kit Library
+* Tweak: Updated Experiments screen structure for better experiments discoverabilty
+* Tweak: Added Word Spacing control to typography group control
+* Tweak: Added Pro promotion screen for Custom Code feature
+* Tweak: Removed the Archive Posts and Archive Title widgets from widgets panel search results in non Archive templates
+* Tweak: Prompt the user permission to allow unfiltered file uploads in the Import Kit flow
+* Tweak: Optimized Kit library index page performance
+* Tweak: Improved performance of `WP_Query` by adding `no_found_rows=true` parameter
+* Tweak: Improved performance of loading the "My templates" while loading the Templates library
+* Tweak: Minimum height wasn't defined to all responsive devices
+* Tweak: Experiments status added to the system info for better debugging
+* Tweak: Safe mode now deactivates Elementor Experiments
+* Tweak: UI improvement for cascaded responsive control units
+* Tweak: Updated Dialog library to `4.9.0`
+* Tweak: Added a unified components registration for widgets, controls, form actions, dynamic tags, and finder categories
+* Tweak: Disabled the option to change the desktop height and width fields in the responsive bar
+* Tweak: Redundant inline CSS code was removed with the use of `eicons`
+* Tweak: Implemented Redux framework for future features support
+* Tweak: Allow "Edit Buttons" options to be extended by 3rd party developers
+* Tweak: `Editor/Documents` moved to `/editor/components` folder
+* Tweak: Added a filter to Context Menu Groups
+* Fix: Hamburger button didn't open on mobile in Nav menu widget ([#16682](https://github.com/elementor/elementor/issues/16682))
+* Fix: Adding multiple repeater controls in one section craetes a onflict ([#13117](https://github.com/elementor/elementor/issues/13117))
+* Fix: Finder incorrectly identifies pages created through Finder as a Post type instead of Page type ([#12502](https://github.com/elementor/elementor/issues/12502))
+* Fix: Unexpected behavior if `ctrl` + mouse click was used on mac ([#5228](https://github.com/elementor/elementor/issues/5228))
+* Fix: Edit header handles don't show up if the `z-index` of the header section is over 99 ([#16214](https://github.com/elementor/elementor/issues/16214))
+* Fix: Slides per view can't be set to default if there is a widescreen value in the Testimonial Carousel widget ([#16210](https://github.com/elementor/elementor/issues/16210))
+* Fix: Dividers not vertically centered in Icon List widget ([#16431](https://github.com/elementor/elementor/issues/16431))
+* Fix: Text typography control is missing in Text Path widget ([#16805](https://github.com/elementor/elementor/issues/16805))
+* Fix: Column padding affected absolute positioned elements ([#16572](https://github.com/elementor/elementor/issues/16572))
+* Fix: Some controls disappear in responsive devices when Additional Custom Breakpoint experiment is active ([#16608](https://github.com/elementor/elementor/issues/16608))
+* Fix: Menu Anchor widget didn't scroll to the appropriate ID if Scroll Snap is active ([#17035](https://github.com/elementor/elementor/issues/17035))
+* Fix: SVG sanitizer is failing if there is a line break after `</svg>`
+* Fix: Image Carousel widget ignored padding and margin inside columns
+* Fix: Theme Builder close button not functioning if the page was refreshed
+* Fix: Pro widget promotional popover CTA text was incorrect when Elementor Pro is activated but not connected
+* Fix: Section editing handle is not accessible when Section is placed below a Header
+* Fix: Run DB calculations only on sites that are required to
+* Fix: UI glitch in Google maps widgets
+* Fix: CLI 'library import' deletes the original imported file when importing a template
+* Fix: Updated Admin Top Bar font for Non-English languages
+* Fix: Elementor top bar is not presented in License page
+* Fix: Template name changed if a dash mark was used in the Import process
+* Fix: Empty state background was missing from the Media controls
+* Fix: Apply Kit option threw an error when used with PHP 8.0
+* Fix: Sticky option threw an error and cause the editor not to work
+* Fix: UI glitch in "Get beta updates" modal
+* Fix: Scroll snap caused UI glitches and threw undefined error on Archive pages
+* Fix: Vertical align control disappeared if used in a custom position on a custom breakpoint
+* Fix: Choose controls in RTL sites were inverted
+* Fix: Elementor notices were being displayed in the plugin update screen
+* Fix: Z-index control overrides negative values
+* Fix: Text Path widget causes redundant file system calls
+* Deprecated: `get_add_new_landing_page_url` (props [@HeyMehedi](https://github.com/HeyMehedi))
+* Deprecated: See all deprecations to this version in our [Developers Deprecations Post](https://developers.elementor.com/v3-5-planned-deprecations/)
+
+= 3.4.8 - 2021-11-16 =
+* Fix: Font Awesome 4 support option is set to Yes in new websites
+* Fix: CSS Printing method option is set to Internal Embedding in new websites
+* Fix: Hardened Lightbox capabilities to enforce better security policies
+* Fix: After downgrading from a version with Container experiment active a PHP error is thrown
+
+= 3.4.7 - 2021-10-31 =
+* Tweak: Added role restriction to Version control feature
+* Fix: Private Vimeo videos are not loading in Video widget ([#16741](https://github.com/elementor/elementor/issues/16741))
+* Fix: Custom width responsive control disappeared until section init in the common Positioning section
+* Fix: PayPal button widget is not functioning in future Pro versions
+* Fix: Unwanted HTML escaping in Pro features promotion
 
 = 3.4.6 - 2021-10-19 =
 * Tweak: Updated `eicons` library to 5.13.0
@@ -290,7 +388,7 @@ See Elementor Developer Edition versions changelog [here](https://go.elementor.c
 * Fix: Theme Builder is not working if Import/Export experiment is inactive
 * Fix: UI glitch in Responsive bar in RTL sites
 * Fix: "Edit with Elementor" isn’t working on static Homepages
-* Fix: UI glitches in Kit Library 
+* Fix: UI glitches in Kit Library
 * Fix: Library connect issues after URL change in Kit and template Library
 * Fix: Kit Library not showing all categories
 * Fix: Pro widget promotions flickers after clicking on "See it in action" button

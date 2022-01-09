@@ -63,6 +63,7 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'mutable' => true,
 			'new_site' => [
 				'default_active' => false,
 				'always_active' => false,
@@ -71,13 +72,11 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		$new_site = $experimental_data['new_site'];
-
-		$feature_is_mutable = true;
 
 		if ( $new_site['default_active'] || $new_site['always_active'] ) {
 			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
@@ -86,28 +85,24 @@ class Manager extends Base_Object {
 				if ( $new_site['always_active'] ) {
 					$experimental_data['state'] = self::STATE_ACTIVE;
 
-					$feature_is_mutable = false;
+					$experimental_data['mutable'] = false;
 				} elseif ( $new_site['default_active'] ) {
 					$experimental_data['default'] = self::STATE_ACTIVE;
 				}
 			}
 		}
 
-		$experimental_data['mutable'] = $feature_is_mutable;
+		if ( $experimental_data['mutable'] ) {
+			$experimental_data['state'] = $this->get_saved_feature_state( $options['name'] );
+		}
 
-		if ( $feature_is_mutable ) {
-			$state = $this->get_saved_feature_state( $options['name'] );
-
-			if ( ! $state ) {
-				$state = self::STATE_DEFAULT;
-			}
-
-			$experimental_data['state'] = $state;
+		if ( empty( $experimental_data['state'] ) ) {
+			$experimental_data['state'] = self::STATE_DEFAULT;
 		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( $feature_is_mutable && is_admin() ) {
+		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
@@ -234,7 +229,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The "Improved Asset Loading" mode reduces the amount of code that is loaded on the page by default. When activated, parts of the infrastructure code will be loaded dynamically, only when needed. Keep in mind that activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-asset-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.2.0-beta',
@@ -247,7 +242,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.3.0-beta',
@@ -256,8 +251,8 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
-			'title' => esc_html__( 'Font-Awesome Inline', 'elementor' ),
-			'description' => esc_html__( 'The "Font-Awesome Inline" will render the Font-Awesome icons as inline SVG without loading the Font-Awesome library and its related CSS files and fonts.', 'elementor' )
+			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
+			'description' => esc_html__( 'The “Inline Font Icons” will render the icons as inline SVG without loading the Font-Awsome and the eicons libraries and its related CSS files and fonts. Learn More.', 'elementor' )
 				. ' <a href="https://go.elementor.com/wp-dash-inline-font-awesome/" target="_blank">'
 				. esc_html__( 'Learn More', 'elementor' ) . '</a>',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
@@ -283,7 +278,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -310,10 +305,12 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.5.0',
-			],
+			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'admin_menu_rearrangement',
+			'mutable' => false,
 		] );
 	}
 
@@ -406,7 +403,7 @@ class Manager extends Base_Object {
 				];
 			}
 
-			if ( ! Tracker::is_allow_track() ) {
+			if ( ! Tracker::is_allow_track() && 'stable' === $section ) {
 				$fields[ $section ] += $settings->get_usage_fields();
 			}
 		}
@@ -476,11 +473,11 @@ class Manager extends Base_Object {
 			?>
 		</p>
 		<?php if ( $this->get_features() ) { ?>
-		<button type="submit" class="button e-experiment__button" value="active">Activate All Experiments</button>
-		<button type="submit" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="active">Activate All Experiments</button>
+		<button type="button" class="button e-experiment__button" value="inactive">Deactivate All Experiments</button>
 		<?php } ?>
 		<hr>
-		<h2>
+		<h2 class="e-experiment__table-title">
 			<?php echo esc_html__( 'Ongoing Experiments', 'elementor' ); ?>
 		</h2>
 		<?php

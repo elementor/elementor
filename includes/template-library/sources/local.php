@@ -215,8 +215,16 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 */
 	public function register_data() {
+		$admin_menu_rearrangement_active = Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' );
+
+		if ( $admin_menu_rearrangement_active ) {
+			$name = _x( 'Templates', 'Template Library', 'elementor' );
+		} else {
+			$name = _x( 'My Templates', 'Template Library', 'elementor' );
+		}
+
 		$labels = [
-			'name' => _x( 'My Templates', 'Template Library', 'elementor' ),
+			'name' => $name,
 			'singular_name' => _x( 'Template', 'Template Library', 'elementor' ),
 			'add_new' => _x( 'Add New', 'Template Library', 'elementor' ),
 			'add_new_item' => _x( 'Add New Template', 'Template Library', 'elementor' ),
@@ -237,7 +245,7 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'menu_icon' => 'dashicons-admin-page',
 			'show_ui' => true,
-			'show_in_menu' => true,
+			'show_in_menu' => ! $admin_menu_rearrangement_active,
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
@@ -477,7 +485,6 @@ class Source_Local extends Source_Base {
 			[
 				'post_title' => $template_data['title'],
 				'post_status' => $template_data['status'],
-				'post_type' => self::CPT,
 			]
 		);
 
@@ -816,6 +823,9 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
 
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		$items = [];
 
 		// If the import file is a Zip file with potentially multiple JSON files
@@ -823,8 +833,6 @@ class Source_Local extends Source_Base {
 			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path );
 
 			if ( is_wp_error( $extracted_files ) ) {
-				// Remove the temporary zip file, since it's now not necessary.
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $path );
 				// Delete the temporary extraction directory, since it's now not necessary.
 				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 
@@ -835,8 +843,6 @@ class Source_Local extends Source_Base {
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 					return $import_result;
 				}
 
@@ -850,8 +856,6 @@ class Source_Local extends Source_Base {
 			$import_result = $this->import_single_template( $path );
 
 			if ( is_wp_error( $import_result ) ) {
-				Plugin::$instance->uploads_manager->remove_file_or_dir( $import_result );
-
 				return $import_result;
 			}
 
@@ -916,7 +920,7 @@ class Source_Local extends Source_Base {
 					<input type="hidden" name="_nonce" value="<?php Utils::print_unescaped_internal_string( $ajax->create_nonce() ); ?>">
 					<fieldset id="elementor-import-template-form-inputs">
 						<input type="file" name="file" accept=".json,application/json,.zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" required>
-						<input type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
+						<input id="e-import-template-action" type="submit" class="button" value="<?php echo esc_attr__( 'Import Now', 'elementor' ); ?>">
 					</fieldset>
 				</form>
 			</div>
@@ -1306,7 +1310,7 @@ class Source_Local extends Source_Base {
 					printf( esc_html__( 'Create Your First %s', 'elementor' ), esc_html( $current_type_label ) );
 					?>
 				</h2>
-				<p><?php echo esc_html( $description ); ?></p>
+				<p><?php echo wp_kses_post( $description ); ?></p>
 				<a id="elementor-template-library-add-new" class="elementor-button elementor-button-success" href="<?php echo esc_url( $href ); ?>">
 					<?php
 					/* translators: %s: Template type label. */
@@ -1425,7 +1429,7 @@ class Source_Local extends Source_Base {
 			'content' => $template_data['content'],
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
-			'title' => get_the_title( $template_id ),
+			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
 

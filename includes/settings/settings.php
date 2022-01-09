@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -547,7 +548,7 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 								'field_args' => [
 									'class' => 'elementor_css_print_method',
 									'type' => 'select',
-									'std' => 'internal',
+									'std' => 'external',
 									'options' => [
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
@@ -612,6 +613,10 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			return __( 'Settings', 'elementor' );
+		}
+
 		return __( 'Elementor', 'elementor' );
 	}
 
@@ -625,6 +630,8 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			'elementor_custom_fonts',
 			'elementor_custom_icons',
 			'elementor-license',
+			'e-form-submissions',
+			'elementor_custom_custom_code',
 			'popup_templates',
 		];
 
@@ -663,10 +670,16 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 		parent::__construct();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-		add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
-		add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+			add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
+			add_action( 'admin_menu', [ $this, 'register_pro_menu' ], self::MENU_PRIORITY_GO_PRO );
+			add_action( 'admin_menu', [ $this, 'register_knowledge_base_menu' ], 501 );
+
+			add_filter( 'custom_menu_order', '__return_true' );
+			add_filter( 'menu_order', [ $this, 'menu_order' ] );
+		}
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
@@ -681,8 +694,5 @@ All within a simple, intuitive place.', 'elementor' ); ?>
 			add_action( "add_option_{$option_name}", $clear_cache_callback );
 			add_action( "update_option_{$option_name}", $clear_cache_callback );
 		}
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 	}
 }

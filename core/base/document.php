@@ -206,7 +206,14 @@ abstract class Document extends Controls_Stack {
 	public static function get_create_url() {
 		$properties = static::get_properties();
 
-		return Plugin::$instance->documents->get_create_new_post_url( $properties['cpt'][0], static::get_type() );
+		// BC Support - Each document should define it own CPT this code is for BC support.
+		$cpt = Source_Local::CPT;
+
+		if ( isset( $properties['cpt'][0] ) ) {
+			$cpt = $properties['cpt'][0];
+		}
+
+		return Plugin::$instance->documents->get_create_new_post_url( $cpt, static::get_type() );
 	}
 
 	public function get_name() {
@@ -305,7 +312,10 @@ abstract class Document extends Controls_Stack {
 		if ( Plugin::$instance->preview->is_preview() ) {
 			$attributes['data-elementor-title'] = static::get_title();
 		} else {
-			$attributes['data-elementor-settings'] = wp_json_encode( $this->get_frontend_settings() );
+			$elementor_settings = $this->get_frontend_settings();
+			if ( ! empty( $elementor_settings ) ) {
+				$attributes['data-elementor-settings'] = wp_json_encode( $elementor_settings );
+			}
 		}
 
 		return $attributes;
@@ -539,6 +549,8 @@ abstract class Document extends Controls_Stack {
 				'have_a_look' => $this->get_have_a_look_url(),
 			],
 		];
+
+		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
 			$config['elements'] = $this->get_elements_raw_data( null, true );
@@ -986,15 +998,15 @@ abstract class Document extends Controls_Stack {
 		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
+			<?php if ( ! $is_dom_optimization_active ) : ?>
 			<div class="elementor-inner">
-			<?php } ?>
 				<div class="elementor-section-wrap">
-					<?php $this->print_elements( $elements_data ); ?>
+			<?php endif; ?>
+				<?php $this->print_elements( $elements_data ); ?>
+			<?php if ( ! $is_dom_optimization_active ) : ?>
 				</div>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
 			</div>
-			<?php } ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

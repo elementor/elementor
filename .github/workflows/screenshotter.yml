@@ -12,27 +12,41 @@ jobs:
       fail-fast: false
       matrix:
         wordpress_versions: [ 'latest' ]
-    name: WordPress ${{ matrix.wordpress_versions }}
+    name: ScreenShotter - WordPress ${{ matrix.wordpress_versions }}
     steps:
       - name: Startup MySQL service
-        run:  sudo /etc/init.d/mysql start
+        run: sudo systemctl start mysql.service
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
       - name: Checkout source code
         uses: actions/checkout@master
+      - name: Install Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
       - name: Install Elementor-ScreenShotter
         run: | ##### TO DO: Remove all sudo
           sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
           sudo chown -R $USER /usr/local/lib/node_modules
           sudo chown -R $USER /usr/local/bin/
           npm i -g @elementor/screenshotter
+          npm i -g grunt-cli
       - name: Install Dependencies
-        run: |
+        run: | # Also, enable import SVG
           elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
+          cd /tmp/wordpress && wp option update elementor_unfiltered_files_upload 1
       - name: Import Templates
         run: |
           elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
       - name: Build Package & Run Test
         run: |
-          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true --deepDebug=true
+          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true
+      - name: Clean up report data
+        if: failure()
+        run: |
+          node ./.github/scripts/screenshotter-cleanup.js
       - uses: actions/upload-artifact@master
         if: failure()
         with:

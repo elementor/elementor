@@ -89,6 +89,7 @@
 			elementsCache = {},
 			currentElement,
 			currentSide,
+			isDroppingAllowedState = false,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -99,6 +100,8 @@
 				placeholderClass: 'html5dnd-placeholder',
 				hasDraggingOnChildClass: 'html5dnd-has-dragging-on-child',
 				groups: null,
+				getDropContainer: () => elementor.getPreviewContainer(),
+				getDropIndex: () => 0,
 				isDroppingAllowed: null,
 				onDragEnter: null,
 				onDragging: null,
@@ -262,19 +265,25 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
-				return;
-			}
+			$e.run( 'editor/browser-import/validate', {
+				input: event.originalEvent.dataTransfer.items,
+			} ).then( ( importAllowed ) => {
+				isDroppingAllowedState = isDroppingAllowed( event ) || importAllowed;
 
-			insertPlaceholder();
+				if ( ! isDroppingAllowedState ) {
+					return;
+				}
 
-			elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
+				insertPlaceholder();
 
-			$( currentElement ).addClass( settings.currentElementClass );
+				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
 
-			if ( 'function' === typeof settings.onDragEnter ) {
-				settings.onDragEnter.call( currentElement, currentSide, event, self );
-			}
+				$( currentElement ).addClass( settings.currentElementClass );
+
+				if ( 'function' === typeof settings.onDragEnter ) {
+					settings.onDragEnter.call( currentElement, currentSide, event, self );
+				}
+			} );
 		};
 
 		var onDragOver = function( event ) {
@@ -288,7 +297,7 @@
 
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
@@ -318,19 +327,41 @@
 			$( currentElement ).removeClass( settings.currentElementClass );
 
 			self.doDragLeave();
+
+			isDroppingAllowedState = false;
 		};
 
 		var onDrop = function( event ) {
+			const input = event.originalEvent.dataTransfer.files;
+
 			setSide( event );
 
-			if ( ! isDroppingAllowed( event ) ) {
+			if ( ! isDroppingAllowedState ) {
 				return;
 			}
 
 			event.preventDefault();
 
-			if ( 'function' === typeof settings.onDropping ) {
-				settings.onDropping.call( this, currentSide, event, self );
+			if ( input.length ) {
+				$e.run( 'editor/browser-import/import', {
+					input,
+					target: settings.getDropContainer(),
+					options: {
+						event,
+						target: {
+							at: settings.getDropIndex( currentSide, event ),
+						},
+					},
+				} );
+			} else {
+				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
+
+				settings.getDropContainer().view.createElementFromModel(
+					{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
+					{
+						at: settings.getDropIndex( currentSide, event ),
+					}
+				);
 			}
 		};
 

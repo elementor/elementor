@@ -46,6 +46,65 @@ class Widget_Common extends Widget_Base {
 	}
 
 	/**
+	 * Get Responsive Device Args
+	 *
+	 * Receives an array of device args, and duplicates it for each active breakpoint.
+	 * Returns an array of device args.
+	 *
+	 * @since 3.4.7
+	 * @access protected
+	 *
+	 * @param array $args arguments to duplicate per breakpoint
+	 * @param array $devices_to_exclude
+	 *
+	 * @return array responsive device args
+	 */
+	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+		$device_args = [];
+		$breakpoints = Breakpoints_Manager::get_default_config();
+
+		foreach ( $breakpoints as $breakpoint_key => $breakpoint ) {
+			// If the device is not excluded, add it to the device args array.
+			if ( ! in_array( $breakpoint_key, $devices_to_exclude, true ) ) {
+				$parsed_device_args = $this->parse_device_args_placeholders( $args, $breakpoint_key );
+
+				$device_args[ $breakpoint_key ] = $parsed_device_args;
+			}
+		}
+
+		return $device_args;
+	}
+
+	/**
+	 * Parse Device Args Placeholders
+	 *
+	 * Receives an array of args. Iterates over the args, and replaces the {{DEVICE}} placeholder, if exists, with the
+	 * passed breakpoint key.
+	 *
+	 * @since 3.4.7
+	 * @access private
+	 *
+	 * @param array $args
+	 * @param string $breakpoint_key
+	 * @return array parsed device args
+	 */
+	private function parse_device_args_placeholders( array $args, $breakpoint_key ) {
+		$parsed_args = [];
+
+		foreach ( $args as $arg_key => $arg_value ) {
+			$arg_key = str_replace( '{{DEVICE}}', $breakpoint_key, $arg_key );
+
+			if ( is_array( $arg_value ) ) {
+				$arg_value = $this->parse_device_args_placeholders( $arg_value, $breakpoint_key );
+			}
+
+			$parsed_args[ $arg_key ] = $arg_value;
+		}
+
+		return $parsed_args;
+	}
+
+	/**
 	 * @param $shape String Shape name.
 	 *
 	 * @return string The shape path in the assets folder.
@@ -157,7 +216,6 @@ class Widget_Common extends Widget_Base {
 			[
 				'label' => esc_html__( 'Z-Index', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
-				'min' => 0,
 				'selectors' => [
 					'{{WRAPPER}}' => 'z-index: {{VALUE}};',
 				],
@@ -295,9 +353,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateZ: {{SIZE}}deg',
 					],
@@ -315,6 +370,12 @@ class Widget_Common extends Widget_Base {
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
+					'selectors' => [
+						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-rotateX: 1deg;  --e-transform-perspective: 20px;',
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+					],
 				]
 			);
 
@@ -328,9 +389,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -353,9 +411,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_rotate_3d{$tab}!" => '',
@@ -412,16 +467,13 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
@@ -441,19 +493,16 @@ class Widget_Common extends Widget_Base {
 					'size_units' => [ '%', 'px' ],
 					'range' => [
 						'%' => [
-							'min' => -200,
-							'max' => 200,
+							'min' => -100,
+							'max' => 100,
 						],
 						'px' => [
-							'min' => -3000,
-							'max' => 3000,
+							'min' => -1000,
+							'max' => 1000,
 						],
 					],
 					'condition' => [
 						"_transform_translate_popover{$tab}!" => '',
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'selectors' => [
 						"{{WRAPPER}} > .elementor-widget-container{$state}" => '--e-transform-translateY: {{SIZE}}{{UNIT}};',
@@ -499,9 +548,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}!" => '',
@@ -525,9 +571,6 @@ class Widget_Common extends Widget_Base {
 							'step' => 0.1,
 						],
 					],
-					'default' => [
-						'size' => 1,
-					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}" => '',
@@ -550,9 +593,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 2,
 							'step' => 0.1,
 						],
-					],
-					'default' => [
-						'size' => 1,
 					],
 					'condition' => [
 						"_transform_scale_popover{$tab}!" => '',
@@ -590,9 +630,6 @@ class Widget_Common extends Widget_Base {
 							'max' => 360,
 						],
 					],
-					'default' => [
-						'size' => 0,
-					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
 					],
@@ -613,9 +650,6 @@ class Widget_Common extends Widget_Base {
 							'min' => -360,
 							'max' => 360,
 						],
-					],
-					'default' => [
-						'size' => 0,
 					],
 					'condition' => [
 						"_transform_skew_popover{$tab}!" => '',
@@ -682,7 +716,6 @@ class Widget_Common extends Widget_Base {
 						'selectors' => [
 							'{{WRAPPER}} > .elementor-widget-container' => '--e-transform-transition-duration: {{SIZE}}ms',
 						],
-						'frontend_available' => true,
 					]
 				);
 			}
@@ -1241,18 +1274,11 @@ class Widget_Common extends Widget_Base {
 				'condition' => [
 					'_element_width' => 'initial',
 				],
-				'device_args' => [
-					Controls_Stack::RESPONSIVE_TABLET => [
-						'condition' => [
-							'_element_width_tablet' => [ 'initial' ],
-						],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}' => [ 'initial' ],
 					],
-					Controls_Stack::RESPONSIVE_MOBILE => [
-						'condition' => [
-							'_element_width_mobile' => [ 'initial' ],
-						],
-					],
-				],
+				] ),
 				'size_units' => [ 'px', '%', 'vw' ],
 				'selectors' => [
 					'{{WRAPPER}}' => 'width: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}}',
@@ -1283,6 +1309,12 @@ class Widget_Common extends Widget_Base {
 					'_element_width!' => '',
 					'_position' => '',
 				],
+				'device_args' => $this->get_responsive_device_args( [
+					'condition' => [
+						'_element_width_{{DEVICE}}!' => '',
+						'_position' => '',
+					],
+				] ),
 				'selectors' => [
 					'{{WRAPPER}}' => 'align-self: {{VALUE}}',
 				],

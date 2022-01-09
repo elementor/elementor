@@ -25,3 +25,7 @@ yarn.lock
 Thumbs.db
 *.DS_Store
 coverage/
+
+# playwright
+test-results/
+tests/playwright/config/storageState.json
