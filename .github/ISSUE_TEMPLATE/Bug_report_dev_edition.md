@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41E Bug Report - Dev Edition"
 about: Report a bug if something isn't working as expected in the Elementor development versions
-labels: Developer Edition
+labels: [bug, dev-edition]
 
 
 ---
