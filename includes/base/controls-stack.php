@@ -91,6 +91,18 @@ abstract class Controls_Stack extends Base_Object {
 	private $config;
 
 	/**
+	 * The additional configuration.
+	 *
+	 * Holds additional configuration that has been set using the `set_config`
+	 * method and later merged into the primary config.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $additional_config = [];
+
+	/**
 	 * Current section.
 	 *
 	 * Holds the current section while inserting a set of controls sections.
@@ -998,6 +1010,14 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
+		foreach ( $this->additional_config as $key => $value ) {
+			if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
+				$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
+			} else {
+				$this->config[ $key ] = $value;
+			}
+		}
+
 		return $this->config;
 	}
 
@@ -1010,13 +1030,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 */
 	public function set_config( $key, $value ) {
-		$this->config = $this->get_config();
-
-		if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
-			$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
-		} else {
-			$this->config[ $key ] = $value;
-		}
+		$this->additional_config[ $key ] = $value;
 	}
 
 	/**
