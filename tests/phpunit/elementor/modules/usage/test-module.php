@@ -105,20 +105,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEquals( 2, $this->get_global_elements_usage_by_document( $document )['button']['count'] );
 	}
 
-	public function test_add_document_usage__ensure_settings_added_to_global() {
-		// Act.
-		$document = $this->factory()->documents->publish_and_get( [
-			'meta_input' => [
-				Document::PAGE_META_KEY => [
-					'background_background' => 'red'
-				],
-			],
-		] );
-
-		// Assert.
-		$this->assertTrue( !! $this->get_global_settings_usage_by_document( $document ) );
-	}
-
 	/**
 	 * TODO: This test will analyze only `$global_usage` of `wp-post' since in multisite kit is somehow shared, And will be added to global usage.
 	 */
@@ -156,10 +142,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Act.
 		$kit->save( [] );
 
-		// Assert.
-		$this->assertEquals( 1, get_option( Module::DOCUMENT_OPTION_NAME, [] )[ 'kit' ]['custom_colors'] );
-
-		// Arrange.
 		$kit->add_repeater_row( 'custom_colors', [
 			'_id' => Utils::generate_random_string(),
 			'title' => 'color 2',

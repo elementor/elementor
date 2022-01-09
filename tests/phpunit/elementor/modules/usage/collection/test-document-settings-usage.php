@@ -26,11 +26,12 @@ class TestDocumentSettingsUsage extends Elementor_Test_Base {
 
 		$document = $this->create_document();
 
+		// Act.
 		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
 			$collection = $collection->add( $document );
 		}
 
-		// Ensure collection added.
+		// Assert - Ensure collection added.
 		$this->assertEquals( self::DOCUMENTS_TEST_COUNT, $collection->get( 'wp-post' )['background_background'] );
 	}
 
@@ -44,18 +45,14 @@ class TestDocumentSettingsUsage extends Elementor_Test_Base {
 			$collection = $collection->add( $document );
 		}
 
-		$differ_count = 0;
-
-		for( $i = 0 ; $i < self::DOCUMENTS_TEST_COUNT ; ++$i ) {
+		for( $i = self::DOCUMENTS_TEST_COUNT ; $i != 0  ; $i-- ) {
 			$current = $collection->get( 'wp-post' );
 
 			// Assert.
-			$this->assertEquals( self::DOCUMENTS_TEST_COUNT - $differ_count, $current['background_background'] );
+			$this->assertEquals( $i, $current['background_background'] );
 
 			// Act.
 			$collection = $collection->remove( $document );
-
-			++$differ_count;
 		}
 
 		// Assert - Validate nothing left.

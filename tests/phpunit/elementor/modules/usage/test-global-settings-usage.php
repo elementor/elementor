@@ -18,13 +18,15 @@ class Test_Global_Settings_Usage extends Elementor_Test_Base {
 		$global_settings_page_usage = new Global_Settings_Page_Usage();
 		$global_settings_page_usage->add( $document );
 
-		$collection = $global_settings_page_usage->get_collection();
-
 		// Act.
 		$global_settings_page_usage->save_global();
 		$collection_from_global = $global_settings_page_usage->create_from_global()->get_collection();
 
 		// Assert.
-		$this->assertEqualSets( $collection_from_global->all(), $collection->all() );
+		$this->assertEqualSets( [
+			'wp-post' => [
+				'background_background' => 2,
+			],
+		], $collection_from_global->all() );
 	}
 }

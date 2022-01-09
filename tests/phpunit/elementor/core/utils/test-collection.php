@@ -3,7 +3,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Utils;
 
 use Elementor\Core\Utils\Collection;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -159,14 +158,14 @@ class Test_Collection extends Elementor_Test_Base {
 
 	public function test_clear_empty_recursive__ensure_value_not_removed() {
 		// Arrange.
-		$collection = new Collection( [ [ [ 1 ] ], [ [ 1 ] ] ] );
-		$excepted = $collection->all();
+		$array = [ [ [ 1 ] ], [ [ 1 ] ] ];
+		$collection = new Collection( $array );
 
 		// Act.
 		$actual = $collection->clear_empty_recursive();
 
 		// Assert.
-		$this->assertEquals( $excepted, $actual );
+		$this->assertEquals( $array, $actual );
 	}
 
 	public function test_implode() {
