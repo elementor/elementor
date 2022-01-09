@@ -26,9 +26,9 @@ body:
         - Change your WordPress theme to WordPress TwentySixteen (or other default WordPress theme).
         - If you're requesting a new feature, explain why you'd like it to be added. Try to add as much detail as you can, and be specific.
   - type: checkboxes
-    id: read-code-of-conduct
+    id: prerequisites
     attributes:
-      label: "🏢 Have you read the Code of Conduct?"
+      label: "Prerequisites"
       options:
-        - label: "I have read the [Code of Conduct](https://github.com/appwrite/appwrite/blob/HEAD/CODE_OF_CONDUCT.md)"
-          required: true
+        - label: "I have searched for similar issues in both open and closed tickets and cannot find a duplicate."
+        - label: "The issue still exists against the latest stable version of Elementor."
