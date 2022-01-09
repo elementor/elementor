@@ -66,13 +66,15 @@ class Responsive {
 	 *
 	 * Retrieve the default responsive breakpoints.
 	 *
+	 * @return array Default breakpoints.
+	 * @deprecated 3.2.0
 	 * @since 1.0.0
 	 * @access public
 	 * @static
-	 *
-	 * @return array Default breakpoints.
 	 */
 	public static function get_default_breakpoints() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.2.0', 'Elementor\Core\Breakpoints\Manager::get_default_config()' );
+
 		return self::$default_breakpoints;
 	}
 

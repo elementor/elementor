@@ -207,7 +207,6 @@ class Widgets_Manager {
 	 * @return true True if the widget was registered.
 	*/
 	public function register_widget_type( Widget_Base $widget ) {
-		// TODO: Uncomment when Pro uses the new hook.
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
@@ -251,7 +250,6 @@ class Widgets_Manager {
 	 * @return true True if the widget was unregistered, False otherwise.
 	*/
 	public function unregister_widget_type( $name ) {
-		// TODO: Uncomment when Pro uses the new hook.
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',

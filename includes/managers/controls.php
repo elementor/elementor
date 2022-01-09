@@ -543,11 +543,11 @@ class Controls_Manager {
 	 */
 	public function unregister_control( $control_id ) {
 		// TODO: Uncomment when Pro uses the new hook.
-		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-		//	__METHOD__,
-		//	'3.5.0',
-		//	'unregister'
-		//);
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
 
 		return $this->unregister( $control_id );
 	}

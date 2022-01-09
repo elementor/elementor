@@ -275,11 +275,11 @@ class Manager {
 	}
 
 	/**
-	 * @since 2.0.0
-	 * @access public
+	 * @param string $class
 	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
-	 * @param string $class
+	 * @since 2.0.0
+	 * @access public
 	 */
 	public function register_tag( $class ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
