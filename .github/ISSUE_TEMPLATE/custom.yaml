@@ -8,12 +8,7 @@ body:
       label: "❓ Support Question"
       options:
         - label: "Please create GitHub issues only for bugs and feature requests. GitHub issues ARE NOT FOR SUPPORT!"
-          disabled: true
         - label: "If you have questions or need general support,  Please use:  https://wordpress.org/support/plugin/elementor"
-          disabled: true
         - label: "For help and support from the Elementor community, see: https://www.facebook.com/groups/Elementors/"
-          disabled: true
         - label: "To read more about Elementor, check out our documentation: https://docs.elementor.com"
-          disabled: true
         - label: "Developers docs are located at: https://developers.elementor.com/"
-          disabled: true
