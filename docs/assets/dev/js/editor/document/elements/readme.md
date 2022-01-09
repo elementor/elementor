@@ -2,7 +2,7 @@
 ## Component -- `$e.components.get('document/elements')`
 
 *  **Name**: Elements.
-*  **Description**: Provide a way to manage elements, create, edit, delete. copy, paste, etc...
+*  **Description**: Provide a way to  manipulate the document elements: create, edit, delete. copy, paste, etc...
 
 ## Component `document/elements/` -- Commands
 | Command                                                                | Access                                             | Description         
