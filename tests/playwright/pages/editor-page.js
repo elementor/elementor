@@ -68,7 +68,7 @@ exports.EditorPage = class EditorPage {
 
 	async addTwoColumns() {
 		await this.getFrame().click( '.elementor-add-section-button' );
-        await this.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
+		await this.getFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
 	}
 
 	async init( experiments ) {
