@@ -52,9 +52,9 @@ body:
       description: "For bug reports, list all the steps needed to reproduce your issue, so we can replicate it ourselves."
       placeholder: "Verify that ..."
   - type: checkboxes
-    id: prerequisites
+    id: isolating_the_problem
     attributes:
-      label: "Prerequisites"
+      label: "Isolating the problem"
       options:
         - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
         - label: "This bug happens with a default WordPress theme active."
