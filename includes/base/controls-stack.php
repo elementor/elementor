@@ -305,7 +305,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Active controls.
 	 */
 	public function get_active_controls( array $controls = null, array $settings = null ) {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
@@ -703,13 +703,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Scheme controls.
 	 */
 	final public function get_scheme_controls() {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		$enabled_schemes = Schemes_Manager::get_enabled_schemes();
 
 		return array_filter(
-			$this->get_controls(), function( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
-			}
+			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
+			return ( ! empty( $control[ 'scheme' ] ) && in_array( $control[ 'scheme' ][ 'type' ], $enabled_schemes ) );
+		}
 		);
 	}
 
@@ -730,14 +732,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Style controls.
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
-		// _deprecated_function( __METHOD__, '3.0.0' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 
 		$controls = $this->get_active_controls( $controls, $settings );
 
 		$style_controls = [];
 
 		foreach ( $controls as $control_name => $control ) {
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control[ 'type' ] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;

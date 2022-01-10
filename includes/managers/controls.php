@@ -489,11 +489,12 @@ class Controls_Manager {
 	 *                                       current instance.
 	 */
 	public function register_control( $control_id, Base_Control $control_instance ) {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
-			__METHOD__,
-			'3.5.0',
-			'register'
-		);
+		// TODO: Uncomment when Pro uses the new hook.
+		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+		//	__METHOD__,
+		//	'3.5.0',
+		//	'register'
+		//);
 
 		$this->register( $control_instance, $control_id );
 	}
@@ -516,14 +517,13 @@ class Controls_Manager {
 		// TODO: Uncomment when Pro uses the new hook.
 
 		// TODO: For BC. Remove in the future.
-		//if ( $control_id ) {
-		//	Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
-		//		'$control_id', '3.5.0'
-		//	);
-		//} else {
-		//}
-
-		$control_id = $control_instance->get_type();
+		if ( $control_id ) {
+			Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
+				'$control_id', '3.5.0'
+			);
+		} else {
+			$control_id = $control_instance->get_type();
+		}
 
 		$this->controls[ $control_id ] = $control_instance;
 	}
