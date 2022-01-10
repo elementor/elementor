@@ -1011,11 +1011,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $this->additional_config as $key => $value ) {
-			if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
-				$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
-			} else {
-				$this->config[ $key ] = $value;
-			}
+			$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
 		}
 
 		return $this->config;
