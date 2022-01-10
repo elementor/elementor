@@ -23,9 +23,13 @@ test.describe( 'Favorite widgets', () => {
 		await favoriteWidgets.add( favoriteToAdd );
 
 		const expectFavoriteVisible = async () => {
-			await expect( page.locator( `#elementor-panel-category-favorites >> text=${ favoriteToAdd }` ) )
+			await expect( page.locator( `#elementor-panel-category-favorites >> text="${ favoriteToAdd }"` ) )
 				.toBeVisible();
 		};
+
+		// Validate that an indication toast appears
+		const notifications = new NotificationsHelpers( page );
+		await notifications.waitForToast( 'Added' );
 
 		await expectFavoriteVisible();
 
