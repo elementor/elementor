@@ -290,6 +290,7 @@ class Module extends BaseModule {
 
 		$post_types = get_post_types( array( 'public' => true ) );
 
+		// Cannot use the pagination parameters of WP_Query if set `no_found_rows` to true.
 		$query = new \WP_Query( [
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
