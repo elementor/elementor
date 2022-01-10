@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before opening a new issue, please search for duplicate issues to prevent opening a duplicate feature request.
+        Before opening a new issue, please search for similar issues to prevent opening a duplicate feature request.
         If there is already an open existing request, please leave a comment there.
 
         ## The Feature
@@ -17,7 +17,7 @@ body:
       options:
         - label: "I have searched for similar features requests in both open and closed tickets and cannot find a duplicate."
           required: true
-        - label: "The feature is still missing in the latest stable version of Elementor ( Elementor Pro. )"
+        - label: "The feature is still missing in the latest stable version of Elementor ( Elementor Pro )"
           required: true
   - type: textarea
     id: the_problem

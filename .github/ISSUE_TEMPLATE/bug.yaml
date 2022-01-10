@@ -1,5 +1,5 @@
 name: "🐞 Bug report"
-description: "Report a bug if something isn't working as expected in the Elementor"
+description: "Report a bug if something isn't working as expected in Elementor"
 title: "🐞 Bug report: "
 labels: [bug]
 body:
@@ -10,7 +10,7 @@ body:
 
         - Please create GitHub issues only for bugs and feature requests. GitHub issues ARE NOT FOR SUPPORT!
 
-        - If you have questions or need general support,  Please use:  https://wordpress.org/support/plugin/elementor
+        - If you have questions or need general support, please use:  https://wordpress.org/support/plugin/elementor
 
         - For help and support from the Elementor community, see: https://www.facebook.com/groups/Elementors/
 
@@ -26,7 +26,7 @@ body:
 
         - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
 
-        - Change your WordPress theme to WordPress TwentySixteen (or other default WordPress theme).
+        - Change your WordPress theme to WordPress TwentyTwentyTwo (or other default WordPress theme).
 
         - If you're requesting a new feature, explain why you'd like it to be added. Try to add as much detail as you can, and be specific.
 
