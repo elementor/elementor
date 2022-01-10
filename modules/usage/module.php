@@ -263,7 +263,10 @@ class Module extends BaseModule {
 	 */
 	public function add_tracking_data( $params ) {
 		$params['usages']['elements'] = get_option( self::ELEMENTS_OPTION_NAME );
-		$params['usages']['documents'] = $this->global_settings_page_usage->create_from_global()->get_collection()->all();
+		$params['usages']['documents'] = $this->global_settings_page_usage
+			->create_from_global()
+			->get_collection()
+			->all();
 
 		return $params;
 	}
@@ -312,9 +315,9 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Increase controls count.
+	 * Increase controls amount.
 	 *
-	 * Increase controls count, for each element.
+	 * Increase controls amount, for each element.
 	 *
 	 * @param array &$element_ref
 	 * @param string $tab
@@ -322,7 +325,7 @@ class Module extends BaseModule {
 	 * @param string $control
 	 * @param int $amount
 	 */
-	private function increase_controls_count( &$element_ref, $tab, $section, $control, $amount ) {
+	private function increase_controls_amount( &$element_ref, $tab, $section, $control, $amount ) {
 		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
 			$element_ref['controls'][ $tab ] = [];
 		}
@@ -369,7 +372,7 @@ class Module extends BaseModule {
 
 			// If setting value is not the control default.
 			if ( $value !== $control_config['default'] ) {
-				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
+				$this->increase_controls_amount( $element_ref, $tab, $section, $control, 1 );
 
 				$changed_controls_count++;
 			}
@@ -393,7 +396,7 @@ class Module extends BaseModule {
 			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
 
 			// Add dynamic count to controls under `general` tab.
-			$this->increase_controls_count(
+			$this->increase_controls_amount(
 				$element_ref,
 				Settings::TAB_GENERAL,
 				Manager::DYNAMIC_SETTING_KEY,
@@ -438,7 +441,7 @@ class Module extends BaseModule {
 			foreach ( $element_usage_data['controls'] as $tab => $sections ) {
 				foreach ( $sections as $section => $controls ) {
 					foreach ( $controls as $control => $count ) {
-						$this->increase_controls_count( $global_usage_ref, $tab, $section, $control, $count );
+						$this->increase_controls_amount( $global_usage_ref, $tab, $section, $control, $count );
 					}
 				}
 			}
@@ -582,10 +585,6 @@ class Module extends BaseModule {
 	}
 
 	private function add_document_usage( $document, $data ) {
-		if ( $this->should_skip_document( $document ) ) {
-			return;
-		}
-
 		if ( $data ) {
 			$elements_usage = $this->get_elements_usage( $document->get_elements_raw_data( $data ) );
 
@@ -598,26 +597,9 @@ class Module extends BaseModule {
 	}
 
 	private function remove_document_usage( $document ) {
-		if ( $this->should_skip_document( $document ) ) {
-			return;
-		}
-
 		$this->remove_document_elements_from_global( $document );
 
 		$this->global_settings_page_usage->remove( $document )->save_global();
-	}
-
-	private function should_skip_document( $document ) {
-		// Skip document which are kit and not the active kit.
-		if ( 'kit' === $document->get_name() ) {
-			$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-			if ( $kit->get_id() !== $document->get_id() ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**

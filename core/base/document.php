@@ -1336,6 +1336,36 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
+	/**
+	 * Get document settings usage.
+	 *
+	 * @return array
+	 */
+	public function get_usage() {
+		$usage  = [];
+
+		// Ensure not from cache.
+		$document = Plugin::$instance->documents->get( $this->get_id(), false );
+		$controls = $document->get_controls();
+
+		foreach ( $document->get_settings() as $setting_name => $setting_value ) {
+			if ( isset( $controls[ $setting_name ] ) ) {
+				$control = $controls[ $setting_name ];
+				$is_repeater = is_array( $setting_value ) && isset( $control['fields'] );
+
+				if ( ! $this->is_control_default_value( $is_repeater, $controls[ $setting_name ]['default'], $setting_value ) ) {
+					if ( $is_repeater ) {
+						$usage[ $setting_name ] = count( $setting_value );
+					} else {
+						$usage[ $setting_name ] = 1;
+					}
+				}
+			}
+		}
+
+		return $usage;
+	}
+
 	/*
 	 * Get Export Data
 	 *

@@ -2,7 +2,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Usage\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -139,9 +138,6 @@ class Test_Module extends Elementor_Test_Base {
 			'color' => 'green',
 		] );
 
-		// Act.
-		$kit->save( [] );
-
 		$kit->add_repeater_row( 'custom_colors', [
 			'_id' => Utils::generate_random_string(),
 			'title' => 'color 2',
@@ -242,7 +238,6 @@ class Test_Module extends Elementor_Test_Base {
 
 			// Act.
 			wp_delete_post( $document->get_id(), true );
-
 
 			$i--;
 		}
