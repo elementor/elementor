@@ -28,31 +28,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 		// Subscribe to the selection state kept in redux.
 		$e.store.subscribe( () => {
-			const selectionSelector = ( state ) => state[ 'document/elements/selection' ];
 			this.elements = Object.fromEntries(
-				Object.keys( selectionSelector( $e.store.getState() ) || {} )
+				Object.keys( $e.store.getState( 'document/elements/selection' ) || {} )
 					.map( ( elementId ) => [ elementId, elementor.getContainer( elementId ) ] )
 			);
-		} );
-
-		// Using a Proxy in order to use update methods only once on external invocations, but internally the `add` or
-		// `remove` methods may be executed many times, when update methods will be used only once.
-		return new Proxy( this, {
-			get: function( target, prop ) {
-				if ( [ 'add', 'remove' ].includes( prop ) ) {
-					return ( ...args ) => {
-						const result = target[ prop ]( ...args );
-
-						target.updateType();
-						target.updateSortable();
-						target.updatePanelPage();
-
-						return result;
-					};
-				}
-
-				return Reflect.get( ...arguments );
-			},
 		} );
 	}
 
@@ -102,6 +81,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			container.view.select();
 		}
+
+		this.updateEnvironment();
 	}
 
 	/**
@@ -130,6 +111,8 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			container.view.deselect();
 		}
+
+		this.updateEnvironment();
 	}
 
 	/**
@@ -161,6 +144,18 @@ export default class Manager extends elementorModules.editor.utils.Module {
 
 			return false;
 		}, elements[ 0 ].type );
+	}
+
+	/**
+	 * Update environment.
+	 *
+	 * When a change to the selection state is applied, some environmental components should be noticed or modified
+	 * accordingly.
+	 */
+	updateEnvironment() {
+		this.updateType();
+		this.updateSortable();
+		this.updatePanelPage();
 	}
 
 	/**

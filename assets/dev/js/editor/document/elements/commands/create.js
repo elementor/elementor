@@ -80,7 +80,7 @@ export class Create extends CommandHistory {
 			$e.store.dispatch(
 				$e.store.get( 'document/elements' ).actions.add( {
 					containerId: 'document' === container.id ? undefined : container.id,
-					model: { id: createdContainer.id, ...createdContainer.model.toJSON() },
+					model: createdContainer.model.toJSON(),
 					index: options.at,
 				} )
 			);

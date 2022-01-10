@@ -20,10 +20,12 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 			start: ( e, ui ) => {
 				container.model.trigger( 'request:sort:start', e, ui );
 				jQuery( ui.item ).children( '.elementor-navigator__item' ).trigger( 'click' );
+				// Turn on sorting state of the navigator.
 				document.getElementById( 'elementor-navigator' ).dataset.over = 'true';
 			},
 			stop: ( e, ui ) => {
 				jQuery( listRef.current ).sortable( 'cancel' );
+				// Turn off sorting state of the navigator.
 				document.getElementById( 'elementor-navigator' ).dataset.over = 'false';
 			},
 			over: ( e, ui ) => {
@@ -60,6 +62,8 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 
 	useEffect( () => {
 		const onItemMouseEnter = () => {
+				// Check whether sorting state of the navigator is active. Currently the sorting state is kept using
+				// dataset.
 				if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
 					return;
 				}

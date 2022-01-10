@@ -12,7 +12,7 @@ export default class Helper {
 				};
 
 				/**
-				 * TODO: Try improve performance of using 'document/elements/create` instead of manual create.
+				 * TODO: Creating large amount of columns will reduce performance, try optimizing `document/elements/create`.
 				 */
 				$e.run( 'document/elements/create', {
 					container,

@@ -129,12 +129,18 @@ export default class Store {
 	}
 
 	/**
-	 * Proxy to Redux's `getState()` function.
+	 * Proxy to Redux's `getState()` function, with the ability to get a specific slice.
 	 *
 	 * @return {*}
 	 */
-	getState() {
-		return this.reduxStore.getState( ...arguments );
+	getState( sliceId ) {
+		let state = this.reduxStore.getState();
+
+		if ( sliceId ) {
+			state = state[ sliceId ];
+		}
+
+		return state;
 	}
 
 	/**

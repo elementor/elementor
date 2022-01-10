@@ -9,14 +9,13 @@ export class SetTitle extends CommandBase {
 		const { containers = [ args.container ], titles = [ args.title ] } = args;
 
 		for ( const [ index, container ] of containers.entries() ) {
-			const settings = container.model.get( 'settings' );
-
-			settings.set( '_title', titles[ index ].trim() );
+			$e.internal( 'document/elements/set-settings', {
+				container,
+				settings: {
+					_title: titles[ index ].trim(),
+				},
+			} );
 		}
-
-		$e.internal( 'document/save/set-is-modified', {
-			status: true,
-		} );
 	}
 }
 

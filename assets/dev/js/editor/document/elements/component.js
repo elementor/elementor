@@ -19,12 +19,12 @@ export default class Component extends ComponentBase {
 		const defaultReducers = {
 			add: ( state, { payload } ) => {
 				// Prepare
-				const { containerId, models = [ payload.model ], index = 0 } = payload,
+				const { containerId, models = [ payload.model ], index } = payload,
 					parent = state[ containerId ];
 
 				// Act
 				for ( const model of models.slice() ) {
-					// Store the newly created element
+					// Store the newly created element, reset `elements` in order to make a flat list
 					state[ model.id ] = { ...model, elements: [] };
 
 					if ( model.elements?.length ) {
@@ -39,7 +39,7 @@ export default class Component extends ComponentBase {
 
 					// Create reference on parent element
 					if ( parent ) {
-						parent.elements.splice( index, 0, model.id );
+						parent.elements.splice( index || parent.elements.length, 0, model.id );
 					}
 				}
 			},
