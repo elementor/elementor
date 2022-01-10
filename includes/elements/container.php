@@ -398,6 +398,7 @@ class Container extends Element_Base {
 				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
 					'hidden' => esc_html__( 'Hidden', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--overflow: {{VALUE}}',
