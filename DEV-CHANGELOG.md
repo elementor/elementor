@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev28 - 2022-01-10
+* Fix: widescreen breakpoint  effects query media order (#17314)
+* Tweak: Adding Responsive option to Text Stroke [ED-5846] (#17235)
+
 #### 3.6.0-dev27 - 2022-01-07
 * Fix: Core SVG icons from template library are imported empty [ED-5980] (#17373)
 * Tweak: Adding Import Export to the Finder [ED-3997] (#17259)
@@ -480,11 +484,3 @@
 * Fix: Lighthouse unused css rules (#15739)
 * Fix: The build process fails. (#15726)
 * Responsive bar: Fix - Widescreen breakpoint reject values entered in the Responsive bar [ED-4216] (#15689)
-
-#### 3.4.0-dev12 - 2021-07-08
-* Tweak: Added support for Additional Breakpoints SASS templates. (#15572)
-* Tweak: Fix merge conflicts between Additional Breakpoints and Dev Edition (#15580)
-* Fix: When trying to import an Envato kit the UI breaks. (#15582)
-* Fix: Image Carousel - Not showing [ED-3640] (#15330)
-* Fix: Remote tests don't send back the status [ED-4076] (#15569)
-* Tweak: Try to merge all branches and failed only in the end (#15586)
