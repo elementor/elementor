@@ -144,6 +144,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'{{SELECTOR}}' => '--align-self: {{VALUE}};',
 			],
 			'responsive' => true,
+			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
 		];
 
 		$fields['order'] = [
@@ -176,6 +177,7 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 				'{{SELECTOR}}' => '--order: {{VALUE}};',
 			],
 			'responsive' => true,
+			'description' => esc_html_x( 'This control will affect contained elements only.', 'Flex Item Control', 'elementor' ),
 		];
 
 		$fields['order_custom'] = [

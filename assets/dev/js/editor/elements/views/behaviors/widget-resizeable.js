@@ -114,7 +114,9 @@ export default class extends Marionette.Behavior {
 			settingToChange = {};
 
 		// TODO: For BC controls.
-		if ( ! elementorCommon.config.experimentalFeatures.container ) {
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			settingToChange._flex_size = 'none';
+		} else {
 			settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
 		}
 
@@ -128,11 +130,16 @@ export default class extends Marionette.Behavior {
 			},
 		} );
 
-		this.$el.css( {
-			width: '',
-			height: '',
-			left: '',
-			flexBasis: '',
+		// Defer to wait for the widget to re-render and prevent UI glitches.
+		setTimeout( () => {
+			this.$el.css( {
+				width: '',
+				height: '',
+				left: '',
+				'flex-shrink': '',
+				'flex-grow': '',
+				'flex-basis': '',
+			} );
 		} );
 	}
 

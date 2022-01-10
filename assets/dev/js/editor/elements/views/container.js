@@ -109,24 +109,29 @@ const ContainerView = BaseElementView.extend( {
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const widgets = Object.values( jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' ) );
-				let newIndex = widgets.indexOf( event.currentTarget );
+				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
+					draggingInSameParent = ( draggedView?.parent === this );
+
+				let $widgets = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+
+				// Exclude the dragged element from the indexing calculations.
+				if ( draggingInSameParent ) {
+					$widgets = $widgets.not( draggedView.$el );
+				}
+
+				const widgetsArray = Object.values( $widgets );
+
+				let newIndex = widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( [ 'bottom', 'right' ].includes( side ) ) {
 					newIndex++;
 				}
 
-				const draggedView = elementor.channels.editor.request( 'element:dragged' );
-
 				// User is sorting inside a Container.
 				if ( draggedView ) {
 					// Reset the dragged element cache.
 					elementor.channels.editor.reply( 'element:dragged', null );
-
-					if ( draggedView.parent === this ) {
-						newIndex++;
-					}
 
 					$e.run( 'document/elements/move', {
 						container: draggedView.getContainer(),
@@ -143,15 +148,6 @@ const ContainerView = BaseElementView.extend( {
 				this.addElementFromPanel( { at: newIndex } );
 			},
 		};
-	},
-
-	changeContainerClasses: function() {
-		const emptyClass = 'e-element-empty',
-			populatedClass = 'e-element-populated',
-			state = this.collection.isEmpty();
-
-		this.$el.toggleClass( populatedClass, ! state )
-			.toggleClass( emptyClass, state );
 	},
 
 	/**
@@ -284,8 +280,6 @@ const ContainerView = BaseElementView.extend( {
 
 	onRender: function() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
-
-		this.changeContainerClasses();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {

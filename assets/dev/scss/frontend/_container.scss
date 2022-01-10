@@ -85,8 +85,18 @@
 		}
 
 		// Fix nested Containers DnD issues (ED-5424).
-		&[data-nesting-level]:not( [data-nesting-level = "0"] ) > .elementor-widget-placeholder {
-			margin-inline-end: var( --margin-end );
+		&[data-nesting-level]:not( [data-nesting-level = "0"] ) {
+			// Any placeholder which is not on first widget.
+			> .elementor-widget-placeholder {
+				margin-inline-end: 0;
+				margin-inline-start: calc( var( --margin-start ) + var( --margin-end ) );
+			}
+
+			// Placeholder on first widget.
+			> :not( .elementor-element ) + .elementor-widget-placeholder {
+				margin-inline-end: var( --margin-end );
+				margin-inline-start: var( --margin-start );
+			}
 		}
 	}
 
@@ -148,19 +158,34 @@
 	// TODO: Find a better solution.
 	& > & {
 		> .elementor-element-overlay {
-			// Hide any setting control which isn't the edit control.
 			.elementor-editor-element-setting {
-				&:not( .elementor-editor-element-edit ),
-				&:first-child::before {
+				position: relative;
+				background-color: $editor-darker;
+
+				&:hover {
+					background-color: $editor-darkest;
+				}
+
+				// Hide any unwanted setting controls.
+				&.elementor-editor-element-add,
+				&.elementor-editor-element-edit + .elementor-editor-element-remove,
+				&:first-child::before,
+				&:last-child::after {
 					display: none;
+				}
+
+				// Extended actions ("editing handles").
+				&:is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+					margin-inline-start: -25px;
+					z-index: -1;
+					transition: .3s all;
+					will-change: margin-inline-start;
 				}
 			}
 
-			.elementor-editor-element-edit {
-				width: auto;
-
-				&:hover {
-					background-color: transparent;
+			> .elementor-editor-element-settings:hover {
+				> :is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+					margin-inline-start: 0;
 				}
 			}
 
@@ -172,14 +197,14 @@
 				border-radius: 0;
 				border-end-end-radius: 3px;
 				height: auto;
-				background-color: $editor-darkest;
+				background-color: $editor-darker;
 
 				&:hover {
-					background-color: $editor-darker;
+					background-color: $editor-darkest;
 				}
 
 				// Replace the edit eicon with Container eicon.
-				i::before {
+				i.eicon-handle::before {
 					content: '\e98d'; // Container eicon.
 					font-size: 10px;
 					display: block;
