@@ -189,6 +189,9 @@ class Source_Remote extends Source_Base {
 			return $data;
 		}
 
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		// BC.
 		$data = (array) $data;
 
@@ -200,6 +203,9 @@ class Source_Remote extends Source_Base {
 		if ( $document ) {
 			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
 		}
+
+		// After the upload complete, set the elementor upload state back to false
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
 		return $data;
 	}

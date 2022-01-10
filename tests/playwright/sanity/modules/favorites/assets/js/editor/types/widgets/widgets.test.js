@@ -22,13 +22,28 @@ test.describe( 'Favorite widgets', () => {
 		const favoriteWidgets = new FavoriteWidgetsHelper( page );
 		await favoriteWidgets.add( favoriteToAdd );
 
+		const expectFavoriteVisible = async () => {
+			await expect( page.locator( `#elementor-panel-category-favorites >> text="${ favoriteToAdd }"` ) )
+				.toBeVisible();
+		};
+
 		// Validate that an indication toast appears
 		const notifications = new NotificationsHelpers( page );
 		await notifications.waitForToast( 'Added' );
 
-		await expect( page.locator( `#elementor-panel-category-favorites >> text=${ favoriteToAdd }` ) )
-			.toBeVisible();
+		await expectFavoriteVisible();
+
+		await page.waitForTimeout( 1000 );
+
+		await editor.reload();
+		await editor.ensurePanelLoaded();
+
+		await expectFavoriteVisible();
 
 		await favoriteWidgets.remove( favoriteToAdd );
+
+		await wpAdmin.setExperiments( {
+			'favorite-widgets': false,
+		} );
 	} );
 } );
