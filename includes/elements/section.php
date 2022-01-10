@@ -707,6 +707,9 @@ class Element_Section extends Element_Base {
 					'saturation' => esc_html__( 'Saturation', 'elementor' ),
 					'color' => esc_html__( 'Color', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-background-overlay' => 'mix-blend-mode: {{VALUE}}',

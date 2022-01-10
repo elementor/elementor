@@ -2,6 +2,7 @@
  * @typedef HashCommand
  * @property {string} method,
  * @property {string} command
+ * @property {object} args
  */
 
 export default class HashCommands {
@@ -48,7 +49,9 @@ export default class HashCommands {
 			const hashList = hash.substr( 1 ).split( '&' );
 
 			hashList.forEach( ( hashItem ) => {
-				const hashParts = hashItem.split( ':' );
+				const [ rawCommand, rawArgs ] = hashItem.split( '?' );
+
+				const hashParts = rawCommand.split( ':' );
 
 				if ( 3 !== hashParts.length ) {
 					return;
@@ -58,11 +61,13 @@ export default class HashCommands {
 					dispatcher = this.dispatchersList[ method ];
 
 				if ( dispatcher ) {
-					const command = hashParts[ 2 ];
+					const command = hashParts[ 2 ],
+						args = this.parseCommandArgs( rawArgs );
 
 					result.push( {
 						method,
 						command,
+						args,
 					} );
 				}
 			} );
@@ -94,7 +99,7 @@ export default class HashCommands {
 
 		// This logic will run the promises by sequence (will wait for dispatcher to finish, before run again).
 		for ( const hashCommand of commands ) {
-			await this.dispatchersList[ hashCommand.method ].runner( hashCommand.command );
+			await this.dispatchersList[ hashCommand.method ].runner( hashCommand.command, hashCommand.args );
 		}
 	}
 
@@ -107,5 +112,23 @@ export default class HashCommands {
 		this.run( this.commands ).then( () => {
 			this.commands = [];
 		} );
+	}
+
+	/**
+	 * Takes a args in form of JSON and parse it.
+	 *
+	 * @param {string} rawArgs
+	 * @returns {object}
+	 */
+	parseCommandArgs( rawArgs ) {
+		try {
+			return JSON.parse(
+				decodeURI( rawArgs || '{}' ),
+			);
+		} catch ( e ) {
+			elementorCommon.helpers.consoleWarn( 'Hash commands JSON args cannot be parsed. \n\n', e );
+
+			return {};
+		}
 	}
 }
