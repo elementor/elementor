@@ -963,9 +963,9 @@ class Upgrades {
 
 	/**
 	 * Don't use the old data anymore.
-	 * Since 3.5.0 the key was changed from `elementor_controls_usage` to `elementor_elements_usage`.
+	 * Since 3.6.0 the key was changed from `elementor_controls_usage` to `elementor_elements_usage`.
 	 */
-	public static function _v_3_5_0_remove_old_elements_usage() {
+	public static function _v_3_6_0_remove_old_elements_usage() {
 		delete_option( 'elementor_controls_usage' );
 		delete_post_meta_by_key( '_elementor_controls_usage' );
 	}

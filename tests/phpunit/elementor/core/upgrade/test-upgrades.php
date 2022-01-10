@@ -567,12 +567,12 @@ class Test_Upgrades extends Elementor_Test_Base {
 		$this->assertEquals( 'yes', get_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY ) );
 	}
 
-	public function test_v_3_5_0_remove_old_elements_usage() {
+	public function test_v_3_6_0_remove_old_elements_usage() {
 		$this->ensure_removed_old_usage_data(
 			'elementor_controls_usage',
 			'_elementor_controls_usage',
 			function () {
-				Upgrades::_v_3_5_0_remove_old_elements_usage();
+				Upgrades::_v_3_6_0_remove_old_elements_usage();
 			}
 		);
 	}
