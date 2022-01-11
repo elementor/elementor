@@ -26,4 +26,20 @@ export default class Repeater extends elementor.modules.controls.Repeater {
 			index: activeItemIndex,
 		} );
 	}
+
+	/**
+	 * @inheritDoc
+	 * Override to avoid the default behavior to adjust the title of the row.
+	 */
+	getDefaults() {
+		const component = $e.components.get( 'nested-elements/nested-repeater' ),
+			widgetContainer = this.options.container,
+			defaults = widgetContainer.model.config.defaults,
+			index = widgetContainer.children.length + 1;
+
+		return {
+			_id: '',
+			[ defaults.repeater_title_setting ]: component.getChildrenTitle( widgetContainer, index ),
+		};
+	}
 }

@@ -85,6 +85,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 	}
 }
 
+// TODO: Avoid mixins inheritance, create common base instead.
 WidgetRepeater.prototype.className = WidgetView.prototype.className;
 WidgetRepeater.prototype.getTemplate = WidgetView.prototype.getTemplate;
 WidgetRepeater.prototype.getEditButtons = WidgetView.prototype.getEditButtons;

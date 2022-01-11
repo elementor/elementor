@@ -1,16 +1,13 @@
 /**
  * On each nested widget creation.
  *
- * a. Create default children from model config.
- * b. For each nested repeater container set the container title,
- * according to the nested repeater title, the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
+ * For each nested repeater container, set the container title,
+ * according to the nested repeater title, e.g: the result will be 'Tab #1', 'Tab #2' and so on instead of 'Container'.
  * '_title' is used by the navigator.
- *
- * TODO: Hook actually data changing hook, but since its required to be executed on history change, hookUI is used.
  */
-export class NestedRepeaterCreateDefaultChildren extends ( $e.modules.hookUI.After ) {
+export class NestedRepeaterAdjustContainerTitles extends ( $e.modules.hookData.After ) {
 	getId() {
-		return 'nested-repeater-create-default-children';
+		return 'nested-repeater-adjust-container-titles';
 	}
 
 	getCommand() {
@@ -36,14 +33,7 @@ export class NestedRepeaterCreateDefaultChildren extends ( $e.modules.hookUI.Aft
 			containers = [ containers ];
 		}
 
-		this.createDefaultChildren( containers );
 		this.setChildrenTitles( containers );
-	}
-
-	createDefaultChildren( containers ) {
-		containers.forEach( ( container ) => {
-			container.view.createDefaultChildren();
-		} );
 	}
 
 	setChildrenTitles( containers ) {

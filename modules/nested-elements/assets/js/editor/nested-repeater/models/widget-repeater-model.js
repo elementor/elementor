@@ -2,12 +2,23 @@
  * @extends {ElementModel}
  */
 export default class WidgetRepeaterModel extends elementor.modules.elements.models.Element {
-	defaultChildren = [];
-
 	initialize( options ) {
 		this.config = elementor.widgetsCache[ options.widgetType ];
 
+		if ( $e.commands.isCurrentFirstTrace( 'document/elements/create' ) ) {
+			this.onElementCreate();
+		}
+
 		super.initialize( options );
+	}
+
+	isValidChild( childModel ) {
+		const parentElType = this.get( 'elType' ),
+			childElType = childModel.get( 'elType' );
+
+		return 'container' === childElType &&
+			'widget' === parentElType &&
+			elementor.modules.nestedElements.isWidgetSupportNesting( this.get( 'widgetType' ) );
 	}
 
 	getDefaultChildren() {
@@ -29,17 +40,7 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 		return result;
 	}
 
-	isValidChild( childModel ) {
-		const parentElType = this.get( 'elType' ),
-			draggedElType = childModel.get( 'elType' );
-
-		// Support import library.
-		if ( 'section' === draggedElType && 'container' === parentElType ) {
-			return true;
-		}
-
-		return 'container' === draggedElType &&
-			'widget' === parentElType &&
-			elementor.modules.nestedElements.isWidgetSupportNesting( this.get( 'widgetType' ) );
+	onElementCreate() {
+		this.set( 'elements', this.getDefaultChildren() );
 	}
 }

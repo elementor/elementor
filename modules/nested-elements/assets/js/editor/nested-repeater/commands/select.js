@@ -42,7 +42,7 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 			restore: this.constructor.restore,
 			data: {
 				current: index,
-				prev: editSettings.get( 'activeItemIndex' ),
+				prev: editSettings.get( 'activeItemIndex' ) || 1,
 			},
 		};
 	}

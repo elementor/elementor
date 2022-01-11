@@ -28,7 +28,7 @@ export default class Component extends $e.modules.ComponentBase {
 	}
 
 	getChildrenTitle( container, index ) {
-		const title = container.parent.view.model.config.defaults.elements_title;
+		const title = container.view.model.config.defaults.elements_title;
 
 		// Translations comes from server side.
 		return sprintf( title, index );
@@ -38,24 +38,10 @@ export default class Component extends $e.modules.ComponentBase {
 		$e.internal( 'document/elements/set-settings', {
 			container,
 			settings: {
-				_title: this.getChildrenTitle( container, index ),
+				_title: this.getChildrenTitle( container.parent, index ),
 			},
 			options: {
 				render: false,
-				external: true,
-			},
-		} );
-	}
-
-	setRepeaterItemTitle( container, index ) {
-		const titleSetting = container.parent.view.model.config.defaults.repeater_title_setting;
-
-		$e.internal( 'document/elements/set-settings', {
-			container,
-			settings: {
-				[ titleSetting ]: this.getChildrenTitle( container, index ),
-			},
-			options: {
 				external: true,
 			},
 		} );

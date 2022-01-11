@@ -141,7 +141,8 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle: function() {
-		let title = this.getSetting( '_title' );
+		// Allow passing default title from the model also.
+		let title = this.getSetting( '_title' ) || this.get( '_title' );
 
 		if ( ! title ) {
 			title = this.getDefaultTitle();
