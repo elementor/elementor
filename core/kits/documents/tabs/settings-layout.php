@@ -78,10 +78,14 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
+		$widgets_space_label = Plugin::instance()->experiments->is_feature_active( 'container' )
+			? esc_html__( 'Elements Gap', 'elementor' )
+			: esc_html__( 'Widgets Space', 'elementor' );
+
 		$this->add_control(
 			'space_between_widgets',
 			[
-				'label' => esc_html__( 'Widgets Space', 'elementor' ) . ' (px)',
+				'label' => $widgets_space_label . ' (px)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 20,

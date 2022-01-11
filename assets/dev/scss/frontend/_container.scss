@@ -41,7 +41,7 @@
 	transition: var( --transition );
 
 	// Force center only top-level containers.
-	.elementor-section-wrap > & {
+	:is( .elementor-section-wrap, [data-elementor-type = "wp-page"] ) > & {
 		margin-right: auto;
 		margin-left: auto;
 	}
