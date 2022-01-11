@@ -278,7 +278,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -304,7 +304,7 @@ class Manager extends Base_Object {
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 		] );
 
