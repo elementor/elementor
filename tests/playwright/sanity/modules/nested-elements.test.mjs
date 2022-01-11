@@ -71,7 +71,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 			test.describe( 'Hooks', () => {
 				test.describe( 'Data', () => {
-					test( 'Hook: `nested-repeater-create-default-children`', async () => {
+					test( 'Hook: `nested-repeater-adjust-container-titles`', async () => {
 						// Arrange, Open navigator.
 						await editor.openNavigator();
 
@@ -98,7 +98,9 @@ test.describe.serial( 'NestedElementsModule', () => {
 						await editor.page.evaluate( ( [ id ] ) => {
 							return $e.run( 'document/repeater/insert', {
 								container: elementor.getContainer( id ),
-								model: {},
+								model: {
+									tab_title: 'Tab #3',
+								},
 								name: 'tabs',
 							} );
 						}, [ widgetId ] );
@@ -113,7 +115,7 @@ test.describe.serial( 'NestedElementsModule', () => {
 
 						// Act.
 						await editor.page.evaluate( ( [ id ] ) => {
-							return $e.run( 'document/repeater/remove', {
+							return $e.run( 'document/repeater/remove',  {
 								container: elementor.getContainer( id ),
 								index: 1,
 								name: 'tabs',

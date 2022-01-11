@@ -4,10 +4,6 @@ const WidgetView = elementor.modules.elements.views.Widget;
  * @extends {BaseElementView}
  */
 export class WidgetRepeater extends elementor.modules.elements.views.BaseElement {
-	initialize() {
-		WidgetView.prototype.initialize.apply( this, arguments );
-	}
-
 	events() {
 		const events = super.events();
 
@@ -86,6 +82,7 @@ export class WidgetRepeater extends elementor.modules.elements.views.BaseElement
 }
 
 // TODO: Avoid mixins inheritance, create common base instead.
+WidgetRepeater.prototype.initialize = WidgetView.prototype.initialize;
 WidgetRepeater.prototype.className = WidgetView.prototype.className;
 WidgetRepeater.prototype.getTemplate = WidgetView.prototype.getTemplate;
 WidgetRepeater.prototype.getEditButtons = WidgetView.prototype.getEditButtons;
