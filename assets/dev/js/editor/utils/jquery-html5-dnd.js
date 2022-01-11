@@ -106,6 +106,7 @@
 				onDragEnter: null,
 				onDragging: null,
 				onDropping: null,
+				onAfterDrop: null,
 				onDragLeave: null,
 			};
 
@@ -353,15 +354,27 @@
 						},
 					},
 				} );
-			} else {
-				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
 
-				settings.getDropContainer().view.createElementFromModel(
-					{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
-					{
-						at: settings.getDropIndex( currentSide, event ),
-					}
-				);
+				return;
+			}
+
+			// Override the onDrop callback with a user-provided one if present.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
+				return;
+			}
+
+			const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
+
+			settings.getDropContainer().view.createElementFromModel(
+				{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
+				{
+					at: settings.getDropIndex( currentSide, event ),
+				}
+			);
+
+			if ( settings.onAfterDrop ) {
+				settings.onAfterDrop( currentSide, event );
 			}
 		};
 

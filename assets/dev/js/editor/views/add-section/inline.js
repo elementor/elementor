@@ -13,6 +13,12 @@ class AddSectionView extends BaseAddSectionView {
 		} );
 	}
 
+	onAfterDrop() {
+		super.onAfterDrop();
+
+		this.destroy();
+	}
+
 	onAfterPaste() {
 		super.onAfterPaste();
 

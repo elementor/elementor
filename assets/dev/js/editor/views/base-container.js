@@ -127,7 +127,7 @@ module.exports = Marionette.CompositeView.extend( {
 				container,
 				columns: Number( ! containerExperiment ),
 				options: {
-					at: this.getOption( 'at' ),
+					at: options.at,
 					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
 					trigger: {
 						beforeAdd: 'section:before:drop',

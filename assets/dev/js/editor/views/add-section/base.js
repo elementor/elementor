@@ -119,7 +119,8 @@ class AddSectionBase extends Marionette.ItemView {
 			placeholder: false,
 			currentElementClass: 'elementor-html5dnd-current-element',
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind( this ),
+			getDropIndex: () => this.getOption( 'at' ),
+			onAfterDrop: () => this.onAfterDrop(),
 		} );
 	}
 
@@ -171,6 +172,8 @@ class AddSectionBase extends Marionette.ItemView {
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	}
+
+	onAfterDrop() {}
 
 	onAfterPaste() {}
 }
