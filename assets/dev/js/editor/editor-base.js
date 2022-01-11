@@ -435,12 +435,6 @@ export default class EditorBase extends Marionette.Application {
 		this.elementsModel = new Backbone.Model( {
 			elements: this.elements,
 		} );
-
-		$e.store.dispatch(
-			$e.store.get( 'document/elements' ).actions.add( {
-				models: elementor.elementsModel.get( 'elements' ).toJSON(),
-			} )
-		);
 	}
 
 	initPreview() {

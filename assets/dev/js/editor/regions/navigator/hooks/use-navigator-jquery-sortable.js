@@ -72,11 +72,15 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 					setElementFolding( true );
 					jQuery( listRef.current ).sortable( 'refreshPositions' );
 				}, 500 );
+
+				itemRef.current.classList.add( 'elementor-dragging-on-child' );
 			},
 			onItemMouseLeave = () => {
 				if ( autoExpandTimerRef.current ) {
 					clearTimeout( autoExpandTimerRef.current );
 				}
+
+				itemRef.current.classList.remove( 'elementor-dragging-on-child' );
 			};
 
 		itemRef.current.addEventListener( 'mouseenter', onItemMouseEnter );

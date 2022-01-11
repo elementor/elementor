@@ -12,7 +12,14 @@ export function ElementItem( { itemId: elementId, level } ) {
 	const ElementBody = () => {
 		const { item: element, container } = useItemContext(),
 			[ elementSelection, setElementSelection ] = useElementSelection( elementId ),
-			[ elementFolding, setElementFolding ] = useElementFolding( elementId );
+			[ elementFolding, setElementFolding ] = ( () => {
+				// If element is the root element, or has no children by default (like widgets), folding capabilities
+				// are not initialized, and the element is not added to the folding state. This is important because
+				// the navigator toggle-all button state(up/down) should not consider those elements.
+				return element.root || ! element.hasChildrenByDefault ?
+					[ true, () => {} ] :
+					useElementFolding( elementId );
+			} )();
 
 		/**
 		 * Set the element selection state in the store.
@@ -79,19 +86,6 @@ export function ElementItem( { itemId: elementId, level } ) {
 		);
 
 		/**
-		 * Whether the element usually contain children (regardless to nested elements).
-		 *
-		 * @var { boolean }
-		 */
-		const hasChildrenByDefault = useMemo(
-			() => {
-				return element.elType &&
-					( 'widget' !== element.elType || Boolean( element.elements.length ) );
-			},
-			[ elementId, element.elements ]
-		);
-
-		/**
 		 * Use the navigator jQuery sortable helper. This is temporary, till the development of a new react-way sortable
 		 * package.
 		 */
@@ -106,27 +100,28 @@ export function ElementItem( { itemId: elementId, level } ) {
 				className={ arrayToClassName( [
 					{ [ BASE_ITEM_CLASS ]: true },
 					{ [ `${ BASE_ITEM_CLASS }-${ element.elType }` ]: element.elType },
-					{ [ `${ BASE_ITEM_CLASS }--has-children` ]: hasChildrenByDefault || element.elements.length },
+					{ [ `${ BASE_ITEM_CLASS }--has-children` ]: element.hasChildrenByDefault || element.elements.length },
 					{ [ `${ BASE_ITEM_CLASS }--hidden` ]: element.hidden },
 				] ) }
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }
 				data-id={ elementId }>
-				<ItemHandle
-					ref={ handleRef }
-					className={ arrayToClassName( [
-						{ 'elementor-active': elementFolding },
-						{ 'elementor-editing': elementSelection },
-					] ) }
-					onToggleFolding={ setElementFolding }
-					onTitleEdit={ handleTitleEdit }>
-					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
-						<Icon className="eicon-preview-medium"/>
-					</div>
-					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection } />
-				</ItemHandle>
+				{ ! element.root &&
+					<ItemHandle
+						ref={ handleRef }
+						className={ arrayToClassName( [
+							{ 'elementor-active': elementFolding },
+							{ 'elementor-editing': elementSelection },
+						] ) }
+						onToggleFolding={ setElementFolding }
+						onTitleEdit={ handleTitleEdit }>
+						<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
+							<Icon className="eicon-preview-medium"/>
+						</div>
+						<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>
+					</ItemHandle> }
 				<div style={ { display: elementFolding ? 'block' : 'none' } }>
-					<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ hasChildrenByDefault } />
+					<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ element.hasChildrenByDefault } />
 				</div>
 			</div>
 		);

@@ -1,29 +1,11 @@
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useState } from 'react';
-import { Empty, ItemList, Header } from './';
+import { useCallback } from 'react';
+import { Empty, Header } from './';
+import { ElementItem } from './items';
 import Icon from 'elementor-app/ui/atoms/icon';
-import PropTypes from 'prop-types';
 
 export function Navigator() {
 	const NavigatorBody = () => {
-		const [ root, setRoot ] = useState( [] );
-
-		useEffect( () => {
-			// Subscribe to changes in the root document elements. Currently the redux store doesn't manage the root
-			// elements list, and therefore - the `elementor.elements` Backbone collection is used.
-			const updateElements = () => setTimeout(
-				() => setRoot( elementor.elements.models.map( ( element ) => element.id ) )
-			);
-
-			updateElements();
-
-			elementor.elements.on( 'add remove reset', updateElements );
-
-			return () => {
-				elementor.elements.off( 'add remove reset', updateElements );
-			};
-		}, [] );
-
 		/**
 		 * Close the navigator view.
 		 *
@@ -37,10 +19,7 @@ export function Navigator() {
 			<div id="elementor-navigator__inner">
 				<Header onClose={ handleClose } />
 				<div id="elementor-navigator__elements">
-					{ root.length ?
-						<ItemList items={ root } /> :
-						<Empty />
-					}
+					<ElementItem itemId="document" level={ 0 } />
 				</div>
 				<div id="elementor-navigator__footer">
 					<Icon className="eicon-ellipsis-h" />
@@ -55,8 +34,5 @@ export function Navigator() {
 		</Provider>
 	);
 }
-
-Navigator.propTypes = {
-};
 
 export default Navigator;

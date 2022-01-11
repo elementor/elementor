@@ -24,6 +24,29 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	);
 
 	/**
+	 * Whether the is the document's tree root.
+	 *
+	 * @var {boolean}
+	 */
+	const root = useMemo(
+		() => 'document' === elementId,
+		[ elementId ]
+	);
+
+	/**
+	 * Whether the element usually contain children (regardless to nested elements).
+	 *
+	 * @var {boolean}
+	 */
+	const hasChildrenByDefault = useMemo(
+		() => {
+			return element.elType &&
+				( 'widget' !== element.elType || Boolean( element.elements.length ) );
+		},
+		[ elementId, element.elements ]
+	);
+
+	/**
 	 * The item representation of the element.
 	 *
 	 * @var {{}}
@@ -32,8 +55,10 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 		() => ( {
 			settings: {},
 			elements: [],
-			title: container.model.getTitle(),
-			icon: container.model.getIcon(),
+			title: container.model.getTitle?.(),
+			icon: container.model.getIcon?.(),
+			root,
+			hasChildrenByDefault,
 			...element,
 		} ),
 		[ container, element ]
