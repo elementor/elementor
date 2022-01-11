@@ -364,8 +364,12 @@ export default class Container extends ArgsObject {
 			const repeaters = Object.values( this.controls ).filter( ( control ) => 'repeater' === control.type );
 
 			if ( 1 === repeaters.length ) {
-				// TODO: Remove with the BC.
-				if ( elementor.modules.nestedElements?.isWidgetSupportNesting( this.model.get( 'widgetType' ) ) ) {
+				/**
+				 * TODO Remove with the BC, nested-elements require `children` to work.
+				 * Since in previous versions, the `children` property was deprecated in favor of:
+				 * `this.repeaters[ $index ].children` this is temporal solution.
+				 */
+				if ( $e.components.get( 'nested-elements' )?.isWidgetSupportNesting( this.model.get( 'widgetType' ) ) ) {
 					return;
 				}
 

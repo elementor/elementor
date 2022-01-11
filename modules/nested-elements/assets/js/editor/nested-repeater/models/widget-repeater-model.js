@@ -18,7 +18,7 @@ export default class WidgetRepeaterModel extends elementor.modules.elements.mode
 
 		return 'container' === childElType &&
 			'widget' === parentElType &&
-			elementor.modules.nestedElements.isWidgetSupportNesting( this.get( 'widgetType' ) );
+			$e.components.get( 'nested-elements' ).isWidgetSupportNesting( this.get( 'widgetType' ) );
 	}
 
 	getDefaultChildren() {

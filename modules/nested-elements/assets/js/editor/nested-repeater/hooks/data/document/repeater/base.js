@@ -4,6 +4,6 @@ export default class Base extends $e.modules.hookData.After {
 	}
 
 	getConditions( args ) {
-		return elementor.modules.nestedElements.isWidgetSupportNesting( args.container.model.get( 'widgetType' ) );
+		return $e.components.get( 'nested-elements' ).isWidgetSupportNesting( args.container.model.get( 'widgetType' ) );
 	}
 }

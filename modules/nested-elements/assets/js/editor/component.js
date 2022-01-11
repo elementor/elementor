@@ -10,4 +10,9 @@ export default class Component extends $e.modules.ComponentBase {
 
 		super.registerAPI();
 	}
+
+	isWidgetSupportNesting( widgetType ) {
+		// eslint-disable-next-line camelcase
+		return elementor.widgetsCache[ widgetType ]?.support_nesting;
+	}
 }
