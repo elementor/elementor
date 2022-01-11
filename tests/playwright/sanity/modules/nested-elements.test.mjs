@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 import WpAdminPage from "../../pages/wp-admin-page.mjs";
 
-
 let page,
 	editor,
 	wpAdmin;
