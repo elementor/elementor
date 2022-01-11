@@ -1,5 +1,3 @@
-import ElementModel from 'elementor-elements/models/element';
-
 /**
  * @name BaseContainer
  * @extends {Marionette.CompositeView}

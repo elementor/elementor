@@ -72,6 +72,13 @@ ElementModel = BaseElementModel.extend( {
 		settings.elType = elType;
 		settings.isInner = this.get( 'isInner' );
 
+		// Allow passing custom `_title` from model.
+		const customTitle = this.get( '_title' );
+
+		if ( customTitle ) {
+			settings._title = customTitle;
+		}
+
 		settings = new SettingsModel( settings, {
 			controls: elementor.getElementControls( this ),
 		} );
@@ -141,8 +148,7 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle: function() {
-		// Allow passing default title from the model also.
-		let title = this.getSetting( '_title' ) || this.get( '_title' );
+		let title = this.getSetting( '_title' );
 
 		if ( ! title ) {
 			title = this.getDefaultTitle();
