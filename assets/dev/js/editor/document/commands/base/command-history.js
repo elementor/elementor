@@ -8,17 +8,21 @@ export default class CommandHistory extends CommandBase {
 	constructor( args ) {
 		super( args );
 
-		/**
-		 * Get History from child command.
-		 *
-		 * @type {{}|boolean}
-		 */
-		this.history = this.getHistory( args );
+		const options = { useHistory: true };
 
-		/**
-		 * @type {number|boolean}
-		 */
-		this.historyId = false;
+		if ( options.useHistory ) {
+			/**
+			 * Get History from child command.
+			 *
+			 * @type {{}|boolean}
+			 */
+			this.history = this.getHistory( args );
+
+			/**
+			 * @type {number|boolean}
+			 */
+			this.historyId = false;
+		}
 	}
 
 	/**

@@ -22,14 +22,16 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 	}
 
 	getHistory( args ) {
-		const { options = { useHistory: true }, container, index } = args;
+		const { container, index } = args,
+			editSettings = container.model.get( 'editSettings' ),
+			current = editSettings.get( 'activeItemIndex' ) || 1;
 
-		if ( ! options.useHistory ) {
+		// If the index is the same, then don't save a history item.
+		if ( current === index ) {
 			return false;
 		}
 
-		const editSettings = container.model.get( 'editSettings' ),
-			defaults = container.model.config.defaults,
+		const defaults = container.model.config.defaults,
 			repeaterName = defaults.repeater_name,
 			repeater = container.repeaters[ repeaterName ],
 			tabTitleSetting = defaults.repeater_title_setting,
@@ -42,7 +44,7 @@ export class Select extends ( $e.modules.document.CommandHistory ) {
 			restore: this.constructor.restore,
 			data: {
 				current: index,
-				prev: editSettings.get( 'activeItemIndex' ) || 1,
+				prev: current,
 			},
 		};
 	}
