@@ -16,24 +16,22 @@ export default function ExportProcess() {
 		navigate = useNavigate(),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		[ errorType, setErrorType ] = useState( '' ),
-		{ plugins, exportedData, isExportProcessStarted } = exportContext.data || {},
+		{ plugins, exportedData, kitInfo, isExportProcessStarted } = exportContext.data || {},
 		{ pluginsData } = useExportPluginsData( plugins ),
 		onDialogDismiss = () => {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
 		exportKit = () => {
-			const { includes, kitInfo } = sharedContext.data;
+			const { includes } = sharedContext.data;
 
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
 				The plugins must be added to the includes items, otherwise they will not be exported.
 				The plugins should always be added in order to include the Core plugin data in the kit.
 			 */
-			includes.push( 'plugins' );
-
 			kitActions.export( {
-				include: includes,
+				include: [ ...includes, 'plugins' ],
 				kitInfo,
 				plugins: pluginsData,
 			} );
