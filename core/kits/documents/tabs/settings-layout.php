@@ -78,7 +78,9 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
-		$widgets_space_label = Plugin::instance()->experiments->is_feature_active( 'container' )
+		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
+
+		$widgets_space_label = $is_container_active
 			? esc_html__( 'Elements Gap', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
@@ -96,7 +98,9 @@ class Settings_Layout extends Tab_Base {
 						'max' => 40,
 					],
 				],
-				'placeholder' => '20',
+				'placeholder' => [
+					'size' => '20',
+				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20)', 'elementor' ),
 				'selectors' => [
 					'.elementor-widget:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
@@ -104,6 +108,37 @@ class Settings_Layout extends Tab_Base {
 				],
 			]
 		);
+
+		if ( $is_container_active ) {
+			$this->add_control(
+				'container_default_padding',
+				[
+					'label' => esc_html__( 'Container Default Padding', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px', 'vw' ],
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 500,
+						],
+						'vw' => [
+							'min' => 0,
+							'max' => 100,
+						],
+					],
+					'default' => [
+						'size' => 10,
+						'unit' => 'px',
+					],
+					'placeholder' => [
+						'size' => '10',
+					],
+					'selectors' => [
+						'.e-container' => '--container-default-padding: {{SIZE}}{{UNIT}}',
+					],
+				]
+			);
+		}
 
 		$this->add_control(
 			'page_title_selector',

@@ -69,22 +69,6 @@ export default class extends Marionette.Behavior {
 		return 'container' === this.view.getContainer().parent?.model?.get( 'elType' );
 	}
 
-	/**
-	 * Get the parent container flex direction.
-	 *
-	 * @returns {null|string}
-	 */
-	getParentFlexDirection() {
-		if ( ! this.isContainerItem() ) {
-			return null;
-		}
-
-		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
-			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode;
-
-		return this.view.getContainer().parent?.model?.getSetting( `flex_direction${ deviceSuffix }` );
-	}
-
 	onRender() {
 		_.defer( () => this.toggle() );
 	}
@@ -96,6 +80,10 @@ export default class extends Marionette.Behavior {
 	onResizeStart( event ) {
 		event.stopPropagation();
 
+		if ( this.view.showPercentsTooltip ) {
+			this.view.showPercentsTooltip();
+		}
+
 		// Don't open edit mode when the item is a Container item ( for UX ).
 		if ( ! this.isContainerItem() ) {
 			this.view.model.trigger( 'request:edit' );
@@ -104,6 +92,10 @@ export default class extends Marionette.Behavior {
 
 	onResizeStop( event, ui ) {
 		event.stopPropagation();
+
+		if ( this.view.hidePercentsTooltip ) {
+			this.view.hidePercentsTooltip();
+		}
 
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
@@ -145,6 +137,10 @@ export default class extends Marionette.Behavior {
 
 	onResize( event, ui ) {
 		event.stopPropagation();
+
+		if ( this.view.changeSizeUI ) {
+			this.view.changeSizeUI();
+		}
 
 		if ( ! this.isContainerItem() ) {
 			return;

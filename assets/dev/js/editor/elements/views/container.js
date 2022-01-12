@@ -22,6 +22,14 @@ const ContainerView = BaseElementView.extend( {
 		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
+	ui: function() {
+		var ui = BaseElementView.prototype.ui.apply( this, arguments );
+
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+
+		return ui;
+	},
+
 	getCurrentUiStates() {
 		const currentDirection = this.container.settings.get( 'flex_direction' );
 
@@ -296,6 +304,53 @@ const ContainerView = BaseElementView.extend( {
 
 	onDragEnd: function() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	attachElContent: function() {
+		BaseElementView.prototype.attachElContent.apply( this, arguments );
+
+		const $tooltip = jQuery( '<div>', {
+			class: 'elementor-column-percents-tooltip',
+			'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
+		} );
+
+		this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	getPercentSize: function( size ) {
+		if ( ! size ) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
+	},
+
+	// TODO: Copied from `views/column.js`.
+	getPercentsForDisplay: function() {
+		const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
+
+		return width.toFixed( 1 ) + '%';
+	},
+
+	// TODO: Copied from `views/column.js`.
+	changeSizeUI: function() {
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
+		}
+	},
+
+	showPercentsTooltip: function() {
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.show();
+		}
+	},
+
+	hidePercentsTooltip: function() {
+		if ( this.ui.percentsTooltip ) {
+			this.ui.percentsTooltip.hide();
+		}
 	},
 } );
 

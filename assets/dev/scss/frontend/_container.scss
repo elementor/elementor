@@ -8,7 +8,7 @@
 	--height: auto;
 	--text-align: initial;
 	--margin: 0;
-	--padding: 10px;
+	--padding: var( --container-default-padding, 10px );
 	--position: relative;
 	--z-index: auto;
 	--overflow: visible;

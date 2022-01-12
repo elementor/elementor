@@ -906,6 +906,7 @@ html.elementor-html {
 .elementor-column-percents-tooltip {
 	position: absolute;
 	display: none;
+	pointer-events: none;
 	top: 50%;
 	transform: translateY(-50%);
 	color: #fff;
