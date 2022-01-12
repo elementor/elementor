@@ -137,10 +137,10 @@ class Categories_Manager {
 		 *
 		 * This hook should be used to add your own Finder categories.
 		 *
-		 * @since 2.3.0
+		 * @param Categories_Manager $this .
 		 * @deprecated 3.5.0 Use `elementor/finder/register` hook instead.
 		 *
-		 * @param Categories_Manager $this .
+		 * @since 2.3.0
 		 */
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 			'elementor/finder/categories/init',
