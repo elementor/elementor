@@ -1,5 +1,8 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev29 - 2022-01-12
+* Fix: Can’t drag & drop elements inside a container  [ED-6077] (#17320)
+
 #### 3.6.0-dev28 - 2022-01-10
 * Fix: widescreen breakpoint  effects query media order (#17314)
 * Tweak: Adding Responsive option to Text Stroke [ED-5846] (#17235)
