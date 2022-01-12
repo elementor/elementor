@@ -389,6 +389,12 @@
 					},
 				} );
 			} else {
+				// Override the onDrop callback with a user-provided one if present.
+				if ( settings.onDropping ) {
+					settings.onDropping( currentSide, event );
+					return;
+				}
+
 				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
 
 				settings.getDropContainer().view.createElementFromModel(
