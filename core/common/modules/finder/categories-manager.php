@@ -140,7 +140,7 @@ class Categories_Manager {
 		 * @param Categories_Manager $this .
 		 * @deprecated 3.5.0 Use `elementor/finder/register` hook instead.
 		 *
-		 * @since 2.3.0
+		 * @param Categories_Manager $this.
 		 */
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 			'elementor/finder/categories/init',
