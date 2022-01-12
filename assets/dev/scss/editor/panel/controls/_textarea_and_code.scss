@@ -19,7 +19,7 @@
 			position: absolute;
 			top: 0;
 			z-index: $first-layer;
-			left: 0; // It should always be LTR
+			right: 0; // It should always be LTR
 		}
 	}
 
