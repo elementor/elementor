@@ -90,9 +90,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
 		Object.defineProperty( this, 'elementSettingsModel', {
 			get() {
-				elementorCommon.helpers.softDeprecated( 'elementSettingsModel', '2.8.0', 'container.settings' );
-
-				return options.container ? options.container.settings : options.elementSettingsModel;
+				return options.container.settings;
 			},
 		} );
 
@@ -101,8 +99,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 
 		this.model.set( controlSettings );
 
-		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
-		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+		const settings = this.container.settings;
 
 		this.listenTo( settings, 'change', this.onAfterChange );
 
@@ -120,8 +117,7 @@ ControlBaseView = Marionette.CompositeView.extend( {
 	},
 
 	toggleControlVisibility: function() {
-		// TODO: this.elementSettingsModel is deprecated since 2.8.0.
-		const settings = this.container ? this.container.settings : this.elementSettingsModel;
+		const settings = this.container.settings;
 
 		var isVisible = elementor.helpers.isActiveControl( this.model, settings.attributes );
 
