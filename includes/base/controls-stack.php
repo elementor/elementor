@@ -93,8 +93,10 @@ abstract class Controls_Stack extends Base_Object {
 	/**
 	 * The additional configuration.
 	 *
-	 * Holds additional configuration that has been set using the `set_config`
-	 * method and later merged into the primary config.
+	 * Holds additional configuration that has been set using `set_config` method.
+	 * The `config` property is not modified directly while using the method because
+	 * it's used to check whether the initial config already loaded (in `get_config`).
+	 * After the initial config loaded, the additional config is merged into it.
 	 *
 	 * @access private
 	 *
@@ -1008,13 +1010,13 @@ abstract class Controls_Stack extends Base_Object {
 			} else {
 				$this->config = $this->get_initial_config();
 			}
-		}
 
-		foreach ( $this->additional_config as $key => $value ) {
-			if ( isset( $this->config[ $key ] ) ) {
-				$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
-			} else {
-				$this->config[ $key ] = $value;
+			foreach ( $this->additional_config as $key => $value ) {
+				if ( isset( $this->config[ $key ] ) ) {
+					$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
+				} else {
+					$this->config[ $key ] = $value;
+				}
 			}
 		}
 
