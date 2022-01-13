@@ -37,27 +37,40 @@ defaultStates() {
 		// A correspnding `Slice` instance will be available under `$e.store.get( 'example' )`.
 		'': {
 			initialState: {
-				count: 0,
+				name: 'Elementor',
 			},
 			reducers: {
-				setCount: ( state, { payload } ) => {
+				setName: ( prev, { payload } ) => {
 					return {
-						count: payload,
+						...prev,
+						name: payload,
 					};
 				},
 			},
 		},
-		// A correspnding `Slice` instance will be available under `$e.store.get( 'example/test' )`.
-		'test': {
+		// A correspnding `Slice` instance will be available under `$e.store.get( 'example/counter' )`.
+		counter: {
 			initialState: {
-				name: 'StyleShit',
+				count: 0,
 			},
 			reducers: {
-				setName: ( state, { payload } ) => {
+				// Override the previous `count` value.
+				setCount: ( prev, { payload } ) => {
 					return {
-						name: payload,
+						...prev,
+						count: payload,
 					};
 				},
+				// Increment `count` by the value of `payload`.
+				increment: ( prev, { payload } ) => ( {
+					...prev,
+					count: prev.count + payload,
+				} ),
+				// Decrement `count` by the value of `payload`.
+				decrement: ( prev, { payload } ) => ( {
+					...prev,
+					count: prev.count - payload,
+				} ),
 			},
 		},
 	};
@@ -68,11 +81,44 @@ defaultStates() {
 
 Later on, you can use the `dispatch()` method with the appropriate *Action* in order to call a *Reducer*:
 ```javascript
-const { setName } = $e.store.get( 'comments/test' ).actions;
+const { setCount } = $e.store.get( 'example/counter' ).actions;
 
-$e.store.dispatch( setName( 'Elementor' ) ); // Will execute the `setName` reducer.
+$e.store.dispatch( setCount( 10 ) ); // Will execute the `setCount` reducer.
 
-console.log( $e.store.getState() ['comments/test'].name ); // => 'Elementor'.
+// ...
+
+const state = $e.store.getState();
+
+console.log( state['example/counter'].count ); // => 10.
+```
+
+You can also use it inside a React application, just like the regular Redux store:
+```javascript
+import { Provider, useDispatch, useSelector } from 'react-redux';
+
+function App( props ) {
+	return (
+			<Provider store={ $e.store.getReduxStore() }>
+				<Counter name="Counter 1" />
+				<Counter name="Counter 2" />
+			</Provider>
+	);
+}
+
+function Counter( props ) {
+	const count = useSelector( ( state ) => state['example/counter'].count );
+	const dispatch = useDispatch();
+	const { actions } = $e.store.get( 'example/counter' );
+	
+	return (
+		<div>
+			<h1>{ props.name }</h1>
+			<button onClick={ () => dispatch( actions.decrement( 1 ) ) }> - </button>
+			<span>{ count }</span>
+			<button onClick={ () => dispatch( actions.increment( 1 ) ) }> + </button>
+		</div>
+	);
+}
 ```
 
 ### [Back](../readme.md) 
