@@ -1,4 +1,5 @@
 import { DEFAULT_MAX_COLUMNS } from 'elementor-elements/views/section';
+import BaseSectionsContainerView from "elementor-views/base-sections-container";
 
 var BaseElementView = require( 'elementor-elements/views/base' ),
 	ColumnEmptyView = require( 'elementor-elements/views/column-empty' ),
@@ -231,12 +232,6 @@ ColumnView = BaseElementView.extend( {
 			hasDraggingOnChildClass: 'elementor-dragging-on-child',
 			getDropContainer: () => this.getContainer(),
 			getDropIndex,
-			onDropping: ( side, event ) => {
-				event.stopPropagation();
-
-				// Triggering drag end manually, since it won't fired above iframe
-				elementor.getPreviewView().onPanelElementDragEnd();
-			},
 		} );
 	},
 
@@ -244,6 +239,13 @@ ColumnView = BaseElementView.extend( {
 		event.stopPropagation();
 
 		this.addNewColumn();
+	},
+
+	createElementFromModel( ...args ) {
+		// Triggering drag end manually, since it won't fired above iframe
+		elementor.getPreviewView().onPanelElementDragEnd();
+
+		return BaseSectionsContainerView.prototype.createElementFromModel.call( this, ...args );
 	},
 } );
 

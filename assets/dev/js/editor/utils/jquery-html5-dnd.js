@@ -332,7 +332,10 @@
 		};
 
 		var onDrop = function( event ) {
-			const input = event.originalEvent.dataTransfer.files;
+			event.preventDefault();
+
+			const input = event.originalEvent.dataTransfer.files,
+				at = settings.getDropIndex( currentSide, event );
 
 			setSide( event );
 
@@ -340,18 +343,11 @@
 				return;
 			}
 
-			event.preventDefault();
-
 			if ( input.length ) {
 				$e.run( 'editor/browser-import/import', {
 					input,
 					target: settings.getDropContainer(),
-					options: {
-						event,
-						target: {
-							at: settings.getDropIndex( currentSide, event ),
-						},
-					},
+					options: { event, target: { at } },
 				} );
 
 				return;
@@ -362,10 +358,10 @@
 					Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
 						.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
 				),
-				{ at: settings.getDropIndex( currentSide, event ), side: currentSide }
+				{ at, side: currentSide }
 			);
 
-			// Trigger a Droppable specific `onDropping` callback.
+			// Trigger a Droppable-specific `onDropping` callback.
 			if ( settings.onDropping ) {
 				settings.onDropping( currentSide, event );
 			}

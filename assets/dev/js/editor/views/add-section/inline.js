@@ -44,9 +44,13 @@ class AddSectionView extends BaseAddSectionView {
 	}
 
 	onDropping() {
+		const droppableOptions = this.getDroppableOptions();
+
 		super.onDropping();
 
-		this.destroy();
+		if ( droppableOptions.onDropping ) {
+			droppableOptions.onDropping();
+		}
 	}
 }
 
