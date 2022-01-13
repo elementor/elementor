@@ -2075,6 +2075,13 @@ abstract class Controls_Stack extends Base_Object {
 
 			$control = array_merge_recursive( $control_obj->get_settings(), $control );
 
+			if ( isset( $control['responsive'] ) && isset( $control['parent'] ) ) {
+				if ( ! isset( $settings[ $control['name'] ] ) ) {
+					$settings[ $control['name'] ] = $settings[ $control['parent'] ];
+					continue;
+				}
+			}
+
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}
 
