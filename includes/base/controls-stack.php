@@ -1011,7 +1011,11 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $this->additional_config as $key => $value ) {
-			$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
+			if ( isset( $this->config[ $key ] ) ) {
+				$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
+			} else {
+				$this->config[ $key ] = $value;
+			}
 		}
 
 		return $this->config;
@@ -1026,7 +1030,11 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 */
 	public function set_config( $key, $value ) {
-		$this->additional_config[ $key ] = $value;
+		if ( isset( $this->additional_config[ $key ] ) ) {
+			$this->additional_config[ $key ] = wp_parse_args( $value, $this->additional_config[ $key ] );
+		} else {
+			$this->additional_config[ $key ] = $value;
+		}
 	}
 
 	/**
