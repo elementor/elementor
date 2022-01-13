@@ -35,6 +35,14 @@ class AddSectionView extends BaseAddSectionView {
 		this.destroy();
 	}
 
+	getDroppableOptions() {
+		return {
+			onDropping: () => {
+				this.destroy();
+			},
+		};
+	}
+
 	onDropping() {
 		super.onDropping();
 

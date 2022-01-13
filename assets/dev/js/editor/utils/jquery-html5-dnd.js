@@ -353,15 +353,21 @@
 						},
 					},
 				} );
-			} else {
-				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
 
-				settings.getDropContainer().view.createElementFromModel(
-					{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
-					{
-						at: settings.getDropIndex( currentSide, event ),
-					}
-				);
+				return;
+			}
+
+			settings.getDropContainer().view.createElementFromModel(
+				Object.fromEntries(
+					Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+						.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) )
+				),
+				{ at: settings.getDropIndex( currentSide, event ), side: currentSide }
+			);
+
+			// Trigger a Droppable specific `onDropping` callback.
+			if ( settings.onDropping ) {
+				settings.onDropping( currentSide, event );
 			}
 		};
 

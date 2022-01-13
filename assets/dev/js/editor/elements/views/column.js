@@ -236,8 +236,6 @@ ColumnView = BaseElementView.extend( {
 
 				// Triggering drag end manually, since it won't fired above iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
-
-				this.addElementFromPanel( { at: getDropIndex( side, event ) } );
 			},
 		} );
 	},
