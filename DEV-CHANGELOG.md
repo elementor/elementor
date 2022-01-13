@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev30 - 2022-01-13
+* Tweak: Added a deprecation notice for PHP 5.6 in WP dashboard [ED-5770] (#17273)
+* Fix: Dynamic Tag switcher disappear in RTL (#17469)
+
 #### 3.6.0-dev29 - 2022-01-12
 * Fix: Can’t drag & drop elements inside a container  [ED-6077] (#17320)
 
