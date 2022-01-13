@@ -79,17 +79,21 @@ defaultStates() {
 // More component code....
 ```
 
-Later on, you can use the `dispatch()` method with the appropriate *Action* in order to call a *Reducer*:
+Later on, you can use the `subscribe()` method in order to listen to changes, and the`dispatch()` method (with the appropriate *Action*) in order to call a *Reducer*:
 ```javascript
+const unsubscribe = $e.store.subscribe( () => {
+	const state = $e.store.getState();
+
+	console.log( state['example/counter'].count );
+} );
+
 const { setCount } = $e.store.get( 'example/counter' ).actions;
 
 $e.store.dispatch( setCount( 10 ) ); // Will execute the `setCount` reducer.
 
-// ...
+// The subscriber function will log `10`.
 
-const state = $e.store.getState();
-
-console.log( state['example/counter'].count ); // => 10.
+unsubscribe(); // Will stop listening to changes.
 ```
 
 You can also use it inside a React application, just like the regular Redux store:
@@ -98,10 +102,10 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 
 function App( props ) {
 	return (
-			<Provider store={ $e.store.getReduxStore() }>
-				<Counter name="Counter 1" />
-				<Counter name="Counter 2" />
-			</Provider>
+		<Provider store={ $e.store.getReduxStore() }>
+			<Counter name="Counter 1" />
+			<Counter name="Counter 2" />
+		</Provider>
 	);
 }
 
