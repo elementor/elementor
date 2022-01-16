@@ -114,7 +114,7 @@
         container: eSection,
     } );
     ```
-    result: section deleted and all children elements.
+    Result: The section and all of its child elements are deleted.
 
 ## Duplicate _Command_ -- `$e.run('document/elements/duplicate')`
 *  **Name**: Duplicate.
