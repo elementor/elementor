@@ -198,14 +198,14 @@
     Copy widget and paste it into column.
 
     ```javascript
-    const eColumn = elementor.getContainer('cb70e3c'),
-        eWidget = elementor.getContainer('2e4b783');
+    const eColumn = elementor.getContainer( 'cb70e3c' ),
+        eWidget = elementor.getContainer( '2e4b783' );
     
-    $e.run('document/elements/copy', { 
+    $e.run( 'document/elements/copy', { 
         container: eWidget
     } );
     
-    const pastedContainers = $e.run('document/elements/paste', { 
+    const pastedContainers = $e.run( 'document/elements/paste', { 
         container: eColumn
     } );
     
