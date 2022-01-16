@@ -175,7 +175,7 @@
     | Property         | Type                              | Default   | Description                            |
     |------------------|-----------------------------------|-----------|----------------------------------------|
     | withPageSettings | `{Boolean}`                       | `{false}` | Should set page settings of `args.page_settings`.
-    | at               | `{Number}`                        | `{null}`  | Position ( Automatically increased ).
+    | at               | `{Number}`                        | `{null}`  | Position (Automatically increased).
     | clone            | `{Boolean}`                       | `{false}` | Generate unique id for the model.
     | edit             | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element.
     | onBeforeAdd      | `{function()}`                    |           | Run callback before add.
