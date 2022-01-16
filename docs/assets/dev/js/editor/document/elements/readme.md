@@ -80,7 +80,7 @@
     ```javascript
     const eColumn = elementor.getContainer('cb70e3c');
     ```
-    Then let create heading widget at the column we reach above:
+    Finally, the heading widget can be created at the selected column:
     ```javascript
     $e.run( 'document/elements/create', {
         container: eColumn,
