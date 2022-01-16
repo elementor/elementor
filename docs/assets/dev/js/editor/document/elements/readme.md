@@ -108,7 +108,7 @@
     ![widget-heading](./_images/widget-heading.png)
     ```javascript
     // Get section container.
-    const eSection = elementor.getContainer('886643f');
+    const eSection = elementor.getContainer( '886643f' );
     
     $e.run( 'document/elements/delete', { 
         container: eSection,
