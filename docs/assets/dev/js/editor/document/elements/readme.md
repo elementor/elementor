@@ -72,7 +72,7 @@
     } );  
     ```
     Result: ![empty-column](./_images/empty-column.png)
-    Now to create widget, we need column, here is two examples how to reach column:
+    Now, in order to create the widget, we need a column. There are two ways to access the column:
     ```javascript
     const eColumn = eSection.children[ 0 ];
     ```
