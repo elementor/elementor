@@ -163,6 +163,7 @@ export default class baseTabs extends elementorModules.frontend.handlers.Base {
 						break;
 					case 'Enter':
 					case 'Space':
+					case ' ': // Space.
 						event.preventDefault();
 						this.changeActiveTab( event.currentTarget.getAttribute( 'data-tab' ) );
 						break;

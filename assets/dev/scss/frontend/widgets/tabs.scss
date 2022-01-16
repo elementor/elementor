@@ -61,6 +61,10 @@
 					left: 100%;
 				}
 			}
+
+			&:focus {
+				text-decoration: underline;
+			}
 		}
 	}
 
