@@ -2,19 +2,32 @@ import { useRef } from 'react';
 
 import Button from 'elementor-app/ui/molecules/button';
 
+import { arrayToClassName, isOneOf } from 'elementor-app/utils/utils.js';
+
 import './upload-file.scss';
 
 export default function UploadFile( props ) {
-	const fileInput = useRef( null );
+	const fileInput = useRef( null ),
+		baseClassName = 'e-app-upload-file',
+		classes = [ baseClassName, props.className ];
 
 	return (
-		<div>
+		<div className={ arrayToClassName( classes ) }>
 			<input
 				ref={ fileInput }
 				type="file"
+				accept={ props.filetypes.map( ( type ) => '.' + type ).join( ', ' ) }
 				className="e-app-upload-file__input"
 				onChange={ ( event ) => {
-					props.onFileSelect( event.target.files, event );
+					const file = event.target.files[ 0 ];
+
+					if ( file && isOneOf( file.type, props.filetypes ) ) {
+						props.onFileSelect( file, event );
+					} else {
+						fileInput.current.value = '';
+
+						props.onError();
+					}
 				} }
 			/>
 
@@ -41,9 +54,12 @@ UploadFile.propTypes = {
 	text: PropTypes.string,
 	onFileSelect: PropTypes.func,
 	isLoading: PropTypes.bool,
+	filetypes: PropTypes.array.isRequired,
+	onError: PropTypes.func,
 };
 
 UploadFile.defaultProps = {
 	className: '',
 	text: __( 'Select File', 'elementor' ),
+	onError: () => {},
 };

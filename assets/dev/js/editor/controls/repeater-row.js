@@ -5,11 +5,13 @@ module.exports = Marionette.CompositeView.extend( {
 
 	className: 'elementor-repeater-fields',
 
-	ui: {
-		duplicateButton: '.elementor-repeater-tool-duplicate',
-		editButton: '.elementor-repeater-tool-edit',
-		removeButton: '.elementor-repeater-tool-remove',
-		itemTitle: '.elementor-repeater-row-item-title',
+	ui: function() {
+		return {
+			duplicateButton: '.elementor-repeater-tool-duplicate',
+			editButton: '.elementor-repeater-tool-edit',
+			removeButton: '.elementor-repeater-tool-remove',
+			itemTitle: '.elementor-repeater-row-item-title',
+		};
 	},
 
 	behaviors: {
@@ -63,7 +65,8 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #%s', [ this.getOption( 'itemIndex' ) ] );
+			/* translators: %s: Item Index (number). */
+			title = sprintf( __( 'Item #%s', 'elementor' ), this.getOption( 'itemIndex' ) );
 		}
 
 		this.ui.itemTitle.html( title );

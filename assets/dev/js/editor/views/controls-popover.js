@@ -26,7 +26,7 @@ export default class ControlsPopover {
 			$resetLabel = $popoverToggleControl.find( '.elementor-control-popover-toggle-reset-label' );
 
 		this.$popoverHeader = jQuery( '<div>', { class: 'e-group-control-header' } )
-			.html( '<span>' + elementor.translate( 'typography' ) + '</span>' );
+			.html( '<span>' + __( 'Typography', 'elementor' ) + '</span>' );
 
 		this.$headerControlsWrapper = jQuery( '<div>', { class: 'e-control-tools' } );
 
@@ -80,7 +80,7 @@ export default class ControlsPopover {
 		this.$addButton.on( 'click', () => this.onAddButtonClick() );
 
 		this.$addButton.tipsy( {
-			title: () => elementor.translate( 'create_global_font' ),
+			title: () => __( 'Create New Global Font', 'elementor' ),
 			gravity: () => 's',
 		} );
 	}

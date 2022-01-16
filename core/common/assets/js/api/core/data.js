@@ -3,17 +3,21 @@ import Commands from './commands.js';
 import Cache from './data/cache';
 
 /**
- * @typedef {('create'|'delete'|'get'|'update')} DataTypes
+ * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
  */
 
 /**
  * @typedef {{}} RequestData
  * @property {ComponentBase} component
  * @property {string} command
+ * @property {{}} args
+ * @property {DataTypes} type
+ * @property {number} timestamp
  * @property {string} endpoint
- * @property {DataTypes} [type]
- * @property {{}} [args]
- * @property {number} [timestamp]
+ *
+ * @property {string} [baseEndpointURL]
+ * @property {string} [namespace]
+ * @property {string} [version]
  * @property {('hit'|'miss')} [cache]
  */
 
@@ -37,17 +41,12 @@ export default class Data extends Commands {
 		this.args = Object.assign( args, {
 			namespace: 'elementor',
 			version: '1',
+			baseEndpointURL: elementorCommon.config.urls.rest,
 		} );
 
 		this.cache = new Cache( this );
 		this.validatedRequests = {};
 		this.commandFormats = {};
-
-		this.baseEndpointAddress = '';
-
-		const { namespace, version } = this.args;
-
-		this.baseEndpointAddress = `${ elementorCommon.config.urls.rest }${ namespace }/v${ version }/`;
 	}
 
 	/**
@@ -57,7 +56,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {DataTypes} type
 	 *
-	 * @return {string|boolean}
+	 * @returns {string|boolean}
 	 */
 	getHTTPMethod( type ) {
 		switch ( type ) {
@@ -72,6 +71,9 @@ export default class Data extends Commands {
 
 			case 'update':
 				return 'PUT';
+
+			case 'options':
+				return 'OPTIONS';
 		}
 
 		return false;
@@ -84,7 +86,7 @@ export default class Data extends Commands {
 	 *
 	 * @param {DataTypes} type
 	 *
-	 * @return {[string]|boolean}
+	 * @returns {[string]|boolean}
 	 */
 	getAllowedMethods( type ) {
 		switch ( type ) {
@@ -99,9 +101,33 @@ export default class Data extends Commands {
 
 			case 'update':
 				return EDITABLE;
+
+			case 'options':
+				return [ 'OPTIONS' ];
 		}
 
 		return false;
+	}
+
+	/**
+	 * Function getEndpointURL().
+	 *
+	 * Get remote endpoint address.
+	 *
+	 * @param {RequestData} requestData
+	 * @param {string} [endpoint=requestData.endpoint]
+	 *
+	 * @returns {string}
+	 */
+	getEndpointURL( requestData, endpoint = requestData.endpoint ) {
+		// Allow to request data override default namespace and args.
+		const {
+			baseEndpointURL = this.args.baseEndpointURL,
+			namespace = this.args.namespace,
+			version = this.args.version,
+		} = requestData;
+
+		return `${ baseEndpointURL }${ namespace }/v${ version }/` + endpoint;
 	}
 
 	/**
@@ -124,35 +150,32 @@ export default class Data extends Commands {
 
 		const argsQueryLength = args?.query ? Object.values( args.query ).length : 0;
 
-		if ( argsQueryLength ) {
-			if ( format && format.includes( '/{' ) ) {
-				// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
-				const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
+		if ( argsQueryLength && format && format.includes( '/{' ) ) {
+			// Means command includes magic query arguments ( controller/endpoint/{whatever} ).
+			const magicParams = format.split( '/' ).filter( ( str ) => '{' === str.charAt( 0 ) );
 
-				magicParams.forEach( ( param ) => {
-					// Remove the '{', '}'.
-					param = param.replace( '{', '' );
-					param = param.replace( '}', '' );
+			magicParams.forEach( ( param ) => {
+				// Remove the '{', '}'.
+				param = param.replace( '{', '' );
+				param = param.replace( '}', '' );
 
-					const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
+				const formatted = Object.entries( args.query ).find( ( [ key ] ) => key === param );
 
-					if ( ! formatted ) {
-						return;
-					}
+				if ( ! formatted ) {
+					return;
+				}
 
-					const key = formatted[ 0 ],
-						value = formatted[ 1 ].toString();
+				const key = formatted[ 0 ],
+					value = formatted[ 1 ].toString();
 
-					// Replace magic params with values.
-					format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
+				// Replace magic params with values.
+				format = format.replace( new RegExp( '{' + param + '}', 'g' ), value );
 
-					delete args.query[ key ];
-				} );
+				delete args.query[ key ];
+			} );
+		}
 
-				endpoint = format;
-			}
-		} else if ( format ) {
-			// No magic params, but still format,
+		if ( format ) {
 			endpoint = format;
 		}
 
@@ -256,15 +279,18 @@ export default class Data extends Commands {
 	/**
 	 * Function prepareHeaders().
 	 *
+	 * Prepare the headers for each request.
+	 *
 	 * @param {RequestData} requestData
 	 *
-	 * @return {{}} params
+	 * @returns {{}} params
 	 */
 	prepareHeaders( requestData ) {
 		/* global wpApiSettings */
 		const type = requestData.type,
 			nonce = wpApiSettings.nonce,
 			params = {
+				signal: requestData.args?.options?.signal,
 				credentials: 'include', // cookies is required for wp reset.
 			},
 			headers = { 'X-WP-Nonce': nonce };
@@ -285,10 +311,15 @@ export default class Data extends Commands {
 			}
 
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
+
+			if ( requestData.args?.headers ) {
+				Object.assign( headers, requestData.args.headers );
+			}
+
 			Object.assign( params, {
 				method,
 				headers,
-				body: JSON.stringify( requestData.args.data ),
+				body: 'application/json' === headers[ 'Content-Type' ] ? JSON.stringify( requestData.args.data ) : requestData.args.data,
 			} );
 		} else {
 			throw Error( `Invalid type: '${ type }'` );
@@ -298,26 +329,29 @@ export default class Data extends Commands {
 	}
 
 	/**
+	 * Function prepareEndpoint().
+	 *
 	 * This method response for building a final endpoint,
 	 * the main problem is with plain permalink mode + command with query params that creates a weird url,
 	 * the current method should fix it.
 	 *
-	 * @param endpoint
-	 * @returns {string}
+	 * @param {RequestData} requestData
+	 *
+	 * @returns {string} Endpoint URL
 	 */
-	prepareEndpoint( endpoint ) {
-		const splitUrl = endpoint.split( '?' ),
-			path = splitUrl.shift();
+	prepareEndpoint( requestData ) {
+		const splitEndpoint = requestData.endpoint.split( '?' ),
+			endpoint = splitEndpoint.shift();
 
-		let url = this.baseEndpointAddress + path;
+		let endpointAddress = this.getEndpointURL( requestData, endpoint );
 
-		if ( splitUrl.length ) {
-			const separator = url.includes( '?' ) ? '&' : '?';
+		if ( splitEndpoint.length ) {
+			const separator = endpointAddress.includes( '?' ) ? '&' : '?';
 
-			url += separator + splitUrl.pop();
+			endpointAddress += separator + splitEndpoint.pop();
 		}
 
-		return url;
+		return endpointAddress;
 	}
 
 	/**
@@ -326,7 +360,7 @@ export default class Data extends Commands {
 	 * @param {RequestData} requestData
 	 * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
 	 *
-	 * @return {{}} params
+	 * @returns {Promise<Response>}
 	 */
 	fetch( requestData, fetchAPI = window.fetch ) {
 		requestData.cache = 'miss';
@@ -348,7 +382,7 @@ export default class Data extends Commands {
 			// This function is async because:
 			// it needs to wait for the results, to cache them before it resolve's the promise.
 			try {
-				const endpoint = this.prepareEndpoint( requestData.endpoint ),
+				const endpoint = this.prepareEndpoint( requestData ),
 					request = fetchAPI( endpoint, params ),
 					response = await request.then( async ( _response ) => {
 						if ( ! _response.ok ) {
@@ -470,27 +504,83 @@ export default class Data extends Commands {
 		this.commandFormats[ command ] = format;
 	}
 
+	/**
+	 * Function create().
+	 *
+	 * Run a command, that will be translated as endpoint for creating new data.
+	 *
+	 * @param {string} command
+	 * @param {*} data
+	 * @param {{}} query
+	 * @param {{}} options
+	 *
+	 * @returns {*} result
+	 */
 	create( command, data, query = {}, options = {} ) {
 		return this.run( 'create', command, { query, options, data } );
 	}
 
+	/**
+	 * Function delete().
+	 *
+	 * Run a command, that will be translated as endpoint for deleting data.
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 * @param {{}} options
+	 *
+	 * @returns {*} result
+	 */
 	delete( command, query = {}, options = {} ) {
 		return this.run( 'delete', command, { query, options } );
 	}
 
+	/**
+	 * Function get().
+	 *
+	 * Run a command, that will be translated as endpoint for getting data.
+	 *
+	 * @param {string} command
+	 * @param {{}} query
+	 * @param {{}} options
+	 *
+	 * @returns {*} result
+	 */
 	get( command, query = {}, options = {} ) {
 		return this.run( 'get', command, { query, options } );
 	}
 
+	/**
+	 * Function update().
+	 *
+	 * Run a command, that will be translated as endpoint for updating data.
+	 *
+	 * @param {string} command
+	 * @param {*} data
+	 * @param {{}} query
+	 * @param {{}} options
+	 *
+	 * @returns {*} result
+	 */
 	update( command, data, query = {}, options = {} ) {
 		return this.run( 'update', command, { query, options, data } );
 	}
 
 	/**
-	 * @param {ComponentBase} component
+	 * Function options().
+	 *
+	 * Run a command, that will be translated as endpoint for requesting options/information about specific endpoint.
+	 *
 	 * @param {string} command
-	 * @param callback
+	 * @param {{}} query
+	 * @param {{}} options
+	 *
+	 * @returns {*} result
 	 */
+	options( command, query, options = {} ) {
+		return this.run( 'options', command, { query, options } );
+	}
+
 	register( component, command, callback ) {
 		super.register( component, command, callback );
 
@@ -501,16 +591,18 @@ export default class Data extends Commands {
 		if ( format ) {
 			$e.data.registerFormat( fullCommandName, format );
 		}
+
+		return this;
 	}
 
 	/**
+	 * @override
+	 *
 	 * TODO: Add JSDOC typedef for args ( query and options ).
 	 *
 	 * @param {DataTypes} type
 	 * @param {string} command
 	 * @param {{}} args
-	 *
-	 * @return {*}
 	 */
 	run( type, command, args ) {
 		args.options.type = type;

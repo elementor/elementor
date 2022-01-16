@@ -19,15 +19,15 @@ export class Back extends CommandBase {
 		if ( ! this.confirmDialog ) {
 			const modalOptions = {
 				id: 'elementor-kit-warn-on-close',
-				headerMessage: elementor.translate( 'Exit' ),
-				message: elementor.translate( 'Would you like to exit?' ),
+				headerMessage: __( 'Exit', 'elementor' ),
+				message: __( 'Would you like to exit?', 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
 				},
 				strings: {
-					confirm: elementor.translate( 'Exit' ),
-					cancel: elementor.translate( 'Cancel' ),
+					confirm: __( 'Exit', 'elementor' ),
+					cancel: __( 'Cancel', 'elementor' ),
 				},
 				onConfirm: () => {
 					$e.run( 'panel/global/close' );

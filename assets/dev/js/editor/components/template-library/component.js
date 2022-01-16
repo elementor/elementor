@@ -1,5 +1,6 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
+import * as commandsData from './commands-data/';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -9,6 +10,9 @@ export default class Component extends ComponentModalBase {
 
 		// When switching documents update defaultTabs.
 		elementor.on( 'document:loaded', this.onDocumentLoaded.bind( this ) );
+
+		// Remove whole component cache data.
+		$e.data.deleteCache( this, 'library' );
 	}
 
 	getNamespace() {
@@ -18,7 +22,7 @@ export default class Component extends ComponentModalBase {
 	defaultTabs() {
 		return {
 			'templates/blocks': {
-				title: elementor.translate( 'blocks' ),
+				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
 					source: 'remote',
 					type: 'block',
@@ -26,14 +30,14 @@ export default class Component extends ComponentModalBase {
 				} ),
 			},
 			'templates/pages': {
-				title: elementor.translate( 'pages' ),
+				title: __( 'Pages', 'elementor' ),
 				filter: {
 					source: 'remote',
 					type: 'page',
 				},
 			},
 			'templates/my-templates': {
-				title: elementor.translate( 'my_templates' ),
+				title: __( 'My Templates', 'elementor' ),
 				filter: {
 					source: 'local',
 				},
@@ -54,9 +58,9 @@ export default class Component extends ComponentModalBase {
 			},
 			connect: ( args ) => {
 				args.texts = {
-					title: elementor.translate( 'library/connect:title' ),
-					message: elementor.translate( 'library/connect:message' ),
-					button: elementor.translate( 'library/connect:button' ),
+					title: __( 'Connect to Template Library', 'elementor' ),
+					message: __( 'Access this template and our entire library by creating a free personal account', 'elementor' ),
+					button: __( 'Get Started', 'elementor' ),
 				};
 
 				this.manager.layout.showConnectView( args );
@@ -71,6 +75,10 @@ export default class Component extends ComponentModalBase {
 			... modalCommands,
 			... this.importCommands( commands ),
 		};
+	}
+
+	defaultData() {
+		return this.importCommands( commandsData );
 	}
 
 	defaultShortcuts() {
@@ -187,7 +195,7 @@ export default class Component extends ComponentModalBase {
 			dialog: null,
 
 			showImportDialog: function( model ) {
-				var dialog = InsertTemplateHandler.getDialog();
+				const dialog = InsertTemplateHandler.getDialog( model );
 
 				dialog.onConfirm = function() {
 					$e.run( 'library/insert-template', {
@@ -206,21 +214,21 @@ export default class Component extends ComponentModalBase {
 				dialog.show();
 			},
 
-			initDialog: function() {
+			initDialog: function( model ) {
 				InsertTemplateHandler.dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 					id: 'elementor-insert-template-settings-dialog',
-					headerMessage: elementor.translate( 'import_template_dialog_header' ),
-					message: elementor.translate( 'import_template_dialog_message' ) + '<br>' + elementor.translate( 'import_template_dialog_message_attention' ),
+					headerMessage: __( 'Apply the settings of this %s too?', 'elementor' ).replace( '%s', elementor.translate( model.attributes.type ) ),
+					message: __( 'This will override the design, layout, and other settings of the %s you’re working on.', 'elementor' ).replace( '%s', elementor.documents.getCurrent().container.label ),
 					strings: {
-						confirm: elementor.translate( 'yes' ),
-						cancel: elementor.translate( 'no' ),
+						confirm: __( 'Apply', 'elementor' ),
+						cancel: __( 'Don’t apply', 'elementor' ),
 					},
 				} );
 			},
 
-			getDialog: function() {
+			getDialog: function( model ) {
 				if ( ! InsertTemplateHandler.dialog ) {
-					InsertTemplateHandler.initDialog();
+					InsertTemplateHandler.initDialog( model );
 				}
 
 				return InsertTemplateHandler.dialog;

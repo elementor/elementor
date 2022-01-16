@@ -69,11 +69,11 @@
 			self.cache.$switchModeButton.on( 'click', function() {
 				if ( self.isElementorMode ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: elementorAdmin.translate( 'back_to_wordpress_editor_message' ),
-						headerMessage: elementorAdmin.translate( 'back_to_wordpress_editor_header' ),
+						message: __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
+						headerMessage: __( 'Back to WordPress Editor', 'elementor' ),
 						strings: {
-							confirm: elementorAdmin.translate( 'yes' ),
-							cancel: elementorAdmin.translate( 'cancel' ),
+							confirm: __( 'Continue', 'elementor' ),
+							cancel: __( 'Cancel', 'elementor' ),
 						},
 						defaultOption: 'confirm',
 						onConfirm: function() {

@@ -19,7 +19,7 @@ export class Empty extends CommandHistory {
 		if ( args.force ) {
 			return {
 				type: 'remove',
-				title: elementor.translate( 'all_content' ),
+				title: __( 'All Content', 'elementor' ),
 				data: elementor.elements ? elementor.elements.toJSON() : null,
 				restore: this.constructor.restore,
 			};

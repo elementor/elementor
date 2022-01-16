@@ -1,3 +1,5 @@
+import ContextMenu from 'elementor-behaviors/context-menu';
+
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
@@ -25,6 +27,21 @@ module.exports = Marionette.ItemView.extend( {
 		element: '.elementor-element',
 	},
 
+	behaviors: function() {
+		const groups = elementor.hooks.applyFilters( 'panel/element/contextMenuGroups', [], this ),
+			behaviors = {};
+
+		if ( groups.length ) {
+			behaviors.contextMenu = {
+				behaviorClass: ContextMenu,
+				context: 'panel',
+				groups,
+			};
+		}
+
+		return elementor.hooks.applyFilters( 'panel/element/behaviors', behaviors, this );
+	},
+
 	isEditable: function() {
 		return false !== this.model.get( 'editable' );
 	},
@@ -37,8 +54,8 @@ module.exports = Marionette.ItemView.extend( {
 		this.ui.element.html5Draggable( {
 			onDragStart: () => {
 				elementor.channels.panelElements
-						.reply( 'element:selected', this )
-						.trigger( 'element:drag:start' );
+					.reply( 'element:selected', this )
+					.trigger( 'element:drag:start' );
 			},
 
 			onDragEnd: () => {
@@ -50,12 +67,16 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown: function() {
+		const title = this.model.get( 'title' );
+
 		elementor.promotion.showDialog( {
-			headerMessage: elementor.translate( 'element_promotion_dialog_header', [ this.model.get( 'title' ) ] ),
-			message: elementor.translate( 'element_promotion_dialog_message', [ this.model.get( 'title' ) ] ),
+			/* translators: %s: Widget title. */
+			headerMessage: sprintf( __( '%s Widget', 'elementor' ), title ),
+			/* translators: %s: Widget title. */
+			message: sprintf( __( 'Use %s widget and dozens more pro features to extend your toolbox and build sites faster and better.', 'elementor' ), title ),
 			top: '-7',
 			element: this.el,
-			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) ),
+			actionURL: elementor.config.elementPromotionURL.replace( '%s', this.model.get( 'name' ) || this.model.get( 'widgetType' ) ),
 		} );
 	},
 } );

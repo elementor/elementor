@@ -1,3 +1,5 @@
+import ElementModel from 'elementor-elements/models/element';
+
 module.exports = Marionette.CompositeView.extend( {
 	templateHelpers: function() {
 		return {
@@ -82,10 +84,92 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
-			newModel.trigger( 'request:edit' );
+			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 		}
 
 		return newView;
+	},
+
+	createElementFromContainer( container, options = {} ) {
+		return this.createElementFromModel( container.model, options );
+	},
+
+	createElementFromModel( model, options = {} ) {
+		let container = this.getContainer();
+
+		if ( model instanceof Backbone.Model ) {
+			model = model.toJSON();
+		}
+
+		if ( elementor.helpers.maybeDisableWidget( model.widgetType ) ) {
+			return;
+		}
+
+		model = Object.assign( model, model.custom );
+
+		// Check whether the container cannot contain a section, in which case we should use an inner-section.
+		if ( 'section' === model.elType ) {
+			model.isInner = true;
+		}
+
+		const historyId = $e.internal( 'document/history/start-log', {
+			type: this.getHistoryType( options.event ),
+			title: elementor.helpers.getModelLabel( model ),
+		} );
+
+		if ( options.shouldWrap ) {
+			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
+
+			container = $e.run( 'document/elements/create', {
+				model: {
+					elType: containerExperiment ? 'container' : 'section',
+				},
+				container,
+				columns: Number( ! containerExperiment ),
+				options: {
+					at: this.getOption( 'at' ),
+					// BC: Deprecated since 2.8.0 - use `$e.hooks`.
+					trigger: {
+						beforeAdd: 'section:before:drop',
+						afterAdd: 'section:after:drop',
+					},
+				},
+			} );
+
+			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+			if ( ! containerExperiment ) {
+				container = container.view.children.findByIndex( 0 )
+					.getContainer();
+			}
+		}
+
+		// Create the element in column.
+		const widget = $e.run( 'document/elements/create', {
+			container,
+			model,
+			options,
+		} );
+
+		$e.internal( 'document/history/end-log', { id: historyId } );
+
+		return widget;
+	},
+
+	getHistoryType( event ) {
+		if ( event ) {
+			if ( event.originalEvent ) {
+				event = event.originalEvent;
+			}
+
+			switch ( event.constructor.name ) {
+				case 'DragEvent':
+					return 'import';
+				case 'ClipboardEvent':
+					return 'paste';
+			}
+		}
+
+		return 'add';
 	},
 
 	addChildElement: function( data, options ) {

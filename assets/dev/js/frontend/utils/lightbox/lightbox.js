@@ -1,4 +1,19 @@
 import screenfull from './screenfull';
+import {
+	chevronLeft,
+	chevronRight,
+	close,
+	downloadBold,
+	facebook,
+	frameExpand,
+	frameMinimize,
+	loading,
+	pinterest,
+	shareArrow,
+	twitter,
+	zoomInBold,
+	zoomOutBold,
+} from '@elementor/e-icons';
 
 module.exports = elementorModules.ViewModule.extend( {
 	oldAspectRatio: null,
@@ -8,6 +23,8 @@ module.exports = elementorModules.ViewModule.extend( {
 	swiper: null,
 
 	player: null,
+
+	isFontIconSvgExperiment: elementorFrontend.config.experimentalFeatures.e_font_icon_svg,
 
 	getDefaultSettings: function() {
 		return {
@@ -78,11 +95,20 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	initModal: function() {
+		const closeIcon = {};
+
+		// If the experiment is active the closeIcon should be an entire SVG element otherwise it should pass the eicon class name.
+		if ( this.isFontIconSvgExperiment ) {
+			closeIcon.iconElement = close.element;
+		} else {
+			closeIcon.iconClass = 'eicon-close';
+		}
+
 		const modal = module.exports.modal = elementorFrontend.getDialogsManager().createWidget( 'lightbox', {
 			className: 'elementor-lightbox',
 			closeButton: true,
 			closeButtonOptions: {
-				iconClass: 'eicon-close',
+				...closeIcon,
 				attributes: {
 					tabindex: 0,
 					role: 'button',
@@ -103,6 +129,10 @@ module.exports = elementorModules.ViewModule.extend( {
 	},
 
 	showModal: function( options ) {
+		if ( options.url && ! options.url.startsWith( 'http' ) ) {
+			return;
+		}
+
 		this.elements.$closeButton = this.getModal().getElements( 'closeButton' );
 
 		this.$buttons = this.elements.$closeButton;
@@ -169,7 +199,46 @@ module.exports = elementorModules.ViewModule.extend( {
 		modal.show();
 	},
 
+	createLightbox: function( element ) {
+		let lightboxData = {};
+
+		if ( element.dataset.elementorLightbox ) {
+			lightboxData = JSON.parse( element.dataset.elementorLightbox );
+		}
+
+		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
+			this.showModal( lightboxData );
+
+			return;
+		}
+
+		if ( ! element.dataset.elementorLightboxSlideshow ) {
+			const slideshowID = 'single-img';
+
+			this.showModal( {
+				type: 'image',
+				id: slideshowID,
+				url: element.href,
+				title: element.dataset.elementorLightboxTitle,
+				description: element.dataset.elementorLightboxDescription,
+				modalOptions: {
+					id: 'elementor-lightbox-slideshow-' + slideshowID,
+				},
+			} );
+
+			return;
+		}
+
+		const initialSlideURL = element.dataset.elementorLightboxVideo || element.href;
+
+		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
+	},
+
 	setHTMLContent: function( html ) {
+		if ( window.elementorCommon ) {
+			elementorCommon.helpers.hardDeprecated( 'elementorFrontend.utils.lightbox.setHTMLContent', '3.1.4' );
+		}
+
 		this.getModal().setMessage( html );
 	},
 
@@ -187,9 +256,15 @@ module.exports = elementorModules.ViewModule.extend( {
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
-			const videoURL = options.url.replace( '&autoplay=0', '' ) + '&autoplay=1';
+			let apiProvider = elementorFrontend.utils.baseVideoLoader;
 
-			$videoElement = $( '<iframe>', { src: videoURL, allowfullscreen: 1 } );
+			if ( -1 !== options.url.indexOf( 'vimeo.com' ) ) {
+				apiProvider = elementorFrontend.utils.vimeo;
+			} else if ( options.url.match( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com)/ ) ) {
+				apiProvider = elementorFrontend.utils.youtube;
+			}
+
+			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
 		}
 
 		$videoContainer.append( $videoWrapper );
@@ -215,9 +290,18 @@ module.exports = elementorModules.ViewModule.extend( {
 	getShareLinks: function() {
 		const { i18n } = elementorFrontend.config,
 			socialNetworks = {
-				facebook: i18n.shareOnFacebook,
-				twitter: i18n.shareOnTwitter,
-				pinterest: i18n.pinIt,
+				facebook: {
+					label: i18n.shareOnFacebook,
+					iconElement: facebook,
+				},
+				twitter: {
+					label: i18n.shareOnTwitter,
+					iconElement: twitter,
+				},
+				pinterest: {
+					label: i18n.pinIt,
+					iconElement: pinterest,
+				},
 			},
 			$ = jQuery,
 			classes = this.getSettings( 'classes' ),
@@ -235,17 +319,23 @@ module.exports = elementorModules.ViewModule.extend( {
 			itemUrl = $image.attr( 'src' );
 		}
 
-		$.each( socialNetworks, ( key, networkLabel ) => {
-			const $link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel );
+		$.each( socialNetworks, ( key, data ) => {
+			const networkLabel = data.label,
+				$link = $( '<a>', { href: this.createShareLink( key, itemUrl ), target: '_blank' } ).text( networkLabel ),
+				$socialNetworkIconElement = this.isFontIconSvgExperiment ? $( data.iconElement.element ) : $( '<i>', { class: 'eicon-' + key } );
 
-			$link.prepend( $( '<i>', { class: 'eicon-' + key } ) );
+			$link.prepend( $socialNetworkIconElement );
 			$linkList.append( $link );
 		} );
 
 		if ( ! videoUrl ) {
+			const $downloadIcon = this.isFontIconSvgExperiment ? $( downloadBold.element ) : $( '<i>', { class: 'eicon-download-bold' } );
+
+			$downloadIcon.attr( 'aria-label', i18n.download );
+
 			$linkList.append( $( '<a>', { href: itemUrl, download: '' } )
 				.text( i18n.downloadImage )
-				.prepend( $( '<i>', { class: 'eicon-download-bold', 'aria-label': i18n.download } ) ) );
+				.prepend( $downloadIcon ) );
 		}
 
 		return $linkList;
@@ -286,7 +376,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		elements.$header = $( '<header>', { class: slideshowClasses.header + ' ' + classes.preventClose } );
 
 		if ( showShare ) {
-			elements.$iconShare = $( '<i>', {
+			const iconElement = this.isFontIconSvgExperiment ? shareArrow.element : '<i>';
+
+			elements.$iconShare = $( iconElement, {
 				class: slideshowClasses.iconShare,
 				role: 'button',
 				'aria-label': i18n.share,
@@ -309,30 +401,74 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		if ( showZoom ) {
-			elements.$iconZoom = $( '<i>', {
-				class: slideshowClasses.iconZoomIn,
-				role: 'switch',
-				'aria-checked': false,
-				'aria-label': i18n.zoom,
-			} );
+			const iconElement = this.isFontIconSvgExperiment ? zoomInBold.element : '<i>',
+				showZoomElements = [],
+				showZoomAttrs = {
+					role: 'switch',
+					'aria-checked': false,
+					'aria-label': i18n.zoom,
+				},
+				zoomAttrs = {
+					...showZoomAttrs,
+				};
 
-			elements.$iconZoom.on( 'click', this.toggleZoomMode );
+			if ( ! this.isFontIconSvgExperiment ) {
+				zoomAttrs.class = slideshowClasses.iconZoomIn;
+			}
 
-			elements.$header.append( elements.$iconZoom );
+			elements.$iconZoom = $( iconElement ).attr( zoomAttrs ).on( 'click', this.toggleZoomMode );
 
-			this.$buttons = this.$buttons.add( elements.$iconZoom );
+			showZoomElements.push( elements.$iconZoom );
+
+			if ( this.isFontIconSvgExperiment ) {
+				elements.$iconZoomOut = $( zoomOutBold.element )
+					.attr( showZoomAttrs )
+					.addClass( classes.hidden )
+					.on( 'click', this.toggleZoomMode );
+
+				showZoomElements.push( elements.$iconZoomOut );
+			}
+
+			elements.$header.append( showZoomElements );
+
+			this.$buttons = this.$buttons.add( showZoomElements );
 		}
 
 		if ( showFullscreen ) {
-			elements.$iconExpand = $( '<i>', {
-				class: slideshowClasses.iconExpand,
-				role: 'switch',
-				'aria-checked': false,
-				'aria-label': i18n.fullscreen,
-			} ).append( $( '<span>' ), $( '<span>' ) );
-			elements.$iconExpand.on( 'click', this.toggleFullscreen );
-			elements.$header.append( elements.$iconExpand );
-			this.$buttons = this.$buttons.add( elements.$iconExpand );
+			const iconElement = this.isFontIconSvgExperiment ? frameExpand.element : '<i>',
+				fullScreenElements = [],
+				fullScreenAttrs = {
+					role: 'switch',
+					'aria-checked': false,
+					'aria-label': i18n.fullscreen,
+				},
+				expandAttrs = {
+					...fullScreenAttrs,
+				};
+
+			// Only if the experiment is not active, we use the class-name in order to render the icon.
+			if ( ! this.isFontIconSvgExperiment ) {
+				expandAttrs.class = slideshowClasses.iconExpand;
+			}
+
+			elements.$iconExpand = $( iconElement )
+				.append( $( '<span>' ), $( '<span>' ) )
+				.attr( expandAttrs )
+				.on( 'click', this.toggleFullscreen );
+
+			fullScreenElements.push( elements.$iconExpand );
+
+			if ( this.isFontIconSvgExperiment ) {
+				elements.$iconMinimize = $( frameMinimize.element )
+					.attr( fullScreenAttrs )
+					.addClass( classes.hidden )
+					.on( 'click', this.toggleFullscreen );
+
+				fullScreenElements.push( elements.$iconMinimize );
+			}
+
+			elements.$header.append( fullScreenElements );
+			this.$buttons = this.$buttons.add( fullScreenElements );
 		}
 
 		if ( showCounter ) {
@@ -402,18 +538,34 @@ module.exports = elementorModules.ViewModule.extend( {
 	activateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.request( this.elements.$container.parents( '.dialog-widget' )[ 0 ] );
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconExpand )
-			.addClass( classes.slideshow.iconShrink )
-			.attr( 'aria-checked', 'true' );
+
+		if ( this.isFontIconSvgExperiment ) {
+			this.elements.$iconExpand.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
+			this.elements.$iconMinimize.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
+		} else {
+			this.elements.$iconExpand
+				.removeClass( classes.slideshow.iconExpand )
+				.addClass( classes.slideshow.iconShrink )
+				.attr( 'aria-checked', 'true' );
+		}
+
 		this.elements.$container.addClass( classes.slideshow.fullscreenMode );
 	},
 
 	deactivateFullscreen: function() {
 		const classes = this.getSettings( 'classes' );
 		screenfull.exit();
-		this.elements.$iconExpand.removeClass( classes.slideshow.iconShrink )
-			.addClass( classes.slideshow.iconExpand )
-			.attr( 'aria-checked', 'false' );
+
+		if ( this.isFontIconSvgExperiment ) {
+			this.elements.$iconExpand.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
+			this.elements.$iconMinimize.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
+		} else {
+			this.elements.$iconExpand
+				.removeClass( classes.slideshow.iconShrink )
+				.addClass( classes.slideshow.iconExpand )
+				.attr( 'aria-checked', 'false' );
+		}
+
 		this.elements.$container.removeClass( classes.slideshow.fullscreenMode );
 	},
 
@@ -427,7 +579,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		swiper.allowSlidePrev = false;
 		swiper.allowTouchMove = false;
 		elements.$container.addClass( classes.slideshow.zoomMode );
-		elements.$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
+
+		if ( this.isFontIconSvgExperiment ) {
+			elements.$iconZoom.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
+			elements.$iconZoomOut.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
+		} else {
+			elements.$iconZoom.removeClass( classes.slideshow.iconZoomIn ).addClass( classes.slideshow.iconZoomOut );
+		}
 	},
 
 	deactivateZoom: function() {
@@ -440,7 +598,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		swiper.allowSlidePrev = true;
 		swiper.allowTouchMove = true;
 		elements.$container.removeClass( classes.slideshow.zoomMode );
-		elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
+
+		if ( this.isFontIconSvgExperiment ) {
+			elements.$iconZoom.removeClass( classes.hidden ).attr( 'aria-checked', 'true' );
+			elements.$iconZoomOut.addClass( classes.hidden ).attr( 'aria-checked', 'false' );
+		} else {
+			elements.$iconZoom.removeClass( classes.slideshow.iconZoomOut ).addClass( classes.slideshow.iconZoomIn );
+		}
 	},
 
 	getSlideshowFooter: function() {
@@ -481,7 +645,9 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( slide.video ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
-				const $playIcon = $( '<div>', { class: classes.playButton } ).html( $( '<i>', { class: classes.playButtonIcon, 'aria-label': i18n.playVideo } ) );
+				const playVideoLoadingElement = this.isFontIconSvgExperiment ? loading.element : '<i>',
+					$playIcon = $( '<div>', { class: classes.playButton } )
+						.html( $( playVideoLoadingElement ).attr( 'aria-label', i18n.playVideo ).addClass( classes.playButtonIcon ) );
 
 				$slide.append( $playIcon );
 			} else {
@@ -519,8 +685,11 @@ module.exports = elementorModules.ViewModule.extend( {
 			.append( $slidesWrapper );
 
 		if ( ! isSingleSlide ) {
-			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $( '<i>', { class: slideshowClasses.prevButtonIcon } ) );
-			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $( '<i>', { class: slideshowClasses.nextButtonIcon } ) );
+			const $prevButtonIcon = this.isFontIconSvgExperiment ? $( chevronLeft.element ) : $( '<i>', { class: slideshowClasses.prevButtonIcon } ),
+				$nextButtonIcon = this.isFontIconSvgExperiment ? $( chevronRight.element ) : $( '<i>', { class: slideshowClasses.nextButtonIcon } );
+
+			$prevButton = $( '<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose, 'aria-label': i18n.previous } ).html( $prevButtonIcon );
+			$nextButton = $( '<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose, 'aria-label': i18n.next } ).html( $nextButtonIcon );
 
 			$container.append(
 				$nextButton,
@@ -662,12 +831,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				if ( isFirst ) {
 					event.preventDefault();
 
-					$buttons.last().focus();
+					$buttons.last().trigger( 'focus' );
 				}
 			} else if ( isLast || ! focusedButton ) {
 				event.preventDefault();
 
-				$buttons.first().focus();
+				$buttons.first().trigger( 'focus' );
 			}
 		}
 	},
@@ -744,7 +913,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			if ( 'youtube' === videoType ) {
 				this.prepareYTVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
 			} else if ( 'vimeo' === videoType ) {
-				this.prepareVimeoVideo( apiObject, videoID, $videoContainer, $videoWrapper, $playIcon );
+				this.prepareVimeoVideo( apiObject, videoURL, $videoContainer, $videoWrapper, $playIcon );
 			}
 		} );
 
@@ -788,10 +957,10 @@ module.exports = elementorModules.ViewModule.extend( {
 		} );
 	},
 
-	prepareVimeoVideo: function( Vimeo, videoId, $videoContainer, $videoWrapper, $playIcon ) {
+	prepareVimeoVideo: function( Vimeo, videoURL, $videoContainer, $videoWrapper, $playIcon ) {
 		const classes = this.getSettings( 'classes' ),
 			vimeoOptions = {
-				id: videoId,
+				url: videoURL,
 				autoplay: true,
 				transparent: false,
 				playsinline: false,
@@ -820,17 +989,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		if ( animation ) {
 			$widgetMessage.addClass( 'animated ' + animation );
 		}
-	},
-
-	isLightboxLink: function( element ) {
-		if ( 'A' === element.tagName && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) {
-			return false;
-		}
-
-		const generalOpenInLightbox = elementorFrontend.getKitSettings( 'global_image_lightbox' ),
-			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
-
-		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
 	},
 
 	openSlideshow: function( slideshowID, initialSlideURL ) {
@@ -886,64 +1044,6 @@ module.exports = elementorModules.ViewModule.extend( {
 				},
 			},
 		} );
-	},
-
-	openLink: function( event ) {
-		const element = event.currentTarget,
-			$target = jQuery( event.target ),
-			editMode = elementorFrontend.isEditMode(),
-			isClickInsideElementor = ! ! $target.closest( '.elementor-edit-area' ).length;
-
-		if ( ! this.isLightboxLink( element ) ) {
-			if ( editMode && isClickInsideElementor ) {
-				event.preventDefault();
-			}
-
-			return;
-		}
-
-		event.preventDefault();
-
-		if ( editMode && ! elementor.getPreferences( 'lightbox_in_editor' ) ) {
-			return;
-		}
-
-		let lightboxData = {};
-
-		if ( element.dataset.elementorLightbox ) {
-			lightboxData = JSON.parse( element.dataset.elementorLightbox );
-		}
-
-		if ( lightboxData.type && 'slideshow' !== lightboxData.type ) {
-			this.showModal( lightboxData );
-
-			return;
-		}
-
-		if ( ! element.dataset.elementorLightboxSlideshow ) {
-			const slideshowID = 'single-img';
-
-			this.showModal( {
-				type: 'image',
-				id: slideshowID,
-				url: element.href,
-				title: element.dataset.elementorLightboxTitle,
-				description: element.dataset.elementorLightboxDescription,
-				modalOptions: {
-					id: 'elementor-lightbox-slideshow-' + slideshowID,
-				},
-			} );
-
-			return;
-		}
-
-		const initialSlideURL = element.dataset.elementorLightboxVideo ? element.dataset.elementorLightboxVideo : element.href;
-
-		this.openSlideshow( element.dataset.elementorLightboxSlideshow, initialSlideURL );
-	},
-
-	bindEvents: function() {
-		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.openLink );
 	},
 
 	onSlideChange: function() {

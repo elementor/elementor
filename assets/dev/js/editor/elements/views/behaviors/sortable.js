@@ -21,11 +21,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onEditModeSwitched: function( activeMode ) {
-		if ( 'edit' === activeMode ) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
+		this.onToggleSortMode( 'edit' === activeMode );
 	},
 
 	onRender: function() {
@@ -40,18 +36,21 @@ SortableBehavior = Marionette.Behavior.extend( {
 		this.deactivate();
 	},
 
-	activate: function() {
+	onToggleSortMode( isActive ) {
+		if ( isActive ) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
+	},
+
+	applySortable() {
 		if ( ! elementor.userCan( 'design' ) ) {
 			return;
 		}
 
-		if ( this.getChildViewContainer().sortable( 'instance' ) ) {
-			return;
-		}
-
-		var $childViewContainer = this.getChildViewContainer(),
+		const $childViewContainer = this.getChildViewContainer(),
 			defaultSortableOptions = {
-				connectWith: $childViewContainer.selector,
 				placeholder: 'elementor-sortable-placeholder elementor-' + this.getOption( 'elChildType' ) + '-placeholder',
 				cursorAt: {
 					top: 20,
@@ -59,11 +58,29 @@ SortableBehavior = Marionette.Behavior.extend( {
 				},
 				helper: this._getSortableHelper.bind( this ),
 				cancel: 'input, textarea, button, select, option, .elementor-inline-editing, .elementor-tab-title',
-
+				// Fix: Sortable - Unable to drag and drop sections with huge height.
+				start: () => {
+					$childViewContainer.sortable( 'refreshPositions' );
+				},
 			},
 			sortableOptions = _.extend( defaultSortableOptions, this.view.getSortableOptions() );
 
 		$childViewContainer.sortable( sortableOptions );
+	},
+
+	/**
+	 * Enable sorting for this element, and generate sortable instance for it unless already generated.
+	 */
+	activate: function() {
+		if ( ! this.getChildViewContainer().sortable( 'instance' ) ) {
+			// Generate sortable instance for this element. Since fresh instances of sortable already allowing sorting,
+			// we can return.
+			this.applySortable();
+
+			return;
+		}
+
+		this.getChildViewContainer().sortable( 'enable' );
 	},
 
 	_getSortableHelper: function( event, $item ) {
@@ -78,24 +95,31 @@ SortableBehavior = Marionette.Behavior.extend( {
 		return this.view.getChildViewContainer( this.view );
 	},
 
+	// This method is used to fix widgets index detection when dragging or sorting using the preview interface,
+	// The natural widget index in the column is wrong, since there is a `.elementor-background-overlay` element
+	// at the beginning of the column
 	getSortedElementNewIndex( $element ) {
 		const draggedModel = elementor.channels.data.request( 'dragging:model' ),
 			draggedElType = draggedModel.get( 'elType' );
 
 		let newIndex = $element.index();
 
-		if ( 'widget' === draggedElType && elementor.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
+		if ( 'widget' === draggedElType && elementorCommon.config.experimentalFeatures[ 'e_dom_optimization' ] ) {
 			newIndex--;
 		}
 
 		return newIndex;
 	},
 
+	/**
+	 * Disable sorting of the element unless no sortable instance exists, in which case there is already no option to
+	 * sort.
+	 */
 	deactivate: function() {
 		var childViewContainer = this.getChildViewContainer();
 
 		if ( childViewContainer.sortable( 'instance' ) ) {
-			childViewContainer.sortable( 'destroy' );
+			childViewContainer.sortable( 'disable' );
 		}
 	},
 
@@ -113,18 +137,22 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	// On sorting element
-	updateSort: function( ui ) {
+	updateSort: function( ui, newIndex ) {
+		if ( undefined === newIndex ) {
+			newIndex = ui.item.index();
+		}
+
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: this.getSortedElementNewIndex( ui.item ),
+				at: newIndex,
 			},
 		} );
 	},
 
 	// On receiving element from another container
-	receiveSort: function( event, ui ) {
+	receiveSort: function( event, ui, newIndex ) {
 		event.stopPropagation();
 
 		if ( this.view.isCollectionFilled() ) {
@@ -144,11 +172,15 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
+		if ( undefined === newIndex ) {
+			newIndex = ui.item.index();
+		}
+
 		$e.run( 'document/elements/move', {
 			container: elementor.channels.data.request( 'dragging:view' ).getContainer(),
 			target: this.view.getContainer(),
 			options: {
-				at: this.getSortedElementNewIndex( ui.item ),
+				at: newIndex,
 			},
 		} );
 	},
@@ -198,7 +230,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortReceive: function( event, ui ) {
-		this.receiveSort( event, ui );
+		this.receiveSort( event, ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
 	onSortUpdate: function( event, ui ) {
@@ -208,7 +240,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		this.updateSort( ui );
+		this.updateSort( ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
 	onAddChild: function( view ) {

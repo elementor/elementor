@@ -16,7 +16,7 @@ export default class Manager {
 		elementor.on( 'panel:init', () => {
 			elementor.getPanelView().addPage( 'historyPage', {
 				view: PanelPage,
-				title: elementor.translate( 'history' ),
+				title: __( 'History', 'elementor' ),
 			} );
 		} );
 	}

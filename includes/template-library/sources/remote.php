@@ -43,7 +43,7 @@ class Source_Remote extends Source_Base {
 	 * @return string The remote template title.
 	 */
 	public function get_title() {
-		return __( 'Remote', 'elementor' );
+		return esc_html__( 'Remote', 'elementor' );
 	}
 
 	/**
@@ -189,6 +189,9 @@ class Source_Remote extends Source_Base {
 			return $data;
 		}
 
+		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
 		// BC.
 		$data = (array) $data;
 
@@ -200,6 +203,9 @@ class Source_Remote extends Source_Base {
 		if ( $document ) {
 			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
 		}
+
+		// After the upload complete, set the elementor upload state back to false
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
 		return $data;
 	}
@@ -222,6 +228,7 @@ class Source_Remote extends Source_Base {
 			'author' => $template_data['author'],
 			'tags' => json_decode( $template_data['tags'] ),
 			'isPro' => ( '1' === $template_data['is_pro'] ),
+			'accessLevel' => $template_data['access_level'],
 			'popularityIndex' => (int) $template_data['popularity_index'],
 			'trendIndex' => (int) $template_data['trend_index'],
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),

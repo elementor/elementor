@@ -1,5 +1,5 @@
 import CommandBase from './command-base';
-import * as errors from './errors';
+import * as errors from '../core/data/errors/';
 
 export default class CommandData extends CommandBase {
 	/**
@@ -65,11 +65,16 @@ export default class CommandData extends CommandBase {
 				after = this.applyAfterUpdate;
 				break;
 
+			case 'options':
+				before = this.applyBeforeOptions;
+				after = this.applyAfterOptions;
+				break;
+
 			default:
 				return false;
 		}
 
-		return { before, after };
+		return { before: before.bind( this ), after: after.bind( this ) };
 	}
 
 	/**
@@ -79,11 +84,11 @@ export default class CommandData extends CommandBase {
 	 */
 	getRequestData() {
 		return {
+			component: this.component,
+			command: this.currentCommand,
 			type: this.type,
 			args: this.args,
 			timestamp: new Date().getTime(),
-			component: this.component,
-			command: this.currentCommand,
 			endpoint: $e.data.commandToEndpoint( this.currentCommand, elementorCommon.helpers.cloneObject( this.args ), this.constructor.getEndpointFormat() ),
 		};
 	}
@@ -180,20 +185,45 @@ export default class CommandData extends CommandBase {
 	}
 
 	/**
-	 * Called after apply() failed.
-	 *
-	 * @param e
+	 * @param [args={}]
+	 * @returns {{}} filtered args
 	 */
+	applyBeforeOptions( args = {} ) {
+		return args;
+	}
+
+	/**
+	 * @param {{}} data
+	 * @param [args={}]
+	 * @returns {{}} filtered result
+	 */
+	applyAfterOptions( data, args = {} ) {// eslint-disable-line no-unused-vars
+		return data;
+	}
+
+	/**
+	 * @param {BaseError} e
+	 */
+	applyAfterCatch( e ) {
+		e.notify();
+	}
+
 	onCatchApply( e ) {
 		// TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
-		const status = e?.data?.status || 0,
-			dataError = Object.values( errors )
-				.find( ( error ) => error.getStatus() === status );
+		const httpErrorCode = e?.data?.status || 501;
+
+		let dataError = Object.values( errors ).find(
+			( error ) => error.getHTTPErrorCode() === httpErrorCode
+		);
+
+		if ( ! dataError ) {
+			dataError = errors.DefaultError;
+		}
 
 		e = dataError.create( e.message, e.code, e.data || [] );
 
 		this.runCatchHooks( e );
 
-		e.notify();
+		this.applyAfterCatch( e );
 	}
 }

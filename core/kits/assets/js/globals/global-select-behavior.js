@@ -160,7 +160,7 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 						if ( result.data.title ) {
 							text = result.data.title;
 						} else {
-							text = elementor.translate( 'default' );
+							text = __( 'Default', 'elementor' );
 						}
 
 						this.updateCurrentGlobalName( text );
@@ -171,10 +171,10 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 				return;
 			} else if ( value ) {
 				// If there is a value and it is not a global, set the text to custom.
-				globalTooltipText = elementor.translate( 'custom' );
+				globalTooltipText = __( 'Custom', 'elementor' );
 			} else {
 				// If there is no value, set the text as default.
-				globalTooltipText = elementor.translate( 'default' );
+				globalTooltipText = __( 'Default', 'elementor' );
 			}
 
 			// If there is no value, remove the 'active' class from the Global Toggle button.
@@ -336,8 +336,8 @@ export default class GlobalControlSelect extends Marionette.Behavior {
 			headerMessage: this.getOption( 'newGlobalConfirmTitle' ),
 			message: $confirmMessage,
 			strings: {
-				confirm: elementor.translate( 'create' ),
-				cancel: elementor.translate( 'cancel' ),
+				confirm: __( 'Create', 'elementor' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
 			hide: {
 				onBackgroundClick: false,

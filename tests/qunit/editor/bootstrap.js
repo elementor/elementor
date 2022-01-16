@@ -8,6 +8,11 @@ export default class EditorBootstrap {
 	}
 
 	initialize() {
+		// Since JS API catch errors that occurs while running commands, the tests should expect it.
+		console.error = ( ... args ) => {
+			throw new Error( args );
+		};
+
 		const EditorTest = require( './test' ).default,
 			ajax = require( '../mock/ajax' ),
 			eData = require( '../mock/e-data' ),

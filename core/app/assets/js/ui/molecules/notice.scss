@@ -1,7 +1,7 @@
 $eps-box-notice-color: tints(500);
 $eps-box-notice-dark-color: dark-tints(200);
 $eps-box-notice-background-color: tints(100);
-$eps-box-notice-dark-background-color: dark-tints(500);
+$eps-box-notice-dark-background-color: dark-tints(600);
 
 $root: eps-notice;
 
@@ -14,7 +14,7 @@ $root: eps-notice;
 	background-color: var(--eps-box-notice-background-color);
 
 	&--warning {
-		border-inline-start: $eps-border-width-md $border-style-solid theme-colors(warning);
+		border-inline-start: $eps-border-width-lg $border-style-solid theme-colors(warning);
 	}
 
 	&__text {

@@ -6,7 +6,8 @@
 	border-radius: 3px;
 	box-shadow: 0 2px 10px 0 rgba(0,0,0,0.09);
 	user-select: none;
-	z-index: $third-layer;
+	// To make sure the navigator item context menu is above the navigator, which has a z-index of 100
+	z-index: 101;
 
 	&-list {
 

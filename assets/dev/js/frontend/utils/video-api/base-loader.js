@@ -40,4 +40,8 @@ export default class BaseLoader extends elementorModules.ViewModule {
 			}, 350 );
 		}
 	}
+
+	getAutoplayURL( videoURL ) {
+		return videoURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
+	}
 }

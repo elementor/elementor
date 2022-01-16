@@ -7,8 +7,8 @@ export default class Component extends ComponentBase {
 
 	defaultTabs() {
 		return {
-			categories: { title: elementor.translate( 'elements' ) },
-			global: { title: elementor.translate( 'global' ) },
+			categories: { title: __( 'Elements', 'elementor' ) },
+			global: { title: __( 'Global', 'elementor' ) },
 		};
 	}
 
@@ -16,7 +16,7 @@ export default class Component extends ComponentBase {
 		return '#elementor-panel-elements-navigation';
 	}
 
-	renderTab( tab ) {
-		this.manager.setPage( 'elements' ).showView( tab );
+	renderTab( tab, args = {} ) {
+		this.manager.setPage( 'elements', null, args ).showView( tab );
 	}
 }

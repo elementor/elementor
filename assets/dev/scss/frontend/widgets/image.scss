@@ -4,27 +4,22 @@
 .elementor-widget-image {
 	text-align: center;
 
-	.elementor-image {
-
-		> a,
-		figure > a {
-			display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/elementor/elementor/issues/5897
-
-			img[src$=".svg"] {
-				width: 48px; //Fix SVG image src, issue: https://github.com/elementor/elementor/issues/5987
-			}
-		}
+	a {
+		display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/elementor/elementor/issues/5897
+		width: var(--img-width);
 
 		img {
-			vertical-align: middle;
-			display: inline-block;
+			width: 100%;
 		}
 
-		&.elementor-image-shape- {
-
-			&circle {
-				border-radius: 50%;
-			}
+		img[src$=".svg"] {
+			width: 48px; //Fix SVG image src, issue: https://github.com/elementor/elementor/issues/5987
 		}
+	}
+
+	img {
+		vertical-align: middle;
+		display: inline-block;
+		width: var(--img-width);
 	}
 }

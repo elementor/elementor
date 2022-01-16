@@ -157,7 +157,12 @@
 }
 
 #e-enable-unfiltered-files-dialog {
+
 	.dialog-confirm-ok {
 		color: $editor-success;
 	}
+}
+
+i.eicon-tilted {
+	transform: rotate(90deg);
 }

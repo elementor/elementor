@@ -88,6 +88,12 @@ class Modules_Manager {
 			'safe-mode',
 			'usage',
 			'dev-tools',
+			'landing-pages',
+			'compatibility-tag',
+			'elements-color-picker',
+			'shapes',
+			'favorites',
+			'admin-top-bar',
 		];
 	}
 
