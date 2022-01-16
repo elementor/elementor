@@ -128,7 +128,7 @@
    | _containers_ | `{Container[]}`  | Targets.
     
 * **Examples**:
-    Duplicate a section, Assuming we have this section, and want to duplicate it.
+    Duplicating a section.
     ![widget-heading](./_images/widget-heading.png)
     ```javascript
     // Get section container.
