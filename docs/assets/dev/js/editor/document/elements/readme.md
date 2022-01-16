@@ -56,7 +56,7 @@
     |-------------|-----------------------------------|-----------|----------------------------------------|
     | at          | `{Number}`                        | `{null}`  | Position (null means last). 
     | clone       | `{Boolean}`                       | `{false}` | Generate unique id for the model.
-    | edit        | `{Boolean}`                       | `{false}` | Is turn edit panel for the new element.
+    | edit        | `{Boolean}`                       | `{false}` | Whether to open the panel for editing after creating the element.
     | onBeforeAdd | `{function()}`                    |           | Run callback before add.
     | onAfterAdd  | `{function( newModel, newView )}` |           | Run callback after add.
     | trigger     | `{Boolean}`                       | `{false}` | *Deprecated*.
