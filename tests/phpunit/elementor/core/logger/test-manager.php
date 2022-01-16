@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Logger;
 
 use Elementor\Core\Logger\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Manager extends Elementor_Test_Base {
 	/**
