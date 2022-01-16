@@ -53,10 +53,6 @@ export default class CommandInfra extends ArgsObject {
 	constructor( args = {} ) {
 		super( args );
 
-		if ( args.__manualConstructorHandling ) {
-			return;
-		}
-
 		if ( ! this.constructor.registerConfig ) {
 			throw RangeError( 'Doing it wrong: Each command type should have `registerConfig`.' );
 		}

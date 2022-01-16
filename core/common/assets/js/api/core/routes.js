@@ -36,10 +36,11 @@ export default class Routes extends Commands {
 			return;
 		}
 
-		delete this.current[ container ];
-		delete this.currentArgs[ container ];
+		const component = this.getComponent( route );
 
-		this.getComponent( route ).onCloseRoute( route );
+		this.removeCurrentTrace( component );
+
+		component.onCloseRoute( route );
 	}
 
 	clear() {
@@ -74,13 +75,23 @@ export default class Routes extends Commands {
 			return false;
 		}
 
-		const component = this.getComponent( route );
+		return this.getComponent( route )?.isOpen;
+	}
 
-		if ( ! component.isOpen || args.reOpen ) {
-			component.isOpen = component.open( args );
+	run( route, args = {} ) {
+		if ( ! this.validateRun( route, args ) ) {
+			const component = this.getComponent( route );
+
+			if ( ! component.isOpen || args.reOpen ) {
+				component.isOpen = component.open( args );
+			}
+
+			if ( ! component.isOpen ) {
+				return false;
+			}
 		}
 
-		return component.isOpen;
+		return super.run( route, args );
 	}
 
 	beforeRun( route, args ) {
@@ -96,8 +107,7 @@ export default class Routes extends Commands {
 			args.onBefore.apply( component, [ args ] );
 		}
 
-		this.current[ container ] = route;
-		this.currentArgs[ container ] = args;
+		this.addCurrentTrace( container, route, args );
 	}
 
 	to( route, args ) {

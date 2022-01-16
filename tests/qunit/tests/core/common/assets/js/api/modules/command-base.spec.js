@@ -1,7 +1,6 @@
 import CommandBase from 'elementor-api/modules/command-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
-import CommandData from 'elementor-api/modules/command-data';
+import CommandBaseMock, { CommandBaseExportedMock } from './mock/command-base.spec';
 
 jQuery( () => {
 	QUnit.module( 'File: core/common/assets/js/api/modules/command-base.js', () => {
@@ -11,7 +10,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( { __manualConstructorHandling: true } );
+						const instance = new CommandBaseMock( {} );
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -32,7 +31,7 @@ jQuery( () => {
 
 				assert.throws(
 					() => {
-						const instance = new CommandBase( { __manualConstructorHandling: true } );
+						const instance = new CommandBaseMock();
 
 						instance.apply = () => {
 							throw new Error( random );
@@ -45,18 +44,14 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const validateCommand = ( commandBase ) => {
-					assert.equal( commandBase instanceof CommandInfra, true );
-					assert.equal( commandBase instanceof CommandBase, true );
-					assert.equal( commandBase instanceof CommandInternalBase, false, );
-					assert.equal( commandBase instanceof CommandData, false, );
-					assert.equal( commandBase instanceof $e.modules.CommandBase, true );
-					assert.equal( commandBase instanceof $e.modules.CommandInternalBase, false );
-					assert.equal( commandBase instanceof $e.modules.CommandData, false );
+				const validateCommand = ( command ) => {
+					assert.equal( command instanceof CommandInfra, true );
+					assert.equal( command instanceof CommandBase, true );
+					assert.equal( command instanceof $e.modules.CommandBase, true );
 				};
 
-				validateCommand( new CommandBase( { __manualConstructorHandling: true } ) );
-				validateCommand( new $e.modules.CommandBase( { __manualConstructorHandling: true } ) );
+				validateCommand( new CommandBaseMock( {} ) );
+				validateCommand( new CommandBaseExportedMock( {} ) );
 			} );
 		} );
 	} );

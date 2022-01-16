@@ -349,13 +349,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 			}
 		}
 
-		return this.getRunAfter( instance, results );
+		return this.applyRunAfter( instance, results );
 	}
 
 	/**
-	 * Function getRunAfter().
+	 * Function applyRunAfter().
 	 *
-	 * Responsible to run everything that need to run after each command run.
+	 * Responsible for applying everything that need to be run after each command runs.
 	 * Called on run() after runInstance(), to manipulate results & apply 'after' hooks.
 	 *
 	 * @param {CommandBase} instance
@@ -363,7 +363,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	 *
 	 * @returns {Promise<*>|*}
 	 */
-	getRunAfter( instance, result ) {
+	applyRunAfter( instance, result ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
 			const handleJQueryDeferred = ( _result ) => {
@@ -372,7 +372,7 @@ export default class Commands extends CommandsBackwardsCompatibility {
 					this.afterRun( instance.command, instance.args, e );
 				} );
 				_result.done( ( __result ) => {
-					this.handleGetRunAfterSimple( instance, __result );
+					this.applyRunAfterSync( instance, __result );
 				} );
 
 				return _result;
@@ -380,24 +380,24 @@ export default class Commands extends CommandsBackwardsCompatibility {
 
 			return handleJQueryDeferred( result );
 		} else if ( result instanceof Promise ) {
-			return this.handleGetRunAfterPromiseResult( instance, result );
+			return this.applyRunAfterAsync( instance, result );
 		}
 
-		this.handleGetRunAfterSimple( instance, result );
+		this.applyRunAfterSync( instance, result );
 
 		return result;
 	}
 
 	/**
-	 * Function handleGetRunAfterSimple().
+	 * Function applyRunAfterSync().
 	 *
-	 * Responsible to handle simple run after behavior.
-	 * Called on getRunAfter() after runInstance(), to handle simple results.
+	 * Responsible to handle simple(synchronous) 'run after' behavior.
+	 * Called on applyRunAfterSync() after runInstance(), to handle results.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 */
-	handleGetRunAfterSimple( instance, result ) {
+	applyRunAfterSync( instance, result ) {
 		// Run Data hooks.
 		instance.onAfterApply( instance.args, result );
 
@@ -408,39 +408,38 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	}
 
 	/**
-	 * Function handleGetRunAfterPromiseResult().
+	 * Function applyRunAfterAsync().
 	 *
-	 * Responsible to to await for promise result.
-	 * Called on getRunAfter() after runInstance(), to handle promise result.
-	 * awaits the promise, before going next.
+	 * Await for promise result.
+	 * Called on applyRunAfter() after runInstance().
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 */
-	handleGetRunAfterPromiseResult( instance, result ) {
+	applyRunAfterAsync( instance, result ) {
 		// Override initial result ( promise ) to await onAfter promises, first!.
 		return ( async () => {
 			await result.catch( ( e ) => {
 				this.catchApply( e, instance );
 				this.afterRun( instance.command, instance.args, e );
 			} );
-			await result.then( ( _result ) => this.handleGetRunAfterPromiseResultAsync( instance, _result ) );
+			await result.then( ( _result ) => this.applyRunAfterAsyncResult( instance, _result ) );
 
 			return result;
 		} )();
 	}
 
 	/**
-	 * Function handleGetRunAfterPromiseResultAsync().
+	 * Function applyRunAfterAsyncResult().
 	 *
 	 * Responsible to await all promises results.
-	 * Called on getRunAfter() after runInstance(), to handle promise results.
+	 * Called on applyRunAfterAsync() after runInstance(), to handle async results.
 	 * Awaits all the promises, before releasing the command.
 	 *
 	 * @param {CommandBase} instance
 	 * @param {*} result
 	 */
-	async handleGetRunAfterPromiseResultAsync( instance, result ) {
+	async applyRunAfterAsyncResult( instance, result ) {
 		// Run Data hooks.
 		const results = instance.onAfterApply( instance.args, result ),
 			promises = Array.isArray( results ) ? results.flat().filter( ( filtered ) => filtered instanceof Promise ) : [];

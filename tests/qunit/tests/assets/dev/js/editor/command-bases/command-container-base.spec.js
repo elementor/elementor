@@ -1,17 +1,15 @@
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
-import CommandData from 'elementor-api/modules/command-data';
 import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
-import CommandContainerInternal from 'elementor-editor/command-bases/command-container-internal';
+import CommandContainerBaseMock, { CommandContainerBaseExportedMock } from './mock/command-container-base.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: assets/dev/js/editor/base/command-container-base.js', () => {
-		QUnit.module( 'CommandEditorBase', () => {
+	QUnit.module( 'File: assets/dev/js/editor/command-bases/command-container-base.js', () => {
+		QUnit.module( 'CommandContainerBase', () => {
 			QUnit.test( 'constructor(): without containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandContainerBase( { __manualConstructorHandling: true } );
+						const instance = new CommandContainerBaseMock( {} );
 
 						instance.requireContainer();
 					},
@@ -22,8 +20,7 @@ jQuery( () => {
 			QUnit.test( 'constructor(): with container & containers', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandContainerBase( {
-							__manualConstructorHandling: true,
+						const instance = new CommandContainerBaseMock( {
 							container: {},
 							containers: [],
 						} );
@@ -35,27 +32,20 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const validateCommandEditor = ( commandEditor ) => {
+				const validateCommand = ( command ) => {
 					// Base.
-					assert.equal( commandEditor instanceof CommandInfra, true );
-					assert.equal( commandEditor instanceof CommandBase, true );
-					assert.equal( commandEditor instanceof CommandInternalBase, false, );
-					assert.equal( commandEditor instanceof CommandData, false, );
+					assert.equal( command instanceof CommandInfra, true );
+					assert.equal( command instanceof CommandBase, true );
 					// Editor.
-					assert.equal( commandEditor instanceof CommandContainerBase, true, );
-					assert.equal( commandEditor instanceof CommandContainerInternal, false );
-
+					assert.equal( command instanceof CommandContainerBase, true, );
 					// Base.
-					assert.equal( commandEditor instanceof $e.modules.CommandBase, true );
-					assert.equal( commandEditor instanceof $e.modules.CommandInternalBase, false );
-					assert.equal( commandEditor instanceof $e.modules.CommandData, false );
+					assert.equal( command instanceof $e.modules.CommandBase, true );
 					// Editor.
-					assert.equal( commandEditor instanceof $e.modules.editor.CommandContainerBase, true );
-					assert.equal( commandEditor instanceof $e.modules.editor.CommandContainerInternal, false );
+					assert.equal( command instanceof $e.modules.editor.CommandContainerBase, true );
 				};
 
-				validateCommandEditor( new CommandContainerBase( { __manualConstructorHandling: true } ) );
-				validateCommandEditor( new $e.modules.editor.CommandContainerBase( { __manualConstructorHandling: true } ) );
+				validateCommand( new CommandContainerBaseMock( {} ) );
+				validateCommand( new CommandContainerBaseExportedMock( {} ) );
 			} );
 		} );
 	} );

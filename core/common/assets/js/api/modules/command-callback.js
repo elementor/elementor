@@ -1,5 +1,8 @@
 import CommandBase from './command-base';
 
+/**
+ * To support pure callbacks in the API(commands.js), to ensure they have registered with the proper context.
+ */
 export default class CommandCallback extends CommandBase {
 	static getInstanceType() {
 		return 'CommandCallback';

@@ -46,8 +46,12 @@ export default class EditorBootstrap {
 		elementor.$preview.trigger( 'load' );
 	}
 
+	/**
+	 * Function initializeTestUtils().
+	 * Since JS API catch errors that occurs while running commands, the tests should expect it.
+	 * Using this function, it can catch the errors and report them to QUnit.
+	 */
 	initializeTestUtils() {
-		// Since JS API catch errors that occurs while running commands, the tests should expect it.
 		const exceptCatchApply = [];
 		const catchApplyOrig = $e.commands.catchApply;
 
@@ -55,6 +59,7 @@ export default class EditorBootstrap {
 			$e.tests = {};
 		}
 
+		// Use `$e.tests.commands.exceptCatchApply()` to except the catch errors.
 		$e.tests.commands = {
 			exceptCatchApply: ( callback, count = 1 ) => {
 				for ( let i = 0; i < count; ++i ) {
@@ -63,6 +68,7 @@ export default class EditorBootstrap {
 			},
 		};
 
+		// Override `$e.commands.catchApply()` to catch the errors that are excepted.
 		$e.commands.catchApply = ( e, instance ) => {
 			catchApplyOrig( e, instance );
 

@@ -1,34 +1,32 @@
 import CommandHistoryBase from 'elementor-editor/document/command-bases/command-history-base';
 import CommandInfra from 'elementor-api/modules/command-infra';
 import CommandBase from 'elementor-api/modules/command-base';
-import CommandInternalBase from 'elementor-api/modules/command-internal-base';
 import CommandData from 'elementor-api/modules/command-data';
-import CommandHistoryDebounceBase from 'elementor-document/command-bases/command-history-debounce-base';
 import CommandContainerBase from 'elementor-editor/command-bases/command-container-base';
-import CommandContainerInternal from 'elementor-editor/command-bases/command-container-internal';
+import CommandHistoryBaseMock, { CommandHistoryBaseExportedMock } from './mock/command-history-base.spec';
 
 jQuery( () => {
-	QUnit.module( 'File: editor/document/base/command-history.js', () => {
+	QUnit.module( 'File: editor/document/command-bases/command-history-base.js', () => {
 		QUnit.module( 'CommandHistoryBase', () => {
 			QUnit.test( 'getHistory(): force method implementation', ( assert ) => {
 				assert.throws(
 					() => {
-						const instance = new CommandHistoryBase( { __manualConstructorHandling: true } );
+						const instance = new CommandHistoryBaseMock( {} );
 
 						instance.getHistory( {} );
 					},
-					new Error( 'CommandHistoryBase.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
+					new Error( 'CommandHistoryBaseMock.getHistory() should be implemented, please provide \'getHistory\' functionality.' )
 				);
 			} );
 
 			QUnit.test( 'onCatchApply()`', ( assert ) => {
-				const fakeHistory = class extends CommandHistoryBase {
+				const fakeHistory = class extends CommandHistoryBaseMock {
 						// eslint-disable-next-line no-unused-vars
 						getHistory( args ) {
 							return true;
 						}
 					},
-					instance = new fakeHistory( { __manualConstructorHandling: true } );
+					instance = new fakeHistory( {} );
 
 				instance.historyId = Math.random();
 
@@ -51,33 +49,25 @@ jQuery( () => {
 			} );
 
 			QUnit.test( 'instanceOf(): validation', ( assert ) => {
-				const validateHistoryCommand = ( historyCommand ) => {
+				const validateHistoryCommand = ( command ) => {
 					// Base.
-					assert.equal( historyCommand instanceof CommandInfra, true );
-					assert.equal( historyCommand instanceof CommandBase, true );
-					assert.equal( historyCommand instanceof CommandInternalBase, false, );
-					assert.equal( historyCommand instanceof CommandData, false, );
+					assert.equal( command instanceof CommandInfra, true );
+					assert.equal( command instanceof CommandBase, true );
+					assert.equal( command instanceof CommandData, false, );
 					// Editor.
-					assert.equal( historyCommand instanceof CommandContainerBase, true, );
-					assert.equal( historyCommand instanceof CommandContainerInternal, false );
+					assert.equal( command instanceof CommandContainerBase, true, );
 					// Editor-Document.
-					assert.equal( historyCommand instanceof CommandHistoryBase, true );
-					assert.equal( historyCommand instanceof CommandHistoryDebounceBase, false );
-
+					assert.equal( command instanceof CommandHistoryBase, true );
 					// Base.
-					assert.equal( historyCommand instanceof $e.modules.CommandBase, true );
-					assert.equal( historyCommand instanceof $e.modules.CommandInternalBase, false );
-					assert.equal( historyCommand instanceof $e.modules.CommandData, false );
+					assert.equal( command instanceof $e.modules.CommandBase, true );
 					// Editor.
-					assert.equal( historyCommand instanceof $e.modules.editor.CommandContainerBase, true );
-					assert.equal( historyCommand instanceof $e.modules.editor.CommandContainerInternal, false );
+					assert.equal( command instanceof $e.modules.editor.CommandContainerBase, true );
 					// Editor-Document.
-					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryBase, true );
-					assert.equal( historyCommand instanceof $e.modules.editor.document.CommandHistoryDebounceBase, false );
+					assert.equal( command instanceof $e.modules.editor.document.CommandHistoryBase, true );
 				};
 
-				validateHistoryCommand( new CommandHistoryBase( { __manualConstructorHandling: true } ) );
-				validateHistoryCommand( new $e.modules.editor.document.CommandHistoryBase( { __manualConstructorHandling: true } ) );
+				validateHistoryCommand( new CommandHistoryBaseMock( { bypassHistory: true } ) );
+				validateHistoryCommand( new CommandHistoryBaseExportedMock( { bypassHistory: true } ) );
 			} );
 		} );
 	} );
