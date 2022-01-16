@@ -1,4 +1,4 @@
-name: "🐞 Bug Report - Dev Edition"
+name: "🐞 Bug Report - Dev Edition - unique"
 description: "Report a bug if something isn't working as expected in the Elementor development versions"
 title: "🐞 Bug report: "
 labels: [bug,dev-edition]
