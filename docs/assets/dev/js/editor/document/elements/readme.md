@@ -291,7 +291,7 @@
     | Property         | Type        | Default   | Description                            |
     |------------------|------------ |-----------|----------------------------------------|
     | external         | `{Boolean}` | `{false}` | Re-render panel with new settings.
-    | debounce         | `{Boolean}` | `{true}`  | Enable\Disable debounce.
+    | debounce         | `{Boolean}` | `{true}`  | Enable/Disable debounce.
 
 * **Examples**:
    * Change settings of widget, assuming we have widget heading, let change title color.
