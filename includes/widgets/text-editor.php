@@ -214,7 +214,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_responsive_control(
 			'max_width',
 			[
-				'label' => __( 'Max Width', 'elementor' ),
+				'label' => esc_html__( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'unit' => '%',
