@@ -212,7 +212,7 @@ class Widget_Text_Editor extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
-			'space',
+			'max_width',
 			[
 				'label' => __( 'Max Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
