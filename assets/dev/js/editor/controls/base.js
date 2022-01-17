@@ -87,13 +87,6 @@ ControlBaseView = Marionette.CompositeView.extend( {
 			},
 		} );
 
-		// Use `defineProperty` because `get elementSettingsModel()` fails during the `Marionette.CompositeView.extend`.
-		Object.defineProperty( this, 'elementSettingsModel', {
-			get() {
-				return options.container.settings;
-			},
-		} );
-
 		var controlType = this.model.get( 'type' ),
 			controlSettings = jQuery.extend( true, {}, elementor.config.controls[ controlType ], this.model.attributes );
 

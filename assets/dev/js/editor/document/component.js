@@ -1,5 +1,4 @@
 import ComponentBase from 'elementor-api/modules/component-base';
-import BackwardsCompatibility from './backwards-compatibility.js';
 import CommandHistory from './commands/base/command-history';
 import CommandHistoryDebounce from './commands/base/command-history-debounce';
 
