@@ -101,7 +101,7 @@ class Manager extends CSS_Manager {
 			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
 		}
 
-		if ( ! current_user_can( 'edit_post', $id ) ) {
+		if ( ! Utils::is_wp_cli() && ! current_user_can( 'edit_post', $id ) ) {
 			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
 		}
 
@@ -173,7 +173,7 @@ class Manager extends CSS_Manager {
 			<# } ); #>
 		</div>
 		<# } #>
-		<div id="elementor-panel-<?php echo $name; ?>-settings-controls"></div>
+		<div id="elementor-panel-<?php echo esc_attr( $name ); ?>-settings-controls"></div>
 		<?php
 	}
 

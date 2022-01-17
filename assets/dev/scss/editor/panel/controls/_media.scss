@@ -3,7 +3,9 @@
 	&.elementor-media-empty {
 
 		.elementor-control-media-area {
-			display: none;
+			.elementor-control-media__remove, .elementor-control-media__content__remove {
+				display: none;
+			}
 		}
 	}
 
@@ -233,6 +235,13 @@
 
 		.elementor-control-input-wrapper {
 			border: none;
+		}
+	}
+}
+.elementor-control:not( .elementor-control-type-icons ) {
+	.elementor-control-media {
+		&__preview {
+			background-color: $editor-lightest;
 		}
 	}
 }

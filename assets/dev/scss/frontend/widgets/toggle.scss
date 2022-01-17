@@ -18,6 +18,12 @@
 			display: inline-block;
 			width: 1em;
 
+			svg {
+				margin-inline-start: -5px; // The position of the SVG icon is different from the <i> tag icon position.
+				width: 1em;
+				height: 1em;
+			}
+
 			&.elementor-toggle-icon- {
 
 				&right {
@@ -59,7 +65,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-toggle {
 

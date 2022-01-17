@@ -6,7 +6,6 @@ $icon-size: var(--icon-size, 25px);
 $icon-padding: var(--icon-padding, 0.5em);
 $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 
-
 .elementor-widget-social-icons {
 /*TODO: This Grid-0 needs to be removed after PRO is Updated */
 	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
@@ -31,20 +30,30 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 	}
 }
 
-.elementor-social-icon {
-	display: inline-flex;
-	background-color: $gray;
+// This is for specificity, to avoid being overridden by Theme Style Link Typography.
+.elementor-icon.elementor-social-icon {
 	font-size: $icon-size;
 	line-height: $icon-size;
 	width: $icon-total-size;
 	height: $icon-total-size;
+}
+
+.elementor-social-icon {
+	--e-social-icon-icon-color: #fff;
+
+	display: inline-flex;
+	background-color: $gray;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
 	cursor: pointer;
 
 	i {
-		color: white;
+		color: var(--e-social-icon-icon-color);
+	}
+
+	svg {
+		fill: var(--e-social-icon-icon-color);
 	}
 
 	&:last-child {

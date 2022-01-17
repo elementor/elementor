@@ -2,12 +2,16 @@ module.exports = {
 	extends: [
 		'wordpress',
 		'plugin:wordpress/esnext',
+		'plugin:@elementor/editor/recommended',
 		'plugin:react/recommended',
+		'plugin:no-jquery/deprecated',
 	],
 	plugins: [
 		'wordpress',
 		'babel',
 		'react',
+		'@elementor/editor',
+		'no-jquery',
 	],
 	parser: 'babel-eslint',
 	globals: {

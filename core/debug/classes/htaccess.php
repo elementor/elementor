@@ -8,7 +8,7 @@ class Htaccess extends Inspection_Base {
 	private $message = '';
 
 	public function __construct() {
-		$this->message = __( 'Your site\'s .htaccess file appears to be missing.', 'elementor' );
+		$this->message = esc_html__( 'Your site\'s .htaccess file appears to be missing.', 'elementor' );
 	}
 
 	public function run() {
@@ -26,7 +26,8 @@ class Htaccess extends Inspection_Base {
 
 		if ( strstr( $server, 'APACHE' ) ) {
 			$htaccess_file = get_home_path() . '.htaccess';
-			$this->message .= ' ' . sprintf( __( 'File Path: %s', 'elementor' ), $htaccess_file ) . ' ';
+			/* translators: %s: Path to .htaccess file. */
+			$this->message .= ' ' . sprintf( esc_html__( 'File Path: %s', 'elementor' ), $htaccess_file ) . ' ';
 			return file_exists( $htaccess_file );
 		}
 		return true;

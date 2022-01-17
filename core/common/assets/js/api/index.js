@@ -9,10 +9,13 @@ import ComponentBase from './modules/component-base';
 import ComponentModalBase from './modules/component-modal-base';
 import Components from './core/components';
 import Data from './core/data.js';
+import HashCommands from './extras/hash-commands';
 import HookBreak from './modules/hook-break';
 import Hooks from './core/hooks';
 import Routes from './core/routes';
 import Shortcuts from './core/shortcuts';
+import Store from './core/store';
+import UiStates from './core/ui-states';
 
 import * as hookData from './modules/hooks/data/';
 import * as hookUI from './modules/hooks/ui';
@@ -35,6 +38,8 @@ export default class API {
 		this.routes = new Routes();
 		this.shortcuts = new Shortcuts( jQuery( window ) );
 		this.data = new Data();
+		this.store = new Store();
+		this.uiStates = new UiStates();
 
 		this.modules = {
 			CommandBase,
@@ -49,6 +54,10 @@ export default class API {
 
 			hookData,
 			hookUI,
+		};
+
+		this.extras = {
+			hashCommands: new HashCommands(),
 		};
 
 		// Backwards compatibility should be last, in order to handle others.

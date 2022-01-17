@@ -57,6 +57,9 @@ module.exports = Marionette.ItemView.extend( {
 				of: this.$el,
 				autoRefresh: true,
 			},
+			hide: {
+				ignore: '.select2-container',
+			},
 		};
 
 		var settingsPopup = elementorCommon.dialogsManager.createWidget( 'buttons', settingsPopupOptions );

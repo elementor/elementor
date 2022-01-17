@@ -5,9 +5,9 @@ import StretchedSection from './stretched-section';
 import Shapes from './shapes';
 
 export default [
+	StretchedSection, // Must run before BackgroundSlideshow to init the slideshow only after the stretch.
 	BackgroundSlideshow,
 	BackgroundVideo,
 	HandlesPosition,
-	StretchedSection,
 	Shapes,
 ];

@@ -4,57 +4,80 @@
  */
 const path = require( 'path' );
 
+// Handling minification for production assets.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const aliasList = require('./webpack.alias.js').resolve;
 
 const webpack = require('webpack');
 
+// Cleaning up existing chunks before creating new ones.
 const RemoveChunksPlugin = require('./remove-chunks');
 
-const moduleRules = {
-	rules: [
-		// {
-		// 	enforce: 'pre',
-		// 	test: /\.js$/,
-		// 	exclude: /node_modules/,
-		// 	loader: 'eslint-loader',
-		// 	options: {
-		// 		failOnError: true,
-		// 	}
-		// },
-		{
-			test: /core[/\\]app.*\.(s)?css$/i,
-			use: [
-				{
-					loader: './loaders/app-imports.js',
-				},
-			],
-		},
-		{
-			test: /\.js$/,
-			exclude: /node_modules/,
-			use: [
-				{
-					loader: 'babel-loader',
-					options: {
-						presets: [ '@wordpress/default' ],
-						plugins: [
-							[ '@wordpress/babel-plugin-import-jsx-pragma' ],
-							[ '@babel/plugin-transform-react-jsx', {
-								'pragmaFrag': 'React.Fragment',
-							} ],
-							[ '@babel/plugin-proposal-class-properties' ],
-							[ '@babel/plugin-transform-runtime' ],
-							[ '@babel/plugin-transform-modules-commonjs' ],
-							[ '@babel/plugin-proposal-optional-chaining' ],
-						],
-					},
-				},
-			],
-		},
-	],
+// Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
+const getChunkName = ( chunkData, environment ) => {
+	const minSuffix = 'production' === environment ? '.min' : '',
+		name = chunkData.chunk.name ? '[name].' : '';
+
+	return `${ name }[contenthash].bundle${ minSuffix }.js`;
 };
+
+const getModuleRules = ( presets ) => {
+	return {
+		rules: [
+			{
+				test: /core[/\\]app.*\.(s)?css$/i,
+				use: [
+					{
+						loader: './loaders/app-imports.js',
+					},
+				],
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'babel-loader',
+						options: {
+							presets,
+							plugins: [
+								[ '@wordpress/babel-plugin-import-jsx-pragma' ],
+								[ '@babel/plugin-transform-react-jsx', {
+									'pragmaFrag': 'React.Fragment',
+								} ],
+								[ '@babel/plugin-transform-runtime' ],
+								[ '@babel/plugin-transform-modules-commonjs' ],
+							],
+						},
+					},
+				],
+			},
+		],
+	};
+};
+
+const moduleRules = getModuleRules( [ '@wordpress/default' ] );
+
+const frontendRulesPresets = [ [
+	'@babel/preset-env',
+	{
+		targets: {
+			browsers: [
+				'last 1 Android versions',
+				'last 1 ChromeAndroid versions',
+				'last 2 Chrome versions',
+				'last 2 Firefox versions',
+				'last 2 Safari versions',
+				'last 2 iOS versions',
+				'last 2 Edge versions',
+				'last 2 Opera versions',
+			],
+		},
+	}
+] ];
+
+const frontendModuleRules = getModuleRules( frontendRulesPresets );
 
 const entry = {
 	'editor': [
@@ -76,21 +99,24 @@ const entry = {
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
-	'preloaded-elements-handlers': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-elements-handlers.js' ), dependOn: 'frontend' },
+	'preloaded-modules': { import: path.resolve( __dirname, '../assets/dev/js/frontend/preloaded-modules.js' ), dependOn: 'frontend' },
 };
 
 const externals = {
 	'@wordpress/i18n': 'wp.i18n',
-		react: 'React',
-		'react-dom': 'ReactDOM',
-		'@elementor/app-ui': 'elementorAppPackages.appUi',
-		'@elementor/site-editor': 'elementorAppPackages.siteEditor',
-		'@elementor/router': 'elementorAppPackages.router',
+	react: 'React',
+	'react-dom': 'ReactDOM',
+	'@elementor/app-ui': 'elementorAppPackages.appUi',
+	'@elementor/components': 'elementorAppPackages.components',
+	'@elementor/hooks': 'elementorAppPackages.hooks',
+	'@elementor/site-editor': 'elementorAppPackages.siteEditor',
+	'@elementor/router': 'elementorAppPackages.router',
 };
 
 const plugins = [
@@ -98,31 +124,29 @@ const plugins = [
 		React: 'react',
 		ReactDOM: 'react-dom',
 		PropTypes: 'prop-types',
-		__: [ '@wordpress/i18n', '__' ],
+		__: ['@wordpress/i18n', '__'],
+		sprintf: ['@wordpress/i18n', 'sprintf'],
 	} )
 ];
 
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
-	devtool: 'source-map',
 	externals,
-	module: moduleRules,
 	resolve: aliasList,
 };
 
 const devSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.js' ),
-		...plugins,
-	],
+	devtool: 'source-map',
 	mode: 'development',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -130,11 +154,20 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		module: moduleRules,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: entry,
 	},
 	{
 		...devSharedConfig,
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		optimization: {
 			runtimeChunk:  {
@@ -162,15 +195,13 @@ const prodSharedOptimization = {
 
 const prodSharedConfig = {
 	...baseConfig,
-	plugins: [
-		new RemoveChunksPlugin( '.bundle.min.js' ),
-		...plugins,
-	],
 	mode: 'production',
 	output: {
 		path: path.resolve( __dirname, '../assets/js' ),
-		chunkFilename: '[name].[contenthash].bundle.min.js',
+		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
+		// Prevents the collision of chunk names between different bundles.
+		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -178,8 +209,13 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		module: moduleRules,
+		plugins: [
+			...plugins,
+		],
 		name: 'base',
 		entry: {
+			// Clone.
 			...entry,
 		},
 		optimization: {
@@ -188,8 +224,14 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		module: frontendModuleRules,
+		plugins: [
+			new RemoveChunksPlugin( '.bundle.min.js' ),
+			...plugins,
+		],
 		name: 'frontend',
 		entry: {
+			// Clone.
 			...frontendEntries,
 		},
 		optimization: {
@@ -204,7 +246,7 @@ const webpackProductionConfig = [
 	},
 ];
 
-// Add minified entry points
+// Adding .min suffix to production entries.
 webpackProductionConfig.forEach( ( config, index ) => {
 	for ( const entryPoint in config.entry ) {
 		let entryValue = config.entry[ entryPoint ];

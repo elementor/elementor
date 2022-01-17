@@ -8,9 +8,10 @@ export default class extends elementorModules.ViewModule {
 				success: () => location.reload(),
 				error: () => {
 					elementor.notifications.showToast( {
-						message: elementor.translate( 'connect_error' ),
+						message: __( 'Unable to connect', 'elementor' ),
 					} );
 				},
+				parseUrl: ( url ) => url, // Allow to change the url, e.g: replace placeholders like '%%template_type%%' with actual value.
 			}, options );
 
 			this.each( function() {
@@ -21,7 +22,8 @@ export default class extends elementorModules.ViewModule {
 
 				$this.attr( {
 					target: '_blank',
-					href: $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId,
+					rel: 'opener',
+					href: settings.parseUrl( $this.attr( 'href' ) + '&mode=popup&callback_id=' + callbackId ),
 				} );
 
 				elementorCommon.elements.$window

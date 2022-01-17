@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Utils from '../../utils/utils';
+import { arrayToClassName } from '../../utils/utils';
 
 import './drag-drop.scss';
 
@@ -14,7 +14,7 @@ export default function DragDrop( props ) {
 				classes.push( baseClassName + '--drag-over' );
 			}
 
-			return Utils.arrayToClassName( classes );
+			return arrayToClassName( classes );
 		},
 		onDragDropActions = ( event ) => {
 			event.preventDefault();

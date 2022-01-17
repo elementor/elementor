@@ -1,5 +1,5 @@
 export default class InstanceType {
-	static [Symbol.hasInstance]( target ) {
+	static [ Symbol.hasInstance ]( target ) {
 		/**
 		 * This is function extending being called each time JS uses instanceOf, since babel use it each time it create new class
 		 * its give's opportunity to mange capabilities of instanceOf operator.

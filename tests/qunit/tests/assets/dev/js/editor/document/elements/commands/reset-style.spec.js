@@ -70,7 +70,7 @@ export const ResetStyle = () => {
 					historyItem = HistoryHelper.getFirstItem().attributes;
 
 				// Exist in history.
-				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'elements' );
+				HistoryHelper.inHistoryValidate( assert, historyItem, 'reset_style', 'Elements' );
 
 				// Undo.
 				HistoryHelper.undoValidate( assert, historyItem );

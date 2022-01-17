@@ -9,7 +9,7 @@ module.exports = {
 
 			processors: [
 				require( 'autoprefixer' )( {
-					browsers: 'last 10 versions'
+					browsers: 'last 3 versions'
 				} )
 			]
 		},
@@ -24,11 +24,14 @@ module.exports = {
 		options: {
 			processors: [
 				require( 'autoprefixer' )( {
-					browsers: 'last 10 versions'
+					browsers: 'last 3 versions'
 				} ),
 				require( 'cssnano' )( {
-					reduceIdents: false,
-					zindex: false,
+					preset: [ 'default', {
+						reduceIdents: false,
+						zindex: false,
+						calc: false
+					} ]
 				} )
 			]
 		},
