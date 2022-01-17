@@ -375,7 +375,7 @@ class Container extends Element_Base {
 				'selector' => '{{WRAPPER}}',
 				'fields_options' => [
 					'gap' => [
-						'label' => esc_html_x( 'Spacing', 'Flex Item Control', 'elementor' ),
+						'label' => esc_html_x( 'Elements Gap', 'Flex Item Control', 'elementor' ),
 						'placeholder' => '20',
 					],
 					'direction' => [
