@@ -6,7 +6,8 @@ export class Copy extends CommandBase {
 	}
 
 	apply( args ) {
-		const { storageKey = 'clipboard', containers = [ args.container ] } = args;
+		const { storageKey = 'clipboard', containers = [ args.container ] } = args,
+			elements = elementor.getPreviewView().$el.find( '.elementor-element' );
 
 		if ( ! elementor.selection.isSameType() ) {
 			elementor.notifications.showToast( {
@@ -24,7 +25,9 @@ export class Copy extends CommandBase {
 
 		elementorCommon.storage.set(
 			storageKey,
-			containers.map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
+			containers.sort( ( first, second ) => {
+				return elements.index( first.view.el ) - elements.index( second.view.el );
+			} ).map( ( container ) => container.model.toJSON( { copyHtmlCache: true } ) )
 		);
 	}
 }

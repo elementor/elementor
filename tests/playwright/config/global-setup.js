@@ -10,7 +10,7 @@ module.exports = async ( config ) => {
 	await page.fill( 'input[name="log"]', process.env.UNAME || 'admin' );
 	await page.waitForTimeout( 500 );
 	await page.fill( 'input[name="pwd"]', process.env.PASSWD || 'password' );
-	await page.click( 'text=Log In' );
+	await page.click( '#wp-submit' );
 	await page.waitForSelector( 'text=Dashboard' );
 
 	// Save signed-in state to 'storageState.json'.
