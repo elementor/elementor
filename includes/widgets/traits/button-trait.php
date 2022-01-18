@@ -301,6 +301,15 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -365,6 +374,15 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow_hover',
+				'selector' => '{{WRAPPER}}:hover .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->end_controls_tabs();
@@ -388,15 +406,6 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
 			]
 		);
