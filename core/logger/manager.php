@@ -24,7 +24,7 @@ class Manager extends BaseModule {
 		return 'log';
 	}
 
-	public function shutdown( $last_error = null ) {
+	public function shutdown( $last_error = null, $should_exit = false ) {
 		if ( ! $last_error ) {
 			$last_error = error_get_last();
 		}
@@ -47,9 +47,13 @@ class Manager extends BaseModule {
 		$item = new PHP( $last_error );
 
 		$this->get_logger()->log( $item );
+
+		if ( $should_exit ) {
+			exit;
+		}
 	}
 
-	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line, $skip_shutdown = false ) {
+	public function rest_error_handler( $error_number, $error_message, $error_file, $error_line ) {
 		$error = new \WP_Error( $error_number, $error_message, [
 			'type' => $error_number,
 			'message' => $error_message,
@@ -80,11 +84,7 @@ class Manager extends BaseModule {
 
 		$error_data = $error->get_error_data();
 
-		if ( ! $skip_shutdown ) {
-			$this->shutdown( $error_data );
-
-			exit;
-		}
+		$this->shutdown( $error_data, true );
 
 		return $error_data;
 	}

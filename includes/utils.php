@@ -758,6 +758,20 @@ class Utils {
 
 	public static function is_elementor_path( $path ) {
 		$path = wp_normalize_path( $path );
+
+		/**
+		 * Is elementor path.
+		 *
+		 * Filters whether the path is part of elementor.
+		 *
+		 * @param string $path The path.
+		 */
+		$is_elementor_path = apply_filters( 'elementor/utils/is_elementor_path', false, $path );
+
+		if ( $is_elementor_path ) {
+			return true;
+		}
+
 		// `untrailingslashit` in order to include other plugins prefixed with elementor.
 		$elementor_path = untrailingslashit( wp_normalize_path( ELEMENTOR_PATH ) );
 
