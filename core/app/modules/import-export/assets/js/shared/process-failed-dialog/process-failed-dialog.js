@@ -8,7 +8,6 @@ import useAction from 'elementor-app/hooks/use-action';
 const messagesContent = {
 	general: {
 		text: __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ),
-		approveButton: 'Try Again',
 	},
 	'zip-archive-module-not-installed': {
 		text: __( 'Install a PHP zip on your server or contact your site host.', 'elementor' ),
@@ -21,22 +20,24 @@ const messagesContent = {
 	},
 };
 
-export default function ImportFailedDialog( props ) {
+export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
 		{ referrer } = useQueryParams().getAll(),
-		errorType = messagesContent[ props.errorType ] ? props.errorType : 'general',
-		{ title, text, approveButton, dismissButton } = messagesContent[ errorType ],
-		onApprove = () => {
-			if ( 'general' === errorType && props.onApprove ) {
-				props.onApprove();
+		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
+		{ text } = messagesContent[ error ],
+		isTryAgainAction = 'general' === error && onApprove,
+		handleOnApprove = () => {
+			// The onApprove function should only be triggered when the errorType is general.
+			if ( isTryAgainAction ) {
+				onApprove();
 			} else {
 				window.open( 'https://elementor.com/help/how-to-fix-common-errors-with-import-export/', '_blank' );
 			}
 		},
-		onDismiss = () => {
-			if ( 'general' === errorType && props.onDismiss ) {
-				props.onDismiss();
+		handleOnDismiss = () => {
+			if ( 'general' === error && onDismiss ) {
+				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
 				navigate( '/kit-library' );
 			} else {
@@ -46,24 +47,28 @@ export default function ImportFailedDialog( props ) {
 
 	return (
 		<Dialog
-			title={ title || __( 'Something went wrong.', 'elementor' ) }
+			title={ __( 'Something went wrong.', 'elementor' ) }
 			text={ text }
 			approveButtonColor="link"
-			approveButtonText={ approveButton || __( 'Learn More', 'elementor' ) }
-			approveButtonOnClick={ onApprove }
-			dismissButtonText={ dismissButton || __( 'Close', 'elementor' ) }
-			dismissButtonOnClick={ onDismiss }
-			onClose={ onDismiss }
+			approveButtonText={ isTryAgainAction ? __( 'Try Again', 'elementor' ) : approveButton }
+			approveButtonOnClick={ handleOnApprove }
+			dismissButtonText={ dismissButton }
+			dismissButtonOnClick={ handleOnDismiss }
+			onClose={ handleOnDismiss }
 		/>
 	);
 }
 
-ImportFailedDialog.propTypes = {
+ProcessFailedDialog.propTypes = {
 	onApprove: PropTypes.func,
 	onDismiss: PropTypes.func,
 	errorType: PropTypes.string,
+	approveButton: PropTypes.string,
+	dismissButton: PropTypes.string,
 };
 
-ImportFailedDialog.defaultProps = {
+ProcessFailedDialog.defaultProps = {
 	errorType: 'general',
+	approveButton: __( 'Learn More', 'elementor' ),
+	dismissButton: __( 'Close', 'elementor' ),
 };
