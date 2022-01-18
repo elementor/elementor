@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Tests\Phpunit\Elementor\Core\Logger;
 
 use ElementorEditorTesting\Elementor_Test_Base;
