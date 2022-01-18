@@ -1575,6 +1575,10 @@ export default class EditorBase extends Marionette.Application {
 			result = this.registeredElements[ index ];
 
 		if ( 'widget' === elType ) {
+			if ( ! widgetType ) {
+				throw new TypeError( 'Missing widget type' );
+			}
+
 			index += '-' + widgetType;
 		}
 
@@ -1591,7 +1595,7 @@ export default class EditorBase extends Marionette.Application {
 	registerElementType( element ) {
 		// Validate instanceOf `element`.
 		if ( ! ( element instanceof ElementBase ) ) {
-			throw new TypeError( 'Elementor: The first argument must be an instance of ElementBase.' );
+			throw new TypeError( 'The element argument must be an instance of ElementBase.' );
 		}
 
 		const index = element.getTypeIndex();

@@ -108,13 +108,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		const elements = this.model.get( 'elements' );
-
-		if ( elements && elements.length ) {
-			return true;
-		}
-
-		return 'widget' !== this.model.get( 'elType' );
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
 	}
 
 	toggleList( state, callback ) {

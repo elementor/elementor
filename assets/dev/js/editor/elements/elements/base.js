@@ -11,7 +11,7 @@ export default class ElementBase {
 	 */
 	getView() {
 		elementorModules.ForceMethodImplementation();
-    }
+	}
 
 	/**
 	 * @return {typeof React.Component}
