@@ -581,7 +581,12 @@ class Module extends BaseModule {
 		try {
 			$this->add_document_usage( $document, $data );
 		} catch ( \Exception $exception ) {
-			return; // Do nothing.
+			Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
+				'document_id' => $document->get_id(),
+				'document_name' => $document->get_name(),
+			] );
+
+			return;
 		};
 	}
 

@@ -1408,7 +1408,13 @@ abstract class Controls_Stack extends Base_Object {
 		if ( $is_repeater && ! $is_default && ! empty( $control_default ) ) {
 			$clear_repeater_settings = [];
 
-			// Using the control defaults, clean unused keys from $setting_value ( repeater values ).
+			/*
+			 * Using the control defaults, clean unused keys from $setting_value ( repeater values ).
+			 * This is needed because the repeater `$setting_value` includes globals that are effected by prefix like: `typography` can have values such as:
+			 * `typography_font_size`, `typography_font_family`, `typography_font_weight`, etc... which are not part of the default.
+			 * How it works? e.g. `$control_default` is `[ 'color' => '#fff' ]` and `$setting_value` is `[ 'color' => '#fff', 'color_hover' => '#000' ]`.
+			 * So only 'color' will be analyzed.
+			 */
 			foreach ( $control_default as $key => $control_repeater_item_default ) {
 				$clear_repeater_settings[ $key ] = array_intersect_key(
 					$setting_value[ $key ],
