@@ -12,6 +12,7 @@ class Test_Manager extends Elementor_Test_Base {
 	private $manager;
 
 	public function setUp() {
+		// Mock 'shutdown' method to avoid exit.
 		$this->manager = $this->getMockBuilder( \Elementor\Core\Logger\Manager::class )
 		                      ->setMethods( [ 'shutdown' ] )
 		                      ->getMock();
