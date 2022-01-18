@@ -740,7 +740,7 @@ abstract class Controls_Stack extends Base_Object {
 		$style_controls = [];
 
 		foreach ( $controls as $control_name => $control ) {
-			$control_obj = Plugin::$instance->controls_manager->get_control( $control[ 'type' ] );
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
 
 			if ( ! $control_obj instanceof Base_Data_Control ) {
 				continue;
