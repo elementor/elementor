@@ -1,5 +1,9 @@
 # Elementor Developer Edition - by Elementor.com
 
+#### 3.6.0-dev32 - 2022-01-18
+* Tweak: Updated Google Fonts list [ED-6245] (#17496)
+* Tweak: Updated changelog for v3.5.4 (#17498)
+
 #### 3.6.0-dev31 - 2022-01-17
 * Fix: Debug Util - `onError` throws an error because of bad parameters [ED-6190] (#17435)
 * Tweak: Update E-Icons library to v5.14.0 (#17378)
