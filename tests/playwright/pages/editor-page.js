@@ -12,6 +12,16 @@ exports.EditorPage = class EditorPage {
 	}
 
 	/**
+	 * Reload the editor page.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async reload() {
+		await this.page.reload();
+		this.previewFrame = this.page.frame( { name: 'elementor-preview-iframe' } );
+	}
+
+	/**
 	 * Make sure that the elements panel is loaded.
 	 *
 	 * @return {Promise<void>}

@@ -8,7 +8,6 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
-use Elementor\Modules\SafeMode\Module as Safe_Mode;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -65,6 +64,7 @@ class Manager extends Base_Object {
 			'description' => '',
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
+			'mutable' => true,
 			'new_site' => [
 				'default_active' => false,
 				'always_active' => false,
@@ -73,13 +73,11 @@ class Manager extends Base_Object {
 			'on_state_change' => null,
 		];
 
-		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'new_site', 'on_state_change' ];
+		$allowed_options = [ 'name', 'title', 'description', 'release_status', 'default', 'mutable', 'new_site', 'on_state_change' ];
 
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		$new_site = $experimental_data['new_site'];
-
-		$feature_is_mutable = true;
 
 		if ( $new_site['default_active'] || $new_site['always_active'] ) {
 			$is_new_installation = Upgrade_Manager::install_compare( $new_site['minimum_installation_version'], '>=' );
@@ -88,28 +86,24 @@ class Manager extends Base_Object {
 				if ( $new_site['always_active'] ) {
 					$experimental_data['state'] = self::STATE_ACTIVE;
 
-					$feature_is_mutable = false;
+					$experimental_data['mutable'] = false;
 				} elseif ( $new_site['default_active'] ) {
 					$experimental_data['default'] = self::STATE_ACTIVE;
 				}
 			}
 		}
 
-		$experimental_data['mutable'] = $feature_is_mutable;
+		if ( $experimental_data['mutable'] ) {
+			$experimental_data['state'] = $this->get_saved_feature_state( $options['name'] );
+		}
 
-		if ( $feature_is_mutable ) {
-			$state = $this->get_saved_feature_state( $options['name'] );
-
-			if ( ! $state ) {
-				$state = self::STATE_DEFAULT;
-			}
-
-			$experimental_data['state'] = $state;
+		if ( empty( $experimental_data['state'] ) ) {
+			$experimental_data['state'] = self::STATE_DEFAULT;
 		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
 
-		if ( $feature_is_mutable && is_admin() ) {
+		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data ) {
@@ -285,7 +279,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.', 'elementor' )
 				. '<br>'
 				. esc_html__( 'You can import a kit and apply it to your site, or export the elements from this site to be used anywhere else.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -311,8 +305,13 @@ class Manager extends Base_Object {
 			'name' => 'e_hidden_wordpress_widgets',
 			'title' => esc_html__( 'Hide native WordPress widgets from search results', 'elementor' ),
 			'description' => esc_html__( 'WordPress widgets will not be shown when searching in the editor panel. Instead, these widgets can be found in the “WordPress” dropdown at the bottom of the panel.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'admin_menu_rearrangement',
+			'mutable' => false,
 		] );
 
 		$this->add_feature( [
@@ -601,10 +600,6 @@ class Manager extends Base_Object {
 	 * @return string
 	 */
 	private function get_feature_actual_state( array $feature ) {
-		if ( get_option( Safe_Mode::OPTION_ENABLED, '' ) ) {
-			return self::STATE_INACTIVE;
-		}
-
 		if ( self::STATE_DEFAULT !== $feature['state'] ) {
 			return $feature['state'];
 		}
