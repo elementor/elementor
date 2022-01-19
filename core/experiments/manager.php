@@ -326,6 +326,19 @@ class Manager extends Base_Object {
 			'name' => 'admin_menu_rearrangement',
 			'mutable' => false,
 		] );
+
+		$this->add_feature( [
+			'name' => 'container',
+			'title' => esc_html__( 'Container', 'elementor' ),
+			'description' => esc_html__(
+				'Create advanced layouts and responsive designs using the new Container element.
+				When this experiment is active, Containers will be the default building block.
+				Existing Sections, Inner Sections and Columns will not be affected.',
+				'elementor'
+			),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**
