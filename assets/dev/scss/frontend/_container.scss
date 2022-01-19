@@ -205,10 +205,10 @@
 
 				// Replace the edit eicon with Container eicon.
 				i.eicon-handle::before {
-					content: '\e98d'; // Container eicon.
-					font-size: 10px;
+					content: '\e9b4'; // eicon-inner-container.
+					font-size: 20px;
 					display: block;
-					padding: 7px;
+					padding: 2px;
 				}
 			}
 		}
