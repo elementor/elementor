@@ -802,7 +802,10 @@ abstract class Controls_Stack extends Base_Object {
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [
+			'reverse' => true,
+			'desktop_first' => true,
+		] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -861,6 +864,10 @@ abstract class Controls_Stack extends Base_Object {
 
 			// Set parent using the name from previous iteration.
 			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
+			
+			// if( isset( $control_name ) && '_element_width_widescreen' === $control_name ) {
+			// 	$control_args['parent'] = 'testeststse';
+			// }
 
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {

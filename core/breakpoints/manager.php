@@ -133,6 +133,7 @@ class Manager extends Module {
 		$default_args = [
 			'add_desktop' => true,
 			'reverse' => false,
+			'desktop_first' => false,
 		];
 
 		$args = array_merge( $default_args, $args );
@@ -152,6 +153,12 @@ class Manager extends Module {
 
 		if ( $args['reverse'] ) {
 			$active_devices = array_reverse( $active_devices );
+		}
+
+		if ( $args['desktop_first'] ) {
+			$desktop = $active_devices[1];
+			unset( $active_devices[1] );
+			array_unshift( $active_devices, $desktop );
 		}
 
 		return $active_devices;
