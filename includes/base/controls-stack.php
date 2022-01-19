@@ -864,10 +864,6 @@ abstract class Controls_Stack extends Base_Object {
 
 			// Set parent using the name from previous iteration.
 			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
-			
-			// if( isset( $control_name ) && '_element_width_widescreen' === $control_name ) {
-			// 	$control_args['parent'] = 'testeststse';
-			// }
 
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
@@ -1366,6 +1362,20 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$instance_value = $values[ $pure_condition_key ];
+
+			if ( ! $instance_value ) {
+				$controls = $this->get_controls();
+				$parent = isset( $controls[ $pure_condition_key ]['parent'] ) ? $controls[ $pure_condition_key ]['parent'] : false;
+
+				while ( $parent ) {
+					$instance_value = $values[ $parent ];
+
+					if ( $instance_value ) {
+						break;
+					}
+					$parent = isset( $controls[ $parent ]['parent'] ) ? $controls[ $parent ]['parent'] : false;
+				}
+			}
 
 			if ( $condition_sub_key && is_array( $instance_value ) ) {
 				if ( ! isset( $instance_value[ $condition_sub_key ] ) ) {
@@ -2081,13 +2091,6 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$control = array_merge_recursive( $control_obj->get_settings(), $control );
-
-			if ( isset( $control['responsive'] ) && isset( $control['parent'] ) ) {
-				if ( ! isset( $settings[ $control['name'] ] ) ) {
-					$settings[ $control['name'] ] = $settings[ $control['parent'] ];
-					continue;
-				}
-			}
 
 			$settings[ $control['name'] ] = $control_obj->get_value( $control, $settings );
 		}

@@ -50,15 +50,23 @@ Conditions = function() {
 				// condition name and the sub key, so later it can be retrieved and examined.
 				const parsedName = term.name.match( /([\w-]+)(?:\[([\w-]+)])?/ ),
 					conditionRealName = parsedName[ 1 ],
-					conditionSubKey = parsedName[ 2 ],
-					// We use null-safe operator since we're trying to get the current element, which is not always
-					// exists, since it's only created when the specific element appears in the panel.
-					placeholder = elementor.selection.getElements()[ 0 ]
-						?.placeholders[ conditionRealName ];
+					conditionSubKey = parsedName[ 2 ];
 
-				// If a placeholder exists for the examined control, we check against it. In any other case, we
-				// use the 'comparisonObject', which includes all values of the selected widget.
-				let value = placeholder || comparisonObject[ conditionRealName ];
+				let value = comparisonObject[ conditionRealName ];
+
+				if ( ! value ) {
+					let parent = elementor.widgetsCache.common.controls[ conditionRealName ]?.parent;
+
+					while ( parent ) {
+						value = comparisonObject[ parent ];
+
+						if ( value ) {
+							break;
+						}
+
+						parent = elementor.widgetsCache.common.controls[ parent ]?.parent;
+					}
+				}
 
 				if ( comparisonObject.__dynamic__ && comparisonObject.__dynamic__[ conditionRealName ] ) {
 					value = comparisonObject.__dynamic__[ conditionRealName ];
