@@ -245,10 +245,10 @@ class Manager {
 			 *
 			 * Fires when Elementor registers dynamic tags.
 			 *
-			 * @param Manager $this Dynamic tags manager.
+			 * @since 2.0.9
 			 * @deprecated 3.5.0 Use `elementor/dynamic_tags/register` hook instead.
 			 *
-			 * @since 2.0.9
+			 * @param Manager $this Dynamic tags manager.
 			 */
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 				'elementor/dynamic_tags/register_tags',
@@ -275,11 +275,11 @@ class Manager {
 	}
 
 	/**
-	 * @param string $class
-	 * @deprecated 3.5.0 Use `$this->register()` instead.
-	 *
 	 * @since 2.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
+	 *
+	 * @param string $class
 	 */
 	public function register_tag( $class ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(

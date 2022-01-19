@@ -93,10 +93,10 @@ class Widgets_Manager {
 		 *
 		 * Fires after Elementor widgets are registered.
 		 *
-		 * @param Widgets_Manager $this The widgets manager.
+		 * @since 1.0.0
 		 * @deprecated 3.5.0 Use `elementor/widgets/register` hook instead.
 		 *
-		 * @since 1.0.0
+		 * @param Widgets_Manager $this The widgets manager.
 		 */
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 			'elementor/widgets/widgets_registered',

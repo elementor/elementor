@@ -710,7 +710,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		return array_filter(
 			$this->get_controls(), function ( $control ) use ( $enabled_schemes ) {
-				return ( ! empty( $control[ 'scheme' ] ) && in_array( $control[ 'scheme' ][ 'type' ], $enabled_schemes ) );
+				return ( ! empty( $control['scheme'] ) && in_array( $control['scheme']['type'], $enabled_schemes ) );
 			}
 		);
 	}
@@ -733,7 +733,6 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_style_controls( array $controls = null, array $settings = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
 
 		$controls = $this->get_active_controls( $controls, $settings );
 

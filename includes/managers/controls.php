@@ -447,10 +447,10 @@ class Controls_Manager {
 		 *
 		 * Fires after Elementor controls are registered.
 		 *
-		 * @param Controls_Manager $this The controls manager.
+		 * @since 1.0.0
 		 * @deprecated 3.5.0 Use `elementor/controls/register` hook instead.
 		 *
-		 * @since 1.0.0
+		 * @param Controls_Manager $this The controls manager.
 		 */
 		// TODO: Uncomment when Pro uses the new hook.
 		//Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
