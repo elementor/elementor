@@ -28,7 +28,10 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		{ text } = messagesContent[ error ],
 		isTryAgainAction = 'general' === error && onApprove,
 		handleOnApprove = () => {
-			// The onApprove function should only be triggered when the errorType is general.
+			/*
+			* When the errorType is general, there should be an option to trigger the onApprove function.
+			* All other error messages should open the learn-more link.
+			*/
 			if ( isTryAgainAction ) {
 				onApprove();
 			} else {
