@@ -138,6 +138,7 @@ export default class extends Marionette.Behavior {
 	onResize( event, ui ) {
 		event.stopPropagation();
 
+		// TODO: Copied from `behaviors/column-resizable.js`.
 		if ( this.view.changeSizeUI ) {
 			this.view.changeSizeUI();
 		}

@@ -22,6 +22,7 @@ const ContainerView = BaseElementView.extend( {
 		return this.model.getSetting( 'html_tag' ) || 'div';
 	},
 
+	// TODO: Copied from `views/column.js`.
 	ui: function() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
 
@@ -120,14 +121,14 @@ const ContainerView = BaseElementView.extend( {
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggingInSameParent = ( draggedView?.parent === this );
 
-				let $widgets = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
+				let $elements = jQuery( event.currentTarget.parentElement ).find( '> .elementor-element' );
 
 				// Exclude the dragged element from the indexing calculations.
 				if ( draggingInSameParent ) {
-					$widgets = $widgets.not( draggedView.$el );
+					$elements = $elements.not( draggedView.$el );
 				}
 
-				const widgetsArray = Object.values( $widgets );
+				const widgetsArray = Object.values( $elements );
 
 				let newIndex = widgetsArray.indexOf( event.currentTarget );
 
