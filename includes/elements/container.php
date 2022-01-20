@@ -380,6 +380,9 @@ class Container extends Element_Base {
 				'condition' => [
 					'content_width' => 'boxed',
 				],
+				'default' => [
+					'unit' => 'px',
+				],
 				// Use the default width from the kit as a placeholder.
 				'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
 			] )
