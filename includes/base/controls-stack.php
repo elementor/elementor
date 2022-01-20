@@ -863,7 +863,12 @@ abstract class Controls_Stack extends Base_Object {
 			$control_args = $args;
 
 			// Set parent using the name from previous iteration.
-			$control_args['parent'] = isset( $control_name ) ? $control_name : null;
+			if ( isset( $control_name ) ) {
+				// If $control_name end with _widescreen use desktop name instead
+				$control_args['parent'] = '_widescreen' === substr( $control_name, -strlen( '_widescreen' ) ) ? $id : $control_name;
+			} else {
+				$control_args['parent'] = null;
+			}
 
 			if ( isset( $control_args['device_args'] ) ) {
 				if ( ! empty( $control_args['device_args'][ $device_name ] ) ) {
