@@ -303,43 +303,86 @@ class Container extends Element_Base {
 
 		$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 
+		$this->add_control(
+			'content_width',
+			[
+				'label' => esc_html__( 'Content Width', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'boxed',
+				'options' => [
+					'boxed' => esc_html__( 'Boxed', 'elementor' ),
+					'full' => esc_html__( 'Full Width', 'elementor' ),
+				],
+				'render_type' => 'ui',
+				'selectors' => [
+					'{{WRAPPER}}' => '{{VALUE}}',
+				],
+				'selectors_dictionary' => [
+					'boxed' => '--width: 100%;',
+					'full' => '--content-width: 100%;',
+				],
+			]
+		);
+
+		$width_control_settings = [
+			'label' => esc_html__( 'Width', 'elementor' ),
+			'type' => Controls_Manager::SLIDER,
+			'size_units' => [ 'px', '%', 'vw' ],
+			'range' => [
+				'px' => [
+					'min' => 500,
+					'max' => 1600,
+				],
+				'%' => [
+					'min' => 0,
+					'max' => 100,
+				],
+				'vw' => [
+					'min' => 0,
+					'max' => 100,
+				],
+			],
+			'default' => [
+				'unit' => '%',
+			],
+			'min_affected_device' => [
+				Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
+				Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
+			],
+			'separator' => 'none',
+		];
+
 		$this->add_responsive_control(
 			'width',
-			[
-				'label' => esc_html__( 'Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
-				'range' => [
-					'px' => [
-						'min' => 500,
-						'max' => 1600,
-					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-					],
-					'vw' => [
-						'min' => 0,
-						'max' => 100,
-					],
-				],
-				'default' => [
-					'unit' => '%',
-				],
+			array_merge( $width_control_settings, [
 				'selectors' => [
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
 				],
-				'min_affected_device' => [
-					Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => $min_affected_device,
-					Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP => $min_affected_device,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA => $min_affected_device,
-					Breakpoints_Manager::BREAKPOINT_KEY_TABLET => $min_affected_device,
-					Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA => $min_affected_device,
+				'condition' => [
+					'content_width' => 'full',
 				],
-				'separator' => 'none',
+				'placeholder' => [
+					'size' => '100',
+					'unit' => '%',
+				],
+			] )
+		);
+
+		$this->add_responsive_control(
+			'boxed_width',
+			array_merge( $width_control_settings, [
+				'selectors' => [
+					'{{WRAPPER}}' => '--content-width: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'content_width' => 'boxed',
+				],
 				// Use the default width from the kit as a placeholder.
 				'placeholder' => $this->active_kit->get_settings_for_display( 'container_width' ),
-			]
+			] )
 		);
 
 		$this->add_responsive_control(
@@ -1109,7 +1152,7 @@ class Container extends Element_Base {
 				'size_units' => [ 'px', 'em', '%', 'rem' ],
 				'placeholder' => '10',
 				'selectors' => [
-					'{{WRAPPER}}' => '--padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}}' => '--padding-top: {{TOP}}{{UNIT}}; --padding-right: {{RIGHT}}{{UNIT}}; --padding-bottom: {{BOTTOM}}{{UNIT}}; --padding-left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
