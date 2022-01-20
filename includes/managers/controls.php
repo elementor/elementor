@@ -514,7 +514,6 @@ class Controls_Manager {
 	 * @return void
 	 */
 	public function register( Base_Control $control_instance, $control_id = null ) {
-		// TODO: Uncomment when Pro uses the new hook.
 
 		// TODO: For BC. Remove in the future.
 		if ( $control_id ) {
@@ -542,7 +541,6 @@ class Controls_Manager {
 	 * @return bool True if the control was removed, False otherwise.
 	 */
 	public function unregister_control( $control_id ) {
-		// TODO: Uncomment when Pro uses the new hook.
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
 			__METHOD__,
 			'3.5.0',
