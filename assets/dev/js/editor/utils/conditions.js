@@ -34,7 +34,7 @@ Conditions = function() {
 		}
 	};
 
-	this.check = function( conditions, comparisonObject ) {
+	this.check = function( conditions, comparisonObject, controls ) {
 		const isOrCondition = 'or' === conditions.relation;
 		let conditionSucceed = ! isOrCondition;
 
@@ -54,8 +54,8 @@ Conditions = function() {
 
 				let value = comparisonObject[ conditionRealName ];
 
-				if ( ! value ) {
-					let parent = elementor.widgetsCache.common.controls[ conditionRealName ]?.parent;
+				if ( ! value && controls ) {
+					let parent = controls[ conditionRealName ]?.parent;
 
 					while ( parent ) {
 						value = comparisonObject[ parent ];
@@ -64,7 +64,7 @@ Conditions = function() {
 							break;
 						}
 
-						parent = elementor.widgetsCache.common.controls[ parent ]?.parent;
+						parent = controls[ parent ]?.parent;
 					}
 				}
 
