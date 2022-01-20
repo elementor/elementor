@@ -114,6 +114,15 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 		expect( migrated.widget2_2.model.get( 'widgetType' ) ).toBe( 'text' );
 	} );
 
+	const sectionDefaultSettings = {
+		flex_gap: {
+			size: 10,
+			unit: 'px',
+		},
+		flex_align_items: 'stretch',
+		flex_direction: 'row',
+	};
+
 	it( 'Should migrate section settings', () => {
 		// Arrange.
 		const section = createContainer( {
@@ -161,16 +170,17 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const expected = {
+			...sectionDefaultSettings,
 			setting_that_should_stay: 123,
-			width: {
+			boxed_width: {
 				size: 100,
 				unit: '%',
 			},
-			width_tablet: {
+			boxed_width_tablet: {
 				size: 1,
 				unit: 'vw',
 			},
-			width_mobile: {
+			boxed_width_mobile: {
 				size: 200,
 				unit: 'px',
 			},
@@ -191,7 +201,6 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 				unit: 'px',
 			},
 			flex_align_items: 'flex-start',
-			flex_direction: 'row', // Default value.
 		};
 
 		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -218,12 +227,11 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const expected = {
+			...sectionDefaultSettings,
 			min_height: {
 				size: 100,
 				unit: 'vh',
 			},
-			flex_align_items: 'center', // Default value.
-			flex_direction: 'row', // Default value.
 		};
 
 		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -250,12 +258,11 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const expected = {
+			...sectionDefaultSettings,
 			min_height: {
 				size: 400,
 				unit: 'px',
 			},
-			flex_align_items: 'center', // Default value.
-			flex_direction: 'row', // Default value.
 		};
 
 		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -286,12 +293,11 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const expected = {
+			...sectionDefaultSettings,
 			min_height: {
 				size: 100,
 				unit: 'px',
 			},
-			flex_align_items: 'center', // Default value.
-			flex_direction: 'row', // Default value.
 		};
 
 		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -322,12 +328,86 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const expected = {
+			...sectionDefaultSettings,
 			flex_gap: {
 				size: 10,
 				unit: '%',
 			},
-			flex_align_items: 'center', // Default value.
-			flex_direction: 'row', // Default value.
+		};
+
+		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+	} );
+
+	it( 'Should migrate section settings -- Defaults', () => {
+		// Arrange.
+		const section = createContainer( {
+			type: 'section',
+			settings: { },
+		} );
+
+		const document = createContainer( {
+			type: 'document',
+			children: [
+				section,
+			],
+		} );
+
+		// Act.
+		$e.run( 'container-converter/convert', { container: section } );
+
+		// Assert.
+		const expected = { ...sectionDefaultSettings };
+
+		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+	} );
+
+	it( 'Should migrate inner section settings', () => {
+		// Arrange.
+		const section = createContainer( {
+			type: 'section',
+			isInner: true,
+			settings: {
+				content_width: {
+					size: 100,
+					unit: '%',
+				},
+				content_width_tablet: {
+					size: 1,
+					unit: 'vw',
+				},
+				content_width_mobile: {
+					size: 200,
+					unit: 'px',
+				},
+			},
+		} );
+
+		const document = createContainer( {
+			type: 'document',
+			children: [
+				section,
+			],
+		} );
+
+		// Act.
+		$e.run( 'container-converter/convert', { container: section } );
+
+		// Assert.
+		const expected = {
+			...sectionDefaultSettings,
+			width: {
+				size: 100,
+				unit: '%',
+			},
+			width_tablet: {
+				size: 1,
+				unit: 'vw',
+			},
+			width_mobile: {
+				size: 200,
+				unit: 'px',
+			},
+			content_width: 'full',
 		};
 
 		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -396,6 +476,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 				size: 30,
 				unit: 'px',
 			},
+			content_width: 'full', // Default setting.
 		};
 
 		expect( document.children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
@@ -444,7 +525,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 	} );
 } );
 
-function createContainer( { type, widgetType, id, settings = {}, children = [], index = 0, ...args } ) {
+function createContainer( { type, widgetType, id, settings = {}, children = [], index = 0, isInner = false, ...args } ) {
 	const container = {
 		id,
 		type,
@@ -464,6 +545,10 @@ function createContainer( { type, widgetType, id, settings = {}, children = [], 
 
 				return map[ key ];
 			},
+			toJSON: () => ( {
+				elType: type,
+				isInner,
+			} ),
 		},
 		...args,
 	};

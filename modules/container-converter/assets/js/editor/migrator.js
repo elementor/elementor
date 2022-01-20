@@ -10,14 +10,22 @@ export default class Migrator {
 	static config = {
 		section: {
 			legacyControlsMapping: sectionMaps,
-			normalizeSettings: ( settings ) => ( {
+			normalizeSettings: ( settings, { isInner } ) => ( {
 				...settings,
-				flex_align_items: settings.flex_align_items || 'center',
 				flex_direction: 'row', // Force it to be row.
+				// Defaults (since default settings are removed):
+				flex_align_items: settings.flex_align_items || 'stretch',
+				flex_gap: settings.flex_gap || { size: 10, unit: 'px' },
+				// Inner section overrides:
+				...( isInner ? { content_width: 'full' } : {} ),
 			} ),
 		},
 		column: {
 			legacyControlsMapping: columnMaps,
+			normalizeSettings: ( settings ) => ( {
+				...settings,
+				content_width: 'full',
+			} ),
 		},
 	};
 
@@ -68,10 +76,12 @@ export default class Migrator {
 	/**
 	 * Get a mapping object of Legacy-to-Container controls mapping.
 	 *
+	 * @param {Object} model - Element model.
+	 *
 	 * @return {Object}
 	 */
-	static getLegacyControlsMapping( elType ) {
-		const config = this.config[ elType ];
+	static getLegacyControlsMapping( model ) {
+		const config = this.config[ model.elType ];
 
 		if ( ! config ) {
 			return {};
@@ -79,24 +89,24 @@ export default class Migrator {
 
 		const { legacyControlsMapping: mapping } = config;
 
-		return ( 'function' === typeof mapping ) ? mapping() : mapping;
+		return ( 'function' === typeof mapping ) ? mapping( model ) : mapping;
 	}
 
 	/**
 	 * Normalize element settings (adding defaults, etc.) by elType,
 	 *
-	 * @param {string} elType - Element type.
+	 * @param {Object} model - Element model.
 	 * @param {Object} settings - Settings object after migration.
 	 *
 	 * @return {Object} - normalized settings.
 	 */
-	static normalizeSettings( elType, settings ) {
-		const config = this.config[ elType ];
+	static normalizeSettings( model, settings ) {
+		const config = this.config[ model.elType ];
 
 		if ( ! config.normalizeSettings ) {
 			return settings;
 		}
 
-		return config.normalizeSettings( settings );
+		return config.normalizeSettings( settings, model );
 	}
 }

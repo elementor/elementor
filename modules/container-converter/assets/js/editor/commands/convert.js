@@ -50,11 +50,13 @@ export class Convert extends CommandHistory {
 			return;
 		}
 
-		const controlsMapping = Migrator.getLegacyControlsMapping( elType );
+		const model = container.model.toJSON();
+
+		const controlsMapping = Migrator.getLegacyControlsMapping( model );
 		let settings = container.settings.toJSON( { remove: 'default' } );
 
 		settings = Migrator.migrate( settings, controlsMapping );
-		settings = Migrator.normalizeSettings( elType, settings );
+		settings = Migrator.normalizeSettings( model, settings );
 
 		const newContainer = $e.run( 'document/elements/create', {
 			model: { elType: 'container', settings },
