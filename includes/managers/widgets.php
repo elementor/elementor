@@ -105,7 +105,6 @@ class Widgets_Manager {
 			'elementor/widgets/register'
 		);
 
-
 		/**
 		 * After widgets registered.
 		 *

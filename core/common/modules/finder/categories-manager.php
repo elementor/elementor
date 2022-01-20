@@ -62,6 +62,7 @@ class Categories_Manager {
 	 * @return void
 	 */
 	public function register( Base_Category $finder_category_instance, $finder_category_name = null ) {
+		// TODO: For BC. Remove in the future.
 		if ( $finder_category_name ) {
 			Plugin::instance()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_argument(
 				'$finder_category_name', '3.5.0'
