@@ -56,68 +56,6 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 		];
 
-		$fields['size'] = [
-			'label' => esc_html_x( 'Size', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::CHOOSE,
-			'default' => '',
-			'options' => [
-				'none' => [
-					'title' => esc_html_x( 'None', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-ban',
-				],
-				'grow' => [
-					'title' => esc_html_x( 'Grow', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-grow',
-				],
-				'shrink' => [
-					'title' => esc_html_x( 'Shrink', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-shrink',
-				],
-				'custom' => [
-					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
-					'icon' => 'eicon-ellipsis-v',
-				],
-			],
-			'selectors_dictionary' => [
-				'grow' => '--flex-grow: 1; --flex-shrink: 0;',
-				'shrink' => '--flex-grow: 0; --flex-shrink: 1;',
-				'custom' => '',
-				'none' => '--flex-grow: 0; --flex-shrink: 0;',
-			],
-			'selectors' => [
-				'{{SELECTOR}}' => '{{VALUE}};',
-			],
-			'responsive' => true,
-		];
-
-		$fields['grow'] = [
-			'label' => esc_html_x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'selectors' => [
-				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
-			],
-			'default' => 1,
-			'placeholder' => 1,
-			'responsive' => true,
-			'condition' => [
-				'size' => 'custom',
-			],
-		];
-
-		$fields['shrink'] = [
-			'label' => esc_html_x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
-			'type' => Controls_Manager::NUMBER,
-			'selectors' => [
-				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
-			],
-			'default' => 1,
-			'placeholder' => 1,
-			'responsive' => true,
-			'condition' => [
-				'size' => 'custom',
-			],
-		];
-
 		$fields['align_self'] = [
 			'label' => esc_html_x( 'Align Self', 'Flex Item Control', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
@@ -189,6 +127,68 @@ class Group_Control_Flex_Item extends Group_Control_Base {
 			'responsive' => true,
 			'condition' => [
 				'order' => 'custom',
+			],
+		];
+
+		$fields['size'] = [
+			'label' => esc_html_x( 'Size', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::CHOOSE,
+			'default' => '',
+			'options' => [
+				'none' => [
+					'title' => esc_html_x( 'None', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ban',
+				],
+				'grow' => [
+					'title' => esc_html_x( 'Grow', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-grow',
+				],
+				'shrink' => [
+					'title' => esc_html_x( 'Shrink', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-shrink',
+				],
+				'custom' => [
+					'title' => esc_html_x( 'Custom', 'Flex Item Control', 'elementor' ),
+					'icon' => 'eicon-ellipsis-v',
+				],
+			],
+			'selectors_dictionary' => [
+				'grow' => '--flex-grow: 1; --flex-shrink: 0;',
+				'shrink' => '--flex-grow: 0; --flex-shrink: 1;',
+				'custom' => '',
+				'none' => '--flex-grow: 0; --flex-shrink: 0;',
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => '{{VALUE}};',
+			],
+			'responsive' => true,
+		];
+
+		$fields['grow'] = [
+			'label' => esc_html_x( 'Flex Grow', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'selectors' => [
+				'{{SELECTOR}}' => '--flex-grow: {{VALUE}};',
+			],
+			'default' => 1,
+			'placeholder' => 1,
+			'responsive' => true,
+			'condition' => [
+				'size' => 'custom',
+			],
+		];
+
+		$fields['shrink'] = [
+			'label' => esc_html_x( 'Flex Shrink', 'Flex Item Control', 'elementor' ),
+			'type' => Controls_Manager::NUMBER,
+			'selectors' => [
+				'{{SELECTOR}}' => '--flex-shrink: {{VALUE}};',
+			],
+			'default' => 1,
+			'placeholder' => 1,
+			'responsive' => true,
+			'condition' => [
+				'size' => 'custom',
 			],
 		];
 
