@@ -36,8 +36,16 @@ export class Convert extends CommandHistory {
 
 		// Copy the element as is without converting.
 		if ( ! Migrator.canConvertToContainer( elType ) ) {
-			$e.run( 'document/elements/copy', { container } );
-			$e.run( 'document/elements/paste', { container: rootContainer, at } );
+			$e.run( 'document/elements/create', {
+				model: {
+					elType: container.model.get( 'elType' ),
+					widgetType: container.model.get( 'widgetType' ),
+					settings: container.settings.toJSON( { remove: 'default' } ),
+				},
+				container: rootContainer,
+				options: { at },
+				edit: false,
+			} );
 
 			return;
 		}
@@ -52,6 +60,7 @@ export class Convert extends CommandHistory {
 			model: { elType: 'container', settings },
 			container: rootContainer,
 			options: { at },
+			edit: false,
 		} );
 
 		// Recursively convert children to Containers.

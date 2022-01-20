@@ -2,12 +2,10 @@ import { Convert } from 'elementor/modules/container-converter/assets/js/editor/
 
 describe( `$e.run( 'container-converter/convert' )`, () => {
 	beforeEach( () => {
-		let clipboard = null;
-
 		const eCreate = ( args ) => {
 			const newContainer = createContainer( {
 				type: args.model.elType,
-				settings: args.model.settings,
+				...args.model,
 			} );
 
 			const { at = 0 } = args.options;
@@ -23,24 +21,6 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 				switch ( id ) {
 					case 'document/elements/create':
 						return eCreate( args );
-
-					case 'document/elements/copy':
-						clipboard = {
-							elType: args.container.type,
-							settings: args.container.settings.toJSON(),
-						};
-						break;
-
-					case 'document/elements/paste':
-						eCreate( {
-							container: args.container,
-							model: clipboard,
-							options: {
-								at: args.at,
-							},
-						} );
-						clipboard = null;
-						break;
 
 					case 'container-converter/convert':
 						Convert.convert( args );
@@ -73,16 +53,16 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 		const column1 = createContainer( {
 			type: 'column',
 			children: [
-				createContainer( { type: 'widget' } ),
-				createContainer( { type: 'widget' } ),
+				createContainer( { type: 'widget', widgetType: 'button' } ),
+				createContainer( { type: 'widget', widgetType: 'image' } ),
 			],
 		} );
 
 		const column2 = createContainer( {
 			type: 'column',
 			children: [
-				createContainer( { type: 'widget' } ),
-				createContainer( { type: 'widget' } ),
+				createContainer( { type: 'widget', widgetType: 'heading' } ),
+				createContainer( { type: 'widget', widgetType: 'text' } ),
 			],
 		} );
 
@@ -123,11 +103,15 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		expect( migrated.column1.type ).toBe( 'container' );
 		expect( migrated.widget1_1.type ).toBe( 'widget' );
+		expect( migrated.widget1_1.model.get( 'widgetType' ) ).toBe( 'button' );
 		expect( migrated.widget1_2.type ).toBe( 'widget' );
+		expect( migrated.widget1_2.model.get( 'widgetType' ) ).toBe( 'image' );
 
 		expect( migrated.column2.type ).toBe( 'container' );
 		expect( migrated.widget2_1.type ).toBe( 'widget' );
+		expect( migrated.widget2_1.model.get( 'widgetType' ) ).toBe( 'heading' );
 		expect( migrated.widget2_2.type ).toBe( 'widget' );
+		expect( migrated.widget2_2.model.get( 'widgetType' ) ).toBe( 'text' );
 	} );
 
 	it( 'Should migrate section settings', () => {
@@ -416,9 +400,51 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		expect( document.children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
+
+	it( 'Should migrate widget settings', () => {
+		// Arrange.
+		const button = createContainer( {
+			type: 'widget',
+			widgetType: 'button',
+			settings: {
+				some_settings_that_should_stay: 123,
+			},
+		} );
+
+		const column = createContainer( {
+			type: 'column',
+			children: [
+				button,
+			],
+		} );
+
+		const section = createContainer( {
+			type: 'section',
+			children: [
+				column,
+			],
+		} );
+
+		const document = createContainer( {
+			type: 'document',
+			children: [
+				section,
+			],
+		} );
+
+		// Act.
+		$e.run( 'container-converter/convert', { container: section } );
+
+		// Assert.
+		const expected = {
+			some_settings_that_should_stay: 123,
+		};
+
+		expect( document.children[ 0 ].children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+	} );
 } );
 
-function createContainer( { type, id, settings = {}, children = [], index = 0 } ) {
+function createContainer( { type, widgetType, id, settings = {}, children = [], index = 0, ...args } ) {
 	const container = {
 		id,
 		type,
@@ -429,6 +455,17 @@ function createContainer( { type, id, settings = {}, children = [], index = 0 } 
 			} ),
 		},
 		children,
+		model: {
+			get: ( key ) => {
+				const map = {
+					elType: type,
+					widgetType,
+				};
+
+				return map[ key ];
+			},
+		},
+		...args,
 	};
 
 	children.forEach( ( child, i ) => {

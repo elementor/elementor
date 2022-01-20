@@ -3,6 +3,25 @@ import columnMaps from './maps/column';
 
 export default class Migrator {
 	/**
+	 * Migrations configuration by `elType`.
+	 *
+	 * @type {Object}
+	 */
+	static config = {
+		section: {
+			legacyControlsMapping: sectionMaps,
+			normalizeSettings: ( settings ) => ( {
+				...settings,
+				flex_align_items: settings.flex_align_items || 'center',
+				flex_direction: 'row', // Force it to be row.
+			} ),
+		},
+		column: {
+			legacyControlsMapping: columnMaps,
+		},
+	};
+
+	/**
 	 * Migrate element settings into new settings object, using a map object.
 	 *
 	 * @param {Object} settings - Settings to migrate.
@@ -43,7 +62,7 @@ export default class Migrator {
 	 * @return {boolean}
 	 */
 	static canConvertToContainer( elType ) {
-		return [ 'section', 'column' ].includes( elType );
+		return Object.keys( this.config ).includes( elType );
 	}
 
 	/**
@@ -52,16 +71,15 @@ export default class Migrator {
 	 * @return {Object}
 	 */
 	static getLegacyControlsMapping( elType ) {
-		switch ( elType ) {
-			case 'section':
-				return sectionMaps();
+		const config = this.config[ elType ];
 
-			case 'column':
-				return columnMaps();
-
-			default:
-				return {};
+		if ( ! config ) {
+			return {};
 		}
+
+		const { legacyControlsMapping: mapping } = config;
+
+		return ( 'function' === typeof mapping ) ? mapping() : mapping;
 	}
 
 	/**
@@ -73,16 +91,12 @@ export default class Migrator {
 	 * @return {Object} - normalized settings.
 	 */
 	static normalizeSettings( elType, settings ) {
-		switch ( elType ) {
-			case 'section':
-				return {
-					...settings,
-					flex_align_items: settings.flex_align_items || 'center',
-					flex_direction: 'row', // Force it to be row.
-				};
+		const config = this.config[ elType ];
 
-			default:
-				return settings;
+		if ( ! config.normalizeSettings ) {
+			return settings;
 		}
+
+		return config.normalizeSettings( settings );
 	}
 }

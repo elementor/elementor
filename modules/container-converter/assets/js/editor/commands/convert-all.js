@@ -14,5 +14,7 @@ export class ConvertAll extends CommandHistory {
 		[ ...children ].forEach( ( container ) => {
 			$e.run( 'container-converter/convert', { container } );
 		} );
+
+		return Promise.resolve();
 	}
 }
