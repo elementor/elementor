@@ -14,7 +14,7 @@
 	--padding-bottom: var( --container-default-padding, 10px );
 	--padding-left: var( --container-default-padding, 10px );
 	--position: relative;
-	--z-index: auto;
+	--z-index: 0;
 	--overflow: visible;
 	--transition: 0;
 	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.

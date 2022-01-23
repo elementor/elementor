@@ -109,37 +109,6 @@ class Settings_Layout extends Tab_Base {
 			]
 		);
 
-		if ( $is_container_active ) {
-			$this->add_control(
-				'container_default_padding',
-				[
-					'label' => esc_html__( 'Container Default Padding', 'elementor' ),
-					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ 'px', 'vw' ],
-					'range' => [
-						'px' => [
-							'min' => 0,
-							'max' => 500,
-						],
-						'vw' => [
-							'min' => 0,
-							'max' => 100,
-						],
-					],
-					'default' => [
-						'size' => 10,
-						'unit' => 'px',
-					],
-					'placeholder' => [
-						'size' => '10',
-					],
-					'selectors' => [
-						'.e-container' => '--container-default-padding: {{SIZE}}{{UNIT}}',
-					],
-				]
-			);
-		}
-
 		$this->add_control(
 			'page_title_selector',
 			[

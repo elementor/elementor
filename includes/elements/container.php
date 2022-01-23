@@ -1168,6 +1168,9 @@ class Container extends Element_Base {
 					'align_self',
 					'order',
 					'order_custom',
+					'size',
+					'grow',
+					'shrink',
 				],
 				'selector' => '{{WRAPPER}}.e-container', // Hack to increase specificity.
 				'separator' => 'before',

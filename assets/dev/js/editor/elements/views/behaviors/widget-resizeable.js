@@ -100,7 +100,8 @@ export default class extends Marionette.Behavior {
 		const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
 			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
 			editModel = this.view.getEditModel(),
-			widthKey = ( 'container' === this.view.model.get( 'elType' ) ) ? 'width' : '_element_custom_width',
+			isContainer = ( 'container' === this.view.model.get( 'elType' ) ),
+			widthKey = isContainer ? 'width' : '_element_custom_width',
 			unit = editModel.getSetting( widthKey + deviceSuffix ).unit,
 			width = elementor.helpers.elementSizeToUnit( this.$el, ui.size.width, unit ),
 			settingToChange = {};
@@ -108,6 +109,10 @@ export default class extends Marionette.Behavior {
 		// TODO: For BC controls.
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			settingToChange._flex_size = 'none';
+
+			if ( isContainer ) {
+				settingToChange.content_width = 'full';
+			}
 		} else {
 			settingToChange[ '_element_width' + deviceSuffix ] = 'initial';
 		}
