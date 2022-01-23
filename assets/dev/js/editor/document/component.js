@@ -39,8 +39,6 @@ export default class Component extends ComponentBase {
 	}
 
 	registerAPI() {
-		new BackwardsCompatibility();
-
 		Object.values( components ).forEach( ( ComponentClass ) =>
 			$e.components.register( new ComponentClass )
 		);
