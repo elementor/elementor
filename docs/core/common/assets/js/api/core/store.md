@@ -22,7 +22,7 @@
 
 
 ## Example:
-Defining and consuming a global state inside a component is fairly easy after you understand the basic concepts.
+Defining and consuming a global state inside a component is fairly easy after understanding the basic concepts.
 Here is an example of a component with basic Slices configuration:
 
 ```javascript
@@ -79,7 +79,7 @@ defaultStates() {
 // More component code....
 ```
 
-Later on, you can use the `subscribe()` method in order to listen to changes, and the`dispatch()` method (with the appropriate *Action*) in order to call a *Reducer*:
+Later on, the `subscribe()` method can be used in order to listen to changes, and the`dispatch()` method (with the appropriate *Action*) in order to call a *Reducer*:
 ```javascript
 const unsubscribe = $e.store.subscribe( () => {
 	const state = $e.store.getState();
@@ -96,7 +96,7 @@ $e.store.dispatch( setCount( 10 ) ); // Will execute the `setCount` reducer.
 unsubscribe(); // Will stop listening to changes.
 ```
 
-You can also use it inside a React application, just like the regular Redux store:
+The store can also be used inside a React application, just like the regular Redux store:
 ```javascript
 import { Provider, useDispatch, useSelector } from 'react-redux';
 
