@@ -67,7 +67,7 @@ class Library extends Common_App {
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
-				'subscription_plans' => $connect->get_subscription_plans( 'panel-library' ),
+				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			],
