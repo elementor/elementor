@@ -10,9 +10,7 @@ export default function ConnectionButton() {
 			return;
 		}
 
-		jQuery( buttonRef.current ).elementorConnect( {
-			UTM: () => '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar&source=generic',
-		} );
+		jQuery( buttonRef.current ).elementorConnect();
 	}, [] );
 
 	let tooltipText = __( 'Connect your account to get access to Elementor\'s Template Library & more.', 'elementor' ),

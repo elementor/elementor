@@ -91,6 +91,20 @@ abstract class Controls_Stack extends Base_Object {
 	private $config;
 
 	/**
+	 * The additional configuration.
+	 *
+	 * Holds additional configuration that has been set using `set_config` method.
+	 * The `config` property is not modified directly while using the method because
+	 * it's used to check whether the initial config already loaded (in `get_config`).
+	 * After the initial config loaded, the additional config is merged into it.
+	 *
+	 * @access private
+	 *
+	 * @var null|array
+	 */
+	private $additional_config = [];
+
+	/**
 	 * Current section.
 	 *
 	 * Holds the current section while inserting a set of controls sections.
@@ -996,6 +1010,14 @@ abstract class Controls_Stack extends Base_Object {
 			} else {
 				$this->config = $this->get_initial_config();
 			}
+
+			foreach ( $this->additional_config as $key => $value ) {
+				if ( isset( $this->config[ $key ] ) ) {
+					$this->config[ $key ] = wp_parse_args( $value, $this->config[ $key ] );
+				} else {
+					$this->config[ $key ] = $value;
+				}
+			}
 		}
 
 		return $this->config;
@@ -1010,12 +1032,10 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 */
 	public function set_config( $key, $value ) {
-		$this->config = $this->get_config();
-
-		if ( isset( $this->config[ $key ] ) && is_array( $this->config[ $key ] ) && is_array( $value ) ) {
-			$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
+		if ( isset( $this->additional_config[ $key ] ) ) {
+			$this->additional_config[ $key ] = wp_parse_args( $value, $this->additional_config[ $key ] );
 		} else {
-			$this->config[ $key ] = $value;
+			$this->additional_config[ $key ] = $value;
 		}
 	}
 
