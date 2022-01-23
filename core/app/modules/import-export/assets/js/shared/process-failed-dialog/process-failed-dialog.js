@@ -19,7 +19,8 @@ const messagesContent = {
 			text: __( 'Elementor is not authorized to read or write from this file. Contact your site host.', 'elementor' ),
 		},
 	},
-	dialogTitle = __( 'Something went wrong.', 'elementor' );
+	dialogTitle = __( 'Something went wrong.', 'elementor' ),
+	tryAgainText = __( 'Try Again', 'elementor' );
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton } ) {
 	const action = useAction(),
@@ -54,7 +55,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			title={ dialogTitle }
 			text={ text }
 			approveButtonColor="link"
-			approveButtonText={ isTryAgainAction ? __( 'Try Again', 'elementor' ) : approveButton }
+			approveButtonText={ isTryAgainAction ? tryAgainText : approveButton }
 			approveButtonOnClick={ handleOnApprove }
 			dismissButtonText={ dismissButton }
 			dismissButtonOnClick={ handleOnDismiss }
