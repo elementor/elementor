@@ -86,17 +86,17 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 
 		// Assert.
 		const migrated = {
-			section: document.children[ 0 ],
-			column1: document.children[ 0 ].children[ 0 ],
-			widget1_1: document.children[ 0 ].children[ 0 ].children[ 0 ],
-			widget1_2: document.children[ 0 ].children[ 0 ].children[ 1 ],
-			column2: document.children[ 0 ].children[ 1 ],
-			widget2_1: document.children[ 0 ].children[ 1 ].children[ 0 ],
-			widget2_2: document.children[ 0 ].children[ 1 ].children[ 1 ],
+			section: document.children[ 1 ],
+			column1: document.children[ 1 ].children[ 0 ],
+			widget1_1: document.children[ 1 ].children[ 0 ].children[ 0 ],
+			widget1_2: document.children[ 1 ].children[ 0 ].children[ 1 ],
+			column2: document.children[ 1 ].children[ 1 ],
+			widget2_1: document.children[ 1 ].children[ 1 ].children[ 0 ],
+			widget2_2: document.children[ 1 ].children[ 1 ].children[ 1 ],
 		};
 
 		// Make sure the original section is the same.
-		expect( document.children[ 1 ] ).toBe( section );
+		expect( document.children[ 0 ] ).toBe( section );
 
 		// Verify the migrated elements.
 		expect( migrated.section.type ).toBe( 'container' );
@@ -203,7 +203,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			flex_align_items: 'flex-start',
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate section settings -- Height = Full', () => {
@@ -234,7 +234,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			},
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate section settings -- Height = Min height -- Uses default', () => {
@@ -265,7 +265,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			},
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate section settings -- Height = Min height -- Uses custom height', () => {
@@ -300,7 +300,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			},
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate section settings -- Gap = Custom', () => {
@@ -335,7 +335,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			},
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate section settings -- Defaults', () => {
@@ -358,7 +358,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 		// Assert.
 		const expected = { ...sectionDefaultSettings };
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate inner section settings', () => {
@@ -410,7 +410,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			content_width: 'full',
 		};
 
-		expect( document.children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate column settings', () => {
@@ -479,7 +479,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			content_width: 'full', // Default setting.
 		};
 
-		expect( document.children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 
 	it( 'Should migrate widget settings', () => {
@@ -521,7 +521,7 @@ describe( `$e.run( 'container-converter/convert' )`, () => {
 			some_settings_that_should_stay: 123,
 		};
 
-		expect( document.children[ 0 ].children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
+		expect( document.children[ 1 ].children[ 0 ].children[ 0 ].settings.toJSON() ).toStrictEqual( expected );
 	} );
 } );
 

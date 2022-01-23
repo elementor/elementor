@@ -20,7 +20,7 @@ export class Convert extends CommandHistory {
 	/**
 	 * Convert an element to Container.
 	 *
-	 * TODO: It's static in order to be able to test that without initializing the whole editor in a browser.
+	 * TODO: It's static in order to be able to test it without initializing the whole editor in a browser.
 	 *  Should be moved to `apply()` when there is a proper way to test commands using jest.
 	 *
 	 * @param {Container} container - Element to convert.
@@ -29,10 +29,12 @@ export class Convert extends CommandHistory {
 	 * @return {void}
 	 */
 	static convert( { container, rootContainer = container.parent } ) {
-		const { view, type: elType } = container;
+		const { view, type: elType } = container,
+			isFirst = ( rootContainer === container.parent );
 
 		// TODO: Maybe use `view._parent.collection.indexOf( this.model )`.
-		const at = view._index;
+		// Get the converted element index. The first converted element should be put after the original one.
+		const at = isFirst ? view._index + 1 : view._index;
 
 		// Copy the element as is without converting.
 		if ( ! Migrator.canConvertToContainer( elType ) ) {
