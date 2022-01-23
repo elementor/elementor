@@ -1,5 +1,5 @@
 import ContainerFactory from '../../../container-factory';
-import { MediaParser } from 'elementor-editor/components/browser-import/files/parsers/base';
+import { MediaParser } from '../base';
 
 export class Widget extends MediaParser {
 	/**
@@ -32,22 +32,27 @@ export class Widget extends MediaParser {
 				},
 			} );
 
-		this.upload( file ).then( ( result ) => {
+		this.upload( file ).then( ( { data } ) => {
 			$e.internal( 'document/elements/set-settings', {
 				// The reason we use the container id and not the container instance itself is that the container
 				// created above is just a placeholder, which later recreated using the same id.
 				container: elementor.getContainer( container.id ),
 				settings: {
 					image: {
-						url: result.data.source_url,
-						id: result.data.id,
+						url: data.source_url,
+						id: data.id,
 					},
 				},
 			} );
 		} ).catch( () => {
-			$e.run( 'document/elements/delete', {
+			elementor.documents.getCurrent().history.setActive( false );
+
+			$e.run( 'document/elements/reset-settings', {
 				container: elementor.getContainer( container.id ),
+				options: { external: true },
 			} );
+
+			elementor.documents.getCurrent().history.setActive( true );
 		} );
 
 		return container;

@@ -118,6 +118,7 @@ export default function ImportProcess() {
 				<FileProcess
 					info={ uploadedData && __( 'Importing your content, templates and site settings', 'elementor' ) }
 					errorType={ errorType }
+					onDialogApprove={ onCancelProcess }
 					onDialogDismiss={ onCancelProcess }
 				/>
 

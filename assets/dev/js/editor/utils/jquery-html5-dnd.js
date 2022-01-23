@@ -354,8 +354,10 @@
 					},
 				} );
 			} else {
+				const dragged = elementor.channels.panelElements.request( 'element:selected' )?.model.attributes;
+
 				settings.getDropContainer().view.createElementFromModel(
-					elementor.channels.panelElements.request( 'element:selected' )?.model.attributes,
+					{ elType: dragged.elType, widgetType: dragged.widgetType, custom: dragged.custom },
 					{
 						at: settings.getDropIndex( currentSide, event ),
 					}
