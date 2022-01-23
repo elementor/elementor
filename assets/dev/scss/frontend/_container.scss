@@ -49,7 +49,7 @@
 	transition: var( --transition );
 
 	// Force center only top-level containers.
-	:is( .elementor-section-wrap, [data-elementor-type = "wp-page"] ) > & {
+	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
 		margin-right: auto;
 		margin-left: auto;
 	}
@@ -183,7 +183,7 @@
 				}
 
 				// Extended actions ("editing handles").
-				&:is( .elementor-editor-element-duplicate, .elementor-editor-element-remove ) {
+				&:not( .elementor-editor-element-edit ) {
 					margin-inline-start: -25px;
 					z-index: -1;
 					transition: .3s all;
