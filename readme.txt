@@ -188,7 +188,7 @@ No. Elementor supports WordPress 5.0 or greater, and is compatible with PHP 5.6 
 
 See Elementor Developer Edition versions changelog [here](https://go.elementor.com/dev-changelog/)
 
-= 3.5.4 - 2022-01-19 =
+= 3.5.4 - 2022-01-23 =
 * Tweak: Update `e-icons` library to `v5.14.0`
 * Fix: Can't edit the page if Favorite Widgets are in use in edge cases ([#17364](https://github.com/elementor/elementor/issues/17364))
 * Fix: `onError` throws an error because of bad parameters in Debug Util ([#14571](https://github.com/elementor/elementor/issues/14571))
