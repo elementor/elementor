@@ -6,19 +6,20 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
 
 const messagesContent = {
-	general: {
-		text: __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ),
+		general: {
+			text: __( 'Nothing to worry about, just try again. If the problem continues, head over to the Help Center.', 'elementor' ),
+		},
+		'zip-archive-module-not-installed': {
+			text: __( 'Install a PHP zip on your server or contact your site host.', 'elementor' ),
+		},
+		'manifest-error': {
+			text: __( 'There is an error with the manifest file. Try importing again with a new kit file.', 'elementor' ),
+		},
+		'no-write-permissions': {
+			text: __( 'Elementor is not authorized to read or write from this file. Contact your site host.', 'elementor' ),
+		},
 	},
-	'zip-archive-module-not-installed': {
-		text: __( 'Install a PHP zip on your server or contact your site host.', 'elementor' ),
-	},
-	'manifest-error': {
-		text: __( 'There is an error with the manifest file. Try importing again with a new kit file.', 'elementor' ),
-	},
-	'no-write-permissions': {
-		text: __( 'Elementor is not authorized to read or write from this file. Contact your site host.', 'elementor' ),
-	},
-};
+	dialogTitle = __( 'Something went wrong.', 'elementor' );
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton } ) {
 	const action = useAction(),
@@ -50,7 +51,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 
 	return (
 		<Dialog
-			title={ __( 'Something went wrong.', 'elementor' ) }
+			title={ dialogTitle }
 			text={ text }
 			approveButtonColor="link"
 			approveButtonText={ isTryAgainAction ? __( 'Try Again', 'elementor' ) : approveButton }
