@@ -247,6 +247,7 @@
 						"software",
 						"mysql_version",
 						"php_version",
+						"php_memory_limit",
 						"php_max_input_vars",
 						"php_max_post_size",
 						"gd_installed",
@@ -287,6 +288,15 @@
 							"title": "PHP version",
 							"examples": [
 								"7.2.34"
+							]
+						},
+						"php_memory_limit": {
+							"$id": "#/system/server/memory_limit",
+							"type": "string",
+							"title": "PHP Memory limit",
+							"description": "Describes the maximum memory allowed by PHP Server.",
+							"examples": [
+								"128M"
 							]
 						},
 						"php_max_input_vars": {

@@ -2,6 +2,7 @@
 namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Api;
+use WP_Site_Health;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,6 +48,7 @@ class Server extends Base {
 			'software' => 'Software',
 			'mysql_version' => 'MySQL version',
 			'php_version' => 'PHP Version',
+			'php_memory_limit' => 'PHP Memory Limit',
 			'php_max_input_vars' => 'PHP Max Input Vars',
 			'php_max_post_size' => 'PHP Max Post Size',
 			'gd_installed' => 'GD Installed',
@@ -119,6 +121,45 @@ class Server extends Base {
 
 		if ( version_compare( $result['value'], '5.4', '<' ) ) {
 			$result['recommendation'] = _x( 'We recommend to use php 5.4 or higher', 'System Info', 'elementor' );
+
+			$result['warning'] = true;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get PHP memory limit.
+	 *
+	 * Retrieve the PHP memory limit.
+	 *
+	 * @return array {
+	 *    Report data.
+	 *
+	 *    @type string $value          PHP memory limit.
+	 *    @type string $recommendation Recommendation memory limit.
+	 *    @type bool   $warning        Whether to display a warning. True if the limit
+	 *                                 is below the recommended 64M, False otherwise.
+	 * }
+	 */
+	public function get_php_memory_limit() {
+		$result = [
+			'value' => (string) WP_Site_Health::get_instance()->php_memory_limit,
+		];
+
+		$min_recommended_memory = '64M';
+
+		$memory_limit_bytes = wp_convert_hr_to_bytes( $result['value'] );
+
+		$min_recommended_bytes = wp_convert_hr_to_bytes( $min_recommended_memory );
+
+		if ( $memory_limit_bytes < $min_recommended_bytes ) {
+			$result['recommendation'] = sprintf(
+			/* translators: 1: Minimum recommended_memory, 2: WordPress wp-config memory documentation. */
+				_x( 'We recommend setting memory to at least %1$s. For more information, read about <a href="%2$s">how to Increase memory allocated to PHP</a>.', 'System Info', 'elementor' ),
+				$min_recommended_memory,
+				'https://go.elementor.com/wordpress-wp-config-memory/'
+			);
 
 			$result['warning'] = true;
 		}
