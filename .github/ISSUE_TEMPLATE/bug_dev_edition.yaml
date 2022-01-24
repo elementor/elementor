@@ -1,7 +1,7 @@
 name: "🐞 Bug Report - Dev Edition - unique"
 description: "Report a bug if something isn't working as expected in the Elementor development versions"
 title: "🐞 Bug report: "
-labels: [bug,dev-edition]
+labels: [bug,developer-edition]
 body:
   - type: markdown
     attributes:
@@ -26,9 +26,9 @@ body:
 
         - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
 
-        - Change your WordPress theme to WordPress TwentySixteen (or other default WordPress theme).
+        - Change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/) (or other default WordPress theme).
 
-        - If you're requesting a new feature, explain why you'd like it to be added. Try to add as much detail as you can, and be specific.
+        - If you're requesting a new feature, explain why you'd like it to be added in [the dedicated form](https://github.com/elementor/elementor/issues/new?assignees=&labels=&template=feature_request.yaml) and not in the bug report one.
 
         ## The Issue
   - type: checkboxes

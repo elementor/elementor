@@ -26,9 +26,9 @@ body:
 
         - Deactivate all of your plugins. If this solves the problem, gradually activate your plugins one by one, until you spot the problematic plugin.
 
-        - Change your WordPress theme to WordPress TwentyTwentyTwo (or other default WordPress theme).
+        - Change your WordPress theme to [Hello theme](https://wordpress.org/themes/hello-elementor/) (or other default WordPress theme).
 
-        - If you're requesting a new feature, explain why you'd like it to be added. Try to add as much detail as you can, and be specific.
+        - If you're requesting a new feature, explain why you'd like it to be added in [the dedicated form](https://github.com/elementor/elementor/issues/new?assignees=&labels=&template=feature_request.yaml) and not in the bug report one.
 
         ## The Issue
   - type: checkboxes
@@ -63,7 +63,7 @@ body:
       label: "Isolating the problem"
       options:
         - label: "This bug happens with only Elementor plugin active (and Elementor Pro)."
-        - label: "This bug happens with a default WordPress theme active."
+        - label: "This bug happens with a Blank WordPress theme active ([Hello theme](https://wordpress.org/themes/hello-elementor/))."
         - label: "I can reproduce this bug consistently using the steps above."
   - type: markdown
     attributes:

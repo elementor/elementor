@@ -1,7 +1,7 @@
-name: "🆕 Feature request - unique"
+name: "🚀 Feature request - unique"
 description: "Suggest an idea for this project"
-title: "🆕 Feature request: "
-labels: [feature]
+title: "🚀 Feature request: "
+labels: [request]
 body:
   - type: markdown
     attributes:
