@@ -350,6 +350,7 @@ abstract class Widget_Base extends Element_Base {
 			'categories' => $this->get_categories(),
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
+			'hide_on_search' => $this->isWidgetShouldBeHidden( $this->get_categories() ),
 		];
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
@@ -360,6 +361,31 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return array_replace_recursive( parent::get_initial_config(), $config );
+	}
+
+	/**
+	 * Check if widget should be displayed in search result according to widget categories.
+	 *
+	 * @param array $categories Widget categories.
+	 */
+	protected function isWidgetShouldBeHidden( $categories ) {
+		$categories_to_hide = [ 'wordpress', 'theme-elements-archive' ];
+		$is_hidden_wordpress_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_hidden_wordpress_widgets' );
+
+		foreach ( $categories_to_hide as $category_to_hide ) {
+			$is_category_exists = in_array( $category_to_hide, $categories, true );
+			$is_wordpress_category = 'wordpress' === $category_to_hide;
+
+			if ( $is_category_exists && ! $is_wordpress_category ) {
+				return true;
+			}
+
+			if ( $is_category_exists && $is_wordpress_category && $is_hidden_wordpress_feature_active ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
