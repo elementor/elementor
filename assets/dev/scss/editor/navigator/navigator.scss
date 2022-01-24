@@ -202,6 +202,13 @@ body {
 			}
 		}
 
+		> .elementor-navigator__item {
+
+			&.elementor-root {
+				display: none;
+			}
+		}
+
 		&__list-toggle {
 			@include margin-end(7px);
 			transition: transform .3s;

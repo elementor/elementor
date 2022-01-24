@@ -61,7 +61,7 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 	}, [ container ] );
 
 	useEffect( () => {
-		const onItemMouseEnter = () => {
+		const onItemMouseEnter = ( e ) => {
 				// Check whether sorting state of the navigator is active. Currently the sorting state is kept using
 				// dataset.
 				if ( 'true' !== document.getElementById( 'elementor-navigator' ).dataset.over ) {
@@ -73,22 +73,27 @@ export function useNavigatorJquerySortable( elementId, { setElementFolding } ) {
 					jQuery( listRef.current ).sortable( 'refreshPositions' );
 				}, 500 );
 
-				itemRef.current.classList.add( 'elementor-dragging-on-child' );
+				e.target.classList.add( 'elementor-dragging-on-child' );
 			},
-			onItemMouseLeave = () => {
+			onItemMouseLeave = ( e ) => {
 				if ( autoExpandTimerRef.current ) {
 					clearTimeout( autoExpandTimerRef.current );
 				}
 
-				itemRef.current.classList.remove( 'elementor-dragging-on-child' );
+				e.target.classList.remove( 'elementor-dragging-on-child' );
+			},
+			onHandleMouseDown = () => {
+				document.activeElement.blur();
 			};
 
 		itemRef.current.addEventListener( 'mouseenter', onItemMouseEnter );
 		itemRef.current.addEventListener( 'mouseleave', onItemMouseLeave );
+		handleRef.current.addEventListener( 'mousedown', onHandleMouseDown );
 
 		return () => {
 			itemRef.current.removeEventListener( 'mouseenter', onItemMouseEnter );
 			itemRef.current.removeEventListener( 'mouseleave', onItemMouseLeave );
+			handleRef.current.removeEventListener( 'mousedown', onHandleMouseDown );
 		};
 	}, [ container ] );
 

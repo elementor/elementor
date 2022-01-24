@@ -347,8 +347,6 @@ export default class EditorBase extends Marionette.Application {
 
 		this.hooks = new EventManager();
 
-		this.selection = new Selection();
-
 		this.settings = new Settings();
 
 		this.dynamicTags = new DynamicTags();
@@ -378,6 +376,8 @@ export default class EditorBase extends Marionette.Application {
 		this.browserImport = new BrowserImport();
 
 		this.documents = $e.components.register( new EditorDocumentsComponent() );
+
+		this.selection = new Selection();
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
 		if ( elementorCommon.config.experimentalFeatures[ 'landing-pages' ] ) {

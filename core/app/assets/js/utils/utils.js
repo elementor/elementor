@@ -22,32 +22,6 @@ export const arrayToClassName = ( array, action ) => {
 		.join( ' ' );
 };
 
-/**
- * Return the first element of an iterable (object/array) if it has only one value.
- *
- * @param iterable The values iterable (the first value is retrieved from it)
- * @param context The iterable that its length is being checked (defaults to the `iterable` argument)
- * @param fallback The value that will be returned if the context is empty
- * @returns {{}|[]|*}
- */
-export const firstIfSingle = ( iterable, { context = iterable, fallback } ) => {
-	iterable = 'object' === typeof iterable ?
-		Object.values( iterable ) :
-		iterable;
-
-	context = 'object' === typeof context ?
-		Object.values( context ) :
-		context;
-
-	if ( ! context.length && undefined !== fallback ) {
-		return fallback;
-	} else if ( 1 === context.length ) {
-		return iterable[ 0 ];
-	}
-
-	return iterable;
-};
-
 export const stringToRemValues = ( string ) => {
 	return string
 		.split( ' ' )

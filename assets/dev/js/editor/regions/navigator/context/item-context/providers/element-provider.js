@@ -7,7 +7,7 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	/**
 	 * The element's Container instance.
 	 *
-	 * @var {Container|false}
+	 * @type {Container|false}
 	 */
 	const container = useMemo(
 		() => elementor.getContainer( elementId ),
@@ -17,7 +17,7 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	/**
 	 * The element selector from store.
 	 *
-	 * @var {{}}
+	 * @type {{}}
 	 */
 	const element = useSelector(
 		( state ) => state[ 'document/elements' ][ elementId ]
@@ -26,7 +26,7 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	/**
 	 * Whether the is the document's tree root.
 	 *
-	 * @var {boolean}
+	 * @type {boolean}
 	 */
 	const root = useMemo(
 		() => 'document' === elementId,
@@ -34,31 +34,18 @@ export function ElementProvider( { itemId: elementId, level, ...props } ) {
 	);
 
 	/**
-	 * Whether the element usually contain children (regardless to nested elements).
-	 *
-	 * @var {boolean}
-	 */
-	const hasChildrenByDefault = useMemo(
-		() => {
-			return element.elType &&
-				( 'widget' !== element.elType || Boolean( element.elements.length ) );
-		},
-		[ elementId, element.elements ]
-	);
-
-	/**
 	 * The item representation of the element.
 	 *
-	 * @var {{}}
+	 * @type {{}}
 	 */
 	const item = useMemo(
 		() => ( {
 			settings: {},
 			elements: [],
-			title: container.model.getTitle?.(),
-			icon: container.model.getIcon?.(),
+			title: container.getTitle(),
+			icon: container.getIcon(),
 			root,
-			hasChildrenByDefault,
+			hasChildrenByDefault: container.hasChildrenByDefault,
 			...element,
 		} ),
 		[ container, element ]

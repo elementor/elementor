@@ -186,22 +186,6 @@ ElementModel = Backbone.Model.extend( {
 		this.trigger( 'remote:render' );
 	},
 
-	flatten: function() {
-		const serialized = this.toJSON();
-
-		const recursion = ( elements, context ) => {
-			return elements.reduce( ( previous, current ) => {
-				return previous.concat( [ {
-					...current,
-					elements: current.elements.map( ( _element ) => _element.id ),
-					parent: context.id,
-				} ] ).concat( recursion( current.elements, current ) );
-			}, [] );
-		};
-
-		return recursion( serialized.elements, serialized );
-	},
-
 	clone: function() {
 		var newModel = new this.constructor( elementorCommon.helpers.cloneObject( this.attributes ) );
 

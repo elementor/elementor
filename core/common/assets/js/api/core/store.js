@@ -129,6 +129,33 @@ export default class Store {
 	}
 
 	/**
+	 * Select and subscribe to a specific part of the store.
+	 *
+	 * @see https://github.com/reduxjs/redux/issues/303#issuecomment-125184409
+	 * @param select
+	 * @param onChange
+	 * @returns {*}
+	 */
+	selector( select, onChange ) {
+		let currentState;
+
+		const handleChange = () => {
+			const nextState = select( this.getState() );
+
+			if ( nextState !== currentState ) {
+				onChange( nextState, currentState );
+				currentState = nextState;
+			}
+		};
+
+		const unsubscribe = this.subscribe( handleChange );
+
+		handleChange();
+
+		return unsubscribe;
+	}
+
+	/**
 	 * Proxy to Redux's `getState()` function, with the ability to get a specific slice.
 	 *
 	 * @return {*}

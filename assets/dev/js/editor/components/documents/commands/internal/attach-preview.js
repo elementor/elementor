@@ -20,17 +20,9 @@ export class AttachPreview extends CommandInternalBaseBase {
 
 				elementor.trigger( 'document:loaded', document );
 
-				$e.store.dispatch(
-					$e.store.get( 'document/elements' ).actions.reset()
-				);
-
-				$e.store.dispatch(
-					$e.store.get( 'document/elements/selection' ).actions.reset()
-				);
-
-				$e.store.dispatch(
-					$e.store.get( 'navigator/folding' ).actions.reset()
-				);
+				// Reset all redux stores on document switch.
+				Object.entries( $e.store.get() )
+					.forEach( ( [ , { actions } ] ) => actions.reset() );
 
 				$e.store.dispatch(
 					$e.store.get( 'document/elements' ).actions.add( {

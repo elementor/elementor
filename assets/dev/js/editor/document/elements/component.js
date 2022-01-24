@@ -37,9 +37,10 @@ export default class Component extends ComponentBase {
 						} );
 					}
 
-					// Create reference on parent element
+					// Create reference on parent element. When the added container is the document (root), it has no
+					// parent to create a reference on.
 					if ( parent ) {
-						parent.elements.splice( index || parent.elements.length, 0, model.id );
+						parent.elements.splice( undefined !== index ? index : parent.elements.length, 0, model.id );
 					}
 				}
 			},
@@ -66,9 +67,7 @@ export default class Component extends ComponentBase {
 					delete state[ containerId ];
 
 					// Remove reference from parent element
-					if ( parent ) {
-						parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
-					}
+					parent.elements.splice( parent.elements.indexOf( containerId ), 1 );
 				}
 
 				return state;
@@ -94,7 +93,6 @@ export default class Component extends ComponentBase {
 				}
 			},
 			reset: ( state, { payload } ) => {
-				// Prepare
 				// Act
 				return {};
 			},
@@ -106,29 +104,30 @@ export default class Component extends ComponentBase {
 				reducers: defaultReducers,
 			},
 			selection: {
-				initialState: {},
+				initialState: [],
 				reducers: {
 					toggle: ( state, { payload } ) => {
 						// Prepare
 						const { containerIds = [ payload.containerId ], state: selectionState, all = false } = payload;
 
 						// Act
-						for ( const containerId of ( all ? Object.keys( state ) : containerIds ) ) {
+						for ( const containerId of ( all ? state : containerIds ) ) {
+							// When no `selectionState` provided, it means toggle, in which case the new state should be
+							// determined.
 							const newState = undefined === selectionState ?
-								! state[ containerId ] :
+								state.indexOf( containerId ) < 1 :
 								selectionState;
 
 							if ( newState ) {
-								state[ containerId ] = newState;
+								state.push( containerId );
 							} else {
-								delete state[ containerId ];
+								state.splice( state.indexOf( containerId ), 1 );
 							}
 						}
 					},
 					reset: ( state, { payload } ) => {
-						// Prepare
 						// Act
-						return {};
+						return [];
 					},
 				},
 			},

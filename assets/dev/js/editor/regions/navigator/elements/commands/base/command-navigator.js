@@ -21,6 +21,16 @@ export class CommandNavigator extends CommandBase {
 	shouldRequireContainer() {
 		return true;
 	}
+
+	/**
+	 * Folding currently allowed for elements which has children by default and which are not the root.
+	 *
+	 * @param container
+	 * @returns {boolean|*|boolean}
+	 */
+	isFoldingAllowed( container ) {
+		return container.hasChildrenByDefault && 'document' !== container.id;
+	}
 }
 
 export default CommandNavigator;

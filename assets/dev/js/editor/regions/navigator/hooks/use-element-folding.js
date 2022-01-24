@@ -5,7 +5,7 @@ export function useElementFolding( elementId ) {
 	/**
 	 * The element folding state from store.
 	 *
-	 * @var {boolean|{boolean}}
+	 * @type {boolean|{boolean}}
 	 */
 	const elementFolding = useSelector(
 		( state ) => {
@@ -49,7 +49,10 @@ export function useElementFolding( elementId ) {
 	}, [ elementId ] );
 
 	return [
-		elementFolding,
+		// If element folding state is undefined, the default is open.
+		undefined === elementFolding ?
+			true :
+			elementFolding,
 		setElementFolding,
 	];
 }

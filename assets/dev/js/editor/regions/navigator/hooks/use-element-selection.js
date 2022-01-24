@@ -5,7 +5,7 @@ export function useElementSelection( elementId ) {
 	/**
 	 * The element selection state from store.
 	 *
-	 * @var {boolean|{boolean}}
+	 * @type {boolean|{boolean}}
 	 */
 	const elementSelection = useSelector(
 		( state ) => {
@@ -13,7 +13,7 @@ export function useElementSelection( elementId ) {
 			const selector = state[ 'document/elements/selection' ];
 
 			if ( undefined !== elementId ) {
-				return selector[ elementId ];
+				return -1 !== selector.indexOf( elementId );
 			}
 
 			return selector;

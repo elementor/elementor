@@ -21,18 +21,20 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	/**
 	 * Manager constructor.
 	 *
-	 * @returns {Manager}
+	 * @constructor
 	 */
 	constructor() {
 		super();
 
 		// Subscribe to the selection state kept in redux.
-		$e.store.subscribe( () => {
-			this.elements = Object.fromEntries(
-				Object.keys( $e.store.getState( 'document/elements/selection' ) || {} )
-					.map( ( elementId ) => [ elementId, elementor.getContainer( elementId ) ] )
-			);
-		} );
+		$e.store.selector(
+			( state ) => state?.[ 'document/elements/selection' ],
+			( newState = [] ) => {
+				this.elements = Object.fromEntries( newState.map(
+					( elementId ) => [ elementId, elementor.getContainer( elementId ) ]
+				) );
+			}
+		);
 	}
 
 	/**

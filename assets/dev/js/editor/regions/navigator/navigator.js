@@ -87,7 +87,7 @@ export default class Navigator extends BaseRegion {
 	}
 
 	initLayout() {
-		ReactDOM.render( <NavigatorComponent />, this.$el[ 0 ] );
+		ReactDOM.render( <NavigatorComponent />, this.el );
 
 		this.$el.draggable( this.getDraggableOptions() );
 		this.$el.resizable( this.getResizableOptions() );

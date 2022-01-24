@@ -125,6 +125,14 @@ export default class Container extends ArgsObject {
 	placeholders = {};
 
 	/**
+	 * Whether the element usually contain children (regardless to nested elements). For example, section and columns
+	 * can contain elements by default, while widget is not.
+	 *
+	 * @type {boolean}
+	 */
+	hasChildrenByDefault = true;
+
+	/**
 	 * Function constructor().
 	 *
 	 * Create container.
@@ -453,6 +461,24 @@ export default class Container extends ArgsObject {
 		);
 
 		return this.children.forEachRecursive( callback );
+	}
+
+	/**
+	 * Get a suitable descriptive title for the element.
+	 *
+	 * @returns {*}
+	 */
+	getTitle() {
+		return this.model.getTitle?.();
+	}
+
+	/**
+	 * Get a suitable descriptive icon for the element.
+	 *
+	 * @returns {*}
+	 */
+	getIcon() {
+		return this.model.getIcon?.();
 	}
 
 	/**

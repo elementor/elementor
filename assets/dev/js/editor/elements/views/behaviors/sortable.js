@@ -240,7 +240,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 			return;
 		}
 
-		this.updateSort( ui, newIndex );
+		this.updateSort(
+			ui,
+			undefined === newIndex ?
+				this.getSortedElementNewIndex( ui.item ) :
+				newIndex
+		);
 	},
 
 	onAddChild: function( view ) {

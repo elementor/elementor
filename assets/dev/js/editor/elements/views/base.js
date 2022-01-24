@@ -109,10 +109,11 @@ BaseElementView = BaseContainer.extend( {
 
 	getContainer() {
 		if ( ! this.container ) {
-			const settingsModel = this.model.get( 'settings' );
+			const elType = this.model.get( 'elType' ),
+				settingsModel = this.model.get( 'settings' );
 
 			this.container = new elementorModules.editor.Container( {
-				type: this.model.get( 'elType' ),
+				type: elType,
 				id: this.model.id,
 				model: this.model,
 				settings: settingsModel,
@@ -120,6 +121,9 @@ BaseElementView = BaseContainer.extend( {
 				parent: this._parent ? this._parent.getContainer() : {},
 				label: elementor.helpers.getModelLabel( this.model ),
 				controls: settingsModel.options.controls,
+				// If this method is not defined in a children element view, undefined passed to the container, which
+				// result eventually set this property to a default value.
+				hasChildrenByDefault: this.hasChildrenByDefault?.(),
 			} );
 		}
 		return this.container;

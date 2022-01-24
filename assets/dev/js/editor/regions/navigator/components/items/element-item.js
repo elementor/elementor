@@ -2,7 +2,7 @@ import { arrayToClassName } from 'elementor-app/utils/utils';
 import { BASE_ITEM_CLASS } from './';
 import { ElementProvider } from '../../context/item-context/providers';
 import { ItemHandle, ItemIndicatorList, ItemList } from '../';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useElementFolding, useElementSelection, useNavigatorJquerySortable } from '../../hooks';
 import { useItemContext } from 'elementor-regions/navigator/context/item-context';
 import Icon from 'elementor-app/ui/atoms/icon';
@@ -12,14 +12,7 @@ export function ElementItem( { itemId: elementId, level } ) {
 	const ElementBody = () => {
 		const { item: element, container } = useItemContext(),
 			[ elementSelection, setElementSelection ] = useElementSelection( elementId ),
-			[ elementFolding, setElementFolding ] = ( () => {
-				// If element is the root element, or has no children by default (like widgets), folding capabilities
-				// are not initialized, and the element is not added to the folding state. This is important because
-				// the navigator toggle-all button state(up/down) should not consider those elements.
-				return element.root || ! element.hasChildrenByDefault ?
-					[ true, () => {} ] :
-					useElementFolding( elementId );
-			} )();
+			[ elementFolding, setElementFolding ] = useElementFolding( elementId );
 
 		/**
 		 * Set the element selection state in the store.
@@ -106,20 +99,20 @@ export function ElementItem( { itemId: elementId, level } ) {
 				onClick={ handleToggleSelection }
 				onContextMenu={ handleContextMenu }
 				data-id={ elementId }>
-				{ ! element.root &&
-					<ItemHandle
-						ref={ handleRef }
-						className={ arrayToClassName( [
-							{ 'elementor-active': elementFolding },
-							{ 'elementor-editing': elementSelection },
-						] ) }
-						onToggleFolding={ setElementFolding }
-						onTitleEdit={ handleTitleEdit }>
-						<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
-							<Icon className="eicon-preview-medium"/>
-						</div>
-						<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>
-					</ItemHandle> }
+				<ItemHandle
+					ref={ handleRef }
+					className={ arrayToClassName( [
+						{ 'elementor-active': elementFolding },
+						{ 'elementor-editing': elementSelection },
+						{ 'elementor-root': element.root },
+					] ) }
+					onToggleFolding={ setElementFolding }
+					onTitleEdit={ handleTitleEdit }>
+					<div className="elementor-navigator__element__toggle" onClick={ handleToggleVisibility }>
+						<Icon className="eicon-preview-medium"/>
+					</div>
+					<ItemIndicatorList settings={ element.settings } onActivateSection={ handleActivateSection }/>
+				</ItemHandle>
 				<div style={ { display: elementFolding ? 'block' : 'none' } }>
 					<ItemList ref={ listRef } items={ element.elements } indicateEmpty={ element.hasChildrenByDefault } />
 				</div>

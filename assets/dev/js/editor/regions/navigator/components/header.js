@@ -9,7 +9,7 @@ export function Header( { onClose } ) {
 	/**
 	 * Whether all elements folding state is open.
 	 *
-	 * @var boolean
+	 * @type boolean
 	 */
 	const isAllOpen = useMemo(
 		() => Object.values( elementsFolding ).every( ( state ) => state ),

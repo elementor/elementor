@@ -21,17 +21,33 @@ export function ItemTitle( { title, onTitleEdit } ) {
 	};
 
 	/**
-	 * Store the new title of the element when the user presses `Enter`. Also blur the span element to exit Edit-Mode.
+	 * Trigger blur event on the span element to exit Edit-Mode and store the title.
 	 *
-	 * @param e Event
+	 * @param e
 	 *
 	 * @void
 	 */
 	const handleKeyPress = ( e ) => {
 		if ( 'Enter' === e.key ) {
 			titleRef.current.blur();
-			onTitleEdit( titleRef.current.innerText );
 		}
+	};
+
+	/**
+	 * Store the new title of the element when the user presses `Enter`.
+	 *
+	 * @param e
+	 */
+	const handleBlur = ( e ) => {
+		const newTitle = titleRef.current.innerText;
+
+		if ( ! newTitle ) {
+			titleRef.current.innerText = title;
+		} else {
+			onTitleEdit( newTitle );
+		}
+
+		setEditMode( false );
 	};
 
 	return (
@@ -43,7 +59,7 @@ export function ItemTitle( { title, onTitleEdit } ) {
 				spellCheck={ false }
 				suppressContentEditableWarning={ true }
 				onDoubleClick={ handleDoubleClick }
-				onBlur={ () => setEditMode( false ) }
+				onBlur={ handleBlur }
 				onKeyPress={ handleKeyPress }>{ title }</span>
 		</div>
 	);
